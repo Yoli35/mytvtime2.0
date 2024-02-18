@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SeriesController!{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{ series.name }}</h1>
+        <h6>
+            {% set n = series.visitNumber %}
+            {% if n > 1000 %}
+            {% set n = (n / 1000)|round(1, 'floor') ~ 'k' %}
+            {% endif %}
+            {{ n }} {{ n > 1 ? 'visits':'visit' }}
+        </h6>
+
+        <div class="overview">{{ series.overview }}</div>
+    </div>
+{% endblock %}

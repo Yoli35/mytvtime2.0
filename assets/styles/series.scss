@@ -1,0 +1,28 @@
+.last-added-series {
+    .card {
+        align-items: flex-start;
+        background-color: var(--gradient-ardoise-90);
+        border-radius: .25rem;
+        color: var(--gradient-ardoise-10);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        .poster {
+            img {
+                border-radius: .25rem .25rem 0 0;
+                height: 15rem;
+                object-fit: cover;
+                width: 10rem;
+            }
+        }
+
+        .name {
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            height: 2rem;
+            width: 10rem;
+        }
+    }
+}

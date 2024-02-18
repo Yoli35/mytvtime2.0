@@ -1,20 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}My Tv Time → Accueil{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="container-fluid home">
+        <h1 class="text-center my-5">Bienvenue sur My Tv Time</h1>
+        <p class="text-center">My Tv Time est un site qui vous permet de gérer vos séries préférées. Vous pouvez ajouter des séries à votre liste, indiquer les épisodes que vous avez vus, et bien plus encore !</p>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/Users/iboy/Sites/mytvtime2.0/src/Controller/HomeController.php</code></li>
-        <li>Your template at <code>/Users/iboy/Sites/mytvtime2.0/templates/home/index.html.twig</code></li>
-    </ul>
-</div>
+        <div class="last-added-series">
+            <h2>Dernières séries ajoutées</h2>
+            <div class="wrapper">
+                <div class="content">
+                    {% for s in series %}
+                        {{ include('_blocks/series/_card.html.twig', { series: s }) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

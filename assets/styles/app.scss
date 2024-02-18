@@ -1,0 +1,188 @@
+@import "variables";
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+::selection {
+    background-color: var(--gradient-orange-50);
+    color: var(--gradient-orange-90);
+}
+
+html {
+    color-scheme: light dark;
+    scroll-behavior: smooth;
+    scroll-padding: 10rem;
+
+    &:has(body.dark) {
+        @for $i from 0 through 100 {
+            --value-#{$i}: #{100 - $i};
+            --percent-#{$i}: calc(calc(calc(100 - #{$i}) / 100) * 100%) !important;
+        }
+    }
+
+    &:has(body.light) {
+        @for $i from 0 through 100 {
+            --value-#{$i}: #{$i};
+            --percent-#{$i}: calc(calc(#{$i} / 100) * 100%) !important;
+        }
+    }
+}
+
+a {
+    color: var(--gradient-ardoise-20);
+    text-decoration: none;
+
+    &:hover, &:visited, &:focus {
+        color: var(--gradient-ardoise-20);
+    }
+}
+
+body {
+    align-items: center;
+    background: var(--mtt-body-bg);
+    background-image: var(--gradient-bg);
+    background-attachment: fixed;
+    color: var(--mtt-body-color);
+    display: flex;
+    flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 1rem;
+    font-weight: 100;
+    min-height: 100vh;
+    line-height: 1.5rem;
+    margin: 0;
+
+    &.frozen {
+        overflow: hidden;
+    }
+
+    img, picture, svg, video {
+        display: block;
+        max-width: 100%;
+    }
+
+    input, textarea, select, button {
+        font: inherit;
+        font-size: 1rem;
+        margin: 0;
+    }
+}
+
+.container, .container-fluid {
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+    margin-inline: auto;
+    min-height: 100vh;
+    padding-block-start: 3rem;
+    padding-inline: 0;
+    width: 100%;
+}
+
+.backgroundImage {
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.backgroundImageOverlay {
+    -webkit-backdrop-filter: blur(32px) brightness(75%) saturate(85%);
+    backdrop-filter: blur(32px) brightness(75%) saturate(85%);
+    height: 100%;
+    padding: 1rem;
+    width: 100%;
+}
+
+.container-fluid:not(:has(.backgroundImageOverlay)) {
+    padding: 1rem 0;
+}
+
+@media (min-width: 576px) {
+    .container {
+        padding-inline: 0.75rem;
+    }
+}
+
+@media (min-width: 1025px) {
+    .container {
+        max-width: 1024px;
+        padding-inline: unset;
+    }
+    .container-fluid:not(:has(.backgroundImageOverlay)) {
+        padding-inline: 1rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1520px;
+    }
+}
+
+@media (min-width: 1920px) {
+    .container {
+        max-width: 1860px;
+    }
+}
+
+
+.home-footer {
+    align-items: center;
+    display: flex;
+    justify-content: space-evenly;
+    background-color: var(--gradient-ardoise-80);
+    color: var(--gradient-ardoise-10);
+    gap: 1rem;
+    margin: auto 0 1rem 0;
+    padding-block: 1rem;
+    width: 100%;
+
+    .logo {
+        align-items: center;
+        display: flex;
+        justify-content: end;
+        background-image: url("../images/logo.png");
+        background-position: left;
+        background-repeat: no-repeat;
+        background-size: 2rem 2rem;
+        height: 2rem;
+        padding-left: 3rem;
+    }
+
+    a {
+        color: var(--gradient-ardoise-10);
+    }
+
+
+    .powered {
+        background-image: url("../images/the-movie-db.svg");
+        background-size: cover;
+        height: 1rem;
+        width: 12rem;
+
+        a {
+            display: block;
+            height: 100%;
+            width: 100%;
+        }
+    }
+}

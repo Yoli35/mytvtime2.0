@@ -1,0 +1,8 @@
+<div class="card">
+    <a href="{{ path('app_series_show', {'id': series.id, 'slug': series.slug }) }}">
+        <div class="poster">
+            <img src="{{ config.secure_base_url ~ config.poster_sizes.4 ~ series.posterPath }}" alt="{{ series.name }}">
+        </div>
+        <div class="name">{{ series.name }}</div>
+    </a>
+</div>
