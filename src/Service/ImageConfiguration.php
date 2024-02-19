@@ -9,23 +9,17 @@ class ImageConfiguration
 {
     private array $imageConfiguration;
 
-    public function __construct(ImageConfigRepository $imageConfigRepository)
+    public function __construct(private readonly TMDBService $tmdbService)
     {
-        $config = $imageConfigRepository->findAll();
-        $c = $config[0];
-        $backdropSizes = $c->getBackdropSizes();
-        $logoSizes = $c->getLogoSizes();
-        $posterSizes = $c->getPosterSizes();
-        $profileSizes = $c->getProfileSizes();
-        $stillSizes = $c->getStillSizes();
+        $config = json_decode($this->tmdbService->imageConfiguration(), true);
 
         $this->imageConfiguration = [
-            'url' => $c->getSecureBaseUrl(),
-            'backdrop_sizes' => $backdropSizes,
-            'logo_sizes' => $logoSizes,
-            'poster_sizes' => $posterSizes,
-            'profile_sizes' => $profileSizes,
-            'still_sizes' => $stillSizes
+            'url' => $config['images']['secure_base_url'],
+            'backdrop_sizes' => $config['images']['backdrop_sizes'],
+            'logo_sizes' => $config['images']['logo_sizes'],
+            'poster_sizes' => $config['images']['poster_sizes'],
+            'profile_sizes' => $config['images']['profile_sizes'],
+            'still_sizes' => $config['images']['still_sizes'],
         ];
     }
 
@@ -33,6 +27,11 @@ class ImageConfiguration
     public function getConfig(): array
     {
         return $this->imageConfiguration;
+    }
+
+    public function getUrl($type, $size): string
+    {
+        return $this->imageConfiguration['url'] . $this->imageConfiguration[$type][$size];
     }
 
     public function getCompleteUrl(string $path, $type, $size): string

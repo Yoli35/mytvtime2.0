@@ -1,11 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My Tv Time → Accueil{% endblock %}
+{% block title %}my Tv Time → {{ 'Home'|trans }}{% endblock %}
 
 {% block body %}
     <div class="container-fluid home">
-        <h1 class="text-center my-5">Bienvenue sur My Tv Time</h1>
-        <p class="text-center">My Tv Time est un site qui vous permet de gérer vos séries préférées. Vous pouvez ajouter des séries à votre liste, indiquer les épisodes que vous avez vus, et bien plus encore !</p>
+        {% include '_blocks/_menu.html.twig' %}
+        <h1>Bienvenue sur My Tv Time</h1>
+        <p>My Tv Time est un site qui vous permet de gérer vos séries préférées. Vous pouvez ajouter des séries à votre liste, indiquer les épisodes que vous avez vus, et bien plus encore !</p>
 
         <div class="last-added-series">
             <h2>Dernières séries ajoutées</h2>
@@ -17,5 +18,6 @@
                 </div>
             </div>
         </div>
+        {% include '_blocks/_footer.html.twig' %}
     </div>
 {% endblock %}

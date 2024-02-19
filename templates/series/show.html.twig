@@ -1,18 +1,40 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello SeriesController!{% endblock %}
+{% block title %}my Tv Time → {{ 'Series'|trans }} → {{ series.name }}{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1>{{ series.name }}</h1>
-        <h6>
-            {% set n = series.visitNumber %}
-            {% if n > 1000 %}
-            {% set n = (n / 1000)|round(1, 'floor') ~ 'k' %}
-            {% endif %}
-            {{ n }} {{ n > 1 ? 'visits':'visit' }}
-        </h6>
-
-        <div class="overview">{{ series.overview }}</div>
+    <script>
+        const bd = '/series/posters{{ series.posterPath }}';
+        const body = document.querySelector("body");
+        body.style.backgroundSize = "cover";
+        body.style.backgroundPosition = "center";
+        body.style.backgroundRepeat = "no-repeat";
+        body.style.backgroundAttachment = "fixed";
+        body.style.backgroundImage = "url(" + bd + ")";
+    </script>
+    <div class="container-fluid backgroundImageOverlay">
+        {% include '_blocks/_menu.html.twig' %}
+        <div class="series-show">
+            <div class="header">
+                <div class="poster">
+                    <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
+                </div>
+                <div class="infos">
+                    <h1>{{ series.name }}</h1>
+                    <h5>
+                        {% set n = series.visitNumber %}
+                        {% if n > 1000 %}
+                            {% set n = (n / 1000)|round(1, 'floor') ~ 'k' %}
+                        {% endif %}
+                        {{ n }} {{ (n > 1 ? 'visits':'visit')|trans }}
+                    </h5>
+                    <div class="overview">{{ series.overview }}</div>
+                    <div class="backdrop">
+                        <img src="/series/backdrops{{ series.backdropPath }}" alt="{{ series.name }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include '_blocks/_footer.html.twig' %}
     </div>
 {% endblock %}

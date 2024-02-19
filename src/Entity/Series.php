@@ -185,4 +185,22 @@ class Series
 
         return $this;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'posterPath' => $this->getPosterPath(),
+            'tmdbId' => $this->getTmdbId(),
+            'originalName' => $this->getOriginalName(),
+            'slug' => $this->getSlug(),
+            'overview' => $this->getOverview(),
+            'backdropPath' => $this->getBackdropPath(),
+            'firstDateAir' => $this->getFirstDateAir(),
+            'createdAt' => $this->getCreatedAt(),
+            'updatedAt' => $this->getUpdatedAt(),
+            'visitNumber' => $this->getVisitNumber(),
+        ];
+    }
 }
