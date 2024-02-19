@@ -1,7 +1,25 @@
 <div class="card">
-    <a href="{{ path('app_series_show', {'id': series.id, 'slug': series.slug }) }}">
+    {% if series.tmdb is defined %}
+        {% set url = path('app_series_tmdb', {'id': series.id, 'slug': series.slug }) %}
+    {% else %}
+        {% set url = path('app_series_show', {'id': series.id, 'slug': series.slug }) %}
+    {% endif %}
+    <a href="{{ url }}">
         <div class="poster">
-            <img src="{{ config.secure_base_url ~ config.poster_sizes.4 ~ series.posterPath }}" alt="{{ series.name }}">
+            {% if series.posterPath is defined %}
+                {% if series.posterPath %}
+                    <img src="{{ config.secure_base_url ~ config.poster_sizes.4 ~ series.posterPath }}" alt="{{ series.name }}">
+                {% else %}
+                    <div>{{ 'No poster'|trans }}</div>
+                {% endif %}
+            {% endif %}
+            {% if series.poster_path is defined %}
+                {% if series.poster_path %}
+                    <img src="{{ series.poster_path }}" alt="{{ series.name }}">
+                {% else %}
+                    <div>{{ 'No poster'|trans }}</div>
+                {% endif %}
+            {% endif %}
         </div>
         <div class="name">{{ series.name }}</div>
     </a>

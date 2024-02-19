@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}my Tv Time → {{ 'Series'|trans }} → {{ series.name }}{% endblock %}
+{% block title %}my Tv Time → {{ 'Series'|trans }} → {{ tv.name }}{% endblock %}
 
 {% block body %}
     <script>
-        const bd = '/series/posters{{ series.posterPath }}';
+        const bd = '/series/posters{{ tv.poster_path ?? '/../backdrops' ~ tv.backdrop_path }}';
         const body = document.querySelector("body");
         body.style.backgroundSize = "cover";
         body.style.backgroundPosition = "center";
@@ -17,20 +17,17 @@
         <div class="series-show">
             <div class="header">
                 <div class="poster">
-                    <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
+                    {% if tv.poster_path %}
+                        <img src="/series/posters{{ tv.poster_path }}" alt="{{ tv.name }}">
+                    {% else %}
+                        <div>{{ 'No poster'|trans }}</div>
+                    {% endif %}
                 </div>
                 <div class="infos">
-                    <h1>{{ series.name }}</h1>
-                    <h5>
-                        {% set n = series.visitNumber %}
-                        {% if n > 1000 %}
-                            {% set n = (n / 1000)|round(1, 'floor') ~ 'k' %}
-                        {% endif %}
-                        {{ n }} {{ (n > 1 ? 'visits':'visit')|trans }}
-                    </h5>
-                    <div class="overview">{{ series.overview }}</div>
+                    <h1>{{ tv.name }}</h1>
+                    <div class="overview">{{ tv.overview }}</div>
                     <div class="backdrop">
-                        <img src="/series/backdrops{{ series.backdropPath }}" alt="{{ series.name }}">
+                        <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }}">
                     </div>
                 </div>
             </div>

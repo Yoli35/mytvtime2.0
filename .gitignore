@@ -32,3 +32,8 @@
 /yarn.lock
 /.idea/
 .DS_Store
+.env
+.idea/mytvtime2.0.iml
+.idea/php.xml
+.idea/mytvtime2.0.iml
+.idea/php.xml

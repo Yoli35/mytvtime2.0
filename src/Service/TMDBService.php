@@ -268,7 +268,7 @@ class TMDBService
         try {
             $response = $this->client->request(
                 'GET',
-                'https://api.themoviedb.org/3/discover/tv/?api_key=' . $this->api_key . $filterString,
+                'https://api.themoviedb.org/3/discover/tv?api_key=' . $this->api_key . $filterString,
             );
             try {
                 return $response->getContent();

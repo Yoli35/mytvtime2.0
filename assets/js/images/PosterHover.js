@@ -16,6 +16,11 @@ export class PosterHover {
 
     showPoster(evt) {
         const poster = evt.currentTarget;
+        const img = poster.querySelector("img");
+
+        if (img === null) {
+            return;
+        }
         let flyingPoster = document.querySelector(".flying-poster");
         // Flying poster : 480 x 704 px
         const screenW = window.innerWidth;
@@ -28,7 +33,7 @@ export class PosterHover {
             left = screenW - 480;
         }
         if (top + 704 + 16 > screenH) {
-            top = screenH - (2 * 704) - 16;
+            top -= 732;
         }
 
         if (flyingPoster) {
@@ -36,8 +41,7 @@ export class PosterHover {
             return;
         }
         // Select div with class name beginning with "container"
-        const container = document.querySelector("div[class|=container]")
-        const img = poster.querySelector("img");
+        const container = document.querySelector("div[class|=container]");
         const src = img.getAttribute("src");
         const alt = img.getAttribute("alt");
         let flyingPosterImg;

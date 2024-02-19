@@ -8,11 +8,21 @@
         <h1>Bienvenue sur My Tv Time</h1>
         <p>My Tv Time est un site qui vous permet de gérer vos séries préférées. Vous pouvez ajouter des séries à votre liste, indiquer les épisodes que vous avez vus, et bien plus encore !</p>
 
-        <div class="last-added-series">
+        <div class="series-group">
             <h2>Dernières séries ajoutées</h2>
             <div class="wrapper">
                 <div class="content">
                     {% for s in series %}
+                        {{ include('_blocks/series/_card.html.twig', { series: s }) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="series-group">
+            <h2>{{ filterName }}</h2>
+            <div class="wrapper">
+                <div class="content">
+                    {% for s in filteredSeries %}
                         {{ include('_blocks/series/_card.html.twig', { series: s }) }}
                     {% endfor %}
                 </div>
