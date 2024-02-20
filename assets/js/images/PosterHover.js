@@ -9,12 +9,34 @@ export class PosterHover {
         const posters = document.querySelectorAll(".poster");
         posters.forEach(poster => {
             poster.addEventListener("mouseover", this.showPoster);
-            poster.addEventListener("mousemove", this.showPoster)
+            poster.addEventListener("mousemove", this.showPoster);
             poster.addEventListener("mouseout", this.hidePoster);
         });
+        const cast = document.querySelector(".cast");
+        if (cast) {
+            const people = cast.querySelectorAll(".people");
+            people.forEach(person => {
+                person.addEventListener("mouseover", this.showPoster);
+                person.addEventListener("mousemove", this.showPoster);
+                person.addEventListener("mouseout", this.hidePoster);
+            });
+        }
+        const crew = document.querySelector(".crew");
+        if (crew) {
+            const people = crew.querySelectorAll(".people");
+            people.forEach(person => {
+                person.addEventListener("mouseover", this.showPoster);
+                person.addEventListener("mousemove", this.showPoster);
+                person.addEventListener("mouseout", this.hidePoster);
+            });
+        }
     }
 
     showPoster(evt) {
+        const preview = localStorage.getItem("preview");
+        if (preview === null) {
+            return;
+        }
         const poster = evt.currentTarget;
         const img = poster.querySelector("img");
 
