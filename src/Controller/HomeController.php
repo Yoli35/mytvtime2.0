@@ -33,14 +33,25 @@ class HomeController extends AbstractController
 
         $s = array_map(function ($serie) use ($config) {
             $s['poster_path'] = $this->imageConfiguration->getCompleteUrl($serie->getPosterPath(), 'poster_sizes', 5); // w780
-//            $s['backdrop_path'] = $this->imageConfiguration->getCompleteUrl($serie->getBackdropPath(), 'backdrop_sizes', 3); // original
             return $s;
         }, $series);
-//        dump($series, $s, $config['images']);
+
+        dump($request);
+
+        $provider = $request->query->get('provider', 8);
+        $watchProviders = json_decode($this->tmdbService->getTvWatchProviderList('fr-FR', 'FR'), true);
+        $watchProviders = $watchProviders['results'];
+        $watchProviders = array_map(function ($watchProvider) {
+            $watchProvider['id'] = $watchProvider['provider_id'];
+            $watchProvider['name'] = $watchProvider['provider_name'];
+            $watchProvider['logoPath'] = $watchProvider['logo_path'] ? $this->imageConfiguration->getCompleteUrl($watchProvider['logo_path'], 'logo_sizes', 2) : null;
+            return $watchProvider;
+        }, $watchProviders);
+        dump(['watchProviders' => $watchProviders]);
 
         $slugger = new AsciiSlugger();
         // Séries Netflix
-        $filterString = "&page=1&sort_by=first_air_date.desc&page=1&language=fr&timezone=Europe/Paris&watch_region=FR&include_adult=false&with_watch_providers=8&with_watch_monetization_types=flatrate";
+        $filterString = "&page=1&sort_by=first_air_date.desc&with_watch_providers=".$provider."&with_watch_monetization_types=flatrate&language=fr&timezone=Europe/Paris&watch_region=FR&include_adult=false";
         $filterName = "Netflix";
         $filteredSeries = json_decode($this->tmdbService->getFilterTv($filterString), true)['results'];
         $filteredSeries = array_map(function ($tv) use($slugger) {
@@ -53,6 +64,8 @@ class HomeController extends AbstractController
 
         return $this->render('home/index.html.twig', [
             'series' => $series,
+            'watchProviders' => $watchProviders,
+            'provider' => $provider,
             'filteredSeries' => $filteredSeries,
             'filterName' => $filterName,
             'config' => $config['images'],

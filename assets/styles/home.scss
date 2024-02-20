@@ -1,5 +1,5 @@
 .home {
-    .last-added-series {
+    .series-group {
         align-items: flex-start;
         background-color: var(--gradient-ardoise-80);
         border-radius: .25rem;
@@ -16,6 +16,69 @@
         &:hover {
             background-color: var(--gradient-ardoise-70);
             color: var(--gradient-ardoise-10);
+        }
+
+        .header {
+            align-items: center;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-start;
+            padding-block: 0;
+            padding-inline: 0;
+            width: 100%;
+
+            .logo {
+                height: 2em;
+                width: 2em;
+
+                img {
+                    border-radius: .25rem;
+                    height: 2rem;
+                    object-fit: cover;
+                    width: 2rem;
+                }
+
+            }
+
+            label {
+                margin-inline-start: auto;
+                position: relative;
+
+                select {
+                    appearance: none;
+                    background-color: var(--gradient-ardoise-60);
+                    border: 1px solid var(--gradient-ardoise-50);
+                    cursor: inherit;
+                    font-family: inherit;
+                    font-size: inherit;
+                    line-height: inherit;
+                    outline: none;
+                    padding-inline: .5rem 1.5rem;
+                }
+
+                &:focus-within {
+                    select {
+                        background-color: var(--gradient-ardoise-50);
+                        outline: var(--gradient-orange-50) auto 2px;
+                    }
+                }
+
+                &::after {
+                    border-bottom: 4px solid var(--gradient-ardoise-20);
+                    border-left: 4px solid transparent;
+                    border-right: 4px solid var(--gradient-ardoise-20);
+                    border-top: 4px solid transparent;
+                    content: "";
+                    display: block;
+                    height: .5em;
+                    position: absolute;
+                    right: .75em;
+                    top: .5em;
+                    transform: rotate(45deg);
+                    width: .5em;
+                    z-index: 2;
+                }
+            }
         }
         
         .wrapper {

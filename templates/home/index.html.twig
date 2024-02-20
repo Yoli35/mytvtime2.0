@@ -19,7 +19,19 @@
             </div>
         </div>
         <div class="series-group">
-            <h2>{{ filterName }}</h2>
+            <div class="header">
+                <div class="logo">
+                    {{ providerLogo(watchProviders, provider) }}
+                </div>
+                <h2>{{ providerName(watchProviders, provider) }}</h2>
+                <label for="watch-providers">Filtrer par plateforme de streaming
+                    <select id="watch-providers">
+                        {% for watchProvider in watchProviders|sort((a, b) => a.name <=> b.name) %}
+                            <option value="{{ watchProvider.id }}" data-logo="{{ watchProvider.logoPath }}"{{ watchProvider.id == provider ? ' selected':''}}>{{ watchProvider.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
             <div class="wrapper">
                 <div class="content">
                     {% for s in filteredSeries %}
