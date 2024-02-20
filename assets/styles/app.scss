@@ -73,7 +73,7 @@ body {
         margin: 0;
     }
 
-    nav {
+    .navbar {
         align-items: center;
         background-color: var(--gradient-ardoise-70-alpha-50);
         border-radius: .5rem;
@@ -101,6 +101,59 @@ body {
 
         &:hover {
             background-color: var(--gradient-ardoise-70);
+        }
+
+        .switches {
+            display: flex;
+            gap: .5rem;
+            margin-inline-start: auto;
+        }
+
+        .switch-preview,
+        .switch-theme,
+        .switch-language {
+            align-items: center;
+            border-radius: .25rem;
+            cursor: pointer;
+            display: flex;
+            gap: .5rem;
+            height: 2rem;
+            justify-content: center;
+            position: relative;
+            transition: background-color .250ms, color .250ms;
+            width: 2rem;
+
+            &:hover {
+                background-color: var(--gradient-ardoise-75);
+
+                .content {
+                    display: flex;
+                }
+            }
+
+            &:focus-within {
+                background-color: var(--gradient-ardoise-75);
+            }
+
+            .content {
+                background-color: var(--gradient-ardoise-50);
+                border-radius: .25rem;
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                right: 0;
+                top: 2rem;
+
+                div {
+                    white-space: nowrap;
+                    padding-inline: 1rem;
+
+                    &:hover {
+                        background-color: var(--gradient-orange-50);
+                        color: var(--gradient-orange-90);
+                    }
+                }
+            }
         }
     }
 }
@@ -207,11 +260,16 @@ body {
     display: flex;
     justify-content: space-evenly;
     background-color: var(--gradient-ardoise-80);
+    border-radius: .5rem;
     color: var(--gradient-ardoise-10);
     gap: 1rem;
-    margin: auto 0 1rem 0;
-    padding-block: 1rem;
+    margin-block-start: 1rem;
+    padding-block: .5rem;
     width: 100%;
+
+    &.dark {
+        color: hsl(202, 18%, 10%);
+    }
 
     .logo {
         align-items: center;
@@ -228,7 +286,6 @@ body {
     a {
         color: var(--gradient-ardoise-10);
     }
-
 
     .powered {
         background-image: url("../images/the-movie-db.svg");
