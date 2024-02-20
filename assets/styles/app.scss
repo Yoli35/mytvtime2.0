@@ -109,9 +109,9 @@ body {
             margin-inline-start: auto;
         }
 
-        .switch-preview,
-        .switch-theme,
-        .switch-language {
+        .menu-preview,
+        .menu-theme,
+        .menu-language {
             align-items: center;
             border-radius: .25rem;
             cursor: pointer;
@@ -151,6 +151,16 @@ body {
                     &:hover {
                         background-color: var(--gradient-orange-50);
                         color: var(--gradient-orange-90);
+                    }
+
+                    &:first-child {
+                        border-top-left-radius: .25rem;
+                        border-top-right-radius: .25rem;
+                    }
+
+                    &:last-child {
+                        border-bottom-left-radius: .25rem;
+                        border-bottom-right-radius: .25rem;
                     }
                 }
             }

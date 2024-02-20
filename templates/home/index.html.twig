@@ -4,7 +4,7 @@
 
 {% block body %}
     <div class="container-fluid home">
-        {% include '_blocks/_menu.html.twig' %}
+        {% include('_blocks/_menu.html.twig') %}
         <h1>Bienvenue sur My Tv Time</h1>
         <p>My Tv Time est un site qui vous permet de gérer vos séries préférées. Vous pouvez ajouter des séries à votre liste, indiquer les épisodes que vous avez vus, et bien plus encore !</p>
 
@@ -40,6 +40,6 @@
                 </div>
             </div>
         </div>
-        {% include '_blocks/_footer.html.twig' %}
+        {% include('_blocks/_footer.html.twig') %}
     </div>
 {% endblock %}

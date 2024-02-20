@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello SeriesController!{% endblock %}
+{% block title %}{{ 'Series' }}{% endblock %}
 
 {% block body %}
-<div class="container">
-    <h1>{{ series.name }}</h1>
-
-    <div class="overview">{{ series.overview }}</div>
+<div class="container-fluid">
+    {% include('_blocks/_menu.html.twig') %}
+    <h1>{{'Your series here soon'}}</h1>
+    {% include('_blocks/_footer.html.twig') %}
 </div>
 {% endblock %}

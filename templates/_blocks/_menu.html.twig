@@ -2,13 +2,13 @@
     <a href="{{ path('app_home') }}" accesskey="<">{{ 'Home'|trans }}</a>
     <a href="{{ path('app_series') }}">{{ 'Series'|trans }}</a>
     <div class="switches">
-        <div class="switch-preview">
+        <div class="menu-preview">
             <i class="fa-solid fa-eye"></i>
             <div class="content">
                 <div id="switch-preview" data-on="{{ 'Hide preview'|trans }}" data-off="{{ 'Show preview'|trans }}">{{ 'Hide preview'|trans }}</div>
             </div>
         </div>
-        <div class="switch-theme">
+        <div class="menu-theme">
             <i class="fa-solid fa-moon"></i>
             <div class="content">
                 <div class="theme" data-theme="auto">{{ 'Automatic'|trans }}</div>
@@ -16,7 +16,7 @@
                 <div class="theme" data-theme="dark">{{ 'Dark'|trans }}</div>
             </div>
         </div>
-        <div class="switch-language">
+        <div class="menu-language">
             <i class="fa-solid fa-globe"></i>
             <div class="content">
                 <div>{{ 'French'|trans }}</div>
