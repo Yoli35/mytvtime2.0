@@ -20,7 +20,7 @@
                     <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
                 </div>
                 <div class="infos">
-                    <h1>{{ series.name }}</h1>
+                    <h1>{{ series.name }} ({{ tv.first_air_date|date("Y") }})</h1>
                     <h5>
                         {% set n = series.visitNumber %}
                         {% if n > 1000 %}

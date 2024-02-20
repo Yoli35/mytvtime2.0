@@ -27,18 +27,18 @@ export class Menu {
     }
 
     initPreview() {
-        this.setPreview(localStorage.getItem("preview"));
+        this.setPreview(localStorage.getItem("mytvtime_2_preview"));
     }
 
     togglePreview() {
-        const preview = localStorage.getItem("preview");
+        const preview = localStorage.getItem("mytvtime_2_preview");
 
         if (preview === null) {
-            localStorage.setItem("preview", "true");
+            localStorage.setItem("mytvtime_2_preview", "true");
         } else {
-            localStorage.removeItem("preview");
+            localStorage.removeItem("mytvtime_2_preview");
         }
-        this.setPreview(localStorage.getItem("preview"));
+        this.setPreview(localStorage.getItem("mytvtime_2_preview"));
     }
 
     setPreview(preview) {
@@ -53,7 +53,7 @@ export class Menu {
     }
 
     initTheme() {
-        const theme = localStorage.getItem("theme");
+        const theme = localStorage.getItem("mytvtime_2_theme");
         if (theme !== null && theme !== 'auto') {
             document.body.classList.add(theme);
         }
@@ -64,7 +64,7 @@ export class Menu {
         const theme = e.currentTarget.getAttribute("data-theme");
         document.body.classList.remove("dark", "light");
         if (theme !== 'auto') document.body.classList.add(theme);
-        localStorage.setItem("theme", theme);
+        localStorage.setItem("mytvtime_2_theme", theme);
         this.iconTheme(theme);
     }
 

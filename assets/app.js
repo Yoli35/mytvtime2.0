@@ -12,8 +12,10 @@ const menu = new Menu();
 menu.init();
 
 import {ProviderSelect} from "./js/home/ProviderSelect.js";
-const providerSelect = new ProviderSelect();
-providerSelect.init();
+if (document.querySelector(".home")) {
+    const providerSelect = new ProviderSelect();
+    providerSelect.init();
+}
 
 import {PosterHover} from "./js/images/PosterHover.js";
 const posterHover = new PosterHover();

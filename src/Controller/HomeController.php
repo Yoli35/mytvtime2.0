@@ -36,9 +36,10 @@ class HomeController extends AbstractController
             return $s;
         }, $series);
 
-        dump($request);
+        // Get the value of the cookie "mytvtime.2.provider"
+        $cookieProvider = $_COOKIE['mytvtime_2_provider'];
 
-        $provider = $request->query->get('provider', 8);
+        $provider = $request->query->get('provider', $cookieProvider ?? 8);
         $watchProviders = json_decode($this->tmdbService->getTvWatchProviderList('fr-FR', 'FR'), true);
         $watchProviders = $watchProviders['results'];
         $watchProviders = array_map(function ($watchProvider) {
@@ -47,7 +48,6 @@ class HomeController extends AbstractController
             $watchProvider['logoPath'] = $watchProvider['logo_path'] ? $this->imageConfiguration->getCompleteUrl($watchProvider['logo_path'], 'logo_sizes', 2) : null;
             return $watchProvider;
         }, $watchProviders);
-        dump(['watchProviders' => $watchProviders]);
 
         $slugger = new AsciiSlugger();
         // Séries Netflix

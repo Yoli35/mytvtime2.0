@@ -175,7 +175,7 @@ body {
     margin-inline: auto;
     min-height: 100vh;
     padding-block-start: 3rem;
-    padding-inline: 0;
+    padding-inline: .25rem;
     position: relative;
     width: 100%;
 }
@@ -200,7 +200,7 @@ body {
 }
 
 @media (min-width: 576px) {
-    .container {
+    .container, .container-fluid:not(:has(.backgroundImageOverlay)) {
         padding-inline: 0.75rem;
     }
 }

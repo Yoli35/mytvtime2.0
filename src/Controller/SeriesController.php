@@ -119,6 +119,7 @@ class SeriesController extends AbstractController
         });
         return $tv['credits'];
     }
+
     public function getWatchProviders($tv, $country): array
     {
         $watchProviders = [];

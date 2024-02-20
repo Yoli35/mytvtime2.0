@@ -1,7 +1,7 @@
 .home {
     .series-group {
         align-items: flex-start;
-        background-color: var(--gradient-ardoise-80);
+        //background-color: var(--gradient-ardoise-80);
         border-radius: .25rem;
         color: var(--gradient-ardoise-10);
         display: flex;
@@ -9,14 +9,9 @@
         font-weight: 300;
         justify-content: flex-start;
         margin-top: 2rem;
-        padding: 1rem;
+        //padding: 1rem;
         text-align: center;
         transition: background-color .250ms, color .250ms;
-
-        &:hover {
-            background-color: var(--gradient-ardoise-70);
-            color: var(--gradient-ardoise-10);
-        }
 
         .header {
             align-items: center;

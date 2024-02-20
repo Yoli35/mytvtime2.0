@@ -33,7 +33,7 @@ export class PosterHover {
     }
 
     showPoster(evt) {
-        const preview = localStorage.getItem("preview");
+        const preview = localStorage.getItem("mytvtime_2_preview");
         if (preview === null) {
             return;
         }
