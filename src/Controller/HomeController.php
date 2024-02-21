@@ -37,7 +37,10 @@ class HomeController extends AbstractController
         }, $series);
 
         // Get the value of the cookie "mytvtime.2.provider"
-        $cookieProvider = $_COOKIE['mytvtime_2_provider'];
+        if (isset($_COOKIE['mytvtime_2_provider']))
+            $cookieProvider = $_COOKIE['mytvtime_2_provider'];
+        else
+            $cookieProvider = null;
 
         $provider = $request->query->get('provider', $cookieProvider ?? 8);
         $watchProviders = json_decode($this->tmdbService->getTvWatchProviderList('fr-FR', 'FR'), true);
