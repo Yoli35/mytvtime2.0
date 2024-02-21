@@ -42,13 +42,16 @@ if (seriesShow) {
     if (hsl.l > 100) {
         hsl.l = 100;
     }
-    navbar.setAttribute("style", "background-color: hsl(" + hsl.h + ", " + hsl.s + "%, " + hsl.l + "%)");
-    footer.setAttribute("style", "background-color: hsl(" + hsl.h + ", " + hsl.s + "%, " + hsl.l + "%)");
+
+    const root = document.documentElement;
+    root.style.setProperty("--navbar-bg", "hsl(" + hsl.h + ", " + hsl.s + "%, " + (hsl.l - 10) + "%)");
+    root.style.setProperty("--navbar-bg-50", "hsla(" + hsl.h + ", " + hsl.s + "%, " + hsl.l + "%, .5)");
+    root.style.setProperty("--navbar-bg-75", "hsla(" + hsl.h + ", " + hsl.s + "%, " + hsl.l + "%, .75)");
+
     if (hsl.l > 50) {
         navbarLinks.forEach(link => {
             link.classList.add("dark");
         });
         footer.classList.add("dark");
     }
-    // infos.innerHTML += "<div class='color' style='background-color: rgb(" + color.r + ", " + color.g + ", " + color.b + ")'></div>";
 }
