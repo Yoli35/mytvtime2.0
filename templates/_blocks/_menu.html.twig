@@ -2,6 +2,17 @@
     <a href="{{ path('app_home') }}" accesskey="<">{{ 'Home'|trans }}</a>
     <a href="{{ path('app_series') }}">{{ 'Series'|trans }}</a>
     <div class="switches">
+        <div class="menu-connect">
+            <i class="fa-solid fa-user"></i>
+            <div class="content">
+                {% if app.user %}
+                    <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a>
+                {% else %}
+                    <a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a>
+                    <a href="{{ path('app_register') }}">{{ 'Register'|trans }}</a>
+                {% endif %}
+            </div>
+        </div>
         <div class="menu-preview">
             <i class="fa-solid fa-eye"></i>
             <div class="content">

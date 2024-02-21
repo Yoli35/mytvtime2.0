@@ -4,12 +4,12 @@ export class ProviderSelect {
     }
 
     init() {
-        this.select.addEventListener("change", () => {
+        this.select?.addEventListener("change", () => {
             const provider = this.select.value;
             const url = new URL(window.location.href);
+            this.setProviderCookie(provider);
             url.searchParams.set("provider", provider);
             window.location.href = url.href;
-            this.setProviderCookie(provider);
         });
     }
 

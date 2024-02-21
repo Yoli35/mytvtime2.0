@@ -49,7 +49,7 @@ class DateService
         try {
             $date = new DateTime($dateString, new DateTimeZone($timeZone));
         } catch (Exception) {
-            $date = new DateTime();
+            $date = new DateTime("now");
         }
         if ($allDay) $date = $date->setTime(0, 0);
 
@@ -61,7 +61,7 @@ class DateService
         try {
             $date = new DateTime('now', new DateTimeZone($timezone));
         } catch (Exception) {
-            $date = new DateTime();
+            $date = new DateTime("now");
         }
         if ($allDay) $date = $date->setTime(0, 0);
 
@@ -73,7 +73,7 @@ class DateService
         try {
             $date = new DateTimeImmutable('now', new DateTimeZone($timezone));
         } catch (Exception) {
-            $date = new DateTimeImmutable();
+            $date = new DateTimeImmutable("now");
         }
         if ($allDay) $date = $date->setTime(0, 0);
 
@@ -86,7 +86,7 @@ class DateService
             $date = new DateTime($dateString, new DateTimeZone('UTC'));
             $date->setTimezone(new DateTimeZone($timeZone));
         } catch (Exception) {
-            $date = new DateTime();
+            $date = new DateTime("now");
         }
         if ($allDay) $date = $date->setTime(0, 0);
 
@@ -98,7 +98,7 @@ class DateService
         try {
             $date = new DateTimeImmutable($dateString, new DateTimeZone($timeZone));
         } catch (Exception) {
-            $date = new DateTimeImmutable();
+            $date = new DateTimeImmutable("now");
         }
         if ($allDay) $date = $date->setTime(0, 0);
 
@@ -108,11 +108,11 @@ class DateService
     public function newDateFromTimestamp($timestamp, $timeZone, $allDay = false): DateTime
     {
         try {
-            $date = new DateTime();
+            $date = new DateTime("now");
             $date->setTimestamp($timestamp);
             $date->setTimezone(new DateTimeZone($timeZone));
         } catch (Exception) {
-            $date = new DateTime();
+            $date = new DateTime("now");
         }
         if ($allDay) $date = $date->setTime(0, 0);
 
@@ -122,11 +122,11 @@ class DateService
     public function newDateImmutableFromTimestamp($timestamp, $timeZone, $allDay = false): DateTimeImmutable
     {
         try {
-            $date = new DateTimeImmutable();
+            $date = new DateTimeImmutable("now");
             $date->setTimestamp($timestamp);
             $date->setTimezone(new DateTimeZone($timeZone));
         } catch (Exception) {
-            $date = new DateTimeImmutable();
+            $date = new DateTimeImmutable("now");
         }
         if ($allDay) $date = $date->setTime(0, 0);
 

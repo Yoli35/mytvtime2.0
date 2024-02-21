@@ -1,5 +1,12 @@
 # Home
 Home: Accueil
+Connect: Se connecter
+Disconnect: Se déconnecter
+Register: S'inscrire
+Username: Nom d'utilisateur
+Password: Mot de passe
+Remember me: Se souvenir de moi
+Sign in: Se connecter
 Hide preview: Masquer l'aperçu
 Show preview: Afficher l'aperçu
 Automatic: Automatique
@@ -21,6 +28,7 @@ Where to rent: Où louer
 Where to buy: Où acheter
 
 # People
+People: Personnes
 Personal Informations: Informations personnelles
 Known for Department: Département connu pour
 Acting: Interprétation
