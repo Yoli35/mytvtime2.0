@@ -205,3 +205,25 @@ $fa-font-path: "../webfonts";
     --vote-9: hsl(15deg 37% 49%);
     --vote-10: hsl(0deg 30% 48%);
 }
+
+@mixin flex-row($align: center, $justify: center) {
+    align-items: $align;
+    display: flex;
+    flex-direction: row;
+    justify-content: $justify;
+}
+
+@mixin flex-100($align: center, $justify: center) {
+    align-items: $align;
+    display: flex;
+    flex-direction: row;
+    justify-content: $justify;
+    width: 100%;
+}
+
+@mixin flex-col($align: center, $justify: center) {
+    align-items: $align;
+    display: flex;
+    flex-direction: column;
+    justify-content: $justify;
+}

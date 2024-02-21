@@ -53,7 +53,6 @@ class HomeController extends AbstractController
         }, $watchProviders);
 
         $slugger = new AsciiSlugger();
-        // Séries Netflix
         $filterString = "&page=1&sort_by=first_air_date.desc&with_watch_providers=".$provider."&with_watch_monetization_types=flatrate&language=fr&timezone=Europe/Paris&watch_region=FR&include_adult=false";
         $filterName = "Netflix";
         $filteredSeries = json_decode($this->tmdbService->getFilterTv($filterString), true)['results'];

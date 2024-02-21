@@ -79,19 +79,21 @@
                 <div class="cast">
                     <div class="wrapper">
                         {% for people in tv.credits.cast %}
-                            <div class="people">
-                                <div class="profile">
-                                    {% if people.profile_path %}
-                                        <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                                    {% else %}
-                                        {{ 'No picture'|trans }}
-                                    {% endif %}
+                            <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
+                                <div class="people">
+                                    <div class="profile">
+                                        {% if people.profile_path %}
+                                            <img src="{{ people.profile_path }}" alt="{{ people.name }}">
+                                        {% else %}
+                                            {{ 'No picture'|trans }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="infos">
+                                        <div class="name">{{ people.name }}</div>
+                                        <div>{{ people.character }}</div>
+                                    </div>
                                 </div>
-                                <div class="infos">
-                                    <div class="name">{{ people.name }}</div>
-                                    <div>{{ people.character }}</div>
-                                </div>
-                            </div>
+                            </a>
                         {% endfor %}
                     </div>
                 </div>
@@ -102,19 +104,21 @@
                 <div class="crew">
                     <div class="wrapper">
                         {% for people in tv.credits.crew %}
-                            <div class="people">
-                                <div class="profile">
-                                    {% if people.profile_path %}
-                                        <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                                    {% else %}
-                                        {{ 'No picture'|trans }}
-                                    {% endif %}
+                            <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
+                                <div class="people">
+                                    <div class="profile">
+                                        {% if people.profile_path %}
+                                            <img src="{{ people.profile_path }}" alt="{{ people.name }}">
+                                        {% else %}
+                                            {{ 'No picture'|trans }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="infos">
+                                        <div class="name">{{ people.name }}</div>
+                                        <div>{{ people.job ~ ' - ' ~ people.department }}</div>
+                                    </div>
                                 </div>
-                                <div class="infos">
-                                    <div class="name">{{ people.name }}</div>
-                                    <div>{{ people.job ~ ' - ' ~ people.department }}</div>
-                                </div>
-                            </div>
+                            </a>
                         {% endfor %}
                     </div>
                 </div>

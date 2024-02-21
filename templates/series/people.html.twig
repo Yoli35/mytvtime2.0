@@ -1,0 +1,363 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'People' }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/people.scss') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        {{ include('_blocks/_menu.html.twig') }}
+        <main>
+            <div class="person">
+                <div class="left-column">
+                    {% if people.profile_path|length %}
+                        <div class="profile">
+                            <img src="{{ imageConfig.url ~ imageConfig.profile_sizes.2 ~ people.profile_path }}" alt="{{ people.name }}" loading="lazy">
+                        </div>
+                    {% endif %}
+                    <div class="infos">
+                        <h4>{{ 'Personal Informations'|trans }}</h4>
+                        <div class="info">
+                            <div>{{ 'Known for Department'|trans }}</div>
+                            <div>{{ people.known_for_department|trans }}</div>
+                        </div>
+                        <div class="info">
+                            <div>{{ 'Known appearances'|trans }}</div>
+                            <div>{{ count }}</div>
+                        </div>
+                        <div class="info">
+                            <div>{{ 'Gender'|trans }}</div>
+                            <div>{{ (people.gender == 1 ? 'Female' : (people.gender == 2 ? 'Male':'Other'))|trans }}</div>
+                        </div>
+                        {% if people.birthday %}
+                            <div class="info">
+                                <div>{{ 'Birthday'|trans }}</div>
+                                <div>{{ people.birthday|format_date('medium') }} ({{ people.age }} {{ 'old'|trans }})</div>
+                            </div>
+                        {% endif %}
+                        {% if people.deathday %}
+                            <div class="info">
+                                <div>{{ 'Deathday'|trans }}</div>
+                                <div>{{ people.deathday|format_date('medium') }}</div>
+                            </div>
+                        {% endif %}
+                        {% if people.place_of_birth %}
+                            <div class="info">
+                                <div>{{ 'Place of Birth'|trans }}</div>
+                                <div>{{ people.place_of_birth }}</div>
+                            </div>
+                        {% endif %}
+                        {% if people.homepage %}
+                            <div class="info">
+                                <div>{{ 'Homepage'|trans }}</div>
+                                <div>{{ people.homepage }}</div>
+                            </div>
+                        {% endif %}
+                        {% if people.also_known_as|length %}
+                            <div class="info">
+                                <div>{{ 'Also known as'|trans }}</div>
+                                {% for name in people.also_known_as %}
+                                    <div>{{ name }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if people.images|length %}
+                        {% if people.images.profiles|length %}
+                            <div class="images">
+                                {% for image in people.images.profiles %}
+                                    <img src="{{ imageConfig.url ~ imageConfig.profile_sizes.3 ~ image.file_path }}" alt="{{ people.name }}" loading="lazy">
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <div class="right-column">
+                    <div class="content">
+                        <h1>{{ people.name }}</h1>
+                        {% if people.biography|length %}
+                            <div class="bio">
+                                {{ people.biography|nl2br }}
+                            </div>
+                        {% endif %}
+                        {% if credits.known_for|length %}
+                            <h2>{{ 'Known for'|trans }}</h2>
+                            <div class="known-for">
+                                <div class="wrapper">
+                                    {% for media in credits.known_for %}
+                                        {% if media.media_type == "movie" %}
+                                            {% set url = "" %}
+                                            {#{% set url = path('app_movie', {id: media.id}) %} #}
+                                        {% endif %}
+                                        {% if media.media_type == "tv" %}
+                                            {% set url = path('app_series_tmdb', {id: media.id, slug: media.slug}) %}
+                                        {% endif %}
+                                        <div class="media" data-poster="{{ media.big_poster_path }}">
+                                            {% if url|length %}
+                                            <a href="{{ url }}">
+                                                {% endif %}
+                                                <img src="{{ media.poster_path }}" alt="{{ media.title }}" loading="lazy">
+                                                <div class="title">{{ media.title }}</div>
+                                                {% if url is defined %}
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="poster-hover"><img src="" alt=""></div>
+                        {% endif %}
+                        <div class="credits">
+                            {% if credits.cast|length %}
+                                <h2>{{ 'Acting'|trans }}</h2>
+                                <div class="acting">
+                                    {% set lastDate = "" %}
+                                    {% for date, prod in credits.cast %}
+                                        {% if loop.index0 %}
+                                            {% if date|length == 10 and date|slice(0,4) != lastDate %}
+                                                <div class="separation"></div>
+                                            {% endif %}
+                                        {% endif %}
+                                        <div class="date">
+                                            {% if loop.index0 %}
+                                                {% if date|length == 10 and date|slice(0,4) != lastDate %}
+                                                    <div class="year">{{ date|length == 10 ? (date|slice(0,4)) : "—" }}</div>
+                                                {% else %}
+                                                    <div class="year"></div>
+                                                {% endif %}
+                                            {% else %}
+                                                <div class="year">{{ date|length == 10 ? (date|slice(0,4)) : "—" }}</div>
+                                            {% endif %}
+                                            <div class="info" data-id="{{ prod.id }}" data-title="{{ prod.title }}" data-type="{{ prod.media_type }}" data-poster="{{ prod.poster_path }}"><i class="fa-solid fa-circle-info"></i></div>
+                                            {#                                            {% if prod.media_type == "movie" %} #}
+                                            {#                                                {% set url = path('app_movie', {id: prod.id}) %} #}
+                                            {#                                            {% endif %} #}
+                                            {% if prod.media_type == "tv" %}
+                                                {% set url = path('app_series_tmdb', {id: prod.id, slug: prod.slug}) %}
+                                            {% endif %}
+                                            {% if url is defined %}
+                                            <a href="{{ url }}">
+                                                {% endif %}
+                                                <div class="title">
+                                                    {{ prod.title }}
+                                                    {% if prod.media_type == 'movie' %}
+                                                        <i class="fa-solid fa-film" title="{{ "Movie"|trans }}"></i>
+                                                    {% endif %}
+                                                    {% if prod.media_type == 'tv' %}
+                                                        <i class="fa-solid fa-tv" title="{{ 'Serie'|trans }}"></i>
+                                                    {% endif %}
+                                                </div>
+                                                {% if url is defined %}
+                                            </a>
+                                            {% endif %}
+                                            {% if prod.character|length %}
+                                                {% if prod.character %}
+                                                    &nbsp;&nbsp;—
+                                                    <div class="character">{{ prod.character }}</div>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                        {% set lastDate = date|slice(0,4) %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% if credits.crew|length %}
+                                {% for department, prod in credits.crew %}
+                                    <h2>{{ department|trans }}</h2>
+                                    <div class="sub-credits">
+                                        {% for date, sub_prod in prod %}
+                                            {% if loop.index0 %}
+                                                {% if date|length == 10 and date|slice(0,4) != lastDate %}
+                                                    <div class="separation"></div>
+                                                {% endif %}
+                                            {% endif %}
+                                            <div class="date">
+                                                {% if loop.index0 %}
+                                                    {% if date|length == 10 and date|slice(0,4) != lastDate %}
+                                                        <div class="year">{{ date|length == 10 ? (date|slice(0,4)) : "—" }}</div>
+                                                    {% else %}
+                                                        <div class="year"></div>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <div class="year">{{ date|length == 10 ? (date|slice(0,4)) : "—" }}</div>
+                                                {% endif %}
+                                                <div class="info" data-id="{{ sub_prod.id }}" data-title="{{ sub_prod.title }}" data-type="{{ sub_prod.media_type }}" data-poster="{{ sub_prod.poster_path }}"><i class="fa-solid fa-circle-info"></i></div>
+                                                {#                                                {% if sub_prod.media_type == "movie" %} #}
+                                                {#                                                    {% set url = path('app_movie', {id: sub_prod.id}) %} #}
+                                                {#                                                {% endif %} #}
+                                                {% if sub_prod.media_type == "tv" %}
+                                                    {% set url = path('app_series_tmdb', {id: sub_prod.id, slug: sub_prod.slug}) %}
+                                                {% endif %}
+                                                {% if url is defined %}
+                                                <a href="{{ url }}">
+                                                    {% endif %}
+                                                    <div class="title">
+                                                        {{ sub_prod.title }}
+                                                        {% if sub_prod.media_type == 'movie' %}
+                                                            <i class="fa-solid fa-film" title="{{ "Movie"|trans }}"></i>
+                                                        {% endif %}
+                                                        {% if sub_prod.media_type == 'tv' %}
+                                                            <i class="fa-solid fa-tv" title="{{ 'Serie'|trans }}"></i>
+                                                        {% endif %}
+                                                    </div>
+                                                    {% if url is defined %}
+                                                </a>
+                                                {% endif %}
+                                                {% if sub_prod.job|length %}
+                                                    <div class="job">{{ 'as.job'|trans }} {{ ('job.' ~ sub_prod.job ~ (people.gender == 1 ? '.she':'.he'))|trans }}</div>
+                                                {% endif %}
+                                            </div>
+                                            {% set lastDate = date|slice(0,4) %}
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="pop-infos">
+                    <div class="content">
+                        <div class="poster"></div>
+                        <div class="body">
+                            <div class="title"></div>
+                            <div class="overview"></div>
+                            <div class="spinner">
+                                <div class="circle1">
+                                    <div class="circle2">
+                                        <div class="circle3">
+                                            <div class="circle4"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="close"><i class="fa-solid fa-xmark"></i></div>
+                        </div>
+                    </div>
+                    <div class="tail"></div>
+                </div>
+            </div>
+        </main>
+        {{ include ('_blocks/_footer.html.twig') }}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {#    <script src="/js/source.js"></script> #}
+    {#        <script src="/js/diaporama.js"></script> #}
+    {#        <script> #}
+    {#            const _app_series_get_overview = "{{ path('app_series_get_overview', {id: 0}) }}"; #}
+    {#            const imgUrl = "{{ imageConfig.url ~ imageConfig.profile_sizes.2 }}"; #}
+
+    {#            window.addEventListener("DOMContentLoaded", () => { #}
+    {#                const infos = document.querySelector(".credits").querySelectorAll(".info"); #}
+    {#                infos.forEach(info => { #}
+    {#                    info.querySelector("i").addEventListener("click", showInfos); #}
+    {#                }); #}
+    {#                document.addEventListener("click", hideInfos); #}
+    {#                initInfos(); #}
+
+    {#                const images = document.querySelector(".person").querySelector(".images").querySelectorAll("img"); #}
+    {#                initDiaporama(images, "{{ app.request.locale }}"); #}
+    {#                images.forEach(image => { #}
+    {#                    image.classList.add("pointer"); #}
+    {#                    image.addEventListener("click", openDiaporama); #}
+    {#                }); #}
+
+    {#                const media = document.querySelector(".person").querySelector(".known-for").querySelectorAll(".media"); #}
+    {#                media.forEach(m => { #}
+    {#                    m.addEventListener("mouseover", showPoster); #}
+    {#                    m.addEventListener("mousemove", showPoster) #}
+    {#                    m.addEventListener("mouseout", hidePoster); #}
+    {#                }); #}
+    {#            }); #}
+
+    {#            function initInfos() { #}
+    {#                const popInfos = document.querySelector(".pop-infos"); #}
+    {#                const close = popInfos.querySelector(".close"); #}
+
+    {#                close.addEventListener("click", hideInfos); #}
+    {#            } #}
+
+    {#            function showInfos(evt) { #}
+    {#                const popInfos = document.querySelector(".pop-infos"); #}
+    {#                let wasOpen = false; #}
+    {#                if (popInfos.classList.contains("show")) { #}
+    {#                    hideInfos(evt); #}
+    {#                    wasOpen = true; #}
+    {#                } #}
+
+    {#                setTimeout(() => { #}
+    {#                    const id = evt.target.closest(".info").getAttribute("data-id"); #}
+    {#                    const type = evt.target.closest(".info").getAttribute("data-type"); #}
+    {#                    const title = evt.target.closest(".info").getAttribute("data-title"); #}
+    {#                    const poster = evt.target.closest(".info").getAttribute("data-poster"); #}
+
+    {#                    const x = evt.clientX, y = evt.clientY + evt.view.scrollY - 16; #}
+
+    {#                    let img = document.createElement("img"); #}
+    {#                    if (poster.length) { #}
+    {#                        img.setAttribute("src", imgUrl + poster); #}
+    {#                    } else { #}
+    {#                        img.setAttribute("src", '/images/default/no_poster_dark.png'); #}
+    {#                    } #}
+    {#                    popInfos.querySelector(".poster").innerHTML = ""; #}
+    {#                    popInfos.querySelector(".poster").appendChild(img); #}
+    {#                    popInfos.querySelector(".title").appendChild(document.createTextNode(title)); #}
+    {#                    popInfos.querySelector(".spinner").setAttribute("style", "display: block;"); #}
+    {#                    popInfos.setAttribute("style", "left: calc(" + x + "px - 16em); top: calc(" + y + "px - 10.85em);"); #}
+    {#                    popInfos.classList.add("show"); #}
+    {#                    setTimeout(() => { #}
+    {#                        popInfos.classList.add("fade"); #}
+    {#                    }, 0); #}
+
+    {#                    const xhr = new XMLHttpRequest(); #}
+    {#                    xhr.onload = function () { #}
+    {#                        let result; #}
+    {#                        result = JSON.parse(this.response); #}
+    {#                        popInfos.querySelector(".title").innerHTML = ""; #}
+    {#                        popInfos.querySelector(".overview").innerHTML = ""; #}
+    {#                        popInfos.querySelector(".title").appendChild(document.createTextNode(title + " (" + result.media_type + ")")); #}
+    {#                        popInfos.querySelector(".overview").appendChild(document.createTextNode(result.overview)); #}
+    {#                        popInfos.querySelector(".spinner").setAttribute("style", "display: none;"); #}
+    {#                    } #}
+    {#                    xhr.open("GET", _app_series_get_overview.substring(0, _app_series_get_overview.length - 1) + id + "?type=" + type); #}
+    {#                    xhr.send(); #}
+    {#                }, wasOpen ? 200 : 0); #}
+    {#            } #}
+
+    {#            function hideInfos(evt) { #}
+    {#                const popInfos = document.querySelector(".pop-infos"); #}
+    {#                if (popInfos.classList.contains("fade")) { #}
+    {#                    evt.preventDefault(); #}
+    {#                    popInfos.classList.remove("fade"); #}
+    {#                    setTimeout(() => { #}
+    {#                        popInfos.classList.remove("show"); #}
+    {#                        popInfos.querySelector(".poster").innerHTML = ""; #}
+    {#                        popInfos.querySelector(".title").innerHTML = ""; #}
+    {#                        popInfos.querySelector(".overview").innerHTML = ""; #}
+    {#                    }, 150); #}
+    {#                } #}
+    {#            } #}
+
+    {#            function showPoster(evt) { #}
+    {#                const poster = document.querySelector(".person").querySelector(".poster-hover"); #}
+    {#                poster.setAttribute("style", "left: " + (evt.clientX - 144) + "px; top: " + (evt.clientY + 16) + "px;"); #}
+
+    {#                if (poster.classList.contains("show")) return; #}
+
+    {#                const img = poster.querySelector("img"); #}
+    {#                const imgSrc = evt.currentTarget.getAttribute("data-poster"); #}
+    {#                const title = evt.currentTarget.querySelector(".title").innerHTML; #}
+    {#                img.setAttribute("src", imgSrc); #}
+    {#                img.setAttribute("alt", title); #}
+    {#                poster.classList.add("show"); #}
+    {#            } #}
+
+    {#            function hidePoster() { #}
+    {#                const poster = document.querySelector(".person").querySelector(".poster-hover"); #}
+    {#                poster.classList.remove("show"); #}
+    {#            } #}
+    </script>
+{% endblock %}
