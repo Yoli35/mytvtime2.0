@@ -27,6 +27,7 @@ export class PosterHover {
             people.forEach(person => {
                 person.addEventListener("mouseover", this.showPoster);
                 person.addEventListener("mousemove", this.showPoster);
+                person.addEventListener("mousewheel", this.showPoster);
                 person.addEventListener("mouseout", this.hidePoster);
             });
         }
@@ -48,7 +49,8 @@ export class PosterHover {
         const screenW = window.innerWidth;
         const screenH = window.innerHeight;
         let left = evt.clientX - 240;
-        let top = evt.clientY + 16;
+        // Ajouter le décalage du scroll
+        let top = evt.clientY + 16 + window.scrollY;
         if (left < 0) {
             left = 0;
         } else if (left + 480 > screenW) {
