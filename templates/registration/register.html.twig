@@ -1,21 +1,43 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}{{ 'Register'|trans }}{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-
-    <h1>Register</h1>
-
-    {{ form_errors(registrationForm) }}
-
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.username) }}
-        {{ form_row(registrationForm.plainPassword) }}
-        {{ form_row(registrationForm.agreeTerms) }}
-
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+    <div class="container-fluid home">
+        {% include('_blocks/_menu.html.twig') %}
+        <div class="register">
+            {{ form_start(registrationForm) }}
+            <div class="error">
+                {{ form_errors(registrationForm) }}
+                {% for flash_error in app.flashes('verify_email_error') %}
+                    <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+                {% endfor %}
+            </div>
+            <div class="header">{{ 'Register'|trans }}</div>
+            <div class="body">
+                {#        {{ form_row(registrationForm.username) }} #}
+                <label for="{{ registrationForm.username.vars.id }}" class="required">{{ 'Username'|trans }}
+                    <input type="text" name="{{ field_name(registrationForm.username) }}" id="{{ registrationForm.username.vars.id }}" required>
+                </label>
+                {#        {{ form_row(registrationForm.plainPassword) }} #}
+                <label for="{{ registrationForm.plainPassword.vars.id }}" class="required">{{ 'Username'|trans }}
+                    <input type="password" name="{{ field_name(registrationForm.plainPassword) }}" id="{{ registrationForm.plainPassword.vars.id }}" required>
+                </label>
+                {#        {{ form_row(registrationForm.agreeTerms) }} #}
+                <div class="remember-me">
+                    <label for="{{ registrationForm.agreeTerms.vars.id }}">
+                        <input type="checkbox" name="{{ field_name(registrationForm.agreeTerms) }}" id="{{ registrationForm.agreeTerms.vars.id }}">
+                        <span>{{ 'Remember me'|trans }}</span>
+                    </label>
+                </div>
+            </div>
+            <div class="footer">
+                <button type="button"><a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a></button>
+                <button type="button"><a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a></button>
+                <button type="submit" class="btn">{{ 'Register'|trans }}</button>
+            </div>
+            {{ form_end(registrationForm) }}
+        </div>
+        {% include('_blocks/_footer.html.twig') %}
+    </div>
 {% endblock %}

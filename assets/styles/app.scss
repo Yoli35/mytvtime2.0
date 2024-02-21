@@ -79,7 +79,7 @@ body {
     flex-direction: column;
     background-color: transparent;
     margin-inline: auto;
-    min-height: 100vh;
+    min-height: calc(100vh - 4rem);
     padding-block-start: 3rem;
     padding-inline: .25rem;
     position: relative;
@@ -259,7 +259,7 @@ body {
     border-radius: .5rem;
     color: var(--gradient-ardoise-10);
     gap: 1rem;
-    margin-block-start: 1rem;
+    margin-block-start: auto;
     padding-block: .5rem;
     width: 100%;
 
@@ -297,7 +297,8 @@ body {
     }
 }
 
-.container-fluid:has(.login) {
+.container-fluid:has(.login),
+.container-fluid:has(.register) {
     align-items: center;
     display: flex;
     height: 100vh;
@@ -309,7 +310,7 @@ body {
     }
 }
 
-.login {
+.login, .register {
     margin-block-start: auto;
 
     form {
@@ -360,6 +361,7 @@ body {
 
             .remember-me {
                 label {
+                    align-items: center;
                     flex-direction: row;
 
                     input[type="checkbox"] {
