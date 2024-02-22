@@ -1,4 +1,3 @@
-
 export class PosterHover {
     constructor() {
         this.showPoster = this.showPoster.bind(this);
@@ -48,9 +47,11 @@ export class PosterHover {
         // Flying poster : 480 x 704 px
         const screenW = window.innerWidth;
         const screenH = window.innerHeight;
+        const homePage = document.querySelector(".home");
+        const marginBlockStart = homePage ? 64 : 0;
         let left = evt.clientX - 240;
         // Ajouter le décalage du scroll
-        let top = evt.clientY + 16 + window.scrollY;
+        let top = evt.clientY + 16 + window.scrollY - marginBlockStart;
         if (left < 0) {
             left = 0;
         } else if (left + 480 > screenW) {
@@ -64,8 +65,7 @@ export class PosterHover {
             flyingPoster.setAttribute("style", "left: " + left + "px; top: " + top + "px;");
             return;
         }
-        // Select div with class name beginning with "container"
-        const container = document.querySelector("div[class|=container]");
+        const container = document.querySelector("div[class|='container']");
         const src = img.getAttribute("src");
         const alt = img.getAttribute("alt");
         let flyingPosterImg;
