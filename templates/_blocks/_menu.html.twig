@@ -6,6 +6,7 @@
             <i class="fa-solid fa-user"></i>
             <div class="content">
                 {% if app.user %}
+                    <a href="{{ path('app_user') }}">{{ 'My account'|trans }}</a>
                     <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a>
                 {% else %}
                     <a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a>

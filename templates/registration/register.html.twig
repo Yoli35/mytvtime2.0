@@ -1,29 +1,56 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'Register'|trans }}{% endblock %}
+{% block title %}my Tv Time → {{ 'Register'|trans }}{% endblock %}
 
 {% block body %}
     <div class="container-fluid home">
         {% include('_blocks/_menu.html.twig') %}
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}
         <div class="register">
+{#            <pre>{{ dump(registrationForm) }}</pre>#}
             {{ form_start(registrationForm) }}
             <div class="error">
                 {{ form_errors(registrationForm) }}
-                {% for flash_error in app.flashes('verify_email_error') %}
-                    <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-                {% endfor %}
             </div>
             <div class="header">{{ 'Register'|trans }}</div>
             <div class="body">
-                {#        {{ form_row(registrationForm.username) }} #}
                 <label for="{{ registrationForm.username.vars.id }}" class="required">{{ 'Username'|trans }}
-                    <input type="text" name="{{ field_name(registrationForm.username) }}" id="{{ registrationForm.username.vars.id }}" required>
+                    <input type="text" name="{{ field_name(registrationForm.username) }}" id="{{ registrationForm.username.vars.id }}" placeholder="{{ registrationForm.username.vars.attr.placeholder|trans }}" required>
                 </label>
-                {#        {{ form_row(registrationForm.plainPassword) }} #}
-                <label for="{{ registrationForm.plainPassword.vars.id }}" class="required">{{ 'Username'|trans }}
-                    <input type="password" name="{{ field_name(registrationForm.plainPassword) }}" id="{{ registrationForm.plainPassword.vars.id }}" required>
+                <label for="{{ registrationForm.email.vars.id }}" class="required">{{ 'Email'|trans }}
+                    <input type="text" name="{{ field_name(registrationForm.email) }}" id="{{ registrationForm.email.vars.id }}" placeholder="{{ registrationForm.email.vars.attr.placeholder|trans }}" required>
                 </label>
-                {#        {{ form_row(registrationForm.agreeTerms) }} #}
+                <label for="{{ registrationForm.plainPassword.vars.id }}" class="required">{{ 'Password'|trans }}
+                    <input type="password" name="{{ field_name(registrationForm.plainPassword) }}" id="{{ registrationForm.plainPassword.vars.id }}" placeholder="{{ registrationForm.plainPassword.vars.attr.placeholder|trans }}" required>
+                    <div class="password-toggle-view"><i class="fas fa-eye"></i></div>
+                </label>
+                <label for="{{ registrationForm.confirmPassword.vars.id }}" class="required">{{ 'Password'|trans }}
+                    <input type="password" name="{{ field_name(registrationForm.confirmPassword) }}" id="{{ registrationForm.confirmPassword.vars.id }}" placeholder="{{ registrationForm.confirmPassword.vars.attr.placeholder|trans }}" required>
+                    <div class="password-toggle-view"><i class="fas fa-eye"></i></div>
+                </label>
+                <label for="{{ registrationForm.country.vars.id }}" class="{{ registrationForm.country.vars.required ? 'required' }}">
+                    <div>{{ registrationForm.country.vars.label|trans }}</div>
+                    {% if registrationForm.country.vars.help %}
+                        <div class="help">{{ registrationForm.country.vars.help|trans }}</div>
+                    {% endif %}
+                    {{ form_widget(registrationForm.country) }}
+                </label>
+                <label for="{{ registrationForm.preferredLanguage.vars.id }}" class="{{ registrationForm.preferredLanguage.vars.required ? 'required' }}">
+                    <div>{{ registrationForm.preferredLanguage.vars.label|trans }}</div>
+                    {% if registrationForm.preferredLanguage.vars.help %}
+                        <div class="help">{{ registrationForm.preferredLanguage.vars.help|trans }}</div>
+                    {% endif %}
+                    {{ form_widget(registrationForm.preferredLanguage) }}
+                </label>
+                <label for="{{ registrationForm.timezone.vars.id }}" class="{{ registrationForm.timezone.vars.required ? 'required' }}">
+                    <div>{{ registrationForm.timezone.vars.label|trans }}</div>
+                    {% if registrationForm.timezone.vars.help %}
+                        <div class="help">{{ registrationForm.timezone.vars.help|trans }}</div>
+                    {% endif %}
+                    {{ form_widget(registrationForm.timezone) }}
+                </label>
                 <div class="remember-me">
                     <label for="{{ registrationForm.agreeTerms.vars.id }}">
                         <input type="checkbox" name="{{ field_name(registrationForm.agreeTerms) }}" id="{{ registrationForm.agreeTerms.vars.id }}">
@@ -41,3 +68,8 @@
         {% include('_blocks/_footer.html.twig') %}
     </div>
 {% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/password-toggle-view.js') }}"></script>
+{% endblock %}
+
