@@ -12,9 +12,14 @@ const menu = new Menu();
 menu.init();
 
 import {ProviderSelect} from "./js/home/ProviderSelect.js";
+import {HighlightSeries} from "./js/home/HighlightSeries.js";
+
 if (document.querySelector(".home")) {
     const providerSelect = new ProviderSelect();
+    const highlightSeries = new HighlightSeries();
+    const globs = JSON.parse(document.querySelector("#global-data").textContent);
     providerSelect.init();
+    highlightSeries.init(globs);
 }
 
 import {PosterHover} from "./js/images/PosterHover.js";

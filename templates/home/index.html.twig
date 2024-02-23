@@ -7,11 +7,39 @@
 {% endblock %}
 
 {% block body %}
+    {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid home">
-        {% include('_blocks/_menu.html.twig') %}
         <h1>Bienvenue sur My Tv Time</h1>
-        <p>My Tv Time est un site qui vous permet de gérer vos séries préférées. Vous pouvez ajouter des séries à votre liste, indiquer les épisodes que vous avez vus, et bien plus encore !</p>
+        <div class="presentation">
+            {#            <p>My Tv Time est un site qui vous permet de gérer vos séries préférées. Vous pouvez ajouter des séries à votre liste, indiquer les épisodes que vous avez vus, et bien plus encore !</p> #}
+            {#            <p>Vous pouvez également consulter les séries les plus populaires, les séries les mieux notées, ou encore les séries les plus récentes.</p> #}
+            {#            <p>Enfin, vous pouvez filtrer les séries par plateforme de streaming pour savoir où les regarder.</p> #}
+        </div>
+        <div class="highlighted-series">
+            <div class="poster"><img src="{{ highlightedSeries.0.poster_path }}" alt="{{ highlightedSeries.0.name }}"></div>
+            <div class="details">
+                <div class="name">{{ highlightedSeries.0.name }}</div>
+                <div class="overview">{{ highlightedSeries.0.overview }}</div>
+                <div class="providers">
+                    <div class="wrapper">
+                        {% for provider in highlightedSeries.0.watch_providers %}
+                            <div class="provider"><img src="{{ provider.logo_path }}" alt=""></div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="series-group">
+            <h2>Séries récentes</h2>
+            <div class="wrapper">
+                <div class="content">
+                    {% for s in highlightedSeries %}
+                        {{ include('_blocks/series/_card.html.twig', { series: s }) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
         <div class="series-group">
             <h2>Dernières séries ajoutées</h2>
             <div class="wrapper">
@@ -31,7 +59,7 @@
                 <label for="watch-providers">Filtrer par plateforme de streaming
                     <select id="watch-providers">
                         {% for watchProvider in watchProviders|sort((a, b) => a.name <=> b.name) %}
-                            <option value="{{ watchProvider.id }}" data-logo="{{ watchProvider.logoPath }}"{{ watchProvider.id == provider ? ' selected':''}}>{{ watchProvider.name }}</option>
+                            <option value="{{ watchProvider.id }}" data-logo="{{ watchProvider.logoPath }}"{{ watchProvider.id == provider ? ' selected':'' }}>{{ watchProvider.name }}</option>
                         {% endfor %}
                     </select>
                 </label>
@@ -45,5 +73,10 @@
             </div>
         </div>
         {% include('_blocks/_footer.html.twig') %}
+        <div id="global-data" class="hidden">
+            {
+            "highlightedSeries": {{ highlightedSeries|json_encode|raw }}
+            }
+        </div>
     </div>
 {% endblock %}
