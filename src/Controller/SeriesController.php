@@ -11,14 +11,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SeriesController extends AbstractController
 {
     public function __construct(
-        private readonly DateService        $dateService,
-        private readonly ImageConfiguration $imageConfiguration,
-        private readonly SeriesRepository   $seriesRepository,
-        private readonly TMDBService        $tmdbService,
+        private readonly DateService         $dateService,
+        private readonly ImageConfiguration  $imageConfiguration,
+        private readonly SeriesRepository    $seriesRepository,
+        private readonly TMDBService         $tmdbService,
+        private readonly TranslatorInterface $translator,
     )
     {
     }
@@ -53,7 +55,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/series/{id}-{slug}', name: 'app_series_show', requirements: ['id' => '\d+'])]
+    #[Route('/series/show/{id}-{slug}', name: 'app_series_show', requirements: ['id' => '\d+'])]
     public function show(Request $request, $id, $slug): Response
     {
         $series = $this->seriesRepository->findOneBy(['id' => $id]);
@@ -88,9 +90,9 @@ class SeriesController extends AbstractController
         $credits = $people['combined_credits'];
 
         dump([
-                'people' => $people,
-                'credits' => $credits
-            ]);
+            'people' => $people,
+            'credits' => $credits
+        ]);
 
 //        if (!key_exists('profile_path', $people)) {
 //            $people['profile_path'] = "";
@@ -219,6 +221,28 @@ class SeriesController extends AbstractController
             'imageConfig' => $this->imageConfiguration->getConfig(),
         ]);
     }
+
+    #[\Symfony\Component\Routing\Annotation\Route('/overview/{id}', name: 'app_series_get_overview', methods: 'GET')]
+    public function getOverview(Request $request, $id): Response
+    {
+        $type = $request->query->get("type");
+        $content = null;
+
+        $standing = match ($type) {
+            "tv" => $this->tmdbService->getTv($id, $request->getLocale()),
+            "movie" => $this->tmdbService->getMovie($id, $request->getLocale()),
+            default => null,
+        };
+
+        if ($standing) {
+            $content = json_decode($standing, true);
+        }
+        return $this->json([
+            'overview' => $content ? $content['overview'] : "",
+            'media_type' => $this->translator->trans($type),
+        ]);
+    }
+
     public function checkSlug($series, $slug): bool|Response
     {
         if ($series->getSlug() !== $slug) {
@@ -243,16 +267,16 @@ class SeriesController extends AbstractController
         return true;
     }
 
-    public function castAndCrew($tv):array
+    public function castAndCrew($tv): array
     {
         $slugger = new AsciiSlugger();
-        $tv['credits']['cast'] = array_map(function ($cast) use ($slugger){
+        $tv['credits']['cast'] = array_map(function ($cast) use ($slugger) {
             $cast['slug'] = $slugger->slug($cast['name'])->lower()->toString();
             $cast['profile_path'] = $cast['profile_path'] ? $this->imageConfiguration->getCompleteUrl($cast['profile_path'], 'profile_sizes', 2) : null; // w185
             return $cast;
         }, $tv['credits']['cast']);
 
-        $tv['credits']['crew'] = array_map(function ($crew) use ($slugger){
+        $tv['credits']['crew'] = array_map(function ($crew) use ($slugger) {
             $crew['slug'] = $slugger->slug($crew['name'])->lower()->toString();
             $crew['profile_path'] = $crew['profile_path'] ? $this->imageConfiguration->getCompleteUrl($crew['profile_path'], 'profile_sizes', 2) : null; // w185
             return $crew;
@@ -443,8 +467,7 @@ class SeriesController extends AbstractController
                 $item['slug'] = $slugger->slug($date['title'])->lower()->toString();
                 $item['media_type'] = $date['media_type'];
                 $item['title'] = $date['title'];
-                $item['poster_path'] = $this->imageConfiguration->getCompleteUrl($date['poster_path'], 'poster_sizes', 2);
-                $item['big_poster_path'] = $this->imageConfiguration->getCompleteUrl($date['poster_path'], 'poster_sizes', 5);
+                $item['poster_path'] = $this->imageConfiguration->getCompleteUrl($date['poster_path'], 'poster_sizes', 5);
                 $knownFor[$date['release_date']] = $item;
             }
         }
