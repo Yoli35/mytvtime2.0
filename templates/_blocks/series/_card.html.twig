@@ -20,6 +20,17 @@
                     <div>{{ 'No poster'|trans }}</div>
                 {% endif %}
             {% endif %}
+            {% if series.watch_providers is defined and series.watch_providers|length %}
+                <div class="providers">
+                    <div class="provider-content">
+                        {% for provider in series.watch_providers %}
+                            <div class="provider">
+                                <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
         </div>
         <div class="name">{{ series.name }}</div>
     </a>
