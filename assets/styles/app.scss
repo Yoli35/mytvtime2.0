@@ -497,3 +497,64 @@ label:has(input[type="text"]) {
         opacity: 1;
     }
 }
+
+.tool-tips {
+    --tooltips-bg: var(--gradient-ardoise-90);
+    --tooltips-color: var(--gradient-ardoise-20);
+
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 4em;
+    justify-content: revert;
+    left: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    top: -4em;
+    transition: opacity .125s;
+    z-index: 10000;
+
+    &.show {
+        opacity: 1;
+    }
+
+    &.masked {
+        display: none;
+    }
+
+    &.orange {
+        .body, .tail {
+            background-color: var(--gradient-orange-40);
+            color: var(--gradient-orange-90);
+            font-weight: 400;
+        }
+    }
+
+    &.highlight {
+        .body, .tail {
+            background-color: var(--tooltips-bg);
+            color: var(--tooltips-color);
+            font-weight: 400;
+        }
+    }
+
+    .body {
+        @include flex-row();
+        background-color: var(--gradient-ardoise-90);
+        border-radius: .25em;
+        color: var(--gradient-ardoise-20);
+        padding: .5em 1em;
+        z-index: 2;
+    }
+
+    .tail {
+        background-color: var(--gradient-ardoise-90);
+        border-radius: .125em;
+        min-height: 1em;
+        rotate: 45deg;
+        translate: 0 -.55em;
+        width: 1em;
+        z-index: 1;
+    }
+}

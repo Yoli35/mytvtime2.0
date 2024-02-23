@@ -15,7 +15,7 @@
             {% endif %}
             {% if series.poster_path is defined %}
                 {% if series.poster_path %}
-                    <img src="{{ series.poster_path }}" alt="{{ series.name }}">
+                    <img src="{{ series.poster_path }}" alt="{{ series.name }}" data-title="{{ series.date }}">
                 {% else %}
                     <div>{{ 'No poster'|trans }}</div>
                 {% endif %}

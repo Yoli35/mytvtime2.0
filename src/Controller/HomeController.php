@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Series;
 use App\Entity\User;
 use App\Repository\SeriesRepository;
+use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,8 +17,9 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 class HomeController extends AbstractController
 {
     public function __construct(
+        private readonly DateService        $dateService,
         private readonly ImageConfiguration $imageConfiguration,
-//        private readonly SeriesController   $seriesController,
+        private readonly SeriesController   $seriesController,
         private readonly SeriesRepository   $seriesRepository,
         private readonly TMDBService        $tmdbService,
     )
@@ -63,14 +65,12 @@ class HomeController extends AbstractController
         }, $watchProviders);
 
         $slugger = new AsciiSlugger();
-        $filterString = "&page=1&sort_by=first_air_date.desc&with_watch_providers=".$provider."&with_watch_monetization_types=flatrate&language=fr&timezone=Europe/Paris&watch_region=FR&include_adult=false";
+        $filterString = "&page=1&sort_by=first_air_date.desc&with_watch_providers=" . $provider . "&with_watch_monetization_types=flatrate&language=fr&timezone=Europe/Paris&watch_region=FR&include_adult=false";
         $filterName = "Netflix";
         $filteredSeries = $this->getSelection($filterString, $slugger);
 //        dump(['filteredSeries' => $filteredSeries]);
 
-        /*
-         * Sélection de séries sorties il y a moins d'un an en fonction des préférences de l'utilisateur, ou pas
-         */
+        $page = rand(1, 3);
         $timezone = $user?->getTimezone() ?? "Europe/Paris";
         $watchRegion = $user?->getCountry() ?? "FR";
         $preferredLanguage = $user?->getPreferredLanguage() ?? "fr";
@@ -78,10 +78,10 @@ class HomeController extends AbstractController
         $startDate = date('Y-m-d', strtotime('-1 year'));
         $endDate = date('Y-m-d', strtotime('+6 month'));
 
-        $filterString = "&sort_by=popularity.desc&page=1&language=".$preferredLanguage."&timezone=".$timezone."&watch_region=".$watchRegion."&include_adult=false&first_air_date.gte=".$startDate."&first_air_date.lte=".$endDate."&with_watch_monetization_types=flatrate";
-        $seriesSelection = $this->getSelection($filterString, $slugger, $watchRegion);
+        $filterString = "&sort_by=popularity.desc&page=" . $page . "&language=" . $preferredLanguage . "&timezone=" . $timezone . "&watch_region=" . $watchRegion . "&include_adult=false&first_air_date.gte=" . $startDate . "&first_air_date.lte=" . $endDate . "&with_watch_monetization_types=flatrate";
+        $seriesSelection = $this->getSelection($filterString, $slugger, $watchRegion, $timezone, $preferredLanguage);
 
-//        dump(['filterString'=>$filterString, 'seriesSelection' => $seriesSelection]);
+        dump(['filterString' => $filterString, 'seriesSelection' => $seriesSelection]);
 
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
@@ -94,12 +94,13 @@ class HomeController extends AbstractController
         ]);
     }
 
-    public function getSelection(string $filterString, AsciiSlugger $slugger, ?string $country = null): array
+    public function getSelection(string $filterString, AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $preferredLanguage = 'fr'): array
     {
         $seriesSelection = json_decode($this->tmdbService->getFilterTv($filterString), true)['results'];
-        return array_map(function ($tv) use ($slugger, $country) {
+        return array_map(function ($tv) use ($slugger, $country, $timezone, $preferredLanguage) {
             $tv['tmdb'] = true;
-            $tv['poster_path'] = $tv['poster_path'] ? $this->imageConfiguration->getCompleteUrl($tv['poster_path'], 'poster_sizes', 5) : null; // w780
+            $this->seriesController->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $tv['poster_path'] = $tv['poster_path'] ? '/series/posters'.$tv['poster_path'] : null; // w780
             $tv['slug'] = strtolower($slugger->slug($tv['name']));
 
             if ($country) {
@@ -110,17 +111,18 @@ class HomeController extends AbstractController
                     $wp['logo_path'] = $wp['logo_path'] ? $this->imageConfiguration->getCompleteUrl($wp['logo_path'], 'logo_sizes', 2) : null;
                     return $wp;
                 }, $tv['watch_providers']);
-            }
-            else
-                $tv['watch_providers'] =[];
+            } else
+                $tv['watch_providers'] = [];
             return [
+                'date' => $this->dateService->newDateImmutable($tv['first_air_date'], $timezone)->format('d/m/Y'),
                 'id' => $tv['id'],
                 'name' => $tv['name'],
+                'overview' => $tv['overview'],
                 'poster_path' => $tv['poster_path'],
                 'slug' => $tv['slug'],
-                'watch_providers' => $tv['watch_providers'],
-                'overview' => $tv['overview'],
                 'tmdb' => true,
+                'watch_providers' => $tv['watch_providers'],
+                'year' => $tv['first_air_date'] ? substr($tv['first_air_date'], 0, 4) : '',
             ];
         }, $seriesSelection);
     }

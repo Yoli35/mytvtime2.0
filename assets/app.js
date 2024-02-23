@@ -11,6 +11,10 @@ import {Menu} from "./js/Menu.js";
 const menu = new Menu();
 menu.init();
 
+import {ToolTips} from "./js/ToolTips.js";
+const toolTips = new ToolTips();
+toolTips.init();
+
 import {ProviderSelect} from "./js/home/ProviderSelect.js";
 import {HighlightSeries} from "./js/home/HighlightSeries.js";
 

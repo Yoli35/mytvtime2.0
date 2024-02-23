@@ -16,9 +16,15 @@
             {#            <p>Enfin, vous pouvez filtrer les séries par plateforme de streaming pour savoir où les regarder.</p> #}
         </div>
         <div class="highlighted-series">
-            <div class="poster"><img src="{{ highlightedSeries.0.poster_path }}" alt="{{ highlightedSeries.0.name }}"></div>
+            <div class="poster">
+                <a href="{{ path('app_series_tmdb', {'id': highlightedSeries.0.id, 'slug': highlightedSeries.0.slug}) }}">
+                    <img src="{{ highlightedSeries.0.poster_path }}" alt="{{ highlightedSeries.0.name }}">
+                </a>
+            </div>
             <div class="details">
-                <div class="name">{{ highlightedSeries.0.name }}</div>
+                <a href="{{ path('app_series_tmdb', {'id': highlightedSeries.0.id, 'slug': highlightedSeries.0.slug}) }}">
+                    <div class="name">{{ highlightedSeries.0.name }}</div>
+                </a>
                 <div class="overview">{{ highlightedSeries.0.overview }}</div>
                 <div class="providers">
                     <div class="wrapper">
@@ -75,7 +81,8 @@
         {% include('_blocks/_footer.html.twig') %}
         <div id="global-data" class="hidden">
             {
-            "highlightedSeries": {{ highlightedSeries|json_encode|raw }}
+            "highlightedSeries": {{ highlightedSeries|json_encode|raw }},
+            "app_series_tmdb": "{{ path('app_series_tmdb', {'id': 0, 'slug':"a"})|slice(0, -3) }}"
             }
         </div>
     </div>

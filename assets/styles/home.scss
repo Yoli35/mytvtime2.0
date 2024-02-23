@@ -3,6 +3,10 @@
     container-type: inline-size;
     margin-block-start: 4rem;
 
+    h1 {
+        z-index: 1;
+    }
+
     .presentation {
         font-size: 1.5rem;
         font-weight: 100;
@@ -11,25 +15,32 @@
     }
 
     .highlighted-series {
+        --highlight-bg: var(--gradient-orange-40);
+        --highlight-color: var(--gradient-orange-90);
+
         align-items: center;
+        background-color: var(--highlight-bg);
+        box-shadow: 0 0 4rem 6rem var(--highlight-bg);
+        color: var(--highlight-color);
         display: flex;
         gap: 1rem;
         height: 36vw;
         justify-content: center;
-        opacity: 0;
         margin-inline: auto;
-        transition: opacity .600ms;
+        transition: background-color 600ms, box-shadow 600ms;
         width: 90vw;
-
-        &.show {
-            opacity: 1;
-        }
 
         .poster {
             flex-shrink: 0;
             height: 36vw;
+            opacity: 0;
             rotate: 3deg;
+            transition: opacity .600ms;
             width: 25vw;
+
+            &.show {
+                opacity: 1;
+            }
 
             img {
                 border: .75rem solid var(--gradient-orange-90);
@@ -39,23 +50,35 @@
                 width: 100%;
             }
         }
+
         .details {
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            opacity: 0;
             overflow-y: auto;
+            transition: opacity .600ms;
 
-            .name {
-                font-size: 2rem;
-                font-weight: 100;
-                line-height: 1.25em;
-                padding-inline: 1rem;
+            &.show {
+                opacity: 1;
+            }
+
+            a {
+                color: var(--highlight-color);
+
+                .name {
+                    font-size: 2rem;
+                    font-weight: 100;
+                    line-height: 1.25em;
+                    padding-inline: 1rem;
+                }
             }
 
             .overview {
                 font-size: 1.1rem;
                 font-weight: 100;
                 line-height: 1.25em;
+                overflow-y: auto;
                 max-height: 30vw;
                 padding-inline: 1rem;
             }
@@ -73,20 +96,22 @@
                     .provider {
                         align-items: center;
                         display: flex;
+                        flex-shrink: 0;
                         gap: .5rem;
                         height: 4rem;
 
                         img {
                             border-radius: .25rem;
-                            height: 4rem;
+                            height: clamp(2rem, 5vw, 4rem);
                             object-fit: cover;
-                            width: 4rem;
+                            width: clamp(2rem, 5vw, 4rem);;
                         }
 
                         .name {
                             font-size: 1.1rem;
                             font-weight: 100;
                             line-height: 1.25em;
+                            white-space: nowrap;
                         }
                     }
                 }
