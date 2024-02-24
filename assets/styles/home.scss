@@ -1,7 +1,15 @@
+:root {
+    --highlight-bg: var(--gradient-ardoise-40);
+    --highlight-color: var(--gradient-ardoise-90);
+    --highlight-duration: 20s;
+    --highlight-transition: 300ms;
+}
+
 .home {
     container-name: home;
     container-type: inline-size;
     margin-block-start: 4rem;
+    position: relative;
 
     h1 {
         z-index: 1;
@@ -15,9 +23,6 @@
     }
 
     .highlighted-series {
-        --highlight-bg: var(--gradient-orange-40);
-        --highlight-color: var(--gradient-orange-90);
-
         align-items: center;
         background-color: var(--highlight-bg);
         box-shadow: 0 0 4rem 6rem var(--highlight-bg);
@@ -27,7 +32,7 @@
         height: 36vw;
         justify-content: center;
         margin-inline: auto;
-        transition: background-color 600ms, box-shadow 600ms;
+        transition: background-color var(--highlight-transition), box-shadow var(--highlight-transition);
         width: 90vw;
 
         .poster {
@@ -35,7 +40,7 @@
             height: 36vw;
             opacity: 0;
             rotate: 3deg;
-            transition: opacity .600ms;
+            transition: opacity var(--highlight-transition);
             width: 25vw;
 
             &.show {
@@ -57,7 +62,7 @@
             gap: 1rem;
             opacity: 0;
             overflow-y: auto;
-            transition: opacity .600ms;
+            transition: opacity var(--highlight-transition);
 
             &.show {
                 opacity: 1;
@@ -116,6 +121,20 @@
                     }
                 }
             }
+        }
+    }
+
+    .highlight-progress {
+        background-color: var(--highlight-bg);
+        height: 2px;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 0;
+
+        &.show {
+            transition: width var(--highlight-duration) linear;
+            width: 100%;
         }
     }
 

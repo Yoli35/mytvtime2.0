@@ -12,8 +12,11 @@ export class HighlightSeries {
     constructor() {
         this.series = [];
         this.count = 0;
+        this.root = null;
         this.highlightDiv = null;
+        this.highlightProgressDiv = null;
         this.intervalDuration = 20000;
+        this.transition = 300;
         this.toolTips = new ToolTips();
     }
 
@@ -22,8 +25,19 @@ export class HighlightSeries {
         this.series = globs.highlightedSeries;
         this.app_series_tmdb = globs.app_series_tmdb;
         this.count = this.series.length;
+        this.root = document.documentElement;
+        this.home = document.querySelector(".home");
         this.highlightDiv = document.querySelector(".highlighted-series");
+        this.highlightProgressDiv = document.querySelector(".highlight-progress");
         this.averageColor = new AverageColor();
+        let duration = this.root.style.getPropertyValue("--highlight-duration");
+        let transition = this.root.style.getPropertyValue("--highlight-transition");
+        if (duration.length) { // s
+            this.intervalDuration = duration.slice(0, -1) * 1000;
+        }
+        if (transition.length) { // ms
+            this.transition = transition.slice(0, -2) * 1;
+        }
 
         this.displaySeries();
     }
@@ -35,6 +49,7 @@ export class HighlightSeries {
         setInterval(() => {
             this.highlightDiv.querySelector('.poster').classList.remove('show');
             this.highlightDiv.querySelector('.details').classList.remove('show');
+            this.highlightProgressDiv.classList.remove('show');
             setTimeout(() => {
                 let seriesIndex = Math.floor(Math.random() * this.count);
                 while (seriesIndex === lastSeriesIndex) {
@@ -42,7 +57,7 @@ export class HighlightSeries {
                 }
                 lastSeriesIndex = seriesIndex;
                 this.setSeries(lastSeriesIndex);
-            }, 600);
+            }, this.transition);
         }, this.intervalDuration);
     }
 
@@ -85,13 +100,14 @@ export class HighlightSeries {
             const hsl = this.averageColor.rgbToHsl(color);
             const toolTips = document.querySelector(".tool-tips.highlight");
             if (toolTips) {
-                toolTips.style.setProperty("--tooltips-bg", "hsl(" + hsl.h + ", " + hsl.s + "%, 40%)");
-                toolTips.style.setProperty("--tooltips-color", "hsl(" + hsl.h + ", " + hsl.s + "%, 80%)");
+                this.root.style.setProperty("--tooltips-bg", "hsl(" + hsl.h + ", " + hsl.s + "%, 50%)");
+                this.root.style.setProperty("--tooltips-color", "hsl(" + hsl.h + ", " + hsl.s + "%, 80%)");
             }
-            this.highlightDiv.style.setProperty("--highlight-bg", "hsl(" + ((hsl.h + 180) % 360) + ", " + hsl.s + "%, " + hsl.l + "%)");
-            this.highlightDiv.style.setProperty("--highlight-color", "hsl(" + ((hsl.h + 180) % 360) + ", " + hsl.s + "%, " + (hsl.l > 60 ? "10" : "90") + "%)");
+            this.root.style.setProperty("--highlight-bg", "hsl(" + ((hsl.h + 180) % 360) + ", " + hsl.s + "%, " + hsl.l + "%)");
+            this.root.style.setProperty("--highlight-color", "hsl(" + ((hsl.h + 180) % 360) + ", " + hsl.s + "%, " + (hsl.l > 60 ? "10" : "90") + "%)");
             this.highlightDiv.querySelector('.poster').classList.add('show');
             this.highlightDiv.querySelector('.details').classList.add('show');
+            this.highlightProgressDiv.classList.add('show');
         };
     }
 }

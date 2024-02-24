@@ -153,6 +153,8 @@ body {
     --navbar-bg: var(--gradient-ardoise-60);
     --navbar-bg-50: var(--gradient-ardoise-70-alpha-50);
     --navbar-bg-75: var(--gradient-ardoise-70-alpha-75);
+    --tooltips-bg: var(--gradient-ardoise-90);
+    --tooltips-color: var(--gradient-ardoise-20);
 }
 
 label:has(select) {
@@ -499,9 +501,6 @@ label:has(input[type="text"]) {
 }
 
 .tool-tips {
-    --tooltips-bg: var(--gradient-ardoise-90);
-    --tooltips-color: var(--gradient-ardoise-20);
-
     align-items: center;
     display: flex;
     flex-direction: column;
