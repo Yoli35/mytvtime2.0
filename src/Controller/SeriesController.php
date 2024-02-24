@@ -44,12 +44,13 @@ class SeriesController extends AbstractController
         $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
 
         $tv['credits'] = $this->castAndCrew($tv);
+        $tv['networks'] = $this->networks($tv);
+        $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
+        $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
 
-        $tv['watch/providers'] = $this->getWatchProviders($tv, 'FR');
-
-//        dump([
-//            'tv' => $tv,
-//        ]);
+        dump([
+            'tv' => $tv,
+        ]);
         return $this->render('series/tmdb.html.twig', [
             'tv' => $tv,
         ]);
@@ -69,13 +70,14 @@ class SeriesController extends AbstractController
 
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords"]), true);
         $tv['credits'] = $this->castAndCrew($tv);
+        $tv['networks'] = $this->networks($tv);
+        $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
+        $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
 
-        $tv['watch/providers'] = $this->getWatchProviders($tv, 'FR');
-
-//        dump([
-//            'series' => $series,
-//            'tv' => $tv,
-//        ]);
+        dump([
+            'series' => $series,
+            'tv' => $tv,
+        ]);
         return $this->render('series/show.html.twig', [
             'series' => $series,
             'tv' => $tv,
@@ -288,7 +290,25 @@ class SeriesController extends AbstractController
         return $tv['credits'];
     }
 
-    public function getWatchProviders($tv, $country): array
+    public function networks($tv): array
+    {
+        return array_map(function ($network) {
+            $network['logo_path'] = $network['logo_path'] ? $this->imageConfiguration->getCompleteUrl($network['logo_path'], 'logo_sizes', 2) : null; // w92
+            return $network;
+        }, $tv['networks']);
+    }
+
+    public function seasonsPosterPath($seasons): array
+    {
+        $slugger = new AsciiSlugger();
+        return array_map(function ($season) use ($slugger) {
+            $season['slug'] = $slugger->slug($season['name'])->lower()->toString();
+            $season['poster_path'] = $season['poster_path'] ? $this->imageConfiguration->getCompleteUrl($season['poster_path'], 'poster_sizes', 5) : null; // w500
+            return $season;
+        }, $seasons);
+    }
+
+    public function watchProviders($tv, $country): array
     {
         $watchProviders = [];
         if (isset($tv['watch/providers']['results'][$country])) {

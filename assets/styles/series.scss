@@ -1,10 +1,19 @@
 
 .series-show {
+    container-name: series-show;
+    container-type: inline-size;
     display: flex;
     flex-direction: column;
     gap: 1rem;
     margin-block-start: 4rem;
     width: 100%;
+
+    h3 {
+        font-size: 1.5rem;
+        font-weight: 100;
+        line-height: 1.25em;
+        margin-block: 1rem .5rem;
+    }
 
     .header {
         align-items: flex-start;
@@ -15,7 +24,7 @@
 
         .poster {
             align-items: center;
-            background-color:  var(--gradient-ardoise-80);
+            background-color: var(--gradient-ardoise-80);
             border-radius: .5rem;
             color: var(--gradient-ardoise-10);
             display: flex;
@@ -25,9 +34,9 @@
 
             img {
                 border-radius: .5rem;
-                height: 30vw;
+                height: 100%;
                 object-fit: cover;
-                width: 25vw;
+                width: 100%;
             }
 
             div {
@@ -64,20 +73,23 @@
                 align-items: center;
                 display: flex;
                 flex-direction: column;
-                font-size: clamp(.875rem, 1vw, 2rem);
+                font-size: clamp(1rem, 1vw, 2rem);
+                font-weight: 300;
                 line-height: clamp(1rem, 1.1vw, 2rem);
                 justify-content: flex-start;
             }
 
             .backdrop {
+                height: 100%;
                 inset: 0;
                 opacity: .25;
                 position: absolute;
+                width: 100%;
                 z-index: -1;
 
                 img {
                     border-radius: .5rem;
-                    height: 30vw;
+                    height: 100%;
                     object-fit: cover;
                     width: 100%;
                 }
@@ -85,84 +97,302 @@
         }
     }
 
-    .providers {
+    .content {
         display: flex;
         gap: 1rem;
 
-        .provider {
-            align-items: center;
-            display: flex;
-            gap: .5rem;
-            justify-content: center;
-            height: 3rem;
-
-            img {
-                border-radius: .25rem;
-                height: 100%;
-                width: 3rem;
-            }
-
-        }
-    }
-
-    .cast,.crew {
-        overflow-x: auto;
-        width: 100%;
-
-        .wrapper {
-            display: flex;
-            gap: .5rem;
+        .left {
             flex-shrink: 0;
-            justify-content: flex-start;
-            padding-inline: 1rem;
+            width: 70%;
+        }
 
-            .people {
-                height: 15rem;
-                width: 9rem;
+        .seasons {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            width: 100%;
+
+            .season {
+                align-items: flex-start;
                 display: flex;
-                flex-direction: column;
+                gap: .5rem;
+                height: 15rem;
+                justify-content: flex-start;
+                padding-inline: 1rem;
+                width: 100%;
 
-                .profile {
+                .poster {
                     align-items: center;
-                    background-color: var(--gradient-ardoise-75-alpha-25);
+                    background-color: var(--gradient-green-70-alpha-50);
                     border-radius: .25rem;
-                    color: var(--gradient-ardoise-10);
+                    color: var(--gradient-green-10);
                     display: flex;
-                    height: 12rem;
+                    flex-shrink: 0;
+                    height: 100%;
                     justify-content: center;
-                    width: 9rem;
+                    width: 10rem;
 
                     img {
-                        border-radius: .25rem .25rem 0 0;
-                        height: 12rem;
+                        border-radius: .25rem;
+                        height: 100%;
                         object-fit: cover;
-                        width: 9rem;
+                        width: 100%;
                     }
                 }
 
                 .infos {
-                    align-items: center;
                     background-color: var(--gradient-ardoise-75-alpha-25);
-                    border-radius: 0 0 .25rem .25rem;
+                    border-radius: .25rem;
+                    color: var(--gradient-ardoise-10);
                     display: flex;
                     flex-direction: column;
-                    font-size: .75rem;
+                    gap: .5rem;
+                    height: 100%;
                     justify-content: center;
-                    line-height: .85rem;
-                    height: 3rem;
-                    overflow: hidden;
-                    width: 9rem;
+                    padding-inline: 1rem;
+                    width: 100%;
 
                     .name {
-                        font-size: .875rem;
-                        font-weight: 300;
+                        font-size: 2rem;
+                        font-weight: 100;
                     }
 
-                    div {
-                        text-align: center;
+                    .overview {
+                        border-left: 2px solid var(--gradient-orange-50);
+                        font-size: 1rem;
+                        font-weight: 300;
+                        padding-inline-start: .5rem;
                     }
+
+                    .air-date, .episodes {
+                        font-size: 1rem;
+                        font-weight: 300;
+                    }
+                }
+            }
+        }
+
+        .providers {
+            overflow-x: auto;
+
+            .wrapper {
+                display: flex;
+                gap: 1rem;
+
+                .provider {
+                    align-items: center;
+                    display: flex;
+                    flex-shrink: 0;
+                    gap: .5rem;
+                    justify-content: center;
+                    height: 3rem;
+
+                    img {
+                        border-radius: .25rem;
+                        height: 100%;
+                        width: 3rem;
+                    }
+
+                }
+            }
+        }
+
+        .facts {
+            align-items: center;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            justify-content: center;
+
+            .fact {
+                align-items: center;
+                background-color: var(--gradient-ardoise-80-alpha-50);
+                border-radius: .25rem;
+                color: var(--gradient-ardoise-10);
+                display: flex;
+                gap: .5rem;
+                justify-content: center;
+                padding: .5rem;
+
+                .fact-label {
+                    font-size: 1rem;
+                    font-weight: 300;
+                }
+
+                .fact-content {
+                    font-size: 1rem;
+                    font-weight: 300;
+                }
+
+                .networks {
+                    display: flex;
+                    gap: .5rem;
+                    justify-content: center;
+                    width: 100%;
+
+                    .network-detail {
+                        .frame {
+                            background-color: var(--gradient-ardoise-90);
+                            border-radius: .25rem;
+                            height: 100%;
+                            padding: .5rem;
+                            width: 100%;
+
+                            &:hover {
+                                background-color: var(--gradient-ardoise-10);
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+        .cast, .crew {
+            overflow-x: auto;
+            width: 100%;
+
+            .wrapper {
+                display: flex;
+                gap: .5rem;
+                flex-shrink: 0;
+                justify-content: flex-start;
+                padding-inline: 1rem;
+
+                .people {
+                    height: 15rem;
+                    width: 9rem;
+                    display: flex;
+                    flex-direction: column;
+
+                    .profile {
+                        align-items: center;
+                        background-color: var(--gradient-ardoise-75-alpha-25);
+                        border-radius: .25rem;
+                        color: var(--gradient-ardoise-10);
+                        display: flex;
+                        height: 12rem;
+                        justify-content: center;
+                        width: 9rem;
+
+                        img {
+                            border-radius: .25rem .25rem 0 0;
+                            height: 12rem;
+                            object-fit: cover;
+                            width: 9rem;
+                        }
+                    }
+
+                    .infos {
+                        align-items: center;
+                        background-color: var(--gradient-ardoise-75-alpha-25);
+                        border-radius: 0 0 .25rem .25rem;
+                        display: flex;
+                        flex-direction: column;
+                        font-size: .75rem;
+                        justify-content: center;
+                        line-height: .85rem;
+                        height: 3rem;
+                        overflow: hidden;
+                        width: 9rem;
+
+                        .name {
+                            font-size: .875rem;
+                            font-weight: 300;
+                        }
+
+                        div {
+                            text-align: center;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @container series-show (width < 768px) {
+        .header {
+            flex-direction: column;
+            height: auto;
+            padding: 1rem;
+            width: 100%;
+
+            .poster {
+                flex-shrink: 0;
+                height: 90vw;
+                margin-inline: auto;
+                width: 60vw;
+            }
+
+            .infos {
+                height: auto;
+                padding: 1rem;
+                width: 100%;
+
+                h1 {
+                    font-size: 2rem;
+                    line-height: 2.2rem;
+                }
+            }
+        }
+
+        .content {
+            .seasons {
+                .season {
+                    height: 20vw;
+
+                    .poster {
+                        height: 20vw;
+                        width: 15vw;
+                    }
+
+                    .infos {
+                        .name {
+                            font-size: 1.5rem;
+                        }
+
+                        .overview {
+                            display: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @container series-show (width < 1024px) {
+        .content {
+            flex-direction: column;
+            // Inverser verticalement l'affichage de .left et .right
+            .right {
+                order: 1;
+            }
+
+            .left {
+                order: 2;
+                width: 100%;
+            }
+        }
+    }
+
+}
+
+@media (max-width: 576px) {
+    .series-show {
+        .content {
+            flex-direction: column;
+            padding-inline: 1rem;
+
+            .providers {
+                padding-inline: 0.75rem;
+            }
+
+            .cast, .crew {
+                .wrapper {
+                    padding-inline: 0;
                 }
             }
         }
     }
 }
+

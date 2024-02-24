@@ -38,91 +38,109 @@
                 </div>
             </div>
 
-            {% if tv['watch/providers'].flatrate|length %}
-                <h3>{{ 'Where to watch'|trans }}</h3>
-                <div class="providers">
-                    {% for provider in tv['watch/providers'].flatrate %}
-                        <div class="provider">
-                            <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
-                            <div>{{ provider.provider_name }}</div>
+            <div class="content">
+                <div class="left">
+                    <div class="seasons">
+                        {% for season in tv.seasons %}
+                        <div class="season">
+                            <div class="name">{{ season.name }}</div>
                         </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-
-            {% if tv['watch/providers'].rent|length %}
-                <h3>{{ 'Where to rent'|trans }}</h3>
-                <div class="providers">
-                    {% for provider in tv['watch/providers'].rent %}
-                        <div class="provider">
-                            <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
-                            <div>{{ provider.provider_name }}</div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-
-            {% if tv['watch/providers'].buy|length %}
-                <h3>{{ 'Where to buy'|trans }}</h3>
-                <div class="providers">
-                    {% for provider in tv['watch/providers'].buy %}
-                        <div class="provider">
-                            <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
-                            <div>{{ provider.provider_name }}</div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-
-            {% if tv.credits.cast|length %}
-                <h3>{{ 'Cast'|trans }}</h3>
-                <div class="cast">
-                    <div class="wrapper">
-                        {% for people in tv.credits.cast %}
-                            <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
-                                <div class="people">
-                                    <div class="profile">
-                                        {% if people.profile_path %}
-                                            <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                                        {% else %}
-                                            {{ 'No picture'|trans }}
-                                        {% endif %}
-                                    </div>
-                                    <div class="infos">
-                                        <div class="name">{{ people.name }}</div>
-                                        <div>{{ people.character }}</div>
-                                    </div>
-                                </div>
-                            </a>
-                        {% endfor %}
+                        {% endif %}
                     </div>
-                </div>
-            {% endif %}
+                    {% if tv.credits.cast|length %}
+                        <h3>{{ 'Cast'|trans }}</h3>
+                        <div class="cast">
+                            <div class="wrapper">
+                                {% for people in tv.credits.cast %}
+                                    <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
+                                        <div class="people">
+                                            <div class="profile">
+                                                {% if people.profile_path %}
+                                                    <img src="{{ people.profile_path }}" alt="{{ people.name }}">
+                                                {% else %}
+                                                    {{ 'No picture'|trans }}
+                                                {% endif %}
+                                            </div>
+                                            <div class="infos">
+                                                <div class="name">{{ people.name }}</div>
+                                                <div>{{ people.character }}</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
 
-            {% if tv.credits.crew|length %}
-                <h3>{{ 'Crew'|trans }}</h3>
-                <div class="crew">
-                    <div class="wrapper">
-                        {% for people in tv.credits.crew %}
-                            <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
-                                <div class="people">
-                                    <div class="profile">
-                                        {% if people.profile_path %}
-                                            <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                                        {% else %}
-                                            {{ 'No picture'|trans }}
-                                        {% endif %}
-                                    </div>
-                                    <div class="infos">
-                                        <div class="name">{{ people.name }}</div>
-                                        <div>{{ people.job ~ ' - ' ~ people.department }}</div>
-                                    </div>
-                                </div>
-                            </a>
-                        {% endfor %}
-                    </div>
+                    {% if tv.credits.crew|length %}
+                        <h3>{{ 'Crew'|trans }}</h3>
+                        <div class="crew">
+                            <div class="wrapper">
+                                {% for people in tv.credits.crew %}
+                                    <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
+                                        <div class="people">
+                                            <div class="profile">
+                                                {% if people.profile_path %}
+                                                    <img src="{{ people.profile_path }}" alt="{{ people.name }}">
+                                                {% else %}
+                                                    {{ 'No picture'|trans }}
+                                                {% endif %}
+                                            </div>
+                                            <div class="infos">
+                                                <div class="name">{{ people.name }}</div>
+                                                <div>{{ people.job ~ ' - ' ~ people.department }}</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
-            {% endif %}
+                <div class="right">
+                    {% if tv['watch/providers'].flatrate|length %}
+                        <h3>{{ 'Where to watch'|trans }}</h3>
+                        <div class="providers">
+                            <div class="wrapper">
+                                {% for provider in tv['watch/providers'].flatrate %}
+                                    <div class="provider">
+                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                        <div>{{ provider.provider_name }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if tv['watch/providers'].rent|length %}
+                        <h3>{{ 'Where to rent'|trans }}</h3>
+                        <div class="providers">
+                            <div class="wrapper">
+                                {% for provider in tv['watch/providers'].rent %}
+                                    <div class="provider">
+                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                        <div>{{ provider.provider_name }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if tv['watch/providers'].buy|length %}
+                        <h3>{{ 'Where to buy'|trans }}</h3>
+                        <div class="providers">
+                            <div class="wrapper">
+                                {% for provider in tv['watch/providers'].buy %}
+                                    <div class="provider">
+                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                        <div>{{ provider.provider_name }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
