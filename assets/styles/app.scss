@@ -83,7 +83,7 @@ body {
     flex-direction: column;
     background-color: transparent;
     margin-inline: auto;
-    min-height: calc(100vh - 4rem);
+    min-height: 100vh;
     padding-block-start: 3rem;
     padding-inline: .25rem;
     position: relative;
@@ -512,7 +512,7 @@ label:has(input[type="text"]) {
     position: absolute;
     top: -4em;
     transition: opacity .125s;
-    z-index: 10000;
+    z-index: 10;
 
     &.show {
         opacity: 1;
