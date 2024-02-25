@@ -222,29 +222,29 @@
                         </div>
                     </div>
                 </div>
-                <div class="pop-infos">
-                    <div class="content">
-                        <div class="poster"></div>
-                        <div class="body">
-                            <div class="title"></div>
-                            <div class="overview"></div>
-                            <div class="spinner">
-                                <div class="circle1">
-                                    <div class="circle2">
-                                        <div class="circle3">
-                                            <div class="circle4"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="close"><i class="fa-solid fa-xmark"></i></div>
-                        </div>
-                    </div>
-                    <div class="tail"></div>
-                </div>
             </div>
         </main>
         {{ include ('_blocks/_footer.html.twig') }}
+    </div>
+    <div class="pop-infos">
+        <div class="content">
+            <div class="poster"></div>
+            <div class="body">
+                <div class="title"></div>
+                <div class="overview"></div>
+                <div class="spinner">
+                    <div class="circle1">
+                        <div class="circle2">
+                            <div class="circle3">
+                                <div class="circle4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="close"><i class="fa-solid fa-xmark"></i></div>
+            </div>
+        </div>
+        <div class="tail"></div>
     </div>
 {% endblock %}
 {% block javascripts %}
@@ -297,6 +297,7 @@
                 const type = evt.target.closest(".info").getAttribute("data-type");
                 const title = evt.target.closest(".info").getAttribute("data-title");
                 const poster = evt.target.closest(".info").getAttribute("data-poster");
+                const screenW = window.innerWidth;
 
                 const x = evt.clientX, y = evt.clientY + evt.view.scrollY - 16;
 
@@ -310,7 +311,8 @@
                 popInfos.querySelector(".poster").appendChild(img);
                 popInfos.querySelector(".title").appendChild(document.createTextNode(title));
                 popInfos.querySelector(".spinner").setAttribute("style", "display: block;");
-                popInfos.setAttribute("style", "left: calc(" + x + "px - 16em); top: calc(" + y + "px - 10.85em);");
+                if (screenW >= 576)
+                    popInfos.setAttribute("style", "left: calc(" + x + "px - 16em); top: calc(" + y + "px - 10.85em);");
                 popInfos.classList.add("show");
                 setTimeout(() => {
                     popInfos.classList.add("fade");
