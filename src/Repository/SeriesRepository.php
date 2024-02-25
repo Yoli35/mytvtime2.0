@@ -30,14 +30,4 @@ class SeriesRepository extends ServiceEntityRepository
             $this->em->flush();
         }
     }
-
-    public function getLastAddedSeries($page = 1, $perPage = 20)
-    {
-        return $this->createQueryBuilder('s')
-            ->orderBy('s.id', 'DESC')
-            ->setFirstResult(($page - 1) * $perPage)
-            ->setMaxResults($perPage)
-            ->getQuery()
-            ->getResult();
-    }
 }

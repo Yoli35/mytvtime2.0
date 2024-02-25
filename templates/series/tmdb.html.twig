@@ -28,7 +28,7 @@
                 </div>
                 <div class="infos">
                     <h1>{{ tv.name }} ({{ tv.first_air_date|date("Y") }})</h1>
-                    <div class="overview">{{ tv.overview }}</div>
+                    <div class="overview">{{ tv.overview|nl2br }}</div>
                     <div class="backdrop">
                         <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }}">
                     </div>

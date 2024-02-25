@@ -126,6 +126,7 @@
 
     .highlight-progress {
         background-color: var(--highlight-bg);
+        box-shadow: 0 0 3rem 2rem var(--highlight-bg);
         height: 2px;
         left: 0;
         position: absolute;
@@ -226,6 +227,7 @@
                 .poster {
                     align-items: center;
                     background-color: var(--gradient-ardoise-80);
+                    border-radius: .25rem .25rem 0 0;
                     color: var(--gradient-ardoise-10);
                     display: flex;
                     height: 15rem;
@@ -263,6 +265,22 @@
                             }
                         }
 
+                    }
+
+                    .progress {
+                        border: 2px solid var(--gradient-orange-50);
+                        height: .5rem;
+                        left: 0;
+                        position: absolute;
+                        bottom: 0;
+                        width: 100%;
+
+                        .progress-bar {
+                            background: var(--gradient-orange-50);
+                            height: .25rem;
+                            transition: width 20s linear;
+                            width: 0;
+                        }
                     }
                 }
 

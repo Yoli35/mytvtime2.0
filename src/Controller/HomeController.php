@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Series;
 use App\Entity\User;
+use App\Entity\UserSeries;
 use App\Repository\SeriesRepository;
+use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
@@ -17,11 +19,11 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 class HomeController extends AbstractController
 {
     public function __construct(
-        private readonly DateService        $dateService,
-        private readonly ImageConfiguration $imageConfiguration,
-        private readonly SeriesController   $seriesController,
-        private readonly SeriesRepository   $seriesRepository,
-        private readonly TMDBService        $tmdbService,
+        private readonly DateService          $dateService,
+        private readonly ImageConfiguration   $imageConfiguration,
+        private readonly SeriesController     $seriesController,
+        private readonly UserSeriesRepository $userSeriesRepository,
+        private readonly TMDBService          $tmdbService,
     )
     {
     }
@@ -33,15 +35,16 @@ class HomeController extends AbstractController
         $user = $this->getUser();
 
         // Dernières séries ajoutées
-        /** @var Series[] $series */
-        $series = $this->seriesRepository->getLastAddedSeries();
+        /** @var UserSeries[] $series */
+        $series = $this->userSeriesRepository->getLastAddedSeries();
         $config = json_decode($this->tmdbService->imageConfiguration(), true);
 
         /*
          * Dernières séries ajoutées
          */
-        $s = array_map(function ($serie) use ($config) {
-            $s['poster_path'] = $this->imageConfiguration->getCompleteUrl($serie->getPosterPath(), 'poster_sizes', 5); // w780
+        $series = array_map(function ($serie) use ($config) {
+            $s = $serie->homeArray();
+            $s['poster_path'] = $this->imageConfiguration->getCompleteUrl($s['poster_path'], 'poster_sizes', 5); // w780
             return $s;
         }, $series);
 
@@ -49,12 +52,9 @@ class HomeController extends AbstractController
          * Watch providers
          */
         // Get the value of the cookie "mytvtime.2.provider"
-        if (isset($_COOKIE['mytvtime_2_provider']))
-            $cookieProvider = $_COOKIE['mytvtime_2_provider'];
-        else
-            $cookieProvider = null;
+        $cookieProvider = $_COOKIE['mytvtime_2_provider'] ?? 8;
 
-        $provider = $request->query->get('provider', $cookieProvider ?? 8);
+        $provider = $request->query->get('provider', $cookieProvider);
         $watchProviders = json_decode($this->tmdbService->getTvWatchProviderList('fr-FR', 'FR'), true);
         $watchProviders = $watchProviders['results'];
         $watchProviders = array_map(function ($watchProvider) {
@@ -73,12 +73,25 @@ class HomeController extends AbstractController
         $page = rand(1, 3);
         $timezone = $user?->getTimezone() ?? "Europe/Paris";
         $watchRegion = $user?->getCountry() ?? "FR";
-        $preferredLanguage = $user?->getPreferredLanguage() ?? "fr";
+        $preferredLanguage = $user?->getPreferredLanguage() ?? "fr" . "-" . $user?->getCountry() ?? "FR";
 
         $startDate = date('Y-m-d', strtotime('-1 year'));
         $endDate = date('Y-m-d', strtotime('+6 month'));
 
-        $filterString = "&sort_by=popularity.desc&page=" . $page . "&language=" . $preferredLanguage . "&timezone=" . $timezone . "&watch_region=" . $watchRegion . "&include_adult=false&first_air_date.gte=" . $startDate . "&first_air_date.lte=" . $endDate . "&with_watch_monetization_types=flatrate";
+        // providers: 8|35|43|119|234|236|337|344|345|350|381
+        // 8: Netflix
+        // 35: Rakuten TV
+        // 43: Starz
+        // 119: Amazon Prime Video
+        // 234: Arte
+        // 236: France TV
+        // 337: Disney Plus
+        // 344: Rakuten Viki
+        // 345: Canal+ Séries
+        // 350: Apple TV Plus
+        // 381: Canal Plus
+
+        $filterString = "&sort_by=popularity.desc&page=" . $page . "&language=" . $preferredLanguage . "&timezone=" . $timezone . "&watch_region=" . $watchRegion . "&include_adult=false&first_air_date.gte=" . $startDate . "&first_air_date.lte=" . $endDate . "&with_watch_monetization_types=flatrate&with_watch_providers=8|35|43|119|234|236|337|344|345|350|381";
         $seriesSelection = $this->getSelection($filterString, $slugger, $watchRegion, $timezone, $preferredLanguage);
 
         dump(['filterString' => $filterString, 'seriesSelection' => $seriesSelection]);
@@ -100,7 +113,7 @@ class HomeController extends AbstractController
         return array_map(function ($tv) use ($slugger, $country, $timezone, $preferredLanguage) {
             $tv['tmdb'] = true;
             $this->seriesController->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-            $tv['poster_path'] = $tv['poster_path'] ? '/series/posters'.$tv['poster_path'] : null; // w780
+            $tv['poster_path'] = $tv['poster_path'] ? '/series/posters' . $tv['poster_path'] : null; // w780
             $tv['slug'] = strtolower($slugger->slug($tv['name']));
 
             if ($country) {

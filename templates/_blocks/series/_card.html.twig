@@ -6,16 +6,9 @@
     {% endif %}
     <a href="{{ url }}">
         <div class="poster">
-            {% if series.posterPath is defined %}
-                {% if series.posterPath %}
-                    <img src="{{ config.secure_base_url ~ config.poster_sizes.4 ~ series.posterPath }}" alt="{{ series.name }}">
-                {% else %}
-                    <div>{{ 'No poster'|trans }}</div>
-                {% endif %}
-            {% endif %}
             {% if series.poster_path is defined %}
                 {% if series.poster_path %}
-                    <img src="{{ series.poster_path }}" alt="{{ series.name }}" data-title="{{ series.date }}">
+                    <img src="{{ series.poster_path }}" alt="{{ series.name }}"{% if series.date is defined %} data-title="{{ series.date }}{% endif %}">
                 {% else %}
                     <div>{{ 'No poster'|trans }}</div>
                 {% endif %}
@@ -29,6 +22,11 @@
                             </div>
                         {% endfor %}
                     </div>
+                </div>
+            {% endif %}
+            {% if series.progress is defined %}
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ series.progress }}%"></div>
                 </div>
             {% endif %}
         </div>

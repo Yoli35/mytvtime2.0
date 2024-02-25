@@ -23,7 +23,7 @@
                     <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
                 </div>
                 <div class="infos">
-                    <h1>{{ series.name }} ({{ tv.first_air_date|date("Y") }})</h1>
+                    <h1>{{ tv.name }} ({{ tv.first_air_date|date("Y") }})</h1>
                     <h5>
                         {% set n = series.visitNumber %}
                         {% if n > 1000 %}
@@ -31,9 +31,9 @@
                         {% endif %}
                         {{ n }} {{ (n > 1 ? 'visits':'visit')|trans }}
                     </h5>
-                    <div class="overview">{{ series.overview }}</div>
+                    <div class="overview">{{ tv.overview }}</div>
                     <div class="backdrop">
-                        <img src="/series/backdrops{{ series.backdropPath }}" alt="{{ series.name }}">
+                        <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
                     </div>
                 </div>
             </div>
@@ -41,11 +41,28 @@
             <div class="content">
                 <div class="left">
                     <div class="seasons">
+                        <h3>{{ 'Seasons'|trans }}</h3>
                         {% for season in tv.seasons %}
-                        <div class="season">
-                            <div class="name">{{ season.name }}</div>
-                        </div>
-                        {% endif %}
+                            <div class="season">
+                                <div class="poster">
+                                    {% if season.poster_path %}
+                                        <img src="{{ season.poster_path }}" alt="{{ season.name }}">
+                                    {% else %}
+                                        <div>{{ 'No poster'|trans }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="infos">
+                                    <div class="name">{{ season.name }}</div>
+                                    {% if season.overview %}
+                                        <div class="overview">{{ season.overview }}</div>
+                                    {% endif %}
+                                    {% if season.air_date %}
+                                        <div class="air-date">{{ 'Air date'|trans }} {{ date(season.air_date)|format_date('relative_short') }}</div>
+                                    {% endif %}
+                                    <div class="episodes">{{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}</div>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
                     {% if tv.credits.cast|length %}
                         <h3>{{ 'Cast'|trans }}</h3>
@@ -139,6 +156,46 @@
                             </div>
                         </div>
                     {% endif %}
+
+                    <h3>{{ 'Key facts'|trans }}</h3>
+                    <div class="facts">
+                        <div class="fact">
+                            <div class="fact-label">{{ 'Original name'|trans }}</div>
+                            <div class="fact-content">{{ tv.original_name }}</div>
+                        </div>
+                        <div class="fact">
+                            <div class="fact-label">{{ 'Original language'|trans }}</div>
+                            <div class="fact-content">{{ tv.original_language|language_name }}</div>
+                        </div>
+                        <div class="fact">
+                            <div class="fact-label">{{ 'Original Country'|trans }}</div>
+                            {% for country in tv.origin_country %}
+                                <div class="fact-content">{{ country|country_name }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="fact">
+                            <div class="fact-label">{{ 'Status'|trans }}</div>
+                            <div class="fact-content">{{ tv.status|trans }}</div>
+                        </div>
+                        {% if tv.networks|length %}
+                            <div class="fact">
+                                <div class="fact-label">{{ (tv.networks|length>1?'Networks':'Network')|trans }}</div>
+                                <div class="networks">
+                                    {% for network in tv.networks %}
+                                        <div class="network-detail">
+                                            <div class="frame">
+                                                {% if network.logo_path %}
+                                                    <img src="{{ network.logo_path }}" alt="{{ network.name }}" loading="lazy">
+                                                {% else %}
+                                                    {{ network.name }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

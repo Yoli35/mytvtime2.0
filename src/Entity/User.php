@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -46,6 +48,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'boolean')]
     private bool $isVerified = false;
+
+    #[ORM\OneToMany(targetEntity: UserSeries::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $series;
+
+    public function __construct()
+    {
+        $this->series = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -202,6 +212,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserSeries>
+     */
+    public function getSeries(): Collection
+    {
+        return $this->series;
+    }
+
+    public function addSeries(UserSeries $series): static
+    {
+        if (!$this->series->contains($series)) {
+            $this->series->add($series);
+            $series->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSeries(UserSeries $series): static
+    {
+        if ($this->series->removeElement($series)) {
+            // set the owning side to null (unless already changed)
+            if ($series->getUser() === $this) {
+                $series->setUser(null);
+            }
+        }
 
         return $this;
     }

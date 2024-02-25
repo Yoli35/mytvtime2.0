@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Repository\SeriesRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
@@ -59,6 +60,8 @@ class SeriesController extends AbstractController
     #[Route('/series/show/{id}-{slug}', name: 'app_series_show', requirements: ['id' => '\d+'])]
     public function show(Request $request, $id, $slug): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['id' => $id]);
         $series->setVisitNumber($series->getVisitNumber() + 1);
         $this->seriesRepository->save($series, true);
