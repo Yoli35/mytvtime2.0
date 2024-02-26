@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -29,12 +30,13 @@ class SeriesController extends AbstractController
     #[Route('/series', name: 'app_series')]
     public function index(): Response
     {
-        return $this->render('series/index.html.twig', [
-            'controller_name' => 'SeriesController',
-        ]);
+        return $this->redirectToRoute('app_home');
+//        return $this->render('series/index.html.twig', [
+//            'controller_name' => 'SeriesController',
+//        ]);
     }
 
-    #[Route('/series/tmdb/{id}-{slug}', name: 'app_series_tmdb', requirements: ['id' => '\d+'])]
+    #[Route('/series/tmdb/{id}-{slug}', name: 'app_series_tmdb', requirements: ['id' => Requirement::DIGITS])]
     public function tmdb(Request $request, $id, $slug): Response
     {
         $tv = json_decode($this->tmdbService->getTv($id, $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords"]), true);
@@ -57,7 +59,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/series/show/{id}-{slug}', name: 'app_series_show', requirements: ['id' => '\d+'])]
+    #[Route('/series/show/{id}-{slug}', name: 'app_series_show', requirements: ['id' => Requirement::DIGITS])]
     public function show(Request $request, $id, $slug): Response
     {
         /** @var User $user */
@@ -87,7 +89,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/series/people/{id}-{slug}', name: 'app_series_people', requirements: ['id' => '\d+'])]
+    #[Route('/series/people/{id}-{slug}', name: 'app_series_people', requirements: ['id' => Requirement::DIGITS])]
     public function people(Request $request, $id): Response
     {
         $standing = $this->tmdbService->getPerson($id, $request->getLocale(), "images,combined_credits");
@@ -227,7 +229,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[\Symfony\Component\Routing\Annotation\Route('/overview/{id}', name: 'app_series_get_overview', methods: 'GET')]
+    #[Route('/overview/{id}', name: 'app_series_get_overview', methods: 'GET')]
     public function getOverview(Request $request, $id): Response
     {
         $type = $request->query->get("type");
