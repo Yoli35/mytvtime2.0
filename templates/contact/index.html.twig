@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Contact'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid">
+        <div class="contact">
+            <h1>{{ 'Contact'|trans }}</h1>
+            {{ form_start(form, {'attr': {'class': 'form'}}) }}
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="{{ form.name.vars.id }}">
+                        {{ form.name.vars.label|trans }}
+                        {{ form_widget(form.name, {'attr': {'autofocus': ''}}) }}
+                        {{ form_errors(form.name) }}
+                    </label>
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.email.vars.id }}">
+                        {{ form.email.vars.label|trans }}
+                        {{ form_widget(form.email) }}
+                        {{ form_errors(form.email) }}
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="{{ form.subject.vars.id }}">
+                        {{ form.subject.vars.label|trans }}
+                        {{ form_widget(form.subject) }}
+                        {{ form_errors(form.subject) }}
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="{{ form.message.vars.id }}">
+                        {{ form.message.vars.label|trans }}
+                        {{ form_widget(form.message) }}
+                        {{ form_errors(form.message) }}
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                    <button type="submit">{{ 'Send'|trans }}</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+        {% include('_blocks/_footer.html.twig') %}
+    </div>
+{% endblock %}

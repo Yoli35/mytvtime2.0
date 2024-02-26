@@ -8,10 +8,12 @@ import './bootstrap.js';
 import './styles/app.scss';
 
 import {Menu} from "./js/Menu.js";
+
 const menu = new Menu();
 menu.init();
 
 import {ToolTips} from "./js/ToolTips.js";
+
 const toolTips = new ToolTips();
 toolTips.init();
 
@@ -27,13 +29,15 @@ if (document.querySelector(".home")) {
 }
 
 import {PosterHover} from "./js/images/PosterHover.js";
+
 const posterHover = new PosterHover();
 posterHover.init();
 
 import {AverageColor} from "./js/images/AverageColor.js";
+
 const seriesShow = document.querySelector(".series-show");
 if (seriesShow) {
-    const navbar = document.querySelector(".navbar");
+    // const navbar = document.querySelector(".navbar");
     const navbarLinks = document.querySelectorAll(".navbar a");
     const footer = document.querySelector(".home-footer");
     const infos = seriesShow.querySelector(".infos");
@@ -43,7 +47,7 @@ if (seriesShow) {
     if (color.lightness > 150) {
         infos.style.color = "#101010";
     } else {
-        infos.style.color= "#f5f5f5";
+        infos.style.color = "#f5f5f5";
     }
     const hsl = averageColor.rgbToHsl(color);
     hsl.l *= .8;
@@ -64,3 +68,22 @@ if (seriesShow) {
         footer.classList.add("dark");
     }
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+    const flashes = document.querySelectorAll(".flash-message");
+
+    flashes.forEach(flash => {
+        flash.querySelector(".close").addEventListener("click", () => {
+            closeFlash(flash);
+        });
+    });
+    function closeFlash(flash) {
+        setTimeout(()=>{
+            flash.classList.add("hide");
+        }, 0);
+        setTimeout(()=>{
+            flash.classList.add("d-none");
+            flash.parentElement.removeChild(flash);
+        }, 500);
+    }
+});

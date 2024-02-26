@@ -1,0 +1,12 @@
+<h1>{{ 'Contact message'|trans }}</h1>
+<h2>
+    {{ 'From'|trans }}: {{ data.name }} - {{ data.email }}<br>
+</h2>
+<h3>{{ 'Subject'|trans }}:</h3>
+<p>
+    {{ data.subject }}
+</p>
+<h3>{{ 'Message'|trans }}:</h3>
+<p>
+    {{ data.message|nl2br }}
+</p>
