@@ -77,11 +77,12 @@ window.addEventListener("DOMContentLoaded", () => {
             closeFlash(flash);
         });
     });
+
     function closeFlash(flash) {
-        setTimeout(()=>{
+        setTimeout(() => {
             flash.classList.add("hide");
         }, 0);
-        setTimeout(()=>{
+        setTimeout(() => {
             flash.classList.add("d-none");
             flash.parentElement.removeChild(flash);
         }, 500);

@@ -55,7 +55,7 @@
             width: 100%;
 
             &.light {
-                color: var(--gradient-ardoise-10);
+                color: var(--gradient-orange-80);
             }
 
             &.dark {
@@ -292,8 +292,10 @@
 
                         .network-detail {
                             .frame {
+                                align-items: center;
                                 background-color: var(--gradient-ardoise-90);
                                 border-radius: .25rem;
+                                display: flex;
                                 height: 100%;
                                 padding: .5rem;
                                 width: 100%;

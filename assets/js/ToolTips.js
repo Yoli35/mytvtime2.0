@@ -23,7 +23,7 @@ export class ToolTips {
         } else {
             if (className) {
                 const tooltips = document.querySelector(".tool-tips");
-                tooltips.classList.add(className);
+                tooltips?.classList.add(className);
             }
             divs = element.querySelectorAll("*[data-title]");
         }
