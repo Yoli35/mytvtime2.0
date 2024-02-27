@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Profile'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid">
+        <div class="profile">
+            {{ form_start(form, {'attr': {'class': 'form'}}) }}
+            <div class="form-row">
+                <h1>{{ 'Profile'|trans }}</h1>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="{{ form.username.vars.id }}">
+                        {{ form.username.vars.label|trans }}
+                        {{ form_widget(form.username, { 'attr': { 'autofocus': '' } }) }}
+                        {{ form_errors(form.username) }}
+                    </label>
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.email.vars.id }}">
+                        {{ form.email.vars.label|trans }}
+                        {{ form_widget(form.email) }}
+                        {{ form_errors(form.email) }}
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="{{ form.country.vars.id }}">
+                        {{ form.country.vars.label|trans }}
+                        {{ form_widget(form.country) }}
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="{{ form.preferredLanguage.vars.id }}">
+                        {{ form.preferredLanguage.vars.label|trans }}
+                        {{ form_widget(form.preferredLanguage) }}
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="{{ form.timezone.vars.id }}">
+                        {{ form.timezone.vars.label|trans }}
+                        {{ form_widget(form.timezone) }}
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="{{ form.avatarFile.vars.id }}" class="drop-zone">
+                        {{ form.avatarFile.vars.label|trans }}
+                        {{ form_widget(form.avatarFile) }}
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="{{ form.bannerFile.vars.id }}" class="drop-zone">
+                        {{ form.bannerFile.vars.label|trans }}
+                        {{ form_widget(form.bannerFile) }}
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <button type="submit">{{ 'Update'|trans }}</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+        {% include('_blocks/_footer.html.twig') %}
+    </div>
+{% endblock %}

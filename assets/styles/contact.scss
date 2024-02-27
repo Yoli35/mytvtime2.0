@@ -1,4 +1,4 @@
-.contact {
+.contact, .profile {
     margin-block: auto;
     margin-inline: auto;
 
@@ -42,6 +42,78 @@
                 textarea {
                     min-height: 10rem;
                     resize: vertical;
+                }
+
+                label:has(select) {
+                    display: flex;
+                    flex-direction: column;
+                    gap: .25rem;
+                }
+
+                label:has(input[type=file]) {
+                    gap: 1rem;
+                    width: 100%;
+
+                    &.drop-zone {
+                        align-items: flex-start;
+                        background-color: var(--gradient-ardoise-80);
+                        border-radius: 0.5rem;
+                        border: 2px dashed;
+                        display: flex;
+                        justify-content: flex-start;
+                        padding: 1rem;
+
+                        &:hover {
+                            background-color: var(--gradient-ardoise-70);
+                            border-color: var(--gradient-ardoise-50);
+                        }
+                    }
+
+                    .vich-image {
+                        display: flex;
+                        flex-direction: column;
+                        flex-grow: 1;
+                        gap: 1rem;
+
+                        input[type=file]::file-selector-button {
+                            background-color: var(--gradient-ardoise-80);
+                            border: 1px solid var(--gradient-ardoise-50);
+                            border-radius: .25em;
+                            color: var(--gradient-ardoise-10);
+                            cursor: pointer;
+                            padding-block: .25rem;
+                            padding-inline: 1rem;
+                        }
+
+                        div {
+                            display: flex;
+                            gap: 1rem;
+
+                            label {
+                                order: 2;
+                            }
+                        }
+
+                        img {
+                            border-radius: .25rem;
+                            height: 10rem;
+                            max-width: 100%;
+                        }
+
+                        a:not(:has(img)) {
+                            background-color: var(--gradient-ardoise-80);
+                            border: 1px solid var(--gradient-ardoise-50);
+                            border-radius: 0.25rem;
+                            padding-block: 0.25rem;
+                            padding-inline: 1rem;
+                            margin-inline-start: auto;
+
+                            &:hover {
+                                background-color: var(--gradient-ardoise-70);
+                                border-color: var(--gradient-ardoise-40);
+                            }
+                        }
+                    }
                 }
             }
 

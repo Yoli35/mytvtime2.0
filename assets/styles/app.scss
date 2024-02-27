@@ -302,6 +302,16 @@ label:has(input[type="text"]) {
             }
         }
     }
+
+    .menu-connect {
+        .avatar {
+            img {
+                border: 1px solid;
+                border-radius: 50%;
+                height: 1.5rem;
+            }
+        }
+    }
 }
 
 .home-footer {

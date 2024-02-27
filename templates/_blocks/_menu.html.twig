@@ -4,10 +4,16 @@
     <a href="{{ path('app_contact') }}">{{ 'Contact'|trans }}</a>
     <div class="switches">
         <div class="menu-connect">
+            {% if app.user and app.user.avatar %}
+                <div class="avatar">
+                    <img src="{{ asset('images/users/avatars/' ~ app.user.avatar) }}" alt="{{ app.user.username }}">
+                </div>
+            {% else %}
             <i class="fa-solid fa-user"></i>
+            {% endif %}
             <div class="content">
                 {% if app.user %}
-                    <a href="{{ path('app_user') }}">{{ 'My account'|trans }}</a>
+                    <a href="{{ path('app_user_profile') }}">{{ 'My account'|trans }}</a>
                     <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a>
                 {% else %}
                     <a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a>

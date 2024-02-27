@@ -3,13 +3,17 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
+#[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -40,14 +44,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $timezone = null;
 
+    #[Vich\UploadableField(mapping: 'avatars', fileNameProperty: 'avatar', size: 'avatarSize')]
+    private ?File $avatarFile = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $avatarSize = null;
+
+    #[Vich\UploadableField(mapping: 'banners', fileNameProperty: 'banner', size: 'bannerSize')]
+    private ?File $bannerFile = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $banner = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $bannerSize = null;
+
     #[ORM\Column(type: 'boolean')]
     private bool $isVerified = false;
+
+    #[ORM\Column(nullable: true)]
+    private ?DateTimeImmutable $updatedAt = null;
 
     #[ORM\OneToMany(targetEntity: UserSeries::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $series;
@@ -244,5 +263,61 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function getUpdatedAt(): ?DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?DateTimeImmutable $updatedAt): void
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+    public function getAvatarSize(): ?int
+    {
+        return $this->avatarSize;
+    }
+
+    public function setAvatarSize(?int $avatarSize): void
+    {
+        $this->avatarSize = $avatarSize;
+    }
+
+    public function getBannerSize(): ?int
+    {
+        return $this->bannerSize;
+    }
+
+    public function setBannerSize(?int $bannerSize): void
+    {
+        $this->bannerSize = $bannerSize;
+    }
+
+    public function getAvatarFile(): ?File
+    {
+        return $this->avatarFile;
+    }
+
+    public function setAvatarFile(?File $avatarFile): void
+    {
+        if (null !== $avatarFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+        $this->avatarFile = $avatarFile;
+    }
+
+    public function getBannerFile(): ?File
+    {
+        return $this->bannerFile;
+    }
+
+    public function setBannerFile(?File $bannerFile): void
+    {
+        if (null !== $bannerFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+        $this->bannerFile = $bannerFile;
     }
 }
