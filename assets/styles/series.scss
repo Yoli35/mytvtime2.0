@@ -1,4 +1,4 @@
-
+/* Pages: series TMDB & user series */
 .series-show {
     container: series-show / inline-size;
     display: flex;
@@ -293,15 +293,19 @@
                         .network-detail {
                             .frame {
                                 align-items: center;
-                                background-color: var(--gradient-ardoise-90);
+                                background-color: var(--gradient-ardoise-10);
                                 border-radius: .25rem;
                                 display: flex;
-                                height: 100%;
+                                height: 3rem;
                                 padding: .5rem;
                                 width: 100%;
 
                                 &:hover {
-                                    background-color: var(--gradient-ardoise-10);
+                                    background-color: var(--gradient-ardoise-50);
+                                }
+
+                                img {
+                                    height: 100%;
                                 }
                             }
                         }
@@ -380,7 +384,6 @@
     }
 }
 
-
 @media (max-width: 576px) {
     .series-show {
         .content {
@@ -400,3 +403,7 @@
     }
 }
 
+/* Rechercher une série */
+.series-search {
+
+}
