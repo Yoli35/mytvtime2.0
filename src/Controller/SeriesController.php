@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\UserSeries;
 use App\Repository\SeriesRepository;
+use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
@@ -18,11 +20,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SeriesController extends AbstractController
 {
     public function __construct(
-        private readonly DateService         $dateService,
-        private readonly ImageConfiguration  $imageConfiguration,
-        private readonly SeriesRepository    $seriesRepository,
-        private readonly TMDBService         $tmdbService,
-        private readonly TranslatorInterface $translator,
+        private readonly DateService          $dateService,
+        private readonly ImageConfiguration   $imageConfiguration,
+        private readonly SeriesRepository     $seriesRepository,
+        private readonly TMDBService          $tmdbService,
+        private readonly TranslatorInterface  $translator,
+        private readonly UserSeriesRepository $userSeriesRepository,
     )
     {
     }
@@ -79,13 +82,17 @@ class SeriesController extends AbstractController
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
 
+        $userSeries = $user ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
+
         dump([
             'series' => $series,
             'tv' => $tv,
+            'userSeries' => $userSeries,
         ]);
         return $this->render('series/show.html.twig', [
             'series' => $series,
             'tv' => $tv,
+            'userSeries' => $userSeries,
         ]);
     }
 
