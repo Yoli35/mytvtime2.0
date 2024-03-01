@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Search'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+{% endblock %}
+{% block body %}
+    <div class="container-fluid">
+        {% include '_blocks/_menu.html.twig' %}
+        <div class="series-search">
+            <h1>{{ 'Search'|trans }}</h1>
+            {{ form_start(form, {'attr': {'class': 'form'}}) }}
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="{{ form.query.vars.id }}">
+                        {{ form.query.vars.label|trans }}
+                        {{ form_widget(form.query, {'attr': {'autofocus': ''}}) }}
+                        {{ form_errors(form.query) }}
+                    </label>
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.firstAirDateYear.vars.id }}">
+                        {{ form.firstAirDateYear.vars.label|trans }}
+                        {{ form_widget(form.firstAirDateYear) }}
+                        {{ form_errors(form.firstAirDateYear) }}
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <button type="submit">{{ 'Send'|trans }}</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+
+        <div class="series-group">
+            <div class="wrapper">
+                <div class="content">
+                    {% for series in seriesList %}
+                        {{ include('_blocks/series/_card.html.twig') }}
+                    {% else %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% include '_blocks/_footer.html.twig' %}
+    </div>
+{% endblock %}

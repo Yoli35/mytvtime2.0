@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\DTO\SeriesSearchDTO;
 use App\Entity\User;
 use App\Entity\UserSeries;
+use App\Form\SeriesSearchType;
 use App\Repository\SeriesRepository;
 use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
@@ -17,6 +19,7 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+#[Route('/{_locale}/series', name: 'app_series_', requirements: ['_locale' => 'fr|en|de|es'])]
 class SeriesController extends AbstractController
 {
     public function __construct(
@@ -30,7 +33,7 @@ class SeriesController extends AbstractController
     {
     }
 
-    #[Route('/series', name: 'app_series')]
+    #[Route('/', name: 'index')]
     public function index(): Response
     {
         return $this->redirectToRoute('app_home');
@@ -39,7 +42,51 @@ class SeriesController extends AbstractController
 //        ]);
     }
 
-    #[Route('/series/tmdb/{id}-{slug}', name: 'app_series_tmdb', requirements: ['id' => Requirement::DIGITS])]
+    #[Route('/search', name: 'search')]
+    public function search(Request $request): Response
+    {
+        $series = [];
+        $slugger = new AsciiSlugger();
+        $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
+        $simpleForm = $this->createForm(SeriesSearchType::class, $simpleSeriesSearch);
+
+        $simpleForm->handleRequest($request);
+        if ($simpleForm->isSubmitted() && $simpleForm->isValid()) {
+            $query = $simpleSeriesSearch->getQuery();
+            $language = $simpleSeriesSearch->getLanguage();
+            $page = $simpleSeriesSearch->getPage();
+            $firstAirDateYear = $simpleSeriesSearch->getFirstAirDateYear();
+
+            $searchString = "&query=$query&include_adult=false&page=$page";
+            if (strlen($firstAirDateYear)) $searchString .= "&first_air_date_year=$firstAirDateYear";
+            if (strlen($language)) $searchString .= "&language=$language";
+
+            dump($searchString);
+            $searchResult = json_decode($this->tmdbService->searchTv($searchString), true);
+            $series = array_map(function ($tv) use($slugger) {
+                $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+                $tv['poster_path'] = $tv['poster_path'] ? '/series/posters' . $tv['poster_path'] : null;
+                return [
+                    'tmdb' => true,
+                    'id' => $tv['id'],
+                    'name' => $tv['name'],
+                    'slug' => $slugger->slug($tv['name'])->lower()->toString(),
+                    'poster_path' => $tv['poster_path'],
+                ];
+            }, $searchResult['results'] ?? []);
+        }
+
+        dump([
+            'series' => $series,
+            'locale' => $request->getLocale(),
+        ]);
+        return $this->render('series/search.html.twig', [
+            'form' => $simpleForm->createView(),
+            'seriesList' => $series,
+        ]);
+    }
+
+    #[Route('/tmdb/{id}-{slug}', name: 'tmdb', requirements: ['id' => Requirement::DIGITS])]
     public function tmdb(Request $request, $id, $slug): Response
     {
         $tv = json_decode($this->tmdbService->getTv($id, $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords"]), true);
@@ -62,7 +109,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/series/show/{id}-{slug}', name: 'app_series_show', requirements: ['id' => Requirement::DIGITS])]
+    #[Route('/show/{id}-{slug}', name: 'show', requirements: ['id' => Requirement::DIGITS])]
     public function show(Request $request, $id, $slug): Response
     {
         /** @var User $user */
@@ -96,7 +143,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/series/people/{id}-{slug}', name: 'app_series_people', requirements: ['id' => Requirement::DIGITS])]
+    #[Route('/people/{id}-{slug}', name: 'people', requirements: ['id' => Requirement::DIGITS])]
     public function people(Request $request, $id): Response
     {
         $standing = $this->tmdbService->getPerson($id, $request->getLocale(), "images,combined_credits");
@@ -236,7 +283,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/overview/{id}', name: 'app_series_get_overview', methods: 'GET')]
+    #[Route('/overview/{id}', name: 'get_overview', methods: 'GET')]
     public function getOverview(Request $request, $id): Response
     {
         $type = $request->query->get("type");
