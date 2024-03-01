@@ -33,6 +33,9 @@ class HomeController extends AbstractController
     {
         /* @var User $user */
         $user = $this->getUser();
+        $language = $user?->getPreferredLanguage() ?? "fr" . "-" . $user?->getCountry() ?? "FR";
+        $country = $user?->getCountry() ?? "FR";
+        $timezone = $user?->getTimezone() ?? "Europe/Paris";
 
         // Dernières séries ajoutées
         /** @var UserSeries[] $series */
@@ -55,7 +58,7 @@ class HomeController extends AbstractController
         $cookieProvider = $_COOKIE['mytvtime_2_provider'] ?? 8;
 
         $provider = $request->query->get('provider', $cookieProvider);
-        $watchProviders = json_decode($this->tmdbService->getTvWatchProviderList('fr-FR', 'FR'), true);
+        $watchProviders = json_decode($this->tmdbService->getTvWatchProviderList($language, $country), true);
         $watchProviders = $watchProviders['results'];
         $watchProviders = array_map(function ($watchProvider) {
             $watchProvider['id'] = $watchProvider['provider_id'];
@@ -71,9 +74,6 @@ class HomeController extends AbstractController
 //        dump(['filteredSeries' => $filteredSeries]);
 
         $page = rand(1, 3);
-        $timezone = $user?->getTimezone() ?? "Europe/Paris";
-        $watchRegion = $user?->getCountry() ?? "FR";
-        $preferredLanguage = $user?->getPreferredLanguage() ?? "fr" . "-" . $user?->getCountry() ?? "FR";
 
         $startDate = date('Y-m-d', strtotime('-1 year'));
         $endDate = date('Y-m-d', strtotime('+6 month'));
@@ -91,8 +91,8 @@ class HomeController extends AbstractController
         // 350: Apple TV Plus
         // 381: Canal Plus
 
-        $filterString = "&sort_by=popularity.desc&page=" . $page . "&language=" . $preferredLanguage . "&timezone=" . $timezone . "&watch_region=" . $watchRegion . "&include_adult=false&first_air_date.gte=" . $startDate . "&first_air_date.lte=" . $endDate . "&with_watch_monetization_types=flatrate&with_watch_providers=8|35|43|119|234|236|337|344|345|350|381";
-        $seriesSelection = $this->getSelection($filterString, $slugger, $watchRegion, $timezone, $preferredLanguage);
+        $filterString = "&sort_by=popularity.desc&page=" . $page . "&language=" . $language . "&timezone=" . $timezone . "&watch_region=" . $country . "&include_adult=false&first_air_date.gte=" . $startDate . "&first_air_date.lte=" . $endDate . "&with_watch_monetization_types=flatrate&with_watch_providers=8|35|43|119|234|236|337|344|345|350|381";
+        $seriesSelection = $this->getSelection($filterString, $slugger, $country, $timezone, $language);
 
         dump(['filterString' => $filterString, 'seriesSelection' => $seriesSelection]);
 
