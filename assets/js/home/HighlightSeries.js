@@ -103,6 +103,8 @@ export class HighlightSeries {
                 this.root.style.setProperty("--tooltips-bg", "hsl(" + hsl.h + ", " + hsl.s + "%, 50%)");
                 this.root.style.setProperty("--tooltips-color", "hsl(" + hsl.h + ", " + hsl.s + "%, 80%)");
             }
+            this.root.style.setProperty("--highlight-progress", "hsl(" + ((hsl.h + 180) % 360) + ", " + hsl.s + "%, " + (hsl.l < 95 ? hsl.l + 5 : 100) + "%)");
+            this.root.style.setProperty("--highlight-head", "hsl(" + ((hsl.h + 180) % 360) + ", " + hsl.s + "%, " + (hsl.l < 75 ? hsl.l + 25 : 100) + "%)");
             this.root.style.setProperty("--highlight-bg", "hsl(" + ((hsl.h + 180) % 360) + ", " + hsl.s + "%, " + hsl.l + "%)");
             this.root.style.setProperty("--highlight-color", "hsl(" + ((hsl.h + 180) % 360) + ", " + hsl.s + "%, " + (hsl.l > 60 ? "10" : "90") + "%)");
             this.highlightDiv.querySelector('.poster').classList.add('show');

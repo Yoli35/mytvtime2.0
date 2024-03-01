@@ -1,0 +1,80 @@
+.user-providers {
+    container: userProviders / inline-size;
+    display: flex;
+    gap: 1rem;
+    margin-block-start: 4rem;
+
+    .providers {
+        border-radius: .25rem;
+        border: 1px solid var(--gradient-ardoise-50);
+        display: flex;
+        flex-wrap: wrap;
+        gap: .25rem .5rem;
+        margin-inline: auto;
+        padding: 1rem;
+
+        .provider {
+            align-items: center;
+            background-color: var(--gradient-ardoise-80);
+            border-radius: .25rem;
+            display: flex;
+            font-size: .875rem;
+            gap: .5rem;
+            height: 2.5rem;
+            justify-content: flex-start;
+            line-height: 1rem;
+            padding: .25rem .5rem;
+            width: 20rem;
+
+            label {
+                align-items: center;
+                display: flex;
+                gap: 1rem;
+                justify-content: flex-start;
+
+                img {
+                    border-radius: .25rem;
+                    height: 2rem;
+                    object-fit: cover;
+                    width: 2rem;
+                }
+            }
+
+            &:has(input:checked) {
+                background-color: var(--gradient-orange-40);
+                font-weight: 600;
+            }
+        }
+    }
+
+    @container userProviders (width >= 104rem) {
+        .providers {
+            width: calc(2px + 104rem);
+        }
+    }
+
+    @container userProviders (width < 104rem) {
+        .providers {
+            width: calc(2px + 83.5rem);
+        }
+    }
+
+    @container userProviders (width < 83.5rem) {
+        .providers {
+            width: calc(2px + 63rem);
+        }
+    }
+
+    @container userProviders (width < 63rem) {
+        .providers {
+            width: calc(2px + 42.5rem);
+        }
+    }
+
+    @container userProviders (width < 42.5rem) {
+        .providers {
+            flex-direction: column;
+            width: calc(2px + 22rem);
+        }
+    }
+}

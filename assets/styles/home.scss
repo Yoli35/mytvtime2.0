@@ -1,5 +1,7 @@
 :root {
     --highlight-bg: var(--gradient-ardoise-40);
+    --highlight-progress: var(--gradient-ardoise-40);
+    --highlight-head: var(--gradient-ardoise-40);
     --highlight-color: var(--gradient-ardoise-90);
     --highlight-duration: 20s;
     --highlight-transition: 300ms;
@@ -125,9 +127,10 @@
     }
 
     .highlight-progress {
-        background-color: var(--highlight-bg);
-        box-shadow: 0 0 3rem 2rem var(--highlight-bg);
-        height: 2px;
+        background-color: var(--highlight-progress);
+        border-radius: 0 1rem 1rem 0;
+        box-shadow: 0 0 3rem 3rem var(--highlight-bg);
+        height: 3px;
         left: 0;
         position: absolute;
         top: 0;
@@ -136,6 +139,18 @@
         &.show {
             transition: width var(--highlight-duration) linear;
             width: 100%;
+        }
+
+        .head {
+            aspect-ratio: 1;
+            background-color: var(--highlight-head);
+            border-radius: 50%;
+            box-shadow: 0 0 1rem 12px var(--highlight-head);
+            height: 100%;
+            position: absolute;
+            right: 0;
+            top: 0;
+
         }
     }
 
@@ -212,7 +227,7 @@
                 flex-shrink: 0;
                 justify-content: flex-start;
                 margin: 0 auto;
-                padding: 1rem;
+                padding-block: 1rem;
             }
 
             .card {

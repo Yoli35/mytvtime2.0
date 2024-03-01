@@ -151,6 +151,7 @@ body {
 
 :root {
     --navbar-bg: var(--gradient-ardoise-60);
+    --navbar-bg-25: var(--gradient-ardoise-70-alpha-25);
     --navbar-bg-50: var(--gradient-ardoise-70-alpha-50);
     --navbar-bg-75: var(--gradient-ardoise-70-alpha-75);
     --tooltips-bg: var(--gradient-ardoise-90);
@@ -206,7 +207,7 @@ label:has(input[type="text"]) {
 
 .navbar {
     align-items: center;
-    background-color: var(--navbar-bg-50);
+    background-color: var(--navbar-bg-25);
     display: flex;
     font-weight: 300;
     height: 3rem;
