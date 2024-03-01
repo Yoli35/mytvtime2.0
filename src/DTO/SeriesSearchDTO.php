@@ -4,7 +4,7 @@ namespace App\DTO;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SeriesSearch
+class SeriesSearchDTO
 {
     #[Assert\NotBlank]
     private string $query;

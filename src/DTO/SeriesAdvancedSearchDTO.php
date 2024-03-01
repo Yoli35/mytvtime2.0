@@ -5,7 +5,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 use DateTimeImmutable;
 
-class SeriesAdvancedSearch
+class SeriesAdvancedSearchDTO
 {
     // User settings
     #[Assert\Language]
