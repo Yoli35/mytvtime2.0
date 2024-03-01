@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Profile'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/providers.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid">
+        <div class="user-providers">
+            <div class="providers">
+                {% for p in providers %}
+                    <div class="provider">
+                        <label for="provider-{{ p.id }}" class="provider__label">
+                            <input type="checkbox" id="provider-{{ p.id }}"{% if p.id in userProviderIds %} checked{% endif %}>
+                            <img src="{{ p.logo }}" alt="{{ p.name }}" class="provider__logo">
+                            {{ p.name }}
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% include('_blocks/_footer.html.twig') %}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            const providers = document.querySelector('.providers');
+            const checkboxes = providers.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    const providerId = checkbox.id.split('-')[1];
+                    const url = `/user/provider/toggle/${providerId}`;
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({}),
+                    }).then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        }
+                        throw new Error('Network response was not ok.');
+                    }).then(data => {
+                        console.log(data);
+                    }).catch(error => {
+                        console.error('There has been a problem with your fetch operation:', error);
+                    })
+                });
+            });
+        });
+    </script>
+{% endblock %}

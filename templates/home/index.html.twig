@@ -34,7 +34,7 @@
                 </div>
             </div>
         </div>
-        <div class="highlight-progress"></div>
+        <div class="highlight-progress"><div class="head"></div></div>
 
         <div class="series-group">
             <h2>Séries récentes</h2>
@@ -62,7 +62,7 @@
                     {{ providerLogo(watchProviders, provider) }}
                 </div>
                 <h2>{{ providerName(watchProviders, provider) }}</h2>
-                <label for="watch-providers">Filtrer par plateforme de streaming
+                <label for="watch-providers">{#Filtrer par plateforme de streaming#}
                     <select id="watch-providers">
                         {% for watchProvider in watchProviders|sort((a, b) => a.name <=> b.name) %}
                             <option value="{{ watchProvider.id }}" data-logo="{{ watchProvider.logoPath }}"{{ watchProvider.id == provider ? ' selected':'' }}>{{ watchProvider.name }}</option>

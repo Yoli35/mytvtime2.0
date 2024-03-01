@@ -14,6 +14,7 @@
             <div class="content">
                 {% if app.user %}
                     <a href="{{ path('app_user_profile') }}">{{ 'My account'|trans }}</a>
+                    <a href="{{ path('app_user_providers') }}">{{ 'My providers'|trans }}</a>
                     <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a>
                 {% else %}
                     <a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a>

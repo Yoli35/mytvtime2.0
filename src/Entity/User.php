@@ -71,9 +71,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: UserSeries::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $series;
 
+    #[ORM\ManyToMany(targetEntity: Provider::class)]
+    private Collection $providers;
+
     public function __construct()
     {
         $this->series = new ArrayCollection();
+        $this->providers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -319,5 +323,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->updatedAt = new \DateTimeImmutable();
         }
         $this->bannerFile = $bannerFile;
+    }
+
+    /**
+     * @return Collection<int, Provider>
+     */
+    public function getProviders(): Collection
+    {
+        return $this->providers;
+    }
+
+    public function addProvider(Provider $provider): static
+    {
+        if (!$this->providers->contains($provider)) {
+            $this->providers->add($provider);
+        }
+
+        return $this;
+    }
+
+    public function removeProvider(Provider $provider): static
+    {
+        $this->providers->removeElement($provider);
+
+        return $this;
     }
 }
