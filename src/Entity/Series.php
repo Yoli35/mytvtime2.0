@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: SeriesRepository::class)]
-#[Broadcast]
 class Series
 {
     #[ORM\Id]
