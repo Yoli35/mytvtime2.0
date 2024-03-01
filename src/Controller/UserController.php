@@ -17,7 +17,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 
 #[IsGranted('ROLE_USER')]
-#[Route('/user')]
 class UserController extends AbstractController
 {
     public function __construct(
@@ -29,7 +28,7 @@ class UserController extends AbstractController
     {
     }
 
-    #[Route('/profile', name: 'app_user_profile')]
+    #[Route('/{_locale}/profile', name: 'app_user_profile', requirements: ['locale' => 'fr|en|de|es'],)]
     public function profile(Request $request): Response
     {
         /** @var User $user */

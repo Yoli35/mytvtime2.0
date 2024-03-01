@@ -28,7 +28,13 @@ class HomeController extends AbstractController
     {
     }
 
-    #[Route('/', name: 'app_home')]
+    #[Route('/', name: 'app_home_without_locale')]
+    public function indexWithoutLocale(Request $request): Response
+    {
+        return $this->redirectToRoute('app_home', ['_locale' => $request->getLocale()]);
+    }
+
+    #[Route('/{_locale}/', name: 'app_home', requirements: ['_locale' => 'fr|en|de|es'])]
     public function index(Request $request): Response
     {
         /* @var User $user */
@@ -90,9 +96,12 @@ class HomeController extends AbstractController
         // 345: Canal+ Séries
         // 350: Apple TV Plus
         // 381: Canal Plus
-
-        $filterString = "&sort_by=popularity.desc&page=" . $page . "&language=" . $language . "&timezone=" . $timezone . "&watch_region=" . $country . "&include_adult=false&first_air_date.gte=" . $startDate . "&first_air_date.lte=" . $endDate . "&with_watch_monetization_types=flatrate&with_watch_providers=8|35|43|119|234|236|337|344|345|350|381";
+        // type: possible values are: [0 Documentary, 1 News, 2 Miniseries, 3 Reality, 4 Scripted, 5 Talk Show, 6 Video], can be a comma (AND) or pipe (OR) separated query
+        $filterString = "&sort_by=first_air_date.desc&page=" . $page . "with_type=0|2|4&language=" . $language . "&timezone=" . $timezone . "&watch_region=" . $country . "&include_adult=false&first_air_date.gte=" . $startDate . "&first_air_date.lte=" . $endDate . "&with_watch_monetization_types=flatrate&with_watch_providers=8|35|43|119|234|236|337|344|345|350|381";
         $seriesSelection = $this->getSelection($filterString, $slugger, $country, $timezone, $language);
+        $seriesSelection = array_filter($seriesSelection, function ($tv) {
+            return $tv['poster_path'];
+        });
 
         dump(['filterString' => $filterString, 'seriesSelection' => $seriesSelection]);
 
@@ -110,6 +119,7 @@ class HomeController extends AbstractController
     public function getSelection(string $filterString, AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $preferredLanguage = 'fr'): array
     {
         $seriesSelection = json_decode($this->tmdbService->getFilterTv($filterString), true)['results'];
+
         return array_map(function ($tv) use ($slugger, $country, $timezone, $preferredLanguage) {
             $tv['tmdb'] = true;
             $this->seriesController->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));

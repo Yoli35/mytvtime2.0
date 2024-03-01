@@ -14,6 +14,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+#[Route('/{_locale}/contact', name: 'app_contact_', requirements: ['_locale' => 'fr|en|de|es'])]
 class ContactController extends AbstractController
 {
     public function __construct(
@@ -23,7 +24,7 @@ class ContactController extends AbstractController
     {
     }
 
-    #[Route('/contact', name: 'app_contact')]
+    #[Route('/', name: 'form', methods: ['GET', 'POST'])]
     public function index(Request $request): Response
     {
         /** @var User $user */
