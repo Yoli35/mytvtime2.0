@@ -5,7 +5,7 @@ export class AverageColor {
         this.defaultRGB = {r: 0, g: 0, b: 0, lightness: 0};
         this.defaultHSL = {h: 202, s: 18, l: 20};
         this.canvas = document.createElement("canvas");
-        this.context = this.canvas.getContext && this.canvas.getContext("2d");
+        this.context = this.canvas.getContext && this.canvas.getContext("2d", {willReadFrequently: true});
     }
 
     getColor(img, square = false) {
