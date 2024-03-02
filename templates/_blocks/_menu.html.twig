@@ -1,3 +1,6 @@
+{% set route = app.request.attributes.get('_route') %}
+{% set parameters = app.request.query %}
+{% set route_params = app.request.attributes.get('_route_params') %}
 <nav class="navbar">
     <a href="{{ path('app_home') }}" accesskey="<">{{ 'Home'|trans }}</a>
     <a href="{{ path('app_series_index') }}">{{ 'Series'|trans }}</a>
@@ -38,10 +41,16 @@
             </div>
         </div>
         <div class="menu-language">
+            {% set p = '' %}
+            {% if parameters|length %}
+                {% for key, value in parameters %}
+                    {% set p = p ~ (loop.index0 ? '&':'?') ~ key ~ '=' ~ value %}
+                {% endfor %}
+            {% endif %}
             <i class="fa-solid fa-globe"></i>
             <div class="content">
-                <div>{{ 'French'|trans }}</div>
-                <div>{{ 'English'|trans }}</div>
+                <a href="{{ path(route, route_params|merge({'_locale': 'fr'})) ~ p }}"><div>{{ 'French'|trans }}</div></a>
+                <a href="{{ path(route, route_params|merge({'_locale': 'en'})) ~ p }}"><div>{{ 'English'|trans }}</div></a>
             </div>
         </div>
     </div>
