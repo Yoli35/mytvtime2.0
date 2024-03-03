@@ -26,7 +26,7 @@ export class PosterHover {
             people.forEach(person => {
                 person.addEventListener("mouseover", this.showPoster);
                 person.addEventListener("mousemove", this.showPoster);
-                person.addEventListener("mousewheel", this.showPoster);
+                // person.addEventListener("mousewheel", this.showPoster);
                 person.addEventListener("mouseout", this.hidePoster);
             });
         }
