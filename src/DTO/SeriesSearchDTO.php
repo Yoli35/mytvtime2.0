@@ -22,7 +22,7 @@ class SeriesSearchDTO
         $this->query = '';
         $this->language = $locale;
         $this->page = $page;
-        $this->firstAirDateYear = 0;
+        $this->firstAirDateYear = null;
     }
 
     public function getQuery(): string

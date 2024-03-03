@@ -28,6 +28,7 @@
 
                 input[type="email"],
                 input[type="number"],
+                input[type="search"],
                 input[type="text"],
                 textarea {
                     appearance: none;
@@ -45,7 +46,9 @@
                     resize: vertical;
                 }
 
-                label:has(select) {
+                label:has(select),
+                label:has(input[type="search"]),
+                label:has(input[type="text"]) {
                     display: flex;
                     flex-direction: column;
                     gap: .25rem;
@@ -143,4 +146,20 @@
         }
     }
 
+}
+
+@media (width <= 36rem) {
+    .contact, .profile, .series-search {
+        margin-block-start: 4rem;
+        padding-inline: .25rem;
+        width: 100%;
+
+        form {
+            max-width: 100%;
+
+            .form-row {
+                flex-direction: column !important;
+            }
+        }
+    }
 }

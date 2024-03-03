@@ -61,9 +61,16 @@ class SeriesController extends AbstractController
             if (strlen($firstAirDateYear)) $searchString .= "&first_air_date_year=$firstAirDateYear";
             if (strlen($language)) $searchString .= "&language=$language";
 
-            dump($searchString);
             $searchResult = json_decode($this->tmdbService->searchTv($searchString), true);
-            $series = array_map(function ($tv) use($slugger) {
+
+            if ($searchResult['total_results'] == 1) {
+                $tv = $searchResult['results'][0];
+                return $this->redirectToRoute('app_series_tmdb', [
+                    'id' => $tv['id'],
+                    'slug' => $slugger->slug($tv['name'])->lower()->toString(),
+                ]);
+            }
+            $series = array_map(function ($tv) use ($slugger) {
                 $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
                 $tv['poster_path'] = $tv['poster_path'] ? '/series/posters' . $tv['poster_path'] : null;
                 return [
@@ -76,13 +83,18 @@ class SeriesController extends AbstractController
             }, $searchResult['results'] ?? []);
         }
 
-        dump([
-            'series' => $series,
-            'locale' => $request->getLocale(),
-        ]);
+//        dump([
+//            'series' => $series,
+//            'locale' => $request->getLocale(),
+//        ]);
         return $this->render('series/search.html.twig', [
             'form' => $simpleForm->createView(),
             'seriesList' => $series,
+            'results' => [
+                'total_results' => $searchResult['total_results'] ?? -1,
+                'total_pages' => $searchResult['total_pages'] ?? 0,
+                'page' => $searchResult['page'] ?? 0,
+            ],
         ]);
     }
 
