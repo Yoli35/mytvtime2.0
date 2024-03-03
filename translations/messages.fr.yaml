@@ -57,10 +57,12 @@ Ended: Série terminée
 In Production: En Production
 Planned: Planifié
 Returning Series: Série renouvelée
+Pilot: Pilote
 Network: Réseau
 
 #Search
 Search: Rechercher
+Advanced search: Recherche avancée
 Page: Page
 Language: Langue
 First air date year: Année
@@ -69,6 +71,39 @@ Search results: Résultats de la recherche
 No results: Aucun résultat
 results: résultats
 Go to page: Aller à la page
+After: Après
+Before: Avant
+Origin country: Pays d'origine
+Monetization type: Type de monétisation
+Flatrate: Abonnement
+Watch providers: Plateformes de streaming
+Runtime less than: Durée inférieure à
+Runtime greater than: Durée supérieure à
+Free: Gratuit
+Rent: Location
+Buy: Achat
+Ads: Publicités
+Documentary: Documentaire
+News: Actualités
+Miniseries: Mini-série
+Reality: Télé-réalité
+Scripted: Scénarisé
+Talk Show: Talk Show
+Video: Vidéo
+Type: Type
+Sort by: Trier par
+Popularity descending: Popularité décroissante
+Popularity ascending: Popularité croissante
+Vote average descending: Vote moyen décroissant
+Vote average ascending: Vote moyen croissant
+First air date descending: Date de première diffusion décroissante
+First air date ascending: Date de première diffusion croissante
+Original name descending: Nom original décroissant
+Original name ascending: Nom original croissant
+Name descending: Nom décroissant
+Name ascending: Nom croissant
+Vote count descending: Vote count décroissant
+Vote count ascending: Vote count croissant
 
 # People
 People: Personnes

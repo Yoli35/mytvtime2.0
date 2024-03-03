@@ -245,9 +245,10 @@ label:has(input[type="text"]) {
     }
 
     .menu-connect,
+    .menu-language,
     .menu-preview,
-    .menu-theme,
-    .menu-language {
+    .menu-search,
+    .menu-theme {
         align-items: center;
         border-radius: .25rem;
         cursor: pointer;

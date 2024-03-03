@@ -26,6 +26,13 @@
                 flex-shrink: 0;
                 flex-grow: 1;
 
+                &:has(select) {
+                    max-width: calc(50% - 0.5rem);
+                    flex-shrink: 0;
+                    flex-grow: 1;
+                }
+
+                input[type="date"],
                 input[type="email"],
                 input[type="number"],
                 input[type="search"],
@@ -47,6 +54,7 @@
                 }
 
                 label:has(select),
+                label:has(input[type="date"]),
                 label:has(input[type="search"]),
                 label:has(input[type="text"]) {
                     display: flex;

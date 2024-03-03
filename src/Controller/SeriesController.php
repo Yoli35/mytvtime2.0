@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\User;
 use App\Entity\UserSeries;
+use App\Form\SeriesAdvancedSearchType;
 use App\Form\SeriesSearchType;
 use App\Repository\SeriesRepository;
 use App\Repository\UserSeriesRepository;
@@ -62,33 +64,49 @@ class SeriesController extends AbstractController
             if (strlen($language)) $searchString .= "&language=$language";
 
             $searchResult = json_decode($this->tmdbService->searchTv($searchString), true);
-
             if ($searchResult['total_results'] == 1) {
-                $tv = $searchResult['results'][0];
-                return $this->redirectToRoute('app_series_tmdb', [
-                    'id' => $tv['id'],
-                    'slug' => $slugger->slug($tv['name'])->lower()->toString(),
-                ]);
+                return $this->getOneResult($searchResult['results'][0], $slugger);
             }
-            $series = array_map(function ($tv) use ($slugger) {
-                $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-                $tv['poster_path'] = $tv['poster_path'] ? '/series/posters' . $tv['poster_path'] : null;
-                return [
-                    'tmdb' => true,
-                    'id' => $tv['id'],
-                    'name' => $tv['name'],
-                    'slug' => $slugger->slug($tv['name'])->lower()->toString(),
-                    'poster_path' => $tv['poster_path'],
-                ];
-            }, $searchResult['results'] ?? []);
+            $series = $this->getSearchResult($searchResult, $slugger);
         }
 
-//        dump([
-//            'series' => $series,
-//            'locale' => $request->getLocale(),
-//        ]);
         return $this->render('series/search.html.twig', [
             'form' => $simpleForm->createView(),
+            'seriesList' => $series,
+            'results' => [
+                'total_results' => $searchResult['total_results'] ?? -1,
+                'total_pages' => $searchResult['total_pages'] ?? 0,
+                'page' => $searchResult['page'] ?? 0,
+            ],
+        ]);
+    }
+
+    #[Route('/advanced/search', name: 'advanced_search')]
+    public function advancedSearch(Request $request): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $series = [];
+        $slugger = new AsciiSlugger();
+        $watchProviders = $this->getWatchProviders($user?->getPreferredLanguage() ?? $request->getLocale(), $user?->getCountry() ?? 'FR');
+
+        $seriesSearch = new SeriesAdvancedSearchDTO($user?->getPreferredLanguage() ?? $request->getLocale(), $user?->getCountry() ?? 'FR', $user?->getTimezone() ?? 'Europe/Paris', 1);
+        $seriesSearch->setWatchProviders($watchProviders['watchProviderSelect']);
+        $form = $this->createForm(SeriesAdvancedSearchType::class, $seriesSearch);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $searchString = $this->getSearchString($form->getData());
+            $searchResult = json_decode($this->tmdbService->getFilterTv($searchString), true);
+
+            if ($searchResult['total_results'] == 1) {
+                return $this->getOneResult($searchResult['results'][0], $slugger);
+            }
+            $series = $this->getSearchResult($searchResult, $slugger);
+        }
+
+        return $this->render('series/search-advanced.html.twig', [
+            'form' => $form->createView(),
             'seriesList' => $series,
             'results' => [
                 'total_results' => $searchResult['total_results'] ?? -1,
@@ -113,9 +131,6 @@ class SeriesController extends AbstractController
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
 
-        dump([
-            'tv' => $tv,
-        ]);
         return $this->render('series/tmdb.html.twig', [
             'tv' => $tv,
         ]);
@@ -143,11 +158,6 @@ class SeriesController extends AbstractController
 
         $userSeries = $user ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
 
-        dump([
-            'series' => $series,
-            'tv' => $tv,
-            'userSeries' => $userSeries,
-        ]);
         return $this->render('series/show.html.twig', [
             'series' => $series,
             'tv' => $tv,
@@ -161,33 +171,6 @@ class SeriesController extends AbstractController
         $standing = $this->tmdbService->getPerson($id, $request->getLocale(), "images,combined_credits");
         $people = json_decode($standing, true);
         $credits = $people['combined_credits'];
-
-        dump([
-            'people' => $people,
-            'credits' => $credits
-        ]);
-
-//        if (!key_exists('profile_path', $people)) {
-//            $people['profile_path'] = "";
-//        }
-//        if (!key_exists('known_for_department', $people)) {
-//            $people['known_for_department'] = "";
-//        }
-//        if (!key_exists('gender', $people)) {
-//            $people['gender'] = "";
-//        }
-//        if (!key_exists('place_of_birth', $people)) {
-//            $people['place_of_birth'] = null;
-//        }
-//        if (!key_exists('homepage', $people)) {
-//            $people['homepage'] = null;
-//        }
-//        if (!key_exists('also_known_as', $people)) {
-//            $people['also_known_as'] = "";
-//        }
-//        if (!key_exists('images', $people)) {
-//            $people['images'] = [];
-//        }
 
         if (key_exists('birthday', $people)) {
             $date = $this->dateService->newDate($people['birthday'], "Europe/Paris");
@@ -285,7 +268,6 @@ class SeriesController extends AbstractController
         krsort($knownFor);
         $credits['known_for'] = $knownFor;
 
-//        dump($people);
         return $this->render('series/people.html.twig', [
             'people' => $people,
             'credits' => $credits,
@@ -415,6 +397,99 @@ class SeriesController extends AbstractController
             'rent' => $rent,
             'buy' => $buy,
         ];
+    }
+
+    public function getWatchProviders($language, $watchRegion): array
+    {
+        $providers = json_decode($this->tmdbService->getTvWatchProviderList($language, $watchRegion), true);
+        $providers = $providers['results'];
+        $watchProviders = [];
+        foreach ($providers as $provider) {
+            $watchProviders[$provider['provider_name']] = $provider['provider_id'];
+        }
+        $watchProviderLogos = [];
+        foreach ($providers as $provider) {
+            $watchProviderLogos[$provider['provider_id']] = $this->imageConfiguration->getCompleteUrl($provider['logo_path'], 'logo_sizes', 2);
+        }
+        ksort($watchProviders);
+        return ['watchProviderSelect' => $watchProviders, 'watchProviderLogos' => $watchProviderLogos];
+    }
+
+    public function getSearchString($data): string
+    {
+        // App\DTO\SeriesAdvancedSearchDTO {#811 ▼
+        //  *-language: "fr"
+        //  *-timezone: "Europe/Paris"
+        //  *-watchRegion: "FR"
+        //  -firstAirDateYear: 2023                     -> first_air_date_year
+        //  -firstAirDateGTE: null                      -> first_air_date.gte
+        //  -firstAirDateLTE: null                      -> first_air_date.lte
+        //  -withOriginCountry: null                    -> with_origin_country
+        //  -withOriginalLanguage: null                 -> with_original_language
+        //  -withWatchMonetizationTypes: "flatrate"     -> with_watch_monetization_types
+        //  -withWatchProviders: "119"                  -> with_watch_providers
+        //  -watchProviders: array:59 [▶]
+        //  -withRuntimeGTE: 0                          -> with_runtime.gte
+        //  -withRuntimeLTE: 0                          -> with_runtime.lte
+        //  -withStatus: null                           -> with_status
+        //  -withType: null                             -> with_type
+        //  -sortBy: "popularity.desc"                  -> sort_by
+        //  *-page: 1
+        //}
+        $page = $data->getPage();
+        $language = $data->getLanguage();
+        $timezone = $data->getTimezone();
+        $watchRegion = $data->getWatchRegion();
+        $firstAirDateYear = $data->getFirstAirDateYear();
+        $firstAirDateGTE = $data->getFirstAirDateGTE()?->format('Y-m-d');
+        $firstAirDateLTE = $data->getFirstAirDateLTE()?->format('Y-m-d');
+        $withOriginCountry = $data->getWithOriginCountry();
+        $withOriginalLanguage = $data->getWithOriginalLanguage();
+        $withWatchMonetizationTypes = $data->getWithWatchMonetizationTypes();
+        $withWatchProviders = $data->getWithWatchProviders();
+        $withRuntimeGTE = $data->getWithRuntimeGTE();
+        $withRuntimeLTE = $data->getWithRuntimeLTE();
+        $withStatus = $data->getWithStatus();
+        $withType = $data->getWithType();
+        $sortBy = $data->getSortBy();
+
+        $searchString = "&include_adult=false&page={$page}&language={$language}&timezone={$timezone}&watch_region={$watchRegion}";
+        if ($firstAirDateYear) $searchString .= "&first_air_date_year={$firstAirDateYear}";
+        if ($firstAirDateGTE) $searchString .= "&first_air_date.gte={$firstAirDateGTE}";
+        if ($firstAirDateLTE) $searchString .= "&first_air_date.lte={$firstAirDateLTE}";
+        if ($withOriginCountry) $searchString .= "&with_origin_country={$withOriginCountry}";
+        if ($withOriginalLanguage) $searchString .= "&with_original_language={$withOriginalLanguage}";
+        if ($withWatchMonetizationTypes) $searchString .= "&with_watch_monetization_types={$withWatchMonetizationTypes}";
+        if ($withWatchProviders) $searchString .= "&with_watch_providers={$withWatchProviders}";
+        if ($withRuntimeGTE) $searchString .= "&with_runtime.gte={$withRuntimeGTE}";
+        if ($withRuntimeLTE) $searchString .= "&with_runtime.lte={$withRuntimeLTE}";
+        if ($withStatus) $searchString .= "&with_status={$withStatus}";
+        if ($withType) $searchString .= "&with_type={$withType}";
+        if ($sortBy) $searchString .= "&sort_by={$sortBy}";
+        return $searchString;
+    }
+
+    public function getSearchResult($searchResult, $slugger): array
+    {
+        return array_map(function ($tv) use ($slugger) {
+            $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $tv['poster_path'] = $tv['poster_path'] ? '/series/posters' . $tv['poster_path'] : null;
+            return [
+                'tmdb' => true,
+                'id' => $tv['id'],
+                'name' => $tv['name'],
+                'slug' => $slugger->slug($tv['name'])->lower()->toString(),
+                'poster_path' => $tv['poster_path'],
+            ];
+        }, $searchResult['results'] ?? []);
+    }
+
+    public function getOneResult($tv, $slugger): Response
+    {
+        return $this->redirectToRoute('app_series_tmdb', [
+            'id' => $tv['id'],
+            'slug' => $slugger->slug($tv['name'])->lower()->toString(),
+        ]);
     }
 
     private function makeRoles(): array
