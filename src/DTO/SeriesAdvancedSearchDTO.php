@@ -33,6 +33,10 @@ class SeriesAdvancedSearchDTO
     private ?string $withWatchProviders = '';
     private array $watchProviders = [];
 
+    // Keywords
+    private ?string $withKeywords = null;
+    private array $keywords = [];
+
     // Runtime, status and type
     #[Assert\GreaterThanOrEqual(0)]
     private ?int $withRuntimeGTE = null;
@@ -226,5 +230,25 @@ class SeriesAdvancedSearchDTO
     public function setPage(int $page): void
     {
         $this->page = $page;
+    }
+
+    public function getWithKeywords(): ?string
+    {
+        return $this->withKeywords;
+    }
+
+    public function setWithKeywords(?string $withKeywords): void
+    {
+        $this->withKeywords = $withKeywords;
+    }
+
+    public function getKeywords(): array
+    {
+        return $this->keywords;
+    }
+
+    public function setKeywords(array $keywords): void
+    {
+        $this->keywords = $keywords;
     }
 }

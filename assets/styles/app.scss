@@ -78,6 +78,10 @@ body {
     }
 }
 
+.d-none {
+    display: none !important;
+}
+
 .container, .container-fluid {
     display: flex;
     flex-direction: column;

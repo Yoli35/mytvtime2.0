@@ -69,6 +69,21 @@
                 </div>
             </div>
             <div class="form-row">
+                <div class="form-field full-width">
+                    <label for="{{ form.withKeywords.vars.id }}">
+                        {{ form.withKeywords.vars.label|trans }}
+                        <input type="search" class="keyword-input" placeholder="{{ 'Start tapping to search'|trans }}">
+                        <div class="keyword-list" id="keywords-list">
+                            {% for label, value in field_choices(form.withKeywords) %}
+                                <div data-value="{{ value }}" class="keyword-item d-none" data-label="{{ label }}" data-title="{{ label|trans([], 'keywords') }}">{{ label }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-keywords"></div>
+                    </label>
+                    <input type="hidden" id="{{ form.withKeywords.vars.id }}" name="{{ field_name(form.withKeywords) }}" value="{{ form.withKeywords.vars.value }}"/>
+                </div>
+            </div>
+            <div class="form-row">
                 <div class="form-field">
                     <label for="{{ form.withRuntimeGTE.vars.id }}">
                         {{ form.withRuntimeGTE.vars.label|trans }}
@@ -148,3 +163,82 @@
         {% include '_blocks/_footer.html.twig' %}
     </div>
 {% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const input = document.querySelector('.keyword-input');
+            const list = document.querySelector('#keywords-list');
+            const keywords = document.querySelector('.form-keywords');
+            const hiddenInput = document.querySelector('#{{ form.withKeywords.vars.id }}');
+            const hiddenInputValue = hiddenInput.value.split('|');
+            const keywordItems = list.querySelectorAll('.keyword-item');
+            const keywordList = [];
+            keywordItems.forEach(function (item) {
+                keywordList.push(item);
+            });
+            keywordList.forEach(function (item) {
+                if (hiddenInputValue.includes(item.dataset.value)) {
+                    const keyword = document.createElement('div');
+                    const close =document.createElement('div');
+                    keyword.classList.add('keyword');
+                    keyword.dataset.value = item.dataset.value;
+                    keyword.innerHTML = item.dataset.label;
+                    close.classList.add('close');
+                    close.innerHTML = '×';
+                    close.addEventListener('click', function () {
+                        keyword.remove();
+                        item.removeAttribute('data-added');
+                        hiddenInput.value = Array.from(keywords.querySelectorAll('.keyword')).map(function (keyword) {
+                            return keyword.dataset.value;
+                        }).join('|');
+                    });
+                    keyword.appendChild(close);
+                    keywords.appendChild(keyword);
+                    item.dataset.added = "1";
+                }
+            });
+            input.addEventListener('input', function () {
+                const value = input.value;
+                keywordList.forEach(function (item) {
+                    if (!item.dataset.added && item.dataset.label.toLowerCase().includes(value.toLowerCase())) {
+                        item.classList.remove('d-none');
+                    } else {
+                        item.classList.add('d-none');
+                    }
+                });
+            });
+            list.addEventListener('click', function (e) {
+                if (e.target.classList.contains('keyword-item')) {
+                    const value = e.target.dataset.value;
+                    const label = e.target.dataset.label;
+                    const keyword = document.createElement('div');
+                    const close =document.createElement('div');
+                    keyword.classList.add('keyword');
+                    keyword.dataset.value = value;
+                    keyword.innerHTML = label;
+                    close.classList.add('close');
+                    close.innerHTML = '×';
+                    close.addEventListener('click', function () {
+                        keyword.remove();
+                        e.target.removeAttribute('data-added');
+                        hiddenInput.value = Array.from(keywords.querySelectorAll('.keyword')).map(function (keyword) {
+                            return keyword.dataset.value;
+                        }).join('|');
+                    });
+                    keyword.appendChild(close);
+                    keywords.appendChild(keyword);
+                    e.target.dataset.added = "1";
+                    input.value = '';
+                    keywordList.forEach(function (item) {
+                        item.classList.add('d-none');
+                    });
+                    hiddenInput.value = Array.from(keywords.querySelectorAll('.keyword')).map(function (keyword) {
+                        return keyword.dataset.value;
+                    }).join('|');
+                }
+            });
+        });
+    </script>
+{% endblock %}
+

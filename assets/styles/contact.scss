@@ -22,6 +22,10 @@
             flex-direction: row;
             gap: 1rem;
 
+            &:has(.form-field.full-width) {
+                flex-direction: column;
+            }
+
             .form-field {
                 flex-shrink: 0;
                 flex-grow: 1;
@@ -30,6 +34,15 @@
                     max-width: calc(50% - 0.5rem);
                     flex-shrink: 0;
                     flex-grow: 1;
+                }
+
+                &.full-width {
+                    width: 100%;
+
+                    &:has(select) {
+                        max-width: unset;
+                        width: 100%;
+                    }
                 }
 
                 input[type="date"],
@@ -127,6 +140,83 @@
                         }
                     }
                 }
+
+                label:has(.keyword-list) {
+                    display: flex;
+                    flex-direction: column;
+                    gap: .25rem;
+                    position: relative;
+                    width: 100%;
+
+                    .keyword-input {
+                        appearance: none;
+                        background-color: var(--gradient-ardoise-80);
+                        border: 1px solid var(--gradient-ardoise-50);
+                        border-radius: .25em;
+                        color: var(--gradient-ardoise-10);
+                        padding-block: .25rem;
+                        padding-inline: .5rem;
+                        width: 100%;
+                    }
+
+                    .keyword-list {
+                        background-color: var(--gradient-ardoise-80);
+                        border: 1px solid var(--gradient-ardoise-50);
+                        left: 0;
+                        max-height: 20rem;
+                        overflow-y: auto;
+                        position: absolute;
+                        top: 3.75rem;
+                        width: 100%;
+                        z-index: 4;
+
+                        .keyword-item {
+                            padding-block: .25rem;
+                            padding-inline: .5rem;
+
+                            &:hover {
+                                background-color: var(--gradient-orange-40);
+                                color: var(--gradient-orange-90);
+                            }
+                        }
+                    }
+
+                    .form-keywords {
+                        background-color: var(--gradient-ardoise-80);
+                        border: 1px solid var(--gradient-ardoise-50);
+                        border-radius: .25em;
+                        display: flex;
+                        flex-direction: row;
+                        gap: .25rem;
+                        flex-wrap: wrap;
+                        padding: .25rem;
+                        width: 100%;
+
+                        .keyword {
+                            background-color: var(--gradient-orange-50);
+                            border-radius: .25em;
+                            color: var(--gradient-orange-90);
+                            cursor: pointer;
+                            font-weight: 300;
+                            padding-block: .25rem;
+                            padding-inline: .5rem 1.25rem;
+                            position: relative;
+
+                            &:hover {
+                                background-color: var(--gradient-orange-40);
+                                color: var(--gradient-orange-90);
+                            }
+
+                            .close {
+                                font-size: 1rem;
+                                font-weight: 900;
+                                position: absolute;
+                                right: .25rem;
+                                top: 0;
+                            }
+                        }
+                    }
+                }
             }
 
             button {
@@ -167,6 +257,12 @@
 
             .form-row {
                 flex-direction: column !important;
+
+                .form-field {
+                    &:has(select) {
+                        max-width: 100% !important;
+                    }
+                }
             }
         }
     }

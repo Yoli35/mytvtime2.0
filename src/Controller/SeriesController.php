@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Entity\UserSeries;
 use App\Form\SeriesAdvancedSearchType;
 use App\Form\SeriesSearchType;
+use App\Repository\KeywordRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
@@ -27,6 +28,7 @@ class SeriesController extends AbstractController
     public function __construct(
         private readonly DateService          $dateService,
         private readonly ImageConfiguration   $imageConfiguration,
+        private readonly KeywordRepository    $keywordRepository,
         private readonly SeriesRepository     $seriesRepository,
         private readonly TMDBService          $tmdbService,
         private readonly TranslatorInterface  $translator,
@@ -89,14 +91,17 @@ class SeriesController extends AbstractController
         $series = [];
         $slugger = new AsciiSlugger();
         $watchProviders = $this->getWatchProviders($user?->getPreferredLanguage() ?? $request->getLocale(), $user?->getCountry() ?? 'FR');
+        $keywords = $this->getKeywords();
 
         $seriesSearch = new SeriesAdvancedSearchDTO($user?->getPreferredLanguage() ?? $request->getLocale(), $user?->getCountry() ?? 'FR', $user?->getTimezone() ?? 'Europe/Paris', 1);
         $seriesSearch->setWatchProviders($watchProviders['watchProviderSelect']);
+        $seriesSearch->setKeywords($keywords);
         $form = $this->createForm(SeriesAdvancedSearchType::class, $seriesSearch);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $searchString = $this->getSearchString($form->getData());
+            dump($searchString);
             $searchResult = json_decode($this->tmdbService->getFilterTv($searchString), true);
 
             if ($searchResult['total_results'] == 1) {
@@ -415,6 +420,17 @@ class SeriesController extends AbstractController
         return ['watchProviderSelect' => $watchProviders, 'watchProviderLogos' => $watchProviderLogos];
     }
 
+    public function getKeywords(): array
+    {
+        $keywords = $this->keywordRepository->findby([], ['name' => 'ASC']);
+
+        $keywordArray = [];
+        foreach ($keywords as $keyword) {
+            $keywordArray[$keyword->getName()] = $keyword->getKeywordId();
+        }
+        return $keywordArray;
+    }
+
     public function getSearchString($data): string
     {
         // App\DTO\SeriesAdvancedSearchDTO {#811 ▼
@@ -447,6 +463,7 @@ class SeriesController extends AbstractController
         $withOriginalLanguage = $data->getWithOriginalLanguage();
         $withWatchMonetizationTypes = $data->getWithWatchMonetizationTypes();
         $withWatchProviders = $data->getWithWatchProviders();
+        $withKeywords = $data->getWithKeywords();
         $withRuntimeGTE = $data->getWithRuntimeGTE();
         $withRuntimeLTE = $data->getWithRuntimeLTE();
         $withStatus = $data->getWithStatus();
@@ -461,6 +478,7 @@ class SeriesController extends AbstractController
         if ($withOriginalLanguage) $searchString .= "&with_original_language={$withOriginalLanguage}";
         if ($withWatchMonetizationTypes) $searchString .= "&with_watch_monetization_types={$withWatchMonetizationTypes}";
         if ($withWatchProviders) $searchString .= "&with_watch_providers={$withWatchProviders}";
+        if ($withKeywords) $searchString .= "&with_keywords={$withKeywords}";
         if ($withRuntimeGTE) $searchString .= "&with_runtime.gte={$withRuntimeGTE}";
         if ($withRuntimeLTE) $searchString .= "&with_runtime.lte={$withRuntimeLTE}";
         if ($withStatus) $searchString .= "&with_status={$withStatus}";
