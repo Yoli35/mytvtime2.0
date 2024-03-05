@@ -311,6 +311,29 @@
                         }
 
                     }
+
+                    .keywords {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: .5rem;
+                        justify-content: center;
+                        width: 100%;
+
+                        .keyword {
+                            align-items: center;
+                            background-color: var(--gradient-orange-50);
+                            border-radius: .25rem;
+                            color: var(--gradient-orange-90);
+                            display: flex;
+                            font-size: 1rem;
+                            font-weight: 300;
+                            gap: .25rem;
+                            justify-content: center;
+                            padding: .25rem;
+                            position: relative;
+                        }
+
+                    }
                 }
             }
         }

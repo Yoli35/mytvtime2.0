@@ -101,7 +101,6 @@ class SeriesController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $searchString = $this->getSearchString($form->getData());
-            dump($searchString);
             $searchResult = json_decode($this->tmdbService->getFilterTv($searchString), true);
 
             if ($searchResult['total_results'] == 1) {
@@ -109,6 +108,7 @@ class SeriesController extends AbstractController
             }
             $series = $this->getSearchResult($searchResult, $slugger);
         }
+        dump($series);
 
         return $this->render('series/search-advanced.html.twig', [
             'form' => $form->createView(),
@@ -124,9 +124,18 @@ class SeriesController extends AbstractController
     #[Route('/tmdb/{id}-{slug}', name: 'tmdb', requirements: ['id' => Requirement::DIGITS])]
     public function tmdb(Request $request, $id, $slug): Response
     {
+        $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
+        if ($series) {
+            $series->setVisitNumber($series->getVisitNumber() + 1);
+            $this->seriesRepository->save($series, true);
+            $localizedName = $series->getLocalizedName($request->getLocale());
+        } else {
+            $localizedName = null;
+        }
         $tv = json_decode($this->tmdbService->getTv($id, $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords"]), true);
 
-        $this->checkTmdbSlug($tv, $slug);
+        dump($localizedName);
+        $this->checkTmdbSlug($tv, $slug, $localizedName?->getSlug());
 
         $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
         $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
@@ -136,8 +145,10 @@ class SeriesController extends AbstractController
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
 
+        dump($tv);
         return $this->render('series/tmdb.html.twig', [
             'tv' => $tv,
+            'localizedName' => $localizedName,
         ]);
     }
 
@@ -314,11 +325,15 @@ class SeriesController extends AbstractController
         return true;
     }
 
-    public function checkTmdbSlug($series, $slug): bool|Response
+    public function checkTmdbSlug($series, $slug, $localizedSlug = null): bool|Response
     {
-        $slugger = new AsciiSlugger();
-        $realSlug = $slugger->slug($series['name'])->lower()->toString();
-        if ($realSlug !== $slug) {
+        if ($localizedSlug) {
+            $realSlug = $localizedSlug;
+        } else {
+            $slugger = new AsciiSlugger();
+            $realSlug = $slugger->slug($series['name'])->lower()->toString();
+        }
+        if ($realSlug != "" && $realSlug !== $slug) {
             return $this->redirectToRoute('app_series_tmdb', [
                 'id' => $series['id'],
                 'slug' => $realSlug,
@@ -492,11 +507,25 @@ class SeriesController extends AbstractController
         return array_map(function ($tv) use ($slugger) {
             $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             $tv['poster_path'] = $tv['poster_path'] ? '/series/posters' . $tv['poster_path'] : null;
+
+            $name = $tv['name'];
+            $slug = $slugger->slug($name)->lower()->toString();
+            if ($slug == "") {
+                $tvUS = $this->tmdbService->getTv($tv['id'], 'en-US');
+                $tvUS = json_decode($tvUS, true);
+                $slug = $slugger->slug($tvUS['name'])->lower()->toString();
+                if ($slug == "") {
+                    $slug = $tv['id'];
+                } else {
+                    $name = $tvUS['name'];
+                }
+            }
+
             return [
                 'tmdb' => true,
                 'id' => $tv['id'],
-                'name' => $tv['name'],
-                'slug' => $slugger->slug($tv['name'])->lower()->toString(),
+                'name' => $name,
+                'slug' => $slug,
                 'poster_path' => $tv['poster_path'],
             ];
         }, $searchResult['results'] ?? []);

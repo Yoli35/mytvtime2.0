@@ -148,20 +148,66 @@
                     position: relative;
                     width: 100%;
 
-                    .keyword-input {
-                        appearance: none;
-                        background-color: var(--gradient-ardoise-80);
-                        border: 1px solid var(--gradient-ardoise-50);
-                        border-radius: .25em;
-                        color: var(--gradient-ardoise-10);
-                        padding-block: .25rem;
-                        padding-inline: .5rem;
-                        width: 100%;
+                    .input-group {
+                        display: flex;
+                        gap:.125rem;
+
+                        .keyword-input {
+                            appearance: none;
+                            background-color: var(--gradient-ardoise-80);
+                            border: 1px solid var(--gradient-ardoise-50);
+                            border-radius: .25em;
+                            color: var(--gradient-ardoise-10);
+                            padding-block: .25rem;
+                            padding-inline: .5rem;
+                            width: 100%;
+                        }
+
+                        .and-or {
+                            background-color: var(--gradient-ardoise-80);
+                            border: 1px solid var(--gradient-ardoise-50);
+                            border-radius: .25em;
+                            color: var(--gradient-ardoise-10);
+                            display: flex;
+
+                            .and, .or {
+                                align-items: center;
+                                background-color: var(--gradient-ardoise-80);
+                                border: none;
+                                color: var(--gradient-ardoise-10);
+                                cursor: pointer;
+                                display: flex;
+                                justify-content: center;
+                                padding-block: .25rem;
+                                padding-inline: .5rem;
+                                width: 50%;
+
+                                &:hover {
+                                    background-color: var(--gradient-ardoise-70);
+                                    color: var(--gradient-ardoise-10);
+                                }
+
+                                &.active {
+                                    background-color: var(--gradient-orange-50);
+                                    color: var(--gradient-orange-90);
+                                }
+                            }
+
+                            .and {
+                                border-radius: calc(.25rem - 1px) 0 0 calc(.25rem - 1px);
+                                border-right: 1px solid var(--gradient-ardoise-50);
+                            }
+
+                            .or {
+                                border-radius: 0 calc(.25rem - 1px) calc(.25rem - 1px) 0;
+                            }
+                        }
                     }
 
                     .keyword-list {
                         background-color: var(--gradient-ardoise-80);
                         border: 1px solid var(--gradient-ardoise-50);
+                        display: none;
                         left: 0;
                         max-height: 20rem;
                         overflow-y: auto;
@@ -169,6 +215,10 @@
                         top: 3.75rem;
                         width: 100%;
                         z-index: 4;
+
+                        &.show {
+                            display: block;
+                        }
 
                         .keyword-item {
                             padding-block: .25rem;
@@ -185,12 +235,16 @@
                         background-color: var(--gradient-ardoise-80);
                         border: 1px solid var(--gradient-ardoise-50);
                         border-radius: .25em;
-                        display: flex;
+                        display: none;
                         flex-direction: row;
                         gap: .25rem;
                         flex-wrap: wrap;
                         padding: .25rem;
                         width: 100%;
+
+                        &:has(.keyword) {
+                            display: flex;
+                        }
 
                         .keyword {
                             background-color: var(--gradient-orange-50);
@@ -198,7 +252,7 @@
                             color: var(--gradient-orange-90);
                             cursor: pointer;
                             font-weight: 300;
-                            padding-block: .25rem;
+                            padding-block: .125rem;
                             padding-inline: .5rem 1.25rem;
                             position: relative;
 

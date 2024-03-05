@@ -72,9 +72,15 @@
                 <div class="form-field full-width">
                     <label for="{{ form.withKeywords.vars.id }}">
                         {{ form.withKeywords.vars.label|trans }}
-                        <input type="search" class="keyword-input" placeholder="{{ 'Start tapping to search'|trans }}">
+                        <div class="input-group">
+                            <input type="search" class="keyword-input" placeholder="{{ 'Start tapping to search'|trans }}">
+                            <div class="and-or">
+                                <div class="and active" data-value="," data-title="{{ 'All keywords'|trans }}">{{ 'And'|trans }}</div>
+                                <div class="or" data-value="|" data-title="{{ 'Any keywords'|trans }}">{{ 'Or'|trans }}</div>
+                            </div>
+                        </div>
                         <div class="keyword-list" id="keywords-list">
-                            {% for label, value in field_choices(form.withKeywords) %}
+                            {% for label, value in form.vars.value.keywords %}
                                 <div data-value="{{ value }}" class="keyword-item d-none" data-label="{{ label }}" data-title="{{ label|trans([], 'keywords') }}">{{ label }}</div>
                             {% endfor %}
                         </div>
@@ -200,6 +206,10 @@
             });
             input.addEventListener('input', function () {
                 const value = input.value;
+                if (value.length)
+                    list.classList.add('show');
+                else
+                    list.classList.remove('show');
                 keywordList.forEach(function (item) {
                     if (!item.dataset.added && item.dataset.label.toLowerCase().includes(value.toLowerCase())) {
                         item.classList.remove('d-none');
@@ -230,6 +240,7 @@
                     keywords.appendChild(keyword);
                     e.target.dataset.added = "1";
                     input.value = '';
+                    list.classList.remove('show');
                     keywordList.forEach(function (item) {
                         item.classList.add('d-none');
                     });

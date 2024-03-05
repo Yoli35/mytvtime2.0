@@ -82,12 +82,17 @@ class SeriesAdvancedSearchType extends AbstractType
                 'required' => false,
                 'empty_data' => '',
             ])
-            ->add('withKeywords', ChoiceType::class, [
+//            ->add('withKeywords', ChoiceType::class, [
+//                'label' => 'Keywords',
+//                'required' => false,
+//                'empty_data' => '',
+//                'choices' => $options['data']->getKeywords(),
+//                'choice_translation_domain' => false,
+//            ])
+            ->add('withKeywords', HiddenType::class, [
                 'label' => 'Keywords',
                 'required' => false,
                 'empty_data' => '',
-                'choices' => $options['data']->getKeywords(),
-                'choice_translation_domain' => false,
             ])
             ->add('withStatus', ChoiceType::class, [
                 'label' => 'Status',
@@ -144,8 +149,7 @@ class SeriesAdvancedSearchType extends AbstractType
             ->add('page', HiddenType::class, [
                 'data' => 1,
                 'empty_data' => '1',
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

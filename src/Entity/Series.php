@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SeriesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\UX\Turbo\Attribute\Broadcast;
@@ -47,6 +49,14 @@ class Series
 
     #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
     private ?int $visitNumber = null;
+
+    #[ORM\OneToMany(targetEntity: SeriesLocalizedName::class, mappedBy: 'series', orphanRemoval: true)]
+    private Collection $seriesLocalizedNames;
+
+    public function __construct()
+    {
+        $this->seriesLocalizedNames = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -201,5 +211,45 @@ class Series
             'updatedAt' => $this->getUpdatedAt(),
             'visitNumber' => $this->getVisitNumber(),
         ];
+    }
+
+    /**
+     * @return Collection<int, SeriesLocalizedName>
+     */
+    public function getSeriesLocalizedNames(): Collection
+    {
+        return $this->seriesLocalizedNames;
+    }
+
+    public function getLocalizedName($locale): ?SeriesLocalizedName
+    {
+        foreach ($this->seriesLocalizedNames as $seriesLocalizedName) {
+            if ($seriesLocalizedName->getLocale() === $locale) {
+                return $seriesLocalizedName;
+            }
+        }
+        return null;
+    }
+
+    public function addSeriesLocalizedName(SeriesLocalizedName $seriesLocalizedName): static
+    {
+        if (!$this->seriesLocalizedNames->contains($seriesLocalizedName)) {
+            $this->seriesLocalizedNames->add($seriesLocalizedName);
+            $seriesLocalizedName->setSeries($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSeriesLocalizedName(SeriesLocalizedName $seriesLocalizedName): static
+    {
+        if ($this->seriesLocalizedNames->removeElement($seriesLocalizedName)) {
+            // set the owning side to null (unless already changed)
+            if ($seriesLocalizedName->getSeries() === $this) {
+                $seriesLocalizedName->setSeries(null);
+            }
+        }
+
+        return $this;
     }
 }
