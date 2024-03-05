@@ -27,7 +27,14 @@
                     {% endif %}
                 </div>
                 <div class="infos">
-                    <h1>{{ tv.name }} ({{ tv.first_air_date|date("Y") }})</h1>
+                    <h1>
+                        {% if localizedName %}
+                            {{ localizedName.name }} - {{ tv.name }}
+                        {% else %}
+                            {{ tv.name }}
+                        {% endif %}
+                        ({{ tv.first_air_date|date("Y") }})
+                    </h1>
                     <div class="overview">{{ tv.overview|nl2br }}</div>
                     <div class="backdrop">
                         <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }}">
@@ -188,6 +195,15 @@
                                                 {% endif %}
                                             </div>
                                         </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if tv.keywords|length %}
+                            <div class="fact">
+                                <div class="keywords">
+                                    {% for k in tv.keywords.results %}
+                                        <div class="keyword" data-title="{{ k.name|trans([], 'keywords') }}">{{ k.name }}</div>
                                     {% endfor %}
                                 </div>
                             </div>
