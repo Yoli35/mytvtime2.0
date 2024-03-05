@@ -501,7 +501,7 @@ label:has(input[type="text"]) {
     position: absolute;
     transition: opacity 150ms ease-in-out;
     width: 30rem;
-    z-index: 1;
+    z-index: 10;
 
     img {
         border-radius: .25rem;
@@ -520,13 +520,14 @@ label:has(input[type="text"]) {
     align-items: center;
     display: flex;
     flex-direction: column;
-    height: 4em;
+    max-width: 32rem;
+    min-height: 4rem;
     justify-content: revert;
     left: 0;
     opacity: 0;
     pointer-events: none;
     position: absolute;
-    top: -4em;
+    top: -4rem;
     transition: opacity .125s;
     z-index: 10;
 
