@@ -44,10 +44,10 @@
 
             <div class="content">
                 <div class="left">
-                    <div class="seasons">
+                    <div class="seasons-episodes">
                         <h3>{{ 'Seasons'|trans }}</h3>
                         {% for season in tv.seasons %}
-                            <div class="season">
+                            <div class="season-episode">
                                 <div class="poster">
                                     {% if season.poster_path %}
                                         <img src="{{ season.poster_path }}" alt="{{ season.name }}">
@@ -214,4 +214,8 @@
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
+
+    <a href="{{ path('app_series_add', {id: tv.id}) }}">
+        <div class="add-this-series">{{ 'Add this series to your watchlist'|trans }}</div>
+    </a>
 {% endblock %}

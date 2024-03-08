@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\UserSeries;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,9 +17,18 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserSeriesRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $em)
     {
         parent::__construct($registry, UserSeries::class);
+    }
+
+    public function save(UserSeries $userSeries, bool $flush = false): void
+    {
+        $this->em->persist($userSeries);
+
+        if ($flush) {
+            $this->em->flush();
+        }
     }
 
     public function getLastAddedSeries($page = 1, $perPage = 20)

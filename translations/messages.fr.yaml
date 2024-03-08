@@ -46,6 +46,7 @@ Episodes: Épisodes
 episodes: épisodes
 episode: épisode
 Air date: 'Date de diffusion :'
+Networks: Réseaux
 Key facts: Points clés
 Original name: Nom original
 Original language: Langue originale
@@ -59,6 +60,10 @@ Planned: Planifié
 Returning Series: Série renouvelée
 Pilot: Pilote
 Network: Réseau
+Add this series to your watchlist: Ajouter cette série à votre liste de suivi
+Series added to your watchlist: Série ajoutée à votre liste de suivi
+Series already in your watchlist: Série déjà dans votre liste de suivi
+season: saison
 
 #Search
 Search: Rechercher

@@ -1,0 +1,166 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Series'|trans }} → {{ series.name }} → {{ 'season'|trans }} {{ season.season_number }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+{% endblock %}
+{% block body %}
+    <script>
+        const bd = '/series/posters{{ season.poster_path }}';
+        const body = document.querySelector("body");
+        body.style.backgroundSize = "cover";
+        body.style.backgroundPosition = "center";
+        body.style.backgroundRepeat = "no-repeat";
+        body.style.backgroundAttachment = "fixed";
+        body.style.backgroundImage = "url(" + bd + ")";
+    </script>
+    <div class="container-fluid backgroundImageOverlay">
+        {% include '_blocks/_menu.html.twig' %}
+        <div class="series-show">
+            <div class="header">
+                <div class="poster">
+                    <img src="/series/posters{{ season.poster_path }}" alt="{{ series.name }} {{ season.season_number }}">
+                </div>
+                <div class="infos">
+                    <h1>{{ season.name }} ({{ season.air_date|date("Y") }})</h1>
+                    <div class="overview">{{ season.overview }}</div>
+                    {% if season.deepl is defined %}
+                        {% if season.deepl.localized %}
+                            <div class="overview deepl">{{ season.deepl.localizedOverview|raw }}</div>
+                        {% endif %}
+                    {% endif %}
+                    <div class="backdrop">
+                        <img src="/series/backdrops{{ series.backdropPath }}" alt="{{ series.name }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="content column">
+                <div class="seasons-episodes">
+                    <h3>{{ 'Episodes'|trans }}</h3>
+                    {% for episode in season.episodes %}
+                        <div class="season-episode">
+                            <div class="still">
+                                {% if episode.still_path %}
+                                    <img src="{{ episode.still_path }}" alt="{{ episode.name }}">
+                                {% else %}
+                                    <div>{{ 'No poster'|trans }}</div>
+                                {% endif %}
+                                <div class="number">
+                                    {{ episode.episode_number }}
+                                </div>
+                            </div>
+                            <div class="infos">
+                                <div class="name">{{ episode.name }}</div>
+                                {% if episode.air_date %}
+                                    <div class="air-date">{{ 'Air date'|trans }} {{ date(episode.air_date)|format_date('relative_short') }}</div>
+                                {% endif %}
+                                {% if episode.runtime %}
+                                    <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
+                                {% endif %}
+                                {% if episode.overview %}
+                                    <div class="overview">{{ episode.overview }}</div>
+                                {% endif %}
+                                {% if episode.guest_stars %}
+                                    <div class="guest-stars">
+                                        <div class="wrapper">
+                                            {% for people in episode.guest_stars %}
+                                                <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
+                                                    <div class="people" data-title="{{ people.name }} - {{ people.character }}">
+                                                        <div class="profile">
+                                                            {% if people.profile_path %}
+                                                                <img src="{{ people.profile_path }}" alt="{{ people.name }}">
+                                                            {% else %}
+                                                                {{ 'No picture'|trans }}
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if season.credits.cast|length %}
+                    <h3>{{ 'Cast'|trans }}</h3>
+                    <div class="cast">
+                        <div class="wrapper">
+                            {% for people in season.credits.cast %}
+                                <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
+                                    <div class="people">
+                                        <div class="profile">
+                                            {% if people.profile_path %}
+                                                <img src="{{ people.profile_path }}" alt="{{ people.name }}">
+                                            {% else %}
+                                                {{ 'No picture'|trans }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="infos">
+                                            <div class="name">{{ people.name }}</div>
+                                            <div>{{ people.character }}</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if season.credits.guest_stars|length %}
+                    <h3>{{ 'Guest starts'|trans }}</h3>
+                    <div class="cast">
+                        <div class="wrapper">
+                            {% for people in season.credits.guest_stars %}
+                                <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
+                                    <div class="people">
+                                        <div class="profile">
+                                            {% if people.profile_path %}
+                                                <img src="{{ people.profile_path }}" alt="{{ people.name }}">
+                                            {% else %}
+                                                {{ 'No picture'|trans }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="infos">
+                                            <div class="name">{{ people.name }}</div>
+                                            <div>{{ people.caracter }}</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if season.credits.crew|length %}
+                    <h3>{{ 'Crew'|trans }}</h3>
+                    <div class="crew">
+                        <div class="wrapper">
+                            {% for people in season.credits.crew %}
+                                <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
+                                    <div class="people">
+                                        <div class="profile">
+                                            {% if people.profile_path %}
+                                                <img src="{{ people.profile_path }}" alt="{{ people.name }}">
+                                            {% else %}
+                                                {{ 'No picture'|trans }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="infos">
+                                            <div class="name">{{ people.name }}</div>
+                                            <div>{{ people.job ~ ' - ' ~ people.department }}</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% include '_blocks/_footer.html.twig' %}
+    </div>
+{% endblock %}

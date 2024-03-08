@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
+use App\Entity\Series;
 use App\Entity\User;
 use App\Entity\UserSeries;
 use App\Form\SeriesAdvancedSearchType;
@@ -12,13 +13,19 @@ use App\Repository\KeywordRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
+use App\Service\DeeplTranslator;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
+use DeepL\DeepLException;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Clock\ClockInterface;
+use Symfony\Component\Clock\DatePoint;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -26,7 +33,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SeriesController extends AbstractController
 {
     public function __construct(
+        private readonly ClockInterface       $clock,
         private readonly DateService          $dateService,
+        private readonly DeeplTranslator      $deeplTranslator,
         private readonly ImageConfiguration   $imageConfiguration,
         private readonly KeywordRepository    $keywordRepository,
         private readonly SeriesRepository     $seriesRepository,
@@ -124,7 +133,16 @@ class SeriesController extends AbstractController
     #[Route('/tmdb/{id}-{slug}', name: 'tmdb', requirements: ['id' => Requirement::DIGITS])]
     public function tmdb(Request $request, $id, $slug): Response
     {
+        $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
+        $userSeries = $user ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
+        if ($userSeries) {
+            $this->redirectToRoute('app_series_show', [
+                'id' => $series->getId(),
+                'slug' => $series->getSlug(),
+            ], 301);
+        }
+
         if ($series) {
             $series->setVisitNumber($series->getVisitNumber() + 1);
             $this->seriesRepository->save($series, true);
@@ -152,6 +170,32 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_USER')]
+    #[Route('/add/{id}', name: 'add', requirements: ['id' => Requirement::DIGITS])]
+    public function addUserSeries(Request $request, int $id): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $date = $this->now();
+        $series = $this->addSeries($id, $date);
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+
+        if ($userSeries) {
+            $this->addFlash('warning', 'Series already added to your watchlist');
+        } else {
+            $userSeries = new UserSeries($user, $series, $date);
+            $userSeries->setUser($user);
+            $userSeries->setSeries($series);
+            $this->userSeriesRepository->save($userSeries, true);
+            $this->addFlash('success', 'Series added to your watchlist');
+        }
+        return $this->redirectToRoute('app_series_show', [
+            'id' => $series->getId(),
+            'slug' => $series->getSlug(),
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
     #[Route('/show/{id}-{slug}', name: 'show', requirements: ['id' => Requirement::DIGITS])]
     public function show(Request $request, $id, $slug): Response
     {
@@ -178,6 +222,75 @@ class SeriesController extends AbstractController
             'series' => $series,
             'tv' => $tv,
             'userSeries' => $userSeries,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/show/season/{id}/{seasonNumber}-{slug}', name: 'season', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS])]
+    public function showSeason(Request $request, $id, $seasonNumber, $slug): Response
+    {
+        $series = $this->seriesRepository->findOneBy(['id' => $id]);
+        $this->checkSlug($series, $slug);
+        $slugger = new AsciiSlugger();
+
+        $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $request->getLocale(), ['credits']), true);
+        if ($season['poster_path']) {
+            $this->saveImage("posters", $season['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+        } else {
+            $season['poster_path'] = $series->getPosterPath();
+        }
+        if (!strlen($season['overview'])) {
+            $usSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, 'en-US'), true);
+            $season['overview'] = $usSeason['overview'];
+            $localized = false;
+            $localizedOverview = null;
+            $localizedResult = null;
+            if (strlen($season['overview'])) {
+                try {
+                    $usage = $this->deeplTranslator->translator->getUsage();
+                    if ($usage->character->count + strlen($season['overview']) < $usage->character->limit) {
+                        $localizedOverview = $this->deeplTranslator->translator->translateText($season['overview'], null, $request->getLocale());
+                        $localized = true;
+                    } else {
+                        $localizedResult = 'Limit exceeded';
+                    }
+                } catch (DeepLException $e) {
+                    $localizedResult = 'Error: code ' . $e->getCode() . ', message: ' . $e->getMessage();
+                    $usage = [
+                        'character' => [
+                            'count' => 0,
+                            'limit' => 500000
+                        ]
+                    ];
+                }
+            }
+            $season['deepl'] = [
+                'localized' => $localized,
+                'localizedOverview' => $localizedOverview,
+                'localizedResult' => $localizedResult,
+                'usage' => $usage ?? null
+            ];
+        }
+        $season['episodes'] = array_map(function ($episode) use ($slugger) {
+            $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
+            $episode['crew'] = array_map(function ($crew) use ($slugger) {
+                $crew['profile_path'] = $crew['profile_path'] ? $this->imageConfiguration->getCompleteUrl($crew['profile_path'], 'profile_sizes', 2) : null; // w185
+                $crew['slug'] = $slugger->slug($crew['name'])->lower()->toString();
+                return $crew;
+            }, $episode['crew'] ?? []);
+            $episode['guest_stars'] = array_map(function ($guest) use ($slugger) {
+                $guest['profile_path'] = $guest['profile_path'] ? $this->imageConfiguration->getCompleteUrl($guest['profile_path'], 'profile_sizes', 2) : null; // w185
+                $guest['slug'] = $slugger->slug($guest['name'])->lower()->toString();
+                return $guest;
+            }, $episode['guest_stars'] ?? []);
+            return $episode;
+        }, $season['episodes']);
+        $season['credits'] = $this->castAndCrew($season);
+
+        dump($season);
+        return $this->render('series/season.html.twig', [
+            'series' => $series,
+            'season' => $season,
         ]);
     }
 
@@ -314,6 +427,46 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    public function addSeries($id, $date): Series
+    {
+        $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
+        if ($series) return $series;
+
+        $slugger = new AsciiSlugger();
+        $tv = json_decode($this->tmdbService->getTv($id, 'en-US'), true);
+        $series = new Series();
+        $series->setTmdbId($id);
+        $series->setName($tv['name']);
+        $series->setSlug($slugger->slug($tv['name']));
+        $series->setOriginalName($tv['original_name']);
+        $series->setOverview($tv['overview']);
+        $series->setPosterPath($tv['poster_path']);
+        $series->setBackdropPath($tv['backdrop_path']);
+        $series->setFirstDateAir(new DatePoint($tv['first_air_date']));
+        $series->setVisitNumber(0);
+        $series->setCreatedAt($date);
+        $series->setUpdatedAt($date);
+        $this->seriesRepository->save($series, true);
+
+        return $this->seriesRepository->findOneBy(['tmdbId' => $id]);
+    }
+
+    public function now(): \DateTimeImmutable
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($user->getTimezone()) {
+            $timezone = $user->getTimezone();
+        } else {
+            $timezone = 'Europe/Paris';
+        }
+        try {
+            $this->clock->withTimeZone($timezone);
+        } catch (Exception) {
+        }
+        return $this->clock->now();
+    }
+
     public function checkSlug($series, $slug): bool|Response
     {
         if ($series->getSlug() !== $slug) {
@@ -349,13 +502,17 @@ class SeriesController extends AbstractController
             $cast['slug'] = $slugger->slug($cast['name'])->lower()->toString();
             $cast['profile_path'] = $cast['profile_path'] ? $this->imageConfiguration->getCompleteUrl($cast['profile_path'], 'profile_sizes', 2) : null; // w185
             return $cast;
-        }, $tv['credits']['cast']);
-
+        }, $tv['credits']['cast'] ?? []);
+        $tv['credits']['guest_stars'] = array_map(function ($cast) use ($slugger) {
+            $cast['slug'] = $slugger->slug($cast['name'])->lower()->toString();
+            $cast['profile_path'] = $cast['profile_path'] ? $this->imageConfiguration->getCompleteUrl($cast['profile_path'], 'profile_sizes', 2) : null; // w185
+            return $cast;
+        }, $tv['credits']['guest_stars'] ?? []);
         $tv['credits']['crew'] = array_map(function ($crew) use ($slugger) {
             $crew['slug'] = $slugger->slug($crew['name'])->lower()->toString();
             $crew['profile_path'] = $crew['profile_path'] ? $this->imageConfiguration->getCompleteUrl($crew['profile_path'], 'profile_sizes', 2) : null; // w185
             return $crew;
-        }, $tv['credits']['crew']);
+        }, $tv['credits']['crew'] ?? []);
 
         usort($tv['credits']['crew'], function ($a, $b) {
             return !$a['profile_path'] <=> !$b['profile_path'];

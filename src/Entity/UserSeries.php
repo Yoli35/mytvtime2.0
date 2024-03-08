@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserSeriesRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Clock\ClockInterface;
 
 #[ORM\Entity(repositoryClass: UserSeriesRepository::class)]
 class UserSeries
@@ -38,6 +39,15 @@ class UserSeries
 
     #[ORM\Column(options: ['default' => 0])]
     private ?float $progress = null;
+
+    public function __construct(User $user, Series $serie, $date)
+    {
+        $this->user = $user;
+        $this->series = $serie;
+        $this->addedAt = $date;
+        $this->viewedEpisodes = 0;
+        $this->progress = 0;
+    }
 
     public function getId(): ?int
     {
