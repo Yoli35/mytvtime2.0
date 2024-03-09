@@ -11,6 +11,12 @@ export class PosterHover {
             poster.addEventListener("mousemove", this.showPoster);
             poster.addEventListener("mouseout", this.hidePoster);
         });
+        const stills = document.querySelectorAll(".still");
+        stills.forEach(still => {
+            still.addEventListener("mouseover", this.showPoster);
+            still.addEventListener("mousemove", this.showPoster);
+            still.addEventListener("mouseout", this.hidePoster);
+        });
         const cast = document.querySelector(".cast");
         if (cast) {
             const people = cast.querySelectorAll(".people");

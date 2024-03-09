@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\EpisodeDTO;
 use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\Series;
@@ -16,6 +17,8 @@ use App\Service\DateService;
 use App\Service\DeeplTranslator;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
+use DateTimeImmutable;
+use DateTimeZone;
 use DeepL\DeepLException;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -171,31 +174,6 @@ class SeriesController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    #[Route('/add/{id}', name: 'add', requirements: ['id' => Requirement::DIGITS])]
-    public function addUserSeries(Request $request, int $id): Response
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-        $date = $this->now();
-        $series = $this->addSeries($id, $date);
-        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-
-        if ($userSeries) {
-            $this->addFlash('warning', 'Series already added to your watchlist');
-        } else {
-            $userSeries = new UserSeries($user, $series, $date);
-            $userSeries->setUser($user);
-            $userSeries->setSeries($series);
-            $this->userSeriesRepository->save($userSeries, true);
-            $this->addFlash('success', 'Series added to your watchlist');
-        }
-        return $this->redirectToRoute('app_series_show', [
-            'id' => $series->getId(),
-            'slug' => $series->getSlug(),
-        ]);
-    }
-
-    #[IsGranted('ROLE_USER')]
     #[Route('/show/{id}-{slug}', name: 'show', requirements: ['id' => Requirement::DIGITS])]
     public function show(Request $request, $id, $slug): Response
     {
@@ -211,17 +189,96 @@ class SeriesController extends AbstractController
         $this->saveImage("backdrops", $series->getBackdropPath(), $this->imageConfiguration->getUrl('backdrop_sizes', 3));
 
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords"]), true);
+        $tv['overview'] = $this->localizedOverview($tv, $series, $request);
         $tv['credits'] = $this->castAndCrew($tv);
         $tv['networks'] = $this->networks($tv);
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
 
         $userSeries = $user ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
+//        if ($userSeries->getRating()==null) {
+//            $userSeries->setRating(0);
+//        }
 
+        dump($userSeries);
         return $this->render('series/show.html.twig', [
             'series' => $series,
             'tv' => $tv,
             'userSeries' => $userSeries,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/add/{id}', name: 'add', requirements: ['id' => Requirement::DIGITS])]
+    public function addUserSeries(Request $request, int $id): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $date = $this->now();
+        $series = $this->addSeries($id, $date);
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+
+        if ($userSeries) {
+            $this->addFlash('warning', 'Series already added to your watchlist');
+        } else {
+            $userSeries = new UserSeries($user, $series, $date);
+            $this->userSeriesRepository->save($userSeries, true);
+            $this->addFlash('success', 'Series added to your watchlist');
+        }
+        return $this->redirectToRoute('app_series_show', [
+            'id' => $series->getId(),
+            'slug' => $series->getSlug(),
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/remove/{id}', name: 'remove', requirements: ['id' => Requirement::DIGITS])]
+    public function removeUserSeries(Series $series): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+
+        $this->userSeriesRepository->remove($userSeries);
+
+        return $this->redirectToRoute('app_series_show', [
+            'id' => $series->getId(),
+            'slug' => $series->getSlug(),
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/favorite/{id}', name: 'favorite', requirements: ['id' => Requirement::DIGITS])]
+    public function favoriteSeries(Series $series): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+
+        $userSeries->setFavorite(!$userSeries->isFavorite());
+        $this->userSeriesRepository->save($userSeries, true);
+
+        return $this->json([
+            'favorite' => $userSeries->isFavorite(),
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/rating/{id}', name: 'rating', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function ratingSeries(Request $request, Series $series): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+
+        $data = json_decode($request->getContent(), true);
+        $rating = $data['rating'];
+        $userSeries->setRating($rating);
+        $this->userSeriesRepository->save($userSeries, true);
+        dump($rating, $userSeries);
+
+        return $this->json([
+            'ok' => true,
         ]);
     }
 
@@ -239,39 +296,8 @@ class SeriesController extends AbstractController
         } else {
             $season['poster_path'] = $series->getPosterPath();
         }
-        if (!strlen($season['overview'])) {
-            $usSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, 'en-US'), true);
-            $season['overview'] = $usSeason['overview'];
-            $localized = false;
-            $localizedOverview = null;
-            $localizedResult = null;
-            if (strlen($season['overview'])) {
-                try {
-                    $usage = $this->deeplTranslator->translator->getUsage();
-                    if ($usage->character->count + strlen($season['overview']) < $usage->character->limit) {
-                        $localizedOverview = $this->deeplTranslator->translator->translateText($season['overview'], null, $request->getLocale());
-                        $localized = true;
-                    } else {
-                        $localizedResult = 'Limit exceeded';
-                    }
-                } catch (DeepLException $e) {
-                    $localizedResult = 'Error: code ' . $e->getCode() . ', message: ' . $e->getMessage();
-                    $usage = [
-                        'character' => [
-                            'count' => 0,
-                            'limit' => 500000
-                        ]
-                    ];
-                }
-            }
-            $season['deepl'] = [
-                'localized' => $localized,
-                'localizedOverview' => $localizedOverview,
-                'localizedResult' => $localizedResult,
-                'usage' => $usage ?? null
-            ];
-        }
-        $season['episodes'] = array_map(function ($episode) use ($slugger) {
+        $season['deepl'] = $this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
+        $season['episodes'] = array_map(function ($episode) use ($series, $season, $slugger) {
             $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
             $episode['crew'] = array_map(function ($crew) use ($slugger) {
                 $crew['profile_path'] = $crew['profile_path'] ? $this->imageConfiguration->getCompleteUrl($crew['profile_path'], 'profile_sizes', 2) : null; // w185
@@ -283,11 +309,14 @@ class SeriesController extends AbstractController
                 $guest['slug'] = $slugger->slug($guest['name'])->lower()->toString();
                 return $guest;
             }, $episode['guest_stars'] ?? []);
+            /** @var User $user */
+            $user = $this->getUser();
+            $episode['dto'] = new EpisodeDTO($user, $series, $season['season_number'], $episode['episode_number'], $this->now());
             return $episode;
         }, $season['episodes']);
         $season['credits'] = $this->castAndCrew($season);
 
-        dump($season);
+        dump($series, $season);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
@@ -451,7 +480,7 @@ class SeriesController extends AbstractController
         return $this->seriesRepository->findOneBy(['tmdbId' => $id]);
     }
 
-    public function now(): \DateTimeImmutable
+    public function now(): DateTimeImmutable
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -460,11 +489,12 @@ class SeriesController extends AbstractController
         } else {
             $timezone = 'Europe/Paris';
         }
+        $now = $this->clock->now();
         try {
-            $this->clock->withTimeZone($timezone);
+            $now = $now->setTimezone(new DateTimeZone($timezone));
         } catch (Exception) {
         }
-        return $this->clock->now();
+        return $now;
     }
 
     public function checkSlug($series, $slug): bool|Response
@@ -493,6 +523,28 @@ class SeriesController extends AbstractController
             ], 301);
         }
         return true;
+    }
+
+    public function localizedOverview($tv, $series, $request): string
+    {
+        if ($tv['overview']) return $tv['overview'];
+
+        if (!strlen($series->getOverview())) {
+            $usSeries = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
+            $overview = $usSeries['overview'];
+            if (strlen($overview)) {
+                try {
+                    $usage = $this->deeplTranslator->translator->getUsage();
+                    if ($usage->character->count + strlen($overview) < $usage->character->limit) {
+                        $overview = $this->deeplTranslator->translator->translateText($usSeries['overview'], null, $request->getLocale());
+                        $series->setOverview($overview);
+                        $this->seriesRepository->save($series, true);
+                    }
+                } catch (DeepLException) {
+                }
+            }
+        }
+        return $series->getOverview();
     }
 
     public function castAndCrew($tv): array
@@ -536,6 +588,43 @@ class SeriesController extends AbstractController
             $season['poster_path'] = $season['poster_path'] ? $this->imageConfiguration->getCompleteUrl($season['poster_path'], 'poster_sizes', 5) : null; // w500
             return $season;
         }, $seasons);
+    }
+
+    public function seasonLocalizedOverview($series, $season, $seasonNumber, $request): array|null
+    {
+        if (!strlen($season['overview'])) {
+            $usSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, 'en-US'), true);
+            $season['overview'] = $usSeason['overview'];
+            $localized = false;
+            $localizedOverview = null;
+            $localizedResult = null;
+            if (strlen($season['overview'])) {
+                try {
+                    $usage = $this->deeplTranslator->translator->getUsage();
+                    if ($usage->character->count + strlen($season['overview']) < $usage->character->limit) {
+                        $localizedOverview = $this->deeplTranslator->translator->translateText($season['overview'], null, $request->getLocale());
+                        $localized = true;
+                    } else {
+                        $localizedResult = 'Limit exceeded';
+                    }
+                } catch (DeepLException $e) {
+                    $localizedResult = 'Error: code ' . $e->getCode() . ', message: ' . $e->getMessage();
+                    $usage = [
+                        'character' => [
+                            'count' => 0,
+                            'limit' => 500000
+                        ]
+                    ];
+                }
+            }
+            return [
+                'localized' => $localized,
+                'localizedOverview' => $localizedOverview,
+                'localizedResult' => $localizedResult,
+                'usage' => $usage ?? null
+            ];
+        }
+        return null;
     }
 
     public function watchProviders($tv, $country): array

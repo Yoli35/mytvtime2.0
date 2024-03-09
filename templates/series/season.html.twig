@@ -25,7 +25,7 @@
                 <div class="infos">
                     <h1>{{ season.name }} ({{ season.air_date|date("Y") }})</h1>
                     <div class="overview">{{ season.overview }}</div>
-                    {% if season.deepl is defined %}
+                    {% if season.deepl %}
                         {% if season.deepl.localized %}
                             <div class="overview deepl">{{ season.deepl.localizedOverview|raw }}</div>
                         {% endif %}
@@ -33,6 +33,18 @@
                     <div class="backdrop">
                         <img src="/series/backdrops{{ series.backdropPath }}" alt="{{ series.name }}">
                     </div>
+                </div>
+                <div class="series-back">
+                    <a href="{{ path('app_series_show', {id: series.id, slug: series.slug}) }}">
+                        {% if series.posterPath %}
+                            <div class="poster-back">
+                                <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }} {{ season.season_number }}">
+                            </div>
+                        {% endif %}
+                        <div class="series-back-link">
+                            <i class="fas fa-arrow-left"></i>&nbsp;<span>{{ 'Back to series'|trans }}</span>
+                        </div>
+                    </a>
                 </div>
             </div>
 
@@ -163,4 +175,18 @@
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const seasonsEpisodes = document.querySelector('.seasons-episodes');
+            const infos = seasonsEpisodes.querySelectorAll('.infos');
+            infos.forEach(info => {
+                info.addEventListener('mouseleave', () => {
+                    info.scrollTop = 0;
+                });
+            });
+        });
+    </script>
 {% endblock %}

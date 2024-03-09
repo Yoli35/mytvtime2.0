@@ -31,7 +31,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         }
     }
 
-    public function getLastAddedSeries($page = 1, $perPage = 20)
+    public function getLastAddedSeries($page = 1, $perPage = 20): mixed
     {
         return $this->createQueryBuilder('us')
             ->orderBy('us.id', 'DESC')
@@ -39,5 +39,13 @@ class UserSeriesRepository extends ServiceEntityRepository
             ->setMaxResults($perPage)
             ->getQuery()
             ->getResult();
+    }
+
+    public function remove(?UserSeries $userSeries): void
+    {
+        if ($userSeries) {
+            $this->em->remove($userSeries);
+            $this->em->flush();
+        }
     }
 }

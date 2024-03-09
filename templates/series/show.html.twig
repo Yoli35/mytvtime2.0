@@ -38,6 +38,30 @@
                 </div>
             </div>
 
+            {% if userSeries %}
+                <div class="user-actions">
+                    <div class="rating">
+                        <div class="rating-stars">
+                            <div class="stars" data-trans-rating="Cancel rating|{{ 'Cancel rating'|trans }}" data-trans-star="star|{{ 'star'|trans }}" data-trans-stars="stars|{{ 'stars'|trans }}">
+                                <i class="star {{ userSeries.rating >= 1 ? "active" }} fas fa-star" data-value="1" data-title="{{ (userSeries.rating >= 1 ? "Cancel rating":"x star")|trans({'x': 1}) }}"></i>
+                                <i class="star {{ userSeries.rating >= 2 ? "active" }} fas fa-star" data-value="2" data-title="{{ (userSeries.rating >= 2 ? "Cancel rating":"x stars")|trans({'x': 2}) }}"></i>
+                                <i class="star {{ userSeries.rating >= 3 ? "active" }} fas fa-star" data-value="3" data-title="{{ (userSeries.rating >= 3 ? "Cancel rating":"x stars")|trans({'x': 3}) }}"></i>
+                                <i class="star {{ userSeries.rating >= 4 ? "active" }} fas fa-star" data-value="4" data-title="{{ (userSeries.rating >= 4 ? "Cancel rating":"x stars")|trans({'x': 4}) }}"></i>
+                                <i class="star {{ userSeries.rating >= 5 ? "active" }} fas fa-star" data-value="5" data-title="{{ (userSeries.rating >= 5 ? "Cancel rating":"x stars")|trans({'x': 5}) }}"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <div class="action toggle-favorite-series{% if userSeries.favorite %} favorite{% endif %}">
+                            <i class="fas fa-heart" data-title="{{ (userSeries.favorite ? "Remove from favorites" : "Add to favorites")|trans }}"></i>
+                        </div>
+                        <div class="action remove-this-series">
+                            <i class="fas fa-trash" data-title="{{ 'Remove this series from your watchlist'|trans }}"></i>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
             <div class="content">
                 <div class="left">
                     <div class="seasons-episodes">
@@ -197,10 +221,79 @@
                                 </div>
                             </div>
                         {% endif %}
+                        {% if tv.keywords|length %}
+                            <div class="fact">
+                                <div class="keywords">
+                                    {% for k in tv.keywords.results %}
+                                        <div class="keyword" data-title="{{ k.name|trans([], 'keywords') }}">{{ k.name }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const userActions = document.querySelector('.user-actions');
+            const lang = document.documentElement.lang;
+            if (userActions) {
+                const stars = userActions.querySelectorAll('.star');
+                stars.forEach(function (star) {
+                    star.addEventListener('click', function () {
+                        const active = this.classList.contains('active');
+                        const value = active ? 0 : this.getAttribute('data-value');
+                        fetch('/' + lang + '/series/rating/' + {{ userSeries.id }}, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({rating: value})
+                        }).then(function (response) {
+                            if (response.ok) {
+                                const transRating = stars[0].parentElement.getAttribute('data-trans-rating').split('|')[lang==='en'?0:1];
+                                const transStar = stars[0].parentElement.getAttribute('data-trans-star').split('|')[lang==='en'?0:1];
+                                const transStars = stars[0].parentElement.getAttribute('data-trans-stars').split('|')[lang==='en'?0:1];
+                                stars.forEach(function (star) {
+                                    star.classList.remove('active');
+                                    if (star.getAttribute('data-value') <= value) {
+                                        star.setAttribute('data-title', transRating);
+                                    } else {
+                                        const v = star.getAttribute('data-value');
+                                        star.setAttribute('data-title', v + ' ' + (v > 1 ? transStars : transStar));
+                                    }
+                                });
+                                for (let i = 0; i < value; i++) {
+                                    stars[i].classList.add('active');
+                                }
+                            }
+                        });
+                    });
+                });
+            }
+            {# const favorite = document.querySelector('.toggle-favorite-series'); #}
+            {# const remove = document.querySelector('.remove-this-series'); #}
+            {# const rating = document.querySelector('.rating-stars'); #}
+            {# const stars = rating.querySelectorAll('.fas.fa-star'); #}
+            {# const seriesId = {{ userSeries.id }}; #}
+            {# const userId = {{ app.user.id }}; #}
+
+            {# favorite.addEventListener('click', function () { #}
+            {#    const isFavorite = this.classList.contains('favorite'); #}
+            {#    const url = '/series/' + seriesId + '/favorite'; #}
+            {#    const method = isFavorite ? 'DELETE' : 'POST'; #}
+            {#    fetch(url, {method: method}).then(function (response) { #}
+            {#        if (response.ok) { #}
+            {#            favorite.classList.toggle('favorite'); #}
+            {#        } #}
+            {#    }); #}
+            {# }); #}
+        });
+    </script>
 {% endblock %}

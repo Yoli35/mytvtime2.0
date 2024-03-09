@@ -2,14 +2,42 @@
 
 namespace App\Service;
 
-use App\Repository\ImageConfigRepository;
 use JetBrains\PhpStorm\ArrayShape;
 
 class ImageConfiguration
 {
-    private array $imageConfiguration;
+    private array $imageConfiguration = [];
 
     public function __construct(private readonly TMDBService $tmdbService)
+    {
+    }
+
+    #[ArrayShape(['url' => "string", 'backdrop_sizes' => "array", 'logo_sizes' => "array", 'poster_sizes' => "array", 'profile_sizes' => "array", 'still_sizes' => "array"])]
+    public function getConfig(): array
+    {
+        if ($this->imageConfiguration === []) {
+            $this->getTMDBConfiguration();
+        }
+        return $this->imageConfiguration;
+    }
+
+    public function getUrl($type, $size): string
+    {
+        if ($this->imageConfiguration === []) {
+            $this->getTMDBConfiguration();
+        }
+        return $this->imageConfiguration['url'] . $this->imageConfiguration[$type][$size];
+    }
+
+    public function getCompleteUrl(string $path, $type, $size): string
+    {
+        if ($this->imageConfiguration === []) {
+            $this->getTMDBConfiguration();
+        }
+        return $this->imageConfiguration['url'] . $this->imageConfiguration[$type][$size] . $path;
+    }
+
+    public function getTMDBConfiguration(): void
     {
         $config = json_decode($this->tmdbService->imageConfiguration(), true);
 
@@ -21,21 +49,5 @@ class ImageConfiguration
             'profile_sizes' => $config['images']['profile_sizes'],
             'still_sizes' => $config['images']['still_sizes'],
         ];
-    }
-
-    #[ArrayShape(['url' => "string", 'backdrop_sizes' => "array", 'logo_sizes' => "array", 'poster_sizes' => "array", 'profile_sizes' => "array", 'still_sizes' => "array"])]
-    public function getConfig(): array
-    {
-        return $this->imageConfiguration;
-    }
-
-    public function getUrl($type, $size): string
-    {
-        return $this->imageConfiguration['url'] . $this->imageConfiguration[$type][$size];
-    }
-
-    public function getCompleteUrl(string $path, $type, $size): string
-    {
-        return $this->imageConfiguration['url'] . $this->imageConfiguration[$type][$size] . $path;
     }
 }

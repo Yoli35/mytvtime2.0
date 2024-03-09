@@ -20,6 +20,7 @@
         gap: 1rem;
         justify-content: flex-start;
         height: 30vw;
+        position: relative;
 
         .poster {
             align-items: center;
@@ -51,7 +52,6 @@
             justify-content: center;
             height: 30vw;
             padding: 1rem;
-            position: relative;
             width: 100%;
 
             &.light {
@@ -99,6 +99,121 @@
                 }
             }
         }
+
+        .series-back {
+            display: none;
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+
+            a {
+                align-items: center;
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+                justify-content: center;
+
+                .poster-back {
+                    align-items: center;
+                    background-color: var(--gradient-ardoise-80);
+                    border-radius: .25rem;
+                    color: var(--gradient-ardoise-10);
+                    display: flex;
+                    height: 9rem;
+                    justify-content: center;
+                    width: 6rem;
+
+                    img {
+                        border-radius: .25rem;
+                        height: 9rem;
+                        object-fit: cover;
+                        width: 6rem;
+                    }
+                }
+
+                .series-back-link {
+                    align-items: center;
+                    background-color: var(--gradient-ardoise-70-alpha-75);
+                    border-radius: .25rem;
+                    color: var(--gradient-ardoise-10);
+                    display: flex;
+                    font-size: 1rem;
+                    font-weight: 300;
+                    justify-content: center;
+                    line-height: 1rem;
+                    padding-block: .25rem;
+                    padding-inline: .5rem;
+                }
+            }
+        }
+
+        &:hover .series-back {
+            display: flex;
+        }
+    }
+
+    .user-actions {
+        align-items: center;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+
+        .rating {
+            align-items: center;
+            background-color: var(--gradient-ardoise-80-alpha-50);
+            border-radius: .25rem;
+            color: var(--gradient-ardoise-10);
+            display: flex;
+            font-size: 1rem;
+            font-weight: 300;
+            gap: .5rem;
+            justify-content: center;
+            padding: .5rem;
+
+            .rating-stars {
+                display: flex;
+                gap: 0;
+                justify-content: center;
+
+                .star {
+                    color: var(--gradient-ardoise-10);
+                    cursor: pointer;
+                    padding-inline: .125rem;
+
+                    &.active {
+                        color: var(--gradient-orange-50);
+                    }
+                }
+            }
+        }
+
+        .actions {
+            display: flex;
+            gap: .5rem;
+
+            .action {
+                align-items: center;
+                border-radius: .25rem;
+                color: var(--gradient-ardoise-10);
+                display: flex;
+                height: 2rem;
+                justify-content: center;
+
+                &.remove-this-series {
+                    background-color: var(--remove-this-series);
+                    width: 2rem;
+                }
+
+                &.toggle-favorite-series {
+                    background-color: var(--toggle-favorite-series);
+                    width: 2rem;
+
+                    &.favorite {
+                        color: var(--favorite-series);
+                    }
+                }
+            }
+        }
     }
 
     .content {
@@ -140,6 +255,7 @@
                     }
                 }
             }
+
             .facts {
                 align-items: center;
                 display: flex;
@@ -286,6 +402,8 @@
             overflow-y: auto;
             padding-block: 1rem;
             padding-inline: 1rem;
+            position: relative;
+            scroll-behavior: smooth;
             width: 100%;
 
             .name {

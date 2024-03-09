@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Repository\UserSeriesRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Clock\ClockInterface;
 
 #[ORM\Entity(repositoryClass: UserSeriesRepository::class)]
 class UserSeries
@@ -35,10 +34,16 @@ class UserSeries
     private ?int $lastEpisode = null;
 
     #[ORM\Column(options: ['default' => 0])]
-    private ?int $viewedEpisodes = null;
+    private ?int $viewedEpisodes;
 
     #[ORM\Column(options: ['default' => 0])]
-    private ?float $progress = null;
+    private ?float $progress;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $favorite;
+
+    #[ORM\Column(nullable: true, options: ['default' => 0])]
+    private ?int $rating;
 
     public function __construct(User $user, Series $serie, $date)
     {
@@ -47,6 +52,8 @@ class UserSeries
         $this->addedAt = $date;
         $this->viewedEpisodes = 0;
         $this->progress = 0;
+        $this->favorite = false;
+        $this->rating = 0;
     }
 
     public function getId(): ?int
@@ -161,5 +168,29 @@ class UserSeries
             'user_id' => $this->getUser()->getId(),
             'progress' => $this->getProgress(),
         ];
+    }
+
+    public function isFavorite(): ?bool
+    {
+        return $this->favorite;
+    }
+
+    public function setFavorite(?bool $favorite): static
+    {
+        $this->favorite = $favorite;
+
+        return $this;
+    }
+
+    public function getRating(): ?int
+    {
+        return $this->rating;
+    }
+
+    public function setRating(?int $rating): static
+    {
+        $this->rating = $rating;
+
+        return $this;
     }
 }
