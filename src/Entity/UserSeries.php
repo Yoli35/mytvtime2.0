@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserSeriesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserSeriesRepository::class)]
@@ -45,6 +47,9 @@ class UserSeries
     #[ORM\Column(nullable: true, options: ['default' => 0])]
     private ?int $rating;
 
+    #[ORM\OneToMany(targetEntity: UserEpisode::class, mappedBy: 'series', orphanRemoval: true)]
+    private Collection $userEpisodes;
+
     public function __construct(User $user, Series $serie, $date)
     {
         $this->user = $user;
@@ -54,6 +59,7 @@ class UserSeries
         $this->progress = 0;
         $this->favorite = false;
         $this->rating = 0;
+        $this->userEpisodes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -167,6 +173,7 @@ class UserSeries
             'slug' => $this->getSeries()->getSlug(),
             'user_id' => $this->getUser()->getId(),
             'progress' => $this->getProgress(),
+            'favorite' => $this->isFavorite(),
         ];
     }
 
@@ -192,5 +199,45 @@ class UserSeries
         $this->rating = $rating;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, UserEpisode>
+     */
+    public function getUserEpisodes(): Collection
+    {
+        return $this->userEpisodes;
+    }
+
+    public function addUserEpisode(UserEpisode $userEpisode): static
+    {
+        if (!$this->userEpisodes->contains($userEpisode)) {
+            $this->userEpisodes->add($userEpisode);
+            $userEpisode->setSeries($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserEpisode(UserEpisode $userEpisode): static
+    {
+        if ($this->userEpisodes->removeElement($userEpisode)) {
+            // set the owning side to null (unless already changed)
+            if ($userEpisode->getSeries() === $this) {
+                $userEpisode->setSeries(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getEpisode(int $episodeId): ?UserEpisode
+    {
+        foreach ($this->getUserEpisodes() as $userEpisode) {
+            if ($userEpisode->getEpisodeId() === $episodeId) {
+                return $userEpisode;
+            }
+        }
+        return null;
     }
 }

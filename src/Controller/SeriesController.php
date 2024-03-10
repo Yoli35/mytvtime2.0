@@ -7,11 +7,13 @@ use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\Series;
 use App\Entity\User;
+use App\Entity\UserEpisode;
 use App\Entity\UserSeries;
 use App\Form\SeriesAdvancedSearchType;
 use App\Form\SeriesSearchType;
 use App\Repository\KeywordRepository;
 use App\Repository\SeriesRepository;
+use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
 use App\Service\DeeplTranslator;
@@ -36,15 +38,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SeriesController extends AbstractController
 {
     public function __construct(
-        private readonly ClockInterface       $clock,
-        private readonly DateService          $dateService,
-        private readonly DeeplTranslator      $deeplTranslator,
-        private readonly ImageConfiguration   $imageConfiguration,
-        private readonly KeywordRepository    $keywordRepository,
-        private readonly SeriesRepository     $seriesRepository,
-        private readonly TMDBService          $tmdbService,
-        private readonly TranslatorInterface  $translator,
-        private readonly UserSeriesRepository $userSeriesRepository,
+        private readonly ClockInterface        $clock,
+        private readonly DateService           $dateService,
+        private readonly DeeplTranslator       $deeplTranslator,
+        private readonly ImageConfiguration    $imageConfiguration,
+        private readonly KeywordRepository     $keywordRepository,
+        private readonly SeriesRepository      $seriesRepository,
+        private readonly TMDBService           $tmdbService,
+        private readonly TranslatorInterface   $translator,
+        private readonly UserEpisodeRepository $userEpisodeRepository,
+        private readonly UserSeriesRepository  $userSeriesRepository,
     )
     {
     }
@@ -219,11 +222,11 @@ class SeriesController extends AbstractController
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
 
         if ($userSeries) {
-            $this->addFlash('warning', 'Series already added to your watchlist');
+            $this->addFlash('warning', $this->translator->trans('Series already added to your watchlist'));
         } else {
             $userSeries = new UserSeries($user, $series, $date);
             $this->userSeriesRepository->save($userSeries, true);
-            $this->addFlash('success', 'Series added to your watchlist');
+            $this->addFlash('success', $this->translator->trans('Series added to your watchlist'));
         }
         return $this->redirectToRoute('app_series_show', [
             'id' => $series->getId(),
@@ -249,33 +252,26 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/favorite/{id}', name: 'favorite', requirements: ['id' => Requirement::DIGITS])]
-    public function favoriteSeries(Series $series): Response
+    public function favoriteSeries(Request $request, UserSeries $userSeries): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-
-        $userSeries->setFavorite(!$userSeries->isFavorite());
+        $data = json_decode($request->getContent(), true);
+        $newFavoriteValue = $data['favorite'];
+        $userSeries->setFavorite($newFavoriteValue);
         $this->userSeriesRepository->save($userSeries, true);
 
         return $this->json([
-            'favorite' => $userSeries->isFavorite(),
+            'ok' => true,
         ]);
     }
 
     #[IsGranted('ROLE_USER')]
     #[Route('/rating/{id}', name: 'rating', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function ratingSeries(Request $request, Series $series): Response
+    public function ratingSeries(Request $request, UserSeries $userSeries): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-
         $data = json_decode($request->getContent(), true);
         $rating = $data['rating'];
         $userSeries->setRating($rating);
         $this->userSeriesRepository->save($userSeries, true);
-        dump($rating, $userSeries);
 
         return $this->json([
             'ok' => true,
@@ -286,7 +282,10 @@ class SeriesController extends AbstractController
     #[Route('/show/season/{id}/{seasonNumber}-{slug}', name: 'season', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS])]
     public function showSeason(Request $request, $id, $seasonNumber, $slug): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['id' => $id]);
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $this->checkSlug($series, $slug);
         $slugger = new AsciiSlugger();
 
@@ -297,7 +296,7 @@ class SeriesController extends AbstractController
             $season['poster_path'] = $series->getPosterPath();
         }
         $season['deepl'] = $this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
-        $season['episodes'] = array_map(function ($episode) use ($series, $season, $slugger) {
+        $season['episodes'] = array_map(function ($episode) use ($userSeries, $series, $season, $slugger) {
             $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
             $episode['crew'] = array_map(function ($crew) use ($slugger) {
                 $crew['profile_path'] = $crew['profile_path'] ? $this->imageConfiguration->getCompleteUrl($crew['profile_path'], 'profile_sizes', 2) : null; // w185
@@ -309,17 +308,56 @@ class SeriesController extends AbstractController
                 $guest['slug'] = $slugger->slug($guest['name'])->lower()->toString();
                 return $guest;
             }, $episode['guest_stars'] ?? []);
-            /** @var User $user */
-            $user = $this->getUser();
-            $episode['dto'] = new EpisodeDTO($user, $series, $season['season_number'], $episode['episode_number'], $this->now());
+            $episode['user_episode'] = $userSeries->getEpisode($episode['id']);
             return $episode;
         }, $season['episodes']);
         $season['credits'] = $this->castAndCrew($season);
 
-        dump($series, $season);
+        $providers = $this->getWatchProviders($user?->getPreferredLanguage() ?? $request->getLocale(), $user?->getCountry() ?? 'FR');
+        dump([
+            'series' => $series,
+            'season' => $season,
+            'userSeries' => $userSeries,
+            'providers' => $providers,
+            ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
+            'providers' => $providers,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/add/episode/{id}', name: 'add_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function addUserEpisode(Request $request, int $id): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $showId = $data['showId'];
+        $seasonNumber = $data['seasonNumber'];
+        $episodeNumber = $data['episodeNumber'];
+        /** @var User $user */
+        $user = $this->getUser();
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+        $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+        $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $id]);
+        if ($userEpisode) {
+            $this->addFlash('warning', $this->translator->trans('Episode already added to your watchlist'));
+            return $this->json([
+                'ok' => true,
+            ]);
+        }
+
+        $episode = json_decode($this->tmdbService->getTvEpisode($showId, $seasonNumber, $episodeNumber, $locale), true);
+        $airDate = $this->dateService->newDate($episode['air_date'], $user->getTimezone() ?? "Europe/Paris");
+        $now = $this->now();
+        $diff = $now->diff($airDate);
+        $userEpisode = new UserEpisode($user, $userSeries, $id, $episode['season_number'], $episode['episode_number'], $now);
+        $userEpisode->setQuickWatchDay($diff->days < 1);
+        $userEpisode->setQuickWatchWeek($diff->days < 7);
+        $this->userEpisodeRepository->save($userEpisode, true);
+        return $this->json([
+            'ok' => true,
         ]);
     }
 
@@ -673,12 +711,16 @@ class SeriesController extends AbstractController
         foreach ($providers as $provider) {
             $watchProviders[$provider['provider_name']] = $provider['provider_id'];
         }
+        $watchProviderNames = [];
+        foreach ($providers as $provider) {
+            $watchProviderNames[$provider['provider_id']] = $provider['provider_name'];
+        }
         $watchProviderLogos = [];
         foreach ($providers as $provider) {
             $watchProviderLogos[$provider['provider_id']] = $this->imageConfiguration->getCompleteUrl($provider['logo_path'], 'logo_sizes', 2);
         }
         ksort($watchProviders);
-        return ['watchProviderSelect' => $watchProviders, 'watchProviderLogos' => $watchProviderLogos];
+        return ['watchProviderSelect' => $watchProviders, 'logos' => $watchProviderLogos, 'names' => $watchProviderNames];
     }
 
     public function getKeywords(): array

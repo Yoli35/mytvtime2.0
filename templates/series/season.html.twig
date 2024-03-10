@@ -93,6 +93,29 @@
                                         </div>
                                     </div>
                                 {% endif %}
+                                {% if episode.user_episode %}
+                                    <div class="user-episode-watch-at">
+                                        {{ episode.user_episode.watchAt|format_datetime('relative_short', 'short')|capitalize }}
+                                    </div>
+                                    <div class="user-episode-actions" data-id="{{ episode.id }}">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div class="user-episode-provider" data-id="{{ episode.id }}" data-title="{{ 'Choose a provider'|trans }}">
+                                        {% if episode.user_episode.providerId %}
+                                            <img src="{{ providers.logos[episode.user_episode.providerId] }}" alt="{{ providers.names[episode.user_episode.providerId] }}" data-title="{{ providers.names[episode.user_episode.providerId] }}">
+                                        {% else %}
+                                            <i class="fas fa-plus"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="user-episode-device" data-id="{{ episode.id }}" data-title="{{ 'Choose a device'|trans }}">
+                                        <i class="fas fa-plus"></i>
+                                    </div>
+                                {% else %}
+                                    <div class="add-this-episode" data-id="{{ episode.id }}" data-show-id="{{ episode.show_id }}" data-s-number="{{ episode.season_number }}" data-e-number="{{ episode.episode_number }}">
+                                        <i class="fas fa-plus"></i>
+                                    </div>
+                                    {# TODO: Dialog (provider, device, vote) #}
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}
@@ -175,16 +198,68 @@
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
+    <pre>
+        {{ dump(providers) }}
+    </pre>
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
     <script>
+        const text = {
+            'provider': '{{ 'Choose a provider'|trans }}',
+            'device': '{{ 'Choose a device'|trans }}',
+            'vote': '{{ 'Vote'|trans }}'
+        };
         document.addEventListener('DOMContentLoaded', function () {
+
             const seasonsEpisodes = document.querySelector('.seasons-episodes');
             const infos = seasonsEpisodes.querySelectorAll('.infos');
             infos.forEach(info => {
                 info.addEventListener('mouseleave', () => {
                     info.scrollTop = 0;
+                });
+            });
+
+            const lang = document.documentElement.lang;
+            const addThisEpisode = document.querySelectorAll('.add-this-episode');
+            addThisEpisode.forEach(episode => {
+                episode.addEventListener('click', () => {
+                    const id = episode.getAttribute('data-id');
+                    fetch('/' + lang + '/series/add/episode/' + id, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            showId: episode.getAttribute('data-show-id'),
+                            seasonNumber: episode.getAttribute('data-s-number'),
+                            episodeNumber: episode.getAttribute('data-e-number')
+                        })
+                    }).then(function (response) {
+                        if (response.ok) {
+                            episode.innerHTML = '<i class="fas fa-eye"></i>';
+                            episode.classList.remove('add-this-episode');
+                            episode.classList.add('user-episode-actions');
+
+                            const watchAt = document.createElement('div');
+                            watchAt.classList.add('user-episode-watch-at');
+                            watchAt.innerHTML = '{{ 'Now'|trans }}';
+                            episode.parentElement.appendChild(watchAt);
+                            const provider = document.createElement('div');
+                            provider.classList.add('user-episode-provider');
+                            provider.setAttribute('data-id', id);
+                            provider.setAttribute('data-title', text.provider);
+                            provider.innerHTML = '<i class="fas fa-plus"></i>';
+                            episode.parentElement.appendChild(provider);
+                            const device = document.createElement('div');
+                            device.classList.add('user-episode-device');
+                            device.setAttribute('data-id', id);
+                            device.setAttribute('data-title', text.device);
+                            device.innerHTML = '<i class="fas fa-plus"></i>';
+                            episode.parentElement.appendChild(device);
+                        }
+                    });
                 });
             });
         });

@@ -304,6 +304,20 @@
                         width: 0;
                     }
                 }
+
+                .favorite {
+                    align-items: center;
+                    background-color: var(--gradient-ardoise-80-alpha-50);
+                    border-radius: .25rem;
+                    color: var(--favorite-series);
+                    display: flex;
+                    height: 2rem;
+                    justify-content: center;
+                    position: absolute;
+                    right: .5rem;
+                    top: .5rem;
+                    width: 2rem;
+                }
             }
 
             .name {

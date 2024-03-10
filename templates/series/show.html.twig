@@ -257,9 +257,9 @@
                             body: JSON.stringify({rating: value})
                         }).then(function (response) {
                             if (response.ok) {
-                                const transRating = stars[0].parentElement.getAttribute('data-trans-rating').split('|')[lang==='en'?0:1];
-                                const transStar = stars[0].parentElement.getAttribute('data-trans-star').split('|')[lang==='en'?0:1];
-                                const transStars = stars[0].parentElement.getAttribute('data-trans-stars').split('|')[lang==='en'?0:1];
+                                const transRating = stars[0].parentElement.getAttribute('data-trans-rating').split('|')[lang === 'en' ? 0 : 1];
+                                const transStar = stars[0].parentElement.getAttribute('data-trans-star').split('|')[lang === 'en' ? 0 : 1];
+                                const transStars = stars[0].parentElement.getAttribute('data-trans-stars').split('|')[lang === 'en' ? 0 : 1];
                                 stars.forEach(function (star) {
                                     star.classList.remove('active');
                                     if (star.getAttribute('data-value') <= value) {
@@ -277,23 +277,22 @@
                     });
                 });
             }
-            {# const favorite = document.querySelector('.toggle-favorite-series'); #}
-            {# const remove = document.querySelector('.remove-this-series'); #}
-            {# const rating = document.querySelector('.rating-stars'); #}
-            {# const stars = rating.querySelectorAll('.fas.fa-star'); #}
-            {# const seriesId = {{ userSeries.id }}; #}
-            {# const userId = {{ app.user.id }}; #}
 
-            {# favorite.addEventListener('click', function () { #}
-            {#    const isFavorite = this.classList.contains('favorite'); #}
-            {#    const url = '/series/' + seriesId + '/favorite'; #}
-            {#    const method = isFavorite ? 'DELETE' : 'POST'; #}
-            {#    fetch(url, {method: method}).then(function (response) { #}
-            {#        if (response.ok) { #}
-            {#            favorite.classList.toggle('favorite'); #}
-            {#        } #}
-            {#    }); #}
-            {# }); #}
+            const favorite = document.querySelector('.toggle-favorite-series');
+            favorite.addEventListener('click', function () {
+                const isFavorite = this.classList.contains('favorite');
+                fetch('/' + lang + '/series/favorite/' + {{ userSeries.id }}, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({favorite: isFavorite ? 0 : 1})
+                }).then(function (response) {
+                    if (response.ok) {
+                        favorite.classList.toggle('favorite');
+                    }
+                });
+            });
         });
     </script>
 {% endblock %}

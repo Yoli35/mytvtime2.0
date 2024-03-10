@@ -74,10 +74,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Provider::class)]
     private Collection $providers;
 
+    #[ORM\OneToMany(targetEntity: UserEpisode::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $userEpisodes;
+
     public function __construct()
     {
         $this->series = new ArrayCollection();
         $this->providers = new ArrayCollection();
+        $this->userEpisodes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -345,6 +349,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeProvider(Provider $provider): static
     {
         $this->providers->removeElement($provider);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserEpisode>
+     */
+    public function getUserEpisodes(): Collection
+    {
+        return $this->userEpisodes;
+    }
+
+    public function addUserEpisode(UserEpisode $userEpisode): static
+    {
+        if (!$this->userEpisodes->contains($userEpisode)) {
+            $this->userEpisodes->add($userEpisode);
+            $userEpisode->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserEpisode(UserEpisode $userEpisode): static
+    {
+        if ($this->userEpisodes->removeElement($userEpisode)) {
+            // set the owning side to null (unless already changed)
+            if ($userEpisode->getUser() === $this) {
+                $userEpisode->setUser(null);
+            }
+        }
 
         return $this;
     }

@@ -595,6 +595,7 @@ label:has(input[type="text"]) {
         border-radius: .5rem;
         display: flex;
         gap: 1rem;
+        font-weight: 500;
         //margin: 1rem auto;
         opacity: 1;
         padding-block: 1rem;
@@ -604,20 +605,20 @@ label:has(input[type="text"]) {
         width: fit-content;
 
         &.success {
-            background-color: var(--gradient-green-40);
+            background-color: var(--gradient-green-70-50);
             border-color: var(--gradient-green-10);
             color: var(--gradient-green-10);
         }
 
         &.warning {
-            background-color: var(--gradient-orange-50);
+            background-color: var(--gradient-orange-50-alpha-50);
             border-color: var(--gradient-orange-70);
             color: var(--gradient-orange-90);
             font-weight: 300;
         }
 
         &.danger {
-            background-color: var(--gradient-red-40);
+            background-color: var(--gradient-red-50-alpha-50);
             border-color: var(--gradient-red-20);
             color: var(--gradient-red-20);
         }
