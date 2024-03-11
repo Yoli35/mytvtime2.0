@@ -93,7 +93,7 @@ class DateService
         return $date;
     }
 
-    public function newDateImmutable($dateString, $timeZone, $allDay = false): DateTimeImmutable
+    public function newDateImmutable(string $dateString, string $timeZone, bool $allDay = false): DateTimeImmutable
     {
         try {
             $date = new DateTimeImmutable($dateString, new DateTimeZone($timeZone));
