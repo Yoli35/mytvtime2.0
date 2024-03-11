@@ -10,7 +10,7 @@
 .home {
     container-name: home;
     container-type: inline-size;
-    margin-block-start: 4rem;
+    //margin-block-start: 4rem;
     position: relative;
 
     h1 {
@@ -21,7 +21,7 @@
         font-size: 1.5rem;
         font-weight: 100;
         line-height: 1.25em;
-        margin: 2rem;
+        //margin: 2rem;
     }
 
     .highlighted-series {
@@ -33,6 +33,7 @@
         gap: 1rem;
         height: 36vw;
         justify-content: center;
+        margin-block-start: 2rem;
         margin-inline: auto;
         transition: background-color var(--highlight-transition), box-shadow var(--highlight-transition);
         width: 90vw;
@@ -91,6 +92,7 @@
             }
 
             .providers {
+                flex-shrink: 0;
                 overflow-x: auto;
 
                 .wrapper {
@@ -129,11 +131,11 @@
     .highlight-progress {
         background-color: var(--highlight-progress);
         border-radius: 0 1rem 1rem 0;
-        box-shadow: 0 0 3rem 3rem var(--highlight-bg);
+        box-shadow: 0 0 3rem 1rem var(--highlight-bg);
         height: 3px;
         left: 0;
         position: absolute;
-        top: 0;
+        top: 1.5rem;
         width: 0;
 
         &.show {
@@ -175,7 +177,7 @@
                 }
 
                 .overview {
-                    align-items: center;
+                    align-items: flex-start;
                     display: flex;
                     font-size: 1.5rem;
                     max-height: unset;
