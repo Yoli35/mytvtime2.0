@@ -21,6 +21,9 @@
             <div class="header">
                 <div class="poster">
                     <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
+                    <div class="progress" data-value="{{ userSeries.progress }}">
+                        <div class="progress-bar"></div>
+                    </div>
                 </div>
                 <div class="infos">
                     <h1>{{ tv.name }} ({{ tv.first_air_date|date("Y") }})</h1>
@@ -82,7 +85,12 @@
                                             <div class="overview">{{ season.overview }}</div>
                                         {% endif %}
                                         {% if season.air_date %}
-                                            <div class="air-date">{{ 'Air date'|trans }} {{ date(season.air_date)|format_date('relative_short') }}</div>
+                                            <div class="air-date">{{ 'Air date'|trans }} {{ date(season.air_date)|format_date('relative_long') }}</div>
+                                        {% else %}
+                                            <div class="air-date">{{ 'Air date'|trans }} {{ 'TBA'|trans }}</div>
+                                        {% endif %}
+                                        {% if userSeries.lastSeason == season.season_number %}
+                                            <div class="air-date">{{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}</div>
                                         {% endif %}
                                         <div class="episodes">{{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}</div>
                                     </div>
@@ -221,7 +229,7 @@
                                 </div>
                             </div>
                         {% endif %}
-                        {% if tv.keywords|length %}
+                        {% if tv.keywords.results|length %}
                             <div class="fact">
                                 <div class="keywords">
                                     {% for k in tv.keywords.results %}
@@ -241,6 +249,13 @@
     {{ parent() }}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const progressDiv = document.querySelector('.progress');
+            const progressBarDiv = document.querySelector('.progress-bar');
+            const progress = progressDiv.getAttribute('data-value');
+            progressBarDiv.classList.add('set');
+            progressBarDiv.style.width = progress + '%';
+            progressBarDiv.setAttribute('aria-valuenow', progress);
+
             const userActions = document.querySelector('.user-actions');
             const lang = document.documentElement.lang;
             if (userActions) {
