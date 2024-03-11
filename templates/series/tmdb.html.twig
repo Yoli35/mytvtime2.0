@@ -61,7 +61,9 @@
                                         <div class="overview">{{ season.overview }}</div>
                                     {% endif %}
                                     {% if season.air_date %}
-                                        <div class="air-date">{{ 'Air date'|trans }} {{ date(season.air_date)|format_date('relative_short') }}</div>
+                                        <div class="air-date">{{ 'Air date'|trans }} {{ date(season.air_date)|format_date('relative_long') }}</div>
+                                    {% else %}
+                                        <div class="air-date">{{ 'Air date'|trans }} {{ 'TBA'|trans }}</div>
                                     {% endif %}
                                     <div class="episodes">{{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}</div>
                                 </div>
@@ -199,7 +201,7 @@
                                 </div>
                             </div>
                         {% endif %}
-                        {% if tv.keywords|length %}
+                        {% if tv.keywords.results|length %}
                             <div class="fact">
                                 <div class="keywords">
                                     {% for k in tv.keywords.results %}
