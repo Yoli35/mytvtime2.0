@@ -142,8 +142,9 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
         $userSeries = $user ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
+        dump($user, $series, $userSeries);
         if ($userSeries) {
-            $this->redirectToRoute('app_series_show', [
+            return $this->redirectToRoute('app_series_show', [
                 'id' => $series->getId(),
                 'slug' => $series->getSlug(),
             ], 301);
@@ -348,6 +349,7 @@ class SeriesController extends AbstractController
             ]);
         }
 
+        $tv = json_decode($this->tmdbService->getTv($showId, $locale), true);
         $episode = json_decode($this->tmdbService->getTvEpisode($showId, $seasonNumber, $episodeNumber, $locale), true);
         $airDate = $this->dateService->newDate($episode['air_date'], $user->getTimezone() ?? "Europe/Paris");
         $now = $this->now();
@@ -356,6 +358,14 @@ class SeriesController extends AbstractController
         $userEpisode->setQuickWatchDay($diff->days < 1);
         $userEpisode->setQuickWatchWeek($diff->days < 7);
         $this->userEpisodeRepository->save($userEpisode, true);
+
+//        $userSeries->addUserEpisode($userEpisode);
+        $userSeries->setLastWatchAt($now);
+        $userSeries->setLastEpisode($episode['episode_number']);
+        $userSeries->setLastSeason($episode['season_number']);
+        $userSeries->setViewedEpisodes($userSeries->getViewedEpisodes() + 1);
+        $userSeries->setProgress($userSeries->getViewedEpisodes() / $tv['number_of_episodes'] * 100);
+        $this->userSeriesRepository->save($userSeries, true);
         return $this->json([
             'ok' => true,
         ]);

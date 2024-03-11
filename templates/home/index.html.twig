@@ -34,10 +34,12 @@
                 </div>
             </div>
         </div>
-        <div class="highlight-progress"><div class="head"></div></div>
+        <div class="highlight-progress">
+            <div class="head"></div>
+        </div>
 
         <div class="series-group">
-            <h2>Séries récentes</h2>
+            <h2>{{ 'Recent series'|trans }}</h2>
             <div class="wrapper">
                 <div class="content">
                     {% for s in highlightedSeries %}
@@ -46,23 +48,25 @@
                 </div>
             </div>
         </div>
-        <div class="series-group">
-            <h2>Dernières séries ajoutées</h2>
-            <div class="wrapper">
-                <div class="content">
-                    {% for s in series %}
-                        {{ include('_blocks/series/_card.html.twig', { series: s }) }}
-                    {% endfor %}
+        {% if app.user %}
+            <div class="series-group">
+                <h2>{{ 'Latest series added'|trans }}</h2>
+                <div class="wrapper">
+                    <div class="content">
+                        {% for s in series %}
+                            {{ include('_blocks/series/_card.html.twig', { series: s }) }}
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
         <div class="series-group">
             <div class="header">
                 <div class="logo">
                     {{ providerLogo(watchProviders, provider) }}
                 </div>
                 <h2>{{ providerName(watchProviders, provider) }}</h2>
-                <label for="watch-providers">{#Filtrer par plateforme de streaming#}
+                <label for="watch-providers">{# Filtrer par plateforme de streaming #}
                     <select id="watch-providers">
                         {% for watchProvider in watchProviders|sort((a, b) => a.name <=> b.name) %}
                             <option value="{{ watchProvider.id }}" data-logo="{{ watchProvider.logoPath }}"{{ watchProvider.id == provider ? ' selected':'' }}>{{ watchProvider.name }}</option>

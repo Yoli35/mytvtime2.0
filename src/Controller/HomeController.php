@@ -43,19 +43,19 @@ class HomeController extends AbstractController
         $country = $user?->getCountry() ?? "FR";
         $timezone = $user?->getTimezone() ?? "Europe/Paris";
 
-        // Dernières séries ajoutées
-        /** @var UserSeries[] $series */
-        $series = $this->userSeriesRepository->getLastAddedSeries();
-        $config = json_decode($this->tmdbService->imageConfiguration(), true);
+        if ($user) {
+            // Dernières séries ajoutées
+            /** @var UserSeries[] $series */
+            $series = $this->userSeriesRepository->getLastAddedSeries($user);
 
-        /*
-         * Dernières séries ajoutées
-         */
-        $series = array_map(function ($serie) use ($config) {
-            $s = $serie->homeArray();
-            $s['poster_path'] = $this->imageConfiguration->getCompleteUrl($s['poster_path'], 'poster_sizes', 5); // w780
-            return $s;
-        }, $series);
+            $series = array_map(function ($serie) {
+                $s = $serie->homeArray();
+                $s['poster_path'] = $this->imageConfiguration->getCompleteUrl($s['poster_path'], 'poster_sizes', 5);
+                return $s;
+            }, $series);
+        } else {
+            $series = [];
+        }
 
         /*
          * Watch providers
@@ -99,7 +99,7 @@ class HomeController extends AbstractController
         // type: possible values are: [0 Documentary, 1 News, 2 Miniseries, 3 Reality, 4 Scripted, 5 Talk Show, 6 Video], can be a comma (AND) or pipe (OR) separated query
         $filterString = "&sort_by=first_air_date.desc&page=" . $page . "with_type=0|2|4&language=" . $language . "&timezone=" . $timezone . "&watch_region=" . $country . "&include_adult=false&first_air_date.gte=" . $startDate . "&first_air_date.lte=" . $endDate . "&with_watch_monetization_types=flatrate&with_watch_providers=8|35|43|119|234|236|337|344|345|350|381";
         $seriesSelection = $this->getSelection($filterString, $slugger, $country, $timezone, $language);
-        // array_values() pour ré-indexer le tableau
+        // array_filter pour retirer les séries sans poster & array_values() pour ré-indexer le tableau
         $seriesSelection = array_values(array_filter($seriesSelection, function ($tv) {
             return $tv['poster_path'];
         }));
@@ -113,7 +113,6 @@ class HomeController extends AbstractController
             'provider' => $provider,
             'filteredSeries' => $filteredSeries,
             'filterName' => $filterName,
-            'config' => $config['images'],
         ]);
     }
 

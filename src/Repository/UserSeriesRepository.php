@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\UserSeries;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,9 +32,11 @@ class UserSeriesRepository extends ServiceEntityRepository
         }
     }
 
-    public function getLastAddedSeries($page = 1, $perPage = 20): mixed
+    public function getLastAddedSeries(User $user, int $page = 1, int $perPage = 20): mixed
     {
         return $this->createQueryBuilder('us')
+            ->where('us.user = :user')
+            ->setParameter('user', $user)
             ->orderBy('us.id', 'DESC')
             ->setFirstResult(($page - 1) * $perPage)
             ->setMaxResults($perPage)
