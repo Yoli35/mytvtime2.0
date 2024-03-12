@@ -92,7 +92,22 @@
                                         {% if userSeries.lastSeason == season.season_number %}
                                             <div class="air-date">{{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}</div>
                                         {% endif %}
-                                        <div class="episodes">{{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}</div>
+                                        <div class="episodes">
+                                            {{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}
+                                            <div class="watched"></div>
+                                            {% for ep in userSeries.userEpisodes %}
+                                                {% if ep.seasonNumber == season.season_number %}
+                                                    <div class="episode">
+                                                        {{ ep.episodeNumber }}
+                                                        {% if ep.watchAt %}
+                                                            <i class="fas fa-eye" data-title="{{ ep.watchAt|format_datetime("relative_long", "short") }}"></i>
+                                                        {% else %}
+                                                            <i class="far fa-eye-slash"></i>
+                                                        {% endif %}
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
                             </a>
