@@ -11,6 +11,7 @@ use App\Entity\UserEpisode;
 use App\Entity\UserSeries;
 use App\Form\SeriesAdvancedSearchType;
 use App\Form\SeriesSearchType;
+use App\Repository\DeviceRepository;
 use App\Repository\KeywordRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\UserEpisodeRepository;
@@ -40,6 +41,7 @@ class SeriesController extends AbstractController
     public function __construct(
         private readonly ClockInterface        $clock,
         private readonly DateService           $dateService,
+        private readonly DeviceRepository      $deviceRepository,
         private readonly DeeplTranslator       $deeplTranslator,
         private readonly ImageConfiguration    $imageConfiguration,
         private readonly KeywordRepository     $keywordRepository,
@@ -197,14 +199,14 @@ class SeriesController extends AbstractController
         $tv['credits'] = $this->castAndCrew($tv);
         $tv['networks'] = $this->networks($tv);
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
-        $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
+        $tv['watch/providers'] = $this->watchProviders($tv, $user->getCountry() ?? 'FR');
 
         $userSeries = $user ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
 //        if ($userSeries->getRating()==null) {
 //            $userSeries->setRating(0);
 //        }
 
-        dump($userSeries);
+//        dump($userSeries, $tv, $series);
         return $this->render('series/show.html.twig', [
             'series' => $series,
             'tv' => $tv,
@@ -290,7 +292,7 @@ class SeriesController extends AbstractController
         $this->checkSlug($series, $slug);
         $slugger = new AsciiSlugger();
 
-        $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $request->getLocale(), ['credits']), true);
+        $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $request->getLocale(), ['credits', 'watch/providers']), true);
         if ($season['poster_path']) {
             $this->saveImage("posters", $season['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
         } else {
@@ -313,18 +315,22 @@ class SeriesController extends AbstractController
             return $episode;
         }, $season['episodes']);
         $season['credits'] = $this->castAndCrew($season);
+        $season['watch/providers'] = $this->watchProviders($season, $user->getCountry() ?? 'FR');
 
         $providers = $this->getWatchProviders($user?->getPreferredLanguage() ?? $request->getLocale(), $user?->getCountry() ?? 'FR');
-        dump([
-            'series' => $series,
-            'season' => $season,
-            'userSeries' => $userSeries,
-            'providers' => $providers,
-            ]);
+        $devices = $this->deviceRepository->deviceArray();
+//        dump([
+//            'series' => $series,
+//            'season' => $season,
+//            'userSeries' => $userSeries,
+//            'providers' => $providers,
+//            'devices' => $devices,
+//            ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
             'providers' => $providers,
+            'devices' => $devices,
         ]);
     }
 
@@ -366,6 +372,60 @@ class SeriesController extends AbstractController
         $userSeries->setViewedEpisodes($userSeries->getViewedEpisodes() + 1);
         $userSeries->setProgress($userSeries->getViewedEpisodes() / $tv['number_of_episodes'] * 100);
         $this->userSeriesRepository->save($userSeries, true);
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/episode/provider/{episodeId}', name: 'episode_provider', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function userEpisodeProvider(Request $request, int $episodeId): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $episodeId]);
+        $data = json_decode($request->getContent(), true);
+        $providerId = $data['providerId'];
+
+        $userEpisode->setProviderId($providerId);
+        $this->userEpisodeRepository->save($userEpisode, true);
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/episode/device/{episodeId}', name: 'episode_device', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function userEpisodeDevice(Request $request, int $episodeId): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $episodeId]);
+        $data = json_decode($request->getContent(), true);
+        $deviceId = $data['deviceId'];
+
+        $userEpisode->setDeviceId($deviceId);
+        $this->userEpisodeRepository->save($userEpisode, true);
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/episode/vote/{episodeId}', name: 'episode_vote', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function userEpisodeVote(Request $request, int $episodeId): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $episodeId]);
+        $data = json_decode($request->getContent(), true);
+        $vote= $data['vote'];
+
+        $userEpisode->setVote($vote);
+        $this->userEpisodeRepository->save($userEpisode, true);
+
         return $this->json([
             'ok' => true,
         ]);
@@ -730,7 +790,17 @@ class SeriesController extends AbstractController
             $watchProviderLogos[$provider['provider_id']] = $this->imageConfiguration->getCompleteUrl($provider['logo_path'], 'logo_sizes', 2);
         }
         ksort($watchProviders);
-        return ['watchProviderSelect' => $watchProviders, 'logos' => $watchProviderLogos, 'names' => $watchProviderNames];
+        $list = [];
+        foreach ($watchProviders as $key => $value) {
+            $list[] = ['provider_id' => $value, 'provider_name' => $key, 'logo_path' => $watchProviderLogos[$value]];
+        }
+
+        return [
+            'watchProviderSelect' => $watchProviders,
+            'logos' => $watchProviderLogos,
+            'names' => $watchProviderNames,
+            'list' => $list,
+            ];
     }
 
     public function getKeywords(): array

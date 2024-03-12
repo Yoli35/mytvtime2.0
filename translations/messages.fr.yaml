@@ -30,6 +30,7 @@ French: Français
 English: Anglais
 Recent series: Séries récentes
 Latest series added: Dernières séries ajoutées
+Your series: Vos séries
 
 
 # Series Show
@@ -83,6 +84,11 @@ Choose a provider: Choisissez une plateforme
 Choose a device: Choisissez un appareil
 Now: Maintenant
 Vote: Voter
+Television: Télévision
+Mobile: Mobile
+Tablet: Tablette
+Laptop: Ordinateur portable
+Desktop: Ordinateur de bureau
 
 #Search
 Search: Rechercher

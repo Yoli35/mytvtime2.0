@@ -47,7 +47,8 @@ class UserSeries
     #[ORM\Column(nullable: true, options: ['default' => 0])]
     private ?int $rating;
 
-    #[ORM\OneToMany(targetEntity: UserEpisode::class, mappedBy: 'series', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: UserEpisode::class, mappedBy: 'series', fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[ORM\OrderBy(['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC'])]
     private Collection $userEpisodes;
 
     public function __construct(User $user, Series $serie, $date)

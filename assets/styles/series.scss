@@ -450,6 +450,16 @@
                 font-weight: 300;
             }
 
+            .episodes {
+                display: flex;
+                gap: 1rem;
+
+                .watched {
+                    display: flex;
+                    gap: .5rem;
+                }
+            }
+
             .guest-stars {
                 flex-shrink: 0;
                 height: 10rem;
@@ -473,70 +483,84 @@
                     }
                 }
             }
+        }
+    }
+}
 
-            .add-this-episode, .user-episode-actions,
-            .user-episode-provider, .user-episode-device {
+.user-episode {
+    background-color: var(--gradient-ardoise-75-alpha-25);
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 15rem;
+    justify-content: center;
+    padding-block: 1rem;
+    padding-inline: 0.5rem;
+    width: 3rem;
+
+    .add-this-episode, .remove-this-episode,
+    .select-provider, .select-device, .select-vote {
+        align-items: center;
+        border-radius: .25rem;
+        color: var(--gradient-ardoise-10);
+        cursor: pointer;
+        display: flex;
+        font-weight: 500;
+        height: 2rem;
+        justify-content: center;
+        line-height: 1em;
+        width: 2rem;
+    }
+
+    .add-this-episode {
+        background-color: var(--add-this-episode);
+    }
+
+    .remove-this-episode,
+    .select-provider, .select-device, .select-vote {
+        background-color: var(--user-episode-actions);
+    }
+
+    .select-provider, .select-device, .select-vote {
+        position: relative;
+
+        img {
+            border-radius: .25rem;
+            height: 2rem;
+            object-fit: cover;
+            width: 2rem;
+        }
+
+        .list {
+            background-color: var(--user-episode-list);
+            border: 2px solid var(--user-episode-actions);
+            border-radius: .25rem;
+            display: flex;
+            max-width: 20.5rem;
+            overflow-x: auto;
+            padding: .25rem;
+            position: absolute;
+            right: 2rem;
+            z-index: 2;
+
+            .item {
                 align-items: center;
-                bottom: 1rem;
-                border-radius: .25rem;
-                color: var(--gradient-ardoise-10);
-                cursor: pointer;
                 display: flex;
-                font-weight: 500;
+                flex-shrink: 0;
                 height: 2rem;
                 justify-content: center;
-                line-height: 1em;
-                position: absolute;
-                right: 1rem;
                 width: 2rem;
-            }
-
-            .add-this-episode {
-                top: 1rem;
-                background-color: var(--add-this-episode);
-            }
-
-            .user-episode-actions,
-            .user-episode-provider, .user-episode-device {
-                background-color: var(--user-episode-actions);
-            }
-
-            .user-episode-actions {
-                top: 1rem;
-            }
-
-            .user-episode-provider {
-                top: 3.25rem;
 
                 img {
-                    border-radius: .25rem;
                     height: 2rem;
                     object-fit: cover;
                     width: 2rem;
                 }
-            }
 
-            .user-episode-device {
-                top: 5.5rem;
-            }
-
-            .user-episode-watch-at {
-                align-items: center;
-                background-color: var(--gradient-ardoise-75-alpha-25);
-                border-radius: .25rem;
-                color: var(--gradient-ardoise-10);
-                display: flex;
-                font-size: 1rem;
-                font-weight: 300;
-                gap: .25rem;
-                height: 2rem;
-                justify-content: center;
-                line-height: 1em;
-                padding-inline: .5rem;
-                position: absolute;
-                right: 3.5rem;
-                top: 1rem;
-
+                &:hover {
+                    background-color: var(--gradient-orange-50);
+                }
             }
         }
     }

@@ -93,22 +93,32 @@
                                         </div>
                                     </div>
                                 {% endif %}
+                            </div>
+                            <div class="user-episode">
                                 {% if episode.user_episode %}
-                                    <div class="user-episode-watch-at">
-                                        {{ episode.user_episode.watchAt|format_datetime('relative_short', 'short')|capitalize }}
-                                    </div>
-                                    <div class="user-episode-actions" data-id="{{ episode.id }}">
+                                    <div class="remove-this-episode" data-id="{{ episode.id }}" data-title="{{ episode.user_episode.watchAt|format_datetime('relative_short', 'short')|capitalize }}">
                                         <i class="fas fa-eye"></i>
                                     </div>
-                                    <div class="user-episode-provider" data-id="{{ episode.id }}" data-title="{{ 'Choose a provider'|trans }}">
+                                    <div class="select-provider" data-id="{{ episode.id }}" data-title="{{ 'Choose a provider'|trans }}">
                                         {% if episode.user_episode.providerId %}
                                             <img src="{{ providers.logos[episode.user_episode.providerId] }}" alt="{{ providers.names[episode.user_episode.providerId] }}" data-title="{{ providers.names[episode.user_episode.providerId] }}">
                                         {% else %}
                                             <i class="fas fa-plus"></i>
                                         {% endif %}
                                     </div>
-                                    <div class="user-episode-device" data-id="{{ episode.id }}" data-title="{{ 'Choose a device'|trans }}">
-                                        <i class="fas fa-plus"></i>
+                                    <div class="select-device" data-id="{{ episode.id }}" data-title="{{ 'Choose a device'|trans }}">
+                                        {% if episode.user_episode.deviceId %}
+                                            <img src="{{ deviceLogo(episode.user_episode.deviceId) }}" alt="{{ deviceName(episode.user_episode.deviceId)|trans }}" data-title="{{ deviceName(episode.user_episode.deviceId)|trans }}">
+                                        {% else %}
+                                            <i class="fas fa-plus"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="select-vote" data-id="{{ episode.id }}" data-title="{{ 'Choose a device'|trans }}">
+                                        {% if episode.user_episode.vote %}
+                                            {{ episode.user_episode.vote }}
+                                        {% else %}
+                                            <i class="fas fa-plus"></i>
+                                        {% endif %}
                                     </div>
                                 {% else %}
                                     <div class="add-this-episode" data-id="{{ episode.id }}" data-show-id="{{ episode.show_id }}" data-s-number="{{ episode.season_number }}" data-e-number="{{ episode.episode_number }}">
@@ -198,8 +208,15 @@
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
+    <div id="globs" style="display: none">
+        {
+        "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        }
+    </div>
     <pre>
-        {{ dump(providers) }}
+        {{ dump(devices) }}
     </pre>
 {% endblock %}
 {% block javascripts %}
@@ -208,9 +225,91 @@
         const text = {
             'provider': '{{ 'Choose a provider'|trans }}',
             'device': '{{ 'Choose a device'|trans }}',
-            'vote': '{{ 'Vote'|trans }}'
+            'vote': '{{ 'Vote'|trans }}',
+            'now': '{{ 'Now'|trans }}',
+            'Television': '{{ 'Television'|trans }}',
+            'Mobile': '{{ 'Mobile'|trans }}',
+            'Tablet': '{{ 'Tablet'|trans }}',
+            'Laptop': '{{ 'Laptop'|trans }}',
+            'Desktop': '{{ 'Desktop'|trans }}'
         };
         document.addEventListener('DOMContentLoaded', function () {
+
+            /**
+             * @typedef Provider
+             * @type {Object}
+             * @property {number} provider_id
+             * @property {string} name
+             * @property {string} logo_path
+             */
+            /**
+             * @typedef Device
+             * @type {Object}
+             * @property {number} id
+             * @property {string} name
+             * @property {string} logo_path
+             */
+            /**
+             * @typedef FlatRate
+             * @type {Array.<Provider>}
+             */
+            /**
+             * @typedef Rent
+             * @type {Array.<Provider>}
+             */
+            /**
+             * @typedef Buy
+             * @type {Array.<Provider>}
+             */
+            /**
+             * @typedef SeasonProvider
+             * @type {Object}
+             * @property {FlatRate} flatrate
+             * @property {Rent} rent
+             * @property {Buy} buy
+             */
+            /**
+             * @typedef wpSelect
+             * @type {Array.<key: value>}
+             */
+            /**
+             * @typedef wpLogos
+             * @type {Array.<key: value>}
+             */
+            /**
+             * @typedef wpNames
+             * @type {Array.<key: value>}
+             */
+            /**
+             * @typedef wpList
+             * @type {Array.<Provider>}
+             */
+            /**
+             * @typedef Providers
+             * @type {Object}
+             * @property {wpSelect} watchProviderSelect
+             * @property {wpLogos} logos
+             * @property {wpNames} names
+             * @property {wpList} list
+             */
+            /**
+             * @typedef Devices
+             * @type {Array.<Device>}
+             */
+            /**
+             * @typedef Globs
+             * @type {Object}
+             * @property {SeasonProvider} seasonProvider
+             * @property {Providers} providers
+             * @property {Devices} devices
+             */
+
+            /** @var {Globs} jsonGlobsObject */
+            const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
+            const seasonProvider = jsonGlobsObject.seasonProvider;
+            const providers = jsonGlobsObject.providers;
+            const providerArray = jsonGlobsObject.providers.list;
+            const devices = jsonGlobsObject.devices;
 
             const seasonsEpisodes = document.querySelector('.seasons-episodes');
             const infos = seasonsEpisodes.querySelectorAll('.infos');
@@ -241,27 +340,171 @@
                             episode.innerHTML = '<i class="fas fa-eye"></i>';
                             episode.classList.remove('add-this-episode');
                             episode.classList.add('user-episode-actions');
+                            episode.setAttribute('data-title', text.now);
 
-                            const watchAt = document.createElement('div');
-                            watchAt.classList.add('user-episode-watch-at');
-                            watchAt.innerHTML = '{{ 'Now'|trans }}';
-                            episode.parentElement.appendChild(watchAt);
                             const provider = document.createElement('div');
-                            provider.classList.add('user-episode-provider');
+                            provider.classList.add('select-provider');
                             provider.setAttribute('data-id', id);
                             provider.setAttribute('data-title', text.provider);
                             provider.innerHTML = '<i class="fas fa-plus"></i>';
+                            provider.addEventListener('click', selectProvider);
                             episode.parentElement.appendChild(provider);
+
                             const device = document.createElement('div');
-                            device.classList.add('user-episode-device');
+                            device.classList.add('select-device');
                             device.setAttribute('data-id', id);
                             device.setAttribute('data-title', text.device);
                             device.innerHTML = '<i class="fas fa-plus"></i>';
+                            device.addEventListener('click', selectDevice);
                             episode.parentElement.appendChild(device);
                         }
                     });
                 });
             });
+
+            const userEpisodeProviders = document.querySelectorAll('.select-provider');
+            userEpisodeProviders.forEach(provider => {
+                provider.addEventListener('mouseenter', selectProvider);
+                provider.addEventListener('mouseleave', removeList);
+            });
+
+            const userEpisodeDevices = document.querySelectorAll('.select-device');
+            userEpisodeDevices.forEach(device => {
+                device.addEventListener('mouseenter', selectDevice);
+                device.addEventListener('mouseleave', removeList);
+            });
+
+            const userEpisodeVotes = document.querySelectorAll('.select-vote');
+            userEpisodeVotes.forEach(vote => {
+                vote.addEventListener('mouseenter', selectVote);
+                vote.addEventListener('mouseleave', removeList);
+            });
+
+            function selectProvider(e) {
+                const selectProviderDiv = e.currentTarget
+                const episodeId = selectProviderDiv.getAttribute('data-id');
+                const flatrate = seasonProvider['flatrate'];
+                const providerList = document.createElement('div');
+                providerList.classList.add('list');
+                selectProviderDiv.appendChild(providerList);
+                if (flatrate.length > 0) {
+                    for (const provider of flatrate) {
+                        addProviderItem(provider, episodeId, providerList, selectProviderDiv);
+                    }
+                } else {
+                    for (const provider of providerArray) {
+                        addProviderItem(provider, episodeId, providerList, selectProviderDiv);
+                    }
+                }
+            }
+
+            function addProviderItem(provider, episodeId, providerList, selectProviderDiv) {
+                const providerDiv = document.createElement('div');
+                providerDiv.classList.add('item');
+                providerDiv.setAttribute('data-provider-id', provider['provider_id'].toString());
+                providerDiv.setAttribute('data-title', provider['provider_name']);
+                providerDiv.innerHTML = '<img src="' + provider['logo_path'] + '" alt="' + provider['provider_name'] + '">';
+                providerDiv.addEventListener('click', () => {
+                    const providerId = providerDiv.getAttribute('data-provider-id');
+                    fetch('/' + lang + '/series/episode/provider/' + episodeId, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            providerId: providerId
+                        })
+                    }).then(function (response) {
+                        if (response.ok) {
+                            selectProviderDiv.innerHTML = '<img src="' + providers.logos[providerId] + '" alt="' + providers.names[providerId] + '">';
+                            selectProviderDiv.setAttribute('data-title', providers.names[providerId]);
+                            providerList.remove();
+                        }
+                    });
+                });
+                providerList.appendChild(providerDiv);
+            }
+
+            function selectDevice(e) {
+                const selectDeviceDiv = e.currentTarget;
+                const episodeId = selectDeviceDiv.getAttribute('data-id');
+                const deviceList = document.createElement('div');
+                deviceList.classList.add('list');
+                selectDeviceDiv.appendChild(deviceList);
+                for (const device of devices) {
+                    addDeviceItem(device, episodeId, deviceList, selectDeviceDiv);
+                }
+            }
+
+            function addDeviceItem(device, episodeId, deviceList, selectDeviceDiv) {
+                const deviceDiv = document.createElement('div');
+                deviceDiv.classList.add('item');
+                deviceDiv.setAttribute('data-id', device['id']);
+                deviceDiv.setAttribute('data-title', text[device['name']]);
+                deviceDiv.innerHTML = '<img src="/series/devices' + device['logo_path'] + '" alt="' + device['name'] + '">';
+                deviceDiv.addEventListener('click', () => {
+                    const deviceId = deviceDiv.getAttribute('data-id');
+                    fetch('/' + lang + '/series/episode/device/' + episodeId, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            deviceId: deviceId
+                        })
+                    }).then(function (response) {
+                        if (response.ok) {
+                            selectDeviceDiv.innerHTML = '<img src="/series/devices' + device['logo_path'] + '" alt="' + device['name'] + '">';
+                            selectDeviceDiv.setAttribute('data-title', text[device['name']]);
+                            deviceList.remove();
+                        }
+                    });
+                });
+                deviceList.appendChild(deviceDiv);
+            }
+
+            function selectVote(e) {
+                const selectVoteDiv = e.currentTarget;
+                const episodeId = selectVoteDiv.getAttribute('data-id');
+                const voteList = document.createElement('div');
+                voteList.classList.add('list');
+                selectVoteDiv.appendChild(voteList);
+                for (let i = 1; i <= 10; i++) {
+                    const vote = document.createElement('div');
+                    vote.classList.add('item');
+                    vote.setAttribute('data-vote', i.toString());
+                    vote.setAttribute('data-title', i.toString());
+                    vote.innerHTML = i;
+                    vote.addEventListener('click', () => {
+                        const voteValue = vote.getAttribute('data-vote');
+                        fetch('/' + lang + '/series/episode/vote/' + episodeId, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({
+                                vote: voteValue
+                            })
+                        }).then(function (response) {
+                            if (response.ok) {
+                                selectVoteDiv.innerHTML = voteValue;
+                                voteList.remove();
+                            }
+                        });
+                    });
+                    voteList.appendChild(vote);
+                }
+            }
+
+            function removeList(e) {
+                const list = e.currentTarget.querySelector('.list');
+                if (list) {
+                    list.remove();
+                }
+            }
         });
     </script>
 {% endblock %}
