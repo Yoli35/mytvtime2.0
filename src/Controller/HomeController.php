@@ -46,15 +46,17 @@ class HomeController extends AbstractController
         if ($user) {
             // Dernières séries ajoutées
             /** @var UserSeries[] $series */
-            $series = $this->userSeriesRepository->getLastAddedSeries($user);
+//            $series = $this->userSeriesRepository->getLastAddedSeries($user);
+            $userSeries = $this->userSeriesRepository->getUserSeries($user);
+            $userSeriesCount = $this->userSeriesRepository->count(['user' => $user]);
 
-            $series = array_map(function ($serie) {
-                $s = $serie->homeArray();
-                $s['poster_path'] = $this->imageConfiguration->getCompleteUrl($s['poster_path'], 'poster_sizes', 5);
-                return $s;
-            }, $series);
+            $userSeries = array_map(function ($series) {
+//                $s = $serie->homeArray();
+                $series['poster_path'] = $this->imageConfiguration->getCompleteUrl($series['poster_path'], 'poster_sizes', 5);
+                return $series;
+            }, $userSeries);
         } else {
-            $series = [];
+            $userSeries = [];
         }
 
         /*
@@ -108,7 +110,8 @@ class HomeController extends AbstractController
 
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
-            'series' => $series,
+            'userSeries' => $userSeries,
+            'userSeriesCount' => $userSeriesCount ?? 0,
             'watchProviders' => $watchProviders,
             'provider' => $provider,
             'filteredSeries' => $filteredSeries,

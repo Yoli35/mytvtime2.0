@@ -44,6 +44,18 @@ class UserSeriesRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function getUserSeries(User $user, int $page = 1, int $perPage = 20): mixed
+    {
+        $sql = "SELECT s.`id` as id, s.`name` as name, s.`poster_path` as poster_path, s.`tmdb_id` as tmdbId, s.`slug` as slug, us.`user_id` as user_id, us.`progress` as progress, us.`favorite` as favorite " .
+            "FROM `user_series` us " .
+            "INNER JOIN `series` s ON s.`id` = us.`series_id` " .
+            "WHERE us.user_id=" . $user->getId() . " " .
+            "ORDER BY s.`first_date_air` DESC " .
+            "LIMIT " . $perPage . " OFFSET " . ($page - 1) * $perPage;
+
+        return $this->em->getConnection()->fetchAllAssociative($sql);
+    }
+
     public function remove(?UserSeries $userSeries): void
     {
         if ($userSeries) {
