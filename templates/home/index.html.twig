@@ -50,10 +50,10 @@
         </div>
         {% if app.user %}
             <div class="series-group">
-                <h2>{{ 'Latest series added'|trans }}</h2>
+                <h2>{{ 'Your series'|trans }} ({{ userSeriesCount }})</h2>
                 <div class="wrapper">
                     <div class="content">
-                        {% for s in series %}
+                        {% for s in userSeries %}
                             {{ include('_blocks/series/_card.html.twig', { series: s }) }}
                         {% endfor %}
                     </div>
