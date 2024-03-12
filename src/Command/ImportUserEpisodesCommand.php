@@ -81,7 +81,7 @@ class ImportUserEpisodesCommand extends Command
         // Importing series
         //
         foreach ($seriesArr as $serie) {
-            $io->writeln('Importing ' . $serie['name']);
+            $io->writeln('Importing series ' . $serie['name']);
             // {
             //      "tmdbId": 125910,
             //      "name": "Young Royals",
@@ -109,7 +109,9 @@ class ImportUserEpisodesCommand extends Command
             //      "seriesLocalizedNames": []
             //  }
             $series = $this->seriesRepository->findOneBy(['tmdbId' => $serie['tmdbId']]);
+            $index = 0;
             if (!$series) {
+                $io->writeln('Creating series ' . $serie['name']);
                 $series = new Series();
                 $series->setTmdbId($serie['tmdbId']);
                 $series->setName($serie['name']);
@@ -118,20 +120,23 @@ class ImportUserEpisodesCommand extends Command
                 $series->setSlug($serie['slug']);
                 $series->setOverview($serie['overview']);
                 $series->setBackdropPath($serie['backdropPath']);
-                $series->setFirstDateAir($this->dateService->newDateImmutable($serie['firstDateAir']['date'], $user->getTimezone() ?? 'Europe/Paris'));
+                $series->setFirstDateAir($serie['firstDateAir'] ? $this->dateService->newDateImmutable($serie['firstDateAir']['date'], $user->getTimezone() ?? 'Europe/Paris'): null);
                 $series->setCreatedAt($this->dateService->newDateImmutable($serie['createdAt']['date'], $user->getTimezone() ?? 'Europe/Paris'));
                 $series->setUpdatedAt($this->dateService->newDateImmutable($serie['updatedAt']['date'], $user->getTimezone() ?? 'Europe/Paris'));
                 $series->setVisitNumber($serie['visitNumber']);
                 $this->entityManager->persist($series);
-                $this->entityManager->flush();
+                if ($index++ % 10 == 0)
+                    $this->entityManager->flush();
             }
         }
+        $this->entityManager->flush();
+        $io->newLine();
 
         //
         // Importing user series & user episodes
         //
         foreach ($userSeriesArr as $userSerie) {
-            $io->writeln('Importing ' . $userSerie['seriesName']);
+            $io->writeln('Importing user series ' . $userSerie['seriesName']);
             //"userSeries": [
             //        {
             //            "user": 2,
@@ -177,11 +182,13 @@ class ImportUserEpisodesCommand extends Command
             $series = $this->seriesRepository->findOneBy(['tmdbId' => $userSerie['tmdbId']]);
             if (!$series) {
                 $io->error('Series not found');
-                return Command::FAILURE;
+//                return Command::FAILURE;
+                continue;
             }
             $dbUserSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
             $newEntity = false;
             if (!$dbUserSeries) {
+                $io->writeln('Creating user series ' . $series->getName());
                 $dbUserSeries = new UserSeries($user, $series, $this->dateService->newDateImmutable($userSerie['addedAt']['date'], $user->getTimezone() ?? 'Europe/Paris'));
                 $newEntity = true;
             }
@@ -201,7 +208,8 @@ class ImportUserEpisodesCommand extends Command
             $index = 0;
             foreach ($userSerie['userEpisodes'] as $userEpisode) {
                 $dbUserEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'series' => $dbUserSeries, 'episodeId' => $userEpisode['episodeId']]);
-                if (!$dbUserEpisode)
+                if (!$dbUserEpisode) {
+                    $io->writeln('Creating user episode ' . $userEpisode['episodeId']);
                     $dbUserEpisode = new UserEpisode(
                         $user,
                         $dbUserSeries,
@@ -210,6 +218,7 @@ class ImportUserEpisodesCommand extends Command
                         $userEpisode['episodeNumber'],
                         $this->dateService->newDateImmutable($userEpisode['watchAt']['date'], $user->getTimezone() ?? 'Europe/Paris')
                     );
+                }
                 $dbUserEpisode->setSeasonNumber($userEpisode['seasonNumber']);
                 $dbUserEpisode->setEpisodeNumber($userEpisode['episodeNumber']);
                 $dbUserEpisode->setWatchAt($this->dateService->newDateImmutable($userEpisode['watchAt']['date'], $user->getTimezone() ?? 'Europe/Paris'));
@@ -225,6 +234,7 @@ class ImportUserEpisodesCommand extends Command
             $this->entityManager->flush();
         }
 
+        $io->newLine();
         $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
         $io->writeln('Import Command ended at ' . $now->format('Y-m-d H:i:s'));
         $t1 = microtime(true);
