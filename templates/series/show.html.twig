@@ -63,7 +63,7 @@
                     </div>
                     <div class="watch-link-form">
                         {#                        <form action="{{ path('app_series_add_watch_link', {id: series.id}) }}" method="post"> #}
-                        <form class="form" id="watch-link-form">
+                        <form class="form" action="" id="watch-link-form">
                             <div class="form-row">
                                 <div class="form-field">
                                     <label for="provider">{{ 'Provider'|trans }}
@@ -316,11 +316,19 @@
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
+    <div id="globs" style="display: none">
+        {
+            "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        }
+    </div>
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
+            const providers = jsonGlobsObject.providers;
+
             const progressDiv = document.querySelector('.progress');
             const progressBarDiv = document.querySelector('.progress-bar');
             const progress = progressDiv.getAttribute('data-value');
@@ -398,6 +406,68 @@
                 setTimeout(function () {
                     watchLinkForm.classList.remove('display');
                 }, 300);
+            });
+            submit.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const provider = form.querySelector('#provider');
+                const name = form.querySelector('#name');
+                const url = form.querySelector('#url');
+                const errors = form.querySelectorAll('.error');
+                errors.forEach(function (error) {
+                    error.textContent = '';
+                });
+                if (!provider.value) {
+                    provider.value = null;
+                }
+                if (!name.value) {
+                    name.nextElementSibling.textContent = '{{ 'This field is required.'|trans }}';
+                }
+                if (!url.value) {
+                    url.nextElementSibling.textContent = '{{ 'This field is required.'|trans }}';
+                }
+                if (name.value && url.value) {
+                    fetch('/' + lang + '/series/add/watch/link/' + {{ series.id }}, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({provider: provider.value, name: name.value, url: url.value})
+                    }).then(function (response) {
+                        if (response.ok) {
+                            watchLinkForm.classList.remove('active');
+                            setTimeout(function () {
+                                watchLinkForm.classList.remove('display');
+                            }, 300);
+                            const watchLinks = document.querySelector('.watch-links');
+                            const newLink = document.createElement('a');
+                            newLink.href = url.value;
+                            newLink.target = '_blank';
+                            newLink.rel = 'noopener noreferrer';
+                            if (provider.value) {
+                                const watchLink = document.createElement('div');
+                                watchLink.classList.add('watch-link');
+                                const img = document.createElement('img');
+                                img.src = providers.logos[provider.value];
+                                img.alt = providers.names[provider.value];
+                                img.setAttribute('data-title', name.value);
+                                watchLink.appendChild(img);
+                                newLink.appendChild(watchLink);
+                            } else {
+                                const watchLink = document.createElement('div');
+                                watchLink.classList.add('watch-link');
+                                const span = document.createElement('span');
+                                span.textContent = name.value;
+                                watchLink.appendChild(span);
+                                newLink.appendChild(watchLink);
+                            }
+                            watchLinks.insertBefore(newLink, watchLinks.lastElementChild);
+                            provider.value = '';
+                            name.value = '';
+                            url.value = '';
+                        }
+                    });
+                }
             });
         });
     </script>

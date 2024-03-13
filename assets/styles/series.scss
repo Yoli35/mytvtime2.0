@@ -253,6 +253,8 @@
             }
 
             form {
+                gap: .5rem;
+
                 .form-row {
                     .form-field:has(select) {
                         max-width: unset;
@@ -263,6 +265,9 @@
                         display: flex;
                         gap: 1rem;
                         justify-content: flex-end;
+                    }
+                    button {
+                        padding-block: .25rem;
                     }
                 }
             }

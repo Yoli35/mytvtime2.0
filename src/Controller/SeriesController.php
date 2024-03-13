@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\Series;
+use App\Entity\SeriesWatchLink;
 use App\Entity\User;
 use App\Entity\UserEpisode;
 use App\Entity\UserSeries;
@@ -13,6 +14,7 @@ use App\Form\SeriesSearchType;
 use App\Repository\DeviceRepository;
 use App\Repository\KeywordRepository;
 use App\Repository\SeriesRepository;
+use App\Repository\SeriesWatchLinkRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
@@ -38,17 +40,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SeriesController extends AbstractController
 {
     public function __construct(
-        private readonly ClockInterface        $clock,
-        private readonly DateService           $dateService,
-        private readonly DeviceRepository      $deviceRepository,
-        private readonly DeeplTranslator       $deeplTranslator,
-        private readonly ImageConfiguration    $imageConfiguration,
-        private readonly KeywordRepository     $keywordRepository,
-        private readonly SeriesRepository      $seriesRepository,
-        private readonly TMDBService           $tmdbService,
-        private readonly TranslatorInterface   $translator,
-        private readonly UserEpisodeRepository $userEpisodeRepository,
-        private readonly UserSeriesRepository  $userSeriesRepository,
+        private readonly ClockInterface            $clock,
+        private readonly DateService               $dateService,
+        private readonly DeviceRepository          $deviceRepository,
+        private readonly DeeplTranslator           $deeplTranslator,
+        private readonly ImageConfiguration        $imageConfiguration,
+        private readonly KeywordRepository         $keywordRepository,
+        private readonly SeriesRepository          $seriesRepository,
+        private readonly SeriesWatchLinkRepository $seriesWatchLinkRepository,
+        private readonly TMDBService               $tmdbService,
+        private readonly TranslatorInterface       $translator,
+        private readonly UserEpisodeRepository     $userEpisodeRepository,
+        private readonly UserSeriesRepository      $userSeriesRepository,
     )
     {
     }
@@ -194,18 +197,15 @@ class SeriesController extends AbstractController
         $this->saveImage("backdrops", $series->getBackdropPath(), $this->imageConfiguration->getUrl('backdrop_sizes', 3));
 
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords"]), true);
-        $tv['overview'] = $this->localizedOverview($tv, $series, $request);
         $tv['credits'] = $this->castAndCrew($tv);
+        $tv['localized_name'] = $series->getLocalizedName($request->getLocale());
         $tv['networks'] = $this->networks($tv);
+        $tv['overview'] = $this->localizedOverview($tv, $series, $request);
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, $user->getCountry() ?? 'FR');
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
-//        if ($userSeries->getRating()==null) {
-//            $userSeries->setRating(0);
-//        }
-        $localizedName = $series->getLocalizedName($request->getLocale());
 
         dump([
             'series' => $series,
@@ -345,6 +345,15 @@ class SeriesController extends AbstractController
     #[Route('/add/watch/link/{id}', name: 'add_watch_link', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addWatchLink(Request $request, int $id): Response
     {
+        $data = json_decode($request->getContent(), true);
+        $url = $data['url'];
+        $name = $data['name'];
+        $providerId = $data['provider'];
+        $series = $this->seriesRepository->findOneBy(['id' => $id]);
+
+        $watchLink = new SeriesWatchLink($url, $name, $series, $providerId);
+        $this->seriesWatchLinkRepository->save($watchLink, true);
+
         return $this->json([
             'ok' => true,
         ]);
@@ -437,7 +446,7 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $episodeId]);
         $data = json_decode($request->getContent(), true);
-        $vote= $data['vote'];
+        $vote = $data['vote'];
 
         $userEpisode->setVote($vote);
         $this->userEpisodeRepository->save($userEpisode, true);
@@ -816,7 +825,7 @@ class SeriesController extends AbstractController
             'logos' => $watchProviderLogos,
             'names' => $watchProviderNames,
             'list' => $list,
-            ];
+        ];
     }
 
     public function getKeywords(): array

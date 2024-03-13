@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\SeriesWatchLink;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,33 +17,14 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SeriesWatchLinkRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $em)
     {
         parent::__construct($registry, SeriesWatchLink::class);
     }
 
-    //    /**
-    //     * @return SeriesWatchLink[] Returns an array of SeriesWatchLink objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?SeriesWatchLink
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function save(SeriesWatchLink $seriesWatchLink, bool $flush = false): void
+    {
+        $this->em->persist($seriesWatchLink);
+        if ($flush) $this->em->flush();
+    }
 }
