@@ -30,9 +30,9 @@
 /.php-version
 /composer.lock
 /yarn.lock
-/.idea/
+/.idea-temp/
 .DS_Store
-.env
+.env.temp
 .idea/mytvtime2.0.iml
 .idea/php.xml
 *.iml
