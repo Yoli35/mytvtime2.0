@@ -231,7 +231,8 @@
             'Mobile': '{{ 'Mobile'|trans }}',
             'Tablet': '{{ 'Tablet'|trans }}',
             'Laptop': '{{ 'Laptop'|trans }}',
-            'Desktop': '{{ 'Desktop'|trans }}'
+            'Desktop': '{{ 'Desktop'|trans }}',
+            'search': '{{ 'Search'|trans }}'
         };
         document.addEventListener('DOMContentLoaded', function () {
 
@@ -396,6 +397,8 @@
                         addProviderItem(provider, episodeId, providerList, selectProviderDiv);
                     }
                 }
+                listInput(providerList);
+                // toolTips.init(providerList);
             }
 
             function addProviderItem(provider, episodeId, providerList, selectProviderDiv) {
@@ -435,6 +438,8 @@
                 for (const device of devices) {
                     addDeviceItem(device, episodeId, deviceList, selectDeviceDiv);
                 }
+                listInput(deviceList);
+                // toolTips.init(deviceList);
             }
 
             function addDeviceItem(device, episodeId, deviceList, selectDeviceDiv) {
@@ -497,6 +502,34 @@
                     });
                     voteList.appendChild(vote);
                 }
+                listInput(voteList);
+            }
+
+            function listInput(list) {
+
+                const input = document.createElement('input');
+                input.setAttribute('type', 'text');
+                input.setAttribute('size', '10');
+                input.setAttribute('placeholder', text.search);
+                list.appendChild(input);
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        list.remove();
+                    }
+                });
+                input.addEventListener('input', (e) => {
+                    const value = e.target.value.toLowerCase();
+                    const items = list.querySelectorAll('.item');
+                    items.forEach(item => {
+                        const title = item.getAttribute('data-title').toLowerCase();
+                        if (title.includes(value)) {
+                            item.style.display = 'flex';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+                input.focus({'preventScroll': true});
             }
 
             function removeList(e) {
