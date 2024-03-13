@@ -1,4 +1,4 @@
-.contact, .profile, .series-search {
+.contact, .profile, .series-search, .series-show {
     margin-block: auto;
     margin-inline: auto;
 
@@ -50,6 +50,7 @@
                 input[type="number"],
                 input[type="search"],
                 input[type="text"],
+                input[type="url"],
                 textarea {
                     appearance: none;
                     background-color: var(--gradient-ardoise-80);

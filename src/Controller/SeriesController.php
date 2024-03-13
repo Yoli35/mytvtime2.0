@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\DTO\EpisodeDTO;
 use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\Series;
@@ -111,7 +110,7 @@ class SeriesController extends AbstractController
         $keywords = $this->getKeywords();
 
         $seriesSearch = new SeriesAdvancedSearchDTO($user?->getPreferredLanguage() ?? $request->getLocale(), $user?->getCountry() ?? 'FR', $user?->getTimezone() ?? 'Europe/Paris', 1);
-        $seriesSearch->setWatchProviders($watchProviders['watchProviderSelect']);
+        $seriesSearch->setWatchProviders($watchProviders['select']);
         $seriesSearch->setKeywords($keywords);
         $form = $this->createForm(SeriesAdvancedSearchType::class, $seriesSearch);
 
@@ -201,22 +200,30 @@ class SeriesController extends AbstractController
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, $user->getCountry() ?? 'FR');
 
-        $userSeries = $user ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+        $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
 //        if ($userSeries->getRating()==null) {
 //            $userSeries->setRating(0);
 //        }
+        $localizedName = $series->getLocalizedName($request->getLocale());
 
-//        dump($userSeries, $tv, $series);
+        dump([
+            'series' => $series,
+            'tv' => $tv,
+            'userSeries' => $userSeries,
+            'providers' => $providers,
+        ]);
         return $this->render('series/show.html.twig', [
             'series' => $series,
             'tv' => $tv,
             'userSeries' => $userSeries,
+            'providers' => $providers,
         ]);
     }
 
     #[IsGranted('ROLE_USER')]
     #[Route('/add/{id}', name: 'add', requirements: ['id' => Requirement::DIGITS])]
-    public function addUserSeries(Request $request, int $id): Response
+    public function addUserSeries(int $id): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -317,7 +324,7 @@ class SeriesController extends AbstractController
         $season['credits'] = $this->castAndCrew($season);
         $season['watch/providers'] = $this->watchProviders($season, $user->getCountry() ?? 'FR');
 
-        $providers = $this->getWatchProviders($user?->getPreferredLanguage() ?? $request->getLocale(), $user?->getCountry() ?? 'FR');
+        $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
 //        dump([
 //            'series' => $series,
@@ -331,6 +338,15 @@ class SeriesController extends AbstractController
             'season' => $season,
             'providers' => $providers,
             'devices' => $devices,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/add/watch/link/{id}', name: 'add_watch_link', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function addWatchLink(Request $request, int $id): Response
+    {
+        return $this->json([
+            'ok' => true,
         ]);
     }
 
@@ -796,7 +812,7 @@ class SeriesController extends AbstractController
         }
 
         return [
-            'watchProviderSelect' => $watchProviders,
+            'select' => $watchProviders,
             'logos' => $watchProviderLogos,
             'names' => $watchProviderNames,
             'list' => $list,
@@ -853,20 +869,20 @@ class SeriesController extends AbstractController
         $withType = $data->getWithType();
         $sortBy = $data->getSortBy();
 
-        $searchString = "&include_adult=false&page={$page}&language={$language}&timezone={$timezone}&watch_region={$watchRegion}";
-        if ($firstAirDateYear) $searchString .= "&first_air_date_year={$firstAirDateYear}";
-        if ($firstAirDateGTE) $searchString .= "&first_air_date.gte={$firstAirDateGTE}";
-        if ($firstAirDateLTE) $searchString .= "&first_air_date.lte={$firstAirDateLTE}";
-        if ($withOriginCountry) $searchString .= "&with_origin_country={$withOriginCountry}";
-        if ($withOriginalLanguage) $searchString .= "&with_original_language={$withOriginalLanguage}";
-        if ($withWatchMonetizationTypes) $searchString .= "&with_watch_monetization_types={$withWatchMonetizationTypes}";
-        if ($withWatchProviders) $searchString .= "&with_watch_providers={$withWatchProviders}";
-        if ($withKeywords) $searchString .= "&with_keywords={$withKeywords}";
-        if ($withRuntimeGTE) $searchString .= "&with_runtime.gte={$withRuntimeGTE}";
-        if ($withRuntimeLTE) $searchString .= "&with_runtime.lte={$withRuntimeLTE}";
-        if ($withStatus) $searchString .= "&with_status={$withStatus}";
-        if ($withType) $searchString .= "&with_type={$withType}";
-        if ($sortBy) $searchString .= "&sort_by={$sortBy}";
+        $searchString = "&include_adult=false&page=$page&language=$language&timezone=$timezone&watch_region=$watchRegion";
+        if ($firstAirDateYear) $searchString .= "&first_air_date_year=$firstAirDateYear";
+        if ($firstAirDateGTE) $searchString .= "&first_air_date.gte=$firstAirDateGTE";
+        if ($firstAirDateLTE) $searchString .= "&first_air_date.lte=$firstAirDateLTE";
+        if ($withOriginCountry) $searchString .= "&with_origin_country=$withOriginCountry";
+        if ($withOriginalLanguage) $searchString .= "&with_original_language=$withOriginalLanguage";
+        if ($withWatchMonetizationTypes) $searchString .= "&with_watch_monetization_types=$withWatchMonetizationTypes";
+        if ($withWatchProviders) $searchString .= "&with_watch_providers=$withWatchProviders";
+        if ($withKeywords) $searchString .= "&with_keywords=$withKeywords";
+        if ($withRuntimeGTE) $searchString .= "&with_runtime.gte=$withRuntimeGTE";
+        if ($withRuntimeLTE) $searchString .= "&with_runtime.lte=$withRuntimeLTE";
+        if ($withStatus) $searchString .= "&with_status=$withStatus";
+        if ($withType) $searchString .= "&with_type=$withType";
+        if ($sortBy) $searchString .= "&sort_by=$sortBy";
         return $searchString;
     }
 

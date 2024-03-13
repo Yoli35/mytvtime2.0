@@ -3,6 +3,7 @@
 {% block title %}my Tv Time → {{ 'Series'|trans }} → {{ series.name }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
 {% endblock %}
 {% block body %}
@@ -26,7 +27,7 @@
                     </div>
                 </div>
                 <div class="infos">
-                    <h1>{{ tv.name }} ({{ tv.first_air_date|date("Y") }})</h1>
+                    <h1>{{ series.name }} ({{ series.firstDateAir|date("Y") }})</h1>
                     <h5>
                         {% set n = series.visitNumber %}
                         {% if n > 1000 %}
@@ -43,6 +44,62 @@
 
             {% if userSeries %}
                 <div class="user-actions">
+                    <div class="watch-links">
+                        <div class="label">{{ 'Watch links'|trans }}</div>
+                        {% for link in series.seriesWatchLinks %}
+                            <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
+                                <div class="watch-link">
+                                    {% if link.providerId %}
+                                        <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}" data-title="{{ link.name ?? providers.names[link.providerId] }}">
+                                    {% else %}
+                                        <span>{{ link.name }}</span>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        {% endfor %}
+                        <div class="add-watch-link" data-title="{{ 'Add a watch link'|trans }}">
+                            <i class="fa fa-plus"></i>
+                        </div>
+                    </div>
+                    <div class="watch-link-form">
+                        {#                        <form action="{{ path('app_series_add_watch_link', {id: series.id}) }}" method="post"> #}
+                        <form class="form" id="watch-link-form">
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="provider">{{ 'Provider'|trans }}
+                                        <select name="provider" id="provider">
+                                            <option value="">{{ 'Select a provider'|trans }}</option>
+                                            {% for name, id in providers.select %}
+                                                <option value="{{ id }}">{{ name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="name">{{ 'Name'|trans }}
+                                        <input type="text" name="name" id="name" required>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="url">{{ 'URL'|trans }}
+                                        <input type="url" name="url" id="url" required>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <button type="button">{{ 'Cancel'|trans }}</button>
+                                    <button type="submit">{{ 'Add'|trans }}</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                     <div class="rating">
                         <div class="rating-stars">
                             <div class="stars" data-trans-rating="Cancel rating|{{ 'Cancel rating'|trans }}" data-trans-star="star|{{ 'star'|trans }}" data-trans-stars="stars|{{ 'stars'|trans }}">
@@ -322,6 +379,25 @@
                         favorite.classList.toggle('favorite');
                     }
                 });
+            });
+
+            const addWatchLink = document.querySelector('.add-watch-link');
+            const watchLinkForm = document.querySelector('.watch-link-form');
+            const form = document.querySelector('#watch-link-form');
+            const cancel = form.querySelector('button[type="button"]');
+            const submit = form.querySelector('button[type="submit"]');
+
+            addWatchLink.addEventListener('click', function () {
+                watchLinkForm.classList.add('display');
+                setTimeout(function () {
+                    watchLinkForm.classList.add('active');
+                }, 0);
+            });
+            cancel.addEventListener('click', function () {
+                watchLinkForm.classList.remove('active');
+                setTimeout(function () {
+                    watchLinkForm.classList.remove('display');
+                }, 300);
             });
         });
     </script>
