@@ -66,7 +66,7 @@
                             <div class="infos">
                                 <div class="name">{{ episode.name }}</div>
                                 {% if episode.air_date %}
-                                    <div class="air-date">{{ 'Air date'|trans }} {{ date(episode.air_date)|format_date('relative_short') }}</div>
+                                    <div class="air-date">{{ 'Air date'|trans }} {{ date(episode.air_date)|format_date('relative_long') }}</div>
                                 {% endif %}
                                 {% if episode.runtime %}
                                     <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
@@ -113,7 +113,7 @@
                                             <i class="fas fa-plus"></i>
                                         {% endif %}
                                     </div>
-                                    <div class="select-vote" data-id="{{ episode.id }}" data-title="{{ 'Choose a device'|trans }}">
+                                    <div class="select-vote" data-id="{{ episode.id }}" data-title="{{ 'Give a rating'|trans }}">
                                         {% if episode.user_episode.vote %}
                                             {{ episode.user_episode.vote }}
                                         {% else %}
@@ -225,7 +225,7 @@
         const text = {
             'provider': '{{ 'Choose a provider'|trans }}',
             'device': '{{ 'Choose a device'|trans }}',
-            'vote': '{{ 'Vote'|trans }}',
+            'rating': '{{ 'Give a rating'|trans }}',
             'now': '{{ 'Now'|trans }}',
             'Television': '{{ 'Television'|trans }}',
             'Mobile': '{{ 'Mobile'|trans }}',
@@ -323,44 +323,7 @@
             const lang = document.documentElement.lang;
             const addThisEpisode = document.querySelectorAll('.add-this-episode');
             addThisEpisode.forEach(episode => {
-                episode.addEventListener('click', () => {
-                    const id = episode.getAttribute('data-id');
-                    fetch('/' + lang + '/series/add/episode/' + id, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: JSON.stringify({
-                            showId: episode.getAttribute('data-show-id'),
-                            seasonNumber: episode.getAttribute('data-s-number'),
-                            episodeNumber: episode.getAttribute('data-e-number')
-                        })
-                    }).then(function (response) {
-                        if (response.ok) {
-                            episode.innerHTML = '<i class="fas fa-eye"></i>';
-                            episode.classList.remove('add-this-episode');
-                            episode.classList.add('user-episode-actions');
-                            episode.setAttribute('data-title', text.now);
-
-                            const provider = document.createElement('div');
-                            provider.classList.add('select-provider');
-                            provider.setAttribute('data-id', id);
-                            provider.setAttribute('data-title', text.provider);
-                            provider.innerHTML = '<i class="fas fa-plus"></i>';
-                            provider.addEventListener('click', selectProvider);
-                            episode.parentElement.appendChild(provider);
-
-                            const device = document.createElement('div');
-                            device.classList.add('select-device');
-                            device.setAttribute('data-id', id);
-                            device.setAttribute('data-title', text.device);
-                            device.innerHTML = '<i class="fas fa-plus"></i>';
-                            device.addEventListener('click', selectDevice);
-                            episode.parentElement.appendChild(device);
-                        }
-                    });
-                });
+                episode.addEventListener('click', addEpisode);
             });
 
             const userEpisodeProviders = document.querySelectorAll('.select-provider');
@@ -380,6 +343,59 @@
                 vote.addEventListener('mouseenter', selectVote);
                 vote.addEventListener('mouseleave', removeList);
             });
+
+            function addEpisode(e) {
+                const episode = e.currentTarget
+                const id = episode.getAttribute('data-id');
+                fetch('/' + lang + '/series/add/episode/' + id, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        showId: episode.getAttribute('data-show-id'),
+                        seasonNumber: episode.getAttribute('data-s-number'),
+                        episodeNumber: episode.getAttribute('data-e-number')
+                    })
+                }).then(function (response) {
+                    if (response.ok) {
+                        episode.removeEventListener('click', addEpisode);
+
+                        episode.innerHTML = '<i class="fas fa-eye"></i>';
+                        episode.classList.remove('add-this-episode');
+                        episode.classList.add('remove-this-episode');
+                        episode.setAttribute('data-title', text.now);
+
+                        const provider = document.createElement('div');
+                        provider.classList.add('select-provider');
+                        provider.setAttribute('data-id', id);
+                        provider.setAttribute('data-title', text.provider);
+                        provider.innerHTML = '<i class="fas fa-plus"></i>';
+                        provider.addEventListener('mouseenter', selectProvider);
+                        provider.addEventListener('mouseleave', removeList);
+                        episode.parentElement.appendChild(provider);
+
+                        const device = document.createElement('div');
+                        device.classList.add('select-device');
+                        device.setAttribute('data-id', id);
+                        device.setAttribute('data-title', text.device);
+                        device.innerHTML = '<i class="fas fa-plus"></i>';
+                        device.addEventListener('mouseenter', selectDevice);
+                        device.addEventListener('mouseleave', removeList);
+                        episode.parentElement.appendChild(device);
+
+                        const vote = document.createElement('div');
+                        vote.classList.add('select-device');
+                        vote.setAttribute('data-id', id);
+                        vote.setAttribute('data-title', text.rating);
+                        vote.innerHTML = '<i class="fas fa-plus"></i>';
+                        vote.addEventListener('mouseenter', selectVote);
+                        vote.addEventListener('mouseleave', removeList);
+                        episode.parentElement.appendChild(vote);
+                    }
+                });
+            }
 
             function selectProvider(e) {
                 const selectProviderDiv = e.currentTarget
@@ -481,7 +497,7 @@
                     vote.classList.add('item');
                     vote.setAttribute('data-vote', i.toString());
                     vote.setAttribute('data-title', i.toString());
-                    vote.innerHTML = i;
+                    vote.innerHTML = i.toString();
                     vote.addEventListener('click', () => {
                         const voteValue = vote.getAttribute('data-vote');
                         fetch('/' + lang + '/series/episode/vote/' + episodeId, {
