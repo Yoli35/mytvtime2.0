@@ -240,96 +240,119 @@
         }
 
         .card {
-            align-items: flex-start;
             background-color: var(--gradient-ardoise-90);
             border-radius: .25rem;
             color: var(--gradient-ardoise-10);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            height: 18rem;
+            width: 10rem;
 
-            .poster {
-                align-items: center;
-                background-color: var(--gradient-ardoise-80);
-                border-radius: .25rem .25rem 0 0;
-                color: var(--gradient-ardoise-10);
+            a {
                 display: flex;
-                height: 15rem;
-                justify-content: center;
-                position: relative;
-                width: 10rem;
+                flex-direction: column;
+                height: 100%;
+                width: 100%;
 
-                img {
+                .poster {
+                    align-items: center;
+                    background-color: var(--gradient-ardoise-80);
                     border-radius: .25rem .25rem 0 0;
+                    color: var(--gradient-ardoise-10);
+                    display: flex;
+                    flex-shrink: 0;
                     height: 15rem;
-                    object-fit: cover;
+                    justify-content: center;
+                    position: relative;
                     width: 10rem;
-                }
 
-                .providers {
-                    position: absolute;
-                    bottom: .5rem;
-                    left: .5rem;
-                    overflow-x: auto;
+                    img {
+                        border-radius: .25rem .25rem 0 0;
+                        height: 15rem;
+                        object-fit: cover;
+                        width: 10rem;
+                    }
 
-                    .provider-content {
-                        display: flex;
-                        gap: .25rem;
+                    .providers {
+                        position: absolute;
+                        bottom: .75rem;
+                        left: .5rem;
+                        overflow-x: auto;
 
-                        .provider {
-                            height: 2rem;
-                            width: 2rem;
+                        .provider-content {
+                            display: flex;
+                            gap: .25rem;
 
-                            img {
-                                border-radius: .25rem;
-                                height: 100%;
-                                object-fit: cover;
-                                width: 100%;
+                            .provider {
+                                height: 2rem;
+                                width: 2rem;
+
+                                img {
+                                    border-radius: .25rem;
+                                    height: 100%;
+                                    object-fit: cover;
+                                    width: 100%;
+                                }
                             }
+                        }
+
+                    }
+
+                    .progress {
+                        border: 2px solid var(--gradient-orange-50);
+                        height: .5rem;
+                        left: 0;
+                        position: absolute;
+                        bottom: 0;
+                        width: 100%;
+
+                        .progress-bar {
+                            background: var(--gradient-orange-50);
+                            height: .25rem;
+                            transition: width 20s linear;
+                            width: 0;
                         }
                     }
 
-                }
+                    .favorite {
+                        align-items: center;
+                        background-color: var(--gradient-ardoise-80-alpha-50);
+                        border-radius: .25rem;
+                        color: var(--favorite-series);
+                        display: flex;
+                        height: 2rem;
+                        justify-content: center;
+                        position: absolute;
+                        right: .5rem;
+                        top: .5rem;
+                        width: 2rem;
+                    }
 
-                .progress {
-                    border: 2px solid var(--gradient-orange-50);
-                    height: .5rem;
-                    left: 0;
-                    position: absolute;
-                    bottom: 0;
-                    width: 100%;
+                    .quick-watcher {
 
-                    .progress-bar {
-                        background: var(--gradient-orange-50);
-                        height: .25rem;
-                        transition: width 20s linear;
-                        width: 0;
+                    }
+
+                    .episode-number {
+                        position: absolute;
+                        bottom: .75rem;
+                        right: .5rem;
+                        background-color: var(--gradient-ardoise-80-alpha-90);
+                        border-radius: .25rem;
+                        color: var(--gradient-ardoise-10);
+                        padding: .25rem;
+                        font-size: 1.5rem;
+                        font-weight: 400;
                     }
                 }
 
-                .favorite {
+                .name {
                     align-items: center;
-                    background-color: var(--gradient-ardoise-80-alpha-50);
-                    border-radius: .25rem;
-                    color: var(--favorite-series);
                     display: flex;
-                    height: 2rem;
+                    flex-shrink: 0;
+                    font-weight: 100;
+                    height: 3rem;
                     justify-content: center;
-                    position: absolute;
-                    right: .5rem;
-                    top: .5rem;
-                    width: 2rem;
+                    line-height: 1rem;
+                    width: 10rem;
                 }
-            }
-
-            .name {
-                align-items: center;
-                display: flex;
-                font-weight: 100;
-                height: 3rem;
-                justify-content: center;
-                line-height: 1rem;
-                width: 10rem;
             }
         }
     }

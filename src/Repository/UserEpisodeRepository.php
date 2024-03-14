@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\UserEpisode;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,5 +30,26 @@ class UserEpisodeRepository extends ServiceEntityRepository
         if ($flush) {
             $this->em->flush();
         }
+    }
+
+    public function history(User $user, $locale, $page, $perPage): array
+    {
+        $sql = "SELECT "
+            . "  s.id as id, s.tmdb_id as tmdbId,"
+            . "	 s.`name` as name, s.`slug` as slug, sln.`name` as localizedName, sln.`slug` as localizedSlug, s.`poster_path` as posterPath, "
+            . "	 ue.`watch_at` as watchAt, ue.`quick_watch_day` as qDay, ue.`quick_watch_week` as qWeek, "
+            . "  us.`favorite` as favorite, us.`progress` as progress, "
+            . "  ue.`episode_number` as episodeNumber, ue.`season_number` as seasonNumber, "
+            . "	 p.`name` as providerName, p.`logo_path` as providerLogoPath "
+            . "FROM `user_episode` ue "
+            . "INNER JOIN `user_series` us ON us.`id` = ue.`series_id` "
+            . "INNER JOIN `series` s ON s.`id` = us.`series_id` "
+            . "LEFT JOIN `provider` p ON p.`provider_id`=ue.`provider_id` "
+            . "LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' "
+            . "WHERE ue.`user_id`= " . $user->getId() . " "
+            . "ORDER BY ue.`watch_at` DESC "
+            . "LIMIT $perPage OFFSET " . ($page - 1) * $perPage;
+
+        return $this->em->getConnection()->fetchAllAssociative($sql);
     }
 }

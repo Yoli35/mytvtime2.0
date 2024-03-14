@@ -6,6 +6,7 @@ use App\Entity\Series;
 use App\Entity\User;
 use App\Entity\UserSeries;
 use App\Repository\SeriesRepository;
+use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
@@ -19,11 +20,12 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 class HomeController extends AbstractController
 {
     public function __construct(
-        private readonly DateService          $dateService,
-        private readonly ImageConfiguration   $imageConfiguration,
-        private readonly SeriesController     $seriesController,
-        private readonly UserSeriesRepository $userSeriesRepository,
-        private readonly TMDBService          $tmdbService,
+        private readonly DateService           $dateService,
+        private readonly ImageConfiguration    $imageConfiguration,
+        private readonly SeriesController      $seriesController,
+        private readonly UserEpisodeRepository $userEpisodeRepository,
+        private readonly UserSeriesRepository  $userSeriesRepository,
+        private readonly TMDBService           $tmdbService,
     )
     {
     }
@@ -55,8 +57,18 @@ class HomeController extends AbstractController
                 $series['poster_path'] = $this->imageConfiguration->getCompleteUrl($series['poster_path'], 'poster_sizes', 5);
                 return $series;
             }, $userSeries);
+
+            // Historique des séries vues
+            $history = array_map(function ($series) {
+//                $s = $serie->homeArray();
+                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+                $series['providerLogoPath'] = $series['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($series['providerLogoPath'], 'logo_sizes', 2) : null;
+                return $series;
+            }, $this->userEpisodeRepository->history($user, $language, 1, 20));
+            dump(['history' => $history,]);
         } else {
             $userSeries = [];
+            $history = [];
         }
 
         /*
@@ -111,6 +123,7 @@ class HomeController extends AbstractController
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
             'userSeries' => $userSeries,
+            'history' => $history,
             'userSeriesCount' => $userSeriesCount ?? 0,
             'watchProviders' => $watchProviders,
             'provider' => $provider,

@@ -59,6 +59,16 @@
                     </div>
                 </div>
             </div>
+            <div class="series-group">
+                <h2>{{ 'History'|trans }}</h2>
+                <div class="wrapper">
+                    <div class="content">
+                        {% for s in history %}
+                            {{ include('_blocks/series/_history-card.html.twig', { series: s }) }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         {% endif %}
         <div class="series-group">
             <div class="header">

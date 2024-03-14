@@ -600,6 +600,11 @@ class SeriesController extends AbstractController
             $series->setSlug($slugger->slug($tv['name']));
             $series->addUpdate('Name updated');
         }
+        $slug = $slugger->slug($tv['name'])->lower()->toString();
+        if ($series->getSlug() != $slug) {
+            $series->setSlug($slugger->slug($slug));
+            $series->addUpdate('Slug updated');
+        }
 
         if ($tv['original_name'] != $series->getOriginalName()) {
             $series->setOriginalName($tv['original_name']);
