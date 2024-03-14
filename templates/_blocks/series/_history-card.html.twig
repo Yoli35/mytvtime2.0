@@ -1,5 +1,5 @@
 <div class="card">
-    <a href="{{ path('app_series_show', {'id': series.id, 'slug': series.localizeSlug ?? series.slug }) }}">
+    <a href="{{ path('app_series_season', {'id': series.id, 'seasonNumber': series.seasonNumber, 'slug': series.localizeSlug ?? series.slug }) }}#episode-{{ series.episodeNumber }}">
         <div class="poster">
             {% if series.posterPath %}
                 <img src="{{ series.posterPath }}" alt="{{ series.name }}"{% if series.date is defined %} data-title="{{ series.date }}{% endif %}">
