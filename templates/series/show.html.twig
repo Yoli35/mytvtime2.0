@@ -421,10 +421,10 @@
                     provider.value = null;
                 }
                 if (!name.value) {
-                    name.nextElementSibling.textContent = '{{ 'This field is required.'|trans }}';
+                    name.nextElementSibling.textContent = '{{ 'This field is required'|trans }}';
                 }
                 if (!url.value) {
-                    url.nextElementSibling.textContent = '{{ 'This field is required.'|trans }}';
+                    url.nextElementSibling.textContent = '{{ 'This field is required'|trans }}';
                 }
                 if (name.value && url.value) {
                     fetch('/' + lang + '/series/add/watch/link/' + {{ series.id }}, {

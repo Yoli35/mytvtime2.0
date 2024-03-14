@@ -735,6 +735,49 @@
     right: 1rem;
     text-align: center;
 }
+/*  @media (min-width: 576px) {
+        .container, .container-fluid:not(:has(.backgroundImageOverlay)) {
+            padding-inline: 0.75rem;
+        }
+    } */
+@container series-show (width < 552px) { /* 576px - 1.5rem */
+
+    .user-actions {
+        padding-inline: 1rem;
+
+        .watch-links {
+            .label {
+                display: none;
+            }
+
+            .watch-link {
+                span {
+                    display: none;
+                }
+
+                img {
+                    height: 3rem;
+                    width: 3rem;
+                }
+            }
+        }
+
+        .rating {
+            .rating-stars {
+                .star {
+                    padding-inline: .25rem;
+                }
+            }
+        }
+
+        .actions {
+            .action {
+                height: 3rem;
+                width: 3rem;
+            }
+        }
+    }
+}
 
 @container series-show (width < 768px) {
     .header {
