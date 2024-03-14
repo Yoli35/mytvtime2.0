@@ -53,9 +53,25 @@ export class Menu {
     }
 
     initTheme() {
-        const theme = localStorage.getItem("mytvtime_2_theme");
+        let theme = localStorage.getItem("mytvtime_2_theme");
         if (theme !== null && theme !== 'auto') {
             document.body.classList.add(theme);
+        }
+        if (theme === null) {
+            const dark = window.matchMedia("(prefers-color-scheme: dark)");
+            const light = window.matchMedia("(prefers-color-scheme: light)");
+            if (dark.matches) {
+                theme = "dark";
+                localStorage.setItem("mytvtime_2_theme", "dark");
+            } else {
+                if (light.matches) {
+                    theme = "light";
+                    localStorage.setItem("mytvtime_2_theme", "light");
+                } else {
+                    theme = "auto";
+                    localStorage.setItem("mytvtime_2_theme", "auto");
+                }
+            }
         }
         this.iconTheme(theme);
     }

@@ -56,10 +56,14 @@ class Series
     #[ORM\OneToMany(targetEntity: SeriesWatchLink::class, mappedBy: 'series', orphanRemoval: true)]
     private Collection $seriesWatchLinks;
 
+    #[ORM\OneToMany(targetEntity: SeriesImage::class, mappedBy: 'series', orphanRemoval: true)]
+    private Collection $seriesImages;
+
     public function __construct()
     {
         $this->seriesLocalizedNames = new ArrayCollection();
         $this->seriesWatchLinks = new ArrayCollection();
+        $this->seriesImages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -281,6 +285,36 @@ class Series
             // set the owning side to null (unless already changed)
             if ($seriesWatchLink->getSeries() === $this) {
                 $seriesWatchLink->setSeries(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SeriesImage>
+     */
+    public function getSeriesImages(): Collection
+    {
+        return $this->seriesImages;
+    }
+
+    public function addSeriesImage(SeriesImage $seriesImage): static
+    {
+        if (!$this->seriesImages->contains($seriesImage)) {
+            $this->seriesImages->add($seriesImage);
+            $seriesImage->setSeries($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSeriesImage(SeriesImage $seriesImage): static
+    {
+        if ($this->seriesImages->removeElement($seriesImage)) {
+            // set the owning side to null (unless already changed)
+            if ($seriesImage->getSeries() === $this) {
+                $seriesImage->setSeries(null);
             }
         }
 

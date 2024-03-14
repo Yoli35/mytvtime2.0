@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\Series;
+use App\Entity\SeriesImage;
 use App\Entity\SeriesWatchLink;
 use App\Entity\User;
 use App\Entity\UserEpisode;
@@ -13,6 +14,7 @@ use App\Form\SeriesAdvancedSearchType;
 use App\Form\SeriesSearchType;
 use App\Repository\DeviceRepository;
 use App\Repository\KeywordRepository;
+use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\SeriesWatchLinkRepository;
 use App\Repository\UserEpisodeRepository;
@@ -46,6 +48,7 @@ class SeriesController extends AbstractController
         private readonly DeeplTranslator           $deeplTranslator,
         private readonly ImageConfiguration        $imageConfiguration,
         private readonly KeywordRepository         $keywordRepository,
+        private readonly SeriesImageRepository     $seriesImageRepository,
         private readonly SeriesRepository          $seriesRepository,
         private readonly SeriesWatchLinkRepository $seriesWatchLinkRepository,
         private readonly TMDBService               $tmdbService,
@@ -192,11 +195,10 @@ class SeriesController extends AbstractController
         $this->seriesRepository->save($series, true);
 
         $this->checkSlug($series, $slug);
-
-        $this->saveImage("posters", $series->getPosterPath(), $this->imageConfiguration->getUrl('poster_sizes', 5));
-        $this->saveImage("backdrops", $series->getBackdropPath(), $this->imageConfiguration->getUrl('backdrop_sizes', 3));
-
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords"]), true);
+
+        $series = $this->updateSeries($series, $tv);
+
         $tv['credits'] = $this->castAndCrew($tv);
         $tv['localized_name'] = $series->getLocalizedName($request->getLocale());
         $tv['networks'] = $this->networks($tv);
@@ -587,6 +589,52 @@ class SeriesController extends AbstractController
             'overview' => $content ? $content['overview'] : "",
             'media_type' => $this->translator->trans($type),
         ]);
+    }
+
+
+    public function updateSeries(Series $series, array $tv): Series
+    {
+        $slugger = new AsciiSlugger();
+        $series->setName($tv['name']);
+        $series->setSlug($slugger->slug($tv['name']));
+
+        $series->setOriginalName($tv['original_name']);
+        if ($tv['first_air_date'] && !$series->getFirstDateAir())
+            $series->setFirstDateAir(new DatePoint($tv['first_air_date']));
+
+        if (strlen($tv['overview']) && !strlen($series->getOverview()))
+            $series->setOverview($tv['overview']);
+
+        $seriesImages = $series->getSeriesImages()->toArray();
+        $seriesPosters = array_filter($seriesImages, fn($image) => $image->getType() == "poster");
+        $seriesBackdrops = array_filter($seriesImages, fn($image) => $image->getType() == "backdrop");
+
+        if (!$this->inImages($tv['poster_path'], $seriesPosters)) {
+            $seriesImage = new SeriesImage($series, "poster", $tv['poster_path']);
+            $this->seriesImageRepository->save($seriesImage, true);
+        }
+        if (!$this->inImages($tv['backdrop_path'], $seriesBackdrops)) {
+            $seriesImage = new SeriesImage($series, "backdrop", $tv['backdrop_path']);
+            $this->seriesImageRepository->save($seriesImage, true);
+        }
+        if ($tv['poster_path'] != $series->getPosterPath()) {
+            $series->setPosterPath($tv['poster_path']);
+            $this->saveImage("posters", $series->getPosterPath(), $this->imageConfiguration->getUrl('poster_sizes', 5));
+        }
+        if ($tv['backdrop_path'] != $series->getBackdropPath()) {
+            $series->setBackdropPath($tv['backdrop_path']);
+            $this->saveImage("backdrops", $series->getBackdropPath(), $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+        }
+        $this->seriesRepository->save($series, true);
+        return $series;
+    }
+
+    public function inImages(string $image, array $images): bool
+    {
+        foreach ($images as $img) {
+            if ($img->getimagePath() == $image) return true;
+        }
+        return false;
     }
 
     public function addSeries($id, $date): Series
