@@ -107,6 +107,29 @@
                 }
             }
 
+            .updates {
+                display: flex;
+                overflow-x: auto;
+                .wrapper {
+                    align-items: center;
+                    display: flex;
+                    flex-shrink: 0;
+                    gap: .5rem;
+                    justify-content: flex-start;
+
+                    .update {
+                        background-color: var(--gradient-orange-50);
+                        border-radius: .25rem;
+                        color: var(--gradient-ardoise-10);
+                        flex-shrink: 0;
+                        font-size: 1rem;
+                        font-weight: 300;
+                        padding-block: .25rem;
+                        padding-inline: .75rem;
+                    }
+                }
+            }
+
             .backdrop {
                 height: 100%;
                 inset: 0;

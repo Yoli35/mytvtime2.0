@@ -36,6 +36,16 @@
                         {{ n }} {{ (n > 1 ? 'visits':'visit')|trans }}
                     </h5>
                     <div class="overview">{{ tv.overview }}</div>
+                    {% if series.updates %}
+                        <h4>{{ 'Updates'|trans }}</h4>
+                    <div class="updates">
+                        <div class="wrapper">
+                            {% for update in series.updates %}
+                                <div class="update">{{ update|trans }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
                     <div class="backdrop">
                         <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
                     </div>

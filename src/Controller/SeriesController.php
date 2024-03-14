@@ -591,19 +591,29 @@ class SeriesController extends AbstractController
         ]);
     }
 
-
     public function updateSeries(Series $series, array $tv): Series
     {
         $slugger = new AsciiSlugger();
-        $series->setName($tv['name']);
-        $series->setSlug($slugger->slug($tv['name']));
+        $series->setUpdates([]);
+        if ($tv['name'] != $series->getName()) {
+            $series->setName($tv['name']);
+            $series->setSlug($slugger->slug($tv['name']));
+            $series->addUpdate('Name updated');
+        }
 
-        $series->setOriginalName($tv['original_name']);
-        if ($tv['first_air_date'] && !$series->getFirstDateAir())
+        if ($tv['original_name'] != $series->getOriginalName()) {
+            $series->setOriginalName($tv['original_name']);
+            $series->addUpdate('Original name updated');
+        }
+        if ($tv['first_air_date'] && !$series->getFirstDateAir()) {
             $series->setFirstDateAir(new DatePoint($tv['first_air_date']));
+            $series->addUpdate('First date air updated');
+        }
 
-        if (strlen($tv['overview']) && !strlen($series->getOverview()))
+        if (strcmp($tv['overview'], $series->getOverview())) {
             $series->setOverview($tv['overview']);
+            $series->addUpdate('Overview updated');
+        }
 
         $seriesImages = $series->getSeriesImages()->toArray();
         $seriesPosters = array_filter($seriesImages, fn($image) => $image->getType() == "poster");
@@ -612,18 +622,23 @@ class SeriesController extends AbstractController
         if (!$this->inImages($tv['poster_path'], $seriesPosters)) {
             $seriesImage = new SeriesImage($series, "poster", $tv['poster_path']);
             $this->seriesImageRepository->save($seriesImage, true);
+            $series->addUpdate('Poster added');
         }
         if (!$this->inImages($tv['backdrop_path'], $seriesBackdrops)) {
             $seriesImage = new SeriesImage($series, "backdrop", $tv['backdrop_path']);
             $this->seriesImageRepository->save($seriesImage, true);
+            $series->addUpdate('Backdrop added');
+            dump($series->getUpdates());
         }
         if ($tv['poster_path'] != $series->getPosterPath()) {
             $series->setPosterPath($tv['poster_path']);
             $this->saveImage("posters", $series->getPosterPath(), $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $series->addUpdate('Poster updated');
         }
         if ($tv['backdrop_path'] != $series->getBackdropPath()) {
             $series->setBackdropPath($tv['backdrop_path']);
             $this->saveImage("backdrops", $series->getBackdropPath(), $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+            $series->addUpdate('Backdrop updated');
         }
         $this->seriesRepository->save($series, true);
         return $series;

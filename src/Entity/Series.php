@@ -59,11 +59,14 @@ class Series
     #[ORM\OneToMany(targetEntity: SeriesImage::class, mappedBy: 'series', orphanRemoval: true)]
     private Collection $seriesImages;
 
+    private array $updates;
+
     public function __construct()
     {
         $this->seriesLocalizedNames = new ArrayCollection();
         $this->seriesWatchLinks = new ArrayCollection();
         $this->seriesImages = new ArrayCollection();
+        $this->updatedFields = [];
     }
 
     public function getId(): ?int
@@ -319,5 +322,20 @@ class Series
         }
 
         return $this;
+    }
+
+    public function getUpdates(): array
+    {
+        return $this->updates;
+    }
+
+    public function addUpdate(string $update): void
+    {
+        $this->updates[] = $update;
+    }
+
+    public function setUpdates(array $updates): void
+    {
+        $this->updates = $updates;
     }
 }
