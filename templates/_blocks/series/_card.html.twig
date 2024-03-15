@@ -2,7 +2,7 @@
     {% if series.tmdb is defined %}
         {% set url = path('app_series_tmdb', {'id': series.id, 'slug': series.slug }) %}
     {% else %}
-        {% set url = path('app_series_show', {'id': series.id, 'slug': series.slug }) %}
+        {% set url = path('app_series_show', {'id': series.id, 'slug': series.localized_slug ?? series.slug }) %}
     {% endif %}
     <a href="{{ url }}">
         <div class="poster">
@@ -35,6 +35,6 @@
                 </div>
             {% endif %}
         </div>
-        <div class="name">{{ series.name }}</div>
+        <div class="name">{{ series.localized_name ?? series.name }}</div>
     </a>
 </div>

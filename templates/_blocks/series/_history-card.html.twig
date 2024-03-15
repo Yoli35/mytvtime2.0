@@ -1,5 +1,5 @@
 <div class="card">
-    <a href="{{ path('app_series_season', {'id': series.id, 'seasonNumber': series.seasonNumber, 'slug': series.localizeSlug ?? series.slug }) }}#episode-{{ series.episodeNumber }}">
+    <a href="{{ path('app_series_season', {'id': series.id, 'seasonNumber': series.seasonNumber, 'slug': series.localizedSlug ?? series.slug }) }}#episode-{{ series.episodeNumber }}">
         <div class="poster">
             {% if series.posterPath %}
                 <img src="{{ series.posterPath }}" alt="{{ series.name }}"{% if series.date is defined %} data-title="{{ series.date }}{% endif %}">
@@ -27,10 +27,6 @@
                 </div>
             {% endif %}
         </div>
-        {% if series.localizedName %}
-            <div class="name">{{ series.localizedName }}</div>
-        {% else %}
-            <div class="name">{{ series.name }}</div>
-        {% endif %}
+        <div class="name">{{ series.localizedName ?? series.name }}</div>
     </a>
 </div>

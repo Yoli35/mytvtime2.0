@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}my Tv Time → {{ 'Series'|trans }} → {{ tv.name }}{% endblock %}
+{% block title %}my Tv Time → {{ 'Series'|trans }} → {{ localizedName ?? tv.name }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
@@ -29,10 +29,9 @@
                 <div class="infos">
                     <h1>
                         {% if localizedName %}
-                            {{ localizedName.name }} - {{ tv.name }}
-                        {% else %}
-                            {{ tv.name }}
+                            {{ localizedName.name }} -
                         {% endif %}
+                        {{ tv.name }}
                         ({{ tv.first_air_date|date("Y") }})
                     </h1>
                     <div class="overview">{{ tv.overview|nl2br }}</div>

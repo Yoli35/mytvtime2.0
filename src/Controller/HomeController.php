@@ -49,7 +49,7 @@ class HomeController extends AbstractController
             // Dernières séries ajoutées
             /** @var UserSeries[] $series */
 //            $series = $this->userSeriesRepository->getLastAddedSeries($user);
-            $userSeries = $this->userSeriesRepository->getUserSeries($user);
+            $userSeries = $this->userSeriesRepository->getUserSeries($user, $user->getPreferredLanguage() ?? $request->getLocale());
             $userSeriesCount = $this->userSeriesRepository->count(['user' => $user]);
 
             $userSeries = array_map(function ($series) {
@@ -65,11 +65,11 @@ class HomeController extends AbstractController
                 $series['providerLogoPath'] = $series['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($series['providerLogoPath'], 'logo_sizes', 2) : null;
                 return $series;
             }, $this->userEpisodeRepository->history($user, $language, 1, 20));
-            dump(['history' => $history,]);
-        } else {
+            } else {
             $userSeries = [];
             $history = [];
         }
+        dump(['history' => $history,]);
 
         /*
          * Watch providers

@@ -44,14 +44,18 @@ class UserSeriesRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function getUserSeries(User $user, int $page = 1, int $perPage = 20): mixed
+    public function getUserSeries(User $user, $locale, int $page = 1, int $perPage = 20): mixed
     {
-        $sql = "SELECT s.`id` as id, s.`name` as name, s.`poster_path` as poster_path, s.`tmdb_id` as tmdbId, s.`slug` as slug, us.`user_id` as user_id, us.`progress` as progress, us.`favorite` as favorite " .
-            "FROM `user_series` us " .
-            "INNER JOIN `series` s ON s.`id` = us.`series_id` " .
-            "WHERE us.user_id=" . $user->getId() . " " .
-            "ORDER BY s.`first_date_air` DESC " .
-            "LIMIT " . $perPage . " OFFSET " . ($page - 1) * $perPage;
+        $sql = "SELECT s.`id` as id, s.`name` as name, s.`poster_path` as poster_path, "
+            . "     s.`tmdb_id` as tmdbId, s.`slug` as slug, us.`user_id` as user_id, "
+            . "     us.`progress` as progress, us.`favorite` as favorite, "
+            . "     sln.`name` as localized_name, sln.`slug` as localized_slug "
+            . "FROM `user_series` us "
+            . "INNER JOIN `series` s ON s.`id` = us.`series_id` "
+            . "LEFT JOIN `series_localized_name` sln ON s.`id` = sln.`series_id` AND sln.locale='" . $locale . "' "
+            . "WHERE us.user_id=" . $user->getId() . " "
+            . "ORDER BY s.`first_date_air` DESC "
+            . "LIMIT " . $perPage . " OFFSET " . ($page - 1) * $perPage;
 
         return $this->em->getConnection()->fetchAllAssociative($sql);
     }

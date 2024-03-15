@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}my Tv Time → {{ 'Series'|trans }} → {{ series.name }} → {{ 'season'|trans }} {{ season.season_number }}{% endblock %}
+{% block title %}my Tv Time → {{ 'Series'|trans }} → {{ season.localized_name.name ?? series.name }} → {{ 'season'|trans }} {{ season.season_number }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">

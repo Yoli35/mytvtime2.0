@@ -149,7 +149,7 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
         $userSeries = $user ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
-        dump($user, $series, $userSeries);
+
         if ($userSeries) {
             return $this->redirectToRoute('app_series_show', [
                 'id' => $series->getId(),
@@ -194,7 +194,7 @@ class SeriesController extends AbstractController
         $series->setVisitNumber($series->getVisitNumber() + 1);
         $this->seriesRepository->save($series, true);
 
-        $this->checkSlug($series, $slug);
+        $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords"]), true);
 
         $series = $this->updateSeries($series, $tv);
@@ -291,14 +291,14 @@ class SeriesController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    #[Route('/show/season/{id}/{seasonNumber}-{slug}', name: 'season', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS])]
+    #[Route('/show/season/{id}-{slug}/{seasonNumber}', name: 'season', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS])]
     public function showSeason(Request $request, $id, $seasonNumber, $slug): Response
     {
         /** @var User $user */
         $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['id' => $id]);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        $this->checkSlug($series, $slug);
+        $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
         $slugger = new AsciiSlugger();
 
         $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $request->getLocale(), ['credits', 'watch/providers']), true);
@@ -325,16 +325,17 @@ class SeriesController extends AbstractController
         }, $season['episodes']);
         $season['credits'] = $this->castAndCrew($season);
         $season['watch/providers'] = $this->watchProviders($season, $user->getCountry() ?? 'FR');
+        $season['localized_name'] = $series->getLocalizedName($request->getLocale());
 
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
-//        dump([
+        dump([
 //            'series' => $series,
-//            'season' => $season,
+            'season' => $season,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-//            ]);
+            ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
@@ -698,9 +699,11 @@ class SeriesController extends AbstractController
         return $now;
     }
 
-    public function checkSlug($series, $slug): bool|Response
+    public function checkSlug($series, $slug, $locale='fr'): bool|Response
     {
-        if ($series->getSlug() !== $slug) {
+        $localizedName = $series->getLocalizedName($locale);
+        $seriesSlug = $localizedName ? $localizedName->getSlug() : $series->getSlug();
+        if ($seriesSlug !== $slug) {
             return $this->redirectToRoute('app_series_show', [
                 'id' => $series->getId(),
                 'slug' => $series->getSlug(),
