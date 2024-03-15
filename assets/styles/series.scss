@@ -15,12 +15,10 @@
     }
 
     .header {
-        align-items: flex-start;
+        align-items: center;
         display: flex;
         gap: 1rem;
         justify-content: flex-start;
-        height: 30vw;
-        position: relative;
 
         .poster {
             align-items: center;
@@ -74,8 +72,8 @@
             flex-direction: column;
             gap: clamp(.5rem, 1vw, 2rem);
             justify-content: center;
-            height: 30vw;
             padding: 1rem;
+            position: relative;
             width: 100%;
 
             &.light {
@@ -811,9 +809,9 @@
 
         .poster {
             flex-shrink: 0;
-            height: 90cqi !important;
+            height: 120cqi !important;
             margin-inline: auto;
-            width: 60cqi !important;
+            width: 90cqi !important;
         }
 
         .infos {
@@ -873,10 +871,45 @@
     .series-show {
         .content {
             flex-direction: column;
-            padding-inline: 1rem;
+
+            h3 {
+                padding-inline-start: 1rem;
+            }
 
             .providers {
                 padding-inline: 0.75rem;
+            }
+
+            .seasons-episodes {
+                .season-episode {
+                    align-items: center;
+                    flex-direction: column;
+                    height: unset;
+                    position: relative;
+
+                    .poster, .still {
+                        height: 80vw;
+                        width: 80vw;
+
+                        .number {
+                            left: .5rem;
+                            right: unset;
+                            height: 20vw;
+                            width: 20vw;
+                            font-size: 15vw;
+                        }
+                    }
+
+                    .infos {
+                        height: unset;
+                    }
+
+                    .user-episode {
+                        position: absolute;
+                        right: 5vw;
+                        top: 5vw;
+                    }
+                }
             }
 
             .cast, .crew {

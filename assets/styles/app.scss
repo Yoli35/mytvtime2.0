@@ -320,6 +320,14 @@ label:has(input[type="text"]) {
     }
 }
 
+@media (max-width: 576px) {
+    .navbar {
+        .desktop {
+            display: none;
+        }
+    }
+}
+
 .home-footer {
     align-items: center;
     display: flex;
