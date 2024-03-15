@@ -75,8 +75,8 @@
                         <div class="input-group">
                             <input type="search" class="keyword-input" placeholder="{{ 'Start tapping to search'|trans }}">
                             <div class="and-or">
-                                <div class="and active" data-value="," data-title="{{ 'All keywords'|trans }}">{{ 'And'|trans }}</div>
-                                <div class="or" data-value="|" data-title="{{ 'Any keywords'|trans }}">{{ 'Or'|trans }}</div>
+                                <div class="and{% if form.keywordSeparator.vars.value==',' %} active{% endif %}" data-value="," data-title="{{ 'All keywords'|trans }}">{{ 'And'|trans }}</div>
+                                <div class="or{% if form.keywordSeparator.vars.value=='|' %} active{% endif %}" data-value="|" data-title="{{ 'Any keywords'|trans }}">{{ 'Or'|trans }}</div>
                             </div>
                         </div>
                         <div class="keyword-list" id="keywords-list">
@@ -174,10 +174,26 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const input = document.querySelector('.keyword-input');
+            const andOr = document.querySelectorAll('.and-or div');
+            const hiddenSeparator = document.querySelector('#{{ form.keywordSeparator.vars.id }}');
+            let separator = hiddenSeparator.value;
+            const hiddenInput = document.querySelector('#{{ form.withKeywords.vars.id }}');
+            const hiddenInputValue = hiddenInput.value.split(separator);
+            andOr.forEach(function (item) {
+                item.addEventListener('click', function () {
+                    let value = hiddenInput.value.split(separator);
+                    andOr.forEach(function (item) {
+                        item.classList.remove('active');
+                    });
+                    item.classList.add('active');
+                    separator = item.dataset.value;
+                    hiddenSeparator.value = separator;
+                    hiddenInput.value = value.join(separator);
+                });
+            });
+
             const list = document.querySelector('#keywords-list');
             const keywords = document.querySelector('.form-keywords');
-            const hiddenInput = document.querySelector('#{{ form.withKeywords.vars.id }}');
-            const hiddenInputValue = hiddenInput.value.split('|');
             const keywordItems = list.querySelectorAll('.keyword-item');
             const keywordList = [];
             keywordItems.forEach(function (item) {
@@ -234,7 +250,7 @@
                         e.target.removeAttribute('data-added');
                         hiddenInput.value = Array.from(keywords.querySelectorAll('.keyword')).map(function (keyword) {
                             return keyword.dataset.value;
-                        }).join('|');
+                        }).join(separator);
                     });
                     keyword.appendChild(close);
                     keywords.appendChild(keyword);
@@ -246,7 +262,7 @@
                     });
                     hiddenInput.value = Array.from(keywords.querySelectorAll('.keyword')).map(function (keyword) {
                         return keyword.dataset.value;
-                    }).join('|');
+                    }).join(separator);
                 }
             });
         });

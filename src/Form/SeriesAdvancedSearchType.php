@@ -94,6 +94,10 @@ class SeriesAdvancedSearchType extends AbstractType
                 'required' => false,
                 'empty_data' => '',
             ])
+            ->add('keywordSeparator', HiddenType::class, [
+                'data' => ',',
+                'empty_data' => ',',
+            ])
             ->add('withStatus', ChoiceType::class, [
                 'label' => 'Status',
                 'choices' => [

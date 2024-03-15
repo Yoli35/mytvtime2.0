@@ -36,6 +36,8 @@ class SeriesAdvancedSearchDTO
     // Keywords
     private ?string $withKeywords = null;
     private array $keywords = [];
+    #[Assert\Choice([',', '|'])]
+    private string $keywordSeparator = ',';
 
     // Runtime, status and type
     #[Assert\GreaterThanOrEqual(0)]
@@ -250,5 +252,15 @@ class SeriesAdvancedSearchDTO
     public function setKeywords(array $keywords): void
     {
         $this->keywords = $keywords;
+    }
+
+    public function getKeywordSeparator(): string
+    {
+        return $this->keywordSeparator;
+    }
+
+    public function setKeywordSeparator(string $keywordSeparator): void
+    {
+        $this->keywordSeparator = $keywordSeparator;
     }
 }
