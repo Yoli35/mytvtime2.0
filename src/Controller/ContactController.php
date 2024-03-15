@@ -51,7 +51,7 @@ class ContactController extends AbstractController
             try {
                 $this->mailer->send($mail);
             } catch (TransportExceptionInterface $e) {
-                dump($e);
+//                dump($e);
                 $this->addFlash('error', $this->translator->trans('An error occurred, please try again later'));
             }
             $this->addFlash('success', $this->translator->trans('Your message has been sent'));

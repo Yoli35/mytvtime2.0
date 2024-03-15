@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div class="series-back">
-                    <a href="{{ path('app_series_show', {id: series.id, slug: series.slug}) }}">
+                    <a href="{{ path('app_series_show', {id: series.id, slug: season.localized_name.slug ?? series.slug}) }}">
                         {% if series.posterPath %}
                             <div class="poster-back">
                                 <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }} {{ season.season_number }}">
@@ -216,7 +216,7 @@
         }
     </div>
     <pre>
-        {{ dump(devices) }}
+{#        {{ dump(devices) }}#}
     </pre>
 {% endblock %}
 {% block javascripts %}

@@ -69,7 +69,7 @@ class HomeController extends AbstractController
             $userSeries = [];
             $history = [];
         }
-        dump(['history' => $history,]);
+//        dump(['history' => $history,]);
 
         /*
          * Watch providers
@@ -118,7 +118,7 @@ class HomeController extends AbstractController
             return $tv['poster_path'];
         }));
 
-        dump(['filterString' => $filterString, 'seriesSelection' => $seriesSelection]);
+//        dump(['filterString' => $filterString, 'seriesSelection' => $seriesSelection]);
 
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,

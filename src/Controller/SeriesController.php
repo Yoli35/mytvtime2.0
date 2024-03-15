@@ -130,7 +130,7 @@ class SeriesController extends AbstractController
             }
             $series = $this->getSearchResult($searchResult, $slugger);
         }
-        dump($series);
+//        dump($series);
 
         return $this->render('series/search-advanced.html.twig', [
             'form' => $form->createView(),
@@ -166,7 +166,7 @@ class SeriesController extends AbstractController
         }
         $tv = json_decode($this->tmdbService->getTv($id, $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords"]), true);
 
-        dump($localizedName);
+//        dump($localizedName);
         $this->checkTmdbSlug($tv, $slug, $localizedName?->getSlug());
 
         $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
@@ -177,7 +177,7 @@ class SeriesController extends AbstractController
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
 
-        dump($tv);
+//        dump($tv);
         return $this->render('series/tmdb.html.twig', [
             'tv' => $tv,
             'localizedName' => $localizedName,
@@ -209,12 +209,12 @@ class SeriesController extends AbstractController
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
 
-        dump([
-            'series' => $series,
-            'tv' => $tv,
-            'userSeries' => $userSeries,
-            'providers' => $providers,
-        ]);
+//        dump([
+//            'series' => $series,
+//            'tv' => $tv,
+//            'userSeries' => $userSeries,
+//            'providers' => $providers,
+//        ]);
         return $this->render('series/show.html.twig', [
             'series' => $series,
             'tv' => $tv,
@@ -329,13 +329,13 @@ class SeriesController extends AbstractController
 
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
-        dump([
+//        dump([
 //            'series' => $series,
-            'season' => $season,
+//            'season' => $season,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-            ]);
+//            ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
@@ -634,7 +634,7 @@ class SeriesController extends AbstractController
             $seriesImage = new SeriesImage($series, "backdrop", $tv['backdrop_path']);
             $this->seriesImageRepository->save($seriesImage, true);
             $series->addUpdate('Backdrop added');
-            dump($series->getUpdates());
+//            dump($series->getUpdates());
         }
         if ($tv['poster_path'] != $series->getPosterPath()) {
             $series->setPosterPath($tv['poster_path']);
