@@ -66,7 +66,7 @@ class Series
         $this->seriesLocalizedNames = new ArrayCollection();
         $this->seriesWatchLinks = new ArrayCollection();
         $this->seriesImages = new ArrayCollection();
-        $this->updatedFields = [];
+        $this->updates = [];
     }
 
     public function getId(): ?int
