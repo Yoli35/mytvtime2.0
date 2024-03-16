@@ -34,6 +34,7 @@ const posterHover = new PosterHover();
 posterHover.init();
 
 import {AverageColor} from "./js/images/AverageColor.js";
+import {Season} from "./js/series/Season.js";
 
 const seriesShow = document.querySelector(".series-show");
 if (seriesShow) {
@@ -66,6 +67,12 @@ if (seriesShow) {
             link.classList.add("dark");
         });
         footer.classList.add("dark");
+    }
+
+    const seasonPage = document.querySelector("#series-season");
+    if (seasonPage) {
+        const season = new Season();
+        season.init();
     }
 }
 
