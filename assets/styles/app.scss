@@ -35,11 +35,12 @@ html {
 }
 
 a {
-    color: var(--gradient-ardoise-20);
+    color: var(--gradient-ardoise-10);
+    font-weight: 400;
     text-decoration: none;
 
     &:hover, &:visited, &:focus {
-        color: var(--gradient-ardoise-20);
+        color: var(--gradient-ardoise-10);
     }
 }
 
@@ -88,7 +89,7 @@ body {
     background-color: transparent;
     margin-inline: auto;
     min-height: 100vh;
-    padding-block-start: 3rem;
+    padding-block-start: 4rem;
     padding-inline: .25rem;
     position: relative;
     width: 100%;
@@ -110,7 +111,7 @@ body {
 }
 
 .container-fluid:not(:has(.backgroundImageOverlay)) {
-    padding: 1rem 0;
+    //padding: 1rem 0;
 }
 
 @media (min-width: 576px) {
@@ -219,7 +220,7 @@ label:has(input[type="text"]) {
     left: 0;
     //margin-block-end: 1rem;
     padding-inline: 1rem;
-    position: sticky;
+    position: fixed;
     top: 1rem;
     width: 100%;
     z-index: 100;

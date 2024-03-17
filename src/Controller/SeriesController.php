@@ -6,6 +6,7 @@ use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\Series;
 use App\Entity\SeriesImage;
+use App\Entity\SeriesLocalizedName;
 use App\Entity\SeriesWatchLink;
 use App\Entity\User;
 use App\Entity\UserEpisode;
@@ -15,6 +16,7 @@ use App\Form\SeriesSearchType;
 use App\Repository\DeviceRepository;
 use App\Repository\KeywordRepository;
 use App\Repository\SeriesImageRepository;
+use App\Repository\SeriesLocalizedNameRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\SeriesWatchLinkRepository;
 use App\Repository\UserEpisodeRepository;
@@ -42,19 +44,20 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SeriesController extends AbstractController
 {
     public function __construct(
-        private readonly ClockInterface            $clock,
-        private readonly DateService               $dateService,
-        private readonly DeviceRepository          $deviceRepository,
-        private readonly DeeplTranslator           $deeplTranslator,
-        private readonly ImageConfiguration        $imageConfiguration,
-        private readonly KeywordRepository         $keywordRepository,
-        private readonly SeriesImageRepository     $seriesImageRepository,
-        private readonly SeriesRepository          $seriesRepository,
-        private readonly SeriesWatchLinkRepository $seriesWatchLinkRepository,
-        private readonly TMDBService               $tmdbService,
-        private readonly TranslatorInterface       $translator,
-        private readonly UserEpisodeRepository     $userEpisodeRepository,
-        private readonly UserSeriesRepository      $userSeriesRepository,
+        private readonly ClockInterface                $clock,
+        private readonly DateService                   $dateService,
+        private readonly DeviceRepository              $deviceRepository,
+        private readonly DeeplTranslator               $deeplTranslator,
+        private readonly ImageConfiguration            $imageConfiguration,
+        private readonly KeywordRepository             $keywordRepository,
+        private readonly SeriesImageRepository         $seriesImageRepository,
+        private readonly SeriesRepository              $seriesRepository,
+        private readonly SeriesLocalizedNameRepository $seriesLocalizedNameRepository,
+        private readonly SeriesWatchLinkRepository     $seriesWatchLinkRepository,
+        private readonly TMDBService                   $tmdbService,
+        private readonly TranslatorInterface           $translator,
+        private readonly UserEpisodeRepository         $userEpisodeRepository,
+        private readonly UserSeriesRepository          $userSeriesRepository,
     )
     {
     }
@@ -329,13 +332,13 @@ class SeriesController extends AbstractController
 
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
-//        dump([
+        dump([
 //            'series' => $series,
-//            'season' => $season,
+            'season' => $season,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-//            ]);
+        ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
@@ -356,6 +359,30 @@ class SeriesController extends AbstractController
 
         $watchLink = new SeriesWatchLink($url, $name, $series, $providerId);
         $this->seriesWatchLinkRepository->save($watchLink, true);
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/add/localized/name/{id}', name: 'add_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function localizedName(Request $request, int $id): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $name = $data['name'];
+        $series = $this->seriesRepository->findOneBy(['id' => $id]);
+        $slugger = new AsciiSlugger();
+
+        $localizedName = $series->getLocalizedName($request->getLocale());
+        if ($localizedName) {
+            $localizedName->setName($name);
+            $localizedName->setSlug($slugger->slug($name));
+        } else {
+            $slug = $slugger->slug($name)->lower()->toString();
+            $localizedName = new SeriesLocalizedName($series, $name, $slug, $request->getLocale());
+        }
+        $this->seriesLocalizedNameRepository->save($localizedName, true);
 
         return $this->json([
             'ok' => true,
@@ -699,7 +726,7 @@ class SeriesController extends AbstractController
         return $now;
     }
 
-    public function checkSlug($series, $slug, $locale='fr'): bool|Response
+    public function checkSlug($series, $slug, $locale = 'fr'): bool|Response
     {
         $localizedName = $series->getLocalizedName($locale);
         $seriesSlug = $localizedName ? $localizedName->getSlug() : $series->getSlug();

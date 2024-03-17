@@ -1,8 +1,8 @@
 .user-providers {
     container: userProviders / inline-size;
-    display: flex;
-    gap: 1rem;
-    margin-block-start: 4rem;
+    //display: flex;
+    //gap: 1rem;
+    margin-block: auto;
 
     .providers {
         border-radius: .25rem;
@@ -11,6 +11,8 @@
         flex-wrap: wrap;
         gap: .25rem .5rem;
         margin-inline: auto;
+        max-height: calc(100vh - 8rem);
+        overflow-y: auto;
         padding: 1rem;
 
         .provider {
@@ -74,6 +76,7 @@
     @container userProviders (width < 42.5rem) {
         .providers {
             flex-direction: column;
+            flex-wrap: nowrap;
             width: calc(2px + 22rem);
         }
     }

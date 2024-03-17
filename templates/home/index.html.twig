@@ -60,10 +60,30 @@
                 </div>
             </div>
             <div class="series-group">
-                <h2>{{ 'History'|trans }}</h2>
+                <h2>{{ 'Last added series'|trans }}</h2>
                 <div class="wrapper">
                     <div class="content">
-                        {% for s in history %}
+                        {% for s in lastAddedSeries %}
+                            {{ include('_blocks/series/_card.html.twig', { series: s }) }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="series-group">
+                <h2>{{ 'Series history'|trans }}</h2>
+                <div class="wrapper">
+                    <div class="content">
+                        {% for s in historySeries %}
+                            {{ include('_blocks/series/_history-card.html.twig', { series: s }) }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="series-group">
+                <h2>{{ 'Episode history'|trans }}</h2>
+                <div class="wrapper">
+                    <div class="content">
+                        {% for s in historyEpisode %}
                             {{ include('_blocks/series/_history-card.html.twig', { series: s }) }}
                         {% endfor %}
                     </div>

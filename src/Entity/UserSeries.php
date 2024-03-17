@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserSeriesRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -24,10 +25,10 @@ class UserSeries
     private ?Series $series = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $addedAt = null;
+    private ?DateTimeImmutable $addedAt;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $lastWatchAt = null;
+    private ?DateTimeImmutable $lastWatchAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $lastSeason = null;
@@ -47,11 +48,11 @@ class UserSeries
     #[ORM\Column(nullable: true, options: ['default' => 0])]
     private ?int $rating;
 
-    #[ORM\OneToMany(targetEntity: UserEpisode::class, mappedBy: 'series', fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: UserEpisode::class, mappedBy: 'userSeries', fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[ORM\OrderBy(['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC'])]
     private Collection $userEpisodes;
 
-    public function __construct(User $user, Series $serie, $date)
+    public function __construct(User $user, Series $serie, DateTimeImmutable $date)
     {
         $this->user = $user;
         $this->series = $serie;
@@ -92,24 +93,24 @@ class UserSeries
         return $this;
     }
 
-    public function getAddedAt(): ?\DateTimeImmutable
+    public function getAddedAt(): ?DateTimeImmutable
     {
         return $this->addedAt;
     }
 
-    public function setAddedAt(\DateTimeImmutable $addedAt): static
+    public function setAddedAt(DateTimeImmutable $addedAt): static
     {
         $this->addedAt = $addedAt;
 
         return $this;
     }
 
-    public function getLastWatchAt(): ?\DateTimeImmutable
+    public function getLastWatchAt(): ?DateTimeImmutable
     {
         return $this->lastWatchAt;
     }
 
-    public function setLastWatchAt(?\DateTimeImmutable $lastWatchAt): static
+    public function setLastWatchAt(?DateTimeImmutable $lastWatchAt): static
     {
         $this->lastWatchAt = $lastWatchAt;
 

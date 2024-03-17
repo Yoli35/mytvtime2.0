@@ -15,11 +15,12 @@
         body.style.backgroundAttachment = "fixed";
         body.style.backgroundImage = "url(" + bd + ")";
     </script>
+    <div class="scroll-watcher"></div>
     <div class="container-fluid backgroundImageOverlay">
         {% include '_blocks/_menu.html.twig' %}
         <div id="series-season" class="series-show">
             <div class="header">
-                <div class="poster">
+                <div class="poster" id="top">
                     <img src="/series/posters{{ season.poster_path }}" alt="{{ series.name }} {{ season.season_number }}">
                 </div>
                 <div class="infos">
@@ -48,84 +49,100 @@
                 </div>
             </div>
 
+            <div class="quick-episodes">
+                {% for episode in season.episodes %}
+                    <a href="#episode-{{ episode.episode_number }}">
+                        <div class="quick-episode{% if episode.user_episode %} watched{% endif %}" data-title="{{ episode.name }}">
+                            {{ episode.episode_number }}
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+
             <div class="content column">
                 <div class="seasons-episodes">
                     <h3>{{ 'Episodes'|trans }}</h3>
                     {% for episode in season.episodes %}
-                        <div class="season-episode" id="episode-{{ episode.episode_number }}">
-                            <div class="still">
-                                {% if episode.still_path %}
-                                    <img src="{{ episode.still_path }}" alt="{{ episode.name }}">
-                                {% else %}
-                                    <div>{{ 'No poster'|trans }}</div>
-                                {% endif %}
-                                <div class="number">
-                                    {{ episode.episode_number }}
+                        <div class="episode-card">
+                            <div class="season-episode" id="episode-{{ episode.episode_number }}">
+                                <div class="still">
+                                    {% if episode.still_path %}
+                                        <img src="{{ episode.still_path }}" alt="{{ episode.name }}">
+                                    {% else %}
+                                        <div>{{ 'No poster'|trans }}</div>
+                                    {% endif %}
+                                    <div class="number">
+                                        {{ episode.episode_number }}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="infos">
-                                <div class="name">{{ episode.name }}</div>
-                                {% if episode.air_date %}
-                                    <div class="air-date">{{ 'Air date'|trans }} {{ date(episode.air_date)|format_date('relative_long') }}</div>
-                                {% endif %}
-                                {% if episode.runtime %}
-                                    <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
-                                {% endif %}
-                                {% if episode.overview %}
-                                    <div class="overview">{{ episode.overview }}</div>
-                                {% endif %}
-                                {% if episode.guest_stars %}
-                                    <div class="guest-stars">
-                                        <div class="wrapper">
-                                            {% for people in episode.guest_stars %}
-                                                <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
-                                                    <div class="people" data-title="{{ people.name }} - {{ people.character }}">
-                                                        <div class="profile">
-                                                            {% if people.profile_path %}
-                                                                <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                                                            {% else %}
-                                                                {{ 'No picture'|trans }}
-                                                            {% endif %}
+                                <div class="infos">
+                                    <div class="name">{{ episode.name }}</div>
+                                    {% if episode.air_date %}
+                                        <div class="air-date">{{ 'Air date'|trans }} {{ date(episode.air_date)|format_date('relative_long') }}</div>
+                                    {% endif %}
+                                    {% if episode.runtime %}
+                                        <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
+                                    {% endif %}
+                                    {% if episode.overview %}
+                                        <div class="overview">{{ episode.overview }}</div>
+                                    {% endif %}
+                                    {% if episode.guest_stars %}
+                                        <div class="guest-stars">
+                                            <div class="wrapper">
+                                                {% for people in episode.guest_stars %}
+                                                    <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
+                                                        <div class="people" data-title="{{ people.name }} - {{ people.character }}">
+                                                            <div class="profile">
+                                                                {% if people.profile_path %}
+                                                                    <img src="{{ people.profile_path }}" alt="{{ people.name }}">
+                                                                {% else %}
+                                                                    {{ 'No picture'|trans }}
+                                                                {% endif %}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </a>
-                                            {% endfor %}
+                                                    </a>
+                                                {% endfor %}
+                                            </div>
                                         </div>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="user-episode">
-                                {% if episode.user_episode %}
-                                    <div class="remove-this-episode" data-id="{{ episode.id }}" data-title="{{ episode.user_episode.watchAt|format_datetime('relative_short', 'short')|capitalize }}">
-                                        <i class="fas fa-eye"></i>
-                                    </div>
-                                    <div class="select-provider" data-id="{{ episode.id }}" data-title="{{ 'Choose a provider'|trans }}">
-                                        {% if episode.user_episode.providerId %}
-                                            <img src="{{ providers.logos[episode.user_episode.providerId] }}" alt="{{ providers.names[episode.user_episode.providerId] }}" data-title="{{ providers.names[episode.user_episode.providerId] }}">
-                                        {% else %}
-                                            <i class="fas fa-plus"></i>
-                                        {% endif %}
-                                    </div>
-                                    <div class="select-device" data-id="{{ episode.id }}" data-title="{{ 'Choose a device'|trans }}">
-                                        {% if episode.user_episode.deviceId %}
-                                            <img src="{{ deviceLogo(episode.user_episode.deviceId) }}" alt="{{ deviceName(episode.user_episode.deviceId)|trans }}" data-title="{{ deviceName(episode.user_episode.deviceId)|trans }}">
-                                        {% else %}
-                                            <i class="fas fa-plus"></i>
-                                        {% endif %}
-                                    </div>
-                                    <div class="select-vote" data-id="{{ episode.id }}" data-title="{{ 'Give a rating'|trans }}">
-                                        {% if episode.user_episode.vote %}
-                                            {{ episode.user_episode.vote }}
-                                        {% else %}
-                                            <i class="fas fa-plus"></i>
-                                        {% endif %}
-                                    </div>
-                                {% else %}
-                                    <div class="add-this-episode" data-id="{{ episode.id }}" data-show-id="{{ episode.show_id }}" data-s-number="{{ episode.season_number }}" data-e-number="{{ episode.episode_number }}" data-title="{{ 'Mark this episode as seen'|trans }}">
-                                        <i class="fas fa-plus"></i>
-                                    </div>
-                                    {# TODO: Dialog (provider, device, vote) #}
-                                {% endif %}
+                                    {% endif %}
+                                </div>
+                                <div class="user-episode">
+                                    {% if episode.user_episode %}
+                                        <div class="remove-this-episode" data-id="{{ episode.id }}" data-title="{{ episode.user_episode.watchAt|format_datetime('relative_short', 'short')|capitalize }}">
+                                            ◉{#<i class="fas fa-eye"></i>#}
+                                        </div>
+                                        <div class="select-provider" data-id="{{ episode.id }}" data-title="{{ 'Choose a provider'|trans }}">
+                                            {% if episode.user_episode.providerId %}
+                                                <img src="{{ providers.logos[episode.user_episode.providerId] }}" alt="{{ providers.names[episode.user_episode.providerId] }}" data-title="{{ providers.names[episode.user_episode.providerId] }}">
+                                            {% else %}
+                                                +{#<i class="fas fa-plus"></i>#}
+                                            {% endif %}
+                                        </div>
+                                        <div class="select-device" data-id="{{ episode.id }}" data-title="{{ 'Choose a device'|trans }}">
+                                            {% if episode.user_episode.deviceId %}
+                                                <img src="{{ deviceLogo(episode.user_episode.deviceId) }}" alt="{{ deviceName(episode.user_episode.deviceId)|trans }}" data-title="{{ deviceName(episode.user_episode.deviceId)|trans }}">
+                                            {% else %}
+                                                +{#<i class="fas fa-plus"></i>#}
+                                            {% endif %}
+                                        </div>
+                                        <div class="select-vote" data-id="{{ episode.id }}" data-title="{{ 'Give a rating'|trans }}">
+                                            {% if episode.user_episode.vote %}
+                                                {{ episode.user_episode.vote }}
+                                            {% else %}
+                                                +{#<i class="fas fa-plus"></i>#}
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <div class="add-this-episode" data-id="{{ episode.id }}" data-show-id="{{ episode.show_id }}" data-s-number="{{ episode.season_number }}" data-e-number="{{ episode.episode_number }}" data-title="{{ 'Mark this episode as seen'|trans }}">
+                                            +{#<i class="fas fa-plus"></i>#}
+                                        </div>
+                                    {% endif %}
+                                    <a href="#top">
+                                        <div class="back-to-top" data-title="{{ 'Back to top'|trans }}">
+                                            ↑{#<i class="fas fa-arrow-up"></i>#}
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     {% endfor %}
@@ -210,24 +227,28 @@
     </div>
     <div id="globs" style="display: none">
         {
-            "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "text": {
-                "provider": "{{ 'Choose a provider'|trans }}",
-                "device": "{{ 'Choose a device'|trans }}",
-                "rating": "{{ 'Give a rating'|trans }}",
-                "now": "{{ 'Now'|trans }}",
-                "Television": "{{ 'Television'|trans }}",
-                "Mobile": "{{ 'Mobile'|trans }}",
-                "Tablet": "{{ 'Tablet'|trans }}",
-                "Laptop": "{{ 'Laptop'|trans }}",
-                "Desktop": "{{ 'Desktop'|trans }}",
-                "Search": "{{ 'Search'|trans }}"
-            }
+        "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "text": {
+        "provider": "{{ 'Choose a provider'|trans }}",
+        "device": "{{ 'Choose a device'|trans }}",
+        "rating": "{{ 'Give a rating'|trans }}",
+        "now": "{{ 'Now'|trans }}",
+        "Television": "{{ 'Television'|trans }}",
+        "Mobile": "{{ 'Mobile'|trans }}",
+        "Tablet": "{{ 'Tablet'|trans }}",
+        "Laptop": "{{ 'Laptop'|trans }}",
+        "Desktop": "{{ 'Desktop'|trans }}",
+        "Search": "{{ 'Search'|trans }}"
+        }
         }
     </div>
     <pre>
-{#        {{ dump(devices) }}#}
+{#        {{ dump(devices) }} #}
     </pre>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://flackr.github.io/scroll-timeline/dist/scroll-timeline.js"></script>
 {% endblock %}

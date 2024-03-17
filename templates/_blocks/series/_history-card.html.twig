@@ -6,7 +6,7 @@
             {% else %}
                 <div>{{ 'No poster'|trans }}</div>
             {% endif %}
-            {% if series.providerName %}
+            {% if series.providerName is defined and series.providerName %}
                 <div class="providers">
                     <div class="provider-content">
                         <div class="provider">

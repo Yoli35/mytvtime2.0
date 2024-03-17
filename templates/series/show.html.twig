@@ -32,7 +32,28 @@
                             {{ tv.localized_name.name }}
                         {% endif %}
                         {{ series.name }} ({{ series.firstDateAir|date("Y") }})
+                        <div class="localized-name" data-title="{{ 'Suggest a name'|trans }}">
+                            <i class="fa fa-pen"></i>
+                        </div>
                     </h1>
+                    <div class="localized-name-form">
+                        <form class="form" action="" id="localized-name-form">
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="name">{{ 'Localized name'|trans }}
+                                        <input type="text" name="name" id="name" value="{% if tv.localized_name %}{{ tv.localized_name.name }}{% endif %}" required>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <button type="button">{{ 'Cancel'|trans }}</button>
+                                    <button type="submit">{{ 'Add'|trans }}</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                     <h5>
                         {% set n = series.visitNumber %}
                         {% if n > 1000 %}
@@ -480,6 +501,53 @@
                             provider.value = '';
                             name.value = '';
                             url.value = '';
+                        }
+                    });
+                }
+            });
+
+            const localizedName = document.querySelector('.localized-name');
+            const localizedNameForm = document.querySelector('.localized-name-form');
+            const lnForm = document.querySelector('#localized-name-form');
+            const lnCancel = lnForm.querySelector('button[type="button"]');
+            const lnSubmit = lnForm.querySelector('button[type="submit"]');
+
+            localizedName.addEventListener('click', function () {
+                localizedNameForm.classList.add('display');
+                setTimeout(function () {
+                    localizedNameForm.classList.add('active');
+                }, 0);
+            });
+            lnCancel.addEventListener('click', function () {
+                localizedNameForm.classList.remove('active');
+                setTimeout(function () {
+                    localizedNameForm.classList.remove('display');
+                }, 300);
+            });
+            lnSubmit.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const name = lnForm.querySelector('#name');
+                const errors = lnForm.querySelectorAll('.error');
+                errors.forEach(function (error) {
+                    error.textContent = '';
+                });
+                if (!name.value) {
+                    name.nextElementSibling.textContent = '{{ 'This field is required'|trans }}';
+                } else {
+                    fetch('/' + lang + '/series/add/localized/name/' + {{ series.id }}, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({name: name.value})
+                    }).then(function (response) {
+                        if (response.ok) {
+                            localizedNameForm.classList.remove('active');
+                            setTimeout(function () {
+                                localizedNameForm.classList.remove('display');
+                            }, 300);
+                            window.location.reload();
                         }
                     });
                 }

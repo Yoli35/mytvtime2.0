@@ -58,18 +58,34 @@ class HomeController extends AbstractController
                 return $series;
             }, $userSeries);
 
+            // Dernières séries ajoutées
+            $lastAddedSeries = array_map(function ($series) {
+//                $s = $serie->homeArray();
+                $series['poster_path'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+                $series['localized_name'] = $series['localizedName'];
+                $series['localized_slug'] = $series['localizedSlug'];
+                return $series;
+            }, $this->userEpisodeRepository->lastAddedSeries($user, $language, 1, 20));
             // Historique des séries vues
-            $history = array_map(function ($series) {
+            $historySeries = array_map(function ($series) {
+//                $s = $serie->homeArray();
+                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+                return $series;
+            }, $this->userEpisodeRepository->historySeries($user, $language, 1, 20));
+            // Historique des épisodes vus
+            $historyEpisode = array_map(function ($series) {
 //                $s = $serie->homeArray();
                 $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
                 $series['providerLogoPath'] = $series['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($series['providerLogoPath'], 'logo_sizes', 2) : null;
                 return $series;
-            }, $this->userEpisodeRepository->history($user, $language, 1, 20));
+            }, $this->userEpisodeRepository->historyEpisode($user, $language, 1, 20));
             } else {
             $userSeries = [];
-            $history = [];
+            $lastAddedSeries = [];
+            $historyEpisode = [];
+            $historySeries = [];
         }
-//        dump(['history' => $history,]);
+        dump(['last added series' => $lastAddedSeries,]);
 
         /*
          * Watch providers
@@ -123,7 +139,9 @@ class HomeController extends AbstractController
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
             'userSeries' => $userSeries,
-            'history' => $history,
+            'lastAddedSeries' => $lastAddedSeries,
+            'historyEpisode' => $historyEpisode,
+            'historySeries' => $historySeries,
             'userSeriesCount' => $userSeriesCount ?? 0,
             'watchProviders' => $watchProviders,
             'provider' => $provider,

@@ -26,6 +26,14 @@ class SeriesLocalizedName
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
+    public function __construct(Series $series, string $name, string $slug, string $locale)
+    {
+        $this->series = $series;
+        $this->name = $name;
+        $this->slug = $slug;
+        $this->locale = $locale;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

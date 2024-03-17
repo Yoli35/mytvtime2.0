@@ -20,7 +20,7 @@ class UserEpisode
 
     #[ORM\ManyToOne(inversedBy: 'userEpisodes')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?UserSeries $series;
+    private ?UserSeries $userSeries;
 
     #[ORM\Column]
     private ?int $episodeId;
@@ -49,10 +49,10 @@ class UserEpisode
     #[ORM\Column(nullable: true)]
     private ?bool $quickWatchWeek = null;
 
-    public function __construct(User $user, UserSeries $series, int $episodeId, int $seasonNumber, int $episodeNumber, DateTimeImmutable $watchAt)
+    public function __construct(User $user, UserSeries $userSeries, int $episodeId, int $seasonNumber, int $episodeNumber, DateTimeImmutable $watchAt)
     {
         $this->user = $user;
-        $this->series = $series;
+        $this->userSeries = $userSeries;
         $this->episodeId = $episodeId;
         $this->seasonNumber = $seasonNumber;
         $this->episodeNumber = $episodeNumber;
@@ -78,12 +78,12 @@ class UserEpisode
 
     public function getSeries(): ?UserSeries
     {
-        return $this->series;
+        return $this->userSeries;
     }
 
-    public function setSeries(?UserSeries $series): static
+    public function setSeries(?UserSeries $userSeries): static
     {
-        $this->series = $series;
+        $this->userSeries = $userSeries;
 
         return $this;
     }
