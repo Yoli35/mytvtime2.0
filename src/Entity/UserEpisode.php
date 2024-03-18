@@ -44,13 +44,13 @@ class UserEpisode
     private ?int $vote = null;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $quickWatchDay = null;
+    private ?bool $quickWatchDay;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $quickWatchWeek = null;
+    private ?bool $quickWatchWeek;
 
     #[ORM\Column(nullable: true, options: ['default' => 0])]
-    private ?int $numberOfView = null;
+    private ?int $numberOfView;
 
     public function __construct(User $user, UserSeries $userSeries, int $episodeId, int $seasonNumber, int $episodeNumber, DateTimeImmutable $watchAt)
     {
@@ -60,6 +60,9 @@ class UserEpisode
         $this->seasonNumber = $seasonNumber;
         $this->episodeNumber = $episodeNumber;
         $this->watchAt = $watchAt;
+        $this->quickWatchDay = false;
+        $this->quickWatchWeek = false;
+        $this->numberOfView = 0;
     }
 
     public function getId(): ?int

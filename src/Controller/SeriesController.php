@@ -422,6 +422,20 @@ class SeriesController extends AbstractController
         $userEpisode->setQuickWatchWeek($diff->days < 7);
         $this->userEpisodeRepository->save($userEpisode, true);
 
+        // Si on regarde 3 épisodes en moins d'un jour, on considère que c'est un marathon
+        if (!$userSeries->getMarathoner() && $episodeNumber >= 3) {
+            $episodes = $this->userEpisodeRepository->findBy(['user' => $user, 'userSeries' => $userSeries, 'seasonNumber' => $seasonNumber], ['watchAt' => 'DESC'], 3);
+            dump($episodes);
+            if ($episodes[0]->getEpisodeNumber() - $episodes[1]->getEpisodeNumber() == 1 && $episodes[1]->getEpisodeNumber() - $episodes[2]->getEpisodeNumber() == 1) {
+                $firstViewAt = $episodes[0]->getWatchAt();
+                $lastViewAt = $episodes[2]->getWatchAt();
+                $diff = $lastViewAt->diff($firstViewAt);
+                if ($diff->days < 1) {
+                    $userSeries->setMarathoner(true);
+                }
+            }
+        }
+
         $userSeries->setLastWatchAt($now);
         $userSeries->setLastEpisode($episode['episode_number']);
         $userSeries->setLastSeason($episode['season_number']);
@@ -460,7 +474,7 @@ class SeriesController extends AbstractController
         if ($episodeNumber > 1) {
             for ($j = $seasonNumber; $j > 0; $j--) {
                 for ($i = $episodeNumber - 1; $i > 0; $i--) {
-                    $episode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'series' => $series, 'seasonNumber' => $j, 'episodeNumber' => $i]);
+                    $episode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'userSeries' => $userSeries, 'seasonNumber' => $j, 'episodeNumber' => $i]);
                     if ($episode && $episode->getWatchAt()) {
                         $userSeries->setLastEpisode($episode->getEpisodeNumber());
                         $userSeries->setLastSeason($episode->getSeasonNumber());

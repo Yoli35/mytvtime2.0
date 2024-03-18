@@ -147,6 +147,11 @@
                             </div>
                         </div>
                     </div>
+                    {% if userSeries.marathoner %}
+                    <div class="badges">
+                        <div class="badge"data-title="{{ 'A real marathoner!'|trans }}"><i class="fas fa-bolt"></i></div>
+                    </div>
+                    {% endif %}
                     <div class="actions">
                         <div class="action toggle-favorite-series{% if userSeries.favorite %} favorite{% endif %}">
                             <i class="fas fa-heart" data-title="{{ (userSeries.favorite ? "Remove from favorites" : "Add to favorites")|trans }}"></i>

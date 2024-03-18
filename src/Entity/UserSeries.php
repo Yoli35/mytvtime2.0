@@ -45,6 +45,9 @@ class UserSeries
     #[ORM\Column(nullable: true)]
     private ?bool $favorite;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $marathoner;
+
     #[ORM\Column(nullable: true, options: ['default' => 0])]
     private ?int $rating;
 
@@ -60,6 +63,7 @@ class UserSeries
         $this->viewedEpisodes = 0;
         $this->progress = 0;
         $this->favorite = false;
+        $this->marathoner = false;
         $this->rating = 0;
         $this->userEpisodes = new ArrayCollection();
     }
@@ -176,6 +180,7 @@ class UserSeries
             'user_id' => $this->getUser()->getId(),
             'progress' => $this->getProgress(),
             'favorite' => $this->isFavorite(),
+            'marathoner' => $this->getMarathoner(),
         ];
     }
 
@@ -241,5 +246,15 @@ class UserSeries
             }
         }
         return null;
+    }
+
+    public function getMarathoner(): ?bool
+    {
+        return $this->marathoner;
+    }
+
+    public function setMarathoner(?bool $marathoner): void
+    {
+        $this->marathoner = $marathoner;
     }
 }

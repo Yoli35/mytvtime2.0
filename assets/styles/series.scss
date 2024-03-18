@@ -316,6 +316,26 @@
             }
         }
 
+        .badges {
+            align-items: center;
+            display: flex;
+            gap: .5rem;
+            justify-content: center;
+
+            .badge {
+                align-items: center;
+                background-color: var(--marathoner-series);
+                border-radius: .25rem;
+                color: var(--gradient-ardoise-10);
+                display: flex;
+                font-size: 1rem;
+                font-weight: 300;
+                gap: .25rem;
+                justify-content: center;
+                padding: .5rem;
+            }
+        }
+
         .actions {
             display: flex;
             gap: .5rem;
