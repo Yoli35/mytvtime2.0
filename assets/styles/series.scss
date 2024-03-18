@@ -98,11 +98,11 @@
             width: 100%;
 
             &.light {
-                color: #f7f7f7;/*var(--gradient-orange-80);*/
+                color: #f7f7f7; /*var(--gradient-orange-80);*/
             }
 
             &.dark {
-                color: #030303;/*var(--gradient-ardoise-90);*/
+                color: #030303; /*var(--gradient-ardoise-90);*/
             }
 
             h1 {
@@ -143,6 +143,7 @@
             .updates {
                 display: flex;
                 overflow-x: auto;
+
                 .wrapper {
                     align-items: center;
                     display: flex;
@@ -380,6 +381,7 @@
                     gap: 1rem;
                     justify-content: flex-end;
                 }
+
                 button {
                     padding-block: .25rem;
                 }
@@ -751,6 +753,32 @@
     }
 }
 
+#review-dialog {
+    border: 2px solid var(--gradient-orange-50);
+    border-radius: .25rem;
+    margin-block: auto;
+    margin-inline: auto;
+
+    .content {
+        background-color: var(--gradient-ardoise-80-alpha-50);
+        color: var(--gradient-ardoise-10);
+        padding: 1rem 2rem;
+
+        form {
+            display: flex;
+            gap: 1rem;
+
+            button {
+                padding-inline: 1rem;
+            }
+        }
+    }
+}
+
+#review-dialog::backdrop {
+    background-color: #1f1f1fcf;
+}
+
 .cast, .crew, .guest-stars {
     overflow-x: auto;
     width: 100%;
@@ -828,13 +856,14 @@
     right: 1rem;
     text-align: center;
 }
+
 /*  @media (min-width: 576px) {
         .container, .container-fluid:not(:has(.backgroundImageOverlay)) {
             padding-inline: 0.75rem;
         }
     } */
-@container series-show (width < 552px) { /* 576px - 1.5rem */
-
+@container series-show (width < 552px) {
+    /* 576px - 1.5rem */
     .user-actions {
         padding-inline: 1rem;
 

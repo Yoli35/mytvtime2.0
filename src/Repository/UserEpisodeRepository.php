@@ -32,6 +32,12 @@ class UserEpisodeRepository extends ServiceEntityRepository
         }
     }
 
+    public function remove(UserEpisode $userEpisode): void
+    {
+        $this->em->remove($userEpisode);
+        $this->em->flush();
+    }
+
     public function lastAddedSeries(User $user, $locale, $page, $perPage): array
     {
         $sql = "SELECT "

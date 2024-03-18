@@ -49,6 +49,9 @@ class UserEpisode
     #[ORM\Column(nullable: true)]
     private ?bool $quickWatchWeek = null;
 
+    #[ORM\Column(nullable: true, options: ['default' => 0])]
+    private ?int $numberOfView = null;
+
     public function __construct(User $user, UserSeries $userSeries, int $episodeId, int $seasonNumber, int $episodeNumber, DateTimeImmutable $watchAt)
     {
         $this->user = $user;
@@ -194,5 +197,15 @@ class UserEpisode
         $this->quickWatchWeek = $quickWatchWeek;
 
         return $this;
+    }
+
+    public function getNumberOfView(): ?int
+    {
+        return $this->numberOfView;
+    }
+
+    public function setNumberOfView(?int $numberOfView): void
+    {
+        $this->numberOfView = $numberOfView;
     }
 }

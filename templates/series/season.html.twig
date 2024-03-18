@@ -71,7 +71,7 @@
                                     {% else %}
                                         <div>{{ 'No poster'|trans }}</div>
                                     {% endif %}
-                                    <div class="number">
+                                    <div class="number"{% if episode.user_episode %} data-title="{{ 'Watched %time% times'|trans({'%time%': episode.user_episode.numberOfView}) }}"{% endif %}>
                                         {{ episode.episode_number }}
                                     </div>
                                 </div>
@@ -108,38 +108,47 @@
                                 </div>
                                 <div class="user-episode">
                                     {% if episode.user_episode %}
-                                        <div class="remove-this-episode" data-id="{{ episode.id }}" data-title="{{ episode.user_episode.watchAt|format_datetime('relative_short', 'short')|capitalize }}">
-                                            ◉{#<i class="fas fa-eye"></i>#}
+                                        <div class="remove-this-episode" data-id="{{ episode.id }}"
+                                             data-show-id="{{ episode.show_id }}"
+                                             data-s-number="{{ episode.season_number }}"
+                                             data-e-number="{{ episode.episode_number }}"
+                                             data-views="{{ episode.user_episode.numberOfView }}"
+                                             data-title="{{ episode.user_episode.watchAt|format_datetime('relative_short', 'short')|capitalize }}">
+                                            <i class="fas fa-eye"></i>
                                         </div>
                                         <div class="select-provider" data-id="{{ episode.id }}" data-title="{{ 'Choose a provider'|trans }}">
                                             {% if episode.user_episode.providerId %}
                                                 <img src="{{ providers.logos[episode.user_episode.providerId] }}" alt="{{ providers.names[episode.user_episode.providerId] }}" data-title="{{ providers.names[episode.user_episode.providerId] }}">
                                             {% else %}
-                                                +{#<i class="fas fa-plus"></i>#}
+                                                <i class="fas fa-plus"></i>
                                             {% endif %}
                                         </div>
                                         <div class="select-device" data-id="{{ episode.id }}" data-title="{{ 'Choose a device'|trans }}">
                                             {% if episode.user_episode.deviceId %}
                                                 <img src="{{ deviceLogo(episode.user_episode.deviceId) }}" alt="{{ deviceName(episode.user_episode.deviceId)|trans }}" data-title="{{ deviceName(episode.user_episode.deviceId)|trans }}">
                                             {% else %}
-                                                +{#<i class="fas fa-plus"></i>#}
+                                                <i class="fas fa-plus"></i>
                                             {% endif %}
                                         </div>
                                         <div class="select-vote" data-id="{{ episode.id }}" data-title="{{ 'Give a rating'|trans }}">
                                             {% if episode.user_episode.vote %}
                                                 {{ episode.user_episode.vote }}
                                             {% else %}
-                                                +{#<i class="fas fa-plus"></i>#}
+                                                <i class="fas fa-plus"></i>
                                             {% endif %}
                                         </div>
                                     {% else %}
-                                        <div class="add-this-episode" data-id="{{ episode.id }}" data-show-id="{{ episode.show_id }}" data-s-number="{{ episode.season_number }}" data-e-number="{{ episode.episode_number }}" data-title="{{ 'Mark this episode as seen'|trans }}">
-                                            +{#<i class="fas fa-plus"></i>#}
+                                        <div class="add-this-episode" data-id="{{ episode.id }}"
+                                             data-show-id="{{ episode.show_id }}"
+                                             data-s-number="{{ episode.season_number }}"
+                                             data-e-number="{{ episode.episode_number }}"
+                                             data-title="{{ 'Mark this episode as seen'|trans }}">
+                                             <i class="fas fa-plus"></i>
                                         </div>
                                     {% endif %}
                                     <a href="#top">
                                         <div class="back-to-top" data-title="{{ 'Back to top'|trans }}">
-                                            ↑{#<i class="fas fa-arrow-up"></i>#}
+                                             <i class="fas fa-arrow-up"></i>
                                         </div>
                                     </a>
                                 </div>
@@ -225,6 +234,15 @@
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
+    // Retirez-vous cet épisode ou le regardez-vous de nouveau ?
+    <dialog id="review-dialog">
+        <div class="content">
+            <form method="dialog">
+                    <button value="remove">{{ 'Remove'|trans }}</button>
+                    <button value="watch" autofocus>{{ 'Watched again'|trans }}</button>
+            </form>
+        </div>
+    </dialog>
     <div id="globs" style="display: none">
         {
         "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
@@ -235,6 +253,7 @@
         "device": "{{ 'Choose a device'|trans }}",
         "rating": "{{ 'Give a rating'|trans }}",
         "now": "{{ 'Now'|trans }}",
+        "add": "{{ 'Add'|trans }}",
         "Television": "{{ 'Television'|trans }}",
         "Mobile": "{{ 'Mobile'|trans }}",
         "Tablet": "{{ 'Tablet'|trans }}",

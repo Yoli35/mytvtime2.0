@@ -1,5 +1,7 @@
 import {ToolTips} from '../ToolTips.js';
+
 let gThis;
+
 export class Season {
 
     constructor() {
@@ -72,6 +74,7 @@ export class Season {
          * @property {string} device
          * @property {string} rating
          * @property {string} now
+         * @property {string} add
          * @property {string} Television
          * @property {string} Mobile
          * @property {string} Tablet
@@ -99,6 +102,7 @@ export class Season {
 
         this.toolTips = new ToolTips();
     }
+
     init() {
         const seasonsEpisodes = document.querySelector('.seasons-episodes');
         const infos = seasonsEpisodes.querySelectorAll('.infos');
@@ -111,6 +115,11 @@ export class Season {
         const addThisEpisode = document.querySelectorAll('.add-this-episode');
         addThisEpisode.forEach(episode => {
             episode.addEventListener('click', this.addEpisode);
+        });
+
+        const removeThisEpisode = document.querySelectorAll('.remove-this-episode');
+        removeThisEpisode.forEach(episode => {
+            episode.addEventListener('click', this.removeOrReviewEpisode);
         });
 
         const userEpisodeProviders = document.querySelectorAll('.select-provider');
@@ -132,9 +141,14 @@ export class Season {
         });
     }
 
-    addEpisode(e) {
-        const episode = e.currentTarget
+    addEpisode(e, episodeId = null) {
+        const selector = episodeId ? '.remove-this-episode[data-id="' + episodeId + '"]' : null;
+        const episode = episodeId ? document.querySelector(selector) : e.currentTarget;
+        const sId = episode.getAttribute('data-show-id');
         const id = episode.getAttribute('data-id');
+        const episodeNumber = episode.getAttribute('data-e-number');
+        const seasonNumber = episode.getAttribute('data-s-number');
+        const views = parseInt(episode.getAttribute('data-views'));
         fetch('/' + gThis.lang + '/series/add/episode/' + id, {
             method: 'POST',
             headers: {
@@ -142,18 +156,24 @@ export class Season {
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({
-                showId: episode.getAttribute('data-show-id'),
-                seasonNumber: episode.getAttribute('data-s-number'),
-                episodeNumber: episode.getAttribute('data-e-number')
+                showId: sId,
+                seasonNumber: seasonNumber,
+                episodeNumber: episodeNumber
             })
         }).then(function (response) {
             if (response.ok) {
                 episode.removeEventListener('click', gThis.addEpisode);
+                episode.addEventListener('click', gThis.removeOrReviewEpisode);
+                const number = episode.closest('.season-episode').querySelector('.number');
+                number.setAttribute('data-title', "x" + (views + 1));
 
+                if (episodeId) {
+                    episode.setAttribute('data-title', gThis.text.now);
+                    return;
+                }
                 episode.innerHTML = '<i class="fas fa-eye"></i>';
                 episode.classList.remove('add-this-episode');
                 episode.classList.add('remove-this-episode');
-                episode.setAttribute('data-title', gThis.text.now);
 
                 const provider = document.createElement('div');
                 provider.classList.add('select-provider');
@@ -181,6 +201,86 @@ export class Season {
                 vote.addEventListener('mouseenter', gThis.selectVote);
                 vote.addEventListener('mouseleave', gThis.removeList);
                 episode.parentElement.appendChild(vote);
+
+                const backToTop = episode.parentElement.querySelector('.back-to-top');
+                episode.parentElement.appendChild(backToTop);
+            }
+        });
+    }
+
+    removeOrReviewEpisode(e) {
+        const dialog = document.querySelector("#review-dialog");
+        const episode = e.currentTarget;
+        const id = episode.getAttribute('data-id');
+        const showId = episode.getAttribute('data-show-id');
+        const episodeNumber = episode.getAttribute('data-e-number');
+        const seasonNumber = episode.getAttribute('data-s-number');
+        const buttons = dialog.querySelectorAll('button');
+        const removeButton = dialog.querySelector('button[value="remove"]');
+        const watchButton = dialog.querySelector('button[value="watch"]');
+        buttons.forEach(button => {
+            button.setAttribute('data-id', id);
+            button.setAttribute('data-show-id', showId);
+            button.setAttribute('data-e-number', episodeNumber);
+            button.setAttribute('data-s-number', seasonNumber);
+        });
+        removeButton.addEventListener('click', () => {
+            dialog.close();
+            gThis.removeEpisode(id);
+        });
+        watchButton.addEventListener('click', () => {
+            dialog.close();
+            gThis.addEpisode(e, id);
+        });
+        dialog.showModal();
+    }
+
+    removeEpisode(episodeId) {
+        const selector = '.remove-this-episode[data-id="' + episodeId + '"]';
+        const episode = document.querySelector(selector);
+        const sId = episode.getAttribute('data-show-id');
+        const episodeNumber = episode.getAttribute('data-e-number');
+        const seasonNumber = episode.getAttribute('data-s-number');
+        let views = parseInt(episode.getAttribute('data-views'));
+        fetch('/' + gThis.lang + '/series/remove/episode/' + episodeId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                showId: sId,
+                seasonNumber: seasonNumber,
+                episodeNumber: episodeNumber
+            })
+        }).then(function (response) {
+            if (response.ok) {
+                views--;
+                episode.setAttribute('data-views', '' + views);
+                const number = episode.closest('.season-episode').querySelector('.number');
+                number.setAttribute('data-title', "x" + views);
+                gThis.toolTips.init(number);
+                if (views > 0) {
+                    return;
+                }
+                episode.removeEventListener('click', gThis.removeEpisode);
+                episode.addEventListener('click', gThis.addEpisode);
+                episode.innerHTML = '<i class="fas fa-plus"></i>';
+                episode.classList.remove('remove-this-episode');
+                episode.classList.add('add-this-episode');
+                episode.setAttribute('data-title', gThis.text.add);
+                const provider = episode.parentElement.querySelector('.select-provider');
+                if (provider) {
+                    provider.remove();
+                }
+                const device = episode.parentElement.querySelector('.select-device');
+                if (device) {
+                    device.remove();
+                }
+                const vote = episode.parentElement.querySelector('.select-vote');
+                if (vote) {
+                    vote.remove();
+                }
             }
         });
     }

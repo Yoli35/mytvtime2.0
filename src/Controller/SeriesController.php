@@ -404,7 +404,9 @@ class SeriesController extends AbstractController
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $id]);
         if ($userEpisode) {
-            $this->addFlash('warning', $this->translator->trans('Episode already added to your watchlist'));
+            $userEpisode->setWatchAt($this->now());
+            $userEpisode->setNumberOfView($userEpisode->getNumberOfView() + 1);
+            $this->userEpisodeRepository->save($userEpisode, true);
             return $this->json([
                 'ok' => true,
             ]);
@@ -420,12 +422,66 @@ class SeriesController extends AbstractController
         $userEpisode->setQuickWatchWeek($diff->days < 7);
         $this->userEpisodeRepository->save($userEpisode, true);
 
-//        $userSeries->addUserEpisode($userEpisode);
         $userSeries->setLastWatchAt($now);
         $userSeries->setLastEpisode($episode['episode_number']);
         $userSeries->setLastSeason($episode['season_number']);
         $userSeries->setViewedEpisodes($userSeries->getViewedEpisodes() + 1);
         $userSeries->setProgress($userSeries->getViewedEpisodes() / $tv['number_of_episodes'] * 100);
+        $this->userSeriesRepository->save($userSeries, true);
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/remove/episode/{id}', name: 'remove_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function removeUserEpisode(Request $request, int $id): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $showId = $data['showId'];
+        $seasonNumber = $data['seasonNumber'];
+        $episodeNumber = $data['episodeNumber'];
+        /** @var User $user */
+        $user = $this->getUser();
+        $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+        $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $id]);
+        if ($userEpisode) {
+            if ($userEpisode->getNumberOfView() > 1) {
+                $userEpisode->setNumberOfView($userEpisode->getNumberOfView() - 1);
+                $this->userEpisodeRepository->save($userEpisode, true);
+                return $this->json([
+                    'ok' => true,
+                ]);
+            }
+            $this->userEpisodeRepository->remove($userEpisode);
+        }
+
+        if ($episodeNumber > 1) {
+            for ($j = $seasonNumber; $j > 0; $j--) {
+                for ($i = $episodeNumber - 1; $i > 0; $i--) {
+                    $episode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'series' => $series, 'seasonNumber' => $j, 'episodeNumber' => $i]);
+                    if ($episode && $episode->getWatchAt()) {
+                        $userSeries->setLastEpisode($episode->getEpisodeNumber());
+                        $userSeries->setLastSeason($episode->getSeasonNumber());
+                        $userSeries->setLastWatchAt($episode->getWatchAt());
+                        $numberOfEpisode = round($userSeries->getViewedEpisodes() / ($userSeries->getProgress() / 100));
+                        $userSeries->setViewedEpisodes($userSeries->getViewedEpisodes() - 1);
+                        $userSeries->setProgress($userSeries->getViewedEpisodes() / $numberOfEpisode * 100);
+                        $this->userSeriesRepository->save($userSeries, true);
+                        return $this->json([
+                            'ok' => true,
+                        ]);
+                    }
+                }
+            }
+        }
+        // on a supprimé le premier épisode de la première saison ou on a pas trouvé d'épisode précédemment vu
+        $userSeries->setLastEpisode(null);
+        $userSeries->setLastSeason(null);
+        $userSeries->setLastWatchAt(null);
+        $userSeries->setViewedEpisodes(0);
+        $userSeries->setProgress(0);
         $this->userSeriesRepository->save($userSeries, true);
         return $this->json([
             'ok' => true,
