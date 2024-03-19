@@ -148,9 +148,9 @@
                         </div>
                     </div>
                     {% if userSeries.marathoner %}
-                    <div class="badges">
-                        <div class="badge"data-title="{{ 'A real marathoner!'|trans }}"><i class="fas fa-bolt"></i></div>
-                    </div>
+                        <div class="badges">
+                            <div class="badge" data-title="{{ 'A real marathoner!'|trans }}"><i class="fas fa-bolt"></i></div>
+                        </div>
                     {% endif %}
                     <div class="actions">
                         <div class="action toggle-favorite-series{% if userSeries.favorite %} favorite{% endif %}">
@@ -193,18 +193,16 @@
                                         <div class="episodes">
                                             {{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}
                                             <div class="watched"></div>
-                                            {% for ep in userSeries.userEpisodes %}
-                                                {% if ep.seasonNumber == season.season_number %}
-                                                    <div class="episode">
-                                                        {{ ep.episodeNumber }}
-                                                        {% if ep.watchAt %}
-                                                            <i class="fas fa-eye" data-title="{{ ep.watchAt|format_datetime("relative_long", "short") }}"></i>
-                                                        {% else %}
-                                                            <i class="far fa-eye-slash"></i>
-                                                        {% endif %}
-                                                    </div>
-                                                {% endif %}
-                                            {% endfor %}
+                                            {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number)|length %}
+                                            {% if viewedEpisodes == 0 %}
+                                                {{ 'No episode seen'|trans }}
+                                            {% elseif viewedEpisodes == 1 %}
+                                                {{ '1 episode seen'|trans }}
+                                            {% elseif viewedEpisodes == season.episode_count %}
+                                                {{ 'All episodes seen'|trans }}
+                                            {% else %}
+                                                {{ viewedEpisodes }} {{ 'episodes seen'|trans }}
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
