@@ -421,6 +421,13 @@ class SeriesController extends AbstractController
         $userEpisode = new UserEpisode($user, $userSeries, $id, $episode['season_number'], $episode['episode_number'], $now);
         $userEpisode->setQuickWatchDay($diff->days < 1);
         $userEpisode->setQuickWatchWeek($diff->days < 7);
+        if ($userEpisode->getEpisodeNumber() > 1) {
+            $previousEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'episodeNumber' => $episodeNumber - 1]);
+            if ($previousEpisode) {
+                $userEpisode->setProviderId($previousEpisode->getProviderId());
+                $userEpisode->setDeviceId($previousEpisode->getDeviceId());
+            }
+        }
         $this->userEpisodeRepository->save($userEpisode, true);
 
         // Si on regarde 3 épisodes en moins d'un jour, on considère que c'est un marathon

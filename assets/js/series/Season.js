@@ -167,8 +167,8 @@ export class Season {
                 const number = episode.closest('.season-episode').querySelector('.number');
                 number.setAttribute('data-title', "x" + (views + 1));
 
+                episode.setAttribute('data-title', gThis.text.now);
                 if (episodeId) {
-                    episode.setAttribute('data-title', gThis.text.now);
                     return;
                 }
                 episode.innerHTML = '<i class="fas fa-eye"></i>';
@@ -177,26 +177,45 @@ export class Season {
 
                 const quickEpisodeLink = document.querySelector('.quick-episode[data-number="' + episodeNumber + '"]');
                 if (quickEpisodeLink) {
-                   quickEpisodeLink.classList.add('watched');
+                    quickEpisodeLink.classList.add('watched');
                 }
 
-                const provider = document.createElement('div');
-                provider.classList.add('select-provider');
-                provider.setAttribute('data-id', id);
-                provider.setAttribute('data-title', gThis.text.provider);
-                provider.innerHTML = '<i class="fas fa-plus"></i>';
-                provider.addEventListener('mouseenter', gThis.selectProvider);
-                provider.addEventListener('mouseleave', gThis.removeList);
-                episode.parentElement.appendChild(provider);
+                const previousEpisode = episode.closest('.seasons-episodes').querySelector('.remove-this-episode[data-e-number="' + (episodeNumber - 1) + '"]');
+                const previousProvider = previousEpisode.parentElement.querySelector('.select-provider');
+                if (parseInt(episodeNumber) >= 1 && previousProvider) {
+                    const clone = previousProvider.cloneNode(true);
+                    clone.setAttribute('data-id', id);
+                    clone.addEventListener('mouseenter', gThis.selectProvider);
+                    clone.addEventListener('mouseleave', gThis.removeList);
+                    episode.parentElement.appendChild(clone);
+                } else {
+                    const providerDiv = document.createElement('div');
+                    providerDiv.classList.add('select-provider');
+                    providerDiv.setAttribute('data-id', id);
+                    providerDiv.setAttribute('data-title', gThis.text.provider);
+                    providerDiv.innerHTML = '<i class="fas fa-plus"></i>';
+                    providerDiv.addEventListener('mouseenter', gThis.selectProvider);
+                    providerDiv.addEventListener('mouseleave', gThis.removeList);
+                    episode.parentElement.appendChild(providerDiv);
+                }
 
-                const device = document.createElement('div');
-                device.classList.add('select-device');
-                device.setAttribute('data-id', id);
-                device.setAttribute('data-title', gThis.text.device);
-                device.innerHTML = '<i class="fas fa-plus"></i>';
-                device.addEventListener('mouseenter', gThis.selectDevice);
-                device.addEventListener('mouseleave', gThis.removeList);
-                episode.parentElement.appendChild(device);
+                const previousDevice = previousEpisode.parentElement.querySelector('.select-device');
+                if (parseInt(episodeNumber) >= 1 && previousDevice) {
+                    const clone = previousDevice.cloneNode(true);
+                    clone.setAttribute('data-id', id);
+                    clone.addEventListener('mouseenter', gThis.selectDevice);
+                    clone.addEventListener('mouseleave', gThis.removeList);
+                    episode.parentElement.appendChild(clone);
+                } else {
+                    const device = document.createElement('div');
+                    device.classList.add('select-device');
+                    device.setAttribute('data-id', id);
+                    device.setAttribute('data-title', gThis.text.device);
+                    device.innerHTML = '<i class="fas fa-plus"></i>';
+                    device.addEventListener('mouseenter', gThis.selectDevice);
+                    device.addEventListener('mouseleave', gThis.removeList);
+                    episode.parentElement.appendChild(device);
+                }
 
                 const vote = document.createElement('div');
                 vote.classList.add('select-device');
