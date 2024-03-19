@@ -31,8 +31,8 @@ English: Anglais
 Recent series: Séries récentes
 Latest series added: Dernières séries ajoutées
 Your series: Vos séries
-Series history: Historique des séries
-Episode history: Historique des épisodes
+Series history: Dernières séries regardées
+Episode history: Derniers épisodes regardés
 Last added series: Dernières séries ajoutées
 
 
@@ -117,6 +117,7 @@ Watched %time% times: Vu %time% fois
 Remove: Pas vu
 Watched again: Vu à nouveau
 A real marathoner!: Un vrai marathonien !
+Localized name: Nom localisé
 
 #Search
 Search: Rechercher

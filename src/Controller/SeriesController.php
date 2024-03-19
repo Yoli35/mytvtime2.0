@@ -28,6 +28,7 @@ use App\Service\TMDBService;
 use DateTimeImmutable;
 use DateTimeZone;
 use DeepL\DeepLException;
+use Deepl\TextResult;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\ClockInterface;
@@ -490,7 +491,7 @@ class SeriesController extends AbstractController
                 }
             }
         }
-        // on a supprimé le premier épisode de la première saison ou on a pas trouvé d'épisode précédemment vu
+        // on a supprimé le premier épisode de la première saison ou on n'a pas trouvé d'épisode précédemment vu
         $userSeries->setLastEpisode(null);
         $userSeries->setLastSeason(null);
         $userSeries->setLastWatchAt(null);
@@ -713,7 +714,7 @@ class SeriesController extends AbstractController
             $series->addUpdate('First date air updated');
         }
 
-        if (strcmp($tv['overview'], $series->getOverview())) {
+        if (strlen($tv['overview']) && strcmp($tv['overview'], $series->getOverview())) {
             $series->setOverview($tv['overview']);
             $series->addUpdate('Overview updated');
         }
@@ -829,7 +830,7 @@ class SeriesController extends AbstractController
     public function localizedOverview($tv, $series, $request): string
     {
         if ($tv['overview']) return $tv['overview'];
-
+        $overview = $series->getOverview();
         if (!strlen($series->getOverview())) {
             $usSeries = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
             $overview = $usSeries['overview'];
@@ -837,7 +838,9 @@ class SeriesController extends AbstractController
                 try {
                     $usage = $this->deeplTranslator->translator->getUsage();
                     if ($usage->character->count + strlen($overview) < $usage->character->limit) {
-                        $overview = $this->deeplTranslator->translator->translateText($usSeries['overview'], null, $request->getLocale());
+                        /** @var TextResult $DeeplOverview */
+                        $DeeplOverview = $this->deeplTranslator->translator->translateText($usSeries['overview'], null, $request->getLocale());
+                        $overview = $DeeplOverview->text;
                         $series->setOverview($overview);
                         $this->seriesRepository->save($series, true);
                     }
@@ -845,7 +848,7 @@ class SeriesController extends AbstractController
                 }
             }
         }
-        return $series->getOverview();
+        return $overview;
     }
 
     public function castAndCrew($tv): array
