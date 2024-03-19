@@ -175,6 +175,11 @@ export class Season {
                 episode.classList.remove('add-this-episode');
                 episode.classList.add('remove-this-episode');
 
+                const quickEpisodeLink = document.querySelector('.quick-episode[data-number="' + episodeNumber + '"]');
+                if (quickEpisodeLink) {
+                   quickEpisodeLink.classList.add('watched');
+                }
+
                 const provider = document.createElement('div');
                 provider.classList.add('select-provider');
                 provider.setAttribute('data-id', id);
@@ -202,8 +207,8 @@ export class Season {
                 vote.addEventListener('mouseleave', gThis.removeList);
                 episode.parentElement.appendChild(vote);
 
-                const backToTop = episode.parentElement.querySelector('.back-to-top');
-                episode.parentElement.appendChild(backToTop);
+                const backToTopLink = episode.parentElement.querySelector('.back-to-top').closest('a');
+                episode.parentElement.appendChild(backToTopLink);
             }
         });
     }
@@ -262,6 +267,11 @@ export class Season {
                 gThis.toolTips.init(number);
                 if (views > 0) {
                     return;
+                }
+
+                const quickEpisodeLink = document.querySelector('.quick-episode[data-number="' + episodeNumber + '"]');
+                if (quickEpisodeLink) {
+                    quickEpisodeLink.classList.remove('watched');
                 }
                 episode.removeEventListener('click', gThis.removeEpisode);
                 episode.addEventListener('click', gThis.addEpisode);
