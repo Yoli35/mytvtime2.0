@@ -52,7 +52,7 @@
             <div class="quick-episodes">
                 {% for episode in season.episodes %}
                     <a href="#episode-{{ episode.episode_number }}">
-                        <div class="quick-episode{% if episode.user_episode %} watched{% endif %}" data-title="{{ episode.name }}">
+                        <div class="quick-episode{% if episode.user_episode %} watched{% endif %}" data-number="{{ episode.episode_number }}" data-title="{{ episode.name }}">
                             {{ episode.episode_number }}
                         </div>
                     </a>
