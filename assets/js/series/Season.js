@@ -81,6 +81,14 @@ export class Season {
          * @property {string} Laptop
          * @property {string} Desktop
          * @property {string} Search
+         * @property {string} days
+         * @property {string} hours
+         * @property {string} minutes
+         * @property {string} seconds
+         * @property {string} day
+         * @property {string} hour
+         * @property {string} minute
+         * @property {string} second
          */
         /**
          * @typedef Globs
@@ -174,6 +182,10 @@ export class Season {
                 episode.innerHTML = '<i class="fas fa-eye"></i>';
                 episode.classList.remove('add-this-episode');
                 episode.classList.add('remove-this-episode');
+                const now = new Date();
+                episode.setAttribute('data-time', now.toISOString());
+                episode.addEventListener('mouseenter', gThis.updateRelativeTime);
+
 
                 const quickEpisodeLink = document.querySelector('.quick-episode[data-number="' + episodeNumber + '"]');
                 if (quickEpisodeLink) {
@@ -230,6 +242,28 @@ export class Season {
                 episode.parentElement.appendChild(backToTopLink);
             }
         });
+    }
+
+    updateRelativeTime(e) {
+        const div = e.currentTarget;
+
+            const time = div.getAttribute('data-time');
+            const date = new Date(time);
+            const now = new Date();
+            const diff = now - date;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor(diff / (1000 * 60));
+            const seconds = Math.floor(diff / 1000);
+            if (days > 0) {
+                div.setAttribute('data-title',  days + ' ' + (days>1 ? gThis.text.days : gThis.text.day));
+            } else if (hours > 0) {
+                div.setAttribute('data-title',  hours + ' ' + (hours>1 ? gThis.text.hours : gThis.text.hour));
+            } else if (minutes > 0) {
+                div.setAttribute('data-title',  minutes + ' ' + (minutes>1 ? gThis.text.minutes : gThis.text.minute));
+            } else {
+                div.setAttribute('data-title',  seconds + ' ' + (seconds>1 ? gThis.text.seconds : gThis.text.second));
+            }
     }
 
     removeOrReviewEpisode(e) {

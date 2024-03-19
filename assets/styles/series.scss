@@ -107,22 +107,37 @@
             }
 
             h1 {
-                color: #030303;
+                //color: #030303;
                 font-size: clamp(1rem, 3vw, 3rem);
                 font-weight: 400;
                 line-height: clamp(1.1rem, 3.3vw, 3.3rem);
+                margin-block: 0;
+                position: relative;
 
                 .localized-name {
-                    color: var(--gradient-orange-50);
+                    align-items: center;
+                    background-color: var(--gradient-orange-50);
+                    border: 2px solid var(--gradient-orange-90);
+                    border-radius: 50%;
+                    color: var(--gradient-orange-90);
+                    cursor: pointer;
+                    display: none;
                     font-size: 1rem;
                     font-weight: 300;
+                    height: 1rem;
+                    justify-content: center;
                     line-height: 1rem;
                     opacity: 0;
-                    transition: opacity 0.3s ease-in-out;
+                    position: absolute;
+                    right: -.75rem;
+                    top: -1rem;
+                    width: 2rem;
                 }
 
                 &:hover .localized-name {
+                    display: flex;
                     opacity: 1;
+                    transition: opacity 150ms ease-in-out;
                 }
             }
 

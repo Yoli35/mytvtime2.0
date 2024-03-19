@@ -245,22 +245,30 @@
     </dialog>
     <div id="globs" style="display: none">
         {
-        "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "text": {
-        "provider": "{{ 'Choose a provider'|trans }}",
-        "device": "{{ 'Choose a device'|trans }}",
-        "rating": "{{ 'Give a rating'|trans }}",
-        "now": "{{ 'Now'|trans }}",
-        "add": "{{ 'Add'|trans }}",
-        "Television": "{{ 'Television'|trans }}",
-        "Mobile": "{{ 'Mobile'|trans }}",
-        "Tablet": "{{ 'Tablet'|trans }}",
-        "Laptop": "{{ 'Laptop'|trans }}",
-        "Desktop": "{{ 'Desktop'|trans }}",
-        "Search": "{{ 'Search'|trans }}"
-        }
+            "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "text": {
+                "provider": "{{ 'Choose a provider'|trans }}",
+                "device": "{{ 'Choose a device'|trans }}",
+                "rating": "{{ 'Give a rating'|trans }}",
+                "now": "{{ 'Now'|trans }}",
+                "add": "{{ 'Add'|trans }}",
+                "Television": "{{ 'Television'|trans }}",
+                "Mobile": "{{ 'Mobile'|trans }}",
+                "Tablet": "{{ 'Tablet'|trans }}",
+                "Laptop": "{{ 'Laptop'|trans }}",
+                "Desktop": "{{ 'Desktop'|trans }}",
+                "Search": "{{ 'Search'|trans }}",
+                "days": "{{ 'days'|trans }}",
+                "hours": "{{ 'hours'|trans }}",
+                "minutes": "{{ 'minutes'|trans }}",
+                "seconds": "{{ 'seconds'|trans }}",
+                "day": "{{ 'day'|trans }}",
+                "hour": "{{ 'hour'|trans }}",
+                "minute": "{{ 'minute'|trans }}",
+                "second": "{{ 'second'|trans }}"
+            }
         }
     </div>
     <pre>
