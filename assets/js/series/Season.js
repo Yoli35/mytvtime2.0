@@ -193,7 +193,7 @@ export class Season {
                 }
 
                 const previousEpisode = episode.closest('.seasons-episodes').querySelector('.remove-this-episode[data-e-number="' + (episodeNumber - 1) + '"]');
-                const previousProvider = previousEpisode.parentElement.querySelector('.select-provider');
+                const previousProvider = previousEpisode?.parentElement.querySelector('.select-provider');
                 if (parseInt(episodeNumber) >= 1 && previousProvider) {
                     const clone = previousProvider.cloneNode(true);
                     clone.setAttribute('data-id', id);
