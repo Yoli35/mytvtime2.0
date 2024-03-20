@@ -249,6 +249,84 @@ label:has(input[type="text"]) {
         margin-inline-start: auto;
     }
 
+    .burger {
+        margin-inline-start: auto;
+        padding: .5rem;
+        position: relative;
+
+        span {
+            background-color: var(--gradient-ardoise-10);
+            display: block;
+            height: .25rem;
+            margin-block: .25rem;
+            transition: transform .250ms ease-in-out, opacity .250ms ease-in-out;
+            width: 1.5rem;
+        }
+
+        &.open {
+            span:nth-child(1) {
+                transform: translate(0, 0.5rem) rotate(45deg);
+            }
+
+            span:nth-child(2) {
+                opacity: 0;
+            }
+
+            span:nth-child(3) {
+                transform: translate(0, -0.5rem) rotate(-45deg);
+            }
+
+            .menu {
+                display: flex;
+            }
+        }
+
+        .menu {
+            background-color: var(--navbar-bg);
+            border-radius: .25rem;
+            display: none;
+            flex-direction: column;
+            gap: .5rem;
+            padding: .5rem;
+            position: absolute;
+            right: 0;
+            top: 3rem;
+
+            a,
+            .menu-preview,
+            .menu-theme {
+                justify-content: flex-start;
+                padding-inline: 1rem;
+                white-space: nowrap;
+                width: 100%;
+
+                &:hover {
+                    background-color: var(--gradient-orange-50);
+                    color: var(--gradient-orange-90);
+
+                    &.active {
+                        background-color: var(--gradient-green-50);
+                        color: var(--gradient-green-90);
+                    }
+                }
+
+                &.active {
+                    color: var(--gradient-green-50);
+                    &::after {
+                        content: "✔";
+                        margin-inline-start: auto;
+                    }
+                }
+            }
+
+            .separation {
+                background-color: var(--navbar-bg-75);
+                padding-inline: 1rem;
+                width: 100%;
+            }
+        }
+    }
+
     .menu-connect,
     .menu-language,
     .menu-preview,

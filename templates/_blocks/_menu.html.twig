@@ -5,59 +5,41 @@
     <a href="{{ path('app_home') }}" accesskey="<">{{ 'Home'|trans }}</a>
     <a href="{{ path('app_series_index') }}" class="desktop">{{ 'Series'|trans }}</a>
     <a href="{{ path('app_contact_form') }}" class="desktop">{{ 'Contact'|trans }}</a>
-    <div class="switches">
-        <div class="menu-search">
-            <i class="fa-solid fa-search"></i>
-            <div class="content">
-                <a href="{{ path('app_series_search') }}">{{ 'Search'|trans }}</a>
-                <a href="{{ path('app_series_advanced_search') }}">{{ 'Advanced search'|trans }}</a>
-            </div>
-        </div>
-        <div class="menu-connect">
-            {% if app.user and app.user.avatar %}
-                <div class="avatar">
-                    <img src="{{ asset('images/users/avatars/' ~ app.user.avatar) }}" alt="{{ app.user.username }}">
-                </div>
+
+    {% set p = '' %}
+    {% if parameters|length %}
+        {% for key, value in parameters %}
+            {% set p = p ~ (loop.index0 ? '&':'?') ~ key ~ '=' ~ value %}
+        {% endfor %}
+    {% endif %}
+
+    <div class="burger">
+        <span></span>
+        <span></span>
+        <span></span>
+        <div class="menu">
+            <a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a>
+            <a href="{{ path('app_series_index') }}">{{ 'Series'|trans }}</a>
+            <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
+            <a href="{{ path('app_series_search') }}">{{ 'Search'|trans }}</a>
+            <a href="{{ path('app_series_advanced_search') }}">{{ 'Advanced search'|trans }}</a>
+            {% if app.user %}
+                <a href="{{ path('app_user_profile') }}">{{ 'My account'|trans }}</a>
+                <a href="{{ path('app_user_providers') }}">{{ 'My providers'|trans }}</a>
+                <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a>
             {% else %}
-            <i class="fa-solid fa-user"></i>
+                <a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a>
+                <a href="{{ path('app_register') }}">{{ 'Register'|trans }}</a>
             {% endif %}
-            <div class="content">
-                {% if app.user %}
-                    <a href="{{ path('app_user_profile') }}">{{ 'My account'|trans }}</a>
-                    <a href="{{ path('app_user_providers') }}">{{ 'My providers'|trans }}</a>
-                    <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a>
-                {% else %}
-                    <a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a>
-                    <a href="{{ path('app_register') }}">{{ 'Register'|trans }}</a>
-                {% endif %}
-            </div>
-        </div>
-        <div class="menu-preview">
-            <i class="fa-solid fa-eye"></i>
-            <div class="content">
-                <div id="switch-preview" data-on="{{ 'Hide preview'|trans }}" data-off="{{ 'Show preview'|trans }}">{{ 'Hide preview'|trans }}</div>
-            </div>
-        </div>
-        <div class="menu-theme">
-            <i class="fa-solid fa-moon"></i>
-            <div class="content">
-                <div class="theme" data-theme="auto">{{ 'Automatic'|trans }}</div>
-                <div class="theme" data-theme="light">{{ 'Light'|trans }}</div>
-                <div class="theme" data-theme="dark">{{ 'Dark'|trans }}</div>
-            </div>
-        </div>
-        <div class="menu-language">
-            {% set p = '' %}
-            {% if parameters|length %}
-                {% for key, value in parameters %}
-                    {% set p = p ~ (loop.index0 ? '&':'?') ~ key ~ '=' ~ value %}
-                {% endfor %}
-            {% endif %}
-            <i class="fa-solid fa-globe"></i>
-            <div class="content">
-                <a href="{{ path(route, route_params|merge({'_locale': 'fr'})) ~ p }}"><div>{{ 'French'|trans }}</div></a>
-                <a href="{{ path(route, route_params|merge({'_locale': 'en'})) ~ p }}"><div>{{ 'English'|trans }}</div></a>
-            </div>
+            <div class="separation">{{ 'Options'|trans }}</div>
+            <div class="menu-preview" data-on="{{ 'Hide preview'|trans }}" data-off="{{ 'Show preview'|trans }}">{{ 'Hide preview'|trans }}</div>
+            <div class="separation">{{ 'Theme'|trans }}</div>
+            <div class="menu-theme" data-theme="auto">{{ 'Automatic'|trans }}</div>
+            <div class="menu-theme" data-theme="light">{{ 'Light'|trans }}</div>
+            <div class="menu-theme" data-theme="dark">{{ 'Dark'|trans }}</div>
+            <div class="separation">{{ 'Language'|trans }}</div>
+            <a href="{{ path(route, route_params|merge({'_locale': 'fr'})) ~ p }}"{% if app.locale=='fr' %} class="active"{% endif %}>{{ 'French'|trans }}</a>
+            <a href="{{ path(route, route_params|merge({'_locale': 'en'})) ~ p }}"{% if app.locale=='en' %} class="active"{% endif %}>{{ 'English'|trans }}</a>
         </div>
     </div>
 </nav>

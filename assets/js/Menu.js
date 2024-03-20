@@ -2,23 +2,30 @@ export class Menu {
     constructor() {
         document.addEventListener("DOMContentLoaded", () => {
             this.menuPreview = document.querySelector(".menu-preview");
-            this.menuThemes = document.querySelector(".menu-theme");
-            this.switchPreview = document.querySelector("#switch-preview");
-            this.switchThemes = document.querySelectorAll(".theme");
-            this.switchLanguage = document.querySelector(".switch-language");
+            this.menuThemes = document.querySelectorAll(".menu-theme");
         });
         this.init = this.init.bind(this);
         this.togglePreview = this.togglePreview.bind(this);
         this.setPreview = this.setPreview.bind(this);
         this.initPreview = this.initPreview.bind(this);
         this.setTheme = this.setTheme.bind(this);
-        this.iconTheme = this.iconTheme.bind(this);
+        this.checkTheme = this.checkTheme.bind(this);
     }
 
     init() {
+        const burger = document.querySelector(".burger");
+        const navbar = document.querySelector(".navbar");
+        const body = document.querySelector("body");
+
+        burger.addEventListener("click", () => {
+            burger.classList.toggle("open");
+            navbar.classList.toggle("active");
+            body.classList.toggle("frozen");
+        });
+
         document.addEventListener("DOMContentLoaded", () => {
-            this.switchPreview.addEventListener("click", this.togglePreview);
-            this.switchThemes.forEach((theme) => {
+            this.menuPreview.addEventListener("click", this.togglePreview);
+            this.menuThemes.forEach((theme) => {
                 theme.addEventListener("click", this.setTheme);
             });
             this.initTheme();
@@ -42,13 +49,10 @@ export class Menu {
     }
 
     setPreview(preview) {
-        this.menuPreview.querySelector('i').classList.remove('fa-eye-slash', 'fa-eye');
         if (preview !== null) {
-            this.switchPreview.innerHTML = this.switchPreview.getAttribute("data-on");
-            this.menuPreview.querySelector('i').classList.add('fa-eye');
+            this.menuPreview.innerHTML = this.menuPreview.getAttribute("data-on");
         } else {
-            this.switchPreview.innerHTML = this.switchPreview.getAttribute("data-off");
-            this.menuPreview.querySelector('i').classList.add('fa-eye-slash');
+            this.menuPreview.innerHTML = this.menuPreview.getAttribute("data-off");
         }
     }
 
@@ -73,7 +77,7 @@ export class Menu {
                 }
             }
         }
-        this.iconTheme(theme);
+        this.checkTheme(theme);
     }
 
     setTheme(e) {
@@ -81,20 +85,14 @@ export class Menu {
         document.body.classList.remove("dark", "light");
         if (theme !== 'auto') document.body.classList.add(theme);
         localStorage.setItem("mytvtime_2_theme", theme);
-        this.iconTheme(theme);
+        this.checkTheme(theme);
     }
 
-    iconTheme(theme) {
-        const i = this.menuThemes.querySelector('i');
-        i.classList.remove('fa-palette', 'fa-moon', 'fa-sun');
-        if (theme === 'auto') {
-            i.classList.add('fa-palette');
-        }
-        if (theme === 'dark') {
-            i.classList.add('fa-moon');
-        }
-        if (theme === 'light') {
-            i.classList.add('fa-sun');
-        }
+    checkTheme(theme) {
+        this.menuThemes.forEach((t) => {
+            t.classList.remove("active");
+        });
+        const newTheme = document.querySelector(`.menu-theme[data-theme="${theme}"]`);
+        newTheme.classList.add("active");
     }
 }

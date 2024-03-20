@@ -1,25 +1,25 @@
 import './bootstrap.js';
-/*
- * Welcome to your app's main JavaScript file!
- *
- * This file will be included onto the page via the importmap() Twig function,
- * which should already be in your base.html.twig.
- */
-//import './styles/app.scss';
 
 import {Menu} from "./js/Menu.js";
+import {ToolTips} from "./js/ToolTips.js";
+import {ProviderSelect} from "./js/home/ProviderSelect.js";
+import {HighlightSeries} from "./js/home/HighlightSeries.js";
+import {PosterHover} from "./js/images/PosterHover.js";
+import {AverageColor} from "./js/images/AverageColor.js";
+import {Season} from "./js/series/Season.js";
 
 const menu = new Menu();
 menu.init();
 
-import {ToolTips} from "./js/ToolTips.js";
-
+// Tooltips
 const toolTips = new ToolTips();
 toolTips.init();
 
-import {ProviderSelect} from "./js/home/ProviderSelect.js";
-import {HighlightSeries} from "./js/home/HighlightSeries.js";
+// Poster hover option
+const posterHover = new PosterHover();
+posterHover.init();
 
+// Home page
 if (document.querySelector(".home")) {
     const providerSelect = new ProviderSelect();
     const highlightSeries = new HighlightSeries();
@@ -28,14 +28,7 @@ if (document.querySelector(".home")) {
     highlightSeries.init(globs);
 }
 
-import {PosterHover} from "./js/images/PosterHover.js";
-
-const posterHover = new PosterHover();
-posterHover.init();
-
-import {AverageColor} from "./js/images/AverageColor.js";
-import {Season} from "./js/series/Season.js";
-
+// Series & season page
 const seriesShow = document.querySelector(".series-show");
 if (seriesShow) {
     // const navbar = document.querySelector(".navbar");
@@ -76,6 +69,7 @@ if (seriesShow) {
     }
 }
 
+// Flash messages
 window.addEventListener("DOMContentLoaded", () => {
     const flashes = document.querySelectorAll(".flash-message");
 
