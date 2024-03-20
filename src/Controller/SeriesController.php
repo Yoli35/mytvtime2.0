@@ -428,6 +428,7 @@ class SeriesController extends AbstractController
                 $userEpisode->setDeviceId($previousEpisode->getDeviceId());
             }
         }
+        $userEpisode->setNumberOfView(1);
         $this->userEpisodeRepository->save($userEpisode, true);
 
         // Si on regarde 3 épisodes en moins d'un jour, on considère que c'est un marathon
