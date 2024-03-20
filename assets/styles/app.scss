@@ -278,6 +278,8 @@ label:has(input[type="text"]) {
 
             .menu {
                 display: flex;
+                opacity: 1;
+                transition: opacity .250ms ease-in-out;
             }
         }
 
@@ -287,6 +289,7 @@ label:has(input[type="text"]) {
             display: none;
             flex-direction: column;
             gap: .5rem;
+            opacity: 0;
             padding: .5rem;
             position: absolute;
             right: 0;
