@@ -7,7 +7,6 @@
     background-color: var(--gradient-orange-50);
     scale: 0 1;
     animation: scroll-watcher linear;
-    //noinspection CssInvalidFunction
     animation-timeline: scroll();
     transform-origin: left;
 }
@@ -632,6 +631,10 @@
                 position: absolute;
                 right: .5rem;
                 width: 2rem;
+
+                &.watched {
+                    background-color: var(--user-episode-actions);
+                }
             }
         }
 

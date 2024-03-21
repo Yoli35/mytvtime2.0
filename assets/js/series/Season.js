@@ -186,11 +186,11 @@ export class Season {
                 episode.setAttribute('data-time', now.toISOString());
                 episode.addEventListener('mouseenter', gThis.updateRelativeTime);
 
-
                 const quickEpisodeLink = document.querySelector('.quick-episode[data-number="' + episodeNumber + '"]');
-                if (quickEpisodeLink) {
-                    quickEpisodeLink.classList.add('watched');
-                }
+                quickEpisodeLink.classList.add('watched');
+
+                const numberDiv = episode.closest('.season-episode').querySelector('.number');
+                numberDiv.classList.add('watched');
 
                 const previousEpisode = episode.closest('.seasons-episodes').querySelector('.remove-this-episode[data-e-number="' + (episodeNumber - 1) + '"]');
                 const previousProvider = previousEpisode?.parentElement.querySelector('.select-provider');
@@ -323,9 +323,11 @@ export class Season {
                 }
 
                 const quickEpisodeLink = document.querySelector('.quick-episode[data-number="' + episodeNumber + '"]');
-                if (quickEpisodeLink) {
-                    quickEpisodeLink.classList.remove('watched');
-                }
+                quickEpisodeLink.classList.remove('watched');
+
+                const numberDiv = episode.closest('.season-episode').querySelector('.number');
+                numberDiv.classList.remove('watched');
+
                 episode.removeEventListener('click', gThis.removeEpisode);
                 episode.addEventListener('click', gThis.addEpisode);
                 episode.innerHTML = '<i class="fas fa-plus"></i>';
