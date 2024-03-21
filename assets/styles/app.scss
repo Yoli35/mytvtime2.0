@@ -289,7 +289,9 @@ label:has(input[type="text"]) {
             display: none;
             flex-direction: column;
             gap: .5rem;
+            max-height: calc(100vh - 5rem);
             opacity: 0;
+            overflow-y: auto;
             padding: .5rem;
             position: absolute;
             right: 0;
@@ -298,6 +300,7 @@ label:has(input[type="text"]) {
             a,
             .menu-preview,
             .menu-theme {
+                flex-shrink: 0;
                 justify-content: flex-start;
                 padding-inline: 1rem;
                 white-space: nowrap;
@@ -308,15 +311,15 @@ label:has(input[type="text"]) {
                     color: var(--gradient-orange-90);
 
                     &.active {
-                        background-color: var(--gradient-green-50);
+                        background-color: var(--gradient-green-40);
                         color: var(--gradient-green-90);
                     }
                 }
 
                 &.active {
-                    color: var(--gradient-green-50);
+                    background-color: var(--gradient-green-50);
                     &::after {
-                        content: "✔";
+                        content: "*";
                         margin-inline-start: auto;
                     }
                 }
@@ -324,8 +327,11 @@ label:has(input[type="text"]) {
 
             .separation {
                 background-color: var(--navbar-bg-75);
+                flex-shrink: 0;
+                padding-block: 0.25rem;
+                margin-inline: -.5rem;
                 padding-inline: 1rem;
-                width: 100%;
+                width: calc(100% + 1rem);
             }
         }
     }

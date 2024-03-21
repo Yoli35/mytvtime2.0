@@ -16,8 +16,8 @@
         body.style.backgroundImage = "url(" + bd + ")";
     </script>
     <div class="scroll-watcher"></div>
+    {{ include('_blocks/_menu.html.twig', {seriesName: season.localized_name ? season.localized_name.name:series.name, seriesLink: path('app_series_show', {id: series.id, slug: season.localized_name.slug ?? series.slug}) }) }}
     <div class="container-fluid backgroundImageOverlay">
-        {% include '_blocks/_menu.html.twig' %}
         <div id="series-season" class="series-show">
             <div class="header">
                 <div class="poster" id="top">
@@ -71,7 +71,7 @@
                                     {% else %}
                                         <div>{{ 'No poster'|trans }}</div>
                                     {% endif %}
-                                    <div class="number"{% if episode.user_episode %} data-title="{{ 'Watched %time% times'|trans({'%time%': episode.user_episode.numberOfView}) }}"{% endif %}>
+                                    <div class="number{% if episode.user_episode %} watched{% endif %}"{% if episode.user_episode %} data-title="{{ 'Watched %time% times'|trans({'%time%': episode.user_episode.numberOfView}) }}"{% endif %}>
                                         {{ episode.episode_number }}
                                     </div>
                                 </div>
@@ -234,7 +234,7 @@
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
-    // Retirez-vous cet épisode ou le regardez-vous de nouveau ?
+{#     Retirez-vous cet épisode ou le regardez-vous de nouveau ?#}
     <dialog id="review-dialog">
         <div class="content">
             <form method="dialog">
@@ -271,9 +271,9 @@
             }
         }
     </div>
-    <pre>
+{#    <pre>#}
 {#        {{ dump(devices) }} #}
-    </pre>
+{#    </pre>#}
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
