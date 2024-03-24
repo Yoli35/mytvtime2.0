@@ -3,13 +3,22 @@
 {% block title %}{{ 'Series' }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
 {% endblock %}
 
 {% block body %}
-<div class="container-fluid">
     {% include('_blocks/_menu.html.twig') %}
-    <h1>{{'Your series here soon'}}</h1>
+<div class="container-fluid">
+    <div class="series-group user">
+        <div class="wrapper">
+            <div class="content">
+                {% for series in seriesList %}
+                    {{  include('_blocks/series/_card.html.twig') }}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
     {% include('_blocks/_footer.html.twig') %}
 </div>
 {% endblock %}
