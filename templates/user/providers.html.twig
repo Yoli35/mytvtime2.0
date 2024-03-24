@@ -29,12 +29,13 @@
     {{ parent() }}
     <script>
         window.addEventListener("DOMContentLoaded", () => {
+            const locale = document.documentElement.lang;
             const providers = document.querySelector('.providers');
             const checkboxes = providers.querySelectorAll('input[type="checkbox"]');
             checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', () => {
                     const providerId = checkbox.id.split('-')[1];
-                    const url = `/user/provider/toggle/${providerId}`;
+                    const url = `/${locale}/user/provider/toggle/${providerId}`;
                     fetch(url, {
                         method: 'POST',
                         headers: {

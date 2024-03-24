@@ -17,6 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 
 #[IsGranted('ROLE_USER')]
+#[Route('/{_locale}/user', name: 'app_user_', requirements: ['locale' => 'fr|en|de|es'])]
 class UserController extends AbstractController
 {
     public function __construct(
@@ -28,7 +29,7 @@ class UserController extends AbstractController
     {
     }
 
-    #[Route('/{_locale}/profile', name: 'app_user_profile', requirements: ['locale' => 'fr|en|de|es'],)]
+    #[Route('/profile', name: 'profile')]
     public function profile(Request $request): Response
     {
         /** @var User $user */
@@ -49,7 +50,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/providers', name: 'app_user_providers')]
+    #[Route('/providers', name: 'providers')]
     public function providers(Request $request, EntityManagerInterface $entityManager): Response
     {
         /** @var User $user */
@@ -67,7 +68,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/provider/toggle/{id}', name: 'app_user_provider_toggle')]
+    #[Route('/provider/toggle/{id}', name: 'provider_toggle')]
     public function providerToggle(Request $request, $id): Response
     {
         /** @var User $user */
