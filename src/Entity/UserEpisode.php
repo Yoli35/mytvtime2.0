@@ -82,12 +82,12 @@ class UserEpisode
         return $this;
     }
 
-    public function getSeries(): ?UserSeries
+    public function getUserSeries(): ?UserSeries
     {
         return $this->userSeries;
     }
 
-    public function setSeries(?UserSeries $userSeries): static
+    public function setUserSeries(?UserSeries $userSeries): static
     {
         $this->userSeries = $userSeries;
 

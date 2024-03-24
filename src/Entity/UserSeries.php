@@ -55,6 +55,9 @@ class UserSeries
     #[ORM\OrderBy(['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC'])]
     private Collection $userEpisodes;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $binge = null;
+
     public function __construct(User $user, Series $serie, DateTimeImmutable $date)
     {
         $this->user = $user;
@@ -256,5 +259,17 @@ class UserSeries
     public function setMarathoner(?bool $marathoner): void
     {
         $this->marathoner = $marathoner;
+    }
+
+    public function isBinge(): ?bool
+    {
+        return $this->binge;
+    }
+
+    public function setBinge(?bool $binge): static
+    {
+        $this->binge = $binge;
+
+        return $this;
     }
 }

@@ -150,12 +150,14 @@ export class Season {
     }
 
     addEpisode(e, episodeId = null) {
+        gThis.toolTips.hide();
         const selector = episodeId ? '.remove-this-episode[data-id="' + episodeId + '"]' : null;
         const episode = episodeId ? document.querySelector(selector) : e.currentTarget;
         const sId = episode.getAttribute('data-show-id');
         const id = episode.getAttribute('data-id');
         const episodeNumber = episode.getAttribute('data-e-number');
         const seasonNumber = episode.getAttribute('data-s-number');
+        const lastEpisode = episode.getAttribute('data-last-episode');
         const views = parseInt(episode.getAttribute('data-views'));
         fetch('/' + gThis.lang + '/series/add/episode/' + id, {
             method: 'POST',
@@ -165,6 +167,7 @@ export class Season {
             },
             body: JSON.stringify({
                 showId: sId,
+                lastEpisode: lastEpisode,
                 seasonNumber: seasonNumber,
                 episodeNumber: episodeNumber
             })
@@ -194,7 +197,7 @@ export class Season {
 
                 const previousEpisode = episode.closest('.seasons-episodes').querySelector('.remove-this-episode[data-e-number="' + (episodeNumber - 1) + '"]');
                 const previousProvider = previousEpisode?.parentElement.querySelector('.select-provider');
-                if (parseInt(episodeNumber) >= 1 && previousProvider) {
+                if (previousProvider) {
                     const clone = previousProvider.cloneNode(true);
                     clone.setAttribute('data-id', id);
                     clone.addEventListener('mouseenter', gThis.selectProvider);
@@ -211,8 +214,8 @@ export class Season {
                     episode.parentElement.appendChild(providerDiv);
                 }
 
-                const previousDevice = previousEpisode.parentElement.querySelector('.select-device');
-                if (parseInt(episodeNumber) >= 1 && previousDevice) {
+                const previousDevice = previousEpisode?.parentElement.querySelector('.select-device');
+                if (previousDevice) {
                     const clone = previousDevice.cloneNode(true);
                     clone.setAttribute('data-id', id);
                     clone.addEventListener('mouseenter', gThis.selectDevice);
@@ -267,6 +270,7 @@ export class Season {
     }
 
     removeOrReviewEpisode(e) {
+        gThis.toolTips.hide();
         const dialog = document.querySelector("#review-dialog");
         const episode = e.currentTarget;
         const id = episode.getAttribute('data-id');
@@ -367,6 +371,7 @@ export class Season {
             }
         }
         gThis.listInput(providerList);
+        gThis.toolTips.hide();
         gThis.toolTips.init(providerList);
     }
 
@@ -409,6 +414,7 @@ export class Season {
             gThis.addDeviceItem(device, episodeId, deviceList, selectDeviceDiv);
         }
         gThis.listInput(deviceList);
+        gThis.toolTips.hide();
         gThis.toolTips.init(deviceList);
     }
 
@@ -473,6 +479,7 @@ export class Season {
             });
             voteList.appendChild(vote);
         }
+        gThis.toolTips.hide();
         gThis.listInput(voteList);
     }
 

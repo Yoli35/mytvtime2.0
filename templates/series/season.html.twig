@@ -109,6 +109,7 @@
                                 <div class="user-episode">
                                     {% if episode.user_episode %}
                                         <div class="remove-this-episode" data-id="{{ episode.id }}"
+                                             data-last-episode="{{ loop.last ?? 0 }}"
                                              data-show-id="{{ episode.show_id }}"
                                              data-s-number="{{ episode.season_number }}"
                                              data-e-number="{{ episode.episode_number }}"
@@ -139,6 +140,7 @@
                                         </div>
                                     {% else %}
                                         <div class="add-this-episode" data-id="{{ episode.id }}"
+                                             data-last-episode="{{ loop.last ?? 0 }}"
                                              data-show-id="{{ episode.show_id }}"
                                              data-s-number="{{ episode.season_number }}"
                                              data-e-number="{{ episode.episode_number }}"

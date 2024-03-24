@@ -226,6 +226,20 @@
         }
     }
 
+    &.user {
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            overflow-x: unset;
+            padding-block: 1rem;
+
+            .content {
+                flex-wrap: wrap;
+                width: 100%;
+            }
+        }
+    }
+
     .wrapper {
         overflow-x: auto;
         width: 100%;

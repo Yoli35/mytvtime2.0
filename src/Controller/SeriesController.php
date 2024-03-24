@@ -15,6 +15,7 @@ use App\Form\SeriesAdvancedSearchType;
 use App\Form\SeriesSearchType;
 use App\Repository\DeviceRepository;
 use App\Repository\KeywordRepository;
+use App\Repository\ProviderRepository;
 use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesLocalizedNameRepository;
 use App\Repository\SeriesRepository;
@@ -51,6 +52,7 @@ class SeriesController extends AbstractController
         private readonly DeeplTranslator               $deeplTranslator,
         private readonly ImageConfiguration            $imageConfiguration,
         private readonly KeywordRepository             $keywordRepository,
+        private readonly ProviderRepository            $providerRepository,
         private readonly SeriesImageRepository         $seriesImageRepository,
         private readonly SeriesRepository              $seriesRepository,
         private readonly SeriesLocalizedNameRepository $seriesLocalizedNameRepository,
@@ -63,13 +65,46 @@ class SeriesController extends AbstractController
     {
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/', name: 'index')]
     public function index(): Response
     {
-        return $this->redirectToRoute('app_home');
-//        return $this->render('series/index.html.twig', [
-//            'controller_name' => 'SeriesController',
-//        ]);
+        /** @var User $user */
+        $user = $this->getUser();
+        $country = $user->getCountry() ?? 'FR';
+        $locale = $user->getPreferredLanguage() ?? 'fr';
+        $language = $locale. '-' . $country;
+        $timezone = $user->getTimezone() ?? 'Europe/Paris';
+
+        $providers = $this->providerRepository->findAll();
+        $providerIds = array_map(function ($p) {
+            return $p->getProviderId();
+        }, $providers);
+        $userProviderIds = array_map(function ($up) use ($providerIds, $providers) {
+            return $providers[array_search($up->getProviderId(), $providerIds)]->getProviderId();
+        }, $user->getProviders()->toArray());
+        dump($userProviderIds);
+        $now = $this->now();
+        // Day of week with monday = 1 to sunday = 7
+        $dayOfWeek = $now->format('N') ? $now->format('N') : 7;
+        // Monday of the current week
+        $monday = $now->modify('-' . ($dayOfWeek - 1) . ' days')->format('Y-m-d');
+        // Sunday of the current week
+        $sunday = $now->modify('+' . (7 - $dayOfWeek) . ' days')->format('Y-m-d');
+        dump($now, $dayOfWeek, $monday, $sunday);
+        $searchString = "&air_date.gte=$monday&air_date.lte=$sunday&include_adult=false&include_null_first_air_dates=false&language=$language&sort_by=first_air_date.desc&timezone=$timezone&watch_region=$country&with_watch_providers=". implode('|', $userProviderIds);
+        dump($searchString);
+        $searchResult = json_decode($this->tmdbService->getFilterTv($searchString . "&page=1"), true);
+        for ($i = 2; $i <= $searchResult['total_pages']; $i++) {
+            $searchResult['results'] = array_merge($searchResult['results'], json_decode($this->tmdbService->getFilterTv($searchString . "&page=$i"), true)['results']);
+        }
+        dump($searchResult);
+        $series = $this->getSearchResult($searchResult, new AsciiSlugger());
+
+        return $this->render('series/index.html.twig', [
+            'seriesList' => $series,
+            'total_results' => $searchResult['total_results'] ?? -1,
+        ]);
     }
 
     #[Route('/search', name: 'search')]
@@ -201,7 +236,8 @@ class SeriesController extends AbstractController
         $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords"]), true);
 
-        $series = $this->updateSeries($series, $tv);
+        $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+        $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));        $series = $this->updateSeries($series, $tv);
 
         $tv['credits'] = $this->castAndCrew($tv);
         $tv['localized_name'] = $series->getLocalizedName($request->getLocale());
@@ -396,6 +432,8 @@ class SeriesController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $showId = $data['showId'];
+        $lastEpisode = $data['lastEpisode'] == "1";
+        dump($data);
         $seasonNumber = $data['seasonNumber'];
         $episodeNumber = $data['episodeNumber'];
         /** @var User $user */
@@ -429,6 +467,20 @@ class SeriesController extends AbstractController
             }
         }
         $userEpisode->setNumberOfView(1);
+
+        // Si on regarde le dernier épisode de la saison et que l'on a pas regardé aure chose entre temps, on considère que c'est un binge
+        if ($lastEpisode) {
+            $seasonEpisodeCount = $episodeNumber;//$tv['seasons'][$seasonNumber - 1]['episode_count'];
+            $lastEpisodes = $this->userEpisodeRepository->getLastWatchedEpisodes($user->getId(), $seasonEpisodeCount);// [`episode_number`, `season_number`, `user_series_id`] DESC watchAt LIMIT $seasonEpisodeCount
+            $userSeriesId = $userSeries->getId();
+            $sameSeriesEpisodes = array_filter($lastEpisodes, function ($e) use ($userSeriesId, $seasonNumber) {
+                return ($e['user_series_id'] == $userSeriesId && $e['season_number'] == $seasonNumber);
+            });
+            if (count($sameSeriesEpisodes) == $seasonEpisodeCount) {
+                $userSeries->setBinge(true);
+            }
+        }
+
         $this->userEpisodeRepository->save($userEpisode, true);
 
         // Si on regarde 3 épisodes en moins d'un jour, on considère que c'est un marathon

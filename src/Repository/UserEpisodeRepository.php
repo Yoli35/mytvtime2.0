@@ -92,4 +92,14 @@ class UserEpisodeRepository extends ServiceEntityRepository
 
         return $this->em->getConnection()->fetchAllAssociative($sql);
     }
+
+    public function getLastWatchedEpisodes($userId, $limit): array
+    {
+        $sql = "SELECT ue.`episode_number`, ue.`season_number`, ue.`user_series_id`, "
+            . "FROM `user_episode` ue "
+            . "WHERE ue.`user_id`=$userId "
+            . "ORDER BY ue.`watch_at` DESC "
+            . "LIMIT $limit";
+        return $this->em->getConnection()->fetchAllAssociative($sql);
+    }
 }
