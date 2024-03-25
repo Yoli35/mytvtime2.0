@@ -21,7 +21,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:import:user:episodes',
-    description: 'Add a short description for your command',
+    description: 'Import user\'s episodes from a json file',
 )]
 class ImportUserEpisodesCommand extends Command
 {
