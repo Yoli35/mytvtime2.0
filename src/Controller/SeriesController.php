@@ -73,7 +73,7 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $country = $user->getCountry() ?? 'FR';
         $locale = $user->getPreferredLanguage() ?? 'fr';
-        $language = $locale. '-' . $country;
+        $language = $locale . '-' . $country;
         $timezone = $user->getTimezone() ?? 'Europe/Paris';
 
         $providers = $this->providerRepository->findAll();
@@ -92,7 +92,7 @@ class SeriesController extends AbstractController
         // Sunday of the current week
         $sunday = $now->modify('+' . (7 - $dayOfWeek) . ' days')->format('Y-m-d');
         dump($now, $dayOfWeek, $monday, $sunday);
-        $searchString = "&air_date.gte=$monday&air_date.lte=$sunday&include_adult=false&include_null_first_air_dates=false&language=$language&sort_by=first_air_date.desc&timezone=$timezone&watch_region=$country&with_watch_providers=". implode('|', $userProviderIds);
+        $searchString = "&air_date.gte=$monday&air_date.lte=$sunday&include_adult=false&include_null_first_air_dates=false&language=$language&sort_by=first_air_date.desc&timezone=$timezone&watch_region=$country&with_watch_providers=" . implode('|', $userProviderIds);
         dump($searchString);
         $searchResult = json_decode($this->tmdbService->getFilterTv($searchString . "&page=1"), true);
         for ($i = 2; $i <= $searchResult['total_pages']; $i++) {
@@ -237,7 +237,8 @@ class SeriesController extends AbstractController
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords"]), true);
 
         $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-        $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));        $series = $this->updateSeries($series, $tv);
+        $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+        $series = $this->updateSeries($series, $tv);
 
         $tv['credits'] = $this->castAndCrew($tv);
         $tv['localized_name'] = $series->getLocalizedName($request->getLocale());
@@ -435,7 +436,7 @@ class SeriesController extends AbstractController
         $lastEpisode = $data['lastEpisode'] == "1";
         $seasonNumber = $data['seasonNumber'];
         $episodeNumber = $data['episodeNumber'];
-        dump(['data'=>$data, 'last episode'=>$lastEpisode, 'season number'=>$seasonNumber, 'episode number'=>$episodeNumber]);
+        
         /** @var User $user */
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
@@ -443,7 +444,7 @@ class SeriesController extends AbstractController
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $id]);
         if ($userEpisode) {
-        //    $userEpisode->setWatchAt($this->now());
+            //    $userEpisode->setWatchAt($this->now());
             $userEpisode->setNumberOfView($userEpisode->getNumberOfView() + 1);
             $this->userEpisodeRepository->save($userEpisode, true);
             return $this->json([
@@ -470,13 +471,14 @@ class SeriesController extends AbstractController
 
         // Si on regarde le dernier épisode de la saison et que l'on n'a pas regardé aure chose entre temps, on considère que c'est un binge
         if ($lastEpisode) {
-            $seasonEpisodeCount = $episodeNumber;//$tv['seasons'][$seasonNumber - 1]['episode_count'];
-            $lastEpisodes = $this->userEpisodeRepository->getLastWatchedEpisodes($user->getId(), $seasonEpisodeCount);// [`episode_number`, `season_number`, `user_series_id`] DESC watchAt LIMIT $seasonEpisodeCount
+            $seasonEpisodeCount = $episodeNumber;
+            // $seasonEpisodeCount - 1: on ne compte pas l'épisode que l'on vient de regarder
+            $lastEpisodes = $this->userEpisodeRepository->getLastWatchedEpisodes($user->getId(), $seasonEpisodeCount - 1);
             $userSeriesId = $userSeries->getId();
             $sameSeriesEpisodes = array_filter($lastEpisodes, function ($e) use ($userSeriesId, $seasonNumber) {
                 return ($e['user_series_id'] == $userSeriesId && $e['season_number'] == $seasonNumber);
             });
-            if (count($sameSeriesEpisodes) == $seasonEpisodeCount) {
+            if (count($sameSeriesEpisodes) == $seasonEpisodeCount - 1) {
                 $userSeries->setBinge(true);
             }
         }

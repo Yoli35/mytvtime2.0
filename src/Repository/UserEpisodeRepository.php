@@ -95,7 +95,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
 
     public function getLastWatchedEpisodes($userId, $limit): array
     {
-        $sql = "SELECT ue.`episode_number`, ue.`season_number`, ue.`user_series_id`, "
+        $sql = "SELECT ue.`episode_number`, ue.`season_number`, ue.`user_series_id`, ue.`watch_at` "
             . "FROM `user_episode` ue "
             . "WHERE ue.`user_id`=$userId "
             . "ORDER BY ue.`watch_at` DESC "
