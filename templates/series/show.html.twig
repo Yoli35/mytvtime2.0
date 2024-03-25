@@ -147,9 +147,14 @@
                             </div>
                         </div>
                     </div>
-                    {% if userSeries.marathoner %}
+                    {% if userSeries.marathoner or userSeries.binge %}
                         <div class="badges">
-                            <div class="badge" data-title="{{ 'A real marathoner!'|trans }}"><i class="fas fa-bolt"></i></div>
+                            {% if userSeries.binge %}
+                                <div class="badge" data-title="{{ 'A real binger!'|trans }}"><i class="fas fa-coffee"></i></div>
+                            {% endif %}
+                            {% if userSeries.marathoner %}
+                                <div class="badge" data-title="{{ 'A real marathoner!'|trans }}"><i class="fas fa-bolt"></i></div>
+                            {% endif %}
                         </div>
                     {% endif %}
                     <div class="actions">
