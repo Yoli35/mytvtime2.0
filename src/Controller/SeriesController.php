@@ -433,9 +433,9 @@ class SeriesController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $showId = $data['showId'];
         $lastEpisode = $data['lastEpisode'] == "1";
-        dump($data);
         $seasonNumber = $data['seasonNumber'];
         $episodeNumber = $data['episodeNumber'];
+        dump(['data'=>$data, 'last episode'=>$lastEpisode, 'season number'=>$seasonNumber, 'episode number'=>$episodeNumber]);
         /** @var User $user */
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
@@ -443,7 +443,7 @@ class SeriesController extends AbstractController
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $id]);
         if ($userEpisode) {
-            $userEpisode->setWatchAt($this->now());
+        //    $userEpisode->setWatchAt($this->now());
             $userEpisode->setNumberOfView($userEpisode->getNumberOfView() + 1);
             $this->userEpisodeRepository->save($userEpisode, true);
             return $this->json([
@@ -468,7 +468,7 @@ class SeriesController extends AbstractController
         }
         $userEpisode->setNumberOfView(1);
 
-        // Si on regarde le dernier épisode de la saison et que l'on a pas regardé aure chose entre temps, on considère que c'est un binge
+        // Si on regarde le dernier épisode de la saison et que l'on n'a pas regardé aure chose entre temps, on considère que c'est un binge
         if ($lastEpisode) {
             $seasonEpisodeCount = $episodeNumber;//$tv['seasons'][$seasonNumber - 1]['episode_count'];
             $lastEpisodes = $this->userEpisodeRepository->getLastWatchedEpisodes($user->getId(), $seasonEpisodeCount);// [`episode_number`, `season_number`, `user_series_id`] DESC watchAt LIMIT $seasonEpisodeCount
