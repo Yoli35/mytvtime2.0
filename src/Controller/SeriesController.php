@@ -436,7 +436,7 @@ class SeriesController extends AbstractController
         $lastEpisode = $data['lastEpisode'] == "1";
         $seasonNumber = $data['seasonNumber'];
         $episodeNumber = $data['episodeNumber'];
-        
+
         /** @var User $user */
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
