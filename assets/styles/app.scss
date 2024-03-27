@@ -250,6 +250,7 @@ label:has(input[type="text"]) {
     }
 
     .burger {
+        cursor: pointer;
         margin-inline-start: auto;
         padding: .5rem;
         position: relative;
@@ -259,13 +260,13 @@ label:has(input[type="text"]) {
             display: block;
             height: .25rem;
             margin-block: .25rem;
-            transition: transform .250ms ease-in-out, opacity .250ms ease-in-out;
+            transition: transform 250ms ease-in-out, opacity 250ms ease-in-out;
             width: 1.5rem;
         }
 
         &.open {
             span:nth-child(1) {
-                transform: translate(0, 0.5rem) rotate(45deg);
+                transform: translate(0, 0.5rem) rotate(135deg);
             }
 
             span:nth-child(2) {
@@ -273,7 +274,7 @@ label:has(input[type="text"]) {
             }
 
             span:nth-child(3) {
-                transform: translate(0, -0.5rem) rotate(-45deg);
+                transform: translate(0, -0.5rem) rotate(-135deg);
             }
 
             .menu {
@@ -318,6 +319,7 @@ label:has(input[type="text"]) {
 
                 &.active {
                     background-color: var(--gradient-green-50);
+
                     &::after {
                         content: "*";
                         margin-inline-start: auto;
