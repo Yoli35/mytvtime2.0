@@ -85,6 +85,8 @@
                                     {% endif %}
                                     {% if episode.overview %}
                                         <div class="overview">{{ episode.overview }}</div>
+                                    {% elseif season.deepl and season.deepl.localized %}
+                                        <div class="overview"><i>{{ season.deepl.us_episode_overviews[episode.episode_number - 1] }}</i></div>
                                     {% endif %}
                                     {% if episode.guest_stars %}
                                         <div class="guest-stars">

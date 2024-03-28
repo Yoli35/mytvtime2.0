@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
+use App\Entity\EpisodeLocalizedOverview;
 use App\Entity\Series;
 use App\Entity\SeriesImage;
 use App\Entity\SeriesLocalizedName;
@@ -14,6 +15,7 @@ use App\Entity\UserSeries;
 use App\Form\SeriesAdvancedSearchType;
 use App\Form\SeriesSearchType;
 use App\Repository\DeviceRepository;
+use App\Repository\EpisodeLocalizedOverviewRepository;
 use App\Repository\KeywordRepository;
 use App\Repository\ProviderRepository;
 use App\Repository\SeriesImageRepository;
@@ -46,21 +48,22 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SeriesController extends AbstractController
 {
     public function __construct(
-        private readonly ClockInterface                $clock,
-        private readonly DateService                   $dateService,
-        private readonly DeviceRepository              $deviceRepository,
-        private readonly DeeplTranslator               $deeplTranslator,
-        private readonly ImageConfiguration            $imageConfiguration,
-        private readonly KeywordRepository             $keywordRepository,
-        private readonly ProviderRepository            $providerRepository,
-        private readonly SeriesImageRepository         $seriesImageRepository,
-        private readonly SeriesRepository              $seriesRepository,
-        private readonly SeriesLocalizedNameRepository $seriesLocalizedNameRepository,
-        private readonly SeriesWatchLinkRepository     $seriesWatchLinkRepository,
-        private readonly TMDBService                   $tmdbService,
-        private readonly TranslatorInterface           $translator,
-        private readonly UserEpisodeRepository         $userEpisodeRepository,
-        private readonly UserSeriesRepository          $userSeriesRepository,
+        private readonly ClockInterface                     $clock,
+        private readonly DateService                        $dateService,
+        private readonly DeviceRepository                   $deviceRepository,
+        private readonly DeeplTranslator                    $deeplTranslator,
+        private readonly EpisodeLocalizedOverviewRepository $episodeLocalizedOverviewRepository,
+        private readonly ImageConfiguration                 $imageConfiguration,
+        private readonly KeywordRepository                  $keywordRepository,
+        private readonly ProviderRepository                 $providerRepository,
+        private readonly SeriesImageRepository              $seriesImageRepository,
+        private readonly SeriesRepository                   $seriesRepository,
+        private readonly SeriesLocalizedNameRepository      $seriesLocalizedNameRepository,
+        private readonly SeriesWatchLinkRepository          $seriesWatchLinkRepository,
+        private readonly TMDBService                        $tmdbService,
+        private readonly TranslatorInterface                $translator,
+        private readonly UserEpisodeRepository              $userEpisodeRepository,
+        private readonly UserSeriesRepository               $userSeriesRepository,
     )
     {
     }
@@ -370,13 +373,13 @@ class SeriesController extends AbstractController
 
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
-//        dump([
+        dump([
 //            'series' => $series,
-//            'season' => $season,
+            'season' => $season,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-//        ]);
+        ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
@@ -472,7 +475,7 @@ class SeriesController extends AbstractController
         // Si on regarde le dernier épisode de la saison et que l'on n'a pas regardé aure chose entre temps, on considère que c'est un binge
         if ($lastEpisode) {
             $seasonEpisodeCount = $episodeNumber;
-            // $seasonEpisodeCount - 1: on ne compte pas l'épisode que l'on vient de regarder
+            // $seasonEpisodeCount - 1 : on ne compte pas l'épisode que l'on vient de regarder
             $lastEpisodes = $this->userEpisodeRepository->getLastWatchedEpisodes($user->getId(), $seasonEpisodeCount - 1);
             $userSeriesId = $userSeries->getId();
             $sameSeriesEpisodes = array_filter($lastEpisodes, function ($e) use ($userSeriesId, $seasonNumber) {
@@ -958,6 +961,7 @@ class SeriesController extends AbstractController
 
     public function seasonLocalizedOverview($series, $season, $seasonNumber, $request): array|null
     {
+        $locale = $request->getLocale();
         if (!strlen($season['overview'])) {
             $usSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, 'en-US'), true);
             $season['overview'] = $usSeason['overview'];
@@ -968,7 +972,7 @@ class SeriesController extends AbstractController
                 try {
                     $usage = $this->deeplTranslator->translator->getUsage();
                     if ($usage->character->count + strlen($season['overview']) < $usage->character->limit) {
-                        $localizedOverview = $this->deeplTranslator->translator->translateText($season['overview'], null, $request->getLocale());
+                        $localizedOverview = $this->deeplTranslator->translator->translateText($season['overview'], null, $locale);
                         $localized = true;
                     } else {
                         $localizedResult = 'Limit exceeded';
@@ -984,6 +988,8 @@ class SeriesController extends AbstractController
                 }
             }
             return [
+                'us_overview' => $usSeason['overview'],
+                'us_episode_overviews' => array_map(function($ep) use ($locale) { return $this->episodeLocalisedOverview($ep, $locale);}, $usSeason['episodes']),
                 'localized' => $localized,
                 'localizedOverview' => $localizedOverview,
                 'localizedResult' => $localizedResult,
@@ -991,6 +997,29 @@ class SeriesController extends AbstractController
             ];
         }
         return null;
+    }
+
+    public function episodeLocalisedOverview($episode, $locale): string
+    {
+        $episodeId = $episode['id'];
+        $localizedOverview = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $episodeId, 'locale' => $locale]);
+        if ($localizedOverview) {
+            dump('we have it');
+            return $localizedOverview->getOverview();
+        }
+        $overview = $episode['overview'];
+        if (strlen($overview)) {
+            try {
+                $usage = $this->deeplTranslator->translator->getUsage();
+                if ($usage->character->count + strlen($overview) < $usage->character->limit) {
+                    $overview = $this->deeplTranslator->translator->translateText($overview, null, $locale);
+                    $localizedOverview = new EpisodeLocalizedOverview($episodeId, $overview, $locale);
+                    $this->episodeLocalizedOverviewRepository->save($localizedOverview, true);
+                }
+            } catch (DeepLException) {
+            }
+        }
+        return $overview;
     }
 
     public function watchProviders($tv, $country): array
