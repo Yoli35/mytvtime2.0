@@ -502,12 +502,14 @@ class SeriesController extends AbstractController
             }
         }
 
-        $userSeries->setLastWatchAt($now);
-        $userSeries->setLastEpisode($episode['episode_number']);
-        $userSeries->setLastSeason($episode['season_number']);
-        $userSeries->setViewedEpisodes($userSeries->getViewedEpisodes() + 1);
-        $userSeries->setProgress($userSeries->getViewedEpisodes() / $tv['number_of_episodes'] * 100);
-        $this->userSeriesRepository->save($userSeries, true);
+        if ($seasonNumber) {
+            $userSeries->setLastWatchAt($now);
+            $userSeries->setLastEpisode($episode['episode_number']);
+            $userSeries->setLastSeason($episode['season_number']);
+            $userSeries->setViewedEpisodes($userSeries->getViewedEpisodes() + 1);
+            $userSeries->setProgress($userSeries->getViewedEpisodes() / $tv['number_of_episodes'] * 100);
+            $this->userSeriesRepository->save($userSeries, true);
+        }
         return $this->json([
             'ok' => true,
         ]);
@@ -537,7 +539,7 @@ class SeriesController extends AbstractController
             $this->userEpisodeRepository->remove($userEpisode);
         }
 
-        if ($episodeNumber > 1) {
+        if ($episodeNumber > 1 && $seasonNumber > 1) {
             for ($j = $seasonNumber; $j > 0; $j--) {
                 for ($i = $episodeNumber - 1; $i > 0; $i--) {
                     $episode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'userSeries' => $userSeries, 'seasonNumber' => $j, 'episodeNumber' => $i]);
@@ -557,11 +559,13 @@ class SeriesController extends AbstractController
             }
         }
         // on a supprimé le premier épisode de la première saison ou on n'a pas trouvé d'épisode précédemment vu
-        $userSeries->setLastEpisode(null);
-        $userSeries->setLastSeason(null);
-        $userSeries->setLastWatchAt(null);
-        $userSeries->setViewedEpisodes(0);
-        $userSeries->setProgress(0);
+        if ($seasonNumber == 1 && $episodeNumber == 1) {
+            $userSeries->setLastEpisode(null);
+            $userSeries->setLastSeason(null);
+            $userSeries->setLastWatchAt(null);
+            $userSeries->setViewedEpisodes(0);
+            $userSeries->setProgress(0);
+        }
         $this->userSeriesRepository->save($userSeries, true);
         return $this->json([
             'ok' => true,
