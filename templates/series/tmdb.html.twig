@@ -215,8 +215,9 @@
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
-
-    <a href="{{ path('app_series_add', {id: tv.id}) }}">
-        <div class="add-this-series">{{ 'Add this series to your watchlist'|trans }}</div>
-    </a>
+    {% if app.user %}
+        <a href="{{ path('app_series_add', {id: tv.id}) }}">
+            <div class="add-this-series">{{ 'Add this series to your watchlist'|trans }}<pre>{{ dump(app.user) }}</pre></div>
+        </a>
+    {% endif %}
 {% endblock %}
