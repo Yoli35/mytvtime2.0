@@ -687,6 +687,10 @@
                 font-size: 2rem;
                 font-weight: 100;
                 line-height: 1.1em;
+
+                span.substitute {
+                    font-weight: 300;
+                }
             }
 
             .overview {
@@ -694,6 +698,10 @@
                 font-size: 1rem;
                 font-weight: 300;
                 padding-inline-start: .5rem;
+
+                &.us {
+                    border-left: 2px solid var(--gradient-green-50);
+                }
             }
 
             .air-date, .episodes, .runtime {

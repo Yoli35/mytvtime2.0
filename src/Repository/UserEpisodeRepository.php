@@ -102,4 +102,12 @@ class UserEpisodeRepository extends ServiceEntityRepository
             . "LIMIT $limit";
         return $this->em->getConnection()->fetchAllAssociative($sql);
     }
+
+    public function getSubstituteName(int $id): mixed
+    {
+        $sql = "SELECT `name` "
+            . "FROM `episode_substitute_name` "
+            . "WHERE `episode_id`=$id";
+        return $this->em->getConnection()->fetchOne($sql);
+    }
 }

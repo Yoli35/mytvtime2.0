@@ -76,7 +76,12 @@
                                     </div>
                                 </div>
                                 <div class="infos">
-                                    <div class="name">{{ episode.name }}</div>
+                                    <div class="name">
+                                        {{ episode.name }}
+                                        {% if episode.substitute_name %}
+                                            <span class="substitute"> - {{ episode.substitute_name }}</span>
+                                        {% endif %}
+                                    </div>
                                     {% if episode.air_date %}
                                         <div class="air-date">{{ 'Air date'|trans }} {{ date(episode.air_date)|format_date('relative_long') }}</div>
                                     {% endif %}
@@ -85,8 +90,9 @@
                                     {% endif %}
                                     {% if episode.overview %}
                                         <div class="overview">{{ episode.overview }}</div>
-                                    {% elseif season.deepl and season.deepl.localized %}
-                                        <div class="overview"><i>{{ season.deepl.us_episode_overviews[episode.episode_number - 1] }}</i></div>
+                                    {% elseif season.deepl %}
+                                        <div class="overview{% if season.deepl.localized == false %} us{% endif %}">
+                                            {{ season.deepl.us_episode_overviews[episode.episode_number - 1] }}                                        </div>
                                     {% endif %}
                                     {% if episode.guest_stars %}
                                         <div class="guest-stars">

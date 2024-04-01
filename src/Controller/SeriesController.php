@@ -369,6 +369,7 @@ class SeriesController extends AbstractController
                 return $guest;
             }, $episode['guest_stars'] ?? []);
             $episode['user_episode'] = $userSeries->getEpisode($episode['id']);
+            $episode['substitute_name'] = $this->userEpisodeRepository->getSubstituteName($episode['id']);
             return $episode;
         }, $season['episodes']);
         $season['credits'] = $this->castAndCrew($season);
@@ -848,6 +849,7 @@ class SeriesController extends AbstractController
         return $schedules;
 
     }
+
     public function inImages(string $image, array $images): bool
     {
         foreach ($images as $img) {
@@ -1046,6 +1048,7 @@ class SeriesController extends AbstractController
         if (strlen($overview)) {
             try {
                 $usage = $this->deeplTranslator->translator->getUsage();
+                dump($usage);
                 if ($usage->character->count + strlen($overview) < $usage->character->limit) {
                     $overview = $this->deeplTranslator->translator->translateText($overview, null, $locale);
                     $localizedOverview = new EpisodeLocalizedOverview($episodeId, $overview, $locale);
