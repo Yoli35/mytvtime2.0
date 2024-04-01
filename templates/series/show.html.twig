@@ -78,11 +78,30 @@
                 </div>
             </div>
 
+            {% if series.schedules|length %}
+                {% set schedules = series.schedules %}
+                <div class="schedules">
+{#                    <h3>{{ 'Schedules'|trans }}</h3>#}
+                    <div class="wrapper">
+                        {% for schedule in schedules %}
+                            <div class="schedule">
+                                {% set country = user.country ?? 'FR' %}
+                                <div class="country" data-title="{{ schedule.country|country_name }}">{{ getEmojiFlag(schedule.country) }}</div>
+                                <div class="air">{{ schedule.firstAirDate|format_datetime(pattern="cccc - H:mm")|capitalize }}</div>
+                                <div><i class="fas fa-arrow-right"></i></div>
+                                <div class="country" data-title="{{ country|country_name }}">{{ getEmojiFlag(country) }}</div>
+                                <div class="local-air">{{ schedule.originalDate|format_datetime(pattern="cccc - H:mm")|capitalize }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
             {% if userSeries %}
                 <div class="user-actions">
                     <div class="watch-links">
                         <div class="label">{{ 'Watch links'|trans }}</div>
-                        {% for link in series.seriesWatchLinks %}
+                        {% for link in series.watchLinks %}
                             <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
                                 <div class="watch-link">
                                     {% if link.providerId %}
@@ -320,7 +339,7 @@
                         <div class="fact">
                             <div class="fact-label">{{ 'Original Country'|trans }}</div>
                             {% for country in tv.origin_country %}
-                                <div class="fact-content">{{ country|country_name }}</div>
+                                <div class="fact-content">{{ getEmojiFlag(country) ~ ' ' ~ country|country_name }}</div>
                             {% endfor %}
                         </div>
                         <div class="fact">

@@ -59,6 +59,9 @@ class Series
     #[ORM\OneToMany(targetEntity: SeriesImage::class, mappedBy: 'series', orphanRemoval: true)]
     private Collection $seriesImages;
 
+    #[ORM\OneToMany(targetEntity: SeriesBroadcastSchedule::class, mappedBy: 'series', orphanRemoval: true)]
+    private Collection $seriesBroadcastSchedules;
+
     private array $updates;
 
     public function __construct()
@@ -66,6 +69,7 @@ class Series
         $this->seriesLocalizedNames = new ArrayCollection();
         $this->seriesWatchLinks = new ArrayCollection();
         $this->seriesImages = new ArrayCollection();
+        $this->seriesBroadcastSchedules = new ArrayCollection();
         $this->updates = [];
     }
 
@@ -209,18 +213,23 @@ class Series
     public function toArray(): array
     {
         return [
-            'id' => $this->getId(),
-            'name' => $this->getName(),
-            'posterPath' => $this->getPosterPath(),
-            'tmdbId' => $this->getTmdbId(),
-            'originalName' => $this->getOriginalName(),
-            'slug' => $this->getSlug(),
-            'overview' => $this->getOverview(),
             'backdropPath' => $this->getBackdropPath(),
-            'firstDateAir' => $this->getFirstDateAir(),
             'createdAt' => $this->getCreatedAt(),
+            'firstDateAir' => $this->getFirstDateAir(),
+            'id' => $this->getId(),
+            'images' => $this->getSeriesImages()->toArray(),
+            'localizedNames' => $this->getSeriesLocalizedNames()->toArray(),
+            'name' => $this->getName(),
+            'originalName' => $this->getOriginalName(),
+            'overview' => $this->getOverview(),
+            'posterPath' => $this->getPosterPath(),
+            'schedules' => $this->getSeriesBroadcastSchedules()->toArray(),
+            'slug' => $this->getSlug(),
+            'tmdbId' => $this->getTmdbId(),
             'updatedAt' => $this->getUpdatedAt(),
             'visitNumber' => $this->getVisitNumber(),
+            'watchLinks' => $this->getSeriesWatchLinks()->toArray(),
+            'updates' => $this->getUpdates(),
         ];
     }
 
@@ -337,5 +346,35 @@ class Series
     public function setUpdates(array $updates): void
     {
         $this->updates = $updates;
+    }
+
+    /**
+     * @return Collection<int, SeriesBroadcastSchedule>
+     */
+    public function getSeriesBroadcastSchedules(): Collection
+    {
+        return $this->seriesBroadcastSchedules;
+    }
+
+    public function addSeriesBroadcastSchedule(SeriesBroadcastSchedule $seriesBroadcastSchedule): static
+    {
+        if (!$this->seriesBroadcastSchedules->contains($seriesBroadcastSchedule)) {
+            $this->seriesBroadcastSchedules->add($seriesBroadcastSchedule);
+            $seriesBroadcastSchedule->setSeries($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSeriesBroadcastSchedule(SeriesBroadcastSchedule $seriesBroadcastSchedule): static
+    {
+        if ($this->seriesBroadcastSchedules->removeElement($seriesBroadcastSchedule)) {
+            // set the owning side to null (unless already changed)
+            if ($seriesBroadcastSchedule->getSeries() === $this) {
+                $seriesBroadcastSchedule->setSeries(null);
+            }
+        }
+
+        return $this;
     }
 }

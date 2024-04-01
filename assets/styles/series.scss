@@ -247,6 +247,36 @@
         }
     }
 
+    .schedules {
+        display: flex;
+        flex-direction: column;
+        gap: .25rem;
+        justify-content: center;
+        max-height: 3rem;
+        overflow-y: auto;
+        padding-inline: 1rem;
+
+        .schedule {
+            align-items: center;
+            background-color: var(--gradient-ardoise-80-alpha-50);
+            border-radius: .25rem;
+            color: var(--gradient-ardoise-10);
+            display: flex;
+            gap: .5rem;
+            justify-content: center;
+            padding: .5rem;
+            width: 100%;
+
+            .air, .country, .local-air {
+                background-color: var(--gradient-ardoise-80-alpha-50);
+                border-radius: .25rem;
+                font-size: 1rem;
+                font-weight: 300;
+                padding: .25rem .5rem;
+            }
+        }
+    }
+
     .user-actions {
         align-items: center;
         display: flex;

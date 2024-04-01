@@ -253,12 +253,16 @@ class SeriesController extends AbstractController
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
 
-//        dump([
-//            'series' => $series,
+        $schedules = $this->seriesSchedules($series);
+        $series = $series->toArray();
+        $series['schedules'] = $schedules;
+
+        dump([
+            'series' => $series,
 //            'tv' => $tv,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
-//        ]);
+        ]);
         return $this->render('series/show.html.twig', [
             'series' => $series,
             'tv' => $tv,
@@ -472,8 +476,9 @@ class SeriesController extends AbstractController
         }
         $userEpisode->setNumberOfView(1);
 
-        // Si on regarde le dernier épisode de la saison et que l'on n'a pas regardé aure chose entre temps, on considère que c'est un binge
-        if ($lastEpisode) {
+        // Si on regarde le dernier épisode de la saison (hors épisodes spéciaux : $seasonNumber > 0)
+        // et que l'on n'a pas regardé aure chose entre temps, on considère que c'est un binge
+        if ($lastEpisode && $seasonNumber) {
             $seasonEpisodeCount = $episodeNumber;
             // $seasonEpisodeCount - 1 : on ne compte pas l'épisode que l'on vient de regarder
             $lastEpisodes = $this->userEpisodeRepository->getLastWatchedEpisodes($user->getId(), $seasonEpisodeCount - 1);
@@ -817,6 +822,32 @@ class SeriesController extends AbstractController
         return $series;
     }
 
+    public function seriesSchedules(Series $series): array
+    {
+        $schedules = [];
+        foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
+            $firstAirDate = $schedule->getFirstAirDate();
+            $airAt = $schedule->getAirAt();
+
+            $country = $schedule->getCountry();
+            $utc = $schedule->getUtc(); // int
+
+            $firstAirDate = $firstAirDate->setTime($airAt->format('H'), $airAt->format('i'));
+
+            $originalDate = $firstAirDate->format('Y-m-d H:i');
+            $originalDate = str_replace(' ', 'T', $originalDate);
+            $originalDate .= ($utc > 0 ? "+":"-") . (abs($utc)<10?'0':''). $utc . ':00';
+
+            $schedules[] = [
+                'country' => $country,
+                'firstAirDate' => $firstAirDate,
+                'originalDate' => $originalDate,
+            ];
+
+        }
+        return $schedules;
+
+    }
     public function inImages(string $image, array $images): bool
     {
         foreach ($images as $img) {
