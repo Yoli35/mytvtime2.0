@@ -222,7 +222,12 @@
                 object-fit: cover;
                 width: 2rem;
             }
+        }
 
+        label {
+            select {
+                color: var(--gradient-ardoise-10);
+            }
         }
     }
 
