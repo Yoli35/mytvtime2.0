@@ -363,6 +363,9 @@ class SeriesController extends AbstractController
                 $crew['slug'] = $slugger->slug($crew['name'])->lower()->toString();
                 return $crew;
             }, $episode['crew'] ?? []);
+            $episode['guest_stars'] = array_filter($episode['guest_stars'] ?? [], function ($guest) {
+                return key_exists('id', $guest);
+            });
             $episode['guest_stars'] = array_map(function ($guest) use ($slugger) {
                 $guest['profile_path'] = $guest['profile_path'] ? $this->imageConfiguration->getCompleteUrl($guest['profile_path'], 'profile_sizes', 2) : null; // w185
                 $guest['slug'] = $slugger->slug($guest['name'])->lower()->toString();
