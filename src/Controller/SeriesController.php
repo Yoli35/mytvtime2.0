@@ -853,8 +853,9 @@ class SeriesController extends AbstractController
 
     }
 
-    public function inImages(string $image, array $images): bool
+    public function inImages(?string $image, array $images): bool
     {
+        if (!$image) return true;
         foreach ($images as $img) {
             if ($img->getimagePath() == $image) return true;
         }
@@ -876,7 +877,7 @@ class SeriesController extends AbstractController
         $series->setOverview($tv['overview']);
         $series->setPosterPath($tv['poster_path']);
         $series->setBackdropPath($tv['backdrop_path']);
-        $series->setFirstDateAir(new DatePoint($tv['first_air_date']));
+        $series->setFirstDateAir($tv['first_air_date'] ? new DatePoint($tv['first_air_date']) : null);
         $series->setVisitNumber(0);
         $series->setCreatedAt($date);
         $series->setUpdatedAt($date);
