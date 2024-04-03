@@ -77,10 +77,15 @@
                                 </div>
                                 <div class="infos">
                                     <div class="name">
-                                        {{ episode.name }}
+                                        <div class="content">{{ episode.name }}</div>
+                                        <div class="substitute">
                                         {% if episode.substitute_name %}
-                                            <span class="substitute"> - {{ episode.substitute_name }}</span>
+                                            {{ episode.substitute_name }}
                                         {% endif %}
+                                        </div>
+                                        <div class="edit" data-title="{{ 'Suggest a title'|trans }}" data-id="{{ episode.id }}">
+                                            <i class="fas fa-pen"></i>
+                                        </div>
                                     </div>
                                     {% if episode.air_date %}
                                         <div class="air-date">{{ 'Air date'|trans }} {{ date(episode.air_date)|format_date('relative_long') }}</div>
@@ -153,12 +158,12 @@
                                              data-s-number="{{ episode.season_number }}"
                                              data-e-number="{{ episode.episode_number }}"
                                              data-title="{{ 'Mark this episode as seen'|trans }}">
-                                             <i class="fas fa-plus"></i>
+                                            <i class="fas fa-plus"></i>
                                         </div>
                                     {% endif %}
                                     <a href="#top">
                                         <div class="back-to-top" data-title="{{ 'Back to top'|trans }}">
-                                             <i class="fas fa-arrow-up"></i>
+                                            <i class="fas fa-arrow-up"></i>
                                         </div>
                                     </a>
                                 </div>
@@ -244,46 +249,46 @@
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
-{#     Retirez-vous cet épisode ou le regardez-vous de nouveau ?#}
+    {#     Retirez-vous cet épisode ou le regardez-vous de nouveau ? #}
     <dialog id="review-dialog">
         <div class="content">
             <form method="dialog">
-                    <button value="remove">{{ 'Remove'|trans }}</button>
-                    <button value="watch" autofocus>{{ 'Watched again'|trans }}</button>
+                <button value="remove">{{ 'Remove'|trans }}</button>
+                <button value="watch" autofocus>{{ 'Watched again'|trans }}</button>
             </form>
         </div>
     </dialog>
     <div id="globs" style="display: none">
         {
-            "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "text": {
-                "provider": "{{ 'Choose a provider'|trans }}",
-                "device": "{{ 'Choose a device'|trans }}",
-                "rating": "{{ 'Give a rating'|trans }}",
-                "now": "{{ 'Now'|trans }}",
-                "add": "{{ 'Add'|trans }}",
-                "Television": "{{ 'Television'|trans }}",
-                "Mobile": "{{ 'Mobile'|trans }}",
-                "Tablet": "{{ 'Tablet'|trans }}",
-                "Laptop": "{{ 'Laptop'|trans }}",
-                "Desktop": "{{ 'Desktop'|trans }}",
-                "Search": "{{ 'Search'|trans }}",
-                "days": "{{ 'days'|trans }}",
-                "hours": "{{ 'hours'|trans }}",
-                "minutes": "{{ 'minutes'|trans }}",
-                "seconds": "{{ 'seconds'|trans }}",
-                "day": "{{ 'day'|trans }}",
-                "hour": "{{ 'hour'|trans }}",
-                "minute": "{{ 'minute'|trans }}",
-                "second": "{{ 'second'|trans }}"
-            }
+        "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "text": {
+        "provider": "{{ 'Choose a provider'|trans }}",
+        "device": "{{ 'Choose a device'|trans }}",
+        "rating": "{{ 'Give a rating'|trans }}",
+        "now": "{{ 'Now'|trans }}",
+        "add": "{{ 'Add'|trans }}",
+        "Television": "{{ 'Television'|trans }}",
+        "Mobile": "{{ 'Mobile'|trans }}",
+        "Tablet": "{{ 'Tablet'|trans }}",
+        "Laptop": "{{ 'Laptop'|trans }}",
+        "Desktop": "{{ 'Desktop'|trans }}",
+        "Search": "{{ 'Search'|trans }}",
+        "days": "{{ 'days'|trans }}",
+        "hours": "{{ 'hours'|trans }}",
+        "minutes": "{{ 'minutes'|trans }}",
+        "seconds": "{{ 'seconds'|trans }}",
+        "day": "{{ 'day'|trans }}",
+        "hour": "{{ 'hour'|trans }}",
+        "minute": "{{ 'minute'|trans }}",
+        "second": "{{ 'second'|trans }}"
+        }
         }
     </div>
-{#    <pre>#}
-{#        {{ dump(devices) }} #}
-{#    </pre>#}
+    {#    <pre> #}
+    {#        {{ dump(devices) }} #}
+    {#    </pre> #}
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}

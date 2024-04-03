@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\EpisodeLocalizedOverview;
+use App\Entity\EpisodeSubstituteName;
 use App\Entity\Series;
 use App\Entity\SeriesImage;
 use App\Entity\SeriesLocalizedName;
@@ -16,6 +17,7 @@ use App\Form\SeriesAdvancedSearchType;
 use App\Form\SeriesSearchType;
 use App\Repository\DeviceRepository;
 use App\Repository\EpisodeLocalizedOverviewRepository;
+use App\Repository\EpisodeSubstituteNameRepository;
 use App\Repository\KeywordRepository;
 use App\Repository\ProviderRepository;
 use App\Repository\SeriesImageRepository;
@@ -53,6 +55,7 @@ class SeriesController extends AbstractController
         private readonly DeviceRepository                   $deviceRepository,
         private readonly DeeplTranslator                    $deeplTranslator,
         private readonly EpisodeLocalizedOverviewRepository $episodeLocalizedOverviewRepository,
+        private readonly EpisodeSubstituteNameRepository    $episodeSubstituteNameRepository,
         private readonly ImageConfiguration                 $imageConfiguration,
         private readonly KeywordRepository                  $keywordRepository,
         private readonly ProviderRepository                 $providerRepository,
@@ -629,6 +632,25 @@ class SeriesController extends AbstractController
 
         $userEpisode->setVote($vote);
         $this->userEpisodeRepository->save($userEpisode, true);
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/episode/update/name/{id}', name: 'update_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function episodeTitle(Request $request, int $id): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $name = $data['name'];
+        $substitute = $this->episodeSubstituteNameRepository->findOneBy(['episodeId' => $id]);
+        if ($substitute) {
+            $substitute->setName($name);
+        } else {
+            $substitute = new EpisodeSubstituteName($id, $name);
+        }
+        $this->episodeSubstituteNameRepository->save($substitute, true);
 
         return $this->json([
             'ok' => true,

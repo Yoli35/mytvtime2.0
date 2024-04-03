@@ -118,6 +118,8 @@ export class Season {
             info.addEventListener('mouseleave', () => {
                 info.scrollTop = 0;
             });
+            const edit = info.querySelector('.edit');
+            edit.addEventListener('click', this.openTitleForm);
         });
 
         const addThisEpisode = document.querySelectorAll('.add-this-episode');
@@ -147,6 +149,68 @@ export class Season {
             vote.addEventListener('mouseenter', gThis.selectVote);
             vote.addEventListener('mouseleave', gThis.removeList);
         });
+    }
+
+    openTitleForm(e) {
+        const editDiv = e.currentTarget;
+        const nameDiv = editDiv.closest('.name');
+        const contentDiv = nameDiv.querySelector('.content');
+        const substituteDiv = nameDiv.querySelector('.substitute');
+        const name = substituteDiv.innerText.length ? substituteDiv.innerText : contentDiv.innerText;
+        const form = document.createElement('form');
+        form.setAttribute('method', 'post');
+        form.setAttribute('action', '');
+        form.setAttribute('autocomplete', 'off');
+        const input = document.createElement('input');
+        input.setAttribute('type', 'text');
+        input.setAttribute('name', 'title');
+        input.setAttribute('value', name);
+        input.setAttribute('maxlength', '255');
+        input.setAttribute('required', '');
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                form.remove();
+            }
+        });
+        form.appendChild(input);
+        const submit = document.createElement('button');
+        submit.setAttribute('type', 'submit');
+        submit.setAttribute('name', 'submit');
+        submit.setAttribute('value', 'submit');
+        submit.textContent = 'OK';
+        submit.addEventListener('click', (e) => {
+            e.preventDefault();
+            const substituteName = input.value;
+            fetch('/' + gThis.lang + '/series/episode/update/name/' + editDiv.getAttribute('data-id'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    name: substituteName
+                })
+            }).then(function (response) {
+                if (response.ok) {
+                    substituteDiv.innerText = substituteName;
+                }
+                form.remove();
+            });
+        });
+        form.appendChild(submit);
+        const cancel = document.createElement('button');
+        cancel.setAttribute('type', 'button');
+        cancel.setAttribute('name', 'cancel');
+        cancel.setAttribute('value', 'cancel');
+        cancel.textContent = 'X';
+        cancel.addEventListener('click', () => {
+            form.remove();
+        });
+        form.appendChild(cancel);
+        nameDiv.appendChild(form);
+
+        input.focus();
+        input.select();
     }
 
     addEpisode(e, episodeId = null) {

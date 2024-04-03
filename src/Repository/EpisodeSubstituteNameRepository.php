@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\EpisodeSubstituteName;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,9 +17,17 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class EpisodeSubstituteNameRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, EpisodeSubstituteName::class);
+    }
+
+    public function save(EpisodeSubstituteName $episodeSubstituteName, bool $flush=false): void
+    {
+        $this->entityManager->persist($episodeSubstituteName);
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
     //    /**
