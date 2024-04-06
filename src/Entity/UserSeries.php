@@ -223,7 +223,7 @@ class UserSeries
     {
         if (!$this->userEpisodes->contains($userEpisode)) {
             $this->userEpisodes->add($userEpisode);
-            $userEpisode->setSeries($this);
+            $userEpisode->setUserSeries($this);
         }
 
         return $this;
@@ -233,8 +233,8 @@ class UserSeries
     {
         if ($this->userEpisodes->removeElement($userEpisode)) {
             // set the owning side to null (unless already changed)
-            if ($userEpisode->getSeries() === $this) {
-                $userEpisode->setSeries(null);
+            if ($userEpisode->getUserSeries() === $this) {
+                $userEpisode->setUserSeries(null);
             }
         }
 

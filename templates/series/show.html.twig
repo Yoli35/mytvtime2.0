@@ -78,22 +78,26 @@
                 </div>
             </div>
 
-            {% if series.schedules|length %}
-                {% set schedules = series.schedules %}
+            {% if series.nextEpisodeAirDate %}
                 <div class="schedules">
-{#                    <h3>{{ 'Schedules'|trans }}</h3>#}
-                    <div class="wrapper">
-                        {% for schedule in schedules %}
-                            <div class="schedule">
-                                {% set country = user.country ?? 'FR' %}
-                                <div class="country" data-title="{{ schedule.country|country_name }}">{{ getEmojiFlag(schedule.country) }}</div>
-                                <div class="air">{{ schedule.firstAirDate|format_datetime(pattern="cccc - H:mm")|capitalize }}</div>
-                                <div><i class="fas fa-arrow-right"></i></div>
-                                <div class="country" data-title="{{ country|country_name }}">{{ getEmojiFlag(country) }}</div>
-                                <div class="local-air">{{ schedule.originalDate|format_datetime(pattern="cccc - H:mm")|capitalize }}</div>
-                            </div>
-                        {% endfor %}
-                    </div>
+                    {% set neta = tv.next_episode_to_air %}
+                    <div class="next-episode">{{ "S%02dE%02d"|format(neta.season_number, neta.episode_number) }} - {{ neta.name }} - {{ series.nextEpisodeAirDate|format_date("relative_full")|capitalize }}</div>
+
+                    {% if series.schedules|length %}
+                        {% set schedules = series.schedules %}
+                        <div class="wrapper">
+                            {% for schedule in schedules %}
+                                <div class="schedule">
+                                    {% set country = user.country ?? 'FR' %}
+                                    <div class="country" data-title="{{ schedule.country|country_name }}">{{ getEmojiFlag(schedule.country) }}</div>
+                                    <div class="air">{{ schedule.firstAirDate|format_datetime(pattern="cccc - H:mm")|capitalize }}</div>
+                                    <div><i class="fas fa-arrow-right"></i></div>
+                                    <div class="country" data-title="{{ country|country_name }}">{{ getEmojiFlag(country) }}</div>
+                                    <div class="local-air">{{ schedule.originalDate|format_datetime(pattern="cccc - H:mm")|capitalize }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
             {% endif %}
 
@@ -240,7 +244,7 @@
                                 {% for people in tv.credits.cast %}
                                     <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
                                         <div class="people">
-                                            <div class="profile">
+                                            <div class="photo">
                                                 {% if people.profile_path %}
                                                     <img src="{{ people.profile_path }}" alt="{{ people.name }}">
                                                 {% else %}
@@ -265,7 +269,7 @@
                                 {% for people in tv.credits.crew %}
                                     <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
                                         <div class="people">
-                                            <div class="profile">
+                                            <div class="photo">
                                                 {% if people.profile_path %}
                                                     <img src="{{ people.profile_path }}" alt="{{ people.name }}">
                                                 {% else %}

@@ -92,14 +92,12 @@ class SeriesHasBeenBingeWatchedCommand extends Command
         foreach ($userEpisodes as $userEpisode) {
             $currentUserSeriesId = $userEpisode->getUserSeries()->getId();
             if (!$previousUserEpisode) {
-                if ($currentUserSeriesId != $userSeriesId) {
-                    continue;
-                } else {
+                if ($currentUserSeriesId == $userSeriesId) {
                     $previousUserEpisode = $userEpisode;
                     $previousSeasonNumber = $userEpisode->getSeasonNumber();
                     $episodeCount++;
-                    continue;
                 }
+                continue;
             }
 
             if ($currentUserSeriesId != $userSeriesId

@@ -254,6 +254,7 @@ class SeriesController extends AbstractController
         $tv['watch/providers'] = $this->watchProviders($tv, $user->getCountry() ?? 'FR');
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+        $userSeries = $this->updateUserSeries($userSeries, $tv);
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
 
         $schedules = $this->seriesSchedules($series);
@@ -262,8 +263,8 @@ class SeriesController extends AbstractController
 
         dump([
             'series' => $series,
-//            'tv' => $tv,
-//            'userSeries' => $userSeries,
+            'tv' => $tv,
+            'userSeries' => $userSeries,
 //            'providers' => $providers,
         ]);
         return $this->render('series/show.html.twig', [
@@ -373,7 +374,7 @@ class SeriesController extends AbstractController
                 $guest['profile_path'] = $guest['profile_path'] ? $this->imageConfiguration->getCompleteUrl($guest['profile_path'], 'profile_sizes', 2) : null; // w185
                 $guest['slug'] = $slugger->slug($guest['name'])->lower()->toString();
                 return $guest;
-            }, $episode['guest_stars'] ?? []);
+            }, $episode['guest_stars']);
             $episode['user_episode'] = $userSeries->getEpisode($episode['id']);
             $episode['substitute_name'] = $this->userEpisodeRepository->getSubstituteName($episode['id']);
             return $episode;
@@ -483,22 +484,13 @@ class SeriesController extends AbstractController
         }
         $userEpisode->setNumberOfView(1);
 
+        $this->userEpisodeRepository->save($userEpisode, true);
+
         // Si on regarde le dernier épisode de la saison (hors épisodes spéciaux : $seasonNumber > 0)
         // et que l'on n'a pas regardé aure chose entre temps, on considère que c'est un binge
         if ($lastEpisode && $seasonNumber) {
-            $seasonEpisodeCount = $episodeNumber;
-            // $seasonEpisodeCount - 1 : on ne compte pas l'épisode que l'on vient de regarder
-            $lastEpisodes = $this->userEpisodeRepository->getLastWatchedEpisodes($user->getId(), $seasonEpisodeCount - 1);
-            $userSeriesId = $userSeries->getId();
-            $sameSeriesEpisodes = array_filter($lastEpisodes, function ($e) use ($userSeriesId, $seasonNumber) {
-                return ($e['user_series_id'] == $userSeriesId && $e['season_number'] == $seasonNumber);
-            });
-            if (count($sameSeriesEpisodes) == $seasonEpisodeCount - 1) {
-                $userSeries->setBinge(true);
-            }
+            $userSeries->setBinge($this->isBinge($userSeries, $seasonNumber, $episodeNumber));
         }
-
-        $this->userEpisodeRepository->save($userEpisode, true);
 
         // Si on regarde 3 épisodes en moins d'un jour, on considère que c'est un marathon
         if (!$userSeries->getMarathoner() && $episodeNumber >= 3) {
@@ -527,6 +519,64 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    public function isBinge(UserSeries $userSeries, int $seasonNumber, int $numberOfEpisode): bool
+    {
+        $isBinge = false;
+
+        $lastEpisodeDb = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber], ['episodeNumber' => 'DESC']);
+        $firstEpisodeDb = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'episodeNumber' => 1]);
+        $lastId = $lastEpisodeDb->getId();
+        $firstId = $firstEpisodeDb->getId();
+        $userSeriesId = $userSeries->getId();
+        $userId = $userSeries->getUser()->getId();
+        $userEpisodes = $this->userEpisodeRepository->getEpisodeListBetweenIds($userId, $firstId, $lastId);
+        $episodeCount = count($userEpisodes);
+        if ($episodeCount == $numberOfEpisode) {
+            return true;
+        }
+        $previousUserEpisode = null;
+        $episodeCount = 0;
+        $interruptions = 0;
+        $otherSeriesEpisodes = 0;
+        // userEpisode
+        //  "episode_number" => 3
+        //  "season_number" => 1
+        //  "user_series_id" => 826
+        foreach ($userEpisodes as $userEpisode) {
+            $currentUserSeriesId = $userEpisode['user_series_id'];
+            if (!$previousUserEpisode) {
+                if ($currentUserSeriesId == $userSeriesId) {
+                    $previousUserEpisode = $userEpisode;
+                    $episodeCount++;
+                }
+                continue;
+            }
+
+            if ($currentUserSeriesId != $userSeriesId
+                || $previousUserEpisode['season_number'] != $userEpisode['season_number']) {
+                $interruptions++;
+                $otherSeriesEpisodes++;
+                // We leave a margin of two episodes of another series
+                if ($otherSeriesEpisodes > 2) {
+                    break;
+                }
+                continue;
+            } else {
+                if ($interruptions > 0) {
+                    $interruptions = 0;
+                    $otherSeriesEpisodes = 0;
+                }
+            }
+            $previousUserEpisode = $userEpisode;
+            $episodeCount++;
+        }
+        dump($userEpisodes, $episodeCount, $numberOfEpisode);
+        if ($episodeCount == $numberOfEpisode) {
+            $isBinge = true;
+        }
+        return $isBinge;
+    }
+
     #[IsGranted('ROLE_USER')]
     #[Route('/remove/episode/{id}', name: 'remove_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function removeUserEpisode(Request $request, int $id): Response
@@ -551,7 +601,7 @@ class SeriesController extends AbstractController
             $this->userEpisodeRepository->remove($userEpisode);
         }
 
-        if ($episodeNumber > 1 && $seasonNumber > 1) {
+        if ($episodeNumber > 1 && $seasonNumber > 0) {
             for ($j = $seasonNumber; $j > 0; $j--) {
                 for ($i = $episodeNumber - 1; $i > 0; $i--) {
                     $episode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'userSeries' => $userSeries, 'seasonNumber' => $j, 'episodeNumber' => $i]);
@@ -559,9 +609,11 @@ class SeriesController extends AbstractController
                         $userSeries->setLastEpisode($episode->getEpisodeNumber());
                         $userSeries->setLastSeason($episode->getSeasonNumber());
                         $userSeries->setLastWatchAt($episode->getWatchAt());
-                        $numberOfEpisode = round($userSeries->getViewedEpisodes() / ($userSeries->getProgress() / 100));
-                        $userSeries->setViewedEpisodes($userSeries->getViewedEpisodes() - 1);
-                        $userSeries->setProgress($userSeries->getViewedEpisodes() / $numberOfEpisode * 100);
+                        $viewedEpisodes = $userSeries->getViewedEpisodes();
+                        $numberOfEpisode = round($viewedEpisodes / ($userSeries->getProgress() / 100));
+                        $userSeries->setViewedEpisodes($viewedEpisodes - 1);
+                        $userSeries->setProgress(($viewedEpisodes - 1) / $numberOfEpisode * 100);
+                        $userSeries->setBinge(false);
                         $this->userSeriesRepository->save($userSeries, true);
                         return $this->json([
                             'ok' => true,
@@ -819,6 +871,18 @@ class SeriesController extends AbstractController
             $series->addUpdate('Overview updated');
         }
 
+        $dbNextEpisodeAirDate = $series->getNextEpisodeAirDate()?->format('Y-m-d');
+        if ($tv['next_episode_to_air'] && $tv['next_episode_to_air']['air_date']) {
+            $tvNextEpisodeAirDate = $tv['next_episode_to_air']['air_date'];
+        } else {
+            $tvNextEpisodeAirDate = null;
+        }
+        if ($tvNextEpisodeAirDate != $dbNextEpisodeAirDate) {
+            $nextEpisodeAirDate = $tvNextEpisodeAirDate ? $this->date($tvNextEpisodeAirDate . " 00:00:00") : null;
+            $series->setNextEpisodeAirDate($nextEpisodeAirDate);
+            $series->addUpdate('Next episode air date updated' . $nextEpisodeAirDate?->format('d-m-Y H:i'));
+        }
+
         $seriesImages = $series->getSeriesImages()->toArray();
         $seriesPosters = array_filter($seriesImages, fn($image) => $image->getType() == "poster");
         $seriesBackdrops = array_filter($seriesImages, fn($image) => $image->getType() == "backdrop");
@@ -848,6 +912,24 @@ class SeriesController extends AbstractController
         return $series;
     }
 
+    public function updateUserSeries(UserSeries $userSeries, array $tv): UserSeries
+    {
+        $change = false;
+//        dump($userSeries->getProgress(), $userSeries->getViewedEpisodes(), $tv['number_of_episodes']);
+        if ($userSeries->getProgress() == 100 && $userSeries->getViewedEpisodes() < $tv['number_of_episodes']) {
+            $userSeries->setProgress($userSeries->getViewedEpisodes() / $tv['number_of_episodes'] * 100);
+            $change = true;
+        }
+        if ($userSeries->getProgress() != 100 && $userSeries->getViewedEpisodes() === $tv['number_of_episodes']) {
+            $userSeries->setProgress(100);
+            $change = true;
+        }
+        if ($change) {
+            $this->userSeriesRepository->save($userSeries, true);
+        }
+        return $userSeries;
+    }
+
     public function seriesSchedules(Series $series): array
     {
         $schedules = [];
@@ -862,7 +944,7 @@ class SeriesController extends AbstractController
 
             $originalDate = $firstAirDate->format('Y-m-d H:i');
             $originalDate = str_replace(' ', 'T', $originalDate);
-            $originalDate .= ($utc > 0 ? "+":"-") . (abs($utc)<10?'0':''). $utc . ':00';
+            $originalDate .= ($utc > 0 ? "+" : "-") . (abs($utc) < 10 ? '0' : '') . $utc . ':00';
 
             $schedules[] = [
                 'country' => $country,
@@ -923,6 +1005,23 @@ class SeriesController extends AbstractController
         } catch (Exception) {
         }
         return $now;
+    }
+
+    public function date(string $dateString): DateTimeImmutable
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($user->getTimezone()) {
+            $timezone = $user->getTimezone();
+        } else {
+            $timezone = 'Europe/Paris';
+        }
+        $date = null;
+        try {
+            $date = new DatePoint($dateString, new DateTimeZone($timezone));
+        } catch (Exception) {
+        }
+        return $date;
     }
 
     public function checkSlug($series, $slug, $locale = 'fr'): bool|Response
@@ -1052,7 +1151,9 @@ class SeriesController extends AbstractController
             }
             return [
                 'us_overview' => $usSeason['overview'],
-                'us_episode_overviews' => array_map(function($ep) use ($locale) { return $this->episodeLocalisedOverview($ep, $locale);}, $usSeason['episodes']),
+                'us_episode_overviews' => array_map(function ($ep) use ($locale) {
+                    return $this->episodeLocalisedOverview($ep, $locale);
+                }, $usSeason['episodes']),
                 'localized' => $localized,
                 'localizedOverview' => $localizedOverview,
                 'localizedResult' => $localizedResult,

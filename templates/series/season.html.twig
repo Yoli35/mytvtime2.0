@@ -76,9 +76,9 @@
                                     </div>
                                 </div>
                                 <div class="infos">
-                                    <div class="name">
-                                        <div class="content">{{ episode.name }}</div>
-                                        <div class="substitute">
+                                    <div class="episode-name">
+                                        <div class="name">{{ episode.name }}</div>
+                                        <div class="substitute{% if episode.substitute_name %} colored{% endif %}">
                                         {% if episode.substitute_name %}
                                             {{ episode.substitute_name }}
                                         {% endif %}
@@ -105,7 +105,7 @@
                                                 {% for people in episode.guest_stars %}
                                                     <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
                                                         <div class="people" data-title="{{ people.name }} - {{ people.character }}">
-                                                            <div class="profile">
+                                                            <div class="photo">
                                                                 {% if people.profile_path %}
                                                                     <img src="{{ people.profile_path }}" alt="{{ people.name }}">
                                                                 {% else %}
@@ -178,7 +178,7 @@
                             {% for people in season.credits.cast %}
                                 <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
                                     <div class="people">
-                                        <div class="profile">
+                                        <div class="photo">
                                             {% if people.profile_path %}
                                                 <img src="{{ people.profile_path }}" alt="{{ people.name }}">
                                             {% else %}
@@ -203,7 +203,7 @@
                             {% for people in season.credits.guest_stars %}
                                 <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
                                     <div class="people">
-                                        <div class="profile">
+                                        <div class="photo">
                                             {% if people.profile_path %}
                                                 <img src="{{ people.profile_path }}" alt="{{ people.name }}">
                                             {% else %}
@@ -228,7 +228,7 @@
                             {% for people in season.credits.crew %}
                                 <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
                                     <div class="people">
-                                        <div class="profile">
+                                        <div class="photo">
                                             {% if people.profile_path %}
                                                 <img src="{{ people.profile_path }}" alt="{{ people.name }}">
                                             {% else %}

@@ -110,4 +110,13 @@ class UserEpisodeRepository extends ServiceEntityRepository
             . "WHERE `episode_id`=$id";
         return $this->em->getConnection()->fetchOne($sql);
     }
+
+    public function getEpisodeListBetweenIds($userId, $startId, $endId): array
+    {
+        $sql = "SELECT ue.`episode_number`, ue.`season_number`, ue.`user_series_id`, ue.`watch_at` "
+            . "FROM `user_episode` ue "
+            . "WHERE ue.`user_id`=$userId AND ue.`id` BETWEEN $startId AND $endId "
+            . "ORDER BY ue.`watch_at` DESC";
+        return $this->em->getConnection()->fetchAllAssociative($sql);
+    }
 }

@@ -153,8 +153,8 @@ export class Season {
 
     openTitleForm(e) {
         const editDiv = e.currentTarget;
-        const nameDiv = editDiv.closest('.name');
-        const contentDiv = nameDiv.querySelector('.content');
+        const nameDiv = editDiv.closest('.episode-name');
+        const contentDiv = nameDiv.querySelector('.name');
         const substituteDiv = nameDiv.querySelector('.substitute');
         const name = substituteDiv.innerText.length ? substituteDiv.innerText : contentDiv.innerText;
         const form = document.createElement('form');
@@ -193,6 +193,11 @@ export class Season {
             }).then(function (response) {
                 if (response.ok) {
                     substituteDiv.innerText = substituteName;
+                    if (substituteName.length) {
+                        substituteDiv.classList.add('colored');
+                    } else {
+                        substituteDiv.classList.remove('colored');
+                    }
                 }
                 form.remove();
             });

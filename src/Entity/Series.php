@@ -64,6 +64,9 @@ class Series
 
     private array $updates;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $nextEpisodeAirDate = null;
+
     public function __construct()
     {
         $this->seriesLocalizedNames = new ArrayCollection();
@@ -220,6 +223,7 @@ class Series
             'images' => $this->getSeriesImages()->toArray(),
             'localizedNames' => $this->getSeriesLocalizedNames()->toArray(),
             'name' => $this->getName(),
+            'nextEpisodeAirDate' => $this->getNextEpisodeAirDate(),
             'originalName' => $this->getOriginalName(),
             'overview' => $this->getOverview(),
             'posterPath' => $this->getPosterPath(),
@@ -227,9 +231,9 @@ class Series
             'slug' => $this->getSlug(),
             'tmdbId' => $this->getTmdbId(),
             'updatedAt' => $this->getUpdatedAt(),
+            'updates' => $this->getUpdates(),
             'visitNumber' => $this->getVisitNumber(),
             'watchLinks' => $this->getSeriesWatchLinks()->toArray(),
-            'updates' => $this->getUpdates(),
         ];
     }
 
@@ -374,6 +378,18 @@ class Series
                 $seriesBroadcastSchedule->setSeries(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNextEpisodeAirDate(): ?\DateTimeImmutable
+    {
+        return $this->nextEpisodeAirDate;
+    }
+
+    public function setNextEpisodeAirDate(?\DateTimeImmutable $nextEpisodeAirDate): static
+    {
+        $this->nextEpisodeAirDate = $nextEpisodeAirDate;
 
         return $this;
     }
