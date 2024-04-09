@@ -1,12 +1,12 @@
 import './bootstrap.js';
 
-import {Menu} from "./js/Menu.js";
-import {ToolTips} from "./js/ToolTips.js";
-import {ProviderSelect} from "./js/home/ProviderSelect.js";
-import {HighlightSeries} from "./js/home/HighlightSeries.js";
-import {PosterHover} from "./js/images/PosterHover.js";
-import {AverageColor} from "./js/images/AverageColor.js";
-import {Season} from "./js/series/Season.js";
+import {Menu} from './js/Menu.js';
+import {ToolTips} from './js/ToolTips.js';
+import {ProviderSelect} from './js/home/ProviderSelect.js';
+import {HighlightSeries} from './js/home/HighlightSeries.js';
+import {PosterHover} from './js/images/PosterHover.js';
+import {AverageColor} from './js/images/AverageColor.js';
+import {Season} from './js/series/Season.js';
 
 const menu = new Menu();
 menu.init();
