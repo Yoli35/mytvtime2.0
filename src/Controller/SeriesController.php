@@ -150,7 +150,7 @@ class SeriesController extends AbstractController
                 'poster_path' => $us['poster_path'] ? '/series/posters' . $us['poster_path'] : null,
                 'progress' => $us['progress'],
             ];
-        }, $this->userSeriesRepository->getUserSeriesOfTheWeek($user, $this->now()->format('Y-m-d'), $locale));
+        }, $this->userSeriesRepository->getUserSeriesOfTheNext7Days($user, $this->now()->format('Y-m-d'), $locale));
 
         dump([
             'seriesOfTheDay' => $seriesOfTheDay,

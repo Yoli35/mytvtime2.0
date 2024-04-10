@@ -81,7 +81,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->em->getConnection()->fetchAllAssociative($sql);
     }
 
-    public function getUserSeriesOfTheWeek(User $user, string $locale): mixed
+    public function getUserSeriesOfTheNext7Days(User $user, string $locale): mixed
     {
         $userId = $user->getId();
         $sql = "SELECT s.`id` as id, s.`name` as name, sln.`name` as localized_name, us.`progress` as progress, "
@@ -92,7 +92,7 @@ class UserSeriesRepository extends ServiceEntityRepository
             . "INNER JOIN `user_series` us ON s.`id`=us.`series_id` "
             . "LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' "
             . "WHERE us.`user_id`=$userId "
-            . "AND s.`next_episode_air_date` <= ADDDATE(CURDATE(), INTERVAL (6 - WEEKDAY(CURDATE())) DAY) AND DATE(s.`next_episode_air_date`) >= SUBDATE(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) "
+            . "AND s.`next_episode_air_date` > CURDATE() AND s.`next_episode_air_date` <= ADDDATE(CURDATE(), INTERVAL 7 DAY) "
             . "ORDER BY s.`next_episode_air_date` ASC";
 
         return $this->em->getConnection()->fetchAllAssociative($sql);
