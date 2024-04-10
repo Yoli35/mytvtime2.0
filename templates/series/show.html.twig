@@ -49,7 +49,10 @@
                             <div class="form-row">
                                 <div class="form-field">
                                     <button type="button">{{ 'Cancel'|trans }}</button>
-                                    <button type="submit">{{ 'Add'|trans }}</button>
+                                    {% if tv.localized_name %}
+                                        <button type="submit" value="delete">{{ 'Delete'|trans }}</button>
+                                    {% endif %}
+                                    <button type="submit" value="add">{{ 'Add'|trans }}</button>
                                 </div>
                             </div>
                         </form>
@@ -573,7 +576,8 @@
             const localizedNameForm = document.querySelector('.localized-name-form');
             const lnForm = document.querySelector('#localized-name-form');
             const lnCancel = lnForm.querySelector('button[type="button"]');
-            const lnSubmit = lnForm.querySelector('button[type="submit"]');
+            const lnDelete = lnForm.querySelector('button[value="delete"]');
+            const lnAdd = lnForm.querySelector('button[value="add"]');
 
             localizedName.addEventListener('click', function () {
                 localizedNameForm.classList.add('display');
@@ -587,7 +591,27 @@
                     localizedNameForm.classList.remove('display');
                 }, 300);
             });
-            lnSubmit.addEventListener('click', function (event) {
+            lnDelete?.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const name = lnForm.querySelector('#name');
+                fetch('/' + lang + '/series/delete/localized/name/' + {{ series.id }}, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({locale: lang})
+                }).then(function (response) {
+                    if (response.ok) {
+                        localizedNameForm.classList.remove('active');
+                        setTimeout(function () {
+                            localizedNameForm.classList.remove('display');
+                        }, 300);
+                        window.location.reload();
+                    }
+                });
+            });
+            lnAdd.addEventListener('click', function (event) {
                 event.preventDefault();
 
                 const name = lnForm.querySelector('#name');

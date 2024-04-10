@@ -29,4 +29,12 @@ class SeriesLocalizedNameRepository extends ServiceEntityRepository
             $this->em->flush();
         }
     }
+
+    public function remove(?SeriesLocalizedName $seriesLocalizedName): void
+    {
+        if ($seriesLocalizedName) {
+            $this->em->remove($seriesLocalizedName);
+            $this->em->flush();
+        }
+    }
 }

@@ -422,7 +422,7 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/add/localized/name/{id}', name: 'add_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function localizedName(Request $request, int $id): Response
+    public function addLocalizedName(Request $request, int $id): Response
     {
         $data = json_decode($request->getContent(), true);
         $name = $data['name'];
@@ -438,6 +438,28 @@ class SeriesController extends AbstractController
             $localizedName = new SeriesLocalizedName($series, $name, $slug, $request->getLocale());
         }
         $this->seriesLocalizedNameRepository->save($localizedName, true);
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/delete/localized/name/{id}', name: 'delete_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function deleteLocalizedName(Request $request, int $id): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $locale = $data['locale'];
+        $series = $this->seriesRepository->findOneBy(['id' => $id]);
+        $slugger = new AsciiSlugger();
+
+        $localizedName = $series->getLocalizedName($locale);
+        if ($localizedName) {
+            $series->removeSeriesLocalizedName($localizedName);
+            $series->setSlug($slugger->slug($series->getName())->lower()->toString());
+            $this->seriesRepository->save($series, true);
+            $this->seriesLocalizedNameRepository->remove($localizedName);
+        }
 
         return $this->json([
             'ok' => true,
