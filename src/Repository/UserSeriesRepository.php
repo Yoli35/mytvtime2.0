@@ -44,6 +44,60 @@ class UserSeriesRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function getLastWatchedUserSeries(User $user, $locale, int $page = 1, int $perPage = 20): mixed
+    {
+        $userId = $user->getId();
+        $sql = "SELECT s.`id` as id, s.`name` as name, sln.`name` as localized_name, us.`progress` as progress, "
+            . "	    us.`last_episode` as last_episode, us.`last_season` as last_season, us.`last_watch_at` as last_watch_at, "
+            . "     s.`slug` as slug, sln.`slug` as localized_slug, "
+            . "     s.`poster_path` as poster_path "
+            . "FROM `user_series` us "
+            . "INNER JOIN `series` s ON s.`id`=us.`series_id` "
+            . "INNER JOIN `user_episode` ue ON ue.`user_series_id`=us.`id` "
+            . "LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' "
+            . "WHERE us.`user_id`=$userId "
+            . "     AND us.`progress`<100 "
+            . "     AND ue.`episode_number`=us.`last_episode` "
+            . "     AND ue.`season_number`=us.`last_season` "
+            . "ORDER BY us.`last_watch_at` DESC "
+            . "LIMIT " . $perPage . " OFFSET " . ($page - 1) * $perPage;
+
+        return $this->em->getConnection()->fetchAllAssociative($sql);
+    }
+
+    public function getUserSeriesOfTheDay(User $user, string $dateString, string $locale): mixed
+    {
+        $userId = $user->getId();
+        $sql = "SELECT s.`id` as id, s.`name` as name, sln.`name` as localized_name, us.`progress` as progress, "
+            . "     us.`last_episode` as last_episode, us.`last_season` as last_season,	"
+            . "     s.`slug` as slug, sln.`slug` as localized_slug, "
+            . "     s.`poster_path` as poster_path	"
+            . "FROM `series` s	"
+            . "INNER JOIN `user_series` us ON s.`id`=us.`series_id`	"
+            . "LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' "
+            . "WHERE us.`user_id`=$userId	"
+            . "AND s.`next_episode_air_date`='$dateString'";
+
+        return $this->em->getConnection()->fetchAllAssociative($sql);
+    }
+
+    public function getUserSeriesOfTheWeek(User $user, string $locale): mixed
+    {
+        $userId = $user->getId();
+        $sql = "SELECT s.`id` as id, s.`name` as name, sln.`name` as localized_name, us.`progress` as progress, "
+            . "	us.`last_episode` as last_episode, us.`last_season` as last_season, "
+            . "     s.`slug` as slug, sln.`slug` as localized_slug, "
+            . "	 s.`poster_path` as poster_path, s.`next_episode_air_date` as date "
+            . "FROM `series` s "
+            . "INNER JOIN `user_series` us ON s.`id`=us.`series_id` "
+            . "LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' "
+            . "WHERE us.`user_id`=$userId "
+            . "AND s.`next_episode_air_date` <= ADDDATE(CURDATE(), INTERVAL (6 - WEEKDAY(CURDATE())) DAY) AND DATE(s.`next_episode_air_date`) >= SUBDATE(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) "
+            . "ORDER BY s.`next_episode_air_date` ASC";
+
+        return $this->em->getConnection()->fetchAllAssociative($sql);
+    }
+
     public function getUserSeries(User $user, $locale, int $page = 1, int $perPage = 20): mixed
     {
         $sql = "SELECT s.`id` as id, s.`name` as name, s.`poster_path` as poster_path, "

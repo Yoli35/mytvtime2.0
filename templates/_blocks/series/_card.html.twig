@@ -8,7 +8,7 @@
         <div class="poster">
             {% if series.poster_path is defined %}
                 {% if series.poster_path %}
-                    <img src="{{ series.poster_path }}" alt="{{ series.name }}"{% if series.date is defined %} data-title="{{ series.date }}{% endif %}">
+                    <img src="{{ series.poster_path }}" alt="{{ series.name }}"{% if series.date is defined and series.series_of_the_week is not defined %} data-title="{{ series.date }}{% endif %}">
                 {% else %}
                     <div>{{ 'No poster'|trans }}</div>
                 {% endif %}
@@ -28,6 +28,12 @@
                 <div class="progress">
                     <div class="progress-bar" style="width: {{ series.progress }}%"></div>
                 </div>
+            {% endif %}
+            {% if series.last_watched_series is defined %}
+                <div class="episode-number">{{ 'S%02dE%02d'|format(series.last_season, series.last_episode) }}</div>
+            {% endif %}
+            {% if series.series_of_the_week is defined %}
+                <div class="date">{{ series.date|format_date('relative_full')|capitalize }}</div>
             {% endif %}
             {% if series.favorite is defined and series.favorite %}
                 <div class="favorite">

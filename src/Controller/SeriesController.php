@@ -104,10 +104,67 @@ class SeriesController extends AbstractController
         for ($i = 2; $i <= $searchResult['total_pages']; $i++) {
             $searchResult['results'] = array_merge($searchResult['results'], json_decode($this->tmdbService->getFilterTv($searchString . "&page=$i"), true)['results']);
         }
-        dump($searchResult);
         $series = $this->getSearchResult($searchResult, new AsciiSlugger());
 
+        $userSeries = array_map(function ($us) {
+            $this->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            return [
+                'last_watched_series' => true,
+                'id' => $us['id'],
+                'name' => $us['name'],
+                'slug' => $us['slug'],
+                'localized_name' => $us['localized_name'],
+                'localized_slug' => $us['localized_slug'],
+                'poster_path' => $us['poster_path'] ? '/series/posters' . $us['poster_path'] : null,
+                'last_episode' => $us['last_episode'],
+                'last_season' => $us['last_season'],
+                'last_watch_at' => $us['last_watch_at'],
+                'progress' => $us['progress'],
+            ];
+        }, $this->userSeriesRepository->getLastWatchedUserSeries($user, $locale, 1, 60));
+
+        $seriesOfTheDay = array_map(function ($us) {
+            $this->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            return [
+                'series_of_the_day' => true,
+                'id' => $us['id'],
+                'name' => $us['name'],
+                'slug' => $us['slug'],
+                'localized_name' => $us['localized_name'],
+                'localized_slug' => $us['localized_slug'],
+                'poster_path' => $us['poster_path'] ? '/series/posters' . $us['poster_path'] : null,
+                'progress' => $us['progress'],
+            ];
+        }, $this->userSeriesRepository->getUserSeriesOfTheDay($user, $this->now()->format('Y-m-d'), $locale));
+
+        $seriesOfTheWeek = array_map(function ($us) {
+            $this->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            return [
+                'series_of_the_week' => true,
+                'id' => $us['id'],
+                'date' => $us['date'],
+                'name' => $us['name'],
+                'slug' => $us['slug'],
+                'localized_name' => $us['localized_name'],
+                'localized_slug' => $us['localized_slug'],
+                'poster_path' => $us['poster_path'] ? '/series/posters' . $us['poster_path'] : null,
+                'progress' => $us['progress'],
+            ];
+        }, $this->userSeriesRepository->getUserSeriesOfTheWeek($user, $this->now()->format('Y-m-d'), $locale));
+
+        dump([
+            'seriesOfTheDay' => $seriesOfTheDay,
+            'seriesOfTheWeek' => $seriesOfTheWeek,
+            'userSeries' => $userSeries,
+            'seriesList' => $series,
+            'total_results' => $searchResult['total_results'] ?? -1,
+            'hier' => $this->now()->modify('-1 day')->format('Y-m-d'),
+        ]);
+
         return $this->render('series/index.html.twig', [
+            'seriesOfTheDay' => $seriesOfTheDay,
+            'seriesOfTheWeek' => $seriesOfTheWeek,
+            'userSeries' => $userSeries,
             'seriesList' => $series,
             'total_results' => $searchResult['total_results'] ?? -1,
         ]);

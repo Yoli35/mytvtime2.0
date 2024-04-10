@@ -9,16 +9,51 @@
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-<div class="container-fluid">
-    <div class="series-group user">
-        <div class="wrapper">
-            <div class="content">
-                {% for series in seriesList %}
-                    {{  include('_blocks/series/_card.html.twig') }}
-                {% endfor %}
+    <div class="container-fluid">
+        {% if seriesOfTheDay|length %}
+            <h2>{{ 'Series of the day'|trans }}</h2>
+            <div class="series-group user">
+                <div class="wrapper">
+                    <div class="content">
+                        {% for series in seriesOfTheDay %}
+                            {{ include('_blocks/series/_card.html.twig') }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% if seriesOfTheWeek|length %}
+            <h2>{{ 'Series of the week'|trans }}</h2>
+            <div class="series-group user">
+                <div class="wrapper">
+                    <div class="content">
+                        {% for series in seriesOfTheWeek %}
+                            {{ include('_blocks/series/_card.html.twig') }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        <h2>{{ 'Series history'|trans }}</h2>
+        <div class="series-group user">
+            <div class="wrapper">
+                <div class="content">
+                    {% for series in userSeries %}
+                        {{ include('_blocks/series/_card.html.twig') }}
+                    {% endfor %}
+                </div>
             </div>
         </div>
+        <h2>{{ 'Series airing this week'|trans }}</h2>
+        <div class="series-group user">
+            <div class="wrapper">
+                <div class="content">
+                    {% for series in seriesList %}
+                        {{ include('_blocks/series/_card.html.twig') }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% include('_blocks/_footer.html.twig') %}
     </div>
-    {% include('_blocks/_footer.html.twig') %}
-</div>
 {% endblock %}

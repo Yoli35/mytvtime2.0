@@ -79,6 +79,9 @@ class Series
     #[ORM\OneToMany(targetEntity: SeriesAdditionalOverview::class, mappedBy: 'series', orphanRemoval: true)]
     private Collection $seriesAdditionalOverviews;
 
+    #[ORM\Column(length: 32, nullable: true)]
+    private ?string $status = null;
+
     public function __construct()
     {
         $this->seriesLocalizedNames = new ArrayCollection();
@@ -485,6 +488,18 @@ class Series
                 $seriesAdditionalOverview->setSeries(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

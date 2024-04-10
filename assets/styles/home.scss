@@ -232,11 +232,13 @@
     }
 
     &.user {
+        margin-block-start: 1rem;
+
         .wrapper {
             display: flex;
             justify-content: center;
             overflow-x: unset;
-            padding-block: 1rem;
+            padding-block: unset;
 
             .content {
                 flex-wrap: wrap;
@@ -312,7 +314,6 @@
                                 }
                             }
                         }
-
                     }
 
                     .progress {
@@ -360,6 +361,18 @@
                         padding: .25rem;
                         font-size: 1.5rem;
                         font-weight: 400;
+                    }
+
+                    .date {
+                        position: absolute;
+                        bottom: .75rem;
+                        right: .5rem;
+                        background-color: var(--gradient-ardoise-80-alpha-90);
+                        border-radius: .25rem;
+                        color: var(--gradient-ardoise-10);
+                        padding: .25rem;
+                        font-size: 1rem;
+                        font-weight: 300;
                     }
                 }
 
