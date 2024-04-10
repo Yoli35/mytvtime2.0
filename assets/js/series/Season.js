@@ -116,6 +116,17 @@ export class Season {
     }
 
     init() {
+        const quickEpisodeLinks = document.querySelectorAll('.quick-episode');
+        quickEpisodeLinks.forEach(episode => {
+            episode.addEventListener('click', e => {
+                e.preventDefault();
+                const episodeNumber = e.currentTarget.getAttribute('data-number');
+                const selector = '#episode-' + episodeNumber;
+                const target = document.querySelector(selector);
+                target.scrollIntoView({behavior: 'smooth'});
+            });
+        });
+
         const seasonsEpisodes = document.querySelector('.seasons-episodes');
         const infos = seasonsEpisodes.querySelectorAll('.infos');
         infos.forEach(info => {
