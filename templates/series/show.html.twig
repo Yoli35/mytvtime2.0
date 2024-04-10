@@ -62,6 +62,38 @@
                         {{ n }} {{ (n > 1 ? 'visits':'visit')|trans }}
                     </h5>
                     <div class="overview">{{ tv.overview }}</div>
+                    {% if tv.localized_overview %}
+                        <div class="localized overview">
+                            {{ tv.localized_overview.overview }}
+                            <div class="locale">{{ tv.localized_overview.locale|upper }}</div>
+                        </div>
+                    {% endif %}
+                    {% if tv.additional_overviews|length %}
+                        <h4>{{ 'Additional overviews'|trans }}</h4>
+                        <div class="additional overviews">
+                            {% for overview in tv.additional_overviews %}
+                                <div class="additional overview">
+                                    {{ overview.overview|nl2br }}
+                                    {% if overview.source %}
+                                        <div class="source">
+                                            {% if overview.source.path %}
+                                                <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
+                                                    {% if overview.source.LogoPath %}
+                                                        <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
+                                                    {% else %}
+                                                        {{ overview.source.name }}
+                                                    {% endif %}
+                                                </a>
+                                            {% else %}
+                                                {{ overview.source.name }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="locale">{{ overview.locale|upper }}</div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                     {% if series.updates %}
                         <h4>{{ 'Updates'|trans }}</h4>
                         <div class="updates">

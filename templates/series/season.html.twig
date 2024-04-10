@@ -94,8 +94,14 @@
                                     {% if episode.overview %}
                                         <div class="overview">{{ episode.overview }}</div>
                                     {% elseif season.deepl %}
-                                        <div class="overview{% if season.deepl.localized == false %} us{% endif %}">
-                                            {{ season.deepl.us_episode_overviews[episode.episode_number - 1] }}                                        </div>
+                                        <div class="overview{% if season.deepl.localized == false %} us{% endif %}"{% if season.deepl.localized == false %} data-id="{{ episode.id }}"{% endif %}>
+                                            {{ season.deepl.us_episode_overviews[episode.episode_number - 1] }}
+                                            {% if season.deepl.localized == false %}
+                                                <div class="translate" data-title="{{ 'Paste your translation here'|trans }}">
+                                                    <i class="fas fa-language"></i>
+                                                </div>
+                                            {% endif %}
+                                        </div>
                                     {% endif %}
                                     {% if episode.guest_stars %}
                                         <div class="guest-stars">

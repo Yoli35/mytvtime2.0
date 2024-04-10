@@ -137,6 +137,11 @@ export class Season {
             edit.addEventListener('click', this.openTitleForm);
         });
 
+        const usOverviews = document.querySelectorAll('.overview.us');
+        usOverviews.forEach(overview => {
+            overview.addEventListener('paste', this.pasteTranslation);
+        });
+
         const addThisEpisode = document.querySelectorAll('.add-this-episode');
         addThisEpisode.forEach(episode => {
             episode.addEventListener('click', this.addEpisode);
@@ -247,6 +252,29 @@ export class Season {
 
         input.focus();
         input.select();
+    }
+
+    pasteTranslation(e) {
+        e.preventDefault();
+        const overviewDiv = e.currentTarget;
+        const localizedText = e.clipboardData.getData('text/plain');
+        fetch('/' + gThis.lang + '/series/episode/localize/overview/' + overviewDiv.getAttribute('data-id'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                overview: localizedText
+            })
+        }).then(function (response) {
+            if (response.ok) {
+                gThis.toolTips.hide();
+                overviewDiv.innerText = localizedText;
+                overviewDiv.classList.remove('us');
+                overviewDiv.removeEventListener('paste', gThis.pasteTranslation);
+            }
+        });
     }
 
     addEpisode(e, episodeId = null) {

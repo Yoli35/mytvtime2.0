@@ -248,6 +248,8 @@ class SeriesController extends AbstractController
 
         $tv['credits'] = $this->castAndCrew($tv);
         $tv['localized_name'] = $series->getLocalizedName($request->getLocale());
+        $tv['localized_overview'] = $series->getLocalizedOverview($request->getLocale());
+        $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
         $tv['networks'] = $this->networks($tv);
         $tv['overview'] = $this->localizedOverview($tv, $series, $request);
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
@@ -709,6 +711,25 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_USER')]
+    #[Route('/episode/localize/overview/{id}', name: 'localize_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function episodeLocalizeOverview(Request $request, int $id): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $overview = $data['overview'];
+        $elo = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $id]);
+        if ($elo) {
+            $elo->setOverview($overview);
+        } else {
+            $elo = new EpisodeLocalizedOverview($id, $overview, $request->getLocale());
+        }
+        $this->episodeLocalizedOverviewRepository->save($elo, true);
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
     #[Route('/people/{id}-{slug}', name: 'people', requirements: ['id' => Requirement::DIGITS])]
     public function people(Request $request, $id): Response
     {
@@ -1152,7 +1173,7 @@ class SeriesController extends AbstractController
             return [
                 'us_overview' => $usSeason['overview'],
                 'us_episode_overviews' => array_map(function ($ep) use ($locale) {
-                    return $this->episodeLocalisedOverview($ep, $locale);
+                    return $this->episodeLocalizedOverview($ep, $locale);
                 }, $usSeason['episodes']),
                 'localized' => $localized,
                 'localizedOverview' => $localizedOverview,
@@ -1163,7 +1184,7 @@ class SeriesController extends AbstractController
         return null;
     }
 
-    public function episodeLocalisedOverview($episode, $locale): string
+    public function episodeLocalizedOverview($episode, $locale): string
     {
         $episodeId = $episode['id'];
         $localizedOverview = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $episodeId, 'locale' => $locale]);

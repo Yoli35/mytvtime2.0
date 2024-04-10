@@ -67,6 +67,18 @@ class Series
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $nextEpisodeAirDate = null;
 
+    /**
+     * @var Collection<int, SeriesLocalizedOverview>
+     */
+    #[ORM\OneToMany(targetEntity: SeriesLocalizedOverview::class, mappedBy: 'series', orphanRemoval: true)]
+    private Collection $seriesLocalizedOverviews;
+
+    /**
+     * @var Collection<int, SeriesAdditionalOverview>
+     */
+    #[ORM\OneToMany(targetEntity: SeriesAdditionalOverview::class, mappedBy: 'series', orphanRemoval: true)]
+    private Collection $seriesAdditionalOverviews;
+
     public function __construct()
     {
         $this->seriesLocalizedNames = new ArrayCollection();
@@ -74,6 +86,8 @@ class Series
         $this->seriesImages = new ArrayCollection();
         $this->seriesBroadcastSchedules = new ArrayCollection();
         $this->updates = [];
+        $this->seriesLocalizedOverviews = new ArrayCollection();
+        $this->seriesAdditionalOverviews = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -390,6 +404,87 @@ class Series
     public function setNextEpisodeAirDate(?\DateTimeImmutable $nextEpisodeAirDate): static
     {
         $this->nextEpisodeAirDate = $nextEpisodeAirDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SeriesLocalizedOverview>
+     */
+    public function getSeriesLocalizedOverviews(): Collection
+    {
+        return $this->seriesLocalizedOverviews;
+    }
+
+    public function getLocalizedOverview($locale): ?SeriesLocalizedOverview
+    {
+        foreach ($this->seriesLocalizedOverviews as $seriesLocalizedOverview) {
+            if ($seriesLocalizedOverview->getLocale() === $locale) {
+                return $seriesLocalizedOverview;
+            }
+        }
+        return null;
+    }
+
+    public function addSeriesLocalizedOverview(SeriesLocalizedOverview $seriesLocalizedOverview): static
+    {
+        if (!$this->seriesLocalizedOverviews->contains($seriesLocalizedOverview)) {
+            $this->seriesLocalizedOverviews->add($seriesLocalizedOverview);
+            $seriesLocalizedOverview->setSeries($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSeriesLocalizedOverview(SeriesLocalizedOverview $seriesLocalizedOverview): static
+    {
+        if ($this->seriesLocalizedOverviews->removeElement($seriesLocalizedOverview)) {
+            // set the owning side to null (unless already changed)
+            if ($seriesLocalizedOverview->getSeries() === $this) {
+                $seriesLocalizedOverview->setSeries(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SeriesAdditionalOverview>
+     */
+    public function getSeriesAdditionalOverviews(): Collection
+    {
+        return $this->seriesAdditionalOverviews;
+    }
+
+    public function getSeriesAdditionalLocaleOverviews($locale): array
+    {
+        $additionalLocaleOverviews = [];
+        foreach ($this->seriesAdditionalOverviews as $seriesAdditionalOverview) {
+            if ($seriesAdditionalOverview->getLocale() === $locale) {
+                $additionalLocaleOverviews[] = $seriesAdditionalOverview;
+            }
+        }
+        return $additionalLocaleOverviews;
+    }
+
+    public function addSeriesAdditionalOverview(SeriesAdditionalOverview $seriesAdditionalOverview): static
+    {
+        if (!$this->seriesAdditionalOverviews->contains($seriesAdditionalOverview)) {
+            $this->seriesAdditionalOverviews->add($seriesAdditionalOverview);
+            $seriesAdditionalOverview->setSeries($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSeriesAdditionalOverview(SeriesAdditionalOverview $seriesAdditionalOverview): static
+    {
+        if ($this->seriesAdditionalOverviews->removeElement($seriesAdditionalOverview)) {
+            // set the owning side to null (unless already changed)
+            if ($seriesAdditionalOverview->getSeries() === $this) {
+                $seriesAdditionalOverview->setSeries(null);
+            }
+        }
 
         return $this;
     }
