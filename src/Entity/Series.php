@@ -82,6 +82,9 @@ class Series
     #[ORM\Column(length: 32, nullable: true)]
     private ?string $status = null;
 
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $dayOffset = [];
+
     public function __construct()
     {
         $this->seriesLocalizedNames = new ArrayCollection();
@@ -235,6 +238,7 @@ class Series
         return [
             'backdropPath' => $this->getBackdropPath(),
             'createdAt' => $this->getCreatedAt(),
+            'dayOffset' => $this->getDayOffset(),
             'firstDateAir' => $this->getFirstDateAir(),
             'id' => $this->getId(),
             'images' => $this->getSeriesImages()->toArray(),
@@ -500,6 +504,26 @@ class Series
     public function setStatus(?string $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getDayOffset(): array
+    {
+        return $this->dayOffset ?? [];
+    }
+
+    public function getDayOffsetByCountry($country): int
+    {
+        if (key_exists($country, $this->dayOffset ?? [])) {
+            return $this->dayOffset[$country];
+        }
+        return 0;
+    }
+
+    public function setDayOffset(?array $dayOffset): static
+    {
+        $this->dayOffset = $dayOffset ?? [];
 
         return $this;
     }
