@@ -51,7 +51,7 @@
 
             <div class="quick-episodes">
                 {% for episode in season.episodes %}
-                    <div class="quick-episode{% if episode.user_episode %} watched{% endif %}" data-number="{{ episode.episode_number }}" data-title="{{ episode.name }}">
+                    <div class="quick-episode{% if episode.user_episode.watchAt %} watched{% endif %}" data-number="{{ episode.episode_number }}" data-title="{{ episode.name }}">
                         {{ episode.episode_number }}
                     </div>
                 {% endfor %}
@@ -69,7 +69,7 @@
                                     {% else %}
                                         <div>{{ 'No poster'|trans }}</div>
                                     {% endif %}
-                                    <div class="number{% if episode.user_episode %} watched{% endif %}"{% if episode.user_episode %} data-title="{{ 'Watched %time% times'|trans({'%time%': episode.user_episode.numberOfView}) }}"{% endif %}>
+                                    <div class="number{% if episode.user_episode.watchAt %} watched{% endif %}"{% if episode.user_episode.numberOfView %} data-title="{{ 'Watched %time% times'|trans({'%time%': episode.user_episode.numberOfView}) }}"{% endif %}>
                                         {{ episode.episode_number }}
                                     </div>
                                 </div>
@@ -124,7 +124,7 @@
                                     {% endif %}
                                 </div>
                                 <div class="user-episode">
-                                    {% if episode.user_episode %}
+                                    {% if episode.user_episode.watchAt %}
                                         <div class="remove-this-episode" data-id="{{ episode.id }}"
                                              data-last-episode="{{ loop.last ?? 0 }}"
                                              data-show-id="{{ episode.show_id }}"

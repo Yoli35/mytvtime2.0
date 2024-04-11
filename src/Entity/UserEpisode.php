@@ -127,7 +127,7 @@ class UserEpisode
         return $this->watchAt;
     }
 
-    public function setWatchAt(DateTimeImmutable $watchAt): static
+    public function setWatchAt(?DateTimeImmutable $watchAt): static
     {
         $this->watchAt = $watchAt;
 

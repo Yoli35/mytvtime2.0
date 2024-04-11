@@ -532,11 +532,13 @@ class SeriesController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+        $country = $user->getCountry() ?? 'FR';
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
+        $dayOffset = $series->getDayOffsetByCountry($country);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $id]);
 //        if ($userEpisode) {
-            //    $userEpisode->setWatchAt($this->now());
+        //    $userEpisode->setWatchAt($this->now());
 //            $userEpisode->setNumberOfView($userEpisode->getNumberOfView() + 1);
 //            $this->userEpisodeRepository->save($userEpisode, true);
 //            return $this->json([
@@ -547,17 +549,34 @@ class SeriesController extends AbstractController
         $now = $this->now();
         if (!$userEpisode) {
             $userEpisode = new UserEpisode($user, $userSeries, $id, $seasonNumber, $episodeNumber, $now);
+        } else {
+            $userEpisode->setWatchAt($now);
         }
 
         $airDate = $userEpisode->getAirDate();
-        if (!$airDate){
+        if (!$airDate) {
             $episode = json_decode($this->tmdbService->getTvEpisode($showId, $seasonNumber, $episodeNumber, $locale), true);
-            $airDate = $this->dateService->newDate($episode['air_date'], $user->getTimezone() ?? "Europe/Paris");
+            $airDate = $this->date($episode['air_date']." 09:00:00");
+            $userEpisode->setAirDate($airDate);
+        }
+        if ($dayOffset > 0) {
+            $airDate = $airDate->modify("+$dayOffset days");
+        } elseif ($dayOffset < 0) {
+            $airDate = $airDate->modify("$dayOffset days");
         }
 
         $tv = json_decode($this->tmdbService->getTv($showId, $locale), true);
 
         $diff = $now->diff($airDate);
+        dump([
+            'day offset' => $dayOffset,
+            'airDate' => $airDate,
+            'now' => $now,
+            'days' => $diff->days,
+            'hours' => $diff->h,
+            'minutes' => $diff->i,
+            'secondes' => $diff->s
+        ]);
         $userEpisode->setQuickWatchDay($diff->days < 1);
         $userEpisode->setQuickWatchWeek($diff->days < 7);
 
@@ -671,6 +690,7 @@ class SeriesController extends AbstractController
         $showId = $data['showId'];
         $seasonNumber = $data['seasonNumber'];
         $episodeNumber = $data['episodeNumber'];
+        $locale = $request->getLocale();
         /** @var User $user */
         $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
@@ -684,7 +704,15 @@ class SeriesController extends AbstractController
                     'ok' => true,
                 ]);
             }
-//            $this->userEpisodeRepository->remove($userEpisode);
+
+            $userEpisode->setWatchAt(null);
+            $userEpisode->setNumberOfView(0);
+            $userEpisode->setProviderId(null);
+            $userEpisode->setDeviceId(null);
+            $userEpisode->setVote(null);
+            $userEpisode->setQuickWatchDay(false);
+            $userEpisode->setQuickWatchWeek(false);
+            $this->userEpisodeRepository->save($userEpisode, true);
         }
 
         if ($episodeNumber > 1 && $seasonNumber > 0) {
@@ -696,7 +724,8 @@ class SeriesController extends AbstractController
                         $userSeries->setLastSeason($episode->getSeasonNumber());
                         $userSeries->setLastWatchAt($episode->getWatchAt());
                         $viewedEpisodes = $userSeries->getViewedEpisodes();
-                        $numberOfEpisode = round($viewedEpisodes / ($userSeries->getProgress() / 100));
+                        $tv = json_decode($this->tmdbService->getTv($showId, $locale), true);
+                        $numberOfEpisode = $tv['number_of_episodes'];
                         $userSeries->setViewedEpisodes($viewedEpisodes - 1);
                         $userSeries->setProgress(($viewedEpisodes - 1) / $numberOfEpisode * 100);
                         $userSeries->setBinge(false);
