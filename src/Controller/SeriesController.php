@@ -341,16 +341,12 @@ class SeriesController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $date = $this->now();
-        $series = $this->addSeries($id, $date);
-        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
 
-        if ($userSeries) {
-            $this->addFlash('warning', $this->translator->trans('Series already added to your watchlist'));
-        } else {
-            $userSeries = new UserSeries($user, $series, $date);
-            $this->userSeriesRepository->save($userSeries, true);
-            $this->addFlash('success', $this->translator->trans('Series added to your watchlist'));
-        }
+        $result = $this->addSeries($id, $date);
+        $tv = $result['tv'];
+        $series = $result['series'];
+        $this->addSeriesToUser($user, $series, $tv, $date);
+
         return $this->redirectToRoute('app_series_show', [
             'id' => $series->getId(),
             'slug' => $series->getSlug(),
@@ -539,23 +535,32 @@ class SeriesController extends AbstractController
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $id]);
-        if ($userEpisode) {
+//        if ($userEpisode) {
             //    $userEpisode->setWatchAt($this->now());
-            $userEpisode->setNumberOfView($userEpisode->getNumberOfView() + 1);
-            $this->userEpisodeRepository->save($userEpisode, true);
-            return $this->json([
-                'ok' => true,
-            ]);
+//            $userEpisode->setNumberOfView($userEpisode->getNumberOfView() + 1);
+//            $this->userEpisodeRepository->save($userEpisode, true);
+//            return $this->json([
+//                'ok' => true,
+//            ]);
+//        }
+
+        $now = $this->now();
+        if (!$userEpisode) {
+            $userEpisode = new UserEpisode($user, $userSeries, $id, $seasonNumber, $episodeNumber, $now);
+        }
+
+        $airDate = $userEpisode->getAirDate();
+        if (!$airDate){
+            $episode = json_decode($this->tmdbService->getTvEpisode($showId, $seasonNumber, $episodeNumber, $locale), true);
+            $airDate = $this->dateService->newDate($episode['air_date'], $user->getTimezone() ?? "Europe/Paris");
         }
 
         $tv = json_decode($this->tmdbService->getTv($showId, $locale), true);
-        $episode = json_decode($this->tmdbService->getTvEpisode($showId, $seasonNumber, $episodeNumber, $locale), true);
-        $airDate = $this->dateService->newDate($episode['air_date'], $user->getTimezone() ?? "Europe/Paris");
-        $now = $this->now();
+
         $diff = $now->diff($airDate);
-        $userEpisode = new UserEpisode($user, $userSeries, $id, $episode['season_number'], $episode['episode_number'], $now);
         $userEpisode->setQuickWatchDay($diff->days < 1);
         $userEpisode->setQuickWatchWeek($diff->days < 7);
+
         if ($userEpisode->getEpisodeNumber() > 1) {
             $previousEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'episodeNumber' => $episodeNumber - 1]);
             if ($previousEpisode) {
@@ -563,7 +568,7 @@ class SeriesController extends AbstractController
                 $userEpisode->setDeviceId($previousEpisode->getDeviceId());
             }
         }
-        $userEpisode->setNumberOfView(1);
+        $userEpisode->setNumberOfView($userEpisode->getNumberOfView() + 1);
 
         $this->userEpisodeRepository->save($userEpisode, true);
 
@@ -589,8 +594,8 @@ class SeriesController extends AbstractController
 
         if ($seasonNumber) {
             $userSeries->setLastWatchAt($now);
-            $userSeries->setLastEpisode($episode['episode_number']);
-            $userSeries->setLastSeason($episode['season_number']);
+            $userSeries->setLastEpisode($episodeNumber);
+            $userSeries->setLastSeason($seasonNumber);
             $userSeries->setViewedEpisodes($userSeries->getViewedEpisodes() + 1);
             $userSeries->setProgress($userSeries->getViewedEpisodes() / $tv['number_of_episodes'] * 100);
             $this->userSeriesRepository->save($userSeries, true);
@@ -679,7 +684,7 @@ class SeriesController extends AbstractController
                     'ok' => true,
                 ]);
             }
-            $this->userEpisodeRepository->remove($userEpisode);
+//            $this->userEpisodeRepository->remove($userEpisode);
         }
 
         if ($episodeNumber > 1 && $seasonNumber > 0) {
@@ -1066,14 +1071,13 @@ class SeriesController extends AbstractController
         return false;
     }
 
-    public function addSeries($id, $date): Series
+    public function addSeries($id, $date): array
     {
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
-        if ($series) return $series;
 
         $slugger = new AsciiSlugger();
         $tv = json_decode($this->tmdbService->getTv($id, 'en-US'), true);
-        $series = new Series();
+        if (!$series) $series = new Series();
         $series->setTmdbId($id);
         $series->setName($tv['name']);
         $series->setSlug($slugger->slug($tv['name']));
@@ -1087,7 +1091,60 @@ class SeriesController extends AbstractController
         $series->setUpdatedAt($date);
         $this->seriesRepository->save($series, true);
 
-        return $this->seriesRepository->findOneBy(['tmdbId' => $id]);
+        return [
+            'series' => $this->seriesRepository->findOneBy(['tmdbId' => $id]),
+            'tv' => $tv,
+        ];
+    }
+
+    public function addSeriesToUser(User $user, Series $series, array $tv, DateTimeImmutable $date): UserSeries
+    {
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+        if ($userSeries) {
+            $this->addFlash('warning', $this->translator->trans('Series already added to your watchlist'));
+        }
+
+        if (!$userSeries) {
+            $userSeries = new UserSeries($user, $series, $date);
+            $this->userSeriesRepository->save($userSeries, true);
+            $this->addFlash('success', $this->translator->trans('Series added to your watchlist'));
+            $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+        }
+
+        foreach ($tv['seasons'] as $season) {
+            $this->addSeasonToUser($user, $userSeries, $season);
+        }
+        return $userSeries;
+    }
+
+    public function addSeasonToUser(User $user, UserSeries $userSeries, array $season): void
+    {
+        $series = $userSeries->getSeries();
+        $language = $user->getPreferredLanguage() ?? "fr" . "-" . $user->getCountry() ?? "FR";
+        $tvSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $season['season_number'], $language), true);
+        if ($tvSeason) {
+            $episodeCount = $tvSeason['episode_count'];
+            $seasonNumber = $tvSeason['season_number'];
+            foreach ($tvSeason['episodes'] as $episode) {
+                $this->addEpisodeToUser($user, $userSeries, $episode, $seasonNumber, $episodeCount);
+            }
+        }
+    }
+
+    public function addEpisodeToUser(User $user, UserSeries $userSeries, array $episode, int $seasonNumber, int $episodeCount): void
+    {
+        $userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
+        if ($userEpisode) {
+            return;
+        }
+        $userEpisode = new UserEpisode($user, $userSeries, $episode['id'], $seasonNumber, $episode['episode_number'], null);
+        $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris', true) : null;
+        $userEpisode->setAirDate($airDate);
+        if ($episode['episode_number'] == $episodeCount) {
+            $this->userEpisodeRepository->save($userEpisode, true);
+        } else {
+            $this->userEpisodeRepository->save($userEpisode);
+        }
     }
 
     public function now(): DateTimeImmutable

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserEpisodeRepository;
 use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserEpisodeRepository::class)]
@@ -31,6 +32,9 @@ class UserEpisode
     #[ORM\Column]
     private ?int $episodeNumber;
 
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $airDate = null;
+
     #[ORM\Column(nullable: true)]
     private ?DateTimeImmutable $watchAt;
 
@@ -52,7 +56,7 @@ class UserEpisode
     #[ORM\Column(nullable: true, options: ['default' => 0])]
     private ?int $numberOfView;
 
-    public function __construct(User $user, UserSeries $userSeries, int $episodeId, int $seasonNumber, int $episodeNumber, DateTimeImmutable $watchAt)
+    public function __construct(User $user, UserSeries $userSeries, int $episodeId, int $seasonNumber, int $episodeNumber, ?DateTimeImmutable $watchAt)
     {
         $this->user = $user;
         $this->userSeries = $userSeries;
@@ -210,5 +214,17 @@ class UserEpisode
     public function setNumberOfView(?int $numberOfView): void
     {
         $this->numberOfView = $numberOfView;
+    }
+
+    public function getAirDate(): ?DateTimeImmutable
+    {
+        return $this->airDate;
+    }
+
+    public function setAirDate(?DateTimeImmutable $airDate): static
+    {
+        $this->airDate = $airDate;
+
+        return $this;
     }
 }
