@@ -22,6 +22,18 @@
                 </div>
             </div>
         {% endif %}
+        {% if episodesOfTheDay|length %}
+            <h2>{{ 'Episodes of the day'|trans }}</h2>
+            <div class="series-group user">
+                <div class="wrapper">
+                    <div class="content">
+                        {% for series in episodesOfTheDay %}
+                            {{ include('_blocks/series/_card.html.twig') }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
         {% if seriesOfTheWeek|length %}
             <h2>{{ 'Series of the next 7 days'|trans }} ({{ seriesOfTheWeek|length }})</h2>
             <div class="series-group user">

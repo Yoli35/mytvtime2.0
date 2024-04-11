@@ -361,6 +361,11 @@
                         padding: .25rem;
                         font-size: 1.5rem;
                         font-weight: 400;
+
+                        &.watched {
+                            background-color: var(--gradient-green-60);
+                            color: var(--gradient-green-10);
+                        }
                     }
 
                     .date {

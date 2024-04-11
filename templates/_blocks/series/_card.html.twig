@@ -29,8 +29,11 @@
                     <div class="progress-bar" style="width: {{ series.progress }}%"></div>
                 </div>
             {% endif %}
-            {% if series.last_watched_series is defined %}
-                <div class="episode-number">{{ 'S%02dE%02d'|format(series.last_season, series.last_episode) }}</div>
+            {% if series.last_watched_series is defined%}
+                <div class="episode-number watched">{{ 'S%02dE%02d'|format(series.last_season, series.last_episode) }}</div>
+            {% endif %}
+            {% if series.episode_of_the_day is defined %}
+                <div class="episode-number{% if series.watch_at %} watched{% endif %}">{{ 'S%02dE%02d'|format(series.season_number, series.episode_number) }}</div>
             {% endif %}
             {% if series.series_of_the_week is defined %}
                 <div class="date">{{ series.date|format_date('relative_full')|capitalize }}</div>

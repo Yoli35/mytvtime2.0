@@ -82,8 +82,11 @@ class Series
     #[ORM\Column(length: 32, nullable: true)]
     private ?string $status = null;
 
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    private ?array $dayOffset = [];
+    /**
+     * @var Collection<int, SeriesDayOffset>
+     */
+    #[ORM\OneToMany(targetEntity: SeriesDayOffset::class, mappedBy: 'series', orphanRemoval: true)]
+    private Collection $seriesDayOffsets;
 
     public function __construct()
     {
@@ -94,6 +97,7 @@ class Series
         $this->updates = [];
         $this->seriesLocalizedOverviews = new ArrayCollection();
         $this->seriesAdditionalOverviews = new ArrayCollection();
+        $this->seriesDayOffsets = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -238,7 +242,7 @@ class Series
         return [
             'backdropPath' => $this->getBackdropPath(),
             'createdAt' => $this->getCreatedAt(),
-            'dayOffset' => $this->getDayOffset(),
+            'dayOffsets' => $this->getSeriesDayOffsets()->toArray(),
             'firstDateAir' => $this->getFirstDateAir(),
             'id' => $this->getId(),
             'images' => $this->getSeriesImages()->toArray(),
@@ -508,22 +512,42 @@ class Series
         return $this;
     }
 
-    public function getDayOffset(): array
+    /**
+     * @return Collection<int, SeriesDayOffset>
+     */
+    public function getSeriesDayOffsets(): Collection
     {
-        return $this->dayOffset ?? [];
+        return $this->seriesDayOffsets;
     }
 
-    public function getDayOffsetByCountry($country): int
+    public function getSeriesDayOffset($country): int
     {
-        if (key_exists($country, $this->dayOffset ?? [])) {
-            return $this->dayOffset[$country];
+        foreach ($this->seriesDayOffsets as $seriesDayOffset) {
+            if ($seriesDayOffset->getCountry() === $country) {
+                return $seriesDayOffset->getOffset();
+            }
         }
         return 0;
     }
 
-    public function setDayOffset(?array $dayOffset): static
+    public function addSeriesDayOffset(SeriesDayOffset $seriesDayOffset): static
     {
-        $this->dayOffset = $dayOffset ?? [];
+        if (!$this->seriesDayOffsets->contains($seriesDayOffset)) {
+            $this->seriesDayOffsets->add($seriesDayOffset);
+            $seriesDayOffset->setSeries($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSeriesDayOffset(SeriesDayOffset $seriesDayOffset): static
+    {
+        if ($this->seriesDayOffsets->removeElement($seriesDayOffset)) {
+            // set the owning side to null (unless already changed)
+            if ($seriesDayOffset->getSeries() === $this) {
+                $seriesDayOffset->setSeries(null);
+            }
+        }
 
         return $this;
     }

@@ -119,7 +119,7 @@ class SeriesController extends AbstractController
                 'last_episode' => $us['last_episode'],
                 'last_season' => $us['last_season'],
                 'last_watch_at' => $us['last_watch_at'],
-                'progress' => $us['progress'],
+//                'progress' => $us['progress'],
             ];
         }, $this->userSeriesRepository->getLastWatchedUserSeries($user, $locale, 1, 60));
 
@@ -136,6 +136,24 @@ class SeriesController extends AbstractController
                 'progress' => $us['progress'],
             ];
         }, $this->userSeriesRepository->getUserSeriesOfTheDay($user, $this->now()->format('Y-m-d'), $locale));
+
+        $episodesOfTheDay = array_map(function ($ue) {
+            $this->saveImage("posters", $ue['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            return [
+                'episode_of_the_day' => true,
+                'id' => $ue['id'],
+                'name' => $ue['name'],
+                'slug' => $ue['slug'],
+                'localized_name' => $ue['localizedName'],
+                'localized_slug' => $ue['localizedSlug'],
+                'poster_path' => $ue['posterPath'] ? '/series/posters' . $ue['posterPath'] : null,
+                'progress' => $ue['progress'],
+                'favorite' => $ue['favorite'],
+                'episode_number' => $ue['episodeNumber'],
+                'season_number' => $ue['seasonNumber'],
+                'watch_at' => $ue['watchAt'],
+            ];
+        }, $this->userEpisodeRepository->getEpisodesOfTheDay($user->getId(), $locale, $country));
 
         $seriesOfTheWeek = array_map(function ($us) {
             $this->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
@@ -154,6 +172,7 @@ class SeriesController extends AbstractController
 
         dump([
             'seriesOfTheDay' => $seriesOfTheDay,
+            'episodesOfTheDay' => $episodesOfTheDay,
             'seriesOfTheWeek' => $seriesOfTheWeek,
             'userSeries' => $userSeries,
             'seriesList' => $series,
@@ -163,6 +182,7 @@ class SeriesController extends AbstractController
 
         return $this->render('series/index.html.twig', [
             'seriesOfTheDay' => $seriesOfTheDay,
+            'episodesOfTheDay' => $episodesOfTheDay,
             'seriesOfTheWeek' => $seriesOfTheWeek,
             'userSeries' => $userSeries,
             'seriesList' => $series,
@@ -534,7 +554,7 @@ class SeriesController extends AbstractController
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $country = $user->getCountry() ?? 'FR';
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
-        $dayOffset = $series->getDayOffsetByCountry($country);
+        $dayOffset = $series->getSeriesDayOffset($country);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $id]);
 //        if ($userEpisode) {

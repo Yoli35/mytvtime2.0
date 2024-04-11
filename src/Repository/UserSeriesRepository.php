@@ -48,7 +48,7 @@ class UserSeriesRepository extends ServiceEntityRepository
     {
         $userId = $user->getId();
         $sql = "SELECT s.`id` as id, s.`name` as name, sln.`name` as localized_name, us.`progress` as progress, "
-            . "	    us.`last_episode` as last_episode, us.`last_season` as last_season, us.`last_watch_at` as last_watch_at, "
+            . "	    ue.`episode_number` as last_episode, ue.`season_number` as last_season, ue.`watch_at` as last_watch_at, "
             . "     s.`slug` as slug, sln.`slug` as localized_slug, "
             . "     s.`poster_path` as poster_path "
             . "FROM `user_series` us "
@@ -56,10 +56,8 @@ class UserSeriesRepository extends ServiceEntityRepository
             . "INNER JOIN `user_episode` ue ON ue.`user_series_id`=us.`id` "
             . "LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' "
             . "WHERE us.`user_id`=$userId "
-            . "     AND us.`progress`<100 "
-            . "     AND ue.`episode_number`=us.`last_episode` "
-            . "     AND ue.`season_number`=us.`last_season` "
-            . "ORDER BY us.`last_watch_at` DESC "
+            . "     AND ue.`watch_at` IS NOT NULL "
+            . "ORDER BY ue.`watch_at` DESC "
             . "LIMIT " . $perPage . " OFFSET " . ($page - 1) * $perPage;
 
         return $this->em->getConnection()->fetchAllAssociative($sql);
