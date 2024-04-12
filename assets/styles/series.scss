@@ -180,11 +180,12 @@
 
                         &:has(img) {
                             background-color: var(--gradient-ardoise-80);
+                            color: hsl(202,18%,10%);
                             height: unset;
                         }
 
                         img {
-                            max-height: 3rem;
+                            max-height: 2rem;
                             width: auto;
                         }
                     }

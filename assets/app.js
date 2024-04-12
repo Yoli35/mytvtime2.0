@@ -62,6 +62,22 @@ if (seriesShow) {
         footer.classList.add("dark");
     }
 
+    const additionalOverviews = document.querySelector(".additional.overviews");
+    if (additionalOverviews) {
+        const imgs = additionalOverviews.querySelectorAll("img");
+        imgs.forEach(img => {
+            const color = averageColor.getColor(img);
+            const sourceDiv = img.closest(".source");
+            if (color.lightness > 150) {
+                // hsl(202,18%,10%)
+                sourceDiv.style.backgroundColor = "#151B1E";
+            } else {
+                // hsl(202,18%,90%);
+                sourceDiv.style.backgroundColor = "#E1E7EA";
+            }
+        });
+    }
+
     const seasonPage = document.querySelector("#series-season");
     if (seasonPage) {
         const season = new Season();
