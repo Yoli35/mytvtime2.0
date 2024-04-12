@@ -1172,7 +1172,7 @@ class SeriesController extends AbstractController
         $language = $user->getPreferredLanguage() ?? "fr" . "-" . $user->getCountry() ?? "FR";
         $tvSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $season['season_number'], $language), true);
         if ($tvSeason) {
-            $episodeCount = $tvSeason['episode_count'];
+            $episodeCount = count($tvSeason['episodes']);
             $seasonNumber = $tvSeason['season_number'];
             foreach ($tvSeason['episodes'] as $episode) {
                 $this->addEpisodeToUser($user, $userSeries, $episode, $seasonNumber, $episodeCount);

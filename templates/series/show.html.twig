@@ -256,7 +256,7 @@
                                         <div class="episodes">
                                             {{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}
                                             <div class="watched"></div>
-                                            {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number)|length %}
+                                            {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
                                             {% if viewedEpisodes == 0 %}
                                                 {{ 'No episode seen'|trans }}
                                             {% elseif viewedEpisodes == 1 %}
