@@ -539,10 +539,12 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
+//    #[IsGranted('ROLE_USER')]
     #[Route('/add/episode/{id}', name: 'add_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addUserEpisode(Request $request, int $id): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $data = json_decode($request->getContent(), true);
         $showId = $data['showId'];
         $lastEpisode = $data['lastEpisode'] == "1";
@@ -702,10 +704,12 @@ class SeriesController extends AbstractController
         return $isBinge;
     }
 
-    #[IsGranted('ROLE_USER')]
+//    #[IsGranted('ROLE_USER')]
     #[Route('/remove/episode/{id}', name: 'remove_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function removeUserEpisode(Request $request, int $id): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $data = json_decode($request->getContent(), true);
         $showId = $data['showId'];
         $seasonNumber = $data['seasonNumber'];
