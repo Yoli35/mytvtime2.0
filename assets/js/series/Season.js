@@ -127,6 +127,15 @@ export class Season {
             });
         });
 
+        const backToTops = document.querySelectorAll('.back-to-top');
+        const top = document.querySelector('#top');
+        backToTops.forEach(backToTop => {
+            backToTop.addEventListener('click', e => {
+                e.preventDefault();
+                top.scrollIntoView({behavior: 'smooth'});
+            });
+        });
+
         const seasonsEpisodes = document.querySelector('.seasons-episodes');
         const infos = seasonsEpisodes.querySelectorAll('.infos');
         infos.forEach(info => {
@@ -268,12 +277,14 @@ export class Season {
                 overview: localizedText
             })
         }).then(function (response) {
-            if (response.ok) {
+            return response.json();
+        }).then(function (json) {
+            // if (response.ok) {
                 gThis.toolTips.hide();
-                overviewDiv.innerText = localizedText;
+                overviewDiv.innerText = json.overview;
                 overviewDiv.classList.remove('us');
                 overviewDiv.removeEventListener('paste', gThis.pasteTranslation);
-            }
+            // }
         });
     }
 

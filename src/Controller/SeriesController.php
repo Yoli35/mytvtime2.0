@@ -578,7 +578,7 @@ class SeriesController extends AbstractController
         $airDate = $userEpisode->getAirDate();
         if (!$airDate) {
             $episode = json_decode($this->tmdbService->getTvEpisode($showId, $seasonNumber, $episodeNumber, $locale), true);
-            $airDate = $this->date($episode['air_date']." 09:00:00");
+            $airDate = $this->date($episode['air_date'] . " 09:00:00");
             $userEpisode->setAirDate($airDate);
         }
         if ($dayOffset > 0) {
@@ -864,6 +864,7 @@ class SeriesController extends AbstractController
 
         return $this->json([
             'ok' => true,
+            'overview' => $overview,
         ]);
     }
 
