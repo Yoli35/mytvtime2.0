@@ -1,5 +1,8 @@
+
+let gThis = null;
 export class Menu {
     constructor() {
+        gThis = this;
         document.addEventListener("DOMContentLoaded", () => {
             this.menuPreview = document.querySelector(".menu-preview");
             this.menuThemes = document.querySelectorAll(".menu-theme");
@@ -10,6 +13,10 @@ export class Menu {
         this.initPreview = this.initPreview.bind(this);
         this.setTheme = this.setTheme.bind(this);
         this.checkTheme = this.checkTheme.bind(this);
+        this.lang = document.documentElement.lang;
+        this.avatar = document.querySelector('.avatar');
+        this.userConnected = this.avatar != null;
+        this.connexionInterval = null;
     }
 
     init() {
@@ -31,6 +38,38 @@ export class Menu {
             this.initTheme();
             this.initPreview();
         });
+
+        if (this.userConnected) {
+            this.connexionInterval = setInterval(() => {
+                this.checkConnexion();
+            }, 60000);
+        }
+    }
+
+    checkConnexion() {
+        fetch('/' + gThis.lang + '/user/is-connected', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.body.connected) {
+                    clearInterval(gThis.connexionInterval);
+                    gThis.avatar.remove();
+                    console.log('User disconnected')
+                } else {
+                    gThis.avatar.classList.add("highlight");
+                    setTimeout(() => {
+                        gThis.avatar.classList.remove("highlight");
+                    }, 300);
+                    console.log('User still connected')
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     }
 
     initPreview() {

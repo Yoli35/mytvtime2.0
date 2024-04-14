@@ -13,6 +13,11 @@
         {% endfor %}
     {% endif %}
 
+    {% if app.user %}
+        <div class="avatar">
+            <img src="/images/users/avatars/{{ app.user.avatar }}" alt="{{ app.user.username }}">
+        </div>
+    {% endif %}
     <div class="burger">
         <span></span>
         <span></span>

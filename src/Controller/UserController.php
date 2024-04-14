@@ -88,6 +88,15 @@ class UserController extends AbstractController
         return $this->json(['status' => 'error']);
     }
 
+    #[Route('/is-connected', name: 'is_connected')]
+    public function isStillConnected(): Response
+    {
+        return $this->json([
+            'ok' => true,
+            'body' => ['connected' => $this->getUser() !== null],
+        ]);
+    }
+
     public function getProviders($user): array
     {
         $language = $user->getPreferredLanguage() ?? 'fr' . '-' . $user->getCountry() ?? 'FR';

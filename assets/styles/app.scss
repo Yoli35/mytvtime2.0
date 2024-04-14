@@ -244,15 +244,31 @@ label:has(input[type="text"]) {
         background-color: var(--navbar-bg);
     }
 
-    .switches {
+    /*.switches {
         display: flex;
         gap: .5rem;
         margin-inline-start: auto;
+    }*/
+    .avatar {
+        margin-inline-start: auto;
+
+        img {
+            border: 1px solid;
+            border-radius: 50%;
+            height: 1.5rem;
+        }
+
+        &.highlight {
+            img {
+                border-color: var(--gradient-orange-70);
+                box-shadow: 0 0 1rem var(--gradient-orange-70);
+            }
+        }
     }
 
     .burger {
         cursor: pointer;
-        margin-inline-start: auto;
+        /*margin-inline-start: auto;*/
         padding: .5rem;
         position: relative;
 
@@ -339,7 +355,13 @@ label:has(input[type="text"]) {
         }
     }
 
-    .menu-connect,
+    &:not(:has(.avatar)) {
+        .burger {
+            margin-inline-start: auto;
+        }
+    }
+
+    /*.menu-connect,
     .menu-language,
     .menu-preview,
     .menu-search,
@@ -408,7 +430,7 @@ label:has(input[type="text"]) {
                 height: 1.5rem;
             }
         }
-    }
+    }*/
 }
 
 @media (max-width: 414px) {
