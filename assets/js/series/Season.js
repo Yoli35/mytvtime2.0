@@ -386,7 +386,7 @@ export class Season {
                 vote.addEventListener('click', gThis.selectVote);
                 episode.parentElement.appendChild(vote);
 
-                const backToTopLink = episode.parentElement.querySelector('.back-to-top').closest('a');
+                const backToTopLink = episode.parentElement.querySelector('.back-to-top');
                 episode.parentElement.appendChild(backToTopLink);
 
                 episode.remove();
