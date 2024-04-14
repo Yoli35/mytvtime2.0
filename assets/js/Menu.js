@@ -47,6 +47,7 @@ export class Menu {
     }
 
     checkConnexion() {
+        gThis.avatar.classList.add("highlight");
         fetch('/' + gThis.lang + '/user/is-connected', {
             method: 'GET',
             headers: {
@@ -60,10 +61,10 @@ export class Menu {
                     gThis.avatar.remove();
                     console.log('User disconnected')
                 } else {
-                    gThis.avatar.classList.add("highlight");
+                    gThis.avatar.classList.add("connected");
                     setTimeout(() => {
-                        gThis.avatar.classList.remove("highlight");
-                    }, 300);
+                        gThis.avatar.classList.remove("highlight", "connected");
+                    }, 500);
                     console.log('User still connected')
                 }
             })

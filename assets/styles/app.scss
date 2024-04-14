@@ -263,6 +263,13 @@ label:has(input[type="text"]) {
                 border-color: var(--gradient-orange-70);
                 box-shadow: 0 0 1rem var(--gradient-orange-70);
             }
+
+            &.connected {
+                img {
+                    border-color: var(--gradient-connected);
+                    box-shadow: 0 0 4rem 1rem var(--gradient-connected);
+                }
+            }
         }
     }
 
