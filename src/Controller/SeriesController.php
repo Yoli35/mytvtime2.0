@@ -1344,6 +1344,7 @@ class SeriesController extends AbstractController
             if (strlen($season['overview'])) {
                 try {
                     $usage = $this->deeplTranslator->translator->getUsage();
+//                    dump($usage);
                     if ($usage->character->count + strlen($season['overview']) < $usage->character->limit) {
                         $localizedOverview = $this->deeplTranslator->translator->translateText($season['overview'], null, $locale);
                         $localized = true;
@@ -1379,14 +1380,14 @@ class SeriesController extends AbstractController
         $episodeId = $episode['id'];
         $localizedOverview = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $episodeId, 'locale' => $locale]);
         if ($localizedOverview) {
-            dump('we have it');
+//            dump('we have it');
             return $localizedOverview->getOverview();
         }
         $overview = $episode['overview'];
         if (strlen($overview)) {
             try {
                 $usage = $this->deeplTranslator->translator->getUsage();
-                dump($usage);
+//                dump($usage);
                 if ($usage->character->count + strlen($overview) < $usage->character->limit) {
                     $overview = $this->deeplTranslator->translator->translateText($overview, null, $locale);
                     $localizedOverview = new EpisodeLocalizedOverview($episodeId, $overview, $locale);
