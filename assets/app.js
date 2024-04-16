@@ -78,6 +78,17 @@ if (seriesShow) {
         });
     }
 
+    const seasonOrder = document.querySelector(".season-order");
+    seasonOrder?.addEventListener("click", () => {
+        const seasonList = seasonOrder.closest(".content").querySelector(".seasons-episodes");
+        seasonList.classList.toggle("reverse");
+        if (seasonList.classList.contains("reverse")) {
+            seasonOrder.innerHTML = "<i class='fas fa-arrow-up'></i>";
+        } else {
+            seasonOrder.innerHTML = "<i class='fas fa-arrow-down'></i>";
+        }
+    });
+
     const seasonPage = document.querySelector("#series-season");
     if (seasonPage) {
         const season = new Season();

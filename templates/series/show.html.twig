@@ -228,8 +228,11 @@
 
             <div class="content">
                 <div class="left">
+                    <div class="all-seasons">
+                        <div>{{ 'Seasons'|trans }}</div>
+                        <div class="season-order"><i class="fa-solid fa-arrow-down"></i></div>
+                    </div>
                     <div class="seasons-episodes">
-                        <h3>{{ 'Seasons'|trans }}</h3>
                         {% for season in tv.seasons %}
                             <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: tv.localized_name.slug ?? series.slug}) }}">
                                 <div class="season-episode">
@@ -245,12 +248,14 @@
                                         {% if season.overview %}
                                             <div class="overview">{{ season.overview }}</div>
                                         {% endif %}
-                                        {% if season.air_date %}
-                                            <div class="air-date">{{ 'Air date'|trans }} {{ date(season.air_date)|format_date('relative_long') }}</div>
-                                        {% else %}
-                                            <div class="air-date">{{ 'Air date'|trans }} {{ 'TBA'|trans }}</div>
-                                        {% endif %}
-                                        {% if userSeries.lastSeason == season.season_number %}
+                                        <div class="air-date">{{ 'Air date'|trans }}
+                                            {% if season.air_date %}
+                                                {{ date(season.air_date)|format_date('relative_long') }}
+                                            {% else %}
+                                                {{ 'TBA'|trans }}
+                                            {% endif %}
+                                        </div>
+                                        {% if userSeries.lastSeason is not null and userSeries.lastSeason == season.season_number %}
                                             <div class="air-date">{{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}</div>
                                         {% endif %}
                                         <div class="episodes">
@@ -594,7 +599,6 @@
             lnDelete?.addEventListener('click', function (event) {
                 event.preventDefault();
 
-                const name = lnForm.querySelector('#name');
                 fetch('/' + lang + '/series/delete/localized/name/' + {{ series.id }}, {
                     method: 'POST',
                     headers: {
