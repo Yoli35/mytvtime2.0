@@ -55,26 +55,27 @@ class SeriesUpdateCommand extends Command
 
         $count = 0;
         foreach ($allSeries as $series) {
-            if ($series->getId() < 560) continue;
 
             $this->io->writeln(sprintf('Series (%d): %s', $series->getId(), $series->getName()));
             $localizedName = $series->getLocalizedName('fr');
             if ($localizedName) {
                 $this->io->writeln('Localized name: ' . $localizedName->getName());
             }
+            if (in_array($series->getStatus(), $endedSeriesStatus)) {
+                $this->io->writeln('Serie is ended or canceled, skipping seasons update');
+                continue;
+            }
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
+
             if ($tv === null) {
                 $this->io->error('Error while fetching TV show');
                 continue;
             }
 
-            if (in_array($series->getStatus(), $endedSeriesStatus)) {
-                $this->io->writeln('Serie is ended or canceled, skipping seasons update');
-                continue;
-            }
             $series->setStatus($tv['status']);
-            if ($tv['next_episode_to_air'] && $tv['next_episode_to_air']['air_date'])
+            if ($tv['next_episode_to_air'] && $tv['next_episode_to_air']['air_date']) {
                 $date = $this->dateService->newDateImmutable($tv['next_episode_to_air']['air_date'], 'Europe/Paris');
+            }
             else
                 $date = null;
             $series->setNextEpisodeAirDate($date);
@@ -86,7 +87,7 @@ class SeriesUpdateCommand extends Command
         }
         $this->entityManager->flush();
 
-        $this->commandEnd();
+        $this->commandEnd($count);
 
         return Command::SUCCESS;
     }
@@ -95,16 +96,17 @@ class SeriesUpdateCommand extends Command
     {
         $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
         $this->io->newLine(2);
-        $this->io->title('Binge Command');
-        $this->io->writeln('Binge Command started at ' . $now->format('Y-m-d H:i:s'));
+        $this->io->title('Series update Command');
+        $this->io->writeln('Series update Command started at ' . $now->format('Y-m-d H:i:s'));
         $this->t0 = microtime(true);
     }
 
-    public function commandEnd(): void
+    public function commandEnd(int $count): void
     {
+        $this->io->writeln(sprintf('Series updated: %d', $count));
         $t1 = microtime(true);
         $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
-        $this->io->writeln('Binge Command ended at ' . $now->format('Y-m-d H:i:s'));
+        $this->io->writeln('Series update Command ended at ' . $now->format('Y-m-d H:i:s'));
         $this->io->writeln(sprintf('Execution time: %.2f seconds', ($t1 - $this->t0)));
         $this->io->newLine(2);
     }
