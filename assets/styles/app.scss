@@ -313,7 +313,7 @@ label:has(input[type="text"]) {
             border-radius: .25rem;
             display: none;
             flex-direction: column;
-            gap: .5rem;
+            gap: .125rem;
             max-height: calc(100vh - 5rem);
             opacity: 0;
             overflow-y: auto;
@@ -325,7 +325,11 @@ label:has(input[type="text"]) {
             a,
             .menu-preview,
             .menu-theme {
+                align-items: center;
+                border-radius: 0.25rem;
+                display: flex;
                 flex-shrink: 0;
+                height: 2rem;
                 justify-content: flex-start;
                 padding-inline: 1rem;
                 white-space: nowrap;

@@ -30,6 +30,16 @@ export class Menu {
             body.classList.toggle("frozen");
         });
 
+        document.addEventListener("click", (e) => {
+            if (burger.classList.contains("open") && !navbar.contains(e.target) && !burger.contains(e.target)) {
+                burger.classList.remove("open");
+                navbar.classList.remove("active");
+                body.classList.remove("frozen");
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        });
+
         document.addEventListener("DOMContentLoaded", () => {
             this.menuPreview.addEventListener("click", this.togglePreview);
             this.menuThemes.forEach((theme) => {
