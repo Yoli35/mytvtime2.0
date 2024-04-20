@@ -794,6 +794,7 @@
                 position: relative;
 
                 .name {
+                    flex-shrink: 0;
                     font-weight: 100;
                 }
 
@@ -816,10 +817,14 @@
                     color: var(--gradient-orange-90);
                     cursor: pointer;
                     display: none;
+                    flex-shrink: 0;
                     font-size: 1rem;
                     height: 2rem;
                     justify-content: center;
                     margin-inline-start: auto;
+                    position: absolute;
+                    right: 0;
+                    top: 0;
                     width: 2rem;
                 }
 
