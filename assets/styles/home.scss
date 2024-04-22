@@ -126,6 +126,32 @@
                 }
             }
         }
+
+        .poster-list {
+            display: flex;
+            gap: .25rem;
+            justify-content: center;
+            width: 100%;
+
+            .poster-item {
+                border: .125rem solid transparent;
+                border-radius: .375rem;
+                height: 6vw;
+                object-fit: cover;
+                width: 4vw;
+
+                &.active {
+                    border-color: var(--gradient-orange-50);
+                }
+
+                img {
+                    border-radius: .25rem;
+                    height: 100%;
+                    object-fit: cover;
+                    width: 100%;
+                }
+            }
+        }
     }
 
     .highlight-progress {

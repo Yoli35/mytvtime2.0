@@ -43,8 +43,11 @@ export class HighlightSeries {
     }
 
     displaySeries() {
-        let lastSeriesIndex = Math.floor(Math.random() * this.count);
+        this.series.forEach((series, index) => {
+            series['thumb'] = this.highlightDiv.querySelector("#thumb-" + series['id']);
+        });
 
+        let lastSeriesIndex = Math.floor(Math.random() * this.count);
         this.setSeries(lastSeriesIndex);
         setInterval(() => {
             this.highlightDiv.querySelector('.poster').classList.remove('show');
@@ -55,6 +58,7 @@ export class HighlightSeries {
                 while (seriesIndex === lastSeriesIndex) {
                     seriesIndex = Math.floor(Math.random() * this.count);
                 }
+                this.series[lastSeriesIndex]['thumb'].classList.remove('active');
                 lastSeriesIndex = seriesIndex;
                 this.setSeries(lastSeriesIndex);
             }, this.transition);
@@ -111,5 +115,7 @@ export class HighlightSeries {
             this.highlightDiv.querySelector('.details').classList.add('show');
             this.highlightProgressDiv.classList.add('show');
         };
+
+        this.series[index]['thumb'].classList.add('active');
     }
 }
