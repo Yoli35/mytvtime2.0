@@ -45,6 +45,7 @@ export class HighlightSeries {
     displaySeries() {
         this.series.forEach((series, index) => {
             series['thumb'] = this.highlightDiv.querySelector("#thumb-" + series['id']);
+            series['countDiv'] = series['thumb'].parentElement.querySelector(".count");
         });
 
         let lastSeriesIndex = Math.floor(Math.random() * this.count);
@@ -117,5 +118,7 @@ export class HighlightSeries {
         };
 
         this.series[index]['thumb'].classList.add('active');
+        const div = document.createElement("div");
+        this.series[index]['countDiv'].appendChild(div);
     }
 }

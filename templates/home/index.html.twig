@@ -36,8 +36,11 @@
             <div class="poster-list">
                 {% for s in highlightedSeries %}
                     <a href="{{ path('app_series_tmdb', {'id': s.id, 'slug': s.slug}) }}">
-                        <div class="poster-item" id="thumb-{{ s.id }}">
-                            <img src="{{ s.poster_path }}" alt="{{ s.name }}">
+                        <div class="item">
+                            <div class="poster-item" id="thumb-{{ s.id }}">
+                                <img src="{{ s.poster_path }}" alt="{{ s.name }}">
+                            </div>
+                            <div class="count"></div>
                         </div>
                     </a>
                 {% endfor %}

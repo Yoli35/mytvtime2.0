@@ -129,26 +129,49 @@
 
         .poster-list {
             display: flex;
-            gap: .25rem;
             justify-content: center;
             width: 100%;
 
-            .poster-item {
-                border: .125rem solid transparent;
-                border-radius: .375rem;
-                height: 6vw;
-                object-fit: cover;
-                width: 4vw;
+            .item {
+                align-items: center;
+                display: flex;
+                flex-direction: column;
+                gap: .25rem;
+                height: 5vw;
+                max-width: 5vw;
 
-                &.active {
-                    border-color: var(--gradient-orange-50);
+                .poster-item {
+                    border: .125rem solid transparent;
+                    border-radius: .375rem;
+                    height: 6vw;
+                    object-fit: cover;
+                    width: 4vw;
+
+                    &.active {
+                        border-color: var(--gradient-orange-50);
+                    }
+
+                    img {
+                        border-radius: .25rem;
+                        height: calc(6vw - .25rem);
+                        object-fit: cover;
+                        width: calc(4vw - .25rem);
+                    }
                 }
 
-                img {
-                    border-radius: .25rem;
-                    height: 100%;
-                    object-fit: cover;
+                .count {
+                    display: flex;
+                    flex-wrap: wrap;
+                    height: .75rem;
+                    justify-content: center;
                     width: 100%;
+
+                    > div {
+                        background-color: var(--gradient-orange-50);
+                        border-radius: 50%;
+                        height: .25rem;
+                        width: .25rem;
+                    }
                 }
             }
         }
