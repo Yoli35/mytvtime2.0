@@ -27,6 +27,9 @@
                     </div>
                 </div>
                 <div class="infos">
+                    <div class="backdrop">
+                        <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
+                    </div>
                     <h1>
                         {% if tv.localized_name %}
                             {{ tv.localized_name.name }}
@@ -107,9 +110,6 @@
                             </div>
                         </div>
                     {% endif %}
-                    <div class="backdrop">
-                        <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
-                    </div>
                 </div>
             </div>
 

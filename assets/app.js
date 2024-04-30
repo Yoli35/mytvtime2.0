@@ -38,7 +38,7 @@ if (seriesShow) {
     const averageColor = new AverageColor();
     const img = seriesShow.querySelector(".poster").querySelector("img") ?? seriesShow.querySelector(".backdrop").querySelector("img");
     const color = averageColor.getColor(img);
-    if (color.lightness > 150) {
+    if (color.lightness > 185) {
         infos.style.color = "#101010";
     } else {
         infos.style.color = "#f5f5f5";
