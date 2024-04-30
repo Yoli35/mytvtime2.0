@@ -60,6 +60,7 @@ class EpisodeAirDateCommand extends Command
         $count = 0;
         $episodeCount = 0;
         $newEpisodeCount = 0;
+        $endedSeriesStatus = ['Ended', 'Canceled'];
 
         foreach ($allUserSeries as $userSeries) {
             $series = $userSeries->getSeries();
@@ -72,8 +73,13 @@ class EpisodeAirDateCommand extends Command
             if ($localizedName) {
                 $line .= ' - Localized name: ' . $localizedName->getName();
             }
-            if ($userSeries->getProgress() < 100) {
+            if ($userSeries->getProgress() == 100) {
                 $line .= 'Series already updated';//' - Serie is finished';
+                $this->io->writeln($line);
+                continue;
+            }
+            if ($series->getStatus() && in_array($series->getStatus(), $endedSeriesStatus)) {
+                $line .= ' - Serie is finished';
                 $this->io->writeln($line);
                 continue;
             }
