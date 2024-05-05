@@ -26,7 +26,7 @@ class SeriesWatchLink
     #[ORM\Column(nullable: true)]
     private ?int $providerId = null;
 
-    public function __construct(string $url, string $name, Series $series, int $providerId)
+    public function __construct(string $url, string $name, Series $series, ?int $providerId)
     {
         $this->url = $url;
         $this->name = $name;

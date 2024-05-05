@@ -211,7 +211,6 @@ class ImportUserEpisodesCommand extends Command
                 if (!$dbUserEpisode) {
                     $io->writeln('Creating user episode ' . $userEpisode['episodeId']);
                     $dbUserEpisode = new UserEpisode(
-                        $user,
                         $dbUserSeries,
                         $userEpisode['episodeId'],
                         $userEpisode['seasonNumber'],

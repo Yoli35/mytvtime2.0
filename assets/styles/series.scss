@@ -744,9 +744,7 @@
                 object-fit: cover;
                 width: 100%;
             }
-        }
 
-        .still {
             .number {
                 align-items: center;
                 background-color: var(--gradient-orange-50);
@@ -1181,7 +1179,7 @@
 
         .poster {
             flex-shrink: 0;
-            height: 120cqi !important;
+            height: 135cqi !important;
             margin-inline: auto;
             width: 90cqi !important;
         }

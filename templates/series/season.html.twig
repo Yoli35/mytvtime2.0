@@ -24,7 +24,12 @@
                     <img src="/series/posters{{ season.poster_path }}" alt="{{ series.name }} {{ season.season_number }}">
                 </div>
                 <div class="infos">
-                    <h1>{{ season.name }} ({{ season.air_date|date("Y") }})</h1>
+                    {% if season.localized_name %}
+                        <h1>{{ season.localized_name.name }} ({{ series.firstDateAir|date("Y") }})</h1>
+                    {% else %}
+                        <h1>{{ series.name }} ({{ series.firstDateAir|date("Y") }})</h1>
+                    {% endif %}
+                    <h2>{{ season.name }}{% if season.season_number > 1 %} ({{ season.air_date|date("Y") }}){% endif %}</h2>
                     <div class="overview">{{ season.overview }}</div>
                     {% if season.deepl %}
                         {% if season.deepl.localized %}
@@ -51,7 +56,7 @@
 
             <div class="quick-episodes">
                 {% for episode in season.episodes %}
-                    <div class="quick-episode{% if episode.user_episode.watchAt %} watched{% endif %}" data-number="{{ episode.episode_number }}" data-title="{{ episode.name }}">
+                    <div class="quick-episode{% if episode.user_episode and episode.user_episode.watchAt %} watched{% endif %}" data-number="{{ episode.episode_number }}" data-title="{{ episode.name }}">
                         {{ episode.episode_number }}
                     </div>
                 {% endfor %}
@@ -69,7 +74,7 @@
                                     {% else %}
                                         <div>{{ 'No poster'|trans }}</div>
                                     {% endif %}
-                                    <div class="number{% if episode.user_episode.watchAt %} watched{% endif %}"{% if episode.user_episode.numberOfView %} data-title="{{ 'Watched %time% times'|trans({'%time%': episode.user_episode.numberOfView}) }}"{% endif %}>
+                                    <div class="number{% if episode.user_episode and episode.user_episode.watchAt %} watched{% endif %}"{% if episode.user_episode and episode.user_episode.numberOfView %} data-title="{{ 'Watched %time% times'|trans({'%time%': episode.user_episode.numberOfView}) }}"{% endif %}>
                                         {{ episode.episode_number }}
                                     </div>
                                 </div>
@@ -124,7 +129,7 @@
                                     {% endif %}
                                 </div>
                                 <div class="user-episode">
-                                    {% if episode.user_episode.watchAt %}
+                                    {% if episode.user_episode and episode.user_episode.watchAt %}
                                         <div class="remove-this-episode" data-id="{{ episode.id }}"
                                              data-last-episode="{{ loop.last ?? 0 }}"
                                              data-show-id="{{ episode.show_id }}"

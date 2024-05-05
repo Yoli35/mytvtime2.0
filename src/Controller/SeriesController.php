@@ -435,7 +435,7 @@ class SeriesController extends AbstractController
             $season['poster_path'] = $series->getPosterPath();
         }
         $season['deepl'] = $this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
-        $season['episodes'] = array_map(function ($episode) use ($userSeries, $series, $season, $slugger) {
+        $season['episodes'] = array_map(function ($episode) use ($user, $userSeries, $series, $season, $slugger) {
             $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
             $episode['crew'] = array_map(function ($crew) use ($slugger) {
                 $crew['profile_path'] = $crew['profile_path'] ? $this->imageConfiguration->getCompleteUrl($crew['profile_path'], 'profile_sizes', 2) : null; // w185
@@ -450,7 +450,17 @@ class SeriesController extends AbstractController
                 $guest['slug'] = $slugger->slug($guest['name'])->lower()->toString();
                 return $guest;
             }, $episode['guest_stars']);
-            $episode['user_episode'] = $userSeries->getEpisode($episode['id']);
+            $userEpisode = $userSeries->getEpisode($episode['id']);
+            if (!$userEpisode) {
+                $userEpisode = new UserEpisode($userSeries, $episode['id'], $season['season_number'], $episode['episode_number'], null);
+                $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris') : null;
+                $userEpisode->setAirDate($airDate);
+                $this->userEpisodeRepository->save($userEpisode);
+                $userSeries->addUserEpisode($userEpisode);
+                $this->userSeriesRepository->save($userSeries, true);
+                $userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
+            }
+            $episode['user_episode'] = $userEpisode;
             $episode['substitute_name'] = $this->userEpisodeRepository->getSubstituteName($episode['id']);
             return $episode;
         }, $season['episodes']);
@@ -483,6 +493,12 @@ class SeriesController extends AbstractController
         $url = $data['url'];
         $name = $data['name'];
         $providerId = $data['provider'];
+        if ($providerId == "") $providerId = null;
+        dump([
+            'url' => $url,
+            'name' => $name,
+            'provider' => $providerId,
+        ]);
         $series = $this->seriesRepository->findOneBy(['id' => $id]);
 
         $watchLink = new SeriesWatchLink($url, $name, $series, $providerId);
@@ -570,7 +586,7 @@ class SeriesController extends AbstractController
 
         $now = $this->now();
         if (!$userEpisode) {
-            $userEpisode = new UserEpisode($user, $userSeries, $id, $seasonNumber, $episodeNumber, $now);
+            $userEpisode = new UserEpisode($userSeries, $id, $seasonNumber, $episodeNumber, $now);
         } else {
             $userEpisode->setWatchAt($now);
         }
@@ -1191,7 +1207,7 @@ class SeriesController extends AbstractController
         if ($userEpisode) {
             return;
         }
-        $userEpisode = new UserEpisode($user, $userSeries, $episode['id'], $seasonNumber, $episode['episode_number'], null);
+        $userEpisode = new UserEpisode($userSeries, $episode['id'], $seasonNumber, $episode['episode_number'], null);
         $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris', true) : null;
         $userEpisode->setAirDate($airDate);
         if ($episode['episode_number'] == $episodeCount) {

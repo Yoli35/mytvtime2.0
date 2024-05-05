@@ -105,7 +105,7 @@ class EpisodeAirDateCommand extends Command
                     $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris') : null;
                     $userEpisode = $this->getUserEpisode($userEpisodes, $seasonNumber, $episodeNumber);
                     if (!$userEpisode) {
-                        $userEpisode = new UserEpisode($user, $userSeries, $episodeId, $seasonNumber, $episodeNumber, null);
+                        $userEpisode = new UserEpisode($userSeries, $episodeId, $seasonNumber, $episodeNumber, null);
                         $newEpisodeCount++;
                     }
                     if ($userEpisode->getAirDate() != $airDate) {

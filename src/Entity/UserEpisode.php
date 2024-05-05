@@ -56,9 +56,9 @@ class UserEpisode
     #[ORM\Column(nullable: true, options: ['default' => 0])]
     private ?int $numberOfView;
 
-    public function __construct(User $user, UserSeries $userSeries, int $episodeId, int $seasonNumber, int $episodeNumber, ?DateTimeImmutable $watchAt)
+    public function __construct(UserSeries $userSeries, int $episodeId, int $seasonNumber, int $episodeNumber, ?DateTimeImmutable $watchAt)
     {
-        $this->user = $user;
+        $this->user = $userSeries->getUser();
         $this->userSeries = $userSeries;
         $this->episodeId = $episodeId;
         $this->seasonNumber = $seasonNumber;
