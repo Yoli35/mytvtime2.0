@@ -26,6 +26,7 @@ use App\Repository\SeriesRepository;
 use App\Repository\SeriesWatchLinkRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeriesRepository;
+use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\DeeplTranslator;
 use App\Service\ImageConfiguration;
@@ -67,6 +68,7 @@ class SeriesController extends AbstractController
         private readonly TranslatorInterface                $translator,
         private readonly UserEpisodeRepository              $userEpisodeRepository,
         private readonly UserSeriesRepository               $userSeriesRepository,
+        private readonly WatchProviderRepository            $watchProviderRepository,
     )
     {
     }
@@ -1457,6 +1459,9 @@ class SeriesController extends AbstractController
     {
         $providers = json_decode($this->tmdbService->getTvWatchProviderList($language, $watchRegion), true);
         $providers = $providers['results'];
+        if (count($providers) == 0) {
+            $providers = $this->watchProviderRepository->getWatchProviderList($watchRegion);
+        }
         $watchProviders = [];
         foreach ($providers as $provider) {
             $watchProviders[$provider['provider_name']] = $provider['provider_id'];

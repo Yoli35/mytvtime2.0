@@ -8,6 +8,7 @@ use App\Entity\UserSeries;
 use App\Repository\SeriesRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeriesRepository;
+use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
@@ -20,12 +21,13 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 class HomeController extends AbstractController
 {
     public function __construct(
-        private readonly DateService           $dateService,
-        private readonly ImageConfiguration    $imageConfiguration,
-        private readonly SeriesController      $seriesController,
-        private readonly UserEpisodeRepository $userEpisodeRepository,
-        private readonly UserSeriesRepository  $userSeriesRepository,
-        private readonly TMDBService           $tmdbService,
+        private readonly DateService             $dateService,
+        private readonly ImageConfiguration      $imageConfiguration,
+        private readonly SeriesController        $seriesController,
+        private readonly UserEpisodeRepository   $userEpisodeRepository,
+        private readonly UserSeriesRepository    $userSeriesRepository,
+        private readonly TMDBService             $tmdbService,
+        private readonly WatchProviderRepository $watchProviderRepository,
     )
     {
     }
@@ -79,7 +81,7 @@ class HomeController extends AbstractController
                 $series['providerLogoPath'] = $series['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($series['providerLogoPath'], 'logo_sizes', 2) : null;
                 return $series;
             }, $this->userEpisodeRepository->historyEpisode($user, $language, 1, 20));
-            } else {
+        } else {
             $userSeries = [];
             $lastAddedSeries = [];
             $historyEpisode = [];
@@ -96,6 +98,9 @@ class HomeController extends AbstractController
         $provider = $request->query->get('provider', $cookieProvider);
         $watchProviders = json_decode($this->tmdbService->getTvWatchProviderList($language, $country), true);
         $watchProviders = $watchProviders['results'];
+        if (count($watchProviders) === 0) {
+            $watchProviders = $this->watchProviderRepository->getWatchProviderList($country);
+        }
         $watchProviders = array_map(function ($watchProvider) {
             $watchProvider['id'] = $watchProvider['provider_id'];
             $watchProvider['name'] = $watchProvider['provider_name'];
