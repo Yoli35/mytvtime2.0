@@ -11,10 +11,17 @@ import {ToolTips} from "../ToolTips.js";
 export class HighlightSeries {
     constructor() {
         this.series = [];
+        this.seriesIndexes = [];
+        this.seriesIndex = 0;
+        this.maxDisplayPerPoster = 1;
+        this.timeToChangeSeries = false;
+        this.interval = null;
         this.count = 0;
+        this.fetchCount = 0;
         this.root = null;
         this.highlightDiv = null;
         this.highlightProgressDiv = null;
+        this.posterListDiv = null;
         this.intervalDuration = 20000;
         this.transition = 300;
         this.toolTips = new ToolTips();
@@ -29,6 +36,8 @@ export class HighlightSeries {
         this.home = document.querySelector(".home");
         this.highlightDiv = document.querySelector(".highlighted-series");
         this.highlightProgressDiv = document.querySelector(".highlight-progress");
+        this.posterListDiv = document.querySelector(".poster-list");
+        this.loadingDiv = document.querySelector(".loading");
         this.averageColor = new AverageColor();
         let duration = this.root.style.getPropertyValue("--highlight-duration");
         let transition = this.root.style.getPropertyValue("--highlight-transition");
@@ -43,30 +52,37 @@ export class HighlightSeries {
     }
 
     displaySeries() {
-        this.series.forEach((series, index) => {
+        this.series.forEach((series) => {
             series['thumb'] = this.highlightDiv.querySelector("#thumb-" + series['id']);
             series['countDiv'] = series['thumb'].parentElement.querySelector(".count");
+            series['count'] = 0;
         });
+        for (let i = 0; i < this.count; i++) {
+            this.seriesIndexes.push(i);
+        }
 
-        let lastSeriesIndex = Math.floor(Math.random() * this.count);
-        this.setSeries(lastSeriesIndex);
-        setInterval(() => {
-            this.highlightDiv.querySelector('.poster').classList.remove('show');
-            this.highlightDiv.querySelector('.details').classList.remove('show');
-            this.highlightProgressDiv.classList.remove('show');
-            setTimeout(() => {
-                let seriesIndex = Math.floor(Math.random() * this.count);
-                while (seriesIndex === lastSeriesIndex) {
-                    seriesIndex = Math.floor(Math.random() * this.count);
-                }
-                this.series[lastSeriesIndex]['thumb'].classList.remove('active');
-                lastSeriesIndex = seriesIndex;
-                this.setSeries(lastSeriesIndex);
-            }, this.transition);
-        }, this.intervalDuration);
+        this.seriesIndex = Math.floor(Math.random() * this.count);
+        this.setSeries(this.seriesIndex);
+        this.interval = setInterval(this.cycle.bind(this), this.intervalDuration);
     }
 
-    setSeries(index) {
+    cycle() {
+        this.highlightDiv.querySelector('.poster').classList.remove('show');
+        this.highlightDiv.querySelector('.details').classList.remove('show');
+        this.highlightProgressDiv.classList.remove('show');
+        if (this.timeToChangeSeries) {
+            clearInterval(this.interval);
+            this.loadNewSeries();
+            return;
+        }
+        setTimeout(() => {
+            this.series[this.seriesIndex]['thumb'].classList.remove('active');
+            this.seriesIndex = this.seriesIndexes[Math.floor(Math.random() * this.seriesIndexes.length)];
+            this.setSeries(this.seriesIndex);
+        }, this.transition);
+    }
+
+    setSeries() {
         const poster = this.highlightDiv.querySelector(".poster");
         const posterImg = poster.querySelector("img");
         const aPoster = poster.querySelector("a");
@@ -74,7 +90,7 @@ export class HighlightSeries {
         const aDetails = this.highlightDiv.querySelector(".details").querySelector("a");
         const overviewDiv = this.highlightDiv.querySelector(".overview");
         const providerDiv = this.highlightDiv.querySelector(".providers").querySelector(".wrapper");
-        const series = this.series[index];
+        const series = this.series[this.seriesIndex];
         const link = this.app_series_tmdb + series['id'] + "-" + series['slug'];
         posterImg.src = series['poster_path'];
         aPoster.href = link;
@@ -117,8 +133,72 @@ export class HighlightSeries {
             this.highlightProgressDiv.classList.add('show');
         };
 
-        this.series[index]['thumb'].classList.add('active');
+        this.series[this.seriesIndex]['thumb'].classList.add('active');
         const div = document.createElement("div");
-        this.series[index]['countDiv'].appendChild(div);
+        this.series[this.seriesIndex]['countDiv'].appendChild(div);
+        this.series[this.seriesIndex]['count']++;
+
+        if (this.series[this.seriesIndex]['count'] >= this.maxDisplayPerPoster) {
+            let index = this.seriesIndexes.indexOf(this.seriesIndex);
+            this.seriesIndexes.splice(index, 1);
+            console.log(this.seriesIndexes);
+            this.timeToChangeSeries = this.seriesIndexes.length === 0;
+        }
+    }
+
+    loadNewSeries() {
+        this.loadingDiv.classList.add('show');
+        fetch('/load-new-series', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(response => {
+            return response.json();
+        }).then(data => {
+            if (data['status'] === 'success') {
+                this.posterListDiv.replaceChildren();
+                this.series = data['series'];
+                this.count = this.series.length;
+                for (let i = 0; i < this.count; i++) {
+                    this.seriesIndexes.push(i);
+                }
+                this.series.forEach((series) => {
+                    const a = document.createElement("a");
+                    const div = document.createElement("div");
+                    const thumb = document.createElement("div");
+                    const img = document.createElement("img");
+                    const count = document.createElement("div");
+                    a.href = this.app_series_tmdb + series['id'] + "-" + series['slug'];
+                    div.classList.add('item');
+                    thumb.classList.add('poster-item');
+                    thumb.id = "thumb-" + series['id'];
+                    img.src = series['poster_path'];
+                    img.alt = series['name'];
+                    count.classList.add('count');
+                    thumb.appendChild(img);
+                    div.appendChild(thumb);
+                    div.appendChild(count);
+                    a.appendChild(div);
+                    this.posterListDiv.appendChild(a);
+                    series['thumb'] = this.highlightDiv.querySelector("#thumb-" + series['id']);
+                    series['countDiv'] = series['thumb'].parentElement.querySelector(".count");
+                    series['count'] = 0;
+                });
+                this.fetchCount++;
+                const div = document.createElement("div");
+                div.classList.add('item');
+                div.classList.add('counter');
+                const counter = document.createElement("div");
+                counter.innerText = this.fetchCount;
+                div.appendChild(counter);
+                this.posterListDiv.insertBefore(div, this.posterListDiv.firstChild);
+                this.loadingDiv.classList.remove('show');
+
+                this.seriesIndex = Math.floor(Math.random() * this.count);
+                this.setSeries(this.seriesIndex);
+                this.interval = setInterval(this.cycle.bind(this), this.intervalDuration);
+            }
+        });
     }
 }

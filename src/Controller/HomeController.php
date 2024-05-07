@@ -2,10 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Series;
 use App\Entity\User;
 use App\Entity\UserSeries;
-use App\Repository\SeriesRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeriesRepository;
 use App\Repository\WatchProviderRepository;
@@ -114,6 +112,42 @@ class HomeController extends AbstractController
         $filteredSeries = $this->getSelection($filterString, $slugger);
 //        dump(['filteredSeries' => $filteredSeries]);
 
+        $seriesSelection = $this->getSeriesSelection($slugger, $country, $timezone, $language);
+
+//        dump(['filterString' => $filterString, 'seriesSelection' => $seriesSelection]);
+
+        return $this->render('home/index.html.twig', [
+            'highlightedSeries' => $seriesSelection,
+            'userSeries' => $userSeries,
+            'lastAddedSeries' => $lastAddedSeries,
+            'historyEpisode' => $historyEpisode,
+            'historySeries' => $historySeries,
+            'userSeriesCount' => $userSeriesCount ?? 0,
+            'watchProviders' => $watchProviders,
+            'provider' => $provider,
+            'filteredSeries' => $filteredSeries,
+            'filterName' => $filterName,
+        ]);
+    }
+
+    #[Route('/load-new-series', name: 'app_home_load_new_series')]
+    public function loadNewSeries():Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $country = $user?->getCountry() ?? "FR";
+        $timezone = $user?->getTimezone() ?? "Europe/Paris";
+        $language = $user?->getPreferredLanguage() ?? "fr";
+        $seriesSelection = $this->getSeriesSelection(new AsciiSlugger(), $country, $timezone, $language);
+
+        return $this->json([
+            'status' => 'success',
+            'series' => $seriesSelection,
+        ]);
+    }
+
+    public function getSeriesSelection(AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $language = 'fr'): array
+    {
         $page = rand(1, 3);
 
         $startDate = date('Y-m-d', strtotime('-1 year'));
@@ -134,25 +168,11 @@ class HomeController extends AbstractController
         // type: possible values are: [0 Documentary, 1 News, 2 Miniseries, 3 Reality, 4 Scripted, 5 Talk Show, 6 Video], can be a comma (AND) or pipe (OR) separated query
         $filterString = "&sort_by=first_air_date.desc&page=" . $page . "with_type=0|2|4&language=" . $language . "&timezone=" . $timezone . "&watch_region=" . $country . "&include_adult=false&first_air_date.gte=" . $startDate . "&first_air_date.lte=" . $endDate . "&with_watch_monetization_types=flatrate&with_watch_providers=8|35|43|119|234|236|337|344|345|350|381";
         $seriesSelection = $this->getSelection($filterString, $slugger, $country, $timezone, $language);
+
         // array_filter pour retirer les séries sans poster & array_values() pour ré-indexer le tableau
-        $seriesSelection = array_values(array_filter($seriesSelection, function ($tv) {
+        return array_values(array_filter($seriesSelection, function ($tv) {
             return $tv['poster_path'];
         }));
-
-//        dump(['filterString' => $filterString, 'seriesSelection' => $seriesSelection]);
-
-        return $this->render('home/index.html.twig', [
-            'highlightedSeries' => $seriesSelection,
-            'userSeries' => $userSeries,
-            'lastAddedSeries' => $lastAddedSeries,
-            'historyEpisode' => $historyEpisode,
-            'historySeries' => $historySeries,
-            'userSeriesCount' => $userSeriesCount ?? 0,
-            'watchProviders' => $watchProviders,
-            'provider' => $provider,
-            'filteredSeries' => $filteredSeries,
-            'filterName' => $filterName,
-        ]);
     }
 
     public function getSelection(string $filterString, AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $preferredLanguage = 'fr'): array
