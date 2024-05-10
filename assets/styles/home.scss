@@ -142,6 +142,9 @@
                 max-width: 5vw;
 
                 &.counter {
+                    max-width: unset;
+                    width: 5vw;
+
                     div {
                         align-items: center;
                         aspect-ratio: 1;
@@ -150,9 +153,11 @@
                         border-radius: 50%;
                         color: var(--gradient-orange-90);
                         display: flex;
+                        font-size: 3vw;
+                        height: 100%;
                         justify-content: center;
                         margin-inline-end: .25rem;
-                        width: 5vw;
+                        width: 100%;
                     }
                 }
 

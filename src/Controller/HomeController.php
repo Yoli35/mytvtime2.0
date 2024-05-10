@@ -131,7 +131,7 @@ class HomeController extends AbstractController
     }
 
     #[Route('/load-new-series', name: 'app_home_load_new_series')]
-    public function loadNewSeries():Response
+    public function loadNewSeries(): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -148,25 +148,33 @@ class HomeController extends AbstractController
 
     public function getSeriesSelection(AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $language = 'fr'): array
     {
-        $page = rand(1, 3);
+        $page = rand(1, 5);
 
         $startDate = date('Y-m-d', strtotime('-1 year'));
         $endDate = date('Y-m-d', strtotime('+6 month'));
 
+        $providers = [8, 35, 43, 119, 234, 236, 337, 344, 345, 350, 381];
+        $count = count($providers);
+        $providerCountToAdd = $providers[rand(1, $count - 1)];
+        $selectedProviders = [];
+        for ($i = 0; $i < $providerCountToAdd; $i++) {
+            $providerToAdd = $providers[rand(1, $count - 1)];
+            if (!in_array($providerToAdd, $selectedProviders)) {
+                $selectedProviders[] = $providerToAdd;
+            }
+        }
+        $selectedProviders = implode('|', $selectedProviders);
         // providers: 8|35|43|119|234|236|337|344|345|350|381
-        // 8: Netflix
-        // 35: Rakuten TV
-        // 43: Starz
-        // 119: Amazon Prime Video
-        // 234: Arte
-        // 236: France TV
-        // 337: Disney Plus
-        // 344: Rakuten Viki
-        // 345: Canal+ Séries
-        // 350: Apple TV Plus
-        // 381: Canal Plus
-        // type: possible values are: [0 Documentary, 1 News, 2 Miniseries, 3 Reality, 4 Scripted, 5 Talk Show, 6 Video], can be a comma (AND) or pipe (OR) separated query
-        $filterString = "&sort_by=first_air_date.desc&page=" . $page . "with_type=0|2|4&language=" . $language . "&timezone=" . $timezone . "&watch_region=" . $country . "&include_adult=false&first_air_date.gte=" . $startDate . "&first_air_date.lte=" . $endDate . "&with_watch_monetization_types=flatrate&with_watch_providers=8|35|43|119|234|236|337|344|345|350|381";
+        // 8: Netflix           // 35: Rakuten TV        // 43: Starz            // 119: Amazon Prime Video
+        // 234: Arte            // 236: France TV        // 337: Disney Plus     // 344: Rakuten Viki
+        // 345: Canal+ Séries   // 350: Apple TV Plus    // 381: Canal Plus
+        // type: possible values are: [0 Documentary, 1 News, 2 Miniseries, 3 Reality, 4 Scripted, 5 Talk Show, 6 Video],
+        // can be a comma (AND) or pipe (OR) separated query
+        $filterString = "&sort_by=first_air_date.desc&page=$page&with_type=0|2|4&language=$language"
+            . "&timezone=$timezone&watch_region=$country&include_adult=false"
+            . "&first_air_date.gte=$startDate&first_air_date.lte=$endDate"
+            . "&with_watch_monetization_types=flatrate&with_watch_providers=$selectedProviders";
+        dump(['filterString' => $filterString]);
         $seriesSelection = $this->getSelection($filterString, $slugger, $country, $timezone, $language);
 
         // array_filter pour retirer les séries sans poster & array_values() pour ré-indexer le tableau
