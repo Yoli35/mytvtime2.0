@@ -159,7 +159,7 @@ class HomeController extends AbstractController
         // 345: Canal+ Séries   // 350: Apple TV Plus    // 381: Canal Plus
         $providers = [8, 35, 43, 119, 234, 236, 337, 344, 345, 350, 381];
         $count = count($providers);
-        $providerCountToAdd = rand(floor($count / 2), $count - 1);
+        $providerCountToAdd = rand(2, $count - 1);
 //        dump(['providerCountToAdd' => $providerCountToAdd]);
         $selectedProviders = [];
         for ($i = 0; $i < $providerCountToAdd; $i++) {
