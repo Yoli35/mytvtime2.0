@@ -792,17 +792,19 @@
                 position: relative;
 
                 .name {
+                    flex-shrink: 0;
                     font-weight: 100;
                 }
 
                 .substitute {
+                    background-color: var(--gradient-orange-40);
                     border-radius: 0.25rem;
                     font-weight: 300;
                     padding-block: 0.25rem;
                     padding-inline: 1rem;
 
-                    &.colored {
-                        background-color: var(--gradient-orange-50-alpha-50);
+                    &.watched {
+                        background-color: var(--user-episode-actions);
                     }
                 }
 

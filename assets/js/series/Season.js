@@ -200,8 +200,8 @@ export class Season {
         const editDiv = e.currentTarget;
         const nameDiv = editDiv.closest('.episode-name');
         const contentDiv = nameDiv.querySelector('.name');
-        const substituteDiv = nameDiv.querySelector('.substitute');
-        const name = substituteDiv.innerText.length ? substituteDiv.innerText : contentDiv.innerText;
+        let substituteDiv = nameDiv.querySelector('.substitute');
+        const name = substituteDiv?.innerText.length ? substituteDiv.innerText : contentDiv.innerText;
         const form = document.createElement('form');
         form.setAttribute('method', 'post');
         form.setAttribute('action', '');
@@ -237,11 +237,20 @@ export class Season {
                 })
             }).then(function (response) {
                 if (response.ok) {
-                    substituteDiv.innerText = substituteName;
+                    const needToCreateSubstitute = substituteName.length && !substituteDiv;
+                    if (needToCreateSubstitute) {
+                        substituteDiv = document.createElement('div');
+                        substituteDiv.classList.add('substitute');
+                        nameDiv.insertBefore(substituteDiv, editDiv);
+                        const episodeWatched = nameDiv.closest('.season-episode').querySelector('.remove-this-episode');
+                        if (episodeWatched) {
+                            substituteDiv.classList.add('watched');
+                        }
+                    }
                     if (substituteName.length) {
-                        substituteDiv.classList.add('colored');
+                        substituteDiv.innerText = substituteName;
                     } else {
-                        substituteDiv.classList.remove('colored');
+                        substituteDiv.remove();
                     }
                 }
                 form.remove();
@@ -344,6 +353,9 @@ export class Season {
                 quickEpisodeLink.classList.add('watched');
 
                 numberDiv.classList.add('watched');
+
+                const substituteNameDiv = episode.closest('.season-episode').querySelector('.substitute');
+                substituteNameDiv?.classList.add('watched');
 
                 const previousEpisode = episode.closest('.seasons-episodes').querySelector('.remove-this-episode[data-e-number="' + (episodeNumber - 1) + '"]');
                 const previousProvider = previousEpisode?.parentElement.querySelector('.select-provider');
@@ -499,6 +511,9 @@ export class Season {
                 quickEpisodeLink.classList.remove('watched');
 
                 numberDiv.classList.remove('watched');
+
+                const substituteNameDiv = episode.closest('.season-episode').querySelector('.substitute');
+                substituteNameDiv?.classList.add('watched');
 
                 const newEpisode = document.createElement('div');
                 newEpisode.classList.add('add-this-episode');
