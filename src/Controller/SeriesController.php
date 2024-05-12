@@ -342,12 +342,12 @@ class SeriesController extends AbstractController
         $series = $series->toArray();
         $series['schedules'] = $schedules;
 
-        dump([
-            'series' => $series,
-            'tv' => $tv,
-            'userSeries' => $userSeries,
+//        dump([
+//            'series' => $series,
+//            'tv' => $tv,
+//            'userSeries' => $userSeries,
 //            'providers' => $providers,
-        ]);
+//        ]);
         return $this->render('series/show.html.twig', [
             'series' => $series,
             'tv' => $tv,
@@ -472,13 +472,13 @@ class SeriesController extends AbstractController
 
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
-        dump([
-            'series' => $series,
-            'season' => $season,
+//        dump([
+//            'series' => $series,
+//            'season' => $season,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-        ]);
+//        ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
