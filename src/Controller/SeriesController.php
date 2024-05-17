@@ -428,7 +428,6 @@ class SeriesController extends AbstractController
         $series = $this->seriesRepository->findOneBy(['id' => $id]);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
-        $slugger = new AsciiSlugger();
 
         $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $request->getLocale(), ['credits', 'watch/providers']), true);
         if ($season['poster_path']) {
@@ -437,35 +436,7 @@ class SeriesController extends AbstractController
             $season['poster_path'] = $series->getPosterPath();
         }
         $season['deepl'] = $this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
-        $season['episodes'] = array_map(function ($episode) use ($user, $userSeries, $series, $season, $slugger) {
-            $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
-            $episode['crew'] = array_map(function ($crew) use ($slugger) {
-                $crew['profile_path'] = $crew['profile_path'] ? $this->imageConfiguration->getCompleteUrl($crew['profile_path'], 'profile_sizes', 2) : null; // w185
-                $crew['slug'] = $slugger->slug($crew['name'])->lower()->toString();
-                return $crew;
-            }, $episode['crew'] ?? []);
-            $episode['guest_stars'] = array_filter($episode['guest_stars'] ?? [], function ($guest) {
-                return key_exists('id', $guest);
-            });
-            $episode['guest_stars'] = array_map(function ($guest) use ($slugger) {
-                $guest['profile_path'] = $guest['profile_path'] ? $this->imageConfiguration->getCompleteUrl($guest['profile_path'], 'profile_sizes', 2) : null; // w185
-                $guest['slug'] = $slugger->slug($guest['name'])->lower()->toString();
-                return $guest;
-            }, $episode['guest_stars']);
-            $userEpisode = $userSeries->getEpisode($episode['id']);
-            if (!$userEpisode) {
-                $userEpisode = new UserEpisode($userSeries, $episode['id'], $season['season_number'], $episode['episode_number'], null);
-                $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris') : null;
-                $userEpisode->setAirDate($airDate);
-                $this->userEpisodeRepository->save($userEpisode);
-                $userSeries->addUserEpisode($userEpisode);
-                $this->userSeriesRepository->save($userSeries, true);
-                $userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
-            }
-            $episode['user_episode'] = $userEpisode;
-            $episode['substitute_name'] = $this->userEpisodeRepository->getSubstituteName($episode['id']);
-            return $episode;
-        }, $season['episodes']);
+        $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
         $season['credits'] = $this->castAndCrew($season);
         $season['watch/providers'] = $this->watchProviders($season, $user->getCountry() ?? 'FR');
         $season['localized_name'] = $series->getLocalizedName($request->getLocale());
@@ -1326,6 +1297,12 @@ class SeriesController extends AbstractController
             return $crew;
         }, $tv['credits']['crew'] ?? []);
 
+        usort($tv['credits']['cast'], function ($a, $b) {
+            return !$a['profile_path'] <=> !$b['profile_path'];
+        });
+        usort($tv['credits']['guest_stars'], function ($a, $b) {
+            return !$a['profile_path'] <=> !$b['profile_path'];
+        });
         usort($tv['credits']['crew'], function ($a, $b) {
             return !$a['profile_path'] <=> !$b['profile_path'];
         });
@@ -1348,6 +1325,51 @@ class SeriesController extends AbstractController
             $season['poster_path'] = $season['poster_path'] ? $this->imageConfiguration->getCompleteUrl($season['poster_path'], 'poster_sizes', 5) : null; // w500
             return $season;
         }, $seasons);
+    }
+
+    public function seasonEpisodes(array $season, UserSeries $userSeries): array
+    {
+        $user = $userSeries->getUser();
+        $slugger = new AsciiSlugger();
+        $seasonEpisodes = [];
+
+        foreach ($season['episodes'] as $episode) {
+            $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
+
+            $episode['crew'] = array_map(function ($crew) use ($slugger) {
+                $crew['profile_path'] = $crew['profile_path'] ? $this->imageConfiguration->getCompleteUrl($crew['profile_path'], 'profile_sizes', 2) : null; // w185
+                $crew['slug'] = $slugger->slug($crew['name'])->lower()->toString();
+                return $crew;
+            }, $episode['crew'] ?? []);
+
+            $episode['guest_stars'] = array_filter($episode['guest_stars'] ?? [], function ($guest) {
+                return key_exists('id', $guest);
+            });
+            usort($episode['guest_stars'], function ($a, $b) {
+                return !$a['profile_path'] <=> !$b['profile_path'];
+            });
+            $episode['guest_stars'] = array_map(function ($guest) use ($slugger) {
+                $guest['profile_path'] = $guest['profile_path'] ? $this->imageConfiguration->getCompleteUrl($guest['profile_path'], 'profile_sizes', 2) : null; // w185
+                $guest['slug'] = $slugger->slug($guest['name'])->lower()->toString();
+                return $guest;
+            }, $episode['guest_stars']);
+
+            $userEpisode = $userSeries->getEpisode($episode['id']);
+            if (!$userEpisode) {
+                $userEpisode = new UserEpisode($userSeries, $episode['id'], $season['season_number'], $episode['episode_number'], null);
+                $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris') : null;
+                $userEpisode->setAirDate($airDate);
+                $this->userEpisodeRepository->save($userEpisode);
+                $userSeries->addUserEpisode($userEpisode);
+                $this->userSeriesRepository->save($userSeries, true);
+                $userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
+            }
+
+            $episode['user_episode'] = $userEpisode;
+            $episode['substitute_name'] = $this->userEpisodeRepository->getSubstituteName($episode['id']);
+            $seasonEpisodes[] = $episode;
+        }
+        return $seasonEpisodes;
     }
 
     public function seasonLocalizedOverview($series, $season, $seasonNumber, $request): array|null

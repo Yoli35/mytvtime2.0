@@ -118,7 +118,9 @@
                                                                 {% if people.profile_path %}
                                                                     <img src="{{ people.profile_path }}" alt="{{ people.name }}">
                                                                 {% else %}
-                                                                    {{ 'No picture'|trans }}
+                                                                    <div>{{ people.character }}</div>
+                                                                    <div>{{ people.name }}</div>
+                                                                    <div>{{ 'No picture'|trans }}</div>
                                                                 {% endif %}
                                                             </div>
                                                         </div>
