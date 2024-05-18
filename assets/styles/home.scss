@@ -199,10 +199,6 @@
 
         .loading {
             align-items: center;
-            animation: spin 1s linear infinite;
-            background-color: var(--highlight-bg);
-            color: var(--highlight-color);
-            border: 1px solid var(--highlight-color);
             border-radius: 50%;
             height: 20vw;
             left: 50%;
@@ -215,6 +211,7 @@
             z-index: 1;
 
             &.show {
+                animation: spin 1s linear infinite;
                 opacity: 1;
             }
 
