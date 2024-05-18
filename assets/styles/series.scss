@@ -460,6 +460,7 @@
                 align-items: center;
                 border-radius: .25rem;
                 color: var(--gradient-ardoise-10);
+                cursor: pointer;
                 display: flex;
                 height: 2rem;
                 justify-content: center;
@@ -1061,10 +1062,11 @@
         padding-inline: 1rem;
 
         .people {
-            height: 15rem;
-            width: 9rem;
             display: flex;
             flex-direction: column;
+            height: 15rem;
+            position: relative;
+            width: 9rem;
 
             .photo {
                 align-items: center;
@@ -1119,6 +1121,13 @@
                 div {
                     text-align: center;
                 }
+            }
+
+            .google {
+                bottom: 1rem;
+                color: var(--gradient-orange-50);
+                position: absolute;
+                right: 1rem;
             }
         }
     }

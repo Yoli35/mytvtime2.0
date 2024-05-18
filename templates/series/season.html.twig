@@ -112,8 +112,8 @@
                                         <div class="guest-stars">
                                             <div class="wrapper">
                                                 {% for people in episode.guest_stars %}
-                                                    <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
-                                                        <div class="people" data-title="{{ people.name }} - {{ people.character }}">
+                                                    <div class="people" data-title="{{ people.name }} - {{ people.character }}">
+                                                        <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
                                                             <div class="photo">
                                                                 {% if people.profile_path %}
                                                                     <img src="{{ people.profile_path }}" alt="{{ people.name }}">
@@ -123,8 +123,11 @@
                                                                     <div>{{ 'No picture'|trans }}</div>
                                                                 {% endif %}
                                                             </div>
-                                                        </div>
-                                                    </a>
+                                                        </a>
+                                                        {% if people.google is defined %}
+                                                            <div class="google" data-title="{{ 'See on Google'|trans }}"><a href="{{ people.google }}" target="_blank"><i class="fab fa-google"></i></a></div>
+                                                        {% endif %}
+                                                    </div>
                                                 {% endfor %}
                                             </div>
                                         </div>

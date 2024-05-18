@@ -385,9 +385,8 @@ class SeriesController extends AbstractController
 
         $this->userSeriesRepository->remove($userSeries);
 
-        return $this->redirectToRoute('app_series_show', [
-            'id' => $series->getId(),
-            'slug' => $series->getSlug(),
+        return $this->json([
+            'ok' => true,
         ]);
     }
 
@@ -1330,6 +1329,7 @@ class SeriesController extends AbstractController
     public function seasonEpisodes(array $season, UserSeries $userSeries): array
     {
         $user = $userSeries->getUser();
+        $series = $userSeries->getSeries();
         $slugger = new AsciiSlugger();
         $seasonEpisodes = [];
 
@@ -1348,9 +1348,12 @@ class SeriesController extends AbstractController
             usort($episode['guest_stars'], function ($a, $b) {
                 return !$a['profile_path'] <=> !$b['profile_path'];
             });
-            $episode['guest_stars'] = array_map(function ($guest) use ($slugger) {
+            $episode['guest_stars'] = array_map(function ($guest) use ($slugger, $series) {
                 $guest['profile_path'] = $guest['profile_path'] ? $this->imageConfiguration->getCompleteUrl($guest['profile_path'], 'profile_sizes', 2) : null; // w185
                 $guest['slug'] = $slugger->slug($guest['name'])->lower()->toString();
+                if (!$guest['profile_path']) {
+                    $guest['google'] = 'https://www.google.com/search?q=' . urlencode($guest['name'] .' ' . $series->getName());
+                }
                 return $guest;
             }, $episode['guest_stars']);
 
