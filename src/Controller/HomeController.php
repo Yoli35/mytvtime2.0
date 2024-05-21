@@ -112,7 +112,7 @@ class HomeController extends AbstractController
         $filteredSeries = $this->getSelection($filterString, $slugger);
 //        dump(['filteredSeries' => $filteredSeries]);
 
-        $seriesSelection = $this->getSeriesSelection($slugger, $country, $timezone, $language);
+        $seriesSelection = $this->getSeriesSelection($slugger, $country, $timezone, $language, true);
 
         dump(['filterString' => $filterString, 'seriesSelection' => $seriesSelection]);
 
