@@ -60,6 +60,7 @@ class EpisodeAirDateCommand extends Command
         $count = 0;
         $episodeCount = 0;
         $newEpisodeCount = 0;
+        $totalEpisodeUpdates = 0;
         $endedSeriesStatus = ['Ended', 'Canceled'];
 
         foreach ($allUserSeries as $userSeries) {
@@ -71,23 +72,23 @@ class EpisodeAirDateCommand extends Command
             $line = sprintf('User %s - Series (%d): %s', $user->getUsername(), $series->getId(), $series->getName());
             $localizedName = $series->getLocalizedName('fr');
             if ($localizedName) {
-                $line .= ' - Localized name: ' . $localizedName->getName();
+                $line .= ' - ' . $localizedName->getName();
             }
             if ($userSeries->getProgress() == 100) {
-                $line .= 'Series already updated';//' - Serie is finished';
+                $line .= ' 👍🏻 Series already updated';
                 $this->io->writeln($line);
                 continue;
             }
             if ($series->getStatus() && in_array($series->getStatus(), $endedSeriesStatus)) {
-                $line .= ' - Serie is finished';
+                $line .= ' 🔒 Serie is finished';
                 $this->io->writeln($line);
                 continue;
             }
-            $this->io->writeln($line);
+            $this->io->write($line);
 
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $language), true);
             if ($tv === null) {
-                $this->io->error('Error while fetching TV show');
+                $this->io->warning('Error while fetching TV show');
                 continue;
             }
             $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries]);
@@ -96,7 +97,7 @@ class EpisodeAirDateCommand extends Command
                 $tvSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $language), true);
                 $episodes = $tvSeason['episodes'];
                 if (!count($episodes)) {
-                    $this->io->error('No episodes for season ' . $seasonNumber);
+                    $this->io->warning('No episodes for season ' . $seasonNumber);
                     continue;
                 }
                 foreach ($episodes as $episode) {
@@ -118,11 +119,17 @@ class EpisodeAirDateCommand extends Command
             }
             if ($episodeUpdates > 0) {
                 $this->entityManager->flush();
+                $this->io->writeln(' ✅ ' . $episodeUpdates . ' episodes updated');
+                $totalEpisodeUpdates += $episodeUpdates;
+            } else {
+                $this->io->writeln(' 🟢 No episode to update');
             }
         }
 
+        $this->io->newLine(2);
         $this->io->writeln(sprintf('Episodes: %d', $episodeCount));
         $this->io->writeln(sprintf('New episodes: %d', $newEpisodeCount));
+        $this->io->writeln(sprintf('Total episodes updated: %d', $totalEpisodeUpdates));
 
         $this->commandEnd();
 
@@ -152,6 +159,7 @@ class EpisodeAirDateCommand extends Command
     {
         $t1 = microtime(true);
         $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
+        $this->io->newLine(2);
         $this->io->writeln('Command ended at ' . $now->format('Y-m-d H:i:s'));
         $this->io->writeln(sprintf('Execution time: %.2f seconds', ($t1 - $this->t0)));
         $this->io->newLine(2);
