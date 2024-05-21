@@ -88,7 +88,8 @@ class EpisodeAirDateCommand extends Command
 
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $language), true);
             if ($tv === null) {
-                $this->io->warning('Error while fetching TV show');
+//                $this->io->warning('Error while fetching TV show');
+                $this->io->writeln(' 🚫📺 Error while fetching TV show');
                 continue;
             }
             $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries]);
@@ -97,7 +98,8 @@ class EpisodeAirDateCommand extends Command
                 $tvSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $language), true);
                 $episodes = $tvSeason['episodes'];
                 if (!count($episodes)) {
-                    $this->io->warning('No episodes for season ' . $seasonNumber);
+//                    $this->io->warning('No episodes for season ' . $seasonNumber);
+                    $this->io->writeln(' 🚫 No episodes for season ' . $seasonNumber);
                     continue;
                 }
                 foreach ($episodes as $episode) {
