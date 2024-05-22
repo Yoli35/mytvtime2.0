@@ -1322,6 +1322,17 @@
     }
 }
 
+@media (min-width: 80rem) {
+    .seasons-episodes {
+        .season-episode {
+            .still {
+                aspect-ratio: 16/9;
+                width: unset;
+            }
+        }
+    }
+}
+
 /* Rechercher une série */
 .series-search-result {
     align-items: flex-start;
