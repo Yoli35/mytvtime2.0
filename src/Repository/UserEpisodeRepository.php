@@ -93,6 +93,28 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->em->getConnection()->fetchAllAssociative($sql);
     }
 
+    public function historyEpisodeWeek(User $user, $locale): array
+    {
+        $sql = "SELECT "
+            . "  s.id as id, s.tmdb_id as tmdbId,"
+            . "	 s.`name` as name, s.`slug` as slug, sln.`name` as localizedName, sln.`slug` as localizedSlug, s.`poster_path` as posterPath, "
+            . "	 ue.`watch_at` as watchAt, ue.`quick_watch_day` as qDay, ue.`quick_watch_week` as qWeek, "
+            . "  us.`favorite` as favorite, us.`progress` as progress, "
+            . "  ue.`episode_number` as episodeNumber, ue.`season_number` as seasonNumber, "
+            . "	 p.`name` as providerName, p.`logo_path` as providerLogoPath "
+            . "FROM `user_episode` ue "
+            . "INNER JOIN `user_series` us ON us.`id` = ue.`user_series_id` "
+            . "INNER JOIN `series` s ON s.`id` = us.`series_id` "
+            . "LEFT JOIN `provider` p ON p.`provider_id`=ue.`provider_id` "
+            . "LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' "
+            . "WHERE ue.`user_id`= " . $user->getId()
+            . "    AND ue.`watch_at` IS NOT NULL "
+            . "    AND ue.`watch_at` >= DATE_SUB(NOW(), INTERVAL 14 DAY) "
+            . "ORDER BY ue.`watch_at` DESC";
+
+        return $this->em->getConnection()->fetchAllAssociative($sql);
+    }
+
     public function getLastWatchedEpisodes($userId, $limit): array
     {
         $sql = "SELECT ue.`episode_number`, ue.`season_number`, ue.`user_series_id`, ue.`watch_at` "

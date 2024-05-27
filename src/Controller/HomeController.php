@@ -72,13 +72,13 @@ class HomeController extends AbstractController
                 $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
                 return $series;
             }, $this->userEpisodeRepository->historySeries($user, $language, 1, 20));
-            // Historique des épisodes vus
+            // Historique des épisodes vus pendant les 2 semaines passées
             $historyEpisode = array_map(function ($series) {
 //                $s = $serie->homeArray();
                 $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
                 $series['providerLogoPath'] = $series['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($series['providerLogoPath'], 'logo_sizes', 2) : null;
                 return $series;
-            }, $this->userEpisodeRepository->historyEpisode($user, $language, 1, 20));
+            }, $this->userEpisodeRepository->historyEpisodeWeek($user, $language));
         } else {
             $userSeries = [];
             $lastAddedSeries = [];
