@@ -24,6 +24,7 @@ use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesLocalizedNameRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\SeriesWatchLinkRepository;
+use App\Repository\SourceRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeriesRepository;
 use App\Repository\WatchProviderRepository;
@@ -64,6 +65,7 @@ class SeriesController extends AbstractController
         private readonly SeriesRepository                   $seriesRepository,
         private readonly SeriesLocalizedNameRepository      $seriesLocalizedNameRepository,
         private readonly SeriesWatchLinkRepository          $seriesWatchLinkRepository,
+        private readonly SourceRepository                   $sourceRepository,
         private readonly TMDBService                        $tmdbService,
         private readonly TranslatorInterface                $translator,
         private readonly UserEpisodeRepository              $userEpisodeRepository,
@@ -327,8 +329,9 @@ class SeriesController extends AbstractController
 
         $tv['credits'] = $this->castAndCrew($tv);
         $tv['localized_name'] = $series->getLocalizedName($request->getLocale());
-        $tv['localized_overview'] = $series->getLocalizedOverview($request->getLocale());
+        $tv['localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
         $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
+        $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
         $tv['networks'] = $this->networks($tv);
         $tv['overview'] = $this->localizedOverview($tv, $series, $request);
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);

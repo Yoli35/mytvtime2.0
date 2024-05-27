@@ -437,6 +437,17 @@ class Series
         return null;
     }
 
+    public function getLocalizedOverviews($locale): Collection
+    {
+        $localizedOverviews = new ArrayCollection();
+        foreach ($this->seriesLocalizedOverviews as $seriesLocalizedOverview) {
+            if ($seriesLocalizedOverview->getLocale() === $locale) {
+                $localizedOverviews->add($seriesLocalizedOverview);
+            }
+        }
+        return $localizedOverviews;
+    }
+
     public function addSeriesLocalizedOverview(SeriesLocalizedOverview $seriesLocalizedOverview): static
     {
         if (!$this->seriesLocalizedOverviews->contains($seriesLocalizedOverview)) {

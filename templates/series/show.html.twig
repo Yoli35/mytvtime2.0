@@ -30,15 +30,24 @@
                     <div class="backdrop">
                         <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
                     </div>
-                    <h1>
-                        {% if tv.localized_name %}
-                            {{ tv.localized_name.name }}
-                        {% endif %}
-                        {{ series.name }} ({{ series.firstDateAir|date("Y") }})
-                        <div class="localized-name" data-title="{{ 'Suggest a name'|trans }}">
-                            <i class="fa fa-pen"></i>
+                    <div class="name">
+                        <h1>
+                            {% if tv.localized_name %}
+                                <span class="localized-name-span">{{ tv.localized_name.name }}</span>
+                            {% endif %}
+                            <span class="name-span">{{ series.name }} ({{ series.firstDateAir|date("Y") }})</span>
+                        </h1>
+                        <div class="series-tools">
+                            <div class="series-tools-click">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </div>
+                            <div class="series-tools-menu">
+                                <div id="localized-name">{{ 'Suggest a localized name'|trans }}</div>
+                                <div id="localized-overview">{{ 'Add a localized overview'|trans }}</div>
+                                <div id="additional-overview">{{ 'Add an additional overview'|trans }}</div>
+                            </div>
                         </div>
-                    </h1>
+                    </div>
                     <div class="localized-name-form">
                         <form class="form" action="" id="localized-name-form">
                             <div class="form-row">
@@ -60,6 +69,54 @@
                             </div>
                         </form>
                     </div>
+                    <div class="overview-form">
+                        <form class="form" action="" id="overview-form">
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="overview-source">{{ 'Source'|trans }}
+                                        <select name="source" id="overview-source">
+                                            <option value="">{{ 'Select a source'|trans }}</option>
+                                            {% for source in tv.sources %}
+                                                <option value="{{ source.id }}">{{ source.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="overview-field">{{ 'Overview'|trans }}
+                                        <textarea id="overview-field" rows="5" required></textarea>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <button type="button">{{ 'Cancel'|trans }}</button>
+                                    <button type="submit" value="add">{{ 'Add'|trans }}</button>
+                                </div>
+                            </div>
+                            <input type="hidden" name="tool" id="tool" value="">
+                        </form>
+                    </div>
+                    <div class="delete-overview-form">
+                        <form class="form" action="" id="delete-overview-form">
+                            <div class="form-row">
+                                <div class="form-field">
+                                    {{ 'Are you sure you want to delete this overview?'|trans }}
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <button type="button">{{ 'Cancel'|trans }}</button>
+                                    <button type="submit" value="delete">{{ 'Add'|trans }}</button>
+                                </div>
+                            </div>
+                            <input type="hidden" name="overview-type" id="overview-type" value=""> {# localized|additional #}
+                            <input type="hidden" name="overview-id" id="overview-id" value="">
+                        </form>
+                    </div>
                     <h5>
                         {% set n = series.visitNumber %}
                         {% if n > 1000 %}
@@ -67,35 +124,50 @@
                         {% endif %}
                         {{ n }} {{ (n > 1 ? 'visits':'visit')|trans }}
                     </h5>
-                    <div class="overview">{{ tv.overview }}</div>
-                    {% if tv.localized_overview %}
-                        <div class="localized overview">
-                            {{ tv.localized_overview.overview }}
-                            <div class="locale">{{ tv.localized_overview.locale|upper }}</div>
-                        </div>
+                    <div class="series-overview">{{ tv.overview }}</div>
+                    {% if tv.localized_overviews|length %}
+                        <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
+                        {% for overview in tv.localized_overviews %}
+                            <div class="localized overview">
+                                <div class="content">
+                                    {{ overview.overview|nl2br }}
+                                </div>
+                                <div class="tools">
+                                    <div class="locale">{{ overview.locale|upper }}</div>
+                                    <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}"><i class="fas fa-pen"></i></div>
+                                    <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}"><i class="fas fa-trash"></i></div>
+                                </div>
+                            </div>
+                        {% endfor %}
                     {% endif %}
                     {% if tv.additional_overviews|length %}
-                        <h4>{{ 'Additional overviews'|trans }}</h4>
+                        <h4 class="additional-h4">{{ 'Additional overviews'|trans }}</h4>
                         <div class="additional overviews">
                             {% for overview in tv.additional_overviews %}
                                 <div class="additional overview">
-                                    {{ overview.overview|nl2br }}
-                                    {% if overview.source %}
-                                        <div class="source">
-                                            {% if overview.source.path %}
-                                                <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
-                                                    {% if overview.source.LogoPath %}
-                                                        <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
-                                                    {% else %}
-                                                        {{ overview.source.name }}
-                                                    {% endif %}
-                                                </a>
-                                            {% else %}
-                                                {{ overview.source.name }}
-                                            {% endif %}
-                                        </div>
-                                        <div class="locale">{{ overview.locale|upper }}</div>
-                                    {% endif %}
+                                    <div class="content">
+                                        {{ overview.overview|nl2br }}
+                                    </div>
+                                    <div class="tools">
+                                        {% if overview.source %}
+                                            <div class="source">
+                                                {% if overview.source.path %}
+                                                    <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
+                                                        {% if overview.source.LogoPath %}
+                                                            <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
+                                                        {% else %}
+                                                            {{ overview.source.name }}
+                                                        {% endif %}
+                                                    </a>
+                                                {% else %}
+                                                    {{ overview.source.name }}
+                                                {% endif %}
+                                            </div>
+                                            <div class="locale">{{ overview.locale|upper }}</div>
+                                        {% endif %}
+                                        <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}"><i class="fas fa-pen"></i></div>
+                                        <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}"><i class="fas fa-trash"></i></div>
+                                    </div>
                                 </div>
                             {% endfor %}
                         </div>
@@ -415,7 +487,7 @@
                             <div class="fact">
                                 <div class="keywords">
                                     {% for k in tv.keywords.results %}
-                                        <div class="keyword" data-title="{{ k.name|trans([], 'keywords') }}">{{ k.name }}</div>
+                                        <div class="keyword" data-title="{{ k.name|trim|trans([], 'keywords') }}">{{ k.name }}</div>
                                     {% endfor %}
                                 </div>
                             </div>
@@ -508,7 +580,7 @@
                     }
                 }).then(function (response) {
                     if (response.ok) {
-                        window.location.href = '/' + lang + '/series/tmdb/' + {{ series.tmdbId }} + '/' + {{ series.slug }};
+                        window.location.href = '/' + lang + '/series/tmdb/' + {{ series.tmdbId }} +'/' + {{ series.slug }};
                     }
                 });
             });
@@ -594,14 +666,32 @@
                 }
             });
 
-            const localizedName = document.querySelector('.localized-name');
+            const seriesToolsClick = document.querySelector('.series-tools-click');
+            const seriesToolsMenu = document.querySelector('.series-tools-menu');
+            seriesToolsClick.addEventListener('click', function () {
+                seriesToolsMenu.classList.toggle('active');
+            });
+
+            const seriesToolsLocalizedName = document.querySelector('#localized-name');
+            const seriesToolsLocalizedOverview = document.querySelector('#localized-overview');
+            const seriesToolsAdditionalOverview = document.querySelector('#additional-overview');
+            const overviews = document.querySelectorAll('.localized.overview');
+            // const additionalOverviews = document.querySelectorAll('.additional.overview');
             const localizedNameForm = document.querySelector('.localized-name-form');
+            const overviewForm = document.querySelector('.overview-form');
+            const deleteOverviewForm = document.querySelector('.delete-overview-form');
             const lnForm = document.querySelector('#localized-name-form');
             const lnCancel = lnForm.querySelector('button[type="button"]');
             const lnDelete = lnForm.querySelector('button[value="delete"]');
             const lnAdd = lnForm.querySelector('button[value="add"]');
+            const ovForm = document.querySelector('#overview-form');
+            const ovCancel = ovForm.querySelector('button[type="button"]');
+            // const ovAdd = ovForm.querySelector('button[value="add"]');
+            const deleteOvForm = document.querySelector('#delete-overview-form');
+            const deleteOvCancel = deleteOvForm.querySelector('button[type="button"]');
+            const deleteOvDelete = deleteOvForm.querySelector('button[value="delete"]');
 
-            localizedName.addEventListener('click', function () {
+            seriesToolsLocalizedName.addEventListener('click', function () {
                 localizedNameForm.classList.add('display');
                 setTimeout(function () {
                     localizedNameForm.classList.add('active');
@@ -624,11 +714,9 @@
                     body: JSON.stringify({locale: lang})
                 }).then(function (response) {
                     if (response.ok) {
-                        localizedNameForm.classList.remove('active');
-                        setTimeout(function () {
-                            localizedNameForm.classList.remove('display');
-                        }, 300);
-                        window.location.reload();
+                        hideForm(localizedNameForm);
+                        const localizedNameSpan = document.querySelector('.localized-name-span');
+                        localizedNameSpan.remove();
                     }
                 });
             });
@@ -651,15 +739,111 @@
                         body: JSON.stringify({name: name.value})
                     }).then(function (response) {
                         if (response.ok) {
-                            localizedNameForm.classList.remove('active');
-                            setTimeout(function () {
-                                localizedNameForm.classList.remove('display');
-                            }, 300);
-                            window.location.reload();
+                            hideForm(localizedNameForm);
+                            const localizedNameSpan = document.querySelector('.localized-name-span');
+                            if (localizedNameSpan) {
+                                localizedNameSpan.textContent = name.value;
+                            } else {
+                                const nameDiv = document.querySelector('.name');
+                                const localizedNameSpan = document.createElement('span');
+                                localizedNameSpan.classList.add('localized-name-span');
+                                localizedNameSpan.textContent = name.value;
+                                nameDiv.insertBefore(localizedNameSpan, nameDiv.firstElementChild);
+                            }
                         }
                     });
                 }
             });
+
+            seriesToolsLocalizedOverview.addEventListener('click', function () {
+                const firstRow = ovForm.querySelector('.form-row:first-child');
+                const tool = ovForm.querySelector('#tool');
+                tool.value = 'add-localized-overview';
+                firstRow.classList.add('hide');
+                displayForm(overviewForm);
+            });
+
+            seriesToolsAdditionalOverview.addEventListener('click', function () {
+                const firstRow = ovForm.querySelector('.form-row:first-child');
+                const tool = ovForm.querySelector('#tool');
+                tool.value = 'add-additional-overview';
+                firstRow.classList.remove('hide');
+                displayForm(overviewForm);
+            });
+
+            ovCancel.addEventListener('click', function () {
+                hideForm(overviewForm);
+            });
+
+            if (overviews) {
+                overviews.forEach(function (localizedOverview) {
+                    const tools = localizedOverview.querySelector('.tools');
+                    const edit = tools.querySelector('.edit');
+                    const del = tools.querySelector('.delete');
+                    edit.addEventListener('click', function () {
+                        const id = this.getAttribute('data-id');
+                        const content = localizedOverview.querySelector('.content').textContent;
+                        const form = document.querySelector('.overview-form');
+                        const tool = form.querySelector('#tool');
+                        const overviewField = form.querySelector('#overview-field');
+                        tool.value = 'edit-localized-overview';
+                        tool.setAttribute('data-id', id);
+                        overviewField.value = content.trim();
+                        const firstRow = form.querySelector('.form-row:first-child');
+                        firstRow.classList.add('hide');
+                        displayForm(overviewForm);
+                    });
+                    del.addEventListener('click', function () {
+                        const id = this.getAttribute('data-id');
+                        const overviewType = deleteOverviewForm.querySelector('#overview-type');
+                        const overviewId = deleteOverviewForm.querySelector('#overview-id');
+                        overviewType.value = 'localized';
+                        overviewId.value = id;
+                        displayForm(deleteOverviewForm);
+                    });
+                });
+            }
+
+            deleteOvCancel.addEventListener('click', function () {
+                hideForm(deleteOverviewForm);
+            });
+
+            deleteOvDelete.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const overviewType = deleteOverviewForm.querySelector('#overview-type').value;
+                const overviewId = deleteOverviewForm.querySelector('#overview-id').value;
+                fetch('/' + lang + '/series/delete/' + overviewType + '/overview/' + overviewId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(function (response) {
+                    if (response.ok) {
+                        hideForm(deleteOverviewForm);
+                        const overviewDiv = document.querySelector('.delete[data-id='+overviewId+']').closest('.' + overviewType + '.overview');
+                        overviewDiv.remove();
+                        const localizedOverviewDivs = document.querySelectorAll('.' + overviewType + '.overview');
+                        if (localizedOverviewDivs.length === 0) {
+                            document.querySelector('.localized-h4').remove();
+                        }
+                    }
+                });
+            });
         });
+
+        function displayForm(form) {
+            form.classList.add('display');
+            setTimeout(function () {
+                form.classList.add('active');
+            }, 0);
+        }
+
+        function hideForm(form) {
+            form.classList.remove('active');
+            setTimeout(function () {
+                form.classList.remove('display');
+            }, 300);
+        }
     </script>
 {% endblock %}
