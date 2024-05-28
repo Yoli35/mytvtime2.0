@@ -73,7 +73,8 @@
                         <form class="form" action="" id="overview-form">
                             <div class="form-row">
                                 <div class="form-field">
-                                    <label for="overview-source">{{ 'Source'|trans }}
+                                    <label for="overview-source">{{ 'Source'|trans }} <span class="required">*</span> <span class="error"></span>
+
                                         <select name="source" id="overview-source">
                                             <option value="">{{ 'Select a source'|trans }}</option>
                                             {% for source in tv.sources %}
@@ -85,7 +86,7 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-field">
-                                    <label for="overview-field">{{ 'Overview'|trans }}
+                                    <label for="overview-field">{{ 'Overview'|trans }} <span class="required">*</span> <span class="error"></span>
                                         <textarea id="overview-field" rows="5" required></textarea>
                                         <span class="error"></span>
                                     </label>
@@ -127,24 +128,26 @@
                     <div class="series-overview">{{ tv.overview }}</div>
                     {% if tv.localized_overviews|length %}
                         <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
-                        {% for overview in tv.localized_overviews %}
-                            <div class="localized overview">
-                                <div class="content">
-                                    {{ overview.overview|nl2br }}
+                        <div class="localized overviews">
+                            {% for overview in tv.localized_overviews %}
+                                <div class="localized overview" data-id="{{ overview.id }}">
+                                    <div class="content">
+                                        {{ overview.overview|nl2br }}
+                                    </div>
+                                    <div class="tools">
+                                        <div class="locale">{{ overview.locale|upper }}</div>
+                                        <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}"><i class="fas fa-pen"></i></div>
+                                        <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}"><i class="fas fa-trash"></i></div>
+                                    </div>
                                 </div>
-                                <div class="tools">
-                                    <div class="locale">{{ overview.locale|upper }}</div>
-                                    <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}"><i class="fas fa-pen"></i></div>
-                                    <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}"><i class="fas fa-trash"></i></div>
-                                </div>
-                            </div>
-                        {% endfor %}
+                            {% endfor %}
+                        </div>
                     {% endif %}
                     {% if tv.additional_overviews|length %}
                         <h4 class="additional-h4">{{ 'Additional overviews'|trans }}</h4>
                         <div class="additional overviews">
                             {% for overview in tv.additional_overviews %}
-                                <div class="additional overview">
+                                <div class="additional overview" data-id="{{ overview.id }}">
                                     <div class="content">
                                         {{ overview.overview|nl2br }}
                                     </div>
@@ -502,16 +505,35 @@
     </div>
     <div id="globs" style="display: none">
         {
-        "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        "seriesId": {{ series.id }},
+        "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
     <script>
+        /**
+         * @typedef Globs
+         * @type {Object}
+         * @property {number} seriesId
+         * @property {Array} providers
+         * @property {Array} translations
+         */
+        /**
+         * @typedef Source
+         * @type {Object}
+         * @property {string} name
+         * @property {string} path
+         * @property {string} logoPath
+         */
         document.addEventListener('DOMContentLoaded', function () {
+            /** @var {Globs} */
             const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
             const providers = jsonGlobsObject.providers;
+            const seriesId = jsonGlobsObject.seriesId;
+            const translations = jsonGlobsObject.translations;
 
             const progressDiv = document.querySelector('.progress');
             const progressBarDiv = document.querySelector('.progress-bar');
@@ -677,8 +699,7 @@
             const seriesToolsLocalizedName = document.querySelector('#localized-name');
             const seriesToolsLocalizedOverview = document.querySelector('#localized-overview');
             const seriesToolsAdditionalOverview = document.querySelector('#additional-overview');
-            const overviews = document.querySelectorAll('.localized.overview');
-            // const additionalOverviews = document.querySelectorAll('.additional.overview');
+            const overviews = document.querySelectorAll('.overview');
             const localizedNameForm = document.querySelector('.localized-name-form');
             const overviewForm = document.querySelector('.overview-form');
             const deleteOverviewForm = document.querySelector('.delete-overview-form');
@@ -688,7 +709,7 @@
             const lnAdd = lnForm.querySelector('button[value="add"]');
             const ovForm = document.querySelector('#overview-form');
             const ovCancel = ovForm.querySelector('button[type="button"]');
-            // const ovAdd = ovForm.querySelector('button[value="add"]');
+            const ovAdd = ovForm.querySelector('button[value="add"]');
             const deleteOvForm = document.querySelector('#delete-overview-form');
             const deleteOvCancel = deleteOvForm.querySelector('button[type="button"]');
             const deleteOvDelete = deleteOvForm.querySelector('button[value="delete"]');
@@ -759,16 +780,18 @@
 
             seriesToolsLocalizedOverview.addEventListener('click', function () {
                 const firstRow = ovForm.querySelector('.form-row:first-child');
-                const tool = ovForm.querySelector('#tool');
-                tool.value = 'add-localized-overview';
+                const hiddenInputTool = ovForm.querySelector('#tool');
+                hiddenInputTool.setAttribute('data-type', 'localized');
+                hiddenInputTool.setAttribute('data-crud', 'add');
                 firstRow.classList.add('hide');
                 displayForm(overviewForm);
             });
 
             seriesToolsAdditionalOverview.addEventListener('click', function () {
                 const firstRow = ovForm.querySelector('.form-row:first-child');
-                const tool = ovForm.querySelector('#tool');
-                tool.value = 'add-additional-overview';
+                const hiddenInputTool = ovForm.querySelector('#tool');
+                hiddenInputTool.setAttribute('data-type', 'additional');
+                hiddenInputTool.setAttribute('data-crud', 'add');
                 firstRow.classList.remove('hide');
                 displayForm(overviewForm);
             });
@@ -778,28 +801,34 @@
             });
 
             if (overviews) {
-                overviews.forEach(function (localizedOverview) {
-                    const tools = localizedOverview.querySelector('.tools');
+                overviews.forEach(function (overview) {
+                    const type = overview.classList.contains('localized') ? 'localized' : 'additional';
+                    const tools = overview.querySelector('.tools');
                     const edit = tools.querySelector('.edit');
                     const del = tools.querySelector('.delete');
                     edit.addEventListener('click', function () {
                         const id = this.getAttribute('data-id');
-                        const content = localizedOverview.querySelector('.content').textContent;
+                        const content = overview.querySelector('.content').textContent;
                         const form = document.querySelector('.overview-form');
-                        const tool = form.querySelector('#tool');
+                        const hiddenInputTool = form.querySelector('#tool');
                         const overviewField = form.querySelector('#overview-field');
-                        tool.value = 'edit-localized-overview';
-                        tool.setAttribute('data-id', id);
+                        hiddenInputTool.value = id;
+                        hiddenInputTool.setAttribute('data-type', type);
+                        hiddenInputTool.setAttribute('data-crud', 'edit');
                         overviewField.value = content.trim();
                         const firstRow = form.querySelector('.form-row:first-child');
-                        firstRow.classList.add('hide');
+                        if (type === 'localized') {
+                            firstRow.classList.add('hide');
+                        } else {
+                            firstRow.classList.remove('hide');
+                        }
                         displayForm(overviewForm);
                     });
                     del.addEventListener('click', function () {
                         const id = this.getAttribute('data-id');
                         const overviewType = deleteOverviewForm.querySelector('#overview-type');
                         const overviewId = deleteOverviewForm.querySelector('#overview-id');
-                        overviewType.value = 'localized';
+                        overviewType.value = type;
                         overviewId.value = id;
                         displayForm(deleteOverviewForm);
                     });
@@ -810,24 +839,146 @@
                 hideForm(deleteOverviewForm);
             });
 
+            ovAdd.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const source = ovForm.querySelector('#overview-source');
+                const sourceError = source.closest('label').querySelector('.error');
+                const overviewField = ovForm.querySelector('#overview-field');
+                const overviewError = overviewField.closest('label').querySelector('.error');
+                const hiddenInputTool = ovForm.querySelector('#tool');
+                const errors = ovForm.querySelectorAll('.error');
+                errors.forEach(function (error) {
+                    error.textContent = '';
+                });
+                const type = hiddenInputTool.getAttribute('data-type');
+                const additional = type === 'additional';
+                if (additional && !source.value) {
+                    sourceError.textContent = '{{ 'This field is required'|trans }}';
+                    return;
+                }
+                if (!overviewField.value) {
+                    overviewError.textContent = '{{ 'This field is required'|trans }}';
+                    return;
+                }
+                let data = {source: source.value, overview: overviewField.value, type: type, crud: hiddenInputTool.getAttribute('data-crud'), locale: lang};
+
+                fetch('/' + lang + '/series/add/edit/overview/' + seriesId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                }).then(function (response) {
+                    if (response.ok) {
+                        hideForm(overviewForm);
+
+                        const infos = document.querySelector('.infos');
+                        let h4 = infos.querySelector('.' + type + '-h4'), overviewsDiv;
+                        if (!h4) {
+                            h4 = document.createElement('h4');
+                            h4.classList.add(type + '-h4');
+                            h4.textContent = type === 'localized' ? translations['Localized overviews'] : translations['Additional overviews'];
+                            infos.appendChild(h4);
+
+                            overviewsDiv = document.createElement('div');
+                            overviewsDiv.classList.add(type);
+                            overviewsDiv.classList.add('overviews');
+                            infos.appendChild(overviewsDiv);
+                        }
+                        overviewsDiv = infos.querySelector('.' + type + '.overviews');
+
+                        const newId = response.id;
+                        /** @type {Source} */
+                        const sourceRecord = response.source;
+
+                        const overviewDiv = document.createElement('div');
+                        overviewDiv.classList.add(type);
+                        overviewDiv.classList.add('overview');
+                        const contentDiv = document.createElement('div');
+                        contentDiv.classList.add('content');
+                        contentDiv.textContent = overviewField.value;
+                        overviewDiv.appendChild(contentDiv);
+
+                        const toolsDiv = document.createElement('div');
+                        toolsDiv.classList.add('tools');
+                        if (sourceRecord) {
+                            const sourceDiv = document.createElement('div');
+                            sourceDiv.classList.add('source');
+                            if (sourceRecord.path) {
+                                const sourceA = document.createElement('a');
+                                sourceA.href = sourceRecord.path;
+                                sourceA.setAttribute('data-title', sourceRecord.name);
+                                sourceA.target = '_blank';
+                                sourceA.rel = 'noopener noreferrer';
+                                sourceDiv.appendChild(sourceA);
+                                if (sourceRecord.logoPath) {
+                                    const sourceImg = document.createElement('img');
+                                    sourceImg.src = sourceRecord.logoPath;
+                                    sourceImg.alt = sourceRecord.name;
+                                    sourceA.appendChild(sourceImg);
+                                } else {
+                                    sourceA.textContent = sourceRecord.name;
+                                }
+                            } else {
+                                sourceDiv.textContent = sourceRecord.name;
+                            }
+                            toolsDiv.appendChild(sourceDiv);
+                        }
+                        const localeDiv = document.createElement('div');
+                        localeDiv.classList.add('locale');
+                        localeDiv.textContent = lang.toUpperCase();
+                        toolsDiv.appendChild(localeDiv);
+
+                        const editDiv = document.createElement('div');
+                        editDiv.classList.add('edit');
+                        editDiv.setAttribute('data-id', newId);
+                        editDiv.setAttribute('data-title', translations['Edit']);
+                        const editI = document.createElement('i');
+                        editI.classList.add('fas');
+                        editI.classList.add('fa-pen');
+                        editDiv.appendChild(editI);
+                        toolsDiv.appendChild(editDiv);
+
+                        const deleteDiv = document.createElement('div');
+                        deleteDiv.classList.add('delete');
+                        deleteDiv.setAttribute('data-id', newId);
+                        deleteDiv.setAttribute('data-title', translations['Delete']);
+                        const deleteI = document.createElement('i');
+                        deleteI.classList.add('fas');
+                        deleteI.classList.add('fa-trash');
+                        deleteDiv.appendChild(deleteI);
+                        toolsDiv.appendChild(deleteDiv);
+
+                        overviewDiv.appendChild(toolsDiv);
+
+                        overviewsDiv.appendChild(overviewDiv);
+
+                        overviewField.value = '';
+                    }
+                });
+            });
+
             deleteOvDelete.addEventListener('click', function (event) {
                 event.preventDefault();
 
                 const overviewType = deleteOverviewForm.querySelector('#overview-type').value;
                 const overviewId = deleteOverviewForm.querySelector('#overview-id').value;
-                fetch('/' + lang + '/series/delete/' + overviewType + '/overview/' + overviewId, {
+                fetch('/' + lang + '/series/delete/overview/' + overviewId, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    body: JSON.stringify({overviewType: overviewType})
                 }).then(function (response) {
                     if (response.ok) {
                         hideForm(deleteOverviewForm);
-                        const overviewDiv = document.querySelector('.delete[data-id=' + overviewId + ']').closest('.' + overviewType + '.overview');
+                        const overviewDiv = document.querySelector('.' + overviewType + '.overview[data-id="' + overviewId + '"]');
                         overviewDiv.remove();
                         const localizedOverviewDivs = document.querySelectorAll('.' + overviewType + '.overview');
                         if (localizedOverviewDivs.length === 0) {
-                            document.querySelector('.localized-h4').remove();
+                            document.querySelector('.' + overviewType + '-h4').remove();
+                            document.querySelector('.' + overviewType + '.overviews').remove();
                         }
                     }
                 });

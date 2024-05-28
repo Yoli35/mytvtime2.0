@@ -7,8 +7,10 @@ use App\DTO\SeriesSearchDTO;
 use App\Entity\EpisodeLocalizedOverview;
 use App\Entity\EpisodeSubstituteName;
 use App\Entity\Series;
+use App\Entity\SeriesAdditionalOverview;
 use App\Entity\SeriesImage;
 use App\Entity\SeriesLocalizedName;
+use App\Entity\SeriesLocalizedOverview;
 use App\Entity\SeriesWatchLink;
 use App\Entity\User;
 use App\Entity\UserEpisode;
@@ -20,8 +22,10 @@ use App\Repository\EpisodeLocalizedOverviewRepository;
 use App\Repository\EpisodeSubstituteNameRepository;
 use App\Repository\KeywordRepository;
 use App\Repository\ProviderRepository;
+use App\Repository\SeriesAdditionalOverviewRepository;
 use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesLocalizedNameRepository;
+use App\Repository\SeriesLocalizedOverviewRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\SeriesWatchLinkRepository;
 use App\Repository\SourceRepository;
@@ -61,9 +65,11 @@ class SeriesController extends AbstractController
         private readonly ImageConfiguration                 $imageConfiguration,
         private readonly KeywordRepository                  $keywordRepository,
         private readonly ProviderRepository                 $providerRepository,
+        private readonly SeriesAdditionalOverviewRepository $seriesAdditionalOverviewRepository,
         private readonly SeriesImageRepository              $seriesImageRepository,
         private readonly SeriesRepository                   $seriesRepository,
         private readonly SeriesLocalizedNameRepository      $seriesLocalizedNameRepository,
+        private readonly SeriesLocalizedOverviewRepository  $seriesLocalizedOverviewRepository,
         private readonly SeriesWatchLinkRepository          $seriesWatchLinkRepository,
         private readonly SourceRepository                   $sourceRepository,
         private readonly TMDBService                        $tmdbService,
@@ -345,6 +351,15 @@ class SeriesController extends AbstractController
         $series = $series->toArray();
         $series['schedules'] = $schedules;
 
+        $translations = [
+            'Localized overviews' => $this->translator->trans('Localized overviews'),
+            'Additional overviews' => $this->translator->trans('Additional overviews'),
+            'Edit' => $this->translator->trans('Edit'),
+            'Delete' => $this->translator->trans('Delete'),
+            'Add' => $this->translator->trans('Add'),
+            'Update' => $this->translator->trans('Update'),
+        ];
+
 //        dump([
 //            'series' => $series,
 //            'tv' => $tv,
@@ -356,6 +371,7 @@ class SeriesController extends AbstractController
             'tv' => $tv,
             'userSeries' => $userSeries,
             'providers' => $providers,
+            'translations' => $translations,
         ]);
     }
 
@@ -523,6 +539,68 @@ class SeriesController extends AbstractController
             $series->setSlug($slugger->slug($series->getName())->lower()->toString());
             $this->seriesRepository->save($series, true);
             $this->seriesLocalizedNameRepository->remove($localizedName);
+        }
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/add/edit/overview/{id}', name: 'add_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function addOverview(Request $request, int $id): Response
+    {
+        $serie = $this->seriesRepository->findOneBy(['id' => $id]);
+        $data = json_decode($request->getContent(), true);
+        $overviewType = $data['type'];
+        $overview = $data['overview'];
+        $locale = $data['locale'];
+        $source = null;
+        $overviewId = null;
+
+        if ($overviewType == "additional") {
+            $sourceId = $data['source'];
+            $source = $this->sourceRepository->findOneBy(['id' => $sourceId]);
+            $seriesAdditionalOverview = new SeriesAdditionalOverview($serie, $overview, $locale, $source);
+            $this->seriesAdditionalOverviewRepository->save($seriesAdditionalOverview, true);
+            $overviewId = $seriesAdditionalOverview->getId();
+        }
+        if ($overviewType == "localized") {
+            $seriesLocalizedOverview = new SeriesLocalizedOverview($serie, $overview, $locale);
+            $this->seriesLocalizedOverviewRepository->save($seriesLocalizedOverview, true);
+            $overviewId = $seriesLocalizedOverview->getId();
+        }
+
+        return $this->json([
+            'ok' => true,
+            'body' => [
+                'id' => $overviewId,
+                'source' => $source,
+            ]
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/delete/overview/{id}', name: 'delete_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function deleteOverview(Request $request, int $id): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $overviewType = $data['overviewType'];
+        if ($overviewType == "additional") {
+            $overview = $this->seriesAdditionalOverviewRepository->findOneBy(['id' => $id]);
+        } else {
+            $overview = $this->seriesLocalizedOverviewRepository->findOneBy(['id' => $id]);
+        }
+        if ($overview) {
+            $series = $overview->getSeries();
+            if ($overviewType == "additional") {
+                $series->removeSeriesAdditionalOverview($overview);
+                $this->seriesAdditionalOverviewRepository->remove($overview);
+            } else {
+                $series->removeSeriesLocalizedOverview($overview);
+                $this->seriesLocalizedOverviewRepository->remove($overview);
+            }
+            $this->seriesRepository->save($series, true);
         }
 
         return $this->json([
@@ -1355,7 +1433,7 @@ class SeriesController extends AbstractController
                 $guest['profile_path'] = $guest['profile_path'] ? $this->imageConfiguration->getCompleteUrl($guest['profile_path'], 'profile_sizes', 2) : null; // w185
                 $guest['slug'] = $slugger->slug($guest['name'])->lower()->toString();
                 if (!$guest['profile_path']) {
-                    $guest['google'] = 'https://www.google.com/search?q=' . urlencode($guest['name'] .' ' . $series->getName());
+                    $guest['google'] = 'https://www.google.com/search?q=' . urlencode($guest['name'] . ' ' . $series->getName());
                 }
                 return $guest;
             }, $episode['guest_stars']);

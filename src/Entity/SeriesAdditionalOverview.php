@@ -28,6 +28,14 @@ class SeriesAdditionalOverview
     #[ORM\JoinColumn(nullable: true)]
     private ?Source $source = null;
 
+    public function __construct(Series $series, string $overview, string $locale, Source $source)
+    {
+        $this->series = $series;
+        $this->overview = $overview;
+        $this->locale = $locale;
+        $this->source = $source;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

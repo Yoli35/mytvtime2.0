@@ -199,74 +199,84 @@
                 }
             }
 
-            .overview {
-                align-items: center;
+            .overviews {
                 display: flex;
-                font-size: clamp(1rem, 1vw, 2rem);
+                flex-direction: column;
                 gap: .5rem;
-                line-height: clamp(1rem, 1.1vw, 2rem);
-                justify-content: flex-start;
+                justify-content: center;
+                width: 100%;
 
-                &.localized, &.additional {
-                    border-left: 2px solid var(--gradient-orange-50);
-                    color: var(--gradient-orange-80);
-                    font-weight: 100;
-                    letter-spacing: .05rem;
-                    padding-inline-start: .5rem;
-                    position: relative;
+                .overview {
+                    align-items: center;
+                    display: flex;
+                    font-size: clamp(1rem, 1vw, 2rem);
+                    gap: .5rem;
+                    line-height: clamp(1rem, 1.1vw, 2rem);
+                    justify-content: flex-start;
+                    width: 100%;
 
-                    .content {
-                        margin-block-end: unset;
-                    }
+                    &.localized, &.additional {
+                        border-left: 2px solid var(--gradient-orange-50);
+                        color: var(--gradient-orange-80);
+                        font-weight: 100;
+                        letter-spacing: .05rem;
+                        padding-inline-start: .5rem;
+                        position: relative;
 
-                    &:hover {
-                        .tools {
-                            opacity: 1;
+                        .content {
+                            margin-block-end: unset;
                         }
-                    }
 
-                    .tools {
-                        display: flex;
-                        flex-direction: column;
-                        gap: .25rem;
-                        opacity: 0;
-                        transition: opacity 0.3s ease-in-out;
-
-                        .source, .locale, .edit, .delete {
-                            align-items: center;
-                            border-radius: .25rem;
-                            color: var(--gradient-orange-90);
-                            display: flex;
-                            font-size: 1rem;
-                            font-weight: 300;
-                            height: 1.75rem;
-                            justify-content: center;
-                            width: 1.75rem;
-
-                            img {
-                                border-radius: .25rem;
-                                height: 1.75rem;
-                                object-fit: cover;
-                                width: 1.75rem;
+                        &:hover {
+                            .tools {
+                                opacity: 1;
                             }
                         }
 
-                        .source, .locale, .edit {
-                            background-color: var(--gradient-orange-50);
-                        }
+                        .tools {
+                            display: flex;
+                            flex-direction: column;
+                            gap: .25rem;
+                            margin-inline-start: auto;
+                            opacity: 0;
+                            transition: opacity 0.3s ease-in-out;
 
-                        .edit, .delete {
-                            cursor: pointer;
-                        }
+                            .source, .locale, .edit, .delete {
+                                align-items: center;
+                                border-radius: .25rem;
+                                color: var(--gradient-orange-90);
+                                display: flex;
+                                font-size: 1rem;
+                                font-weight: 300;
+                                height: 1.75rem;
+                                justify-content: center;
+                                width: 1.75rem;
 
-                        .delete {
-                            background-color: var(--remove-this-series);
+                                img {
+                                    border-radius: .25rem;
+                                    height: 1.75rem;
+                                    object-fit: cover;
+                                    width: 1.75rem;
+                                }
+                            }
+
+                            .source, .locale, .edit {
+                                background-color: var(--gradient-orange-50);
+                            }
+
+                            .edit, .delete {
+                                cursor: pointer;
+                            }
+
+                            .delete {
+                                background-color: var(--remove-this-series);
+                            }
                         }
                     }
-                }
 
-                &.additional {
-                    margin-block-end: 1rem;
+                    &.additional {
+                        margin-block-end: 1rem;
+                    }
                 }
             }
         }

@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\SeriesAdditionalOverview;
+use App\Entity\SeriesLocalizedOverview;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,33 +18,25 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SeriesAdditionalOverviewRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $em)
     {
         parent::__construct($registry, SeriesAdditionalOverview::class);
     }
 
-    //    /**
-    //     * @return SeriesAdditionalOverview[] Returns an array of SeriesAdditionalOverview objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function save(SeriesAdditionalOverview $seriesAdditionalOverview, bool $flush = false): void
+    {
+        $this->em->persist($seriesAdditionalOverview);
 
-    //    public function findOneBySomeField($value): ?SeriesAdditionalOverview
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        if ($flush) {
+            $this->em->flush();
+        }
+    }
+
+    public function remove(?SeriesLocalizedOverview $seriesLocalizedName): void
+    {
+        if ($seriesLocalizedName) {
+            $this->em->remove($seriesLocalizedName);
+            $this->em->flush();
+        }
+    }
 }
