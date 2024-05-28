@@ -88,6 +88,8 @@
 
         .infos {
             align-items: flex-start;
+            background-color: var(--gradient-ardoise-75-alpha-25);
+            border-radius: .5rem;
             display: flex;
             flex-direction: column;
             gap: clamp(.5rem, 1vw, 2rem);
@@ -296,7 +298,7 @@
         .backdrop {
             height: 100%;
             inset: 0;
-            opacity: .125;
+            opacity: .25;
             position: absolute;
             width: 100%;
             z-index: -1;
