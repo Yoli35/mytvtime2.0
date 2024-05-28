@@ -706,6 +706,14 @@ label:has(input[type="text"]) {
         padding: .5em;
         width: fit-content;
         z-index: 2;
+
+        &:has(img) {
+            flex-direction: column;
+        }
+
+        img {
+            border-radius: .25em;
+        }
     }
 
     .tail {

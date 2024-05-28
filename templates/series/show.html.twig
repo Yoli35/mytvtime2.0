@@ -302,7 +302,9 @@
                 <div class="left">
                     <div class="all-seasons">
                         <div>{{ 'Seasons'|trans }}</div>
-                        <div class="season-order"><i class="fa-solid fa-arrow-down"></i></div>
+                        {% if tv.seasons|length > 1 %}
+                            <div class="season-order"><i class="fa-solid fa-arrow-down"></i></div>
+                        {% endif %}
                     </div>
                     <div class="seasons-episodes">
                         {% for season in tv.seasons %}
@@ -358,7 +360,7 @@
                             <div class="wrapper">
                                 {% for people in tv.credits.cast %}
                                     <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
-                                        <div class="people">
+                                        <div class="people" data-title="{{ people.name }}">
                                             <div class="photo">
                                                 {% if people.profile_path %}
                                                     <img src="{{ people.profile_path }}" alt="{{ people.name }}">
@@ -383,7 +385,7 @@
                             <div class="wrapper">
                                 {% for people in tv.credits.crew %}
                                     <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
-                                        <div class="people">
+                                        <div class="people" data-title="{{ people.name }}">
                                             <div class="photo">
                                                 {% if people.profile_path %}
                                                     <img src="{{ people.profile_path }}" alt="{{ people.name }}">
@@ -408,7 +410,7 @@
                         <div class="providers">
                             <div class="wrapper">
                                 {% for provider in tv['watch/providers'].flatrate %}
-                                    <div class="provider">
+                                    <div class="provider" data-title="{{ provider.provider_name }}">
                                         <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
                                         <div>{{ provider.provider_name }}</div>
                                     </div>
@@ -422,7 +424,7 @@
                         <div class="providers">
                             <div class="wrapper">
                                 {% for provider in tv['watch/providers'].rent %}
-                                    <div class="provider">
+                                    <div class="provider" data-title="{{ provider.provider_name }}">
                                         <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
                                         <div>{{ provider.provider_name }}</div>
                                     </div>
@@ -436,7 +438,7 @@
                         <div class="providers">
                             <div class="wrapper">
                                 {% for provider in tv['watch/providers'].buy %}
-                                    <div class="provider">
+                                    <div class="provider" data-title="{{ provider.provider_name }}">
                                         <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
                                         <div>{{ provider.provider_name }}</div>
                                     </div>
@@ -821,7 +823,7 @@
                 }).then(function (response) {
                     if (response.ok) {
                         hideForm(deleteOverviewForm);
-                        const overviewDiv = document.querySelector('.delete[data-id='+overviewId+']').closest('.' + overviewType + '.overview');
+                        const overviewDiv = document.querySelector('.delete[data-id=' + overviewId + ']').closest('.' + overviewType + '.overview');
                         overviewDiv.remove();
                         const localizedOverviewDivs = document.querySelectorAll('.' + overviewType + '.overview');
                         if (localizedOverviewDivs.length === 0) {

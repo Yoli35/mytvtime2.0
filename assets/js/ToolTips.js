@@ -45,9 +45,20 @@ export class ToolTips {
         if (tooltips.classList.contains("show")) {
             return;
         }
-        const text = evt.currentTarget.getAttribute("data-title");
+        const currentTarget = evt.currentTarget;
+        const text = currentTarget.getAttribute("data-title");
+        const img = currentTarget.querySelector("img");
         const body = tooltips.querySelector(".body");
+        if (!img) {
         body.innerHTML = text;
+        } else {
+            const imgClone = img.cloneNode(true);
+            body.innerHTML = "";
+            body.appendChild(imgClone);
+            const p = document.createElement("p");
+            p.innerHTML = text;
+            body.appendChild(p);
+        }
 
         const toolTipsBg = tooltips.style.getPropertyValue("--tooltips-bg");
         const toolTipsColor = tooltips.style.getPropertyValue("--tooltips-color");
