@@ -160,7 +160,7 @@ body {
     --navbar-bg-25: var(--gradient-ardoise-70-alpha-25);
     --navbar-bg-50: var(--gradient-ardoise-70-alpha-50);
     --navbar-bg-75: var(--gradient-ardoise-70-alpha-75);
-    --navbar-color: var(--gradient-ardoise-25-alpha-25);
+    --navbar-color: var(--gradient-ardoise-25-alpha-05);
     --navbar-color-hover: var(--gradient-ardoise-10);
     --tooltips-bg: var(--gradient-ardoise-90);
     --tooltips-color: var(--gradient-ardoise-20);
@@ -222,7 +222,6 @@ label:has(input[type="text"]) {
     height: 3rem;
     justify-content: flex-start;
     left: 0;
-    //margin-block-end: 1rem;
     padding-inline: 1rem;
     position: fixed;
     top: 1rem;
