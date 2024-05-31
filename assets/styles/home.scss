@@ -453,6 +453,22 @@
                         bottom: 0;
                         width: 100%;
 
+                        &.up-to-date {
+                            border: 2px solid var(--up-to-date-series);
+
+                            .progress-bar {
+                                border: 2px solid var(--up-to-date-series);
+                            }
+                        }
+
+                        &.that-s-all-folks {
+                            border: 2px solid var(--that-s-all-folks);
+
+                            .progress-bar {
+                                border: 2px solid var(--that-s-all-folks);
+                            }
+                        }
+
                         .progress-bar {
                             background: var(--gradient-orange-50);
                             height: .25rem;

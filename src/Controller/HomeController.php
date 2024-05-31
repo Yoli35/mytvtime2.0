@@ -58,6 +58,12 @@ class HomeController extends AbstractController
                 return $series;
             }, $userSeries);
 
+            // Episodes du jour
+            $episodesOfTheDay = array_map(function ($series) {
+                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+                $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
+                return $series;
+            }, $this->userEpisodeRepository->episodesOfTheDay($user, $language));
             // Dernières séries ajoutées
             $lastAddedSeries = array_map(function ($series) {
 //                $s = $serie->homeArray();
@@ -68,10 +74,10 @@ class HomeController extends AbstractController
             }, $this->userEpisodeRepository->lastAddedSeries($user, $language, 1, 20));
             // Historique des séries vues
             $historySeries = array_map(function ($series) {
-//                $s = $serie->homeArray();
                 $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+                $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
                 return $series;
-            }, $this->userEpisodeRepository->historySeries($user, $language, 1, 20));
+            }, $this->userEpisodeRepository->historySeries($user, $language, 1, 20));// Historique des séries vues
             // Historique des épisodes vus pendant les 2 semaines passées
             $historyEpisode = array_map(function ($series) {
 //                $s = $serie->homeArray();
@@ -81,6 +87,7 @@ class HomeController extends AbstractController
             }, $this->userEpisodeRepository->historyEpisodeWeek($user, $language));
         } else {
             $userSeries = [];
+            $episodesOfTheDay = [];
             $lastAddedSeries = [];
             $historyEpisode = [];
             $historySeries = [];
@@ -114,11 +121,16 @@ class HomeController extends AbstractController
 
         $seriesSelection = $this->getSeriesSelection($slugger, $country, $timezone, $language, true);
 
-        dump(['filterString' => $filterString, 'seriesSelection' => $seriesSelection]);
+        dump([
+            'historySeries' => $historySeries,
+            'filterString' => $filterString,
+            'seriesSelection' => $seriesSelection
+        ]);
 
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
             'userSeries' => $userSeries,
+            'episodesOfTheDay' => $episodesOfTheDay,
             'lastAddedSeries' => $lastAddedSeries,
             'historyEpisode' => $historyEpisode,
             'historySeries' => $historySeries,

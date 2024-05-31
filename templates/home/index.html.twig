@@ -67,6 +67,18 @@
             </div>
         </div>
         {% if app.user %}
+            {% if episodesOfTheDay|length %}
+                <div class="series-group">
+                    <h2>{{ 'Episodes of the day'|trans }} ({{ episodesOfTheDay|length }})</h2>
+                    <div class="wrapper">
+                        <div class="content">
+                            {% for s in episodesOfTheDay %}
+                                {{ include('_blocks/series/_history-card.html.twig', { series: s }) }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
             <div class="series-group">
                 <h2>{{ 'Your series'|trans }} ({{ userSeriesCount }})</h2>
                 <div class="wrapper">
