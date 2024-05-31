@@ -178,6 +178,11 @@
                                     <div class="back-to-top" data-title="{{ 'Back to top'|trans }}">
                                         <i class="fas fa-arrow-up"></i>
                                     </div>
+                                    <a href="{{ path('app_series_show', {id: series.id, slug: season.localized_name.slug ?? series.slug}) }}">
+                                        <div class="back-to-top" data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.localized_name %}{{ season.localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»">
+                                            <i class="fas fa-arrow-left"></i>
+                                        </div>
+                                    </a>
                                 </div>
                             </div>
                         </div>

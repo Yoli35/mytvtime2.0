@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Home'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid home">
+    </div>
+{% endblock %}
