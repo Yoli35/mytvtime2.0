@@ -575,7 +575,7 @@ class SeriesController extends AbstractController
             'ok' => true,
             'body' => [
                 'id' => $overviewId,
-                'source' => $source,
+                'source' => ['id' => $source->getId(), 'name' => $source->getName(), 'path' => $source->getPath(), 'logoPath' => $source->getLogoPath()],
             ]
         ]);
     }
@@ -1418,10 +1418,15 @@ class SeriesController extends AbstractController
             $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
 
             $episode['crew'] = array_map(function ($crew) use ($slugger) {
+                dump($crew);
+                if (key_exists('person_id', $crew)) return null;
                 $crew['profile_path'] = $crew['profile_path'] ? $this->imageConfiguration->getCompleteUrl($crew['profile_path'], 'profile_sizes', 2) : null; // w185
                 $crew['slug'] = $slugger->slug($crew['name'])->lower()->toString();
                 return $crew;
             }, $episode['crew'] ?? []);
+            $episode['crew'] = array_filter($episode['crew'], function ($crew) {
+                return $crew;
+            });
 
             $episode['guest_stars'] = array_filter($episode['guest_stars'] ?? [], function ($guest) {
                 return key_exists('id', $guest);
