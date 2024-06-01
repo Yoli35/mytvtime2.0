@@ -142,27 +142,31 @@
                                              data-e-number="{{ episode.episode_number }}"
                                              data-views="{{ episode.user_episode.numberOfView }}"
                                              data-title="{{ episode.user_episode.watchAt|format_datetime('relative_short', 'short')|capitalize }}">
-                                            <i class="fas fa-eye"></i>
+{#                                            <i class="fas fa-eye"></i>#}
+                                            {{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px'}) }}
                                         </div>
                                         <div class="select-provider" data-id="{{ episode.id }}" data-title="{{ 'Choose a provider'|trans }}">
                                             {% if episode.user_episode.providerId %}
                                                 <img src="{{ providers.logos[episode.user_episode.providerId] }}" alt="{{ providers.names[episode.user_episode.providerId] }}" data-title="{{ providers.names[episode.user_episode.providerId] }}">
                                             {% else %}
-                                                <i class="fas fa-plus"></i>
+{#                                                <i class="fas fa-plus"></i>#}
+                                                {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
                                             {% endif %}
                                         </div>
                                         <div class="select-device" data-id="{{ episode.id }}" data-title="{{ 'Choose a device'|trans }}">
                                             {% if episode.user_episode.deviceId %}
                                                 <img src="{{ deviceLogo(episode.user_episode.deviceId) }}" alt="{{ deviceName(episode.user_episode.deviceId)|trans }}" data-title="{{ deviceName(episode.user_episode.deviceId)|trans }}">
                                             {% else %}
-                                                <i class="fas fa-plus"></i>
+{#                                                <i class="fas fa-plus"></i>#}
+                                                {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
                                             {% endif %}
                                         </div>
                                         <div class="select-vote" data-id="{{ episode.id }}" data-title="{{ 'Give a rating'|trans }}">
                                             {% if episode.user_episode.vote %}
                                                 {{ episode.user_episode.vote }}
                                             {% else %}
-                                                <i class="fas fa-plus"></i>
+{#                                                <i class="fas fa-plus"></i>#}
+                                                {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
                                             {% endif %}
                                         </div>
                                     {% else %}
@@ -172,15 +176,18 @@
                                              data-s-number="{{ episode.season_number }}"
                                              data-e-number="{{ episode.episode_number }}"
                                              data-title="{{ 'Mark this episode as seen'|trans }}">
-                                            <i class="fas fa-plus"></i>
+{#                                            <i class="fas fa-plus"></i>#}
+                                            {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
                                         </div>
                                     {% endif %}
                                     <div class="back-to-top" data-title="{{ 'Back to top'|trans }}">
-                                        <i class="fas fa-arrow-up"></i>
+{#                                        <i class="fas fa-arrow-up"></i>#}
+                                        {{ ux_icon('fa6-solid:arrow-up-long', {height: '18px', width: '18px'}) }}
                                     </div>
                                     <a href="{{ path('app_series_show', {id: series.id, slug: season.localized_name.slug ?? series.slug}) }}">
-                                        <div class="back-to-top" data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.localized_name %}{{ season.localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»">
-                                            <i class="fas fa-arrow-left"></i>
+                                        <div class="back-to-series" data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.localized_name %}{{ season.localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»">
+{#                                            <i class="fas fa-arrow-left"></i>#}
+                                            {{ ux_icon('fa6-solid:arrow-left-long', {height: '18px', width: '18px'}) }}
                                         </div>
                                     </a>
                                 </div>

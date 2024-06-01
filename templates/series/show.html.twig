@@ -604,7 +604,7 @@
                     }
                 }).then(function (response) {
                     if (response.ok) {
-                        window.location.href = '/' + lang + '/series/tmdb/' + {{ series.tmdbId }} +'/' + {{ series.slug }};
+                        window.location.href = '/' + lang + '/series/tmdb/{{ series.tmdbId }}/{{ series.slug }}';
                     }
                 });
             });
@@ -767,11 +767,12 @@
                             if (localizedNameSpan) {
                                 localizedNameSpan.textContent = name.value;
                             } else {
-                                const nameDiv = document.querySelector('.name');
+                                const h1 = document.querySelector('h1');
+                                const nameSpan = document.querySelector('.name-span');
                                 const localizedNameSpan = document.createElement('span');
                                 localizedNameSpan.classList.add('localized-name-span');
                                 localizedNameSpan.textContent = name.value;
-                                nameDiv.insertBefore(localizedNameSpan, nameDiv.firstElementChild);
+                                h1.insertBefore(localizedNameSpan, nameSpan);
                             }
                         }
                     });

@@ -362,6 +362,17 @@ label:has(input[type="text"]) {
                 }
             }
 
+            a > em:has(svg) {
+                align-items: center;
+                background-color: var(--add-this-episode);
+                border-radius: .125rem;
+                display: flex;
+                height: 1.5rem;
+                justify-content: center;
+                margin-inline-end: .5rem;
+                width: 1.75rem;
+            }
+
             .separation {
                 background-color: var(--navbar-bg-75);
                 color: var(--gradient-orange-50);
