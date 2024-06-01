@@ -20,30 +20,32 @@
                     <img src="{{ highlightedSeries.0.poster_path }}" alt="{{ highlightedSeries.0.name }}">
                 </a>
             </div>
-            <div class="details">
-                <a href="{{ path('app_series_tmdb', {'id': highlightedSeries.0.id, 'slug': highlightedSeries.0.slug}) }}">
-                    <div class="name">{{ highlightedSeries.0.name }}</div>
-                </a>
-                <div class="overview">{{ highlightedSeries.0.overview }}</div>
-                <div class="providers">
-                    <div class="wrapper">
-                        {% for provider in highlightedSeries.0.watch_providers %}
-                            <div class="provider"><img src="{{ provider.logo_path }}" alt=""></div>
-                        {% endfor %}
+            <div class="infos">
+                <div class="details">
+                    <a href="{{ path('app_series_tmdb', {'id': highlightedSeries.0.id, 'slug': highlightedSeries.0.slug}) }}">
+                        <div class="name">{{ highlightedSeries.0.name }}</div>
+                    </a>
+                    <div class="overview">{{ highlightedSeries.0.overview }}</div>
+                    <div class="providers">
+                        <div class="wrapper">
+                            {% for provider in highlightedSeries.0.watch_providers %}
+                                <div class="provider"><img src="{{ provider.logo_path }}" alt=""></div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="poster-list">
-                {% for s in highlightedSeries %}
-                    <a href="{{ path('app_series_tmdb', {'id': s.id, 'slug': s.slug}) }}">
-                        <div class="item">
-                            <div class="poster-item" id="thumb-{{ s.id }}">
-                                <img src="{{ s.poster_path }}" alt="{{ s.name }}">
+                <div class="poster-list">
+                    {% for s in highlightedSeries %}
+                        <a href="{{ path('app_series_tmdb', {'id': s.id, 'slug': s.slug}) }}">
+                            <div class="item">
+                                <div class="poster-item" id="thumb-{{ s.id }}">
+                                    <img src="{{ s.poster_path }}" alt="{{ s.name }}">
+                                </div>
+                                <div class="count"></div>
                             </div>
-                            <div class="count"></div>
-                        </div>
-                    </a>
-                {% endfor %}
+                        </a>
+                    {% endfor %}
+                </div>
             </div>
             <div class="loading">
                 <div class="loading-item"></div>
@@ -73,7 +75,7 @@
                     <div class="wrapper">
                         <div class="content">
                             {% for s in episodesOfTheDay %}
-                                {{ include('_blocks/series/_history-card.html.twig', { series: s }) }}
+                                {{ include('_blocks/series/_episode-card.html.twig', { series: s }) }}
                             {% endfor %}
                         </div>
                     </div>
@@ -104,7 +106,7 @@
                 <div class="wrapper">
                     <div class="content">
                         {% for s in historySeries %}
-                            {{ include('_blocks/series/_history-card.html.twig', { series: s }) }}
+                            {{ include('_blocks/series/_episode-card.html.twig', { series: s }) }}
                         {% endfor %}
                     </div>
                 </div>

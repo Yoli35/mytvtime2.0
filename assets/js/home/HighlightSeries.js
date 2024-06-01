@@ -92,6 +92,9 @@ export class HighlightSeries {
         const providerDiv = this.highlightDiv.querySelector(".providers").querySelector(".wrapper");
         const series = this.series[this.seriesIndex];
         const link = this.app_series_tmdb + series['id'] + "-" + series['slug'];
+
+        poster.style.rotate = (5 * (Math.random() - .5)) + "deg";
+
         posterImg.src = series['poster_path'];
         aPoster.href = link;
         posterImg.alt = series['name'];

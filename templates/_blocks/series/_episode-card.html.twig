@@ -1,6 +1,19 @@
 {% set upToDate = series.upToDate is defined and series.upToDate == 1 %}
 {% set ended = series.progress==100 %}
-<div class="card">
+{% if not upToDate %}
+    {% if series.remainingEpisodes > 1 %}
+        {% set title = series.remainingEpisodes ~ ' ' ~ ('remaining episodes to see'|trans) %}
+    {% else %}
+        {% set title = series.remainingEpisodes ~ ' ' ~ ('remaining episode to see'|trans) %}
+    {% endif %}
+{% else %}
+    {% if ended %}
+        {% set title = 'That\'s all, Folks!'|trans %}
+    {% else %}
+        {% set title = 'Up to date!'|trans %}
+    {% endif %}
+{% endif %}
+<div class="card" data-title="{{ title }}">
     <a href="{{ path('app_series_season', {'id': series.id, 'seasonNumber': series.seasonNumber, 'slug': series.localizedSlug ?? series.slug }) }}#episode-{{ series.episodeNumber }}">
         <div class="poster">
             {% if series.posterPath %}
