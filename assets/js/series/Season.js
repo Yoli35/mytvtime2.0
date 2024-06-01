@@ -416,6 +416,9 @@ export class Season {
                 const backToTopLink = episode.parentElement.querySelector('.back-to-top');
                 episode.parentElement.appendChild(backToTopLink);
 
+                const backToSeriesLink = episode.parentElement.querySelector('.back-to-series').closest('a');
+                episode.parentElement.appendChild(backToSeriesLink);
+
                 episode.remove();
             }
         });
