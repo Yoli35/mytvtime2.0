@@ -48,7 +48,8 @@
                             </div>
                         {% endif %}
                         <div class="series-back-link">
-                            <i class="fas fa-arrow-left"></i>&nbsp;<span>{{ 'Back to series'|trans }}</span>
+                            {{ ux_icon('fa6-solid:arrow-left', {height: '18px', width: '18px'}) }}
+                            <span>{{ 'Back to series'|trans }}</span>
                         </div>
                     </a>
                 </div>
@@ -155,7 +156,8 @@
                                         </div>
                                         <div class="select-device" data-id="{{ episode.id }}" data-title="{{ 'Choose a device'|trans }}">
                                             {% if episode.user_episode.deviceId %}
-                                                <img src="{{ deviceLogo(episode.user_episode.deviceId) }}" alt="{{ deviceName(episode.user_episode.deviceId)|trans }}" data-title="{{ deviceName(episode.user_episode.deviceId)|trans }}">
+{#                                                <img src="{{ deviceLogo(episode.user_episode.deviceId) }}" alt="{{ deviceName(episode.user_episode.deviceId)|trans }}" data-title="{{ deviceName(episode.user_episode.deviceId)|trans }}">#}
+                                                {{ ux_icon(deviceSvg(episode.user_episode.deviceId), {height: '18px', width: '18px'}) }}
                                             {% else %}
 {#                                                <i class="fas fa-plus"></i>#}
                                                 {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
@@ -310,9 +312,15 @@
         }
         }
     </div>
-    {#    <pre> #}
-    {#        {{ dump(devices) }} #}
-    {#    </pre> #}
+    <div class="svgs" style="display: none">
+        {% for d in devices %}
+            {{ ux_icon(d.svg, {id: 'device-'~d.id, height: '18px', width: '18px'}) }}
+        {% endfor %}
+        {{ ux_icon('fa6-solid:plus', {id: 'plus', height: '18px', width: '18px'}) }}
+        {{ ux_icon('fa6-solid:eye', {id: 'eye', height: '18px', width: '18px'}) }}
+        {{ ux_icon('fa6-solid:arrow-up-long', {id: 'up', height: '18px', width: '18px'}) }}
+        {{ ux_icon('fa6-solid:arrow-left-long', {id: 'left', height: '18px', width: '18px'}) }}
+    </div>
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}

@@ -17,6 +17,7 @@ class DeviceExtension extends AbstractExtension
             // Reference: https://twig.symfony.com/doc/3.x/advanced.html#automatic-escaping
             new TwigFilter('deviceLogo', [DeviceRuntime::class, 'getDeviceLogPath']),
             new TwigFilter('deviceName', [DeviceRuntime::class, 'getDeviceName']),
+            new TwigFilter('deviceSvg', [DeviceRuntime::class, 'getDeviceSvg']),
         ];
     }
 
@@ -25,6 +26,7 @@ class DeviceExtension extends AbstractExtension
         return [
             new TwigFunction('deviceLogo', [DeviceRuntime::class, 'getDeviceLogPath']),
             new TwigFunction('deviceName', [DeviceRuntime::class, 'getDeviceName']),
+            new TwigFunction('deviceSvg', [DeviceRuntime::class, 'getDeviceSvg']),
         ];
     }
 }

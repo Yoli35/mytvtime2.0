@@ -33,4 +33,14 @@ class DeviceRuntime implements RuntimeExtensionInterface
         }
         return null;
     }
+
+    public function getDeviceSvg($id): ?string
+    {
+        foreach ($this->devices as $device) {
+            if ($device->getId() === $id) {
+                return  $device->getSvg();
+            }
+        }
+        return null;
+    }
 }

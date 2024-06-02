@@ -19,6 +19,9 @@ class Device
     #[ORM\Column(length: 255)]
     private ?string $logoPath = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $svg = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +47,18 @@ class Device
     public function setLogoPath(string $logoPath): static
     {
         $this->logoPath = $logoPath;
+
+        return $this;
+    }
+
+    public function getSvg(): ?string
+    {
+        return $this->svg;
+    }
+
+    public function setSvg(?string $svg): static
+    {
+        $this->svg = $svg;
 
         return $this;
     }

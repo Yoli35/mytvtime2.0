@@ -83,6 +83,12 @@ body {
     display: none !important;
 }
 
+.svg {
+    fill: currentColor;
+    height: 18px;
+    width: 18px;
+}
+
 .container, .container-fluid {
     display: flex;
     flex-direction: column;

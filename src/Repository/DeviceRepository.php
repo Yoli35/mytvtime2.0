@@ -26,7 +26,7 @@ class DeviceRepository extends ServiceEntityRepository
         $devices = $this->findAll();
         $deviceArray = [];
         foreach ($devices as $device) {
-            $deviceArray[] = ['id'=>$device->getId(), 'name'=>$device->getName(), 'logo_path'=>$device->getLogoPath()];
+            $deviceArray[] = ['id'=>$device->getId(), 'name'=>$device->getName(), 'logo_path'=>$device->getLogoPath(), 'svg' => $device->getSvg()];
         }
         return $deviceArray;
     }

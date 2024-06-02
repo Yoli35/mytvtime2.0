@@ -463,6 +463,10 @@
                         bottom: 0;
                         width: 100%;
 
+                        &.start-this-series {
+                            border: 2px solid var(--astart-this-series);
+                        }
+
                         &.up-to-date {
                             border: 2px solid var(--up-to-date-series);
 
