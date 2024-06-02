@@ -45,6 +45,7 @@
     "symfony/ux-dropzone": "^2.15",
     "symfony/ux-icons": "^2.17",
     "symfony/ux-turbo": "^2.15",
+    "symfony/ux-twig-component": "^2.17",
     "symfony/validator": "7.*",
     "symfony/web-link": "7.*",
     "symfony/yaml": "7.*",
