@@ -1,3 +1,7 @@
+{% if series.progress is defined %}
+    {% set start = series.progress==0 %}
+    {% set ended = series.progress==100 %}
+{% endif %}
 <div class="card">
     {% if series.tmdb is defined %}
         {% set url = path('app_series_tmdb', {'id': series.id, 'slug': series.slug }) %}
@@ -25,11 +29,11 @@
                 </div>
             {% endif %}
             {% if series.progress is defined %}
-                <div class="progress">
+                <div class="progress{% if ended %} that-s-all-folks{% endif %}{% if start %} start-this-series{% endif %}">
                     <div class="progress-bar" style="width: {{ series.progress }}%"></div>
                 </div>
             {% endif %}
-            {% if series.last_watched_series is defined%}
+            {% if series.last_watched_series is defined %}
                 <div class="episode-number watched">{{ 'S%02dE%02d'|format(series.last_season, series.last_episode) }}</div>
             {% endif %}
             {% if series.episode_of_the_day is defined %}

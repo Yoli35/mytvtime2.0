@@ -1,4 +1,5 @@
 {% set upToDate = series.upToDate is defined and series.upToDate == 1 %}
+{% set start = series.progress==0 %}
 {% set ended = series.progress==100 %}
 {% if not upToDate %}
     {% if series.remainingEpisodes > 1 %}
@@ -30,7 +31,7 @@
                     </div>
                 </div>
             {% endif %}
-            <div class="progress{% if upToDate %}{% if ended %} that-s-all-folks{% else %} up-to-date{% endif %}{% endif %}">
+            <div class="progress{% if upToDate %}{% if ended %} that-s-all-folks{% else %} up-to-date{% endif %}{% endif %}{% if start %} start-this-series{% endif %}">
                 <div class="progress-bar" style="width: {{ series.progress }}%"></div>
             </div>
             <div class="episode-number">
