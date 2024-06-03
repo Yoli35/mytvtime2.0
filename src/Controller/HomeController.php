@@ -63,7 +63,7 @@ class HomeController extends AbstractController
                 $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
                 $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
                 return $series;
-            }, $this->userEpisodeRepository->episodesOfTheDay($user, $language));
+            }, $this->userEpisodeRepository->episodesOfTheDay($user, $country));
             // Dernières séries ajoutées
             $lastAddedSeries = array_map(function ($series) {
 //                $s = $serie->homeArray();
@@ -122,13 +122,13 @@ class HomeController extends AbstractController
 
         $seriesSelection = $this->getSeriesSelection($slugger, $country, $timezone, $language, true);
 
-        dump([
-            'historySeries' => $historySeries,
-            'filterString' => $filterString,
-            'seriesSelection' => $seriesSelection,
-            'episodesOfTheDay' => $episodesOfTheDay,
-            'historyEpisode' => $historyEpisode,
-        ]);
+//        dump([
+//            'historySeries' => $historySeries,
+//            'filterString' => $filterString,
+//            'seriesSelection' => $seriesSelection,
+//            'episodesOfTheDay' => $episodesOfTheDay,
+//            'historyEpisode' => $historyEpisode,
+//        ]);
 
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
