@@ -14,6 +14,15 @@
     {% endif %}
 
     {% if app.user %}
+        {% set notificationCount = countEpisodeNotifications(app.user) %}
+        {% if notificationCount %}
+            <div class="notifications">
+                {#            <a href="{{ path('app_user_notifications') }}"> #}
+                <em>{{ ux_icon('fa6-solid:bell', {height: '18px', width: '18px'}) }}</em>
+                <span>{{ notificationCount }}</span>
+                {#            </a> #}
+            </div>
+        {% endif %}
         <div class="avatar">
             <img src="/images/users/avatars/{{ app.user.avatar }}" alt="{{ app.user.username }}">
         </div>
@@ -26,7 +35,7 @@
             <a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a>
             {% if seriesName is defined %}
                 <a href="{{ seriesLink }}">
-{#                    <i class="fas fa-arrow-left"></i>&nbsp;#}
+                    {#                    <i class="fas fa-arrow-left"></i>&nbsp; #}
                     <em>{{ ux_icon('fa6-solid:arrow-left-long', {height: '18px', width: '18px'}) }}</em>&nbsp;{{ seriesName }}
                 </a>
             {% endif %}

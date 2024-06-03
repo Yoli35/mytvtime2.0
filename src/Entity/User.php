@@ -77,11 +77,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: UserEpisode::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $userEpisodes;
 
+    /**
+     * @var Collection<int, UserEpisodeNotification>
+     */
+    #[ORM\OneToMany(targetEntity: UserEpisodeNotification::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $userEpisodeNotifications;
+
     public function __construct()
     {
         $this->series = new ArrayCollection();
         $this->providers = new ArrayCollection();
         $this->userEpisodes = new ArrayCollection();
+        $this->userEpisodeNotifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -378,6 +385,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             if ($userEpisode->getUser() === $this) {
                 $userEpisode->setUser(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserEpisodeNotification>
+     */
+    public function getUserEpisodeNotifications(): Collection
+    {
+        return $this->userEpisodeNotifications;
+    }
+
+    public function addUserEpisodeNotification(UserEpisodeNotification $userEpisodeNotification): static
+    {
+        if (!$this->userEpisodeNotifications->contains($userEpisodeNotification)) {
+            $this->userEpisodeNotifications->add($userEpisodeNotification);
+            $userEpisodeNotification->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserEpisodeNotification(UserEpisodeNotification $userEpisodeNotification): static
+    {
+        if ($this->userEpisodeNotifications->removeElement($userEpisodeNotification)) {
+            $userEpisodeNotification->removeUser($this);
         }
 
         return $this;

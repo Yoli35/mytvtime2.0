@@ -2,13 +2,20 @@
 
 namespace App\Command;
 
+use App\Entity\EpisodeNotification;
+use App\Entity\SeriesLocalizedName;
+use App\Entity\User;
 use App\Entity\UserEpisode;
+use App\Entity\UserEpisodeNotification;
+use App\Entity\UserSeries;
+use App\Repository\EpisodeNotificationRepository;
 use App\Repository\SeriesRepository;
+use App\Repository\UserEpisodeNotificationRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
 use App\Service\TMDBService;
-use Doctrine\ORM\EntityManagerInterface;
+use DateTimeImmutable;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,19 +25,26 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:episode:air-date',
-    description: 'Update user episode air date for all series or a specific one',
+    description: 'Update user episode air date for all user series or a specific one',
 )]
 class EpisodeAirDateCommand extends Command
 {
     private SymfonyStyle $io;
     private float $t0;
+    private bool $list = false;
+
+    private const string SERIES_DATE = 'series date';
+    private const string EPISODE_NEW = 'episode';
+    private const string EPISODE_DATE = 'episode date';
 
     public function __construct(
-        private readonly DateService            $dateService,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly UserEpisodeRepository  $userEpisodeRepository,
-        private readonly UserSeriesRepository   $userSeriesRepository,
-        private readonly TMDBService            $tmdbService,
+        private readonly DateService                       $dateService,
+        private readonly EpisodeNotificationRepository     $episodeNotificationRepository,
+        private readonly SeriesRepository                  $seriesRepository,
+        private readonly UserEpisodeNotificationRepository $userEpisodeNotificationRepository,
+        private readonly UserEpisodeRepository             $userEpisodeRepository,
+        private readonly UserSeriesRepository              $userSeriesRepository,
+        private readonly TMDBService                       $tmdbService,
     )
     {
         parent::__construct();
@@ -39,7 +53,8 @@ class EpisodeAirDateCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('series', 's', InputOption::VALUE_REQUIRED, 'Series ID');
+            ->addOption('series', 's', InputOption::VALUE_REQUIRED, 'User series ID')
+            ->addOption('list', 'l', InputOption::VALUE_NONE, 'List all updates');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -48,6 +63,7 @@ class EpisodeAirDateCommand extends Command
         $this->io = new SymfonyStyle($input, $output);
 
         $seriesId = $input->getOption('series');
+        $this->list = $input->getOption('list');
 
         if (!$seriesId) {
             $allUserSeries = $this->userSeriesRepository->findAll();
@@ -57,11 +73,11 @@ class EpisodeAirDateCommand extends Command
 
         $this->commandStart();
 
-        $count = 0;
         $episodeCount = 0;
         $newEpisodeCount = 0;
+        $newSeriesDateCount = 0;
         $totalEpisodeUpdates = 0;
-        $endedSeriesStatus = ['Ended', 'Canceled'];
+        $notifications = [];
 
         foreach ($allUserSeries as $userSeries) {
             $series = $userSeries->getSeries();
@@ -88,39 +104,63 @@ class EpisodeAirDateCommand extends Command
 
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $language), true);
             if ($tv === null) {
-//                $this->io->warning('Error while fetching TV show');
                 $this->io->writeln(' 🚫📺 Error while fetching TV show');
                 continue;
             }
+            if ($tv['first_air_date']) {
+                $airDate = $this->dateService->newDateImmutable($tv['first_air_date'], 'UTC');
+                if ($series->getFirstAirDate() != $airDate) {
+                    if (!$this->list) {
+                        $series->setFirstAirDate($airDate);
+                        $this->seriesRepository->save($series, true);
+                    }
+                    $notifications[] = $this->newNotification(self::SERIES_DATE, $userSeries, null, $localizedName, $airDate);
+                    $newSeriesDateCount++;
+                }
+            }
+
             $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries]);
+            $firstUnseenEpisode = $this->findFirstNotWatchedEpisode($userEpisodes);
+            $startingSeason = $firstUnseenEpisode ? $firstUnseenEpisode->getSeasonNumber() : 1;
             foreach ($tv['seasons'] as $season) {
+                if ($season['season_number'] < $startingSeason) {
+                    continue;
+                }
                 $seasonNumber = $season['season_number'];
                 $tvSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $language), true);
                 $episodes = $tvSeason['episodes'];
                 if (!count($episodes)) {
-//                    $this->io->warning('No episodes for season ' . $seasonNumber);
                     $this->io->writeln(' 🚫 No episodes for season ' . $seasonNumber);
                     continue;
                 }
                 foreach ($episodes as $episode) {
                     $episodeId = $episode['id'];
                     $episodeNumber = $episode['episode_number'];
-                    $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris') : null;
-                    $userEpisode = $this->getUserEpisode($userEpisodes, $seasonNumber, $episodeNumber);
+                    /** @var DateTimeImmutable|null $airDate */
+                    $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], 'UTC') : null;
+                    $userEpisode = $this->getUserEpisodeById($userEpisodes, $episodeId);
+
                     if (!$userEpisode) {
                         $userEpisode = new UserEpisode($userSeries, $episodeId, $seasonNumber, $episodeNumber, null);
+                        $this->userEpisodeRepository->save($userEpisode);
                         $newEpisodeCount++;
+
+                        $notifications[] = $this->newNotification(self::EPISODE_NEW, $userSeries, $episodeId, $localizedName, $airDate);
                     }
                     if ($userEpisode->getAirDate() != $airDate) {
-                        $userEpisode->setAirDate($airDate);
-                        $this->userEpisodeRepository->save($userEpisode);
+                        if (!$this->list) {
+                            $userEpisode->setAirDate($airDate);
+                            $this->userEpisodeRepository->save($userEpisode);
+                        }
+                        $notifications[] = $this->newNotification(self::EPISODE_DATE, $userSeries, $episodeId, $localizedName, $airDate);
                         $episodeUpdates++;
                     }
                     $episodeCount++;
                 }
             }
-            if ($episodeUpdates > 0) {
-                $this->entityManager->flush();
+            if ($newEpisodeCount || $episodeUpdates) {
+                $this->episodeNotificationRepository->flush();
+                $this->userEpisodeNotificationRepository->flush();
                 $this->io->writeln(' ✅ ' . $episodeUpdates . ' episodes updated');
                 $totalEpisodeUpdates += $episodeUpdates;
             } else {
@@ -129,7 +169,14 @@ class EpisodeAirDateCommand extends Command
         }
 
         $this->io->newLine(2);
-        $this->io->writeln(sprintf('Episodes: %d', $episodeCount));
+        $this->io->writeln('Notifications:');
+        foreach ($notifications as $notification) {
+            $this->io->writeln($notification);
+        }
+        $this->io->newLine(2);
+        $this->io->writeln(sprintf('Series checked: %d', count($allUserSeries)));
+        $this->io->writeln(sprintf('New series air date: %d', $newSeriesDateCount));
+        $this->io->writeln(sprintf('Episodes checked: %d', $episodeCount));
         $this->io->writeln(sprintf('New episodes: %d', $newEpisodeCount));
         $this->io->writeln(sprintf('Total episodes updated: %d', $totalEpisodeUpdates));
 
@@ -138,10 +185,55 @@ class EpisodeAirDateCommand extends Command
         return Command::SUCCESS;
     }
 
-    public function getUserEpisode($userEpisodes, $seasonNUmber, $episodeNumber): mixed
+    public function newNotification($type, UserSeries $userSeries, ?int $episodeId, ?SeriesLocalizedName $localizedName, ?DateTimeImmutable $airDate): string
+    {
+        $userEpisode = $this->getUserEpisodeById($userSeries->getUserEpisodes()->toArray(), $episodeId);
+        $seasonNumber = $userEpisode ? $userEpisode->getSeasonNumber() : 0;
+        $episodeNumber = $userEpisode ? $userEpisode->getEpisodeNumber() : 0;
+        $series = $userSeries->getSeries();
+        $user = $userSeries->getUser();
+
+        $notification = sprintf('New %s: %s (%d)', $type, $series->getName(), $series->getId());
+        if ($localizedName) {
+            $notification .= ' - ' . $localizedName->getName();
+        }
+        if ($seasonNumber && $episodeNumber) {
+            $notification .= sprintf(' - S%02dE%02d', $seasonNumber, $episodeNumber);
+        }
+        $notification .= ' - ' . ($airDate ? $airDate->format('d-m-Y') : 'Unknown');
+
+        if (!$this->list) {
+            $newRecord = new EpisodeNotification($episodeId, $notification);
+            $this->episodeNotificationRepository->save($newRecord, true);
+            $this->addUserNotification($user, $newRecord);
+        }
+
+        return $notification;
+    }
+
+    public function addUserNotification(User $user, EpisodeNotification $notification): void
+    {
+        $userEpisodeNotification = new UserEpisodeNotification($user, $notification);
+        $this->userEpisodeNotificationRepository->save($userEpisodeNotification, true);
+    }
+
+    public function getUserEpisodeById($userEpisodes, $episodeId): mixed
+    {
+        array_filter($userEpisodes, function ($userEpisode) use ($episodeId) {
+            return $userEpisode->getEpisodeId() == $episodeId;
+        });
+        foreach ($userEpisodes as $userEpisode) {
+            if ($userEpisode->getEpisodeId() == $episodeId) {
+                return $userEpisode;
+            }
+        }
+        return null;
+    }
+
+    public function findFirstNotWatchedEpisode($userEpisodes): mixed
     {
         foreach ($userEpisodes as $userEpisode) {
-            if ($userEpisode->getSeasonNumber() == $seasonNUmber && $userEpisode->getEpisodeNumber() == $episodeNumber) {
+            if ($userEpisode->getWatchAt() === null) {
                 return $userEpisode;
             }
         }

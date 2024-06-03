@@ -261,6 +261,37 @@ label:has(input[type="text"]) {
         }
     }
 
+    &:has(.notifications) {
+        .avatar {
+            margin-inline-start: .5rem;
+        }
+    }
+
+    .notifications {
+        align-items: center;
+        display: flex;
+        height: 1.5rem;
+        margin-inline-start: auto;
+
+        em {
+            color: var(--gradient-orange-50);
+        }
+
+        span {
+            align-items: center;
+            background-color: var(--gradient-orange-50);
+            border-radius: 50%;
+            color: var(--gradient-orange-90);
+            display: flex;
+            font-size: 0.5rem;
+            font-weight: 600;
+            height: 1rem;
+            justify-content: center;
+            margin-block-end: .5rem;
+            width: 1rem;
+        }
+    }
+
     .avatar {
         margin-inline-start: auto;
 
