@@ -53,8 +53,7 @@ class HomeController extends AbstractController
             $userSeriesCount = $this->userSeriesRepository->count(['user' => $user]);
 
             $userSeries = array_map(function ($series) {
-//                $s = $serie->homeArray();
-                $series['poster_path'] = $this->imageConfiguration->getCompleteUrl($series['poster_path'], 'poster_sizes', 5);
+                $series['poster_path'] = $series['poster_path'] ? $this->imageConfiguration->getCompleteUrl($series['poster_path'], 'poster_sizes', 5) : null;
                 return $series;
             }, $userSeries);
 
