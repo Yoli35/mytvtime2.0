@@ -228,6 +228,51 @@ class SeriesController extends AbstractController
 
         return $this->render('series/search.html.twig', [
             'form' => $simpleForm->createView(),
+            'title' => 'Search a series',
+            'seriesList' => $series,
+            'results' => [
+                'total_results' => $searchResult['total_results'] ?? -1,
+                'total_pages' => $searchResult['total_pages'] ?? 0,
+                'page' => $searchResult['page'] ?? 0,
+            ],
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/search/db', name: 'search_db')]
+    public function searchDB(Request $request): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $series = [];
+        $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
+        $simpleForm = $this->createForm(SeriesSearchType::class, $simpleSeriesSearch);
+
+        $simpleForm->handleRequest($request);
+        if ($simpleForm->isSubmitted() && $simpleForm->isValid()) {
+            $query = $simpleSeriesSearch->getQuery();
+            $page = $simpleSeriesSearch->getPage();
+            $firstAirDateYear = $simpleSeriesSearch->getFirstAirDateYear();
+
+            $series = array_map(function($s) {
+                $s['poster_path'] = $s['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $s['poster_path'] : null;
+                return $s;
+            }, $this->seriesRepository->search($user, $query, $firstAirDateYear, $page));
+
+            if (count($series) == 1) {
+                return $this->redirectToRoute('app_series_show', [
+                    'id' => $series[0]['id'],
+                    'slug' => $series[0]['slug'],
+                ]);
+            }
+        }
+
+        dump($series);
+
+        return $this->render('series/search.html.twig', [
+            'form' => $simpleForm->createView(),
+            'title' => 'Search among your series',
             'seriesList' => $series,
             'results' => [
                 'total_results' => $searchResult['total_results'] ?? -1,

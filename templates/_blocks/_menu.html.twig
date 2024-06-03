@@ -41,7 +41,9 @@
             {% endif %}
             <a href="{{ path('app_series_index') }}">{{ 'Series'|trans }}</a>
             <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
-            <a href="{{ path('app_series_search') }}">{{ 'Search'|trans }}</a>
+            <div class="separation">{{ 'Search'|trans }}</div>
+            <a href="{{ path('app_series_search') }}">{{ 'A series'|trans }}</a>
+            <a href="{{ path('app_series_search_db') }}">{{ 'Your series'|trans }}</a>
             <a href="{{ path('app_series_advanced_search') }}">{{ 'Advanced search'|trans }}</a>
             <div class="separation">{{ 'User'|trans }}</div>
             {% if app.user %}
