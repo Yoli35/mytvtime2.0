@@ -106,7 +106,7 @@ class UserSeriesRepository extends ServiceEntityRepository
             . "INNER JOIN `series` s ON s.`id` = us.`series_id` "
             . "LEFT JOIN `series_localized_name` sln ON s.`id` = sln.`series_id` AND sln.locale='" . $locale . "' "
             . "WHERE us.user_id=" . $user->getId() . " "
-            . "ORDER BY s.`first_date_air` DESC "
+            . "ORDER BY s.`first_air_date` DESC "
             . "LIMIT " . $perPage . " OFFSET " . ($page - 1) * $perPage;
 
         return $this->em->getConnection()->fetchAllAssociative($sql);

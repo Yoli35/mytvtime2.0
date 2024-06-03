@@ -21,13 +21,17 @@
         <div id="series-season" class="series-show">
             <div class="header">
                 <div class="poster" id="top">
+                    {% if season.poster_path %}
                     <img src="/series/posters{{ season.poster_path }}" alt="{{ series.name }} {{ season.season_number }}">
+                    {% else %}
+                    <div>{{ 'No poster'|trans }}</div>
+                    {% endif %}
                 </div>
                 <div class="infos">
                     {% if season.localized_name %}
-                        <h1>{{ season.localized_name.name }} ({{ series.firstDateAir|date("Y") }})</h1>
+                        <h1>{{ season.localized_name.name }} ({{ series.firstAirDate|date("Y") }})</h1>
                     {% else %}
-                        <h1>{{ series.name }} ({{ series.firstDateAir|date("Y") }})</h1>
+                        <h1>{{ series.name }} ({{ series.firstAirDate|date("Y") }})</h1>
                     {% endif %}
                     <h2>{{ season.name }}{% if season.season_number > 1 %} ({{ season.air_date|date("Y") }}){% endif %}</h2>
                     <div class="overview">{{ season.overview }}</div>

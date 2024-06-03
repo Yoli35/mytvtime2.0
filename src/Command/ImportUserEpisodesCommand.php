@@ -120,7 +120,7 @@ class ImportUserEpisodesCommand extends Command
                 $series->setSlug($serie['slug']);
                 $series->setOverview($serie['overview']);
                 $series->setBackdropPath($serie['backdropPath']);
-                $series->setFirstDateAir($serie['firstDateAir'] ? $this->dateService->newDateImmutable($serie['firstDateAir']['date'], $user->getTimezone() ?? 'Europe/Paris'): null);
+                $series->setFirstAirDate($serie['firstDateAir'] ? $this->dateService->newDateImmutable($serie['firstDateAir']['date'], $user->getTimezone() ?? 'Europe/Paris'): null);
                 $series->setCreatedAt($this->dateService->newDateImmutable($serie['createdAt']['date'], $user->getTimezone() ?? 'Europe/Paris'));
                 $series->setUpdatedAt($this->dateService->newDateImmutable($serie['updatedAt']['date'], $user->getTimezone() ?? 'Europe/Paris'));
                 $series->setVisitNumber($serie['visitNumber']);

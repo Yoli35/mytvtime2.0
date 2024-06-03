@@ -39,7 +39,7 @@ class Series
     private ?string $backdropPath = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $firstDateAir = null;
+    private ?\DateTimeImmutable $firstAirDate = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -189,14 +189,14 @@ class Series
         return $this;
     }
 
-    public function getFirstDateAir(): ?\DateTimeImmutable
+    public function getFirstAirDate(): ?\DateTimeImmutable
     {
-        return $this->firstDateAir;
+        return $this->firstAirDate;
     }
 
-    public function setFirstDateAir(?\DateTimeImmutable $firstDateAir): static
+    public function setFirstAirDate(?\DateTimeImmutable $firstAirDate): static
     {
-        $this->firstDateAir = $firstDateAir;
+        $this->firstAirDate = $firstAirDate;
 
         return $this;
     }
@@ -243,7 +243,7 @@ class Series
             'backdropPath' => $this->getBackdropPath(),
             'createdAt' => $this->getCreatedAt(),
             'dayOffsets' => $this->getSeriesDayOffsets()->toArray(),
-            'firstDateAir' => $this->getFirstDateAir(),
+            'firstAirDate' => $this->getFirstAirDate(),
             'id' => $this->getId(),
             'images' => $this->getSeriesImages()->toArray(),
             'localizedNames' => $this->getSeriesLocalizedNames()->toArray(),

@@ -21,7 +21,11 @@
         <div class="series-show">
             <div class="header">
                 <div class="poster">
+                    {% if series.posterPath %}
                     <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
+                    {% else %}
+                    <div>{{ 'No poster'|trans }}</div>
+                    {% endif %}
                     <div class="progress" data-value="{{ userSeries.progress }}">
                         <div class="progress-bar"></div>
                     </div>
@@ -35,7 +39,7 @@
                             {% if tv.localized_name %}
                                 <span class="localized-name-span">{{ tv.localized_name.name }}</span>
                             {% endif %}
-                            <span class="name-span">{{ series.name }} ({{ series.firstDateAir|date("Y") }})</span>
+                            <span class="name-span">{{ series.name }} ({{ series.firstAirDate|date("Y") }})</span>
                         </h1>
                         <div class="series-tools">
                             <div class="series-tools-click">

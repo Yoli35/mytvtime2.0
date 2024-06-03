@@ -1089,9 +1089,9 @@ class SeriesController extends AbstractController
             $series->setOriginalName($tv['original_name']);
             $series->addUpdate('Original name updated');
         }
-        if ($tv['first_air_date'] && !$series->getFirstDateAir()) {
-            $series->setFirstDateAir(new DatePoint($tv['first_air_date']));
-            $series->addUpdate('First date air updated');
+        if ($tv['first_air_date'] && !$series->getFirstAirDate()) {
+            $series->setFirstAirDate(new DatePoint($tv['first_air_date']));
+            $series->addUpdate('First air date updated');
         }
 
         if (strlen($tv['overview']) && strcmp($tv['overview'], $series->getOverview())) {
@@ -1208,7 +1208,7 @@ class SeriesController extends AbstractController
         $series->setOverview($tv['overview']);
         $series->setPosterPath($tv['poster_path']);
         $series->setBackdropPath($tv['backdrop_path']);
-        $series->setFirstDateAir($tv['first_air_date'] ? new DatePoint($tv['first_air_date']) : null);
+        $series->setFirstAirDate($tv['first_air_date'] ? new DatePoint($tv['first_air_date']) : null);
         $series->setVisitNumber(0);
         $series->setCreatedAt($date);
         $series->setUpdatedAt($date);
