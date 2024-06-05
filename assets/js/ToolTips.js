@@ -50,7 +50,7 @@ export class ToolTips {
         const img = currentTarget.querySelector("img");
         const body = tooltips.querySelector(".body");
         if (!img) {
-        body.innerHTML = text;
+            body.innerHTML = text;
         } else {
             const imgClone = img.cloneNode(true);
             body.innerHTML = "";
@@ -65,7 +65,7 @@ export class ToolTips {
 
         const width = body.offsetWidth;
         const height = body.offsetHeight - 48;
-        let style = "translate: " + (evt.pageX - (width / 2)) + "px " + (evt.pageY - height) + "px;";
+        let style = "translate: " + (evt.pageX - (width / 2)) + "px " + (evt.pageY - height) + "px; max-height: " + height + "px;";
         tooltips.setAttribute("style", style);
         if (toolTipsBg.length) tooltips.style.setProperty("--tooltips-bg", toolTipsBg);
         if (toolTipsColor.length) tooltips.style.setProperty("--tooltips-color", toolTipsColor);
@@ -83,16 +83,20 @@ export class ToolTips {
         const tooltips = document.querySelector(".tool-tips");
         const tail = tooltips.querySelector(".tail");
         const body = tooltips.querySelector(".body");
+        const img = body.querySelector("img");
         const width = body.offsetWidth;
         const height = body.offsetHeight - 48;
+        const fromTopViewport = evt.clientY;
         const windowWidth = window.innerWidth;
 
         const toolTipsBg = tooltips.style.getPropertyValue("--tooltips-bg");
         const toolTipsColor = tooltips.style.getPropertyValue("--tooltips-color");
 
+        if (img) img.style.maxHeight = (fromTopViewport - 64) + "px";
+
         const left = evt.pageX - (width / 2);
         if (left < 0) {
-            let style  = "translate: " + (evt.pageX - (width / 2) + (left * -1)) + "px " + (evt.pageY - height) + "px;";
+            let style = "translate: " + (evt.pageX - (width / 2) + (left * -1)) + "px " + (evt.pageY - Math.min(height, fromTopViewport)) + "px;";
             tooltips.setAttribute("style", style);
             if (toolTipsBg.length) tooltips.style.setProperty("--tooltips-bg", toolTipsBg);
             if (toolTipsColor.length) tooltips.style.setProperty("--tooltips-color", toolTipsColor);
@@ -102,7 +106,7 @@ export class ToolTips {
 
         const right = evt.pageX + (width / 2);
         if (right > windowWidth) {
-            let style = "translate: " + (evt.pageX - (width / 2) - (right - windowWidth)) + "px " + (evt.pageY - height) + "px;";
+            let style = "translate: " + (evt.pageX - (width / 2) - (right - windowWidth)) + "px " + (evt.pageY - Math.min(height, fromTopViewport)) + "px;";
             tooltips.setAttribute("style", style);
             if (toolTipsBg.length) tooltips.style.setProperty("--tooltips-bg", toolTipsBg);
             if (toolTipsColor.length) tooltips.style.setProperty("--tooltips-color", toolTipsColor);
@@ -110,7 +114,7 @@ export class ToolTips {
             return;
         }
 
-        let style = "translate: " + (evt.pageX - (width / 2)) + "px " + (evt.pageY - height) + "px;";
+        let style = "translate: " + (evt.pageX - (width / 2)) + "px " + (evt.pageY - Math.min(height, fromTopViewport)) + "px;";
         tooltips.setAttribute("style", style);
         if (toolTipsBg.length) tooltips.style.setProperty("--tooltips-bg", toolTipsBg);
         if (toolTipsColor.length) tooltips.style.setProperty("--tooltips-color", toolTipsColor);
