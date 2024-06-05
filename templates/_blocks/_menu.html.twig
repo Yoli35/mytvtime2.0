@@ -16,11 +16,17 @@
     {% if app.user %}
         {% set notificationCount = countEpisodeNotifications(app.user) %}
         {% if notificationCount %}
+            {% set notifications = listEpisodeNotifications(app.user) %}
             <div class="notifications">
                 {#            <a href="{{ path('app_user_notifications') }}"> #}
                 <em>{{ ux_icon('fa6-solid:bell', {height: '18px', width: '18px'}) }}</em>
                 <span>{{ notificationCount }}</span>
                 {#            </a> #}
+                <div class="menu">
+                    {% for n in notifications %}
+                        <div class="item">{{ n.message }}</div>
+                    {% endfor %}
+                </div>
             </div>
         {% endif %}
         <div class="avatar">

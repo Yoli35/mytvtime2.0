@@ -16,6 +16,7 @@ class EpisodeNotificationExtension extends AbstractExtension
             // parameter: ['is_safe' => ['html']]
             // Reference: https://twig.symfony.com/doc/3.x/advanced.html#automatic-escaping
             new TwigFilter('countEpisodeNotifications', [EpisodeNotificationExtensionRuntime::class, 'countEpisodeNotifications']),
+            new TwigFilter('listEpisodeNotifications', [EpisodeNotificationExtensionRuntime::class, 'listEpisodeNotifications']),
         ];
     }
 
@@ -23,6 +24,7 @@ class EpisodeNotificationExtension extends AbstractExtension
     {
         return [
             new TwigFunction('countEpisodeNotifications', [EpisodeNotificationExtensionRuntime::class, 'countEpisodeNotifications']),
+            new TwigFunction('listEpisodeNotifications', [EpisodeNotificationExtensionRuntime::class, 'listEpisodeNotifications']),
         ];
     }
 }

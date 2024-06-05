@@ -272,6 +272,7 @@ label:has(input[type="text"]) {
         display: flex;
         height: 1.5rem;
         margin-inline-start: auto;
+        position: relative;
 
         em {
             color: var(--gradient-orange-50);
@@ -289,6 +290,44 @@ label:has(input[type="text"]) {
             justify-content: center;
             margin-block-end: .5rem;
             width: 1rem;
+        }
+
+        .menu {
+            background-color: var(--navbar-bg);
+            border: 1px solid var(--navbar-bg-75);
+            border-radius: 0 0 .25rem .25rem;
+            display: none;
+            flex-direction: column;
+            max-height: calc(30vh - 5rem);
+            opacity: 0;
+            overflow-y: auto;
+            position: absolute;
+            right: 0;
+            top: 2rem;
+
+            &.show {
+                display: flex;
+                opacity: 1;
+                transition: opacity .250ms ease-in-out;
+            }
+
+            .item {
+                align-items: center;
+                border-radius: .25rem;
+                color: var(--navbar-color-hover);
+                display: flex;
+                flex-shrink: 0;
+                height: 2rem;
+                justify-content: flex-start;
+                padding-inline: 1rem;
+                white-space: nowrap;
+                width: 100%;
+
+                &:hover {
+                    background-color: var(--gradient-orange-50);
+                    color: var(--gradient-orange-90);
+                }
+            }
         }
     }
 

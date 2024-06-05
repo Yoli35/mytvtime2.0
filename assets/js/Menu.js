@@ -1,5 +1,5 @@
-
 let gThis = null;
+
 export class Menu {
     constructor() {
         gThis = this;
@@ -23,11 +23,17 @@ export class Menu {
         const burger = document.querySelector(".burger");
         const navbar = document.querySelector(".navbar");
         const body = document.querySelector("body");
+        const notifications = document.querySelector(".notifications");
 
         burger.addEventListener("click", () => {
             burger.classList.toggle("open");
             navbar.classList.toggle("active");
             body.classList.toggle("frozen");
+        });
+
+        notifications?.addEventListener("click", () => {
+            const menu = notifications.querySelector(".menu");
+            menu.classList.toggle("show");
         });
 
         document.addEventListener("click", (e) => {
@@ -37,6 +43,14 @@ export class Menu {
                 body.classList.remove("frozen");
                 e.stopPropagation();
                 e.preventDefault();
+            }
+            if (notifications?.querySelector(".menu").classList.contains("show")) {
+                const menu = notifications.querySelector(".menu");
+                if (!menu.contains(e.target) && !notifications.contains(e.target)) {
+                    menu.classList.remove("show");
+                    e.stopPropagation();
+                    e.preventDefault();
+                }
             }
         });
 

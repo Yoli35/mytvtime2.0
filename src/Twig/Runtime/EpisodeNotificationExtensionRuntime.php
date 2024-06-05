@@ -18,4 +18,9 @@ readonly class EpisodeNotificationExtensionRuntime implements RuntimeExtensionIn
         $count = $this->episodeNotificationRepository->episodeNotificationCount($user);
         return $count[0]['count'];
     }
+
+    public function listEpisodeNotifications(User $user): array
+    {
+        return $this->episodeNotificationRepository->episodeNotificationList($user);
+    }
 }
