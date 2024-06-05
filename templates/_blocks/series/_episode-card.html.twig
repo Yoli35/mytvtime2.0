@@ -37,6 +37,9 @@
             <div class="episode-number">
                 {{ 'S%02dE%02d'|format(series.seasonNumber, series.episodeNumber) }}
             </div>
+            {% if upToDate %}
+                <div class="up-to-date-banner{% if ended %} ended{% endif %}">{{ 'Up to date!'|trans }}</div>
+            {% endif %}
             {% if series.favorite %}
                 <div class="favorite">
                     <i class="fas fa-heart"></i>

@@ -420,6 +420,7 @@
                     flex-shrink: 0;
                     height: 15rem;
                     justify-content: center;
+                    overflow: hidden;
                     position: relative;
                     width: 10rem;
 
@@ -488,6 +489,22 @@
                             height: .25rem;
                             transition: width 20s linear;
                             width: 0;
+                        }
+                    }
+
+                    .up-to-date-banner {
+                        background-color: var(--up-to-date-series);
+                        color: var(--gradient-green-50);
+                        padding: .25rem;
+                        position: absolute;
+                        right: -3rem;
+                        top: 1rem;
+                        transform: rotate(45deg);
+                        width: 10rem;
+
+                        &.ended {
+                            background-color: var(--that-s-all-folks);
+                            color: var(--up-to-date-series);
                         }
                     }
 
