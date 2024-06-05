@@ -185,7 +185,7 @@ class EpisodeAirDateCommand extends Command
         return Command::SUCCESS;
     }
 
-    public function newNotification($type, UserSeries $userSeries, ?int $episodeId, ?SeriesLocalizedName $localizedName, ?DateTimeImmutable $airDate): string
+    public function newNotification(string $type, UserSeries $userSeries, ?int $episodeId, ?SeriesLocalizedName $localizedName, ?DateTimeImmutable $airDate): string
     {
         $userEpisode = $this->getUserEpisodeById($userSeries->getUserEpisodes()->toArray(), $episodeId);
         $seasonNumber = $userEpisode ? $userEpisode->getSeasonNumber() : 0;
@@ -193,14 +193,14 @@ class EpisodeAirDateCommand extends Command
         $series = $userSeries->getSeries();
         $user = $userSeries->getUser();
 
-        $notification = sprintf('New %s: %s (%d)', $type, $series->getName(), $series->getId());
+        $notification = sprintf('New %s: %s', $type, $series->getName());
         if ($localizedName) {
             $notification .= ' - ' . $localizedName->getName();
         }
         if ($seasonNumber && $episodeNumber) {
             $notification .= sprintf(' - S%02dE%02d', $seasonNumber, $episodeNumber);
         }
-        $notification .= ' - ' . ($airDate ? $airDate->format('d-m-Y') : 'Unknown');
+        $notification .= ' - ' . ($airDate ? $airDate->format('d/m/Y') : 'Unknown');
 
         if (!$this->list) {
             $newRecord = new EpisodeNotification($episodeId, $notification);

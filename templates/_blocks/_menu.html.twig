@@ -24,7 +24,16 @@
                 {#            </a> #}
                 <div class="menu">
                     {% for n in notifications %}
-                        <div class="item">{{ n.message }}</div>
+                        {% set message = n.message|replace({
+                            'New episode date': 'New episode date'|trans,
+                            'New episode': 'New episode'|trans,
+                            'New series date': 'New series date'|trans,
+                            'Unknown': 'Unknown'|trans,
+                        }) %}
+                        <div class="item" data-id="{{ n.id }}" title="{{ message }}">
+                            <div class="message">{{ message }}</div>
+                            <div class="date">{{ n.created_at|format_date('relative_short') }}</div>
+                        </div>
                     {% endfor %}
                 </div>
             </div>

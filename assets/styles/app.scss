@@ -269,9 +269,11 @@ label:has(input[type="text"]) {
 
     .notifications {
         align-items: center;
+        border-radius: .25rem;
         display: flex;
-        height: 1.5rem;
+        height: 2rem;
         margin-inline-start: auto;
+        padding-inline: .5rem;
         position: relative;
 
         em {
@@ -292,13 +294,29 @@ label:has(input[type="text"]) {
             width: 1rem;
         }
 
+        &:has(.menu.show) {
+            background-color: var(--gradient-orange-50);
+            color: var(--gradient-orange-90);
+
+            em {
+                color: var(--gradient-orange-90);
+            }
+
+
+            span {
+                background-color: var(--gradient-green-50);
+                color: var(--gradient-green-10);
+            }
+        }
+
         .menu {
             background-color: var(--navbar-bg);
-            border: 1px solid var(--navbar-bg-75);
-            border-radius: 0 0 .25rem .25rem;
+            border: 1px solid var(--navbar-bg-90);
+            border-radius: .25rem;
             display: none;
             flex-direction: column;
-            max-height: calc(30vh - 5rem);
+            max-height: 30vh;
+            max-width: calc(100vw - 6rem);
             opacity: 0;
             overflow-y: auto;
             position: absolute;
@@ -317,15 +335,29 @@ label:has(input[type="text"]) {
                 color: var(--navbar-color-hover);
                 display: flex;
                 flex-shrink: 0;
+                gap: .5rem;
                 height: 2rem;
                 justify-content: flex-start;
                 padding-inline: 1rem;
-                white-space: nowrap;
                 width: 100%;
 
                 &:hover {
                     background-color: var(--gradient-orange-50);
                     color: var(--gradient-orange-90);
+                }
+
+                .message {
+                    flex-grow: 0;
+                    flex-shrink: 1;
+                    overflow-x: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                .date {
+                    flex-shrink: 0;
+                    font-size: .75rem;
+                    margin-inline-start: auto;
                 }
             }
         }

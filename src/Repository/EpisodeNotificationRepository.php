@@ -45,7 +45,7 @@ class EpisodeNotificationRepository extends ServiceEntityRepository
 
     public function episodeNotificationList(User $user): array
     {
-        $sql = "SELECT en.message as message, en.create_at as created_at "
+        $sql = "SELECT uen.id as id, en.message as message, en.create_at as created_at "
             . "FROM episode_notification en "
             . "INNER JOIN user_episode_notification uen ON en.id = uen.episode_notification_id AND uen.user_id = :user_id "
             . "AND uen.validated_at IS NULL "
