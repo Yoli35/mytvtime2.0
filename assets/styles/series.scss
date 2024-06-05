@@ -823,6 +823,7 @@
             height: 100%;
             justify-content: center;
             position: relative;
+            transition: width 0.3s ease-in-out;
             width: 10rem;
 
             img {
@@ -845,6 +846,7 @@
                 justify-content: center;
                 position: absolute;
                 right: .5rem;
+                transition: font-size  0.3s ease-in-out, height 0.3s ease-in-out, width 0.3s ease-in-out;
                 width: 2rem;
 
                 &.watched {
@@ -1414,6 +1416,14 @@
             .still {
                 aspect-ratio: 16/9;
                 width: unset;
+
+                .number {
+                    font-size: 3rem;
+                    height: 4rem;
+                    width: 4rem;
+
+                }
+
             }
         }
     }
