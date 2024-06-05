@@ -495,7 +495,8 @@
                     .up-to-date-banner {
                         background-color: var(--up-to-date-series);
                         color: var(--gradient-green-50);
-                        padding: .25rem;
+                        font-weight: 600;
+                        padding: .125rem;
                         position: absolute;
                         right: -3rem;
                         top: 1rem;
