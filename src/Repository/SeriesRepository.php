@@ -32,7 +32,7 @@ class SeriesRepository extends ServiceEntityRepository
         }
     }
 
-    public function search(User $user, string $query, ?int $firstAirDateYear, int $page = 1)
+    public function search(User $user, string $query, ?int $firstAirDateYear, int $page = 1): array
     {
         $userId = $user->getId();
         $offset = ($page - 1) * 20;
