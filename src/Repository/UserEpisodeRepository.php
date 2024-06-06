@@ -1,10 +1,11 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Repository;
 
 use App\Entity\User;
 use App\Entity\UserEpisode;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -52,7 +53,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
             . "ORDER BY us.`added_at` DESC "
             . "LIMIT $perPage OFFSET " . ($page - 1) * $perPage;
 
-        return $this->em->getConnection()->fetchAllAssociative($sql);
+        return $this->getAll($sql);
     }
 
     public function historySeries(User $user, $locale, $page, $perPage): array
@@ -80,11 +81,12 @@ class UserEpisodeRepository extends ServiceEntityRepository
             . "ORDER BY us.`last_watch_at` DESC "
             . "LIMIT $perPage OFFSET " . ($page - 1) * $perPage;
 
-        return $this->em->getConnection()->fetchAllAssociative($sql);
+        return $this->getAll($sql);
     }
 
-    public function episodesOfTheDay(User $user, $country = 'FR'): array
+    public function episodesOfTheDay(User $user, string $country = 'FR', string $locale='fr'): array
     {
+        $userId = $user->getId();
         $sql = "SELECT "
             . "       s.id                                   as id, "
             . "       s.name                                 as name, "
@@ -94,6 +96,9 @@ class UserEpisodeRepository extends ServiceEntityRepository
             . "       s.poster_path                          as posterPath, "
             . "       us.favorite                            as favorite, "
             . "       us.progress                            as progress, "
+            . "       ue.`episode_number`                    as episodeNumber, "
+            . "       ue.`season_number`                     as seasonNumber, "
+            . "       ue.`watch_at`                          as watchAt, "
             . "       (SELECT count(*) "
             . "        FROM user_episode ue "
             . "        WHERE ue.user_series_id = us.id "
@@ -112,8 +117,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
             . "       INNER JOIN user_series us ON s.id = us.series_id "
             . "       INNER JOIN user_episode ue ON us.id = ue.user_series_id "
             . "       LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'"
-            . "       LEFT JOIN series_localized_name sln ON s.id = sln.series_id "
-            . "WHERE us.user_id =  " . $user->getId() . " "
+            . "       LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'"
+            . "WHERE us.user_id = $userId "
             . "       AND ue.season_number > 0 "
             . "       AND ( "
             . "           ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.air_date = CURDATE()) "
@@ -122,7 +127,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
             . "           ) "
             . "ORDER BY us.last_watch_at DESC ";
 
-        return $this->em->getConnection()->fetchAllAssociative($sql);
+        return $this->getAll($sql);
     }
 
     public function historyEpisode(User $user, int $dayCount, string $locale): array
@@ -155,27 +160,17 @@ class UserEpisodeRepository extends ServiceEntityRepository
             . "       WHERE ue.user_series_id = us.id "
             . "         AND ue.season_number > 0 "
             . "         AND ue.air_date <= CURDATE())       as aired_episode_count "
-            . "FROM `user_episode` ue "
+            . " FROM `user_episode` ue "
             . "      INNER JOIN `user_series` us ON us.`id` = ue.`user_series_id` "
             . "      INNER JOIN `series` s ON s.`id` = us.`series_id` "
             . "      LEFT JOIN `provider` p ON p.`provider_id`=ue.`provider_id` "
             . "      LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' "
-            . "WHERE ue.`user_id`= " . $user->getId()
+            . " WHERE ue.`user_id`= " . $user->getId()
             . "      AND ue.`watch_at` IS NOT NULL "
             . "      AND ue.`watch_at` >= DATE_SUB(NOW(), INTERVAL $dayCount DAY) "
-            . "ORDER BY ue.`watch_at` DESC";
+            . " ORDER BY ue.`watch_at` DESC";
 
-        return $this->em->getConnection()->fetchAllAssociative($sql);
-    }
-
-    public function getLastWatchedEpisodes($userId, $limit): array
-    {
-        $sql = "SELECT ue.`episode_number`, ue.`season_number`, ue.`user_series_id`, ue.`watch_at` "
-            . "FROM `user_episode` ue "
-            . "WHERE ue.`user_id`=$userId AND ue.`watch_at` IS NOT NULL "
-            . "ORDER BY ue.`watch_at` DESC "
-            . "LIMIT $limit";
-        return $this->em->getConnection()->fetchAllAssociative($sql);
+        return $this->getAll($sql);
     }
 
     public function getSubstituteName(int $id): mixed
@@ -183,7 +178,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         $sql = "SELECT `name` "
             . "FROM `episode_substitute_name` "
             . "WHERE `episode_id`=$id";
-        return $this->em->getConnection()->fetchOne($sql);
+        return $this->getOne($sql);
     }
 
     public function getEpisodeListBetweenIds($userId, $startId, $endId): array
@@ -192,22 +187,24 @@ class UserEpisodeRepository extends ServiceEntityRepository
             . "FROM `user_episode` ue "
             . "WHERE ue.`user_id`=$userId AND ue.`id` BETWEEN $startId AND $endId "
             . "ORDER BY ue.`watch_at` DESC";
-        return $this->em->getConnection()->fetchAllAssociative($sql);
+        return $this->getAll($sql);
     }
 
-    public function getEpisodesOfTheDay($userId, $locale, $country): array
+    public function getAll($sql): array
     {
-        $sql = "SELECT "
-            . "	s.`id` as id, s.`name` as name, s.`slug` as slug, s.`poster_path` as posterPath, "
-            . "	sln.`name` as localizedName, sln.`slug` as localizedSlug, "
-            . "	us.`favorite` as favorite, us.`progress` as progress, "
-            . "	ue.`episode_number` as episodeNumber, ue.`season_number` as seasonNumber, ue.`watch_at` as watchAt "
-            . "FROM `user_episode` ue "
-            . "LEFT JOIN `user_series` us ON us.`id` = ue.`user_series_id` "
-            . "LEFT JOIN `series` s ON s.`id` = us.`series_id` "
-            . "LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' "
-            . "LEFT JOIN `series_day_offset` sdo ON sdo.`series_id`=s.`id` AND sdo.`country`='$country' "
-            . "WHERE ue.`user_id`=$userId AND ((ISNULL(sdo.`id`) AND ue.`air_date`=SUBDATE(DATE(NOW()), INTERVAL 0 DAY)) OR (sdo.`id` IS NOT NULL AND DATE_ADD(ue.`air_date`, INTERVAL sdo.`offset` DAY)=SUBDATE(DATE(NOW()), INTERVAL 0 DAY)))";
-        return $this->em->getConnection()->fetchAllAssociative($sql);
+        try {
+            return $this->em->getConnection()->fetchAllAssociative($sql);
+        } catch (Exception) {
+            return [];
+        }
+    }
+
+    public function getOne($sql): mixed
+    {
+        try {
+            return $this->em->getConnection()->fetchOne($sql);
+        } catch (Exception) {
+            return [];
+        }
     }
 }

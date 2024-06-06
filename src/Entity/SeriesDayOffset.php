@@ -17,7 +17,7 @@ class SeriesDayOffset
     #[ORM\JoinColumn(nullable: false)]
     private ?Series $series = null;
 
-    #[ORM\Column]
+    #[ORM\Column(options: ['default' => 0])]
     private ?int $offset = null;
 
     #[ORM\Column(length: 2)]

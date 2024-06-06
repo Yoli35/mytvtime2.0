@@ -17,6 +17,13 @@
     }
 }
 
+h2 {
+    background-color: var(--gradient-orange-50);
+    border-radius: .25rem;
+    color: var(--gradient-orange-90);
+    padding: .5rem 1rem;
+}
+
 /* Pages: series TMDB & user series */
 .series-show {
     container: series-show / inline-size;

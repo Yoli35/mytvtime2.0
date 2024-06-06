@@ -22,29 +22,31 @@
             {% else %}
                 <div>{{ 'No poster'|trans }}</div>
             {% endif %}
-            {% if series.providerName is defined and series.providerName %}
-                <div class="providers">
-                    <div class="provider-content">
-                        <div class="provider">
-                            <img src="{{ series.providerLogoPath }}" alt="{{ series.providerName }}">
+            <div class="series-infos">
+                {% if series.favorite %}
+                    <div class="favorite">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                {% endif %}
+                {% if series.providerName is defined and series.providerName %}
+                    <div class="providers">
+                        <div class="provider-content">
+                            <div class="provider">
+                                <img src="{{ series.providerLogoPath }}" alt="{{ series.providerName }}">
+                            </div>
                         </div>
                     </div>
+                {% endif %}
+                <div class="episode-number">
+                    {{ 'S%02dE%02d'|format(series.seasonNumber, series.episodeNumber) }}
                 </div>
-            {% endif %}
-            <div class="progress{% if upToDate %}{% if ended %} that-s-all-folks{% else %} up-to-date{% endif %}{% endif %}{% if start %} start-this-series{% endif %}">
-                <div class="progress-bar" style="width: {{ series.progress }}%"></div>
-            </div>
-            <div class="episode-number">
-                {{ 'S%02dE%02d'|format(series.seasonNumber, series.episodeNumber) }}
             </div>
             {% if upToDate %}
                 <div class="up-to-date-banner{% if ended %} ended{% endif %}">{{ 'Up to date!'|trans }}</div>
             {% endif %}
-            {% if series.favorite %}
-                <div class="favorite">
-                    <i class="fas fa-heart"></i>
-                </div>
-            {% endif %}
+            <div class="progress{% if upToDate %}{% if ended %} that-s-all-folks{% else %} up-to-date{% endif %}{% endif %}{% if start %} start-this-series{% endif %}">
+                <div class="progress-bar" style="width: {{ series.progress }}%"></div>
+            </div>
         </div>
         <div class="name">{{ series.localizedName ?? series.name }}</div>
     </a>

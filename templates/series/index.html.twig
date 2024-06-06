@@ -39,7 +39,12 @@
             <div class="series-group user">
                 <div class="wrapper">
                     <div class="content">
+                        {% set date = "" %}
                         {% for series in seriesOfTheWeek %}
+                            {% if date != series.date %}
+                                <h3>{{ series.date|format_date('relative_full')|capitalize }}</h3>
+                                {% set date = series.date %}
+                            {% endif %}
                             {{ include('_blocks/series/_card.html.twig') }}
                         {% endfor %}
                     </div>

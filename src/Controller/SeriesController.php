@@ -145,7 +145,7 @@ class SeriesController extends AbstractController
                 'poster_path' => $us['poster_path'] ? '/series/posters' . $us['poster_path'] : null,
                 'progress' => $us['progress'],
             ];
-        }, $this->userSeriesRepository->getUserSeriesOfTheDay($user, $this->now()->format('Y-m-d'), $locale));
+        }, $this->userSeriesRepository->getUserSeriesOfTheDay($user, $country,$locale));
 
         $episodesOfTheDay = array_map(function ($ue) {
             $this->saveImage("posters", $ue['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
@@ -163,22 +163,26 @@ class SeriesController extends AbstractController
                 'season_number' => $ue['seasonNumber'],
                 'watch_at' => $ue['watchAt'],
             ];
-        }, $this->userEpisodeRepository->getEpisodesOfTheDay($user->getId(), $locale, $country));
+        }, $this->userEpisodeRepository->episodesOfTheDay($user, $country, $locale));
 
         $seriesOfTheWeek = array_map(function ($us) {
             $this->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return [
                 'series_of_the_week' => true,
+                'episode_of_the_day' => true,
                 'id' => $us['id'],
-                'date' => $us['date'],
+                'date' => $us['air_date'],
                 'name' => $us['name'],
                 'slug' => $us['slug'],
                 'localized_name' => $us['localized_name'],
                 'localized_slug' => $us['localized_slug'],
                 'poster_path' => $us['poster_path'] ? '/series/posters' . $us['poster_path'] : null,
                 'progress' => $us['progress'],
+                'watch_at' => $us['watch_at'],
+                'season_number' => $us['season_number'],
+                'episode_number' => $us['episode_number'],
             ];
-        }, $this->userSeriesRepository->getUserSeriesOfTheNext7Days($user, $this->now()->format('Y-m-d'), $locale));
+        }, $this->userSeriesRepository->getUserSeriesOfTheNext7Days($user, $country, $locale));
 
         dump([
             'seriesOfTheDay' => $seriesOfTheDay,

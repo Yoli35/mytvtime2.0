@@ -63,7 +63,7 @@ class HomeController extends AbstractController
                 $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
                 $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
                 return $series;
-            }, $this->userEpisodeRepository->episodesOfTheDay($user, $country));
+            }, $this->userEpisodeRepository->episodesOfTheDay($user, $country, $language));
             // Dernières séries ajoutées
             $lastAddedSeries = array_map(function ($series) {
 //                $s = $serie->homeArray();
