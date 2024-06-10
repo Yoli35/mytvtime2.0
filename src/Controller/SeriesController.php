@@ -1467,7 +1467,7 @@ class SeriesController extends AbstractController
             $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
 
             $episode['crew'] = array_map(function ($crew) use ($slugger) {
-                dump($crew);
+//                dump($crew);
                 if (key_exists('person_id', $crew)) return null;
                 $crew['profile_path'] = $crew['profile_path'] ? $this->imageConfiguration->getCompleteUrl($crew['profile_path'], 'profile_sizes', 2) : null; // w185
                 $crew['slug'] = $slugger->slug($crew['name'])->lower()->toString();
