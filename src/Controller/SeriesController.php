@@ -92,14 +92,10 @@ class SeriesController extends AbstractController
         $language = $locale . '-' . $country;
         $timezone = $user->getTimezone() ?? 'Europe/Paris';
 
-        $providers = $this->providerRepository->findAll();
-        $providerIds = array_map(function ($p) {
-            return $p->getProviderId();
-        }, $providers);
-        $userProviderIds = array_map(function ($up) use ($providerIds, $providers) {
-            return $providers[array_search($up->getProviderId(), $providerIds)]->getProviderId();
+        $userProviderIds = array_map(function ($up) {
+            return $up->getProviderId();
         }, $user->getProviders()->toArray());
-        dump($userProviderIds);
+
         $now = $this->now();
         // Day of week with monday = 1 to sunday = 7
         $dayOfWeek = $now->format('N') ? $now->format('N') : 7;
@@ -107,31 +103,17 @@ class SeriesController extends AbstractController
         $monday = $now->modify('-' . ($dayOfWeek - 1) . ' days')->format('Y-m-d');
         // Sunday of the current week
         $sunday = $now->modify('+' . (7 - $dayOfWeek) . ' days')->format('Y-m-d');
-        dump($now, $dayOfWeek, $monday, $sunday);
+
         $searchString = "&air_date.gte=$monday&air_date.lte=$sunday&include_adult=false&include_null_first_air_dates=false&language=$language&sort_by=first_air_date.desc&timezone=$timezone&watch_region=$country&with_watch_providers=" . implode('|', $userProviderIds);
-        dump($searchString);
+
         $searchResult = json_decode($this->tmdbService->getFilterTv($searchString . "&page=1"), true);
         for ($i = 2; $i <= $searchResult['total_pages']; $i++) {
             $searchResult['results'] = array_merge($searchResult['results'], json_decode($this->tmdbService->getFilterTv($searchString . "&page=$i"), true)['results']);
         }
         $series = $this->getSearchResult($searchResult, new AsciiSlugger());
 
-        $userSeries = array_map(function ($us) {
-            $this->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-            return [
-                'last_watched_series' => true,
-                'id' => $us['id'],
-                'name' => $us['name'],
-                'slug' => $us['slug'],
-                'localized_name' => $us['localized_name'],
-                'localized_slug' => $us['localized_slug'],
-                'poster_path' => $us['poster_path'] ? '/series/posters' . $us['poster_path'] : null,
-                'last_episode' => $us['last_episode'],
-                'last_season' => $us['last_season'],
-                'last_watch_at' => $us['last_watch_at'],
-//                'progress' => $us['progress'],
-            ];
-        }, $this->userSeriesRepository->getLastWatchedUserSeries($user, $locale, 1, 60));
+        // Historique des épisodes vus pendant les 2 semaines passées
+        $episodeHistory = $this->getEpisodeHistory($user, 14, $language);
 
         $seriesOfTheDay = array_map(function ($us) {
             $this->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
@@ -188,7 +170,7 @@ class SeriesController extends AbstractController
             'seriesOfTheDay' => $seriesOfTheDay,
             'episodesOfTheDay' => $episodesOfTheDay,
             'seriesOfTheWeek' => $seriesOfTheWeek,
-            'userSeries' => $userSeries,
+            'episodeHistory' => $episodeHistory,
             'seriesList' => $series,
             'total_results' => $searchResult['total_results'] ?? -1,
             'hier' => $this->now()->modify('-1 day')->format('Y-m-d'),
@@ -198,7 +180,7 @@ class SeriesController extends AbstractController
             'seriesOfTheDay' => $seriesOfTheDay,
             'episodesOfTheDay' => $episodesOfTheDay,
             'seriesOfTheWeek' => $seriesOfTheWeek,
-            'userSeries' => $userSeries,
+            'episodeHistory' => $episodeHistory,
             'seriesList' => $series,
             'total_results' => $searchResult['total_results'] ?? -1,
         ]);
@@ -1319,6 +1301,16 @@ class SeriesController extends AbstractController
         }
     }
 
+    public function getEpisodeHistory($user, $dayCount, $language): array
+    {
+        return array_map(function ($series) {
+            $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+            $series['providerLogoPath'] = $series['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($series['providerLogoPath'], 'logo_sizes', 2) : null;
+            $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
+            $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
+            return $series;
+        }, $this->userEpisodeRepository->historyEpisode($user, $dayCount, $language));
+    }
     public function now(): DateTimeImmutable
     {
         /** @var User $user */

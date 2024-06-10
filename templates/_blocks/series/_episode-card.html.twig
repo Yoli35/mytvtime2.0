@@ -40,6 +40,11 @@
                 <div class="episode-number">
                     {{ 'S%02dE%02d'|format(series.seasonNumber, series.episodeNumber) }}
                 </div>
+                {% if series.watchAt is defined and series.watchAt %}
+                    <div class="date">
+                        {{ series.watchAt|format_datetime('relative_medium', 'short') }}
+                    </div>
+                {% endif %}
             </div>
             {% if upToDate %}
                 <div class="up-to-date-banner{% if ended %} ended{% endif %}">{{ 'Up to date!'|trans }}</div>

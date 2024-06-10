@@ -80,13 +80,7 @@ class HomeController extends AbstractController
                 return $series;
             }, $this->userEpisodeRepository->historySeries($user, $language, 1, 20));// Historique des séries vues
             // Historique des épisodes vus pendant les 2 semaines passées
-            $historyEpisode = array_map(function ($series) {
-                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
-                $series['providerLogoPath'] = $series['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($series['providerLogoPath'], 'logo_sizes', 2) : null;
-                $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
-                $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
-                return $series;
-            }, $this->userEpisodeRepository->historyEpisode($user, 14, $language));
+            $historyEpisode = $this->seriesController->getEpisodeHistory($user, 14, $language);
         } else {
             $userSeries = [];
             $episodesOfTheDay = [];

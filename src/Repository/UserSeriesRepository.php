@@ -61,6 +61,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     s.`poster_path` as poster_path
                 FROM `series` s
                     INNER JOIN `user_series` us ON s.`id`=us.`series_id`
+                    INNER JOIN `user_episode` ue on us.`id` = ue.`user_series_id`
                     LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale'
                 WHERE us.`user_id`=$userId
