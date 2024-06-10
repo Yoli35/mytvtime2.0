@@ -1,10 +1,11 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Repository;
 
 use App\Entity\EpisodeNotification;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -38,21 +39,29 @@ class EpisodeNotificationRepository extends ServiceEntityRepository
             . "INNER JOIN user_episode_notification uen ON en.id = uen.episode_notification_id AND uen.user_id = :user_id "
             . "AND uen.validated_at IS NULL";
 
-        return $this->em->getConnection()
-            ->executeQuery($sql, ['user_id' => $user->getId()])
-            ->fetchAllAssociative($sql);
+        return $this->getAll($user, $sql);
     }
 
     public function episodeNotificationList(User $user): array
     {
-        $sql = "SELECT uen.id as id, en.message as message, en.create_at as created_at "
+        $sql = "SELECT uen.id as id, en.message as message, en.create_at as created_at, uen.validated_at as validated_at "
             . "FROM episode_notification en "
             . "INNER JOIN user_episode_notification uen ON en.id = uen.episode_notification_id AND uen.user_id = :user_id "
-            . "AND uen.validated_at IS NULL "
-            . "ORDER BY en.create_at DESC";
+//            . "AND uen.validated_at IS NULL "
+            . "ORDER BY en.create_at DESC "
+            . "LIMIT 50";
 
-        return $this->em->getConnection()
-            ->executeQuery($sql, ['user_id' => $user->getId()])
-            ->fetchAllAssociative($sql);
+        return $this->getAll($user, $sql);
+    }
+
+    public function getAll(User $user, string $sql): array
+    {
+        try {
+            return $this->em->getConnection()
+                ->executeQuery($sql, ['user_id' => $user->getId()])
+                ->fetchAllAssociative();
+        } catch (Exception) {
+            return [];
+        }
     }
 }

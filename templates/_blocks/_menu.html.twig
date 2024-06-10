@@ -30,7 +30,7 @@
                             'New series date': 'New series date'|trans,
                             'Unknown': 'Unknown'|trans,
                         }) %}
-                        <div class="item" data-id="{{ n.id }}" title="{{ message }}">
+                        <div class="item{% if n.validated_at %} validate{% endif %}" data-id="{{ n.id }}" title="{{ message }}">
                             <div class="message">{{ message }}</div>
                             <div class="date">{{ n.created_at|format_date('relative_short') }}</div>
                         </div>

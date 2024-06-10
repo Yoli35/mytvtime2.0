@@ -170,6 +170,8 @@ body {
     --navbar-color-hover: var(--gradient-ardoise-10);
     --tooltips-bg: var(--gradient-ardoise-90);
     --tooltips-color: var(--gradient-ardoise-20);
+    --notification-color: var(--gradient-ardoise-10);
+    --notification-validated: var(--gradient-ardoise-40);
 }
 
 label:has(select) {
@@ -270,6 +272,7 @@ label:has(input[type="text"]) {
     .notifications {
         align-items: center;
         border-radius: .25rem;
+        cursor: pointer;
         display: flex;
         height: 2rem;
         margin-inline-start: auto;
@@ -283,7 +286,7 @@ label:has(input[type="text"]) {
         span {
             align-items: center;
             background-color: var(--gradient-orange-50);
-            border-radius: 50%;
+            border-radius: 999px;
             color: var(--gradient-orange-90);
             display: flex;
             font-size: 0.5rem;
@@ -291,7 +294,15 @@ label:has(input[type="text"]) {
             height: 1rem;
             justify-content: center;
             margin-block-end: .5rem;
-            width: 1rem;
+            min-width: 1rem;
+            padding-inline: .25rem;
+            transform-origin: center top;
+            transition: scale 250ms ease-in-out;
+            z-index: 1;
+
+            &:hover {
+                scale: 4;
+            }
         }
 
         &:has(.menu.show) {
@@ -332,7 +343,7 @@ label:has(input[type="text"]) {
             .item {
                 align-items: center;
                 border-radius: .25rem;
-                color: var(--navbar-color-hover);
+                color: var(--notification-color);
                 display: flex;
                 flex-shrink: 0;
                 gap: .5rem;
@@ -344,6 +355,15 @@ label:has(input[type="text"]) {
                 &:hover {
                     background-color: var(--gradient-orange-50);
                     color: var(--gradient-orange-90);
+                }
+
+                &.validated {
+                    color: var(--notification-validated);
+
+                    &:hover {
+                        background-color: var(--gradient-green-50);
+                        color: var(--gradient-green-90);
+                    }
                 }
 
                 .message {
@@ -716,7 +736,7 @@ label:has(input[type="text"]) {
     pointer-events: none;
     position: absolute;
     top: -4rem;
-    transition: opacity .125s;
+    transition: opacity 300ms ease-in-out;
     z-index: 10;
 
     &.show {

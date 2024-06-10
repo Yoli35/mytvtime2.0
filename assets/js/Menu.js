@@ -34,6 +34,7 @@ export class Menu {
         notifications?.addEventListener("click", () => {
             const menu = notifications.querySelector(".menu");
             menu.classList.toggle("show");
+            this.markNotificationsAsRead();
         });
 
         document.addEventListener("click", (e) => {
@@ -158,5 +159,26 @@ export class Menu {
         });
         const newTheme = document.querySelector(`.menu-theme[data-theme="${theme}"]`);
         newTheme.classList.add("active");
+    }
+
+    markNotificationsAsRead() {
+        fetch('/' + gThis.lang + '/user/notifications/mark-as-read', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    const notifications = document.querySelector(".notifications");
+                    const badge = notifications.querySelector("span");
+                    badge?.remove();
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
     }
 }

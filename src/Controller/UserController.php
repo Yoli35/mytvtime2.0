@@ -5,7 +5,10 @@ namespace App\Controller;
 use App\Entity\Provider;
 use App\Entity\User;
 use App\Form\UserType;
+use App\Repository\EpisodeNotificationRepository;
 use App\Repository\ProviderRepository;
+use App\Repository\UserEpisodeNotificationRepository;
+use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,10 +24,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly ImageConfiguration     $imageConfiguration,
-        private readonly ProviderRepository     $providerRepository,
-        private readonly TMDBService            $tmdbService,
+        private readonly EntityManagerInterface            $entityManager,
+        private readonly UserEpisodeNotificationRepository $userEpisodeNotificationRepository,
+        private readonly DateService                       $dateService,
+        private readonly ImageConfiguration                $imageConfiguration,
+        private readonly ProviderRepository                $providerRepository,
+        private readonly TMDBService                       $tmdbService,
     )
     {
     }
@@ -51,7 +56,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/providers', name: 'providers')]
-    public function providers(Request $request, EntityManagerInterface $entityManager): Response
+    public function providers(): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -69,7 +74,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/provider/toggle/{id}', name: 'provider_toggle')]
-    public function providerToggle(Request $request, $id): Response
+    public function providerToggle($id): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -95,6 +100,20 @@ class UserController extends AbstractController
             'ok' => true,
             'body' => ['connected' => $this->getUser() !== null],
         ]);
+    }
+
+    #[Route('/notifications/mark-as-read', name: 'notifications-mark-as-read', methods: ['GET'])]
+    public function markNotificationsAsRead(): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $notifications = $this->userEpisodeNotificationRepository->findBy(['user' => $user, 'validatedAt' => null]);
+        $now = $this->dateService->getNowImmutable($user->getTimeZone() ?? 'UTC');
+        foreach ($notifications as $notification) {
+            $notification->setValidatedAt($now);
+        }
+        $this->entityManager->flush();
+        return $this->json(['ok' => true]);
     }
 
     public function getProviders($user): array
