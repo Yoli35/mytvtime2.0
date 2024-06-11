@@ -55,7 +55,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-size: 1rem;
     font-weight: 100;
-    min-height: 100vh;
+    min-height: 100dvh;
     line-height: 1.5rem;
     margin: 0;
 
@@ -94,7 +94,7 @@ body {
     flex-direction: column;
     background-color: transparent;
     margin-inline: auto;
-    min-height: 100vh;
+    min-height: 100dvh;
     padding-block-start: 4rem;
     padding-inline: .25rem;
     position: relative;
@@ -326,7 +326,7 @@ label:has(input[type="text"]) {
             border-radius: .25rem;
             display: none;
             flex-direction: column;
-            max-height: 30vh;
+            max-height: 30dvh;
             max-width: calc(100vw - 6rem);
             opacity: 0;
             overflow-y: auto;
@@ -448,7 +448,7 @@ label:has(input[type="text"]) {
             display: none;
             flex-direction: column;
             gap: .125rem;
-            max-height: calc(100vh - 5rem);
+            max-height: calc(100dvh - 5rem);
             opacity: 0;
             overflow-y: auto;
             padding: .5rem;
@@ -578,7 +578,7 @@ label:has(input[type="text"]) {
 .container-fluid:has(.register) {
     align-items: center;
     display: flex;
-    height: 100vh;
+    height: 100dvh;
     justify-content: center;
     width: 100%;
 
@@ -866,5 +866,34 @@ label:has(input[type="text"]) {
         justify-content: center;
         margin-left: auto;
         width: 3rem;
+    }
+}
+
+.to-top {
+    align-items: center;
+    background-color: var(--gradient-orange-50);
+    border-radius: 50%;
+    bottom: 1rem;
+    color: var(--gradient-orange-90);
+    cursor: pointer;
+    display: none;
+    font-size: 1.5rem;
+    height: 2rem;
+    justify-content: center;
+    opacity: 0;
+    position: fixed;
+    right: 1rem;
+    transition: opacity 0.25s, display 0.25s;
+    transition-behavior: allow-discrete;
+    width: 2rem;
+    z-index: 999;
+
+    &.show {
+        display: flex;
+        opacity: 1;
+    }
+
+    &.dev {
+        bottom: 3rem;
     }
 }

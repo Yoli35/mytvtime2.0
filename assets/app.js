@@ -8,6 +8,24 @@ import {PosterHover} from './js/images/PosterHover.js';
 import {AverageColor} from './js/images/AverageColor.js';
 import {Season} from './js/series/Season.js';
 
+
+const toTop = document.querySelector(".to-top");
+if (toTop) {
+    toTop.addEventListener("click", () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    });
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 100) {
+            toTop.classList.add("show");
+        } else {
+            toTop.classList.remove("show");
+        }
+    });
+}
+
 const menu = new Menu();
 menu.init();
 
