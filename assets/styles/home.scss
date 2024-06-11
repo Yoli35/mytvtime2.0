@@ -8,9 +8,6 @@
 }
 
 .home {
-    container-name: home;
-    container-type: inline-size;
-    //margin-block-start: 4rem;
     position: relative;
 
     h1 {
@@ -94,7 +91,6 @@
                     font-weight: 100;
                     line-height: 1.25em;
                     overflow-y: auto;
-                    max-height: 30vw;
                     padding-inline: 1rem;
                 }
 
@@ -285,20 +281,24 @@
 
         }
     }
+}
 
-    @container home (width < 768px) {
+@media (orientation: portrait) {
+    .home {
         .highlighted-series {
             flex-direction: column;
             height: auto;
             width: 90vw;
 
             .poster {
-                height: 120vw;
-                width: 80vw;
+                aspect-ratio: 78 / 117;
+                height: 64dvh;
+                max-width: 90vw;
+                width: auto;
             }
 
             .details {
-                height: 48cqi;
+                height: auto;
                 width: 90vw;
 
                 .name {
