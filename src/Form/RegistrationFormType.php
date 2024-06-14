@@ -26,7 +26,10 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('username', TextType::class, [
-                'attr' => ['placeholder' => 'Choose a username']
+                'attr' => [
+                    'placeholder' => 'Choose a username',
+                    'autofocus' => true,
+                    ]
             ])
             ->add('email', EmailType::class, [
                 'attr' => ['placeholder' => 'Email address']
@@ -73,10 +76,10 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('preferredLanguage', LanguageType::class, [
                 'attr' => ['class' => 'form-select w100'],
-                'preferred_choices' => ['fr', 'de', 'en', 'es'],
                 'expanded' => false,
                 'help' => 'Your preferred language for series descriptions and reviews. You can change this later.',
                 'label' => 'Preferred language',
+                'preferred_choices' => ['fr', 'de', 'en', 'es'],
             ])
             ->add('timezone', TimezoneType::class, [
                 'attr' => ['class' => 'form-select w100'],

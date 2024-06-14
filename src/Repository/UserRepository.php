@@ -4,6 +4,9 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -21,7 +24,7 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $em)
     {
         parent::__construct($registry, User::class);
     }
@@ -51,13 +54,39 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult();
     }
 
-    //    public function findOneBySomeField($value): ?User
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function usersQB(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->select('u.id', 'u.avatar', 'u.email', 'u.username', 'COUNT(u.providers)')
+            ->addSelect('(SELECT COUNT(us) FROM App\Entity\UserSeries us WHERE us.user=u) as seriesCount')
+            ->addSelect('(SELECT COUNT(ue) FROM App\Entity\UserEpisode ue WHERE ue.user=u) as episodeCount')
+            ->orderBy('u.id')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    public function users(): array
+    {
+        $sql = "SELECT u.id       as id,
+                       u.avatar   as avatar,
+                       u.email    as email,
+                       u.username as username,
+                       u.roles    as roles,
+                       (SELECT COUNT(*) FROM user_series us WHERE us.user_id=u.id)   as seriesCount,
+                       (SELECT COUNT(*) FROM user_provider up WHERE up.user_id=u.id) as providerCount,
+                       (SELECT COUNT(*) FROM user_episode ue WHERE ue.user_id=u.id)  as episodeCount
+                FROM user u
+                ORDER BY u.id";
+
+        return $this->getAll($sql);
+    }
+
+    public function getAll($sql): array
+    {
+        try {
+            return $this->em->getConnection()->fetchAllAssociative($sql);
+        } catch (Exception) {
+            return [];
+        }
+    }
 }

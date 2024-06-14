@@ -30,7 +30,7 @@
                             'New series date': 'New series date'|trans,
                             'Unknown': 'Unknown'|trans,
                         }) %}
-                        <div class="item{% if n.validated_at %} validate{% endif %}" data-id="{{ n.id }}" title="{{ message }}">
+                        <div class="item{% if n.validated_at %} validated{% endif %}" data-id="{{ n.id }}" title="{{ message }}">
                             <div class="message">{{ message }}</div>
                             <div class="date">{{ n.created_at|format_date('relative_short') }}</div>
                         </div>
@@ -39,7 +39,11 @@
             </div>
         {% endif %}
         <div class="avatar">
-            <img src="/images/users/avatars/{{ app.user.avatar }}" alt="{{ app.user.username }}">
+            {% if app.user.avatar %}
+                <img src="/images/users/avatars/{{ app.user.avatar }}" alt="{{ app.user.username }}">
+            {% else %}
+                <img src="/images/users/avatars/default.png" alt="{{ app.user.username }}">
+            {% endif %}
         </div>
     {% endif %}
     <div class="burger">
@@ -48,14 +52,16 @@
         <span></span>
         <div class="menu">
             <a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a>
-            {% if seriesName is defined %}
-                <a href="{{ seriesLink }}">
-                    {#                    <i class="fas fa-arrow-left"></i>&nbsp; #}
-                    <em>{{ ux_icon('fa6-solid:arrow-left-long', {height: '18px', width: '18px'}) }}</em>&nbsp;{{ seriesName }}
-                </a>
+            {% if app.user %}
+                {% if seriesName is defined %}
+                    <a href="{{ seriesLink }}">
+                        {#                    <i class="fas fa-arrow-left"></i>&nbsp; #}
+                        <em>{{ ux_icon('fa6-solid:arrow-left-long', {height: '18px', width: '18px'}) }}</em>&nbsp;{{ seriesName }}
+                    </a>
+                {% endif %}
+                <a href="{{ path('app_series_index') }}">{{ 'Series'|trans }}</a>
+                <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
             {% endif %}
-            <a href="{{ path('app_series_index') }}">{{ 'Series'|trans }}</a>
-            <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
             <div class="separation">{{ 'Search'|trans }}</div>
             {% if app.user %}
                 <a href="{{ path('app_series_search_db') }}">{{ 'Among your series'|trans }}</a>
@@ -69,7 +75,7 @@
                 <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a>
                 {% if 'ROLE_ADMIN' in app.user.roles %}
                     <div class="separation">{{ 'Admin'|trans }}</div>
-                    <a href="{{ path('app_series_admin') }}">{{ 'Series'|trans }}</a>
+                    <a href="{{ path('app_admin_index') }}">{{ 'Series'|trans }}</a>
                 {% endif %}
             {% else %}
                 <a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a>

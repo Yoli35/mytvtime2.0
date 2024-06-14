@@ -1,0 +1,64 @@
+h2 {
+    margin-block: 1rem;
+}
+
+.users {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+
+    .user {
+        align-items: center;
+        border-radius: .25rem;
+        display: flex;
+        font-size: .875rem;
+
+        gap: 1rem;
+        padding-block: .25rem;
+        padding-inline: 1rem;
+
+        .user__avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+        }
+
+        .user__name, .user__email {
+            white-space: nowrap;
+            width: 10rem;
+        }
+
+        .user__series, .user__providers, .user__episodes {
+            text-align: right;
+            width: 5rem;
+        }
+
+        .user__role {
+            display: flex;
+            justify-content: center;
+            width: 5rem;
+        }
+
+        &:has(img) {
+            .user__role {
+                color: var(--gradient-green-30);
+            }
+        }
+
+        &:nth-child(odd) {
+            background-color: var(--gradient-ardoise-80-alpha-50);
+
+            &:hover {
+                background-color: var(--gradient-ardoise-60-alpha-50);
+            }
+        }
+
+        &:nth-child(even) {
+            background-color: var(--gradient-ardoise-90-alpha-50);
+
+            &:hover {
+                background-color: var(--gradient-ardoise-70-alpha-50);
+            }
+        }
+    }
+}
