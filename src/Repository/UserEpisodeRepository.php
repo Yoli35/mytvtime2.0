@@ -77,7 +77,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
             . "FROM `user_series` us "
             . "INNER JOIN `series` s ON s.`id` = us.`series_id` "
             . "LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' "
-            . "WHERE us.`user_id`= " . $user->getId() . " "
+            . "WHERE us.`user_id`= " . $user->getId() . " AND us.`last_watch_at` IS NOT NULL "
             . "ORDER BY us.`last_watch_at` DESC "
             . "LIMIT $perPage OFFSET " . ($page - 1) * $perPage;
 
