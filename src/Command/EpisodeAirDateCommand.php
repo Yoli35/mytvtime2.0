@@ -145,14 +145,14 @@ class EpisodeAirDateCommand extends Command
                         $this->userEpisodeRepository->save($userEpisode);
                         $newEpisodeCount++;
 
-                        $notifications[] = $this->newNotification(self::EPISODE_NEW, $userSeries, $episodeId, $localizedName, $airDate);
+                        $notifications[] = $this->newNotification(self::EPISODE_NEW, $userSeries, $userEpisode, $localizedName, $airDate);
                     }
                     if ($userEpisode->getAirDate() != $airDate) {
                         if (!$this->list) {
                             $userEpisode->setAirDate($airDate);
                             $this->userEpisodeRepository->save($userEpisode);
                         }
-                        $notifications[] = $this->newNotification(self::EPISODE_DATE, $userSeries, $episodeId, $localizedName, $airDate);
+                        $notifications[] = $this->newNotification(self::EPISODE_DATE, $userSeries, $userEpisode, $localizedName, $airDate);
                         $episodeUpdates++;
                     }
                     $episodeCount++;
@@ -185,11 +185,12 @@ class EpisodeAirDateCommand extends Command
         return Command::SUCCESS;
     }
 
-    public function newNotification(string $type, UserSeries $userSeries, ?int $episodeId, ?SeriesLocalizedName $localizedName, ?DateTimeImmutable $airDate): string
+    public function newNotification(string $type, UserSeries $userSeries, ?UserEpisode $userEpisode, ?SeriesLocalizedName $localizedName, ?DateTimeImmutable $airDate): string
     {
-        $userEpisode = $this->getUserEpisodeById($userSeries->getUserEpisodes()->toArray(), $episodeId);
         $seasonNumber = $userEpisode ? $userEpisode->getSeasonNumber() : 0;
         $episodeNumber = $userEpisode ? $userEpisode->getEpisodeNumber() : 0;
+        $episodeId = $userEpisode ? $userEpisode->getEpisodeId() : 0;
+
         $series = $userSeries->getSeries();
         $user = $userSeries->getUser();
 
