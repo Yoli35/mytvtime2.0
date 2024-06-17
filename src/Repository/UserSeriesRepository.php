@@ -55,21 +55,35 @@ class UserSeriesRepository extends ServiceEntityRepository
     public function getUserSeriesOfTheDay(User $user, string $country, string $locale): array
     {
         $userId = $user->getId();
-        $sql = "SELECT s.`id` as id, s.`name` as name, sln.`name` as localized_name, us.`progress` as progress,
-                    us.`last_episode` as last_episode, us.`last_season` as last_season,
-                    s.`slug` as slug, sln.`slug` as localized_slug,
-                    s.`poster_path` as poster_path
+        $sql = "SELECT s.`id`            as id,
+                       s.`name`          as name,
+                       sln.`name`        as localized_name,
+                       us.`progress`     as progress,
+                       us.`last_episode` as last_episode,
+                       us.`last_season`  as last_season,
+                       s.`slug`          as slug,
+                       sln.`slug`        as localized_slug,
+                       s.`poster_path`   as poster_path,
+                       sdo.offset        as day_offset,
+                       ue.air_date       as air_date,
+                       CASE
+                           WHEN sdo.offset IS NULL THEN ue.`air_date`
+                           WHEN sdo.offset = 0 THEN ue.`air_date`
+                           WHEN sdo.offset > 0 THEN DATE_ADD(ue.`air_date`, INTERVAL sdo.offset DAY)
+                           WHEN sdo.offset < 0 THEN DATE_SUB(ue.`air_date`, INTERVAL ABS(sdo.offset) DAY)
+                           END           as final_air_date
                 FROM `series` s
-                    INNER JOIN `user_series` us ON s.`id`=us.`series_id`
-                    INNER JOIN `user_episode` ue on us.`id` = ue.`user_series_id`
-                    LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
-                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale'
-                WHERE us.`user_id`=$userId
-                    AND (
-                        ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.`air_date` = CURDATE())
-                     OR ((sdo.offset > 0) AND ue.`air_date` = DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
-                     OR ((sdo.offset < 0) AND ue.`air_date` = DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
-                        )";
+                         INNER JOIN `user_series` us ON s.`id` = us.`series_id`
+                         INNER JOIN `user_episode` ue on us.`id` = ue.`user_series_id`
+                         LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
+                         LEFT JOIN `series_localized_name` sln ON sln.`series_id` = s.`id` AND sln.`locale` = '$locale'
+                WHERE us.`user_id` = $userId
+                  AND (
+                    ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.`air_date` = CURDATE())
+                        OR ((sdo.offset > 0) AND ue.`air_date` = DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
+                        OR ((sdo.offset < 0) AND ue.`air_date` = DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
+                    )
+                GROUP BY s.id, s.name, sln.name, us.progress, us.last_episode, us.last_season, s.slug, sln.slug, s.poster_path, sdo.offset, ue.air_date";
 
         return $this->getAll($sql);
     }
