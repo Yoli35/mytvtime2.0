@@ -127,7 +127,7 @@ class SeriesController extends AbstractController
                 'poster_path' => $us['poster_path'] ? '/series/posters' . $us['poster_path'] : null,
                 'progress' => $us['progress'],
             ];
-        }, $this->userSeriesRepository->getUserSeriesOfTheDay($user, $country,$locale));
+        }, $this->userSeriesRepository->getUserSeriesOfTheDay($user, $country, $locale));
 
         $episodesOfTheDay = array_map(function ($ue) {
             $this->saveImage("posters", $ue['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
@@ -241,7 +241,7 @@ class SeriesController extends AbstractController
             $page = $simpleSeriesSearch->getPage();
             $firstAirDateYear = $simpleSeriesSearch->getFirstAirDateYear();
 
-            $series = array_map(function($s) {
+            $series = array_map(function ($s) {
                 $s['poster_path'] = $s['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $s['poster_path'] : null;
                 return $s;
             }, $this->seriesRepository->search($user, $query, $firstAirDateYear, $page));
@@ -309,9 +309,11 @@ class SeriesController extends AbstractController
     #[Route('/tmdb/{id}-{slug}', name: 'tmdb', requirements: ['id' => Requirement::DIGITS])]
     public function tmdb(Request $request, $id, $slug): Response
     {
+        /** @var User $user */
         $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
-        $userSeries = $user ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
+        $userSeries = ($user && $series) ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
+        $locale = $user ? $user->getPreferredLanguage() : $request->getLocale();
 
         if ($userSeries) {
             return $this->redirectToRoute('app_series_show', [
@@ -323,7 +325,7 @@ class SeriesController extends AbstractController
         if ($series) {
             $series->setVisitNumber($series->getVisitNumber() + 1);
             $this->seriesRepository->save($series, true);
-            $localizedName = $series->getLocalizedName($request->getLocale());
+            $localizedName = $series->getLocalizedName($locale);
         } else {
             $localizedName = null;
         }
@@ -332,6 +334,20 @@ class SeriesController extends AbstractController
 //        dump($localizedName);
         $this->checkTmdbSlug($tv, $slug, $localizedName?->getSlug());
 
+//        dump($tv['seasons']);
+        if ($tv['overview'] == "" && $locale != 'en') {
+            $tvUS = json_decode($this->tmdbService->getTv($id, 'en-US', []), true);
+            $tv['overview'] = $tvUS['overview'];
+            foreach ($tv['seasons'] as $key => $season) {
+                $seasonUs = $this->getSeason($tvUS['seasons'], $season['season_number']);
+//                dump(['season' => $season, 'season us' => $seasonUs]);
+                if ($season['overview'] == "" && $seasonUs)
+                    $tv['seasons'][$key]['overview'] = $seasonUs['overview'];
+                if ($season['name'] == "" || ($season['name'] == "Saison " . $season['season_number'] && $seasonUs['name'] != "Season " . $season['season_number']))
+                    $tv['seasons'][$key]['name'] .= ' - ' . $seasonUs['name'];
+            }
+        }
+//        dump($tv['seasons']);
         $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
         $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
 
@@ -1174,12 +1190,15 @@ class SeriesController extends AbstractController
     public function updateUserSeries(UserSeries $userSeries, array $tv): UserSeries
     {
         $change = false;
-//        dump($userSeries->getProgress(), $userSeries->getViewedEpisodes(), $tv['number_of_episodes']);
-        if ($userSeries->getProgress() == 100 && $userSeries->getViewedEpisodes() < $tv['number_of_episodes']) {
-            $userSeries->setProgress($userSeries->getViewedEpisodes() / $tv['number_of_episodes'] * 100);
+        $episodeCount = $this->checkNumberOfEpisodes($tv);
+        if ($episodeCount != $tv['number_of_episodes']) {
+            $this->addFlash('warning', $this->translator->trans('Number of episodes has changed') .'<br>' . $tv['number_of_episodes'] . ' → ' . $episodeCount);
+        }
+        if ($userSeries->getProgress() == 100 && $userSeries->getViewedEpisodes() < $episodeCount) {
+            $userSeries->setProgress($userSeries->getViewedEpisodes() / $episodeCount * 100);
             $change = true;
         }
-        if ($userSeries->getProgress() != 100 && $userSeries->getViewedEpisodes() === $tv['number_of_episodes']) {
+        if ($userSeries->getProgress() != 100 && $userSeries->getViewedEpisodes() === $episodeCount) {
             $userSeries->setProgress(100);
             $change = true;
         }
@@ -1187,6 +1206,17 @@ class SeriesController extends AbstractController
             $this->userSeriesRepository->save($userSeries, true);
         }
         return $userSeries;
+    }
+
+    public function checkNumberOfEpisodes(array $tv): int
+    {
+        $seasonEpisodeCount = 0;
+        foreach ($tv['seasons'] as $season) {
+            if ($season['season_number'] > 0) {
+                $seasonEpisodeCount += $season['episode_count'];
+            }
+        }
+        return $seasonEpisodeCount;
     }
 
     public function seriesSchedules(Series $series): array
@@ -1311,6 +1341,7 @@ class SeriesController extends AbstractController
             return $series;
         }, $this->userEpisodeRepository->historyEpisode($user, $dayCount, $language));
     }
+
     public function now(): DateTimeImmutable
     {
         /** @var User $user */
@@ -1436,6 +1467,16 @@ class SeriesController extends AbstractController
             $network['logo_path'] = $network['logo_path'] ? $this->imageConfiguration->getCompleteUrl($network['logo_path'], 'logo_sizes', 2) : null; // w92
             return $network;
         }, $tv['networks']);
+    }
+
+    public function getSeason(array $seasons, int $seasonNumber): array
+    {
+        foreach ($seasons as $season) {
+            if ($season['season_number'] == $seasonNumber) {
+                return $season;
+            }
+        }
+        return [];
     }
 
     public function seasonsPosterPath($seasons): array
