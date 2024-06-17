@@ -1194,7 +1194,7 @@ class SeriesController extends AbstractController
         if ($episodeCount != $tv['number_of_episodes']) {
             $this->addFlash('warning', $this->translator->trans('Number of episodes has changed') .'<br>' . $tv['number_of_episodes'] . ' → ' . $episodeCount);
         }
-        if ($userSeries->getProgress() == 100 && $userSeries->getViewedEpisodes() < $episodeCount) {
+        if (/*$userSeries->getProgress() == 100 && */$userSeries->getViewedEpisodes() < $episodeCount) {
             $userSeries->setProgress($userSeries->getViewedEpisodes() / $episodeCount * 100);
             $change = true;
         }
