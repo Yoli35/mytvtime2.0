@@ -78,9 +78,9 @@ class HomeController extends AbstractController
                 $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
                 $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
                 return $series;
-            }, $this->userEpisodeRepository->historySeries($user, $language, 1, 20));// Historique des séries vues
+            }, $this->userEpisodeRepository->historySeries($user, $country, $language, 1, 20));// Historique des séries vues
             // Historique des épisodes vus pendant les 2 semaines passées
-            $historyEpisode = $this->seriesController->getEpisodeHistory($user, 14, $language);
+            $historyEpisode = $this->seriesController->getEpisodeHistory($user, 14, $country, $language);
         } else {
             $userSeries = [];
             $episodesOfTheDay = [];

@@ -115,7 +115,7 @@ class SeriesController extends AbstractController
         $series = $this->getSearchResult($searchResult, new AsciiSlugger());
 
         // Historique des épisodes vus pendant les 2 semaines passées
-        $episodeHistory = $this->getEpisodeHistory($user, 14, $language);
+        $episodeHistory = $this->getEpisodeHistory($user, 14, $country, $language);
 
         $seriesOfTheDay = array_map(function ($us) {
             $this->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
@@ -1336,7 +1336,7 @@ class SeriesController extends AbstractController
         }
     }
 
-    public function getEpisodeHistory($user, $dayCount, $language): array
+    public function getEpisodeHistory(User $user, int $dayCount, string $country, string $language): array
     {
         return array_map(function ($series) {
             $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
@@ -1344,7 +1344,7 @@ class SeriesController extends AbstractController
             $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
             $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
             return $series;
-        }, $this->userEpisodeRepository->historyEpisode($user, $dayCount, $language));
+        }, $this->userEpisodeRepository->historyEpisode($user, $dayCount, $country, $language));
     }
 
     public function now(): DateTimeImmutable
