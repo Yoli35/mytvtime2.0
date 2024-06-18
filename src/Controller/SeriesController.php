@@ -21,8 +21,9 @@ use App\Repository\DeviceRepository;
 use App\Repository\EpisodeLocalizedOverviewRepository;
 use App\Repository\EpisodeSubstituteNameRepository;
 use App\Repository\KeywordRepository;
-use App\Repository\ProviderRepository;
+//use App\Repository\ProviderRepository;
 use App\Repository\SeriesAdditionalOverviewRepository;
+use App\Repository\SeriesDayOffsetRepository;
 use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesLocalizedNameRepository;
 use App\Repository\SeriesLocalizedOverviewRepository;
@@ -64,8 +65,9 @@ class SeriesController extends AbstractController
         private readonly EpisodeSubstituteNameRepository    $episodeSubstituteNameRepository,
         private readonly ImageConfiguration                 $imageConfiguration,
         private readonly KeywordRepository                  $keywordRepository,
-        private readonly ProviderRepository                 $providerRepository,
+//        private readonly ProviderRepository                 $providerRepository,
         private readonly SeriesAdditionalOverviewRepository $seriesAdditionalOverviewRepository,
+        private readonly SeriesDayOffsetRepository          $seriesDayOffsetRepository,
         private readonly SeriesImageRepository              $seriesImageRepository,
         private readonly SeriesRepository                   $seriesRepository,
         private readonly SeriesLocalizedNameRepository      $seriesLocalizedNameRepository,
@@ -491,6 +493,9 @@ class SeriesController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['id' => $id]);
+        $seriesDayOffset = $this->seriesDayOffsetRepository->findOneBy(['series' => $series, 'country' => $user->getCountry() ?? 'FR']);
+        $dayOffset = $seriesDayOffset ? $seriesDayOffset->getOffset() : 0;
+
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
 
@@ -501,7 +506,7 @@ class SeriesController extends AbstractController
             $season['poster_path'] = $series->getPosterPath();
         }
         $season['deepl'] = $this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
-        $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
+        $season['episodes'] = $this->seasonEpisodes($season, $userSeries, $dayOffset);
         $season['credits'] = $this->castAndCrew($season);
         $season['watch/providers'] = $this->watchProviders($season, $user->getCountry() ?? 'FR');
         $season['localized_name'] = $series->getLocalizedName($request->getLocale());
@@ -1192,9 +1197,9 @@ class SeriesController extends AbstractController
         $change = false;
         $episodeCount = $this->checkNumberOfEpisodes($tv);
         if ($episodeCount != $tv['number_of_episodes']) {
-            $this->addFlash('warning', $this->translator->trans('Number of episodes has changed') .'<br>' . $tv['number_of_episodes'] . ' → ' . $episodeCount);
+            $this->addFlash('warning', $this->translator->trans('Number of episodes has changed') . '<br>' . $tv['number_of_episodes'] . ' → ' . $episodeCount);
         }
-        if (/*$userSeries->getProgress() == 100 && */$userSeries->getViewedEpisodes() < $episodeCount) {
+        if (/*$userSeries->getProgress() == 100 && */ $userSeries->getViewedEpisodes() < $episodeCount) {
             $userSeries->setProgress($userSeries->getViewedEpisodes() / $episodeCount * 100);
             $change = true;
         }
@@ -1489,7 +1494,7 @@ class SeriesController extends AbstractController
         }, $seasons);
     }
 
-    public function seasonEpisodes(array $season, UserSeries $userSeries): array
+    public function seasonEpisodes(array $season, UserSeries $userSeries, $dayOffset): array
     {
         $user = $userSeries->getUser();
         $series = $userSeries->getSeries();
@@ -1498,9 +1503,8 @@ class SeriesController extends AbstractController
 
         foreach ($season['episodes'] as $episode) {
             $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
-
-            $episode['crew'] = array_map(function ($crew) use ($slugger) {
-//                dump($crew);
+            $episode['air_date'] = $this->offsetDate($episode['air_date'], $dayOffset, $user->getTimezone() ?? 'Europe/Paris');
+            $episode['crew'] = array_map(function ($crew) use ($slugger, $user) {
                 if (key_exists('person_id', $crew)) return null;
                 $crew['profile_path'] = $crew['profile_path'] ? $this->imageConfiguration->getCompleteUrl($crew['profile_path'], 'profile_sizes', 2) : null; // w185
                 $crew['slug'] = $slugger->slug($crew['name'])->lower()->toString();
@@ -1541,6 +1545,19 @@ class SeriesController extends AbstractController
             $seasonEpisodes[] = $episode;
         }
         return $seasonEpisodes;
+    }
+
+    public function offsetDate($date, $offset, $timezone): string
+    {
+        if ($date && $offset) {
+            $date = $this->dateService->newDateImmutable($date, $timezone);
+            if ($offset > 0)
+                $date = $date->modify("+$offset days");
+            else if ($offset < 0)
+                $date = $date->modify("$offset days");
+            $date = $date->format('Y-m-d');
+        }
+        return $date;
     }
 
     public function seasonLocalizedOverview($series, $season, $seasonNumber, $request): array|null
