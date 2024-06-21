@@ -860,6 +860,28 @@ h2 {
                     background-color: var(--user-episode-actions);
                 }
             }
+
+            .finale {
+                align-items: center;
+                background-color: var(--gradient-orange-50);
+                border-radius: .25rem;
+                color: var(--gradient-ardoise-10);
+                display: flex;
+                font-size: 1.5rem;
+                font-weight: 500;
+                justify-content: center;
+                left: .5rem;
+                max-width: calc(100% - 1rem);
+                padding-block: .25rem;
+                padding-inline: .5rem;
+                position: absolute;
+                text-align: center;
+                top: .5rem;
+
+                &.watched {
+                    background-color: var(--user-episode-actions);
+                }
+            }
         }
 
         .infos {

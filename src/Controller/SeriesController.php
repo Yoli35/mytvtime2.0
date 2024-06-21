@@ -1547,7 +1547,7 @@ class SeriesController extends AbstractController
         return $seasonEpisodes;
     }
 
-    public function offsetDate($date, $offset, $timezone): string
+    public function offsetDate($date, $offset, $timezone): ?string
     {
         if ($date && $offset) {
             $date = $this->dateService->newDateImmutable($date, $timezone);

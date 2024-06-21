@@ -82,6 +82,9 @@
                                     <div class="number{% if episode.user_episode and episode.user_episode.watchAt %} watched{% endif %}"{% if episode.user_episode and episode.user_episode.numberOfView %} data-title="{{ 'Watched %time% times'|trans({'%time%': episode.user_episode.numberOfView}) }}"{% endif %}>
                                         {{ episode.episode_number }}
                                     </div>
+                                    {% if episode.episode_type is defined and episode.episode_type == 'finale' %}
+                                        <div class="finale">{{ 'Series finale'|trans }}</div>
+                                    {% endif %}
                                 </div>
                                 <div class="infos">
                                     <div class="episode-name">

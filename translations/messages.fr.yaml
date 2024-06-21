@@ -54,124 +54,125 @@ New series date: Nouvelle date de série
 Unknown: Date inconnue
 
 # Series Show
-Series: Séries
-visit: visite
-visits: visites
-Cast: Casting
-Crew: Équipe
-No poster: Pas d'affiche
-No picture: Pas d'image
-Where to watch: Où regarder
-Where to rent: Où louer
-Where to buy: Où acheter
-Seasons: Saisons
-Season: Saison
-Episodes: Épisodes
-episodes: épisodes
-episode: épisode
-Air date: 'Date de diffusion :'
-Last seen: 'Dernière vue :'
-TBA: À annoncer
-Networks: Réseaux
-Key facts: Points clés
-Original name: Nom original
-Original language: Langue originale
-Original Country: Pays d'origine
-Status: Statut
-Canceled: Série annulée
-Continuing: Série en cours
-Ended: Série terminée
-In Production: En Production
-Planned: Planifié
-Returning Series: Série renouvelée
-Pilot: Pilote
-Network: Réseau
-Watch links: Liens pour regarder
+1 episode seen: 1 épisode vu
+A real binger!: Un vrai binge-watcher !
+A real marathoner!: Un vrai marathonien !
+Add a localized overview: Ajouter un aperçu localisé
 Add a watch link: Ajouter un lien pour regarder
-Provider: Plateforme
-Select a provider: Sélectionnez une plateforme
+Add an additional overview: Ajouter un aperçu supplémentaire
+Add this series to your watchlist: Ajouter cette série à votre liste de suivi
+Add to favorites: Ajouter aux favoris
 Add: Ajouter
+Additional overviews: Aperçus supplémentaires
+Air date: 'Date de diffusion :'
+All episodes seen: Tous les épisodes vus
+Are you sure you want to delete this overview?: Êtes-vous sûr de vouloir supprimer cet aperçu ?
+Back to series: Retour à la série
+Back to the series page: Retour à la page de la série
+Back to top: Retour en haut
+Backdrop added: Arrière-plan ajouté
+Backdrop updated: Arrière-plan mis à jour
+Cancel rating: Annuler la note
+Canceled: Série annulée
+Cast: Casting
+Choose a device: Choisissez un appareil
+Choose a provider: Choisissez une plateforme
+Continuing: Série en cours
+Crew: Équipe
 Delete: Supprimer
+Desktop: Ordinateur de bureau
+Edit: Modifier
+Ended: Série terminée
+Episode of the day: Épisode du jour
+Episodes of the day: Épisodes du jour
+Episodes: Épisodes
+First air date updated: Date de première diffusion mise à jour
+Give a rating: Donnez une note
+In Production: En Production
+Key facts: Points clés
+Laptop: Ordinateur portable
+Last seen: 'Dernière vue :'
+Last watched series: Dernière séries regardées
+Localized name: Nom localisé
+Localized overviews: Aperçus localisés
+Mark this episode as seen: Marquer cet épisode comme vu
+Mobile: Mobile
+Name updated: Nom mis à jour
+Network: Réseau
+Networks: Réseaux
+Next episode air date updated: Date de diffusion du prochain épisode mise à jour
+No episode seen: Aucun épisode vu
+No picture: Pas d'image
+No poster: Pas d'affiche
+Now: Maintenant
+Number of episodes has changed: Le nombre d'épisodes a changé
+Original Country: Pays d'origine
+Original language: Langue originale
+Original name updated: Nom original mis à jour
+Original name: Nom original
+Overview updated: Aperçu mis à jour
+Overview: Aperçu
+Paste your translation here: Collez (⌘ V / ⌃ V) votre traduction ici (depuis le presser-papier)
+Pilot: Pilote
+Planned: Planifié
+Poster added: Affiche ajoutée
+Poster updated: Affiche mise à jour
+Provider: Plateforme
+Remove from favorites: Retirer des favoris
+Remove this series from your watchlist: Retirer cette série de votre liste de suivi
+Remove: Pas vu
+Returning Series: Série renouvelée
+Season: Saison
+Seasons: Saisons
+See on Google: Voir sur Google
+Select a provider: Sélectionnez une plateforme
+Select a source: Sélectionnez une source
+Series added to your watchlist: Série ajoutée à votre liste de suivi
+Series airing this week: Séries diffusées cette semaine
+Series already in your watchlist: Série déjà dans votre liste de suivi
+Series finale: Fin de la série
+Series of the day: Série du jour
+Series of the next 7 days: Séries des 7 prochains jours
+Series: Séries
+Slug updated: Slug mis à jour
+Source: Source
+Status: Statut
+Suggest a localized name: Suggérer un nom localisé
+Suggest a name: Suggérer un nom
+Suggest a title: Suggérer un titre
+TBA: À annoncer
+Tablet: Tablette
+Television: Télévision
+That's all, Folks!: C'est tout, les amis !
 This field is required: Ce champ est requis
 URL: URL
-Add this series to your watchlist: Ajouter cette série à votre liste de suivi
-Series added to your watchlist: Série ajoutée à votre liste de suivi
-Series already in your watchlist: Série déjà dans votre liste de suivi
-Remove this series from your watchlist: Retirer cette série de votre liste de suivi
-Add to favorites: Ajouter aux favoris
-Remove from favorites: Retirer des favoris
-Cancel rating: Annuler la note
+Up to date!: À jour !
+Updates: Mises à jour
+Vote: Voter
+Watch links: Liens pour regarder
+Watched %time% times: Vu %time% fois
+Watched again: Vu à nouveau
+Where to buy: Où acheter
+Where to rent: Où louer
+Where to watch: Où regarder
+day: jour
+days: jours
+episode: épisode
+episodes seen: épisodes vus
+episodes: épisodes
+hour: heure
+hours: heures
+minute: minute
+minutes: minutes
+season: saison
+second: seconde
+seconds: secondes
 star: étoile
 stars: étoiles
+visit: visite
+visits: visites
 x star: x étoile
 x stars: x étoiles
-season: saison
-minutes: minutes
-Back to series: Retour à la série
-Choose a provider: Choisissez une plateforme
-Choose a device: Choisissez un appareil
-Give a rating: Donnez une note
-Now: Maintenant
-Vote: Voter
-Television: Télévision
-Mobile: Mobile
-Tablet: Tablette
-Laptop: Ordinateur portable
-Desktop: Ordinateur de bureau
-Updates: Mises à jour
-Name updated: Nom mis à jour
-Slug updated: Slug mis à jour
-Original name updated: Nom original mis à jour
-First air date updated: Date de première diffusion mise à jour
-Overview updated: Aperçu mis à jour
-Next episode air date updated: Date de diffusion du prochain épisode mise à jour
-Poster updated: Affiche mise à jour
-Poster added: Affiche ajoutée
-Backdrop updated: Arrière-plan mis à jour
-Backdrop added: Arrière-plan ajouté
-Mark this episode as seen: Marquer cet épisode comme vu
-Back to top: Retour en haut
-Suggest a name: Suggérer un nom
-Watched %time% times: Vu %time% fois
-Remove: Pas vu
-Watched again: Vu à nouveau
-A real marathoner!: Un vrai marathonien !
-A real binger!: Un vrai binge-watcher !
-Localized name: Nom localisé
-No episode seen: Aucun épisode vu
-1 episode seen: 1 épisode vu
-All episodes seen: Tous les épisodes vus
-episodes seen: épisodes vus
-days: jours
-day: jour
-hours: heures
-hour: heure
-minute: minute
-seconds: secondes
-second: seconde
-Suggest a title: Suggérer un titre
-Paste your translation here: Collez (⌘ V / ⌃ V) votre traduction ici (depuis le presser-papier)
-Additional overviews: Aperçus supplémentaires
-Last watched series: Dernière séries regardées
-Series airing this week: Séries diffusées cette semaine
-Series of the day: Série du jour
-Episodes of the day: Épisodes du jour
-Episode of the day: Épisode du jour
-Back to the series page: Retour à la page de la série
-Series of the next 7 days: Séries des 7 prochains jours
-See on Google: Voir sur Google
-Suggest a localized name: Suggérer un nom localisé
-Add a localized overview: Ajouter un aperçu localisé
-Add an additional overview: Ajouter un aperçu supplémentaire
-Localized overviews: Aperçus localisés
-Overview: Aperçu
-Edit: Modifier
-Are you sure you want to delete this overview?: Êtes-vous sûr de vouloir supprimer cet aperçu ?
-Source: Source
-Select a source: Sélectionnez une source
-Up to date!: À jour !
-That's all, Folks!: C'est tout, les amis !
-Number of episodes has changed: Le nombre d'épisodes a changé
 
 #Search
 Search: Recherche
