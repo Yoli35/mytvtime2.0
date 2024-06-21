@@ -17,6 +17,7 @@ class EpisodeNotificationExtension extends AbstractExtension
             // Reference: https://twig.symfony.com/doc/3.x/advanced.html#automatic-escaping
             new TwigFilter('countEpisodeNotifications', [EpisodeNotificationExtensionRuntime::class, 'countEpisodeNotifications']),
             new TwigFilter('listEpisodeNotifications', [EpisodeNotificationExtensionRuntime::class, 'listEpisodeNotifications']),
+            new TwigFilter('listEpisodeOfTheDay', [EpisodeNotificationExtensionRuntime::class, 'listEpisodeOfTheDay']),
         ];
     }
 
@@ -25,6 +26,7 @@ class EpisodeNotificationExtension extends AbstractExtension
         return [
             new TwigFunction('countEpisodeNotifications', [EpisodeNotificationExtensionRuntime::class, 'countEpisodeNotifications']),
             new TwigFunction('listEpisodeNotifications', [EpisodeNotificationExtensionRuntime::class, 'listEpisodeNotifications']),
+            new TwigFunction('listEpisodeOfTheDay', [EpisodeNotificationExtensionRuntime::class, 'listEpisodeOfTheDay']),
         ];
     }
 }

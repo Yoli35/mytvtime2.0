@@ -53,14 +53,28 @@
         <div class="menu">
             <a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a>
             {% if app.user %}
+                <a href="{{ path('app_series_index') }}">{{ 'Series'|trans }}</a>
+                <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
+            {% endif %}
+            {% if app.user %}
+                {% set eotdList=listEpisodeOfTheDay(app.user) %}
+                {% set l = eotdList|length %}
+                {% if l %}
+                    <div class="separation">{{ (l>1?'Episodes of the day':'Episode of the day')|trans }}</div>
+                    {% for eotd in eotdList %}
+                        {% set name = eotd.localizedName ? eotd.localizedName : eotd.name %}
+                        {% set slug = eotd.localizedName ? eotd.localizedSlug : eotd.slug %}
+                        {% set e = eotd.episodeNumber %}
+                        {% set s = eotd.seasonNumber %}
+                        <a href="{{ path('app_series_season', {id: eotd.id, slug: slug, seasonNumber: s}) }}">{{ name }} {{ 'S%02dE%02d'|format(s, e) }}</a>
+                    {% endfor %}
+                {% endif %}
                 {% if seriesName is defined %}
+                    <div class="separation">{{ 'Back to the series page'|trans }}</div>
                     <a href="{{ seriesLink }}">
-                        {#                    <i class="fas fa-arrow-left"></i>&nbsp; #}
                         <em>{{ ux_icon('fa6-solid:arrow-left-long', {height: '18px', width: '18px'}) }}</em>&nbsp;{{ seriesName }}
                     </a>
                 {% endif %}
-                <a href="{{ path('app_series_index') }}">{{ 'Series'|trans }}</a>
-                <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
             {% endif %}
             <div class="separation">{{ 'Search'|trans }}</div>
             {% if app.user %}
@@ -93,3 +107,4 @@
         </div>
     </div>
 </nav>
+
