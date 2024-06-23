@@ -1,4 +1,5 @@
 import {AverageColor} from "../images/AverageColor.js";
+import {NavBar} from "../NavBar.js";
 import {ToolTips} from "../ToolTips.js";
 
 /**
@@ -24,6 +25,7 @@ export class HighlightSeries {
         this.posterListDiv = null;
         this.intervalDuration = 20000;
         this.transition = 300;
+        this.navBarColor = new NavBar().navBarColor;
         this.toolTips = new ToolTips();
     }
 
@@ -122,11 +124,15 @@ export class HighlightSeries {
         posterImg.onload = () => {
             const color = this.averageColor.getColor(posterImg);
             const hsl = this.averageColor.rgbToHsl(color);
+
+            this.navBarColor(hsl);
+
             const toolTips = document.querySelector(".tool-tips.highlight");
             if (toolTips) {
                 this.root.style.setProperty("--tooltips-bg", "hsl(" + hsl.h + ", " + hsl.s + "%, 50%)");
                 this.root.style.setProperty("--tooltips-color", "hsl(" + hsl.h + ", " + hsl.s + "%, 80%)");
             }
+
             this.root.style.setProperty("--highlight-progress", "hsl(" + ((hsl.h + 180) % 360) + ", " + hsl.s + "%, " + (hsl.l < 95 ? hsl.l + 5 : 100) + "%)");
             this.root.style.setProperty("--highlight-head", "hsl(" + ((hsl.h + 180) % 360) + ", " + hsl.s + "%, " + (hsl.l < 75 ? hsl.l + 25 : 100) + "%)");
             this.root.style.setProperty("--highlight-bg", "hsl(" + ((hsl.h + 180) % 360) + ", " + hsl.s + "%, " + hsl.l + "%)");
@@ -144,7 +150,7 @@ export class HighlightSeries {
         if (this.series[this.seriesIndex]['count'] >= this.maxDisplayPerPoster) {
             let index = this.seriesIndexes.indexOf(this.seriesIndex);
             this.seriesIndexes.splice(index, 1);
-            console.log(this.seriesIndexes);
+            // console.log(this.seriesIndexes);
             this.timeToChangeSeries = this.seriesIndexes.length === 0;
         }
     }

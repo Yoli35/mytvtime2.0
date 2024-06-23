@@ -1,6 +1,7 @@
 import './bootstrap.js';
 
 import {Menu} from './js/Menu.js';
+import {NavBar} from './js/NavBar.js';
 import {ToolTips} from './js/ToolTips.js';
 import {ProviderSelect} from './js/home/ProviderSelect.js';
 import {HighlightSeries} from './js/home/HighlightSeries.js';
@@ -26,6 +27,7 @@ if (toTop) {
     });
 }
 
+const navBar = new NavBar();
 const menu = new Menu();
 menu.init();
 
@@ -68,17 +70,7 @@ if (seriesShow) {
         hsl.l = 100;
     }
 
-    const root = document.documentElement;
-    root.style.setProperty("--navbar-bg", "hsl(" + hsl.h + ", " + hsl.s + "%, " + (hsl.l - 10) + "%)");
-    root.style.setProperty("--navbar-bg-50", "hsla(" + hsl.h + ", " + hsl.s + "%, " + hsl.l + "%, .5)");
-    root.style.setProperty("--navbar-bg-75", "hsla(" + hsl.h + ", " + hsl.s + "%, " + hsl.l + "%, .75)");
-
-    if (hsl.l > 50) {
-        navbarLinks.forEach(link => {
-            link.classList.add("dark");
-        });
-        footer.classList.add("dark");
-    }
+    navBar.navBarColor(hsl);
 
     const additionalOverviews = document.querySelector(".additional.overviews");
     if (additionalOverviews) {
