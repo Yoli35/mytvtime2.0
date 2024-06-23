@@ -6,7 +6,7 @@
 <div class="container-fluid home">
     {% include('_blocks/_menu.html.twig') %}
     <div class="login">
-        <form method="post">
+        <form action="{{ path('app_login') }}" method="post">
             {% if error %}
                 <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
             {% endif %}
