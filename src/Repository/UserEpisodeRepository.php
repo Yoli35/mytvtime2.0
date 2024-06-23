@@ -157,7 +157,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
                      sln.name                               as localizedName, 
                      sln.slug                               as localizedSlug, 
                      ue.`episode_number`                    as episodeNumber, 
-                     ue.`season_number`                     as seasonNumber 
+                     ue.`season_number`                     as seasonNumber,
+                     IF(sln.name IS NULL, s.name, sln.name) as displayName 
               FROM series s 
                      INNER JOIN user_series us ON s.id = us.series_id 
                      INNER JOIN user_episode ue ON us.id = ue.user_series_id 
@@ -170,7 +171,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                       OR ((sdo.offset > 0) AND ue.air_date = DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY)) 
                       OR ((sdo.offset < 0) AND ue.air_date = DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY)) 
                          ) 
-              ORDER BY us.last_watch_at DESC ";
+              ORDER BY displayName ";
 
         return $this->getAll($sql);
     }
