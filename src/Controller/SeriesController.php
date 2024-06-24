@@ -328,8 +328,10 @@ class SeriesController extends AbstractController
             $series->setVisitNumber($series->getVisitNumber() + 1);
             $this->seriesRepository->save($series, true);
             $localizedName = $series->getLocalizedName($locale);
+            $localizedOverview = $series->getLocalizedOverview($locale);
         } else {
             $localizedName = null;
+            $localizedOverview = null;
         }
         $tv = json_decode($this->tmdbService->getTv($id, $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords"]), true);
 
@@ -337,7 +339,7 @@ class SeriesController extends AbstractController
         $this->checkTmdbSlug($tv, $slug, $localizedName?->getSlug());
 
 //        dump($tv['seasons']);
-        if ($tv['overview'] == "" && $locale != 'en') {
+        if (!$localizedOverview && $tv['overview'] == "" && $locale != 'en') {
             $tvUS = json_decode($this->tmdbService->getTv($id, 'en-US', []), true);
             $tv['overview'] = $tvUS['overview'];
             foreach ($tv['seasons'] as $key => $season) {
@@ -362,6 +364,7 @@ class SeriesController extends AbstractController
         return $this->render('series/tmdb.html.twig', [
             'tv' => $tv,
             'localizedName' => $localizedName,
+            'localizedOverview' => $localizedOverview,
         ]);
     }
 
@@ -445,12 +448,8 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/remove/{id}', name: 'remove', requirements: ['id' => Requirement::DIGITS])]
-    public function removeUserSeries(Series $series): Response
+    public function removeUserSeries(UserSeries $userSeries): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-
         $this->userSeriesRepository->remove($userSeries);
 
         return $this->json([
@@ -627,7 +626,7 @@ class SeriesController extends AbstractController
             'ok' => true,
             'body' => [
                 'id' => $overviewId,
-                'source' => ['id' => $source->getId(), 'name' => $source->getName(), 'path' => $source->getPath(), 'logoPath' => $source->getLogoPath()],
+                'source' => $source ? ['id' => $source->getId(), 'name' => $source->getName(), 'path' => $source->getPath(), 'logoPath' => $source->getLogoPath()] : null,
             ]
         ]);
     }

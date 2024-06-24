@@ -34,7 +34,13 @@
                         {{ tv.name }}
                         ({{ tv.first_air_date|date("Y") }})
                     </h1>
-                    <div class="overview">{{ tv.overview|nl2br }}</div>
+                    <div class="overview">
+                        {% if localizedOverview %}
+                            {{ localizedOverview.overview|nl2br }}
+                        {% else %}
+                            {{ tv.overview|nl2br }}
+                        {% endif %}
+                    </div>
                     <div class="backdrop">
                         <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }}">
                     </div>

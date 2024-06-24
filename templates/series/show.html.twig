@@ -608,7 +608,7 @@
                     }
                 }).then(function (response) {
                     if (response.ok) {
-                        window.location.href = '/' + lang + '/series/tmdb/{{ series.tmdbId }}/{{ series.slug }}';
+                        window.location.href = '/' + lang + '/series/tmdb/{{ series.tmdbId }}-{{ series.slug }}';
                     }
                 });
             });
