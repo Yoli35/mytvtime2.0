@@ -30,6 +30,11 @@ readonly class EpisodeNotificationExtensionRuntime implements RuntimeExtensionIn
 
     public function listEpisodeOfTheDay(User $user, string $country = 'FR', string $locale = 'fr'): array
     {
-        return $this->userEpisodeRepository->episodesOfTheDayForTwig($user, $country, $locale);
+        $arr = array_map(function ($item) {
+            $item['posterPath'] = '/series/posters' . $item['posterPath'];
+            return $item;
+        }, $this->userEpisodeRepository->episodesOfTheDayForTwig($user, $country, $locale));
+        dump($arr);
+        return $arr;
     }
 }

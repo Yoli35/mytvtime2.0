@@ -22,6 +22,8 @@ export class Menu {
     init() {
         const burger = document.querySelector(".burger");
         const navbar = document.querySelector(".navbar");
+        const mainMenu = navbar.querySelector(".menu");
+        const eotdMenuItems = document.querySelectorAll("a[id^='eotd-menu-item-']");
         const body = document.querySelector("body");
         const notifications = document.querySelector(".notifications");
 
@@ -29,6 +31,38 @@ export class Menu {
             burger.classList.toggle("open");
             navbar.classList.toggle("active");
             body.classList.toggle("frozen");
+            if (burger.classList.contains("open")) {
+                mainMenu.classList.add("open");
+                setTimeout(() => {
+                    mainMenu.classList.add("show");
+                }, 0);
+            } else {
+                setTimeout(() => {
+                    mainMenu.classList.remove("show");
+                    setTimeout(() => {
+                        mainMenu.classList.remove("open");
+                    }, 250);
+                }, 0);
+            }
+        });
+
+        eotdMenuItems.forEach((item) => {
+            const id = item.id.split("-")[3];
+            const eotdPreview = document.querySelector(`#eotd-preview-${id}`);
+            item.addEventListener("mouseenter", () => {
+                eotdPreview.classList.add("open");
+                setTimeout(() => {
+                    eotdPreview.classList.add("show");
+                }, 0);
+            });
+            item.addEventListener("mouseleave", () => {
+                setTimeout(() => {
+                    eotdPreview.classList.remove("show");
+                    setTimeout(() => {
+                        eotdPreview.classList.remove("open");
+                    }, 250);
+                }, 0);
+            });
         });
 
         notifications?.addEventListener("click", () => {
@@ -42,6 +76,13 @@ export class Menu {
                 burger.classList.remove("open");
                 navbar.classList.remove("active");
                 body.classList.remove("frozen");
+
+                setTimeout(() => {
+                    mainMenu.classList.remove("show");
+                    setTimeout(() => {
+                        mainMenu.classList.remove("open");
+                    }, 250);
+                }, 0);
                 e.stopPropagation();
                 e.preventDefault();
             }

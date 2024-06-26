@@ -153,11 +153,13 @@ class UserEpisodeRepository extends ServiceEntityRepository
         $sql = "SELECT 
                      s.id                                   as id, 
                      s.name                                 as name, 
+                     s.poster_path                          as posterPath,
                      s.slug                                 as slug, 
                      sln.name                               as localizedName, 
                      sln.slug                               as localizedSlug, 
                      ue.`episode_number`                    as episodeNumber, 
                      ue.`season_number`                     as seasonNumber,
+                     ue.`watch_at`                          as watchAt,
                      IF(sln.name IS NULL, s.name, sln.name) as displayName 
               FROM series s 
                      INNER JOIN user_series us ON s.id = us.series_id 
