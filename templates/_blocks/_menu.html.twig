@@ -57,31 +57,20 @@
                 <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
             {% endif %}
             {% if app.user %}
-                {% set eotdList=listEpisodeOfTheDay(app.user) %}
-                {% set l = eotdList|length %}
+                {% set eotdList = listEpisodeOfTheDay(app.user) %}
+                {% set l = eotdList.totalEpisodeCount %}
                 {% if l %}
-                    <div class="separation">{{ (l>1?'Episodes of the day':'Episode of the day')|trans }}</div>
-                    {% for eotd in eotdList %}
-                        {% set name = eotd.displayName %}
-                        {% set slug = eotd.localizedName ? eotd.localizedSlug : eotd.slug %}
-                        {% set e = eotd.episodeNumber %}
-                        {% set s = eotd.seasonNumber %}
+                    <div class="separation">{{ 'Today'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
+                    {% for eotd in eotdList.results %}
                         <div class="a-preview">
                             <a id="eotd-menu-item-{{ eotd.id }}"
-                               href="{{ path('app_series_season', {id: eotd.id, slug: slug, seasonNumber: s}) }}"
-                                    {% if eotd.watchAt %} class="watched"{% endif %}>
-                                {{ name }} {{ 'S%02dE%02d'|format(s, e) }}
+                               href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
+                               style="background: linear-gradient(90deg, var(--gradient-green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
+                                {{ eotd.display }}
                             </a>
-{#                            <div class="vote">#}
-{#                                {% if eotd.vote > 0 %}#}
-{#                                    {% for i in 1..eotd.vote %}#}
-{#                                        <div class="bar"></div>#}
-{#                                    {% endfor %}#}
-{#                                {% endif %}#}
-{#                            </div>#}
                             <div id="eotd-preview-{{ eotd.id }}" class="episode-of-the-day-preview">
-                                <a href="{{ path('app_series_season', {id: eotd.id, slug: slug, seasonNumber: s}) }}">
-                                    <img src="{{ eotd.posterPath }}" alt="{{ name }}">
+                                <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
+                                    <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
                                 </a>
                             </div>
                         </div>
