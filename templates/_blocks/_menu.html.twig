@@ -65,6 +65,8 @@
                         <div class="a-preview">
                             <a id="eotd-menu-item-{{ eotd.id }}"
                                href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
+                               data-episode-count="{{ eotd.episodeCount }}"
+                               data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
                                style="background: linear-gradient(90deg, var(--gradient-green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
                                 {{ eotd.display }}
                             </a>

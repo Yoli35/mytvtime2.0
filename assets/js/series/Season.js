@@ -359,6 +359,26 @@ export class Season {
                 const substituteNameDiv = episode.closest('.season-episode').querySelector('.substitute');
                 substituteNameDiv?.classList.add('watched');
 
+                // Mise à jour du menu
+                const seriesId = episode.getAttribute('data-series-id');
+                const episodeOfTheDayInMenu = document.querySelector('a[id="eotd-menu-item-' + seriesId + '"]');
+                if (episodeOfTheDayInMenu) {
+                    const episodeCount = parseInt(episodeOfTheDayInMenu.getAttribute('data-episode-count'));
+                    const firstEpisodeNumber = parseInt(episodeOfTheDayInMenu.getAttribute('data-first-episode-number'));
+                    const number = parseInt(episodeNumber);
+                    if (episodeCount === 1) {
+                        if (number === firstEpisodeNumber) {
+                            episodeOfTheDayInMenu.classList.add('watched');
+                        }
+                    } else {
+                        if (number >= firstEpisodeNumber && number < firstEpisodeNumber + episodeCount) {
+                            const progress = Math.round(100 * (episodeNumber - firstEpisodeNumber + 1) / episodeCount);
+                            const style = "background: linear-gradient(90deg, var(--gradient-green-50) " + progress + "%, transparent " + progress + "%)";
+                            episodeOfTheDayInMenu.setAttribute('style', style);
+                        }
+                    }
+                }
+
                 const previousEpisode = episode.closest('.seasons-episodes').querySelector('.remove-this-episode[data-e-number="' + (episodeNumber - 1) + '"]');
                 const previousProvider = previousEpisode?.parentElement.querySelector('.select-provider');
                 if (previousProvider) {

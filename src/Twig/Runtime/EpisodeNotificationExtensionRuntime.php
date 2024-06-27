@@ -53,10 +53,11 @@ readonly class EpisodeNotificationExtensionRuntime implements RuntimeExtensionIn
                     $display = sprintf('S%02dE%02d to S%02dE%02d', $seasonNumber, $start, $seasonNumber, $end);
                 else
                     $display = sprintf('S%02dE%02d à S%02dE%02d', $seasonNumber, $start, $seasonNumber, $end);
+                $seriesArr[$key]['firstEpisodeNumber'] = $start;
             } else {
                 $episodeNumber = $item['episodes'][0];
                 $display = sprintf('S%02dE%02d', $seasonNumber, $episodeNumber);
-
+                $seriesArr[$key]['firstEpisodeNumber'] = $episodeNumber;
             }
             $seriesArr[$key]['display'] = $item['displayName'] . ' ' . $display;
             $seriesArr[$key]['episodeCount'] = count($item['episodes']);
@@ -70,6 +71,7 @@ readonly class EpisodeNotificationExtensionRuntime implements RuntimeExtensionIn
                     'display' => $item['display'],
                     'episodeCount' => $item['episodeCount'],
                     'episodesWatched' => $item['episodesWatched'],
+                    'firstEpisodeNumber' => $item['firstEpisodeNumber'],
                     'id' => $item['id'],
                     'name' => $item['displayName'],
                     'posterPath' => $item['posterPath'],

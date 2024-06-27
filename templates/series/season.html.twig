@@ -144,6 +144,7 @@
                                 <div class="user-episode">
                                     {% if episode.user_episode and episode.user_episode.watchAt %}
                                         <div class="remove-this-episode" data-id="{{ episode.id }}"
+                                             data-series-id="{{ series.id }}"
                                              data-last-episode="{{ loop.last ?? 0 }}"
                                              data-show-id="{{ episode.show_id }}"
                                              data-s-number="{{ episode.season_number }}"
@@ -175,6 +176,7 @@
                                         </div>
                                     {% else %}
                                         <div class="add-this-episode" data-id="{{ episode.id }}"
+                                             data-series-id="{{ series.id }}"
                                              data-last-episode="{{ loop.last ?? 0 }}"
                                              data-show-id="{{ episode.show_id }}"
                                              data-s-number="{{ episode.season_number }}"
