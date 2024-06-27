@@ -527,31 +527,6 @@ label:has(input[type="text"]) {
                 display: flex;
                 position: relative;
 
-               /* > a {
-                    width: calc(100% - 1rem);
-                }*/
-
-                .vote {
-                    background-color: var(--gradient-green-15);
-                    border-radius: .125rem;
-                    display: flex;
-                    flex-direction: column;
-                    flex-shrink: 0;
-                    gap: 1px;
-                    height: 33px;
-                    justify-content: flex-end;
-                    margin-block-start: -1px;
-                    margin-inline-start: auto;
-                    padding: 2px;
-                    width: 12px;
-
-                    .bar {
-                        background-color: var(--gradient-green-50);
-                        height: 2px;
-                        width: 100%;
-                    }
-                }
-
                 .episode-of-the-day-preview {
                     align-items: center;
                     background-color: var(--navbar-bg);
