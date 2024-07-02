@@ -22,7 +22,7 @@
                 <em>{{ ux_icon('fa6-solid:bell', {height: '18px', width: '18px'}) }}</em>
                 <span>{{ notificationCount }}</span>
                 {#            </a> #}
-                <div class="menu">
+                <div class="menu-notifications">
                     {% for n in notifications %}
                         {% set message = n.message|replace({
                             'New episode date': 'New episode date'|trans,
