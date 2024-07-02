@@ -9,6 +9,11 @@ import {PosterHover} from './js/images/PosterHover.js';
 import {AverageColor} from './js/images/AverageColor.js';
 import {Season} from './js/series/Season.js';
 
+// new ResizeObserver(entries => {
+//     entries.forEach( (entry) =>{
+//     console.log({entry});
+//     });
+// }).observe(document.body);
 
 const toTop = document.querySelector(".to-top");
 if (toTop) {

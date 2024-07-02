@@ -252,6 +252,26 @@
                 }
             }
         }
+
+        .loading-v2 {
+            border: 2px dashed var(--gradient-orange-50);
+            inset: 0;
+            position: absolute;
+
+            .ball-container {
+                height: 100%;
+                position: relative;
+                width: 100%;
+
+                .ball {
+                    background-color: var(--gradient-orange-50);
+                    border-radius: 50%;
+                    height: 2rem;
+                    position: absolute;
+                    width: 2rem;
+                }
+            }
+        }
     }
 
     .highlight-progress {
