@@ -1465,7 +1465,7 @@ class SeriesController extends AbstractController
         return $tv['credits'];
     }
 
-    public function networks($tv): array
+    public function networks(array $tv): array
     {
         return array_map(function ($network) {
             $network['logo_path'] = $network['logo_path'] ? $this->imageConfiguration->getCompleteUrl($network['logo_path'], 'logo_sizes', 2) : null; // w92
@@ -1483,7 +1483,7 @@ class SeriesController extends AbstractController
         return [];
     }
 
-    public function seasonsPosterPath($seasons): array
+    public function seasonsPosterPath(array $seasons): array
     {
         $slugger = new AsciiSlugger();
         return array_map(function ($season) use ($slugger) {
@@ -1493,7 +1493,7 @@ class SeriesController extends AbstractController
         }, $seasons);
     }
 
-    public function seasonEpisodes(array $season, UserSeries $userSeries, $dayOffset): array
+    public function seasonEpisodes(array $season, UserSeries $userSeries, int $dayOffset): array
     {
         $user = $userSeries->getUser();
         $series = $userSeries->getSeries();
@@ -1546,17 +1546,18 @@ class SeriesController extends AbstractController
         return $seasonEpisodes;
     }
 
-    public function offsetDate($date, $offset, $timezone): ?string
+    public function offsetDate(string $dateString, int $offset, string $timezone): ?string
     {
-        if ($date && $offset) {
-            $date = $this->dateService->newDateImmutable($date, $timezone);
+        // Nombre de jours entre le 18 juillet 2022 et le 21 juin 2024 : 704
+        if ($dateString && $offset) {
+            $date = $this->dateService->newDateImmutable($dateString, $timezone);
             if ($offset > 0)
                 $date = $date->modify("+$offset days");
             else if ($offset < 0)
                 $date = $date->modify("$offset days");
-            $date = $date->format('Y-m-d');
+            $dateString = $date->format('Y-m-d');
         }
-        return $date;
+        return $dateString;
     }
 
     public function seasonLocalizedOverview($series, $season, $seasonNumber, $request): array|null
