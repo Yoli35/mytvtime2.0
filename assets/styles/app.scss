@@ -305,7 +305,7 @@ label:has(input[type="text"]) {
             }
         }
 
-        &:has(.menu.show) {
+        &:has(.menu-notifications.show) {
             background-color: var(--gradient-orange-50);
             color: var(--gradient-orange-90);
 
@@ -320,7 +320,7 @@ label:has(input[type="text"]) {
             }
         }
 
-        .menu {
+        .menu-notifications {
             background-color: var(--navbar-bg);
             border: 1px solid var(--navbar-bg-90);
             border-radius: .25rem;

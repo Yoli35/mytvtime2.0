@@ -66,7 +66,7 @@ export class Menu {
         });
 
         notifications?.addEventListener("click", () => {
-            const menu = notifications.querySelector(".menu");
+            const menu = notifications.querySelector(".menu-notifications");
             menu.classList.toggle("show");
             this.markNotificationsAsRead();
         });
@@ -86,8 +86,8 @@ export class Menu {
                 e.stopPropagation();
                 e.preventDefault();
             }
-            if (notifications?.querySelector(".menu").classList.contains("show")) {
-                const menu = notifications.querySelector(".menu");
+            if (notifications?.querySelector(".menu-notifications").classList.contains("show")) {
+                const menu = notifications.querySelector(".menu-notifications");
                 if (!menu.contains(e.target) && !notifications.contains(e.target)) {
                     menu.classList.remove("show");
                     e.stopPropagation();
