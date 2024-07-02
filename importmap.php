@@ -18,8 +18,29 @@ return [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
+    'AverageColor' => [
+        'path' => './assets/js/images/AverageColor.js',
+    ],
+    'HighlightSeries' => [
+        'path' => './assets/js/home/HighlightSeries.js',
+    ],
     'Menu' => [
         'path' => './assets/js/Menu.js',
+    ],
+    'NavBar' => [
+        'path' => './assets/js/NavBar.js',
+    ],
+    'PosterHover' => [
+        'path' => './assets/js/images/PosterHover.js',
+    ],
+    'ProviderSelect' => [
+        'path' => './assets/js/home/ProviderSelect.js',
+    ],
+    'ToolTips' => [
+        'path' => './assets/js/ToolTips.js',
+    ],
+    'Season' => [
+        'path' => './assets/js/series/Season.js',
     ],
     '@hotwired/stimulus' => [
         'version' => '3.2.2',

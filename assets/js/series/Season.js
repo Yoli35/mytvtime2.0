@@ -1,4 +1,4 @@
-import {ToolTips} from '../ToolTips.js';
+import {ToolTips} from 'ToolTips';
 
 let gThis;
 
