@@ -1,19 +1,90 @@
 import './bootstrap.js';
 
-import {Menu} from './js/Menu.js';
-import {NavBar} from './js/NavBar.js';
-import {ToolTips} from './js/ToolTips.js';
-import {ProviderSelect} from './js/home/ProviderSelect.js';
-import {HighlightSeries} from './js/home/HighlightSeries.js';
-import {PosterHover} from './js/images/PosterHover.js';
-import {AverageColor} from './js/images/AverageColor.js';
-import {Season} from './js/series/Season.js';
+import {Menu} from 'Menu';
+import {NavBar} from 'NavBar';
+import {ToolTips} from 'ToolTips';
+import {ProviderSelect} from 'ProviderSelect';
+import {HighlightSeries} from 'HighlightSeries';
+import {PosterHover} from 'PosterHover';
+import {AverageColor} from 'AverageColor';
+import {Season} from 'Season';
 
 // new ResizeObserver(entries => {
 //     entries.forEach( (entry) =>{
 //     console.log({entry});
 //     });
+//     drawBodyBackground(canvas);
 // }).observe(document.body);
+
+
+const canvas = initBodyBackground();
+new ResizeObserver(() => {
+    drawBodyBackground(canvas);
+}).observe(document.body);
+
+function initBodyBackground()
+{
+    const body = document.querySelector("body");
+    const canvas = document.createElement("canvas");
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    canvas.style.position = "fixed";
+    canvas.style.top = "0";
+    canvas.style.left = "0";
+    canvas.style.zIndex = "-1";
+    canvas.style.pointerEvents = "none";
+    body.appendChild(canvas);
+
+    return canvas;
+}
+function drawBodyBackground(canvas)
+{
+    let ctx = canvas.getContext("2d");
+    const scaleFactor = backingScale(ctx);
+    const height = window.innerHeight;
+    const width = window.innerWidth;
+    const bodyVisibleHeight = height * scaleFactor;
+    const bodyVisibleWidth = width * scaleFactor;
+    if (scaleFactor > 1) {
+        ctx = canvas.getContext("2d", { alpha: false });
+    }
+
+    canvas.height = height;
+    canvas.width = width;
+    ctx.fillStyle = "#1E1E22";
+    ctx.fillRect(0, 0, bodyVisibleWidth, bodyVisibleHeight);
+
+    ctx.beginPath();
+    const grad1 = ctx.createRadialGradient(3 * width / 4, height / 4, 0, 3 * width / 4, height / 4, width / 4);
+    grad1.addColorStop(0, "#5f6668");
+    grad1.addColorStop(1, "#1E1E22");
+    ctx.fillStyle = grad1;
+    ctx.arc(3 * width / 4, height / 4, width / 4, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.beginPath();
+    const grad2 = ctx.createRadialGradient(width / 4, 3 * height / 4, 0, width / 4, 3 * height / 4, width / 4);
+    grad2.addColorStop(0, "#5f6668");
+    grad2.addColorStop(1, "#1E1E22");
+    ctx.fillStyle = grad2;
+    ctx.arc(width / 4, 3 * height / 4, width / 4, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.beginPath();
+    const grad = ctx.createRadialGradient(50, 50, 5, 50, 50, 50);
+    grad.addColorStop(0, '#5f6668');
+    grad.addColorStop(1, '#1e1e22');
+    ctx.fillStyle = grad;
+    ctx.arc(50, 50, 50, 0, 2 * Math.PI);
+    ctx.fill();
+}
+
+function backingScale() {
+    if ('devicePixelRatio' in window) {
+        if (window.devicePixelRatio > 1) {
+            return window.devicePixelRatio;
+        }
+    }
+    return 1;
+}
 
 const toTop = document.querySelector(".to-top");
 if (toTop) {
@@ -57,8 +128,8 @@ if (document.querySelector(".home")) {
 const seriesShow = document.querySelector(".series-show");
 if (seriesShow) {
     // const navbar = document.querySelector(".navbar");
-    const navbarLinks = document.querySelectorAll(".navbar a");
-    const footer = document.querySelector(".home-footer");
+    // const navbarLinks = document.querySelectorAll(".navbar a");
+    // const footer = document.querySelector(".home-footer");
     const infos = seriesShow.querySelector(".infos");
     const averageColor = new AverageColor();
     const img = seriesShow.querySelector(".poster").querySelector("img") ?? seriesShow.querySelector(".backdrop").querySelector("img");
