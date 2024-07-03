@@ -43,7 +43,7 @@
                         </h1>
                         <div class="series-tools">
                             <div class="series-tools-click">
-                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                {{ ux_icon('fa6-solid:ellipsis-vertical', {height: '18px', width: '18px'}) }}
                             </div>
                             <div class="series-tools-menu">
                                 <div id="localized-name">{{ 'Suggest a localized name'|trans }}</div>
@@ -140,8 +140,12 @@
                                     </div>
                                     <div class="tools">
                                         <div class="locale">{{ overview.locale|upper }}</div>
-                                        <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}"><i class="fas fa-pen"></i></div>
-                                        <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}"><i class="fas fa-trash"></i></div>
+                                        <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
+                                            {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
+                                        </div>
+                                        <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
+                                            {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
+                                        </div>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -172,8 +176,12 @@
                                             </div>
                                             <div class="locale">{{ overview.locale|upper }}</div>
                                         {% endif %}
-                                        <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}"><i class="fas fa-pen"></i></div>
-                                        <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}"><i class="fas fa-trash"></i></div>
+                                        <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
+                                            {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
+                                        </div>
+                                        <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
+                                            {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
+                                        </div>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -205,7 +213,9 @@
                                     {% set country = user.country ?? 'FR' %}
                                     <div class="country" data-title="{{ schedule.country|country_name }}">{{ getEmojiFlag(schedule.country) }}</div>
                                     <div class="air">{{ schedule.firstAirDate|format_datetime(pattern="cccc - H:mm")|capitalize }}</div>
-                                    <div><i class="fas fa-arrow-right"></i></div>
+                                    <div>
+                                        {{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }}
+                                    </div>
                                     <div class="country" data-title="{{ country|country_name }}">{{ getEmojiFlag(country) }}</div>
                                     <div class="local-air">{{ schedule.originalDate|format_datetime(pattern="cccc - H:mm")|capitalize }}</div>
                                 </div>
@@ -231,11 +241,10 @@
                             </a>
                         {% endfor %}
                         <div class="add-watch-link" data-title="{{ 'Add a watch link'|trans }}">
-                            <i class="fa fa-plus"></i>
+                            {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
                         </div>
                     </div>
                     <div class="watch-link-form">
-                        {#                        <form action="{{ path('app_series_add_watch_link', {id: series.id}) }}" method="post"> #}
                         <form class="form" action="" id="watch-link-form">
                             <div class="form-row">
                                 <div class="form-field">
@@ -276,30 +285,44 @@
                     <div class="rating">
                         <div class="rating-stars">
                             <div class="stars" data-trans-rating="Cancel rating|{{ 'Cancel rating'|trans }}" data-trans-star="star|{{ 'star'|trans }}" data-trans-stars="stars|{{ 'stars'|trans }}">
-                                <i class="star {{ userSeries.rating >= 1 ? "active" }} fas fa-star" data-value="1" data-title="{{ (userSeries.rating >= 1 ? "Cancel rating":"x star")|trans({'x': 1}) }}"></i>
-                                <i class="star {{ userSeries.rating >= 2 ? "active" }} fas fa-star" data-value="2" data-title="{{ (userSeries.rating >= 2 ? "Cancel rating":"x stars")|trans({'x': 2}) }}"></i>
-                                <i class="star {{ userSeries.rating >= 3 ? "active" }} fas fa-star" data-value="3" data-title="{{ (userSeries.rating >= 3 ? "Cancel rating":"x stars")|trans({'x': 3}) }}"></i>
-                                <i class="star {{ userSeries.rating >= 4 ? "active" }} fas fa-star" data-value="4" data-title="{{ (userSeries.rating >= 4 ? "Cancel rating":"x stars")|trans({'x': 4}) }}"></i>
-                                <i class="star {{ userSeries.rating >= 5 ? "active" }} fas fa-star" data-value="5" data-title="{{ (userSeries.rating >= 5 ? "Cancel rating":"x stars")|trans({'x': 5}) }}"></i>
+                                <div class="star {{ userSeries.rating >= 1 ? "active" }}" data-value="1" data-title="{{ (userSeries.rating >= 1 ? "Cancel rating":"x star")|trans({'x': 1}) }}">
+                                    {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                </div>
+                                <div class="star {{ userSeries.rating >= 2 ? "active" }}" data-value="2" data-title="{{ (userSeries.rating >= 2 ? "Cancel rating":"x stars")|trans({'x': 2}) }}">
+                                    {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                </div>
+                                <div class="star {{ userSeries.rating >= 3 ? "active" }}" data-value="3" data-title="{{ (userSeries.rating >= 3 ? "Cancel rating":"x stars")|trans({'x': 3}) }}">
+                                    {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                </div>
+                                <div class="star {{ userSeries.rating >= 4 ? "active" }}" data-value="4" data-title="{{ (userSeries.rating >= 4 ? "Cancel rating":"x stars")|trans({'x': 4}) }}">
+                                    {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                </div>
+                                <div class="star {{ userSeries.rating >= 5 ? "active" }}" data-value="5" data-title="{{ (userSeries.rating >= 5 ? "Cancel rating":"x stars")|trans({'x': 5}) }}">
+                                    {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                </div>
                             </div>
                         </div>
                     </div>
                     {% if userSeries.marathoner or userSeries.binge %}
                         <div class="badges">
                             {% if userSeries.binge %}
-                                <div class="badge" data-title="{{ 'A real binger!'|trans }}"><i class="fas fa-coffee"></i></div>
+                                <div class="badge" data-title="{{ 'A real binger!'|trans }}">
+                                    {{ ux_icon('fa6-solid:coffee', {height: '18px', width: '18px'}) }}
+                                </div>
                             {% endif %}
                             {% if userSeries.marathoner %}
-                                <div class="badge" data-title="{{ 'A real marathoner!'|trans }}"><i class="fas fa-bolt"></i></div>
+                                <div class="badge" data-title="{{ 'A real marathoner!'|trans }}">
+                                    {{ ux_icon('fa6-solid:bolt', {height: '18px', width: '18px'}) }}
+                                </div>
                             {% endif %}
                         </div>
                     {% endif %}
                     <div class="actions">
-                        <div class="action toggle-favorite-series{% if userSeries.favorite %} favorite{% endif %}">
-                            <i class="fas fa-heart" data-title="{{ (userSeries.favorite ? "Remove from favorites" : "Add to favorites")|trans }}"></i>
+                        <div class="action toggle-favorite-series{% if userSeries.favorite %} favorite{% endif %}" data-title="{{ (userSeries.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
+                            {{ ux_icon('fa6-solid:heart', {height: '18px', width: '18px'}) }}
                         </div>
-                        <div class="action remove-this-series">
-                            <i class="fas fa-trash" data-title="{{ 'Remove this series from your watchlist'|trans }}"></i>
+                        <div class="action remove-this-series" data-title="{{ 'Remove this series from your watchlist'|trans }}">
+                            {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
                         </div>
                     </div>
                 </div>
@@ -310,7 +333,9 @@
                     <div class="all-seasons">
                         <div>{{ 'Seasons'|trans }}</div>
                         {% if tv.seasons|length > 1 %}
-                            <div class="season-order"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="season-order">
+                                {{ ux_icon('fa6-solid:arrow-down', {height: '18px', width: '18px'}) }}
+                            </div>
                         {% endif %}
                     </div>
                     <div class="seasons-episodes">

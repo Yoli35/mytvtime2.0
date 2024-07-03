@@ -509,13 +509,17 @@ h2 {
                 gap: 0;
                 justify-content: center;
 
-                .star {
-                    color: var(--gradient-ardoise-10);
-                    cursor: pointer;
-                    padding-inline: .125rem;
+                .stars {
+                    display: flex;
 
-                    &.active {
-                        color: var(--gradient-orange-50);
+                    .star {
+                        color: var(--gradient-ardoise-10);
+                        cursor: pointer;
+                        padding-inline: .125rem;
+
+                        &.active {
+                            color: var(--gradient-orange-50);
+                        }
                     }
                 }
             }
