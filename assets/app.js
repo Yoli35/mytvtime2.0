@@ -55,26 +55,26 @@ function drawBodyBackground(canvas)
     ctx.fillRect(0, 0, bodyVisibleWidth, bodyVisibleHeight);
 
     ctx.beginPath();
-    const grad1 = ctx.createRadialGradient(3 * width / 4, height / 4, 0, 3 * width / 4, height / 4, width / 4);
+    const grad1 = ctx.createRadialGradient(3 * width / 4, height / 4, 0, 3 * width / 4, height / 4, width / 3);
     grad1.addColorStop(0, "#5f6668");
     grad1.addColorStop(1, "#1E1E22");
     ctx.fillStyle = grad1;
-    ctx.arc(3 * width / 4, height / 4, width / 4, 0, 2 * Math.PI);
+    ctx.arc(3 * width / 4, height / 4, width / 3, 0, 2 * Math.PI);
     ctx.fill();
     ctx.beginPath();
-    const grad2 = ctx.createRadialGradient(width / 4, 3 * height / 4, 0, width / 4, 3 * height / 4, width / 4);
+    const grad2 = ctx.createRadialGradient(width / 4, 3 * height / 4, 0, width / 4, 3 * height / 4, width / 3);
     grad2.addColorStop(0, "#5f6668");
     grad2.addColorStop(1, "#1E1E22");
     ctx.fillStyle = grad2;
-    ctx.arc(width / 4, 3 * height / 4, width / 4, 0, 2 * Math.PI);
+    ctx.arc(width / 4, 3 * height / 4, width / 3, 0, 2 * Math.PI);
     ctx.fill();
-    ctx.beginPath();
-    const grad = ctx.createRadialGradient(50, 50, 5, 50, 50, 50);
-    grad.addColorStop(0, '#5f6668');
-    grad.addColorStop(1, '#1e1e22');
-    ctx.fillStyle = grad;
-    ctx.arc(50, 50, 50, 0, 2 * Math.PI);
-    ctx.fill();
+    // ctx.beginPath();
+    // const grad = ctx.createRadialGradient(50, 50, 5, 50, 50, 50);
+    // grad.addColorStop(0, '#5f6668');
+    // grad.addColorStop(1, '#1e1e22');
+    // ctx.fillStyle = grad;
+    // ctx.arc(50, 50, 50, 0, 2 * Math.PI);
+    // ctx.fill();
 }
 
 function backingScale() {
@@ -134,11 +134,11 @@ if (seriesShow) {
     const averageColor = new AverageColor();
     const img = seriesShow.querySelector(".poster").querySelector("img") ?? seriesShow.querySelector(".backdrop").querySelector("img");
     const color = averageColor.getColor(img);
-    if (color.lightness > 185) {
+    /*if (color.lightness > 185) {
         infos.style.color = "#101010";
     } else {
         infos.style.color = "#f5f5f5";
-    }
+    }*/
     const hsl = averageColor.rgbToHsl(color);
     hsl.l *= .8;
     hsl.s *= 1.25;
