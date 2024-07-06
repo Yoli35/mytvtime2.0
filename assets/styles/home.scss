@@ -533,7 +533,7 @@
 
                     .progress {
                         background-color: var(--gradient-orange-20);
-                        border: 2px solid var(--gradient-orange-50);
+                        border: 1px solid var(--gradient-orange-50);
                         height: .5rem;
                         left: 0;
                         position: absolute;
@@ -541,28 +541,28 @@
                         width: 100%;
 
                         &.start-this-series {
-                            border: 2px solid var(--astart-this-series);
+                            border-color: var(--astart-this-series);
                         }
 
                         &.up-to-date {
-                            border: 2px solid var(--up-to-date-series);
+                            border-color: var(--up-to-date-series);
 
                             .progress-bar {
-                                border: 2px solid var(--up-to-date-series);
+                                background-color: var(--up-to-date-series);
                             }
                         }
 
                         &.that-s-all-folks {
-                            border: 2px solid var(--that-s-all-folks);
+                            border-color: var(--that-s-all-folks);
 
                             .progress-bar {
-                                border: 2px solid var(--that-s-all-folks);
+                                background-color: var(--that-s-all-folks);
                             }
                         }
 
                         .progress-bar {
                             background: var(--gradient-orange-50);
-                            height: .25rem;
+                            height: .375rem;
                             transition: width 20s linear;
                             width: 0;
                         }
