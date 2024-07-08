@@ -67,11 +67,11 @@
                 {% endfor %}
             </div>
 
+            <h3>{{ 'Episodes'|trans }}</h3>
             <div class="content column">
                 <div class="seasons-episodes">
-                    <h3>{{ 'Episodes'|trans }}</h3>
                     {% for episode in season.episodes %}
-                        <div class="episode-card">
+{#                        <div class="episode-card">#}
                             <div class="season-episode" id="episode-{{ episode.episode_number }}">
                                 <div class="still">
                                     {% if episode.still_path %}
@@ -95,7 +95,8 @@
                                             </div>
                                         {% endif %}
                                         <div class="edit" data-title="{{ 'Suggest a title'|trans }}" data-id="{{ episode.id }}">
-                                            <i class="fas fa-pen"></i>
+{#                                            <i class="fas fa-pen"></i>#}
+                                            {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
                                         </div>
                                     </div>
                                     {% if episode.air_date %}
@@ -111,7 +112,8 @@
                                             {{ season.deepl.us_episode_overviews[episode.episode_number - 1] }}
                                             {% if season.deepl.localized == false %}
                                                 <div class="translate" data-title="{{ 'Paste your translation here'|trans }}">
-                                                    <i class="fas fa-language"></i>
+{#                                                    <i class="fas fa-language"></i>#}
+                                                    {{ ux_icon('fa6-solid:language', {height: '18px', width: '18px'}) }}
                                                 </div>
                                             {% endif %}
                                         </div>
@@ -133,7 +135,12 @@
                                                             </div>
                                                         </a>
                                                         {% if people.google is defined %}
-                                                            <div class="google" data-title="{{ 'See on Google'|trans }}"><a href="{{ people.google }}" target="_blank"><i class="fab fa-google"></i></a></div>
+                                                            <div class="google" data-title="{{ 'See on Google'|trans }}">
+                                                                <a href="{{ people.google }}" target="_blank">
+{#                                                                    <i class="fab fa-google"></i>#}
+                                                                    {{ ux_icon('flat-color-icons:google', {height: '18px', width: '18px'}) }}
+                                                                </a>
+                                                            </div>
                                                         {% endif %}
                                                     </div>
                                                 {% endfor %}
@@ -195,7 +202,7 @@
                                     </a>
                                 </div>
                             </div>
-                        </div>
+{#                        </div>#}
                     {% endfor %}
                 </div>
                 {% if season.credits.cast|length %}
