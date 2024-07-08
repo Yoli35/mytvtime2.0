@@ -154,6 +154,46 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function episodesToWatch(User $user, string $country = 'FR', string $locale = 'fr'): array
+    {
+        $userId = $user->getId();
+        $sql = "SELECT s.id              as id,
+                       s.tmdb_id         as tmdbId,
+                       s.`name`          as name,
+                       s.`slug`          as slug,
+                       sln.`name`        as localizedName,
+                       sln.`slug`        as localizedSlug,
+                       s.`poster_path`   as posterPath,
+                       us.`favorite`     as favorite,
+                       us.`progress`     as progress,
+                       ue.season_number  as seasonNumber,
+                       ue.episode_number as episodeNumber
+                FROM `user_series` us
+                         INNER JOIN user_episode ue ON ue.`user_series_id` = us.`id`
+                         LEFT JOIN `series` s ON s.`id` = us.`series_id`
+                         LEFT JOIN `series_day_offset` sdo ON s.id = sdo.series_id AND sdo.country = '$country'
+                         LEFT JOIN `series_localized_name` sln ON sln.`series_id` = s.`id` AND sln.`locale` = '$locale'
+                WHERE us.`user_id` = $userId
+                  AND us.progress < 100
+                  AND ue.id=(SELECT ue2.id
+                             FROM user_episode ue2
+                             WHERE ue2.user_series_id = us.id
+                               AND ue2.`watch_at` IS NULL
+                               AND ue2.season_number > 0
+                               AND (
+                                 ((sdo.offset IS NULL OR sdo.offset = 0) AND ue2.`air_date` <= CURDATE())
+                                     OR ((sdo.offset > 0) AND ue2.`air_date` <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
+                                     OR ((sdo.offset < 0) AND ue2.`air_date` <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
+                                 )
+                             ORDER BY ue2.air_date
+                             LIMIT 1)
+                  AND us.progress > 0
+                ORDER BY us.`last_watch_at` DESC
+                LIMIT 20 OFFSET 0";
+
+        return $this->getAll($sql);
+    }
+
     public function episodesOfTheDayForTwig(User $user, string $country = 'FR', string $locale = 'fr'): array
     {
         $userId = $user->getId();

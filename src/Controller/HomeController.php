@@ -64,6 +64,11 @@ class HomeController extends AbstractController
                 $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
                 return $series;
             }, $this->userEpisodeRepository->episodesOfTheDay($user, $country, $language));
+            // Épisodes à voir parmi les séries commencées
+            $episodesToWatch = array_map(function ($series) {
+                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+                return $series;
+            }, $this->userEpisodeRepository->episodesToWatch($user, $country, $language, 1, 20));
             // Dernières séries ajoutées
             $lastAddedSeries = array_map(function ($series) {
 //                $s = $serie->homeArray();
@@ -78,17 +83,18 @@ class HomeController extends AbstractController
                 $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
                 $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
                 return $series;
-            }, $this->userEpisodeRepository->historySeries($user, $country, $language, 1, 20));// Historique des séries vues
+            }, $this->userEpisodeRepository->historySeries($user, $country, $language, 1, 20));
             // Historique des épisodes vus pendant les 2 semaines passées
             $historyEpisode = $this->seriesController->getEpisodeHistory($user, 14, $country, $language);
         } else {
             $userSeries = [];
             $episodesOfTheDay = [];
+            $episodesToWatch = [];
             $lastAddedSeries = [];
             $historyEpisode = [];
             $historySeries = [];
         }
-//        dump(['last added series' => $lastAddedSeries,]);
+//        dump(['Episodes to watch' => $episodesToWatch,]);
 
         /*
          * Watch providers
@@ -129,6 +135,7 @@ class HomeController extends AbstractController
             'highlightedSeries' => $seriesSelection,
             'userSeries' => $userSeries,
             'episodesOfTheDay' => $episodesOfTheDay,
+            'episodesToWatch' => $episodesToWatch,
             'lastAddedSeries' => $lastAddedSeries,
             'historyEpisode' => $historyEpisode,
             'historySeries' => $historySeries,
