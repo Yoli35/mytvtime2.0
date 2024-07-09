@@ -29,7 +29,8 @@ class UserPinnedSeriesRepository extends ServiceEntityRepository
                        ups.`created_at` as createdAt,
                        (IF(sln.`name` IS NULL, s.`name`, sln.`name`)) as displayName
                 FROM `user_pinned_series` ups
-                         INNER JOIN `series` s ON ups.`user_id` =$userId AND ups.`user_series_id` = s.`id`
+                         INNER JOIN `user_series` us ON ups.`user_id` =$userId AND ups.`user_series_id` = us.`id`
+                         INNER JOIN `series` s ON us.`series_id` = s.`id`
                          LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
                 ORDER BY ups.`created_at` DESC";
         return $this->getAll($sql);
