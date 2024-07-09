@@ -39,6 +39,7 @@ English: Anglais
 Recent series: Séries récentes
 Latest series added: Dernières séries ajoutées
 Your series: Vos séries
+All my series: Toutes mes séries
 Series history: Dernières séries regardées
 Episode history: Épisodes regardés ces 14 derniers jours
 Last added series: Dernières séries ajoutées
@@ -53,6 +54,19 @@ New episode date: Nouvelle date d'épisode
 New series date: Nouvelle date de série
 Unknown: Date inconnue
 Episodes to watch: Épisodes suivants disponibles à regarder
+
+# All my series
+Filters: Filtres
+My series: Mes séries
+Series started: Séries commencées
+Watched series: Séries terminées
+Yes: Oui
+No: Non
+All: Toutes
+Number of element per page: Nombre d'éléments par page
+Default: Par défaut
+First air date: Date de première diffusion
+Last series watched: Dernière série regardée
 
 # Series Show
 1 episode seen: 1 épisode vu

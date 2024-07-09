@@ -120,18 +120,72 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getUserSeries(User $user, $locale, int $page = 1, int $perPage = 20): array
+    public function getUserSeries(User $user, string $locale, int $page = 1, int $perPage = 20): array
     {
-        $sql = "SELECT s.`id` as id, s.`name` as name, s.`poster_path` as poster_path, "
-            . "     s.`tmdb_id` as tmdbId, s.`slug` as slug, us.`user_id` as user_id, "
-            . "     us.`progress` as progress, us.`favorite` as favorite, "
-            . "     sln.`name` as localized_name, sln.`slug` as localized_slug "
-            . "FROM `user_series` us "
-            . "INNER JOIN `series` s ON s.`id` = us.`series_id` "
-            . "LEFT JOIN `series_localized_name` sln ON s.`id` = sln.`series_id` AND sln.locale='" . $locale . "' "
-            . "WHERE us.user_id=" . $user->getId() . " "
-            . "ORDER BY s.`first_air_date` DESC "
-            . "LIMIT " . $perPage . " OFFSET " . ($page - 1) * $perPage;
+        $userId = $user->getId();
+        $offset = ($page - 1) * $perPage;
+        $sql = "SELECT 
+                    s.`id` as id,
+                    s.`name` as name,
+                    s.`poster_path` as poster_path, 
+                    s.`tmdb_id` as tmdbId,
+                    s.`slug` as slug,
+                    us.`user_id` as user_id, 
+                    us.`progress` as progress,
+                    us.`favorite` as favorite, 
+                    sln.`name` as localized_name,
+                    sln.`slug` as localized_slug 
+                FROM `user_series` us 
+                    INNER JOIN `series` s ON s.`id` = us.`series_id` 
+                    LEFT JOIN `series_localized_name` sln ON s.`id` = sln.`series_id` AND sln.locale='$locale ' 
+            WHERE us.user_id=$userId 
+            ORDER BY s.`first_air_date` DESC 
+            LIMIT $perPage OFFSET $offset";
+
+        return $this->getAll($sql);
+    }
+
+    public function getAllSeries(User $user, array $localisation = ['country' => 'FR', 'language' => 'fr', 'locale' => 'fr'], array $filters = [], string $sort = 'firstAirDate', string $order = 'DESC', int $page = 1, int $perPage = 20): array
+    {
+        switch ($sort) {
+            case 'firstAirDate':
+                $sort = 's.`first_air_date`';
+                break;
+            case 'lastWatched':
+                $sort = 'us.`last_watch_at`';
+                break;
+            case 'name':
+                $sort = 's.`name`';
+                break;
+            default:
+                $sort = 's.`first_air_date`';
+        }
+        $filterString = array_map(fn($filter) => "AND $filter", $filters);
+        $filterString = implode(' ', $filterString);
+        $userId = $user->getId();
+        $country = $localisation['country'];
+        $locale = $localisation['locale'];
+        $offset = ($page - 1) * $perPage;
+
+        $sql = "SELECT 
+                    s.`id` as id,
+                    s.`name` as name,
+                    s.`poster_path` as poster_path, 
+                    s.`tmdb_id` as tmdbId,
+                    s.`slug` as slug,
+                    us.`user_id` as user_id, 
+                    us.`progress` as progress,
+                    us.`favorite` as favorite, 
+                    sln.`name` as localized_name,
+                    sln.`slug` as localized_slug 
+                FROM `user_series` us 
+                    INNER JOIN `series` s ON s.`id` = us.`series_id` 
+                    LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
+                    LEFT JOIN `series_localized_name` sln ON s.`id` = sln.`series_id` AND sln.locale='$locale ' 
+            WHERE us.user_id=$userId $filterString
+            ORDER BY $sort $order 
+            LIMIT $perPage OFFSET $offset";
+        dump($sql);
 
         return $this->getAll($sql);
     }

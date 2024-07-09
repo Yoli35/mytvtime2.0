@@ -3,7 +3,13 @@
 {% set route_params = app.request.attributes.get('_route_params') %}
 <nav class="navbar">
     <a href="{{ path('app_home') }}" accesskey="<">{{ 'Home'|trans }}</a>
-    <a href="{{ path('app_series_index') }}" class="desktop">{{ 'Series'|trans }}</a>
+    <details>
+        <summary>{{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}</summary>
+        <ul>
+            <li><a href="{{ path('app_series_index') }}" class="desktop">{{ 'Series'|trans }}</a></li>
+            <li><a href="{{ path('app_series_all') }}" class="desktop">{{ 'All my series'|trans }}</a></li>
+        </ul>
+    </details>
     <a href="{{ path('app_contact_form') }}" class="desktop">{{ 'Contact'|trans }}</a>
 
     {% set p = '' %}
@@ -54,6 +60,7 @@
             <a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a>
             {% if app.user %}
                 <a href="{{ path('app_series_index') }}">{{ 'Series'|trans }}</a>
+                <a href="{{ path('app_series_all') }}">{{ 'All my series'|trans }}</a>
                 <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
             {% endif %}
             {% if app.user %}

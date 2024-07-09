@@ -21,6 +21,7 @@ use App\Repository\DeviceRepository;
 use App\Repository\EpisodeLocalizedOverviewRepository;
 use App\Repository\EpisodeSubstituteNameRepository;
 use App\Repository\KeywordRepository;
+
 //use App\Repository\ProviderRepository;
 use App\Repository\SeriesAdditionalOverviewRepository;
 use App\Repository\SeriesDayOffsetRepository;
@@ -225,6 +226,56 @@ class SeriesController extends AbstractController
             ],
         ]);
     }
+
+    #[Route('/all', name: 'all')]
+    public function all(Request $request): Response
+    {
+        /* @var User $user */
+        $user = $this->getUser();
+        $localisation = [
+            'locale' => $user?->getPreferredLanguage() ?? $request->getLocale(),
+            'country' => $user?->getCountry() ?? "FR",
+            'language' => $user?->getPreferredLanguage() ?? $request->getLocale(),
+            'timezone' => $user?->getTimezone() ?? "Europe/Paris"
+        ];
+        $page = 1;
+        $filters = [
+            'perPage' => 100,
+            'sort' => 'lastWatched',
+            'order' => 'DESC',
+            'startStatus' => 'series-started',
+            'endStatus' => 'series-not-watched',
+        ];
+        $filterValues = [
+            'series-started' => 'us.progress > 0',
+            'series-not-started' => 'us.progress = 0',
+            'series-watched' => 'us.progress = 100',
+            'series-not-watched' => 'us.progress < 100',
+            'series-favorite' => 'us.favorite = 1',
+        ];
+
+        /** @var UserSeries[] $userSeries */
+        $userSeries = $this->userSeriesRepository->getAllSeries($user, $localisation, ['us.progress > 0', 'us.progress < 100'], $filters['sort'], $filters['order'], $page, $filters['perPage']);
+        $userSeriesCount = $this->userSeriesRepository->count(['user' => $user]);
+
+        $userSeries = array_map(function ($series) {
+            $series['poster_path'] = $series['poster_path'] ? $this->imageConfiguration->getCompleteUrl($series['poster_path'], 'poster_sizes', 5) : null;
+            return $series;
+        }, $userSeries);
+
+        dump([
+            'userSeries' => $userSeries,
+            'userSeriesCount' => $userSeriesCount,
+            'filters' => $filters,
+        ]);
+
+        return $this->render('series/all.html.twig', [
+            'userSeries' => $userSeries,
+            'userSeriesCount' => $userSeriesCount,
+            'filters' => $filters,
+        ]);
+    }
+
 
     #[IsGranted('ROLE_USER')]
     #[Route('/search/db', name: 'search_db')]

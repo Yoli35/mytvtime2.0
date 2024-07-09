@@ -175,6 +175,7 @@ body {
 }
 
 label:has(select) {
+    display: flex;
     margin-inline-start: auto;
     position: relative;
 
@@ -182,12 +183,9 @@ label:has(select) {
         appearance: none;
         background-color: var(--gradient-ardoise-80);
         border: 1px solid var(--gradient-ardoise-50);
-        border-radius: .125rem;
-        cursor: inherit;
-        font-family: inherit;
-        font-size: inherit;
-        line-height: inherit;
+        border-radius: .25rem;
         outline: none;
+        margin-inline-start: auto;
         padding-block: .25rem;
         padding-inline: .5rem 1.5rem;
     }
@@ -204,12 +202,12 @@ label:has(select) {
         border-left: 4px solid transparent;
         border-right: 4px solid var(--gradient-ardoise-20);
         border-top: 4px solid transparent;
-        bottom: 1em;
         content: "";
         display: block;
         height: .5em;
         position: absolute;
         right: .75em;
+        top: 20%;
         transform: rotate(45deg);
         width: .5em;
         z-index: 2;
@@ -236,7 +234,7 @@ label:has(input[type="text"]) {
     width: 100%;
     z-index: 100;
 
-    > a {
+    > a, > details {
         align-items: center;
         border-radius: .25rem;
         color: var(--navbar-color);
@@ -246,12 +244,52 @@ label:has(input[type="text"]) {
         padding-inline: .5rem;
         transition: background-color .250ms, color .250ms;
 
+        &:hover {
+            background-color: var(--navbar-bg-hover);
+        }
+    }
+
+    > a {
         &:visited {
             color: var(--navbar-color);
         }
+    }
 
-        &:hover {
-            background-color: var(--navbar-bg-hover);
+    > details {
+        position: relative;
+
+        summary {
+            color: var(--navbar-color);
+            list-style: none;
+            padding-block-start: .5rem;
+        }
+
+        summary::-webkit-details-marker { display: none }
+
+        ul {
+            background-color: var(--navbar-bg);
+            border-radius: .25rem;
+            left: 0;
+            list-style: none;
+            overflow: hidden;
+            position: absolute;
+            top: 2rem;
+            width: max-content;
+
+            li {
+                padding-inline: 1rem;
+
+                a {
+                    color: var(--navbar-color);
+                    display: block;
+                    padding-block: .5rem;
+                    text-decoration: none;
+                }
+
+                &:hover {
+                    background-color: var(--navbar-bg-hover);
+                }
+            }
         }
     }
 
@@ -634,6 +672,56 @@ label:has(input[type="text"]) {
 
     .home-footer {
         margin-block-start: auto;
+    }
+}
+
+.switcher {
+    border: 2px solid var(--gradient-ardoise-80);
+    border-radius: calc(.5em + 2px);
+    cursor: pointer;
+    display: inline-block;
+    height: calc(1em + 4px);
+    margin-left: auto;
+    margin-right: .5em;
+    overflow: hidden;
+    position: relative;
+    width: calc(2em + 4px);
+
+    input {
+        height: 0;
+        position: absolute;
+        top: -2em;
+        width: 0;
+
+        + span {
+            background: var(--gradient-ardoise-50);
+            border-radius: .5em;
+            cursor: pointer;
+            inset: 0;
+            position: absolute;
+
+            &:before {
+                background: white;
+                border-radius: 50%;
+                content: "";
+                cursor: pointer;
+                display: inline-block;
+                height: 1rem;
+                left: 0;
+                position: absolute;
+                top: 0;
+                transition: all .2s ease-in-out;
+                width: 1rem;
+            }
+        }
+
+        &:checked + span {
+            background: var(--gradient-orange-50);
+        }
+
+        &:checked + span:before {
+            left: 1em;
+        }
     }
 }
 

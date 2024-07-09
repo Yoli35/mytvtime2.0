@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'All my series'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="all-my-series container-fluid">
+        <h1>{{ 'All my series'|trans }}</h1>
+        <aside>
+            <h2>{{ 'Filters'|trans }}</h2>
+            <article>
+                <div class="filters">
+                    <div class="filter">
+                        <label for="series-started">{{ 'Series started'|trans }}
+                            <select id="series-started">
+                                <option value="">{{ 'All'|trans }}</option>
+                                <option value="started"{% if filters.startStatus=='series-started' %} selected{% endif %}>{{ 'Yes'|trans }}</option>
+                                <option value="not-started"{% if filters.startStatus=='series-not-started' %} selected{% endif %}>{{ 'No'|trans }}
+                            </select>
+                        </label>
+                    </div>
+                    <div class="filter">
+                        <label for="series-watched">{{ 'Watched series'|trans }}
+                            <select id="series-watched">
+                                <option value="">{{ 'All'|trans }}</option>
+                                <option value="watched"{% if filters.endStatus=='series-watched' %} selected{% endif %}>{{ 'Yes'|trans }}</option>
+                                <option value="not-watched"{% if filters.endStatus=='series-not-watched' %} selected{% endif %}>{{ 'No'|trans }}
+                            </select>
+                        </label>
+                    </div>
+                    <div class="filter">
+                        <label for="per-page">{{ 'Number of elements per page'|trans }}
+                            <select id="per-page">
+                                {% for number in [10, 20, 50, 100] %}
+                                    <option value="{{ number }}{% if filters.perPage==number %} selected{% endif %}">{{ number }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    </div>
+                    <div class="filter">
+                        <label for="sort-by">{{ 'Sort by'|trans }}
+                            <select id="sort-by">
+                                <option value="">{{ 'Default'|trans }}</option>
+                                <option value="name"{% if filters.sort=='name' %} selected{% endif %}>{{ 'Name'|trans }}</option>
+                                <option value="firstAirDate"{% if filters.sort=='firstAirDate' %} selected{% endif %}>{{ 'First air date'|trans }}</option>
+                                <option value="lastWatched"{% if filters.sort=='lastWatched' %} selected{% endif %}>{{ 'Last series watched'|trans }}</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+            </article>
+        </aside>
+        <main>
+            <article>
+                <h2>{{ 'My series'|trans }}</h2>
+                <div class="wrapper">
+                    {% for series in userSeries %}
+                        {{ include('_blocks/series/_card.html.twig') }}
+                    {% endfor %}
+                </div>
+            </article>
+        </main>
+        {% include('_blocks/_footer.html.twig') %}
+    </div>
+{% endblock %}
