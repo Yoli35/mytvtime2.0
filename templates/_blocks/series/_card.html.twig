@@ -49,6 +49,7 @@
                   "remainingEpisodes" => 45
                   "final_air_date" => "2018-07-11" #}
                 {% if allFiltered is defined %}
+                    <div class="air-date">{{ series.final_air_date|format_date('relative_full')|capitalize }}</div>
                     <div class="episode-number" data-title="{{ 'Next episode'|trans }}">{{ 'S%02dE%02d'|format(series.next_episode_season_number, series.next_episode_episode_number) }}</div>
                 {% endif %}
             </div>
