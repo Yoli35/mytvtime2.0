@@ -24,6 +24,7 @@ export class Menu {
         const navbar = document.querySelector(".navbar");
         const mainMenu = navbar.querySelector(".menu");
         const eotdMenuItems = document.querySelectorAll("a[id^='eotd-menu-item-']");
+        const pinnedMenuItems = document.querySelectorAll("a[id^='pinned-menu-item-']");
         const body = document.querySelector("body");
         const notifications = document.querySelector(".notifications");
 
@@ -60,6 +61,25 @@ export class Menu {
                     eotdPreview.classList.remove("show");
                     setTimeout(() => {
                         eotdPreview.classList.remove("open");
+                    }, 250);
+                }, 0);
+            });
+        });
+
+        pinnedMenuItems.forEach((item) => {
+            const id = item.id.split("-")[3];
+            const pinnedPreview = document.querySelector(`#pinned-preview-${id}`);
+            item.addEventListener("mouseenter", () => {
+                pinnedPreview.classList.add("open");
+                setTimeout(() => {
+                    pinnedPreview.classList.add("show");
+                }, 0);
+            });
+            item.addEventListener("mouseleave", () => {
+                setTimeout(() => {
+                    pinnedPreview.classList.remove("show");
+                    setTimeout(() => {
+                        pinnedPreview.classList.remove("open");
                     }, 250);
                 }, 0);
             });

@@ -175,6 +175,7 @@ body {
 }
 
 label:has(select) {
+    align-items: center;
     display: flex;
     margin-inline-start: auto;
     position: relative;
@@ -184,6 +185,7 @@ label:has(select) {
         background-color: var(--gradient-ardoise-80);
         border: 1px solid var(--gradient-ardoise-50);
         border-radius: .25rem;
+        color: var(--gradient-ardoise-10);
         outline: none;
         margin-inline-start: auto;
         padding-block: .25rem;
@@ -298,6 +300,12 @@ label:has(input[type="text"]) {
 
         a {
             color: var(--navbar-color-hover);
+        }
+
+        > details {
+            summary {
+                color: var(--navbar-color-hover);
+            }
         }
     }
 
@@ -553,7 +561,7 @@ label:has(input[type="text"]) {
 
             .separation {
                 background-color: var(--navbar-bg-75);
-                color: var(--gradient-orange-50);
+                color: var(--gradient-orange-80);
                 flex-shrink: 0;
                 padding-block: 0.25rem;
                 margin-inline: -.5rem;
@@ -565,7 +573,7 @@ label:has(input[type="text"]) {
                 display: flex;
                 position: relative;
 
-                .episode-of-the-day-preview {
+                .episode-of-the-day-preview, .pinned-series-preview {
                     align-items: center;
                     background-color: var(--navbar-bg);
                     border-radius: .75rem;

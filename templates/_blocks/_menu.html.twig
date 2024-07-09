@@ -85,6 +85,24 @@
                         </div>
                     {% endfor %}
                 {% endif %}
+
+                {% set pinnedSeries=pinnedSeries(app.user, app.user.preferredLanguage??'fr') %}
+                {% set l = pinnedSeries|length %}
+                {% if l %}
+                    <div class="separation">{{ 'Pinned series'|trans }} ({{ l }} {{ (l > 1 ? 'seriess':'series')|trans }})</div>
+                    {% for series in pinnedSeries %}
+                        <div class="a-preview">
+                            <a id="pinned-menu-item-{{ series.id }}">
+                                {{ series.displayName }}
+                            </a>
+                            <div id="pinned-preview-{{ series.id }}" class="pinned-series-preview">
+                                <a href="{{ path('app_series_show', {id: series.id, slug: series.slug}) }}">
+                                    <img src="{{ series.posterPath }}" alt="{{ series.name }}">
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
                 {% if seriesName is defined %}
                     <div class="separation">{{ 'Back to the series page'|trans }}</div>
                     <a href="{{ seriesLink }}">

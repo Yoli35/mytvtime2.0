@@ -83,12 +83,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: UserEpisodeNotification::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $userEpisodeNotifications;
 
+    /**
+     * @var Collection<int, UserPinnedSeries>
+     */
+    #[ORM\OneToMany(targetEntity: UserPinnedSeries::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $userPinnedSeries;
+
     public function __construct()
     {
         $this->series = new ArrayCollection();
         $this->providers = new ArrayCollection();
         $this->userEpisodes = new ArrayCollection();
         $this->userEpisodeNotifications = new ArrayCollection();
+        $this->userPinnedSeries = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -412,6 +419,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->userEpisodeNotifications->removeElement($userEpisodeNotification)) {
             $userEpisodeNotification->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserPinnedSeries>
+     */
+    public function getUserPinnedSeries(): Collection
+    {
+        return $this->userPinnedSeries;
+    }
+
+    public function addUserPinnedSeries(UserPinnedSeries $userPinnedSeries): static
+    {
+        if (!$this->userPinnedSeries->contains($userPinnedSeries)) {
+            $this->userPinnedSeries->add($userPinnedSeries);
+            $userPinnedSeries->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserPinnedSeries(UserPinnedSeries $userPinnedSeries): static
+    {
+        if ($this->userPinnedSeries->removeElement($userPinnedSeries)) {
+            // set the owning side to null (unless already changed)
+            if ($userPinnedSeries->getUser() === $this) {
+                $userPinnedSeries->setUser(null);
+            }
         }
 
         return $this;
