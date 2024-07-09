@@ -60,7 +60,7 @@
                 <h2>{{ 'My series'|trans }}</h2>
                 <div class="wrapper">
                     {% for series in userSeries %}
-                        {{ include('_blocks/series/_card.html.twig') }}
+                        {{ include('_blocks/series/_card.html.twig', {allFiltered: true}) }}
                     {% endfor %}
                 </div>
             </article>

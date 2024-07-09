@@ -40,9 +40,17 @@
                 {% if series.episode_of_the_day is defined %}
                     <div class="episode-number{% if series.watch_at %} watched{% endif %}">{{ 'S%02dE%02d'|format(series.season_number, series.episode_number) }}</div>
                 {% endif %}
-{#                {% if series.series_of_the_week is defined %}#}
-{#                    <div class="date">{{ series.date|format_date('relative_full')|capitalize }}</div>#}
-{#                {% endif %}#}
+                {#                {% if series.series_of_the_week is defined %} #}
+                {#                    <div class="date">{{ series.date|format_date('relative_full')|capitalize }}</div> #}
+                {#                {% endif %} #}
+                {#                "next_episode_season_number" => 1
+                  "next_episode_episode_number" => 5
+                  "day_offset" => null
+                  "remainingEpisodes" => 45
+                  "final_air_date" => "2018-07-11" #}
+                {% if allFiltered is defined %}
+                    <div class="episode-number" data-title="{{ 'Next episode'|trans }}">{{ 'S%02dE%02d'|format(series.next_episode_season_number, series.next_episode_episode_number) }}</div>
+                {% endif %}
             </div>
             {% if series.progress is defined %}
                 <div class="progress{% if ended %} that-s-all-folks{% endif %}{% if start %} start-this-series{% endif %}">
@@ -50,6 +58,10 @@
                 </div>
             {% endif %}
         </div>
-        <div class="name">{{ series.localized_name ?? series.name }}</div>
+        <div class="name">{{ series.localized_name ?? series.name }}
+            {% if allFiltered is defined %}
+                <div class="">{{ series.remainingEpisodes }} {{ (series.remainingEpisodes > 1 ? 'remaining episodes':'remaining episode')|trans }}</div>
+            {% endif %}
+        </div>
     </a>
 </div>

@@ -58,6 +58,7 @@ Episodes to watch: Épisodes suivants disponibles à regarder
 # All my series
 Filters: Filtres
 My series: Mes séries
+Number of elements per page: Nombre d'éléments par page
 Series started: Séries commencées
 Watched series: Séries terminées
 Yes: Oui
@@ -67,6 +68,9 @@ Number of element per page: Nombre d'éléments par page
 Default: Par défaut
 First air date: Date de première diffusion
 Last series watched: Dernière série regardée
+Next episode: Prochain épisode
+remaining episode: épisode restant
+remaining episodes: épisodes restants
 
 # Series Show
 1 episode seen: 1 épisode vu

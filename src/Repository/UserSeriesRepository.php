@@ -168,21 +168,48 @@ class UserSeriesRepository extends ServiceEntityRepository
         $offset = ($page - 1) * $perPage;
 
         $sql = "SELECT 
-                    s.`id` as id,
-                    s.`name` as name,
-                    s.`poster_path` as poster_path, 
-                    s.`tmdb_id` as tmdbId,
-                    s.`slug` as slug,
-                    us.`user_id` as user_id, 
-                    us.`progress` as progress,
-                    us.`favorite` as favorite, 
-                    sln.`name` as localized_name,
-                    sln.`slug` as localized_slug 
+                    s.`id`                        as id,
+                    s.`name`                      as name,
+                    s.`poster_path`               as poster_path, 
+                    s.`tmdb_id`                   as tmdbId,
+                    s.`slug`                      as slug,
+                    us.`user_id`                  as user_id, 
+                    us.`progress`                 as progress,
+                    us.`favorite`                 as favorite, 
+                    sln.`name`                    as localized_name,
+                    sln.`slug`                    as localized_slug,
+                    ue.air_date                   as next_episode_air_date,
+                    ue.season_number              as next_episode_season_number,
+                    ue.episode_number             as next_episode_episode_number,
+                    sdo.offset                    as day_offset,
+                    (SELECT COUNT(*)
+                    FROM user_episode ue2
+                    WHERE ue2.user_series_id = us.id
+                      AND ue2.season_number > 0
+                      AND ue2.`watch_at` IS NULL) as remainingEpisodes,
+                    CASE
+                        WHEN sdo.offset IS NULL OR sdo.offset = 0 THEN ue.`air_date`
+                        WHEN sdo.offset > 0 THEN DATE_ADD(ue.`air_date`, INTERVAL sdo.offset DAY)
+                        ELSE DATE_SUB(ue.`air_date`, INTERVAL ABS(sdo.offset) DAY)
+                    END                           as final_air_date
                 FROM `user_series` us 
-                    INNER JOIN `series` s ON s.`id` = us.`series_id` 
+                    INNER JOIN user_episode ue ON ue.`user_series_id` = us.`id`
+                    LEFT JOIN `series` s ON s.`id` = us.`series_id` 
                     LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                     LEFT JOIN `series_localized_name` sln ON s.`id` = sln.`series_id` AND sln.locale='$locale ' 
-            WHERE us.user_id=$userId $filterString
+                WHERE us.user_id=$userId $filterString
+                  AND ue.id=(SELECT ue2.id
+                             FROM user_episode ue2
+                             WHERE ue2.user_series_id = us.id
+                               AND ue2.`watch_at` IS NULL
+                               AND ue2.season_number > 0
+                               AND (
+                                 ((sdo.offset IS NULL OR sdo.offset = 0) AND ue2.`air_date` <= CURDATE())
+                                     OR ((sdo.offset > 0) AND ue2.`air_date` <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
+                                     OR ((sdo.offset < 0) AND ue2.`air_date` <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
+                                 )
+                             ORDER BY ue2.air_date
+                             LIMIT 1)
             ORDER BY $sort $order 
             LIMIT $perPage OFFSET $offset";
         dump($sql);

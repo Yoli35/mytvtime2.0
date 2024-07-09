@@ -1329,6 +1329,7 @@ h2 {
                     .poster {
                         border-radius: .5rem .5rem 0 0;
                         height: 22rem;
+                        position: relative;
 
                         img {
                             border-radius: .5rem .5rem 0 0;
@@ -1336,11 +1337,52 @@ h2 {
                             object-fit: cover;
                             width: 15rem;
                         }
+
+                        .series-infos {
+                            /*border: 1px dashed var(--gradient-orange-50);*/
+                            bottom: 1rem;
+                            display: flex;
+                            flex-direction: column;
+                            gap: .25rem;
+                            left: 0;
+                            padding-inline: .5rem;
+                            position: absolute;
+                            right: 0;
+
+                            .episode-number {
+                                background-color: var(--gradient-orange-10);
+                                border-radius: .25rem;
+                                color: var(--gradient-orange-90);
+                                font-size: 2rem;
+                                font-weight: 100;
+                                margin-inline-start: auto;
+                                padding: .5rem;
+                            }
+                        }
+
+                        .progress {
+                            background-color: var(--gradient-orange-10);
+                            border: 2px solid var(--gradient-orange-40);
+                            bottom: 0;
+                            height: .75rem;
+                            left: 0;
+                            position: absolute;
+                            right: 0;
+
+                            .progress-bar {
+                                background-color: var(--gradient-orange-50);
+                                height: 100%;
+                                transition: width 0.3s ease-in-out;
+                                width: 0;
+                            }
+                        }
                     }
 
                     .name {
                         border-radius: 0 0 .5rem .5rem;
+                        flex-direction: column;
                         height: 5rem;
+                        text-align: center;
                     }
                 }
             }
