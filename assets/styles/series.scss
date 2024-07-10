@@ -1323,6 +1323,7 @@ h2 {
             .page {
                 align-items: center;
                 background-color: var(--gradient-green-50);
+                border: none;
                 border-radius: .25rem;
                 color: var(--gradient-ardoise-10);
                 cursor: pointer;
@@ -1331,7 +1332,7 @@ h2 {
                 font-weight: 300;
                 height: 2rem;
                 justify-content: center;
-                min-width: 2rem;
+                min-width: 5ch;
                 padding-inline: .5rem;
 
                 &:hover {

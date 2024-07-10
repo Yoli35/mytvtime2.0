@@ -12,6 +12,7 @@ use App\Entity\SeriesImage;
 use App\Entity\SeriesLocalizedName;
 use App\Entity\SeriesLocalizedOverview;
 use App\Entity\SeriesWatchLink;
+use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserEpisode;
 use App\Entity\UserPinnedSeries;
@@ -31,6 +32,7 @@ use App\Repository\SeriesLocalizedNameRepository;
 use App\Repository\SeriesLocalizedOverviewRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\SeriesWatchLinkRepository;
+use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\UserPinnedSeriesRepository;
@@ -76,6 +78,7 @@ class SeriesController extends AbstractController
         private readonly SeriesLocalizedNameRepository      $seriesLocalizedNameRepository,
         private readonly SeriesLocalizedOverviewRepository  $seriesLocalizedOverviewRepository,
         private readonly SeriesWatchLinkRepository          $seriesWatchLinkRepository,
+        private readonly SettingsRepository                 $settingsRepository,
         private readonly SourceRepository                   $sourceRepository,
         private readonly TMDBService                        $tmdbService,
         private readonly TranslatorInterface                $translator,
@@ -236,12 +239,6 @@ class SeriesController extends AbstractController
     {
         /* @var User $user */
         $user = $this->getUser();
-        // /fr/series/all?sort=episodeAirDate&order=DESC&startStatus=series-not-started&endStatus=series-not-watched&perPage=10
-        $paramSort = $request->get('sort');
-        $paramOrder = $request->get('order');
-        $paramStartStatus = $request->get('startStatus');
-        $paramEndStatus = $request->get('endStatus');
-        $paramPerPage = $request->get('perPage');
         $localisation = [
             'locale' => $user?->getPreferredLanguage() ?? $request->getLocale(),
             'country' => $user?->getCountry() ?? "FR",
@@ -249,13 +246,38 @@ class SeriesController extends AbstractController
             'timezone' => $user?->getTimezone() ?? "Europe/Paris"
         ];
         $page = 1;
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'series to end']);
+        // Parameters count
+        if (!count($request->query->all())) {
+            if (!$settings) {
+                $settings = new Settings($user, 'series to end', ['perPage' => 10, 'sort' => 'lastWatched', 'order' => 'DESC', 'startStatus' => 'series-started', 'endStatus' => 'series-not-watched']);
+                $this->settingsRepository->save($settings, true);
+            }
+        } else {
+            // /fr/series/all?sort=episodeAirDate&order=DESC&startStatus=series-not-started&endStatus=series-not-watched&perPage=10
+            $paramSort = $request->get('sort');
+            $paramOrder = $request->get('order');
+            $paramStartStatus = $request->get('startStatus');
+            $paramEndStatus = $request->get('endStatus');
+            $paramPerPage = $request->get('perPage');
+            $settings->setData([
+                'perPage' => $paramPerPage,
+                'sort' => $paramSort,
+                'order' => $paramOrder,
+                'startStatus' => $paramStartStatus,
+                'endStatus' => $paramEndStatus,
+            ]);
+            $this->settingsRepository->save($settings, true);
+            $page = $request->get('page') ?? 1;
+        }
+        $data = $settings->getData();
         $filters = [
             'page' => $page,
-            'perPage' => $paramPerPage ? intval($paramPerPage) : 10,
-            'sort' => $paramSort ?? 'lastWatched',
-            'order' => $paramOrder ?? 'DESC',
-            'startStatus' => $paramStartStatus ?? 'series-started',
-            'endStatus' => $paramEndStatus ?? 'series-not-watched',
+            'perPage' => $data['perPage'],
+            'sort' => $data['sort'],
+            'order' => $data['order'],
+            'startStatus' => $data['startStatus'],
+            'endStatus' => $data['endStatus'],
         ];
         $filterValues = [
             'series-started' => 'us.progress > 0',
@@ -266,8 +288,8 @@ class SeriesController extends AbstractController
         ];
 
         /** @var UserSeries[] $userSeries */
-        $userSeries = $this->userSeriesRepository->getAllSeries($user, $localisation, ['us.progress > 0', 'us.progress < 100'], $filters['sort'], $filters['order'], $page, $filters['perPage']);
-        $userSeriesCount = $this->userSeriesRepository->countAllSeries($user, $localisation, ['us.progress > 0', 'us.progress < 100']);
+        $userSeries = $this->userSeriesRepository->getAllSeries($user, $localisation, [/*'us.progress > 0', */ 'us.progress < 100'], $filters['sort'], $filters['order'], $page, $filters['perPage']);
+        $userSeriesCount = $this->userSeriesRepository->countAllSeries($user, $localisation, [/*'us.progress > 0', */ 'us.progress < 100']);
 
         $userSeries = array_map(function ($series) {
             $series['poster_path'] = $series['poster_path'] ? $this->imageConfiguration->getCompleteUrl($series['poster_path'], 'poster_sizes', 5) : null;

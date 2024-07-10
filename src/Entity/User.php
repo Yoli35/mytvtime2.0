@@ -95,6 +95,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: UserMovie::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $userMovies;
 
+    /**
+     * @var Collection<int, Settings>
+     */
+    #[ORM\OneToMany(targetEntity: Settings::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $settings;
+
     public function __construct()
     {
         $this->series = new ArrayCollection();
@@ -103,6 +109,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userEpisodeNotifications = new ArrayCollection();
         $this->userPinnedSeries = new ArrayCollection();
         $this->userMovies = new ArrayCollection();
+        $this->settings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -483,6 +490,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->userMovies->removeElement($userMovie)) {
             $userMovie->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Settings>
+     */
+    public function getSettings(): Collection
+    {
+        return $this->settings;
+    }
+
+    public function addSetting(Settings $setting): static
+    {
+        if (!$this->settings->contains($setting)) {
+            $this->settings->add($setting);
+            $setting->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSetting(Settings $setting): static
+    {
+        if ($this->settings->removeElement($setting)) {
+            // set the owning side to null (unless already changed)
+            if ($setting->getUser() === $this) {
+                $setting->setUser(null);
+            }
         }
 
         return $this;

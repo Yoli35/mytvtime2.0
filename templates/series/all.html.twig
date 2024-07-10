@@ -66,7 +66,7 @@
             <article>
                 <div class="pages">
                     {% for page in 1..pages %}
-                        <div class="page{% if page==filters.page %} active{% endif %}">{{ page }}</div>
+                        <button class="page{% if page==filters.page %} active{% endif %}" value="{{ page }}">{{ page }}</button>
                     {% endfor %}
                 </div>
             </article>
@@ -85,6 +85,7 @@
     </div>
 {% endblock %}
 {% block javascripts %}
+    {{ parent() }}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const sortSelect = document.getElementById('sort-by');
@@ -92,21 +93,29 @@
             const seriesStarted = document.getElementById('series-started');
             const seriesWatched = document.getElementById('series-watched');
             const perPage = document.getElementById('per-page');
+            const pages = document.querySelectorAll('.pages button');
+            console.log({pages});
+
+            pages.forEach(page => {
+                page.addEventListener('click', function () {
+                    window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: page.value}));
+                });
+            });
 
             sortSelect.addEventListener('change', function () {
-                window.location.href = newUrl(window.location.href, getParams());
+                window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
             });
             orderSelect.addEventListener('change', function () {
-                window.location.href = newUrl(window.location.href, getParams());
+                window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
             });
             seriesStarted.addEventListener('change', function () {
-                window.location.href = newUrl(window.location.href, getParams());
+                window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
             });
             seriesWatched.addEventListener('change', function () {
-                window.location.href = newUrl(window.location.href, getParams());
+                window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
             });
             perPage.addEventListener('change', function () {
-                window.location.href = newUrl(window.location.href, getParams());
+                window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
             });
 
             function getParams() {
