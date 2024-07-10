@@ -19,8 +19,8 @@
                         <label for="series-started">{{ 'Series started'|trans }}
                             <select id="series-started">
                                 <option value="">{{ 'All'|trans }}</option>
-                                <option value="started"{% if filters.startStatus=='series-started' %} selected{% endif %}>{{ 'Yes'|trans }}</option>
-                                <option value="not-started"{% if filters.startStatus=='series-not-started' %} selected{% endif %}>{{ 'No'|trans }}
+                                <option value="series-started"{% if filters.startStatus=='series-started' %} selected{% endif %}>{{ 'Yes'|trans }}</option>
+                                <option value="series-not-started"{% if filters.startStatus=='series-not-started' %} selected{% endif %}>{{ 'No'|trans }}
                             </select>
                         </label>
                     </div>
@@ -28,8 +28,8 @@
                         <label for="series-watched">{{ 'Watched series'|trans }}
                             <select id="series-watched">
                                 <option value="">{{ 'All'|trans }}</option>
-                                <option value="watched"{% if filters.endStatus=='series-watched' %} selected{% endif %}>{{ 'Yes'|trans }}</option>
-                                <option value="not-watched"{% if filters.endStatus=='series-not-watched' %} selected{% endif %}>{{ 'No'|trans }}
+                                <option value="series-watched"{% if filters.endStatus=='series-watched' %} selected{% endif %}>{{ 'Yes'|trans }}</option>
+                                <option value="series-not-watched"{% if filters.endStatus=='series-not-watched' %} selected{% endif %}>{{ 'No'|trans }}
                             </select>
                         </label>
                     </div>
@@ -37,7 +37,7 @@
                         <label for="per-page">{{ 'Number of elements per page'|trans }}
                             <select id="per-page">
                                 {% for number in [10, 20, 50, 100] %}
-                                    <option value="{{ number }}{% if filters.perPage==number %} selected{% endif %}">{{ number }}</option>
+                                    <option value="{{ number }}"{% if filters.perPage==number %} selected{% endif %}>{{ number }}</option>
                                 {% endfor %}
                             </select>
                         </label>
@@ -49,15 +49,31 @@
                                 <option value="name"{% if filters.sort=='name' %} selected{% endif %}>{{ 'Name'|trans }}</option>
                                 <option value="firstAirDate"{% if filters.sort=='firstAirDate' %} selected{% endif %}>{{ 'First air date'|trans }}</option>
                                 <option value="lastWatched"{% if filters.sort=='lastWatched' %} selected{% endif %}>{{ 'Last series watched'|trans }}</option>
+                                <option value="episodeAirDate"{% if filters.sort=='episodeAirDate' %} selected{% endif %}>{{ 'Episode air date'|trans }}</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="filter">
+                        <label for="order-by">{{ 'Order by'|trans }}
+                            <select id="order-by">
+                                <option value="DESC"{% if filters.order=='DESC' %} selected{% endif %}>{{ 'Descending'|trans }}</option>
+                                <option value="ASC"{% if filters.order=='ASC' %} selected{% endif %}>{{ 'Ascending'|trans }}</option>
                             </select>
                         </label>
                     </div>
                 </div>
             </article>
+            <article>
+                <div class="pages">
+                    {% for page in 1..pages %}
+                        <div class="page{% if page==filters.page %} active{% endif %}">{{ page }}</div>
+                    {% endfor %}
+                </div>
+            </article>
         </aside>
         <main>
             <article>
-                <h2>{{ 'My series'|trans }}</h2>
+                <h2>{{ 'My series'|trans }} ({{ userSeriesCount }} {{ 'seriess'|trans }})</h2>
                 <div class="wrapper">
                     {% for series in userSeries %}
                         {{ include('_blocks/series/_card.html.twig', {allFiltered: true}) }}
@@ -67,4 +83,49 @@
         </main>
         {% include('_blocks/_footer.html.twig') %}
     </div>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sortSelect = document.getElementById('sort-by');
+            const orderSelect = document.getElementById('order-by');
+            const seriesStarted = document.getElementById('series-started');
+            const seriesWatched = document.getElementById('series-watched');
+            const perPage = document.getElementById('per-page');
+
+            sortSelect.addEventListener('change', function () {
+                window.location.href = newUrl(window.location.href, getParams());
+            });
+            orderSelect.addEventListener('change', function () {
+                window.location.href = newUrl(window.location.href, getParams());
+            });
+            seriesStarted.addEventListener('change', function () {
+                window.location.href = newUrl(window.location.href, getParams());
+            });
+            seriesWatched.addEventListener('change', function () {
+                window.location.href = newUrl(window.location.href, getParams());
+            });
+            perPage.addEventListener('change', function () {
+                window.location.href = newUrl(window.location.href, getParams());
+            });
+
+            function getParams() {
+                return [
+                    {key: 'sort', value: sortSelect.value},
+                    {key: 'order', value: orderSelect.value},
+                    {key: 'startStatus', value: seriesStarted.value},
+                    {key: 'endStatus', value: seriesWatched.value},
+                    {key: 'perPage', value: perPage.value}
+                ];
+            }
+
+            function newUrl(href, params) {
+                const url = new URL(href);
+                params.forEach(param => {
+                    url.searchParams.set(param.key, param.value);
+                });
+                return url.href;
+            }
+        });
+    </script>
 {% endblock %}

@@ -2,7 +2,13 @@
 {% set parameters = app.request.query %}
 {% set route_params = app.request.attributes.get('_route_params') %}
 <nav class="navbar">
-    <a href="{{ path('app_home') }}" accesskey="<">{{ 'Home'|trans }}</a>
+    <a href="{{ path('app_home') }}" accesskey="<">{{ ux_icon('ion:home', {height: "18px", width: "18px"}) }}</a>
+    <details>
+        <summary>{{ ux_icon('fa6-solid:film', {height: "18px", width: "18px"}) }}</summary>
+        <ul>
+            <li><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'Movies'|trans }}</a></li>
+        </ul>
+    </details>
     <details>
         <summary>{{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}</summary>
         <ul>
@@ -10,7 +16,7 @@
             <li><a href="{{ path('app_series_all') }}" class="desktop">{{ 'All my series'|trans }}</a></li>
         </ul>
     </details>
-    <a href="{{ path('app_contact_form') }}" class="desktop">{{ 'Contact'|trans }}</a>
+    <a href="{{ path('app_contact_form') }}" class="desktop">{{ ux_icon('ion:mail', {height: "18px", width: "18px"}) }}</a>
 
     {% set p = '' %}
     {% if parameters|length %}
@@ -59,15 +65,60 @@
         <div class="menu">
             <a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a>
             {% if app.user %}
+                <a href="{{ path('app_movie_index') }}">{{ 'Movies'|trans }}</a>
                 <a href="{{ path('app_series_index') }}">{{ 'Series'|trans }}</a>
                 <a href="{{ path('app_series_all') }}">{{ 'All my series'|trans }}</a>
                 <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
             {% endif %}
             {% if app.user %}
-                {% set eotdList = listEpisodeOfTheDay(app.user) %}
+                {% set eotdList = listEpisodeOfTheDay(app.user, -1) %}
+                {% set l = eotdList.totalEpisodeCount %}
+                {% if l %}
+                    <div class="separation">{{ 'Yesterday'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
+                    {% for eotd in eotdList.results %}
+                        <div class="a-preview">
+                            <a id="eotd-menu-item-{{ eotd.id }}"
+                               href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
+                               data-episode-count="{{ eotd.episodeCount }}"
+                               data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
+                               style="background: linear-gradient(90deg, var(--gradient-green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
+                                {{ eotd.display }}
+                            </a>
+                            <div id="eotd-preview-{{ eotd.id }}" class="episode-of-the-day-preview">
+                                <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
+                                    <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% set eotdList = listEpisodeOfTheDay(app.user, 0) %}
                 {% set l = eotdList.totalEpisodeCount %}
                 {% if l %}
                     <div class="separation">{{ 'Today'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
+                    {% for eotd in eotdList.results %}
+                        <div class="a-preview">
+                            <a id="eotd-menu-item-{{ eotd.id }}"
+                               href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
+                               data-episode-count="{{ eotd.episodeCount }}"
+                               data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
+                               style="background: linear-gradient(90deg, var(--gradient-green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
+                                {{ eotd.display }}
+                            </a>
+                            <div id="eotd-preview-{{ eotd.id }}" class="episode-of-the-day-preview">
+                                <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
+                                    <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% set eotdList = listEpisodeOfTheDay(app.user, 1) %}
+                {% set l = eotdList.totalEpisodeCount %}
+                {% if l %}
+                    <div class="separation">{{ 'Tomorrow'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
                     {% for eotd in eotdList.results %}
                         <div class="a-preview">
                             <a id="eotd-menu-item-{{ eotd.id }}"

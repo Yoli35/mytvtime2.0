@@ -5,6 +5,7 @@ namespace App\Twig\Runtime;
 use App\Entity\User;
 use App\Repository\EpisodeNotificationRepository;
 use App\Repository\UserEpisodeRepository;
+use DateTimeImmutable;
 use Twig\Extension\RuntimeExtensionInterface;
 
 readonly class EpisodeNotificationExtensionRuntime implements RuntimeExtensionInterface
@@ -28,9 +29,17 @@ readonly class EpisodeNotificationExtensionRuntime implements RuntimeExtensionIn
         return $this->episodeNotificationRepository->episodeNotificationList($user);
     }
 
-    public function listEpisodeOfTheDay(User $user, string $country = 'FR', string $locale = 'fr'): array
+    public function listEpisodeOfTheDay(User $user, int $interval, string $country = 'FR', string $locale = 'fr'): array
     {
-        $arr = $this->userEpisodeRepository->episodesOfTheDayForTwig($user, $country, $locale);
+        $date = new DateTimeImmutable();
+        if ($interval > 0)
+            $date = $date->modify(sprintf('+%d day', $interval))->format('Y-m-d');
+        if ($interval === 0)
+            $date = $date->format('Y-m-d');
+        if ($interval < 0)
+            $date = $date->modify(sprintf('%d day', $interval))->format('Y-m-d');
+
+        $arr = $this->userEpisodeRepository->episodesOfTheDayForTwig($user, $date, $country, $locale);
         $seriesArr = [];
         $totalEpisodeCount = 0;
         foreach ($arr as $item) {

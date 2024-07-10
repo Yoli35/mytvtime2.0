@@ -257,7 +257,7 @@ label:has(input[type="text"]) {
         }
     }
 
-    > details {
+    details {
         position: relative;
 
         summary {
@@ -557,6 +557,14 @@ label:has(input[type="text"]) {
                 justify-content: center;
                 margin-inline-end: .5rem;
                 width: 1.75rem;
+            }
+
+            > details {
+                ul {
+                    left: unset;
+                    right: 100%;
+                    top: 1rem;
+                }
             }
 
             .separation {

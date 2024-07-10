@@ -1310,6 +1310,44 @@ h2 {
                 padding-inline: 1rem;
             }
         }
+
+        .pages {
+            background-color: var(--gradient-ardoise-80-alpha-50);
+            border-radius: .25rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            margin-block-start: 1rem;
+            padding: 1rem;
+
+            .page {
+                align-items: center;
+                background-color: var(--gradient-green-50);
+                border-radius: .25rem;
+                color: var(--gradient-ardoise-10);
+                cursor: pointer;
+                display: flex;
+                font-size: 1rem;
+                font-weight: 300;
+                height: 2rem;
+                justify-content: center;
+                min-width: 2rem;
+                padding-inline: .5rem;
+
+                &:hover {
+                    background-color: var(--gradient-green-40);
+                }
+
+                &.active {
+                    background-color: var(--gradient-orange-50);
+                    color: var(--gradient-orange-90);
+
+                    &:hover {
+                        background-color: var(--gradient-orange-60);
+                    }
+                }
+            }
+        }
     }
 
     main {

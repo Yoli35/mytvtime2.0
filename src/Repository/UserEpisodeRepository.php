@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\User;
 use App\Entity\UserEpisode;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -194,7 +195,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function episodesOfTheDayForTwig(User $user, string $country = 'FR', string $locale = 'fr'): array
+    public function episodesOfTheDayForTwig(User $user, string $day, string $country = 'FR', string $locale = 'fr'): array
     {
         $userId = $user->getId();
         $sql = "SELECT 
@@ -217,9 +218,9 @@ class UserEpisodeRepository extends ServiceEntityRepository
               WHERE us.user_id = $userId 
                      AND ue.season_number > 0 
                      AND ( 
-                         ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.air_date = CURDATE()) 
-                      OR ((sdo.offset > 0) AND ue.air_date = DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY)) 
-                      OR ((sdo.offset < 0) AND ue.air_date = DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY)) 
+                         ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.air_date = '$day') 
+                      OR ((sdo.offset > 0) AND ue.air_date = DATE_SUB('$day', INTERVAL sdo.offset DAY)) 
+                      OR ((sdo.offset < 0) AND ue.air_date = DATE_ADD('$day', INTERVAL ABS(sdo.offset) DAY)) 
                          ) 
               ORDER BY displayName ";
 

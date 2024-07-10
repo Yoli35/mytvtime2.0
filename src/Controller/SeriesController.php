@@ -231,11 +231,17 @@ class SeriesController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    #[Route('/all', name: 'all')]
+    #[Route('/all', name: 'all', methods: ['GET', 'POST'])]
     public function all(Request $request): Response
     {
         /* @var User $user */
         $user = $this->getUser();
+        // /fr/series/all?sort=episodeAirDate&order=DESC&startStatus=series-not-started&endStatus=series-not-watched&perPage=10
+        $paramSort = $request->get('sort');
+        $paramOrder = $request->get('order');
+        $paramStartStatus = $request->get('startStatus');
+        $paramEndStatus = $request->get('endStatus');
+        $paramPerPage = $request->get('perPage');
         $localisation = [
             'locale' => $user?->getPreferredLanguage() ?? $request->getLocale(),
             'country' => $user?->getCountry() ?? "FR",
@@ -244,11 +250,12 @@ class SeriesController extends AbstractController
         ];
         $page = 1;
         $filters = [
-            'perPage' => 100,
-            'sort' => 'lastWatched',
-            'order' => 'DESC',
-            'startStatus' => 'series-started',
-            'endStatus' => 'series-not-watched',
+            'page' => $page,
+            'perPage' => $paramPerPage ? intval($paramPerPage) : 10,
+            'sort' => $paramSort ?? 'lastWatched',
+            'order' => $paramOrder ?? 'DESC',
+            'startStatus' => $paramStartStatus ?? 'series-started',
+            'endStatus' => $paramEndStatus ?? 'series-not-watched',
         ];
         $filterValues = [
             'series-started' => 'us.progress > 0',
@@ -260,7 +267,7 @@ class SeriesController extends AbstractController
 
         /** @var UserSeries[] $userSeries */
         $userSeries = $this->userSeriesRepository->getAllSeries($user, $localisation, ['us.progress > 0', 'us.progress < 100'], $filters['sort'], $filters['order'], $page, $filters['perPage']);
-        $userSeriesCount = $this->userSeriesRepository->count(['user' => $user]);
+        $userSeriesCount = $this->userSeriesRepository->countAllSeries($user, $localisation, ['us.progress > 0', 'us.progress < 100']);
 
         $userSeries = array_map(function ($series) {
             $series['poster_path'] = $series['poster_path'] ? $this->imageConfiguration->getCompleteUrl($series['poster_path'], 'poster_sizes', 5) : null;
@@ -276,6 +283,7 @@ class SeriesController extends AbstractController
         return $this->render('series/all.html.twig', [
             'userSeries' => $userSeries,
             'userSeriesCount' => $userSeriesCount,
+            'pages' => ceil($userSeriesCount / $filters['perPage']),
             'filters' => $filters,
         ]);
     }
@@ -592,13 +600,13 @@ class SeriesController extends AbstractController
 
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
-//        dump([
-//            'series' => $series,
-//            'season' => $season,
+        dump([
+            'series' => $series,
+            'season' => $season,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-//        ]);
+        ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
@@ -1582,7 +1590,7 @@ class SeriesController extends AbstractController
 
         foreach ($season['episodes'] as $episode) {
             $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
-            $episode['air_date'] = $this->offsetDate($episode['air_date'], $dayOffset, $user->getTimezone() ?? 'Europe/Paris');
+            $episode['air_date'] = ($episode['air_date'] ? $this->offsetDate($episode['air_date'], $dayOffset, $user->getTimezone() ?? 'Europe/Paris') : null);
             $episode['crew'] = array_map(function ($crew) use ($slugger, $user) {
                 if (key_exists('person_id', $crew)) return null;
                 $crew['profile_path'] = $crew['profile_path'] ? $this->imageConfiguration->getCompleteUrl($crew['profile_path'], 'profile_sizes', 2) : null; // w185
