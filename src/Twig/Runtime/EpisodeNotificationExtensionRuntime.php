@@ -5,12 +5,14 @@ namespace App\Twig\Runtime;
 use App\Entity\User;
 use App\Repository\EpisodeNotificationRepository;
 use App\Repository\UserEpisodeRepository;
+use App\Service\DateService;
 use DateTimeImmutable;
 use Twig\Extension\RuntimeExtensionInterface;
 
 readonly class EpisodeNotificationExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
+        private DateService                   $dateService,
         private EpisodeNotificationRepository $episodeNotificationRepository,
         private UserEpisodeRepository         $userEpisodeRepository
     )
@@ -31,7 +33,8 @@ readonly class EpisodeNotificationExtensionRuntime implements RuntimeExtensionIn
 
     public function listEpisodeOfTheDay(User $user, int $interval, string $country = 'FR', string $locale = 'fr'): array
     {
-        $date = new DateTimeImmutable();
+        $date = $this->dateService->newDateImmutable('now', $user->getTimezone() ?? 'Europe/Paris');
+
         if ($interval > 0)
             $date = $date->modify(sprintf('+%d day', $interval))->format('Y-m-d');
         if ($interval === 0)
