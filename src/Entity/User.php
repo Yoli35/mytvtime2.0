@@ -89,6 +89,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: UserPinnedSeries::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $userPinnedSeries;
 
+    /**
+     * @var Collection<int, UserMovie>
+     */
+    #[ORM\OneToMany(targetEntity: UserMovie::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $userMovies;
+
     public function __construct()
     {
         $this->series = new ArrayCollection();
@@ -96,6 +102,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userEpisodes = new ArrayCollection();
         $this->userEpisodeNotifications = new ArrayCollection();
         $this->userPinnedSeries = new ArrayCollection();
+        $this->userMovies = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -449,6 +456,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             if ($userPinnedSeries->getUser() === $this) {
                 $userPinnedSeries->setUser(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserMovie>
+     */
+    public function getUserMovies(): Collection
+    {
+        return $this->userMovies;
+    }
+
+    public function addUserMovie(UserMovie $userMovie): static
+    {
+        if (!$this->userMovies->contains($userMovie)) {
+            $this->userMovies->add($userMovie);
+            $userMovie->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserMovie(UserMovie $userMovie): static
+    {
+        if ($this->userMovies->removeElement($userMovie)) {
+            $userMovie->removeUser($this);
         }
 
         return $this;

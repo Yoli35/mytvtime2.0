@@ -33,24 +33,24 @@ class UserSeriesRepository extends ServiceEntityRepository
         }
     }
 
-    public function getLastWatchedUserSeries(User $user, $locale, int $page = 1, int $perPage = 20): array
-    {
-        $userId = $user->getId();
-        $sql = "SELECT s.`id` as id, s.`name` as name, sln.`name` as localized_name, us.`progress` as progress, "
-            . "	    ue.`episode_number` as last_episode, ue.`season_number` as last_season, ue.`watch_at` as last_watch_at, "
-            . "     s.`slug` as slug, sln.`slug` as localized_slug, "
-            . "     s.`poster_path` as poster_path "
-            . "FROM `user_series` us "
-            . "INNER JOIN `series` s ON s.`id`=us.`series_id` "
-            . "INNER JOIN `user_episode` ue ON ue.`user_series_id`=us.`id` "
-            . "LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' "
-            . "WHERE us.`user_id`=$userId "
-            . "     AND ue.`watch_at` IS NOT NULL "
-            . "ORDER BY ue.`watch_at` DESC "
-            . "LIMIT " . $perPage . " OFFSET " . ($page - 1) * $perPage;
-
-        return $this->getAll($sql);
-    }
+//    public function getLastWatchedUserSeries(User $user, $locale, int $page = 1, int $perPage = 20): array
+//    {
+//        $userId = $user->getId();
+//        $sql = "SELECT s.`id` as id, s.`name` as name, sln.`name` as localized_name, us.`progress` as progress, "
+//            . "	    ue.`episode_number` as last_episode, ue.`season_number` as last_season, ue.`watch_at` as last_watch_at, "
+//            . "     s.`slug` as slug, sln.`slug` as localized_slug, "
+//            . "     s.`poster_path` as poster_path "
+//            . "FROM `user_series` us "
+//            . "INNER JOIN `series` s ON s.`id`=us.`series_id` "
+//            . "INNER JOIN `user_episode` ue ON ue.`user_series_id`=us.`id` "
+//            . "LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' "
+//            . "WHERE us.`user_id`=$userId "
+//            . "     AND ue.`watch_at` IS NOT NULL "
+//            . "ORDER BY ue.`watch_at` DESC "
+//            . "LIMIT " . $perPage . " OFFSET " . ($page - 1) * $perPage;
+//
+//        return $this->getAll($sql);
+//    }
 
     public function getUserSeriesOfTheDay(User $user, string $country, string $locale): array
     {
@@ -147,19 +147,12 @@ class UserSeriesRepository extends ServiceEntityRepository
 
     public function getAllSeries(User $user, array $localisation = ['country' => 'FR', 'language' => 'fr', 'locale' => 'fr'], array $filters = [], string $sort = 'firstAirDate', string $order = 'DESC', int $page = 1, int $perPage = 20): array
     {
-        switch ($sort) {
-            case 'firstAirDate':
-                $sort = 's.`first_air_date`';
-                break;
-            case 'lastWatched':
-                $sort = 'us.`last_watch_at`';
-                break;
-            case 'name':
-                $sort = 's.`name`';
-                break;
-            default:
-                $sort = 's.`first_air_date`';
-        }
+        $sort = match ($sort) {
+            'lastWatched' => 'us.`last_watch_at`',
+            'episodeAirDate' => 'ue.`air_date`',
+            'name' => 's.`name`',
+            default => 's.`first_air_date`',
+        };
         $filterString = array_map(fn($filter) => "AND $filter", $filters);
         $filterString = implode(' ', $filterString);
         $userId = $user->getId();
@@ -213,14 +206,52 @@ class UserSeriesRepository extends ServiceEntityRepository
             ORDER BY $sort $order 
             LIMIT $perPage OFFSET $offset";
         dump($sql);
-
         return $this->getAll($sql);
+    }
+
+
+    public function countAllSeries(User $user, array $localisation = ['country' => 'FR', 'language' => 'fr', 'locale' => 'fr'], array $filters = []): int
+    {
+        $filterString = array_map(fn($filter) => "AND $filter", $filters);
+        $filterString = implode(' ', $filterString);
+        $userId = $user->getId();
+        $country = $localisation['country'];
+
+        $sql = "SELECT COUNT(*)
+                FROM `user_series` us 
+                    INNER JOIN user_episode ue ON ue.`user_series_id` = us.`id`
+                    LEFT JOIN `series` s ON s.`id` = us.`series_id` 
+                    LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
+                WHERE us.user_id=$userId $filterString
+                  AND ue.id=(SELECT ue2.id
+                             FROM user_episode ue2
+                             WHERE ue2.user_series_id = us.id
+                               AND ue2.`watch_at` IS NULL
+                               AND ue2.season_number > 0
+                               AND (
+                                 ((sdo.offset IS NULL OR sdo.offset = 0) AND ue2.`air_date` <= CURDATE())
+                                     OR ((sdo.offset > 0) AND ue2.`air_date` <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
+                                     OR ((sdo.offset < 0) AND ue2.`air_date` <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
+                                 )
+                             ORDER BY ue2.air_date
+                             LIMIT 1)";
+        dump($sql);
+        return $this->getOne($sql);
     }
 
     public function getAll($sql): array
     {
         try {
             return $this->em->getConnection()->fetchAllAssociative($sql);
+        } catch (Exception) {
+            return [];
+        }
+    }
+
+    public function getOne($sql): mixed
+    {
+        try {
+            return $this->em->getConnection()->fetchOne($sql);
         } catch (Exception) {
             return [];
         }

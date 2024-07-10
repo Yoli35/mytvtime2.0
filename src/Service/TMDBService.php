@@ -144,80 +144,12 @@ class TMDBService
         }
     }
 
-//    public function getTvCredits($tvId, $locale): ?string
-//    {
-//        try {
-//            $response = $this->client->request(
-//                'GET',
-//                'https://api.themoviedb.org/3/tv/' . $tvId . '/credits?api_key=' . $this->api_key . '&language=' . $locale,
-//            );
-//            try {
-//                return $response->getContent();
-//            } catch (Throwable) {
-//                return 'Response : ' . $exception->getMessage() . ' - code : ' . $exception->getCode();
-//            }
-//        } catch (Throwable) {
-//            return 'Request : ' . $exception->getMessage() . ' - code : ' . $exception->getCode();
-//        }
-//    }
-//
-//    public function getTvKeywords($tvId, $locale): ?string
-//    {
-//        try {
-//            $response = $this->client->request(
-//                'GET',
-//                'https://api.themoviedb.org/3/tv/' . $tvId . '/keywords?api_key=' . $this->api_key . '&language=' . $locale,
-//            );
-//            try {
-//                return $response->getContent();
-//            } catch (Throwable) {
-//                return "";
-//            }
-//        } catch (Throwable) {
-//            return "";
-//        }
-//    }
-
-    public function getTvWatchProviders($tvId): ?string
-    {
-        try {
-            $response = $this->client->request(
-                'GET',
-                'https://api.themoviedb.org/3/tv/' . $tvId . '/watch/providers?api_key=' . $this->api_key,
-            );
-            try {
-                return $response->getContent();
-            } catch (Throwable) {
-                return "";
-            }
-        } catch (Throwable) {
-            return "";
-        }
-    }
-
     public function getTvWatchProviderList($language = 'fr-FR', $region = null): ?string
     {
         try {
             $response = $this->client->request(
                 'GET',
                 'https://api.themoviedb.org/3/watch/providers/tv?language=' . $language . ($region ? '&watch_region=' . $region : '') . '&api_key=' . $this->api_key,
-            );
-            try {
-                return $response->getContent();
-            } catch (Throwable) {
-                return "";
-            }
-        } catch (Throwable) {
-            return "";
-        }
-    }
-
-    public function getTvGenreList($language): ?string
-    {
-        try {
-            $response = $this->client->request(
-                'GET',
-                'https://api.themoviedb.org/3/genre/tv/list?language=' . $language . '&api_key=' . $this->api_key,
             );
             try {
                 return $response->getContent();

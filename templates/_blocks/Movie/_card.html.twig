@@ -1,0 +1,23 @@
+<div class="card">
+    <a href="{{ path('app_movie_show', {'id': movie.id, 'slug': movie.slug }) }}">
+        <div class="poster">
+            {% if movie.posterPath %}
+                <img src="/movies/posters/{{ movie.posterPath }}" alt="{{ movie.title }}">
+            {% else %}
+                <div>{{ 'No poster'|trans }}</div>
+            {% endif %}
+            {% if movie.favorite %}
+                <div class="favorite">
+                    <i class="fas fa-heart"></i>
+                </div>
+            {% endif %}
+            {% if movie.lastViewedAt %}
+                <div class="viewed">{{ 'Last viewed'|trans }} : {{ movie.lastViewedAt|format_date('full')|capitalize }}</div>
+            {% endif %}
+        </div>
+        <div class="infos">
+            <div class="name">{{ movie.title }}</div>
+            <div class="date">{{ movie.releaseDate|format_date('relative_full')|capitalize }}        </div>
+        </div>
+    </a>
+</div>

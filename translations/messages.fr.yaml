@@ -69,10 +69,14 @@ Watched series: Séries terminées
 Yes: Oui
 No: Non
 All: Toutes
+Order by: Ordre
+Descending: Décroissant
+Ascending: Croissant
 Number of element per page: Nombre d'éléments par page
 Default: Par défaut
 First air date: Date de première diffusion
 Last series watched: Dernière série regardée
+Episode air date: Date de diffusion de l'épisode
 Next episode: Prochain épisode
 remaining episode: épisode restant
 remaining episodes: épisodes restants
@@ -170,6 +174,7 @@ Television: Télévision
 That's all, Folks!: C'est tout, les amis !
 This field is required: Ce champ est requis
 Today: Aujourd'hui
+Tomorrow: Demain
 URL: URL
 Up to date!: À jour !
 Updates: Mises à jour
@@ -180,6 +185,7 @@ Watched again: Vu à nouveau
 Where to buy: Où acheter
 Where to rent: Où louer
 Where to watch: Où regarder
+Yesterday: Hier
 day: jour
 days: jours
 episode: épisode
@@ -358,3 +364,7 @@ Avatar: Avatar
 Banner: Bannière
 Update: Mettre à jour
 Drop your file here or click to upload: Déposez votre image ou cliquez ici pour la choisir
+
+# Movies
+Movies: Films
+My movies: Mes films

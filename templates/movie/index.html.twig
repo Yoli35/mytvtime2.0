@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Movies'|trans }}!{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/movie.scss') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="movie-index">
+        {% include('_blocks/_menu.html.twig') %}
+        <div class="container-fluid">
+
+            <div class="wrapper">
+                {% for movie in userMovies %}
+                    {{ include('_blocks/movie/_card.html.twig') }}
+                {% endfor %}
+            </div>
+
+            {% include('_blocks/_footer.html.twig') %}
+        </div>
+    </div>
+{% endblock %}
