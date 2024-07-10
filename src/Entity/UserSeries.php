@@ -42,6 +42,9 @@ class UserSeries
     #[ORM\Column(options: ['default' => 0])]
     private ?float $progress;
 
+    #[ORM\OneToOne(mappedBy: 'userSeries')]
+    private ?UserPinnedSeries $userPinnedSeries = null;
+
     #[ORM\Column(nullable: true)]
     private ?bool $favorite;
 
@@ -271,5 +274,15 @@ class UserSeries
         $this->binge = $binge;
 
         return $this;
+    }
+
+    public function getUserPinnedSeries(): ?UserPinnedSeries
+    {
+        return $this->userPinnedSeries;
+    }
+
+    public function setUserPinnedSeries(?UserPinnedSeries $userPinnedSeries): void
+    {
+        $this->userPinnedSeries = $userPinnedSeries;
     }
 }

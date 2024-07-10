@@ -19,15 +19,32 @@ class UserPinnedSeriesRepository extends ServiceEntityRepository
         parent::__construct($registry, UserPinnedSeries::class);
     }
 
+    public function add(UserPinnedSeries $entity, bool $flush = false): void
+    {
+        $this->em->persist($entity);
+
+        if ($flush) {
+            $this->em->flush();
+        }
+    }
+
+    public function remove(UserPinnedSeries $entity, bool $flush = false): void
+    {
+        $this->em->remove($entity);
+
+        if ($flush) {
+            $this->em->flush();
+        }
+    }
+
     public function getPinnedSeriesByUser(User $user, string $locale): array
     {
         $userId = $user->getId();
         $sql = "SELECT s.`id`           as id,
-                       s.`name`         as name,
-                       s.`slug`         as slug,
                        s.`poster_path`  as posterPath,
                        ups.`created_at` as createdAt,
-                       (IF(sln.`name` IS NULL, s.`name`, sln.`name`)) as displayName
+                       (IF(sln.`name` IS NULL, s.`name`, sln.`name`)) as name,
+                       (IF(sln.`name` IS NULL, s.`slug`, sln.`slug`)) as slug
                 FROM `user_pinned_series` ups
                          INNER JOIN `user_series` us ON ups.`user_id` =$userId AND ups.`user_series_id` = us.`id`
                          INNER JOIN `series` s ON us.`series_id` = s.`id`

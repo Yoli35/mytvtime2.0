@@ -14,6 +14,7 @@ use App\Entity\SeriesLocalizedOverview;
 use App\Entity\SeriesWatchLink;
 use App\Entity\User;
 use App\Entity\UserEpisode;
+use App\Entity\UserPinnedSeries;
 use App\Entity\UserSeries;
 use App\Form\SeriesAdvancedSearchType;
 use App\Form\SeriesSearchType;
@@ -32,6 +33,7 @@ use App\Repository\SeriesRepository;
 use App\Repository\SeriesWatchLinkRepository;
 use App\Repository\SourceRepository;
 use App\Repository\UserEpisodeRepository;
+use App\Repository\UserPinnedSeriesRepository;
 use App\Repository\UserSeriesRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
@@ -78,6 +80,7 @@ class SeriesController extends AbstractController
         private readonly TMDBService                        $tmdbService,
         private readonly TranslatorInterface                $translator,
         private readonly UserEpisodeRepository              $userEpisodeRepository,
+        private readonly UserPinnedSeriesRepository         $userPinnedSeriesRepository,
         private readonly UserSeriesRepository               $userSeriesRepository,
         private readonly WatchProviderRepository            $watchProviderRepository,
     )
@@ -227,6 +230,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/all', name: 'all')]
     public function all(Request $request): Response
     {
@@ -448,6 +452,7 @@ class SeriesController extends AbstractController
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userSeries = $this->updateUserSeries($userSeries, $tv);
+
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
 
         $schedules = $this->seriesSchedules($series);
@@ -461,6 +466,8 @@ class SeriesController extends AbstractController
             'Delete' => $this->translator->trans('Delete'),
             'Add' => $this->translator->trans('Add'),
             'Update' => $this->translator->trans('Update'),
+            'Remove from favorites' => $this->translator->trans('Remove from favorites'),
+            'Add to favorites' => $this->translator->trans('Add to favorites'),
         ];
 
 //        dump([
@@ -502,6 +509,28 @@ class SeriesController extends AbstractController
     public function removeUserSeries(UserSeries $userSeries): Response
     {
         $this->userSeriesRepository->remove($userSeries);
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/pinned/{id}', name: 'pinned', requirements: ['id' => Requirement::DIGITS])]
+    public function pinnedSeries(Request $request, UserSeries $userSeries): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $data = json_decode($request->getContent(), true);
+        $newPinnedValue = $data['newStatus'];
+
+        if ($newPinnedValue) {
+            $userPinnedSeries = new UserPinnedSeries($user, $userSeries);
+            $this->userPinnedSeriesRepository->add($userPinnedSeries, true);
+        } else {
+            $userPinnedSeries = $this->userPinnedSeriesRepository->findOneBy(['user' => $user, 'userSeries' => $userSeries]);
+            $this->userPinnedSeriesRepository->remove($userPinnedSeries, true);
+        }
 
         return $this->json([
             'ok' => true,

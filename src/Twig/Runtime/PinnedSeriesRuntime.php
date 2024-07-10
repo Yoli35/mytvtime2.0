@@ -22,11 +22,9 @@ readonly class PinnedSeriesRuntime implements RuntimeExtensionInterface
         if (!$user) {
             return [];
         }
-        $result = array_map(function ($series) {
+        return array_map(function ($series) {
             $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
             return $series;
         }, $this->userPinnedSeriesRepository->getPinnedSeriesByUser($user, $locale));
-        dump($result);
-        return $result;
     }
 }

@@ -571,6 +571,15 @@ h2 {
                         color: var(--favorite-series);
                     }
                 }
+
+                &.toggle-pinned-series {
+                    background-color: var(--gradient-ardoise-80-alpha-50);
+                    width: 2rem;
+
+                    &.pinned {
+                        color: var(--favorite-series);
+                    }
+                }
             }
         }
     }

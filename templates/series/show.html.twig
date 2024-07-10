@@ -318,6 +318,9 @@
                         </div>
                     {% endif %}
                     <div class="actions">
+                        <div class="action toggle-pinned-series{% if userSeries.userPinnedSeries %} pinned{% endif %}" data-title="{{ (userSeries.userPinnedSeries ? "Remove from pinned series" : "Add to pinned series")|trans }}">
+                            {{ ux_icon('fa6-solid:paperclip', {height: '18px', width: '18px'}) }}
+                        </div>
                         <div class="action toggle-favorite-series{% if userSeries.favorite %} favorite{% endif %}" data-title="{{ (userSeries.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
                             {{ ux_icon('fa6-solid:heart', {height: '18px', width: '18px'}) }}
                         </div>
@@ -608,6 +611,22 @@
                 });
             }
 
+            const pinned = userActions.querySelector('.toggle-pinned-series');
+            pinned.addEventListener('click', function () {
+                const isPinned = this.classList.contains('pinned');
+                fetch('/' + lang + '/series/pinned/' + {{ userSeries.id }}, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({newStatus: isPinned ? 0 : 1})
+                }).then(function (response) {
+                    if (response.ok) {
+                        window.location.reload();
+                    }
+                });
+            });
+
             const favorite = userActions.querySelector('.toggle-favorite-series');
             favorite.addEventListener('click', function () {
                 const isFavorite = this.classList.contains('favorite');
@@ -620,6 +639,11 @@
                 }).then(function (response) {
                     if (response.ok) {
                         favorite.classList.toggle('favorite');
+                        if (favorite.classList.contains('favorite')) {
+                            favorite.setAttribute('data-title', translations['Remove from favorites']);
+                        } else {
+                            favorite.setAttribute('data-title', translations['Add to favorites']);
+                        }
                     }
                 });
             });

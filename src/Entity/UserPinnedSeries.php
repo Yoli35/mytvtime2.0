@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserPinnedSeriesRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserPinnedSeriesRepository::class)]
@@ -15,14 +16,21 @@ class UserPinnedSeries
 
     #[ORM\ManyToOne(inversedBy: 'userPinnedSeries')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private ?User $user;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'userPinnedSeries')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?UserSeries $userSeries = null;
+    private ?UserSeries $userSeries;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?DateTimeImmutable $createdAt;
+
+    public function __construct(User $user, UserSeries $userSeries)
+    {
+        $this->user = $user;
+        $this->userSeries = $userSeries;
+        $this->createdAt = new DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -53,12 +61,12 @@ class UserPinnedSeries
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
 
