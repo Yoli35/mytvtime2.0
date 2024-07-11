@@ -17,9 +17,11 @@ export class Menu {
         this.avatar = document.querySelector('.avatar');
         this.userConnected = this.avatar != null;
         this.connexionInterval = null;
+        this.posterUrl = null;
     }
 
     init() {
+        this.getImageConfig();
         const burger = document.querySelector(".burger");
         const navbar = document.querySelector(".navbar");
         const mainMenu = navbar.querySelector(".menu");
@@ -27,6 +29,7 @@ export class Menu {
         const pinnedMenuItems = document.querySelectorAll("a[id^='pinned-menu-item-']");
         const body = document.querySelector("body");
         const notifications = document.querySelector(".notifications");
+        const movieSearch = navbar.querySelector("#movie-search");
 
         burger.addEventListener("click", () => {
             burger.classList.toggle("open");
@@ -130,6 +133,72 @@ export class Menu {
                 this.checkConnexion();
             }, 60000);
         }
+
+        movieSearch.addEventListener("input", (e) => {
+            const value = e.target.value;
+            if (value.length > 2) {
+                const searchResults = movieSearch.closest("li").querySelector(".search-results");
+                const query = encodeURIComponent(value);
+                const url = 'https://api.themoviedb.org/3/search/movie?query=' + query + '&include_adult=false&language=en-US&page=1';
+                const options = {
+                    method: 'GET',
+                    headers: {
+                        accept: 'application/json',
+                        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmN2UzYzVmZTc5NGQ1NjViNDcxMzM0YzljNWVjYWY5NiIsIm5iZiI6MTcyMDYxMDA2Ni4zMzk0NzgsInN1YiI6IjYyMDJiZjg2ZTM4YmQ4MDA5MWVjOWIzOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.D5XVKmPsIrUKnZjQBXOhsKXzXtrejlHl8KT1dmZ2oyQ'
+                    }
+                };
+
+                fetch(url, options)
+                    .then(res => res.json())
+                    .then(json => {
+                        console.log(json);
+                        searchResults.innerHTML = '';
+                        const ul = document.createElement("ul");
+                        json.results.forEach((result) => {
+                            const a = document.createElement("a");
+                            a.href = '/'+gThis.lang+'/movie/tmdb/' + result.id;
+                            const li = document.createElement("li");
+                            const posterDiv = document.createElement("div");
+                            posterDiv.classList.add("poster");
+                            if (result.poster_path) {
+                                const img = document.createElement("img");
+                                img.src = result.poster_path ? gThis.posterUrl + result.poster_path : '/assets/img/no-poster.png';
+                                img.alt = result.title;
+                                posterDiv.appendChild(img);
+                            } else {
+                                posterDiv.innerHTML = 'No poster';
+                            }
+                            a.appendChild(posterDiv);
+                            const titleDiv = document.createElement("div");
+                            titleDiv.classList.add("title");
+                            titleDiv.innerHTML = result.title;
+                            a.appendChild(titleDiv);
+                            li.appendChild(a);
+                            ul.appendChild(li);
+                        });
+                        searchResults.appendChild(ul);
+                    })
+                    .catch(err => console.error('error:' + err));
+            } else {
+                movieSearch.closest("li").querySelector(".search-results").innerHTML = '';
+            }
+        });
+    }
+
+    getImageConfig() {
+        fetch('/' + gThis.lang + '/movie/image/config', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                gThis.posterUrl = data.body.poster_url;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     }
 
     checkConnexion() {

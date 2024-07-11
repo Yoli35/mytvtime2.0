@@ -8,9 +8,8 @@
 {% endblock %}
 
 {% block body %}
-    <div class="movie-index">
         {% include('_blocks/_menu.html.twig') %}
-        <div class="container-fluid">
+        <div class="container-fluid movie-index">
 
             <div class="wrapper">
                 {% for movie in userMovies %}
@@ -20,5 +19,4 @@
 
             {% include('_blocks/_footer.html.twig') %}
         </div>
-    </div>
 {% endblock %}

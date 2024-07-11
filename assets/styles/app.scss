@@ -266,14 +266,15 @@ label:has(input[type="text"]) {
             padding-block-start: .5rem;
         }
 
-        summary::-webkit-details-marker { display: none }
+        summary::-webkit-details-marker {
+            display: none
+        }
 
         ul {
             background-color: var(--navbar-bg);
             border-radius: .25rem;
             left: 0;
             list-style: none;
-            overflow: hidden;
             position: absolute;
             top: 2rem;
             width: max-content;
@@ -290,6 +291,93 @@ label:has(input[type="text"]) {
 
                 &:hover {
                     background-color: var(--navbar-bg-hover);
+                }
+
+                label {
+                    position: relative;
+
+                    input {
+                        appearance: none;
+                        background-color: var(--gradient-ardoise-80);
+                        border: 1px solid var(--gradient-ardoise-50);
+                        border-radius: 999px;
+                        margin-block: .5rem;
+                        padding-inline: .5rem 2rem;
+                    }
+
+                    .magnifying-glass {
+                        position: absolute;
+                        right: .75rem;
+                        top: 0;
+                    }
+                }
+
+                &:has(input[type=search]) {
+                    position: relative;
+
+                    .search-results {
+                        background-color: var(--gradient-ardoise-80);
+                        border-radius: .25rem;
+                        display: flex;
+                        flex-direction: column;
+                        left: 0;
+                        list-style: none;
+                        padding-inline: 1rem;
+                        position: absolute;
+                        top: .5rem;
+                        z-index: 10;
+
+                        ul {
+                            max-height: 30dvh;
+                            overflow-y: auto;
+
+                            li {
+                                a {
+                                    align-items: center;
+                                    color: var(--navbar-color-hover);
+                                    display: flex;
+                                    gap: .5rem;
+                                    padding-block: .125rem;
+                                    padding-inline: 1rem;
+
+                                    &:hover {
+                                        background-color: var(--navbar-bg-hover);
+                                    }
+
+                                    .poster {
+                                        align-items: center;
+                                        aspect-ratio: 78 / 117;
+                                        display: flex;
+                                        font-size: .5rem;
+                                        height: 3rem;
+                                        justify-content: center;
+                                        text-align: center;
+
+                                        img {
+                                            border-radius: .125rem;
+                                            height: 3rem;
+                                            object-fit: cover;
+                                            width: 100%;
+                                        }
+                                    }
+
+                                    .title {
+                                        flex-grow: 1;
+                                        overflow: hidden;
+                                        text-overflow: ellipsis;
+                                        white-space: nowrap;
+                                    }
+                                }
+                            }
+
+                            a {
+                                color: var(--navbar-color);
+                                display: block;
+                                padding-block: .5rem;
+                                text-decoration: none;
+                            }
+                        }
+                    }
                 }
             }
         }

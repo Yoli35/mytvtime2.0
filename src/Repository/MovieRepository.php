@@ -33,7 +33,7 @@ class MovieRepository extends ServiceEntityRepository
         $userId = $user->getId();
         $offset = ($page - 1) * $perPage;
 
-        $sql = "SELECT um.id             as id,
+        $sql = "SELECT um.id             as userMovieId,
                        m.title           as title,
                        m.poster_path     as posterPath,
                        m.release_date    as releaseDate,
