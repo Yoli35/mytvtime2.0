@@ -1715,6 +1715,47 @@ h2 {
         left: 0;
         right: 0;
     }
+
+    .all-my-series {
+        main {
+            .wrapper {
+                .card {
+                    height: unset;
+                    width: 100%;
+
+                    a {
+                        .poster, .name {
+                            width: 100%;
+                        }
+
+                        .poster {
+                            height: unset;
+
+                            img {
+                                aspect-ratio: 78 / 117;
+                                height: auto;
+                                width: 100%;
+                            }
+
+                            .series-infos {
+                                .air-date {
+                                    font-size: 2rem;
+                                }
+
+                                .episode-number {
+                                    font-size: 3rem;
+                                }
+                            }
+                        }
+
+                        .name {
+                            font-size: 1.5rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @media (min-width: 80rem) {
