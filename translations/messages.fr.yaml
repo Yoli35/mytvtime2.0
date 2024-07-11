@@ -62,6 +62,7 @@ Remove from pinned series: Retirer des séries épinglées
 
 # All my series
 Filters: Filtres
+Show / hide filter options: Afficher / masquer les options de filtre
 My series: Mes séries
 Number of elements per page: Nombre d'éléments par page
 Series started: Séries commencées
@@ -69,7 +70,8 @@ Watched series: Séries terminées
 Yes: Oui
 No: Non
 All: Toutes
-Order by: Ordre
+Sort: Tri
+Order: Ordre
 Descending: Décroissant
 Ascending: Croissant
 Number of element per page: Nombre d'éléments par page

@@ -12,9 +12,18 @@
     <div class="all-my-series container-fluid">
         <h1>{{ 'All my series'|trans }}</h1>
         <aside>
-            <h2>{{ 'Filters'|trans }}</h2>
             <article>
-                <div class="filters">
+                <header>
+                    <div class="title">{{ 'Filters'|trans }}</div>
+                    <div class="collapse" data-title="{{ 'Show / hide filter options'|trans }}">
+                        {% if filterBoxOpen %}
+                            {{ ux_icon('ion:chevron-collapse', {height: '18px', width: '18px'}) }}
+                        {% else %}
+                            {{ ux_icon('ion:chevron-expand', {height: '18px', width: '18px'}) }}
+                        {% endif %}
+                    </div>
+                </header>
+                <div class="filters{% if filterBoxOpen == 0 %} collapse{% endif %}">
                     <div class="filter">
                         <label for="series-started">{{ 'Series started'|trans }}
                             <select id="series-started">
@@ -43,7 +52,7 @@
                         </label>
                     </div>
                     <div class="filter">
-                        <label for="sort-by">{{ 'Sort by'|trans }}
+                        <label for="sort-by">{{ 'Sort'|trans }}
                             <select id="sort-by">
                                 <option value="">{{ 'Default'|trans }}</option>
                                 <option value="name"{% if filters.sort=='name' %} selected{% endif %}>{{ 'Name'|trans }}</option>
@@ -54,7 +63,7 @@
                         </label>
                     </div>
                     <div class="filter">
-                        <label for="order-by">{{ 'Order by'|trans }}
+                        <label for="order-by">{{ 'Order'|trans }}
                             <select id="order-by">
                                 <option value="DESC"{% if filters.order=='DESC' %} selected{% endif %}>{{ 'Descending'|trans }}</option>
                                 <option value="ASC"{% if filters.order=='ASC' %} selected{% endif %}>{{ 'Ascending'|trans }}</option>
@@ -73,7 +82,13 @@
         </aside>
         <main>
             <article>
-                <h2>{{ 'My series'|trans }} ({{ userSeriesCount }} {{ 'seriess'|trans }})</h2>
+                <header>
+                    <div class="title">{{ 'My series'|trans }} ({{ userSeriesCount }} {{ 'seriess'|trans }})</div>
+                    <div class="filter-values">
+                        <div class="filter-value" data-title="{{ 'Sort'|trans }} / {{ 'Order'|trans }}">{{ ux_icon('ion:funnel', {height: '18px', width: '18px'}) }}: {{ filterMeanings[filters.sort]|trans }} / {{ filterMeanings[filters.order]|trans }}</div>
+                        <div class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">{{ ux_icon('ion:apps-sharp', {height: '18px', width: '18px'}) }}: {{ filters.perPage }}</div>
+                    </div>
+                </header>
                 <div class="wrapper">
                     {% for series in userSeries %}
                         {{ include('_blocks/series/_card.html.twig', {allFiltered: true}) }}
@@ -87,7 +102,12 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
+        const svgPathCollapse = '<path fill="currentColor" d="M117.863 88.282c-8.681 10.017-7.598 25.174 2.419 33.855l120 104c9.02 7.818 22.416 7.818 31.436 0l120-104c10.017-8.681 11.1-23.838 2.419-33.855s-23.839-11.099-33.855-2.418L256 176.241L151.718 85.864c-10.016-8.681-25.174-7.598-33.855 2.418m0 335.436c-8.681-10.017-7.598-25.174 2.419-33.855l120-104c9.02-7.818 22.416-7.818 31.436 0l120 104c10.017 8.681 11.1 23.838 2.419 33.855s-23.839 11.099-33.855 2.418L256 335.759l-104.282 90.377c-10.016 8.681-25.174 7.598-33.855-2.418"></path>';
+        const svgPathExpand = '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="m136 208l120-104l120 104m-240 96l120 104l120-104"></path>';
         document.addEventListener('DOMContentLoaded', function () {
+            const filtersCollapse = document.querySelector('.collapse');
+            const filtersCollapseIcon = filtersCollapse.querySelector('svg');
+            const filters = document.querySelector('.filters');
             const sortSelect = document.getElementById('sort-by');
             const orderSelect = document.getElementById('order-by');
             const seriesStarted = document.getElementById('series-started');
@@ -95,6 +115,17 @@
             const perPage = document.getElementById('per-page');
             const pages = document.querySelectorAll('.pages button');
             console.log({pages});
+
+            filtersCollapse.addEventListener('click', function () {
+                filters.classList.toggle('collapse');
+                if (filters.classList.contains('collapse')) {
+                    filtersCollapseIcon.innerHTML = svgPathExpand;
+                    saveFilterBoxSettings(false);
+                } else {
+                    filtersCollapseIcon.innerHTML = svgPathCollapse;
+                    saveFilterBoxSettings(true);
+                }
+            });
 
             pages.forEach(page => {
                 page.addEventListener('click', function () {
@@ -134,6 +165,26 @@
                     url.searchParams.set(param.key, param.value);
                 });
                 return url.href;
+            }
+
+            function saveFilterBoxSettings(open) {
+                const data = {
+                    'name': 'series to end: filter box',
+                    'value': {
+                        'open': open
+                    }
+                };
+                fetch('{{ path('app_series_settings_save') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(response => response.json())
+                    .then(data => console.log(data))
+                    .catch(error => console.error(error));
             }
         });
     </script>

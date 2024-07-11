@@ -188,8 +188,8 @@ label:has(select) {
         color: var(--gradient-ardoise-10);
         outline: none;
         margin-inline-start: auto;
-        padding-block: .25rem;
-        padding-inline: .5rem 1.5rem;
+        padding-block: 0;
+        padding-inline: .5rem 2rem;
     }
 
     &:focus-within {

@@ -245,6 +245,14 @@ class SeriesController extends AbstractController
             'language' => $user?->getPreferredLanguage() ?? $request->getLocale(),
             'timezone' => $user?->getTimezone() ?? "Europe/Paris"
         ];
+        $filtersBoxSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'series to end: filter box']);
+        if (!$filtersBoxSettings) {
+            $filtersBoxSettings = new Settings($user, 'series to end: filter box', ['open' => true]);
+            $this->settingsRepository->save($filtersBoxSettings, true);
+            $filterBoxOpen = true;
+        } else {
+            $filterBoxOpen = $filtersBoxSettings->getData()['open'];
+        }
         $page = 1;
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'series to end']);
         // Parameters count
@@ -286,6 +294,14 @@ class SeriesController extends AbstractController
             'series-not-watched' => 'us.progress < 100',
             'series-favorite' => 'us.favorite = 1',
         ];
+        $filterMeanings = [
+            'name' => 'Name',
+            'firstAirDate' => 'First air date',
+            'lastWatched' => 'Last series watched',
+            'episodeAirDate' => 'Episode air date',
+            'DESC' => 'Descending',
+            'ASC' => 'Ascending',
+        ];
 
         /** @var UserSeries[] $userSeries */
         $userSeries = $this->userSeriesRepository->getAllSeries($user, $localisation, [/*'us.progress > 0', */ 'us.progress < 100'], $filters['sort'], $filters['order'], $page, $filters['perPage']);
@@ -300,6 +316,7 @@ class SeriesController extends AbstractController
             'userSeries' => $userSeries,
             'userSeriesCount' => $userSeriesCount,
             'filters' => $filters,
+            'filterBoxOpen' => $filterBoxOpen,
         ]);
 
         return $this->render('series/all.html.twig', [
@@ -307,6 +324,8 @@ class SeriesController extends AbstractController
             'userSeriesCount' => $userSeriesCount,
             'pages' => ceil($userSeriesCount / $filters['perPage']),
             'filters' => $filters,
+            'filterBoxOpen' => $filterBoxOpen,
+            'filterMeanings' => $filterMeanings,
         ]);
     }
 
@@ -1228,6 +1247,31 @@ class SeriesController extends AbstractController
         return $this->json([
             'overview' => $content ? $content['overview'] : "",
             'media_type' => $this->translator->trans($type),
+        ]);
+    }
+
+    #[Route('/settings/save', name: 'settings_save', methods: 'POST')]
+    public function saveSettings(Request $request): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $data = json_decode($request->getContent(), true);
+        $name = $data['name'];
+        $value = $data['value'];
+        dump([
+            'name' => $name,
+            'value' => $value,
+        ]);
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => $name]);
+        if ($settings) {
+            $settings->setData($value);
+        } else {
+            $settings = new Settings($user, $name, $value);
+        }
+        $this->settingsRepository->save($settings, true);
+
+        return $this->json([
+            'ok' => true,
         ]);
     }
 
