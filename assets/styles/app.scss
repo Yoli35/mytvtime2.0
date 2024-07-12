@@ -332,6 +332,8 @@ label:has(input[type="text"]) {
                             overflow-y: auto;
 
                             li {
+                                padding-inline: 0;
+
                                 a {
                                     align-items: center;
                                     color: var(--navbar-color-hover);
@@ -341,7 +343,7 @@ label:has(input[type="text"]) {
                                     padding-inline: 1rem;
 
                                     &:hover {
-                                        background-color: var(--navbar-bg-hover);
+                                        background-color: var(--gradient-orange-40);
                                     }
 
                                     .poster {

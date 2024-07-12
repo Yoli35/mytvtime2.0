@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'Movies'|trans }}!{% endblock %}
+{% block title %}my Tv Time → {{ 'Movies'|trans }} → {{ movie.title }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
@@ -71,9 +71,11 @@
                                 <div class="wrapper">
                                     {% for recommendation in movie.recommendations %}
                                         <div class="recommendation">
-                                            <div class="poster" data-title="{{ recommendation.title }}">
-                                                <img src="/movies/posters{{ recommendation.poster_path }}" alt="{{ recommendation.title }} {{ 'poster'|trans }}">
-                                            </div>
+                                            <a href="{{ path('app_movie_tmdb', {id: recommendation.id}) }}">
+                                                <div class="poster" data-title="{{ recommendation.title }}">
+                                                    <img src="/movies/posters{{ recommendation.poster_path }}" alt="{{ recommendation.title }} {{ 'poster'|trans }}">
+                                                </div>
+                                            </a>
                                         </div>
                                     {% endfor %}
                                 </div>
