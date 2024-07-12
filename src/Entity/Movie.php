@@ -74,22 +74,22 @@ class Movie
         return $this->title;
     }
 
-    public function __construct(array $tv)
+    public function __construct(array $movie)
     {
-        $this->setBackdropPath($tv['backdrop_path']);
-        $this->setOriginCountry($tv['origin_country']);
-        $this->setOriginalLanguage($tv['original_language']);
-        $this->setOriginalTitle($tv['original_title']);
-        $this->setOverview($tv['overview']);
-        $this->setPosterPath($tv['poster_path']);
-        $this->setReleaseDate($tv['release_date'] ? new DateTime($tv['release_date']) : null);
-        $this->setRuntime($tv['runtime']);
-        $this->setStatus($tv['status']);
-        $this->setTagline($tv['tagline']);
-        $this->setTitle($tv['title']);
-        $this->setTmdbId($tv['id']);
-        $this->setVoteAverage($tv['vote_average']);
-        $this->setVoteCount($tv['vote_count']);
+        $this->setBackdropPath($movie['backdrop_path']);
+        $this->setOriginCountry($movie['origin_country']);
+        $this->setOriginalLanguage($movie['original_language']);
+        $this->setOriginalTitle($movie['original_title']);
+        $this->setOverview($movie['overview']);
+        $this->setPosterPath($movie['poster_path']);
+        $this->setReleaseDate($movie['release_date'] ? new DateTime($movie['release_date']) : null);
+        $this->setRuntime($movie['runtime']);
+        $this->setStatus($movie['status']);
+        $this->setTagline($movie['tagline']);
+        $this->setTitle($movie['title']);
+        $this->setTmdbId($movie['id']);
+        $this->setVoteAverage($movie['vote_average']);
+        $this->setVoteCount($movie['vote_count']);
         $this->userMovies = new ArrayCollection();
     }
 

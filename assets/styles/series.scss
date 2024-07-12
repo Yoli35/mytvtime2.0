@@ -1264,23 +1264,6 @@ h2 {
     }
 }
 
-.add-this-series {
-    align-items: center;
-    background-color: var(--add-this-series);
-    bottom: 1rem;
-    border-radius: .25rem;
-    color: var(--gradient-ardoise-10);
-    display: flex;
-    font-size: 2rem;
-    font-weight: 500;
-    justify-content: center;
-    line-height: 1em;
-    padding: 2rem;
-    position: fixed;
-    right: 1rem;
-    text-align: center;
-}
-
 .all-my-series {
     flex-direction: row;
     flex-wrap: wrap;
@@ -1709,7 +1692,7 @@ h2 {
         }
     }
 
-    .add-this-series {
+    .add-this {
         bottom: 0;
         border-radius: 0;
         left: 0;

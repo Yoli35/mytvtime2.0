@@ -39,7 +39,7 @@ class UserMovie
     #[ORM\Column]
     private array $viewArray = [];
 
-    public function __construct(User $user, Movie $movie, DateTimeImmutable $createdAT, bool $favorite, int $rating)
+    public function __construct(User $user, Movie $movie, DateTimeImmutable $createdAT, bool $favorite = false, int $rating = 0)
     {
         $this->user = $user;
         $this->movie = $movie;

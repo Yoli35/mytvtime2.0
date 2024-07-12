@@ -1,0 +1,12 @@
+
+<div class="recommendation">
+    <a href="{{ path('app_movie_tmdb', {id: recommendation.id}) }}">
+        <div class="poster" data-title="{{ recommendation.title }}">
+            {% if recommendation.poster_path %}
+                <img src="/movies/posters{{ recommendation.poster_path }}" alt="{{ recommendation.title }} {{ 'poster'|trans }}">
+            {% else %}
+                <div>{{ 'No poster'|trans }}</div>
+            {% endif %}
+        </div>
+    </a>
+</div>

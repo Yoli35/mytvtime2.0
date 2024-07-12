@@ -781,6 +781,23 @@ label:has(input[type="text"]) {
     }
 }
 
+.add-this {
+    align-items: center;
+    background-color: var(--add-this);
+    bottom: 1rem;
+    border-radius: .25rem;
+    color: var(--gradient-ardoise-10);
+    display: flex;
+    font-size: 2rem;
+    font-weight: 500;
+    justify-content: center;
+    line-height: 1em;
+    padding: 2rem;
+    position: fixed;
+    right: 1rem;
+    text-align: center;
+}
+
 .switcher {
     border: 2px solid var(--gradient-ardoise-80);
     border-radius: calc(.5em + 2px);

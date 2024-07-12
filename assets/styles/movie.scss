@@ -94,6 +94,12 @@
         gap: 1rem;
 
         .poster {
+            align-items: center;
+            aspect-ratio: 78 / 117;
+            background-color: var(--gradient-grey-75-alpha-40);
+            border-radius: .5rem;
+            display: flex;
+            justify-content: center;
             width: 25vw;
 
             img {
@@ -217,8 +223,13 @@
 
                     .recommendation {
                         .poster {
+                            align-items: center;
                             aspect-ratio: 78 / 117;
+                            background-color: var(--gradient-green-70-alpha-50);
+                            border-radius: .5rem;
+                            display: flex;
                             height: 10rem;
+                            justify-content: center;
 
                             img {
                                 border-radius: .5rem;

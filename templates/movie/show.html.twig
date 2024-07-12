@@ -70,13 +70,7 @@
                             <div class="content">
                                 <div class="wrapper">
                                     {% for recommendation in movie.recommendations %}
-                                        <div class="recommendation">
-                                            <a href="{{ path('app_movie_tmdb', {id: recommendation.id}) }}">
-                                                <div class="poster" data-title="{{ recommendation.title }}">
-                                                    <img src="/movies/posters{{ recommendation.poster_path }}" alt="{{ recommendation.title }} {{ 'poster'|trans }}">
-                                                </div>
-                                            </a>
-                                        </div>
+                                        {{ include('_blocks/Movie/_recommandation.html.twig', {recommendation: recommendation}) }}
                                     {% endfor %}
                                 </div>
                             </div>

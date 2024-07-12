@@ -21,7 +21,11 @@
     <div class="container-fluid backgroundImageOverlay movie-show">
         <header>
             <div class="poster">
-                <img src="/movies/posters{{ movie.poster_path }}" alt="{{ movie.title }} {{ 'poster'|trans }}">
+                {% if movie.poster_path %}
+                    <img src="/movies/posters{{ movie.poster_path }}" alt="{{ movie.title }} {{ 'poster'|trans }}">
+                {% else %}
+                    <div>{{ 'No poster'|trans }}</div>
+                {% endif %}
             </div>
             <div class="infos">
                 <div class="backdrop">
@@ -70,11 +74,7 @@
                             <div class="content">
                                 <div class="wrapper">
                                     {% for recommendation in movie.recommendations %}
-                                        <div class="recommendation">
-                                            <div class="poster" data-title="{{ recommendation.title }}">
-                                                <img src="/movies/posters{{ recommendation.poster_path }}" alt="{{ recommendation.title }} {{ 'poster'|trans }}">
-                                            </div>
-                                        </div>
+                                        {{ include('_blocks/Movie/_recommandation.html.twig', {recommendation: recommendation}) }}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -84,5 +84,10 @@
             </section>
         </main>
         {% include('_blocks/_footer.html.twig') %}
+        {% if app.user %}
+            <a href="{{ path('app_movie_add', {id: movie.id}) }}">
+                <div class="add-this">{{ 'Add this movie to your watchlist'|trans }}</div>
+            </a>
+        {% endif %}
     </div>
 {% endblock %}
