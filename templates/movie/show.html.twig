@@ -34,6 +34,18 @@
         <main>
             <section>
                 <div class="details">
+                    {% if movie.providers|length %}
+                        <div class="providers">
+                            <div class="label">{{ 'Providers'|trans }}</div>
+                            <div class="content">
+                                {% for provider in movie.providers %}
+                                    <div class="provider">
+                                        <div class="logo"><img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}"></div>
+                                        <div class="name">{{ provider.provider_name }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
                     <div class="genres">
                         <div class="label">{{ 'Genres'|trans }}</div>
                         <div class="content">
@@ -44,7 +56,7 @@
                     </div>
                     <div class="runtime">
                         <div class="label">{{ 'Runtime'|trans }}</div>
-                        <div class="content">{{ movie.runtime }} {{ 'minutes'|trans }}</div>
+                        <div class="content">{{ movie.runtime|time }}</div>
                     </div>
                     <div class="notes">
                         <div class="label">{{ 'Note'|trans }}</div>
@@ -53,9 +65,16 @@
                             <div class="note">{{ 'Count'|trans }} {{ movie.vote_count }}</div>
                         </div>
                     </div>
+                    {% if movie.release_date or movie.release_dates|length %}
                     <div class="release-dates">
                         <div class="label">{{ 'Release date'|trans }}</div>
                         <div class="content">
+                            {if movie.release_date %}
+                                <div class="release-date">
+                                    <div class="note">{{ 'Release date'|trans }}</div>
+                                    <div class="release-date">{{ movie.release_date|date("d/m/Y") }}</div>
+                                </div>
+                            {% endif %}
                             {% for rd in movie.release_dates %}
                                 <div class="release-date">
                                     <div class="note">{{ rd.note }}</div>
@@ -64,6 +83,31 @@
                             {% endfor %}
                         </div>
                     </div>
+                    {% endif %}
+                    {% if movie.credits.cast %}
+                        <div class="cast">
+                            <div class="label">{{ 'Cast'|trans }}</div>
+                            <div class="content">
+                                <div class="wrapper">
+                                    {% for cast in movie.credits.cast %}
+                                        {{ include('_blocks/Movie/_cast.html.twig', {cast: cast}) }}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if movie.credits.cast %}
+                        <div class="cast">
+                            <div class="label">{{ 'Crew'|trans }}</div>
+                            <div class="content">
+                                <div class="wrapper">
+                                    {% for crew in movie.credits.crew %}
+                                        {{ include('_blocks/Movie/_crew.html.twig', {crew: crew}) }}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
                     {% if movie.recommendations|length %}
                         <div class="recommendations">
                             <div class="label">{{ 'Recommendations'|trans }}</div>

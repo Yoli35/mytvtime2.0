@@ -167,11 +167,11 @@ class MovieController extends AbstractController
     public function getCredits(array &$movie): void
     {
         $movie['credits']['cast'] = array_map(function ($people) {
-            $people['profile_path'] = $this->imageConfiguration->getUrl('profile_sizes', 2) . $people['profile_path'];
+            $people['profile_path'] = $people['profile_path'] ? $this->imageConfiguration->getUrl('profile_sizes', 2) . $people['profile_path'] : null;
             return $people;
         }, $movie['credits']['cast']);
         $movie['credits']['crew'] = array_map(function ($people) {
-            $people['profile_path'] = $this->imageConfiguration->getUrl('profile_sizes', 2) . $people['profile_path'];
+            $people['profile_path'] = $people['profile_path'] ? $this->imageConfiguration->getUrl('profile_sizes', 2) . $people['profile_path']: null;
             return $people;
         }, $movie['credits']['crew']);
     }
