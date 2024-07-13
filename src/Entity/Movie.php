@@ -69,6 +69,30 @@ class Movie
     #[ORM\OneToMany(targetEntity: UserMovie::class, mappedBy: 'movie', orphanRemoval: true)]
     private Collection $userMovies;
 
+    /**
+     * @var Collection<int, MovieDirectLink>
+     */
+    #[ORM\OneToMany(targetEntity: MovieDirectLink::class, mappedBy: 'movie', orphanRemoval: true)]
+    private Collection $movieDirectLinks;
+
+    /**
+     * @var Collection<int, MovieAdditionalOverview>
+     */
+    #[ORM\OneToMany(targetEntity: MovieAdditionalOverview::class, mappedBy: 'movie')]
+    private Collection $movieAdditionalOverviews;
+
+    /**
+     * @var Collection<int, MovieLocalizedName>
+     */
+    #[ORM\OneToMany(targetEntity: MovieLocalizedName::class, mappedBy: 'movie', orphanRemoval: true)]
+    private Collection $movieLocalizedNames;
+
+    /**
+     * @var Collection<int, MovieLocalizedOverview>
+     */
+    #[ORM\OneToMany(targetEntity: MovieLocalizedOverview::class, mappedBy: 'movie', orphanRemoval: true)]
+    private Collection $movieLocalizedOverviews;
+
     public function __toString(): string
     {
         return $this->title;
@@ -91,6 +115,10 @@ class Movie
         $this->setVoteAverage($movie['vote_average']);
         $this->setVoteCount($movie['vote_count']);
         $this->userMovies = new ArrayCollection();
+        $this->movieDirectLinks = new ArrayCollection();
+        $this->movieAdditionalOverviews = new ArrayCollection();
+        $this->movieLocalizedNames = new ArrayCollection();
+        $this->movieLocalizedOverviews = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -302,6 +330,126 @@ class Movie
             // set the owning side to null (unless already changed)
             if ($userMovie->getMovie() === $this) {
                 $userMovie->setMovie(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MovieDirectLink>
+     */
+    public function getMovieDirectLinks(): Collection
+    {
+        return $this->movieDirectLinks;
+    }
+
+    public function addMovieDirectLink(MovieDirectLink $movieDirectLink): static
+    {
+        if (!$this->movieDirectLinks->contains($movieDirectLink)) {
+            $this->movieDirectLinks->add($movieDirectLink);
+            $movieDirectLink->setMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMovieDirectLink(MovieDirectLink $movieDirectLink): static
+    {
+        if ($this->movieDirectLinks->removeElement($movieDirectLink)) {
+            // set the owning side to null (unless already changed)
+            if ($movieDirectLink->getMovie() === $this) {
+                $movieDirectLink->setMovie(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MovieAdditionalOverview>
+     */
+    public function getMovieAdditionalOverviews(): Collection
+    {
+        return $this->movieAdditionalOverviews;
+    }
+
+    public function addMovieAdditionalOverview(MovieAdditionalOverview $movieAdditionalOverview): static
+    {
+        if (!$this->movieAdditionalOverviews->contains($movieAdditionalOverview)) {
+            $this->movieAdditionalOverviews->add($movieAdditionalOverview);
+            $movieAdditionalOverview->setMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMovieAdditionalOverview(MovieAdditionalOverview $movieAdditionalOverview): static
+    {
+        if ($this->movieAdditionalOverviews->removeElement($movieAdditionalOverview)) {
+            // set the owning side to null (unless already changed)
+            if ($movieAdditionalOverview->getMovie() === $this) {
+                $movieAdditionalOverview->setMovie(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MovieLocalizedName>
+     */
+    public function getMovieLocalizedNames(): Collection
+    {
+        return $this->movieLocalizedNames;
+    }
+
+    public function addMovieLocalizedName(MovieLocalizedName $movieLocalizedName): static
+    {
+        if (!$this->movieLocalizedNames->contains($movieLocalizedName)) {
+            $this->movieLocalizedNames->add($movieLocalizedName);
+            $movieLocalizedName->setMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMovieLocalizedName(MovieLocalizedName $movieLocalizedName): static
+    {
+        if ($this->movieLocalizedNames->removeElement($movieLocalizedName)) {
+            // set the owning side to null (unless already changed)
+            if ($movieLocalizedName->getMovie() === $this) {
+                $movieLocalizedName->setMovie(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MovieLocalizedOverview>
+     */
+    public function getMovieLocalizedOverviews(): Collection
+    {
+        return $this->movieLocalizedOverviews;
+    }
+
+    public function addMovieLocalizedOverview(MovieLocalizedOverview $movieLocalizedOverview): static
+    {
+        if (!$this->movieLocalizedOverviews->contains($movieLocalizedOverview)) {
+            $this->movieLocalizedOverviews->add($movieLocalizedOverview);
+            $movieLocalizedOverview->setMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMovieLocalizedOverview(MovieLocalizedOverview $movieLocalizedOverview): static
+    {
+        if ($this->movieLocalizedOverviews->removeElement($movieLocalizedOverview)) {
+            // set the owning side to null (unless already changed)
+            if ($movieLocalizedOverview->getMovie() === $this) {
+                $movieLocalizedOverview->setMovie(null);
             }
         }
 

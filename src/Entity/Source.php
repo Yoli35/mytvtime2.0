@@ -28,9 +28,16 @@ class Source
     #[ORM\JoinColumn(nullable: false)]
     private Collection $seriesAdditionalOverviews;
 
+    /**
+     * @var Collection<int, MovieAdditionalOverview>
+     */
+    #[ORM\OneToMany(targetEntity: MovieAdditionalOverview::class, mappedBy: 'source')]
+    private Collection $movieAdditionalOverviews;
+
     public function __construct()
     {
         $this->seriesAdditionalOverviews = new ArrayCollection();
+        $this->movieAdditionalOverviews = new ArrayCollection();
     }
     public function getId(): ?int
     {
@@ -94,6 +101,36 @@ class Source
             // set the owning side to null (unless already changed)
             if ($seriesAdditionalOverview->getSource() === $this) {
                 $seriesAdditionalOverview->setSource(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MovieAdditionalOverview>
+     */
+    public function getMovieAdditionalOverviews(): Collection
+    {
+        return $this->movieAdditionalOverviews;
+    }
+
+    public function addMovieAdditionalOverview(MovieAdditionalOverview $movieAdditionalOverview): static
+    {
+        if (!$this->movieAdditionalOverviews->contains($movieAdditionalOverview)) {
+            $this->movieAdditionalOverviews->add($movieAdditionalOverview);
+            $movieAdditionalOverview->setSource($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMovieAdditionalOverview(MovieAdditionalOverview $movieAdditionalOverview): static
+    {
+        if ($this->movieAdditionalOverviews->removeElement($movieAdditionalOverview)) {
+            // set the owning side to null (unless already changed)
+            if ($movieAdditionalOverview->getSource() === $this) {
+                $movieAdditionalOverview->setSource(null);
             }
         }
 
