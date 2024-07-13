@@ -139,7 +139,7 @@ export class Menu {
             if (value.length > 2) {
                 const searchResults = movieSearch.closest("li").querySelector(".search-results");
                 const query = encodeURIComponent(value);
-                const url = 'https://api.themoviedb.org/3/search/movie?query=' + query + '&include_adult=false&language=en-US&page=1';
+                const url = 'https://api.themoviedb.org/3/search/movie?query=' + query + '&include_adult=false&language=fr-FR&page=1';
                 const options = {
                     method: 'GET',
                     headers: {
