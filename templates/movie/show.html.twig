@@ -5,6 +5,7 @@
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/movie.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
 {% endblock %}
 
 {% block body %}
@@ -34,56 +35,153 @@
         <main>
             <section>
                 <div class="details">
-                    {% if movie.providers|length %}
-                        <div class="providers">
-                            <div class="label">{{ 'Providers'|trans }}</div>
+                    <div class="movie-details">
+                        {% if movie.providers|length %}
+                            <div class="providers">
+                                <div class="label">{{ 'Providers'|trans }}</div>
+                                <div class="content">
+                                    {% for provider in movie.providers %}
+                                        <div class="provider">
+                                            <div class="logo"><img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}"></div>
+                                            <div class="name">{{ provider.provider_name }}</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="genres">
+                            <div class="label">{{ 'Genres'|trans }}</div>
                             <div class="content">
-                                {% for provider in movie.providers %}
-                                    <div class="provider">
-                                        <div class="logo"><img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}"></div>
-                                        <div class="name">{{ provider.provider_name }}</div>
-                                    </div>
+                                {% for genre in movie.genres %}
+                                    <div class="genre">{{ genre.name }}</div>
                                 {% endfor %}
                             </div>
                         </div>
-                    <div class="genres">
-                        <div class="label">{{ 'Genres'|trans }}</div>
-                        <div class="content">
-                            {% for genre in movie.genres %}
-                                <div class="genre">{{ genre.name }}</div>
-                            {% endfor %}
+                        <div class="runtime">
+                            <div class="label">{{ 'Runtime'|trans }}</div>
+                            <div class="content">{{ movie.runtime|time }}</div>
                         </div>
-                    </div>
-                    <div class="runtime">
-                        <div class="label">{{ 'Runtime'|trans }}</div>
-                        <div class="content">{{ movie.runtime|time }}</div>
-                    </div>
-                    <div class="notes">
-                        <div class="label">{{ 'Note'|trans }}</div>
-                        <div class="content">
-                            <div class="note">{{ 'Average'|trans }} {{ movie.vote_average }}</div>
-                            <div class="note">{{ 'Count'|trans }} {{ movie.vote_count }}</div>
+                        <div class="notes">
+                            <div class="label">{{ 'Note'|trans }}</div>
+                            <div class="content">
+                                <div class="note">{{ 'Average'|trans }} {{ movie.vote_average }}</div>
+                                <div class="note">{{ 'Count'|trans }} {{ movie.vote_count }}</div>
+                            </div>
                         </div>
-                    </div>
-                    {% if movie.release_date or movie.release_dates|length %}
-                    <div class="release-dates">
-                        <div class="label">{{ 'Release date'|trans }}</div>
-                        <div class="content">
-                            {if movie.release_date %}
+                        {% if movie.release_date or movie.release_dates|length %}
+                        <div class="release-dates">
+                            <div class="label">{{ 'Release date'|trans }}</div>
+                            <div class="content">
+                                {if movie.release_date %}
                                 <div class="release-date">
                                     <div class="note">{{ 'Release date'|trans }}</div>
                                     <div class="release-date">{{ movie.release_date|date("d/m/Y") }}</div>
                                 </div>
-                            {% endif %}
-                            {% for rd in movie.release_dates %}
-                                <div class="release-date">
-                                    <div class="note">{{ rd.note }}</div>
-                                    <div class="release-date">{{ rd.release_date|date("d/m/Y") }}</div>
-                                </div>
-                            {% endfor %}
+                                {% endif %}
+                                {% for rd in movie.release_dates %}
+                                    <div class="release-date">
+                                        <div class="note">{{ rd.note }}</div>
+                                        <div class="release-date">{{ rd.release_date|date("d/m/Y") }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-                    {% endif %}
+                    <div class="user-details">
+                        <div class="user-actions">
+                            <div class="watch-links">
+                                <div class="label">{{ 'Watch links'|trans }}</div>
+                                {% for link in movie.direct_links %}
+                                    <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
+                                        <div class="watch-link">
+                                            {% if link.providerId %}
+                                                <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}" data-title="{{ link.name ?? providers.names[link.providerId] }}">
+                                            {% else %}
+                                                <span>{{ link.name }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                                <div class="add-watch-link" data-title="{{ 'Add a watch link'|trans }}">
+                                    {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                                </div>
+                            </div>
+                            <div class="watch-link-form">
+                                <form class="form" action="" id="watch-link-form">
+                                    <div class="form-row">
+                                        <div class="form-field">
+                                            <label for="provider">{{ 'Provider'|trans }}
+                                                <select name="provider" id="provider">
+                                                    <option value="">{{ 'Select a provider'|trans }}</option>
+                                                    {% for name, id in providers.select %}
+                                                        <option value="{{ id }}">{{ name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-field">
+                                            <label for="name">{{ 'Name'|trans }}
+                                                <input type="text" name="name" id="name" required>
+                                                <span class="error"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-field">
+                                            <label for="url">{{ 'URL'|trans }}
+                                                <input type="url" name="url" id="url" required>
+                                                <span class="error"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-field">
+                                            <button type="button">{{ 'Cancel'|trans }}</button>
+                                            <button type="submit">{{ 'Add'|trans }}</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="rating">
+                                <div class="rating-stars">
+                                    <div class="stars" data-trans-rating="Cancel rating|{{ 'Cancel rating'|trans }}" data-trans-star="star|{{ 'star'|trans }}" data-trans-stars="stars|{{ 'stars'|trans }}">
+                                        <div class="star {{ userMovie.rating >= 1 ? "active" }}" data-value="1" data-title="{{ (userMovie.rating >= 1 ? "Cancel rating":"x star")|trans({'x': 1}) }}">
+                                            {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                        </div>
+                                        <div class="star {{ userMovie.rating >= 2 ? "active" }}" data-value="2" data-title="{{ (userMovie.rating >= 2 ? "Cancel rating":"x stars")|trans({'x': 2}) }}">
+                                            {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                        </div>
+                                        <div class="star {{ userMovie.rating >= 3 ? "active" }}" data-value="3" data-title="{{ (userMovie.rating >= 3 ? "Cancel rating":"x stars")|trans({'x': 3}) }}">
+                                            {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                        </div>
+                                        <div class="star {{ userMovie.rating >= 4 ? "active" }}" data-value="4" data-title="{{ (userMovie.rating >= 4 ? "Cancel rating":"x stars")|trans({'x': 4}) }}">
+                                            {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                        </div>
+                                        <div class="star {{ userMovie.rating >= 5 ? "active" }}" data-value="5" data-title="{{ (userMovie.rating >= 5 ? "Cancel rating":"x stars")|trans({'x': 5}) }}">
+                                            {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="actions">
+{#                                <div class="action toggle-pinned-series{% if userMovie.userPinnedSeries %} pinned{% endif %}" data-title="{{ (userMovie.userPinnedSeries ? "Remove from pinned series" : "Add to pinned series")|trans }}">#}
+{#                                    {{ ux_icon('fa6-solid:paperclip', {height: '18px', width: '18px'}) }}#}
+{#                                </div>#}
+                                <div class="action toggle-favorite-series{% if userMovie.favorite %} favorite{% endif %}" data-title="{{ (userMovie.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
+                                    {{ ux_icon('fa6-solid:heart', {height: '18px', width: '18px'}) }}
+                                </div>
+                                <div class="action remove-this-series" data-title="{{ 'Remove this series from your watchlist'|trans }}">
+                                    {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="movie-details">
                     {% if movie.credits.cast %}
                         <div class="cast">
                             <div class="label">{{ 'Cast'|trans }}</div>

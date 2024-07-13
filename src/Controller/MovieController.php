@@ -9,6 +9,7 @@ use App\Entity\UserMovie;
 use App\Repository\MovieCollectionRepository;
 use App\Repository\MovieRepository;
 use App\Repository\UserMovieRepository;
+use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
@@ -29,6 +30,7 @@ class MovieController extends AbstractController
         private readonly MovieRepository           $movieRepository,
         private readonly TMDBService               $tmdbService,
         private readonly UserMovieRepository       $userMovieRepository,
+        private readonly WatchProviderRepository   $watchProviderRepository,
     )
     {
     }
@@ -63,6 +65,7 @@ class MovieController extends AbstractController
         $locale = $request->getLocale();
         $language = ($user->getPreferredLanguage() ?? $locale) . '-' . ($user->getCountry() ?? ($locale === 'fr' ? 'FR' : 'US'));
         $userMovie = $this->userMovieRepository->find($userMovieId);
+        $dbMovie = $userMovie->getMovie();
         $movie = json_decode($this->tmdbService->getMovie($userMovie->getMovie()->getTmdbId(), $language, ['videos,images,credits,recommendations,watch/providers,release_dates']), true);
 
         $this->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
@@ -72,6 +75,12 @@ class MovieController extends AbstractController
         $this->getProviders($movie);
         $this->getReleaseDates($movie);
         $this->getRecommandations($movie);
+        $this->getDirectLinks($movie, $dbMovie);
+        $this->getAdditionalOverviews($movie, $dbMovie);
+        $this->getLocalizedNames($movie, $dbMovie);
+        $this->getLocalizedOverviews($movie, $dbMovie);
+
+        $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
 
         dump(
             [
@@ -83,6 +92,7 @@ class MovieController extends AbstractController
         return $this->render('movie/show.html.twig', [
             'userMovie' => $userMovie,
             'movie' => $movie,
+            'providers' => $providers,
         ]);
     }
 
@@ -235,6 +245,59 @@ class MovieController extends AbstractController
             }
         }
         return $movieCollection;
+    }
+
+    public function getDirectLinks(array &$movie, Movie $dbMovie): void
+    {
+        $movie['direct_links'] = $dbMovie->getMovieDirectLinks()->toArray();
+    }
+
+    public function getAdditionalOverviews(array &$movie, Movie $dbMovie): void
+    {
+        $movie['additional_overviews'] = $dbMovie->getMovieAdditionalOverviews()->toArray();
+    }
+
+    public function getLocalizedNames(array &$movie, Movie $dbMovie): void
+    {
+        $movie['localized_names'] = $dbMovie->getMovieLocalizedNames()->toArray();
+    }
+
+    public function getLocalizedOverviews(array &$movie, Movie $dbMovie): void
+    {
+        $movie['localized_overviews'] = $dbMovie->getMovieLocalizedOverviews()->toArray();
+    }
+
+    public function getWatchProviders($language, $watchRegion): array
+    {
+        $providers = json_decode($this->tmdbService->getMovieWatchProviderList($language, $watchRegion), true);
+        $providers = $providers['results'];
+        if (count($providers) == 0) {
+            $providers = $this->watchProviderRepository->getWatchProviderList($watchRegion);
+        }
+        $watchProviders = [];
+        foreach ($providers as $provider) {
+            $watchProviders[$provider['provider_name']] = $provider['provider_id'];
+        }
+        $watchProviderNames = [];
+        foreach ($providers as $provider) {
+            $watchProviderNames[$provider['provider_id']] = $provider['provider_name'];
+        }
+        $watchProviderLogos = [];
+        foreach ($providers as $provider) {
+            $watchProviderLogos[$provider['provider_id']] = $this->imageConfiguration->getCompleteUrl($provider['logo_path'], 'logo_sizes', 2);
+        }
+        ksort($watchProviders);
+        $list = [];
+        foreach ($watchProviders as $key => $value) {
+            $list[] = ['provider_id' => $value, 'provider_name' => $key, 'logo_path' => $watchProviderLogos[$value]];
+        }
+
+        return [
+            'select' => $watchProviders,
+            'logos' => $watchProviderLogos,
+            'names' => $watchProviderNames,
+            'list' => $list,
+        ];
     }
 
     public function saveImage($type, $imagePath, $imageUrl): void

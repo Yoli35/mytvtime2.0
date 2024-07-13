@@ -161,6 +161,23 @@ class TMDBService
         }
     }
 
+    public function getMovieWatchProviderList($language = 'fr-FR', $region = null): ?string
+    {
+        try {
+            $response = $this->client->request(
+                'GET',
+                'https://api.themoviedb.org/3/watch/providers/movie?language=' . $language . ($region ? '&watch_region=' . $region : '') . '&api_key=' . $this->api_key,
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable) {
+                return "";
+            }
+        } catch (Throwable) {
+            return "";
+        }
+    }
+
 //    public function getTvSimilar($tvId): ?string
 //    {
 //        try {
