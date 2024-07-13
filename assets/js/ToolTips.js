@@ -88,6 +88,7 @@ export class ToolTips {
         const height = body.offsetHeight - 48;
         const fromTopViewport = evt.clientY;
         const windowWidth = window.innerWidth;
+        const visualViewport = window.visualViewport;
 
         const toolTipsBg = tooltips.style.getPropertyValue("--tooltips-bg");
         const toolTipsColor = tooltips.style.getPropertyValue("--tooltips-color");
@@ -100,17 +101,17 @@ export class ToolTips {
             tooltips.setAttribute("style", style);
             if (toolTipsBg.length) tooltips.style.setProperty("--tooltips-bg", toolTipsBg);
             if (toolTipsColor.length) tooltips.style.setProperty("--tooltips-color", toolTipsColor);
-            tail.setAttribute("style", "translate: " + left + "px -.55em");
+            tail.setAttribute("style", "translate: " + left + "px -.55rem");
             return;
         }
 
         const right = evt.pageX + (width / 2);
-        if (right > windowWidth) {
+        if (right > windowWidth * visualViewport.scale) {
             let style = "translate: " + (evt.pageX - (width / 2) - (right - windowWidth)) + "px " + (evt.pageY - Math.min(height, fromTopViewport)) + "px;";
             tooltips.setAttribute("style", style);
             if (toolTipsBg.length) tooltips.style.setProperty("--tooltips-bg", toolTipsBg);
             if (toolTipsColor.length) tooltips.style.setProperty("--tooltips-color", toolTipsColor);
-            tail.setAttribute("style", "translate: " + (right - windowWidth) + "px -.55em;");
+            tail.setAttribute("style", "translate: " + (right - windowWidth) + "px -.55rem;");
             return;
         }
 
@@ -118,6 +119,6 @@ export class ToolTips {
         tooltips.setAttribute("style", style);
         if (toolTipsBg.length) tooltips.style.setProperty("--tooltips-bg", toolTipsBg);
         if (toolTipsColor.length) tooltips.style.setProperty("--tooltips-color", toolTipsColor);
-        tail.setAttribute("style", "translate: 0 -.55em");
+        tail.setAttribute("style", "translate: 0 -.55rem");
     }
 }
