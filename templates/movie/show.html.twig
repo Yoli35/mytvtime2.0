@@ -69,23 +69,24 @@
                             </div>
                         </div>
                         {% if movie.release_date or movie.release_dates|length %}
-                        <div class="release-dates">
-                            <div class="label">{{ 'Release date'|trans }}</div>
-                            <div class="content">
-                                {if movie.release_date %}
-                                <div class="release-date">
-                                    <div class="note">{{ 'Release date'|trans }}</div>
-                                    <div class="release-date">{{ movie.release_date|date("d/m/Y") }}</div>
+                            <div class="release-dates">
+                                <div class="label">{{ 'Release date'|trans }}</div>
+                                <div class="content">
+                                    {% if movie.release_date %}
+                                        <div class="release-date">
+                                            <div class="note">{{ 'Release date'|trans }}</div>
+                                            <div class="release-date">{{ movie.release_date|date("d/m/Y") }}</div>
+                                        </div>
+                                    {% endif %}
+                                    {% for rd in movie.release_dates %}
+                                        <div class="release-date">
+                                            <div class="note">{{ rd.note }}</div>
+                                            <div class="release-date">{{ rd.release_date|date("d/m/Y") }}</div>
+                                        </div>
+                                    {% endfor %}
                                 </div>
-                                {% endif %}
-                                {% for rd in movie.release_dates %}
-                                    <div class="release-date">
-                                        <div class="note">{{ rd.note }}</div>
-                                        <div class="release-date">{{ rd.release_date|date("d/m/Y") }}</div>
-                                    </div>
-                                {% endfor %}
                             </div>
-                        </div>
+                        {% endif %}
                     </div>
                     <div class="user-details">
                         <div class="user-actions">
@@ -166,9 +167,9 @@
                                 </div>
                             </div>
                             <div class="actions">
-{#                                <div class="action toggle-pinned-series{% if userMovie.userPinnedSeries %} pinned{% endif %}" data-title="{{ (userMovie.userPinnedSeries ? "Remove from pinned series" : "Add to pinned series")|trans }}">#}
-{#                                    {{ ux_icon('fa6-solid:paperclip', {height: '18px', width: '18px'}) }}#}
-{#                                </div>#}
+                                {#                                <div class="action toggle-pinned-series{% if userMovie.userPinnedSeries %} pinned{% endif %}" data-title="{{ (userMovie.userPinnedSeries ? "Remove from pinned series" : "Add to pinned series")|trans }}"> #}
+                                {#                                    {{ ux_icon('fa6-solid:paperclip', {height: '18px', width: '18px'}) }} #}
+                                {#                                </div> #}
                                 <div class="action toggle-favorite-series{% if userMovie.favorite %} favorite{% endif %}" data-title="{{ (userMovie.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
                                     {{ ux_icon('fa6-solid:heart', {height: '18px', width: '18px'}) }}
                                 </div>
