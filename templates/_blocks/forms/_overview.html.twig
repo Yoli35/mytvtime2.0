@@ -1,0 +1,32 @@
+<div class="overview-form">
+    <form class="form" action="" id="overview-form">
+        <div class="form-row">
+            <div class="form-field">
+                <label for="overview-source">{{ 'Source'|trans }} <span class="required">*</span> <span class="error"></span>
+
+                    <select name="source" id="overview-source">
+                        <option value="">{{ 'Select a source'|trans }}</option>
+                        {% for source in media.sources %}
+                            <option value="{{ source.id }}">{{ source.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field">
+                <label for="overview-field">{{ 'Overview'|trans }} <span class="required">*</span> <span class="error"></span>
+                    <textarea id="overview-field" rows="5" required></textarea>
+                    <span class="error"></span>
+                </label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field">
+                <button type="button">{{ 'Cancel'|trans }}</button>
+                <button type="submit" value="add">{{ 'Add'|trans }}</button>
+            </div>
+        </div>
+        <input type="hidden" name="tool" id="tool" value="">
+    </form>
+</div>

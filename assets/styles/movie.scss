@@ -140,20 +140,179 @@
             }
 
             .title {
-                background-color: var(--gradient-ardoise-90-alpha-50);
-                border-radius: .5rem;
-                color: var(--gradient-orange-50);
-                font-size: 2rem;
-                font-weight: 100;
-                padding: 1rem;
+                display: flex;
+                position: relative;
+                width: 100%;
+
+                h1 {
+                    font-size: clamp(1rem, 5vw, 4rem);
+                    font-weight: 100;
+                    line-height: clamp(1.1rem, 5vw, 4rem);;
+                    margin-block: 0;
+                    text-align: left;
+
+                    .localized-name-span {
+                        color: var(--gradient-orange-70);
+                    }
+                }
+
+                .movie-tools {
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: center;
+                    margin-inline-start: auto;
+                    position: relative;
+
+                    .movie-tools-click {
+                        align-items: center;
+                        aspect-ratio: 1;
+                        background-color: var(--gradient-ardoise-80);
+                        border-radius: .25rem;
+                        color: var(--gradient-ardoise-10);
+                        cursor: pointer;
+                        display: flex;
+                        justify-content: center;
+                        width: 2rem;
+                    }
+
+                    &:hover .movie-tools-menu {
+                        display: block;
+                    }
+                }
+
+                .movie-tools-menu {
+                    border-radius: .25rem;
+                    display: none;
+                    overflow: hidden;
+                    position: absolute;
+                    right: 0;
+                    top: 2rem;
+                    z-index: 1;
+
+                    &.active {
+                        display: block;
+                    }
+
+                    > div {
+                        align-items: center;
+                        background-color: var(--gradient-ardoise-70);
+                        color: var(--gradient-ardoise-10);
+                        cursor: pointer;
+                        display: flex;
+                        font-size: 1rem;
+                        font-weight: 300;
+                        gap: .5rem;
+                        justify-content: flex-start;
+                        padding-block: .5rem;
+                        padding-inline: 1rem;
+                        white-space: nowrap;
+
+                        &:hover {
+                            background-color: var(--gradient-orange-50);
+                        }
+                    }
+                }
             }
 
-            .overview {
+            .movie-overview {
                 background-color: var(--gradient-ardoise-90-alpha-50);
                 border-radius: .5rem;
                 color: var(--gradient-ardoise-10);
                 font-size: 1.25rem;
                 padding: 1rem;
+            }
+
+            .localized-h4, .additional-h4 {
+                color: var(--gradient-orange-70);
+                font-weight: 300;
+
+                &.hide {
+                    display: none;
+                }
+            }
+
+            .overviews {
+                display: flex;
+                flex-direction: column;
+                gap: .5rem;
+                justify-content: center;
+                width: 100%;
+
+                .overview {
+                    align-items: center;
+                    display: flex;
+                    font-size: clamp(1rem, 1vw, 2rem);
+                    gap: .5rem;
+                    line-height: clamp(1rem, 1.1vw, 2rem);
+                    justify-content: flex-start;
+                    width: 100%;
+
+                    &.localized, &.additional {
+                        border-left: 2px solid var(--gradient-orange-50);
+                        color: var(--gradient-orange-80);
+                        font-weight: 100;
+                        letter-spacing: .05rem;
+                        padding-inline-start: .5rem;
+                        position: relative;
+
+                        .content {
+                            background-color: var(--gradient-ardoise-70-alpha-50);
+                            border-radius: .5rem;
+                            margin-block-end: unset;
+                            padding: .5rem;
+                        }
+
+                        &:hover {
+                            .tools {
+                                opacity: 1;
+                            }
+                        }
+
+                        .tools {
+                            display: flex;
+                            flex-direction: column;
+                            gap: .25rem;
+                            margin-inline-start: auto;
+                            opacity: 0;
+                            transition: opacity 0.3s ease-in-out;
+
+                            .source, .locale, .edit, .delete {
+                                align-items: center;
+                                border-radius: .25rem;
+                                color: var(--gradient-orange-90);
+                                display: flex;
+                                font-size: 1rem;
+                                font-weight: 300;
+                                height: 1.75rem;
+                                justify-content: center;
+                                width: 1.75rem;
+
+                                img {
+                                    border-radius: .25rem;
+                                    height: 1.75rem;
+                                    object-fit: cover;
+                                    width: 1.75rem;
+                                }
+                            }
+
+                            .source, .locale, .edit {
+                                background-color: var(--gradient-orange-50);
+                            }
+
+                            .edit, .delete {
+                                cursor: pointer;
+                            }
+
+                            .delete {
+                                background-color: var(--remove-this-series);
+                            }
+                        }
+                    }
+
+                    &.additional {
+                        margin-block-end: 1rem;
+                    }
+                }
             }
 
             .actions {

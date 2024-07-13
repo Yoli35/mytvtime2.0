@@ -27,6 +27,9 @@ return [
     'Menu' => [
         'path' => './assets/js/Menu.js',
     ],
+    'Movie' => [
+        'path' => './assets/js/movies/Movie.js',
+    ],
     'NavBar' => [
         'path' => './assets/js/NavBar.js',
     ],

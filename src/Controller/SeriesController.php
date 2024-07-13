@@ -519,12 +519,12 @@ class SeriesController extends AbstractController
             'Add to favorites' => $this->translator->trans('Add to favorites'),
         ];
 
-//        dump([
-//            'series' => $series,
-//            'tv' => $tv,
-//            'userSeries' => $userSeries,
-//            'providers' => $providers,
-//        ]);
+        dump([
+            'series' => $series,
+            'tv' => $tv,
+            'userSeries' => $userSeries,
+            'providers' => $providers,
+        ]);
         return $this->render('series/show.html.twig', [
             'series' => $series,
             'tv' => $tv,
@@ -1821,7 +1821,8 @@ class SeriesController extends AbstractController
 
     public function getWatchProviders($language, $watchRegion): array
     {
-        $providers = json_decode($this->tmdbService->getTvWatchProviderList($language, $watchRegion), true);
+        $providers = ['results'=>[]];//json_decode($this->tmdbService->getTvWatchProviderList($language, $watchRegion), true);
+        dump(['TV providers' => $providers]);
         $providers = $providers['results'];
         if (count($providers) == 0) {
             $providers = $this->watchProviderRepository->getWatchProviderList($watchRegion);

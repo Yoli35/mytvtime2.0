@@ -1,0 +1,21 @@
+<div class="localized-name-form">
+    <form class="form" action="" id="localized-name-form">
+        <div class="form-row">
+            <div class="form-field">
+                <label for="name">{{ 'Localized name'|trans }}
+                    <input type="text" name="name" id="name" value="{% if media.localized_name %}{{ media.localized_name.name }}{% endif %}" required>
+                    <span class="error"></span>
+                </label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field">
+                <button type="button">{{ 'Cancel'|trans }}</button>
+                {% if media.localized_name %}
+                    <button type="submit" value="delete">{{ 'Delete'|trans }}</button>
+                {% endif %}
+                <button type="submit" value="add">{{ 'Add'|trans }}</button>
+            </div>
+        </div>
+    </form>
+</div>

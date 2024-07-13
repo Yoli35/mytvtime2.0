@@ -53,76 +53,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="localized-name-form">
-                        <form class="form" action="" id="localized-name-form">
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="name">{{ 'Localized name'|trans }}
-                                        <input type="text" name="name" id="name" value="{% if tv.localized_name %}{{ tv.localized_name.name }}{% endif %}" required>
-                                        <span class="error"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <button type="button">{{ 'Cancel'|trans }}</button>
-                                    {% if tv.localized_name %}
-                                        <button type="submit" value="delete">{{ 'Delete'|trans }}</button>
-                                    {% endif %}
-                                    <button type="submit" value="add">{{ 'Add'|trans }}</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="overview-form">
-                        <form class="form" action="" id="overview-form">
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="overview-source">{{ 'Source'|trans }} <span class="required">*</span> <span class="error"></span>
-
-                                        <select name="source" id="overview-source">
-                                            <option value="">{{ 'Select a source'|trans }}</option>
-                                            {% for source in tv.sources %}
-                                                <option value="{{ source.id }}">{{ source.name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="overview-field">{{ 'Overview'|trans }} <span class="required">*</span> <span class="error"></span>
-                                        <textarea id="overview-field" rows="5" required></textarea>
-                                        <span class="error"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <button type="button">{{ 'Cancel'|trans }}</button>
-                                    <button type="submit" value="add">{{ 'Add'|trans }}</button>
-                                </div>
-                            </div>
-                            <input type="hidden" name="tool" id="tool" value="">
-                        </form>
-                    </div>
-                    <div class="delete-overview-form">
-                        <form class="form" action="" id="delete-overview-form">
-                            <div class="form-row">
-                                <div class="form-field">
-                                    {{ 'Are you sure you want to delete this overview?'|trans }}
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <button type="button">{{ 'Cancel'|trans }}</button>
-                                    <button type="submit" value="delete">{{ 'Add'|trans }}</button>
-                                </div>
-                            </div>
-                            <input type="hidden" name="overview-type" id="overview-type" value=""> {# localized|additional #}
-                            <input type="hidden" name="overview-id" id="overview-id" value="">
-                        </form>
-                    </div>
+                    {{ include('_blocks/forms/_delete-overview.html.twig') }}
+                    {{ include('_blocks/forms/_localized-name.html.twig', {media: tv}) }}
+                    {{ include('_blocks/forms/_overview.html.twig', {media: tv}) }}
                     <h5>
                         {% set n = series.visitNumber %}
                         {% if n > 1000 %}

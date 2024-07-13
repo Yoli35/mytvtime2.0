@@ -1,6 +1,7 @@
 import './bootstrap.js';
 
 import {Menu} from 'Menu';
+import {Movie} from 'Movie';
 import {NavBar} from 'NavBar';
 import {ToolTips} from 'ToolTips';
 import {ProviderSelect} from 'ProviderSelect';
@@ -185,6 +186,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const movieShow = document.querySelector(".movie-show");
     if (movieShow) {
+        new Movie();
+
         const img = movieShow.querySelector(".poster").querySelector("img") ?? movieShow.querySelector(".backdrop").querySelector("img");
         if (img) {
             const averageColor = new AverageColor();

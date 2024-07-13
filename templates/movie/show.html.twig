@@ -3,6 +3,7 @@
 {% block title %}my Tv Time → {{ 'Movies'|trans }} → {{ movie.title }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/movie.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
@@ -28,8 +29,82 @@
                 <div class="backdrop">
                     <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
                 </div>
-                <div class="title">{{ movie.title }} ({{ movie.release_date|date("Y") }})</div>
-                <div class="overview">{{ movie.overview }}</div>
+                <div class="title">
+                    <h1>
+                        {{ movie.title }} ({{ movie.release_date|date("Y") }})
+                    </h1>
+                    <div class="movie-tools">
+                        <div class="movie-tools-click">
+                            {{ ux_icon('fa6-solid:ellipsis-vertical', {height: '18px', width: '18px'}) }}
+                        </div>
+                        <div class="movie-tools-menu">
+                            <div id="localized-name">{{ 'Suggest a localized name'|trans }}</div>
+                            <div id="localized-overview">{{ 'Add a localized overview'|trans }}</div>
+                            <div id="additional-overview">{{ 'Add an additional overview'|trans }}</div>
+                        </div>
+                    </div>
+                </div>
+                {{ include('_blocks/forms/_delete-overview.html.twig') }}
+                {{ include('_blocks/forms/_localized-name.html.twig', {media: movie}) }}
+                {{ include('_blocks/forms/_overview.html.twig', {media: movie}) }}
+                <div class="movie-overview">{{ movie.overview }}</div>
+                {% if movie.localized_overviews|length %}
+                    <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
+                    <div class="localized overviews">
+                        {% for overview in movie.localized_overviews %}
+                            <div class="localized overview" data-id="{{ overview.id }}">
+                                <div class="content">
+                                    {{ overview.overview|nl2br }}
+                                </div>
+                                <div class="tools">
+                                    <div class="locale">{{ overview.locale|upper }}</div>
+                                    <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
+                                        {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                    <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
+                                        {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if movie.additional_overviews|length %}
+                    <h4 class="additional-h4">{{ 'Additional overviews'|trans }}</h4>
+                    <div class="additional overviews">
+                        {% for overview in movie.additional_overviews %}
+                            <div class="additional overview" data-id="{{ overview.id }}">
+                                <div class="content">
+                                    {{ overview.overview|nl2br }}
+                                </div>
+                                <div class="tools">
+                                    {% if overview.source %}
+                                        <div class="source">
+                                            {% if overview.source.path %}
+                                                <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
+                                                    {% if overview.source.LogoPath %}
+                                                        <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
+                                                    {% else %}
+                                                        {{ overview.source.name }}
+                                                    {% endif %}
+                                                </a>
+                                            {% else %}
+                                                {{ overview.source.name }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="locale">{{ overview.locale|upper }}</div>
+                                    {% endif %}
+                                    <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
+                                        {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                    <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
+                                        {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
         </header>
         <main>
@@ -167,13 +242,13 @@
                                 </div>
                             </div>
                             <div class="actions">
-                                {#                                <div class="action toggle-pinned-series{% if userMovie.userPinnedSeries %} pinned{% endif %}" data-title="{{ (userMovie.userPinnedSeries ? "Remove from pinned series" : "Add to pinned series")|trans }}"> #}
+                                {#                                <div class="action toggle-pinned-movie{% if userMovie.userPinnedSeries %} pinned{% endif %}" data-title="{{ (userMovie.userPinnedSeries ? "Remove from pinned series" : "Add to pinned series")|trans }}"> #}
                                 {#                                    {{ ux_icon('fa6-solid:paperclip', {height: '18px', width: '18px'}) }} #}
                                 {#                                </div> #}
-                                <div class="action toggle-favorite-series{% if userMovie.favorite %} favorite{% endif %}" data-title="{{ (userMovie.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
+                                <div class="action toggle-favorite-movie{% if userMovie.favorite %} favorite{% endif %}" data-title="{{ (userMovie.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
                                     {{ ux_icon('fa6-solid:heart', {height: '18px', width: '18px'}) }}
                                 </div>
-                                <div class="action remove-this-series" data-title="{{ 'Remove this series from your watchlist'|trans }}">
+                                <div class="action remove-this-movie" data-title="{{ 'Remove this series from your watchlist'|trans }}">
                                     {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
                                 </div>
                             </div>
@@ -223,5 +298,12 @@
             </section>
         </main>
         {% include('_blocks/_footer.html.twig') %}
+    </div>
+    <div id="globs" style="display: none">
+        {
+        "userMovieId": {{ userMovie.id }},
+        "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        }
     </div>
 {% endblock %}
