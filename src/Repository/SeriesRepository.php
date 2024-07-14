@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Series;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -47,5 +48,30 @@ class SeriesRepository extends ServiceEntityRepository
         $sql .= "  LIMIT 20 OFFSET $offset";
 
         return $this->em->getConnection()->fetchAllAssociative($sql);
+    }
+
+    public function userSeriesInfos(User $user): array
+    {
+        $userId = $user->getId();
+        $sql = "SELECT s.tmdb_id as id,
+                       sln.name as localized_name,
+                       us.progress as progress,
+                       us.rating as rating,
+                       us.favorite as favorite
+                FROM series s
+                         INNER JOIN user_series us ON s.id = us.series_id
+                         LEFT JOIN series_localized_name sln ON s.id = sln.series_id
+                WHERE us.user_id=$userId";
+
+        return $this->getAll($sql);
+    }
+
+    public function getAll($sql): array
+    {
+        try {
+            return $this->em->getConnection()->fetchAllAssociative($sql);
+        } catch (Exception) {
+            return [];
+        }
     }
 }

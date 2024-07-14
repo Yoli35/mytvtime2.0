@@ -1120,6 +1120,20 @@ class SeriesController extends AbstractController
     #[Route('/people/{id}-{slug}', name: 'people', requirements: ['id' => Requirement::DIGITS])]
     public function people(Request $request, $id): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
+        $seriesInfos = $this->seriesRepository->userSeriesInfos($user);
+        $seriesIds = array_column($seriesInfos, 'id');
+        $indexedInfos = [];
+        foreach ($seriesInfos as $info) {
+            $indexedInfos[$info['id']] = $info;
+        }
+//        dump([
+//            'seriesInfos' => $seriesInfos,
+//            'seriesIds' => $seriesIds,
+//            'indexedInfos' => $indexedInfos,
+//            ]);
+
         $standing = $this->tmdbService->getPerson($id, $request->getLocale(), "images,combined_credits");
         $people = json_decode($standing, true);
         $credits = $people['combined_credits'];
@@ -1170,6 +1184,15 @@ class SeriesController extends AbstractController
             $role['release_date'] = key_exists('release_date', $cast) ? $cast['release_date'] : (key_exists('first_air_date', $cast) ? $cast['first_air_date'] : null);
             $role['title'] = key_exists('title', $cast) ? $cast['title'] : (key_exists('name', $cast) ? $cast['name'] : null);
             $role['slug'] = $role['title'] ? $slugger->slug($role['title'])->lower()->toString() : null;
+
+            $role['localized_title'] = $indexedInfos[$cast['id']]['localized_name'] ?? null;
+            $role['added_series'] = in_array($cast['id'], $seriesIds);
+            $role['progress'] = $indexedInfos[$cast['id']]['progress'] ?? null;
+            if ($role['progress']) {
+                $role['progress'] = round($role['progress'], 2);
+            }
+            $role['rating'] = $indexedInfos[$cast['id']]['rating'] ?? null;
+            $role['favorite'] = $indexedInfos[$cast['id']]['favorite'] ?? null;
 
             if ($role['release_date']) {
                 $castDates[$role['release_date']] = $role;
@@ -1224,7 +1247,7 @@ class SeriesController extends AbstractController
             'people' => $people,
             'credits' => $credits,
             'count' => $count,
-            'user' => $this->getUser(),
+            'user' => $user,
             'imageConfig' => $this->imageConfiguration->getConfig(),
         ]);
     }

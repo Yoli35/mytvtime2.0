@@ -123,7 +123,7 @@
                                                 <div class="separation"></div>
                                             {% endif %}
                                         {% endif %}
-                                        <div class="date">
+                                        <div class="date{% if prod.added_series %}{% if prod.progress==0 %} added{% elseif prod.progress==100 %} ended{% else %} started{% endif %}{% endif %}">
                                             {% if loop.index0 %}
                                                 {% if date|length == 10 and date|slice(0,4) != lastDate %}
                                                     <div class="year">{{ date|length == 10 ? (date|slice(0,4)) : "—" }}</div>
@@ -146,6 +146,9 @@
                                                 {% endif %}
                                                 <div class="title">
                                                     {{ prod.title }}
+                                                    {% if prod.localized_title %}
+                                                        <span class="localized">{{ prod.localized_title }}</span>
+                                                    {% endif %}
                                                     {% if prod.media_type == 'movie' %}
                                                         <i class="fa-solid fa-film" title="{{ "Movie"|trans }}"></i>
                                                     {% endif %}
@@ -162,6 +165,40 @@
                                                     <div class="character">{{ prod.character }}</div>
                                                 {% endif %}
                                             {% endif %}
+
+                                            <div class="extras">
+                                                {% if prod.favorite %}
+                                                    <div class="favorite">
+                                                        {{ ux_icon('fa6-solid:heart', {height: '16px', width: '16px'}) }}
+                                                    </div>
+                                                {% endif %}
+                                                {% if prod.rating %}
+                                                    <div class="rating">
+                                                        {% for i in 1..prod.rating %}
+                                                            {{ ux_icon('fa6-solid:star', {height: '16px', width: '16px'}) }}
+                                                        {% endfor %}
+                                                        {% if prod.rating < 5 %}
+                                                            {% for i in (prod.rating+1)..5 %}
+                                                                {{ ux_icon('fa6-regular:star', {height: '16px', width: '16px'}) }}
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    </div>
+                                                {% endif %}
+                                                {% if prod.added_series %}
+                                                    <div class="progress">
+                                                        {% if prod.progress==0 %}
+                                                            {{ ux_icon('ion:battery-dead-outline', {height: '24px', width: '24px'}) }}
+                                                            0%
+                                                        {% elseif prod.progress==100 %}
+                                                            {{ ux_icon('ion:battery-full-outline', {height: '24px', width: '24px'}) }}
+                                                            100%
+                                                        {% else %}
+                                                            {{ ux_icon('ion:battery-half-outline', {height: '24px', width: '24px'}) }}
+                                                            {{ prod.progress }}%
+                                                        {% endif %}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                         {% set lastDate = date|slice(0,4) %}
                                     {% endfor %}
