@@ -59,11 +59,14 @@
                 </div>
             </div>
 
+            {% set now = 'now'|date("Y-m-d") %}
             <div class="quick-episodes">
                 {% for episode in season.episodes %}
-                    <div class="quick-episode{% if episode.user_episode and episode.user_episode.watchAt %} watched{% endif %}" data-number="{{ episode.episode_number }}" data-title="{{ episode.name }} - {{ date(episode.air_date)|format_date("short") }} - {{ episode.air_date|format_date("short") }}">
-                        {{ episode.episode_number }}
-                    </div>
+                    {% if episode.air_date and episode.air_date <= now %}
+                        <div class="quick-episode{% if episode.user_episode and episode.user_episode.watchAt %} watched{% endif %}" data-number="{{ episode.episode_number }}" data-title="{{ episode.name }} - {{ date(episode.air_date)|format_date("short") }} - {{ episode.air_date|format_date("short") }}">
+                            {{ episode.episode_number }}
+                        </div>
+                    {% endif %}
                 {% endfor %}
             </div>
 
@@ -71,7 +74,7 @@
             <div class="content column">
                 <div class="seasons-episodes">
                     {% for episode in season.episodes %}
-{#                        <div class="episode-card">#}
+                        {% if episode.air_date and episode.air_date <= now %}
                             <div class="season-episode" id="episode-{{ episode.episode_number }}">
                                 <div class="still">
                                     {% if episode.still_path %}
@@ -95,7 +98,6 @@
                                             </div>
                                         {% endif %}
                                         <div class="edit" data-title="{{ 'Suggest a title'|trans }}" data-id="{{ episode.id }}">
-{#                                            <i class="fas fa-pen"></i>#}
                                             {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
                                         </div>
                                     </div>
@@ -112,7 +114,6 @@
                                             {{ season.deepl.us_episode_overviews[episode.episode_number - 1] }}
                                             {% if season.deepl.localized == false %}
                                                 <div class="translate" data-title="{{ 'Paste your translation here'|trans }}">
-{#                                                    <i class="fas fa-language"></i>#}
                                                     {{ ux_icon('fa6-solid:language', {height: '18px', width: '18px'}) }}
                                                 </div>
                                             {% endif %}
@@ -137,7 +138,6 @@
                                                         {% if people.google is defined %}
                                                             <div class="google" data-title="{{ 'See on Google'|trans }}">
                                                                 <a href="{{ people.google }}" target="_blank">
-{#                                                                    <i class="fab fa-google"></i>#}
                                                                     {{ ux_icon('flat-color-icons:google', {height: '18px', width: '18px'}) }}
                                                                 </a>
                                                             </div>
@@ -202,7 +202,7 @@
                                     </a>
                                 </div>
                             </div>
-{#                        </div>#}
+                        {% endif %}
                     {% endfor %}
                 </div>
                 {% if season.credits.cast|length %}
