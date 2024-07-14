@@ -193,10 +193,10 @@ h2 {
             .series-overview {
                 align-items: center;
                 display: flex;
-                font-size: clamp(1rem, 1vw, 2rem);
+                font-size: clamp(1rem, 1.5vw, 2rem);
                 font-weight: 300;
                 gap: .5rem;
-                line-height: clamp(1rem, 1.1vw, 2rem);
+                line-height: clamp(1rem, 1.6vw, 2rem);
                 justify-content: flex-start;
             }
 
