@@ -76,7 +76,9 @@ export class ToolTips {
     hide() {
         const tooltips = document.querySelector(".tool-tips");
         tooltips.classList.remove("show");
-        tooltips.setAttribute("style", "translate: 0px 0px;");
+        setTimeout(() => {
+            tooltips.setAttribute("style", "translate: 0px 0px;");
+        }, 300);
     }
 
     move(evt) {
