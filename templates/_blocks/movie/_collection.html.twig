@@ -1,0 +1,23 @@
+{#   "belongs_to_collection" => array:4 [▼
+         "id" => 87096
+         "name" => "Avatar - Saga"
+         "poster_path" => "/uO2yU3QiGHvVp0L5e5IatTVRkYk.jpg"
+         "backdrop_path" => "/gxnvX9kF7RRUQYvB52dMLPgeJkt.jpg"
+     ]
+#}
+{% if movie.belongs_to_collection %}
+    <div class="movie-collection">
+        <div class="label">{{ 'Collection'|trans }}</div>
+        <div class="collection">
+            <div class="poster">
+                <img src="/movies/posters{{ movie.belongs_to_collection.poster_path }}" alt="{{ movie.belongs_to_collection.name }} {{ 'poster'|trans }}">
+            </div>
+            <div class="infos">
+                <div class="name">{{ movie.belongs_to_collection.name }}</div>
+                <div class="collection-backdrop">
+                    <img src="/movies/backdrops{{ movie.belongs_to_collection.backdrop_path }}" alt="{{ movie.belongs_to_collection.name }} {{ 'backdrop'|trans }}">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

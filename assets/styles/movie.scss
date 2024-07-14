@@ -348,14 +348,15 @@
                 display: flex;
 
                 .label {
-                    font-size: 1.25rem;
-                    font-weight: 100;
+                    font-size: 1rem;
+                    font-weight: 300;
                     width: 10rem;
                 }
 
                 .content {
                     display: flex;
                     font-size: 1rem;
+                    font-weight: 100;
                     gap: .25rem;
                 }
             }
@@ -403,7 +404,11 @@
             }
 
             .release-dates {
+                align-items: flex-start;
+
                 .content {
+                    flex-direction: column;
+
                     .release-date {
                         display: flex;
                         gap: .5rem;
@@ -457,6 +462,81 @@
             margin-inside: 0;
             padding: 1rem;
         }
+
+        .movie-collection {
+            background-color: var(--gradient-ardoise-90-alpha-20);
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            gap: 1rem;
+            margin-inside: 0;
+            padding: 1rem;
+
+            label {
+                font-size: 1.25rem;
+                font-weight: 300;
+            }
+
+            .collection {
+                display: flex;
+                gap: 1rem;
+                height: 20rem;
+                justify-content: center;
+
+                .poster {
+                    align-items: center;
+                    aspect-ratio: 78 / 117;
+                    background-color: var(--gradient-green-70-alpha-50);
+                    border-radius: .5rem;
+                    display: flex;
+                    height: 100%;
+                    justify-content: center;
+
+                    img {
+                        border-radius: .5rem;
+                        height: 100%;
+                        object-fit: cover;
+                        width: 100%;
+                    }
+                }
+
+                .infos {
+                    aspect-ratio: 16 / 9;
+                    display: flex;
+                    flex-direction: column;
+                    gap: .5rem;
+                    height: 100%;
+                    justify-content: center;
+                    position: relative;
+
+                    .name {
+                        bottom: 1rem;
+                        color: var(--gradient-orange-50);
+                        font-size: 2rem;
+                        font-weight: 100;
+                        margin-block: 0;
+                        text-align: center;
+                        position: absolute;
+                        right: 1rem;
+                    }
+
+                    .collection-backdrop {
+                        inset: 0;
+                        overflow: auto;
+                        position: absolute;
+                        z-index: -1;
+
+                        img {
+                            border-radius: .5rem;
+                            height: 100%;
+                            object-fit: cover;
+                            width: 100%;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -464,13 +544,25 @@
     .movie-show {
         main {
             .details {
-                flex-direction: column;
+                flex-direction: column-reverse;
 
                 .movie-details {
                     > div {
                         align-items: flex-start;
                         flex-direction: column;
                         justify-content: center;
+                    }
+                }
+            }
+
+            .movie-collection {
+                .collection {
+                    .poster {
+                    }
+
+                    .infos {
+                        aspect-ratio: unset;
+                        flex-grow: 1;
                     }
                 }
             }

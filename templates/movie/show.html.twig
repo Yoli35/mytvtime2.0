@@ -143,25 +143,7 @@
                                 <div class="note">{{ 'Count'|trans }} {{ movie.vote_count }}</div>
                             </div>
                         </div>
-                        {% if movie.release_date or movie.release_dates|length %}
-                            <div class="release-dates">
-                                <div class="label">{{ 'Release date'|trans }}</div>
-                                <div class="content">
-                                    {% if movie.release_date %}
-                                        <div class="release-date">
-                                            <div class="note">{{ 'Release date'|trans }}</div>
-                                            <div class="release-date">{{ movie.release_date|date("d/m/Y") }}</div>
-                                        </div>
-                                    {% endif %}
-                                    {% for rd in movie.release_dates %}
-                                        <div class="release-date">
-                                            <div class="note">{{ rd.note }}</div>
-                                            <div class="release-date">{{ rd.release_date|date("d/m/Y") }}</div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endif %}
+                        {{ include('_blocks/movie/_release-dates.html.twig') }}
                     </div>
                     <div class="user-details">
                         <div class="user-actions">
@@ -255,6 +237,9 @@
                         </div>
                     </div>
                 </div>
+            </section>
+            <section>
+                {{ include('_blocks/Movie/_collection.html.twig') }}
             </section>
             <section>
                 <div class="movie-details">

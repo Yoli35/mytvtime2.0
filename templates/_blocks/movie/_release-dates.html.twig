@@ -1,0 +1,20 @@
+{% if movie.release_date or movie.release_dates|length %}
+    <div class="release-dates">
+        <div class="label">{{ 'Release date'|trans }}</div>
+        <div class="content">
+            {% for rd in movie.release_dates %}
+                <div class="release-date">
+                    <div class="note">{{ rd.type_string|trans }} - {{ rd.note }}</div>
+                    <div class="release-date">{{ rd.release_date|date("d/m/Y") }}</div>
+                </div>
+            {% else %}
+                {% if movie.release_date %}
+                    <div class="release-date">
+                        <div class="note">{{ 'Release date'|trans }}</div>
+                        <div class="release-date">{{ movie.release_date|date("d/m/Y") }}</div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}

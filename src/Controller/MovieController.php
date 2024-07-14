@@ -75,6 +75,7 @@ class MovieController extends AbstractController
         $this->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
         $this->saveImage("backdrops", $movie['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
 
+        $this->getBelongToCollection($movie);
         $this->getCredits($movie);
         $this->getProviders($movie);
         $this->getReleaseDates($movie);
@@ -205,6 +206,14 @@ class MovieController extends AbstractController
         }, $movie['credits']['crew']);
     }
 
+    public function getBelongToCollection(array $movie): void
+    {
+        if (key_exists('belongs_to_collection', $movie)) {
+            $this->saveImage("posters", $movie['belongs_to_collection']['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->saveImage("backdrops", $movie['belongs_to_collection']['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+        }
+    }
+
     public function getProviders(array &$movie): void
     {
         $providers = array_filter($movie['watch/providers']['results'], function ($key) {
@@ -220,15 +229,22 @@ class MovieController extends AbstractController
 
     public function getReleaseDates(array &$movie): void
     {
+        $types = [1 => 'Premiere', 2 => 'Theatrical (limited)', 3 => 'Theatrical', 4 => 'Digital', 5 => 'Physical', 6 => 'TV'];
         $releaseDates = array_filter($movie['release_dates']['results'], function ($rd) {
             return $rd['iso_3166_1'] === 'FR';
         });
         $releaseDates = array_values($releaseDates);
         if (count($releaseDates)) {
-            $movie['release_dates'] = $releaseDates[0]['release_dates'];
+            $releaseDates = $releaseDates[0]['release_dates'];
         } else {
-            $movie['release_dates'] = [];
+            $releaseDates = [];
         }
+        $releaseDates = array_map(function ($rd) use ($types) {
+            $rd['type_string'] = $types[$rd['type']];
+            return $rd;
+        }, $releaseDates);
+
+        $movie['release_dates'] = $releaseDates;
     }
 
     public function getRecommandations(array &$movie): void
@@ -325,7 +341,6 @@ class MovieController extends AbstractController
     public function getSources(array &$movie):void
     {
         $sources = $this->sourceRepository->findAll();
-        dump(['sources' => $sources]);
         $movie['sources'] = $sources;
     }
 
