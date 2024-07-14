@@ -30,6 +30,7 @@ export class Menu {
         const body = document.querySelector("body");
         const notifications = document.querySelector(".notifications");
         const movieSearch = navbar.querySelector("#movie-search");
+        const tvSearch = navbar.querySelector("#tv-search");
 
         burger.addEventListener("click", () => {
             burger.classList.toggle("open");
@@ -156,7 +157,7 @@ export class Menu {
                         const ul = document.createElement("ul");
                         json.results.forEach((result) => {
                             const a = document.createElement("a");
-                            a.href = '/'+gThis.lang+'/movie/tmdb/' + result.id;
+                            a.href = '/' + gThis.lang + '/movie/tmdb/' + result.id;
                             const li = document.createElement("li");
                             const posterDiv = document.createElement("div");
                             posterDiv.classList.add("poster");
@@ -172,6 +173,56 @@ export class Menu {
                             const titleDiv = document.createElement("div");
                             titleDiv.classList.add("title");
                             titleDiv.innerHTML = result.title;
+                            a.appendChild(titleDiv);
+                            li.appendChild(a);
+                            ul.appendChild(li);
+                        });
+                        searchResults.appendChild(ul);
+                    })
+                    .catch(err => console.error('error:' + err));
+            } else {
+                movieSearch.closest("li").querySelector(".search-results").innerHTML = '';
+            }
+        });
+
+        tvSearch.addEventListener("input", (e) => {
+            const value = e.target.value;
+            if (value.length > 2) {
+                const searchResults = tvSearch.closest("li").querySelector(".search-results");
+                const query = encodeURIComponent(value);
+                const url = 'https://api.themoviedb.org/3/search/tv?query=' + query + '&include_adult=false&language=fr-FR&page=1';
+                const options = {
+                    method: 'GET',
+                    headers: {
+                        accept: 'application/json',
+                        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmN2UzYzVmZTc5NGQ1NjViNDcxMzM0YzljNWVjYWY5NiIsIm5iZiI6MTcyMDYxMDA2Ni4zMzk0NzgsInN1YiI6IjYyMDJiZjg2ZTM4YmQ4MDA5MWVjOWIzOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.D5XVKmPsIrUKnZjQBXOhsKXzXtrejlHl8KT1dmZ2oyQ'
+                    }
+                };
+
+                fetch(url, options)
+                    .then(res => res.json())
+                    .then(json => {
+                        console.log(json);
+                        searchResults.innerHTML = '';
+                        const ul = document.createElement("ul");
+                        json.results.forEach((result) => {
+                            const a = document.createElement("a");
+                            a.href = '/' + gThis.lang + '/series/tmdb/' + result.id + '-' + gThis.toSlug(result.name);
+                            const li = document.createElement("li");
+                            const posterDiv = document.createElement("div");
+                            posterDiv.classList.add("poster");
+                            if (result.poster_path) {
+                                const img = document.createElement("img");
+                                img.src = gThis.posterUrl + result.poster_path;
+                                img.alt = result.title;
+                                posterDiv.appendChild(img);
+                            } else {
+                                posterDiv.innerHTML = 'No poster';
+                            }
+                            a.appendChild(posterDiv);
+                            const titleDiv = document.createElement("div");
+                            titleDiv.classList.add("title");
+                            titleDiv.innerHTML = result.name;
                             a.appendChild(titleDiv);
                             li.appendChild(a);
                             ul.appendChild(li);
@@ -310,5 +361,23 @@ export class Menu {
                 console.error('Error:', error);
             });
 
+    }
+
+    toSlug(str) {
+        str = str.replace(/^\s+|\s+$/g, ''); // trim
+        str = str.toLowerCase();
+
+        // remove accents, swap ñ for n, etc
+        let from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
+        let to = "aaaaeeeeiiiioooouuuunc------";
+        for (let i = 0, l = from.length; i < l; i++) {
+            str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+        }
+
+        str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+            .replace(/\s+/g, '-') // collapse whitespace and replace by -
+            .replace(/-+/g, '-'); // collapse dashes
+
+        return str;
     }
 }
