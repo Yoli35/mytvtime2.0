@@ -55,7 +55,7 @@ class MovieRepository extends ServiceEntityRepository
                            um.last_viewed_at as lastViewedAt
                     FROM movie m
                              INNER JOIN user_movie um ON m.id = um.movie_id
-                    WHERE um.user_id = $userId AND m.title LIKE '%$title%'
+                    WHERE um.user_id = $userId AND (m.title LIKE '%$title%' OR m.original_title LIKE '%$title%')
                     ORDER BY $sort $order
                     LIMIT $offset, $perPage";
         } else {

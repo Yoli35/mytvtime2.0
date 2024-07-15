@@ -31,7 +31,7 @@
                 </div>
                 <div class="title">
                     <h1>
-                        {{ movie.title }} ({{ movie.release_date|date("Y") }})
+                        {{ movie.title }}{% if movie.original_title %}<br><span>{{ movie.original_title }}</span>{% endif%} ({{ movie.release_date|date("Y") }})
                     </h1>
                     <div class="movie-tools">
                         <div class="movie-tools-click">

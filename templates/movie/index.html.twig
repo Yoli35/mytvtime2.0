@@ -159,6 +159,21 @@
                         movies.forEach(movie => {
                             wrapper.appendChild(card(movie));
                         });
+                        const PagesDiv = document.querySelector('.pages');
+                        PagesDiv.innerHTML = '';
+                        for (let i = 1; i <= pages; i++) {
+                            const button = document.createElement('button');
+                            button.classList.add('page');
+                            button.value = i;
+                            button.textContent = i;
+                            if (i === 1) {
+                                button.classList.add('active');
+                            }
+                            button.addEventListener('click', function () {
+                                getMovies(getParams().concat({key: 'page', value: i}));
+                            });
+                            PagesDiv.appendChild(button);
+                        }
                     })
                     .catch(error => console.error(error));
             }
@@ -203,10 +218,12 @@
             /* @param {
                 userMovieId: number,
                 title: string,
-                releaseDate: string,
+                releaseDate: date
+                releaseDateString: string,
                 posterPath: string,
                 favorite: boolean,
-                lastViewedAt: string
+                lastViewedAt: date
+                lastViewedAtString: string
             } movie */
             function card(movie) {
                 const card = document.createElement('div');

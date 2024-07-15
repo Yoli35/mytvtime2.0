@@ -175,7 +175,7 @@
             border-radius: .5rem;
             display: flex;
             flex-direction: column;
-            height: 27rem;
+            height: 28rem;
             justify-content: center;
             width: 15rem;
 
@@ -224,21 +224,21 @@
                 border-radius: 0 0 .5rem .5rem;
                 display: flex;
                 flex-direction: column;
-                height: 5rem;
+                height: 6rem;
                 justify-content: center;
                 width: 100%;
 
                 .name {
                     color: var(--gradient-orange-50);
-                    font-size: 1.25rem;
+                    font-size: 1rem;
                     font-weight: 100;
-                    margin-bottom: .5rem;
                     text-align: center;
                 }
 
                 .date {
                     color: var(--gradient-ardoise-10);
                     font-size: 1rem;
+                    font-weight: 100;
                 }
             }
         }
@@ -300,18 +300,22 @@
             }
 
             .title {
+                align-items: flex-start;
                 display: flex;
                 position: relative;
                 width: 100%;
 
                 h1 {
+                    background-color: var(--gradient-ardoise-90-alpha-50);
+                    border-radius: .5rem;
                     font-size: clamp(1rem, 5vw, 4rem);
                     font-weight: 100;
                     line-height: clamp(1.1rem, 5vw, 4rem);;
+                    padding: .5rem;
                     margin-block: 0;
                     text-align: left;
 
-                    .localized-name-span {
+                    .localized-name-span, span {
                         color: var(--gradient-orange-70);
                     }
                 }
