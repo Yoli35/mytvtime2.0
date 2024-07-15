@@ -328,7 +328,7 @@
                         <div class="cast">
                             <div class="wrapper">
                                 {% for people in tv.credits.cast %}
-                                    <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
+                                    <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
                                         <div class="people" data-title="{{ people.name }}">
                                             <div class="photo">
                                                 {% if people.profile_path %}
@@ -353,7 +353,7 @@
                         <div class="crew">
                             <div class="wrapper">
                                 {% for people in tv.credits.crew %}
-                                    <a href="{{ path('app_series_people', {id: people.id, slug: people.slug}) }}">
+                                    <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
                                         <div class="people" data-title="{{ people.name }}">
                                             <div class="photo">
                                                 {% if people.profile_path %}

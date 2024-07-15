@@ -92,19 +92,19 @@
                             <div class="content">
                                 <div class="wrapper">
                                     {% for cast in movie.credits.cast %}
-                                        {{ include('_blocks/Movie/_cast.html.twig', {cast: cast}) }}
+                                        {{ include('_blocks/Movie/_cast.html.twig', {cast: cast, job: cast.character}) }}
                                     {% endfor %}
                                 </div>
                             </div>
                         </div>
                     {% endif %}
-                    {% if movie.credits.cast %}
+                    {% if movie.credits.crew %}
                         <div class="cast">
                             <div class="label">{{ 'Crew'|trans }}</div>
                             <div class="content">
                                 <div class="wrapper">
                                     {% for crew in movie.credits.crew %}
-                                        {{ include('_blocks/Movie/_crew.html.twig', {crew: crew}) }}
+                                        {{ include('_blocks/Movie/_cast.html.twig', {cast: crew, job: crew.job}) }}
                                     {% endfor %}
                                 </div>
                             </div>

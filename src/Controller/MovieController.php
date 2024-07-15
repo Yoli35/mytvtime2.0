@@ -196,12 +196,15 @@ class MovieController extends AbstractController
 
     public function getCredits(array &$movie): void
     {
-        $movie['credits']['cast'] = array_map(function ($people) {
+        $slugger = new ASCIISlugger();
+        $movie['credits']['cast'] = array_map(function ($people) use($slugger) {
             $people['profile_path'] = $people['profile_path'] ? $this->imageConfiguration->getUrl('profile_sizes', 2) . $people['profile_path'] : null;
+            $people['slug'] = $slugger->slug($people['name']);
             return $people;
         }, $movie['credits']['cast']);
-        $movie['credits']['crew'] = array_map(function ($people) {
+        $movie['credits']['crew'] = array_map(function ($people) use($slugger) {
             $people['profile_path'] = $people['profile_path'] ? $this->imageConfiguration->getUrl('profile_sizes', 2) . $people['profile_path'] : null;
+            $people['slug'] = $slugger->slug($people['name']);
             return $people;
         }, $movie['credits']['crew']);
     }

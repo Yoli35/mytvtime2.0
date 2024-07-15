@@ -1,12 +1,12 @@
 
 <div class="item">
-{#    <a href="{{ path('app_movie_tmdb', {id: recommendation.id}) }}">#}
-        <div class="poster" data-title="{{ cast.name }}{% if cast.character%} > {{ cast.character }}{% endif %}">
+    <a href="{{ path('app_people_show', {id: cast.id, slug: cast.slug}) }}">
+        <div class="poster" data-title="{{ cast.name }}{% if job %} > {{ job }}{% endif %}">
             {% if cast.profile_path %}
                 <img src="{{ cast.profile_path }}" alt="{{ cast.name }}">
             {% else %}
                 <div>{{ 'No picture'|trans }}</div>
             {% endif %}
         </div>
-{#    </a>#}
+    </a>
 </div>
