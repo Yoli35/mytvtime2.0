@@ -2,7 +2,7 @@
 .movie-index {
     .wrapper {
         align-items: center;
-        background-color: var(--gradient-ardoise-80);
+        background-color: var(--gradient-grey-85);
         border-radius: .5rem;
         display: flex;
         flex-wrap: wrap;
@@ -63,6 +63,8 @@
 
         .infos {
             align-items: center;
+            background-color: var(--gradient-grey-90);
+            border-radius: 0 0 .5rem .5rem;
             display: flex;
             flex-direction: column;
             height: 5rem;
@@ -534,6 +536,37 @@
                             width: 100%;
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+@media (width < 577px) {
+    .movie-index {
+        .wrapper {
+            padding: 0;
+            scroll-snap-type: y mandatory;
+
+            .card {
+                height: unset;
+                scroll-snap-align: start;
+                width: 95vw;
+
+                .poster {
+                    aspect-ratio: 77 / 114;
+                    height: unset;
+                    width: 95vw;
+
+                    img {
+                        aspect-ratio: 77 / 114;
+                        object-fit: cover;
+                        width: 100%;
+                    }
+                }
+
+                .infos {
+                    width: 100%;
                 }
             }
         }
