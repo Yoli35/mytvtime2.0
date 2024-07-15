@@ -101,19 +101,12 @@ class MovieRepository extends ServiceEntityRepository
                     ORDER BY $sort $order
                     LIMIT $offset, $perPage";
         } else {
-            $sql = "SELECT um.id             as userMovieId,
-                       m.title           as title,
-                       m.poster_path     as posterPath,
-                       m.release_date    as releaseDate,
-                       m.runtime         as runtime,
-                       um.favorite       as favorite,
-                       um.rating         as rating,
-                       um.last_viewed_at as lastViewedAt
-                FROM movie m
-                         INNER JOIN user_movie um ON m.id = um.movie_id
-                WHERE um.user_id = $userId
-                ORDER BY $sort $order
-                LIMIT $offset, $perPage";
+            $sql = "SELECT COUNT(*) 
+                    FROM movie m
+                             INNER JOIN user_movie um ON m.id = um.movie_id
+                    WHERE um.user_id = $userId
+                    ORDER BY $sort $order
+                    LIMIT $offset, $perPage";
         }
 
         return $this->getOne($sql);
