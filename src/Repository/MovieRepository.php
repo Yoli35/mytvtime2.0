@@ -28,12 +28,38 @@ class MovieRepository extends ServiceEntityRepository
         }
     }
 
-    public function getMovieCards(User $user, int $page = 1, int $perPage = 20): array
+    public function getMovieCards(User $user, array $filters): array
     {
         $userId = $user->getId();
-        $offset = ($page - 1) * $perPage;
+        $sort = $filters['sort'];
+        $order = $filters['order'];
+        $page = $filters['page'];
+        $perPage = $filters['perPage'];
+        $title = $filters['title'];
 
-        $sql = "SELECT um.id             as userMovieId,
+        $offset = ($page - 1) * $perPage;
+        // Sort: name, release date
+        $sort = match ($sort) {
+            'name' => 'm.title',
+            default => 'm.release_date'
+        };
+
+        if ($title) {
+            $sql = "SELECT um.id             as userMovieId,
+                           m.title           as title,
+                           m.poster_path     as posterPath,
+                           m.release_date    as releaseDate,
+                           m.runtime         as runtime,
+                           um.favorite       as favorite,
+                           um.rating         as rating,
+                           um.last_viewed_at as lastViewedAt
+                    FROM movie m
+                             INNER JOIN user_movie um ON m.id = um.movie_id
+                    WHERE um.user_id = $userId AND m.title LIKE '%$title%'
+                    ORDER BY $sort $order
+                    LIMIT $offset, $perPage";
+        } else {
+            $sql = "SELECT um.id             as userMovieId,
                        m.title           as title,
                        m.poster_path     as posterPath,
                        m.release_date    as releaseDate,
@@ -44,10 +70,53 @@ class MovieRepository extends ServiceEntityRepository
                 FROM movie m
                          INNER JOIN user_movie um ON m.id = um.movie_id
                 WHERE um.user_id = $userId
-                ORDER BY m.release_date DESC
+                ORDER BY $sort $order
                 LIMIT $offset, $perPage";
+        }
 
         return $this->getAll($sql);
+    }
+
+    public function countMovieCards(User $user, array $filters): int
+    {
+        $userId = $user->getId();
+        $sort = $filters['sort'];
+        $order = $filters['order'];
+        $page = $filters['page'];
+        $perPage = $filters['perPage'];
+        $title = $filters['title'];
+
+        $offset = ($page - 1) * $perPage;
+        // Sort: name, release date
+        $sort = match ($sort) {
+            'name' => 'm.title',
+            default => 'm.release_date'
+        };
+
+        if ($title) {
+            $sql = "SELECT COUNT(*) 
+                    FROM movie m
+                             INNER JOIN user_movie um ON m.id = um.movie_id
+                    WHERE um.user_id = $userId AND m.title LIKE '%$title%'
+                    ORDER BY $sort $order
+                    LIMIT $offset, $perPage";
+        } else {
+            $sql = "SELECT um.id             as userMovieId,
+                       m.title           as title,
+                       m.poster_path     as posterPath,
+                       m.release_date    as releaseDate,
+                       m.runtime         as runtime,
+                       um.favorite       as favorite,
+                       um.rating         as rating,
+                       um.last_viewed_at as lastViewedAt
+                FROM movie m
+                         INNER JOIN user_movie um ON m.id = um.movie_id
+                WHERE um.user_id = $userId
+                ORDER BY $sort $order
+                LIMIT $offset, $perPage";
+        }
+
+        return $this->getOne($sql);
     }
 
     public function getAll($sql): array

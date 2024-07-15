@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Movie;
 use App\Entity\MovieCollection;
+use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserMovie;
 use App\Repository\MovieCollectionRepository;
 use App\Repository\MovieRepository;
+use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
 use App\Repository\UserMovieRepository;
 use App\Repository\WatchProviderRepository;
@@ -30,6 +32,7 @@ class MovieController extends AbstractController
         private readonly ImageConfiguration        $imageConfiguration,
         private readonly MovieCollectionRepository $movieCollectionRepository,
         private readonly MovieRepository           $movieRepository,
+        private readonly SettingsRepository        $settingsRepository,
         private readonly SourceRepository          $sourceRepository,
         private readonly TMDBService               $tmdbService,
         private readonly TranslatorInterface       $translator,
@@ -41,21 +44,87 @@ class MovieController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/index', name: 'index')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
         /** @var User $user */
         $user = $this->getUser();
         $slugger = new ASCIISlugger();
 
+        $localisation = [
+            'locale' => $user?->getPreferredLanguage() ?? $request->getLocale(),
+            'country' => $user?->getCountry() ?? "FR",
+            'language' => $user?->getPreferredLanguage() ?? $request->getLocale(),
+            'timezone' => $user?->getTimezone() ?? "Europe/Paris"
+        ];
+        $filtersBoxSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'my movies: filter box']);
+        if (!$filtersBoxSettings) {
+            $filtersBoxSettings = new Settings($user, 'my movies: filter box', ['open' => true]);
+            $this->settingsRepository->save($filtersBoxSettings, true);
+            $filterBoxOpen = true;
+        } else {
+            $filterBoxOpen = $filtersBoxSettings->getData()['open'];
+        }
+        $page = 1;
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'my movies']);
+        // Parameters count
+        if (!count($request->query->all())) {
+            if (!$settings) {
+                $settings = new Settings($user, 'my movies', ['perPage' => 10, 'sort' => 'releaseDate', 'order' => 'DESC']);
+                $this->settingsRepository->save($settings, true);
+            }
+        } else {
+            // /fr/series/all?sort=episodeAirDate&order=DESC&startStatus=series-not-started&endStatus=series-not-watched&perPage=10
+            $paramSort = $request->get('sort');
+            $paramOrder = $request->get('order');
+            $paramPerPage = $request->get('perPage');
+            $paramTitle = $request->get('title');
+            $settings->setData([
+                'title' => $paramTitle,
+                'perPage' => $paramPerPage,
+                'sort' => $paramSort,
+                'order' => $paramOrder,
+            ]);
+            $this->settingsRepository->save($settings, true);
+            $page = $request->get('page') ?? 1;
+        }
+        $data = $settings->getData();
+        $filters = [
+            'title' => $data['title'],
+            'page' => $page,
+            'perPage' => $data['perPage'],
+            'sort' => $data['sort'],
+            'order' => $data['order'],
+        ];
         $userMovies = array_map(function ($movie) use ($slugger) {
             $this->saveImage("posters", $movie['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             $movie['slug'] = $slugger->slug($movie['title']);
             return $movie;
-        }, $this->movieRepository->getMovieCards($user));
+        }, $this->movieRepository->getMovieCards($user, $filters));
 
-        dump(['userMovies' => $userMovies]);
+        $userMovieCount = $this->movieRepository->countMovieCards($user, $filters);
+
+        $filterMeanings = [
+            'name' => 'Name',
+            'releaseDate' => 'Release date',
+            'DESC' => 'Descending',
+            'ASC' => 'Ascending',
+        ];
+
+        dump([
+            'userMovies' => $userMovies,
+            'userMovieCount' => $userMovieCount,
+            'pages' => ceil($userMovieCount / $filters['perPage']),
+            'filterMeanings' => $filterMeanings,
+            'filterBoxOpen' => $filterBoxOpen,
+            'filters' => $filters,
+            ]);
         return $this->render('movie/index.html.twig', [
             'userMovies' => $userMovies,
+            'userMovieCount' => $userMovieCount,
+            'pages' => ceil($userMovieCount / $filters['perPage']),
+            'filterMeanings' => $filterMeanings,
+            'filterBoxOpen' => $filterBoxOpen,
+            'filters' => $filters,
         ]);
     }
 
