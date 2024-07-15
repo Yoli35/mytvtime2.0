@@ -99,15 +99,15 @@ class MovieController extends AbstractController
         ];
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
 
-        dump(
-            [
-                'language' => $language,
-                'movie' => $movie,
-                'userMovie' => $userMovie,
-                'providers' => $providers,
-                'translations' => $translations,
-            ]
-        );
+//        dump(
+//            [
+//                'language' => $language,
+//                'movie' => $movie,
+//                'userMovie' => $userMovie,
+//                'providers' => $providers,
+//                'translations' => $translations,
+//            ]
+//        );
         return $this->render('movie/show.html.twig', [
             'userMovie' => $userMovie,
             'movie' => $movie,
@@ -209,8 +209,11 @@ class MovieController extends AbstractController
     public function getBelongToCollection(array $movie): void
     {
         if (key_exists('belongs_to_collection', $movie)) {
-            $this->saveImage("posters", $movie['belongs_to_collection']['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-            $this->saveImage("backdrops", $movie['belongs_to_collection']['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+            $collection = $movie['belongs_to_collection'];
+            if ($collection) {
+                $this->saveImage("posters", $collection['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+                $this->saveImage("backdrops", $collection['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+            }
         }
     }
 
@@ -338,7 +341,7 @@ class MovieController extends AbstractController
         ];
     }
 
-    public function getSources(array &$movie):void
+    public function getSources(array &$movie): void
     {
         $sources = $this->sourceRepository->findAll();
         $movie['sources'] = $sources;
