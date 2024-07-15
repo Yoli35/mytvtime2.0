@@ -3,8 +3,10 @@
 {% block title %}my Tv Time → {{ 'Movies'|trans }} → {{ movie.title }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/movie.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
 {% endblock %}
 
 {% block body %}
@@ -31,45 +33,52 @@
                 <div class="backdrop">
                     <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
                 </div>
-                <div class="title">{{ movie.title }} ({{ movie.release_date|date("Y") }})</div>
+                <div class="title">
+                    <h1>
+                        {{ movie.title }} ({{ movie.release_date|date("Y") }})
+                    </h1>
+                </div>
                 <div class="overview">{{ movie.overview }}</div>
             </div>
         </header>
         <main>
             <section>
                 <div class="details">
-                    <div class="genres">
-                        <div class="label">{{ 'Genres'|trans }}</div>
-                        <div class="content">
-                            {% for genre in movie.genres %}
-                                <div class="genre">{{ genre.name }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="runtime">
-                        <div class="label">{{ 'Runtime'|trans }}</div>
-                        <div class="content">{{ movie.runtime }} {{ 'minutes'|trans }}</div>
-                    </div>
-                    <div class="notes">
-                        <div class="label">{{ 'Note'|trans }}</div>
-                        <div class="content">
-                            <div class="note">{{ 'Average'|trans }} {{ movie.vote_average }}</div>
-                            <div class="note">{{ 'Count'|trans }} {{ movie.vote_count }}</div>
-                        </div>
-                    </div>
-                    {{ include('_blocks/movie/_release-dates.html.twig') }}
-                   {% if movie.recommendations|length %}
-                        <div class="recommendations">
-                            <div class="label">{{ 'Recommendations'|trans }}</div>
-                            <div class="content">
-                                <div class="wrapper">
-                                    {% for recommendation in movie.recommendations %}
-                                        {{ include('_blocks/Movie/_recommandation.html.twig', {recommendation: recommendation}) }}
+                    <div class="movie-details">
+                        {% if movie.providers|length %}
+                            <div class="providers">
+                                <div class="label">{{ 'Providers'|trans }}</div>
+                                <div class="content">
+                                    {% for provider in movie.providers %}
+                                        <div class="provider">
+                                            <div class="logo"><img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}"></div>
+                                            <div class="name">{{ provider.provider_name }}</div>
+                                        </div>
                                     {% endfor %}
                                 </div>
                             </div>
+                        {% endif %}
+                        <div class="genres">
+                            <div class="label">{{ 'Genres'|trans }}</div>
+                            <div class="content">
+                                {% for genre in movie.genres %}
+                                    <div class="genre">{{ genre.name }}</div>
+                                {% endfor %}
+                            </div>
                         </div>
-                    {% endif %}
+                        <div class="runtime">
+                            <div class="label">{{ 'Runtime'|trans }}</div>
+                            <div class="content">{{ movie.runtime|time }}</div>
+                        </div>
+                        <div class="notes">
+                            <div class="label">{{ 'Note'|trans }}</div>
+                            <div class="content">
+                                <div class="note">{{ 'Average'|trans }} {{ movie.vote_average }}</div>
+                                <div class="note">{{ 'Count'|trans }} {{ movie.vote_count }}</div>
+                            </div>
+                        </div>
+                        {{ include('_blocks/movie/_release-dates.html.twig') }}
+                    </div>
                 </div>
             </section>
             <section>
@@ -117,10 +126,10 @@
             </section>
         </main>
         {% include('_blocks/_footer.html.twig') %}
-        {% if app.user %}
-            <a href="{{ path('app_movie_add', {id: movie.id}) }}">
-                <div class="add-this">{{ 'Add this movie to your watchlist'|trans }}</div>
-            </a>
-        {% endif %}
     </div>
+    {% if app.user %}
+        <a href="{{ path('app_movie_add', {id: movie.id}) }}">
+            <div class="add-this">{{ 'Add this movie to your watchlist'|trans }}</div>
+        </a>
+    {% endif %}
 {% endblock %}
