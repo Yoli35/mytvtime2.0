@@ -117,7 +117,7 @@ class MovieController extends AbstractController
             'filterMeanings' => $filterMeanings,
             'filterBoxOpen' => $filterBoxOpen,
             'filters' => $filters,
-            ]);
+        ]);
         return $this->render('movie/index.html.twig', [
             'userMovies' => $userMovies,
             'userMovieCount' => $userMovieCount,
@@ -254,6 +254,52 @@ class MovieController extends AbstractController
         return $this->redirectToRoute('app_movie_show', ['userMovieId' => $userMovie->getId()]);
     }
 
+    #[IsGranted('ROLE_USER')]
+    #[Route('/filter', name: 'filter', methods: ['POST'])]
+    public function filter(Request $request): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $slugger = new ASCIISlugger();
+
+        $data = json_decode($request->getContent(), true);
+        $filters = [];
+        foreach ($data as $filter) {
+            $filters[$filter['key']] = $filter['value'];
+        }
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'my movies']);
+        $settings->setData($filters);
+        $this->settingsRepository->save($settings, true);
+
+        $userMovies = array_map(function ($movie) use ($user, $slugger) {
+            $this->saveImage("posters", $movie['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $movie['slug'] = $slugger->slug($movie['title']);
+            // release_date: 2024-07-24 -> 24 juillet 2024
+            $movie['releaseDateString'] = ucfirst($this->dateService->formatDateLong($movie['releaseDate'], $user->getTimezone() ?? 'Europe/Paris', $user->getPreferredLanguage() ?? 'fr'));
+            $movie['lastViewedAtString'] = $movie['lastViewedAt'] ? ucfirst($this->dateService->formatDateLong($movie['lastViewedAt'], $user->getTimezone() ?? 'Europe/Paris', $user->getPreferredLanguage() ?? 'fr')) : null;
+            return $movie;
+        }, $this->movieRepository->getMovieCards($user, $filters));
+
+        $userMovieCount = $this->movieRepository->countMovieCards($user, $filters);
+
+        dump([
+            'userMovies' => $userMovies,
+            'userMovieCount' => $userMovieCount,
+            'pages' => ceil($userMovieCount / $filters['perPage']),
+            'filters' => $filters,
+        ]);
+
+        return $this->json([
+            'ok' => true,
+            'body' => [
+                'userMovies' => $userMovies,
+                'userMovieCount' => $userMovieCount,
+                'pages' => ceil($userMovieCount / $filters['perPage']),
+                'filters' => $filters,
+            ],
+        ]);
+    }
+
     #[Route('/image/config', name: 'image_config')]
     public function getImageConfig(): Response
     {
@@ -266,12 +312,12 @@ class MovieController extends AbstractController
     public function getCredits(array &$movie): void
     {
         $slugger = new ASCIISlugger();
-        $movie['credits']['cast'] = array_map(function ($people) use($slugger) {
+        $movie['credits']['cast'] = array_map(function ($people) use ($slugger) {
             $people['profile_path'] = $people['profile_path'] ? $this->imageConfiguration->getUrl('profile_sizes', 2) . $people['profile_path'] : null;
             $people['slug'] = $slugger->slug($people['name']);
             return $people;
         }, $movie['credits']['cast']);
-        $movie['credits']['crew'] = array_map(function ($people) use($slugger) {
+        $movie['credits']['crew'] = array_map(function ($people) use ($slugger) {
             $people['profile_path'] = $people['profile_path'] ? $this->imageConfiguration->getUrl('profile_sizes', 2) . $people['profile_path'] : null;
             $people['slug'] = $slugger->slug($people['name']);
             return $people;

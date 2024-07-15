@@ -68,7 +68,7 @@
         <main>
             <article>
                 <header>
-                    <div class="title">{{ 'My movies'|trans }} ({{ userMovieCount }} {{ 'movies'|trans }})</div>
+                    <div class="title">{{ 'My movies'|trans }} (<span id="movie-count">{{ userMovieCount }}</span>)</div>
                     <div class="filter-values">
                         <div class="filter-value" data-title="{{ 'Sort'|trans }} / {{ 'Order'|trans }}">{{ ux_icon('ion:funnel', {height: '18px', width: '18px'}) }}: {{ filterMeanings[filters.sort]|trans }} / {{ filterMeanings[filters.order]|trans }}</div>
                         <div class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">{{ ux_icon('ion:apps-sharp', {height: '18px', width: '18px'}) }}: {{ filters.perPage }}</div>
@@ -90,7 +90,9 @@
     <script>
         const svgPathCollapse = '<path fill="currentColor" d="M117.863 88.282c-8.681 10.017-7.598 25.174 2.419 33.855l120 104c9.02 7.818 22.416 7.818 31.436 0l120-104c10.017-8.681 11.1-23.838 2.419-33.855s-23.839-11.099-33.855-2.418L256 176.241L151.718 85.864c-10.016-8.681-25.174-7.598-33.855 2.418m0 335.436c-8.681-10.017-7.598-25.174 2.419-33.855l120-104c9.02-7.818 22.416-7.818 31.436 0l120 104c10.017 8.681 11.1 23.838 2.419 33.855s-23.839 11.099-33.855 2.418L256 335.759l-104.282 90.377c-10.016 8.681-25.174 7.598-33.855-2.418"></path>';
         const svgPathExpand = '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="m136 208l120-104l120 104m-240 96l120 104l120-104"></path>';
+        const svgFavorite = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="m47.6 300.4l180.7 168.7c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9l180.7-168.7c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141c-45.6-7.6-92 7.3-124.6 39.9l-12 12l-12-12c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5"/></svg>'
         document.addEventListener('DOMContentLoaded', function () {
+            const lang = document.documentElement.lang;
             const filtersCollapse = document.querySelector('.collapse');
             const filtersCollapseIcon = filtersCollapse.querySelector('svg');
             const filters = document.querySelector('.filters');
@@ -111,27 +113,55 @@
                 }
             });
 
+
+
             pages.forEach(page => {
                 page.addEventListener('click', function () {
-                    window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: page.value}));
+                    getMovies(getParams().concat({key: 'page', value: page.value}));
                 });
             });
 
             titleFilter.addEventListener('input', function () {
                 if (titleFilter.value.length > 2) {
-                    window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}, {key: 'title', value: titleFilter.value}));
+                    getMovies(getParams().concat({key: 'page', value: 1}, {key: 'title', value: titleFilter.value}));
                 }
             });
 
             sortSelect.addEventListener('change', function () {
-                window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
+                getMovies(getParams().concat({key: 'page', value: 1}));
             });
             orderSelect.addEventListener('change', function () {
-                window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
+                getMovies(getParams().concat({key: 'page', value: 1}));
             });
             perPage.addEventListener('change', function () {
-                window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
+                getMovies(getParams().concat({key: 'page', value: 1}));
             });
+
+            function getMovies(params) {
+                fetch('/' + lang + '/movie/filter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify(params)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        const movies = data.body['userMovies'];
+                        const count = data.body['userMovieCount'];
+                        const pages = data.body['pages'];
+                        const movieCount = document.getElementById('movie-count');
+                        movieCount.textContent = count;
+                        const wrapper = document.querySelector('.wrapper');
+                        wrapper.innerHTML = '';
+                        movies.forEach(movie => {
+                            wrapper.appendChild(card(movie));
+                        });
+                    })
+                    .catch(error => console.error(error));
+            }
 
             function getParams() {
                 return [
@@ -168,6 +198,61 @@
                     .then(response => response.json())
                     .then(data => console.log(data))
                     .catch(error => console.error(error));
+            }
+
+            /* @param {
+                userMovieId: number,
+                title: string,
+                releaseDate: string,
+                posterPath: string,
+                favorite: boolean,
+                lastViewedAt: string
+            } movie */
+            function card(movie) {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                const a = document.createElement('a');
+                {#a.href = '{{ path('app_movie_show', {'userMovieId': movie.userMovieId}) }}';#}
+                a.href = '/' + lang + '/movie/show/' + movie.userMovieId;
+                const poster = document.createElement('div');
+                poster.classList.add('poster');
+                if (movie.posterPath) {
+                    const img = document.createElement('img');
+                    img.src = '/movies/posters/' + movie.posterPath;
+                    img.alt = movie.title;
+                    poster.appendChild(img);
+                } else {
+                    const div = document.createElement('div');
+                    div.textContent = '{{ 'No poster'|trans }}';
+                    poster.appendChild(div);
+                }
+                if (movie.favorite) {
+                    const favorite = document.createElement('div');
+                    favorite.classList.add('favorite');
+                    favorite.innerHTML = svgFavorite;
+                    poster.appendChild(favorite);
+                }
+                if (movie.lastViewedAtString) {
+                    const viewed = document.createElement('div');
+                    viewed.classList.add('viewed');
+                    viewed.textContent = movie.lastViewedAtString;
+                    poster.appendChild(viewed);
+                }
+                a.appendChild(poster);
+                const infos = document.createElement('div');
+                infos.classList.add('infos');
+                const name = document.createElement('div');
+                name.classList.add('name');
+                name.textContent = movie.title;
+                infos.appendChild(name);
+                const date = document.createElement('div');
+                date.classList.add('date');
+                date.textContent = movie.releaseDateString;
+                infos.appendChild(date);
+                a.appendChild(infos);
+                card.appendChild(a);
+
+                return card;
             }
         });
     </script>
