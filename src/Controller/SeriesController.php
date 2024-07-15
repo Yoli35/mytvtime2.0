@@ -1145,15 +1145,30 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $data = json_decode($request->getContent(), true);
         $name = $data['name'];
-        $value = $data['value'];
+        if ($name == 'my movies boxes')
+            $value = $data['box'];
+        else
+            $value = $data['value'];
         dump([
             'name' => $name,
             'value' => $value,
         ]);
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => $name]);
         if ($settings) {
+            if ($name == 'my movies boxes') {
+                $box = $value['key'];
+                $open = $value['value'];
+                $value = $settings->getData();
+                $value[$box] = $open;
+            }
             $settings->setData($value);
         } else {
+            if ($name == 'my movies boxes') {
+                $box = $value['key'];
+                $open = $value['value'];
+                $value = ['filters' => true, 'pages' => true];
+                $value[$box] = $open;
+            }
             $settings = new Settings($user, $name, $value);
         }
         $this->settingsRepository->save($settings, true);
@@ -1709,7 +1724,7 @@ class SeriesController extends AbstractController
 
     public function getWatchProviders($language, $watchRegion): array
     {
-        $providers = ['results'=>[]];//json_decode($this->tmdbService->getTvWatchProviderList($language, $watchRegion), true);
+        $providers = ['results' => []];//json_decode($this->tmdbService->getTvWatchProviderList($language, $watchRegion), true);
         dump(['TV providers' => $providers]);
         $providers = $providers['results'];
         if (count($providers) == 0) {

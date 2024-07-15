@@ -56,13 +56,16 @@ class MovieController extends AbstractController
             'language' => $user?->getPreferredLanguage() ?? $request->getLocale(),
             'timezone' => $user?->getTimezone() ?? "Europe/Paris"
         ];
-        $filtersBoxSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'my movies: filter box']);
+        $filtersBoxSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'my movies boxes']);
         if (!$filtersBoxSettings) {
-            $filtersBoxSettings = new Settings($user, 'my movies: filter box', ['open' => true]);
+            $filtersBoxSettings = new Settings($user, 'my movies boxes', ['filters' => true, 'pages' => true]);
             $this->settingsRepository->save($filtersBoxSettings, true);
             $filterBoxOpen = true;
+            $pageBoxOpen = true;
         } else {
-            $filterBoxOpen = $filtersBoxSettings->getData()['open'];
+            $data = $filtersBoxSettings->getData();
+            $filterBoxOpen = $data['filters'];
+            $pageBoxOpen = $data['pages'];
         }
         $page = 1;
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'my movies']);
@@ -124,6 +127,7 @@ class MovieController extends AbstractController
             'pages' => ceil($userMovieCount / $filters['perPage']),
             'filterMeanings' => $filterMeanings,
             'filterBoxOpen' => $filterBoxOpen,
+            'pageBoxOpen' => $pageBoxOpen,
             'filters' => $filters,
         ]);
     }
@@ -282,12 +286,12 @@ class MovieController extends AbstractController
 
         $userMovieCount = $this->movieRepository->countMovieCards($user, $filters);
 
-        dump([
-            'userMovies' => $userMovies,
-            'userMovieCount' => $userMovieCount,
-            'pages' => ceil($userMovieCount / $filters['perPage']),
-            'filters' => $filters,
-        ]);
+//        dump([
+//            'userMovies' => $userMovies,
+//            'userMovieCount' => $userMovieCount,
+//            'pages' => ceil($userMovieCount / $filters['perPage']),
+//            'filters' => $filters,
+//        ]);
 
         return $this->json([
             'ok' => true,

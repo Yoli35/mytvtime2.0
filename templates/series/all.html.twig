@@ -3,13 +3,14 @@
 {% block title %}my Tv Time → {{ 'All my series'|trans }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/filter.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
 {% endblock %}
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-    <div class="all-my-series container-fluid">
+    <div class="all-my-series container-fluid filter-page">
         <h1>{{ 'All my series'|trans }}</h1>
         <aside>
             <article>
