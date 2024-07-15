@@ -205,7 +205,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                              LIMIT 1)
             ORDER BY $sort $order 
             LIMIT $perPage OFFSET $offset";
-        dump($sql);
+//        dump($sql);
         return $this->getAll($sql);
     }
 
@@ -235,7 +235,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                                  )
                              ORDER BY ue2.air_date
                              LIMIT 1)";
-        dump($sql);
+//        dump($sql);
         return $this->getOne($sql);
     }
 
