@@ -33,41 +33,42 @@ export class Movie {
 
         const userActions = document.querySelector('.user-actions');
 
-        if (userActions) {
-            const stars = userActions.querySelectorAll('.star');
-            stars.forEach(function (star) {
-                star.addEventListener('click', function () {
-                    const active = this.classList.contains('active');
-                    const value = active ? 0 : this.getAttribute('data-value');
-                    fetch('/' + gThis.lang + '/movie/rating/' + gThis.userMovieId, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({rating: value})
-                        }
-                    ).then(function (response) {
-                        if (response.ok) {
-                            const transRating = stars[0].parentElement.getAttribute('data-trans-rating').split('|')[gThis.lang === 'en' ? 0 : 1];
-                            const transStar = stars[0].parentElement.getAttribute('data-trans-star').split('|')[gThis.lang === 'en' ? 0 : 1];
-                            const transStars = stars[0].parentElement.getAttribute('data-trans-stars').split('|')[gThis.lang === 'en' ? 0 : 1];
-                            stars.forEach(function (star) {
-                                star.classList.remove('active');
-                                if (star.getAttribute('data-value') <= value) {
-                                    star.setAttribute('data-title', transRating);
-                                } else {
-                                    const v = star.getAttribute('data-value');
-                                    star.setAttribute('data-title', v + ' ' + (v > 1 ? transStars : transStar));
-                                }
-                            });
-                            for (let i = 0; i < value; i++) {
-                                stars[i].classList.add('active');
+        if (!userActions) {
+            return;
+        }
+        const stars = userActions.querySelectorAll('.star');
+        stars.forEach(function (star) {
+            star.addEventListener('click', function () {
+                const active = this.classList.contains('active');
+                const value = active ? 0 : this.getAttribute('data-value');
+                fetch('/' + gThis.lang + '/movie/rating/' + gThis.userMovieId, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({rating: value})
+                    }
+                ).then(function (response) {
+                    if (response.ok) {
+                        const transRating = stars[0].parentElement.getAttribute('data-trans-rating').split('|')[gThis.lang === 'en' ? 0 : 1];
+                        const transStar = stars[0].parentElement.getAttribute('data-trans-star').split('|')[gThis.lang === 'en' ? 0 : 1];
+                        const transStars = stars[0].parentElement.getAttribute('data-trans-stars').split('|')[gThis.lang === 'en' ? 0 : 1];
+                        stars.forEach(function (star) {
+                            star.classList.remove('active');
+                            if (star.getAttribute('data-value') <= value) {
+                                star.setAttribute('data-title', transRating);
+                            } else {
+                                const v = star.getAttribute('data-value');
+                                star.setAttribute('data-title', v + ' ' + (v > 1 ? transStars : transStar));
                             }
+                        });
+                        for (let i = 0; i < value; i++) {
+                            stars[i].classList.add('active');
                         }
-                    });
+                    }
                 });
             });
-        }
+        });
 
         const pinned = userActions.querySelector('.toggle-pinned-movie');
         pinned?.addEventListener('click', function () {
@@ -248,7 +249,7 @@ export class Movie {
         lnDelete?.addEventListener('click', function (event) {
             event.preventDefault();
 
-            fetch('/' + gThis.lang + '/movie/delete/localized/name/' + gThis.userMovieId,{
+            fetch('/' + gThis.lang + '/movie/delete/localized/name/' + gThis.userMovieId, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -274,7 +275,7 @@ export class Movie {
             if (!name.value) {
                 name.nextElementSibling.textContent = gThis.translations['This field is required'];
             } else {
-                fetch('/' + gThis.lang + '/series/add/localized/name/' + gThis.userMovieId,{
+                fetch('/' + gThis.lang + '/series/add/localized/name/' + gThis.userMovieId, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -400,7 +401,7 @@ export class Movie {
                     if (!h4) {
                         h4 = document.createElement('h4');
                         h4.classList.add(type + '-h4');
-                        h4.textContent = gThis.translations[type === 'localized' ? 'Localized overviews':'Additional overviews'];
+                        h4.textContent = gThis.translations[type === 'localized' ? 'Localized overviews' : 'Additional overviews'];
                         infos.appendChild(h4);
 
                         overviewsDiv = document.createElement('div');
