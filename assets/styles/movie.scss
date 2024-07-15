@@ -160,7 +160,7 @@
 
         .wrapper {
             align-items: center;
-            background-color: var(--gradient-grey-85);
+            background-color: var(--gradient-ardoise-100-alpha-20);
             border-radius: .5rem;
             display: flex;
             flex-wrap: wrap;
@@ -171,7 +171,7 @@
 
         .card {
             align-items: center;
-            background-color: var(--gradient-ardoise-80-alpha-50);
+            background-color: var(--gradient-ardoise-100-alpha-20);
             border-radius: .5rem;
             display: flex;
             flex-direction: column;
@@ -221,7 +221,6 @@
 
             .infos {
                 align-items: center;
-                background-color: var(--gradient-grey-90);
                 border-radius: 0 0 .5rem .5rem;
                 display: flex;
                 flex-direction: column;
