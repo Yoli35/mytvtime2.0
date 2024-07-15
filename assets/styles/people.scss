@@ -221,7 +221,10 @@
                         }
 
                         .title {
+                            align-items: center;
+                            display: flex;
                             font-weight: 300;
+                            gap: 1rem;
 
                             span {
                                 color: var(--gradient-orange-70);

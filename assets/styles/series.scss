@@ -142,7 +142,7 @@ h2 {
                     .series-tools-click {
                         align-items: center;
                         aspect-ratio: 1;
-                        background-color: var(--gradient-ardoise-80);
+                        background-color: var(--gradient-ardoise-100-alpha-20);
                         border-radius: .25rem;
                         color: var(--gradient-ardoise-10);
                         cursor: pointer;
@@ -171,7 +171,7 @@ h2 {
 
                     > div {
                         align-items: center;
-                        background-color: var(--gradient-ardoise-70);
+                        background-color: var(--gradient-grey-85);
                         color: var(--gradient-ardoise-10);
                         cursor: pointer;
                         display: flex;
@@ -419,7 +419,7 @@ h2 {
 
     .next-episode {
         align-items: center;
-        background-color: var(--gradient-ardoise-80-alpha-50);
+        background-color: var(--gradient-ardoise-100-alpha-20);
         border-radius: .25rem;
         color: var(--gradient-ardoise-10);
         display: flex;
@@ -510,7 +510,7 @@ h2 {
 
                 .fact {
                     align-items: center;
-                    background-color: var(--gradient-ardoise-80-alpha-50);
+                    background-color: var(--gradient-ardoise-100-alpha-20);
                     border-radius: .25rem;
                     color: var(--gradient-ardoise-10);
                     display: flex;
@@ -1307,13 +1307,8 @@ h2 {
     }
 }
 
-/*  @media (min-width: 576px) {
-        .container, .container-fluid:not(:has(.backgroundImageOverlay)) {
-            padding-inline: 0.75rem;
-        }
-    } */
-@container series-show (width < 552px) {
-    /* 576px - 1.5rem */
+@container series-show (width < 576px) {
+
     .user-actions {
         padding-inline: 1rem;
 
@@ -1446,6 +1441,27 @@ h2 {
 
 @media (max-width: 576px) {
     .series-show {
+        .header, .schedules {
+            padding: 0;
+        }
+
+        .header {
+            .infos {
+                border-radius: 0;
+                .backdrop{
+                    img {
+                        border-radius: 0;
+                    }
+                }
+            }
+        }
+
+        .schedules {
+            .next-episode {
+                border-radius: 0;
+            }
+        }
+
         .content {
             flex-direction: column;
 

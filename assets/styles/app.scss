@@ -96,7 +96,7 @@ body {
     margin-inline: auto;
     min-height: 100dvh;
     padding-block-start: 4rem;
-    padding-inline: .25rem;
+    padding-inline: 0;
     position: relative;
     width: 100%;
 }
@@ -112,7 +112,7 @@ body {
     -webkit-backdrop-filter: blur(256px) brightness(75%) saturate(85%);
     backdrop-filter: blur(256px) brightness(75%) saturate(85%);
     height: 100%;
-    padding: 1rem;
+    padding: 0;
     width: 100%;
 }
 
@@ -123,6 +123,10 @@ body {
 @media (min-width: 576px) {
     .container, .container-fluid:not(:has(.backgroundImageOverlay)) {
         padding-inline: 0.75rem;
+    }
+
+    .backgroundImageOverlay {
+        padding: 1rem;
     }
 }
 
@@ -785,7 +789,7 @@ label:has(input[type="text"]) {
 .add-this {
     align-items: center;
     background-color: var(--add-this);
-    bottom: 1rem;
+    bottom: 6rem;
     border-radius: .25rem;
     color: var(--gradient-ardoise-10);
     display: flex;
