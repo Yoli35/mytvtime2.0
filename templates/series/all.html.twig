@@ -16,6 +16,10 @@
             <article>
                 <header>
                     <div class="title">{{ 'Filters'|trans }}</div>
+                    <div class="filter-values">
+                        <div class="filter-value" data-title="{{ 'Sort'|trans }} / {{ 'Order'|trans }}">{{ ux_icon('ion:settings-outline', {height: '18px', width: '18px'}) }}: {{ filterMeanings[filters.sort]|trans }} / {{ filterMeanings[filters.order]|trans }}</div>
+                        <div class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">{{ ux_icon('ion:apps-sharp', {height: '18px', width: '18px'}) }}: {{ filters.perPage }}</div>
+                    </div>
                     <div class="collapse" data-title="{{ 'Show / hide filter options'|trans }}">
                         {% if filterBoxOpen %}
                             {{ ux_icon('ion:chevron-collapse', {height: '18px', width: '18px'}) }}
@@ -85,10 +89,6 @@
             <article>
                 <header>
                     <div class="title">{{ 'My series'|trans }} ({{ userSeriesCount }} {{ 'seriess'|trans }})</div>
-                    <div class="filter-values">
-                        <div class="filter-value" data-title="{{ 'Sort'|trans }} / {{ 'Order'|trans }}">{{ ux_icon('ion:funnel', {height: '18px', width: '18px'}) }}: {{ filterMeanings[filters.sort]|trans }} / {{ filterMeanings[filters.order]|trans }}</div>
-                        <div class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">{{ ux_icon('ion:apps-sharp', {height: '18px', width: '18px'}) }}: {{ filters.perPage }}</div>
-                    </div>
                 </header>
                 <div class="wrapper">
                     {% for series in userSeries %}
