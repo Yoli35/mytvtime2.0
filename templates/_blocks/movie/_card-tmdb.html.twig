@@ -1,0 +1,15 @@
+<div class="card">
+    <a href="{{ path('app_movie_tmdb', {'id': movie.id}) }}">
+        <div class="poster">
+            {% if movie.poster_path %}
+                <img src="{{ movie.poster_path }}" alt="{{ movie.title }}">
+            {% else %}
+                <div>{{ 'No poster'|trans }}</div>
+            {% endif %}
+        </div>
+        <div class="infos">
+            <div class="name">{{ movie.title }}</div>
+{#            <div class="date">{{ movie.date|format_date('relative_full')|capitalize }}</div>#}
+        </div>
+    </a>
+</div>

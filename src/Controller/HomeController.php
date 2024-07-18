@@ -118,21 +118,24 @@ class HomeController extends AbstractController
         $slugger = new AsciiSlugger();
         $filterString = "&page=1&sort_by=first_air_date.desc&with_watch_providers=" . $provider . "&with_watch_monetization_types=flatrate&language=fr&timezone=Europe/Paris&watch_region=FR&include_adult=false";
         $filterName = "Netflix";
-        $filteredSeries = $this->getSelection($filterString, $slugger);
+        $filteredSeries = $this->getSelection('tv', $filterString, $slugger);
 //        dump(['filteredSeries' => $filteredSeries]);
 
         $seriesSelection = $this->getSeriesSelection($slugger, $country, $timezone, $language, true);
+        $movieSelection = $this->getMovieSelection($slugger, $country, $timezone, $language, true);
 
-//        dump([
+        dump([
 //            'historySeries' => $historySeries,
 //            'filterString' => $filterString,
-//            'seriesSelection' => $seriesSelection,
+            'seriesSelection' => $seriesSelection,
+            'movieSelection' => $movieSelection,
 //            'episodesOfTheDay' => $episodesOfTheDay,
 //            'historyEpisode' => $historyEpisode,
-//        ]);
+        ]);
 
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
+            'highlightedMovies' => $movieSelection,
             'userSeries' => $userSeries,
             'episodesOfTheDay' => $episodesOfTheDay,
             'episodesToWatch' => $episodesToWatch,
@@ -206,7 +209,7 @@ class HomeController extends AbstractController
             . "&timezone=$timezone&watch_region=$country&include_adult=false"
             . "&first_air_date.gte=$startDate&first_air_date.lte=$endDate"
             . "&with_watch_monetization_types=flatrate&with_watch_providers=$selectedProviders";
-        $seriesSelection = $this->getSelection($filterString, $slugger, $country, $timezone, $language);
+        $seriesSelection = $this->getSelection('tv', $filterString, $slugger, $country, $timezone, $language);
 
         // array_filter pour retirer les séries sans poster & array_values() pour ré-indexer le tableau
         return array_values(array_filter($seriesSelection, function ($tv) {
@@ -214,18 +217,72 @@ class HomeController extends AbstractController
         }));
     }
 
-    public function getSelection(string $filterString, AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $preferredLanguage = 'fr'): array
+    public function getMovieSelection(AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $language = 'fr', $forceProvider = null): array
     {
-        $seriesSelection = json_decode($this->tmdbService->getFilterTv($filterString), true)['results'];
+        $page = rand(1, 5);
 
-        return array_map(function ($tv) use ($slugger, $country, $timezone, $preferredLanguage) {
+        $startDate = date('Y-m-d', strtotime('-1 year'));
+        $endDate = date('Y-m-d', strtotime('+6 month'));
 
-            $tv = json_decode($this->tmdbService->getTv($tv['id'], $preferredLanguage, ['videos', 'watch/providers']), true);
+        if ($forceProvider) {
+            $selectedProviders = "8|337|119|350";
+        } else {
+            // providers: 8|35|43|119|234|236|337|344|345|350|381
+            // 8: Netflix           // 35: Rakuten TV        // 43: Starz            // 119: Amazon Prime Video
+            // 234: Arte            // 236: France TV        // 337: Disney Plus     // 344: Rakuten Viki
+            // 345: Canal+ Séries   // 350: Apple TV Plus    // 381: Canal Plus
+            $providers = [8, 35, 43, 119, 234, 236, 337, 344, 345, 350, 381];
+            $count = count($providers);
+            $providerCountToAdd = rand(2, $count - 1);
+            $selectedProviders = [];
+            for ($i = 0; $i < $providerCountToAdd; $i++) {
+                do {
+                    $index = rand(0, $count - 1);
+                    $providerToAdd = $providers[$index];
+                } while (in_array($providerToAdd, $selectedProviders));
+                $selectedProviders[] = $providerToAdd;
+                $providers = array_values(array_diff($providers, $selectedProviders));
+                $count = count($providers);
+            }
+            $selectedProviders = implode('|', $selectedProviders);
+        }
+        // type: possible values are: [0 Documentary, 1 News, 2 Miniseries, 3 Reality, 4 Scripted, 5 Talk Show, 6 Video],
+        // can be a comma (AND) or pipe (OR) separated query
+        $filterString = "&sort_by=first_air_date.desc&page=$page&with_type=0|2|4&language=$language"
+            . "&timezone=$timezone&watch_region=$country&include_adult=false"
+            . "&release_date.gte=$startDate&release_date.lte=$endDate"
+            . "&with_watch_monetization_types=flatrate&with_watch_providers=$selectedProviders";
+        $seriesSelection = $this->getSelection('movie', $filterString, $slugger, $country, $timezone, $language);
 
+        // array_filter pour retirer les séries sans poster & array_values() pour ré-indexer le tableau
+        return array_values(array_filter($seriesSelection, function ($tv) {
+            return $tv['poster_path'];
+        }));
+    }
+
+    public function getSelection(string $media, string $filterString, AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $preferredLanguage = 'fr'): array
+    {
+        if ($media === 'movie') {
+            $seriesSelection = json_decode($this->tmdbService->getFilterMovie($filterString), true)['results'];
+//            $id = 'userMovie'
+            $name = 'title';
+            $date = 'release_date';
+        } else {
+            $seriesSelection = json_decode($this->tmdbService->getFilterTv($filterString), true)['results'];
+            $name = 'name';
+            $date = 'first_air_date';
+        }
+
+        return array_map(function ($tv) use ($slugger, $media, $name, $date, $country, $timezone, $preferredLanguage) {
+
+            if ($media === 'movie')
+                $tv = json_decode($this->tmdbService->getMovie($tv['id'], $preferredLanguage, ['videos', 'watch/providers']), true);
+            else
+                $tv = json_decode($this->tmdbService->getTv($tv['id'], $preferredLanguage, ['videos', 'watch/providers']), true);
             $tv['tmdb'] = true;
-            $this->seriesController->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-            $tv['poster_path'] = $tv['poster_path'] ? '/series/posters' . $tv['poster_path'] : null; // w780
-            $tv['slug'] = strtolower($slugger->slug($tv['name']));
+            $this->seriesController->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5),$media==='movie' ? '/movies/' : '/series/');
+            $tv['poster_path'] = $tv['poster_path'] ? '/' . ($media === 'tv' ? 'series' : 'movies') . '/posters' . $tv['poster_path'] : null; // w780
+            $tv['slug'] = strtolower($slugger->slug($tv[$media === 'tv' ? 'name': 'title']));
 
             if ($country) {
                 $wpArr = $tv['watch/providers'];//json_decode($this->tmdbService->getTvwatchProviders($tv['id']), true);
@@ -238,15 +295,15 @@ class HomeController extends AbstractController
             } else
                 $tv['watch_providers'] = [];
             return [
-                'date' => $this->dateService->newDateImmutable($tv['first_air_date'], $timezone)->format('d/m/Y'),
+                'date' => $this->dateService->newDateImmutable($tv[$date], $timezone)->format('d/m/Y'),
                 'id' => $tv['id'],
-                'name' => $tv['name'],
+                $name => $tv[$name],
                 'overview' => $tv['overview'],
                 'poster_path' => $tv['poster_path'],
                 'slug' => $tv['slug'],
                 'tmdb' => true,
                 'watch_providers' => $tv['watch_providers'],
-                'year' => $tv['first_air_date'] ? substr($tv['first_air_date'], 0, 4) : '',
+                'year' => $tv[$date] ? substr($tv[$date], 0, 4) : '',
                 'videos' => $tv['videos']['results'] ?? '',
             ];
         }, $seriesSelection);

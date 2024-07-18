@@ -53,10 +53,10 @@
                 <div class="loading-item"></div>
                 <div class="loading-item"></div>
             </div>
-{#            <div class="loading-v2">#}
-{#                <div class="ball-container">#}
-{#                </div>#}
-{#            </div>#}
+            <div class="loading-v2">
+                <div class="ball-container">
+                </div>
+            </div>
         </div>
         <div class="highlight-progress">
             <div class="head"></div>
@@ -68,6 +68,16 @@
                 <div class="content">
                     {% for s in highlightedSeries %}
                         {{ include('_blocks/series/_card.html.twig', { series: s }) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="series-group">
+            <h2>{{ 'Recent movies'|trans }}</h2>
+            <div class="wrapper">
+                <div class="content">
+                    {% for m in highlightedMovies %}
+                        {{ include('_blocks/movie/_card-tmdb.html.twig', { movie: m }) }}
                     {% endfor %}
                 </div>
             </div>
