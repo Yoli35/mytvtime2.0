@@ -258,7 +258,7 @@ export class Movie {
                 }
             ).then(function (response) {
                 if (response.ok) {
-                    hideForm(localizedNameForm);
+                    gThis.hideForm(localizedNameForm);
                     const localizedNameSpan = document.querySelector('.localized-name-span');
                     localizedNameSpan.remove();
                 }
@@ -284,7 +284,7 @@ export class Movie {
                     }
                 ).then(function (response) {
                     if (response.ok) {
-                        hideForm(localizedNameForm);
+                        gThis.hideForm(localizedNameForm);
                         const localizedNameSpan = document.querySelector('.localized-name-span');
                         if (localizedNameSpan) {
                             localizedNameSpan.textContent = name.value;
