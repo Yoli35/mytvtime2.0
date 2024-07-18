@@ -15,6 +15,7 @@
                 <div class="user__avatar"></div>
                 <div class="user__name">{{ 'Username'|trans }}</div>
                 <div class="user__email">{{ 'Email'|trans }}</div>
+                <div class="user__movie">{{ 'Movie'|trans }}</div>
                 <div class="user__series">{{ 'Series'|trans }}</div>
                 <div class="user__providers">{{ 'Providers'|trans }}</div>
                 <div class="user__episodes">{{ 'Episodes'|trans }}</div>
@@ -27,6 +28,7 @@
                     <img src="/images/users/avatars/{{ u.avatar }}" class="user__avatar" alt="{{ u.username }}">
                     <div class="user__name">{{ u.username }}</div>
                     <div class="user__email">{{ u.email }}</div>
+                    <div class="user__movie">{{ u.movieCount }}</div>
                     <div class="user__series">{{ u.seriesCount }}</div>
                     <div class="user__providers">{{ u.providerCount }}</div>
                     <div class="user__episodes">{{ u.episodeCount }}</div>

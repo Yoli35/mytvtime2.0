@@ -9,8 +9,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
-#[Route('/{_locale}/series/admin', name: 'app_admin_', requirements: ['_locale' => 'fr|en|de|es'])]
-class SeriesAdminController extends AbstractController
+#[Route('/{_locale}/admin', name: 'app_admin_', requirements: ['_locale' => 'fr|en|de|es'])]
+class AdminController extends AbstractController
 {
 
     public function __construct(
@@ -23,7 +23,7 @@ class SeriesAdminController extends AbstractController
     public function index(): Response
     {
         $users = $this->userRepository->users();
-        return $this->render('series_admin/index.html.twig', [
+        return $this->render('admin/index.html.twig', [
             'users' => $users,
         ]);
     }

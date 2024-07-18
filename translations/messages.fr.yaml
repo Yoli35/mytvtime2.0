@@ -1,6 +1,7 @@
 #Admin
 Users: Utilisateurs
 Providers: Plateformes
+Dashboard: Tableau de bord
 
 # Home
 Home: Accueil
@@ -37,6 +38,7 @@ Dark: Sombre
 French: Français
 English: Anglais
 Recent series: Séries récentes
+Recent movies: Films récents
 Latest series added: Dernières séries ajoutées
 Your series: Vos séries
 All my series: Toutes mes séries à regarder
@@ -179,6 +181,7 @@ That's all, Folks!: C'est tout, les amis !
 This field is required: Ce champ est requis
 Today: Aujourd'hui
 Tomorrow: Demain
+Translate: Traduire
 URL: URL
 Up to date!: À jour !
 Updates: Mises à jour

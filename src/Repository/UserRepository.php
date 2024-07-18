@@ -72,6 +72,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                        u.email    as email,
                        u.username as username,
                        u.roles    as roles,
+                       (SELECT COUNT(*) FROM user_movie um WHERE um.user_id=u.id)    as movieCount,
                        (SELECT COUNT(*) FROM user_series us WHERE us.user_id=u.id)   as seriesCount,
                        (SELECT COUNT(*) FROM user_provider up WHERE up.user_id=u.id) as providerCount,
                        (SELECT COUNT(*) FROM user_episode ue WHERE ue.user_id=u.id)  as episodeCount
