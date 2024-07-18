@@ -40,8 +40,8 @@ export class HighlightSeries {
         this.highlightProgressDiv = document.querySelector(".highlight-progress");
         this.posterListDiv = document.querySelector(".poster-list");
         this.loadingDiv = document.querySelector(".loading");
-        // this.loadingV2Div = document.querySelector(".loading-v2");
-        // this.loadingV2Rect = this.loadingV2Div.getBoundingClientRect();
+        this.loadingV2Div = document.querySelector(".loading-v2");
+        this.loadingV2Rect = this.loadingV2Div.getBoundingClientRect();
         this.averageColor = new AverageColor();
         let duration = this.root.style.getPropertyValue("--highlight-duration");
         let transition = this.root.style.getPropertyValue("--highlight-transition");
@@ -52,11 +52,11 @@ export class HighlightSeries {
             this.transition = transition.slice(0, -2) * 1;
         }
 
-        // new ResizeObserver(() => {
-        //     this.loadingV2Rect = this.loadingV2Div.getBoundingClientRect();
-        // }).observe(this.highlightDiv);
+        new ResizeObserver(() => {
+            this.loadingV2Rect = this.loadingV2Div.getBoundingClientRect();
+        }).observe(this.highlightDiv);
 
-        // this.loadingV2();
+        this.loadingV2();
         this.displaySeries();
     }
 
