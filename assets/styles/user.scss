@@ -147,7 +147,11 @@
     }
 }
 
-.watch-link-form, .localized-name-form, .overview-form, .delete-overview-form {
+.watch-link-form,
+.localized-name-form,
+.overview-form,
+.delete-overview-form,
+.keyword-translation-form {
     background-color: var(--gradient-ardoise-80-alpha-90);
     border-radius: 0.5rem;
     border: 2px solid var(--gradient-orange-50);
@@ -169,7 +173,7 @@
     }
 
     form {
-        gap: .5rem;
+        gap: 1rem;
         padding: 1rem;
 
         .form-row {
@@ -190,6 +194,32 @@
 
             &.hide {
                 display: none;
+            }
+        }
+
+        .form-body {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+
+            .fields {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+
+                .translation {
+                    width: 100%;
+
+                    label {
+                        display: flex;
+                        font-size: 1rem;
+                        font-weight: 300;
+                        gap: 1rem;
+                        justify-content: space-between;
+                        width: 100%;
+                        white-space: nowrap;
+                    }
+                }
             }
         }
     }

@@ -9,6 +9,7 @@ import {HighlightSeries} from 'HighlightSeries';
 import {PosterHover} from 'PosterHover';
 import {AverageColor} from 'AverageColor';
 import {Season} from 'Season';
+import {Show} from 'Show';
 
 // new ResizeObserver(entries => {
 //     entries.forEach( (entry) =>{
@@ -16,7 +17,6 @@ import {Season} from 'Season';
 //     });
 //     drawBodyBackground(canvas);
 // }).observe(document.body);
-
 
 // const canvas = initBodyBackground();
 // new ResizeObserver(() => {
@@ -182,6 +182,11 @@ window.addEventListener("DOMContentLoaded", () => {
             const season = new Season();
             season.init();
         }
+    }
+
+    const userSeriesShow = document.querySelector(".user-series-show");
+    if (userSeriesShow) {
+        new Show();
     }
 
     const movieShow = document.querySelector(".movie-show");

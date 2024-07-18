@@ -45,6 +45,9 @@ return [
     'Season' => [
         'path' => './assets/js/series/Season.js',
     ],
+    'Show' => [
+        'path' => './assets/js/series/Show.js',
+    ],
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],

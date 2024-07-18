@@ -556,6 +556,15 @@ h2 {
 
                     }
 
+                    &.keyword-block {
+                        position: relative;
+
+                        .keyword-translation-form {
+                            left: unset;
+                            right:unset;
+                        }
+                    }
+
                     .keywords {
                         display: flex;
                         flex-wrap: wrap;
@@ -565,7 +574,7 @@ h2 {
 
                         .keyword {
                             align-items: center;
-                            background-color: var(--gradient-orange-50);
+                            background-color: var(--gradient-green-50);
                             border-radius: .25rem;
                             color: var(--gradient-orange-90);
                             display: flex;
@@ -573,10 +582,18 @@ h2 {
                             font-weight: 300;
                             gap: .25rem;
                             justify-content: center;
-                            padding: .25rem;
+                            padding: .125rem .375rem;
                             position: relative;
-                        }
 
+                            &.missing {
+                                background-color: var(--gradient-orange-50);
+                                cursor: pointer;
+
+                                &:hover {
+                                    background-color: var(--gradient-orange-60);
+                                }
+                            }
+                        }
                     }
                 }
             }

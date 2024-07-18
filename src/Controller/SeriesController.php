@@ -498,6 +498,7 @@ class SeriesController extends AbstractController
         $tv['overview'] = $this->localizedOverview($tv, $series, $request);
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, $user->getCountry() ?? 'FR');
+        $tv['missing_translations'] = $this->keywordsTranslation($tv['keywords'], $request->getLocale());
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userSeries = $this->updateUserSeries($userSeries, $tv);
@@ -517,6 +518,7 @@ class SeriesController extends AbstractController
             'Update' => $this->translator->trans('Update'),
             'Remove from favorites' => $this->translator->trans('Remove from favorites'),
             'Add to favorites' => $this->translator->trans('Add to favorites'),
+            'This field is required' => $this->translator->trans('This field is required'),
         ];
 
         dump([
@@ -1175,6 +1177,48 @@ class SeriesController extends AbstractController
 
         return $this->json([
             'ok' => true,
+        ]);
+    }
+
+    #[Route('/keywords/save', name: 'keywords_save', methods: ['POST'])]
+    public function translationSave(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $tmdbId = $data['id'];
+        $keywords = $data['keywords'];
+        $language = $data['language'];
+
+        $keywordYaml = $this->getTranslationLines($language);
+
+        $n = count($keywords);
+        for ($i = 0; $i < $n; $i++) {
+            $line = $keywords[$i]['original'] . ': ' . $keywords[$i]['translated'] . "\n";
+            $keywordYaml[] = $line;
+        }
+        usort($keywordYaml, fn($a, $b) => $a <=> $b);
+
+        $filename = '../translations/keywords.' . $language . '.yaml';
+        $res = fopen($filename, 'w');
+
+        foreach ($keywordYaml as $line) {
+            fputs($res, $line);
+        }
+        fclose($res);
+
+        $tvKeywords = json_decode($this->tmdbService->getTvKeywords($tmdbId), true);
+
+        $missingKeywords = $this->keywordsTranslation($tvKeywords, $language);
+        $keywordBlock = $this->renderView('_blocks/series/_keywords.html.twig', [
+            'id' => $tmdbId,
+            'keywords' => $tvKeywords['results'],
+            'missing' => $missingKeywords,
+        ]);
+
+        // fetch response
+        return $this->json([
+            'ok' => true,
+            'keywords' => $keywordBlock,
         ]);
     }
 
@@ -1860,13 +1904,13 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    public function saveImage($type, $imagePath, $imageUrl): void
+    public function saveImage($type, $imagePath, $imageUrl, $localPath="/series/"): void
     {
         if (!$imagePath) return;
         $root = $this->getParameter('kernel.project_dir');
         $this->saveImageFromUrl(
             $imageUrl . $imagePath,
-            $root . "/public/series/" . $type . $imagePath
+            $root . "/public" . $localPath . $type . $imagePath
         );
     }
 
@@ -1894,5 +1938,53 @@ class SeriesController extends AbstractController
             }
         }
         return true;
+    }
+
+    public function keywordsTranslation($keywords, $locale): array
+    {
+        $translatedKeywords = $this->getTranslations($locale);
+        $keywordsList = [];
+        $keywordsOk = [];
+
+        foreach ($keywords['results'] as $keyword) {
+            $keywordsList[] = $keyword['name'];
+            foreach ($translatedKeywords as $value) {
+                if (!strcmp(trim($keyword['name']), trim($value[0]))) {
+                    $keywordsOk[] = $keyword['name'];
+                    break;
+                }
+            }
+        }
+        $diff = array_diff($keywordsList, $keywordsOk);
+        $values = array_values($diff);
+        dump(['keywords' => $keywordsList, 'ok' => $keywordsOk, 'diff' => $diff, 'values' => $values]);
+        return array_values(array_diff($keywordsList, $keywordsOk));
+    }
+
+    public function getTranslations($locale): array
+    {
+        $filename = '../translations/keywords.' . $locale . '.yaml';
+        $res = fopen($filename, 'a+');
+        $ks = [];
+
+        while (!feof($res)) {
+            $line = fgets($res);
+            $ks[] = explode(": ", $line);
+        }
+        fclose($res);
+        return $ks;
+    }
+
+    public function getTranslationLines($locale): array
+    {
+        $filename = '../translations/keywords.' . $locale . '.yaml';
+        $res = fopen($filename, 'a+');
+        $ks = [];
+
+        while (!feof($res)) {
+            $ks[] = fgets($res);
+        }
+        fclose($res);
+        return $ks;
     }
 }

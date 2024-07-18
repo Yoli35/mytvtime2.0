@@ -127,6 +127,23 @@ class TMDBService
         }
     }
 
+    public function getFilterMovie(string $filterString): ?string
+    {
+        try {
+            $response = $this->client->request(
+                'GET',
+                'https://api.themoviedb.org/3/discover/movie?api_key=' . $this->api_key . $filterString,
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable $exception) {
+                return 'Response : ' . $exception->getMessage() . ' - code : ' . $exception->getCode();
+            }
+        } catch (Throwable $exception) {
+            return 'Request : ' . $exception->getMessage() . ' - code : ' . $exception->getCode();
+        }
+    }
+
     public function searchTv(string $searchString): ?string
     {
         try {
@@ -273,6 +290,24 @@ class TMDBService
         if ($details) {
             $request .= '&append_to_response=' . implode(',', $details);
         }
+        try {
+            $response = $this->client->request(
+                'GET',
+                $request,
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable) {
+                return "";
+            }
+        } catch (Throwable) {
+            return "";
+        }
+    }
+
+    public function getTvKeywords($tvId): ?string
+    {
+        $request = "https://api.themoviedb.org/3/tv/$tvId/keywords?api_key=$this->api_key";
         try {
             $response = $this->client->request(
                 'GET',
