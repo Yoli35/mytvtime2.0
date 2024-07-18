@@ -41,6 +41,7 @@ use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\DeeplTranslator;
 use App\Service\ImageConfiguration;
+use App\Service\KeywordService;
 use App\Service\TMDBService;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -70,7 +71,7 @@ class SeriesController extends AbstractController
         private readonly EpisodeSubstituteNameRepository    $episodeSubstituteNameRepository,
         private readonly ImageConfiguration                 $imageConfiguration,
         private readonly KeywordRepository                  $keywordRepository,
-//        private readonly ProviderRepository                 $providerRepository,
+        private readonly KeywordService                     $keywordService,
         private readonly SeriesAdditionalOverviewRepository $seriesAdditionalOverviewRepository,
         private readonly SeriesDayOffsetRepository          $seriesDayOffsetRepository,
         private readonly SeriesImageRepository              $seriesImageRepository,
@@ -498,7 +499,7 @@ class SeriesController extends AbstractController
         $tv['overview'] = $this->localizedOverview($tv, $series, $request);
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, $user->getCountry() ?? 'FR');
-        $tv['missing_translations'] = $this->keywordsTranslation($tv['keywords'], $request->getLocale());
+        $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $request->getLocale());
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userSeries = $this->updateUserSeries($userSeries, $tv);
@@ -1189,7 +1190,7 @@ class SeriesController extends AbstractController
         $keywords = $data['keywords'];
         $language = $data['language'];
 
-        $keywordYaml = $this->getTranslationLines($language);
+        $keywordYaml = $this->keywordService->getTranslationLines($language);
 
         $n = count($keywords);
         for ($i = 0; $i < $n; $i++) {
@@ -1208,7 +1209,7 @@ class SeriesController extends AbstractController
 
         $tvKeywords = json_decode($this->tmdbService->getTvKeywords($tmdbId), true);
 
-        $missingKeywords = $this->keywordsTranslation($tvKeywords, $language);
+        $missingKeywords = $this->keywordService->keywordsTranslation($tvKeywords['results'], $language);
         $keywordBlock = $this->renderView('_blocks/series/_keywords.html.twig', [
             'id' => $tmdbId,
             'keywords' => $tvKeywords['results'],
@@ -1938,53 +1939,5 @@ class SeriesController extends AbstractController
             }
         }
         return true;
-    }
-
-    public function keywordsTranslation($keywords, $locale): array
-    {
-        $translatedKeywords = $this->getTranslations($locale);
-        $keywordsList = [];
-        $keywordsOk = [];
-
-        foreach ($keywords['results'] as $keyword) {
-            $keywordsList[] = $keyword['name'];
-            foreach ($translatedKeywords as $value) {
-                if (!strcmp(trim($keyword['name']), trim($value[0]))) {
-                    $keywordsOk[] = $keyword['name'];
-                    break;
-                }
-            }
-        }
-        $diff = array_diff($keywordsList, $keywordsOk);
-        $values = array_values($diff);
-        dump(['keywords' => $keywordsList, 'ok' => $keywordsOk, 'diff' => $diff, 'values' => $values]);
-        return array_values(array_diff($keywordsList, $keywordsOk));
-    }
-
-    public function getTranslations($locale): array
-    {
-        $filename = '../translations/keywords.' . $locale . '.yaml';
-        $res = fopen($filename, 'a+');
-        $ks = [];
-
-        while (!feof($res)) {
-            $line = fgets($res);
-            $ks[] = explode(": ", $line);
-        }
-        fclose($res);
-        return $ks;
-    }
-
-    public function getTranslationLines($locale): array
-    {
-        $filename = '../translations/keywords.' . $locale . '.yaml';
-        $res = fopen($filename, 'a+');
-        $ks = [];
-
-        while (!feof($res)) {
-            $ks[] = fgets($res);
-        }
-        fclose($res);
-        return $ks;
     }
 }

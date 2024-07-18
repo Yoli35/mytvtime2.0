@@ -477,4 +477,22 @@ class TMDBService
             return "";
         }
     }
+
+    public function getMovieKeywords($movieId): ?string
+    {
+        $request = "https://api.themoviedb.org/3/movie/$movieId/keywords?api_key=$this->api_key";
+        try {
+            $response = $this->client->request(
+                'GET',
+                $request,
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable) {
+                return "";
+            }
+        } catch (Throwable) {
+            return "";
+        }
+    }
 }

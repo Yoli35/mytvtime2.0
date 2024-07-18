@@ -1,3 +1,5 @@
+import {Keyword} from "Keyword";
+
 let gThis;
 
 export class Movie {
@@ -18,15 +20,14 @@ export class Movie {
 
     constructor() {
         gThis = this;
-        document.addEventListener('DOMContentLoaded', function () {
-            /** @var {Globs} */
-            const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
-            this.providers = jsonGlobsObject.providers;
-            this.userMovieId = jsonGlobsObject.userMovieId;
-            this.translations = jsonGlobsObject.translations;
-            this.lang = document.documentElement.lang;
-        });
-        this.init();
+
+        /** @var {Globs} */
+        const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
+        this.providers = jsonGlobsObject.providers;
+        this.userMovieId = jsonGlobsObject.userMovieId;
+        this.translations = jsonGlobsObject.translations;
+        this.lang = document.documentElement.lang;
+        gThis.init();
     }
 
     init() {
@@ -506,6 +507,8 @@ export class Movie {
                 }
             });
         });
+
+        new Keyword('movie');
     }
 
     displayForm(form) {

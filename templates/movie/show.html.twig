@@ -31,7 +31,7 @@
                 </div>
                 <div class="title">
                     <h1>
-                        {{ movie.title }}{% if movie.original_title %}<br><span>{{ movie.original_title }}</span>{% endif%} ({{ movie.release_date|date("Y") }})
+                        {{ movie.title }}{% if movie.original_title %}<br><span>{{ movie.original_title }}</span>{% endif %} ({{ movie.release_date|date("Y") }})
                     </h1>
                     <div class="movie-tools">
                         <div class="movie-tools-click">
@@ -111,39 +111,143 @@
             <section>
                 <div class="details">
                     <div class="movie-details">
-                        {% if movie.providers|length %}
-                            <div class="providers">
-                                <div class="label">{{ 'Providers'|trans }}</div>
-                                <div class="content">
-                                    {% for provider in movie.providers %}
-                                        <div class="provider">
-                                            <div class="logo"><img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}"></div>
-                                            <div class="name">{{ provider.provider_name }}</div>
+                        <div class="two-parts">
+                            <div class="left">
+                                {% if movie.providers|length %}
+                                    <div class="providers">
+                                        <div class="label">{{ 'Providers'|trans }}</div>
+                                        <div class="content">
+                                            {% for provider in movie.providers %}
+                                                <div class="provider">
+                                                    <div class="logo"><img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}"></div>
+                                                    <div class="name">{{ provider.provider_name }}</div>
+                                                </div>
+                                            {% endfor %}
                                         </div>
-                                    {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="genres">
+                                    <div class="label">{{ 'Genres'|trans }}</div>
+                                    <div class="content">
+                                        {% for genre in movie.genres %}
+                                            <div class="genre">{{ genre.name }}</div>
+                                        {% endfor %}
+                                    </div>
                                 </div>
+                                <div class="runtime">
+                                    <div class="label">{{ 'Runtime'|trans }}</div>
+                                    <div class="content">{{ movie.runtime|time }}</div>
+                                </div>
+                                <div class="notes">
+                                    <div class="label">{{ 'Note'|trans }}</div>
+                                    <div class="content">
+                                        <div class="note">{{ 'Average'|trans }} {{ movie.vote_average }}</div>
+                                        <div class="note">{{ 'Count'|trans }} {{ movie.vote_count }}</div>
+                                    </div>
+                                </div>
+                                {{ include('_blocks/movie/_release-dates.html.twig') }}
+                                    <div class="original-name">
+                                        <div class="label">{{ 'Original name'|trans }}</div>
+                                        <div class="content">{{ movie.original_title }}</div>
+                                    </div>
+                                    <div class="original-language">
+                                        <div class="label">{{ 'Original language'|trans }}</div>
+                                        <div class="content">{{ movie.original_language|language_name }}</div>
+                                    </div>
+                                    <div class="original-countries">
+                                        <div class="label">{{ 'Original Country'|trans }}</div>
+                                        <div class="content">
+                                            {% for country in movie.origin_country %}
+                                                <div class="country">{{ getEmojiFlag(country) ~ ' ' ~ country|country_name }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="status">
+                                        <div class="label">{{ 'Status'|trans }}</div>
+                                        <div class="content">{{ movie.status|trans }}</div>
+                                    </div>
                             </div>
-                        {% endif %}
-                        <div class="genres">
-                            <div class="label">{{ 'Genres'|trans }}</div>
-                            <div class="content">
-                                {% for genre in movie.genres %}
-                                    <div class="genre">{{ genre.name }}</div>
-                                {% endfor %}
+                            <div class="right">
+                                {% if movie['watch/providers'] %}
+                                    {% if movie['watch/providers'].flatrate|length %}
+                                        <h3>{{ 'Where to watch'|trans }}</h3>
+                                        <div class="providers">
+                                            <div class="wrapper">
+                                                {% for provider in movie['watch/providers'].flatrate %}
+                                                    <div class="provider" data-title="{{ provider.provider_name }}">
+                                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                                        <div>{{ provider.provider_name }}</div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                    {% if movie['watch/providers'].rent|length %}
+                                        <h3>{{ 'Where to rent'|trans }}</h3>
+                                        <div class="providers">
+                                            <div class="wrapper">
+                                                {% for provider in movie['watch/providers'].rent %}
+                                                    <div class="provider" data-title="{{ provider.provider_name }}">
+                                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                                        <div>{{ provider.provider_name }}</div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                    {% if movie['watch/providers'].buy|length %}
+                                        <h3>{{ 'Where to buy'|trans }}</h3>
+                                        <div class="providers">
+                                            <div class="wrapper">
+                                                {% for provider in movie['watch/providers'].buy %}
+                                                    <div class="provider" data-title="{{ provider.provider_name }}">
+                                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                                        <div>{{ provider.provider_name }}</div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                                {% if movie.production_companies|length %}
+                                    <div class="production-companies">
+                                        <div class="label">{{ 'Production companies'|trans }}</div>
+                                        <div class="content">
+                                            {% for pc in movie.production_companies %}
+                                                    <div class="frame">
+                                                        {% if pc.logo_path %}
+                                                            <img src="{{ pc.logo_path }}" data-title="{{ pc.name }}" alt="{{ pc.name }}" loading="lazy">
+                                                        {% else %}
+                                                            {{ pc.name }}
+                                                        {% endif %}
+                                                    </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if movie.production_countries|length %}
+                                    <div class="production-countries">
+                                        <div class="label">{{ 'Production countries'|trans }}</div>
+                                        <div class="content">
+                                            {% for pc in movie.production_countries %}
+                                                <div class="frame">
+                                                    {{ getEmojiFlag(pc.iso_3166_1) ~ ' ' ~ pc.name|country_name }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if movie.keywords.keywords|length %}
+                                    <div class="movie-keywords">
+                                        <div class="content keyword-block">
+                                            {{ include('_blocks/movie/_keywords.html.twig', {id: movie.id, keywords: movie.keywords.keywords, missing: movie.missing_translations}) }}
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
-                        <div class="runtime">
-                            <div class="label">{{ 'Runtime'|trans }}</div>
-                            <div class="content">{{ movie.runtime|time }}</div>
-                        </div>
-                        <div class="notes">
-                            <div class="label">{{ 'Note'|trans }}</div>
-                            <div class="content">
-                                <div class="note">{{ 'Average'|trans }} {{ movie.vote_average }}</div>
-                                <div class="note">{{ 'Count'|trans }} {{ movie.vote_count }}</div>
-                            </div>
-                        </div>
-                        {{ include('_blocks/movie/_release-dates.html.twig') }}
                     </div>
                     <div class="user-details">
                         <div class="user-actions">

@@ -15,6 +15,7 @@ use App\Repository\UserMovieRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
+use App\Service\KeywordService;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,6 +31,7 @@ class MovieController extends AbstractController
     public function __construct(
         private readonly DateService               $dateService,
         private readonly ImageConfiguration        $imageConfiguration,
+        private readonly KeywordService            $keywordService,
         private readonly MovieCollectionRepository $movieCollectionRepository,
         private readonly MovieRepository           $movieRepository,
         private readonly SettingsRepository        $settingsRepository,
@@ -50,12 +52,12 @@ class MovieController extends AbstractController
         $user = $this->getUser();
         $slugger = new ASCIISlugger();
 
-        $localisation = [
-            'locale' => $user?->getPreferredLanguage() ?? $request->getLocale(),
-            'country' => $user?->getCountry() ?? "FR",
-            'language' => $user?->getPreferredLanguage() ?? $request->getLocale(),
-            'timezone' => $user?->getTimezone() ?? "Europe/Paris"
-        ];
+//        $localisation = [
+//            'locale' => $user?->getPreferredLanguage() ?? $request->getLocale(),
+//            'country' => $user?->getCountry() ?? "FR",
+//            'language' => $user?->getPreferredLanguage() ?? $request->getLocale(),
+//            'timezone' => $user?->getTimezone() ?? "Europe/Paris"
+//        ];
         $filtersBoxSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'my movies boxes']);
         if (!$filtersBoxSettings) {
             $filtersBoxSettings = new Settings($user, 'my movies boxes', ['filters' => true, 'pages' => true]);
@@ -143,7 +145,7 @@ class MovieController extends AbstractController
         $language = ($user->getPreferredLanguage() ?? $locale) . '-' . ($user->getCountry() ?? ($locale === 'fr' ? 'FR' : 'US'));
         $userMovie = $this->userMovieRepository->find($userMovieId);
         $dbMovie = $userMovie->getMovie();
-        $movie = json_decode($this->tmdbService->getMovie($userMovie->getMovie()->getTmdbId(), $language, ['videos,images,credits,recommendations,watch/providers,release_dates']), true);
+        $movie = json_decode($this->tmdbService->getMovie($userMovie->getMovie()->getTmdbId(), $language, ['videos,images,credits,recommendations,keywords,watch/providers,release_dates']), true);
 
         $this->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
         $this->saveImage("backdrops", $movie['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
@@ -151,6 +153,7 @@ class MovieController extends AbstractController
         $this->getBelongToCollection($movie);
         $this->getCredits($movie);
         $this->getProviders($movie);
+        $this->getProductionCompanies($movie);
         $this->getReleaseDates($movie);
         $this->getRecommandations($movie);
         $this->getDirectLinks($movie, $dbMovie);
@@ -158,6 +161,7 @@ class MovieController extends AbstractController
         $this->getLocalizedName($movie, $dbMovie);
         $this->getLocalizedOverviews($movie, $dbMovie);
         $this->getSources($movie);
+        $movie['missing_translations'] = $this->keywordService->keywordsTranslation($movie['keywords']['keywords'], $request->getLocale());
 
         $translations = [
             'Localized overviews' => $this->translator->trans('Localized overviews'),
@@ -172,15 +176,13 @@ class MovieController extends AbstractController
         ];
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
 
-//        dump(
-//            [
+        dump([
 //                'language' => $language,
-//                'movie' => $movie,
+                'movie' => $movie,
 //                'userMovie' => $userMovie,
 //                'providers' => $providers,
 //                'translations' => $translations,
-//            ]
-//        );
+            ]);
         return $this->render('movie/show.html.twig', [
             'userMovie' => $userMovie,
             'movie' => $movie,
@@ -232,7 +234,7 @@ class MovieController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/add/{id}', name: 'add', requirements: ['id' => '\d+'])]
-    public function add(Request $request, int $id): Response
+    public function add(int $id): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -278,7 +280,7 @@ class MovieController extends AbstractController
         $userMovies = array_map(function ($movie) use ($user, $slugger) {
             $this->saveImage("posters", $movie['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             $movie['slug'] = $slugger->slug($movie['title']);
-            // release_date: 2024-07-24 -> 24 juillet 2024
+            // release_date: 2024-07-24 → 24 juillet 2024
             $movie['releaseDateString'] = ucfirst($this->dateService->formatDateLong($movie['releaseDate'], $user->getTimezone() ?? 'Europe/Paris', $user->getPreferredLanguage() ?? 'fr'));
             $movie['lastViewedAtString'] = $movie['lastViewedAt'] ? ucfirst($this->dateService->formatDateLong($movie['lastViewedAt'], $user->getTimezone() ?? 'Europe/Paris', $user->getPreferredLanguage() ?? 'fr')) : null;
             return $movie;
@@ -350,6 +352,75 @@ class MovieController extends AbstractController
         }, $providers['FR']['flatrate'] ?? []);
         $movie['watch/providers'] = null;
         $movie['providers'] = $providers;
+    }
+
+    public function getProductionCompanies(array &$movie): void
+    {
+        /*
+         * "production_companies" => array:5 [▼
+              0 => array:4 [▼
+                "id" => 14714
+                "logo_path" => "/dSHaVKtBCpMU5VP9wMbTkqov62i.png"
+                "name" => "China Film Group Corporation"
+                "origin_country" => "CN"
+              ]
+              1 => array:4 [▶]
+              2 => array:4 [▶]
+              3 => array:4 [▶]
+              4 => array:4 [▶]
+            ]
+         */
+        usort($movie['production_companies'], function ($a, $b) {
+            return $b['logo_path'] <=> $a['logo_path'];
+//            dump(['a' => $a, 'b' => $b]);
+        });
+        $pc = array_map(function ($p) {
+            $p['logo_path'] = $p['logo_path'] ? $this->imageConfiguration->getUrl('logo_sizes', 1) . $p['logo_path']:null;
+            return $p;
+        }, $movie['production_companies'] ?? []);
+        $movie['production_companies'] = $pc;
+    }
+
+    #[Route('/keywords/save', name: 'keywords_save', methods: ['POST'])]
+    public function translationSave(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $tmdbId = $data['id'];
+        $keywords = $data['keywords'];
+        $language = $data['language'];
+
+        $keywordYaml = $this->keywordService->getTranslationLines($language);
+
+        $n = count($keywords);
+        for ($i = 0; $i < $n; $i++) {
+            $line = $keywords[$i]['original'] . ': ' . $keywords[$i]['translated'] . "\n";
+            $keywordYaml[] = $line;
+        }
+        usort($keywordYaml, fn($a, $b) => $a <=> $b);
+
+        $filename = '../translations/keywords.' . $language . '.yaml';
+        $res = fopen($filename, 'w');
+
+        foreach ($keywordYaml as $line) {
+            fputs($res, $line);
+        }
+        fclose($res);
+
+        $movieKeywords = json_decode($this->tmdbService->getMovieKeywords($tmdbId), true);
+
+        $missingKeywords = $this->keywordService->keywordsTranslation($movieKeywords['keywords'], $language);
+        $keywordBlock = $this->renderView('_blocks/series/_keywords.html.twig', [
+            'id' => $tmdbId,
+            'keywords' => $movieKeywords['keywords'],
+            'missing' => $missingKeywords,
+        ]);
+
+        // fetch response
+        return $this->json([
+            'ok' => true,
+            'keywords' => $keywordBlock,
+        ]);
     }
 
     public function getReleaseDates(array &$movie): void

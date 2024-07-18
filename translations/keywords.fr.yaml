@@ -559,6 +559,7 @@ dirty: sale
 disability: handicap
 disappearance: disparition
 disapproving parent: parent désapprouvant
+disaster movie: film catastrophe
 disaster: catastrophe
 disease: maladie
 disguise: déguisement
@@ -585,6 +586,7 @@ dream: rêve
 dress: robe
 drinking blood: sang de boeuf
 drones: drones
+drowning: noyade
 drug addiction: toxicomanie
 drug cartel: cartel de la drogue
 drug crime: crime de la drogue
@@ -600,6 +602,7 @@ drug use: consommation de drogue
 drugged: drogué
 drugs: drogues
 dwarf: nain
+dying sun: soleil mourant
 dying world: monde en voie de disparition
 dynasty: dynastie
 dysfunctional family: famille dysfonctionnelle
@@ -644,6 +647,7 @@ environmental change: changement environnemental
 environmental documentary: documentaire environnemental
 environmentalism: environnementalisme
 epic fights: combats épiques
+epic: épique
 epidemic: épidémie
 erased memory: mémoire effacée
 erasmus: érasmus
@@ -662,6 +666,7 @@ ethics: éthique
 ethnic minority: minorité ethnique
 european union: Union européenne
 euthanasia: euthanasie
+evacuation: évacuation
 evidence: preuve
 evil a.i.: i.a. maléfique
 evil corporation: société diabolique
@@ -806,6 +811,7 @@ friends with benefits: amis avec avantages
 friends: amis
 friendship: amitié
 fringe science: science marginale
+frozen earth: terre gelée
 fugitive: fugitif
 funeral home: maison funéraire
 future vision: vision du futur
@@ -844,11 +850,13 @@ germany: Allemagne
 ghost hunting: chasse aux fantômes
 ghost: fantôme
 ghosting: fantôme
+giant engine: moteur géant
 giant monster: monstre géant
 gigolo: gigolo
 girls love: amour de filles
 gladiator: gladiateur
 glee club: glee club
+global government: gouvernement global
 global politics: politique mondiale
 global warming: réchauffement de la planète
 god: dieu
@@ -866,6 +874,7 @@ government agent: agent du gouvernement
 government conspiracy: gouvernement conspiration
 government: gouvernement
 governor: gouverneur
+grandfather grandson relationship: relation grand-père petit fils
 grandmother: grand-mère
 grandparent grandchild relationship: relation grand-parent-petit-enfant
 great detective: grand détective
@@ -928,6 +937,7 @@ hijacking: détournement d'avion
 hip-hop: hip-hop
 historical comedy: comédie historique
 historical drama: drame historique
+historical event: événement historique
 historical fiction: fiction historique
 historical romance: historique
 historical: historique
@@ -945,6 +955,7 @@ homicide investigation: homicide, enquête sur l'homicide
 homicide: homicide
 homophobia: homophobie
 hope for future: espoir pour l'avenir
+hopeful: plein d'espoir
 horror anthology: anthologie de l'horreur
 horror, thriller: horreur, thriller
 horror: horreur
@@ -966,6 +977,7 @@ husband: mari
 hybrid: hybride
 ice hockey: hockey sur glace
 ice melting: glace de mer
+iceberg: iceberg
 iceland: patrie
 identity: identité
 idol group: groupe d'idols
@@ -993,6 +1005,7 @@ inner monologue: monologue intérieur
 insane asylum: asile d'aliénés
 insanity: folie
 insecure woman: femme peu sûre d'elle
+insecure: peu sûr
 intelligence analyst: analyste de l'intelligence
 intelligence service: service de renseignement
 intelligence: intelligence
@@ -1047,6 +1060,7 @@ journey around the world: voyage autour du monde
 jovan adepo: jovan adepo
 judge: juge
 judgment by social media: jugement par les médias sociaux
+jupiter: jupiter
 jury duty: devoir du jury
 justice: justice
 juvenile delinquent: délinquant juvénile
@@ -1107,6 +1121,7 @@ lgbt: lgbt
 lgbtqia+: Les minorités sexuelles et de genre, connues sous le sigle LGBT ou d'autres variantes, correspondent aux personnes notamment lesbiennes, gays, bisexuelles, trans, queer, intersexes et asexuelles, c'est-à-dire celles qui ne sont pas hétérosexuelles, pas cisgenres ou pas dyadiques.
 lie detection: détection des mensonges
 life: vie
+lifeboat: canot de sauvetage
 lighthearted: léger
 literary agent: agent littéraire
 live action and animation: animation et action réelle
@@ -1127,6 +1142,7 @@ loss: perte
 lost city: ville perdue
 lost civilization: civilisation perdue
 lost memory: mémoire perdue
+love affair: histoire d'amour
 love at first sight: l'amour au premier regard
 love destiny: amour destiné
 love sickness: maladie d'amour
@@ -1163,6 +1179,7 @@ manchester, england: manchester, angleterre
 manchester: manchester
 manhattan, new york city: manhattan, new york city
 manifesto: manifeste
+mankind forced underground: l'humanité contrainte à la clandestinité
 mansion: manoir
 marathon: marathon
 marijuana: marijuana
@@ -1382,6 +1399,7 @@ obsessive: obsessionnel
 obstetrics: obstétrique
 occupation: occupation
 occupying power: pouvoir d'occupation
+ocean liner: paquebot
 ocean: océan
 oceanic expedition: expédition océanique
 odd couple: couple bizarre
@@ -1625,7 +1643,9 @@ revolutionary: révolutionnaire
 reykjavík, iceland: reykjavík, iceland
 rich family: famille riche
 rich man poor woman: homme riche femme pauvre
+rich snob: snob riche
 rich vs poor: riches contre pauvres
+rich woman poor man: femme riche homme pauvre
 rich: riche
 right and justice: droit et justice
 rio de janeiro: rio de janeiro
@@ -1759,6 +1779,7 @@ shepherd: berger
 sheriff: shérif
 sherlock holmes: sherlock holmes
 ship: bateau
+shipwreck: naufrage
 shipwrecked: naufrage
 shooting: tir
 shop owner: propriétaire de magasin
@@ -1785,6 +1806,7 @@ single father: père célibataire
 single man: homme célibataire
 single mother: mère célibataire
 single parent: père célibataire
+sinking ship: navire en perdition
 sister: sœur
 sisterhood: sœur
 sitcom: sitcom
@@ -1868,6 +1890,7 @@ spy thriller: espionnage
 spy: espion
 stalker: espionnage
 stand-up comedian: comédien de stand-up
+star crossed lovers: amants croisés
 star wars universe: univers de la guerre des étoiles
 starfleet: starfleet
 starship: vaisseau spatial
@@ -1875,6 +1898,7 @@ startup: startup
 stasi: stasi
 stealing manuscript: vol de manuscrit
 steampunk: steampunk
+steerage: pilotage
 stockholm, sweden: stockholm, suède
 stolen cars: voitures volées
 story-based drama: drame basé sur une histoire
@@ -1903,6 +1927,7 @@ summer romance: amour d'été
 summer vacation: vacances d'été
 summer: été
 sun: soleil
+sunken ship: navire coulé
 super fast: super rapide
 super hero: super héros
 super power: super pouvoir
@@ -2012,6 +2037,7 @@ time skip: saut dans le temps
 time travel: voyage dans le temps
 time: temps
 timeline: ligne du temps
+titanic: titanic
 tokyo, japan: tokyo, japon
 toronto, canada: toronto, canada
 torture: torture
@@ -2019,7 +2045,9 @@ tourism: tourisme
 town mayor: maire de la ville
 town: ville
 tragedy: tragédie
+tragic love: amour tragique
 tragic past: passé tragique
+tragic: tragique
 training: formation
 traitor: traître
 trans man: homme trans
@@ -2073,6 +2101,7 @@ undead: mort-vivant
 underage: mineur
 undercover agent: agent infiltré
 undercover: sous couverture
+underground city: ville souterraine
 underworld: sous-monde
 unemployed: chômeur
 unexplained: inexpliqué
