@@ -91,14 +91,14 @@
                     <div class="separation">{{ 'Yesterday'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
                     {% for eotd in eotdList.results %}
                         <div class="a-preview">
-                            <a id="eotd-menu-item-{{ eotd.id }}"
+                            <a id="eotd-menu-item-1-{{ eotd.id }}"
                                href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
                                data-episode-count="{{ eotd.episodeCount }}"
                                data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
                                style="background: linear-gradient(90deg, var(--gradient-green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
                                 {{ eotd.display }}
                             </a>
-                            <div id="eotd-preview-{{ eotd.id }}" class="episode-of-the-day-preview">
+                            <div id="eotd-preview-1-{{ eotd.id }}" class="episode-of-the-day-preview">
                                 <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
                                     <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
                                 </a>
@@ -113,14 +113,14 @@
                     <div class="separation">{{ 'Today'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
                     {% for eotd in eotdList.results %}
                         <div class="a-preview">
-                            <a id="eotd-menu-item-{{ eotd.id }}"
+                            <a id="eotd-menu-item-2-{{ eotd.id }}"
                                href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
                                data-episode-count="{{ eotd.episodeCount }}"
                                data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
                                style="background: linear-gradient(90deg, var(--gradient-green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
                                 {{ eotd.display }}
                             </a>
-                            <div id="eotd-preview-{{ eotd.id }}" class="episode-of-the-day-preview">
+                            <div id="eotd-preview-2-{{ eotd.id }}" class="episode-of-the-day-preview">
                                 <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
                                     <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
                                 </a>
@@ -135,14 +135,14 @@
                     <div class="separation">{{ 'Tomorrow'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
                     {% for eotd in eotdList.results %}
                         <div class="a-preview">
-                            <a id="eotd-menu-item-{{ eotd.id }}"
+                            <a id="eotd-menu-item-3-{{ eotd.id }}"
                                href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
                                data-episode-count="{{ eotd.episodeCount }}"
                                data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
                                style="background: linear-gradient(90deg, var(--gradient-green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
                                 {{ eotd.display }}
                             </a>
-                            <div id="eotd-preview-{{ eotd.id }}" class="episode-of-the-day-preview">
+                            <div id="eotd-preview-3-{{ eotd.id }}" class="episode-of-the-day-preview">
                                 <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
                                     <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
                                 </a>

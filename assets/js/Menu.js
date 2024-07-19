@@ -52,8 +52,9 @@ export class Menu {
         });
 
         eotdMenuItems.forEach((item) => {
-            const id = item.id.split("-")[3];
-            const eotdPreview = document.querySelector(`#eotd-preview-${id}`);
+            const group = item.id.split("-")[3]; // eotd-menu-item-{group}-{id}
+            const id = item.id.split("-")[4];
+            const eotdPreview = document.querySelector(`#eotd-preview-${group}-${id}`);
             item.addEventListener("mouseenter", () => {
                 eotdPreview.classList.add("open");
                 setTimeout(() => {
