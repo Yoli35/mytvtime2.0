@@ -61,6 +61,7 @@
                             <select id="sort-by">
                                 <option value="">{{ 'Default'|trans }}</option>
                                 <option value="name"{% if filters.sort=='name' %} selected{% endif %}>{{ 'Name'|trans }}</option>
+                                <option value="addedAt"{% if filters.sort=='addedAt' %} selected{% endif %}>{{ 'Date added'|trans }}</option>
                                 <option value="firstAirDate"{% if filters.sort=='firstAirDate' %} selected{% endif %}>{{ 'First air date'|trans }}</option>
                                 <option value="lastWatched"{% if filters.sort=='lastWatched' %} selected{% endif %}>{{ 'Last series watched'|trans }}</option>
                                 <option value="episodeAirDate"{% if filters.sort=='episodeAirDate' %} selected{% endif %}>{{ 'Episode air date'|trans }}</option>
@@ -92,7 +93,7 @@
                 </header>
                 <div class="wrapper">
                     {% for series in userSeries %}
-                        {{ include('_blocks/series/_card.html.twig', {allFiltered: true}) }}
+                        {{ include('_blocks/series/_card.html.twig', {allFiltered: true, sort: filters.sort}) }}
                     {% endfor %}
                 </div>
             </article>

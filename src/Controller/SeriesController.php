@@ -297,6 +297,7 @@ class SeriesController extends AbstractController
         ];
         $filterMeanings = [
             'name' => 'Name',
+            'addedAt' => 'Date added',
             'firstAirDate' => 'First air date',
             'lastWatched' => 'Last series watched',
             'episodeAirDate' => 'Episode air date',
@@ -329,7 +330,6 @@ class SeriesController extends AbstractController
             'filterMeanings' => $filterMeanings,
         ]);
     }
-
 
     #[IsGranted('ROLE_USER')]
     #[Route('/search/db', name: 'search_db')]

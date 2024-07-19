@@ -151,6 +151,7 @@ class UserSeriesRepository extends ServiceEntityRepository
             'lastWatched' => 'us.`last_watch_at`',
             'episodeAirDate' => 'ue.`air_date`',
             'name' => 's.`name`',
+            'addedAt' => 'us.`added_at`',
             default => 's.`first_air_date`',
         };
         $filterString = array_map(fn($filter) => "AND $filter", $filters);
@@ -167,6 +168,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     s.`tmdb_id`                   as tmdbId,
                     s.`slug`                      as slug,
                     us.`user_id`                  as user_id, 
+                    us.`added_at`                 as added_at,
                     us.`progress`                 as progress,
                     us.`favorite`                 as favorite, 
                     sln.`name`                    as localized_name,
