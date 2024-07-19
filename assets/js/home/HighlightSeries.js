@@ -1,6 +1,6 @@
-import {AverageColor} from "../images/AverageColor.js";
-import {NavBar} from "../NavBar.js";
-import {ToolTips} from "../ToolTips.js";
+import {AverageColor} from "AverageColor";
+import {NavBar} from "NavBar";
+import {ToolTips} from "ToolTips";
 
 /**
  *  @typedef Globs
@@ -40,8 +40,8 @@ export class HighlightSeries {
         this.highlightProgressDiv = document.querySelector(".highlight-progress");
         this.posterListDiv = document.querySelector(".poster-list");
         this.loadingDiv = document.querySelector(".loading");
-        this.loadingV2Div = document.querySelector(".loading-v2");
-        this.loadingV2Rect = this.loadingV2Div.getBoundingClientRect();
+        /*this.loadingV2Div = null;
+        this.loadingV2Rect = null;*/
         this.averageColor = new AverageColor();
         let duration = this.root.style.getPropertyValue("--highlight-duration");
         let transition = this.root.style.getPropertyValue("--highlight-transition");
@@ -52,12 +52,13 @@ export class HighlightSeries {
             this.transition = transition.slice(0, -2) * 1;
         }
 
+        this.displaySeries();
+
+        /*this.loadingV2();
+
         new ResizeObserver(() => {
             this.loadingV2Rect = this.loadingV2Div.getBoundingClientRect();
-        }).observe(this.highlightDiv);
-
-        this.loadingV2();
-        this.displaySeries();
+        }).observe(this.highlightDiv);*/
     }
 
     displaySeries() {
@@ -218,16 +219,28 @@ export class HighlightSeries {
         });
     }
 
-    loadingV2() {
+    /*loadingV2() {
 
         const ballSize = 32;
         const ballGap = 16;
-        const ballCount = 81;
+        const ballCount = 5 * 5;
         const rowCount = Math.ceil(Math.sqrt(ballCount));
         const rowHalf = Math.floor(rowCount / 2);
-        const collisionDistance = 2 * ballGap;
+        const collisionDistance = 2.5 * ballGap;
 
-        const ballContainer = this.loadingV2Div.querySelector(".ball-container");
+        /!*  <div class="loading-v2">
+                <div class="ball-container">
+                </div>
+            </div> *!/
+        this.loadingV2Div = document.createElement("div");
+        this.loadingV2Div.classList.add("loading-v2");
+        const ballContainer = document.createElement("div");
+        ballContainer.classList.add("ball-container");
+        this.loadingV2Div.appendChild(ballContainer);
+        this.highlightDiv.appendChild(this.loadingV2Div);
+        this.loadingV2Rect = this.loadingV2Div.getBoundingClientRect();
+
+        // ballContainer = this.loadingV2Div.querySelector(".ball-container");
         for (let i = 0; i < ballCount; i++) {
             const ball = document.createElement("div");
             ball.classList.add("ball");
@@ -357,5 +370,5 @@ export class HighlightSeries {
         setTimeout(() => {
             window.requestAnimationFrame(move);
         }, 2000);
-    }
+    }*/
 }
