@@ -1,15 +1,16 @@
 import './bootstrap.js';
 
+import {AverageColor} from 'AverageColor';
+import {HighlightSeries} from 'HighlightSeries';
 import {Menu} from 'Menu';
 import {Movie} from 'Movie';
 import {NavBar} from 'NavBar';
-import {ToolTips} from 'ToolTips';
-import {ProviderSelect} from 'ProviderSelect';
-import {HighlightSeries} from 'HighlightSeries';
+import {PeopleShow} from "PeopleShow";
 import {PosterHover} from 'PosterHover';
-import {AverageColor} from 'AverageColor';
+import {ProviderSelect} from 'ProviderSelect';
 import {Season} from 'Season';
 import {Show} from 'Show';
+import {ToolTips} from 'ToolTips';
 
 // new ResizeObserver(entries => {
 //     entries.forEach( (entry) =>{
@@ -207,6 +208,10 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    const person = document.querySelector(".person");
+    if (person) {
+        new PeopleShow();
+    }
 // Flash messages
     const flashes = document.querySelectorAll(".flash-message");
 

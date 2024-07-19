@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
-#[Route('{_locale}/people/', name: 'app_people_', requirements: ['_locale' => 'en|fr'])]
+#[Route('{_locale}/people', name: 'app_people_', requirements: ['_locale' => 'en|fr'])]
 class PeopleController extends AbstractController
 {
 
@@ -160,7 +160,7 @@ class PeopleController extends AbstractController
         krsort($knownFor);
         $credits['known_for'] = $knownFor;
 
-        return $this->render('series/people.html.twig', [
+        return $this->render('people/show.html.twig', [
             'people' => $people,
             'credits' => $credits,
             'count' => $count,

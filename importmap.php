@@ -21,6 +21,9 @@ return [
     'AverageColor' => [
         'path' => './assets/js/images/AverageColor.js',
     ],
+    'Diaporama' => [
+        'path' => './assets/js/images/Diaporama.js',
+    ],
     'HighlightSeries' => [
         'path' => './assets/js/home/HighlightSeries.js',
     ],
@@ -35,6 +38,9 @@ return [
     ],
     'NavBar' => [
         'path' => './assets/js/NavBar.js',
+    ],
+    'PeopleShow' => [
+        'path' => './assets/js/people/PeopleShow.js',
     ],
     'PosterHover' => [
         'path' => './assets/js/images/PosterHover.js',

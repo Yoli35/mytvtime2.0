@@ -1141,6 +1141,16 @@ h2 {
                                 padding: .25rem;
                             }
 
+                            .date-added {
+                                background-color: var(--gradient-orange-40);
+                                border-radius: .25rem;
+                                color: var(--gradient-orange-90);
+                                font-size: 1rem;
+                                font-weight: 100;
+                                margin-inline-start: auto;
+                                padding: .25rem;
+                            }
+
                             .episode-number {
                                 background-color: var(--gradient-orange-10);
                                 border-radius: .25rem;
