@@ -356,23 +356,8 @@ class MovieController extends AbstractController
 
     public function getProductionCompanies(array &$movie): void
     {
-        /*
-         * "production_companies" => array:5 [▼
-              0 => array:4 [▼
-                "id" => 14714
-                "logo_path" => "/dSHaVKtBCpMU5VP9wMbTkqov62i.png"
-                "name" => "China Film Group Corporation"
-                "origin_country" => "CN"
-              ]
-              1 => array:4 [▶]
-              2 => array:4 [▶]
-              3 => array:4 [▶]
-              4 => array:4 [▶]
-            ]
-         */
         usort($movie['production_companies'], function ($a, $b) {
             return $b['logo_path'] <=> $a['logo_path'];
-//            dump(['a' => $a, 'b' => $b]);
         });
         $pc = array_map(function ($p) {
             $p['logo_path'] = $p['logo_path'] ? $this->imageConfiguration->getUrl('logo_sizes', 1) . $p['logo_path']:null;
@@ -410,7 +395,7 @@ class MovieController extends AbstractController
         $movieKeywords = json_decode($this->tmdbService->getMovieKeywords($tmdbId), true);
 
         $missingKeywords = $this->keywordService->keywordsTranslation($movieKeywords['keywords'], $language);
-        $keywordBlock = $this->renderView('_blocks/series/_keywords.html.twig', [
+        $keywordBlock = $this->renderView('_blocks/movie/_keywords.html.twig', [
             'id' => $tmdbId,
             'keywords' => $movieKeywords['keywords'],
             'missing' => $missingKeywords,
