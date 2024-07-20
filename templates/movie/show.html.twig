@@ -306,6 +306,12 @@
                                     </div>
                                 </form>
                             </div>
+                            {% if userMovie.lastViewedAt %}
+                                <div class="viewed-at">
+                                    {{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px'}) }}
+                                    {{ userMovie.lastViewedAt|format_datetime('relative_full', 'short')|capitalize }}
+                                </div>
+                            {% endif %}
                             <div class="rating">
                                 <div class="rating-stars">
                                     <div class="stars" data-trans-rating="Cancel rating|{{ 'Cancel rating'|trans }}" data-trans-star="star|{{ 'star'|trans }}" data-trans-stars="stars|{{ 'stars'|trans }}">

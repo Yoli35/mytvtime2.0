@@ -55,6 +55,20 @@
         }
     }
 
+    .viewed-at {
+        align-items: center;
+        background-color: var(--gradient-ardoise-80-alpha-50);
+        border-radius: .25rem;
+        color: var(--gradient-ardoise-10);
+        display: flex;
+        font-size: 1rem;
+        font-weight: 300;
+        gap: .5rem;
+        justify-content: center;
+        margin-inline-end: auto;
+        padding: .5rem;
+    }
+
     .rating {
         align-items: center;
         background-color: var(--gradient-ardoise-80-alpha-50);

@@ -21,6 +21,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -179,7 +180,7 @@ class MovieController extends AbstractController
         dump([
 //                'language' => $language,
                 'movie' => $movie,
-//                'userMovie' => $userMovie,
+                'userMovie' => $userMovie,
 //                'providers' => $providers,
 //                'translations' => $translations,
             ]);
@@ -303,6 +304,20 @@ class MovieController extends AbstractController
                 'pages' => ceil($userMovieCount / $filters['perPage']),
                 'filters' => $filters,
             ],
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/rating/{id}', name: 'rating', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function ratingMovie(Request $request, UserMovie $userMovie): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $rating = $data['rating'];
+        $userMovie->setRating($rating);
+        $this->userMovieRepository->save($userMovie, true);
+
+        return $this->json([
+            'ok' => true,
         ]);
     }
 

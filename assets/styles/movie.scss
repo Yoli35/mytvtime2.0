@@ -587,11 +587,14 @@
                     position: relative;
 
                     .name {
+                        background-color: var(--gradient-ardoise-100-alpha-20);
+                        border-radius: .25rem;
                         bottom: 1rem;
                         color: var(--gradient-orange-50);
                         font-size: 2rem;
-                        font-weight: 100;
+                        font-weight: 300;
                         margin-block: 0;
+                        padding: .125rem .5rem;
                         text-align: center;
                         position: absolute;
                         right: 1rem;
