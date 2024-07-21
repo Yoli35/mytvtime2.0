@@ -58,6 +58,7 @@
                     font-size: 1.5rem;
                     height: 2.5rem;
                     justify-content: center;
+                    text-align: center;
                     width: 100%
                 }
             }
@@ -352,6 +353,7 @@
 
             .providers {
                 .content {
+                    align-items: center;
                     display: flex;
                     gap: .5rem;
                     justify-content: center;
@@ -521,6 +523,10 @@
                                         }
                                     }
                                 }
+                            }
+
+                            &:has(img) {
+                                align-items: center;
                             }
                         }
                     }
