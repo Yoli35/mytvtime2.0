@@ -17,7 +17,16 @@
                 <header>
                     <div class="title">{{ 'Filters'|trans }}</div>
                     <div class="filter-values">
-                        <div class="filter-value" data-title="{{ 'Sort'|trans }} / {{ 'Order'|trans }}">{{ ux_icon('ion:settings-outline', {height: '18px', width: '18px'}) }}: {{ filterMeanings[filters.sort]|trans }} / {{ filterMeanings[filters.order]|trans }}</div>
+                        <div class="filter-value" data-title="{{ 'Sort'|trans }} / {{ 'Order'|trans }}">
+                            {{ ux_icon('ion:settings-outline', {height: '18px', width: '18px'}) }}:
+                            {{ filterMeanings[filters.sort]|trans }}{# / #}
+                            {#                            {{ filterMeanings[filters.order]|trans }} #}
+                            {% if filters.order == 'DESC' %}
+                                {{ ux_icon('fa6-solid:arrow-down', {height: '18px', width: '18px'}) }}
+                            {% else %}
+                                {{ ux_icon('fa6-solid:arrow-up', {height: '18px', width: '18px'}) }}
+                            {% endif %}
+                        </div>
                         <div class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">{{ ux_icon('ion:apps-sharp', {height: '18px', width: '18px'}) }}: {{ filters.perPage }}</div>
                     </div>
                     <div class="collapse" data-title="{{ 'Show / hide filter options'|trans }}">
@@ -71,8 +80,8 @@
                     <div class="filter">
                         <label for="order-by">{{ 'Order'|trans }}
                             <select id="order-by">
-                                <option value="DESC"{% if filters.order=='DESC' %} selected{% endif %}>{{ 'Descending'|trans }}</option>
-                                <option value="ASC"{% if filters.order=='ASC' %} selected{% endif %}>{{ 'Ascending'|trans }}</option>
+                                <option value="DESC"{% if filters.order=='DESC' %} selected{% endif %}>{{ ux_icon('fa6-solid:arrow-down', {height: '18px', width: '18px'}) }}{{ 'Descending'|trans }}</option>
+                                <option value="ASC"{% if filters.order=='ASC' %} selected{% endif %}>{{ ux_icon('fa6-solid:arrow-up', {height: '18px', width: '18px'}) }}{{ 'Ascending'|trans }}</option>
                             </select>
                         </label>
                     </div>
