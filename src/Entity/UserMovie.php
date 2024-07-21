@@ -62,7 +62,7 @@ class UserMovie
         return $this->user;
     }
 
-    public function setUser(User $user): static
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 
@@ -139,5 +139,12 @@ class UserMovie
         $this->viewArray = $viewArray;
 
         return $this;
+    }
+
+    public function addUser(User $user): void
+    {
+        if (!$this->user->contains($user)) {
+            $this->user[] = $user;
+        }
     }
 }

@@ -423,7 +423,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->userEpisodeNotifications->contains($userEpisodeNotification)) {
             $this->userEpisodeNotifications->add($userEpisodeNotification);
-            $userEpisodeNotification->addUser($this);
+            $userEpisodeNotification->setUser($this);
         }
 
         return $this;
@@ -432,7 +432,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeUserEpisodeNotification(UserEpisodeNotification $userEpisodeNotification): static
     {
         if ($this->userEpisodeNotifications->removeElement($userEpisodeNotification)) {
-            $userEpisodeNotification->removeUser($this);
+            if ($userEpisodeNotification->getUser() === $this) {
+                $userEpisodeNotification->setUser(null);
+            }
         }
 
         return $this;
@@ -480,7 +482,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->userMovies->contains($userMovie)) {
             $this->userMovies->add($userMovie);
-            $userMovie->addUser($this);
+            $userMovie->setUser($this);
         }
 
         return $this;
@@ -488,8 +490,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeUserMovie(UserMovie $userMovie): static
     {
-        if ($this->userMovies->removeElement($userMovie)) {
-            $userMovie->removeUser($this);
+        $this->userMovies->removeElement($userMovie);
+        if ($userMovie->getUser() === $this) {
+            $userMovie->setUser(null);
         }
 
         return $this;

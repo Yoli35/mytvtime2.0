@@ -18,7 +18,7 @@ class UserEpisodeNotification
 
     #[ORM\ManyToOne(inversedBy: 'userEpisodeNotifications')]
     #[ORM\JoinColumn(nullable: false)]
-    private User $user;
+    private ?User $user;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -55,7 +55,7 @@ class UserEpisodeNotification
         return $this->user;
     }
 
-    public function setUser(User $user): void
+    public function setUser(?User $user): void
     {
         $this->user = $user;
     }
