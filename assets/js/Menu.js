@@ -1,6 +1,50 @@
 let gThis = null;
 
 export class Menu {
+
+    /**
+     * @typedef SearchResults
+     * @type {Object}
+     * @property {Array} results
+     * @property {number} page
+     */
+
+    /**
+     * @typedef Movie
+     * @type {Object}
+     * @property {boolean} adult
+     * @property {string} backdrop_path
+     * @property {Array} genre_ids
+     * @property {number} id
+     * @property {string} original_language
+     * @property {string} original_title
+     * @property {string} overview
+     * @property {number} popularity
+     * @property {string} poster_path
+     * @property {string} release_date
+     * @property {string} title
+     * @property {boolean} video
+     * @property {number} vote_average
+     * @property {number} vote_count
+     */
+
+    /**
+     * @typedef TV
+     * @type {Object}
+     * @property {string} backdrop_path
+     * @property {Array} genre_ids
+     * @property {number} id
+     * @property {Array} origin_country
+     * @property {string} original_language
+     * @property {string} original_name
+     * @property {string} overview
+     * @property {number} popularity
+     * @property {string} poster_path
+     * @property {string} first_air_date
+     * @property {string} name
+     * @property {number} vote_average
+     * @property {number} vote_count
+     */
     constructor() {
         gThis = this;
         document.addEventListener("DOMContentLoaded", () => {
@@ -138,6 +182,7 @@ export class Menu {
 
         movieSearch.addEventListener("input", (e) => {
             const value = e.target.value;
+            console.log({e});
             if (value.length > 2) {
                 const searchResults = movieSearch.closest("li").querySelector(".search-results");
                 const query = encodeURIComponent(value);
@@ -152,14 +197,18 @@ export class Menu {
 
                 fetch(url, options)
                     .then(res => res.json())
+                    /** @type {SearchResults} */
                     .then(json => {
                         console.log(json);
                         searchResults.innerHTML = '';
                         const ul = document.createElement("ul");
+                        ul.setAttribute("data-type", "movie");
+                        /** @type {Movie} */
                         json.results.forEach((result) => {
                             const a = document.createElement("a");
                             a.href = '/' + gThis.lang + '/movie/tmdb/' + result.id;
                             const li = document.createElement("li");
+                            li.setAttribute("data-id", result.id);
                             const posterDiv = document.createElement("div");
                             posterDiv.classList.add("poster");
                             if (result.poster_path) {
@@ -185,6 +234,7 @@ export class Menu {
                 movieSearch.closest("li").querySelector(".search-results").innerHTML = '';
             }
         });
+        movieSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
         tvSearch.addEventListener("input", (e) => {
             const value = e.target.value;
@@ -206,10 +256,14 @@ export class Menu {
                         console.log(json);
                         searchResults.innerHTML = '';
                         const ul = document.createElement("ul");
+                        ul.setAttribute("data-type", "tv");
                         json.results.forEach((result) => {
                             const a = document.createElement("a");
-                            a.href = '/' + gThis.lang + '/series/tmdb/' + result.id + '-' + gThis.toSlug(result.name);
+                            const slug = gThis.toSlug(result.name);
+                            a.href = '/' + gThis.lang + '/series/tmdb/' + result.id + '-' + slug;
                             const li = document.createElement("li");
+                            li.setAttribute("data-id", result.id);
+                            li.setAttribute("data-slug", slug);
                             const posterDiv = document.createElement("div");
                             posterDiv.classList.add("poster");
                             if (result.poster_path) {
@@ -235,6 +289,64 @@ export class Menu {
                 movieSearch.closest("li").querySelector(".search-results").innerHTML = '';
             }
         });
+        tvSearch.addEventListener("keydown", gThis.searchMenuNavigate);
+    }
+
+    searchMenuNavigate(e) {
+        // movieSearch or tvSearch
+        const searchMenu = e.target;
+        console.log({e});
+        const value = e.target.value;
+        if (value.length > 2) {
+            const ul = searchMenu.closest("li").querySelector(".search-results ul");
+            const type = ul.getAttribute("data-type");
+            console.log({ul});
+            console.log(e.key);
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const li = ul.querySelector("li.active")||ul.querySelector("li");
+                const id = li.getAttribute("data-id");
+                if (type==='movie') {
+                    window.location.href = '/' + gThis.lang + '/movie/tmdb/' + id;
+                }
+                if (type==='tv') {
+                    const slug = li.getAttribute("data-slug");
+                    window.location.href = '/' + gThis.lang + '/series/tmdb/' + id + '-' + slug;
+                }
+            }
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                const active = ul.querySelector("li.active");
+                if (active) {
+                    active.classList.remove("active");
+                    if (active.nextElementSibling) {
+                        active.nextElementSibling.classList.add("active");
+                    } else {
+                        ul.querySelector("li").classList.add("active");
+                    }
+                } else {
+                    ul.querySelector("li").classList.add("active");
+                }
+                const newActive = ul.querySelector("li.active");
+                newActive.scrollIntoView({block: "center", inline: "center"});
+            }
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                const active = ul.querySelector("li.active");
+                if (active) {
+                    active.classList.remove("active");
+                    if (active.previousElementSibling) {
+                        active.previousElementSibling.classList.add("active");
+                    } else {
+                        ul.querySelector("li:last-child").classList.add("active");
+                    }
+                } else {
+                    ul.querySelector("li:last-child").classList.add("active");
+                }
+                const newActive = ul.querySelector("li.active");
+                newActive.scrollIntoView({block: "center", inline: "center"});
+            }
+        }
     }
 
     getImageConfig() {
@@ -245,6 +357,10 @@ export class Menu {
             },
         })
             .then(response => response.json())
+            /**
+             *  @type {Object}
+             * @property {string} poster_url
+             */
             .then(data => {
                 gThis.posterUrl = data.body.poster_url;
             })

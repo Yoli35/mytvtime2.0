@@ -338,6 +338,11 @@ label:has(input[type="text"]) {
                             li {
                                 padding-inline: 0;
 
+                                &.active {
+                                    background-color: var(--gradient-orange-50);
+                                    color: var(--gradient-orange-90);
+                                }
+
                                 a {
                                     align-items: center;
                                     color: var(--navbar-color-hover);
