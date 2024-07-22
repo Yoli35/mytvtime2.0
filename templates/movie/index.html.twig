@@ -49,6 +49,7 @@
                             <select id="sort-by">
                                 <option value="name"{% if filters.sort=='name' %} selected{% endif %}>{{ 'Name'|trans }}</option>
                                 <option value="releaseDate"{% if filters.sort=='releaseDate' %} selected{% endif %}>{{ 'Release date'|trans }}</option>
+                                <option value="addedAt"{% if filters.sort=='addedAt' %} selected{% endif %}>{{ 'Date added'|trans }}</option>
                             </select>
                         </label>
                     </div>

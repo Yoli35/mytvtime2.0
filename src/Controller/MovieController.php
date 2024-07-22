@@ -112,6 +112,7 @@ class MovieController extends AbstractController
         $filterMeanings = [
             'name' => 'Name',
             'releaseDate' => 'Release date',
+            'addedAt' => 'Date added',
             'DESC' => 'Descending',
             'ASC' => 'Ascending',
         ];

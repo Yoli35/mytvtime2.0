@@ -41,6 +41,7 @@ class MovieRepository extends ServiceEntityRepository
         // Sort: name, release date
         $sort = match ($sort) {
             'name' => 'm.title',
+            'addedAt' => 'um.created_at',
             default => 'm.release_date'
         };
 
