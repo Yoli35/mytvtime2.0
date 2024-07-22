@@ -384,6 +384,11 @@
 
             .genres {
                 .content {
+                    align-items: center;
+                    display: flex;
+                    gap: .5rem;
+                    justify-content: flex-start;
+
                     .genre {
                         background-color: var(--gradient-orange-40);
                         border-radius: .25rem;
