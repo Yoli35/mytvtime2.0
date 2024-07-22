@@ -9,7 +9,7 @@ export class Keyword {
         gThis = this;
         this.toolTips = new ToolTips();
         this.maxLength = 0;
-        this.init(type);
+        this.init(type); // type: 'series'|'movies'
     }
 
     init(type) {
@@ -51,7 +51,7 @@ export class Keyword {
                 .then(data => {
                     console.log({data});
                     gThis.hideForm(keywordForm);
-                    const factDiv = document.querySelector('.fact.keyword-block');
+                    const factDiv = document.querySelector(type==='series'?'.fact.keyword-block':'.content.keyword-block');
                     factDiv.innerHTML = data.keywords;
                     gThis.toolTips.init(factDiv);
                 });

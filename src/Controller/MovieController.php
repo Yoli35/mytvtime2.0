@@ -262,6 +262,23 @@ class MovieController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
+    #[Route('/remove/{id}', name: 'remove', requirements: ['id' => '\d+'])]
+    public function remove(int $id): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $userMovie = $this->userMovieRepository->findOneBy(['id' => $id]);
+
+        if ($userMovie && $userMovie->getUser() === $user) {
+            $this->userMovieRepository->remove($userMovie, true);
+        }
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
     #[Route('/filter', name: 'filter', methods: ['POST'])]
     public function filter(Request $request): Response
     {
@@ -314,6 +331,20 @@ class MovieController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $rating = $data['rating'];
         $userMovie->setRating($rating);
+        $this->userMovieRepository->save($userMovie, true);
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/favorite/{id}', name: 'favorite', requirements: ['id' => Requirement::DIGITS])]
+    public function favoriteSeries(Request $request, UserMovie $userMovie): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $newFavoriteValue = $data['favorite'];
+        $userMovie->setFavorite($newFavoriteValue);
         $this->userMovieRepository->save($userMovie, true);
 
         return $this->json([

@@ -7,6 +7,7 @@ export class Movie {
      * @typedef Globs
      * @type {Object}
      * @property {number} userMovieId
+     * @property {number} tmdbId
      * @property {Array} providers
      * @property {Array} translations
      */
@@ -25,6 +26,7 @@ export class Movie {
         const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
         this.providers = jsonGlobsObject.providers;
         this.userMovieId = jsonGlobsObject.userMovieId;
+        this.tmdbId = jsonGlobsObject.tmdbId;
         this.translations = jsonGlobsObject.translations;
         this.lang = document.documentElement.lang;
         gThis.init();
@@ -71,23 +73,23 @@ export class Movie {
             });
         });
 
-        const pinned = userActions.querySelector('.toggle-pinned-movie');
-        pinned?.addEventListener('click', function () {
-            const isPinned = this.classList.contains('pinned');
-            fetch('/' + gThis.lang + '/movie/pinned/' + gThis.userMovieId,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({newStatus: isPinned ? 0 : 1})
-                }
-            ).then(function (response) {
-                if (response.ok) {
-                    window.location.reload();
-                }
-            });
-        });
+        // const pinned = userActions.querySelector('.toggle-pinned-movie');
+        // pinned?.addEventListener('click', function () {
+        //     const isPinned = this.classList.contains('pinned');
+        //     fetch('/' + gThis.lang + '/movie/pinned/' + gThis.userMovieId,
+        //         {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             },
+        //             body: JSON.stringify({newStatus: isPinned ? 0 : 1})
+        //         }
+        //     ).then(function (response) {
+        //         if (response.ok) {
+        //             window.location.reload();
+        //         }
+        //     });
+        // });
 
         const favorite = userActions.querySelector('.toggle-favorite-movie');
         favorite.addEventListener('click', function () {
@@ -113,9 +115,9 @@ export class Movie {
             });
         });
 
-        const removeThisSeries = userActions.querySelector('.remove-this-movie');
-        removeThisSeries.addEventListener('click', function () {
-            fetch('/' + gThis.lang + '/series/remove/' + gThis.userMovieId,
+        const removeThisMovie = userActions.querySelector('.remove-this-movie');
+        removeThisMovie.addEventListener('click', function () {
+            fetch('/' + gThis.lang + '/movie/remove/' + gThis.userMovieId,
                 {
                     method: 'POST',
                     headers: {
@@ -124,7 +126,7 @@ export class Movie {
                 }
             ).then(function (response) {
                 if (response.ok) {
-                    window.location.href = '/' + gThis.lang + '/series/tmdb/{{ series.tmdbId }}-{{ series.slug }}';
+                    window.location.href = '/' + gThis.lang + '/movie/tmdb/' + gThis.tmdbId;
                 }
             });
         });
