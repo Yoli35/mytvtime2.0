@@ -18,22 +18,21 @@
                     <div class="title">{{ 'Filters'|trans }}</div>
                     <div class="filter-values">
                         <div class="filter-value" data-title="{{ 'Sort'|trans }} / {{ 'Order'|trans }}">
-                            {{ ux_icon('ion:settings-outline', {height: '18px', width: '18px'}) }}:
-                            {{ filterMeanings[filters.sort]|trans }}{# / #}
-                            {#                            {{ filterMeanings[filters.order]|trans }} #}
+                            {{ ux_icon('ion:settings-outline', {height: '16px', width: '16px'}) }}&nbsp;
+                            {{ filterMeanings[filters.sort]|trans }}&nbsp;
                             {% if filters.order == 'DESC' %}
-                                {{ ux_icon('fa6-solid:arrow-down', {height: '18px', width: '18px'}) }}
+                                {{ ux_icon('fa6-solid:arrow-down', {height: '16px', width: '16px'}) }}
                             {% else %}
-                                {{ ux_icon('fa6-solid:arrow-up', {height: '18px', width: '18px'}) }}
+                                {{ ux_icon('fa6-solid:arrow-up', {height: '16px', width: '16px'}) }}
                             {% endif %}
                         </div>
-                        <div class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">{{ ux_icon('ion:apps-sharp', {height: '18px', width: '18px'}) }}: {{ filters.perPage }}</div>
+                        <div class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">{{ ux_icon('ion:apps-sharp', {height: '16px', width: '16px'}) }}: {{ filters.perPage }}</div>
                     </div>
                     <div class="collapse" data-title="{{ 'Show / hide filter options'|trans }}">
                         {% if filterBoxOpen %}
-                            {{ ux_icon('ion:chevron-collapse', {height: '18px', width: '18px'}) }}
+                            {{ ux_icon('ion:chevron-collapse', {height: '16px', width: '16px'}) }}
                         {% else %}
-                            {{ ux_icon('ion:chevron-expand', {height: '18px', width: '18px'}) }}
+                            {{ ux_icon('ion:chevron-expand', {height: '16px', width: '16px'}) }}
                         {% endif %}
                     </div>
                 </header>
@@ -80,8 +79,8 @@
                     <div class="filter">
                         <label for="order-by">{{ 'Order'|trans }}
                             <select id="order-by">
-                                <option value="DESC"{% if filters.order=='DESC' %} selected{% endif %}>{{ ux_icon('fa6-solid:arrow-down', {height: '18px', width: '18px'}) }}{{ 'Descending'|trans }}</option>
-                                <option value="ASC"{% if filters.order=='ASC' %} selected{% endif %}>{{ ux_icon('fa6-solid:arrow-up', {height: '18px', width: '18px'}) }}{{ 'Ascending'|trans }}</option>
+                                <option value="DESC"{% if filters.order=='DESC' %} selected{% endif %}>{{ 'Descending'|trans }} ↓</option>
+                                <option value="ASC"{% if filters.order=='ASC' %} selected{% endif %}>{{ 'Ascending'|trans }} ↑</option>
                             </select>
                         </label>
                     </div>
@@ -108,6 +107,12 @@
             </article>
         </main>
         {% include('_blocks/_footer.html.twig') %}
+    </div>
+    <div id="svgs" style="display: none">
+        <div id="arrow-down">{{ ux_icon('ion:settings-outline', {height: '16px', width: '16px'}) }}</div>
+        <div id="arrow-up">{{ ux_icon('ion:settings-outline', {height: '16px', width: '16px'}) }}</div>
+        <div id="chevron-collapse">{{ ux_icon('ion:chevron-collapse', {height: '16px', width: '16px'}) }}</div>
+        <div id="chevron-expand">{{ ux_icon('ion:chevron-expand', {height: '16px', width: '16px'}) }}</div>
     </div>
 {% endblock %}
 {% block javascripts %}
