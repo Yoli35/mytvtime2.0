@@ -1370,21 +1370,24 @@ h2 {
                         width: 100%;
 
                         .number {
+                            bottom: -2rem;
                             left: .5rem;
                             right: unset;
                             height: 20vw;
                             width: 20vw;
                             font-size: 15vw;
+                            z-index: 1;
                         }
                     }
 
                     .infos {
                         height: unset;
+                        padding-block-start: 2rem;
                     }
 
                     .user-episode {
                         position: absolute;
-                        right: 3vw;
+                        right: 4vw;
                         top: 5vw;
                     }
                 }
