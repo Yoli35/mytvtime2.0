@@ -17,7 +17,7 @@ class MovieDirectLink
     private ?string $url = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    private ?string $title = null;
 
     #[ORM\ManyToOne(inversedBy: 'movieDirectLinks')]
     #[ORM\JoinColumn(nullable: false)]
@@ -26,10 +26,10 @@ class MovieDirectLink
     #[ORM\Column(nullable: true)]
     private ?int $providerId = null;
 
-    public function __construct(string $url, string $name, Movie $movie, ?int $providerId)
+    public function __construct(string $url, string $title, Movie $movie, ?int $providerId)
     {
         $this->url = $url;
-        $this->name = $name;
+        $this->title = $title;
         $this->movie = $movie;
         $this->providerId = $providerId;
     }
@@ -51,14 +51,14 @@ class MovieDirectLink
         return $this;
     }
 
-    public function getName(): ?string
+    public function getTitle(): ?string
     {
-        return $this->name;
+        return $this->title;
     }
 
-    public function setName(string $name): static
+    public function setTitle(string $title): static
     {
-        $this->name = $name;
+        $this->title = $title;
 
         return $this;
     }

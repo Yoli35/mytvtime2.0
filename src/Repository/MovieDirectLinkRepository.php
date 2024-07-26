@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\MovieDirectLink;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -11,33 +12,17 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MovieDirectLinkRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $em)
     {
         parent::__construct($registry, MovieDirectLink::class);
     }
 
-    //    /**
-    //     * @return MovieDirectLink[] Returns an array of MovieDirectLink objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('m.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function save(MovieDirectLink $entity, bool $flush = false): void
+    {
+        $this->em->persist($entity);
 
-    //    public function findOneBySomeField($value): ?MovieDirectLink
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        if ($flush) {
+            $this->em->flush();
+        }
+    }
 }

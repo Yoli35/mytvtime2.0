@@ -169,12 +169,12 @@ export class Movie {
                 url.nextElementSibling.textContent = gThis.translations['This field is required'];
             }
             if (name.value && url.value) {
-                fetch('/' + gThis.lang + '/series/add/watch/link/' + gThis.userMovieId, {
+                fetch('/' + gThis.lang + '/movie/add/direct/link/' + gThis.userMovieId, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({provider: provider.value, name: name.value, url: url.value})
+                        body: JSON.stringify({provider: provider.value, title: name.value, url: url.value})
                     }
                 ).then(function (response) {
                     if (response.ok) {

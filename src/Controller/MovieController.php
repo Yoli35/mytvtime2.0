@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Movie;
 use App\Entity\MovieCollection;
+use App\Entity\MovieDirectLink;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserMovie;
 use App\Repository\MovieCollectionRepository;
+use App\Repository\MovieDirectLinkRepository;
 use App\Repository\MovieRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
@@ -34,6 +36,7 @@ class MovieController extends AbstractController
         private readonly ImageConfiguration        $imageConfiguration,
         private readonly KeywordService            $keywordService,
         private readonly MovieCollectionRepository $movieCollectionRepository,
+        private readonly MovieDirectLinkRepository $movieDirectLinkRepository,
         private readonly MovieRepository           $movieRepository,
         private readonly SettingsRepository        $settingsRepository,
         private readonly SourceRepository          $sourceRepository,
@@ -180,11 +183,11 @@ class MovieController extends AbstractController
 
         dump([
 //                'language' => $language,
-                'movie' => $movie,
-                'userMovie' => $userMovie,
+            'movie' => $movie,
+            'userMovie' => $userMovie,
 //                'providers' => $providers,
 //                'translations' => $translations,
-            ]);
+        ]);
         return $this->render('movie/show.html.twig', [
             'userMovie' => $userMovie,
             'movie' => $movie,
@@ -353,6 +356,30 @@ class MovieController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_USER')]
+    #[Route('/add/direct/link/{id}', name: 'add_watch_link', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function addWatchLink(Request $request, UserMovie $userMovie): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $url = $data['url'];
+        $title = $data['title'];
+        $providerId = $data['provider'];
+        if ($providerId == "") $providerId = null;
+        dump([
+            'url' => $url,
+            'title' => $title,
+            'provider' => $providerId,
+        ]);
+        $movie = $userMovie->getMovie();
+
+        $watchLink = new MovieDirectLink($url, $title, $movie, $providerId);
+        $this->movieDirectLinkRepository->save($watchLink, true);
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
     #[Route('/image/config', name: 'image_config')]
     public function getImageConfig(): Response
     {
@@ -361,7 +388,7 @@ class MovieController extends AbstractController
             'body' => [
                 'poster_url' => $this->imageConfiguration->getUrl('poster_sizes', 0),
                 'profile_url' => $this->imageConfiguration->getUrl('profile_sizes', 0),
-                ],
+            ],
         ]);
     }
 
@@ -410,7 +437,7 @@ class MovieController extends AbstractController
             return $b['logo_path'] <=> $a['logo_path'];
         });
         $pc = array_map(function ($p) {
-            $p['logo_path'] = $p['logo_path'] ? $this->imageConfiguration->getUrl('logo_sizes', 1) . $p['logo_path']:null;
+            $p['logo_path'] = $p['logo_path'] ? $this->imageConfiguration->getUrl('logo_sizes', 1) . $p['logo_path'] : null;
             return $p;
         }, $movie['production_companies'] ?? []);
         $movie['production_companies'] = $pc;
