@@ -5,10 +5,10 @@ namespace App\Twig\Runtime;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 
-class FormatRuntime implements RuntimeExtensionInterface
+readonly class FormatRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
-        private readonly TranslatorInterface $translator,
+        private TranslatorInterface $translator,
     )
     {
         // Inject dependencies if needed
