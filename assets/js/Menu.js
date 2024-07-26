@@ -62,6 +62,7 @@ export class Menu {
         this.userConnected = this.avatar != null;
         this.connexionInterval = null;
         this.posterUrl = null;
+        this.profileUrl = null;
     }
 
     init() {
@@ -75,6 +76,7 @@ export class Menu {
         const notifications = document.querySelector(".notifications");
         const movieSearch = navbar.querySelector("#movie-search");
         const tvSearch = navbar.querySelector("#tv-search");
+        const personSearch = navbar.querySelector("#person-search");
 
         burger.addEventListener("click", () => {
             burger.classList.toggle("open");
@@ -290,6 +292,145 @@ export class Menu {
             }
         });
         tvSearch.addEventListener("keydown", gThis.searchMenuNavigate);
+
+        const personResult ={
+              "page": 1,
+              "results": [
+                {
+                  "adult": false,
+                  "gender": 2,
+                  "id": 587634,
+                  "known_for_department": "Acting",
+                  "name": "Park Bo-gum",
+                  "original_name": "박보검",
+                  "popularity": 45.927,
+                  "profile_path": "/lITY3WsJOFjlHkP1bJ3PwYhuNnD.jpg",
+                  "known_for": [
+                    {
+                      "backdrop_path": "/18ypvPahjmmue1iR4N4YgTBrO8N.jpg",
+                      "id": 99047,
+                      "name": "Record of Youth",
+                      "original_name": "청춘기록",
+                      "overview": "Deux acteurs et une maquilleuse luttent pour se frayer un chemin dans un univers qui prend plus en considération leurs origines et leur passé que leurs rêves d'avenir.",
+                      "poster_path": "/54yTLS5d4OPOuunzOvHlmP82eIT.jpg",
+                      "media_type": "tv",
+                      "adult": false,
+                      "original_language": "ko",
+                      "genre_ids": [
+                        18
+                      ],
+                      "popularity": 191.587,
+                      "first_air_date": "2020-09-07",
+                      "vote_average": 8.2,
+                      "vote_count": 201,
+                      "origin_country": [
+                        "KR"
+                      ]
+                    },
+                    {
+                      "backdrop_path": "/yC4DRg5aGgNpkHpUDpLtBqzownS.jpg",
+                      "id": 586047,
+                      "title": "Seobok",
+                      "original_title": "서복",
+                      "overview": "Ki Heon, ancien agent secret atteint d’un cancer en phase terminale, se voit confier une dernière mission : assurer le transport en toute sécurité du premier clone humain Seo Bok, dont le code génétique détient le secret de la vie éternelle. Un pouvoir extraordinaire qui est cible de toutes les convoitises. Bien que ses jours soient comptés, Ki Heon est bien décidé à protéger Seobok au péril de sa vie !",
+                      "poster_path": "/7sPEI9L5kyR14JijGnuTWiL3kwr.jpg",
+                      "media_type": "movie",
+                      "adult": false,
+                      "original_language": "ko",
+                      "genre_ids": [
+                        878,
+                        28,
+                        53,
+                        9648
+                      ],
+                      "popularity": 28.746,
+                      "release_date": "2021-04-12",
+                      "video": false,
+                      "vote_average": 7.214,
+                      "vote_count": 215
+                    },
+                    {
+                      "backdrop_path": "/1nvdHIVrCuJahMAXYcSx2Mh9bPt.jpg",
+                      "id": 66256,
+                      "name": "Moonlight Drawn by Clouds",
+                      "original_name": "구르미 그린 달빛",
+                      "overview": "En Corée sous la Dynastie Joseon, une jeune femme qui à vécu jusque-là dans la peau d'un homme, devient eunuque au palais royal et noue des liens avec le prince héritier.",
+                      "poster_path": "/qKir5S1ka8UkWVo8aGW9T19IIHC.jpg",
+                      "media_type": "tv",
+                      "adult": false,
+                      "original_language": "ko",
+                      "genre_ids": [
+                        35,
+                        18,
+                        10768
+                      ],
+                      "popularity": 90.432,
+                      "first_air_date": "2016-08-22",
+                      "vote_average": 6.753,
+                      "vote_count": 75,
+                      "origin_country": [
+                        "KR"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "total_pages": 1,
+              "total_results": 1
+            };
+        personSearch.addEventListener("input", (e) => {
+            const value = e.target.value;
+            if (value.length > 2) {
+                const searchResults = personSearch.closest("li").querySelector(".search-results");
+                const query = encodeURIComponent(value);
+                const url = 'https://api.themoviedb.org/3/search/person?query=' + query + '&include_adult=false&language=fr-FR&page=1';
+                const options = {
+                    method: 'GET',
+                    headers: {
+                        accept: 'application/json',
+                        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmN2UzYzVmZTc5NGQ1NjViNDcxMzM0YzljNWVjYWY5NiIsIm5iZiI6MTcyMDYxMDA2Ni4zMzk0NzgsInN1YiI6IjYyMDJiZjg2ZTM4YmQ4MDA5MWVjOWIzOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.D5XVKmPsIrUKnZjQBXOhsKXzXtrejlHl8KT1dmZ2oyQ'
+                    }
+                };
+
+                fetch(url, options)
+                    .then(res => res.json())
+                    .then(json => {
+                        console.log(json);
+                        searchResults.innerHTML = '';
+                        const ul = document.createElement("ul");
+                        ul.setAttribute("data-type", "person");
+                        json.results.forEach((result) => {
+                            const a = document.createElement("a");
+                            a.href = '/' + gThis.lang + '/people/show/' + result.id + '-' + gThis.toSlug(result.name);
+                            const li = document.createElement("li");
+                            li.setAttribute("data-id", result.id);
+                            li.setAttribute("data-slug", gThis.toSlug(result.name));
+                            const posterDiv = document.createElement("div");
+                            posterDiv.classList.add("poster");
+                            if (result.profile_path) {
+                                const img = document.createElement("img");
+                                img.src = gThis.profileUrl + result.profile_path;
+                                img.alt = result.name;
+                                posterDiv.appendChild(img);
+                            } else {
+                                posterDiv.innerHTML = 'No poster';
+                            }
+                            a.appendChild(posterDiv);
+                            const titleDiv = document.createElement("div");
+                            titleDiv.classList.add("title");
+                            titleDiv.innerHTML = result.name;
+                            a.appendChild(titleDiv);
+                            li.appendChild(a);
+                            ul.appendChild(li);
+                        });
+                        searchResults.appendChild(ul);
+                    })
+                    .catch(err => console.error('error:' + err));
+            } else {
+                movieSearch.closest("li").querySelector(".search-results").innerHTML = '';
+            }
+        });
+        personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
     }
 
     searchMenuNavigate(e) {
@@ -312,6 +453,10 @@ export class Menu {
                 if (type==='tv') {
                     const slug = li.getAttribute("data-slug");
                     window.location.href = '/' + gThis.lang + '/series/tmdb/' + id + '-' + slug;
+                }
+                if (type==='person') {
+                    const slug = li.getAttribute("data-slug");
+                    window.location.href = '/' + gThis.lang + '/people/show/' + id + '-' + slug;
                 }
             }
             if (e.key === 'ArrowDown') {
@@ -360,9 +505,11 @@ export class Menu {
             /**
              *  @type {Object}
              * @property {string} poster_url
+             * @property {string} profile_url
              */
             .then(data => {
                 gThis.posterUrl = data.body.poster_url;
+                gThis.profileUrl = data.body.profile_url;
             })
             .catch((error) => {
                 console.error('Error:', error);
