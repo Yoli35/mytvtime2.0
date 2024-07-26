@@ -15,6 +15,9 @@ export class Keyword {
     init(type) {
         const lang = document.querySelector("html").getAttribute("lang");
         const keywordForm = document.querySelector('.keyword-translation-form');
+        if (!keywordForm) {
+            return;
+        }
         const keywordFormsCancel = keywordForm.querySelector('button[type="button"]');
         const keywordFormsSubmit = keywordForm.querySelector('button[type="submit"]');
         const keywordsDiv = document.querySelector('.keywords');
