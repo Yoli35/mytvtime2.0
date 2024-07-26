@@ -1366,8 +1366,8 @@ h2 {
                     position: relative;
 
                     .poster, .still {
-                        height: 80vw;
-                        width: 80vw;
+                        aspect-ratio: 16/9;
+                        width: 100%;
 
                         .number {
                             left: .5rem;
