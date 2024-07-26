@@ -146,6 +146,13 @@ class DateService
         return datefmt_format($format, $timestamp);
     }
 
+    public function formatDateRelativeLong($dateSting, $timeZone, $locale): string
+    {
+        $timestamp = strtotime($dateSting);
+        $format = datefmt_create($locale, IntlDateFormatter::RELATIVE_LONG, IntlDateFormatter::SHORT, $timeZone, IntlDateFormatter::GREGORIAN);
+        return datefmt_format($format, $timestamp);
+    }
+
     public function getDayNames($count): array
     {
         $days = [];

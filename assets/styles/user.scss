@@ -57,9 +57,10 @@
 
     .viewed-at {
         align-items: center;
-        background-color: var(--gradient-ardoise-80-alpha-50);
+        background-color: var(--gradient-orange-50);
         border-radius: .25rem;
         color: var(--gradient-ardoise-10);
+        cursor: pointer;
         display: flex;
         font-size: 1rem;
         font-weight: 300;
@@ -67,6 +68,11 @@
         justify-content: center;
         margin-inline-end: auto;
         padding: .5rem;
+
+        &.viewed {
+            background-color: var(--gradient-green-50);
+            color: var(--gradient-ardoise-10);
+        }
     }
 
     .rating {

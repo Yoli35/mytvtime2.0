@@ -380,6 +380,34 @@ class MovieController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_USER')]
+    #[Route('/viewed/{id}', name: 'viewed', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function addViewedDate(Request $request, UserMovie $userMovie): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $viewed = $data['viewed'];
+
+        $now = $this->dateService->getNowImmutable($userMovie->getUser()->getTimezone() ?? 'Europe/Paris');
+
+        if ($viewed) {
+            $viewArray = $userMovie->getViewArray();
+            $lastViewedAt = $userMovie->getLastViewedAt();
+            $viewArray[] = $lastViewedAt;
+            $userMovie->setViewArray($viewArray);
+        } else {
+            $userMovie->setLastViewedAt($now);
+        }
+        $this->userMovieRepository->save($userMovie, true);
+
+        return $this->json([
+            'ok' => true,
+            'body' => [
+                'viewed' => $viewed,
+                'lastViewedAt' => $this->dateService->formatDateRelativeLong($now->format("Y-m-d H:i:s"), 'UTC', $userMovie->getUser()->getPreferredLanguage() ?? 'fr')
+            ],
+        ]);
+    }
+
     #[Route('/image/config', name: 'image_config')]
     public function getImageConfig(): Response
     {

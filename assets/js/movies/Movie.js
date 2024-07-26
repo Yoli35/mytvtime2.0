@@ -213,6 +213,29 @@ export class Movie {
             }
         });
 
+        const viewedAtDiv = userActions.querySelector('.viewed-at');
+
+        viewedAtDiv.addEventListener('click', function () {
+            const viewed = this.classList.contains('viewed');
+            fetch('/' + gThis.lang + '/movie/viewed/' + gThis.userMovieId,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({viewed: viewed})
+                }
+            ).then(response => response.json())
+                /** @param {{viewed: boolean, lastViewedAt: string}} data */
+                .then(data => {
+                    if (!data.body.viewed) {
+                        viewedAtDiv.classList.add('viewed');
+                    }
+                    const textNode = document.createTextNode(' ' + data.body.lastViewedAt);
+                    viewedAtDiv.appendChild(textNode);
+                });
+        });
+
         const seriesToolsClick = document.querySelector('.movie-tools-click');
         const seriesToolsMenu = document.querySelector('.movie-tools-menu');
         seriesToolsClick.addEventListener('click', function () {
