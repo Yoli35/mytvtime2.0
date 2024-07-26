@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\MovieRepository;
 use App\Repository\SeriesRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
@@ -19,10 +20,12 @@ class PeopleController extends AbstractController
 {
 
     public function __construct(
-        private readonly SeriesRepository   $seriesRepository,
-        private readonly TmdbService        $tmdbService,
         private readonly DateService        $dateService,
-        private readonly ImageConfiguration $imageConfiguration)
+        private readonly ImageConfiguration $imageConfiguration,
+        private readonly MovieRepository    $movieRepository,
+        private readonly SeriesRepository   $seriesRepository,
+        private readonly TmdbService        $tmdbService
+    )
     {
     }
 
@@ -41,15 +44,19 @@ class PeopleController extends AbstractController
         $user = $this->getUser();
         $seriesInfos = $this->seriesRepository->userSeriesInfos($user);
         $seriesIds = array_column($seriesInfos, 'id');
-        $indexedInfos = [];
+        $movieInfos = $this->movieRepository->movieInfos($user);
+        $movieIds = array_column($movieInfos, 'tmdbId');
+        $indexedSeriesInfos = [];
         foreach ($seriesInfos as $info) {
-            $indexedInfos[$info['id']] = $info;
+            $indexedSeriesInfos[$info['id']] = $info;
         }
-//        dump([
-//            'seriesInfos' => $seriesInfos,
-//            'seriesIds' => $seriesIds,
-//            'indexedInfos' => $indexedInfos,
-//            ]);
+        $indexedMovieInfos = [];
+        foreach ($movieInfos as $info) {
+            $indexedMovieInfos[$info['tmdbId']] = $info;
+        }
+        dump([
+            'indexedMovieInfos' => $indexedMovieInfos,
+            ]);
 
         $standing = $this->tmdbService->getPerson($id, $request->getLocale(), "images,combined_credits");
         $people = json_decode($standing, true);
@@ -96,20 +103,28 @@ class PeopleController extends AbstractController
                 $role['character'] = key_exists('character', $cast) ? ($cast['character'] ?: null) : null;
             }
             $role['media_type'] = key_exists('media_type', $cast) ? $cast['media_type'] : null;
+            $typeTv = $role['media_type'] == 'tv';
             $role['original_title'] = key_exists('original_title', $cast) ? $cast['original_title'] : (key_exists('original_name', $cast) ? $cast['original_name'] : null);
             $role['poster_path'] = key_exists('poster_path', $cast) ? $cast['poster_path'] : null;
             $role['release_date'] = key_exists('release_date', $cast) ? $cast['release_date'] : (key_exists('first_air_date', $cast) ? $cast['first_air_date'] : null);
             $role['title'] = key_exists('title', $cast) ? $cast['title'] : (key_exists('name', $cast) ? $cast['name'] : null);
             $role['slug'] = $role['title'] ? $slugger->slug($role['title'])->lower()->toString() : null;
 
-            $role['localized_title'] = $indexedInfos[$cast['id']]['localized_name'] ?? null;
-            $role['added_series'] = in_array($cast['id'], $seriesIds);
-            $role['progress'] = $indexedInfos[$cast['id']]['progress'] ?? null;
-            if ($role['progress']) {
-                $role['progress'] = round($role['progress'], 2);
+            $role['user_added'] = in_array($cast['id'], $typeTv ? $seriesIds : $movieIds);
+            if ($role['user_added']) {
+                $role['localized_title'] = $indexedSeriesInfos[$cast['id']]['localized_name'] ?? null;
+                $role['progress'] = $typeTv ? ($indexedSeriesInfos[$cast['id']]['progress'] ?? null) : ($indexedMovieInfos[$cast['id']]['lastViewedAt'] != null ? 100 : 0 ?? null);
+                if ($role['progress']) {
+                    $role['progress'] = round($role['progress'], 2);
+                }
+                $role['rating'] = $typeTv ? ($indexedSeriesInfos[$cast['id']]['rating'] ?? null) : ($indexedMovieInfos[$cast['id']]['rating'] ?? null);
+                $role['favorite'] = $typeTv ? ($indexedSeriesInfos[$cast['id']]['favorite'] ?? null) : ($indexedMovieInfos[$cast['id']]['favorite'] ?? null);
+            } else {
+                $role['localized_title'] = null;
+                $role['progress'] = null;
+                $role['rating'] = null;
+                $role['favorite'] = null;
             }
-            $role['rating'] = $indexedInfos[$cast['id']]['rating'] ?? null;
-            $role['favorite'] = $indexedInfos[$cast['id']]['favorite'] ?? null;
 
             if ($role['release_date']) {
                 $castDates[$role['release_date']] = $role;

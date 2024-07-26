@@ -94,7 +94,7 @@
                                     {% for media in credits.known_for %}
                                         {% if media.media_type == "movie" %}
                                             {% set url = "" %}
-                                             {% set url = path('app_movie_tmdb', {id: media.id}) %}
+                                            {% set url = path('app_movie_tmdb', {id: media.id}) %}
                                         {% endif %}
                                         {% if media.media_type == "tv" %}
                                             {% set url = path('app_series_tmdb', {id: media.id, slug: media.slug}) %}
@@ -125,7 +125,7 @@
                                                 <div class="separation"></div>
                                             {% endif %}
                                         {% endif %}
-                                        <div class="date{% if prod.added_series %}{% if prod.progress==0 %} added{% elseif prod.progress==100 %} ended{% else %} started{% endif %}{% endif %}">
+                                        <div class="date{% if prod.user_added %}{% if prod.progress==0 %} added{% elseif prod.progress==100 %} ended{% else %} started{% endif %}{% endif %}">
                                             {% if loop.index0 %}
                                                 {% if date|length == 10 and date|slice(0,4) != lastDate %}
                                                     <div class="year">{{ date|length == 10 ? (date|slice(0,4)) : "—" }}</div>
@@ -186,7 +186,7 @@
                                                         {% endif %}
                                                     </div>
                                                 {% endif %}
-                                                {% if prod.added_series %}
+                                                {% if prod.user_added %}
                                                     <div class="progress">
                                                         {% set icon = 'fa6-solid:battery-empty' %}
                                                         {% if prod.progress==100 %}
@@ -290,8 +290,8 @@
     </div>
     <div class="global-data" style="display: none">
         {
-            "app_series_get_overview": "{{ path('app_series_get_overview', {id: 0})|slice(0, -1) }}",
-            "imgUrl": "{{ imageConfig.url ~ imageConfig.profile_sizes.2 }}"
+        "app_series_get_overview": "{{ path('app_series_get_overview', {id: 0})|slice(0, -1) }}",
+        "imgUrl": "{{ imageConfig.url ~ imageConfig.profile_sizes.2 }}"
         }
     </div>
 {% endblock %}
