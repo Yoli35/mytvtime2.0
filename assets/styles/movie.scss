@@ -330,7 +330,9 @@
             }
         }
     }
+}
 
+.movie-show {
     main {
         display: flex;
         flex-direction: column;
@@ -571,7 +573,7 @@
                 height: 20rem;
                 justify-content: center;
 
-                .poster {
+                .poster a {
                     align-items: center;
                     aspect-ratio: 78 / 117;
                     background-color: var(--gradient-green-70-alpha-50);
@@ -588,7 +590,7 @@
                     }
                 }
 
-                .infos {
+                .infos a {
                     aspect-ratio: 16 / 9;
                     display: flex;
                     flex-direction: column;
@@ -625,6 +627,167 @@
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+.collection-show {
+    padding-block-start: 5rem;
+
+    header {
+        align-items: stretch;
+        display: flex;
+        gap: 1rem;
+
+        .poster {
+            align-items: center;
+            aspect-ratio: 78 / 117;
+            background-color: var(--gradient-grey-75-alpha-40);
+            border-radius: .5rem;
+            display: flex;
+            justify-content: center;
+            width: 28vw;
+
+            img {
+                aspect-ratio: 78 / 117;
+                border-radius: .5rem;
+                height: auto;
+                position: relative;
+                width: 100%;
+                z-index: -1;
+            }
+        }
+
+        .infos {
+            background-color: var(--gradient-ardoise-100-alpha-50);
+            border-radius: .5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            justify-content: center;
+            overflow: hidden;
+            padding: 1rem;
+            position: relative;
+            width: calc(72vw - 1rem);
+            z-index: 1;
+
+            .backdrop {
+                inset: 0;
+                overflow: auto;
+                position: absolute;
+                z-index: -1;
+
+                img {
+                    border-radius: .5rem;
+                    height: 100%;
+                    object-fit: cover;
+                    width: 100%;
+                }
+            }
+
+            .title {
+                h1 {
+                    background-color: var(--gradient-ardoise-100-alpha-50);
+                    border-radius: .5rem;
+                    color: var(--gradient-orange-50);
+                    font-size: clamp(1rem, 5vw, 4rem);
+                    font-weight: 100;
+                    line-height: clamp(1.1rem, 5vw, 4rem);;
+                    padding: .5rem;
+                    margin-block: 0;
+                    text-align: left;
+
+                    .localized-name-span, span {
+                        color: var(--gradient-orange-70);
+                    }
+                }
+            }
+
+            .movie-overview {
+                background-color: var(--gradient-ardoise-100-alpha-50);
+                border-radius: .5rem;
+                color: var(--gradient-ardoise-10);
+                font-size: 1.25rem;
+                padding: 1rem;
+            }
+        }
+    }
+
+    main {
+        section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding-block: 1rem;
+
+            .movie {
+                display: flex;
+                gap: 1rem;
+
+                .poster {
+                    align-items: center;
+                    aspect-ratio: 78 / 117;
+                    background-color: var(--gradient-green-70-alpha-50);
+                    border-radius: .5rem;
+                    display: flex;
+                    justify-content: center;
+                    width: 28vw;
+
+                    img {
+                        border-radius: .5rem;
+                        height: 100%;
+                        object-fit: cover;
+                        width: 100%;
+                    }
+                }
+
+                .infos {
+                    aspect-ratio: 16 / 9;
+                    display: flex;
+                    flex-direction: column;
+                    gap: .5rem;
+                    justify-content: center;
+                    padding: 1rem;
+                    position: relative;
+                    width: calc(72vw - 1rem);
+
+                    .backdrop {
+                        inset: 0;
+                        position: absolute;
+                        z-index: -1;
+
+                        img {
+                            border-radius: .5rem;
+                            height: 100%;
+                            object-fit: cover;
+                            width: 100%;
+                        }
+                    }
+
+                    .title {
+                        background-color: var(--gradient-ardoise-100-alpha-50);
+                        border-radius: .5rem;
+                        color: var(--gradient-ardoise-10);
+                        font-size: 1rem;
+                        font-weight: 100;
+                        padding: .5rem;
+
+                        span {
+                            color: var(--gradient-orange-50);
+                        }
+                    }
+
+                    .movie-overview {
+                        background-color: var(--gradient-ardoise-100-alpha-50);
+                        border-radius: .5rem;
+                        color: var(--gradient-ardoise-10);
+                        font-size: 1rem;
+                        font-weight: 100;
+                        padding: .5rem;
+                    }
+                }
+
             }
         }
     }
@@ -702,12 +865,16 @@
 
             .movie-collection {
                 .collection {
+                    align-items: center;
+                    flex-direction: column;
+                    height: unset;
+
                     .poster {
+                        width: 50vw;
                     }
 
                     .infos {
-                        aspect-ratio: unset;
-                        flex-grow: 1;
+                        height: 50vw;
                     }
                 }
             }

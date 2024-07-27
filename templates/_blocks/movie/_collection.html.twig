@@ -10,13 +10,17 @@
         <div class="label">{{ 'Collection'|trans }}</div>
         <div class="collection">
             <div class="poster">
-                <img src="/movies/posters{{ movie.belongs_to_collection.poster_path }}" alt="{{ movie.belongs_to_collection.name }} {{ 'poster'|trans }}">
+                <a href="{{ path('app_movie_collection', {id: movie.belongs_to_collection.id}) }}" title="{{ movie.belongs_to_collection.name }}">
+                    <img src="/movies/posters{{ movie.belongs_to_collection.poster_path }}" alt="{{ movie.belongs_to_collection.name }} {{ 'poster'|trans }}">
+                </a>
             </div>
             <div class="infos">
-                <div class="name">{{ movie.belongs_to_collection.name }}</div>
-                <div class="collection-backdrop">
-                    <img src="/movies/backdrops{{ movie.belongs_to_collection.backdrop_path }}" alt="{{ movie.belongs_to_collection.name }} {{ 'backdrop'|trans }}">
-                </div>
+                <a href="{{ path('app_movie_collection', {id: movie.belongs_to_collection.id}) }}" title="{{ movie.belongs_to_collection.name }}">
+                    <div class="name">{{ movie.belongs_to_collection.name }}</div>
+                    <div class="collection-backdrop">
+                        <img src="/movies/backdrops{{ movie.belongs_to_collection.backdrop_path }}" alt="{{ movie.belongs_to_collection.name }} {{ 'backdrop'|trans }}">
+                    </div>
+                </a>
             </div>
         </div>
     </div>

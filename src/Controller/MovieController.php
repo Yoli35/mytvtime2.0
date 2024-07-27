@@ -141,7 +141,6 @@ class MovieController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/show/{userMovieId}', name: 'show', requirements: ['userMovieId' => '\d+'])]
-//    #[Route('/show/{id}-{slug}', name: 'show', requirements: ['id' => '\d+', 'slug' => '[a-z0-9-]+'])]
     public function show(Request $request, int $userMovieId): Response
     {
         /** @var User $user */
@@ -181,13 +180,13 @@ class MovieController extends AbstractController
         ];
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
 
-        dump([
+//        dump([
 //                'language' => $language,
-            'movie' => $movie,
-            'userMovie' => $userMovie,
+//            'movie' => $movie,
+//            'userMovie' => $userMovie,
 //                'providers' => $providers,
 //                'translations' => $translations,
-        ]);
+//        ]);
         return $this->render('movie/show.html.twig', [
             'userMovie' => $userMovie,
             'movie' => $movie,
@@ -196,9 +195,7 @@ class MovieController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
     #[Route('/tmdb/{id}', name: 'tmdb', requirements: ['id' => '\d+'])]
-//    #[Route('/tmdb/{id}-{slug}', name: 'tmdb', requirements: ['id' => '\d+', 'slug' => '[a-z0-9-]+'])]
     public function tmdb(Request $request, int $id): Response
     {
         /** @var User $user */
@@ -234,6 +231,24 @@ class MovieController extends AbstractController
         );
         return $this->render('movie/tmdb.html.twig', [
             'movie' => $movie,
+        ]);
+    }
+
+    #[Route('/collection/{id}', name: 'collection', requirements: ['id' => '\d+'])]
+    public function collection(Request $request, int $id): Response
+    {
+        $collection = json_decode($this->tmdbService->getMovieCollection($id), true);
+
+        $this->saveImage("posters", $collection['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+        $this->saveImage("backdrops", $collection['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+
+        foreach ($collection['parts'] as $part) {
+            $this->saveImage("posters", $part['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->saveImage("backdrops", $part['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+        }
+
+        return $this->render('movie/collection.html.twig', [
+            'collection' => $collection,
         ]);
     }
 

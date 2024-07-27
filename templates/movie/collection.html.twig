@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Movie collection'|trans }} → {{ collection.name }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/movie.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
+{% endblock %}
+
+{% block body %}
+    <script>
+        const bd = '/movies/posters{{ collection.poster_path }}';
+        const body = document.querySelector("body");
+        body.style.backgroundSize = "cover";
+        body.style.backgroundPosition = "center";
+        body.style.backgroundRepeat = "no-repeat";
+        body.style.backgroundAttachment = "fixed";
+        body.style.backgroundImage = "url(" + bd + ")";
+    </script>
+    {% include '_blocks/_menu.html.twig' %}
+    <div class="container-fluid backgroundImageOverlay collection-show">
+        <header>
+            <div class="poster">
+                <img src="/movies/posters{{ collection.poster_path }}" alt="{{ collection.name }} {{ 'poster'|trans }}">
+            </div>
+            <div class="infos">
+                <div class="backdrop">
+                    <img src="/movies/backdrops{{ collection.backdrop_path }}" alt="{{ collection.name }} {{ 'backdrop'|trans }}">
+                </div>
+                <div class="title">
+                    <h1>
+                        {{ collection.name }}
+                    </h1>
+                </div>
+                {% if collection.overview %}
+                    <div class="movie-overview">{{ collection.overview }}</div>
+                {% endif %}
+            </div>
+        </header>
+        <main>
+            <section>
+                {% for movie in collection.parts %}
+                    <div class="movie">
+                        <div class="poster">
+                            <a href="{{ path('app_movie_tmdb', {id: movie.id}) }}" title="{{ movie.title }}">
+                                <img src="/movies/posters{{ movie.poster_path }}" alt="{{ movie.title }} {{ 'poster'|trans }}">
+                            </a>
+                        </div>
+                        <div class="infos">
+                            <div class="backdrop">
+                                <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
+                            </div>
+                            <div class="title">
+                                <h2>
+                                    {{ movie.title }}{% if movie.original_title and movie.original_title != movie.title %}<br><span>{{ movie.original_title }}</span>{% endif %} ({{ movie.release_date|date("Y") }})
+                                </h2>
+                            </div>
+                            <div class="movie-overview">{{ movie.overview }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </section>
+        </main>
+        {% include('_blocks/_footer.html.twig') %}
+    </div>
+{% endblock %}

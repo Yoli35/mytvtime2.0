@@ -26,7 +26,7 @@ class KeywordService
         }
         $diff = array_diff($keywordsList, $keywordsOk);
         $values = array_values($diff);
-        dump(['keywords' => $keywordsList, 'ok' => $keywordsOk, 'diff' => $diff, 'values' => $values]);
+//        dump(['keywords' => $keywordsList, 'ok' => $keywordsOk, 'diff' => $diff, 'values' => $values]);
         return array_values(array_diff($keywordsList, $keywordsOk));
     }
 

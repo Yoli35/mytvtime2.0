@@ -495,4 +495,22 @@ class TMDBService
             return "";
         }
     }
+
+    public function getMovieCollection($collectionId): ?string
+    {
+        $request = "https://api.themoviedb.org/3/collection/$collectionId?api_key=$this->api_key";
+        try {
+            $response = $this->client->request(
+                'GET',
+                $request,
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable) {
+                return "";
+            }
+        } catch (Throwable) {
+            return "";
+        }
+    }
 }
