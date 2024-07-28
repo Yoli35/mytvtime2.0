@@ -1,3 +1,140 @@
+.people-index {
+    aside {
+        .pages {
+            form {
+                align-items: center;
+                display: flex;
+                gap: 1rem;
+
+                label {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+
+                    input {
+                        appearance: none;
+                        background-color: var(--gradient-orange-50);
+                        border: 1px solid var(--gradient-orange-90);
+                        border-radius: .25rem;
+                        color: var(--gradient-orange-90);
+                        padding-block: 3px;
+                        padding-inline-start: .5rem;
+
+                    }
+                }
+            }
+        }
+    }
+
+    main {
+        .person-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+
+            .person-card {
+                background-color: var(--gradient-orange-40-alpha-50);
+                border-radius: .5rem;
+                display: flex;
+                height: 22.5rem;
+
+                .profile {
+                    align-items: center;
+                    background-color: var(--gradient-green-50);
+                    border-radius: .5rem 0 0 .5rem;
+                    display: flex;
+                    flex-shrink: 0;
+                    justify-content: center;
+                    height: 100%;
+                    width: 15rem;
+
+                    img {
+                        aspect-ratio: 78 / 117;
+                        border-radius: .5rem 0 0 .5rem;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+                }
+
+                .infos {
+                    display: flex;
+                    flex-direction: column;
+                    gap: .5rem;
+                    justify-content: center;
+                    padding: 1rem;
+                    width: 25%;
+
+                    h4 {
+                        color: var(--gradient-ardoise-20);
+                        font-size: 1.5rem;
+                        font-weight: 100;
+                        line-height: 1.75rem;
+                    }
+
+                    .info {
+                        color: var(--gradient-ardoise-20);
+                        font-size: 1rem;
+                        font-weight: 100;
+                    }
+                }
+
+                .known-for {
+                    display: flex;
+                    flex-direction: column;
+                    gap: .5rem;
+                    justify-content: center;
+                    overflow: hidden;
+                    padding: 1rem;
+
+                    .wrapper {
+                        display: flex;
+                        gap: .5rem;
+                        overflow-x: scroll;
+
+                        .poster {
+                            aspect-ratio: 78 / 117;
+                            border-radius: .5rem;
+                            height: 18rem;
+                            max-width: 12rem;
+                            position: relative;
+
+                            a {
+                                align-items: center;
+                                background-color: var(--gradient-green-50);
+                                border-radius: .5rem;
+                                display: flex;
+                                height: 100%;
+                                justify-content: center;
+                                width: 100%;
+
+                                img {
+                                    aspect-ratio: 78 / 117;
+                                    border-radius: .5rem;
+                                    height: 18rem;
+                                    max-width: 12rem;
+                                    object-fit: cover;
+                                }
+                            }
+
+                            .media-type {
+                                background-color: var(--gradient-orange-50);
+                                border-radius: .25rem;
+                                color: var(--gradient-orange-90);
+                                font-size: .75rem;
+                                font-weight: 300;
+                                padding: .25rem .5rem;
+                                position: absolute;
+                                right: .5rem;
+                                top: .5rem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 .person {
     //@include flex-100(stretch, start);
     align-items: stretch;

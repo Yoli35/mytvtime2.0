@@ -29,11 +29,62 @@ class PeopleController extends AbstractController
     {
     }
 
-    #[Route('/', name: 'index')]
-    public function index(): Response
+    #[Route('/popular', name: 'index')]
+    public function index(Request $request): Response
     {
+        $page = $request->query->get('page', 1);
+        $people = json_decode($this->tmdbService->getPopularPeople($request->getLocale(), $page), true);
+        /*
+         * [▼
+              "adult" => false
+              "gender" => 2
+              "id" => 976
+              "known_for_department" => "Acting"
+              "name" => "Jason Statham"
+              "original_name" => "Jason Statham"
+              "popularity" => 213.578
+              "profile_path" => "/whNwkEQYWLFJA8ij0WyOOAD5xhQ.jpg"
+              "known_for" => array:3 [▼
+                0 => array:15 [▼
+                  "backdrop_path" => "/ibKeXahq4JD63z6uWQphqoJLvNw.jpg"
+                  "id" => 345940
+                  "title" => "En eaux troubles"
+                  "original_title" => "The Meg"
+                  "overview" => "
+        Missionné par un programme international d'observation de la vie sous-marine, un submersible a été attaqué par une créature gigantesque qu'on croyait disparue.
+         ▶
+        "
+                  "poster_path" => "/sKmxFCYGSync2zH94Aukzcp8yYA.jpg"
+                  "media_type" => "movie"
+                  "adult" => false
+                  "original_language" => "en"
+                  "genre_ids" => array:3 [▶]
+                  "popularity" => 102.043
+                  "release_date" => "2018-08-09"
+                  "video" => false
+                  "vote_average" => 6.257
+                  "vote_count" => 7477
+                ]
+                1 => array:15 [▶]
+                2 => array:15 [▶]
+           ]
+         */
+        $people['results'] = array_map(function ($person) {
+            $slugger = new AsciiSlugger();
+            $person['slug'] = $slugger->slug($person['name'])->lower()->toString();
+            $person['profile_path'] = $person['profile_path'] ? $this->imageConfiguration->getCompleteUrl($person['profile_path'], 'profile_sizes', 2) : null;
+            $person['known_for'] = array_map(function ($knownFor) {
+                $slugger = new AsciiSlugger();
+                $knownFor['slug'] = $slugger->slug($knownFor['media_type']=='movie' ? $knownFor['title']:$knownFor['name'])->lower()->toString();
+                $knownFor['poster_path'] = $knownFor['poster_path'] ? $this->imageConfiguration->getCompleteUrl($knownFor['poster_path'], 'poster_sizes', 5) : null;
+                return $knownFor;
+            }, $person['known_for']);
+            return $person;
+        }, $people['results']);
+
+        dump($people);
         return $this->render('people/index.html.twig', [
-            'controller_name' => 'PeopleController',
+            'people' => $people,
         ]);
     }
 

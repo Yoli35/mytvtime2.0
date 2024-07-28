@@ -1,20 +1,110 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello PeopleController!{% endblock %}
+{% block title %}my Tv Time → {{ 'Movies'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/filter.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/people.scss') }}">
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/Users/iboy/Sites/mytvtime2.0/src/Controller/PeopleController.php</code></li>
-        <li>Your template at <code>/Users/iboy/Sites/mytvtime2.0/templates/people/index.html.twig</code></li>
-    </ul>
-</div>
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid people-index filter-page">
+        <aside>
+            <article>
+                {% set start = max(1, people.page - 2) %}
+                {% set end = min(500, max(people.page + 2, start + 4)) %}
+                <div class="pages">
+                    {% if start > 1 %}
+                        {% for page in 1..min(start-1, 5) %}
+                            <a href="{{ path('app_people_index', {page: page}) }}">
+                                <button class="page{% if page==people.page %} active{% endif %}" value="{{ page }}">{{ page }}</button>
+                            </a>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="pages">
+                    {% for page in start..end %}
+                        <a href="{{ path('app_people_index', {page: page}) }}">
+                            <button class="page{% if page==people.page %} active{% endif %}" value="{{ page }}">{{ page }}</button>
+                        </a>
+                    {% endfor %}
+                </div>
+                <div class="pages">
+                    {% if end < 500 %}
+                        {% for page in max(end+1, 496)..500 %}
+                            <a href="{{ path('app_people_index', {page: page}) }}">
+                                <button class="page{% if page==people.page %} active{% endif %}" value="{{ page }}">{{ page }}</button>
+                            </a>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="pages">
+                    <form action="{{ path('app_people_index') }}" method="get">
+                        <label for="page">{{ 'Go to page'|trans }}
+                        <input type="number" name="page" value="{{ people.page }}" min="1" max="500" autofocus>
+                        </label>
+                        <button type="submit" class="page">{{ 'Go'|trans }}</button>
+                    </form>
+                </div>
+            </article>
+        </aside>
+        <main>
+            <div class="person-list">
+                {% for p in people.results %}
+                    <div class="person-card">
+                        <div class="profile">
+                            <a href="{{ path('app_people_show', {id: p.id, slug: p.slug}) }}">
+                                {% if p.profile_path %}
+                                    <img src="{{ p.profile_path }}" alt="{{ p.name }}">
+                                {% else %}
+                                    {{ 'No profile'|trans }}
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div class="infos">
+                            <h4>{{ p.name }}</h4>
+                        </div>
+                        <div class="known-for">
+                            <h5>{{ 'Known for'|trans }}</h5>
+                            <div class="wrapper">
+                                {% for m in p.known_for %}
+                                    {% if m.media_type == 'movie' %}
+                                        <div class="poster" data-title="{{ m.title }}">
+                                            <a href="{{ path('app_movie_tmdb', {id: m.id}) }}">
+                                                {% if m.poster_path %}
+                                                    <img src="{{ m.poster_path }}" alt="{{ m.title }}">
+                                                {% else %}
+                                                    {{ 'No poster'|trans }}
+                                                {% endif %}
+                                            </a>
+                                            <div class="media-type">
+                                                {{ ux_icon('fa6-solid:film', {height: '24px', width: '24px'}) }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if m.media_type == 'tv' %}
+                                        <div class="poster" data-title="{{ m.name }}">
+                                            <a href="{{ path('app_series_tmdb', {id: m.id, slug: m.slug}) }}">
+                                                {% if m.poster_path %}
+                                                    <img src="{{ m.poster_path }}" alt="{{ m.name }}">
+                                                {% else %}
+                                                    {{ 'No poster'|trans }}
+                                                {% endif %}
+                                            </a>
+                                            <div class="media-type">
+                                                {{ ux_icon('fa6-solid:tv', {height: '24px', width: '24px'}) }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </main>
+        {% include('_blocks/_footer.html.twig') %}
+    </div>
 {% endblock %}

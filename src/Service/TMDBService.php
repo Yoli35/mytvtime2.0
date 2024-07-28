@@ -377,13 +377,13 @@ class TMDBService
         }
     }
 
-    public function getPopularPeople($locale): ?string
+    public function getPopularPeople($locale, $page = 1): ?string
     {
         $noPopularPeople = json_encode([]);
         try {
             $response = $this->client->request(
                 'GET',
-                'https://api.themoviedb.org/3/person/popular?api_key=' . $this->api_key . '&language=' . $locale,
+                'https://api.themoviedb.org/3/person/popular?api_key=' . $this->api_key . '&language=' . $locale . '&page=' . $page,
             );
             try {
                 return $response->getContent();
