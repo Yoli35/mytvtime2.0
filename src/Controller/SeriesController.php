@@ -1261,7 +1261,7 @@ class SeriesController extends AbstractController
         if ($tvNextEpisodeAirDate != $dbNextEpisodeAirDate) {
             $nextEpisodeAirDate = $tvNextEpisodeAirDate ? $this->date($tvNextEpisodeAirDate . " 00:00:00") : null;
             $series->setNextEpisodeAirDate($nextEpisodeAirDate);
-            $series->addUpdate('Next episode air date updated' . $nextEpisodeAirDate?->format('d-m-Y H:i'));
+            $series->addUpdate($this->translator->trans('Next episode air date updated') . ' → ' . $nextEpisodeAirDate?->format('d-m-Y'));
         }
 
         $seriesImages = $series->getSeriesImages()->toArray();
