@@ -45,6 +45,20 @@ export class Menu {
      * @property {number} vote_average
      * @property {number} vote_count
      */
+
+    /**
+     * @typedef Person
+     * @type {Object}
+     * @property {boolean} adult
+     * @property {number} gender
+     * @property {number} id
+     * @property {string} known_for_department
+     * @property {string} name
+     * @property {string} original_name
+     * @property {number} popularity
+     * @property {string} profile_path
+     * @property {Array} known_for
+     */
     constructor() {
         gThis = this;
         document.addEventListener("DOMContentLoaded", () => {
@@ -59,8 +73,8 @@ export class Menu {
         this.checkTheme = this.checkTheme.bind(this);
         this.lang = document.documentElement.lang;
         this.avatar = document.querySelector('.avatar');
-        this.userConnected = this.avatar != null;
-        this.connexionInterval = null;
+        /*this.userConnected = this.avatar != null;
+        this.connexionInterval = null;*/
         this.posterUrl = null;
         this.profileUrl = null;
     }
@@ -176,11 +190,11 @@ export class Menu {
             this.initPreview();
         });
 
-        if (this.userConnected) {
-            this.connexionInterval = setInterval(() => {
-                this.checkConnexion();
-            }, 60000);
-        }
+        // if (this.userConnected) {
+        //     this.connexionInterval = setInterval(() => {
+        //         this.checkConnexion();
+        //     }, 60000);
+        // }
 
         movieSearch.addEventListener("input", (e) => {
             const value = e.target.value;
@@ -293,7 +307,7 @@ export class Menu {
         });
         tvSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
-        const personResult ={
+        /*const personResult ={
               "page": 1,
               "results": [
                 {
@@ -377,7 +391,7 @@ export class Menu {
               ],
               "total_pages": 1,
               "total_results": 1
-            };
+            };*/
         personSearch.addEventListener("input", (e) => {
             const value = e.target.value;
             if (value.length > 2) {
@@ -399,6 +413,7 @@ export class Menu {
                         searchResults.innerHTML = '';
                         const ul = document.createElement("ul");
                         ul.setAttribute("data-type", "person");
+                        /** @var {Person} */
                         json.results.forEach((result) => {
                             const a = document.createElement("a");
                             a.href = '/' + gThis.lang + '/people/show/' + result.id + '-' + gThis.toSlug(result.name);
@@ -516,7 +531,7 @@ export class Menu {
             });
     }
 
-    checkConnexion() {
+   /* checkConnexion() {
         gThis.avatar.classList.add("highlight");
         fetch('/' + gThis.lang + '/user/is-connected', {
             method: 'GET',
@@ -541,7 +556,7 @@ export class Menu {
             .catch((error) => {
                 console.error('Error:', error);
             });
-    }
+    }*/
 
     initPreview() {
         this.setPreview(localStorage.getItem("mytvtime_2_preview"));
