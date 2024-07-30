@@ -102,7 +102,7 @@
                                         </div>
                                     </div>
                                     {% if episode.air_date %}
-                                        <div class="air-date">{{ 'Air date'|trans }} {{ episode.air_date|format_date('relative_long') }}</div>
+                                        <div class="air-date">{{ 'Air date'|trans }} {{ episode.air_date|format_date('relative_full') }}</div>
                                     {% endif %}
                                     {% if episode.runtime %}
                                         <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
