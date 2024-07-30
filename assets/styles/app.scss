@@ -1305,7 +1305,7 @@ label:has(input[type="text"]) {
         padding-block: 1rem;
         padding-inline: 1rem 2rem;
         position: relative;
-        transition: all 500ms ease-in-out, width 1500ms ease-in-out;
+        transition: all 500ms ease-in-out;
         width: fit-content;
 
         &.success {
