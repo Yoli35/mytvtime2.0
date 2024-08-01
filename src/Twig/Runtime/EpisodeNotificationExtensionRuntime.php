@@ -58,13 +58,18 @@ readonly class EpisodeNotificationExtensionRuntime implements RuntimeExtensionIn
         }
         foreach ($seriesArr as $key => $item) {
             $seasonNumber = $item['seasonNumber'];
-            if (count($item['episodes']) > 1) {
+            if (count($item['episodes']) > 2) {
                 $start = $this->minNumberInArray($item['episodes']);
                 $end = $this->maxNumberInArray($item['episodes']);
                 if ($locale === 'en')
                     $display = sprintf('S%02dE%02d to S%02dE%02d', $seasonNumber, $start, $seasonNumber, $end);
                 else
                     $display = sprintf('S%02dE%02d à S%02dE%02d', $seasonNumber, $start, $seasonNumber, $end);
+                $seriesArr[$key]['firstEpisodeNumber'] = $start;
+            } elseif (count($item['episodes']) > 1) {
+                $start = $this->minNumberInArray($item['episodes']);
+                $end = $this->maxNumberInArray($item['episodes']);
+                $display = sprintf('S%02dE%02d & S%02dE%02d', $seasonNumber, $start, $seasonNumber, $end);
                 $seriesArr[$key]['firstEpisodeNumber'] = $start;
             } else {
                 $episodeNumber = $item['episodes'][0];
