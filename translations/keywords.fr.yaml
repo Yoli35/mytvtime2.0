@@ -16,6 +16,7 @@
 2000s: "2000s"
 2010s: "2010s"
 2030s: "2030s"
+2060s: 2060s
 2070s: "2070s"
 22nd century: 22e siècle
 23rd century: 23e siècle
@@ -186,6 +187,7 @@ austin, texas: austin, texas
 australia: Australie
 autism: autisme
 autistic: autiste
+awestruck: stupéfait
 axé: axé
 baby: bébé
 babysitter: baby-sitter
@@ -445,6 +447,7 @@ convicted murderer: meurtre condamné
 cooking show: émission de cuisine
 cooking: cuisine
 cop: flic
+cornfield: champ de maïs
 corporate law: droit des sociétés
 corrupt politician: corruption de l'homme politique
 corruption: corruption
@@ -702,6 +705,7 @@ exoplanet: exoplanète
 exorcism: exorcisme
 exorcist: exorciste
 expatriate: expatrié
+expedition: expédition
 experiment: expérience
 exploration: exploration
 explorer: explorateur
@@ -735,12 +739,14 @@ family saga: famille de couleur
 family secrets: secrets de famille
 family tension: tension familiale
 family: famille
+famine: famine
 famous lead/common lead: rôle principal célèbre/principal commun
 fandom: fandom
 fantastic realism: réalisme fantastique
 fantasy world: monde fantastique
 fantasy: monde fantastique
 farm: ferme
+farmer: fermier
 farming: agriculture
 fashion industry: industrie de la mode
 fashion magazine: magazine de mode
@@ -1610,12 +1616,14 @@ punishment: punition
 puppet show: spectacle de marionnettes
 puppet: marionnette
 quantico: quantique
+quantum mechanics: mécanique quantique
 quantum physics: physique quantique
 quarter life crisis: crise du quart de vie
 quebec: quebec
 queens, new york city: queens, new york city
 queer: queer
 quest: quête
+race against time: course contre le temps
 racism: racisme
 racist cop: flic raciste
 rags to riches: des haillons à la richesse
@@ -1653,6 +1661,7 @@ remake: refaire
 renaissance: renaissance
 reporter: journaliste
 representation: représentation
+rescue: sauvetage
 research: recherche
 resilience of nature: résilience de la nature
 resistance fighter: résistance à la violence
@@ -2064,8 +2073,12 @@ time hole: trou temporel
 time jump: temps de la bombe
 time loop: boucle temporelle
 time machine: machine à voyager dans le temps
+time manipulation: manipulation du temps
+time paradox: paradoxe temporel
 time skip: saut dans le temps
 time travel: voyage dans le temps
+time warp: distorsion temporelle
+time-manipulation: manipulation du temps
 time: temps
 timeline: ligne du temps
 titanic: titanic
