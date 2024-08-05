@@ -9,7 +9,7 @@
             <li><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'My movies'|trans }}</a></li>
             <li>
                 <label for="movie-search">
-                    <input type="search" id="movie-search" class="search">
+                    <input type="search" id="movie-search" class="search" spellcheck="false">
                     {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                 </label>
                 <div class="search-results"></div>
@@ -23,7 +23,7 @@
             <li><a href="{{ path('app_series_all') }}" class="desktop">{{ 'All my series'|trans }}</a></li>
             <li>
                 <label for="tv-search">
-                    <input type="search" id="tv-search" class="search">
+                    <input type="search" id="tv-search" class="search" spellcheck="false">
                     {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                 </label>
                 <div class="search-results"></div>
@@ -36,7 +36,7 @@
             <li><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></li>
             <li>
                 <label for="person-search">
-                    <input type="search" id="person-search" class="search">
+                    <input type="search" id="person-search" class="search" spellcheck="false">
                     {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                 </label>
                 <div class="search-results"></div>
