@@ -150,6 +150,17 @@ export class Season {
         const usOverviews = document.querySelectorAll('.overview.us');
         usOverviews.forEach(overview => {
             overview.addEventListener('paste', this.pasteTranslation);
+
+            // const text = overview.innerText;
+            // const svgPlus = overview.querySelector('svg');
+            overview.addEventListener('click', () => {
+                // Select the text
+                const range = document.createRange();
+                range.selectNodeContents(overview);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+            });
         });
 
         const addThisEpisode = document.querySelectorAll('.add-this-episode');
@@ -175,7 +186,7 @@ export class Season {
         const userEpisodeVotes = document.querySelectorAll('.select-vote');
         userEpisodeVotes.forEach(vote => {
             vote.addEventListener('click', gThis.selectVote);
-            vote.addEventListener('wheel', gThis.wheelVote);
+            // vote.addEventListener('wheel', gThis.wheelVote);
         });
 
         document.addEventListener('keydown', (e) => {
@@ -418,7 +429,7 @@ export class Season {
                 vote.setAttribute('data-title', gThis.text.rating);
                 vote.appendChild(gThis.getSvg('plus'));
                 vote.addEventListener('click', gThis.selectVote);
-                vote.addEventListener('wheel', gThis.wheelVote);
+                // vote.addEventListener('wheel', gThis.wheelVote);
                 episode.parentElement.appendChild(vote);
 
                 const backToTopLink = episode.parentElement.querySelector('.back-to-top');
@@ -717,42 +728,42 @@ export class Season {
         gThis.listInput(voteList);
     }
 
-    wheelVote(e) {
-        e.preventDefault();
-        // Save the new value every 500ms
-        if (gThis.saving) {
-            return;
-        }
-        gThis.saving = setTimeout(() => {
-            if (e.deltaY > 0) {
-                gThis.incVote(e);
-            } else {
-                gThis.decVote(e);
-            }
-        }, 500);
-    }
+    // wheelVote(e) {
+    //     e.preventDefault();
+    //     // Save the new value every 500ms
+    //     if (gThis.saving) {
+    //         return;
+    //     }
+    //     gThis.saving = setTimeout(() => {
+    //         if (e.deltaY > 0) {
+    //             gThis.incVote(e);
+    //         } else {
+    //             gThis.decVote(e);
+    //         }
+    //     }, 500);
+    // }
 
-    incVote(e) {
-        const selectVoteDiv = e.target;
-        const innerText = selectVoteDiv.innerText;
-        const episodeId = selectVoteDiv.getAttribute('data-id');
-        const voteValue = innerText === '+' ? 0 : parseInt(selectVoteDiv.innerText);
-        if (voteValue < 10) {
-            selectVoteDiv.innerText = (voteValue + 1).toString();
-            gThis.saveVote(episodeId, voteValue + 1);
-        }
-    }
-
-    decVote(e) {
-        const selectVoteDiv = e.target;
-        const innerText = selectVoteDiv.innerText;
-        const episodeId = selectVoteDiv.getAttribute('data-id');
-        const voteValue = innerText === '+' ? 11 : parseInt(selectVoteDiv.innerText);
-        if (voteValue > 1) {
-            selectVoteDiv.innerText = (voteValue - 1).toString();
-            gThis.saveVote(episodeId, voteValue - 1);
-        }
-    }
+    // incVote(e) {
+    //     const selectVoteDiv = e.target;
+    //     const innerText = selectVoteDiv.innerText;
+    //     const episodeId = selectVoteDiv.getAttribute('data-id');
+    //     const voteValue = innerText === '+' ? 0 : parseInt(selectVoteDiv.innerText);
+    //     if (voteValue < 10) {
+    //         selectVoteDiv.innerText = (voteValue + 1).toString();
+    //         gThis.saveVote(episodeId, voteValue + 1);
+    //     }
+    // }
+    //
+    // decVote(e) {
+    //     const selectVoteDiv = e.target;
+    //     const innerText = selectVoteDiv.innerText;
+    //     const episodeId = selectVoteDiv.getAttribute('data-id');
+    //     const voteValue = innerText === '+' ? 11 : parseInt(selectVoteDiv.innerText);
+    //     if (voteValue > 1) {
+    //         selectVoteDiv.innerText = (voteValue - 1).toString();
+    //         gThis.saveVote(episodeId, voteValue - 1);
+    //     }
+    // }
 
     saveVote(episodeId, voteValue, selectVoteDiv = null, voteList = null) {
         fetch('/' + gThis.lang + '/series/episode/vote/' + episodeId, {

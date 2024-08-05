@@ -110,14 +110,23 @@
                                     {% if episode.overview %}
                                         <div class="overview">{{ episode.overview }}</div>
                                     {% elseif season.deepl %}
-                                        <div class="overview{% if season.deepl.localized == false %} us{% endif %}"{% if season.deepl.localized == false %} data-id="{{ episode.id }}"{% endif %}>
-                                            {{ season.deepl.us_episode_overviews[episode.episode_number - 1] }}
-                                            {% if season.deepl.localized == false %}
+                                        {% if season.deepl.us_episode_overviews[episode.episode_number - 1]|length %}
+                                            <div class="overview{% if season.deepl.localized == false %} us{% endif %}"{% if season.deepl.localized == false %} data-id="{{ episode.id }}"{% endif %}>
+                                                {{ season.deepl.us_episode_overviews[episode.episode_number - 1] }}
+                                                {% if season.deepl.localized == false %}
+                                                    <div class="translate" data-title="{{ 'Paste your translation here'|trans }}">
+                                                        {{ ux_icon('fa6-solid:language', {height: '18px', width: '18px'}) }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        {% else %}
+                                            <div class="overview{% if season.deepl.localized == false %} us{% endif %}"{% if season.deepl.localized == false %} data-id="{{ episode.id }}"{% endif %}>
+                                                {{ 'Click to select, then paste your overview.'|trans }}
                                                 <div class="translate" data-title="{{ 'Paste your translation here'|trans }}">
                                                     {{ ux_icon('fa6-solid:language', {height: '18px', width: '18px'}) }}
                                                 </div>
-                                            {% endif %}
-                                        </div>
+                                            </div>
+                                        {% endif %}
                                     {% endif %}
                                     {% if episode.guest_stars %}
                                         <div class="guest-stars">
