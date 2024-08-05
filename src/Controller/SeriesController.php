@@ -567,7 +567,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
+//    #[IsGranted('ROLE_USER')]
     #[Route('/pinned/{id}', name: 'pinned', requirements: ['id' => Requirement::DIGITS])]
     public function pinnedSeries(Request $request, UserSeries $userSeries): Response
     {
@@ -589,7 +589,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
+//    #[IsGranted('ROLE_USER')]
     #[Route('/favorite/{id}', name: 'favorite', requirements: ['id' => Requirement::DIGITS])]
     public function favoriteSeries(Request $request, UserSeries $userSeries): Response
     {
@@ -603,7 +603,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
+//    #[IsGranted('ROLE_USER')]
     #[Route('/rating/{id}', name: 'rating', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function ratingSeries(Request $request, UserSeries $userSeries): Response
     {
@@ -644,13 +644,13 @@ class SeriesController extends AbstractController
 
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
-        dump([
-            'series' => $series,
-            'season' => $season,
+//        dump([
+//            'series' => $series,
+//            'season' => $season,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-        ]);
+//        ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
@@ -659,7 +659,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
+//    #[IsGranted('ROLE_USER')]
     #[Route('/add/watch/link/{id}', name: 'add_watch_link', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addWatchLink(Request $request, int $id): Response
     {
@@ -683,7 +683,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
+//    #[IsGranted('ROLE_USER')]
     #[Route('/add/localized/name/{id}', name: 'add_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addLocalizedName(Request $request, int $id): Response
     {
@@ -707,7 +707,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
+//    #[IsGranted('ROLE_USER')]
     #[Route('/delete/localized/name/{id}', name: 'delete_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function deleteLocalizedName(Request $request, int $id): Response
     {
@@ -729,7 +729,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
+//    #[IsGranted('ROLE_USER')]
     #[Route('/add/edit/overview/{id}', name: 'add_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addOverview(Request $request, int $id): Response
     {
@@ -763,7 +763,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
+//    #[IsGranted('ROLE_USER')]
     #[Route('/delete/overview/{id}', name: 'delete_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function deleteOverview(Request $request, int $id): Response
     {
@@ -1027,7 +1027,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
+//    #[IsGranted('ROLE_USER')]
     #[Route('/episode/provider/{episodeId}', name: 'episode_provider', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function userEpisodeProvider(Request $request, int $episodeId): Response
     {
@@ -1045,7 +1045,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
+//    #[IsGranted('ROLE_USER')]
     #[Route('/episode/device/{episodeId}', name: 'episode_device', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function userEpisodeDevice(Request $request, int $episodeId): Response
     {
@@ -1063,7 +1063,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
+//    #[IsGranted('ROLE_USER')]
     #[Route('/episode/vote/{episodeId}', name: 'episode_vote', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function userEpisodeVote(Request $request, int $episodeId): Response
     {
@@ -1081,7 +1081,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
+//    #[IsGranted('ROLE_USER')]
     #[Route('/episode/update/name/{id}', name: 'update_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function episodeTitle(Request $request, int $id): Response
     {
@@ -1100,7 +1100,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_USER')]
+//    #[IsGranted('ROLE_USER')]
     #[Route('/episode/localize/overview/{id}', name: 'localize_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function episodeLocalizeOverview(Request $request, int $id): Response
     {
@@ -1770,7 +1770,7 @@ class SeriesController extends AbstractController
     public function getWatchProviders($language, $watchRegion): array
     {
         $providers = ['results' => []];//json_decode($this->tmdbService->getTvWatchProviderList($language, $watchRegion), true);
-        dump(['TV providers' => $providers]);
+//        dump(['TV providers' => $providers]);
         $providers = $providers['results'];
         if (count($providers) == 0) {
             $providers = $this->watchProviderRepository->getWatchProviderList($watchRegion);
