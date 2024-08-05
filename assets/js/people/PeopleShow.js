@@ -1,6 +1,7 @@
 import {Diaporama} from "Diaporama";
 
 let gThis = null;
+
 export class PeopleShow {
     constructor() {
         gThis = this;
@@ -31,6 +32,7 @@ export class PeopleShow {
             m.addEventListener("mousemove", this.showPoster)
             m.addEventListener("mouseout", this.hidePoster);
         });
+        document.addEventListener("click", this.hidePoster);
     }
 
     initInfos() {
@@ -123,8 +125,13 @@ export class PeopleShow {
         poster.classList.add("show");
     }
 
-    hidePoster() {
+    hidePoster(e) {
         const poster = document.querySelector(".person").querySelector(".poster-hover");
+        // poster.classList.remove("show");
+        console.log(e);
+        if (poster.classList.contains("show") && e.type === "click") {
+            e.preventDefault();
+        }
         poster.classList.remove("show");
     }
 }
