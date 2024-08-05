@@ -148,8 +148,15 @@ class MovieController extends AbstractController
         $locale = $request->getLocale();
         $language = ($user->getPreferredLanguage() ?? $locale) . '-' . ($user->getCountry() ?? ($locale === 'fr' ? 'FR' : 'US'));
         $userMovie = $this->userMovieRepository->find($userMovieId);
+        $tmdbId = $userMovie->getMovie()->getTmdbId();
         $dbMovie = $userMovie->getMovie();
-        $movie = json_decode($this->tmdbService->getMovie($userMovie->getMovie()->getTmdbId(), $language, ['videos,images,credits,recommendations,keywords,watch/providers,release_dates']), true);
+        $movie = json_decode($this->tmdbService->getMovie($tmdbId, $language, ['videos,images,credits,recommendations,keywords,watch/providers,release_dates']), true);
+//        dump([
+//            'language' => $language,
+//            'tmdbId' => $tmdbId,
+//            'movie' => $movie,
+//            'userMovie' => $userMovie,
+//        ]);
 
         $this->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
         $this->saveImage("backdrops", $movie['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
