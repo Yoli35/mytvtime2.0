@@ -126,7 +126,7 @@
                         <div class="updates">
                             <div class="wrapper">
                                 {% for update in series.updates %}
-                                    <div class="update">{{ update|trans }}</div>
+                                    <div class="update">{{ update }}</div>
                                 {% endfor %}
                             </div>
                         </div>
@@ -275,10 +275,10 @@
                             </div>
                         {% endif %}
                     </div>
-                    <div class="seasons-episodes">
+                    <div class="seasons">
                         {% for season in tv.seasons %}
                             <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: tv.localized_name.slug ?? series.slug}) }}">
-                                <div class="season-episode">
+                                <div class="season">
                                     <div class="poster">
                                         {% if season.poster_path %}
                                             <img src="{{ season.poster_path }}" alt="{{ season.name }}">
@@ -290,21 +290,21 @@
                                         </div>
                                     </div>
                                     <div class="infos">
-                                        <div class="name">{{ season.name }}</div>
+                                        <div class="season__name">{{ season.name }}</div>
                                         {% if season.overview %}
-                                            <div class="overview">{{ season.overview }}</div>
+                                            <div class="season__overview">{{ season.overview }}</div>
                                         {% endif %}
-                                        <div class="air-date">{{ 'Air date'|trans }}
+                                        <div class="season__air-date">{{ 'Air date'|trans }}
                                             {% if season.air_date %}
                                                 {{ date(season.air_date)|format_date('relative_long') }}
+                                                {% if userSeries.lastSeason is not null and userSeries.lastSeason == season.season_number %}
+                                                    — {{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}
+                                                {% endif %}
                                             {% else %}
                                                 {{ 'TBA'|trans }}
                                             {% endif %}
                                         </div>
-                                        {% if userSeries.lastSeason is not null and userSeries.lastSeason == season.season_number %}
-                                            <div class="air-date">{{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}</div>
-                                        {% endif %}
-                                        <div class="episodes">
+                                        <div class="season__episodes">
                                             {{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}
                                             <div class="watched"></div>
                                             {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}

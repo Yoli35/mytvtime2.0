@@ -137,8 +137,8 @@ export class Season {
             });
         });
 
-        const seasonsEpisodes = document.querySelector('.seasons-episodes');
-        const infos = seasonsEpisodes.querySelectorAll('.infos');
+        const episodes = document.querySelector('.episodes');
+        const infos = episodes.querySelectorAll('.infos');
         infos.forEach(info => {
             info.addEventListener('mouseleave', () => {
                 info.scrollTop = 0;

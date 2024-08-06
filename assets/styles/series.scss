@@ -42,21 +42,21 @@ h2 {
     }
 
     .header {
-        align-items: center;
+        align-items: stretch;
         display: flex;
         gap: 1rem;
         justify-content: flex-start;
 
         .poster {
             align-items: center;
+            aspect-ratio: 78 / 117;
             background-color: var(--gradient-ardoise-80);
             border-radius: .5rem;
             color: var(--gradient-ardoise-10);
             display: flex;
-            height: 30vw;
             justify-content: center;
             position: relative;
-            width: 25vw;
+            width: 40vw;
 
             img {
                 border-radius: .5rem;
@@ -226,11 +226,9 @@ h2 {
                     width: 100%;
 
                     &.localized, &.additional {
-                        border-left: 2px solid var(--gradient-orange-50);
-                        color: var(--gradient-orange-80);
+                        color: var(--gradient-orange-90);
                         font-weight: 100;
                         letter-spacing: .05rem;
-                        padding-inline-start: .5rem;
                         position: relative;
 
                         .content {
@@ -247,11 +245,16 @@ h2 {
                         }
 
                         .tools {
+                            background-color: var(--gradient-ardoise-90-alpha-50);
+                            border-radius: .25rem;
                             display: flex;
                             flex-direction: column;
-                            gap: .25rem;
+                            gap: .5rem;
                             margin-inline-start: auto;
                             opacity: 0;
+                            padding: .5rem;
+                            position: absolute;
+                            right: -2rem;
                             transition: opacity 0.3s ease-in-out;
 
                             .source, .locale, .edit, .delete {
@@ -602,6 +605,127 @@ h2 {
 
 }
 
+.seasons {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    width: 100%;
+
+    &.reverse {
+        flex-direction: column-reverse;
+    }
+
+    .season {
+        align-items: flex-start;
+        display: flex;
+        gap: .5rem;
+        height: 15rem;
+        justify-content: flex-start;
+        padding-inline: 1rem;
+        width: 100%;
+
+        .poster {
+            align-items: center;
+            background-color: var(--gradient-ardoise-100-alpha-20);
+            border-radius: .25rem;
+            color: var(--gradient-green-10);
+            display: flex;
+            flex-shrink: 0;
+            height: 100%;
+            justify-content: center;
+            position: relative;
+            transition: width 0.3s ease-in-out;
+            width: 10rem;
+
+            img {
+                border-radius: .25rem;
+                height: 100%;
+                object-fit: cover;
+                width: 100%;
+            }
+
+            .number {
+                align-items: center;
+                background-color: var(--gradient-orange-50);
+                border-radius: .25rem;
+                bottom: .5rem;
+                color: var(--gradient-ardoise-10);
+                display: flex;
+                font-size: 1.5rem;
+                font-weight: 500;
+                height: 2rem;
+                justify-content: center;
+                position: absolute;
+                right: .5rem;
+                transition: font-size 0.3s ease-in-out, height 0.3s ease-in-out, width 0.3s ease-in-out;
+                width: 2rem;
+
+                &.watched {
+                    background-color: var(--user-episode-actions);
+                }
+            }
+
+            .finale {
+                align-items: center;
+                background-color: var(--gradient-orange-50);
+                border-radius: .25rem;
+                color: var(--gradient-ardoise-10);
+                display: flex;
+                font-size: 1.5rem;
+                font-weight: 500;
+                justify-content: center;
+                left: .5rem;
+                max-width: calc(100% - 1rem);
+                padding-block: .25rem;
+                padding-inline: .5rem;
+                position: absolute;
+                text-align: center;
+                top: .5rem;
+
+                &.watched {
+                    background-color: var(--user-episode-actions);
+                }
+            }
+        }
+
+        .infos {
+            background-color: var(--gradient-ardoise-100-alpha-20);
+            border-radius: .25rem;
+            color: var(--gradient-ardoise-10);
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            height: 15rem;
+            justify-content: flex-start;
+            overflow-y: auto;
+            padding-block: 1rem;
+            padding-inline: 1rem;
+            width: 100%;
+
+            .season__overview {
+                font-size: 1rem;
+                font-weight: 300;
+                line-height: 1.25em;
+            }
+
+            .season__air-date, .season__episodes, .season__runtime {
+                font-size: 1rem;
+                font-weight: 300;
+            }
+
+            .season__episodes {
+                display: flex;
+                gap: 1rem;
+
+                .watched {
+                    display: flex;
+                    gap: .5rem;
+                }
+            }
+        }
+    }
+}
+
 .quick-episodes {
     align-items: flex-start;
     background-color: var(--gradient-ardoise-100-alpha-20);
@@ -632,22 +756,13 @@ h2 {
 
 }
 
-.seasons-episodes {
+.episodes {
     display: flex;
     flex-direction: column;
     gap: .5rem;
     width: 100%;
 
-    &.reverse {
-        flex-direction: column-reverse;
-    }
-
-    .episode-card {
-        //position: sticky;
-        //top: 0;
-    }
-
-    .season-episode {
+    .episode {
         align-items: flex-start;
         display: flex;
         gap: .5rem;
@@ -656,7 +771,7 @@ h2 {
         padding-inline: 1rem;
         width: 100%;
 
-        .poster, .still {
+        .still {
             align-items: center;
             background-color: var(--gradient-ardoise-100-alpha-20);
             border-radius: .25rem;
@@ -1235,7 +1350,7 @@ h2 {
     }
 }
 
-@container series-show (width < 768px) {
+@container series-show (width < 1024px) {
     .header {
         flex-direction: column;
         height: auto !important;
@@ -1265,11 +1380,10 @@ h2 {
         .left {
             .seasons {
                 .season {
-                    height: 20vw;
+                    height: 15rem;
 
                     .poster {
-                        height: 20vw;
-                        width: 15vw;
+                        height: 15rem;
                     }
 
                     .infos {
@@ -1454,9 +1568,9 @@ h2 {
     }
 }
 
-@media (min-width: 80rem) {
-    .seasons-episodes {
-        .season-episode {
+@media (min-width: 1024px) {
+    .episodes {
+        .episode {
             .still {
                 aspect-ratio: 16/9;
                 width: unset;
