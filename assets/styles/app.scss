@@ -262,12 +262,19 @@ label:has(input[type="text"]) {
     }
 
     details {
+        padding-inline: 0;
         position: relative;
+        width: 2rem;
 
         summary {
+            align-items: center;
             color: var(--navbar-color);
+            cursor: pointer;
+            display: flex;
+            height: 2rem;
+            justify-content: center;
             list-style: none;
-            padding-block-start: .5rem;
+            width: 2rem;
         }
 
         summary::-webkit-details-marker {

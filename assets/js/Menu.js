@@ -61,10 +61,8 @@ export class Menu {
      */
     constructor() {
         gThis = this;
-        document.addEventListener("DOMContentLoaded", () => {
-            this.menuPreview = document.querySelector(".menu-preview");
-            this.menuThemes = document.querySelectorAll(".menu-theme");
-        });
+        this.menuPreview = document.querySelector(".menu-preview");
+        this.menuThemes = document.querySelectorAll(".menu-theme");
         this.init = this.init.bind(this);
         this.togglePreview = this.togglePreview.bind(this);
         this.setPreview = this.setPreview.bind(this);
@@ -88,9 +86,20 @@ export class Menu {
         const pinnedMenuItems = document.querySelectorAll("a[id^='pinned-menu-item-']");
         const body = document.querySelector("body");
         const notifications = document.querySelector(".notifications");
+        const detailsElements = document.querySelectorAll("details");
         const movieSearch = navbar.querySelector("#movie-search");
         const tvSearch = navbar.querySelector("#tv-search");
         const personSearch = navbar.querySelector("#person-search");
+
+        document.addEventListener("click", (e) => {
+            detailsElements.forEach((details) => {
+                if (details.open && !details.contains(e.target)) {
+                    details.removeAttribute("open");
+                    e.stopPropagation();
+                    e.preventDefault();
+                }
+            });
+        });
 
         burger.addEventListener("click", () => {
             burger.classList.toggle("open");
@@ -302,7 +311,7 @@ export class Menu {
                     })
                     .catch(err => console.error('error:' + err));
             } else {
-                movieSearch.closest("li").querySelector(".search-results").innerHTML = '';
+                tvSearch.closest("li").querySelector(".search-results").innerHTML = '';
             }
         });
         tvSearch.addEventListener("keydown", gThis.searchMenuNavigate);
@@ -442,14 +451,14 @@ export class Menu {
                     })
                     .catch(err => console.error('error:' + err));
             } else {
-                movieSearch.closest("li").querySelector(".search-results").innerHTML = '';
+                personSearch.closest("li").querySelector(".search-results").innerHTML = '';
             }
         });
         personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
     }
 
     searchMenuNavigate(e) {
-        // movieSearch or tvSearch
+        // movieSearch, tvSearch or personSearch
         const searchMenu = e.target;
         console.log({e});
         const value = e.target.value;
@@ -460,16 +469,16 @@ export class Menu {
             console.log(e.key);
             if (e.key === 'Enter') {
                 e.preventDefault();
-                const li = ul.querySelector("li.active")||ul.querySelector("li");
+                const li = ul.querySelector("li.active") || ul.querySelector("li");
                 const id = li.getAttribute("data-id");
-                if (type==='movie') {
+                if (type === 'movie') {
                     window.location.href = '/' + gThis.lang + '/movie/tmdb/' + id;
                 }
-                if (type==='tv') {
+                if (type === 'tv') {
                     const slug = li.getAttribute("data-slug");
                     window.location.href = '/' + gThis.lang + '/series/tmdb/' + id + '-' + slug;
                 }
-                if (type==='person') {
+                if (type === 'person') {
                     const slug = li.getAttribute("data-slug");
                     window.location.href = '/' + gThis.lang + '/people/show/' + id + '-' + slug;
                 }
@@ -531,32 +540,32 @@ export class Menu {
             });
     }
 
-   /* checkConnexion() {
-        gThis.avatar.classList.add("highlight");
-        fetch('/' + gThis.lang + '/user/is-connected', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (!data.body.connected) {
-                    clearInterval(gThis.connexionInterval);
-                    gThis.avatar.remove();
-                    console.log('User disconnected')
-                } else {
-                    gThis.avatar.classList.add("connected");
-                    setTimeout(() => {
-                        gThis.avatar.classList.remove("highlight", "connected");
-                    }, 500);
-                    console.log('User still connected')
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }*/
+    /* checkConnexion() {
+         gThis.avatar.classList.add("highlight");
+         fetch('/' + gThis.lang + '/user/is-connected', {
+             method: 'GET',
+             headers: {
+                 'Content-Type': 'application/json',
+             },
+         })
+             .then(response => response.json())
+             .then(data => {
+                 if (!data.body.connected) {
+                     clearInterval(gThis.connexionInterval);
+                     gThis.avatar.remove();
+                     console.log('User disconnected')
+                 } else {
+                     gThis.avatar.classList.add("connected");
+                     setTimeout(() => {
+                         gThis.avatar.classList.remove("highlight", "connected");
+                     }, 500);
+                     console.log('User still connected')
+                 }
+             })
+             .catch((error) => {
+                 console.error('Error:', error);
+             });
+     }*/
 
     initPreview() {
         this.setPreview(localStorage.getItem("mytvtime_2_preview"));
