@@ -255,7 +255,7 @@ export class Season {
                         substituteDiv = document.createElement('div');
                         substituteDiv.classList.add('substitute');
                         nameDiv.insertBefore(substituteDiv, editDiv);
-                        const episodeWatched = nameDiv.closest('.season-episode').querySelector('.remove-this-episode');
+                        const episodeWatched = nameDiv.closest('.episode').querySelector('.remove-this-episode');
                         if (episodeWatched) {
                             substituteDiv.classList.add('watched');
                         }
@@ -334,7 +334,7 @@ export class Season {
             })
         }).then(function (response) {
             if (response.ok) {
-                const numberDiv = episode.closest('.season-episode').querySelector('.number');
+                const numberDiv = episode.closest('.episode').querySelector('.number');
                 numberDiv.setAttribute('data-title', "x" + (views + 1));
 
                 episode.setAttribute('data-views', '' + (views + 1));
@@ -367,7 +367,7 @@ export class Season {
 
                 numberDiv.classList.add('watched');
 
-                const substituteNameDiv = episode.closest('.season-episode').querySelector('.substitute');
+                const substituteNameDiv = episode.closest('.episode').querySelector('.substitute');
                 substituteNameDiv?.classList.add('watched');
 
                 // Mise à jour du menu
@@ -390,7 +390,7 @@ export class Season {
                     }
                 }
 
-                const previousEpisode = episode.closest('.seasons-episodes').querySelector('.remove-this-episode[data-e-number="' + (episodeNumber - 1) + '"]');
+                const previousEpisode = episode.closest('.episodes').querySelector('.remove-this-episode[data-e-number="' + (episodeNumber - 1) + '"]');
                 const previousProvider = previousEpisode?.parentElement.querySelector('.select-provider');
                 if (previousProvider) {
                     const clone = previousProvider.cloneNode(true);
@@ -532,7 +532,7 @@ export class Season {
             if (response.ok) {
                 views--;
                 episode.setAttribute('data-views', '' + views);
-                const numberDiv = episode.closest('.season-episode').querySelector('.number');
+                const numberDiv = episode.closest('.episode').querySelector('.number');
                 numberDiv.setAttribute('data-title', "x" + views);
                 gThis.toolTips.init(numberDiv);
                 if (views > 0) {
@@ -549,7 +549,7 @@ export class Season {
 
                 numberDiv.classList.remove('watched');
 
-                const substituteNameDiv = episode.closest('.season-episode').querySelector('.substitute');
+                const substituteNameDiv = episode.closest('.episode').querySelector('.substitute');
                 substituteNameDiv?.classList.add('watched');
 
                 const newEpisode = document.createElement('div');
