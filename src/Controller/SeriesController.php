@@ -644,13 +644,13 @@ class SeriesController extends AbstractController
 
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
-//        dump([
+        dump([
 //            'series' => $series,
-//            'season' => $season,
+            'season' => $season,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-//        ]);
+        ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
@@ -1230,26 +1230,26 @@ class SeriesController extends AbstractController
         if ($tv['name'] != $series->getName()) {
             $series->setName($tv['name']);
             $series->setSlug($slugger->slug($tv['name']));
-            $series->addUpdate('Name updated');
+            $series->addUpdate($this->translator->trans('Name updated'));
         }
         $slug = $slugger->slug($tv['name'])->lower()->toString();
         if ($series->getSlug() != $slug) {
             $series->setSlug($slugger->slug($slug));
-            $series->addUpdate('Slug updated');
+            $series->addUpdate($this->translator->trans('Slug updated'));
         }
 
         if ($tv['original_name'] != $series->getOriginalName()) {
             $series->setOriginalName($tv['original_name']);
-            $series->addUpdate('Original name updated');
+            $series->addUpdate($this->translator->trans('Original name updated'));
         }
         if ($tv['first_air_date'] && !$series->getFirstAirDate()) {
             $series->setFirstAirDate(new DatePoint($tv['first_air_date']));
-            $series->addUpdate('First air date updated');
+            $series->addUpdate($this->translator->trans('First air date updated'));
         }
 
         if (strlen($tv['overview']) && strcmp($tv['overview'], $series->getOverview())) {
             $series->setOverview($tv['overview']);
-            $series->addUpdate('Overview updated');
+            $series->addUpdate($this->translator->trans('Overview updated'));
         }
 
         $dbNextEpisodeAirDate = $series->getNextEpisodeAirDate()?->format('Y-m-d');
@@ -1271,23 +1271,23 @@ class SeriesController extends AbstractController
         if (!$this->inImages($tv['poster_path'], $seriesPosters)) {
             $seriesImage = new SeriesImage($series, "poster", $tv['poster_path']);
             $this->seriesImageRepository->save($seriesImage, true);
-            $series->addUpdate('Poster added');
+            $series->addUpdate($this->translator->trans('Poster added'));
         }
         if (!$this->inImages($tv['backdrop_path'], $seriesBackdrops)) {
             $seriesImage = new SeriesImage($series, "backdrop", $tv['backdrop_path']);
             $this->seriesImageRepository->save($seriesImage, true);
-            $series->addUpdate('Backdrop added');
+            $series->addUpdate($this->translator->trans('Backdrop added'));
 //            dump($series->getUpdates());
         }
         if ($tv['poster_path'] != $series->getPosterPath()) {
             $series->setPosterPath($tv['poster_path']);
             $this->saveImage("posters", $series->getPosterPath(), $this->imageConfiguration->getUrl('poster_sizes', 5));
-            $series->addUpdate('Poster updated');
+            $series->addUpdate($this->translator->trans('Poster updated'));
         }
         if ($tv['backdrop_path'] != $series->getBackdropPath()) {
             $series->setBackdropPath($tv['backdrop_path']);
             $this->saveImage("backdrops", $series->getBackdropPath(), $this->imageConfiguration->getUrl('backdrop_sizes', 3));
-            $series->addUpdate('Backdrop updated');
+            $series->addUpdate($this->translator->trans('Backdrop updated'));
         }
         $this->seriesRepository->save($series, true);
         return $series;
