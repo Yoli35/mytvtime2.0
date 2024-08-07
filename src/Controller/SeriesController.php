@@ -619,7 +619,7 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/show/season/{id}-{slug}/{seasonNumber}', name: 'season', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS])]
-    public function showSeason(Request $request, $id, $seasonNumber, $slug): Response
+    public function showSeason(Request $request, int $id, int $seasonNumber, string $slug): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -1601,6 +1601,7 @@ class SeriesController extends AbstractController
         $series = $userSeries->getSeries();
         $slugger = new AsciiSlugger();
         $seasonEpisodes = [];
+        $userEpisodes = $this->userEpisodeRepository->getUserEpisodes($user->getId(), $userSeries->getId(), $season['season_number'], $user->getPreferredLanguage() ?? 'fr');
 
         foreach ($season['episodes'] as $episode) {
             $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
@@ -1630,22 +1631,50 @@ class SeriesController extends AbstractController
                 return $guest;
             }, $episode['guest_stars']);
 
-            $userEpisode = $userSeries->getEpisode($episode['id']);
-            if (!$userEpisode) {
-                $userEpisode = new UserEpisode($userSeries, $episode['id'], $season['season_number'], $episode['episode_number'], null);
+            $userEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number']);//$userSeries->getEpisode($episode['id']);
+            if (empty($userEpisode)) {
+                $ue = new UserEpisode($userSeries, $episode['id'], $season['season_number'], $episode['episode_number'], null);
                 $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris') : null;
-                $userEpisode->setAirDate($airDate);
-                $this->userEpisodeRepository->save($userEpisode);
-                $userSeries->addUserEpisode($userEpisode);
+                $ue->setAirDate($airDate);
+                $this->userEpisodeRepository->save($ue);
+                $userSeries->addUserEpisode($ue);
                 $this->userSeriesRepository->save($userSeries, true);
-                $userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
+                $ue = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
+
+                $userEpisode['id'] = $ue->getId();
+                $userEpisode['episode_id'] = $ue->getEpisodeId();
+                $userEpisode['substitute_name'] = null;
+                $userEpisode['localized_overview'] = null;
+                $userEpisode['episode_number'] = $ue->getEpisodeNumber();
+                $userEpisode['watch_at'] = null;
+                $userEpisode['air_date'] = $ue->getAirDate();
+                $userEpisode['provider_id'] = null;
+                $userEpisode['provider_name'] = null;
+                $userEpisode['provider_logo_path'] = null;
+                $userEpisode['device_id'] = null;
+                $userEpisode['device_name'] = null;
+                $userEpisode['device_logo_path'] = null;
+                $userEpisode['device_svg'] = null;
+                $userEpisode['vote'] = 0;
+                $userEpisode['number_of_view'] = 0;
             }
 
             $episode['user_episode'] = $userEpisode;
-            $episode['substitute_name'] = $this->userEpisodeRepository->getSubstituteName($episode['id']);
+//            $episode['substitute_name'] = $this->userEpisodeRepository->getSubstituteName($episode['id']);
             $seasonEpisodes[] = $episode;
         }
         return $seasonEpisodes;
+    }
+
+    public function getUserEpisode(array $userEpisodes, int $episodeNumber): array
+    {
+        foreach ($userEpisodes as $userEpisode) {
+            if ($userEpisode['episode_number'] == $episodeNumber) {
+                $userEpisode['provider_logo_path'] = $userEpisode['provider_logo_path'] ? $this->imageConfiguration->getCompleteUrl($userEpisode['provider_logo_path'], 'logo_sizes', 2) : null; // w45
+                return $userEpisode;
+            }
+        }
+        return [];
     }
 
     public function offsetDate(string $dateString, int $offset, string $timezone): ?string
@@ -1693,9 +1722,9 @@ class SeriesController extends AbstractController
             }
             return [
                 'us_overview' => $usSeason['overview'],
-                'us_episode_overviews' => array_map(function ($ep) use ($locale) {
+                'us_episode_overviews' => []/*array_map(function ($ep) use ($locale) {
                     return $this->episodeLocalizedOverview($ep, $locale);
-                }, $usSeason['episodes']),
+                }, $usSeason['episodes'])*/,
                 'localized' => $localized,
                 'localizedOverview' => $localizedOverview,
                 'localizedResult' => $localizedResult,
@@ -1705,29 +1734,29 @@ class SeriesController extends AbstractController
         return null;
     }
 
-    public function episodeLocalizedOverview($episode, $locale): string
-    {
-        $episodeId = $episode['id'];
-        $localizedOverview = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $episodeId, 'locale' => $locale]);
-        if ($localizedOverview) {
-//            dump('we have it');
-            return $localizedOverview->getOverview();
-        }
-        $overview = $episode['overview'];
-        if (strlen($overview)) {
-            try {
-                $usage = $this->deeplTranslator->translator->getUsage();
-//                dump($usage);
-                if ($usage->character->count + strlen($overview) < $usage->character->limit) {
-                    $overview = $this->deeplTranslator->translator->translateText($overview, null, $locale);
-                    $localizedOverview = new EpisodeLocalizedOverview($episodeId, $overview, $locale);
-                    $this->episodeLocalizedOverviewRepository->save($localizedOverview, true);
-                }
-            } catch (DeepLException) {
-            }
-        }
-        return $overview;
-    }
+//    public function episodeLocalizedOverview($episode, $locale): string
+//    {
+//        $episodeId = $episode['id'];
+//        $localizedOverview = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $episodeId, 'locale' => $locale]);
+//        if ($localizedOverview) {
+////            dump('we have it');
+//            return $localizedOverview->getOverview();
+//        }
+//        $overview = $episode['overview'];
+//        if (strlen($overview)) {
+//            try {
+//                $usage = $this->deeplTranslator->translator->getUsage();
+////                dump($usage);
+//                if ($usage->character->count + strlen($overview) < $usage->character->limit) {
+//                    $overview = $this->deeplTranslator->translator->translateText($overview, null, $locale);
+//                    $localizedOverview = new EpisodeLocalizedOverview($episodeId, $overview, $locale);
+//                    $this->episodeLocalizedOverviewRepository->save($localizedOverview, true);
+//                }
+//            } catch (DeepLException) {
+//            }
+//        }
+//        return $overview;
+//    }
 
     public function watchProviders($tv, $country): array
     {
@@ -1905,7 +1934,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    public function saveImage($type, $imagePath, $imageUrl, $localPath="/series/"): void
+    public function saveImage($type, $imagePath, $imageUrl, $localPath = "/series/"): void
     {
         if (!$imagePath) return;
         $root = $this->getParameter('kernel.project_dir');
