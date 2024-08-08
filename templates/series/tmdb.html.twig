@@ -47,10 +47,10 @@
 
             <div class="content">
                 <div class="left">
-                    <div class="seasons-episodes">
+                    <div class="seasons">
                         <h3>{{ 'Seasons'|trans }}</h3>
                         {% for season in tv.seasons %}
-                            <div class="season-episode">
+                            <div class="season">
                                 <div class="poster">
                                     {% if season.poster_path %}
                                         <img src="{{ season.poster_path }}" alt="{{ season.name }}">

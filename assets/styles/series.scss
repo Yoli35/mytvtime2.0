@@ -116,6 +116,7 @@ h2 {
             }
 
             .name {
+                align-items: flex-start;
                 display: flex;
                 position: relative;
                 width: 100%;
@@ -729,9 +730,10 @@ h2 {
 .quick-episodes {
     align-items: flex-start;
     background-color: var(--gradient-ardoise-100-alpha-20);
+    border-radius: .25rem;
     display: flex;
     flex-wrap: wrap;
-    gap: .5rem;
+    gap: .25rem;
     justify-content: center;
     overflow-x: auto;
     padding: .5rem;
