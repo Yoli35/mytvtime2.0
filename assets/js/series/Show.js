@@ -140,6 +140,7 @@ export class Show {
         const addWatchLink = document.querySelector('.add-watch-link');
         const watchLinkForm = document.querySelector('.watch-link-form');
         const form = document.querySelector('#watch-link-form');
+        const providerSelect = form.querySelector('#provider');
         const cancel = form.querySelector('button[type="button"]');
         const submit = form.querySelector('button[type="submit"]');
 
@@ -148,6 +149,13 @@ export class Show {
             setTimeout(function () {
                 watchLinkForm.classList.add('active');
             }, 0);
+        });
+        providerSelect.addEventListener('change', function () {
+            const provider = this.value;
+            if (provider) {
+                const name = form.querySelector('#name');
+                name.value = translations['Watch on'] + ' ' + providers.names[provider];
+            }
         });
         cancel.addEventListener('click', function () {
             watchLinkForm.classList.remove('active');

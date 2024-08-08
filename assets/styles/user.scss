@@ -1,5 +1,4 @@
 
-
 .user-actions {
     align-items: center;
     display: flex;
@@ -200,8 +199,22 @@
 
         .form-row {
             .form-field:has(select) {
-                max-width: unset;
+                max-width: unset !important;
                 width: 100%;
+
+                label {
+                    align-items: flex-start;
+
+                    select {
+                        height: 2rem;
+                        margin-block-start: unset;
+                        width: 100%;
+                    }
+                }
+
+                label:has(select)::after {
+                    top: 60%;
+                }
             }
 
             .form-field:has(button) {

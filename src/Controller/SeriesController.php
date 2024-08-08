@@ -520,6 +520,7 @@ class SeriesController extends AbstractController
             'Remove from favorites' => $this->translator->trans('Remove from favorites'),
             'Add to favorites' => $this->translator->trans('Add to favorites'),
             'This field is required' => $this->translator->trans('This field is required'),
+            'Watch on' => $this->translator->trans('Watch on'),
         ];
 
         dump([
