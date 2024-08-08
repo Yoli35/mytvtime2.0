@@ -331,12 +331,11 @@ class UserEpisodeRepository extends ServiceEntityRepository
     // Query builder version of getUserEpisodes
     public function getUserEpisodesQueryBuilder(User $user, UserSeries $userSeries, int $seasonNumber, string $locale): array
     {
-        $qb = $this->em->createQueryBuilder();
+        $qb = $this->createQueryBuilder('ue');
         $qb->select('ue.id', 'ue.episodeId', 'ue.episodeNumber', 'ue.watchAt', 'ue.airDate', 'ue.vote', 'ue.numberOfView',
             'esn.name as substituteName', 'elo.overview as localizedOverview',
             'ue.providerId', 'p.name as providerName', 'p.logoPath as providerLogoPath',
             'ue.deviceId', 'd.name as deviceName', 'd.logoPath as deviceLogoPath', 'd.svg as deviceSvg')
-            ->from('App\Entity\UserEpisode', 'ue')
             ->leftJoin('App\Entity\EpisodeSubstituteName', 'esn', Expr\Join::WITH, 'ue.episodeId = esn.episodeId')
             ->leftJoin('App\Entity\EpisodeLocalizedOverview', 'elo', Expr\Join::WITH, 'ue.episodeId = elo.episodeId AND elo.locale = ' . $qb->expr()->literal($locale))
             ->leftJoin('App\Entity\Provider', 'p', Expr\Join::WITH, 'ue.providerId = p.providerId')
