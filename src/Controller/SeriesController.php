@@ -1602,6 +1602,7 @@ class SeriesController extends AbstractController
         $slugger = new AsciiSlugger();
         $seasonEpisodes = [];
         $userEpisodes = $this->userEpisodeRepository->getUserEpisodes($user->getId(), $userSeries->getId(), $season['season_number'], $user->getPreferredLanguage() ?? 'fr');
+        dump($this->userEpisodeRepository->getUserEpisodesQueryBuilder($user, $userSeries, $season['season_number'], $user->getPreferredLanguage() ?? 'fr'));
 
         foreach ($season['episodes'] as $episode) {
             $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300

@@ -4,10 +4,11 @@ namespace App\Repository;
 
 use App\Entity\User;
 use App\Entity\UserEpisode;
-use DateTimeImmutable;
+use App\Entity\UserSeries;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -280,13 +281,13 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getSubstituteName(int $id): mixed
+    /*public function getSubstituteName(int $id): mixed
     {
         $sql = "SELECT `name` "
             . "FROM `episode_substitute_name` "
             . "WHERE `episode_id`=$id";
         return $this->getOne($sql);
-    }
+    }*/
 
     public function getEpisodeListBetweenIds($userId, $startId, $endId): array
     {
@@ -325,6 +326,29 @@ class UserEpisodeRepository extends ServiceEntityRepository
                   AND ue.season_number = $seasonNumber";
 
         return $this->getAll($sql);
+    }
+
+    // Query builder version of getUserEpisodes
+    public function getUserEpisodesQueryBuilder(User $user, UserSeries $userSeries, int $seasonNumber, string $locale): array
+    {
+        $qb = $this->em->createQueryBuilder();
+        $qb->select('ue.id', 'ue.episodeId', 'ue.episodeNumber', 'ue.watchAt', 'ue.airDate', 'ue.vote', 'ue.numberOfView',
+            'esn.name as substituteName', 'elo.overview as localizedOverview',
+            'ue.providerId', 'p.name as providerName', 'p.logoPath as providerLogoPath',
+            'ue.deviceId', 'd.name as deviceName', 'd.logoPath as deviceLogoPath', 'd.svg as deviceSvg')
+            ->from('App\Entity\UserEpisode', 'ue')
+            ->leftJoin('App\Entity\EpisodeSubstituteName', 'esn', Expr\Join::WITH, 'ue.episodeId = esn.episodeId')
+            ->leftJoin('App\Entity\EpisodeLocalizedOverview', 'elo', Expr\Join::WITH, 'ue.episodeId = elo.episodeId AND elo.locale = ' . $qb->expr()->literal($locale))
+            ->leftJoin('App\Entity\Provider', 'p', Expr\Join::WITH, 'ue.providerId = p.providerId')
+            ->leftJoin('App\Entity\Device', 'd', Expr\Join::WITH, 'ue.deviceId = d.id')
+            ->where('ue.user = :user')
+            ->andWhere('ue.userSeries = :userSeries')
+            ->andWhere('ue.seasonNumber = :seasonNumber')
+            ->setParameter('user', $user)
+            ->setParameter('userSeries', $userSeries)
+            ->setParameter('seasonNumber', $seasonNumber);
+
+        return $qb->getQuery()->getResult();
     }
 
     public function getAll($sql): array
