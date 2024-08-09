@@ -91,16 +91,6 @@ export class Menu {
         const tvSearch = navbar.querySelector("#tv-search");
         const personSearch = navbar.querySelector("#person-search");
 
-        document.addEventListener("click", (e) => {
-            detailsElements.forEach((details) => {
-                if (details.open && !details.contains(e.target)) {
-                    details.removeAttribute("open");
-                    e.stopPropagation();
-                    e.preventDefault();
-                }
-            });
-        });
-
         burger.addEventListener("click", () => {
             burger.classList.toggle("open");
             navbar.classList.toggle("active");
@@ -188,16 +178,23 @@ export class Menu {
                     e.preventDefault();
                 }
             }
+            detailsElements.forEach((details) => {
+                if (details.open && !details.contains(e.target)) {
+                    details.removeAttribute("open");
+                    e.stopPropagation();
+                    e.preventDefault();
+                }
+            });
         });
 
-        document.addEventListener("DOMContentLoaded", () => {
+        // document.addEventListener("DOMContentLoaded", () => {
             this.menuPreview.addEventListener("click", this.togglePreview);
             this.menuThemes.forEach((theme) => {
                 theme.addEventListener("click", this.setTheme);
             });
             this.initTheme();
             this.initPreview();
-        });
+        // });
 
         // if (this.userConnected) {
         //     this.connexionInterval = setInterval(() => {
@@ -249,6 +246,13 @@ export class Menu {
                             titleDiv.classList.add("title");
                             titleDiv.innerHTML = result.title;
                             a.appendChild(titleDiv);
+                            // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu
+                            a.addEventListener("auxclick", (e) => {
+                                const details = e.currentTarget.closest("details");
+                                ul.remove();
+                                movieSearch.value = '';
+                                details.removeAttribute("open");
+                            });
                             li.appendChild(a);
                             ul.appendChild(li);
                         });
@@ -304,6 +308,13 @@ export class Menu {
                             titleDiv.classList.add("title");
                             titleDiv.innerHTML = result.name;
                             a.appendChild(titleDiv);
+                            // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu
+                            a.addEventListener("auxclick", (e) => {
+                                const details = e.currentTarget.closest("details");
+                                ul.remove();
+                                tvSearch.value = '';
+                                details.removeAttribute("open");
+                            });
                             li.appendChild(a);
                             ul.appendChild(li);
                         });
@@ -444,6 +455,13 @@ export class Menu {
                             titleDiv.classList.add("title");
                             titleDiv.innerHTML = result.name;
                             a.appendChild(titleDiv);
+                            // Si le lien est ouvert dans un autre onglet, il faut supprimer le menu
+                            a.addEventListener("auxclick", (e) => {
+                                const details = e.currentTarget.closest("details");
+                                ul.remove();
+                                personSearch.value = '';
+                                details.removeAttribute("open");
+                            });
                             li.appendChild(a);
                             ul.appendChild(li);
                         });
@@ -464,6 +482,7 @@ export class Menu {
         const value = e.target.value;
         if (value.length > 2) {
             const ul = searchMenu.closest("li").querySelector(".search-results ul");
+            if (!ul) return;
             const type = ul.getAttribute("data-type");
             console.log({ul});
             console.log(e.key);
@@ -471,6 +490,12 @@ export class Menu {
                 e.preventDefault();
                 const li = ul.querySelector("li.active") || ul.querySelector("li");
                 const id = li.getAttribute("data-id");
+
+                const details = li.closest("details");
+                ul.remove();
+                e.target.value = '';
+                details.removeAttribute("open");
+
                 if (type === 'movie') {
                     window.location.href = '/' + gThis.lang + '/movie/tmdb/' + id;
                 }
