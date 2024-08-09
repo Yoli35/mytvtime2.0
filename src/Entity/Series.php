@@ -88,6 +88,12 @@ class Series
     #[ORM\OneToMany(targetEntity: SeriesDayOffset::class, mappedBy: 'series', orphanRemoval: true)]
     private Collection $seriesDayOffsets;
 
+    /**
+     * @var Collection<int, SeasonLocalizedOverview>
+     */
+    #[ORM\OneToMany(targetEntity: SeasonLocalizedOverview::class, mappedBy: 'series', orphanRemoval: true)]
+    private Collection $seasonLocalizedOverviews;
+
     public function __construct()
     {
         $this->seriesLocalizedNames = new ArrayCollection();
@@ -98,6 +104,7 @@ class Series
         $this->seriesLocalizedOverviews = new ArrayCollection();
         $this->seriesAdditionalOverviews = new ArrayCollection();
         $this->seriesDayOffsets = new ArrayCollection();
+        $this->seasonLocalizedOverviews = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -557,6 +564,36 @@ class Series
             // set the owning side to null (unless already changed)
             if ($seriesDayOffset->getSeries() === $this) {
                 $seriesDayOffset->setSeries(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SeasonLocalizedOverview>
+     */
+    public function getSeasonLocalizedOverviews(): Collection
+    {
+        return $this->seasonLocalizedOverviews;
+    }
+
+    public function addSeasonLocalizedOverview(SeasonLocalizedOverview $seasonLocalizedOverview): static
+    {
+        if (!$this->seasonLocalizedOverviews->contains($seasonLocalizedOverview)) {
+            $this->seasonLocalizedOverviews->add($seasonLocalizedOverview);
+            $seasonLocalizedOverview->setSeries($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSeasonLocalizedOverview(SeasonLocalizedOverview $seasonLocalizedOverview): static
+    {
+        if ($this->seasonLocalizedOverviews->removeElement($seasonLocalizedOverview)) {
+            // set the owning side to null (unless already changed)
+            if ($seasonLocalizedOverview->getSeries() === $this) {
+                $seasonLocalizedOverview->setSeries(null);
             }
         }
 

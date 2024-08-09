@@ -6,6 +6,7 @@ use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\EpisodeLocalizedOverview;
 use App\Entity\EpisodeSubstituteName;
+use App\Entity\SeasonLocalizedOverview;
 use App\Entity\Series;
 use App\Entity\SeriesAdditionalOverview;
 use App\Entity\SeriesImage;
@@ -25,6 +26,7 @@ use App\Repository\EpisodeSubstituteNameRepository;
 use App\Repository\KeywordRepository;
 
 //use App\Repository\ProviderRepository;
+use App\Repository\SeasonLocalizedOverviewRepository;
 use App\Repository\SeriesAdditionalOverviewRepository;
 use App\Repository\SeriesDayOffsetRepository;
 use App\Repository\SeriesImageRepository;
@@ -72,6 +74,7 @@ class SeriesController extends AbstractController
         private readonly ImageConfiguration                 $imageConfiguration,
         private readonly KeywordRepository                  $keywordRepository,
         private readonly KeywordService                     $keywordService,
+        private readonly SeasonLocalizedOverviewRepository  $seasonLocalizedOverviewRepository,
         private readonly SeriesAdditionalOverviewRepository $seriesAdditionalOverviewRepository,
         private readonly SeriesDayOffsetRepository          $seriesDayOffsetRepository,
         private readonly SeriesImageRepository              $seriesImageRepository,
@@ -1696,12 +1699,13 @@ class SeriesController extends AbstractController
     public function seasonLocalizedOverview($series, $season, $seasonNumber, $request): array|null
     {
         $locale = $request->getLocale();
-        if (!strlen($season['overview'])) {
+        $localized = false;
+        $localizedResult = null;
+        $localizedOverview = $this->seasonLocalizedOverviewRepository->findOneBy(['series' => $series, 'seasonNumber' => $seasonNumber, 'locale' => $locale]);
+
+        if (!$localizedOverview && !strlen($season['overview'])) {
             $usSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, 'en-US'), true);
             $season['overview'] = $usSeason['overview'];
-            $localized = false;
-            $localizedOverview = null;
-            $localizedResult = null;
             if (strlen($season['overview'])) {
                 try {
                     $usage = $this->deeplTranslator->translator->getUsage();
@@ -1709,6 +1713,9 @@ class SeriesController extends AbstractController
                     if ($usage->character->count + strlen($season['overview']) < $usage->character->limit) {
                         $localizedOverview = $this->deeplTranslator->translator->translateText($season['overview'], null, $locale);
                         $localized = true;
+
+                        $seasonLocalizedOverview = new SeasonLocalizedOverview($series, $seasonNumber, $localizedOverview, $locale);
+                        $this->seasonLocalizedOverviewRepository->save($seasonLocalizedOverview, true);
                     } else {
                         $localizedResult = 'Limit exceeded';
                     }
@@ -1731,6 +1738,15 @@ class SeriesController extends AbstractController
                 'localizedOverview' => $localizedOverview,
                 'localizedResult' => $localizedResult,
                 'usage' => $usage ?? null
+            ];
+        } else {
+            return [
+                'us_overview' => null,
+                'us_episode_overviews' => [],
+                'localized' => true,
+                'localizedOverview' => $localizedOverview->getOverview(),
+                'localizedResult' => null,
+                'usage' => null
             ];
         }
         return null;
