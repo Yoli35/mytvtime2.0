@@ -67,6 +67,10 @@
                         <div class="quick-episode{% if ue and ue.watch_at %} watched{% endif %}" data-number="{{ episode.episode_number }}" data-title="{{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
                             {{ episode.episode_number }}
                         </div>
+                        {% else %}
+                            <div class="future-episode" data-title="{{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
+                                {{ episode.episode_number }}
+                            </div>
                     {% endif %}
                 {% endfor %}
             </div>

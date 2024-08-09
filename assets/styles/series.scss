@@ -756,6 +756,18 @@ h2 {
         }
     }
 
+    .future-episode {
+        align-items: center;
+        background-color: var(--gradient-ardoise-40-alpha-50);
+        border-radius: .25rem;
+        color: var(--gradient-ardoise-30);
+        display: flex;
+        gap: .5rem;
+        justify-content: center;
+        padding: .25rem;
+        width: 2rem;
+    }
+
 }
 
 .episodes {
