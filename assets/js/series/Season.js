@@ -207,6 +207,46 @@ export class Season {
                 }
             }
         });
+
+        document.addEventListener('paste', async (e) => {
+            // Récupérer l'élément sous la souris
+            const target = e.target;
+            const targetStillDiv = target.classList.contains('.still') ? target : target.closest('.still');
+
+            if (!targetStillDiv) {
+                return;
+            }
+            e.preventDefault();
+            const seriesId = targetStillDiv.getAttribute('data-series-id');
+            const seasonId = targetStillDiv.getAttribute('data-season-id');
+            const episodeId = targetStillDiv.getAttribute('data-episode-id');
+            const fileName = seriesId + '-' + seasonId + '-' + episodeId + '.';
+
+            for (const clipboardItem of e.clipboardData.files) {
+                if (clipboardItem.type.startsWith('image/')) {
+                    // Save the image in %kernel.dir%/public/series/stills/season-xx/episode-xx.jpg
+                    const formData = new FormData();
+                    formData.append('file', clipboardItem, fileName + clipboardItem.type.split('/')[1]);
+                    const response = await fetch('/' + gThis.lang + '/series/episode/still/' + episodeId, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    if (response.ok) {
+                        let still;
+                        still= targetStillDiv.querySelector('img');
+                        if (still) {
+                            still.src = URL.createObjectURL(clipboardItem);
+                        } else {
+                            const noPoster = targetStillDiv.querySelector('.no-poster');
+                            noPoster?.remove();
+                            still = document.createElement('img');
+                            still.src = URL.createObjectURL(clipboardItem);
+                            targetStillDiv.appendChild(still);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     openTitleForm(e) {

@@ -56,6 +56,9 @@ class UserEpisode
     #[ORM\Column(nullable: true, options: ['default' => 0])]
     private ?int $numberOfView;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $still = null;
+
     public function __construct(UserSeries $userSeries, int $episodeId, int $seasonNumber, int $episodeNumber, ?DateTimeImmutable $watchAt)
     {
         $this->user = $userSeries->getUser();
@@ -224,6 +227,18 @@ class UserEpisode
     public function setAirDate(?DateTimeImmutable $airDate): static
     {
         $this->airDate = $airDate;
+
+        return $this;
+    }
+
+    public function getStill(): ?string
+    {
+        return $this->still;
+    }
+
+    public function setStill(?string $still): static
+    {
+        $this->still = $still;
 
         return $this;
     }

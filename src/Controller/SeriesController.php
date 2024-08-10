@@ -53,6 +53,7 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Clock\DatePoint;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -648,13 +649,13 @@ class SeriesController extends AbstractController
 
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
-        dump([
+//        dump([
 //            'series' => $series,
-            'season' => $season,
+//            'season' => $season,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-        ]);
+//        ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
@@ -1121,6 +1122,27 @@ class SeriesController extends AbstractController
         return $this->json([
             'ok' => true,
             'overview' => $overview,
+        ]);
+    }
+
+//    #[IsGranted('ROLE_USER')]
+    #[Route('/episode/still/{id}', name: 'still', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function episodeStill(Request $request, int $id): Response
+    {
+        /** @var UploadedFile $uploadedFile */
+        $uploadedFile = $request->files->get('file');
+        $filename = '/' . $uploadedFile->getClientOriginalName();
+        $stillPath = $this->getParameter('kernel.project_dir') . '/public/series/stills' . $filename;
+        $copy = $this->copyImage($uploadedFile->getPathname(), $stillPath);
+
+        if ($copy) {
+            $episode = $this->userEpisodeRepository->findOneBy(['episodeId' => $id]);
+            $episode->setStill($filename);
+            $this->userEpisodeRepository->save($episode, true);
+        }
+
+        return $this->json([
+            'ok' => $copy,
         ]);
     }
 
@@ -1606,7 +1628,7 @@ class SeriesController extends AbstractController
         $slugger = new AsciiSlugger();
         $seasonEpisodes = [];
         $userEpisodes = $this->userEpisodeRepository->getUserEpisodes($user->getId(), $userSeries->getId(), $season['season_number'], $user->getPreferredLanguage() ?? 'fr');
-        dump($this->userEpisodeRepository->getUserEpisodesQueryBuilder($user, $userSeries, $season['season_number'], $user->getPreferredLanguage() ?? 'fr'));
+//        dump($this->userEpisodeRepository->getUserEpisodesQueryBuilder($user, $userSeries, $season['season_number'], $user->getPreferredLanguage() ?? 'fr'));
 
         foreach ($season['episodes'] as $episode) {
             $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
@@ -1988,5 +2010,16 @@ class SeriesController extends AbstractController
             }
         }
         return true;
+    }
+
+    public function copyImage($source, $destination): bool
+    {
+        if (!file_exists($destination)) {
+            if (file_exists($source)) {
+                copy($source, $destination);
+                return true;
+            }
+        }
+        return false;
     }
 }

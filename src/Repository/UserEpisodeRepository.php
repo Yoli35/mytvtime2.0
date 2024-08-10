@@ -315,7 +315,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        d.logo_path       as device_logo_path,
                        d.svg             as device_svg,
                        ue.vote           as vote,
-                       ue.number_of_view as number_of_view
+                       ue.number_of_view as number_of_view,
+                       ue.still          as still
                 FROM user_episode ue
                          LEFT JOIN episode_substitute_name esn ON ue.episode_id = esn.episode_id
                          LEFT JOIN episode_localized_overview elo ON ue.episode_id = elo.episode_id AND elo.locale = '$locale'
@@ -332,7 +333,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
     public function getUserEpisodesQueryBuilder(User $user, UserSeries $userSeries, int $seasonNumber, string $locale): array
     {
         $qb = $this->createQueryBuilder('ue');
-        $qb->select('ue.id', 'ue.episodeId', 'ue.episodeNumber', 'ue.watchAt', 'ue.airDate', 'ue.vote', 'ue.numberOfView',
+        $qb->select('ue.id', 'ue.episodeId', 'ue.episodeNumber', 'ue.watchAt', 'ue.airDate', 'ue.vote', 'ue.numberOfView', 'ue.still',
             'esn.name as substituteName', 'elo.overview as localizedOverview',
             'ue.providerId', 'p.name as providerName', 'p.logoPath as providerLogoPath',
             'ue.deviceId', 'd.name as deviceName', 'd.logoPath as deviceLogoPath', 'd.svg as deviceSvg')

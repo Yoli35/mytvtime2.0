@@ -82,11 +82,13 @@
                         {% if episode.air_date and episode.air_date <= now %}
                             {% set ue = episode.user_episode %}
                             <div class="episode" id="episode-{{ episode.episode_number }}">
-                                <div class="still">
+                                <div class="still" data-series-id="{{ series.tmdbId }}" data-season-id="{{ season.id }}" data-episode-id="{{ episode.id }}">
                                     {% if episode.still_path %}
                                         <img src="{{ episode.still_path }}" alt="{{ episode.name }}">
+                                    {% elseif ue.still %}
+                                        <img src="/series/stills/{{ ue.still }}" alt="{{ episode.name }}">
                                     {% else %}
-                                        <div>{{ 'No poster'|trans }}</div>
+                                        <div class="no-poster">{{ 'No poster'|trans }}</div>
                                     {% endif %}
                                     <div class="number{% if ue and ue.watch_at %} watched{% endif %}"{% if ue and ue.number_of_view %} data-title="{{ 'Watched %time% times'|trans({'%time%': ue.number_of_view}) }}"{% endif %}>
                                         {{ episode.episode_number }}
