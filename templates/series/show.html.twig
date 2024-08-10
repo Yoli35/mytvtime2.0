@@ -473,5 +473,9 @@
         "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
+    <div class="svgs" style="display: none">
+        <div class="svg" id="arrow-down">{{ ux_icon('fa6-solid:arrow-down', {height: '18px', width: '18px'}) }}</div>
+        <div class="svg" id="arrow-up">{{ ux_icon('fa6-solid:arrow-up', {height: '18px', width: '18px'}) }}</div>
+    </div>
 {% endblock %}
 

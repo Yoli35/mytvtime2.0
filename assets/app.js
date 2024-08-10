@@ -173,12 +173,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
         const seasonOrder = document.querySelector(".season-order");
         seasonOrder?.addEventListener("click", () => {
-            const seasonList = seasonOrder.closest(".content").querySelector(".seasons-episodes");
+            const seasonList = seasonOrder.closest(".content").querySelector(".seasons");
             seasonList.classList.toggle("reverse");
             if (seasonList.classList.contains("reverse")) {
-                seasonOrder.innerHTML = "<i class='fas fa-arrow-up'></i>";
+                const arrowUp = document.querySelector(".svgs #arrow-up").querySelector("svg").cloneNode(true);
+                seasonOrder.innerHTML = arrowUp.outerHTML;
             } else {
-                seasonOrder.innerHTML = "<i class='fas fa-arrow-down'></i>";
+                const arrowDown = document.querySelector(".svgs #arrow-down").querySelector("svg").cloneNode(true);
+                seasonOrder.innerHTML = arrowDown.outerHTML;
             }
         });
 
