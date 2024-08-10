@@ -263,37 +263,39 @@ class HomeController extends AbstractController
     public function getSelection(string $media, string $filterString, AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $preferredLanguage = 'fr'): array
     {
         if ($media === 'movie') {
-            $seriesSelection = json_decode($this->tmdbService->getFilterMovie($filterString), true)['results'];
+            $mediaSelection = json_decode($this->tmdbService->getFilterMovie($filterString.'&append_to_response=watch/providers'), true)['results'];
 //            $id = 'userMovie'
             $name = 'title';
             $date = 'release_date';
         } else {
-            $seriesSelection = json_decode($this->tmdbService->getFilterTv($filterString), true)['results'];
+            $mediaSelection = json_decode($this->tmdbService->getFilterTv($filterString.'&append_to_response=watch/providers'), true)['results'];
             $name = 'name';
             $date = 'first_air_date';
         }
+        dump(['mediaSelection' => $mediaSelection]);
 
         return array_map(function ($tv) use ($slugger, $media, $name, $date, $country, $timezone, $preferredLanguage) {
 
-            if ($media === 'movie')
-                $tv = json_decode($this->tmdbService->getMovie($tv['id'], $preferredLanguage, ['videos', 'watch/providers']), true);
-            else
-                $tv = json_decode($this->tmdbService->getTv($tv['id'], $preferredLanguage, ['videos', 'watch/providers']), true);
+//            if ($media === 'movie')
+//                $tv = json_decode($this->tmdbService->getMovie($tv['id'], $preferredLanguage, ['videos', 'watch/providers']), true);
+//            else
+//                $tv = json_decode($this->tmdbService->getTv($tv['id'], $preferredLanguage, ['videos', 'watch/providers']), true);
             $tv['tmdb'] = true;
             $this->seriesController->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5),$media==='movie' ? '/movies/' : '/series/');
             $tv['poster_path'] = $tv['poster_path'] ? '/' . ($media === 'tv' ? 'series' : 'movies') . '/posters' . $tv['poster_path'] : null; // w780
             $tv['slug'] = strtolower($slugger->slug($tv[$media === 'tv' ? 'name': 'title']));
 
-            if ($country) {
-                $wpArr = $tv['watch/providers'];//json_decode($this->tmdbService->getTvwatchProviders($tv['id']), true);
-                $tv['watch_providers'] = $wpArr['results'][$country] ?? [];
-                $tv['watch_providers'] = $tv['watch_providers']['flatrate'] ?? [];
-                $tv['watch_providers'] = array_map(function ($wp) {
-                    $wp['logo_path'] = $wp['logo_path'] ? $this->imageConfiguration->getCompleteUrl($wp['logo_path'], 'logo_sizes', 2) : null;
-                    return $wp;
-                }, $tv['watch_providers']);
-            } else
+//            if ($country) {
+//                $wpArr = $tv['watch/providers'];//json_decode($this->tmdbService->getTvwatchProviders($tv['id']), true);
+//                $tv['watch_providers'] = $wpArr['results'][$country] ?? [];
+//                $tv['watch_providers'] = $tv['watch_providers']['flatrate'] ?? [];
+//                $tv['watch_providers'] = array_map(function ($wp) {
+//                    $wp['logo_path'] = $wp['logo_path'] ? $this->imageConfiguration->getCompleteUrl($wp['logo_path'], 'logo_sizes', 2) : null;
+//                    return $wp;
+//                }, $tv['watch_providers']);
+//            } else
                 $tv['watch_providers'] = [];
+
             return [
                 'date' => $this->dateService->newDateImmutable($tv[$date], $timezone)->format('d/m/Y'),
                 'id' => $tv['id'],
@@ -306,6 +308,6 @@ class HomeController extends AbstractController
                 'year' => $tv[$date] ? substr($tv[$date], 0, 4) : '',
                 'videos' => $tv['videos']['results'] ?? '',
             ];
-        }, $seriesSelection);
+        }, $mediaSelection);
     }
 }
