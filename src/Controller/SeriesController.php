@@ -1703,42 +1703,44 @@ class SeriesController extends AbstractController
         $localizedResult = null;
         $localizedOverview = $this->seasonLocalizedOverviewRepository->findOneBy(['series' => $series, 'seasonNumber' => $seasonNumber, 'locale' => $locale]);
 
-        if (!$localizedOverview && !strlen($season['overview'])) {
-            $usSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, 'en-US'), true);
-            $season['overview'] = $usSeason['overview'];
-            if (strlen($season['overview'])) {
-                try {
-                    $usage = $this->deeplTranslator->translator->getUsage();
+        if (!$localizedOverview) {
+            if (!strlen($season['overview'])) {
+                $usSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, 'en-US'), true);
+                $season['overview'] = $usSeason['overview'];
+                if (strlen($season['overview'])) {
+                    try {
+                        $usage = $this->deeplTranslator->translator->getUsage();
 //                    dump($usage);
-                    if ($usage->character->count + strlen($season['overview']) < $usage->character->limit) {
-                        $localizedOverview = $this->deeplTranslator->translator->translateText($season['overview'], null, $locale);
-                        $localized = true;
+                        if ($usage->character->count + strlen($season['overview']) < $usage->character->limit) {
+                            $localizedOverview = $this->deeplTranslator->translator->translateText($season['overview'], null, $locale);
+                            $localized = true;
 
-                        $seasonLocalizedOverview = new SeasonLocalizedOverview($series, $seasonNumber, $localizedOverview, $locale);
-                        $this->seasonLocalizedOverviewRepository->save($seasonLocalizedOverview, true);
-                    } else {
-                        $localizedResult = 'Limit exceeded';
+                            $seasonLocalizedOverview = new SeasonLocalizedOverview($series, $seasonNumber, $localizedOverview, $locale);
+                            $this->seasonLocalizedOverviewRepository->save($seasonLocalizedOverview, true);
+                        } else {
+                            $localizedResult = 'Limit exceeded';
+                        }
+                    } catch (DeepLException $e) {
+                        $localizedResult = 'Error: code ' . $e->getCode() . ', message: ' . $e->getMessage();
+                        $usage = [
+                            'character' => [
+                                'count' => 0,
+                                'limit' => 500000
+                            ]
+                        ];
                     }
-                } catch (DeepLException $e) {
-                    $localizedResult = 'Error: code ' . $e->getCode() . ', message: ' . $e->getMessage();
-                    $usage = [
-                        'character' => [
-                            'count' => 0,
-                            'limit' => 500000
-                        ]
-                    ];
                 }
-            }
-            return [
-                'us_overview' => $usSeason['overview'],
-                'us_episode_overviews' => []/*array_map(function ($ep) use ($locale) {
+                return [
+                    'us_overview' => $usSeason['overview'],
+                    'us_episode_overviews' => []/*array_map(function ($ep) use ($locale) {
                     return $this->episodeLocalizedOverview($ep, $locale);
                 }, $usSeason['episodes'])*/,
-                'localized' => $localized,
-                'localizedOverview' => $localizedOverview,
-                'localizedResult' => $localizedResult,
-                'usage' => $usage ?? null
-            ];
+                    'localized' => $localized,
+                    'localizedOverview' => $localizedOverview,
+                    'localizedResult' => $localizedResult,
+                    'usage' => $usage ?? null
+                ];
+            }
         } else {
             return [
                 'us_overview' => null,
