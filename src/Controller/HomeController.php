@@ -85,13 +85,16 @@ class HomeController extends AbstractController
                 return $series;
             }, $this->userEpisodeRepository->historySeries($user, $country, $language, 1, 20));
             // Historique des épisodes vus pendant les 2 semaines passées
-            $historyEpisode = $this->seriesController->getEpisodeHistory($user, 14, $country, $language);
+            $cookieDayCount = $_COOKIE['mytvtime_2_day_count'] ?? 7;
+            $dayCount = $request->query->get('daycount', $cookieDayCount);
+            $historyEpisode = $this->seriesController->getEpisodeHistory($user, $dayCount, $country, $language);
         } else {
             $userSeries = [];
             $episodesOfTheDay = [];
             $episodesToWatch = [];
             $lastAddedSeries = [];
             $historyEpisode = [];
+            $dayCount = 0;
             $historySeries = [];
         }
 //        dump(['Episodes to watch' => $episodesToWatch,]);
@@ -101,8 +104,8 @@ class HomeController extends AbstractController
          */
         // Get the value of the cookie "mytvtime.2.provider"
         $cookieProvider = $_COOKIE['mytvtime_2_provider'] ?? 8;
-
         $provider = $request->query->get('provider', $cookieProvider);
+
         $watchProviders = json_decode($this->tmdbService->getTvWatchProviderList($language, $country), true);
         $watchProviders = $watchProviders['results'];
         if (count($watchProviders) === 0) {
@@ -117,9 +120,7 @@ class HomeController extends AbstractController
 
         $slugger = new AsciiSlugger();
         $filterString = "&page=1&sort_by=first_air_date.desc&with_watch_providers=" . $provider . "&with_watch_monetization_types=flatrate&language=fr&timezone=Europe/Paris&watch_region=FR&include_adult=false";
-        $filterName = "Netflix";
         $filteredSeries = $this->getSelection('tv', $filterString, $slugger);
-//        dump(['filteredSeries' => $filteredSeries]);
 
         $seriesSelection = $this->getSeriesSelection($slugger, $country, $timezone, $language, true);
         $movieSelection = $this->getMovieSelection($slugger, $country, $timezone, $language, true);
@@ -131,6 +132,7 @@ class HomeController extends AbstractController
             'movieSelection' => $movieSelection,
 //            'episodesOfTheDay' => $episodesOfTheDay,
 //            'historyEpisode' => $historyEpisode,
+//            'filteredSeries' => $filteredSeries,
         ]);
 
         return $this->render('home/index.html.twig', [
@@ -141,12 +143,12 @@ class HomeController extends AbstractController
             'episodesToWatch' => $episodesToWatch,
             'lastAddedSeries' => $lastAddedSeries,
             'historyEpisode' => $historyEpisode,
+            'dayCount' => $dayCount,
             'historySeries' => $historySeries,
             'userSeriesCount' => $userSeriesCount ?? 0,
             'watchProviders' => $watchProviders,
             'provider' => $provider,
             'filteredSeries' => $filteredSeries,
-            'filterName' => $filterName,
         ]);
     }
 

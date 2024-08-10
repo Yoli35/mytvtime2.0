@@ -1,6 +1,7 @@
 import './bootstrap.js';
 
 import {AverageColor} from 'AverageColor';
+import {DayCountHistory} from 'DayCountHistory';
 import {HighlightSeries} from 'HighlightSeries';
 import {Menu} from 'Menu';
 import {Movie} from 'Movie';
@@ -120,11 +121,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
 // Home page
     if (document.querySelector(".home")) {
+        const dayCountHistory = new DayCountHistory();
         const providerSelect = new ProviderSelect();
         const highlightSeries = new HighlightSeries();
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
+        dayCountHistory.init();
         providerSelect.init();
         highlightSeries.init(globs);
+
     }
 
 // Series & season page

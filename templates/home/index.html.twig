@@ -53,10 +53,10 @@
                 <div class="loading-item"></div>
                 <div class="loading-item"></div>
             </div>
-{#            <div class="loading-v2">#}
-{#                <div class="ball-container">#}
-{#                </div>#}
-{#            </div>#}
+            {#            <div class="loading-v2"> #}
+            {#                <div class="ball-container"> #}
+            {#                </div> #}
+            {#            </div> #}
         </div>
         <div class="highlight-progress">
             <div class="head"></div>
@@ -97,7 +97,7 @@
             {% endif %}
             {% if episodesToWatch|length %}
                 <div class="series-group">
-                    <h2>{{ 'Episodes to watch'|trans }} {#({{ episodesToWatch|length }})#}</h2>
+                    <h2>{{ 'Episodes to watch'|trans }} {# ({{ episodesToWatch|length }}) #}</h2>
                     <div class="wrapper">
                         <div class="content">
                             {% for s in episodesToWatch %}
@@ -138,7 +138,21 @@
                 </div>
             </div>
             <div class="series-group">
-                <h2>{{ 'Episode history'|trans }} ({{ historyEpisode|length }})</h2>
+                <div class="header">
+                    {% if dayCount == 1 %}
+                    <h2>{{ 'Episode history (%h)'|trans|format(dayCount*24) }} ({{ historyEpisode|length }})</h2>
+                    {% else %}
+                    <h2>{{ 'Episode history (%d)'|trans|format(dayCount) }} ({{ historyEpisode|length }})</h2>
+                    {% endif %}
+                    <label for="day-count">{{ 'Day count'|trans }}
+                        <select id="day-count">
+                            <option value="1"{% if dayCount == 1 %} selected{% endif %}>{{ 'Last 24 hours'|trans }}</option>
+                            <option value="7"{% if dayCount == 7 %} selected{% endif %}>{{ 'Last 7 days'|trans }}</option>
+                            <option value="14"{% if dayCount == 14 %} selected{% endif %}>{{ 'Last 14 days'|trans }}</option>
+                            <option value="30"{% if dayCount == 30 %} selected{% endif %}>{{ 'Last 30 days'|trans }}</option>
+                        </select>
+                    </label>
+                </div>
                 <div class="wrapper">
                     <div class="content">
                         {% for s in historyEpisode %}

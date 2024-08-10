@@ -21,6 +21,9 @@ return [
     'AverageColor' => [
         'path' => './assets/js/images/AverageColor.js',
     ],
+    'DayCountHistory' => [
+        'path' => './assets/js/home/DayCountHistory.js',
+    ],
     'Diaporama' => [
         'path' => './assets/js/images/Diaporama.js',
     ],
