@@ -26,9 +26,11 @@
                 <img src="/movies/posters{{ movie.poster_path }}" alt="{{ movie.title }} {{ 'poster'|trans }}">
             </div>
             <div class="infos">
-                <div class="backdrop">
-                    <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
-                </div>
+                {% if movie.backdrop_path %}
+                    <div class="backdrop">
+                        <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
+                    </div>
+                {% endif %}
                 <div class="title">
                     <h1>
                         {{ movie.title }}{% if movie.original_title and movie.original_title != movie.title %}<br><span>{{ movie.original_title }}</span>{% endif %} ({{ movie.release_date|date("Y") }})
@@ -126,14 +128,16 @@
                                         </div>
                                     </div>
                                 {% endif %}
-                                <div class="genres">
-                                    <div class="label">{{ 'Genres'|trans }}</div>
-                                    <div class="content">
-                                        {% for genre in movie.genres %}
-                                            <div class="genre">{{ genre.name }}</div>
-                                        {% endfor %}
+                                {% if movie.genres|length %}
+                                    <div class="genres">
+                                        <div class="label">{{ 'Genres'|trans }}</div>
+                                        <div class="content">
+                                            {% for genre in movie.genres %}
+                                                <div class="genre">{{ genre.name }}</div>
+                                            {% endfor %}
+                                        </div>
                                     </div>
-                                </div>
+                                {% endif %}
                                 <div class="runtime">
                                     <div class="label">{{ 'Runtime'|trans }}</div>
                                     <div class="content">{{ movie.runtime|time }}</div>
@@ -249,6 +253,25 @@
                             </div>
                         </div>
                     </div>
+                    {% if movie.found == false %}
+                        <div class="not-found">
+                            <div class="label">{{ 'Not found'|trans }}</div>
+                            <div class="content">
+                                <p>{{ 'Movie not found on TMDB'|trans }}</p>
+                            </div>
+                            <div class="actions">
+                                <div class="search-movie">
+                                    <label for="movieTitle">{{ 'Title'|trans }}
+                                        <input type="search" name="movieTitle" id="movieTitle" value="{{ movie.title }}">
+                                    </label>
+                                    <button id="search-tmdb">{{ 'Search'|trans }}</button>
+                                </div>
+                                <div class="delete-movie">
+                                    <button id="delete-movie">{{ 'Delete this movie from your watchlist'|trans }}</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
                     <div class="user-details">
                         <div class="user-actions">
                             <div class="watch-links">
