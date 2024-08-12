@@ -38,6 +38,7 @@ accountant male lead: comptable, premier rôle masculin
 accountant: comptable
 accounting: comptabilité
 action adventure: action aventure
+action hero: héros d'action
 action thriller: action et thriller
 action: action
 actor male lead: acteur premier rôle masculin
@@ -234,6 +235,7 @@ best friend: meilleur ami
 best friends: meilleur ami
 betrayal by friend: trahison par un ami
 bewildered: perplexe
+bickering couple: couple chamailleur
 big family: famille nombreuse
 bigotry: bombe à retardement
 biography: biographie
@@ -541,9 +543,11 @@ deepfake: faux profond
 deer: cerf
 defense attorney: avocat de la défense
 defraud: fraude
+deity: divinité
 delivery service: service de livraison
 democracy: démocratie
 demon hunter: chasseur de démons
+demon lord: seigneur des démons
 demon: démon
 demonic cult: culte démoniaque
 demonic possession: démence
@@ -687,6 +691,7 @@ evidence: preuve
 evil a.i.: i.a. maléfique
 evil corporation: société diabolique
 evil doll: poupée diabolique
+evil king: roi maléfique
 evil robot: robot maléfique
 evil ruler: poupée diabolique
 evil spirit: esprit maléfique
@@ -718,6 +723,7 @@ fairy tale: conte de fées
 fairy: fée
 fake death: fausse mort
 fake identity: fausse identité
+faking amnesia: simuler l'amnésie
 fall from grace: faux souvenir
 fall: chute
 false memory: faux souvenir
@@ -822,6 +828,7 @@ framed for a crime: l'homme et la femme
 framed: encadré
 france: France
 franchise: franchise
+fraternal twins: faux jumeaux
 freak show: freak show
 freedom: liberté
 french artist: artiste français
@@ -858,6 +865,7 @@ gay youth: jeunesse gay
 gay: gay
 geek: intello
 gen z: gen z
+gender bender: maître du genre
 genderqueer: genderqueer
 generation z: génération z
 genetic engineering: génie génétique
@@ -948,6 +956,7 @@ heroine: héroïne
 hidden fortune: fortune cachée
 hidden identity: identité cachée
 hidden killer: tueur caché
+hidden past: passé caché
 hidden powers: pouvoirs cachés
 high fantasy: haute fantaisie
 high school drama: drame lycéen
@@ -1007,12 +1016,14 @@ ice melting: glace de mer
 iceberg: iceberg
 iceland: patrie
 identity: identité
+idol actress: actrice idole
 idol group: groupe d'idols
 idol: idole
 illegal drugs: drogues illégales
 illegal gambling: jeux d'argent illégaux
 illinois: illinois
 immigration: immigration
+immortal: immortel
 immortality: immortalité
 impersonation: usurpation d'identité
 impostor: imposteur
@@ -1182,6 +1193,7 @@ love triangle: triangle amoureux
 love-hate relationship: relation amour-haine
 love: amour
 lover: amant
+lovers reunited: amants réunis
 lsd: lsd
 lunar civilization: civilisation lunaire
 luxury liner: luxueux paquebot
@@ -1319,6 +1331,7 @@ moon: lune
 moral dilemma: dilemme moral
 mormonism: mormonisme
 morning show: émission matinale
+mortal world: monde mortel
 mortuary: morgue
 motel: motel
 mother daughter relationship: relation mère-fille
@@ -1435,6 +1448,7 @@ ocean liner: paquebot
 ocean: océan
 oceanic expedition: expédition océanique
 odd couple: couple bizarre
+odyssey: odyssée
 offbeat: décalé
 offensive: offensif
 office politics: bureau politique
@@ -1575,6 +1589,7 @@ prequel: préquelle
 president: président
 presumed dead: présumé mort
 pretend relationship: prétendre à une relation
+pretentious: prétentieux
 priest: prêtre
 primate: primat
 prince male lead: prince premier rôle masculin
@@ -1844,6 +1859,7 @@ single man: homme célibataire
 single mother: mère célibataire
 single parent: père célibataire
 sinking ship: navire en perdition
+sismance: romance entre personne du même genre
 sister: sœur
 sisterhood: sœur
 sitcom: sitcom
@@ -1900,6 +1916,7 @@ space program: programme spatial
 space race: course à l'espace
 space station: station spatiale
 space travel: voyage dans l'espace
+space vessel: vaisseau spatial
 space war: guerre de l'espace
 space western: espace occidental
 space: espace
@@ -1969,6 +1986,7 @@ summer: été
 sun: soleil
 sunken ship: navire coulé
 super fast: super rapide
+super hero girls: super hero girls
 super hero: super héros
 super power: super pouvoir
 super soldier: super soldat
@@ -2118,6 +2136,7 @@ treasure hunt: chasse au trésor
 trek: randonnée
 trial: essai
 triangle: triangle
+tribe: tribu
 troubled teen: adolescent en difficulté
 troubled youth: jeunes en difficulté
 truck driver: chauffeur de camion
@@ -2156,6 +2175,7 @@ unintended consequences: conséquences involontaires
 united nations: nations unies
 universe: univers
 university: université
+unlikely romance: histoire d'amour improbable
 unreliable narrator: narrateur non fiable
 unrequited love: amour non partagé
 upper class: classe supérieure
