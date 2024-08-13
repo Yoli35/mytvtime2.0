@@ -71,7 +71,7 @@
                         }) %}
                         <div class="item{% if n.validated_at %} validated{% endif %}" data-id="{{ n.id }}" title="{{ message }}">
                             <div class="message">{{ message }}</div>
-                            <div class="date">{{ n.created_at|format_date('relative_short') }}</div>
+                            <div class="date">{{ n.created_at|date('d/m/Y h:i:s') }}</div>
                         </div>
                     {% endfor %}
                 </div>
