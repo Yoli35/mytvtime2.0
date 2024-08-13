@@ -26,7 +26,9 @@
                                 {{ ux_icon('fa6-solid:arrow-up', {height: '16px', width: '16px'}) }}
                             {% endif %}
                         </div>
-                        <div class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">{{ ux_icon('ion:apps-sharp', {height: '16px', width: '16px'}) }}: {{ filters.perPage }}</div>
+                        <div class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">
+                            {{ ux_icon('ion:apps-sharp', {height: '16px', width: '16px'}) }}&nbsp;{{ filters.perPage }}
+                        </div>
                     </div>
                     <div class="collapse" data-title="{{ 'Show / hide filter options'|trans }}">
                         {% if filterBoxOpen %}
