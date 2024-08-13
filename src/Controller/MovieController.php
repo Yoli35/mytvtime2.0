@@ -152,125 +152,7 @@ class MovieController extends AbstractController
         $dbMovie = $userMovie->getMovie();
         $movie = json_decode($this->tmdbService->getMovie($tmdbId, $language, ['videos,images,credits,recommendations,keywords,watch/providers,release_dates']), true);
         if (!$movie) {
-//            $this->addFlash('danger', $dbMovie->getTitle() . '<br>' . $this->translator->trans('Movie not found on TMDB'));
-//            return $this->redirectToRoute('app_movie_index');
-            // {
-            //  "adult": false,
-            //  "backdrop_path": "/wNAhuOZ3Zf84jCIlrcI6JhgmY5q.jpg",
-            //  "belongs_to_collection": {
-            //    "id": 8945,
-            //    "name": "Mad Max Collection",
-            //    "poster_path": "/9U9QmbCDIBhqDShuIxOiS9gjKYz.jpg",
-            //    "backdrop_path": "/fhv3dWOuzeW9eXOSlr8MCHwo24t.jpg"
-            //  },
-            //  "budget": 170000000,
-            //  "genres": [
-            //    {
-            //      "id": 28,
-            //      "name": "Action"
-            //    },
-            //    {
-            //      "id": 12,
-            //      "name": "Adventure"
-            //    },
-            //    {
-            //      "id": 878,
-            //      "name": "Science Fiction"
-            //    }
-            //  ],
-            //  "homepage": "https://www.furiosaamadmaxsaga.com",
-            //  "id": 786892,
-            //  "imdb_id": "tt12037194",
-            //  "origin_country": [
-            //    "AU",
-            //    "US"
-            //  ],
-            //  "original_language": "en",
-            //  "original_title": "Furiosa: A Mad Max Saga",
-            //  "overview": "As the world fell, young Furiosa is snatched from the Green Place of Many Mothers and falls into the hands of a great Biker Horde led by the Warlord Dementus. Sweeping through the Wasteland they come across the Citadel presided over by The Immortan Joe. While the two Tyrants war for dominance, Furiosa must survive many trials as she puts together the means to find her way home.",
-            //  "popularity": 940.878,
-            //  "poster_path": "/iADOJ8Zymht2JPMoy3R7xceZprc.jpg",
-            //  "production_companies": [
-            //    {
-            //      "id": 174,
-            //      "logo_path": "/zhD3hhtKB5qyv7ZeL4uLpNxgMVU.png",
-            //      "name": "Warner Bros. Pictures",
-            //      "origin_country": "US"
-            //    },
-            //    {
-            //      "id": 28382,
-            //      "logo_path": "/xqE1fjLynj3RaZca9chctZQyfzZ.png",
-            //      "name": "Kennedy Miller Mitchell",
-            //      "origin_country": "AU"
-            //    },
-            //    {
-            //      "id": 216687,
-            //      "logo_path": null,
-            //      "name": "Domain Entertainment",
-            //      "origin_country": "US"
-            //    }
-            //  ],
-            //  "production_countries": [
-            //    {
-            //      "iso_3166_1": "AU",
-            //      "name": "Australia"
-            //    },
-            //    {
-            //      "iso_3166_1": "US",
-            //      "name": "United States of America"
-            //    }
-            //  ],
-            //  "release_date": "2024-05-22",
-            //  "revenue": 172775791,
-            //  "runtime": 149,
-            //  "spoken_languages": [
-            //    {
-            //      "english_name": "English",
-            //      "iso_639_1": "en",
-            //      "name": "English"
-            //    }
-            //  ],
-            //  "status": "Released",
-            //  "tagline": "Fury is born.",
-            //  "title": "Furiosa: A Mad Max Saga",
-            //  "video": false,
-            //  "vote_average": 7.62,
-            //  "vote_count": 2538
-            //}
-            $movie['backdrop_path'] = $dbMovie->getBackdropPath();
-            $movie['belongs_to_collection'] = $dbMovie->getCollection();
-            $movie['genres'] = [];
-            $movie['homepage'] = null;
-            $movie['id'] = $dbMovie->getTmdbId();
-            $movie['origin_country'] = $dbMovie->getOriginCountry();
-            $movie['original_language'] = $dbMovie->getOriginalLanguage();
-            $movie['original_title'] = $dbMovie->getOriginalTitle();
-            $movie['overview'] = $dbMovie->getOverview();
-            $movie['poster_path'] = $dbMovie->getPosterPath();
-            $movie['production_companies'] = [];
-            $movie['production_countries'] = [];
-            $movie['release_date'] = $dbMovie->getReleaseDate();
-            $movie['revenue'] = null;
-            $movie['runtime'] = $dbMovie->getRuntime();
-            $movie['spoken_languages'] = [];
-            $movie['status'] = $dbMovie->getStatus();
-            $movie['tagline'] = $dbMovie->getTagline();
-            $movie['title'] = $dbMovie->getTitle();
-            $movie['video'] = false;
-            $movie['vote_average'] = $dbMovie->getVoteAverage();
-            $movie['vote_count'] = $dbMovie->getVoteCount();
-            $movie['videos']['results'] = [];
-            $movie['images']['backdrops'] = [];
-            $movie['images']['logos'] = [];
-            $movie['images']['posters'] = [];
-            $movie['credits']['cast'] = [];
-            $movie['credits']['crew'] = [];
-            $movie['recommendations']['results'] = [];
-            $movie['keywords']['keywords'] = [];
-            $movie['watch/providers']['results'] = [];
-            $movie['release_dates']['results'] = [];
-            $movie['found'] = false;
-
+            $movie = $this->createMovieFromDBMovie($userMovie);
             //TODO: if movie not found on tmdb, ask for removal
         } else {
             $movie['found'] = true;
@@ -773,6 +655,128 @@ class MovieController extends AbstractController
     {
         $sources = $this->sourceRepository->findAll();
         $movie['sources'] = $sources;
+    }
+
+    public function createMovieFromDBMovie(Movie $dbMovie): array
+    {
+        // {
+        //  "adult": false,
+        //  "backdrop_path": "/wNAhuOZ3Zf84jCIlrcI6JhgmY5q.jpg",
+        //  "belongs_to_collection": {
+        //    "id": 8945,
+        //    "name": "Mad Max Collection",
+        //    "poster_path": "/9U9QmbCDIBhqDShuIxOiS9gjKYz.jpg",
+        //    "backdrop_path": "/fhv3dWOuzeW9eXOSlr8MCHwo24t.jpg"
+        //  },
+        //  "budget": 170000000,
+        //  "genres": [
+        //    {
+        //      "id": 28,
+        //      "name": "Action"
+        //    },
+        //    {
+        //      "id": 12,
+        //      "name": "Adventure"
+        //    },
+        //    {
+        //      "id": 878,
+        //      "name": "Science Fiction"
+        //    }
+        //  ],
+        //  "homepage": "https://www.furiosaamadmaxsaga.com",
+        //  "id": 786892,
+        //  "imdb_id": "tt12037194",
+        //  "origin_country": [
+        //    "AU",
+        //    "US"
+        //  ],
+        //  "original_language": "en",
+        //  "original_title": "Furiosa: A Mad Max Saga",
+        //  "overview": "As the world fell, young Furiosa is snatched from the Green Place of Many Mothers and falls into the hands of a great Biker Horde led by the Warlord Dementus. Sweeping through the Wasteland they come across the Citadel presided over by The Immortan Joe. While the two Tyrants war for dominance, Furiosa must survive many trials as she puts together the means to find her way home.",
+        //  "popularity": 940.878,
+        //  "poster_path": "/iADOJ8Zymht2JPMoy3R7xceZprc.jpg",
+        //  "production_companies": [
+        //    {
+        //      "id": 174,
+        //      "logo_path": "/zhD3hhtKB5qyv7ZeL4uLpNxgMVU.png",
+        //      "name": "Warner Bros. Pictures",
+        //      "origin_country": "US"
+        //    },
+        //    {
+        //      "id": 28382,
+        //      "logo_path": "/xqE1fjLynj3RaZca9chctZQyfzZ.png",
+        //      "name": "Kennedy Miller Mitchell",
+        //      "origin_country": "AU"
+        //    },
+        //    {
+        //      "id": 216687,
+        //      "logo_path": null,
+        //      "name": "Domain Entertainment",
+        //      "origin_country": "US"
+        //    }
+        //  ],
+        //  "production_countries": [
+        //    {
+        //      "iso_3166_1": "AU",
+        //      "name": "Australia"
+        //    },
+        //    {
+        //      "iso_3166_1": "US",
+        //      "name": "United States of America"
+        //    }
+        //  ],
+        //  "release_date": "2024-05-22",
+        //  "revenue": 172775791,
+        //  "runtime": 149,
+        //  "spoken_languages": [
+        //    {
+        //      "english_name": "English",
+        //      "iso_639_1": "en",
+        //      "name": "English"
+        //    }
+        //  ],
+        //  "status": "Released",
+        //  "tagline": "Fury is born.",
+        //  "title": "Furiosa: A Mad Max Saga",
+        //  "video": false,
+        //  "vote_average": 7.62,
+        //  "vote_count": 2538
+        //}
+        $movie['backdrop_path'] = $dbMovie->getBackdropPath();
+        $movie['belongs_to_collection'] = $dbMovie->getCollection();
+        $movie['genres'] = [];
+        $movie['homepage'] = null;
+        $movie['id'] = $dbMovie->getTmdbId();
+        $movie['origin_country'] = $dbMovie->getOriginCountry();
+        $movie['original_language'] = $dbMovie->getOriginalLanguage();
+        $movie['original_title'] = $dbMovie->getOriginalTitle();
+        $movie['overview'] = $dbMovie->getOverview();
+        $movie['poster_path'] = $dbMovie->getPosterPath();
+        $movie['production_companies'] = [];
+        $movie['production_countries'] = [];
+        $movie['release_date'] = $dbMovie->getReleaseDate();
+        $movie['revenue'] = null;
+        $movie['runtime'] = $dbMovie->getRuntime();
+        $movie['spoken_languages'] = [];
+        $movie['status'] = $dbMovie->getStatus();
+        $movie['tagline'] = $dbMovie->getTagline();
+        $movie['title'] = $dbMovie->getTitle();
+        $movie['video'] = false;
+        $movie['vote_average'] = $dbMovie->getVoteAverage();
+        $movie['vote_count'] = $dbMovie->getVoteCount();
+        $movie['videos']['results'] = [];
+        $movie['images']['backdrops'] = [];
+        $movie['images']['logos'] = [];
+        $movie['images']['posters'] = [];
+        $movie['credits']['cast'] = [];
+        $movie['credits']['crew'] = [];
+        $movie['recommendations']['results'] = [];
+        $movie['keywords']['keywords'] = [];
+        $movie['watch/providers']['results'] = [];
+        $movie['release_dates']['results'] = [];
+        $movie['found'] = false;
+
+        return $movie;
     }
 
     public function saveImage($type, $imagePath, $imageUrl): void
