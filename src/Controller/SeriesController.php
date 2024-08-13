@@ -649,13 +649,13 @@ class SeriesController extends AbstractController
 
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
-//        dump([
+        dump([
 //            'series' => $series,
-//            'season' => $season,
+            'season' => $season,
 //            'userSeries' => $userSeries,
-//            'providers' => $providers,
+            'providers' => $providers,
 //            'devices' => $devices,
-//        ]);
+        ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
@@ -1628,7 +1628,6 @@ class SeriesController extends AbstractController
         $slugger = new AsciiSlugger();
         $seasonEpisodes = [];
         $userEpisodes = $this->userEpisodeRepository->getUserEpisodes($user->getId(), $userSeries->getId(), $season['season_number'], $user->getPreferredLanguage() ?? 'fr');
-//        dump($this->userEpisodeRepository->getUserEpisodesQueryBuilder($user, $userSeries, $season['season_number'], $user->getPreferredLanguage() ?? 'fr'));
 
         foreach ($season['episodes'] as $episode) {
             $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
@@ -1697,7 +1696,10 @@ class SeriesController extends AbstractController
     {
         foreach ($userEpisodes as $userEpisode) {
             if ($userEpisode['episode_number'] == $episodeNumber) {
-                $userEpisode['provider_logo_path'] = $userEpisode['provider_logo_path'] ? $this->imageConfiguration->getCompleteUrl($userEpisode['provider_logo_path'], 'logo_sizes', 2) : null; // w45
+                if ($userEpisode['provider_id'] > 0)
+                    $userEpisode['provider_logo_path'] = $userEpisode['provider_logo_path'] ? $this->imageConfiguration->getCompleteUrl($userEpisode['provider_logo_path'], 'logo_sizes', 2) : null; // w45
+                else
+                    $userEpisode['provider_logo_path'] = '/images/providers/' . $userEpisode['provider_logo_path'];
                 return $userEpisode;
             }
         }
@@ -1856,7 +1858,10 @@ class SeriesController extends AbstractController
         }
         $watchProviderLogos = [];
         foreach ($providers as $provider) {
-            $watchProviderLogos[$provider['provider_id']] = $this->imageConfiguration->getCompleteUrl($provider['logo_path'], 'logo_sizes', 2);
+            if ($provider['provider_id'] > 0)
+                $watchProviderLogos[$provider['provider_id']] = $this->imageConfiguration->getCompleteUrl($provider['logo_path'], 'logo_sizes', 2);
+            else
+                $watchProviderLogos[$provider['provider_id']] = '/images/providers' . $provider['logo_path'];
         }
         ksort($watchProviders);
         $list = [];
