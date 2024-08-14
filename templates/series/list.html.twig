@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Lists'|trans }} → {{ list.name }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+{% endblock %}
+{% block body %}
+    {% if list.backdrop_path %}
+        <script>
+            const bd = '/series/backdrops{{ list.backdrop_path }}';
+            const body = document.querySelector("body");
+            body.style.backgroundSize = "cover";
+            body.style.backgroundPosition = "center";
+            body.style.backgroundRepeat = "no-repeat";
+            body.style.backgroundAttachment = "fixed";
+            body.style.backgroundImage = "url(" + bd + ")";
+        </script>
+    {% endif %}
+    {% include '_blocks/_menu.html.twig' %}
+    <div class="container-fluid backgroundImageOverlay">
+        <div class="series-show">
+            <div class="header">
+                <div class="poster">
+                    <a href="{{ path('app_series_show', {'id': series.id, 'slug': series.slug}) }}">
+                        {% if series.posterPath %}
+                            <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
+                        {% else %}
+                            <div>{{ 'No poster'|trans }}</div>
+                            <div>{{ series.name }}</div>
+                        {% endif %}
+                    </a>
+                </div>
+                <div class="poster">
+                    {% if list.poster_path %}
+                        <img src="/series/posters{{ list.poster_path }}" alt="{{ list.name }}">
+                    {% else %}
+                        <div>{{ 'No poster'|trans }}</div>
+                    {% endif %}
+                </div>
+                <div class="infos">
+                    <div class="name">
+                        <h1>{{ list.name }}</h1>
+                    </div>
+                    <div class="series-overview">
+                        {{ list.description }}
+                    </div>
+                    {% if list.backdrop_path %}
+                        <div class="backdrop">
+                            <img src="/series/backdrops{{ list.backdrop_path }}" alt="{{ list.name }}">
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="series-search-result">
+                <div class="wrapper">
+                    {% for result in list.results %}
+                        {% if result.media_type == 'tv' %}
+                            {{ include('_blocks/series/_card.html.twig', {'series': result}) }}
+                        {% endif %}
+                        {% if result.media_type == 'movie' %}
+                            {{ include('_blocks/movie/_card-tmdb.html.twig', {'movie': result}) }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% include '_blocks/_footer.html.twig' %}
+    </div>
+{% endblock %}

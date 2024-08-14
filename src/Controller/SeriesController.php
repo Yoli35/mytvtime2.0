@@ -478,6 +478,32 @@ class SeriesController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
+    #[Route('/list/{id}/{seriesId}', name: 'list', requirements: ['id' => Requirement::DIGITS, 'showId' => Requirement::DIGITS])]
+    public function list(Request $request, int $id, int $seriesId): Response
+    {
+        $page = $request->get('page') ?? 1;
+        $series = $this->seriesRepository->findOneBy(['id' => $seriesId]);
+        $list = json_decode($this->tmdbService->getList($id, $page), true);
+        dump($id, $list);
+        $this->saveImage("backdrops", $list['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+        $this->saveImage("posters", $list['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+
+        $list['results'] = array_map(function ($item) {
+            $slugger = new AsciiSlugger();
+            $this->saveImage("posters", $item['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $item['poster_path'] = ($item['media_type'] == 'tv' ? '/series/posters':'/movies/posters') . $item['poster_path'];
+            $item['slug'] = $item['media_type'] == 'tv' ? $slugger->slug($item['name']) : $slugger->slug($item['title']);
+            $item['tmdb'] = true;
+            return $item;
+        }, $list['results']);
+
+        return $this->render('series/list.html.twig', [
+            'list' => $list,
+            'series' => $series,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
     #[Route('/show/{id}-{slug}', name: 'show', requirements: ['id' => Requirement::DIGITS])]
     public function show(Request $request, $id, $slug): Response
     {
@@ -488,7 +514,13 @@ class SeriesController extends AbstractController
         $this->seriesRepository->save($series, true);
 
         $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
-        $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords"]), true);
+        $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "keywords, list"]), true);
+        $tvLists = json_decode($this->tmdbService->getTvLists($series->getTmdbId()), true);
+        dump($tv, $tvLists);
+        if ($tvLists) {
+            $firstList = json_decode($this->tmdbService->getList($tvLists['results'][0]['id']), true);
+            dump($tvLists['results'][0]['id'], $firstList);
+        }
 
         $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
         $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
@@ -536,6 +568,7 @@ class SeriesController extends AbstractController
         return $this->render('series/show.html.twig', [
             'series' => $series,
             'tv' => $tv,
+            'tvLists' => $tvLists,
             'userSeries' => $userSeries,
             'providers' => $providers,
             'translations' => $translations,

@@ -89,12 +89,48 @@ class TMDBService
         }
     }
 
-    public function getTv($showId, $locale, $details = null): ?string
+    public function getTv(int $showId, string $locale, array $details = null): ?string
     {
         $request = 'https://api.themoviedb.org/3/tv/' . $showId . '?api_key=' . $this->api_key . '&language=' . $locale;
         if ($details) {
             $request .= '&append_to_response=' . implode(',', $details);
         }
+        try {
+            $response = $this->client->request(
+                'GET',
+                $request,
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable) {
+                return "";
+            }
+        } catch (Throwable) {
+            return "";
+        }
+    }
+
+    public function getTvLists(int $showId): ?string
+    {
+        $request = 'https://api.themoviedb.org/3/tv/' . $showId . '/lists?api_key=' . $this->api_key;
+        try {
+            $response = $this->client->request(
+                'GET',
+                $request,
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable) {
+                return "";
+            }
+        } catch (Throwable) {
+            return "";
+        }
+    }
+
+    public function getList(int $listId, int $page = 1, string $language = 'fr-FR'): ?string
+    {
+        $request = "https://api.themoviedb.org/4/list/$listId?api_key=$this->api_key&language=$language&page=$page";
         try {
             $response = $this->client->request(
                 'GET',
