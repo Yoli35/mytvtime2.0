@@ -41,23 +41,23 @@ h2 {
 
         &:has(img) {
             .user__role {
-                color: var(--gradient-green-30);
+                color: var(--green-30);
             }
         }
 
         &:nth-child(odd) {
-            background-color: var(--gradient-ardoise-80-alpha-50);
+            background-color: var(--ardoise-80-alpha-50);
 
             &:hover {
-                background-color: var(--gradient-ardoise-60-alpha-50);
+                background-color: var(--ardoise-60-alpha-50);
             }
         }
 
         &:nth-child(even) {
-            background-color: var(--gradient-ardoise-90-alpha-50);
+            background-color: var(--ardoise-90-alpha-50);
 
             &:hover {
-                background-color: var(--gradient-ardoise-70-alpha-50);
+                background-color: var(--ardoise-70-alpha-50);
             }
         }
     }

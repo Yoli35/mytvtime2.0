@@ -424,7 +424,7 @@ export class Season {
                     } else {
                         if (number >= firstEpisodeNumber && number < firstEpisodeNumber + episodeCount) {
                             const progress = Math.round(100 * (episodeNumber - firstEpisodeNumber + 1) / episodeCount);
-                            const style = "background: linear-gradient(90deg, var(--gradient-green-50) " + progress + "%, transparent " + progress + "%)";
+                            const style = "background: linear-gradient(90deg, var(--green-50) " + progress + "%, transparent " + progress + "%)";
                             episodeOfTheDayInMenu.setAttribute('style', style);
                         }
                     }

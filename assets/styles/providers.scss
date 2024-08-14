@@ -6,7 +6,7 @@
 
     .providers {
         border-radius: .25rem;
-        border: 1px solid var(--gradient-ardoise-50);
+        border: 1px solid var(--ardoise-50);
         display: flex;
         flex-wrap: wrap;
         gap: .25rem .5rem;
@@ -17,7 +17,7 @@
 
         .provider {
             align-items: center;
-            background-color: var(--gradient-ardoise-80);
+            background-color: var(--ardoise-80);
             border-radius: .25rem;
             display: flex;
             font-size: .875rem;
@@ -43,7 +43,7 @@
             }
 
             &:has(input:checked) {
-                background-color: var(--gradient-orange-40);
+                background-color: var(--orange-40);
                 font-weight: 600;
             }
         }

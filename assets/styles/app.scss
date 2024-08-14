@@ -10,8 +10,8 @@
 }
 
 ::selection {
-    background-color: var(--gradient-orange-50);
-    color: var(--gradient-orange-90);
+    background-color: var(--orange-50);
+    color: var(--orange-90);
 }
 
 html {
@@ -35,19 +35,19 @@ html {
 }
 
 a {
-    color: var(--gradient-ardoise-10);
+    color: var(--ardoise-10);
     font-weight: 400;
     text-decoration: none;
 
     &:hover, &:visited, &:focus {
-        color: var(--gradient-ardoise-10);
+        color: var(--ardoise-10);
     }
 }
 
 body {
     align-items: center;
     background: var(--mtt-body-bg);
-    background-image: var(--gradient-bg);
+    background-image: var(--bg);
     background-attachment: fixed;
     color: var(--mtt-body-color);
     display: flex;
@@ -165,17 +165,17 @@ body {
 }
 
 :root {
-    --navbar-bg: var(--gradient-ardoise-60);
-    --navbar-bg-hover: var(--gradient-orange-50);
-    --navbar-bg-25: var(--gradient-ardoise-70-alpha-25);
-    --navbar-bg-50: var(--gradient-ardoise-70-alpha-50);
-    --navbar-bg-75: var(--gradient-ardoise-70-alpha-75);
-    --navbar-color: var(--gradient-ardoise-25-alpha-25);
-    --navbar-color-hover: var(--gradient-ardoise-10);
-    --tooltips-bg: var(--gradient-ardoise-90);
-    --tooltips-color: var(--gradient-ardoise-20);
-    --notification-color: var(--gradient-ardoise-10);
-    --notification-validated: var(--gradient-ardoise-40);
+    --navbar-bg: var(--ardoise-60);
+    --navbar-bg-hover: var(--orange-50);
+    --navbar-bg-25: var(--ardoise-70-alpha-25);
+    --navbar-bg-50: var(--ardoise-70-alpha-50);
+    --navbar-bg-75: var(--ardoise-70-alpha-75);
+    --navbar-color: var(--ardoise-25-alpha-25);
+    --navbar-color-hover: var(--ardoise-10);
+    --tooltips-bg: var(--ardoise-90);
+    --tooltips-color: var(--ardoise-20);
+    --notification-color: var(--ardoise-10);
+    --notification-validated: var(--ardoise-40);
 }
 
 label:has(select) {
@@ -186,10 +186,10 @@ label:has(select) {
 
     select {
         appearance: none;
-        background-color: var(--gradient-ardoise-80);
-        border: 1px solid var(--gradient-ardoise-50);
+        background-color: var(--ardoise-80);
+        border: 1px solid var(--ardoise-50);
         border-radius: .25rem;
-        color: var(--gradient-ardoise-10);
+        color: var(--ardoise-10);
         outline: none;
         margin-inline-start: auto;
         padding-block: 0;
@@ -198,15 +198,15 @@ label:has(select) {
 
     &:focus-within {
         select {
-            background-color: var(--gradient-ardoise-50);
-            outline: var(--gradient-orange-50) auto 2px;
+            background-color: var(--ardoise-50);
+            outline: var(--orange-50) auto 2px;
         }
     }
 
     &::after {
-        border-bottom: 4px solid var(--gradient-ardoise-20);
+        border-bottom: 4px solid var(--ardoise-20);
         border-left: 4px solid transparent;
-        border-right: 4px solid var(--gradient-ardoise-20);
+        border-right: 4px solid var(--ardoise-20);
         border-top: 4px solid transparent;
         content: "";
         display: block;
@@ -309,8 +309,8 @@ label:has(input[type="text"]) {
 
                     input {
                         appearance: none;
-                        background-color: var(--gradient-ardoise-80);
-                        border: 1px solid var(--gradient-ardoise-50);
+                        background-color: var(--ardoise-80);
+                        border: 1px solid var(--ardoise-50);
                         border-radius: 999px;
                         margin-block: .5rem;
                         padding-inline: .5rem 2rem;
@@ -327,7 +327,7 @@ label:has(input[type="text"]) {
                     position: relative;
 
                     .search-results {
-                        background-color: var(--gradient-ardoise-80);
+                        background-color: var(--ardoise-80);
                         border-radius: .25rem;
                         display: flex;
                         flex-direction: column;
@@ -346,8 +346,8 @@ label:has(input[type="text"]) {
                                 padding-inline: 0;
 
                                 &.active {
-                                    background-color: var(--gradient-orange-50);
-                                    color: var(--gradient-orange-90);
+                                    background-color: var(--orange-50);
+                                    color: var(--orange-90);
                                 }
 
                                 a {
@@ -359,7 +359,7 @@ label:has(input[type="text"]) {
                                     padding-inline: 1rem;
 
                                     &:hover {
-                                        background-color: var(--gradient-orange-40);
+                                        background-color: var(--orange-40);
                                     }
 
                                     .poster {
@@ -432,14 +432,14 @@ label:has(input[type="text"]) {
         position: relative;
 
         em {
-            color: var(--gradient-orange-50);
+            color: var(--orange-50);
         }
 
         span {
             align-items: center;
-            background-color: var(--gradient-orange-50);
+            background-color: var(--orange-50);
             border-radius: 999px;
-            color: var(--gradient-orange-90);
+            color: var(--orange-90);
             display: flex;
             font-size: 0.5rem;
             font-weight: 600;
@@ -458,17 +458,17 @@ label:has(input[type="text"]) {
         }
 
         &:has(.menu-notifications.show) {
-            background-color: var(--gradient-orange-50);
-            color: var(--gradient-orange-90);
+            background-color: var(--orange-50);
+            color: var(--orange-90);
 
             em {
-                color: var(--gradient-orange-90);
+                color: var(--orange-90);
             }
 
 
             span {
-                background-color: var(--gradient-green-50);
-                color: var(--gradient-green-10);
+                background-color: var(--green-50);
+                color: var(--green-10);
             }
         }
 
@@ -505,16 +505,16 @@ label:has(input[type="text"]) {
                 width: 100%;
 
                 &:hover {
-                    background-color: var(--gradient-orange-50);
-                    color: var(--gradient-orange-90);
+                    background-color: var(--orange-50);
+                    color: var(--orange-90);
                 }
 
                 &.validated {
                     color: var(--notification-validated);
 
                     &:hover {
-                        background-color: var(--gradient-green-50);
-                        color: var(--gradient-green-90);
+                        background-color: var(--green-50);
+                        color: var(--green-90);
                     }
                 }
 
@@ -546,14 +546,14 @@ label:has(input[type="text"]) {
 
         &.highlight {
             img {
-                border-color: var(--gradient-orange-70);
-                box-shadow: 0 0 1rem var(--gradient-orange-70);
+                border-color: var(--orange-70);
+                box-shadow: 0 0 1rem var(--orange-70);
             }
 
             &.connected {
                 img {
-                    border-color: var(--gradient-connected);
-                    box-shadow: 0 0 4rem 1rem var(--gradient-connected);
+                    border-color: var(--connected);
+                    box-shadow: 0 0 4rem 1rem var(--connected);
                 }
             }
         }
@@ -566,7 +566,7 @@ label:has(input[type="text"]) {
         position: relative;
 
         span {
-            background-color: var(--gradient-ardoise-10);
+            background-color: var(--ardoise-10);
             display: block;
             height: .25rem;
             margin-block: .25rem;
@@ -631,17 +631,17 @@ label:has(input[type="text"]) {
                 width: 100%;
 
                 &:hover {
-                    background-color: var(--gradient-orange-50);
-                    color: var(--gradient-orange-90);
+                    background-color: var(--orange-50);
+                    color: var(--orange-90);
 
                     &.active {
-                        background-color: var(--gradient-green-40);
-                        color: var(--gradient-green-90);
+                        background-color: var(--green-40);
+                        color: var(--green-90);
                     }
                 }
 
                 &.active {
-                    background-color: var(--gradient-green-50);
+                    background-color: var(--green-50);
 
                     &::after {
                         content: "*";
@@ -650,8 +650,8 @@ label:has(input[type="text"]) {
                 }
 
                 &.watched {
-                    background-color: var(--gradient-green-50);
-                    color: var(--gradient-green-90);
+                    background-color: var(--green-50);
+                    color: var(--green-90);
                 }
             }
 
@@ -676,7 +676,7 @@ label:has(input[type="text"]) {
 
             .separation {
                 background-color: var(--navbar-bg-75);
-                color: var(--gradient-orange-80);
+                color: var(--orange-80);
                 flex-shrink: 0;
                 padding-block: 0.25rem;
                 margin-inline: -.5rem;
@@ -745,7 +745,7 @@ label:has(input[type="text"]) {
     justify-content: space-evenly;
     background-color: var(--navbar-bg);
     border-radius: .5rem;
-    color: var(--gradient-ardoise-10);
+    color: var(--ardoise-10);
     gap: 1rem;
     margin-block-start: auto;
     padding-block: .5rem;
@@ -768,7 +768,7 @@ label:has(input[type="text"]) {
     }
 
     a {
-        color: var(--gradient-ardoise-10);
+        color: var(--ardoise-10);
     }
 
     .powered {
@@ -803,7 +803,7 @@ label:has(input[type="text"]) {
     background-color: var(--add-this);
     bottom: 6rem;
     border-radius: .25rem;
-    color: var(--gradient-ardoise-10);
+    color: var(--ardoise-10);
     display: flex;
     font-size: 2rem;
     font-weight: 500;
@@ -816,7 +816,7 @@ label:has(input[type="text"]) {
 }
 
 .switcher {
-    border: 2px solid var(--gradient-ardoise-80);
+    border: 2px solid var(--ardoise-80);
     border-radius: calc(.5em + 2px);
     cursor: pointer;
     display: inline-block;
@@ -834,7 +834,7 @@ label:has(input[type="text"]) {
         width: 0;
 
         + span {
-            background: var(--gradient-ardoise-50);
+            background: var(--ardoise-50);
             border-radius: .5em;
             cursor: pointer;
             inset: 0;
@@ -856,7 +856,7 @@ label:has(input[type="text"]) {
         }
 
         &:checked + span {
-            background: var(--gradient-orange-50);
+            background: var(--orange-50);
         }
 
         &:checked + span:before {
@@ -869,9 +869,9 @@ label:has(input[type="text"]) {
     margin-block-start: auto;
 
     form {
-        background-color: var(--gradient-ardoise-80-alpha-50);
+        background-color: var(--ardoise-80-alpha-50);
         border-radius: 1rem;
-        border: 2px solid var(--gradient-ardoise-20-alpha-50);
+        border: 2px solid var(--ardoise-20-alpha-50);
         display: flex;
         flex-direction: column;
         gap: 1rem;
@@ -900,16 +900,16 @@ label:has(input[type="text"]) {
                 width: 100%;
 
                 input {
-                    background-color: var(--gradient-ardoise-80-alpha-50);
-                    border: 1px solid var(--gradient-ardoise-20-alpha-50);
+                    background-color: var(--ardoise-80-alpha-50);
+                    border: 1px solid var(--ardoise-20-alpha-50);
                     border-radius: .25rem;
-                    color: var(--gradient-ardoise-10);
+                    color: var(--ardoise-10);
                     padding: .5rem;
                     transition: border-color .250ms;
                     width: 24rem;
 
                     &:focus {
-                        border-color: var(--gradient-orange-50);
+                        border-color: var(--orange-50);
                     }
                 }
 
@@ -921,7 +921,7 @@ label:has(input[type="text"]) {
                 }
 
                 .help {
-                    color: var(--gradient-orange-50);
+                    color: var(--orange-50);
                     font-size: .75rem;
                     font-weight: 300;
                     line-height: .75rem;
@@ -954,20 +954,20 @@ label:has(input[type="text"]) {
             width: 100%;
 
             button[type="submit"] {
-                background-color: var(--gradient-orange-50);
-                border: 1px solid var(--gradient-orange-60);
+                background-color: var(--orange-50);
+                border: 1px solid var(--orange-60);
                 border-radius: .25rem;
-                color: var(--gradient-orange-90);
+                color: var(--orange-90);
                 cursor: pointer;
                 padding-block: .25rem;
                 padding-inline: 1rem;
             }
 
             button[type="button"] {
-                background-color: var(--gradient-ardoise-50);
-                border: 1px solid var(--gradient-ardoise-60);
+                background-color: var(--ardoise-50);
+                border: 1px solid var(--ardoise-60);
                 border-radius: .25rem;
-                color: var(--gradient-ardoise-90);
+                color: var(--ardoise-90);
                 cursor: pointer;
                 padding-block: .25rem;
                 padding-inline: 1rem;
@@ -979,7 +979,7 @@ label:has(input[type="text"]) {
 .flying-poster {
     align-items: center;
     display: none;
-    background-color: var(--gradient-ardoise-90-alpha-80);
+    background-color: var(--ardoise-90-alpha-80);
     border-radius: .5rem;
     height: 44rem;
     justify-content: center;
@@ -1004,7 +1004,7 @@ label:has(input[type="text"]) {
 
 .back-diapo {
     align-items: center;
-    background-color: var(--gradient-ardoise-90-alpha-80);
+    background-color: var(--ardoise-90-alpha-80);
     display: flex;
     inset: 0;
     justify-content: center;
@@ -1031,7 +1031,7 @@ label:has(input[type="text"]) {
             width: 100%;
 
             img {
-                border: 1em solid var(--gradient-ardoise-20);
+                border: 1em solid var(--ardoise-20);
                 max-height: 95dvh;
                 max-width: 90vw;
                 object-fit: cover;
@@ -1045,9 +1045,9 @@ label:has(input[type="text"]) {
 
             .chevron {
                 align-items: center;
-                background-color: var(--gradient-ardoise-60-alpha-50);
+                background-color: var(--ardoise-60-alpha-50);
                 border-radius: 50%;
-                color: var(--gradient-ardoise-20);
+                color: var(--ardoise-20);
                 cursor: pointer;
                 display: flex;
                 font-size: 2em;
@@ -1067,7 +1067,7 @@ label:has(input[type="text"]) {
                 position: relative;
 
                 img {
-                    border: .25em solid var(--gradient-grey-20);
+                    border: .25em solid var(--grey-20);
                     cursor: pointer;
                     max-height: 4dvh;
                     max-width: 4dvh;
@@ -1077,13 +1077,13 @@ label:has(input[type="text"]) {
 
                 &.active {
                     img {
-                        border: .25em solid var(--gradient-yellow-50);
+                        border: .25em solid var(--yellow-50);
                     }
                 }
 
                 &.active::before {
                     align-items: center;
-                    background-color: var(--gradient-yellow-50);
+                    background-color: var(--yellow-50);
                     border-radius: 999px;
                     content: '';
                     display: flex;
@@ -1098,7 +1098,7 @@ label:has(input[type="text"]) {
 
                 &.active::after {
                     align-items: center;
-                    background-color: var(--gradient-yellow-50);
+                    background-color: var(--yellow-50);
                     border-radius: 999px;
                     bottom: -1em;
                     content: '';
@@ -1121,9 +1121,9 @@ label:has(input[type="text"]) {
 
         > div {
             align-items: center;
-            background-color: var(--gradient-grey-20-alpha-50);
+            background-color: var(--grey-20-alpha-50);
             border-radius: 50%;
-            color: var(--gradient-grey-10);
+            color: var(--grey-10);
             cursor: pointer;
             display: flex;
             font-size: 2em;
@@ -1135,7 +1135,7 @@ label:has(input[type="text"]) {
 
     .navigation {
         bottom: 1em;
-        color: var(--gradient-ardoise-10);
+        color: var(--ardoise-10);
         position: absolute;
         right: 1em;
         transition: height 300ms ease-in-out, width 100ms ease-in-out;
@@ -1146,7 +1146,7 @@ label:has(input[type="text"]) {
             width: 15em;
 
             .maxi {
-                background-color: var(--gradient-ardoise-40);
+                background-color: var(--ardoise-40);
                 border-radius: 1em;
                 inset: 0;
                 padding: 1em;
@@ -1186,7 +1186,7 @@ label:has(input[type="text"]) {
 
             .mini {
                 align-items: center;
-                background-color: var(--gradient-ardoise-40);
+                background-color: var(--ardoise-40);
                 border-radius: 999px;
                 cursor: pointer;
                 display: flex;
@@ -1243,8 +1243,8 @@ label:has(input[type="text"]) {
 
     &.orange {
         .body, .tail {
-            background-color: var(--gradient-orange-40);
-            color: var(--gradient-orange-90);
+            background-color: var(--orange-40);
+            color: var(--orange-90);
             font-weight: 400;
         }
     }
@@ -1259,9 +1259,9 @@ label:has(input[type="text"]) {
 
     .body {
         @include flex-row();
-        background-color: var(--gradient-ardoise-90);
+        background-color: var(--ardoise-90);
         border-radius: .25em;
-        color: var(--gradient-ardoise-20);
+        color: var(--ardoise-20);
         padding: .5em;
         width: fit-content;
         z-index: 2;
@@ -1276,7 +1276,7 @@ label:has(input[type="text"]) {
     }
 
     .tail {
-        background-color: var(--gradient-ardoise-90);
+        background-color: var(--ardoise-90);
         border-radius: .125em;
         min-height: 1em;
         rotate: 45deg;
@@ -1316,22 +1316,22 @@ label:has(input[type="text"]) {
         width: fit-content;
 
         &.success {
-            background-color: var(--gradient-green-70-50);
-            border-color: var(--gradient-green-10);
-            color: var(--gradient-green-10);
+            background-color: var(--green-70-50);
+            border-color: var(--green-10);
+            color: var(--green-10);
         }
 
         &.warning {
-            background-color: var(--gradient-orange-50-alpha-50);
-            border-color: var(--gradient-orange-70);
-            color: var(--gradient-orange-90);
+            background-color: var(--orange-50-alpha-50);
+            border-color: var(--orange-70);
+            color: var(--orange-90);
             font-weight: 300;
         }
 
         &.danger {
-            background-color: var(--gradient-red-50-alpha-50);
-            border-color: var(--gradient-red-20);
-            color: var(--gradient-red-20);
+            background-color: var(--red-50-alpha-50);
+            border-color: var(--red-20);
+            color: var(--red-20);
         }
 
         .close {
@@ -1349,10 +1349,10 @@ label:has(input[type="text"]) {
 
     .flash-close-all {
         align-items: center;
-        background-color: var(--gradient-orange-50);
-        border-color: var(--gradient-orange-70);
+        background-color: var(--orange-50);
+        border-color: var(--orange-70);
         border-radius: 50%;
-        color: var(--gradient-orange-90);
+        color: var(--orange-90);
         cursor: pointer;
         display: flex;
         font-size: 3rem;
@@ -1365,10 +1365,10 @@ label:has(input[type="text"]) {
 
 .to-top {
     align-items: center;
-    background-color: var(--gradient-orange-50);
+    background-color: var(--orange-50);
     border-radius: 50%;
     bottom: 1rem;
-    color: var(--gradient-orange-90);
+    color: var(--orange-90);
     cursor: pointer;
     display: none;
     font-size: 1.5rem;

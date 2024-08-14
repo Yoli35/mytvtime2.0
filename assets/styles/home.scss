@@ -1,8 +1,8 @@
 :root {
-    --highlight-bg: var(--gradient-ardoise-40);
-    --highlight-progress: var(--gradient-ardoise-40);
-    --highlight-head: var(--gradient-ardoise-40);
-    --highlight-color: var(--gradient-ardoise-90);
+    --highlight-bg: var(--ardoise-40);
+    --highlight-progress: var(--ardoise-40);
+    --highlight-head: var(--ardoise-40);
+    --highlight-color: var(--ardoise-90);
     --highlight-duration: 20s;
     --highlight-transition: 300ms;
 }
@@ -50,7 +50,7 @@
             }
 
             img {
-                border: .75rem solid var(--gradient-orange-90);
+                border: .75rem solid var(--orange-90);
                 border-radius: .25rem;
                 height: 100%;
                 object-fit: cover;
@@ -154,10 +154,10 @@
                         div {
                             align-items: center;
                             aspect-ratio: 1;
-                            background-color: var(--gradient-orange-50);
-                            border: .125rem solid var(--gradient-orange-90);
+                            background-color: var(--orange-50);
+                            border: .125rem solid var(--orange-90);
                             border-radius: 50%;
-                            color: var(--gradient-orange-90);
+                            color: var(--orange-90);
                             display: flex;
                             font-size: 3vw;
                             height: 100%;
@@ -175,7 +175,7 @@
                         width: 4vw;
 
                         &.active {
-                            border-color: var(--gradient-orange-50);
+                            border-color: var(--orange-50);
                         }
 
                         img {
@@ -194,7 +194,7 @@
                         width: 100%;
 
                         > div {
-                            background-color: var(--gradient-orange-50);
+                            background-color: var(--orange-50);
                             border-radius: 50%;
                             height: .25rem;
                             width: .25rem;
@@ -223,7 +223,7 @@
             }
 
             .loading-item {
-                background-color: var(--gradient-orange-50);
+                background-color: var(--orange-50);
                 border-radius: 50%;
                 border-top: .5rem solid;
                 height: 2rem;
@@ -263,7 +263,7 @@
                 width: 100%;
 
                 .ball {
-                    background-color: var(--gradient-orange-50);
+                    background-color: var(--orange-50);
                     border-radius: 50%;
                     height: 2rem;
                     position: absolute;
@@ -349,9 +349,9 @@
 
 .series-group {
     align-items: flex-start;
-    //background-color: var(--gradient-ardoise-80);
+    //background-color: var(--ardoise-80);
     border-radius: .25rem;
-    color: var(--gradient-ardoise-10);
+    color: var(--ardoise-10);
     display: flex;
     flex-direction: column;
     font-weight: 300;
@@ -386,7 +386,7 @@
             gap: 1rem;
 
             select {
-                color: var(--gradient-ardoise-10);
+                color: var(--ardoise-10);
             }
         }
     }
@@ -420,7 +420,7 @@
             padding-block: 1rem;
 
             h3 {
-                background-color: var(--gradient-orange-40);
+                background-color: var(--orange-40);
                 border-radius: .25rem;
                 padding: .25rem .5rem;
                 text-align: left;
@@ -429,9 +429,9 @@
         }
 
         .card {
-            background-color: var(--gradient-ardoise-90);
+            background-color: var(--ardoise-90);
             border-radius: .25rem;
-            color: var(--gradient-ardoise-10);
+            color: var(--ardoise-10);
             height: 18rem;
             width: 10rem;
 
@@ -443,9 +443,9 @@
 
                 .poster {
                     align-items: center;
-                    background-color: var(--gradient-ardoise-80);
+                    background-color: var(--ardoise-80);
                     border-radius: .25rem .25rem 0 0;
-                    color: var(--gradient-ardoise-10);
+                    color: var(--ardoise-10);
                     display: flex;
                     flex-shrink: 0;
                     height: 15rem;
@@ -497,7 +497,7 @@
 
                         .favorite, .quick-watcher {
                             align-items: center;
-                            background-color: var(--gradient-ardoise-80-alpha-50);
+                            background-color: var(--ardoise-80-alpha-50);
                             border-radius: .25rem;
                             color: var(--favorite-series);
                             display: flex;
@@ -507,24 +507,24 @@
                         }
 
                         .episode-number {
-                            background-color: var(--gradient-ardoise-80-alpha-90);
+                            background-color: var(--ardoise-80-alpha-90);
                             border-radius: .25rem;
-                            color: var(--gradient-ardoise-10);
+                            color: var(--ardoise-10);
                             padding: .25rem;
                             font-size: 1.5rem;
                             font-weight: 400;
                             width: fit-content;
 
                             &.watched {
-                                background-color: var(--gradient-green-60);
-                                color: var(--gradient-green-10);
+                                background-color: var(--green-60);
+                                color: var(--green-10);
                             }
                         }
 
                         .date {
-                            background-color: var(--gradient-ardoise-80-alpha-90);
+                            background-color: var(--ardoise-80-alpha-90);
                             border-radius: .25rem;
-                            color: var(--gradient-ardoise-10);
+                            color: var(--ardoise-10);
                             padding: .25rem;
                             font-size: .875rem;
                             font-weight: 300;
@@ -533,8 +533,8 @@
                     }
 
                     .progress {
-                        background-color: var(--gradient-orange-20);
-                        border: 1px solid var(--gradient-orange-50);
+                        background-color: var(--orange-20);
+                        border: 1px solid var(--orange-50);
                         height: .5rem;
                         left: 0;
                         position: absolute;
@@ -562,7 +562,7 @@
                         }
 
                         .progress-bar {
-                            background: var(--gradient-orange-50);
+                            background: var(--orange-50);
                             height: .375rem;
                             transition: width 20s linear;
                             width: 0;
@@ -571,7 +571,7 @@
 
                     .up-to-date-banner {
                         background-color: var(--up-to-date-series);
-                        color: var(--gradient-green-50);
+                        color: var(--green-50);
                         font-weight: 600;
                         padding: .125rem;
                         position: absolute;

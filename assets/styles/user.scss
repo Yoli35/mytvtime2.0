@@ -23,9 +23,9 @@
 
             span {
                 align-items: center;
-                background-color: var(--gradient-ardoise-80-alpha-50);
+                background-color: var(--ardoise-80-alpha-50);
                 border-radius: .25rem;
-                color: var(--gradient-ardoise-10);
+                color: var(--ardoise-10);
                 display: flex;
                 font-size: 1rem;
                 font-weight: 300;
@@ -43,9 +43,9 @@
 
         .add-watch-link {
             align-items: center;
-            background-color: var(--gradient-orange-50);
+            background-color: var(--orange-50);
             border-radius: .25rem;
-            color: var(--gradient-orange-90);
+            color: var(--orange-90);
             cursor: pointer;
             display: flex;
             height: 2rem;
@@ -56,9 +56,9 @@
 
     .viewed-at {
         align-items: center;
-        background-color: var(--gradient-orange-50);
+        background-color: var(--orange-50);
         border-radius: .25rem;
-        color: var(--gradient-ardoise-10);
+        color: var(--ardoise-10);
         cursor: pointer;
         display: flex;
         font-size: 1rem;
@@ -69,16 +69,16 @@
         padding: .5rem;
 
         &.viewed {
-            background-color: var(--gradient-green-50);
-            color: var(--gradient-ardoise-10);
+            background-color: var(--green-50);
+            color: var(--ardoise-10);
         }
     }
 
     .rating {
         align-items: center;
-        background-color: var(--gradient-ardoise-80-alpha-50);
+        background-color: var(--ardoise-80-alpha-50);
         border-radius: .25rem;
-        color: var(--gradient-ardoise-10);
+        color: var(--ardoise-10);
         display: flex;
         font-size: 1rem;
         font-weight: 300;
@@ -95,12 +95,12 @@
                 display: flex;
 
                 .star {
-                    color: var(--gradient-ardoise-10);
+                    color: var(--ardoise-10);
                     cursor: pointer;
                     padding-inline: .125rem;
 
                     &.active {
-                        color: var(--gradient-orange-50);
+                        color: var(--orange-50);
                     }
                 }
             }
@@ -117,7 +117,7 @@
             align-items: center;
             background-color: var(--marathoner-series);
             border-radius: .25rem;
-            color: var(--gradient-ardoise-10);
+            color: var(--ardoise-10);
             display: flex;
             font-size: 1rem;
             font-weight: 300;
@@ -134,7 +134,7 @@
         .action {
             align-items: center;
             border-radius: .25rem;
-            color: var(--gradient-ardoise-10);
+            color: var(--ardoise-10);
             cursor: pointer;
             display: flex;
             height: 2rem;
@@ -146,7 +146,7 @@
             }
 
             &.toggle-favorite-series {
-                background-color: var(--gradient-ardoise-80-alpha-50);
+                background-color: var(--ardoise-80-alpha-50);
                 width: 2rem;
 
                 &.favorite {
@@ -155,7 +155,7 @@
             }
 
             &.toggle-pinned-series {
-                background-color: var(--gradient-ardoise-80-alpha-50);
+                background-color: var(--ardoise-80-alpha-50);
                 width: 2rem;
 
                 &.pinned {
@@ -171,9 +171,9 @@
 .overview-form,
 .delete-overview-form,
 .keyword-translation-form {
-    background-color: var(--gradient-ardoise-80-alpha-90);
+    background-color: var(--ardoise-80-alpha-90);
     border-radius: 0.5rem;
-    border: 2px solid var(--gradient-orange-50);
+    border: 2px solid var(--orange-50);
     display: none;
     left: 0;
     opacity: 0;

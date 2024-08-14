@@ -5,7 +5,7 @@
     top: 0;
     width: 100%;
     z-index: 1000;
-    background-color: var(--gradient-orange-50);
+    background-color: var(--orange-50);
     scale: 0 1;
     animation: scroll-watcher linear;
     animation-timeline: scroll();
@@ -19,9 +19,9 @@
 }
 
 h2 {
-    background-color: var(--gradient-orange-50);
+    background-color: var(--orange-50);
     border-radius: .25rem;
-    color: var(--gradient-orange-90);
+    color: var(--orange-90);
     padding: .5rem 1rem;
 }
 
@@ -50,13 +50,21 @@ h2 {
         .poster {
             align-items: center;
             aspect-ratio: 78 / 117;
-            background-color: var(--gradient-ardoise-80);
+            background-color: var(--ardoise-80);
             border-radius: .5rem;
-            color: var(--gradient-ardoise-10);
+            color: var(--ardoise-10);
             display: flex;
             justify-content: center;
             position: relative;
             width: 40vw;
+
+            a {
+                align-items: center;
+                display: flex;
+                height: 100%;
+                justify-content: center;
+                width: 100%;
+            }
 
             img {
                 border-radius: .5rem;
@@ -70,8 +78,8 @@ h2 {
             }
 
             .progress {
-                background-color: var(--gradient-orange-20);
-                border: .125rem solid var(--gradient-orange-50);
+                background-color: var(--orange-20);
+                border: .125rem solid var(--orange-50);
                 border-radius: 999px;
                 bottom: 1rem;
                 color: transparent;
@@ -82,7 +90,7 @@ h2 {
                 width: calc(100% - 2rem);
 
                 .progress-bar {
-                    background-color: var(--gradient-orange-50);
+                    background-color: var(--orange-50);
                     border-radius: 999px;
                     height: 100%;
                     width: 0;
@@ -96,7 +104,7 @@ h2 {
 
         .infos {
             align-items: flex-start;
-            background-color: var(--gradient-ardoise-100-alpha-20);
+            background-color: var(--ardoise-100-alpha-20);
             border-radius: .5rem;
             display: flex;
             flex-direction: column;
@@ -108,11 +116,11 @@ h2 {
             width: 100%;
 
             &.light {
-                color: #f7f7f7; /*var(--gradient-orange-80);*/
+                color: #f7f7f7; /*var(--orange-80);*/
             }
 
             &.dark {
-                color: #030303; /*var(--gradient-ardoise-90);*/
+                color: #030303; /*var(--ardoise-90);*/
             }
 
             .name {
@@ -129,7 +137,7 @@ h2 {
                     text-align: left;
 
                     .localized-name-span {
-                        color: var(--gradient-orange-70);
+                        color: var(--orange-70);
                     }
                 }
 
@@ -143,9 +151,9 @@ h2 {
                     .series-tools-click {
                         align-items: center;
                         aspect-ratio: 1;
-                        background-color: var(--gradient-ardoise-100-alpha-20);
+                        background-color: var(--ardoise-100-alpha-20);
                         border-radius: .25rem;
-                        color: var(--gradient-ardoise-10);
+                        color: var(--ardoise-10);
                         cursor: pointer;
                         display: flex;
                         justify-content: center;
@@ -172,8 +180,8 @@ h2 {
 
                     > div {
                         align-items: center;
-                        background-color: var(--gradient-grey-85);
-                        color: var(--gradient-ardoise-10);
+                        background-color: var(--grey-85);
+                        color: var(--ardoise-10);
                         cursor: pointer;
                         display: flex;
                         font-size: 1rem;
@@ -185,7 +193,7 @@ h2 {
                         white-space: nowrap;
 
                         &:hover {
-                            background-color: var(--gradient-orange-50);
+                            background-color: var(--orange-50);
                         }
                     }
                 }
@@ -202,7 +210,7 @@ h2 {
             }
 
             .localized-h4, .additional-h4 {
-                color: var(--gradient-orange-70);
+                color: var(--orange-70);
                 font-weight: 300;
 
                 &.hide {
@@ -227,13 +235,13 @@ h2 {
                     width: 100%;
 
                     &.localized, &.additional {
-                        color: var(--gradient-orange-90);
+                        color: var(--orange-90);
                         font-weight: 100;
                         letter-spacing: .05rem;
                         position: relative;
 
                         .content {
-                            background-color: var(--gradient-ardoise-70-alpha-50);
+                            background-color: var(--ardoise-70-alpha-50);
                             border-radius: .5rem;
                             margin-block-end: unset;
                             padding: .5rem;
@@ -246,7 +254,7 @@ h2 {
                         }
 
                         .tools {
-                            background-color: var(--gradient-ardoise-90-alpha-50);
+                            background-color: var(--ardoise-90-alpha-50);
                             border-radius: .25rem;
                             display: flex;
                             flex-direction: column;
@@ -261,7 +269,7 @@ h2 {
                             .source, .locale, .edit, .delete {
                                 align-items: center;
                                 border-radius: .25rem;
-                                color: var(--gradient-orange-90);
+                                color: var(--orange-90);
                                 display: flex;
                                 font-size: 1rem;
                                 font-weight: 300;
@@ -278,7 +286,7 @@ h2 {
                             }
 
                             .source, .locale, .edit {
-                                background-color: var(--gradient-orange-50);
+                                background-color: var(--orange-50);
                             }
 
                             .edit, .delete {
@@ -310,9 +318,9 @@ h2 {
                 justify-content: flex-start;
 
                 .update {
-                    background-color: var(--gradient-orange-50);
+                    background-color: var(--orange-50);
                     border-radius: .25rem;
-                    color: var(--gradient-ardoise-10);
+                    color: var(--ardoise-10);
                     flex-shrink: 0;
                     font-size: 1rem;
                     font-weight: 300;
@@ -353,9 +361,9 @@ h2 {
 
                 .poster-back {
                     align-items: center;
-                    background-color: var(--gradient-ardoise-80);
+                    background-color: var(--ardoise-80);
                     border-radius: .25rem;
-                    color: var(--gradient-ardoise-10);
+                    color: var(--ardoise-10);
                     display: flex;
                     height: 9rem;
                     justify-content: center;
@@ -371,9 +379,9 @@ h2 {
 
                 .series-back-link {
                     align-items: center;
-                    background-color: var(--gradient-ardoise-70-alpha-75);
+                    background-color: var(--ardoise-70-alpha-75);
                     border-radius: .25rem;
-                    color: var(--gradient-ardoise-10);
+                    color: var(--ardoise-10);
                     display: flex;
                     font-size: 1rem;
                     font-weight: 300;
@@ -402,9 +410,9 @@ h2 {
 
         .schedule {
             align-items: center;
-            background-color: var(--gradient-ardoise-80-alpha-50);
+            background-color: var(--ardoise-80-alpha-50);
             border-radius: .25rem;
-            color: var(--gradient-ardoise-10);
+            color: var(--ardoise-10);
             display: flex;
             gap: .5rem;
             justify-content: center;
@@ -412,7 +420,7 @@ h2 {
             width: 100%;
 
             .air, .country, .local-air {
-                background-color: var(--gradient-ardoise-80-alpha-50);
+                background-color: var(--ardoise-80-alpha-50);
                 border-radius: .25rem;
                 font-size: 1rem;
                 font-weight: 300;
@@ -423,9 +431,9 @@ h2 {
 
     .next-episode {
         align-items: center;
-        background-color: var(--gradient-ardoise-100-alpha-20);
+        background-color: var(--ardoise-100-alpha-20);
         border-radius: .25rem;
-        color: var(--gradient-ardoise-10);
+        color: var(--ardoise-10);
         display: flex;
         gap: .5rem;
         justify-content: center;
@@ -433,7 +441,7 @@ h2 {
         width: 100%;
 
         .air-date {
-            background-color: var(--gradient-ardoise-80-alpha-50);
+            background-color: var(--ardoise-80-alpha-50);
             border-radius: .25rem;
             font-size: 1rem;
             font-weight: 300;
@@ -466,15 +474,40 @@ h2 {
 
                 .season-order {
                     align-items: center;
-                    background-color: var(--gradient-ardoise-80-alpha-50);
+                    background-color: var(--ardoise-80-alpha-50);
                     border-radius: .25rem;
-                    color: var(--gradient-ardoise-10);
+                    color: var(--ardoise-10);
                     cursor: pointer;
                     display: flex;
                     font-size: .875rem;
                     font-weight: 100;
                     justify-content: center;
                     width: 2.5rem;
+                }
+            }
+
+            .lists {
+                ul {
+                    display: flex;
+                    flex-direction: column;
+                    gap: .25rem;
+                    padding-inline-start: 2rem;
+
+                    li {
+                        background-color: var(--ardoise-80-alpha-50);
+                        border-radius: .25rem;
+                        list-style: none;
+                        padding-block: .25rem;
+                        padding-inline: 1rem;
+
+                        span {
+                            color: var(--orange-50);
+                        }
+
+                        &:hover {
+                            background-color: var(--ardoise-90-alpha-50);
+                        }
+                    }
                 }
             }
         }
@@ -514,9 +547,9 @@ h2 {
 
                 .fact {
                     align-items: center;
-                    background-color: var(--gradient-ardoise-100-alpha-20);
+                    background-color: var(--ardoise-100-alpha-20);
                     border-radius: .25rem;
-                    color: var(--gradient-ardoise-10);
+                    color: var(--ardoise-10);
                     display: flex;
                     gap: .5rem;
                     justify-content: center;
@@ -541,7 +574,7 @@ h2 {
                         .network-detail {
                             .frame {
                                 align-items: center;
-                                background-color: var(--gradient-ardoise-10);
+                                background-color: var(--ardoise-10);
                                 border-radius: .25rem;
                                 display: flex;
                                 height: 3rem;
@@ -549,7 +582,7 @@ h2 {
                                 width: 100%;
 
                                 &:hover {
-                                    background-color: var(--gradient-ardoise-50);
+                                    background-color: var(--ardoise-50);
                                 }
 
                                 img {
@@ -578,9 +611,9 @@ h2 {
 
                         .keyword {
                             align-items: center;
-                            background-color: var(--gradient-green-50);
+                            background-color: var(--green-50);
                             border-radius: .25rem;
-                            color: var(--gradient-orange-90);
+                            color: var(--orange-90);
                             display: flex;
                             font-size: 1rem;
                             font-weight: 300;
@@ -590,11 +623,11 @@ h2 {
                             position: relative;
 
                             &.missing {
-                                background-color: var(--gradient-orange-50);
+                                background-color: var(--orange-50);
                                 cursor: pointer;
 
                                 &:hover {
-                                    background-color: var(--gradient-orange-60);
+                                    background-color: var(--orange-60);
                                 }
                             }
                         }
@@ -627,9 +660,9 @@ h2 {
 
         .poster {
             align-items: center;
-            background-color: var(--gradient-ardoise-100-alpha-20);
+            background-color: var(--ardoise-100-alpha-20);
             border-radius: .25rem;
-            color: var(--gradient-green-10);
+            color: var(--green-10);
             display: flex;
             flex-shrink: 0;
             height: 100%;
@@ -647,10 +680,10 @@ h2 {
 
             .number {
                 align-items: center;
-                background-color: var(--gradient-orange-50);
+                background-color: var(--orange-50);
                 border-radius: .25rem;
                 bottom: .5rem;
-                color: var(--gradient-ardoise-10);
+                color: var(--ardoise-10);
                 display: flex;
                 font-size: 1.5rem;
                 font-weight: 500;
@@ -668,9 +701,9 @@ h2 {
 
             .finale {
                 align-items: center;
-                background-color: var(--gradient-orange-50);
+                background-color: var(--orange-50);
                 border-radius: .25rem;
-                color: var(--gradient-ardoise-10);
+                color: var(--ardoise-10);
                 display: flex;
                 font-size: 1.5rem;
                 font-weight: 500;
@@ -690,9 +723,9 @@ h2 {
         }
 
         .infos {
-            background-color: var(--gradient-ardoise-100-alpha-20);
+            background-color: var(--ardoise-100-alpha-20);
             border-radius: .25rem;
-            color: var(--gradient-ardoise-10);
+            color: var(--ardoise-10);
             display: flex;
             flex-direction: column;
             gap: .5rem;
@@ -729,7 +762,7 @@ h2 {
 
 .quick-episodes {
     align-items: flex-start;
-    background-color: var(--gradient-ardoise-100-alpha-20);
+    background-color: var(--ardoise-100-alpha-20);
     border-radius: .25rem;
     display: flex;
     flex-wrap: wrap;
@@ -741,16 +774,16 @@ h2 {
 
     .quick-episode {
         align-items: center;
-        background-color: var(--gradient-ardoise-80-alpha-50);
-        border: 2px solid var(--gradient-ardoise-100-alpha-50);
+        background-color: var(--ardoise-80-alpha-50);
+        border: 2px solid var(--ardoise-100-alpha-50);
         border-radius: .25rem;
-        color: var(--gradient-ardoise-10);
+        color: var(--ardoise-10);
         cursor: pointer;
         display: flex;
         gap: .5rem;
         justify-content: center;
         padding: .25rem;
-        transition: transform 0.3s ease-in-out, border 0.3s ease-in-out;
+        transition: transform 0.3s linear, border 0.3s linear;
         width: 2rem;
 
         &.watched {
@@ -758,14 +791,14 @@ h2 {
         }
 
         &:hover {
-            border: 2px solid var(--gradient-orange-50);
+            border: 2px solid var(--orange-50);
             transform: scale(1.5);
             z-index: 3;
         }
 
         &:has(+ *:hover),
         &:hover + * {
-            border: 2px solid var(--gradient-orange-50-alpha-50);
+            border: 2px solid var(--orange-50-alpha-50);
             transform: scale(1.30);
             z-index: 2;
         }
@@ -779,10 +812,10 @@ h2 {
 
     .future-episode {
         align-items: center;
-        background-color: var(--gradient-ardoise-40-alpha-50);
-        border: 2px solid var(--gradient-ardoise-100-alpha-50);
+        background-color: var(--ardoise-40-alpha-50);
+        border: 2px solid var(--ardoise-100-alpha-50);
         border-radius: .25rem;
-        color: var(--gradient-ardoise-30);
+        color: var(--ardoise-30);
         display: flex;
         gap: .5rem;
         justify-content: center;
@@ -810,9 +843,9 @@ h2 {
 
         .still {
             align-items: center;
-            background-color: var(--gradient-ardoise-100-alpha-20);
+            background-color: var(--ardoise-100-alpha-20);
             border-radius: .25rem;
-            color: var(--gradient-green-10);
+            color: var(--green-10);
             display: flex;
             flex-shrink: 0;
             height: 100%;
@@ -830,10 +863,10 @@ h2 {
 
             .number {
                 align-items: center;
-                background-color: var(--gradient-orange-50);
+                background-color: var(--orange-50);
                 border-radius: .25rem;
                 bottom: .5rem;
-                color: var(--gradient-ardoise-10);
+                color: var(--ardoise-10);
                 display: flex;
                 font-size: 1.5rem;
                 font-weight: 500;
@@ -851,9 +884,9 @@ h2 {
 
             .finale {
                 align-items: center;
-                background-color: var(--gradient-orange-50);
+                background-color: var(--orange-50);
                 border-radius: .25rem;
-                color: var(--gradient-ardoise-10);
+                color: var(--ardoise-10);
                 display: flex;
                 font-size: 1.5rem;
                 font-weight: 500;
@@ -873,9 +906,9 @@ h2 {
         }
 
         .infos {
-            background-color: var(--gradient-ardoise-100-alpha-20);
+            background-color: var(--ardoise-100-alpha-20);
             border-radius: .25rem;
-            color: var(--gradient-ardoise-10);
+            color: var(--ardoise-10);
             display: flex;
             flex-direction: column;
             gap: .5rem;
@@ -903,7 +936,7 @@ h2 {
                 }
 
                 .substitute {
-                    background-color: var(--gradient-orange-40);
+                    background-color: var(--orange-40);
                     border-radius: 0.25rem;
                     font-weight: 300;
                     padding-block: 0.25rem;
@@ -916,10 +949,10 @@ h2 {
 
                 .edit {
                     align-items: center;
-                    background-color: var(--gradient-orange-50);
-                    border: 2px solid var(--gradient-orange-90);
+                    background-color: var(--orange-50);
+                    border: 2px solid var(--orange-90);
                     border-radius: 50%;
-                    color: var(--gradient-orange-90);
+                    color: var(--orange-90);
                     cursor: pointer;
                     display: none;
                     flex-shrink: 0;
@@ -948,10 +981,10 @@ h2 {
                     width: 80%;
 
                     input {
-                        background-color: var(--gradient-ardoise-80);
-                        border: 2px solid var(--gradient-orange-50);
+                        background-color: var(--ardoise-80);
+                        border: 2px solid var(--orange-50);
                         border-radius: .25rem;
-                        color: var(--gradient-ardoise-10);
+                        color: var(--ardoise-10);
                         flex-grow: 1;
                         font-size: 1rem;
                         font-weight: 100;
@@ -961,10 +994,10 @@ h2 {
 
                     button {
                         align-items: center;
-                        background-color: var(--gradient-orange-50);
-                        border: 2px solid var(--gradient-orange-90);
+                        background-color: var(--orange-50);
+                        border: 2px solid var(--orange-90);
                         border-radius: .25rem;
-                        color: var(--gradient-orange-90);
+                        color: var(--orange-90);
                         cursor: pointer;
                         display: flex;
                         font-size: 1rem;
@@ -977,13 +1010,13 @@ h2 {
             }
 
             .overview {
-                border-left: 2px solid var(--gradient-orange-50);
+                border-left: 2px solid var(--orange-50);
                 font-size: 1rem;
                 font-weight: 300;
                 padding-inline-start: .5rem;
 
                 &.us {
-                    border-left: 2px solid var(--gradient-green-50);
+                    border-left: 2px solid var(--green-50);
                     position: relative;
 
                     &:hover .translate {
@@ -992,9 +1025,9 @@ h2 {
 
                     .translate {
                         align-items: center;
-                        background-color: var(--gradient-green-50);
+                        background-color: var(--green-50);
                         border-radius: .25rem;
-                        color: var(--gradient-green-90);
+                        color: var(--green-90);
                         cursor: pointer;
                         display: none;
                         font-size: 1.25rem;
@@ -1051,7 +1084,7 @@ h2 {
 }
 
 .user-episode {
-    background-color: var(--gradient-ardoise-100-alpha-20);
+    background-color: var(--ardoise-100-alpha-20);
     border-radius: 0.25rem;
     display: flex;
     flex-direction: column;
@@ -1069,7 +1102,7 @@ h2 {
     .back-to-top, .back-to-series {
         align-items: center;
         border-radius: .25rem;
-        color: var(--gradient-ardoise-10);
+        color: var(--ardoise-10);
         cursor: pointer;
         display: flex;
         font-weight: 500;
@@ -1126,7 +1159,7 @@ h2 {
                 }
 
                 &:hover {
-                    background-color: var(--gradient-orange-50);
+                    background-color: var(--orange-50);
                 }
             }
         }
@@ -1134,14 +1167,14 @@ h2 {
 }
 
 #review-dialog {
-    border: 2px solid var(--gradient-orange-50);
+    border: 2px solid var(--orange-50);
     border-radius: .25rem;
     margin-block: auto;
     margin-inline: auto;
 
     .content {
-        background-color: var(--gradient-ardoise-80-alpha-50);
-        color: var(--gradient-ardoise-10);
+        background-color: var(--ardoise-80-alpha-50);
+        color: var(--ardoise-10);
         padding: 1rem 2rem;
 
         form {
@@ -1179,9 +1212,9 @@ h2 {
 
             .photo, .profile {
                 align-items: center;
-                background-color: var(--gradient-ardoise-100-alpha-20);
+                background-color: var(--ardoise-100-alpha-20);
                 border-radius: .25rem;
-                color: var(--gradient-ardoise-10);
+                color: var(--ardoise-10);
                 display: flex;
                 flex-direction: column;
                 gap: 1rem;
@@ -1211,7 +1244,7 @@ h2 {
 
             .infos {
                 align-items: center;
-                background-color: var(--gradient-ardoise-100-alpha-20);
+                background-color: var(--ardoise-100-alpha-20);
                 border-radius: 0 0 .25rem .25rem;
                 display: flex;
                 flex-direction: column;
@@ -1234,7 +1267,7 @@ h2 {
 
             .google {
                 bottom: 1rem;
-                color: var(--gradient-orange-50);
+                color: var(--orange-50);
                 position: absolute;
                 right: 1rem;
             }
@@ -1258,7 +1291,7 @@ h2 {
                 a {
                     .poster, .name {
                         align-items: center;
-                        background-color: var(--gradient-ardoise-70-alpha-50);
+                        background-color: var(--ardoise-70-alpha-50);
                         display: flex;
                         justify-content: center;
                         width: 15rem;
@@ -1277,7 +1310,7 @@ h2 {
                         }
 
                         .series-infos {
-                            /*border: 1px dashed var(--gradient-orange-50);*/
+                            /*border: 1px dashed var(--orange-50);*/
                             bottom: 1rem;
                             display: flex;
                             flex-direction: column;
@@ -1288,9 +1321,9 @@ h2 {
                             right: 0;
 
                             .air-date {
-                                background-color: var(--gradient-orange-10);
+                                background-color: var(--orange-10);
                                 border-radius: .25rem;
-                                color: var(--gradient-orange-90);
+                                color: var(--orange-90);
                                 font-size: 1rem;
                                 font-weight: 100;
                                 margin-inline-start: auto;
@@ -1298,9 +1331,9 @@ h2 {
                             }
 
                             .date-added {
-                                background-color: var(--gradient-orange-40);
+                                background-color: var(--orange-40);
                                 border-radius: .25rem;
-                                color: var(--gradient-orange-90);
+                                color: var(--orange-90);
                                 font-size: 1rem;
                                 font-weight: 100;
                                 margin-inline-start: auto;
@@ -1308,9 +1341,9 @@ h2 {
                             }
 
                             .episode-number {
-                                background-color: var(--gradient-orange-10);
+                                background-color: var(--orange-10);
                                 border-radius: .25rem;
-                                color: var(--gradient-orange-90);
+                                color: var(--orange-90);
                                 font-size: 2rem;
                                 font-weight: 100;
                                 margin-inline-start: auto;
@@ -1319,8 +1352,8 @@ h2 {
                         }
 
                         .progress {
-                            background-color: var(--gradient-orange-10);
-                            border: 2px solid var(--gradient-orange-40);
+                            background-color: var(--orange-10);
+                            border: 2px solid var(--orange-40);
                             bottom: 0;
                             height: .75rem;
                             left: 0;
@@ -1328,7 +1361,7 @@ h2 {
                             right: 0;
 
                             .progress-bar {
-                                background-color: var(--gradient-orange-50);
+                                background-color: var(--orange-50);
                                 height: 100%;
                                 transition: width 0.3s ease-in-out;
                                 width: 0;
@@ -1627,7 +1660,7 @@ h2 {
 /* Rechercher une série */
 .series-search-result {
     align-items: flex-start;
-    color: var(--gradient-ardoise-10);
+    color: var(--ardoise-10);
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -1656,10 +1689,10 @@ h2 {
 
             div.btn, button {
                 appearance: none;
-                background-color: var(--gradient-ardoise-60);
-                border: 1px solid var(--gradient-ardoise-50);
+                background-color: var(--ardoise-60);
+                border: 1px solid var(--ardoise-50);
                 border-radius: .25em;
-                color: var(--gradient-ardoise-10);
+                color: var(--ardoise-10);
                 font-size: 1rem;
                 font-weight: 300;
                 padding-block: .125rem;
@@ -1668,8 +1701,8 @@ h2 {
             }
 
             button {
-                background-color: var(--gradient-orange-40);
-                color: var(--gradient-orange-90);
+                background-color: var(--orange-40);
+                color: var(--orange-90);
                 cursor: pointer;
             }
         }
@@ -1688,9 +1721,9 @@ h2 {
 
         .card {
             align-items: flex-start;
-            background-color: var(--gradient-ardoise-90);
+            background-color: var(--ardoise-90);
             border-radius: .25rem;
-            color: var(--gradient-ardoise-10);
+            color: var(--ardoise-10);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -1698,9 +1731,9 @@ h2 {
 
             .poster {
                 align-items: center;
-                background-color: var(--gradient-ardoise-80);
+                background-color: var(--ardoise-80);
                 border-radius: .25rem .25rem 0 0;
-                color: var(--gradient-ardoise-10);
+                color: var(--ardoise-10);
                 display: flex;
                 height: 18rem;
                 justify-content: center;

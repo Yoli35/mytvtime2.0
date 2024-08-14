@@ -13,10 +13,10 @@
 
                     input {
                         appearance: none;
-                        background-color: var(--gradient-orange-50);
-                        border: 1px solid var(--gradient-orange-90);
+                        background-color: var(--orange-50);
+                        border: 1px solid var(--orange-90);
                         border-radius: .25rem;
-                        color: var(--gradient-orange-90);
+                        color: var(--orange-90);
                         padding-block: 3px;
                         padding-inline-start: .5rem;
 
@@ -33,14 +33,14 @@
             gap: 1rem;
 
             .person-card {
-                background-color: var(--gradient-orange-40-alpha-50);
+                background-color: var(--orange-40-alpha-50);
                 border-radius: .5rem;
                 display: flex;
                 height: 22.5rem;
 
                 .profile {
                     align-items: center;
-                    background-color: var(--gradient-green-50);
+                    background-color: var(--green-50);
                     border-radius: .5rem 0 0 .5rem;
                     display: flex;
                     flex-shrink: 0;
@@ -69,14 +69,14 @@
                     width: 25%;
 
                     h4 {
-                        color: var(--gradient-ardoise-20);
+                        color: var(--ardoise-20);
                         font-size: 1.5rem;
                         font-weight: 100;
                         line-height: 1.75rem;
                     }
 
                     .info {
-                        color: var(--gradient-ardoise-20);
+                        color: var(--ardoise-20);
                         font-size: 1rem;
                         font-weight: 100;
                     }
@@ -104,7 +104,7 @@
 
                             a {
                                 align-items: center;
-                                background-color: var(--gradient-green-50);
+                                background-color: var(--green-50);
                                 border-radius: .5rem;
                                 display: flex;
                                 height: 100%;
@@ -121,9 +121,9 @@
                             }
 
                             .media-type {
-                                background-color: var(--gradient-orange-50);
+                                background-color: var(--orange-50);
                                 border-radius: .25rem;
-                                color: var(--gradient-orange-90);
+                                color: var(--orange-90);
                                 font-size: .75rem;
                                 font-weight: 300;
                                 padding: .25rem .5rem;
@@ -158,9 +158,9 @@
     .left-column {
         //@include flex-col(start, start);
         align-items: flex-start;
-        background-color: var(--gradient-ardoise-80-alpha-50);
+        background-color: var(--ardoise-80-alpha-50);
         border-radius: 1rem;
-        color: var(--gradient-ardoise-20);
+        color: var(--ardoise-20);
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -195,11 +195,11 @@
             padding: 1rem;
 
             h4 {
-                color: var(--gradient-ardoise-20);
+                color: var(--ardoise-20);
             }
 
             .info {
-                color: var(--gradient-ardoise-20);
+                color: var(--ardoise-20);
                 margin-bottom: .5rem;
 
                 div {
@@ -238,13 +238,13 @@
         width: calc(100% - 18rem);
 
         .content {
-            background-color: var(--gradient-ardoise-90-alpha-10);
+            background-color: var(--ardoise-90-alpha-10);
             border-radius: 1rem;
             padding: 1rem;
             width: 100%;
 
             h1 {
-                color: var(--gradient-ardoise-20);
+                color: var(--ardoise-20);
                 font-size: 2rem;
                 font-weight: 100;
                 line-height: 2.1rem;
@@ -256,7 +256,7 @@
             }
 
             .known-for {
-                background-color: var(--gradient-ardoise-90-alpha-10);
+                background-color: var(--ardoise-90-alpha-10);
                 border-radius: .5rem;
                 overflow-x: scroll;
                 padding: 1rem;
@@ -315,7 +315,7 @@
 
             .poster-hover {
                 display: none;
-                background-color: var(--gradient-orange-50);
+                background-color: var(--orange-50);
                 border-radius: 1.5rem;
                 opacity: 0;
                 padding: 1rem;
@@ -341,7 +341,7 @@
                     display: flex;
                     flex-direction: column;
                     justify-content: flex-start;
-                    background-color: var(--gradient-ardoise-90-alpha-10);
+                    background-color: var(--ardoise-90-alpha-10);
                     border-radius: 1rem;
                     gap: .25rem;
                     padding: 1rem;
@@ -357,15 +357,15 @@
                         width: 100%;
 
                         &.added {
-                            background-color: var(--gradient-yellow-60);
+                            background-color: var(--yellow-60);
                         }
 
                         &.started {
-                            background-color: var(--gradient-orange-40);
+                            background-color: var(--orange-40);
                         }
 
                         &.ended {
-                            background-color: var(--gradient-green-60);
+                            background-color: var(--green-60);
                         }
 
                         .year {
@@ -392,7 +392,7 @@
                             gap: 1rem;
 
                             span {
-                                color: var(--gradient-orange-70);
+                                color: var(--orange-70);
                             }
                         }
 
@@ -409,9 +409,9 @@
 
                             .rating {
                                 align-items: center;
-                                background-color: var(--gradient-ardoise-80-alpha-50);
+                                background-color: var(--ardoise-80-alpha-50);
                                 border-radius: .25rem;
-                                color: var(--gradient-yellow-50);
+                                color: var(--yellow-50);
                                 display: flex;
                                 font-size: .75rem;
                                 font-weight: 300;
@@ -429,7 +429,7 @@
                     }
 
                     .separation {
-                        border-bottom: 1px solid var(--gradient-ardoise-40-alpha-50);
+                        border-bottom: 1px solid var(--ardoise-40-alpha-50);
                         width: 100%;
                     }
                 }
@@ -490,9 +490,9 @@
         align-items: flex-start;
         display: flex;
         justify-content: flex-start;
-        background-color: var(--gradient-ardoise-90);
+        background-color: var(--ardoise-90);
         border-radius: 1rem;
-        color: var(--gradient-ardoise-10);
+        color: var(--ardoise-10);
         font-weight: 100;
         height: 10rem;
         width: 32rem;
@@ -544,10 +544,10 @@
                     justify-content: center;
                     animation: 1s infinite clockwise linear;
                     background: conic-gradient(
-                                    var(--gradient-ardoise-10) 0deg,
-                                    var(--gradient-ardoise-10) 270deg,
-                                    var(--gradient-ardoise-90) 270deg,
-                                    var(--gradient-ardoise-90) 360deg);
+                                    var(--ardoise-10) 0deg,
+                                    var(--ardoise-10) 270deg,
+                                    var(--ardoise-90) 270deg,
+                                    var(--ardoise-90) 360deg);
                     border-radius: 50%;
                     height: 4rem;
                     width: 4rem;
@@ -557,7 +557,7 @@
                         align-items: center;
                         display: flex;
                         justify-content: center;
-                        background-color: var(--gradient-ardoise-90);
+                        background-color: var(--ardoise-90);
                         border-radius: 50%;
                         height: 3.8rem;
                         width: 3.8rem;
@@ -569,10 +569,10 @@
                             justify-content: center;
                             animation: 1s infinite counter-clockwise ease-in-out;
                             background: conic-gradient(
-                                            var(--gradient-ardoise-90) 0deg,
-                                            var(--gradient-ardoise-90) 90deg,
-                                            var(--gradient-ardoise-20) 90deg,
-                                            var(--gradient-ardoise-20) 360deg);
+                                            var(--ardoise-90) 0deg,
+                                            var(--ardoise-90) 90deg,
+                                            var(--ardoise-20) 90deg,
+                                            var(--ardoise-20) 360deg);
                             border-radius: 50%;
                             height: 3rem;
                             width: 3rem;
@@ -582,7 +582,7 @@
                                 align-items: center;
                                 display: flex;
                                 justify-content: center;
-                                background-color: var(--gradient-ardoise-90);
+                                background-color: var(--ardoise-90);
                                 border-radius: 50%;
                                 height: 2.8rem;
                                 width: 2.8rem;
@@ -620,7 +620,7 @@
     }
 
     .tail {
-        background-color: var(--gradient-ardoise-90);
+        background-color: var(--ardoise-90);
         border-radius: .25rem;
         height: 2rem;
         rotate: 45deg;
@@ -649,9 +649,9 @@
 
         .content {
             flex-direction: column;
-            background-color: var(--gradient-orange-30);
+            background-color: var(--orange-30);
             border-radius: 1rem;
-            color: var(--gradient-ardoise-10);
+            color: var(--ardoise-10);
             height: unset;
             width: 100%;
 

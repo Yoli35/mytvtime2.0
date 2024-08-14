@@ -14,9 +14,9 @@
     aside, main {
         header {
             align-items: center;
-            background-color: var(--gradient-orange-50);
+            background-color: var(--orange-50);
             border-radius: .25rem;
-            color: var(--gradient-ardoise-10);
+            color: var(--ardoise-10);
             display: flex;
             padding-block: .25rem;
             padding-inline: .5rem .25rem;
@@ -39,7 +39,7 @@
 
             .collapse {
                 align-items: center;
-                background-color: var(--gradient-orange-30);
+                background-color: var(--orange-30);
                 border-radius: .25rem;
                 cursor: pointer;
                 display: flex;
@@ -48,7 +48,7 @@
                 width: 1.5rem;
 
                 &:hover {
-                    background-color: var(--gradient-orange-40);
+                    background-color: var(--orange-40);
                 }
             }
 
@@ -63,7 +63,7 @@
 
                 .filter-value {
                     align-items: center;
-                    background-color: var(--gradient-orange-40);
+                    background-color: var(--orange-40);
                     border-radius: .25rem;
                     display: flex;
                     padding-block: .25rem;
@@ -81,9 +81,9 @@
             transition: height 0.6s ease-in-out;
 
             .filter {
-                background-color: var(--gradient-ardoise-80-alpha-50);
+                background-color: var(--ardoise-80-alpha-50);
                 border-radius: .25rem;
-                color: var(--gradient-ardoise-10);
+                color: var(--ardoise-10);
                 padding-block: .5rem;
                 padding-inline: 1rem;
 
@@ -94,8 +94,8 @@
 
                     input[type=search] {
                         appearance: none;
-                        background-color: var(--gradient-ardoise-80);
-                        border: 1px solid var(--gradient-ardoise-50);
+                        background-color: var(--ardoise-80);
+                        border: 1px solid var(--ardoise-50);
                         border-radius: .25rem;
                         margin-inline-start: auto;
                         padding-inline: .5rem;
@@ -114,10 +114,10 @@
 
             button {
                 align-items: center;
-                background-color: var(--gradient-orange-40);
+                background-color: var(--orange-40);
                 border: none;
                 border-radius: .25rem;
-                color: var(--gradient-orange-90);
+                color: var(--orange-90);
                 display: flex;
                 justify-content: center;
                 min-width: 6ch;
@@ -126,7 +126,7 @@
         }
 
         .pages {
-            background-color: var(--gradient-ardoise-80-alpha-50);
+            background-color: var(--ardoise-80-alpha-50);
             border-radius: .25rem;
             display: flex;
             flex-wrap: wrap;
@@ -139,10 +139,10 @@
 
             .page {
                 align-items: center;
-                background-color: var(--gradient-green-50);
+                background-color: var(--green-50);
                 border: none;
                 border-radius: .25rem;
-                color: var(--gradient-ardoise-10);
+                color: var(--ardoise-10);
                 cursor: pointer;
                 display: flex;
                 font-size: 1rem;
@@ -153,15 +153,15 @@
                 padding-inline: .5rem;
 
                 &:hover {
-                    background-color: var(--gradient-green-40);
+                    background-color: var(--green-40);
                 }
 
                 &.active {
-                    background-color: var(--gradient-orange-50);
-                    color: var(--gradient-orange-90);
+                    background-color: var(--orange-50);
+                    color: var(--orange-90);
 
                     &:hover {
-                        background-color: var(--gradient-orange-60);
+                        background-color: var(--orange-60);
                     }
                 }
             }

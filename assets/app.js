@@ -148,7 +148,8 @@ window.addEventListener("DOMContentLoaded", () => {
         }*/
         const hsl = averageColor.rgbToHsl(color);
         hsl.l *= .8;
-        hsl.s *= 1.25;
+        // hsl.s *= 1.25;
+        hsl.s = 30;
         if (hsl.l > 100) {
             hsl.l = 100;
         }

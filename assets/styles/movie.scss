@@ -3,7 +3,7 @@
     main {
         .wrapper {
             align-items: center;
-            background-color: var(--gradient-ardoise-100-alpha-20);
+            background-color: var(--ardoise-100-alpha-20);
             border-radius: .5rem;
             display: flex;
             flex-wrap: wrap;
@@ -14,7 +14,7 @@
 
         .card {
             align-items: center;
-            background-color: var(--gradient-ardoise-100-alpha-20);
+            background-color: var(--ardoise-100-alpha-20);
             border-radius: .5rem;
             display: flex;
             flex-direction: column;
@@ -36,9 +36,9 @@
 
                 .favorite {
                     align-items: center;
-                    background-color: var(--gradient-ardoise-80);
+                    background-color: var(--ardoise-80);
                     border-radius: .25rem;
-                    color: var(--gradient-orange-50);
+                    color: var(--orange-50);
                     display: flex;
                     font-size: 1.5rem;
                     height: 2.5rem;
@@ -51,7 +51,7 @@
 
                 .viewed {
                     align-items: center;
-                    background-color: var(--gradient-ardoise-80);
+                    background-color: var(--ardoise-80);
                     bottom: 0;
                     position: absolute;
                     display: flex;
@@ -73,14 +73,14 @@
                 width: 100%;
 
                 .name {
-                    color: var(--gradient-orange-50);
+                    color: var(--orange-50);
                     font-size: 1rem;
                     font-weight: 100;
                     text-align: center;
                 }
 
                 .date {
-                    color: var(--gradient-ardoise-10);
+                    color: var(--ardoise-10);
                     font-size: 1rem;
                     font-weight: 100;
                 }
@@ -100,7 +100,7 @@
         .poster {
             align-items: center;
             aspect-ratio: 78 / 117;
-            background-color: var(--gradient-grey-75-alpha-40);
+            background-color: var(--grey-75-alpha-40);
             border-radius: .5rem;
             display: flex;
             justify-content: center;
@@ -117,7 +117,7 @@
         }
 
         .infos {
-            background-color: var(--gradient-ardoise-90-alpha-20);
+            background-color: var(--ardoise-90-alpha-20);
             border-radius: 0;
             display: flex;
             flex-direction: column;
@@ -150,7 +150,7 @@
                 width: 100%;
 
                 h1 {
-                    background-color: var(--gradient-ardoise-90-alpha-50);
+                    background-color: var(--ardoise-90-alpha-50);
                     border-radius: .5rem;
                     font-size: clamp(1rem, 5vw, 4rem);
                     font-weight: 100;
@@ -160,7 +160,7 @@
                     text-align: left;
 
                     .localized-name-span, span {
-                        color: var(--gradient-orange-70);
+                        color: var(--orange-70);
                     }
                 }
 
@@ -174,9 +174,9 @@
                     .movie-tools-click {
                         align-items: center;
                         aspect-ratio: 1;
-                        background-color: var(--gradient-ardoise-80);
+                        background-color: var(--ardoise-80);
                         border-radius: .25rem;
-                        color: var(--gradient-ardoise-10);
+                        color: var(--ardoise-10);
                         cursor: pointer;
                         display: flex;
                         justify-content: center;
@@ -203,8 +203,8 @@
 
                     > div {
                         align-items: center;
-                        background-color: var(--gradient-ardoise-70);
-                        color: var(--gradient-ardoise-10);
+                        background-color: var(--ardoise-70);
+                        color: var(--ardoise-10);
                         cursor: pointer;
                         display: flex;
                         font-size: 1rem;
@@ -216,22 +216,22 @@
                         white-space: nowrap;
 
                         &:hover {
-                            background-color: var(--gradient-orange-50);
+                            background-color: var(--orange-50);
                         }
                     }
                 }
             }
 
             .movie-overview {
-                background-color: var(--gradient-ardoise-90-alpha-50);
+                background-color: var(--ardoise-90-alpha-50);
                 border-radius: .5rem;
-                color: var(--gradient-ardoise-10);
+                color: var(--ardoise-10);
                 font-size: 1.25rem;
                 padding: 1rem;
             }
 
             .localized-h4, .additional-h4 {
-                color: var(--gradient-orange-70);
+                color: var(--orange-70);
                 font-weight: 300;
 
                 &.hide {
@@ -256,15 +256,15 @@
                     width: 100%;
 
                     &.localized, &.additional {
-                        border-left: 2px solid var(--gradient-orange-50);
-                        color: var(--gradient-orange-80);
+                        border-left: 2px solid var(--orange-50);
+                        color: var(--orange-80);
                         font-weight: 100;
                         letter-spacing: .05rem;
                         padding-inline-start: .5rem;
                         position: relative;
 
                         .content {
-                            background-color: var(--gradient-ardoise-70-alpha-50);
+                            background-color: var(--ardoise-70-alpha-50);
                             border-radius: .5rem;
                             margin-block-end: unset;
                             padding: .5rem;
@@ -287,7 +287,7 @@
                             .source, .locale, .edit, .delete {
                                 align-items: center;
                                 border-radius: .25rem;
-                                color: var(--gradient-orange-90);
+                                color: var(--orange-90);
                                 display: flex;
                                 font-size: 1rem;
                                 font-weight: 300;
@@ -304,7 +304,7 @@
                             }
 
                             .source, .locale, .edit {
-                                background-color: var(--gradient-orange-50);
+                                background-color: var(--orange-50);
                             }
 
                             .edit, .delete {
@@ -345,7 +345,7 @@
         }
 
         .movie-details {
-            background-color: var(--gradient-ardoise-100-alpha-20);
+            background-color: var(--ardoise-100-alpha-20);
             border-radius: 0;
             display: flex;
             flex-direction: column;
@@ -362,7 +362,7 @@
 
                     .provider {
                         align-items: center;
-                        background-color: var(--gradient-orange-40);
+                        background-color: var(--orange-40);
                         border-radius: .5rem;
                         display: flex;
                         gap: .5rem;
@@ -392,9 +392,9 @@
                     justify-content: flex-start;
 
                     .genre {
-                        background-color: var(--gradient-orange-40);
+                        background-color: var(--orange-40);
                         border-radius: .25rem;
-                        color: var(--gradient-orange-90);
+                        color: var(--orange-90);
                         font-size: 1rem;
                         padding: .125rem .25rem;
                     }
@@ -432,7 +432,7 @@
                             .poster {
                                 align-items: center;
                                 aspect-ratio: 78 / 117;
-                                background-color: var(--gradient-green-70-alpha-50);
+                                background-color: var(--green-70-alpha-50);
                                 border-radius: .5rem;
                                 display: flex;
                                 height: 10rem;
@@ -480,9 +480,9 @@
 
                             .frame {
                                 align-items: center;
-                                background-color: var(--gradient-orange-40);
+                                background-color: var(--orange-40);
                                 border-radius: .25rem;
-                                color: var(--gradient-orange-90);
+                                color: var(--orange-90);
                                 display: flex;
                                 justify-content: center;
                                 padding: .125rem .25rem;
@@ -504,7 +504,7 @@
                                 }
 
                                 .keywords {
-                                    background-color: var(--gradient-ardoise-100-alpha-20);
+                                    background-color: var(--ardoise-100-alpha-20);
                                     border-radius: .5rem;
                                     display: flex;
                                     flex-wrap: wrap;
@@ -513,19 +513,19 @@
                                     padding: 1rem;
 
                                     .keyword {
-                                        background-color: var(--gradient-green-50);
+                                        background-color: var(--green-50);
                                         border-radius: .25rem;
-                                        color: var(--gradient-ardoise-0);
+                                        color: var(--ardoise-0);
                                         font-size: 1rem;
                                         font-weight: 300;
                                         padding: .125rem .5rem;
 
                                         &.missing {
-                                            background-color: var(--gradient-orange-50);
+                                            background-color: var(--orange-50);
                                             cursor: pointer;
 
                                             &:hover {
-                                                background-color: var(--gradient-orange-60);
+                                                background-color: var(--orange-60);
                                             }
                                         }
                                     }
@@ -545,7 +545,7 @@
             align-items: center;
             background-color: var(--remove-this-series);
             border-radius: .5rem;
-            color: var(--gradient-orange-90);
+            color: var(--orange-90);
             display: flex;
             flex-direction: column;
             font-size: 1.5rem;
@@ -581,10 +581,10 @@
 
                         input {
                             appearance: none;
-                            background-color: var(--gradient-orange-50);
+                            background-color: var(--orange-50);
                             border: none;
                             border-radius: .25rem;
-                            color: var(--gradient-ardoise-90);
+                            color: var(--ardoise-90);
                             font-size: 1rem;
                             font-weight: 300;
                             padding: .25rem .5rem;
@@ -602,23 +602,23 @@
 
                 button {
                     appearance: none;
-                    background-color: var(--gradient-orange-50);
+                    background-color: var(--orange-50);
                     border: none;
                     border-radius: .25rem;
-                    color: var(--gradient-ardoise-10);
+                    color: var(--ardoise-10);
                     cursor: pointer;
                     font-weight: 300;
                     padding: .25rem .5rem;
 
                     &:hover {
-                        background-color: var(--gradient-orange-60);
+                        background-color: var(--orange-60);
                     }
                 }
             }
         }
 
         .user-details {
-            background-color: var(--gradient-ardoise-100-alpha-20);
+            background-color: var(--ardoise-100-alpha-20);
             border-radius: 0;
             display: flex;
             flex-direction: column;
@@ -629,7 +629,7 @@
         }
 
         .movie-collection {
-            background-color: var(--gradient-ardoise-100-alpha-20);
+            background-color: var(--ardoise-100-alpha-20);
             border-radius: 0;
             display: flex;
             flex-direction: column;
@@ -652,7 +652,7 @@
                 .poster a {
                     align-items: center;
                     aspect-ratio: 78 / 117;
-                    background-color: var(--gradient-green-70-alpha-50);
+                    background-color: var(--green-70-alpha-50);
                     border-radius: .5rem;
                     display: flex;
                     height: 100%;
@@ -676,10 +676,10 @@
                     position: relative;
 
                     .name {
-                        background-color: var(--gradient-ardoise-100-alpha-20);
+                        background-color: var(--ardoise-100-alpha-20);
                         border-radius: .25rem;
                         bottom: 1rem;
-                        color: var(--gradient-orange-50);
+                        color: var(--orange-50);
                         font-size: 2rem;
                         font-weight: 300;
                         margin-block: 0;
@@ -719,7 +719,7 @@
         .poster {
             align-items: center;
             aspect-ratio: 78 / 117;
-            background-color: var(--gradient-grey-75-alpha-40);
+            background-color: var(--grey-75-alpha-40);
             border-radius: .5rem;
             display: flex;
             justify-content: center;
@@ -736,7 +736,7 @@
         }
 
         .infos {
-            background-color: var(--gradient-ardoise-100-alpha-50);
+            background-color: var(--ardoise-100-alpha-50);
             border-radius: .5rem;
             display: flex;
             flex-direction: column;
@@ -764,9 +764,9 @@
 
             .title {
                 h1 {
-                    background-color: var(--gradient-ardoise-100-alpha-50);
+                    background-color: var(--ardoise-100-alpha-50);
                     border-radius: .5rem;
-                    color: var(--gradient-orange-50);
+                    color: var(--orange-50);
                     font-size: clamp(1rem, 5vw, 4rem);
                     font-weight: 100;
                     line-height: clamp(1.1rem, 5vw, 4rem);;
@@ -775,15 +775,15 @@
                     text-align: left;
 
                     .localized-name-span, span {
-                        color: var(--gradient-orange-70);
+                        color: var(--orange-70);
                     }
                 }
             }
 
             .movie-overview {
-                background-color: var(--gradient-ardoise-100-alpha-50);
+                background-color: var(--ardoise-100-alpha-50);
                 border-radius: .5rem;
-                color: var(--gradient-ardoise-10);
+                color: var(--ardoise-10);
                 font-size: 1.25rem;
                 padding: 1rem;
             }
@@ -804,7 +804,7 @@
                 .poster {
                     align-items: center;
                     aspect-ratio: 78 / 117;
-                    background-color: var(--gradient-green-70-alpha-50);
+                    background-color: var(--green-70-alpha-50);
                     border-radius: .5rem;
                     display: flex;
                     justify-content: center;
@@ -842,22 +842,22 @@
                     }
 
                     .title {
-                        background-color: var(--gradient-ardoise-100-alpha-50);
+                        background-color: var(--ardoise-100-alpha-50);
                         border-radius: .5rem;
-                        color: var(--gradient-ardoise-10);
+                        color: var(--ardoise-10);
                         font-size: 1rem;
                         font-weight: 100;
                         padding: .5rem;
 
                         span {
-                            color: var(--gradient-orange-50);
+                            color: var(--orange-50);
                         }
                     }
 
                     .movie-overview {
-                        background-color: var(--gradient-ardoise-100-alpha-50);
+                        background-color: var(--ardoise-100-alpha-50);
                         border-radius: .5rem;
-                        color: var(--gradient-ardoise-10);
+                        color: var(--ardoise-10);
                         font-size: 1rem;
                         font-weight: 100;
                         padding: .5rem;

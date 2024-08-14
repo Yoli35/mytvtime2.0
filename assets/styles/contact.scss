@@ -3,7 +3,7 @@
     margin-inline: auto;
 
     h1 {
-        color: var(--gradient-ardoise-10);
+        color: var(--ardoise-10);
         font-size: 2rem;
         margin-block: 1rem;
         text-align: center;
@@ -53,10 +53,10 @@
                 input[type="url"],
                 textarea {
                     appearance: none;
-                    background-color: var(--gradient-ardoise-80);
-                    border: 1px solid var(--gradient-ardoise-50);
+                    background-color: var(--ardoise-80);
+                    border: 1px solid var(--ardoise-50);
                     border-radius: .25em;
-                    color: var(--gradient-ardoise-10);
+                    color: var(--ardoise-10);
                     padding-block: .25rem;
                     padding-inline: .5rem;
                     width: 100%;
@@ -82,7 +82,7 @@
 
                     &.drop-zone {
                         align-items: flex-start;
-                        background-color: var(--gradient-ardoise-80);
+                        background-color: var(--ardoise-80);
                         border-radius: 0.5rem;
                         border: 2px dashed;
                         display: flex;
@@ -90,8 +90,8 @@
                         padding: 1rem;
 
                         &:hover {
-                            background-color: var(--gradient-ardoise-70);
-                            border-color: var(--gradient-ardoise-50);
+                            background-color: var(--ardoise-70);
+                            border-color: var(--ardoise-50);
                         }
                     }
 
@@ -102,10 +102,10 @@
                         gap: 1rem;
 
                         input[type=file]::file-selector-button {
-                            background-color: var(--gradient-ardoise-80);
-                            border: 1px solid var(--gradient-ardoise-50);
+                            background-color: var(--ardoise-80);
+                            border: 1px solid var(--ardoise-50);
                             border-radius: .25em;
-                            color: var(--gradient-ardoise-10);
+                            color: var(--ardoise-10);
                             cursor: pointer;
                             padding-block: .25rem;
                             padding-inline: 1rem;
@@ -127,16 +127,16 @@
                         }
 
                         a:not(:has(img)) {
-                            background-color: var(--gradient-ardoise-80);
-                            border: 1px solid var(--gradient-ardoise-50);
+                            background-color: var(--ardoise-80);
+                            border: 1px solid var(--ardoise-50);
                             border-radius: 0.25rem;
                             padding-block: 0.25rem;
                             padding-inline: 1rem;
                             margin-inline-start: auto;
 
                             &:hover {
-                                background-color: var(--gradient-ardoise-70);
-                                border-color: var(--gradient-ardoise-40);
+                                background-color: var(--ardoise-70);
+                                border-color: var(--ardoise-40);
                             }
                         }
                     }
@@ -155,27 +155,27 @@
 
                         .keyword-input {
                             appearance: none;
-                            background-color: var(--gradient-ardoise-80);
-                            border: 1px solid var(--gradient-ardoise-50);
+                            background-color: var(--ardoise-80);
+                            border: 1px solid var(--ardoise-50);
                             border-radius: .25em;
-                            color: var(--gradient-ardoise-10);
+                            color: var(--ardoise-10);
                             padding-block: .25rem;
                             padding-inline: .5rem;
                             width: 100%;
                         }
 
                         .and-or {
-                            background-color: var(--gradient-ardoise-80);
-                            border: 1px solid var(--gradient-ardoise-50);
+                            background-color: var(--ardoise-80);
+                            border: 1px solid var(--ardoise-50);
                             border-radius: .25em;
-                            color: var(--gradient-ardoise-10);
+                            color: var(--ardoise-10);
                             display: flex;
 
                             .and, .or {
                                 align-items: center;
-                                background-color: var(--gradient-ardoise-80);
+                                background-color: var(--ardoise-80);
                                 border: none;
-                                color: var(--gradient-ardoise-10);
+                                color: var(--ardoise-10);
                                 cursor: pointer;
                                 display: flex;
                                 justify-content: center;
@@ -184,19 +184,19 @@
                                 width: 50%;
 
                                 &:hover {
-                                    background-color: var(--gradient-ardoise-70);
-                                    color: var(--gradient-ardoise-10);
+                                    background-color: var(--ardoise-70);
+                                    color: var(--ardoise-10);
                                 }
 
                                 &.active {
-                                    background-color: var(--gradient-orange-50);
-                                    color: var(--gradient-orange-90);
+                                    background-color: var(--orange-50);
+                                    color: var(--orange-90);
                                 }
                             }
 
                             .and {
                                 border-radius: calc(.25rem - 1px) 0 0 calc(.25rem - 1px);
-                                border-right: 1px solid var(--gradient-ardoise-50);
+                                border-right: 1px solid var(--ardoise-50);
                             }
 
                             .or {
@@ -206,8 +206,8 @@
                     }
 
                     .keyword-list {
-                        background-color: var(--gradient-ardoise-80);
-                        border: 1px solid var(--gradient-ardoise-50);
+                        background-color: var(--ardoise-80);
+                        border: 1px solid var(--ardoise-50);
                         display: none;
                         left: 0;
                         max-height: 20rem;
@@ -226,15 +226,15 @@
                             padding-inline: .5rem;
 
                             &:hover {
-                                background-color: var(--gradient-orange-40);
-                                color: var(--gradient-orange-90);
+                                background-color: var(--orange-40);
+                                color: var(--orange-90);
                             }
                         }
                     }
 
                     .form-keywords {
-                        background-color: var(--gradient-ardoise-80);
-                        border: 1px solid var(--gradient-ardoise-50);
+                        background-color: var(--ardoise-80);
+                        border: 1px solid var(--ardoise-50);
                         border-radius: .25em;
                         display: none;
                         flex-direction: row;
@@ -248,9 +248,9 @@
                         }
 
                         .keyword {
-                            background-color: var(--gradient-orange-50);
+                            background-color: var(--orange-50);
                             border-radius: .25em;
-                            color: var(--gradient-orange-90);
+                            color: var(--orange-90);
                             cursor: pointer;
                             font-weight: 300;
                             padding-block: .125rem;
@@ -258,8 +258,8 @@
                             position: relative;
 
                             &:hover {
-                                background-color: var(--gradient-orange-40);
-                                color: var(--gradient-orange-90);
+                                background-color: var(--orange-40);
+                                color: var(--orange-90);
                             }
 
                             .close {
@@ -276,10 +276,10 @@
 
             button {
                 appearance: none;
-                background-color: var(--gradient-ardoise-60);
+                background-color: var(--ardoise-60);
                 border: none;
                 border-radius: .25em;
-                color: var(--gradient-ardoise-10);
+                color: var(--ardoise-10);
                 cursor: pointer;
                 font-size: 1rem;
                 font-weight: 300;
@@ -288,8 +288,8 @@
             }
 
             button[type="submit"] {
-                background-color: var(--gradient-orange-50);
-                color: var(--gradient-orange-90);
+                background-color: var(--orange-50);
+                color: var(--orange-90);
             }
 
             &:has(button[type="submit"]) {
