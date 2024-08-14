@@ -1355,8 +1355,10 @@ h2 {
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
-            justify-content: center;
+            justify-content: flex-start;
             margin-block: 1rem;
+            margin-inline: auto;
+            width: round(down, 100%, 16rem); /* 16rem = 1 card + gap */
 
             .card {
                 height: 27rem;
@@ -1560,7 +1562,7 @@ h2 {
     }
 }
 
-@media (width < 1200px) {
+/*@media (width < 1200px) {
     .all-my-series {
         flex-direction: column;
         flex-wrap: nowrap;
@@ -1584,7 +1586,7 @@ h2 {
             width: 100%;
         }
     }
-}
+}*/
 
 @media (max-width: 576px) {
     .series-show {
