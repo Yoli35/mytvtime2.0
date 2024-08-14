@@ -52,6 +52,17 @@ class UserSeriesRepository extends ServiceEntityRepository
 //        return $this->getAll($sql);
 //    }
 
+    public function userSeriesTMDBIds(User $user): array
+    {
+        $userId = $user->getId();
+        $sql = "SELECT s.tmdb_id as id
+                FROM series s
+                         INNER JOIN user_series us ON s.id = us.series_id
+                WHERE us.user_id=$userId";
+
+        return $this->getAll($sql);
+    }
+
     public function getUserSeriesOfTheDay(User $user, string $country, string $locale): array
     {
         $userId = $user->getId();

@@ -481,17 +481,19 @@ class SeriesController extends AbstractController
     #[Route('/list/{id}/{seriesId}', name: 'list', requirements: ['id' => Requirement::DIGITS, 'showId' => Requirement::DIGITS])]
     public function list(Request $request, int $id, int $seriesId): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $page = $request->get('page') ?? 1;
         $series = $this->seriesRepository->findOneBy(['id' => $seriesId]);
+        $userSeriesTMDBIds = array_column($this->userSeriesRepository->userSeriesTMDBIds($user), 'id');
         $list = json_decode($this->tmdbService->getList($id, $page), true);
-        dump($id, $list);
+
         $this->saveImage("backdrops", $list['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
         $this->saveImage("posters", $list['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
 
         $list['results'] = array_map(function ($item) {
             $slugger = new AsciiSlugger();
-            $this->saveImage("posters", $item['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-            $item['poster_path'] = ($item['media_type'] == 'tv' ? '/series/posters':'/movies/posters') . $item['poster_path'];
+            $item['poster_path'] = $item['poster_path'] ? $this->imageConfiguration->getCompleteUrl($item['poster_path'], 'poster_sizes', 5) : null;
             $item['slug'] = $item['media_type'] == 'tv' ? $slugger->slug($item['name']) : $slugger->slug($item['title']);
             $item['tmdb'] = true;
             return $item;
@@ -500,6 +502,7 @@ class SeriesController extends AbstractController
         return $this->render('series/list.html.twig', [
             'list' => $list,
             'series' => $series,
+            'ids' => $userSeriesTMDBIds,
         ]);
     }
 
@@ -517,10 +520,6 @@ class SeriesController extends AbstractController
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "keywords, list"]), true);
         $tvLists = json_decode($this->tmdbService->getTvLists($series->getTmdbId()), true);
         dump($tv, $tvLists);
-        if ($tvLists) {
-            $firstList = json_decode($this->tmdbService->getList($tvLists['results'][0]['id']), true);
-            dump($tvLists['results'][0]['id'], $firstList);
-        }
 
         $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
         $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));

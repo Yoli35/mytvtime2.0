@@ -373,7 +373,7 @@
                         </div>
                     {% endif %}
 
-                    {% if tvLists|length %}
+                    {% if tvLists and tvLists.total_results %}
                         <h3>{{ 'Lists'|trans }}</h3>
                         <div class="lists">
                             <ul>

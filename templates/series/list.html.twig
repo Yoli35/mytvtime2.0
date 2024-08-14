@@ -53,16 +53,29 @@
                 </div>
             </div>
 
-            <div class="series-search-result">
-                <div class="wrapper">
-                    {% for result in list.results %}
-                        {% if result.media_type == 'tv' %}
-                            {{ include('_blocks/series/_card.html.twig', {'series': result}) }}
-                        {% endif %}
-                        {% if result.media_type == 'movie' %}
-                            {{ include('_blocks/movie/_card-tmdb.html.twig', {'movie': result}) }}
-                        {% endif %}
-                    {% endfor %}
+            <div class="content">
+                <div class="series-search-result">
+                    <div class="header">
+                        <div class="pages">
+                            {% for page in 1..list.total_pages %}
+                                    <div class="page{% if page == list.page %} active{% endif %}">
+                                        <a href="{{ path('app_series_list', {'id': list.id, 'seriesId': series.id, 'page': page}) }}">
+                                        {{ page }}
+                                        </a>
+                                    </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="wrapper">
+                        {% for result in list.results %}
+                            {% if result.media_type == 'tv' %}
+                                {{ include('_blocks/series/_card.html.twig', {'series': result}) }}
+                            {% endif %}
+                            {% if result.media_type == 'movie' %}
+                                {{ include('_blocks/movie/_card-tmdb.html.twig', {'movie': result}) }}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

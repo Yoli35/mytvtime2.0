@@ -62,7 +62,8 @@
                 </div>
             {% endif %}
         </div>
-        <div class="name">{{ series.localized_name ?? series.name }}
+        <div class="name{% if ids is defined and series.id in ids %} added{% endif %}">
+            {{ series.localized_name ?? series.name }}
             {% if allFiltered is defined %}
                 <div class="">{{ series.remainingEpisodes }} {{ (series.remainingEpisodes > 1 ? 'remaining episodes':'remaining episode')|trans }}</div>
             {% endif %}
