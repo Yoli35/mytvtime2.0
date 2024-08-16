@@ -24,6 +24,9 @@ export class Keyword {
         const missingKeywords = document.querySelectorAll('.keyword.missing');
         missingKeywords.forEach(keyword => {
             keyword.addEventListener('click', function () {
+                if (keywordForm.classList.contains('active')) {
+                    return;
+                }
                 gThis.keywordInitFields(keywordForm, missingKeywords);
                 gThis.displayForm(keywordForm);
             });
@@ -64,6 +67,7 @@ export class Keyword {
     keywordInitFields(form, missingKeywords) {
         const content = form.querySelector(".form-body");
         let values = [];
+        content.innerHTML = '';
 
         gThis.keywordTranslationSelect(content);
 
