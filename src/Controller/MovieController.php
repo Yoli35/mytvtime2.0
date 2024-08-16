@@ -152,7 +152,7 @@ class MovieController extends AbstractController
         $dbMovie = $userMovie->getMovie();
         $movie = json_decode($this->tmdbService->getMovie($tmdbId, $language, ['videos,images,credits,recommendations,keywords,watch/providers,release_dates']), true);
         if (!$movie) {
-            $movie = $this->createMovieFromDBMovie($userMovie);
+            $movie = $this->createMovieFromDBMovie($dbMovie);
             //TODO: if movie not found on tmdb, ask for removal
         } else {
             $movie['found'] = true;

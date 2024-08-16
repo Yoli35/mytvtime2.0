@@ -13,7 +13,7 @@
                 </div>
             {% endif %}
             {% if movie.lastViewedAt %}
-                <div class="viewed">{{ 'Last viewed'|trans }} : {{ movie.lastViewedAt|format_date('full')|capitalize }}</div>
+                <div class="viewed">{{ ux_icon('ion:eye-outline', {height: '18px', width: '18px'}) }}&nbsp;{{ movie.lastViewedAt|format_date('full')|capitalize }}</div>
             {% endif %}
         </div>
         <div class="infos">
