@@ -421,7 +421,7 @@ export class Season {
                         const number = parseInt(episodeNumber);
                         if (episodeCount === 1) {
                             if (number === firstEpisodeNumber) {
-                                eotd.classList.add('watched');
+                                eotd.setAttribute('style', 'background: linear-gradient(90deg, var(--green-50) 100%, transparent 100%)');
                             }
                         } else {
                             if (number >= firstEpisodeNumber && number < firstEpisodeNumber + episodeCount) {
