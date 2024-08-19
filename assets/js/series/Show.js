@@ -531,11 +531,20 @@ export class Show {
         const addLocationForm = document.querySelector('#add-location-form');
         const addLocationDialog = document.querySelector('dialog.add-location-dialog');
         const addLocationButton = document.querySelector('.add-location-button');
+        const inputGoogleMapsUrl = addLocationForm.querySelector('input[name="google-map-url"]');
+        const inputLatitude = addLocationForm.querySelector('input[name="latitude"]');
+        const inputLongitude = addLocationForm.querySelector('input[name="longitude"]');
         const addLocationCancel = addLocationForm.querySelector('button[type="button"]');
         const addLocationSubmit = addLocationForm.querySelector('button[type="submit"]');
 
         addLocationButton.addEventListener('click', function () {
             addLocationDialog.showModal();
+        });
+        inputGoogleMapsUrl.addEventListener('change', function () {
+            const url = this.value;
+            const urlParts = url.split('@')[1].split(',');
+            inputLatitude.value = urlParts[0];
+            inputLongitude.value = urlParts[1];
         });
         addLocationCancel.addEventListener('click', function () {
             addLocationDialog.close();
@@ -543,7 +552,7 @@ export class Show {
         addLocationSubmit.addEventListener('click', function (event) {
             event.preventDefault();
 
-            const inputs = addLocationForm.querySelectorAll('input');
+            const inputs = addLocationForm.querySelectorAll('input[required]');
             let emptyInput = false;
             inputs.forEach(function (input) {
                 if (!input.value) {

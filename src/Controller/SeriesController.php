@@ -523,7 +523,7 @@ class SeriesController extends AbstractController
         $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "keywords, list"]), true);
         $tvLists = json_decode($this->tmdbService->getTvLists($series->getTmdbId()), true);
-        dump($tv, $tvLists);
+//        dump($tv, $tvLists);
 
         $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
         $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
@@ -562,12 +562,12 @@ class SeriesController extends AbstractController
             'Watch on' => $this->translator->trans('Watch on'),
         ];
 
-        dump([
-            'series' => $seriesArr,
-            'tv' => $tv,
-            'userSeries' => $userSeries,
-            'providers' => $providers,
-        ]);
+//        dump([
+//            'series' => $seriesArr,
+//            'tv' => $tv,
+//            'userSeries' => $userSeries,
+//            'providers' => $providers,
+//        ]);
         return $this->render('series/show.html.twig', [
             'series' => $seriesArr,
             'tv' => $tv,
@@ -1291,7 +1291,9 @@ class SeriesController extends AbstractController
     {
         $locations = $series->getLocations();
         $data = json_decode($request->getContent(), true);
-        dump(['locations' => $locations, 'data' => $data]);
+//        dump(['locations' => $locations, 'data' => $data]);
+        $data = array_filter($data, fn($key) => $key != "google-map-url", ARRAY_FILTER_USE_KEY);
+//        dump(['data' => $data]);
 
         $data['latitude'] = str_replace(',', '.', $data['latitude']);
         $data['longitude'] = str_replace(',', '.', $data['longitude']);

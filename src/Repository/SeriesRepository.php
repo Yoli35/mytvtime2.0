@@ -78,7 +78,7 @@ class SeriesRepository extends ServiceEntityRepository
                 WHERE s.`locations` IS NOT NULL AND us.user_id=$userId";
 
         $arr = $this->getAll($sql);
-        dump($arr);
+//        dump($arr);
         return array_map(function ($item) {
             $decoded = json_decode($item['locations'], true);
             $item['locations'] = $decoded['locations'];
@@ -97,7 +97,7 @@ class SeriesRepository extends ServiceEntityRepository
                 WHERE s.`id`=$seriesId";
 
         $item = $this->getOne($sql);
-        dump($item);
+//        dump($item);
         if (!$item['locations']) {
             return [];
         }

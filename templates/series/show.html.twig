@@ -494,6 +494,13 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-field">
+                                    <label for="google-map-url">{{ 'Paste Google maps url here to obtain latitude and longitude'|trans }}
+                                        <input type="url" name="google-map-url" id="google-map-url">
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
                                     <label for="latitude">{{ 'Latitude'|trans }}
                                         <input type="number" name="latitude" id="latitude" step="0.0000001" required>
                                         <span class="error"></span>
@@ -507,7 +514,7 @@
                             <div class="form-row">
                                 <div class="form-field">
                                     <label for="description">{{ 'Description'|trans }}
-                                        <input name="description" id="description" required></input>
+                                        <input type="text" name="description" id="description" required></input>
                                         <span class="error"></span>
                                     </label>
                                 </div>
