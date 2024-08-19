@@ -373,20 +373,6 @@
                         </div>
                     {% endif %}
 
-                    {% if tvLists and tvLists.total_results %}
-                        <h3>{{ 'Lists'|trans }}</h3>
-                        <div class="lists">
-                            <ul>
-                                {% for list in tvLists.results %}
-                                    <li>
-                                        <a href="{{ path('app_series_list', {id: list.id, seriesId: series.id}) }}">
-                                            <span>{{ list.name }}</span> ({{ list.iso_3166_1|country_name }}, {{ list.item_count }} {{ 'items'|trans }}){% if list.description %} - {{ list.description }}{% endif %}
-                                        </a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
                 </div>
                 <div class="right">
                     {% if tv['watch/providers'].flatrate|length %}
@@ -476,6 +462,88 @@
                         {% endif %}
                     </div>
                 </div>
+            </div>
+            <div class="content">
+                <h3>{{ 'Shooting locations'|trans }}</h3>
+                <div class="series-map">
+                    {% if map %}
+                        {{ render_map(map, { 'data-controller': 'series_map', class: 'map-controller' }) }}
+                    {% endif %}
+                    <div class="add-location">
+                        <div class="add-location-button" data-title="{{ 'Add a shooting location'|trans }}">
+                            {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                        </div>
+                    </div>
+                    <dialog class="add-location-dialog">
+                        <form action="" id="add-location-form">
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="title">{{ 'Title'|trans }}
+                                        <input type="text" name="title" id="title" required>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="location">{{ 'Location'|trans }}
+                                        <input type="text" name="location" id="location" required>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="latitude">{{ 'Latitude'|trans }}
+                                        <input type="number" name="latitude" id="latitude" step="0.0000001" required>
+                                        <span class="error"></span>
+                                    </label>
+                                    <label for="longitude">{{ 'Longitude'|trans }}
+                                        <input type="number" name="longitude" id="longitude" step="0.0000001" required>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="description">{{ 'Description'|trans }}
+                                        <input name="description" id="description" required></input>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="image">{{ 'Image'|trans }}
+                                        <input type="url" name="image" id="image" required>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <button type="button">{{ 'Cancel'|trans }}</button>
+                                    <button type="submit">{{ 'Add'|trans }}</button>
+                                </div>
+                            </div>
+                        </form>
+                    </dialog>
+                </div>
+
+                {% if tvLists and tvLists.total_results %}
+                    <h3>{{ 'Lists'|trans }}</h3>
+                    <div class="lists">
+                        <ul>
+                            {% for list in tvLists.results %}
+                                <li>
+                                    <a href="{{ path('app_series_list', {id: list.id, seriesId: series.id}) }}">
+                                        <span>{{ list.name }}</span> ({{ list.iso_3166_1|country_name }}, {{ list.item_count }} {{ 'items'|trans }}){% if list.description %} - {{ list.description }}{% endif %}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
             </div>
         </div>
         {% include '_blocks/_footer.html.twig' %}

@@ -94,6 +94,9 @@ class Series
     #[ORM\OneToMany(targetEntity: SeasonLocalizedOverview::class, mappedBy: 'series', orphanRemoval: true)]
     private Collection $seasonLocalizedOverviews;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $locations = null;
+
     public function __construct()
     {
         $this->seriesLocalizedNames = new ArrayCollection();
@@ -596,6 +599,18 @@ class Series
                 $seasonLocalizedOverview->setSeries(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLocations(): ?array
+    {
+        return $this->locations;
+    }
+
+    public function setLocations(?array $locations): static
+    {
+        $this->locations = $locations;
 
         return $this;
     }

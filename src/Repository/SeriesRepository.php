@@ -66,10 +66,59 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function seriesLocations(User $user, string $locale): array
+    {
+        $userId = $user->getId();
+        $sql = "SELECT s.`id`                                                        as id,
+                       IF(sln.name IS NULL, s.name, CONCAT(sln.name, ' - ', s.name)) as name,
+                       s.locations                                                   as locations
+                FROM `series` s
+                         INNER JOIN user_series us ON s.id = us.series_id
+                         LEFT JOIN `series_localized_name` as sln ON sln.`series_id` = s.`id` AND sln.locale='$locale'
+                WHERE s.`locations` IS NOT NULL AND us.user_id=$userId";
+
+        $arr = $this->getAll($sql);
+        dump($arr);
+        return array_map(function ($item) {
+            $decoded = json_decode($item['locations'], true);
+            $item['locations'] = $decoded['locations'];
+            return $item;
+        }, $arr);
+    }
+
+    public function oneSeriesLocations(Series $series, string $locale): array
+    {
+        $seriesId = $series->getId();
+        $sql = "SELECT s.`id`                                                        as id,
+                       IF(sln.name IS NULL, s.name, CONCAT(sln.name, ' - ', s.name)) as name,
+                       s.locations                                                   as locations
+                FROM `series` s
+                         LEFT JOIN `series_localized_name` as sln ON sln.`series_id` = s.`id` AND sln.locale='$locale'
+                WHERE s.`id`=$seriesId";
+
+        $item = $this->getOne($sql);
+        dump($item);
+        if (!$item['locations']) {
+            return [];
+        }
+        $decoded = json_decode($item['locations'], true);
+        $item['locations'] = $decoded['locations'] ?? [];
+        return $item;
+    }
+
     public function getAll($sql): array
     {
         try {
             return $this->em->getConnection()->fetchAllAssociative($sql);
+        } catch (Exception) {
+            return [];
+        }
+    }
+
+    public function getOne($sql): array
+    {
+        try {
+            return $this->em->getConnection()->fetchAssociative($sql);
         } catch (Exception) {
             return [];
         }

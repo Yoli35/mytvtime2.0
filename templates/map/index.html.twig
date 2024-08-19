@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Shooting locations for your series'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/filter.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid">
+        <div class="series-map" id="map">
+            <h1>{{ 'Shooting locations for your series'|trans }}</h1>
+            {{ render_map(map, { 'data-controller': 'series_map', class: 'map-controller all'}) }}
+        </div>
+        {% include('_blocks/_footer.html.twig') %}
+    </div>
+{% endblock %}

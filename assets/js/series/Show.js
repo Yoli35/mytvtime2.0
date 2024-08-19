@@ -527,6 +527,50 @@ export class Show {
         });
 
         new Keyword('series');
+
+        const addLocationForm = document.querySelector('#add-location-form');
+        const addLocationDialog = document.querySelector('dialog.add-location-dialog');
+        const addLocationButton = document.querySelector('.add-location-button');
+        const addLocationCancel = addLocationForm.querySelector('button[type="button"]');
+        const addLocationSubmit = addLocationForm.querySelector('button[type="submit"]');
+
+        addLocationButton.addEventListener('click', function () {
+            addLocationDialog.showModal();
+        });
+        addLocationCancel.addEventListener('click', function () {
+            addLocationDialog.close();
+        });
+        addLocationSubmit.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const inputs = addLocationForm.querySelectorAll('input');
+            let emptyInput = false;
+            inputs.forEach(function (input) {
+                if (!input.value) {
+                    input.nextElementSibling.textContent = translations['This field is required'];
+                    emptyInput = true;
+                } else {
+                    input.nextElementSibling.textContent = '';
+                }
+            });
+            if (!emptyInput) {
+                const formDatas = new FormData(addLocationForm);
+                fetch('/' + lang + '/series/add/location/' + seriesId,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(Object.fromEntries(formDatas))
+                    }
+                ).then(function (response) {
+                    if (response.ok) {
+                        addLocationDialog.close();
+                        window.location.reload();
+                    }
+                });
+            }
+        });
     }
 
     displayForm(form) {

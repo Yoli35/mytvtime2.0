@@ -61,6 +61,10 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\UX\Map\InfoWindow;
+use Symfony\UX\Map\Map;
+use Symfony\UX\Map\Marker;
+use Symfony\UX\Map\Point;
 
 #[Route('/{_locale}/series', name: 'app_series_', requirements: ['_locale' => 'fr|en|de|es'])]
 class SeriesController extends AbstractController
@@ -542,8 +546,8 @@ class SeriesController extends AbstractController
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
 
         $schedules = $this->seriesSchedules($series);
-        $series = $series->toArray();
-        $series['schedules'] = $schedules;
+        $seriesArr = $series->toArray();
+        $seriesArr['schedules'] = $schedules;
 
         $translations = [
             'Localized overviews' => $this->translator->trans('Localized overviews'),
@@ -559,17 +563,18 @@ class SeriesController extends AbstractController
         ];
 
         dump([
-            'series' => $series,
+            'series' => $seriesArr,
             'tv' => $tv,
             'userSeries' => $userSeries,
             'providers' => $providers,
         ]);
         return $this->render('series/show.html.twig', [
-            'series' => $series,
+            'series' => $seriesArr,
             'tv' => $tv,
             'tvLists' => $tvLists,
             'userSeries' => $userSeries,
             'providers' => $providers,
+            'map' => $this->getSeriesLocations($series, $user->getPreferredLanguage() ?? $request->getLocale()),
             'translations' => $translations,
         ]);
     }
@@ -1281,6 +1286,26 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[Route('/add/location/{id}', name: 'add_location', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function addLocation(Request $request, Series $series): Response
+    {
+        $locations = $series->getLocations();
+        $data = json_decode($request->getContent(), true);
+        dump(['locations' => $locations, 'data' => $data]);
+
+        $data['latitude'] = str_replace(',', '.', $data['latitude']);
+        $data['longitude'] = str_replace(',', '.', $data['longitude']);
+        $data['latitude'] = floatval($data['latitude']);
+        $data['longitude'] = floatval($data['longitude']);
+        $locations['locations'][] = $data;
+        $series->setLocations($locations);
+        $this->seriesRepository->save($series, true);
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
     public function updateSeries(Series $series, array $tv): Series
     {
         $slugger = new AsciiSlugger();
@@ -1504,6 +1529,26 @@ class SeriesController extends AbstractController
             $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
             return $series;
         }, $this->userEpisodeRepository->historyEpisode($user, $dayCount, $country, $language));
+    }
+
+    public function getSeriesLocations(Series $series, string $locale): ?Map
+    {
+        $seriesLocation = $this->seriesRepository->oneSeriesLocations($series, $locale);
+        if (empty($seriesLocation)) {
+            return null;
+        }
+        $map = new Map();
+        if (count($seriesLocation['locations']) > 1) {
+            $map->fitBoundsToMarkers();
+        } else {
+            $map->zoom(10)
+                ->center(new Point($seriesLocation['locations'][0]['latitude'], $seriesLocation['locations'][0]['longitude']));
+        }
+
+        foreach ($seriesLocation['locations'] as $location) {
+            $map->addMarker(new Marker(new Point($location['latitude'], $location['longitude']), $seriesLocation['name'], new InfoWindow('<strong>' . $seriesLocation['name'] . '</strong> - ' . $location['description'], '<img src="' . $location['image'] . '" alt="' . $location['description'] . '" style="height: auto; width: 100%">')));
+        }
+        return $map;
     }
 
     public function now(): DateTimeImmutable

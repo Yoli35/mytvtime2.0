@@ -22,6 +22,8 @@ $fa-font-path: "../webfonts";
     --header-fade-bg: hsla(202, var(--saturation), 10%, .2);
     --header-flat-color: hsla(202, var(--saturation), 10%, .9);
 
+    --error: hsl(0, 50%, 50%);
+
     @media (prefers-color-scheme: light) {
         @for $i from 0 through 100 {
             --value-#{$i}: #{$i};
