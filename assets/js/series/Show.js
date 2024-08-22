@@ -7,6 +7,7 @@ export class Show {
     /**
      * @typedef Globs
      * @type {Object}
+     * @property {string} seriesName
      * @property {number} seriesId
      * @property {number} userSeriesId
      * @property {Array} providers
@@ -31,6 +32,7 @@ export class Show {
         const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
         const providers = jsonGlobsObject.providers;
         const seriesId = jsonGlobsObject.seriesId;
+        const seriesName = jsonGlobsObject.seriesName;
         const userSeriesId = jsonGlobsObject.userSeriesId;
         const translations = jsonGlobsObject.translations;
 
@@ -528,6 +530,7 @@ export class Show {
 
         new Keyword('series');
 
+        const seriesMap = document.querySelector('div[data-controller^="series-map"]');
         const addLocationForm = document.querySelector('#add-location-form');
         const addLocationDialog = document.querySelector('dialog.add-location-dialog');
         const addLocationButton = document.querySelector('.add-location-button');
@@ -537,11 +540,26 @@ export class Show {
         const addLocationCancel = addLocationForm.querySelector('button[type="button"]');
         const addLocationSubmit = addLocationForm.querySelector('button[type="submit"]');
 
+        if (seriesMap) {
+            const mapViewValue = JSON.parse(seriesMap.getAttribute('data-symfony--ux-leaflet-map--map-view-value'));
+            console.log({mapViewValue});
+        }
+
         addLocationButton.addEventListener('click', function () {
+            const inputs = addLocationForm.querySelectorAll('input');
+            const titleInput = addLocationForm.querySelector('input[name="title"]');
+            const locationInput = addLocationForm.querySelector('input[name="location"]');
+            inputs.forEach(function (input) {
+                input.value = '';
+            });
+            titleInput.value = seriesName;
+            locationInput.focus();
+            locationInput.select();
             addLocationDialog.showModal();
         });
-        inputGoogleMapsUrl.addEventListener('change', function () {
-            const url = this.value;
+        inputGoogleMapsUrl.addEventListener('paste', function (e) {
+            const url = e.clipboardData.getData('text');
+            // const url = this.value;
             const urlParts = url.split('@')[1].split(',');
             inputLatitude.value = urlParts[0];
             inputLongitude.value = urlParts[1];
