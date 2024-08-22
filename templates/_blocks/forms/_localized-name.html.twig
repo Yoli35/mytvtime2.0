@@ -3,7 +3,7 @@
         <div class="form-row">
             <div class="form-field">
                 <label for="name">{{ 'Localized name'|trans }}
-                    <input type="text" name="name" id="name" value="{% if media.localized_name %}{{ media.localized_name.name }}{% endif %}" required>
+                    <input type="text" name="name" id="name" value="{% if media.localized_name %}{{ media.localized_name.name }}{% endif %}" required autocomplete="false">
                     <span class="error"></span>
                 </label>
             </div>
