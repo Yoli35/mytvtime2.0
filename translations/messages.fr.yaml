@@ -67,6 +67,7 @@ seriess: séries
 series: série
 Add to pinned series: Ajouter aux séries épinglées
 Remove from pinned series: Retirer des séries épinglées
+In The Movie Database: Sur The Movie Database
 
 # All my series
 Filters: Filtres
@@ -417,7 +418,7 @@ Delete this movie from your watchlist: Supprimer ce film de votre liste de suivi
 
 
 # Map
-Shooting locations for your series: Lieux de tournage pour vos séries
+Shooting locations for your %d series: Lieux de tournage pour vos %d séries
 Shooting locations: Lieux de tournage
 Add a shooting location: Ajouter un lieu de tournage
 Location: Lieu

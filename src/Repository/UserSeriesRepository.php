@@ -252,6 +252,25 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getOne($sql);
     }
 
+    public function searchSeries(User $user, mixed $query, string $locale): array
+    {
+        $userId = $user->getId();
+        $sql = "SELECT s.`id`                                     as series_id,
+                       s.`tmdb_id`                                as tmdb_id,
+                       s.`poster_path`                            as poster_path,
+                       IF(sln.name IS NOT NULL, sln.name, s.name) as display_name,
+                       IF(sln.name IS NOT NULL, sln.slug, s.slug) as display_slug
+                FROM `user_series` us
+                         INNER JOIN `series` s ON s.`id` = us.`series_id`
+                         LEFT JOIN `series_localized_name` sln ON s.`id` = sln.`series_id` AND sln.locale = '$locale'
+                WHERE us.user_id = $userId
+                  AND (s.name LIKE '%$query%' OR s.original_name LIKE '%$query%' OR sln.name LIKE '%$query%')
+                ORDER BY s.`first_air_date` DESC
+                LIMIT 20";
+
+        return $this->getAll($sql);
+    }
+
     public function getAll($sql): array
     {
         try {

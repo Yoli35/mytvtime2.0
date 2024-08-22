@@ -23,7 +23,14 @@
             <li><a href="{{ path('app_series_all') }}" class="desktop">{{ 'All my series'|trans }}</a></li>
             <li>
                 <label for="tv-search">
-                    <input type="search" id="tv-search" class="search" spellcheck="false">
+                    <input type="search" id="tv-search" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}">
+                    {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                </label>
+                <div class="search-results"></div>
+            </li>
+            <li>
+                <label for="tv-search-db">
+                    <input type="search" id="tv-search-db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}">
                     {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                 </label>
                 <div class="search-results"></div>

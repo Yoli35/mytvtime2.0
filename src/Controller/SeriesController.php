@@ -63,6 +63,7 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\Map\InfoWindow;
 use Symfony\UX\Map\Map;
+use Symfony\UX\Map\MapOptionsInterface;
 use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
 
@@ -574,7 +575,7 @@ class SeriesController extends AbstractController
             'tvLists' => $tvLists,
             'userSeries' => $userSeries,
             'providers' => $providers,
-            'map' => $this->getSeriesLocations($series, $user->getPreferredLanguage() ?? $request->getLocale()),
+            'seriesLocations' => $this->getSeriesLocations($series, $user->getPreferredLanguage() ?? $request->getLocale()),
             'translations' => $translations,
         ]);
     }
@@ -1308,6 +1309,22 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[Route('/fetch/search/db/tv', name: 'fetch_search_db_tv', methods: ['POST'])]
+    public function fetchSearchDbTv(Request $request): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+        $data = json_decode($request->getContent(), true);
+        $query = $data['query'];
+        $series = $this->userSeriesRepository->searchSeries($user, $query, $locale);
+
+        return $this->json([
+            'ok' => true,
+            'results' => $series,
+        ]);
+    }
+
     public function updateSeries(Series $series, array $tv): Series
     {
         $slugger = new AsciiSlugger();
@@ -1533,14 +1550,15 @@ class SeriesController extends AbstractController
         }, $this->userEpisodeRepository->historyEpisode($user, $dayCount, $country, $language));
     }
 
-    public function getSeriesLocations(Series $series, string $locale): ?Map
+    public function getSeriesLocations(Series $series, string $locale): array
     {
         $seriesLocation = $this->seriesRepository->oneSeriesLocations($series, $locale);
         if (empty($seriesLocation)) {
-            return null;
+            return ['map'=>null, 'locations'=> null];
         }
         $map = new Map();
-        if (count($seriesLocation['locations']) > 1) {
+        $count = count($seriesLocation['locations']);
+        if ($count > 1) {
             $map->fitBoundsToMarkers();
         } else {
             $map->zoom(10)
@@ -1550,7 +1568,8 @@ class SeriesController extends AbstractController
         foreach ($seriesLocation['locations'] as $location) {
             $map->addMarker(new Marker(new Point($location['latitude'], $location['longitude']), $seriesLocation['name'], new InfoWindow('<strong>' . $seriesLocation['name'] . '</strong> - ' . $location['description'], '<img src="' . $location['image'] . '" alt="' . $location['description'] . '" style="height: auto; width: 100%">')));
         }
-        return $map;
+        dump($seriesLocation['locations']);
+        return ['map'=>$map, 'locations'=> $seriesLocation['locations']];
     }
 
     public function now(): DateTimeImmutable

@@ -59,6 +59,15 @@ export class Menu {
      * @property {string} profile_path
      * @property {Array} known_for
      */
+
+    /**
+     * @typedef DbSeries
+     * @type {Object}
+     * @property {string} display_name
+     * @property {string} display_slug
+     * @property {number} series_id
+     * @property {string} poster_path
+     */
     constructor() {
         gThis = this;
         this.menuPreview = document.querySelector(".menu-preview");
@@ -89,6 +98,7 @@ export class Menu {
         const detailsElements = document.querySelectorAll("details");
         const movieSearch = navbar.querySelector("#movie-search");
         const tvSearch = navbar.querySelector("#tv-search");
+        const tvSearchDb = navbar.querySelector("#tv-search-db");
         const personSearch = navbar.querySelector("#person-search");
 
         burger.addEventListener("click", () => {
@@ -327,91 +337,67 @@ export class Menu {
         });
         tvSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
-        /*const personResult ={
-              "page": 1,
-              "results": [
-                {
-                  "adult": false,
-                  "gender": 2,
-                  "id": 587634,
-                  "known_for_department": "Acting",
-                  "name": "Park Bo-gum",
-                  "original_name": "박보검",
-                  "popularity": 45.927,
-                  "profile_path": "/lITY3WsJOFjlHkP1bJ3PwYhuNnD.jpg",
-                  "known_for": [
-                    {
-                      "backdrop_path": "/18ypvPahjmmue1iR4N4YgTBrO8N.jpg",
-                      "id": 99047,
-                      "name": "Record of Youth",
-                      "original_name": "청춘기록",
-                      "overview": "Deux acteurs et une maquilleuse luttent pour se frayer un chemin dans un univers qui prend plus en considération leurs origines et leur passé que leurs rêves d'avenir.",
-                      "poster_path": "/54yTLS5d4OPOuunzOvHlmP82eIT.jpg",
-                      "media_type": "tv",
-                      "adult": false,
-                      "original_language": "ko",
-                      "genre_ids": [
-                        18
-                      ],
-                      "popularity": 191.587,
-                      "first_air_date": "2020-09-07",
-                      "vote_average": 8.2,
-                      "vote_count": 201,
-                      "origin_country": [
-                        "KR"
-                      ]
+        tvSearchDb.addEventListener("input", (e) => {
+            const value = e.target.value;
+            if (value.length > 2) {
+                const searchResults = tvSearchDb.closest("li").querySelector(".search-results");
+                const url = `/${gThis.lang}/series/fetch/search/db/tv`;
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        accept: 'application/json'
                     },
-                    {
-                      "backdrop_path": "/yC4DRg5aGgNpkHpUDpLtBqzownS.jpg",
-                      "id": 586047,
-                      "title": "Seobok",
-                      "original_title": "서복",
-                      "overview": "Ki Heon, ancien agent secret atteint d’un cancer en phase terminale, se voit confier une dernière mission : assurer le transport en toute sécurité du premier clone humain Seo Bok, dont le code génétique détient le secret de la vie éternelle. Un pouvoir extraordinaire qui est cible de toutes les convoitises. Bien que ses jours soient comptés, Ki Heon est bien décidé à protéger Seobok au péril de sa vie !",
-                      "poster_path": "/7sPEI9L5kyR14JijGnuTWiL3kwr.jpg",
-                      "media_type": "movie",
-                      "adult": false,
-                      "original_language": "ko",
-                      "genre_ids": [
-                        878,
-                        28,
-                        53,
-                        9648
-                      ],
-                      "popularity": 28.746,
-                      "release_date": "2021-04-12",
-                      "video": false,
-                      "vote_average": 7.214,
-                      "vote_count": 215
-                    },
-                    {
-                      "backdrop_path": "/1nvdHIVrCuJahMAXYcSx2Mh9bPt.jpg",
-                      "id": 66256,
-                      "name": "Moonlight Drawn by Clouds",
-                      "original_name": "구르미 그린 달빛",
-                      "overview": "En Corée sous la Dynastie Joseon, une jeune femme qui à vécu jusque-là dans la peau d'un homme, devient eunuque au palais royal et noue des liens avec le prince héritier.",
-                      "poster_path": "/qKir5S1ka8UkWVo8aGW9T19IIHC.jpg",
-                      "media_type": "tv",
-                      "adult": false,
-                      "original_language": "ko",
-                      "genre_ids": [
-                        35,
-                        18,
-                        10768
-                      ],
-                      "popularity": 90.432,
-                      "first_air_date": "2016-08-22",
-                      "vote_average": 6.753,
-                      "vote_count": 75,
-                      "origin_country": [
-                        "KR"
-                      ]
-                    }
-                  ]
-                }
-              ],
-              "total_pages": 1,
-              "total_results": 1
-            };*/
+                    body: JSON.stringify({query: value})
+                };
+                console.log({url, options});
+
+                fetch(url, options)
+                    .then(res => res.json())
+                    .then(json => {
+                        searchResults.innerHTML = '';
+                        const ul = document.createElement("ul");
+                        ul.setAttribute("data-type", "dbtv");
+                        /** @type {DbSeries} */
+                        json.results.forEach((result) => {
+                            const a = document.createElement("a");
+                            a.href = '/' + gThis.lang + '/series/show/' + result.series_id + '-' + result.display_slug;
+                            const li = document.createElement("li");
+                            li.setAttribute("data-id", result.series_id);
+                            li.setAttribute("data-slug", result.display_slug);
+                            const posterDiv = document.createElement("div");
+                            posterDiv.classList.add("poster");
+                            if (result.poster_path) {
+                                const img = document.createElement("img");
+                                img.src = '/series/posters' + result.poster_path;
+                                img.alt = result.display_name;
+                                posterDiv.appendChild(img);
+                            } else {
+                                posterDiv.innerHTML = 'No poster';
+                            }
+                            a.appendChild(posterDiv);
+                            const titleDiv = document.createElement("div");
+                            titleDiv.classList.add("title");
+                            titleDiv.innerHTML = result.display_name;
+                            a.appendChild(titleDiv);
+                            // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu
+                            a.addEventListener("auxclick", (e) => {
+                                const details = e.currentTarget.closest("details");
+                                ul.remove();
+                                tvSearch.value = '';
+                                details.removeAttribute("open");
+                            });
+                            li.appendChild(a);
+                            ul.appendChild(li);
+                        });
+                        searchResults.appendChild(ul);
+                    })
+                    .catch(err => console.error('error:' + err));
+            } else {
+                tvSearch.closest("li").querySelector(".search-results").innerHTML = '';
+            }
+        });
+        tvSearchDb.addEventListener("keydown", gThis.searchMenuNavigate);
+
         personSearch.addEventListener("input", (e) => {
             const value = e.target.value;
             if (value.length > 2) {
@@ -476,16 +462,16 @@ export class Menu {
     }
 
     searchMenuNavigate(e) {
-        // movieSearch, tvSearch or personSearch
+        // movieSearch, tvSearch, tvSearchDb or personSearch
         const searchMenu = e.target;
-        console.log({e});
+        // console.log({e});
         const value = e.target.value;
         if (value.length > 2) {
             const ul = searchMenu.closest("li").querySelector(".search-results ul");
             if (!ul) return;
             const type = ul.getAttribute("data-type");
-            console.log({ul});
-            console.log(e.key);
+            // console.log({ul});
+            // console.log(e.key);
             if (e.key === 'Enter') {
                 e.preventDefault();
                 const li = ul.querySelector("li.active") || ul.querySelector("li");
@@ -502,6 +488,10 @@ export class Menu {
                 if (type === 'tv') {
                     const slug = li.getAttribute("data-slug");
                     window.location.href = '/' + gThis.lang + '/series/tmdb/' + id + '-' + slug;
+                }
+                if (type === 'dbtv') {
+                    const slug = li.getAttribute("data-slug");
+                    window.location.href = '/' + gThis.lang + '/series/show/' + id + '-' + slug;
                 }
                 if (type === 'person') {
                     const slug = li.getAttribute("data-slug");
