@@ -1,4 +1,4 @@
-import { Controller } from '@hotwired/stimulus';
+import {Controller} from '@hotwired/stimulus';
 
 export default class extends Controller {
     connect() {
@@ -21,7 +21,7 @@ export default class extends Controller {
     }
 
     _onPreConnect(event) {
-        // The map is not created yet
+        // The map is not created, yet
         // You can use this event to configure the map before it is created
         console.log(event.detail.options);
     }
@@ -32,10 +32,17 @@ export default class extends Controller {
         console.log(event.detail.map);
         console.log(event.detail.markers);
         console.log(event.detail.infoWindows);
+
+        const markerCount = event.detail.markers.length;
+        const seriesMapTitle = document.querySelector('#series-map-title').querySelector('.title');
+        seriesMapTitle.textContent += ` (${markerCount})`;
+
+        // const firstInfoWindow = event.detail.infoWindows[0];
+        // firstInfoWindow.options.opened = true;
     }
 
     _onMarkerBeforeCreate(event) {
-        // The marker is not created yet
+        // The marker is not created, yet
         // You can use this event to configure the marker before it is created
         console.log(event.detail.definition);
     }
@@ -47,7 +54,7 @@ export default class extends Controller {
     }
 
     _onInfoWindowBeforeCreate(event) {
-        // The infoWindow is not created yet
+        // The infoWindow is not created, yet
         // You can use this event to configure the infoWindow before it is created
         console.log(event.detail.definition);
         // The associated marker instance is also available
@@ -60,5 +67,6 @@ export default class extends Controller {
         console.log(event.detail.infoWindow);
         // The associated marker instance is also available
         console.log(event.detail.marker);
+        console.log(event);
     }
 }
