@@ -195,7 +195,7 @@
                             <div class="form-row">
                                 <div class="form-field">
                                     <label for="name">{{ 'Name'|trans }}
-                                        <input type="text" name="name" id="name" required>
+                                        <input type="text" name="name" id="name" required autocomplete="false">
                                         <span class="error"></span>
                                     </label>
                                 </div>
@@ -464,16 +464,31 @@
                 </div>
             </div>
             <div class="content">
-                <h3>{{ 'Shooting locations'|trans }}</h3>
+                <div id="series-map-title">
+                    <div class="title">{{ 'Shooting locations'|trans }}</div>
+                    <div class="add-location-button" data-title="{{ 'Add a shooting location'|trans }}">
+                        {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                    </div>
+                </div>
                 <div class="series-map">
+                    {% set map = seriesLocations.map %}
                     {% if map %}
                         {{ render_map(map, { 'data-controller': 'series_map', class: 'map-controller' }) }}
-                    {% endif %}
-                    <div class="add-location">
-                        <div class="add-location-button" data-title="{{ 'Add a shooting location'|trans }}">
-                            {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                        <div class="locations">
+                            <ul>
+                                {% for location in seriesLocations.locations %}
+                                    <li data-lat="{{ location.latitude }}" data-lon="{{ location.longitude }}">
+                                        <div class="image">
+                                            <img src="{{ location.image }}" alt="{{ location.location }}">
+                                        </div>
+                                        <div class="location">
+                                            {{ location.location }}
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
                         </div>
-                    </div>
+                    {% endif %}
                     <dialog class="add-location-dialog">
                         <form action="" id="add-location-form">
                             <div class="form-row">
@@ -494,6 +509,22 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-field">
+                                    <label for="description">{{ 'Description'|trans }}
+                                        <input type="text" name="description" id="description" required>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="image">{{ 'Image'|trans }}
+                                        <input type="url" name="image" id="image" required>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
                                     <label for="google-map-url">{{ 'Paste Google maps url here to obtain latitude and longitude'|trans }}
                                         <input type="url" name="google-map-url" id="google-map-url">
                                     </label>
@@ -507,22 +538,6 @@
                                     </label>
                                     <label for="longitude">{{ 'Longitude'|trans }}
                                         <input type="number" name="longitude" id="longitude" step="0.0000001" required>
-                                        <span class="error"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="description">{{ 'Description'|trans }}
-                                        <input type="text" name="description" id="description" required></input>
-                                        <span class="error"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="image">{{ 'Image'|trans }}
-                                        <input type="url" name="image" id="image" required>
                                         <span class="error"></span>
                                     </label>
                                 </div>
@@ -557,6 +572,11 @@
     </div>
     <div id="globs" style="display: none">
         {
+        {% if tv.localized_name %}
+            "seriesName": "{{ tv.localized_name.name }}",
+        {% else %}
+            "seriesName": "{{ series.name }}",
+        {% endif %}
         "seriesId": {{ series.id }},
         "userSeriesId": {{ userSeries.id }},
         "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},

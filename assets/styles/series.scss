@@ -1845,6 +1845,27 @@ h2 {
     }
 }
 
+#series-map-title {
+    align-items: center;
+    display: flex;
+    font-size: 1.5rem;
+    font-weight: 100;
+    gap: .5rem;
+    line-height: 1.25em;
+    margin-block: 1rem .5rem;
+
+    .add-location-button {
+        background-color: var(--orange-50);
+        border: 2px solid var(--orange-90);
+        border-radius: .25rem;
+        color: var(--orange-90);
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 300;
+        padding-inline: .5rem;
+    }
+}
+
 .series-map {
     display: flex;
     flex-direction: column;
@@ -1866,19 +1887,46 @@ h2 {
         }
     }
 
-    .add-location {
+    .locations {
         display: flex;
-        justify-content: flex-end;
+        overflow-x: auto;
 
-        .add-location-button {
-            background-color: var(--orange-50);
-            border: 2px solid var(--orange-90);
-            border-radius: .25rem;
-            color: var(--orange-90);
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 300;
-            padding-inline: .5rem;
+        ul {
+            display: flex;
+            gap: 1rem;
+            margin-inline: auto;
+
+            li {
+                background-color: var(--ardoise-100-alpha-50);
+                border-radius: .25rem;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                gap: .5rem;
+
+                .image {
+                    aspect-ratio: 16/9;
+                    width: 15rem;
+
+                    img {
+                        aspect-ratio: 16 / 9;
+                        border-radius: .25rem .25rem 0 0;
+                        height: 100%;
+                        object-fit: cover;
+                        width: 100%;
+                    }
+                }
+
+                .location {
+                    align-items: center;
+                    display: flex;
+                    height: 100%;
+                    justify-content: center;
+                    padding-inline: .5rem;
+                    text-align: center;
+                    width: 15rem;
+                }
+            }
         }
     }
 }
