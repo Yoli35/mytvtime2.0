@@ -8,6 +8,7 @@ use App\Form\UserType;
 use App\Repository\EpisodeNotificationRepository;
 use App\Repository\ProviderRepository;
 use App\Repository\UserEpisodeNotificationRepository;
+use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
@@ -29,7 +30,8 @@ class UserController extends AbstractController
         private readonly DateService                       $dateService,
         private readonly ImageConfiguration                $imageConfiguration,
         private readonly ProviderRepository                $providerRepository,
-        private readonly TMDBService                       $tmdbService,
+//        private readonly TMDBService                       $tmdbService,
+        private readonly WatchProviderRepository           $watchProviderRepository,
     )
     {
     }
@@ -118,35 +120,37 @@ class UserController extends AbstractController
 
     public function getProviders($user): array
     {
-        $language = $user->getPreferredLanguage() ?? 'fr' . '-' . $user->getCountry() ?? 'FR';
+//        $language = $user->getPreferredLanguage() ?? 'fr' . '-' . $user->getCountry() ?? 'FR';
         $country = $user->getCountry() ?? 'FR';
-        $tmdbProviders = json_decode($this->tmdbService->getTvWatchProviderList($language, $country), true);
-        $localProviders = $this->providerRepository->findAll();
-        $newLocalProvider = false;
+//        $tmdbProviders = json_decode($this->tmdbService->getTvWatchProviderList($language, $country), true);
+//        $localProviders = $this->providerRepository->findAll();
+//        $newLocalProvider = false;
+//
+//        foreach ($tmdbProviders['results'] as $provider) {
+//            if (!$this->isLocalProvider($provider, $localProviders)) {
+//                $localProvider = new Provider();
+//                $localProvider->setProviderId($provider['provider_id']);
+//                $localProvider->setName($provider['provider_name']);
+//                $localProvider->setLogoPath($provider['logo_path']);
+//                $this->entityManager->persist($localProvider);
+//                $newLocalProvider = true;
+//            }
+//        }
+//        if ($newLocalProvider) {
+//            $this->entityManager->flush();
+//        }
 
-        foreach ($tmdbProviders['results'] as $provider) {
-            if (!$this->isLocalProvider($provider, $localProviders)) {
-                $localProvider = new Provider();
-                $localProvider->setProviderId($provider['provider_id']);
-                $localProvider->setName($provider['provider_name']);
-                $localProvider->setLogoPath($provider['logo_path']);
-                $this->entityManager->persist($localProvider);
-                $newLocalProvider = true;
-            }
-        }
-        if ($newLocalProvider) {
-            $this->entityManager->flush();
-        }
-
+        $providers = $this->watchProviderRepository->getWatchProviderList($country);
         $arr = array_map(function ($provider) {
             return [
                 'id' => $provider['provider_id'],
                 'name' => $provider['provider_name'],
                 'logo' => $this->imageConfiguration->getCompleteUrl($provider['logo_path'], 'logo_sizes', 2)
             ];
-        }, $tmdbProviders['results'] ?? []);
+//        }, $tmdbProviders['results'] ?? []);
+        }, $providers);
         usort($arr, function ($a, $b) {
-            return $a['name'] <=> $b['name'];
+            return strcasecmp($a['name'], $b['name']);
         });
         return $arr;
     }

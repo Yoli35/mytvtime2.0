@@ -247,6 +247,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        ue.`season_number`              as seasonNumber,
                        p.`name`                        as providerName,
                        p.`logo_path`                   as providerLogoPath,
+                       p.provider_id                   as providerId,
                        sdo.offset                      as dayOffset,
                        (SELECT count(*)
                         FROM user_episode ue
