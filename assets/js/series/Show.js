@@ -36,6 +36,9 @@ export class Show {
         const userSeriesId = jsonGlobsObject.userSeriesId;
         const translations = jsonGlobsObject.translations;
 
+        /******************************************************************************
+         * Animation for the progress bar                                             *
+         ******************************************************************************/
         const progressDiv = document.querySelector('.progress');
         const progressBarDiv = document.querySelector('.progress-bar');
         const progress = progressDiv.getAttribute('data-value');
@@ -43,6 +46,9 @@ export class Show {
         progressBarDiv.style.width = progress + '%';
         progressBarDiv.setAttribute('aria-valuenow', progress);
 
+        /******************************************************************************
+         * User's actions: rating, pinned, favorite, remove this series               *
+         ******************************************************************************/
         const userActions = document.querySelector('.user-actions');
         const lang = document.documentElement.lang;
         if (userActions) {
@@ -80,65 +86,69 @@ export class Show {
                     });
                 });
             });
+
+            const pinned = userActions.querySelector('.toggle-pinned-series');
+            pinned.addEventListener('click', function () {
+                const isPinned = this.classList.contains('pinned');
+                fetch('/' + lang + '/series/pinned/' + userSeriesId,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({newStatus: isPinned ? 0 : 1})
+                    }
+                ).then(function (response) {
+                    if (response.ok) {
+                        window.location.reload();
+                    }
+                });
+            });
+
+            const favorite = userActions.querySelector('.toggle-favorite-series');
+            favorite.addEventListener('click', function () {
+                const isFavorite = this.classList.contains('favorite');
+                fetch('/' + lang + '/series/favorite/' + userSeriesId,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({favorite: isFavorite ? 0 : 1})
+                    }
+                ).then(function (response) {
+                    if (response.ok) {
+                        favorite.classList.toggle('favorite');
+                        if (favorite.classList.contains('favorite')) {
+                            favorite.setAttribute('data-title', translations['Remove from favorites']);
+                        } else {
+                            favorite.setAttribute('data-title', translations['Add to favorites']);
+                        }
+                    }
+                });
+            });
+
+            const removeThisSeries = userActions.querySelector('.remove-this-series');
+            removeThisSeries.addEventListener('click', function () {
+                fetch('/' + lang + '/series/remove/' + userSeriesId,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                ).then(function (response) {
+                    if (response.ok) {
+                        window.location.href = '/' + lang + '/series/tmdb/{{ series.tmdbId }}-{{ series.slug }}';
+                    }
+                });
+            });
         }
 
-        const pinned = userActions.querySelector('.toggle-pinned-series');
-        pinned.addEventListener('click', function () {
-            const isPinned = this.classList.contains('pinned');
-            fetch('/' + lang + '/series/pinned/' + userSeriesId,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({newStatus: isPinned ? 0 : 1})
-                }
-            ).then(function (response) {
-                if (response.ok) {
-                    window.location.reload();
-                }
-            });
-        });
-
-        const favorite = userActions.querySelector('.toggle-favorite-series');
-        favorite.addEventListener('click', function () {
-            const isFavorite = this.classList.contains('favorite');
-            fetch('/' + lang + '/series/favorite/' + userSeriesId,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({favorite: isFavorite ? 0 : 1})
-                }
-            ).then(function (response) {
-                if (response.ok) {
-                    favorite.classList.toggle('favorite');
-                    if (favorite.classList.contains('favorite')) {
-                        favorite.setAttribute('data-title', translations['Remove from favorites']);
-                    } else {
-                        favorite.setAttribute('data-title', translations['Add to favorites']);
-                    }
-                }
-            });
-        });
-
-        const removeThisSeries = userActions.querySelector('.remove-this-series');
-        removeThisSeries.addEventListener('click', function () {
-            fetch('/' + lang + '/series/remove/' + userSeriesId,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
-            ).then(function (response) {
-                if (response.ok) {
-                    window.location.href = '/' + lang + '/series/tmdb/{{ series.tmdbId }}-{{ series.slug }}';
-                }
-            });
-        });
-
+        /******************************************************************************
+         * Watch links: add.                                                          *
+         * TODO: edit, delete                                                         *
+         ******************************************************************************/
         const addWatchLink = document.querySelector('.add-watch-link');
         const watchLinkForm = document.querySelector('.watch-link-form');
         const form = document.querySelector('#watch-link-form');
@@ -230,6 +240,9 @@ export class Show {
             }
         });
 
+        /******************************************************************************
+         * Menu to add a localized name or an overview and additional overview        *
+         ******************************************************************************/
         const seriesToolsClick = document.querySelector('.series-tools-click');
         const seriesToolsMenu = document.querySelector('.series-tools-menu');
         seriesToolsClick.addEventListener('click', function () {
@@ -329,7 +342,10 @@ export class Show {
             const hiddenInputTool = ovForm.querySelector('#tool');
             hiddenInputTool.setAttribute('data-type', 'localized');
             hiddenInputTool.setAttribute('data-crud', 'add');
+            hiddenInputTool.setAttribute('data-overview-id', '');
             firstRow.classList.add('hide');
+            const submitButton = ovForm.querySelector('button[type="submit"]');
+            submitButton.textContent = translations['Add'];
             gThis.displayForm(overviewForm);
         });
 
@@ -339,6 +355,8 @@ export class Show {
             hiddenInputTool.setAttribute('data-type', 'additional');
             hiddenInputTool.setAttribute('data-crud', 'add');
             firstRow.classList.remove('hide');
+            const submitButton = ovForm.querySelector('button[type="submit"]');
+            submitButton.textContent = translations['Add'];
             gThis.displayForm(overviewForm);
         });
 
@@ -346,6 +364,7 @@ export class Show {
             gThis.hideForm(overviewForm);
         });
 
+        /* Tools for every added overview */
         if (overviews) {
             overviews.forEach(function (overview) {
                 const type = overview.classList.contains('localized') ? 'localized' : 'additional';
@@ -361,6 +380,7 @@ export class Show {
                     hiddenInputTool.value = id;
                     hiddenInputTool.setAttribute('data-type', type);
                     hiddenInputTool.setAttribute('data-crud', 'edit');
+                    hiddenInputTool.setAttribute('data-overview-id', id);
                     overviewField.value = content.trim();
                     const firstRow = form.querySelector('.form-row:first-child');
                     if (type === 'localized') {
@@ -368,6 +388,8 @@ export class Show {
                     } else {
                         firstRow.classList.remove('hide');
                     }
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    submitButton.textContent = translations['Edit'];
                     gThis.displayForm(overviewForm);
                 });
                 del.addEventListener('click', function () {
@@ -398,6 +420,8 @@ export class Show {
                 error.textContent = '';
             });
             const type = hiddenInputTool.getAttribute('data-type');
+            const overviewId = parseInt(hiddenInputTool.getAttribute('data-overview-id'));
+            const crud = hiddenInputTool.getAttribute('data-crud');
             const additional = type === 'additional';
             if (additional && !source.value) {
                 sourceError.textContent = gThis.translations['This field is required'];
@@ -405,7 +429,14 @@ export class Show {
             if (!overviewField.value) {
                 overviewError.textContent = gThis.translations['This field is required'];
             }
-            let data = {source: source.value, overview: overviewField.value, type: type, crud: hiddenInputTool.getAttribute('data-crud'), locale: lang};
+            let data = {
+                overviewId: overviewId,
+                source: source.value,
+                overview: overviewField.value,
+                type: type,
+                crud: crud,
+                locale: lang
+            };
 
             fetch('/' + lang + '/series/add/edit/overview/' + seriesId, {
                 method: 'POST',
@@ -417,6 +448,42 @@ export class Show {
                 if (response.ok) {
                     gThis.hideForm(overviewForm);
 
+                    if (crud === 'edit') {
+                        const overviewDiv = document.querySelector('.' + type + '.overview[data-id="' + overviewId + '"]');
+                        const contentDiv = overviewDiv.querySelector('.content');
+                        const newContentText = overviewField.value;
+                        // replace \n by <br>
+                        contentDiv.innerHTML = newContentText.replace(/\n/g, '<br>');
+
+                        /*const toolsDiv = overviewDiv.querySelector('.tools');
+                        const sourceDiv = toolsDiv.querySelector('.source');
+                        if (source.value) {
+                            if (sourceDiv) {
+                                const sourceA = sourceDiv.querySelector('a');
+                                sourceA.href = source.value;
+                                sourceA.setAttribute('data-title', source.value);
+                                sourceA.textContent = source.value;
+                            } else {
+                                const sourceDiv = document.createElement('div');
+                                sourceDiv.classList.add('source');
+                                const sourceA = document.createElement('a');
+                                sourceA.href = source.value;
+                                sourceA.setAttribute('data-title', source.value);
+                                sourceA.target = '_blank';
+                                sourceA.rel = 'noopener noreferrer';
+                                sourceA.textContent = source.value;
+                                sourceDiv.appendChild(sourceA);
+                                toolsDiv.insertBefore(sourceDiv, toolsDiv.firstChild);
+                            }
+                        } else {
+                            if (sourceDiv) {
+                                sourceDiv.remove();
+                            }
+                        }*/
+                        return;
+                    }
+
+                    // crud: add
                     const infos = document.querySelector('.infos');
                     let h4 = infos.querySelector('.' + type + '-h4'), overviewsDiv;
                     if (!h4) {
@@ -528,8 +595,14 @@ export class Show {
             });
         });
 
+        /******************************************************************************
+         * Keyword translation                                                        *
+         ******************************************************************************/
         new Keyword('series');
 
+        /******************************************************************************
+         * Filming location form                                                      *
+         ******************************************************************************/
         const seriesMap = document.querySelector('div[data-controller^="series-map"]');
         const addLocationForm = document.querySelector('#add-location-form');
         const addLocationDialog = document.querySelector('dialog.add-location-dialog');
@@ -553,9 +626,9 @@ export class Show {
                 input.value = '';
             });
             titleInput.value = seriesName;
+            addLocationDialog.showModal();
             locationInput.focus();
             locationInput.select();
-            addLocationDialog.showModal();
         });
         inputGoogleMapsUrl.addEventListener('paste', function (e) {
             const url = e.clipboardData.getData('text');

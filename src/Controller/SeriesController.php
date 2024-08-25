@@ -778,23 +778,38 @@ class SeriesController extends AbstractController
     {
         $serie = $this->seriesRepository->findOneBy(['id' => $id]);
         $data = json_decode($request->getContent(), true);
+        dump($data);
+        $overviewId = $data['overviewId'];
+        $overviewId = $overviewId == "" ? null : intval($overviewId);
         $overviewType = $data['type'];
         $overview = $data['overview'];
         $locale = $data['locale'];
         $source = null;
-        $overviewId = null;
 
         if ($overviewType == "additional") {
             $sourceId = $data['source'];
             $source = $this->sourceRepository->findOneBy(['id' => $sourceId]);
-            $seriesAdditionalOverview = new SeriesAdditionalOverview($serie, $overview, $locale, $source);
-            $this->seriesAdditionalOverviewRepository->save($seriesAdditionalOverview, true);
-            $overviewId = $seriesAdditionalOverview->getId();
+            if ($overviewId) {
+                $seriesAdditionalOverview = $this->seriesAdditionalOverviewRepository->findOneBy(['id' => $overviewId]);
+                $seriesAdditionalOverview->setOverview($overview);
+                $seriesAdditionalOverview->setSource($source);
+                $this->seriesAdditionalOverviewRepository->save($seriesAdditionalOverview, true);
+            } else {
+                $seriesAdditionalOverview = new SeriesAdditionalOverview($serie, $overview, $locale, $source);
+                $this->seriesAdditionalOverviewRepository->save($seriesAdditionalOverview, true);
+                $overviewId = $seriesAdditionalOverview->getId();
+            }
         }
         if ($overviewType == "localized") {
-            $seriesLocalizedOverview = new SeriesLocalizedOverview($serie, $overview, $locale);
-            $this->seriesLocalizedOverviewRepository->save($seriesLocalizedOverview, true);
-            $overviewId = $seriesLocalizedOverview->getId();
+            if ($overviewId) {
+                $seriesLocalizedOverview = $this->seriesLocalizedOverviewRepository->findOneBy(['id' => $overviewId]);
+                $seriesLocalizedOverview->setOverview($overview);
+                $this->seriesLocalizedOverviewRepository->save($seriesLocalizedOverview, true);
+            } else {
+                $seriesLocalizedOverview = new SeriesLocalizedOverview($serie, $overview, $locale);
+                $this->seriesLocalizedOverviewRepository->save($seriesLocalizedOverview, true);
+                $overviewId = $seriesLocalizedOverview->getId();
+            }
         }
 
         return $this->json([
@@ -1543,7 +1558,7 @@ class SeriesController extends AbstractController
     {
         return array_map(function ($series) {
             $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
-            $series['providerLogoPath'] = $series['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($series['providerLogoPath'], 'logo_sizes', 2) : null;
+            $series['providerLogoPath'] = $series['providerLogoPath'] ? ($series['providerId'] > 0 ? $this->imageConfiguration->getCompleteUrl($series['providerLogoPath'], 'logo_sizes', 2):'/images/providers'.$series['providerLogoPath']) : null;
             $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
             $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
             return $series;
@@ -1961,7 +1976,9 @@ class SeriesController extends AbstractController
             else
                 $watchProviderLogos[$provider['provider_id']] = '/images/providers' . $provider['logo_path'];
         }
-        ksort($watchProviders);
+        uksort($watchProviders, function ($a, $b) {
+            return strcasecmp($a, $b);
+        });
         $list = [];
         foreach ($watchProviders as $key => $value) {
             $list[] = ['provider_id' => $value, 'provider_name' => $key, 'logo_path' => $watchProviderLogos[$value]];
