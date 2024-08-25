@@ -76,7 +76,7 @@ class HomeController extends AbstractController
                 $series['localized_name'] = $series['localizedName'];
                 $series['localized_slug'] = $series['localizedSlug'];
                 return $series;
-            }, $this->userEpisodeRepository->lastAddedSeries($user, $language, 1, 20));
+            }, $this->userEpisodeRepository->lastAddedSeries($user, $language, 1, 50));
             // Historique des séries vues
             $historySeries = array_map(function ($series) {
                 $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
