@@ -2,7 +2,7 @@
     <form class="form" action="" id="overview-form">
         <div class="form-row">
             <div class="form-field">
-                <label for="overview-source">{{ 'Source'|trans }} <span class="required">*</span> <span class="error"></span>
+                <label for="overview-source"><span>{{ 'Source'|trans }} <span class="required">*</span></span> <span class="error"></span>
                     <select name="source" id="overview-source">
                         <option value="">{{ 'Select a source'|trans }}</option>
                         {% for source in media.sources %}
@@ -14,7 +14,7 @@
         </div>
         <div class="form-row">
             <div class="form-field">
-                <label for="overview-field">{{ 'Overview'|trans }} <span class="required">*</span> <span class="error"></span>
+                <label for="overview-field"><span>{{ 'Overview'|trans }} <span class="required">*</span></span> <span class="error"></span>
                     <textarea id="overview-field" rows="5" required></textarea>
                     <span class="error"></span>
                 </label>

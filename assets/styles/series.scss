@@ -205,14 +205,14 @@ h2 {
                 font-size: clamp(1rem, 1.5vw, 2rem);
                 font-weight: 300;
                 gap: .5rem;
-                line-height: clamp(1rem, 1.6vw, 2rem);
+                line-height: clamp(1.25rem, 1.875vw, 2.5rem);
                 justify-content: flex-start;
             }
 
             .localized-h4, .additional-h4 {
                 background-color: var(--orange-20);
                 color: var(--orange-70);
-                font-size: 1.25rem;
+                font-size: clamp(1.25rem, 1.875vw, 2.5rem);
                 font-weight: 300;
                 padding-block: .25rem;
                 padding-inline: .5rem;
@@ -232,9 +232,9 @@ h2 {
                 .overview {
                     align-items: center;
                     display: flex;
-                    font-size: clamp(1rem, 1vw, 2rem);
+                    font-size: clamp(1rem, 1.5vw, 2rem);
                     gap: .5rem;
-                    line-height: clamp(1rem, 1.1vw, 2rem);
+                    line-height: clamp(1.25rem, 1.875vw, 2.5rem);
                     justify-content: flex-start;
                     width: 100%;
 
@@ -301,10 +301,6 @@ h2 {
                                 background-color: var(--remove-this-series);
                             }
                         }
-                    }
-
-                    &.additional {
-                        margin-block-end: 1rem;
                     }
                 }
             }

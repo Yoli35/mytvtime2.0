@@ -373,7 +373,7 @@ export class Show {
                 const del = tools.querySelector('.delete');
                 edit.addEventListener('click', function () {
                     const id = this.getAttribute('data-id');
-                    const content = overview.querySelector('.content').textContent;
+                    const content = overview.querySelector('.content').getAttribute('data-overview');
                     const form = document.querySelector('.overview-form');
                     const hiddenInputTool = form.querySelector('#tool');
                     const overviewField = form.querySelector('#overview-field');
@@ -387,6 +387,11 @@ export class Show {
                         firstRow.classList.add('hide');
                     } else {
                         firstRow.classList.remove('hide');
+                        const select = form.querySelector('#overview-source');
+                        const sourceId = overview.getAttribute('data-source-id');
+                        if (sourceId) {
+                            select.value = sourceId;
+                        }
                     }
                     const submitButton = form.querySelector('button[type="submit"]');
                     submitButton.textContent = translations['Edit'];
@@ -452,6 +457,7 @@ export class Show {
                         const overviewDiv = document.querySelector('.' + type + '.overview[data-id="' + overviewId + '"]');
                         const contentDiv = overviewDiv.querySelector('.content');
                         const newContentText = overviewField.value;
+                        contentDiv.setAttribute('data-overview', newContentText);
                         // replace \n by <br>
                         contentDiv.innerHTML = newContentText.replace(/\n/g, '<br>');
 
@@ -508,7 +514,8 @@ export class Show {
                     overviewDiv.classList.add('overview');
                     const contentDiv = document.createElement('div');
                     contentDiv.classList.add('content');
-                    contentDiv.textContent = overviewField.value;
+                    contentDiv.setAttribute('data-overview', overviewField.value);
+                    contentDiv.textContent = overviewField.value.replace(/\n/g, '<br>');
                     overviewDiv.appendChild(contentDiv);
 
                     const toolsDiv = document.createElement('div');
@@ -564,6 +571,7 @@ export class Show {
                     overviewDiv.appendChild(toolsDiv);
 
                     overviewsDiv.appendChild(overviewDiv);
+                    gThis.toolTips.init(overviewDiv);
 
                     overviewField.value = '';
                 }

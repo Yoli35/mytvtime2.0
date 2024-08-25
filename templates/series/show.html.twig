@@ -69,7 +69,7 @@
                         <div class="localized overviews">
                             {% for overview in tv.localized_overviews %}
                                 <div class="localized overview" data-id="{{ overview.id }}">
-                                    <div class="content">
+                                    <div class="content" data-overview="{{ overview.overview }}">
                                         {{ overview.overview|nl2br }}
                                     </div>
                                     <div class="tools">
@@ -89,27 +89,17 @@
                         <h4 class="additional-h4">{{ 'Additional overviews'|trans }}</h4>
                         <div class="additional overviews">
                             {% for overview in tv.additional_overviews %}
-                                <div class="additional overview" data-id="{{ overview.id }}">
-                                    <div class="content">
+                                <div class="additional overview" data-id="{{ overview.id }}" data-source-id="{{ overview.source.id }}">
+                                    <div class="content" data-overview="{{ overview.overview }}">
                                         {{ overview.overview|nl2br }}
                                     </div>
                                     <div class="tools">
-                                        {% if overview.source %}
-                                            <div class="source">
-                                                {% if overview.source.path %}
-                                                    <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
-                                                        {% if overview.source.LogoPath %}
-                                                            <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
-                                                        {% else %}
-                                                            {{ overview.source.name }}
-                                                        {% endif %}
-                                                    </a>
-                                                {% else %}
-                                                    {{ overview.source.name }}
-                                                {% endif %}
-                                            </div>
-                                            <div class="locale">{{ overview.locale|upper }}</div>
-                                        {% endif %}
+                                        <div class="source">
+                                            <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
+                                                <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
+                                            </a>
+                                        </div>
+                                        <div class="locale">{{ overview.locale|upper }}</div>
                                         <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
                                             {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
                                         </div>
