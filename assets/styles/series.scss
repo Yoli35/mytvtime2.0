@@ -210,8 +210,12 @@ h2 {
             }
 
             .localized-h4, .additional-h4 {
+                background-color: var(--orange-20);
                 color: var(--orange-70);
+                font-size: 1.25rem;
                 font-weight: 300;
+                padding-block: .25rem;
+                padding-inline: .5rem;
 
                 &.hide {
                     display: none;
@@ -1855,14 +1859,17 @@ h2 {
     margin-block: 1rem .5rem;
 
     .add-location-button {
+        align-items: center;
         background-color: var(--orange-50);
-        border: 2px solid var(--orange-90);
         border-radius: .25rem;
         color: var(--orange-90);
         cursor: pointer;
+        display: flex;
         font-size: 1rem;
         font-weight: 300;
-        padding-inline: .5rem;
+        height: 2rem;
+        justify-content: center;
+        width: 2rem;
     }
 }
 

@@ -41,6 +41,8 @@ export class ToolTips {
     }
 
     show(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
         const tooltips = document.querySelector(".tool-tips");
         if (tooltips.classList.contains("show")) {
             return;
@@ -82,6 +84,8 @@ export class ToolTips {
     }
 
     move(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
         const tooltips = document.querySelector(".tool-tips");
         const tail = tooltips.querySelector(".tail");
         const body = tooltips.querySelector(".body");
