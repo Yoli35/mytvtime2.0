@@ -7,6 +7,7 @@ use App\Repository\EpisodeNotificationRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Service\DateService;
 use DateTimeImmutable;
+use Symfony\Component\Validator\Constraints\Timezone;
 use Twig\Extension\RuntimeExtensionInterface;
 
 readonly class EpisodeNotificationExtensionRuntime implements RuntimeExtensionInterface
@@ -100,6 +101,15 @@ readonly class EpisodeNotificationExtensionRuntime implements RuntimeExtensionIn
         ];
     }
 
+    public function seriesHistory(User $user, int $count): array
+    {
+        $history = array_map(function ($item) use ($user) {
+            $item['lastWatchAt'] = $this->dateService->newDateImmutable($item['lastWatchAt'], 'UTC')->setTimezone(new \DateTimeZone($user->getTimezone() ?? 'Europe/Paris'));
+            return $item;
+        }, $this->userEpisodeRepository->seriesHistoryForTwig($user, $user->getCountry() ?? 'FR', $user->getPreferredLanguage() ?? 'fr', $count));
+        dump($history);
+        return $history;
+    }
     private function seriesInArray($seriesArr, $item): bool
     {
         return key_exists($item['id'], $seriesArr);

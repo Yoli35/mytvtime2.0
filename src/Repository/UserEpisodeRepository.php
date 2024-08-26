@@ -103,6 +103,28 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function seriesHistoryForTwig(User $user, string $country, string $locale, int $count): array
+    {
+        $userId = $user->getId();
+        $sql = "SELECT s.id                            as id,
+                       s.`poster_path`                 as posterPath,
+                       us.`last_episode`               as episodeNumber,
+                       us.`last_season`                as seasonNumber,
+                       us.last_watch_at                as lastWatchAt,
+                       IF(sln.name IS NULL, s.name, sln.name) as name,
+                       IF(sln.slug IS NULL, s.slug, sln.slug) as slug
+            FROM `user_series` us
+                     INNER JOIN `series` s ON s.`id` = us.`series_id`
+                     LEFT JOIN `series_day_offset` sdo ON s.id = sdo.series_id AND sdo.country = '$country'
+                     LEFT JOIN `series_localized_name` sln ON sln.`series_id` = s.`id` AND sln.`locale` = '$locale'
+            WHERE us.`user_id`=$userId
+              AND us.`last_watch_at` IS NOT NULL
+            ORDER BY us.`last_watch_at` DESC
+            LIMIT $count OFFSET 0";
+
+        return $this->getAll($sql);
+    }
+
     public function episodesOfTheDay(User $user, string $country = 'FR', string $locale = 'fr'): array
     {
         $userId = $user->getId();

@@ -286,6 +286,8 @@ label:has(input[type="text"]) {
             border-radius: .25rem;
             left: 0;
             list-style: none;
+            max-height: calc(100vh - 5rem);
+            overflow-y: auto;
             position: absolute;
             top: 2rem;
             width: max-content;
@@ -298,6 +300,37 @@ label:has(input[type="text"]) {
                     display: block;
                     padding-block: .5rem;
                     text-decoration: none;
+
+                    &.history {
+                        align-items: center;
+                        display: flex;
+                        gap: .5rem;
+
+                        .poster {
+                            align-items: center;
+                            aspect-ratio: 78 / 117;
+                            display: flex;
+                            font-size: .5rem;
+                            height: 3rem;
+                            justify-content: center;
+                            text-align: center;
+
+                            img {
+                                border-radius: .125rem;
+                                height: 3rem;
+                                object-fit: cover;
+                                width: 100%;
+                            }
+                        }
+
+                        .date {
+                            background-color: var(--orange-50);
+                            border-radius: .25rem;
+                            color: var(--orange-90);
+                            margin-inline-start: auto;
+                            padding-inline: .5rem;
+                        }
+                    }
                 }
 
                 &:hover {
