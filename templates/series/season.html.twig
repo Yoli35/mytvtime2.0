@@ -182,9 +182,9 @@
                                              data-title="{{ ue.watch_at|format_datetime('relative_short', 'short')|capitalize }}">
                                             {{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px'}) }}
                                         </div>
-                                        <div class="select-provider" data-id="{{ episode.id }}" data-title="{{ 'Choose a provider'|trans }}">
+                                        <div class="select-provider" data-id="{{ episode.id }}" data-title="{{ (ue.provider_id ?'Choose a provider':ue.provider_name)|trans }}">
                                             {% if ue.provider_id %}
-                                                <img src="{{ ue.provider_logo_path }}" alt="{{ ue.provider_name }}" data-title="{{ ue.provider_name }}">
+                                                <img src="{{ ue.provider_logo_path }}" alt="{{ ue.provider_name }}">
                                             {% else %}
                                                 {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
                                             {% endif %}
