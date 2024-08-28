@@ -55,7 +55,8 @@
             <summary>{{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }}</summary>
             {% set history = seriesHistory(app.user, 20) %}
             {% if history %}
-                <ul>
+                <ul id="viewHistory">
+                    <li id="optionHistory"><label><input type="checkbox" >{{ 'Episodes detail'|trans }}</label></li>
                     {% for h in history %}
                         <li>
                             <a class="history" href="{{ path('app_series_season', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber}) }}">

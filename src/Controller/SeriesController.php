@@ -688,7 +688,7 @@ class SeriesController extends AbstractController
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
         dump([
-//            'series' => $series,
+            'series' => $series,
             'season' => $season,
 //            'userSeries' => $userSeries,
             'providers' => $providers,

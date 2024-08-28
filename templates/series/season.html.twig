@@ -22,7 +22,10 @@
             <div class="header">
                 <div class="poster" id="top">
                     {% if season.poster_path %}
-                        <img src="/series/posters{{ season.poster_path }}" alt="{{ series.name }} {{ season.season_number }}">
+                        <img src="/series/posters{{ season.poster_path }}" alt="{{ series.name }} {{ season.season_number }}"
+                             data-id="{{ series.id }}"
+                             data-name="{{ season.localized_name ? season.localized_name.name:series.name }}"
+                             data-slug="{{ season.localized_name ? season.localized_name.slug:series.slug }}">
                     {% else %}
                         <div>{{ 'No poster'|trans }}</div>
                     {% endif %}
@@ -324,6 +327,7 @@
         "device": "{{ 'Choose a device'|trans }}",
         "rating": "{{ 'Give a rating'|trans }}",
         "now": "{{ 'Now'|trans }}",
+        "Today": "{{ 'Today'|trans }}",
         "add": "{{ 'Add'|trans }}",
         "Television": "{{ 'Television'|trans }}",
         "Mobile": "{{ 'Mobile'|trans }}",

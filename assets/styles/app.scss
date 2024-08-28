@@ -337,7 +337,50 @@ label:has(input[type="text"]) {
                     background-color: var(--navbar-bg-hover);
                 }
 
-                label {
+                &:has(input[type=checkbox]) {
+                    &:hover {
+                        background-color: var(--green-50);
+                        color: var(--green-90);
+                    }
+                }
+
+                label:has(input[type=checkbox]) {
+                    align-items: center;
+                    color: var(--orange-90);
+                    display: flex;
+                    gap: .5rem;
+                    justify-content: flex-start;
+                    padding-block: 1rem;
+                    padding-inline: 1rem;
+
+                    input[type=checkbox] {
+                        appearance: none;
+                        background-color: var(--ardoise-80);
+                        border: 1px solid var(--ardoise-50);
+                        border-radius: .25rem;
+                        height: 1rem;
+                        position: relative;
+                        width: 1rem;
+
+                        &:checked {
+                            background-color: var(--orange-50);
+                            border-color: var(--orange-90);
+                        }
+
+                        &::after {
+                            content: "";
+                            left: -1px;
+                            position: absolute;
+                            top: -.25rem;
+                        }
+
+                        &:checked::after {
+                            content: "✖︎";
+                        }
+                    }
+                }
+
+                label:has(input[type="search"]) {
                     position: relative;
 
                     input {
@@ -762,6 +805,7 @@ label:has(input[type="text"]) {
             margin-inline-start: auto;
         }
     }
+
 }
 
 @media (max-width: 414px) {
