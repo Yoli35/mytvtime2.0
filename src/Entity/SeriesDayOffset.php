@@ -23,6 +23,13 @@ class SeriesDayOffset
     #[ORM\Column(length: 2)]
     private ?string $country = null;
 
+    public function __construct(Series $series, int $offset, string $country)
+    {
+        $this->series = $series;
+        $this->offset = $offset;
+        $this->country = $country;
+    }
+    
     public function getId(): ?int
     {
         return $this->id;

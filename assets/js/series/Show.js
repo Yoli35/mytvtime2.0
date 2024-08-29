@@ -679,6 +679,27 @@ export class Show {
                 });
             }
         });
+
+        /******************************************************************************
+         * Broadcast delay                                                            *
+         ******************************************************************************/
+        const broadcastInput = document.querySelector('input[name="broadcast-delay"]');
+        const broadcastSubmit = document.querySelector('button[value="broadcast-delay"]');
+        broadcastSubmit.addEventListener('click', function () {
+            fetch('/' + lang + '/series/broadcast/delay/' + seriesId,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({delay: broadcastInput.value})
+                }
+            ).then(function (response) {
+                if (response.ok) {
+                    window.location.reload();
+                }
+            });
+        });
     }
 
     displayForm(form) {

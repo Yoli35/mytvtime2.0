@@ -608,6 +608,43 @@ h2 {
                         }
                     }
                 }
+
+                .broadcast-delay {
+                    align-items: center;
+                    display: flex;
+                    gap: .5rem;
+
+                    label {
+                        align-items: center;
+                        display: flex;
+                        gap: .5rem;
+
+                        input {
+                            background-color: var(--orange-20);
+                            border: 2px solid var(--orange-50);
+                            border-radius: .25rem;
+                            color: var(--orange-90);
+                            padding-inline: .5rem;
+                            width: 4rem;
+                        }
+                    }
+
+                    .save {
+                        background-color: var(--orange-50);
+                        border: 2px solid var(--orange-80);
+                        border-radius: .25rem;
+                        color: var(--ardoise-10);
+                        cursor: pointer;
+                        font-size: 1rem;
+                        font-weight: 300;
+                        padding: .125rem .5rem;
+
+                        &:hover {
+                            background-color: var(--orange-40);
+                            border: 2px solid var(--orange-60);
+                        }
+                    }
+                }
             }
         }
 

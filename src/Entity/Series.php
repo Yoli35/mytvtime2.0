@@ -247,12 +247,14 @@ class Series
         return $this;
     }
 
-    public function toArray(): array
+    public function toArray(string $country = "FR"): array
     {
         return [
             'backdropPath' => $this->getBackdropPath(),
             'createdAt' => $this->getCreatedAt(),
-            'dayOffsets' => $this->getSeriesDayOffsets()->toArray(),
+            'dayOffsets' => array_filter(array_map(function ($dayOffset) {
+                return ['offset' => $dayOffset->getOffset(), 'country' => $dayOffset->getCountry()];
+            }, $this->getSeriesDayOffsets()->toArray()), fn($dayOffset) => $dayOffset['country'] === $country),
             'firstAirDate' => $this->getFirstAirDate(),
             'id' => $this->getId(),
             'images' => $this->getSeriesImages()->toArray(),

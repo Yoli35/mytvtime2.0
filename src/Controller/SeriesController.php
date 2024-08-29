@@ -9,6 +9,7 @@ use App\Entity\EpisodeSubstituteName;
 use App\Entity\SeasonLocalizedOverview;
 use App\Entity\Series;
 use App\Entity\SeriesAdditionalOverview;
+use App\Entity\SeriesDayOffset;
 use App\Entity\SeriesImage;
 use App\Entity\SeriesLocalizedName;
 use App\Entity\SeriesLocalizedOverview;
@@ -604,6 +605,29 @@ class SeriesController extends AbstractController
     public function removeUserSeries(UserSeries $userSeries): Response
     {
         $this->userSeriesRepository->remove($userSeries);
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
+//    #[IsGranted('ROLE_USER')]
+    #[Route('/broadcast/delay/{id}', name: 'broadcast-delay', requirements: ['id' => Requirement::DIGITS])]
+    public function broadcastDelay(Request $request, Series $series): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $data = json_decode($request->getContent(), true);
+        $delay = $data['delay'];
+
+        $seriesDayOffset = $this->seriesDayOffsetRepository->findOneBy(['series' => $series, 'country' => $user->getCountry() ?? 'FR']);
+
+        if ($seriesDayOffset) {
+            $seriesDayOffset->setOffset($delay);
+        } else {
+            $seriesDayOffset = new SeriesDayOffset($series, $delay, $user->getCountry() ?? 'FR');
+        }
+        $this->seriesDayOffsetRepository->save($seriesDayOffset);
 
         return $this->json([
             'ok' => true,

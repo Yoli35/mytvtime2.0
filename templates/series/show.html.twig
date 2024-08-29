@@ -407,6 +407,18 @@
                         </div>
                     {% endif %}
 
+                    <h3>{{ 'Broadcast delay'|trans }}</h3>
+                    <div class="facts">
+                        <div class="fact">
+                            <div class="broadcast-delay">
+                                <label for="broadcast-delay" data-title="{{ 'Delay in days'|trans }}">{{ 'Delay'|trans }}
+                                    <input type="number" id="broadcast-delay" name="broadcast-delay" value="{{ series.dayOffsets.0.offset??0 }}" />
+                                </label>
+                                <button class="save" value="broadcast-delay">{{ 'Save'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <h3>{{ 'Key facts'|trans }}</h3>
                     <div class="facts">
                         <div class="fact">
