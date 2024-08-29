@@ -286,8 +286,8 @@ label:has(input[type="text"]) {
             border-radius: .25rem;
             left: 0;
             list-style: none;
-            max-height: calc(100vh - 5rem);
-            overflow-y: auto;
+            /*max-height: calc(100vh - 5rem);
+            overflow-y: auto;*/
             position: absolute;
             top: 2rem;
             width: max-content;
