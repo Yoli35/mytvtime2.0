@@ -29,7 +29,7 @@ class SeriesDayOffset
         $this->offset = $offset;
         $this->country = $country;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
