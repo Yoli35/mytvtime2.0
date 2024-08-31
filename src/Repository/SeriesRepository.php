@@ -106,6 +106,16 @@ class SeriesRepository extends ServiceEntityRepository
         return $item;
     }
 
+    public function seriesImages(Series $series): array
+    {
+        $seriesId = $series->getId();
+        $sql = "SELECT type, image_path
+                FROM series_image si
+                WHERE series_id=$seriesId";
+
+        return $this->getAll($sql);
+    }
+
     public function getAll($sql): array
     {
         try {

@@ -54,6 +54,7 @@ h2 {
             border-radius: .5rem;
             color: var(--ardoise-10);
             display: flex;
+            flex-shrink: 0;
             justify-content: center;
             position: relative;
             width: 40vw;
@@ -113,7 +114,7 @@ h2 {
             min-height: 30vw;
             padding: 1rem;
             position: relative;
-            width: 100%;
+            width: calc(60vw - 3rem);
 
             &.light {
                 color: #f7f7f7; /*var(--orange-80);*/
@@ -309,6 +310,7 @@ h2 {
         .updates {
             display: flex;
             overflow-x: auto;
+            width: 100%;
 
             .wrapper {
                 align-items: center;
@@ -396,6 +398,73 @@ h2 {
 
         &:hover .series-back {
             display: flex;
+        }
+
+        .backdrops, .logos, .posters  {
+            align-items: center;
+            background-color: var(--ardoise-100-alpha-20);
+            border-radius: .5rem;
+            display: flex;
+            gap: .5rem;
+            height: 9rem;
+            justify-content: flex-start;
+            overflow-x: hidden;
+
+            .wrapper {
+                align-items: center;
+                display: flex;
+                gap: .5rem;
+                height: 7.25rem;
+                justify-content: flex-start;
+                overflow-x: hidden;
+                margin-inline: auto;
+                padding-inline: 1rem;
+
+                &:hover {
+                    overflow-x: auto;
+                }
+            }
+
+            img {
+                border: 2px solid var(--orange-50);
+                border-radius: .25rem;
+                height: 7rem;
+                object-fit: cover;
+            }
+        }
+
+        .backdrops {
+            width: 100%;
+
+            .other-backdrop {
+                aspect-ratio: 16/9;
+                border-radius: .25rem;
+                height: 7rem;
+            }
+        }
+
+        .logos{
+            width: 100%;
+
+            .wrapper {
+                height: unset;
+            }
+
+            .other-logo {
+                border-radius: .25rem;
+                height: 7rem;
+                width: auto;
+            }
+        }
+
+        .posters {
+            width: 40vw;
+
+            .other-poster {
+                aspect-ratio: 78/117;
+                border-radius: .25rem;
+                height: 7rem;
+            }
         }
     }
 

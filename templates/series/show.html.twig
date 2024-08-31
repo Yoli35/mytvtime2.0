@@ -124,6 +124,43 @@
                 </div>
             </div>
 
+            <div class="header">
+                {#                <pre>{{ dump(series.images.posters) }}</pre> #}
+                {#                <pre>{{ dump(series.images.backdrops) }}</pre> #}
+                <div class="posters">
+                    <div class="wrapper">
+                        {% for poster in series.images.posters %}
+                            <div class="other-poster">
+                                <img src="{{ poster }}" alt="{{ 'Poster #' ~ loop.index ~ ' ' ~ series.name }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="backdrops">
+                    <div class="wrapper">
+                        {% for backdrop in series.images.backdrops %}
+                            <div class="other-backdrop">
+                                <img src="{{ backdrop }}" alt="{{ 'Backdrop #' ~ loop.index ~ ' ' ~ series.name }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            {% if series.images.logos|length %}
+                <div class="header">
+                    <div class="logos">
+                        <div class="wrapper">
+                            {% for backdrop in series.images.logos %}
+                                <div class="other-backdrop">
+                                    <img src="{{ backdrop }}" alt="{{ 'Backdrop #' ~ loop.index ~ ' ' ~ series.name }}">
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
             {% if series.nextEpisodeAirDate %}
                 <div class="schedules">
                     {% set neta = tv.next_episode_to_air %}
@@ -412,7 +449,7 @@
                         <div class="fact">
                             <div class="broadcast-delay">
                                 <label for="broadcast-delay" data-title="{{ 'Delay in days'|trans }}">{{ 'Delay'|trans }}
-                                    <input type="number" id="broadcast-delay" name="broadcast-delay" value="{{ series.dayOffsets.0.offset??0 }}" />
+                                    <input type="number" id="broadcast-delay" name="broadcast-delay" value="{{ series.dayOffsets.0.offset??0 }}"/>
                                 </label>
                                 <button class="save" value="broadcast-delay">{{ 'Save'|trans }}</button>
                             </div>
