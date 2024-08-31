@@ -107,7 +107,7 @@ readonly class EpisodeNotificationExtensionRuntime implements RuntimeExtensionIn
             $item['lastWatchAt'] = $this->dateService->newDateImmutable($item['lastWatchAt'], 'UTC')->setTimezone(new \DateTimeZone($user->getTimezone() ?? 'Europe/Paris'));
             return $item;
         }, $this->userEpisodeRepository->seriesHistoryForTwig($user, $user->getCountry() ?? 'FR', $user->getPreferredLanguage() ?? 'fr', $count));
-        dump($history);
+//        dump($history);
         return $history;
     }
     private function seriesInArray($seriesArr, $item): bool
