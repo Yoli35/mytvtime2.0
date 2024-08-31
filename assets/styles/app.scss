@@ -252,8 +252,24 @@ label:has(input[type="text"]) {
 
         &:hover {
             background-color: var(--navbar-bg-hover);
+            color: var(--navbar-bg-hover);
+
+            svg {
+                color: var(--navbar-bg-color);
+            }
         }
     }
+
+    /*&:has(> a:hover) > a:not(:hover),
+    &:has(> a:hover) > details:not(:hover),
+    &:has(> details:hover) > details:not(:hover),
+    &:has(> details:hover) > a:not(:hover) {
+        opacity: .75;
+
+        svg {
+            opacity: .75;
+        }
+    }*/
 
     > a {
         &:visited {
