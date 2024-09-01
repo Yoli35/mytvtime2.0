@@ -1,5 +1,6 @@
-import {ToolTips} from 'ToolTips';
+import {Diaporama} from 'Diaporama';
 import {Keyword} from 'Keyword';
+import {ToolTips} from 'ToolTips';
 
 let gThis = null;
 
@@ -45,6 +46,17 @@ export class Show {
         progressBarDiv.classList.add('set');
         progressBarDiv.style.width = progress + '%';
         progressBarDiv.setAttribute('aria-valuenow', progress);
+
+        /******************************************************************************
+         * Diaporama for posters, backdrops and logos                                 *
+         ******************************************************************************/
+        const diaporama = new Diaporama();
+        const posters = document.querySelector('.posters')?.querySelectorAll('img');
+        const backdrops = document.querySelector('.backdrops')?.querySelectorAll('img');
+        const logos = document.querySelector('.logos')?.querySelectorAll('img');
+        diaporama.start(posters);
+        diaporama.start(backdrops);
+        diaporama.start(logos);
 
         /******************************************************************************
          * User's actions: rating, pinned, favorite, remove this series               *

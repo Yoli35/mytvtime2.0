@@ -1143,6 +1143,7 @@ label:has(input[type="text"]) {
                 color: var(--ardoise-20);
                 cursor: pointer;
                 display: flex;
+                flex-shrink: 0;
                 font-size: 2em;
                 height: 1.5em;
                 justify-content: center;
@@ -1234,12 +1235,12 @@ label:has(input[type="text"]) {
         transition: height 300ms ease-in-out, width 100ms ease-in-out;
 
         .help {
-            height: 11em;
+            height: 16em;
             position: relative;
             width: 15em;
 
             .maxi {
-                background-color: var(--ardoise-40);
+                background-color: var(--ardoise-75);
                 border-radius: 1em;
                 inset: 0;
                 padding: 1em;

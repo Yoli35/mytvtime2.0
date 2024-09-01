@@ -32,6 +32,10 @@ export class Diaporama {
         const srcArray = Array.from(images, image => {
             return image.getAttribute("src")
         });
+        const svgs = document.querySelector(".svgs");
+        const xmark = svgs.querySelector("#xmark").querySelector("svg").cloneNode(true);
+        const arrowLeft = svgs.querySelector("#arrow-left").querySelector("svg").cloneNode(true);
+        const arrowRight = svgs.querySelector("#arrow-right").querySelector("svg").cloneNode(true);
 
         gThis.diaporamaIndex = 0;
         gThis.diaporamaCount = count;
@@ -59,14 +63,14 @@ export class Diaporama {
         const crossDiv = document.createElement("div");
         closeDiv.appendChild(crossDiv);
         closeDiv.addEventListener("click", gThis.closeDiaporama);
-        crossDiv.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        crossDiv.appendChild(xmark);
         if (count > 1) {
             prevDiv = document.createElement("div");
-            prevDiv.classList.add("chevron");
+            prevDiv.classList.add("chevron", "left");
             nextDiv = document.createElement("div");
-            nextDiv.classList.add("chevron");
-            prevDiv.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
-            nextDiv.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+            nextDiv.classList.add("chevron", "right");
+            prevDiv.appendChild(arrowLeft);
+            nextDiv.appendChild(arrowRight);
         }
 
         const imageSrc = e.currentTarget.getAttribute("src");
@@ -213,8 +217,8 @@ export class Diaporama {
                 const thumbnail = document.querySelector(selector);
                 thumbnail.removeEventListener("click", gThis.gotoImage);
             }
-            const prevDiv = document.querySelector(".back-diapo").querySelector(".fa-chevron-left").parentElement;
-            const nextDiv = document.querySelector(".back-diapo").querySelector(".fa-chevron-right").parentElement;
+            const prevDiv = document.querySelector(".back-diapo").querySelector(".chevron.left").parentElement;
+            const nextDiv = document.querySelector(".back-diapo").querySelector(".chevron.right").parentElement;
             prevDiv.removeEventListener("click", gThis.prevImage);
             nextDiv.removeEventListener("click", gThis.nextImage);
         }

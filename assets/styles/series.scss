@@ -400,7 +400,7 @@ h2 {
             display: flex;
         }
 
-        .backdrops, .logos, .posters  {
+        .backdrops, .logos, .posters {
             align-items: center;
             background-color: var(--ardoise-100-alpha-20);
             border-radius: .5rem;
@@ -430,6 +430,10 @@ h2 {
                 border-radius: .25rem;
                 height: 7rem;
                 object-fit: cover;
+
+                &.pointer {
+                    cursor: pointer;
+                }
             }
         }
 
@@ -443,7 +447,7 @@ h2 {
             }
         }
 
-        .logos{
+        .logos {
             width: 100%;
 
             .wrapper {
@@ -1607,7 +1611,6 @@ h2 {
     .header {
         flex-direction: column;
         height: auto !important;
-        padding: 1rem;
         width: 100%;
 
         .poster {
@@ -1627,6 +1630,14 @@ h2 {
                 line-height: 2.2rem;
             }
         }
+    }
+
+    .infos {
+        width: 100% !important;
+    }
+
+    .posters {
+        width: 100% !important;
     }
 
     .content {
