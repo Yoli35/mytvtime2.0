@@ -130,6 +130,28 @@
                 <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
             {% endif %}
             {% if app.user %}
+                {% set eotdList = listEpisodeOfTheDay(app.user, -2) %}
+                {% set l = eotdList.totalEpisodeCount %}
+                {% if l %}
+                    <div class="separation">{{ 'Two days ago'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
+                    {% for eotd in eotdList.results %}
+                        <div class="a-preview">
+                            <a id="eotd-menu-item-1-{{ eotd.id }}"
+                               href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
+                               data-episode-count="{{ eotd.episodeCount }}"
+                               data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
+                               style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
+                                {{ eotd.display }}
+                            </a>
+                            <div id="eotd-preview-1-{{ eotd.id }}" class="episode-of-the-day-preview">
+                                <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
+                                    <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
                 {% set eotdList = listEpisodeOfTheDay(app.user, -1) %}
                 {% set l = eotdList.totalEpisodeCount %}
                 {% if l %}
