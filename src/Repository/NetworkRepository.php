@@ -30,6 +30,12 @@ class NetworkRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function getNetworkList():array
+    {
+        $sql = "SELECT network_id, name, logo_path FROM network";
+        return $this->getAll($sql);
+    }
+
     public function getAll($sql): array
     {
         try {

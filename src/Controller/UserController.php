@@ -6,6 +6,7 @@ use App\Entity\Provider;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\EpisodeNotificationRepository;
+use App\Repository\NetworkRepository;
 use App\Repository\ProviderRepository;
 use App\Repository\UserEpisodeNotificationRepository;
 use App\Repository\WatchProviderRepository;
@@ -29,6 +30,7 @@ class UserController extends AbstractController
         private readonly UserEpisodeNotificationRepository $userEpisodeNotificationRepository,
         private readonly DateService                       $dateService,
         private readonly ImageConfiguration                $imageConfiguration,
+        private readonly NetworkRepository                 $networkRepository,
         private readonly ProviderRepository                $providerRepository,
 //        private readonly TMDBService                       $tmdbService,
         private readonly WatchProviderRepository           $watchProviderRepository,
@@ -75,6 +77,24 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[Route('/networks', name: 'networks')]
+    public function networks(): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $networks = $this->getNetworks();
+        $userNetworks = $user->getNetworks();
+        $userNetworkIds = array_map(function ($p) {
+            return $p->getNetworkId();
+        }, $userNetworks->toArray());
+
+        return $this->render('user/networks.html.twig', [
+            'networks' => $networks,
+            'user' => $user,
+            'userNetworkIds' => $userNetworkIds,
+        ]);
+    }
+
     #[Route('/provider/toggle/{id}', name: 'provider_toggle')]
     public function providerToggle($id): Response
     {
@@ -87,6 +107,26 @@ class UserController extends AbstractController
                 $user->removeProvider($provider);
             } else {
                 $user->addProvider($provider);
+            }
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+            return $this->json(['status' => 'ok']);
+        }
+        return $this->json(['status' => 'error']);
+    }
+
+    #[Route('/network/toggle/{id}', name: 'network_toggle')]
+    public function networkToggle($id): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $network = $this->networkRepository->findOneBy(['networkId' => $id]);
+
+        if ($network) {
+            if ($user->getNetworks()->contains($network)) {
+                $user->removeNetwork($network);
+            } else {
+                $user->addNetwork($network);
             }
             $this->entityManager->persist($user);
             $this->entityManager->flush();
@@ -120,25 +160,7 @@ class UserController extends AbstractController
 
     public function getProviders($user): array
     {
-//        $language = $user->getPreferredLanguage() ?? 'fr' . '-' . $user->getCountry() ?? 'FR';
         $country = $user->getCountry() ?? 'FR';
-//        $tmdbProviders = json_decode($this->tmdbService->getTvWatchProviderList($language, $country), true);
-//        $localProviders = $this->providerRepository->findAll();
-//        $newLocalProvider = false;
-//
-//        foreach ($tmdbProviders['results'] as $provider) {
-//            if (!$this->isLocalProvider($provider, $localProviders)) {
-//                $localProvider = new Provider();
-//                $localProvider->setProviderId($provider['provider_id']);
-//                $localProvider->setName($provider['provider_name']);
-//                $localProvider->setLogoPath($provider['logo_path']);
-//                $this->entityManager->persist($localProvider);
-//                $newLocalProvider = true;
-//            }
-//        }
-//        if ($newLocalProvider) {
-//            $this->entityManager->flush();
-//        }
 
         $providers = $this->watchProviderRepository->getWatchProviderList($country);
         $arr = array_map(function ($provider) {
@@ -147,7 +169,6 @@ class UserController extends AbstractController
                 'name' => $provider['provider_name'],
                 'logo' => $this->imageConfiguration->getCompleteUrl($provider['logo_path'], 'logo_sizes', 2)
             ];
-//        }, $tmdbProviders['results'] ?? []);
         }, $providers);
         usort($arr, function ($a, $b) {
             return strcasecmp($a['name'], $b['name']);
@@ -155,13 +176,19 @@ class UserController extends AbstractController
         return $arr;
     }
 
-    public function isLocalProvider($provider, $localProviders): bool
+    public function getNetworks(): array
     {
-        foreach ($localProviders as $localProvider) {
-            if ($provider['provider_id'] === $localProvider->getProviderId()) {
-                return true;
-            }
-        }
-        return false;
+        $networks = $this->networkRepository->getNetworkList();
+        $arr = array_map(function ($network) {
+            return [
+                'id' => $network['network_id'],
+                'name' => $network['name'],
+                'logo' => $network['logo_path'] ? $this->imageConfiguration->getCompleteUrl($network['logo_path'], 'logo_sizes', 3) : null
+            ];
+        }, $networks);
+        usort($arr, function ($a, $b) {
+            return strcasecmp($a['name'], $b['name']);
+        });
+        return $arr;
     }
 }
