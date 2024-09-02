@@ -9,6 +9,7 @@ use App\Entity\UserEpisode;
 use App\Entity\UserEpisodeNotification;
 use App\Entity\UserSeries;
 use App\Repository\EpisodeNotificationRepository;
+
 //use App\Repository\SeriesDayOffsetRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\UserEpisodeNotificationRepository;
@@ -69,8 +70,10 @@ class EpisodeAirDateCommand extends Command
 
         if (!$seriesId) {
             $allUserSeries = $this->userSeriesRepository->findAll();
+            $force = false;
         } else {
             $allUserSeries = $this->userSeriesRepository->findBy(['id' => $seriesId]);
+            $force = true;
         }
 
         $this->commandStart();
@@ -92,15 +95,19 @@ class EpisodeAirDateCommand extends Command
             if ($localizedName) {
                 $line .= ' - ' . $localizedName->getName();
             }
-            if ($userSeries->getProgress() == 100) {
-                $line .= ' 👍🏻 Series already updated';
-                $this->io->writeln($line);
-                continue;
-            }
-            if ($series->getStatus() && in_array($series->getStatus(), $endedSeriesStatus)) {
-                $line .= ' 🔒 Serie is finished';
-                $this->io->writeln($line);
-                continue;
+            if ($force) {
+                $line .= ' 🔨 Force update';
+            } else {
+                if ($userSeries->getProgress() == 100) {
+                    $line .= ' 👍🏻 Series already updated';
+                    $this->io->writeln($line);
+                    continue;
+                }
+                if ($series->getStatus() && in_array($series->getStatus(), $endedSeriesStatus)) {
+                    $line .= ' 🔒 Serie is finished';
+                    $this->io->writeln($line);
+                    continue;
+                }
             }
             $this->io->write($line);
 
@@ -128,7 +135,7 @@ class EpisodeAirDateCommand extends Command
             $firstUnseenEpisode = $this->findFirstNotWatchedEpisode($userEpisodes);
             $startingSeason = $firstUnseenEpisode ? $firstUnseenEpisode->getSeasonNumber() : 1;
             foreach ($tv['seasons'] as $season) {
-                if ($season['season_number'] < $startingSeason) {
+                if (!$force && $season['season_number'] < $startingSeason) {
                     continue;
                 }
                 $seasonNumber = $season['season_number'];
@@ -256,7 +263,7 @@ class EpisodeAirDateCommand extends Command
     {
         $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
         $this->io->newLine(2);
-        $this->io->title('Episode air date Command');
+        $this->io->title('📺 Tv Episode air date Command');
         $this->io->writeln('Command started at ' . $now->format('Y-m-d H:i:s'));
         $this->t0 = microtime(true);
     }
