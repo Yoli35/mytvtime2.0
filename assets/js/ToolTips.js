@@ -49,6 +49,7 @@ export class ToolTips {
         }
         const currentTarget = evt.currentTarget;
         const text = currentTarget.getAttribute("data-title");
+        const titleBg = currentTarget.getAttribute("data-title-bg");
         const img = currentTarget.querySelector("img");
         const body = tooltips.querySelector(".body");
         if (!img) {
@@ -56,6 +57,7 @@ export class ToolTips {
         } else {
             const imgClone = img.cloneNode(true);
             body.innerHTML = "";
+            body.style.backgroundColor = titleBg || "transparent";
             body.appendChild(imgClone);
             const p = document.createElement("p");
             p.innerHTML = text;
