@@ -64,7 +64,7 @@
                                 <div class="logo" data-title="{{ 'Network'|trans }}" data-title-bg="white"><img src="{{ networkLogoPaths[filters.network] }}" alt="{{ 'Network'|trans }}"></div>
                             {% endif %}
                             <select id="network">
-                                <option value="">{{ 'All'|trans }}</option>
+                                <option value="all">{{ 'All'|trans }}</option>
                                 <hr>
                                 {% set userNetwork = 0 %}
                                 {% for un in userNetworks %}
