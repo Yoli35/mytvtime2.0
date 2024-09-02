@@ -51,9 +51,38 @@
                     <div class="filter">
                         <label for="series-watched">{{ 'Watched series'|trans }}
                             <select id="series-watched">
-                                <option value="">{{ 'All'|trans }}</option>
+                                <option value="all">{{ 'All'|trans }}</option>
                                 <option value="series-watched"{% if filters.endStatus=='series-watched' %} selected{% endif %}>{{ 'Yes'|trans }}</option>
                                 <option value="series-not-watched"{% if filters.endStatus=='series-not-watched' %} selected{% endif %}>{{ 'No'|trans }}
+                            </select>
+                        </label>
+                    </div>
+                    <div class="filter">
+                        <label for="network">
+                            {{ 'Network'|trans }}
+                            {% if networkLogoPaths[filters.network] %}
+                                <div class="logo" data-title="{{ 'Network'|trans }}" data-title-bg="white"><img src="{{ networkLogoPaths[filters.network] }}" alt="{{ 'Network'|trans }}"></div>
+                            {% endif %}
+                            <select id="network">
+                                <option value="">{{ 'All'|trans }}</option>
+                                <hr>
+                                {% set userNetwork = 0 %}
+                                {% for un in userNetworks %}
+                                    <option value="{{ un.id }}"{% if filters.network==un.id %} selected{% endif %}>{{ un.name }}</option>
+                                    {% if filters.network==un.id %}
+                                        {% set userNetwork = 1 %}
+                                    {% endif %}
+                                {% endfor %}
+                                <hr>
+                                {% if userNetwork %}
+                                    {% for n in networks %}
+                                        <option value="{{ n.id }}">{{ n.name }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    {% for n in networks %}
+                                        <option value="{{ n.id }}"{% if filters.network==n.id %} selected{% endif %}>{{ n.name }}</option>
+                                    {% endfor %}
+                                {% endif %}
                             </select>
                         </label>
                     </div>
@@ -130,6 +159,7 @@
             const orderSelect = document.getElementById('order-by');
             const seriesStarted = document.getElementById('series-started');
             const seriesWatched = document.getElementById('series-watched');
+            const network = document.getElementById('network');
             const perPage = document.getElementById('per-page');
             const pages = document.querySelectorAll('.pages button');
             console.log({pages});
@@ -166,11 +196,15 @@
             perPage.addEventListener('change', function () {
                 window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
             });
+            network.addEventListener('change', function () {
+                window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
+            });
 
             function getParams() {
                 return [
                     {key: 'sort', value: sortSelect.value},
                     {key: 'order', value: orderSelect.value},
+                    {key: 'network', value: network.value},
                     {key: 'startStatus', value: seriesStarted.value},
                     {key: 'endStatus', value: seriesWatched.value},
                     {key: 'perPage', value: perPage.value}

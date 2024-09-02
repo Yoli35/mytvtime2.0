@@ -156,8 +156,18 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getAllSeries(User $user, array $localisation = ['country' => 'FR', 'language' => 'fr', 'locale' => 'fr'], array $filters = [], string $sort = 'firstAirDate', string $order = 'DESC', int $page = 1, int $perPage = 20): array
+    public function getAllSeries(
+        User $user,
+        array $localisation,
+        array $filters,
+        array $progress = []): array
     {
+        $page = $filters['page'] ?? 1;
+        $perPage = $filters['perPage'] ?? 20;
+        $sort = $filters['sort'] ?? 'firstAirDate';
+        $order = $filters['order'] ?? 'ASC';
+        $network = $filters['network'];
+
         $sort = match ($sort) {
             'lastWatched' => 'us.`last_watch_at`',
             'episodeAirDate' => 'ue.`air_date`',
@@ -165,8 +175,13 @@ class UserSeriesRepository extends ServiceEntityRepository
             'addedAt' => 'us.`added_at`',
             default => 's.`first_air_date`',
         };
-        $filterString = array_map(fn($filter) => "AND $filter", $filters);
+        $filterString = array_map(fn($filter) => "AND $filter", $progress);
         $filterString = implode(' ', $filterString);
+        if ($network !== 'all') {
+            $innerJoin = " INNER JOIN series_network sn ON sn.`network_id` = $network AND sn.`series_id` = s.`id` ";
+        } else {
+            $innerJoin = '';
+        }
         $userId = $user->getId();
         $country = $localisation['country'];
         $locale = $localisation['locale'];
@@ -199,8 +214,9 @@ class UserSeriesRepository extends ServiceEntityRepository
                         ELSE DATE_SUB(ue.`air_date`, INTERVAL ABS(sdo.offset) DAY)
                     END                           as final_air_date
                 FROM `user_series` us 
-                    INNER JOIN user_episode ue ON ue.`user_series_id` = us.`id`
+                    INNER JOIN user_episode ue ON ue.`user_series_id` = us.`id` 
                     LEFT JOIN `series` s ON s.`id` = us.`series_id` 
+                    $innerJoin
                     LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                     LEFT JOIN `series_localized_name` sln ON s.`id` = sln.`series_id` AND sln.locale='$locale ' 
                 WHERE us.user_id=$userId $filterString
@@ -223,10 +239,20 @@ class UserSeriesRepository extends ServiceEntityRepository
     }
 
 
-    public function countAllSeries(User $user, array $localisation = ['country' => 'FR', 'language' => 'fr', 'locale' => 'fr'], array $filters = []): int
+    public function countAllSeries(
+        User $user,
+        array $localisation,
+        array $filters,
+        array $progress = []): int
     {
-        $filterString = array_map(fn($filter) => "AND $filter", $filters);
+        $network = $filters['network'];
+        $filterString = array_map(fn($filter) => "AND $filter", $progress);
         $filterString = implode(' ', $filterString);
+        if ($network !== 'all') {
+            $innerJoin = " INNER JOIN series_network sn ON sn.`network_id` = $network AND sn.`series_id` = s.`id` ";
+        } else {
+            $innerJoin = '';
+        }
         $userId = $user->getId();
         $country = $localisation['country'];
 
@@ -234,6 +260,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                 FROM `user_series` us 
                     INNER JOIN user_episode ue ON ue.`user_series_id` = us.`id`
                     LEFT JOIN `series` s ON s.`id` = us.`series_id` 
+                    $innerJoin
                     LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                 WHERE us.user_id=$userId $filterString
                   AND ue.id=(SELECT ue2.id

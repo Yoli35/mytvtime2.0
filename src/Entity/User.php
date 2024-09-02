@@ -101,6 +101,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Settings::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $settings;
 
+    /**
+     * @var Collection<int, Network>
+     */
+    #[ORM\ManyToMany(targetEntity: Network::class)]
+    private Collection $networks;
+
     public function __construct()
     {
         $this->series = new ArrayCollection();
@@ -110,6 +116,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userPinnedSeries = new ArrayCollection();
         $this->userMovies = new ArrayCollection();
         $this->settings = new ArrayCollection();
+        $this->networks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -524,6 +531,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $setting->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Network>
+     */
+    public function getNetworks(): Collection
+    {
+        return $this->networks;
+    }
+
+    public function addNetwork(Network $network): static
+    {
+        if (!$this->networks->contains($network)) {
+            $this->networks->add($network);
+        }
+
+        return $this;
+    }
+
+    public function removeNetwork(Network $network): static
+    {
+        $this->networks->removeElement($network);
 
         return $this;
     }

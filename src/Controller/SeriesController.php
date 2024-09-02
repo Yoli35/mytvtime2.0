@@ -27,6 +27,7 @@ use App\Repository\EpisodeSubstituteNameRepository;
 use App\Repository\KeywordRepository;
 
 //use App\Repository\ProviderRepository;
+use App\Repository\NetworkRepository;
 use App\Repository\SeasonLocalizedOverviewRepository;
 use App\Repository\SeriesAdditionalOverviewRepository;
 use App\Repository\SeriesDayOffsetRepository;
@@ -81,6 +82,7 @@ class SeriesController extends AbstractController
         private readonly ImageConfiguration                 $imageConfiguration,
         private readonly KeywordRepository                  $keywordRepository,
         private readonly KeywordService                     $keywordService,
+        private readonly NetworkRepository                  $networkRepository,
         private readonly SeasonLocalizedOverviewRepository  $seasonLocalizedOverviewRepository,
         private readonly SeriesAdditionalOverviewRepository $seriesAdditionalOverviewRepository,
         private readonly SeriesDayOffsetRepository          $seriesDayOffsetRepository,
@@ -269,13 +271,14 @@ class SeriesController extends AbstractController
         // Parameters count
         if (!count($request->query->all())) {
             if (!$settings) {
-                $settings = new Settings($user, 'series to end', ['perPage' => 10, 'sort' => 'lastWatched', 'order' => 'DESC', 'startStatus' => 'series-started', 'endStatus' => 'series-not-watched']);
+                $settings = new Settings($user, 'series to end', ['perPage' => 10, 'sort' => 'lastWatched', 'order' => 'DESC', 'startStatus' => 'series-started', 'endStatus' => 'series-not-watched', 'network' => 'all']);
                 $this->settingsRepository->save($settings, true);
             }
         } else {
             // /fr/series/all?sort=episodeAirDate&order=DESC&startStatus=series-not-started&endStatus=series-not-watched&perPage=10
             $paramSort = $request->get('sort');
             $paramOrder = $request->get('order');
+            $paramNetwork = $request->get('network');
             $paramStartStatus = $request->get('startStatus');
             $paramEndStatus = $request->get('endStatus');
             $paramPerPage = $request->get('perPage');
@@ -283,6 +286,7 @@ class SeriesController extends AbstractController
                 'perPage' => $paramPerPage,
                 'sort' => $paramSort,
                 'order' => $paramOrder,
+                'network' => $paramNetwork,
                 'startStatus' => $paramStartStatus,
                 'endStatus' => $paramEndStatus,
             ]);
@@ -293,6 +297,7 @@ class SeriesController extends AbstractController
         $filters = [
             'page' => $page,
             'perPage' => $data['perPage'],
+            'network' => $data['network'],
             'sort' => $data['sort'],
             'order' => $data['order'],
             'startStatus' => $data['startStatus'],
@@ -316,19 +321,41 @@ class SeriesController extends AbstractController
         ];
 
         /** @var UserSeries[] $userSeries */
-        $userSeries = $this->userSeriesRepository->getAllSeries($user, $localisation, [/*'us.progress > 0', */ 'us.progress < 100'], $filters['sort'], $filters['order'], $page, $filters['perPage']);
-        $userSeriesCount = $this->userSeriesRepository->countAllSeries($user, $localisation, [/*'us.progress > 0', */ 'us.progress < 100']);
+        $userSeries = $this->userSeriesRepository->getAllSeries(
+            $user,
+            $localisation,
+            $filters,
+            [/*'us.progress > 0', */ 'us.progress < 100']);
+        $userSeriesCount = $this->userSeriesRepository->countAllSeries(
+            $user,
+            $localisation,
+            $filters,
+            [/*'us.progress > 0', */ 'us.progress < 100']);
 
         $userSeries = array_map(function ($series) {
             $series['poster_path'] = $series['poster_path'] ? $this->imageConfiguration->getCompleteUrl($series['poster_path'], 'poster_sizes', 5) : null;
             return $series;
         }, $userSeries);
 
+        $userNetworks = $user->getNetworks();
+        $networks = $this->networkRepository->findBy([], ['name' => 'ASC']);
+        $nlpArr = $this->networkRepository->networkLogoPaths();
+        $networkLogoPaths = ['all' => null];
+        foreach ($nlpArr as $nlp) {
+            if ($nlp['logo_path'])
+                $networkLogoPaths[$nlp['id']] = $this->imageConfiguration->getCompleteUrl($nlp['logo_path'], 'logo_sizes', 3);
+            else
+                $networkLogoPaths[$nlp['id']] = null;
+        }
+
         dump([
             'userSeries' => $userSeries,
             'userSeriesCount' => $userSeriesCount,
             'filters' => $filters,
             'filterBoxOpen' => $filterBoxOpen,
+            'userNetworks' => $userNetworks,
+            'networks' => $networks,
+            'networkLogoPaths' => $networkLogoPaths,
         ]);
 
         return $this->render('series/all.html.twig', [
@@ -338,6 +365,9 @@ class SeriesController extends AbstractController
             'filters' => $filters,
             'filterBoxOpen' => $filterBoxOpen,
             'filterMeanings' => $filterMeanings,
+            'userNetworks' => $userNetworks,
+            'networks' => $networks,
+            'networkLogoPaths' => $networkLogoPaths,
         ]);
     }
 

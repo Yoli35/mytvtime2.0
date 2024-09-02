@@ -181,8 +181,25 @@ body {
 label:has(select) {
     align-items: center;
     display: flex;
+    gap: 1rem;
     margin-inline-start: auto;
     position: relative;
+
+    .logo {
+        align-items: center;
+        background-color: hsl(0, 0%, 100%);
+        border: 1px solid var(--orange-50);
+        border-radius: .25rem;
+        display: flex;
+        justify-content: center;
+        height: 1.5rem;
+        padding: .25rem;
+
+        img {
+            border-radius: .25rem;
+            height: 100%;
+        }
+    }
 
     select {
         appearance: none;

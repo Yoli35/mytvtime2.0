@@ -97,6 +97,12 @@ class Series
     #[ORM\Column(nullable: true)]
     private ?array $locations = null;
 
+    /**
+     * @var Collection<int, Network>
+     */
+    #[ORM\ManyToMany(targetEntity: Network::class)]
+    private Collection $networks;
+
     public function __construct()
     {
         $this->seriesLocalizedNames = new ArrayCollection();
@@ -108,6 +114,7 @@ class Series
         $this->seriesAdditionalOverviews = new ArrayCollection();
         $this->seriesDayOffsets = new ArrayCollection();
         $this->seasonLocalizedOverviews = new ArrayCollection();
+        $this->networks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -613,6 +620,30 @@ class Series
     public function setLocations(?array $locations): static
     {
         $this->locations = $locations;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Network>
+     */
+    public function getNetworks(): Collection
+    {
+        return $this->networks;
+    }
+
+    public function addNetwork(Network $network): static
+    {
+        if (!$this->networks->contains($network)) {
+            $this->networks->add($network);
+        }
+
+        return $this;
+    }
+
+    public function removeNetwork(Network $network): static
+    {
+        $this->networks->removeElement($network);
 
         return $this;
     }
