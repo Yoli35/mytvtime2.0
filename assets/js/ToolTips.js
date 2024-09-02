@@ -52,12 +52,14 @@ export class ToolTips {
         const titleBg = currentTarget.getAttribute("data-title-bg");
         const img = currentTarget.querySelector("img");
         const body = tooltips.querySelector(".body");
+        const tail = tooltips.querySelector(".tail");
         if (!img) {
             body.innerHTML = text;
         } else {
             const imgClone = img.cloneNode(true);
             body.innerHTML = "";
-            body.style.backgroundColor = titleBg || "transparent";
+            body.style.backgroundColor = titleBg || "sienna";
+            tail.style.backgroundColor = titleBg || "sienna";
             body.appendChild(imgClone);
             const p = document.createElement("p");
             p.innerHTML = text;
@@ -109,7 +111,8 @@ export class ToolTips {
             tooltips.setAttribute("style", style);
             if (toolTipsBg.length) tooltips.style.setProperty("--tooltips-bg", toolTipsBg);
             if (toolTipsColor.length) tooltips.style.setProperty("--tooltips-color", toolTipsColor);
-            tail.setAttribute("style", "translate: " + left + "px -.55rem");
+            // tail.setAttribute("style", "translate: " + left + "px -.55rem");
+            tail.style.translate = left + "px -.55rem";
             return;
         }
 
@@ -119,7 +122,8 @@ export class ToolTips {
             tooltips.setAttribute("style", style);
             if (toolTipsBg.length) tooltips.style.setProperty("--tooltips-bg", toolTipsBg);
             if (toolTipsColor.length) tooltips.style.setProperty("--tooltips-color", toolTipsColor);
-            tail.setAttribute("style", "translate: " + (right - windowWidth) + "px -.55rem;");
+            // tail.setAttribute("style", "translate: " + (right - windowWidth) + "px -.55rem;");
+            tail.style.translate = (right - windowWidth) + "px -.55rem;";
             return;
         }
 
@@ -127,6 +131,7 @@ export class ToolTips {
         tooltips.setAttribute("style", style);
         if (toolTipsBg.length) tooltips.style.setProperty("--tooltips-bg", toolTipsBg);
         if (toolTipsColor.length) tooltips.style.setProperty("--tooltips-color", toolTipsColor);
-        tail.setAttribute("style", "translate: 0 -.55rem");
+        // tail.setAttribute("style", "translate: 0 -.55rem");
+        tail.style.translate = "0 -.55rem";
     }
 }
