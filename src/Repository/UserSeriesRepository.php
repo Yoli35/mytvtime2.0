@@ -256,7 +256,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         $userId = $user->getId();
         $country = $localisation['country'];
 
-        $sql = "SELECT COUNT(*)
+        $sql = "SELECT COUNT(s.id)
                 FROM `user_series` us 
                     INNER JOIN user_episode ue ON ue.`user_series_id` = us.`id`
                     LEFT JOIN `series` s ON s.`id` = us.`series_id` 
