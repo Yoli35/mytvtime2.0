@@ -762,28 +762,28 @@ class SeriesController extends AbstractController
     }
 
 //    #[IsGranted('ROLE_USER')]
-    #[Route('/add/watch/link/{id}', name: 'add_watch_link', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function addWatchLink(Request $request, int $id): Response
-    {
-        $data = json_decode($request->getContent(), true);
-        $url = $data['url'];
-        $name = $data['name'];
-        $providerId = $data['provider'];
-        if ($providerId == "") $providerId = null;
-        dump([
-            'url' => $url,
-            'name' => $name,
-            'provider' => $providerId,
-        ]);
-        $series = $this->seriesRepository->findOneBy(['id' => $id]);
-
-        $watchLink = new SeriesWatchLink($url, $name, $series, $providerId);
-        $this->seriesWatchLinkRepository->save($watchLink, true);
-
-        return $this->json([
-            'ok' => true,
-        ]);
-    }
+//    #[Route('/add/watch/link/{id}', name: 'add_watch_link', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+//    public function addWatchLink(Request $request, int $id): Response
+//    {
+//        $data = json_decode($request->getContent(), true);
+//        $url = $data['url'];
+//        $name = $data['name'];
+//        $providerId = $data['provider'];
+//        if ($providerId == "") $providerId = null;
+//        dump([
+//            'url' => $url,
+//            'name' => $name,
+//            'provider' => $providerId,
+//        ]);
+//        $series = $this->seriesRepository->findOneBy(['id' => $id]);
+//
+//        $watchLink = new SeriesWatchLink($url, $name, $series, $providerId);
+//        $this->seriesWatchLinkRepository->save($watchLink, true);
+//
+//        return $this->json([
+//            'ok' => true,
+//        ]);
+//    }
 
 //    #[IsGranted('ROLE_USER')]
     #[Route('/add/localized/name/{id}', name: 'add_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]

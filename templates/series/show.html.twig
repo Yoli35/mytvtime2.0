@@ -191,15 +191,23 @@
                     <div class="watch-links">
                         <div class="label">{{ 'Watch links'|trans }}</div>
                         {% for link in series.watchLinks %}
-                            <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
-                                <div class="watch-link">
+                            <div class="watch-link">
+                                <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
                                     {% if link.providerId %}
                                         <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}" data-title="{{ link.name ?? providers.names[link.providerId] }}">
                                     {% else %}
                                         <span>{{ link.name }}</span>
                                     {% endif %}
+                                </a>
+                                <div class="watch-link-tools">
+                                    <div class="watch-link-tool edit" data-title="{{ 'Edit this watch link'|trans }}">
+                                        {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                    <div class="watch-link-tool delete" data-title="{{ 'Delete this watch link'|trans }}">
+                                        {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
+                                    </div>
                                 </div>
-                            </a>
+                            </div>
                         {% endfor %}
                         <div class="add-watch-link" data-title="{{ 'Add a watch link'|trans }}">
                             {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
@@ -619,7 +627,15 @@
         "seriesId": {{ series.id }},
         "userSeriesId": {{ userSeries.id }},
         "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "api": {
+        "directLinkCrud": {
+        "create": "{{ path('api_series_direct_link_create') }}",
+        "read": "{{ path('api_series_direct_link_read', {id: 0})|slice(0,-1) }}",
+        "update": "{{ path('api_series_direct_link_update', {id: 0})|slice(0,-1) }}",
+        "delete": "{{ path('api_series_direct_link_delete', {id: 0})|slice(0,-1) }}"
+        }
+        }
         }
     </div>
     <div class="svgs" style="display: none">

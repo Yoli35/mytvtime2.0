@@ -6,6 +6,20 @@ let gThis = null;
 
 export class Show {
     /**
+     * @typedef Crud
+     * @type {Object}
+     * @property {string} create
+     * @property {string} read
+     * @property {string} update
+     * @property {string} delete
+     */
+    /**
+     * @typedef Api
+     * @type {Object}
+     * @property {Crud} directLinkCrud
+     */
+
+    /**
      * @typedef Globs
      * @type {Object}
      * @property {string} seriesName
@@ -13,6 +27,7 @@ export class Show {
      * @property {number} userSeriesId
      * @property {Array} providers
      * @property {Array} translations
+     * @property {Api} api
      */
     /**
      * @typedef Source
@@ -36,6 +51,8 @@ export class Show {
         const seriesName = jsonGlobsObject.seriesName;
         const userSeriesId = jsonGlobsObject.userSeriesId;
         const translations = jsonGlobsObject.translations;
+        const api = jsonGlobsObject.api;
+        console.log({api});
 
         /******************************************************************************
          * Animation for the progress bar                                             *
@@ -207,13 +224,12 @@ export class Show {
                 url.nextElementSibling.textContent = gThis.translations['This field is required'];
             }
             if (name.value && url.value) {
-                fetch('/' + lang + '/series/add/watch/link/' + seriesId,
-                    {
+                fetch(api.directLinkCrud.create, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({provider: provider.value, name: name.value, url: url.value})
+                        body: JSON.stringify({seriesId: seriesId, provider: provider.value, name: name.value, url: url.value})
                     }
                 ).then(function (response) {
                     if (response.ok) {

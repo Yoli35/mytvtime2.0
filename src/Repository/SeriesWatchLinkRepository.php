@@ -27,4 +27,12 @@ class SeriesWatchLinkRepository extends ServiceEntityRepository
         $this->em->persist($seriesWatchLink);
         if ($flush) $this->em->flush();
     }
+
+    public function delete(?SeriesWatchLink $watchLink)
+    {
+        if ($watchLink) {
+            $this->em->remove($watchLink);
+            $this->em->flush();
+        }
+    }
 }
