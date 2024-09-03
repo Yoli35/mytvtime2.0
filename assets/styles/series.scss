@@ -1645,7 +1645,16 @@ h2 {
     }
 
     .content {
+        flex-direction: column;
+
+        .right {
+            order: 1;
+        }
+
         .left {
+            order: 2;
+            width: 100cqi !important;
+
             .seasons {
                 .season {
                     height: 15rem;
@@ -1665,21 +1674,6 @@ h2 {
                     }
                 }
             }
-        }
-    }
-}
-
-@container series-show (width < 1024px) {
-    .content {
-        flex-direction: column;
-
-        .right {
-            order: 1;
-        }
-
-        .left {
-            order: 2;
-            width: 100cqi !important;
         }
     }
 }
