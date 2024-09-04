@@ -13,7 +13,6 @@ use App\Entity\SeriesDayOffset;
 use App\Entity\SeriesImage;
 use App\Entity\SeriesLocalizedName;
 use App\Entity\SeriesLocalizedOverview;
-use App\Entity\SeriesWatchLink;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserEpisode;
@@ -35,7 +34,6 @@ use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesLocalizedNameRepository;
 use App\Repository\SeriesLocalizedOverviewRepository;
 use App\Repository\SeriesRepository;
-use App\Repository\SeriesWatchLinkRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
 use App\Repository\UserEpisodeRepository;
@@ -65,7 +63,6 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\Map\InfoWindow;
 use Symfony\UX\Map\Map;
-use Symfony\UX\Map\MapOptionsInterface;
 use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
 
@@ -90,7 +87,6 @@ class SeriesController extends AbstractController
         private readonly SeriesRepository                   $seriesRepository,
         private readonly SeriesLocalizedNameRepository      $seriesLocalizedNameRepository,
         private readonly SeriesLocalizedOverviewRepository  $seriesLocalizedOverviewRepository,
-        private readonly SeriesWatchLinkRepository          $seriesWatchLinkRepository,
         private readonly SettingsRepository                 $settingsRepository,
         private readonly SourceRepository                   $sourceRepository,
         private readonly TMDBService                        $tmdbService,
@@ -303,13 +299,13 @@ class SeriesController extends AbstractController
             'startStatus' => $data['startStatus'],
             'endStatus' => $data['endStatus'],
         ];
-        $filterValues = [
+        /*$filterValues = [
             'series-started' => 'us.progress > 0',
             'series-not-started' => 'us.progress = 0',
             'series-watched' => 'us.progress = 100',
             'series-not-watched' => 'us.progress < 100',
             'series-favorite' => 'us.favorite = 1',
-        ];
+        ];*/
         $filterMeanings = [
             'name' => 'Name',
             'addedAt' => 'Date added',
@@ -422,7 +418,7 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $series = [];
         $slugger = new AsciiSlugger();
-        $watchProviders = $this->getWatchProviders($user?->getPreferredLanguage() ?? $request->getLocale(), $user?->getCountry() ?? 'FR');
+        $watchProviders = $this->getWatchProviders($user?->getCountry() ?? 'FR');
         $keywords = $this->getKeywords();
 
         $seriesSearch = new SeriesAdvancedSearchDTO($user?->getPreferredLanguage() ?? $request->getLocale(), $user?->getCountry() ?? 'FR', $user?->getTimezone() ?? 'Europe/Paris', 1);
@@ -575,7 +571,7 @@ class SeriesController extends AbstractController
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userSeries = $this->updateUserSeries($userSeries, $tv);
 
-        $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
+        $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
 
         $schedules = $this->seriesSchedules($series);
         $seriesArr = $series->toArray();
@@ -732,19 +728,27 @@ class SeriesController extends AbstractController
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
 
+        $seriesImages = $series->getSeriesImages()->toArray();
+
         $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $request->getLocale(), ['credits', 'watch/providers']), true);
         if ($season['poster_path']) {
-            $this->saveImage("posters", $season['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            if (!$this->inImages($season['poster_path'], $seriesImages)) {
+                $seriesImage = new SeriesImage($series, "poster", $season['poster_path']);
+                $this->seriesImageRepository->save($seriesImage, true);
+                $this->saveImage("posters", $season['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            }
         } else {
             $season['poster_path'] = $series->getPosterPath();
         }
+
         $season['deepl'] = $this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
         $season['episodes'] = $this->seasonEpisodes($season, $userSeries, $dayOffset);
         $season['credits'] = $this->castAndCrew($season);
         $season['watch/providers'] = $this->watchProviders($season, $user->getCountry() ?? 'FR');
         $season['localized_name'] = $series->getLocalizedName($request->getLocale());
 
-        $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
+
+        $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
         dump([
             'series' => $series,
@@ -2037,14 +2041,16 @@ class SeriesController extends AbstractController
         ];
     }
 
-    public function getWatchProviders($language, $watchRegion): array
+    public function getWatchProviders($watchRegion): array
     {
-        $providers = ['results' => []];//json_decode($this->tmdbService->getTvWatchProviderList($language, $watchRegion), true);
+        // May be unavailable - when Youtube was added for example
+        // TODO: make a command to regularly update db
+//        $providers = json_decode($this->tmdbService->getTvWatchProviderList($language, $watchRegion), true);
 //        dump(['TV providers' => $providers]);
-        $providers = $providers['results'];
-        if (count($providers) == 0) {
-            $providers = $this->watchProviderRepository->getWatchProviderList($watchRegion);
-        }
+//        $providers = $providers['results'];
+//        if (count($providers) == 0) {
+        $providers = $this->watchProviderRepository->getWatchProviderList($watchRegion);
+//        }
         $watchProviders = [];
         foreach ($providers as $provider) {
             $watchProviders[$provider['provider_name']] = $provider['provider_id'];
