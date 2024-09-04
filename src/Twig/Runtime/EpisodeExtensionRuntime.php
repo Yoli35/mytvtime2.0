@@ -10,7 +10,7 @@ use DateTimeImmutable;
 use Symfony\Component\Validator\Constraints\Timezone;
 use Twig\Extension\RuntimeExtensionInterface;
 
-readonly class EpisodeNotificationExtensionRuntime implements RuntimeExtensionInterface
+readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         private DateService                   $dateService,
