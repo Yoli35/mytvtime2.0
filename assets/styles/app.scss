@@ -331,13 +331,14 @@ label:has(input[type="text"]) {
                 a {
                     color: var(--navbar-color);
                     display: block;
-                    padding-block: .5rem;
+                    padding-block: .125rem;
                     text-decoration: none;
 
                     &.history {
                         align-items: center;
                         display: flex;
                         gap: .5rem;
+                        justify-content: stretch;
 
                         .poster {
                             align-items: center;
@@ -354,6 +355,21 @@ label:has(input[type="text"]) {
                                 object-fit: cover;
                                 width: 100%;
                             }
+                        }
+
+                        .name{
+                            flex-grow: 1;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                        }
+
+                        .number {
+                            background-color: var(--green-50);
+                            border-radius: .25rem;
+                            color: var(--green-90);
+                            margin-inline-start: auto;
+                            padding-inline: .5rem;
                         }
 
                         .date {

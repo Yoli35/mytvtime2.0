@@ -2,8 +2,10 @@
 
 namespace App\Twig\Runtime;
 
+use App\Entity\Settings;
 use App\Entity\User;
 use App\Repository\EpisodeNotificationRepository;
+use App\Repository\SettingsRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Service\DateService;
 use DateTimeImmutable;
@@ -15,6 +17,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
     public function __construct(
         private DateService                   $dateService,
         private EpisodeNotificationRepository $episodeNotificationRepository,
+        private SettingsRepository            $settingsRepository,
         private UserEpisodeRepository         $userEpisodeRepository
     )
     {
@@ -103,10 +106,18 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
 
     public function seriesHistory(User $user, int $count): array
     {
+        // settings: user_id: 1, name: seriesHistory, value: {"list": "series"|"episode"}
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'seriesHistory']);
+        if (!$settings) {
+            $settings = new Settings($user, 'seriesHistory', ["list"=> "series"]);
+            $this->settingsRepository->save($settings, true);
+        }
+        $list = $settings->getData()['list'];
+
         $history = array_map(function ($item) use ($user) {
             $item['lastWatchAt'] = $this->dateService->newDateImmutable($item['lastWatchAt'], 'UTC')->setTimezone(new \DateTimeZone($user->getTimezone() ?? 'Europe/Paris'));
             return $item;
-        }, $this->userEpisodeRepository->seriesHistoryForTwig($user, $user->getCountry() ?? 'FR', $user->getPreferredLanguage() ?? 'fr', $count));
+        }, $this->userEpisodeRepository->seriesHistoryForTwig($user, $user->getCountry() ?? 'FR', $user->getPreferredLanguage() ?? 'fr', $list, $count));
 //        dump($history);
         return $history;
     }

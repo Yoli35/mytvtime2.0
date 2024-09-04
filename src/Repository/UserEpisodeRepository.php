@@ -103,10 +103,11 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function seriesHistoryForTwig(User $user, string $country, string $locale, int $count): array
+    public function seriesHistoryForTwig(User $user, string $country, string $locale, string $list, int $count): array
     {
         $userId = $user->getId();
-        $sql = "SELECT s.id                            as id,
+        if ($list == 'series') {
+            $sql = "SELECT s.id                            as id,
                        s.`poster_path`                 as posterPath,
                        us.`last_episode`               as episodeNumber,
                        us.`last_season`                as seasonNumber,
@@ -121,6 +122,25 @@ class UserEpisodeRepository extends ServiceEntityRepository
               AND us.`last_watch_at` IS NOT NULL
             ORDER BY us.`last_watch_at` DESC
             LIMIT $count OFFSET 0";
+        }
+        if ($list == 'episode') {
+            $sql = "SELECT s.id                                   as id,
+                           s.`poster_path`                        as posterPath,
+                           ue.episode_number                      as episodeNumber,
+                           ue.season_number                       as seasonNumber,
+                           ue.watch_at                            as lastWatchAt,
+                           IF(sln.name IS NULL, s.name, CONCAT(sln.name,' - ',s.name)) as name,
+                           IF(sln.slug IS NULL, s.slug, sln.slug) as slug
+                    FROM `user_episode` ue
+                             INNER JOIN `user_series` us ON us.`id` = ue.`user_series_id`
+                             INNER JOIN `series` s ON s.`id` = us.`series_id`
+                             LEFT JOIN `series_day_offset` sdo ON s.id = sdo.series_id AND sdo.country = '$country'
+                             LEFT JOIN `series_localized_name` sln ON sln.`series_id` = s.`id` AND sln.`locale` = '$locale'
+                    WHERE us.`user_id` = $userId
+                      AND ue.watch_at IS NOT NULL
+                    ORDER BY ue.watch_at DESC
+                    LIMIT $count OFFSET 0";
+        }
 
         return $this->getAll($sql);
     }
