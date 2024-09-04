@@ -35,10 +35,15 @@ h2 {
     width: 100%;
 
     h3 {
+        display: flex;
         font-size: 1.5rem;
         font-weight: 100;
         line-height: 1.25em;
         margin-block: 1rem .5rem;
+
+        span{
+            margin-inline-start: auto;
+        }
     }
 
     .header {
@@ -442,7 +447,7 @@ h2 {
         }
 
         .backdrops {
-            width: 100%;
+            width: calc(60vw - 3rem);
 
             .other-backdrop {
                 aspect-ratio: 16/9;
@@ -1009,7 +1014,6 @@ h2 {
         gap: .5rem;
         justify-content: center;
         padding: .25rem;
-        pointer-events: none;
         width: 2rem;
     }
 

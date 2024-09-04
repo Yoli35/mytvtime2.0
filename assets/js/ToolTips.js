@@ -66,25 +66,22 @@ export class ToolTips {
             body.appendChild(p);
         }
 
-        const toolTipsBg = tooltips.style.getPropertyValue("--tooltips-bg");
-        const toolTipsColor = tooltips.style.getPropertyValue("--tooltips-color");
-
         const width = body.offsetWidth;
         const height = body.offsetHeight - 48;
         let style = "translate: " + (evt.pageX - (width / 2)) + "px " + (evt.pageY - height) + "px; max-height: " + height + "px;";
         tooltips.setAttribute("style", style);
-        if (toolTipsBg.length) tooltips.style.setProperty("--tooltips-bg", toolTipsBg);
-        if (toolTipsColor.length) tooltips.style.setProperty("--tooltips-color", toolTipsColor);
 
         tooltips.classList.add("show");
     }
 
     hide() {
         const tooltips = document.querySelector(".tool-tips");
+        const h3Span = document.querySelector("h3 span");
         tooltips.classList.remove("show");
         setTimeout(() => {
             tooltips.setAttribute("style", "translate: 0px 0px;");
         }, 300);
+        h3Span.innerHTML = "";
     }
 
     move(evt) {
@@ -99,9 +96,7 @@ export class ToolTips {
         const fromTopViewport = evt.clientY;
         const windowWidth = window.innerWidth;
         const visualViewport = window.visualViewport;
-
-        const toolTipsBg = tooltips.style.getPropertyValue("--tooltips-bg");
-        const toolTipsColor = tooltips.style.getPropertyValue("--tooltips-color");
+        const h3Span = document.querySelector("h3 span");
 
         if (img) img.style.maxHeight = (fromTopViewport - 64) + "px";
 
@@ -109,8 +104,6 @@ export class ToolTips {
         if (left < 0) {
             let style = "translate: " + (evt.pageX - (width / 2) + (left * -1)) + "px " + (evt.pageY - Math.min(height, fromTopViewport)) + "px;";
             tooltips.setAttribute("style", style);
-            if (toolTipsBg.length) tooltips.style.setProperty("--tooltips-bg", toolTipsBg);
-            if (toolTipsColor.length) tooltips.style.setProperty("--tooltips-color", toolTipsColor);
             // tail.setAttribute("style", "translate: " + left + "px -.55rem");
             tail.style.translate = left + "px -.55rem";
             return;
@@ -120,17 +113,15 @@ export class ToolTips {
         if (right > windowWidth * visualViewport.scale) {
             let style = "translate: " + (evt.pageX - (width / 2) - (right - windowWidth)) + "px " + (evt.pageY - Math.min(height, fromTopViewport)) + "px;";
             tooltips.setAttribute("style", style);
-            if (toolTipsBg.length) tooltips.style.setProperty("--tooltips-bg", toolTipsBg);
-            if (toolTipsColor.length) tooltips.style.setProperty("--tooltips-color", toolTipsColor);
             // tail.setAttribute("style", "translate: " + (right - windowWidth) + "px -.55rem;");
-            tail.style.translate = (right - windowWidth) + "px -.55rem;";
+            let translateX = right - (windowWidth * visualViewport.scale) + "px";
+            h3Span.innerHTML = translateX;
+            tail.style.translate = translateX + " -.255rem;";
             return;
         }
 
         let style = "translate: " + (evt.pageX - (width / 2)) + "px " + (evt.pageY - Math.min(height, fromTopViewport)) + "px;";
         tooltips.setAttribute("style", style);
-        if (toolTipsBg.length) tooltips.style.setProperty("--tooltips-bg", toolTipsBg);
-        if (toolTipsColor.length) tooltips.style.setProperty("--tooltips-color", toolTipsColor);
         // tail.setAttribute("style", "translate: 0 -.55rem");
         tail.style.translate = "0 -.55rem";
     }
