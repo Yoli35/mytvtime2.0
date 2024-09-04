@@ -184,11 +184,17 @@ class SeriesController extends AbstractController
             ];
         }, $this->userSeriesRepository->getUserSeriesOfTheNext7Days($user, $country, $locale));
 
+        $seriesToStart = array_map(function ($s) {
+            $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            return $s;
+        }, $this->userEpisodeRepository->seriesToStart($user, $locale, 1, 20));
+
         dump([
             'seriesOfTheDay' => $seriesOfTheDay,
             'episodesOfTheDay' => $episodesOfTheDay,
             'seriesOfTheWeek' => $seriesOfTheWeek,
             'episodeHistory' => $episodeHistory,
+            'seriesToStart' => $seriesToStart,
             'seriesList' => $series,
             'total_results' => $searchResult['total_results'] ?? -1,
             'hier' => $this->now()->modify('-1 day')->format('Y-m-d'),
@@ -199,6 +205,7 @@ class SeriesController extends AbstractController
             'episodesOfTheDay' => $episodesOfTheDay,
             'seriesOfTheWeek' => $seriesOfTheWeek,
             'episodeHistory' => $episodeHistory,
+            'seriesToStart' => $seriesToStart,
             'seriesList' => $series,
             'total_results' => $searchResult['total_results'] ?? -1,
         ]);

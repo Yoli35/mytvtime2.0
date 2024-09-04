@@ -324,6 +324,32 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function seriesToStart(User $user, string $locale, int $page, int $perPage): array
+    {
+        $userId = $user->getId();
+        $offset = ($page - 1) * $perPage;
+        $sql = "SELECT s.id                                                          as id,
+                       IF(sln.`name`, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
+                       IF(sln.`slug`, sln.`slug`, s.`slug`)                          as slug,
+                       s.`poster_path`                                               as poster_path,
+                       s.`first_air_date`                                            as final_air_date,
+                       (SELECT COUNT(*)
+                            FROM `user_episode` ue
+                            WHERE ue.`user_series_id`=us.id)                         as number_of_episode,
+                       (SELECT CONCAT(ue.`season_number`, '/',ue.`episode_number`)
+                            FROM `user_episode` ue
+                            WHERE ue.`user_series_id`=us.id AND ue.`season_number`>0 AND ue.`watch_at` IS NULL
+                            ORDER BY ue.`episode_number` LIMIT 1)                    as episode
+                FROM `series` s
+                INNER JOIN `user_series` us ON us.series_id=s.id
+                LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.id AND sln.`locale`='$locale'
+                WHERE s.`first_air_date` <= NOW() AND us.user_id=$userId AND us.`progress`=0
+                ORDER BY s.`first_air_date` DESC
+                LIMIT $perPage OFFSET $offset";
+
+        return $this->getAll($sql);
+    }
+
     /*public function getSubstituteName(int $id): mixed
     {
         $sql = "SELECT `name` "
