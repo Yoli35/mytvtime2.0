@@ -78,12 +78,13 @@ export class ToolTips {
 
     hide() {
         const tooltips = this.tooltipsElement;
-        const h3Span = document.querySelector("h3 span");
+        if (!tooltips) {
+            return;
+        }
         tooltips.classList.remove("show");
         setTimeout(() => {
             tooltips.setAttribute("style", "translate: 0px 0px;");
         }, 300);
-        h3Span.innerHTML = "";
     }
 
     move(evt) {
