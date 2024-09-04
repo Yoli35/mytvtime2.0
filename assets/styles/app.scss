@@ -367,7 +367,7 @@ label:has(input[type="text"]) {
                 }
 
                 &:hover {
-                    background-color: var(--navbar-bg-hover);
+                    background-color: var(--orange-40);
                 }
 
                 &:has(input[type=checkbox]) {
