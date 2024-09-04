@@ -256,6 +256,7 @@
             }
 
             .form-field:has(button) {
+                align-items: center;
                 display: flex;
                 gap: 1rem;
                 justify-content: flex-end;
@@ -264,6 +265,15 @@
             button {
                 padding-inline: 1rem;
                 padding-block: .25rem;
+
+                &.delete {
+                    background-color: var(--remove-this-series) !important;
+                    font-size: 2rem;
+                    font-weight: 600;
+                    line-height: 2;
+                    text-transform: uppercase;
+                    width: 20rem;
+                }
             }
 
             &.hide {

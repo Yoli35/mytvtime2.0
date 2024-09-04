@@ -26,7 +26,7 @@ class SeriesDirectLink extends AbstractController
     }
 
     #[Route('/create', name: 'create', methods: ['POST'])]
-    public function addWatchLink(Request $request): Response
+    public function create(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
         $seriesId = $data['seriesId'];
@@ -45,7 +45,7 @@ class SeriesDirectLink extends AbstractController
     }
 
     #[Route('/read/{id}', name: 'read', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function getWatchLink(Request $request, SeriesWatchLink $seriesWatchLink): Response
+    public function read(SeriesWatchLink $seriesWatchLink): Response
     {
         $provider = $this->watchProviderRepository->findOneBy(['providerId' => $seriesWatchLink->getProviderId()]);
         return $this->json([
@@ -64,7 +64,7 @@ class SeriesDirectLink extends AbstractController
     }
 
     #[Route('/update/{id}', name: 'update', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function updateWatchLink(Request $request, SeriesWatchLink $watchLink): Response
+    public function update(Request $request, SeriesWatchLink $watchLink): Response
     {
         $data = json_decode($request->getContent(), true);
         $url = $data['url'];
@@ -83,7 +83,7 @@ class SeriesDirectLink extends AbstractController
     }
 
     #[Route('/delete/{id}', name: 'delete', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function deleteWatchLink(SeriesWatchLink $watchLink): Response
+    public function delete(SeriesWatchLink $watchLink): Response
     {
         $this->seriesWatchLinkRepository->delete($watchLink);
 

@@ -176,21 +176,76 @@ export class Show {
 
         /******************************************************************************
          * Watch links: add.                                                          *
-         * TODO: edit, delete                                                         *
+         * ****************************************************************************
+         * <div class="watch-link-tools"                                              *
+         *     data-id="142"                                                          *
+         *     data-provider="1733"                                                   *
+         *     data-name="Regarder sur Action Max Amazon Channel"                     *
+         * >                                                                          *
+         *     <div class="watch-link-tool edit" data-title="...">                    *
+         *         <svg viewBox="0 0 512 512" fill="currentColor" [...] </svg>        *
+         *     </div>                                                                 *
+         *     <div class="watch-link-tool delete" data-title="...">                  *
+         *         <svg viewBox="0 0 448 512" fill="currentColor" [...] </svg>        *
+         *     </div>                                                                 *
+         * </div>                                                                     *
          ******************************************************************************/
+        const watchLinks = document.querySelectorAll('.watch-link');
         const addWatchLink = document.querySelector('.add-watch-link');
         const watchLinkForm = document.querySelector('.watch-link-form');
+        const watchLinkFormProvider = watchLinkForm.querySelector('#provider');
+        const watchLinkFormName = watchLinkForm.querySelector('#name');
+        const watchLinkFormUrl = watchLinkForm.querySelector('#url');
+        const watchLinkFormType = watchLinkForm.querySelector('#crud-type');
+        const watchLinkFormId = watchLinkForm.querySelector('#crud-id');
         const form = document.querySelector('#watch-link-form');
         const providerSelect = form.querySelector('#provider');
-        const cancel = form.querySelector('button[type="button"]');
-        const submit = form.querySelector('button[type="submit"]');
+        const watchLinkFormCancel = form.querySelector('button[type="button"]');
+        const watchLinkFormSubmit = form.querySelector('button[type="submit"]');
 
         addWatchLink.addEventListener('click', function () {
-            watchLinkForm.classList.add('display');
-            setTimeout(function () {
-                watchLinkForm.classList.add('active');
-            }, 0);
+            watchLinkFormType.value = 'create';
+            watchLinkFormSubmit.classList.remove('delete');
+            watchLinkFormSubmit.textContent = translations['Add'];
+            watchLinkFormId.value = "";
+            watchLinkFormProvider.value = "";
+            watchLinkFormName.value = "";
+            watchLinkFormUrl.value = "";
+            gThis.displayForm(watchLinkForm);
         });
+
+        watchLinks.forEach(function (watchLink) {
+            const tools = watchLink.querySelector('.watch-link-tools');
+            const href = watchLink.querySelector('a').getAttribute('href');
+            const edit = tools.querySelector('.watch-link-tool.edit');
+            const del = tools.querySelector('.watch-link-tool.delete');
+            const id = tools.getAttribute('data-id');
+            const provider = tools.getAttribute('data-provider');
+            const name = tools.getAttribute('data-name');
+
+            edit.addEventListener('click', function () {
+                watchLinkFormType.value = 'update';
+                watchLinkFormSubmit.classList.remove('delete');
+                watchLinkFormSubmit.textContent = translations['Edit'];
+                watchLinkFormId.value = id;
+                watchLinkFormProvider.value = provider;
+                watchLinkFormName.value = name;
+                watchLinkFormUrl.value = href;
+                gThis.displayForm(watchLinkForm);
+            });
+
+            del.addEventListener('click', function () {
+                watchLinkFormType.value = 'delete';
+                watchLinkFormSubmit.classList.add('delete');
+                watchLinkFormSubmit.textContent = translations['Delete'];
+                watchLinkFormId.value = id;
+                watchLinkFormProvider.value = provider;
+                watchLinkFormName.value = name;
+                watchLinkFormUrl.value = href;
+                gThis.displayForm(watchLinkForm);
+            });
+        });
+
         providerSelect.addEventListener('change', function () {
             const provider = this.value;
             if (provider) {
@@ -198,18 +253,16 @@ export class Show {
                 name.value = translations['Watch on'] + ' ' + providers.names[provider];
             }
         });
-        cancel.addEventListener('click', function () {
-            watchLinkForm.classList.remove('active');
-            setTimeout(function () {
-                watchLinkForm.classList.remove('display');
-            }, 300);
+        watchLinkFormCancel.addEventListener('click', function () {
+            gThis.hideForm(watchLinkForm);
         });
-        submit.addEventListener('click', function (event) {
+        watchLinkFormSubmit.addEventListener('click', function (event) {
             event.preventDefault();
 
             const provider = form.querySelector('#provider');
             const name = form.querySelector('#name');
             const url = form.querySelector('#url');
+            const type = form.querySelector('#crud-type');
             const errors = form.querySelectorAll('.error');
             errors.forEach(function (error) {
                 error.textContent = '';
@@ -219,12 +272,24 @@ export class Show {
             }
             if (!name.value) {
                 name.nextElementSibling.textContent = gThis.translations['This field is required'];
+                return;
             }
             if (!url.value) {
                 url.nextElementSibling.textContent = gThis.translations['This field is required'];
+                return;
             }
             if (name.value && url.value) {
-                fetch(api.directLinkCrud.create, {
+                let apiUrl;
+                if (type.value === 'create') {
+                    apiUrl = api.directLinkCrud.create;
+                }
+                if (type.value === 'update') {
+                    apiUrl = api.directLinkCrud.update + watchLinkFormId.value;
+                }
+                if (type.value === 'delete') {
+                    apiUrl = api.directLinkCrud.delete + watchLinkFormId.value;
+                }
+                fetch(apiUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -233,33 +298,65 @@ export class Show {
                     }
                 ).then(function (response) {
                     if (response.ok) {
-                        watchLinkForm.classList.remove('active');
-                        setTimeout(function () {
-                            watchLinkForm.classList.remove('display');
-                        }, 300);
-                        const watchLinks = document.querySelector('.watch-links');
-                        const newLink = document.createElement('a');
-                        newLink.href = url.value;
-                        newLink.target = '_blank';
-                        newLink.rel = 'noopener noreferrer';
-                        if (provider.value) {
-                            const watchLink = document.createElement('div');
-                            watchLink.classList.add('watch-link');
-                            const img = document.createElement('img');
-                            img.src = providers.logos[provider.value];
-                            img.alt = providers.names[provider.value];
-                            img.setAttribute('data-title', name.value);
-                            watchLink.appendChild(img);
-                            newLink.appendChild(watchLink);
-                        } else {
-                            const watchLink = document.createElement('div');
-                            watchLink.classList.add('watch-link');
-                            const span = document.createElement('span');
-                            span.textContent = name.value;
-                            watchLink.appendChild(span);
-                            newLink.appendChild(watchLink);
+                        gThis.hideForm(watchLinkForm);
+                        const watchLinksDiv = document.querySelector('.watch-links');
+                        if (type.value === 'create') {
+                            const newLink = document.createElement('a');
+                            newLink.href = url.value;
+                            newLink.target = '_blank';
+                            newLink.rel = 'noopener noreferrer';
+                            if (provider.value) {
+                                const watchLink = document.createElement('div');
+                                watchLink.classList.add('watch-link');
+                                const img = document.createElement('img');
+                                img.setAttribute('data-title', name.value);
+                                watchLink.appendChild(img);
+                                newLink.appendChild(watchLink);
+                            } else {
+                                const watchLink = document.createElement('div');
+                                watchLink.classList.add('watch-link');
+                                const span = document.createElement('span');
+                                span.textContent = name.value;
+                                watchLink.appendChild(span);
+                                newLink.appendChild(watchLink);
+                            }
+                            watchLinks.insertBefore(newLink, watchLinksDiv.lastElementChild);
                         }
-                        watchLinks.insertBefore(newLink, watchLinks.lastElementChild);
+                        if (type.value === 'update') {
+                            const watchLink = document.querySelector('.watch-link[data-id="' + watchLinkFormId.value + '"]');
+                            const hasImg = watchLink.querySelector('img');
+                            const hasSpan = watchLink.querySelector('span');
+                            if (provider.value) {
+                                if (hasImg) {
+                                    const img = watchLink.querySelector('img');
+                                    img.src = providers.logos[provider.value];
+                                    img.alt = providers.names[provider.value];
+                                    img.setAttribute('data-title', name.value);
+                                }
+                                if (hasSpan) {
+                                    const img = document.createElement('img');
+                                    img.src = providers.logos[provider.value];
+                                    img.alt = providers.names[provider.value];
+                                    img.setAttribute('data-title', name.value);
+                                    watchLink.appendChild(img);
+                                    if (hasSpan) {
+                                        hasSpan.remove();
+                                    }
+                                }
+                            } else {
+                                if (hasSpan) {
+                                    hasSpan.textContent = name.value;
+                                }
+                                if (hasImg) {
+                                    hasImg.remove();
+                                }
+                            }
+                        }
+                        if (type.value === 'delete') {
+                            const watchLink = document.querySelector('.watch-link[data-id="' + watchLinkFormId.value + '"]');
+                            watchLink.remove();
+                        }
+
                         provider.value = '';
                         name.value = '';
                         url.value = '';
@@ -668,7 +765,6 @@ export class Show {
         });
         inputGoogleMapsUrl.addEventListener('paste', function (e) {
             const url = e.clipboardData.getData('text');
-            // const url = this.value;
             const urlParts = url.split('@')[1].split(',');
             inputLatitude.value = urlParts[0];
             inputLongitude.value = urlParts[1];

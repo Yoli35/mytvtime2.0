@@ -191,7 +191,7 @@
                     <div class="watch-links">
                         <div class="label">{{ 'Watch links'|trans }}</div>
                         {% for link in series.watchLinks %}
-                            <div class="watch-link">
+                            <div class="watch-link" data-id="{{ link.id }}">
                                 <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
                                     {% if link.providerId %}
                                         <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}" data-title="{{ link.name ?? providers.names[link.providerId] }}">
@@ -199,7 +199,11 @@
                                         <span>{{ link.name }}</span>
                                     {% endif %}
                                 </a>
-                                <div class="watch-link-tools">
+                                <div class="watch-link-tools"
+                                     data-id="{{ link.id }}"
+                                     data-provider="{{ link.providerId }}"
+                                     data-name="{{ link.name }}"
+                                >
                                     <div class="watch-link-tool edit" data-title="{{ 'Edit this watch link'|trans }}">
                                         {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
                                     </div>
@@ -249,6 +253,8 @@
                                     <button type="submit">{{ 'Add'|trans }}</button>
                                 </div>
                             </div>
+                            <input type="hidden" name="crud-type" id="crud-type" value="">{# create (new) | update (edit) | delete (remove) #}
+                            <input type="hidden" name="crud-id" id="crud-id" value="">{# id of updated watch link #}
                         </form>
                     </div>
                     <div class="rating">
