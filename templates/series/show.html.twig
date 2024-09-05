@@ -207,6 +207,7 @@
                                     <div class="watch-link-tool edit" data-title="{{ 'Edit this watch link'|trans }}">
                                         {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
                                     </div>
+                                    <div class="watch-link-name">{{ link.name }}</div>
                                     <div class="watch-link-tool delete" data-title="{{ 'Delete this watch link'|trans }}">
                                         {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
                                     </div>
@@ -644,12 +645,14 @@
         }
         }
     </div>
-    <div class="svgs" style="display: none">
+    <div id="svgs" style="display: none">
         <div class="svg" id="arrow-down">{{ ux_icon('fa6-solid:arrow-down', {height: '18px', width: '18px'}) }}</div>
         <div class="svg" id="arrow-up">{{ ux_icon('fa6-solid:arrow-up', {height: '18px', width: '18px'}) }}</div>
         <div class="svg" id="arrow-left">{{ ux_icon('fa6-solid:arrow-left', {height: '18px', width: '18px'}) }}</div>
         <div class="svg" id="arrow-right">{{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }}</div>
         <div class="svg" id="xmark">{{ ux_icon('fa6-solid:xmark', {height: '18px', width: '18px'}) }}</div>
+        <div class="svg" id="pen">{{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}</div>
+        <div class="svg" id="trash">{{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}</div>
     </div>
 {% endblock %}
 

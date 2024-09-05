@@ -37,6 +37,22 @@ export class Show {
      * @property {string} logoPath
      */
 
+    /**
+     * @typedef Provider
+     * @type {Object}
+     * @property {string} id
+     * @property {string} name
+     * @property {string} logoPath
+     */
+    /**
+     * @typedef Link
+     * @type {Object}
+     * @property {string} id
+     * @property {string} name
+     * @property {Provider} provider
+     * @property {string} url
+     */
+
     constructor() {
         gThis = this;
         this.toolTips = new ToolTips();
@@ -46,6 +62,7 @@ export class Show {
     init() {
         /** @var {Globs} */
         const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
+        const svgs = document.querySelector('div#svgs');
         const providers = jsonGlobsObject.providers;
         const seriesId = jsonGlobsObject.seriesId;
         const seriesName = jsonGlobsObject.seriesName;
@@ -296,31 +313,89 @@ export class Show {
                         },
                         body: JSON.stringify({seriesId: seriesId, provider: provider.value, name: name.value, url: url.value})
                     }
-                ).then(function (response) {
+                ).then(async function (response)
+                {
                     if (response.ok) {
+                        const data = await response.json();
+                        console.log({data});
                         gThis.hideForm(watchLinkForm);
                         const watchLinksDiv = document.querySelector('.watch-links');
                         if (type.value === 'create') {
+                            /** @var {Link} link */
+                            const link = data.link;
+                            console.log({link});
+                            const newWatchLinkDiv = document.createElement('div');
+                            newWatchLinkDiv.classList.add('watch-link');
+                            newWatchLinkDiv.setAttribute('data-id', link.id);
                             const newLink = document.createElement('a');
-                            newLink.href = url.value;
+                            newLink.href = link.url;
                             newLink.target = '_blank';
                             newLink.rel = 'noopener noreferrer';
-                            if (provider.value) {
+                            if (link.provider.logoPath) {
                                 const watchLink = document.createElement('div');
                                 watchLink.classList.add('watch-link');
                                 const img = document.createElement('img');
-                                img.setAttribute('data-title', name.value);
+                                img.src = link.provider.logoPath; //providers.logos[provider.value];
+                                img.alt = link.provider.name; //providers.names[provider.value];
+                                img.setAttribute('data-title', link.name);
                                 watchLink.appendChild(img);
                                 newLink.appendChild(watchLink);
                             } else {
                                 const watchLink = document.createElement('div');
                                 watchLink.classList.add('watch-link');
                                 const span = document.createElement('span');
-                                span.textContent = name.value;
+                                span.textContent = link.name;
                                 watchLink.appendChild(span);
                                 newLink.appendChild(watchLink);
                             }
-                            watchLinks.insertBefore(newLink, watchLinksDiv.lastElementChild);
+                            const watchLinkTools = document.createElement('div');
+                            watchLinkTools.classList.add('watch-link-tools');
+                            watchLinkTools.setAttribute('data-id', link.id);
+                            watchLinkTools.setAttribute('data-provider', link.provider.id);
+                            watchLinkTools.setAttribute('data-name', link.name);
+                            const edit = document.createElement('div');
+                            edit.classList.add('watch-link-tool');
+                            edit.classList.add('edit');
+                            edit.setAttribute('data-title', translations['Edit this watch link']);
+                            const editIcon = svgs.querySelector('.svg#pen').querySelector('svg').cloneNode(true);
+                            edit.addEventListener('click', function () {
+                                watchLinkFormType.value = 'update';
+                                watchLinkFormSubmit.classList.remove('delete');
+                                watchLinkFormSubmit.textContent = translations['Edit'];
+                                watchLinkFormId.value = link.id;
+                                watchLinkFormProvider.value = link.provider.id;
+                                watchLinkFormName.value = link.name;
+                                watchLinkFormUrl.value = link.url;
+                                gThis.displayForm(watchLinkForm);
+                            });
+                            edit.appendChild(editIcon);
+                            watchLinkTools.appendChild(edit);
+                            const nameDiv = document.createElement('div');
+                            nameDiv.classList.add('watch-link-name');
+                            nameDiv.textContent = link.name;
+                            watchLinkTools.appendChild(nameDiv);
+                            const del = document.createElement('div');
+                            del.classList.add('watch-link-tool');
+                            del.classList.add('delete');
+                            del.setAttribute('data-title', translations['Delete this watch link']);
+                            const delIcon = svgs.querySelector('.svg#trash').querySelector('svg').cloneNode(true);
+                            del.appendChild(delIcon);
+                            del.addEventListener('click', function () {
+                                watchLinkFormType.value = 'delete';
+                                watchLinkFormSubmit.classList.add('delete');
+                                watchLinkFormSubmit.textContent = translations['Delete'];
+                                watchLinkFormId.value = link.id;
+                                watchLinkFormProvider.value = link.provider.id;
+                                watchLinkFormName.value = link.name;
+                                watchLinkFormUrl.value = link.url;
+                                gThis.displayForm(watchLinkForm);
+                            });
+                            watchLinkTools.appendChild(del);
+                            gThis.toolTips.init(watchLinkTools);
+
+                            newWatchLinkDiv.appendChild(newLink);
+                            newWatchLinkDiv.appendChild(watchLinkTools);
+                            watchLinksDiv.insertBefore(newWatchLinkDiv, watchLinksDiv.lastElementChild);
                         }
                         if (type.value === 'update') {
                             const watchLink = document.querySelector('.watch-link[data-id="' + watchLinkFormId.value + '"]');

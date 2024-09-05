@@ -57,11 +57,16 @@
                 position: absolute;
                 top: 2rem;
 
+                .watch-link-name {
+                    white-space: nowrap;
+                }
+
                 .watch-link-tool {
                     align-items: center;
                     border-radius: 50%;
                     cursor: pointer;
                     display: flex;
+                    flex-shrink: 0;
                     height: 2rem;
                     justify-content: center;
                     width: 2rem;

@@ -41,25 +41,16 @@ class SeriesDirectLink extends AbstractController
 
         return $this->json([
             'ok' => true,
+            'link' => $this->getLink($watchLink),
         ]);
     }
 
     #[Route('/read/{id}', name: 'read', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function read(SeriesWatchLink $seriesWatchLink): Response
     {
-        $provider = $this->watchProviderRepository->findOneBy(['providerId' => $seriesWatchLink->getProviderId()]);
         return $this->json([
             'ok' => true,
-            'body' => [
-                'link' => [
-                    'name' => $seriesWatchLink->getName(),
-                    'provider' => [
-                        'id' => $provider->getProviderId(),
-                        'name' => $provider->getProviderName(),
-                        'logoPath' => $provider->getLogoPath() ? $this->imageConfiguration->getCompleteUrl($provider->getLogoPath(), 'logos', 3) : null,
-                    ],
-                    'url' => $seriesWatchLink->getUrl(),
-                ]]
+            'link' => $this->getLink($seriesWatchLink),
         ]);
     }
 
@@ -90,5 +81,26 @@ class SeriesDirectLink extends AbstractController
         return $this->json([
             'ok' => true,
         ]);
+    }
+
+    private function getLink($seriesWatchLink): array
+    {
+        return [
+            'id' => $seriesWatchLink->getId(),
+            'name' => $seriesWatchLink->getName(),
+            'provider' => $this->getProvider($seriesWatchLink->getProviderId()),
+            'url' => $seriesWatchLink->getUrl(),
+        ];
+    }
+
+    private function getProvider($providerId): array
+    {
+        $provider = $this->watchProviderRepository->findOneBy(['providerId' => $providerId]);
+
+        return [
+            'id' => $provider->getProviderId(),
+            'name' => $provider->getProviderName(),
+            'logoPath' => $provider->getLogoPath() ? $this->imageConfiguration->getCompleteUrl($provider->getLogoPath(), 'logo_sizes', 3) : null,
+        ];
     }
 }
