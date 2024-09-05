@@ -1,44 +1,56 @@
 export class ToolTips {
+
+    tooltipsElement = null;
+    bodyElement = null;
+    tailElement = null;
+
+    constructor(element = null, className = null) {
+        let tooltipsDiv = document.querySelector(".tool-tips");
+        if (!tooltipsDiv) {
+            tooltipsDiv = this.createTooltips();
+        }
+
+        this.tooltipsElement = tooltipsDiv;
+        this.bodyElement = this.tooltipsElement.querySelector(".body");
+        this.tailElement = this.tooltipsElement.querySelector(".tail");
+
+        this.init(element, className);
+    }
+
     init(element = null, className = null) {
-        // <div className="tool-tips">
-        //     <div className="body"></div>
-        //     <div className="tail"></div>
-        // </div>
         let divs;
         if (!element) {
-            const tooltips = document.createElement("div");
-            tooltips.classList.add("tool-tips");
-            if (className) {
-                tooltips.classList.add(className);
-            }
-            const body = document.createElement("div");
-            body.classList.add("body");
-            const tail = document.createElement("div");
-            tail.classList.add("tail");
-            tooltips.appendChild(body);
-            tooltips.appendChild(tail);
-            document.body.appendChild(tooltips);
-
-            this.tooltipsElement = tooltips;
-            this.bodyElement = body;
-            this.tailElement = tail;
-
             divs = document.querySelectorAll("*[data-title]");
         } else {
-            if (className) {
-                this.tooltipsElement.classList.add(className);
-            }
             divs = element.querySelectorAll("*[data-title]");
         }
         divs.forEach(div => {
             this.initElement(div);
         });
+
+        if (className) {
+            this.tooltipsElement.classList.add(className);
+        }
     }
 
     initElement(element) {
         element.addEventListener('mousemove', this.move.bind(this));
         element.addEventListener('mouseover', this.show.bind(this));
         element.addEventListener('mouseout', this.hide.bind(this));
+    }
+
+    createTooltips() {
+        const tooltips = document.createElement("div");
+        tooltips.classList.add("tool-tips");
+        const body = document.createElement("div");
+        body.classList.add("body");
+        const tail = document.createElement("div");
+        tail.classList.add("tail");
+        tooltips.appendChild(body);
+        tooltips.appendChild(tail);
+        document.body.appendChild(tooltips);
+
+        return tooltips;
     }
 
     show(evt) {
@@ -119,7 +131,7 @@ export class ToolTips {
             return;
         }
 
-        let style = "translate: " + (evt.pageX - (width / 2)) + "px, " + (evt.pageY - Math.min(height, fromTopViewport)) + "px;";
+        let style = "translate: " + (evt.pageX - (width / 2)) + "px " + (evt.pageY - Math.min(height, fromTopViewport)) + "px;";
         tooltips.setAttribute("style", style);
         tail.setAttribute("style", "translate: 0 -.55rem;" + bg);
     }

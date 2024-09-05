@@ -113,7 +113,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
 // Tooltips
     const toolTips = new ToolTips();
-    toolTips.init();
 
 // Poster hover option
     const posterHover = new PosterHover();
