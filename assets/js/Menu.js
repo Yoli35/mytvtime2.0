@@ -68,6 +68,18 @@ export class Menu {
      * @property {number} series_id
      * @property {string} poster_path
      */
+
+    /**
+     * @typedef HistoryItem
+     * @type {Object}
+     * @property {Date} lastWatchAt
+     * @property {number} episodeNumber
+     * @property {number} id
+     * @property {number} seasonNumber
+     * @property {string} name
+     * @property {string} posterPath
+     * @property {string} url
+     */
     constructor() {
         gThis = this;
         this.menuPreview = document.querySelector(".menu-preview");
@@ -100,6 +112,9 @@ export class Menu {
         const tvSearch = navbar.querySelector("#tv-search");
         const tvSearchDb = navbar.querySelector("#tv-search-db");
         const personSearch = navbar.querySelector("#person-search");
+
+        const historyList = navbar.querySelector("#history-list");
+        const historyOption = historyList.querySelector("#history-option").querySelector("input[type='checkbox']");
 
         burger.addEventListener("click", () => {
             burger.classList.toggle("open");
@@ -197,20 +212,12 @@ export class Menu {
             });
         });
 
-        // document.addEventListener("DOMContentLoaded", () => {
-            this.menuPreview.addEventListener("click", this.togglePreview);
-            this.menuThemes.forEach((theme) => {
-                theme.addEventListener("click", this.setTheme);
-            });
-            this.initTheme();
-            this.initPreview();
-        // });
-
-        // if (this.userConnected) {
-        //     this.connexionInterval = setInterval(() => {
-        //         this.checkConnexion();
-        //     }, 60000);
-        // }
+        this.menuPreview.addEventListener("click", this.togglePreview);
+        this.menuThemes.forEach((theme) => {
+            theme.addEventListener("click", this.setTheme);
+        });
+        this.initTheme();
+        this.initPreview();
 
         movieSearch.addEventListener("input", (e) => {
             const value = e.target.value;
@@ -459,6 +466,8 @@ export class Menu {
             }
         });
         personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
+
+        historyOption.addEventListener("change", this.reloadHistory);
     }
 
     searchMenuNavigate(e) {
@@ -664,6 +673,60 @@ export class Menu {
                 console.error('Error:', error);
             });
 
+    }
+
+    reloadHistory(e) {
+        const historyList = document.querySelector("#history-list");
+        const historyOption = e.currentTarget;
+        const historyListItems = historyList.querySelectorAll("li.history-item");
+        // if checked, fetch last viewed episodes else fetch last viewed series
+        const type = historyOption.checked ? 'episode' : 'series';
+
+        fetch('/api/history/menu', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({type: type})
+        })
+            .then(response => response.json())
+            .then(data => {
+                historyListItems.forEach((item) => {
+                    item.remove();
+                });
+                /** @type {HistoryItem} */
+                data.list.forEach((item) => {
+                    const li = document.createElement("li");
+                    li.classList.add("history-item");
+                    const a = document.createElement("a");
+                    a.classList.add("history");
+                    a.href = item.url;
+                    const poster = document.createElement("div");
+                    poster.classList.add("poster");
+                    const img = document.createElement("img");
+                    img.src = item.posterPath;
+                    img.alt = item.name;
+                    poster.appendChild(img);
+                    a.appendChild(poster);
+                    const name = document.createElement("div");
+                    name.classList.add("name");
+                    name.innerHTML = item.name;
+                    a.appendChild(name);
+                    const number = document.createElement("div");
+                    number.classList.add("number");
+                    number.innerHTML = 'S' + (item.seasonNumber < 10 ? '0' + item.seasonNumber : item.seasonNumber) + 'E' + (item.episodeNumber < 10 ? '0' + item.episodeNumber : item.episodeNumber);
+                    a.appendChild(number);
+                    const date = document.createElement("div");
+                    date.classList.add("date");
+                    date.innerHTML = item.lastWatchAt;
+                    a.appendChild(date);
+                    li.appendChild(a);
+                    historyList.appendChild(li);
+                });
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     }
 
     toSlug(str) {

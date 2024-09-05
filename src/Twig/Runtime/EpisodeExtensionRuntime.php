@@ -104,15 +104,16 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         ];
     }
 
-    public function seriesHistory(User $user, int $count): array
+    public function seriesHistory(User $user): array
     {
         // settings: user_id: 1, name: seriesHistory, value: {"list": "series"|"episode"}
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'seriesHistory']);
         if (!$settings) {
-            $settings = new Settings($user, 'seriesHistory', ["list" => "series"]);
+            $settings = new Settings($user, 'seriesHistory', ["list" => "series", 'count' => 20]);
             $this->settingsRepository->save($settings, true);
         }
         $listType = $settings->getData()['list'];
+        $count = $settings->getData()['count'];
 
         $history = array_map(function ($item) use ($user) {
             $item['lastWatchAt'] = $this->dateService->newDateImmutable($item['lastWatchAt'], 'UTC')->setTimezone(new \DateTimeZone($user->getTimezone() ?? 'Europe/Paris'));
