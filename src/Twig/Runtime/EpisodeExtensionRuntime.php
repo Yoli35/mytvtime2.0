@@ -109,18 +109,22 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         // settings: user_id: 1, name: seriesHistory, value: {"list": "series"|"episode"}
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'seriesHistory']);
         if (!$settings) {
-            $settings = new Settings($user, 'seriesHistory', ["list"=> "series"]);
+            $settings = new Settings($user, 'seriesHistory', ["list" => "series"]);
             $this->settingsRepository->save($settings, true);
         }
-        $list = $settings->getData()['list'];
+        $listType = $settings->getData()['list'];
 
         $history = array_map(function ($item) use ($user) {
             $item['lastWatchAt'] = $this->dateService->newDateImmutable($item['lastWatchAt'], 'UTC')->setTimezone(new \DateTimeZone($user->getTimezone() ?? 'Europe/Paris'));
             return $item;
-        }, $this->userEpisodeRepository->seriesHistoryForTwig($user, $user->getCountry() ?? 'FR', $user->getPreferredLanguage() ?? 'fr', $list, $count));
+        }, $this->userEpisodeRepository->seriesHistoryForTwig($user, $user->getCountry() ?? 'FR', $user->getPreferredLanguage() ?? 'fr', $listType, $count));
 //        dump($history);
-        return $history;
+        return [
+            'list' => $history,
+            'type' => $listType
+        ];
     }
+
     private function seriesInArray($seriesArr, $item): bool
     {
         return key_exists($item['id'], $seriesArr);
