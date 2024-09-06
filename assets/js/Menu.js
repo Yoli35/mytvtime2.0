@@ -73,6 +73,7 @@ export class Menu {
      * @typedef HistoryItem
      * @type {Object}
      * @property {Date} lastWatchAt
+     * @property {number} episodeId
      * @property {number} episodeNumber
      * @property {number} id
      * @property {number} seasonNumber
@@ -125,7 +126,7 @@ export class Menu {
         const tvSearchDb = navbar.querySelector("#tv-search-db");
         const personSearch = navbar.querySelector("#person-search");
 
-        const historyList = navbar.querySelector("#history-list");
+        const historyMenu = navbar.querySelector("#history-menu");
 
         burger.addEventListener("click", () => {
             burger.classList.toggle("open");
@@ -479,10 +480,36 @@ export class Menu {
         });
         personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
-        const historyOptions = historyList.querySelector("#history-options").querySelectorAll("input");
-        historyOptions.forEach((historyOption) => {
-            historyOption.addEventListener("change", this.reloadHistory);
-        });
+        if (historyMenu) {
+            const historyList = navbar.querySelector("#history-list");
+            const historyOptions = historyList?.querySelector("#history-options").querySelectorAll("input");
+            historyMenu.addEventListener("click", () => {
+                const open = historyMenu.getAttribute("open");
+                if (open === null) {
+                    console.log({open});
+                    fetch('/api/history/menu/last', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                        .then(response => response.json())
+                        /** @var {{ok: boolean, last: number}} data */
+                        .then(data => {
+                            const lastWatchedEpisode = data.last;
+                            const lastEpisodeInHistory = parseInt(historyList.getAttribute("data-last"));
+                            console.log(lastWatchedEpisode, lastEpisodeInHistory);
+                            if (lastEpisodeInHistory !== lastWatchedEpisode) {
+                                this.reloadHistory();
+                            }
+                        });
+                }
+            });
+            historyOptions.forEach((historyOption) => {
+                historyOption.addEventListener("change", this.reloadHistory);
+            });
+        }
+
     }
 
     searchMenuNavigate(e) {
@@ -698,7 +725,7 @@ export class Menu {
         const historyListItems = historyList.querySelectorAll("li.history-item");
         const options = {'type': false, 'page': 1, 'count': 20, 'vote': false, 'device': false, 'provider': false};
 
-        historyOptions.forEach (option => {
+        historyOptions.forEach(option => {
             if (option.type === 'checkbox') {
                 options[option.id.split('-')[2]] = option.checked;
             }
@@ -735,6 +762,7 @@ export class Menu {
                 data.list.forEach((item) => {
                     const li = document.createElement("li");
                     li.classList.add("history-item");
+                    li.setAttribute("id", item.episodeId);
                     const a = document.createElement("a");
                     a.classList.add("history");
                     a.href = item.url;
@@ -772,7 +800,7 @@ export class Menu {
                     const provider = document.createElement("div");
                     provider.classList.add("provider");
                     if (options.provider === false) provider.classList.add('hidden');
-                    if (item.providerLogoPath){
+                    if (item.providerLogoPath) {
                         const imgProvider = document.createElement("img");
                         imgProvider.src = item.providerLogoPath;
                         imgProvider.alt = item.providerName;

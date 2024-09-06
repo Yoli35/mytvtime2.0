@@ -51,11 +51,11 @@
         </ul>
     </details>
     {% if app.user %}
-        <details>
+        <details id="history-menu">
             <summary>{{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }}</summary>
             {% set history = seriesHistory(app.user) %}
             {% if history.list %}
-                <ul id="history-list">
+                <ul id="history-list" data-last="{{ history.last }}">
                     <li id="history-options">
                         <label><input id="history-option-type" type="checkbox"{% if history.type == 'episode' %} checked{% endif %}>{{ 'Episodes detail'|trans }}</label>
                         <label>{{ 'Page'|trans }}<input id="history-option-page" type="number" value="{{ history.page }}"></label>
@@ -65,7 +65,7 @@
                         <label><input id="history-option-provider" type="checkbox"{% if history.provider %} checked{% endif %}>{{ 'Provider'|trans }}</label>
                     </li>
                     {% for h in history.list %}
-                        <li class="history-item">
+                        <li class="history-item" id="{{ h.episodeId }}">
                             <a class="history" href="{{ path('app_series_season', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber}) }}">
                                 <div class="poster"><img src="/series/posters{{ h.posterPath }}" alt="{{ h.name }}"></div>
                                 <div class="name">{{ h.name }}</div>

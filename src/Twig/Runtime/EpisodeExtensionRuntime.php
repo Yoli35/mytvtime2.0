@@ -108,10 +108,18 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
 
     public function seriesHistory(User $user): array
     {
-        // settings: user_id: 1, name: seriesHistory, value: {"list": "series"|"episode"}
+        // 2868897
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'seriesHistory']);
         if (!$settings) {
-            $settings = new Settings($user, 'seriesHistory', ["list" => "series", 'count' => 20, 'page' => 1, 'vote' => true, 'device' => true, 'provider' => true]);
+            $settings = new Settings($user, 'seriesHistory', [
+                "list" => "series",
+                "last" => 0,
+                "count" => 20,
+                "page" => 1,
+                "vote" => true,
+                "device" => true,
+                "provider" => true
+            ]);
             $this->settingsRepository->save($settings, true);
         }
         $data = $settings->getData();
@@ -127,9 +135,16 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
             $item['providerLogoPath'] = $item['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($item['providerLogoPath'], 'logo_sizes', 2) : null;
             return $item;
         }, $this->userEpisodeRepository->seriesHistoryForTwig($user, $user->getPreferredLanguage() ?? 'fr', $listType, $page, $count));
+
         dump(['settings' => $data, 'history' => $history]);
+        if (count($history) && $data['last'] !== $history[0]['episodeId']) {
+            $data['last'] = $history[0]['episodeId'];
+            $settings->setData($data);
+            $this->settingsRepository->save($settings, true);
+        }
         return [
             'list' => $history,
+            'last' => $data['last'],
             'type' => $listType,
             'count' => $count,
             'page' => $page,

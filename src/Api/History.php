@@ -42,8 +42,8 @@ class History extends AbstractController
         $provider = $data['provider'];
 
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'seriesHistory']);
-//        $count = $settings->getData()['count'] ?? 10;
-        $settings->setData(['list' => $type, 'count' => $count, 'page' => $page, 'vote' => $vote, 'device' => $device, 'provider' => $provider]);
+        $last = $settings->getData()["last"];
+        $settings->setData(["last" => $last, "list" => $type, "count" => $count, "page" => $page, "vote" => $vote, "device" => $device, "provider" => $provider]);
         $this->settingsRepository->save($settings, true);
 
         $history = array_map(function ($item) use ($user) {
@@ -63,6 +63,20 @@ class History extends AbstractController
             'vote' => $vote,
             'device' => $device,
             'provider' => $provider,
+        ]);
+    }
+
+    #[Route('/menu/last', name: 'menu_last', methods: ['GET'])]
+    public function last(): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $last = $this->userEpisodeRepository->getLastWatchedEpisode($user);
+
+        return $this->json([
+            'ok' => true,
+            'last' => $last,
         ]);
     }
 }

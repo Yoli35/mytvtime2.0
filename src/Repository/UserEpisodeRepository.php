@@ -109,6 +109,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         $offset = ($page - 1) * $count;
         if ($list == 'series') {
             $sql = "SELECT s.id                            as id,
+                           ue.episode_id                   as episodeId,
                            s.`poster_path`                 as posterPath,
                            us.`last_episode`               as episodeNumber,
                            us.`last_season`                as seasonNumber,
@@ -134,6 +135,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         if ($list == 'episode') {
             $sql = "SELECT s.id                                   as id,
                            s.`poster_path`                        as posterPath,
+                           ue.episode_id                          as episodeId,
                            ue.episode_number                      as episodeNumber,
                            ue.season_number                       as seasonNumber,
                            ue.watch_at                            as lastWatchAt,
@@ -157,6 +159,18 @@ class UserEpisodeRepository extends ServiceEntityRepository
         }
 
         return $this->getAll($sql);
+    }
+
+    public function getLastWatchedEpisode(User $user): int
+    {
+        $userId = $user->getId();
+        $sql = "SELECT ue.episode_id
+                FROM user_episode ue
+                WHERE ue.user_id = $userId
+                ORDER BY ue.watch_at DESC
+                LIMIT 1";
+
+        return $this->getOne($sql);
     }
 
     public function episodesOfTheDay(User $user, string $country = 'FR', string $locale = 'fr'): array
