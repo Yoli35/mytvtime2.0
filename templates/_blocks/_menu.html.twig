@@ -56,13 +56,29 @@
             {% set history = seriesHistory(app.user) %}
             {% if history.list %}
                 <ul id="history-list">
-                    <li id="history-option"><label><input type="checkbox"{% if history.type == 'episode' %} checked{% endif %}>{{ 'Episodes detail'|trans }}</label></li>
+                    <li id="history-options">
+                        <label><input id="history-option-type" type="checkbox"{% if history.type == 'episode' %} checked{% endif %}>{{ 'Episodes detail'|trans }}</label>
+                        <label>{{ 'Page'|trans }}<input id="history-option-page" type="number" value="{{ history.page }}"></label>
+                        <label>{{ 'Count'|trans }}<input id="history-option-count" type="number" value="{{ history.count }}"></label>
+                        <label><input id="history-option-vote" type="checkbox"{% if history.vote %} checked{% endif %}>{{ 'Rating'|trans }}</label>
+                        <label><input id="history-option-device" type="checkbox"{% if history.device %} checked{% endif %}>{{ 'Device'|trans }}</label>
+                        <label><input id="history-option-provider" type="checkbox"{% if history.provider %} checked{% endif %}>{{ 'Provider'|trans }}</label>
+                    </li>
                     {% for h in history.list %}
                         <li class="history-item">
                             <a class="history" href="{{ path('app_series_season', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber}) }}">
                                 <div class="poster"><img src="/series/posters{{ h.posterPath }}" alt="{{ h.name }}"></div>
                                 <div class="name">{{ h.name }}</div>
-                                <div class="number">{{ 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) }}</div>
+                                {% if h.vote %}
+                                    <div class="vote{% if history.vote == 0 %} hidden{% endif %}">{{ h.vote }}</div>
+                                {% endif %}
+                                {% if h.deviceSvg %}
+                                    <div class="device{% if history.device == 0 %} hidden{% endif %}">{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}</div>
+                                {% endif %}
+                                {% if h.providerLogoPath %}
+                                    <div class="provider{% if history.provider == 0 %} hidden{% endif %}"><img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}"></div>
+                                {% endif %}
+                                <div class="number{% if h.progress==100 %} ended{% endif %}">{{ 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) }}</div>
                                 <div class="date">{{ h.lastWatchAt|format_datetime('relative_medium', 'short', 'Europe/Paris') }}</div>
                             </a>
                         </li>

@@ -103,25 +103,33 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function seriesHistoryForTwig(User $user, string $country, string $locale, string $list, int $count): array
+    public function seriesHistoryForTwig(User $user, string $locale, string $list, int $page, int $count): array
     {
         $userId = $user->getId();
+        $offset = ($page - 1) * $count;
         if ($list == 'series') {
             $sql = "SELECT s.id                            as id,
                            s.`poster_path`                 as posterPath,
                            us.`last_episode`               as episodeNumber,
                            us.`last_season`                as seasonNumber,
                            us.last_watch_at                as lastWatchAt,
+                           us.progress                     as progress,
+                           wp.logo_path                    as providerLogoPath,
+                           wp.provider_name                as providerName,
+                           d.svg                           as deviceSvg,
+                           ue.vote                         as vote,
                            IF(sln.name IS NULL, s.name, sln.name) as name,
                            IF(sln.slug IS NULL, s.slug, sln.slug) as slug
                 FROM `user_series` us
                          INNER JOIN `series` s ON s.`id` = us.`series_id`
-                         LEFT JOIN `series_day_offset` sdo ON s.id = sdo.series_id AND sdo.country = '$country'
+                         INNER JOIN `user_episode` ue ON us.`id` = ue.`user_series_id` AND ue.`season_number` = us.`last_season` AND ue.`episode_number` = us.`last_episode`
                          LEFT JOIN `series_localized_name` sln ON sln.`series_id` = s.`id` AND sln.`locale` = '$locale'
+                         LEFT JOIN watch_provider wp ON wp.provider_id = ue.provider_id
+                         LEFT JOIN device d ON ue.device_id = d.id
                 WHERE us.`user_id`=$userId
                   AND us.`last_watch_at` IS NOT NULL
                 ORDER BY us.`last_watch_at` DESC
-                LIMIT $count OFFSET 0";
+                LIMIT $count OFFSET $offset";
         }
         if ($list == 'episode') {
             $sql = "SELECT s.id                                   as id,
@@ -129,17 +137,23 @@ class UserEpisodeRepository extends ServiceEntityRepository
                            ue.episode_number                      as episodeNumber,
                            ue.season_number                       as seasonNumber,
                            ue.watch_at                            as lastWatchAt,
+                           us.progress                            as progress,
+                           wp.logo_path                           as providerLogoPath,
+                           wp.provider_name                       as providerName,
+                           d.svg                                  as deviceSvg,
+                           ue.vote                                as vote,
                            IF(sln.name IS NULL, s.name, CONCAT(sln.name,' - ',s.name)) as name,
                            IF(sln.slug IS NULL, s.slug, sln.slug) as slug
                     FROM `user_episode` ue
                              INNER JOIN `user_series` us ON us.`id` = ue.`user_series_id`
                              INNER JOIN `series` s ON s.`id` = us.`series_id`
-                             LEFT JOIN `series_day_offset` sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                              LEFT JOIN `series_localized_name` sln ON sln.`series_id` = s.`id` AND sln.`locale` = '$locale'
+                             LEFT JOIN watch_provider wp ON wp.provider_id = ue.provider_id
+                             LEFT JOIN device d ON ue.device_id = d.id
                     WHERE us.`user_id` = $userId
                       AND ue.watch_at IS NOT NULL
                     ORDER BY ue.watch_at DESC
-                    LIMIT $count OFFSET 0";
+                    LIMIT $count OFFSET $offset";
         }
 
         return $this->getAll($sql);
@@ -424,7 +438,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
     {
         try {
             return $this->em->getConnection()->fetchAllAssociative($sql);
-        } catch (Exception) {
+        } catch (Exception $e) {
+            dump($e->getMessage());
             return [];
         }
     }
