@@ -210,6 +210,7 @@ export class Menu {
                     e.preventDefault();
                 }
             });
+            document.querySelector(".tooltip")?.classList.remove("show");
         });
 
         this.menuPreview.addEventListener("click", this.togglePreview);
