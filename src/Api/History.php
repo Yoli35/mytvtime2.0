@@ -66,6 +66,32 @@ class History extends AbstractController
         ]);
     }
 
+    #[Route('/menu/save', name: 'menu_save', methods: ['POST'])]
+    public function save(Request $request): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $data = json_decode($request->getContent(), true);
+
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'seriesHistory']);
+
+        $settings->setData([
+            "last" => $settings->getData()["last"],
+            "list" =>  $data['type'] ? 'episode' : 'series',
+            "count" => intval($data['count']),
+            "page" => intval($data['page']),
+            "vote" => intval($data['vote']),
+            "device" => $data['device'],
+            "provider" => $data['provider']
+        ]);
+        $this->settingsRepository->save($settings, true);
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
     #[Route('/menu/last', name: 'menu_last', methods: ['GET'])]
     public function last(): Response
     {

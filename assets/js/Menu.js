@@ -486,6 +486,13 @@ export class Menu {
             historyMenu.addEventListener("click", () => {
                 const open = historyMenu.getAttribute("open");
                 if (open === null) {
+                    const firstItem = historyList.querySelector("li.history-item");
+                    const loadingLi = document.createElement("li");
+                    loadingLi.classList.add("loading");
+                    const loadingDiv = document.createElement("div");
+                    loadingDiv.innerHTML = 'Checking...';
+                    loadingLi.appendChild(loadingDiv);
+                    historyList.insertBefore(loadingLi, firstItem);
                     console.log({open});
                     fetch('/api/history/menu/last', {
                         method: 'GET',
@@ -500,8 +507,10 @@ export class Menu {
                             const lastEpisodeInHistory = parseInt(historyList.getAttribute("data-last"));
                             console.log(lastWatchedEpisode, lastEpisodeInHistory);
                             if (lastEpisodeInHistory !== lastWatchedEpisode) {
-                                this.reloadHistory();
+                                loadingDiv.innerHTML = 'Reloading...';
+                                this.reloadHistory({currentTarget: historyOptions[0]});
                             }
+                            loadingLi.remove();
                         });
                 }
             });
@@ -743,6 +752,20 @@ export class Menu {
                     item.querySelector('.' + optionId)?.classList.add('hidden');
                 }
             });
+            //TODO: save options
+            fetch('/api/history/menu/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(options)
+            })
+                .then(response => {
+                console.log(response.ok, 'Options saved');
+            })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
             return;
         }
 

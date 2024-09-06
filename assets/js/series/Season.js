@@ -481,46 +481,6 @@ export class Season {
                 const backToSeriesLink = episode.parentElement.querySelector('.back-to-series').closest('a');
                 episode.parentElement.appendChild(backToSeriesLink);
 
-                const historyUL = document.querySelector('#viewHistory');
-                const secondLI = historyUL.querySelector('li:nth-child(2)');
-                const seriesPoster = document.querySelector('.header .poster img');
-                const posterSrc = seriesPoster.getAttribute('src');
-                const seriesName = seriesPoster.getAttribute('data-name');
-                const seriesSlug = seriesPoster.getAttribute('data-slug');
-
-                /*
-                <li>
-                    <a class="history" href="{{ path('app_series_season', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber}) }}">
-                        <div class="poster"><img src="/series/posters{{ h.posterPath }}" alt="{{ h.name }}"></div>
-                        <div class="name">{{ h.name }} {{ 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) }}</div>
-                        <div class="date">{{ h.lastWatchAt|format_datetime('relative_medium', 'short', 'Europe/Paris') }}</div>
-                    </a>
-                </li>
-                 */
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.classList.add('history');
-                //https://mytvtime.hd.free.fr:43202/fr/series/show/season/755-the-director-who-buys-me-dinner/1
-                a.href = '/' + gThis.lang + '/series/show/season/' + seriesId + '-' + seriesSlug + '/' + seasonNumber;
-                const poster = document.createElement('div');
-                poster.classList.add('poster');
-                const img = document.createElement('img');
-                img.src = posterSrc;
-                img.alt = seriesName;
-                poster.appendChild(img);
-                a.appendChild(poster);
-                const name = document.createElement('div');
-                name.classList.add('name');
-                name.innerText = seriesName + (seasonNumber < 10 ? ' S0' : ' S') + seasonNumber + (episodeNumber < 10 ? 'E0' : 'E') + episodeNumber;
-                a.appendChild(name);
-                const date = document.createElement('div');
-                date.classList.add('date');
-                // "27/08/2024 22:40".slice(-5): "22:40"
-                date.innerText = gThis.text['Today'] + ', ' + (new Date()).toLocaleString(gThis.lang === 'fr' ? 'fr-FR' : 'en-GB', {dateStyle: "full", timeStyle: "short", timeZone: 'Europe/Paris'}).slice(-5);
-                a.appendChild(date);
-                li.appendChild(a);
-                historyUL.insertBefore(li, secondLI);
-
                 episode.remove();
             }
         });
