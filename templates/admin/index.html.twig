@@ -8,7 +8,7 @@
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-    <div class="container-fluid home">
+    <div class="container-fluid">
         <h2>{{ 'Users'|trans }}</h2>
         <div class="users">
             <div class="user">
@@ -25,7 +25,13 @@
             </div>
             {% for u in users %}
                 <div class="user">
+                    {% if u.avatar %}
                     <img src="/images/users/avatars/{{ u.avatar }}" class="user__avatar" alt="{{ u.username }}">
+                    {% else %}
+                    <div class="user__avatar">
+                        {{ ux_icon('fa6-solid:user', {height: '18px', width: '18px'}) }}
+                    </div>
+                    {% endif %}
                     <div class="user__name">{{ u.username }}</div>
                     <div class="user__email">{{ u.email }}</div>
                     <div class="user__movie">{{ u.movieCount }}</div>
