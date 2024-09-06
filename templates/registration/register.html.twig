@@ -3,7 +3,7 @@
 {% block title %}my Tv Time → {{ 'Register'|trans }}{% endblock %}
 
 {% block body %}
-    <div class="container-fluid home">
+    <div class="container-fluid">
         {% include('_blocks/_menu.html.twig') %}
         {% for flash_error in app.flashes('verify_email_error') %}
             <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
