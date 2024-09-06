@@ -95,7 +95,7 @@ body {
     background-color: transparent;
     margin-inline: auto;
     min-height: 100dvh;
-    padding-block-start: 4rem;
+    padding-block-start: 2rem !important;
     padding-inline: 0;
     position: relative;
     width: 100%;
@@ -172,10 +172,23 @@ body {
     --navbar-bg-75: var(--ardoise-70-alpha-75);
     --navbar-color: var(--ardoise-25-alpha-25);
     --navbar-color-hover: var(--ardoise-10);
+    --navbar-opacity: 1;
     --tooltips-bg: var(--ardoise-90);
     --tooltips-color: var(--ardoise-20);
     --notification-color: var(--ardoise-10);
     --notification-validated: var(--ardoise-40);
+}
+
+.debug {
+    background-color: var(--orange-30);
+    border: 2px dashed var(--orange-50);
+    border-radius: .25rem;
+    color: var(--orange-80);
+    padding: .125rem .5rem;
+    position: fixed;
+    right: 10rem;
+    top: 1.5rem;
+    z-index: 100;
 }
 
 label:has(select) {
@@ -244,16 +257,20 @@ label:has(input[type="text"]) {
 
 .navbar {
     align-items: center;
-    background-color: var(--navbar-bg-25);
-    color: var(--navbar-color);
+    background-color: var(--navbar-bg);
+    color: var(--navbar-color-hover);
+    //background-color: var(--navbar-bg-25);
+    //color: var(--navbar-color);
     display: flex;
     font-weight: 300;
     height: 3rem;
     justify-content: flex-start;
     left: 0;
+    opacity: var(--navbar-opacity);
     padding-inline: 1rem;
     position: fixed;
     top: 1rem;
+    transition: opacity .250ms;
     width: 100%;
     z-index: 100;
 
@@ -528,6 +545,7 @@ label:has(input[type="text"]) {
 
     &:hover {
         background-color: var(--navbar-bg);
+        opacity: 1;
 
         a {
             color: var(--navbar-color-hover);
