@@ -481,7 +481,7 @@ class SeriesController extends AbstractController
             $localizedName = null;
             $localizedOverview = null;
         }
-        $tv = json_decode($this->tmdbService->getTv($id, $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords"]), true);
+        $tv = json_decode($this->tmdbService->getTv($id, $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords", "similar"]), true);
 
 //        dump($localizedName);
         $this->checkTmdbSlug($tv, $slug, $localizedName?->getSlug());
@@ -508,7 +508,7 @@ class SeriesController extends AbstractController
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
 
-//        dump($tv);
+        dump($tv);
         return $this->render('series/tmdb.html.twig', [
             'tv' => $tv,
             'localizedName' => $localizedName,
@@ -556,9 +556,25 @@ class SeriesController extends AbstractController
         $this->seriesRepository->save($series, true);
 
         $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
-        $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "keywords, list"]), true);
-        $tvLists = json_decode($this->tmdbService->getTvLists($series->getTmdbId()), true);
-//        dump($tv, $tvLists);
+        // Get with fr-FR language to get the localized name
+        $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "keywords", "lists", "similar"]), true);
+        if (!$tv['lists']['total_results']) {
+            // Get with en-US language to get the lists
+            $tvLists = json_decode($this->tmdbService->getTvLists($series->getTmdbId()), true);
+            $tv['lists'] = $tvLists;
+        }
+        if ($tv['similar']['total_results'] == 0) {
+            // Get with en-US language to get the similar series
+            $similar = json_decode($this->tmdbService->getTvSimilar($series->getTmdbId()), true);
+            $tv['similar'] = $similar;
+        }
+        $tv['similar']['results'] = array_map(function ($s) {
+            $s['poster_path'] = $s['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $s['poster_path'] : null;
+            $s['tmdb'] = true;
+            $s['slug'] = (new AsciiSlugger())->slug($s['name']);
+            return $s;
+        }, $tv['similar']['results']);
+//        dump($tv, $tvLists, $similar);
 
         $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
         $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
@@ -602,16 +618,15 @@ class SeriesController extends AbstractController
             'Watch on' => $this->translator->trans('Watch on'),
         ];
 
-        dump([
-            'series' => $seriesArr,
-            'tv' => $tv,
+//        dump([
+//            'series' => $seriesArr,
+//            'tv' => $tv,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
-        ]);
+//        ]);
         return $this->render('series/show.html.twig', [
             'series' => $seriesArr,
             'tv' => $tv,
-            'tvLists' => $tvLists,
             'userSeries' => $userSeries,
             'providers' => $providers,
             'seriesLocations' => $this->getSeriesLocations($series, $user->getPreferredLanguage() ?? $request->getLocale()),
