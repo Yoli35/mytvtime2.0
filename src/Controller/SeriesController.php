@@ -60,6 +60,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\Map\InfoWindow;
 use Symfony\UX\Map\Map;
@@ -618,12 +619,12 @@ class SeriesController extends AbstractController
             'Watch on' => $this->translator->trans('Watch on'),
         ];
 
-//        dump([
+        dump([
 //            'series' => $seriesArr,
-//            'tv' => $tv,
+            'tv' => $tv,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
-//        ]);
+        ]);
         return $this->render('series/show.html.twig', [
             'series' => $seriesArr,
             'tv' => $tv,
@@ -1595,17 +1596,18 @@ class SeriesController extends AbstractController
         $slugger = new AsciiSlugger();
         $tv = json_decode($this->tmdbService->getTv($id, 'en-US'), true);
         if (!$series) $series = new Series();
-        $series->setTmdbId($id);
+        $series->setBackdropPath($tv['backdrop_path']);
+        $series->setCreatedAt($date);
+        $series->setFirstAirDate($tv['first_air_date'] ? new DatePoint($tv['first_air_date']) : null);
         $series->setName($tv['name']);
-        $series->setSlug($slugger->slug($tv['name']));
         $series->setOriginalName($tv['original_name']);
         $series->setOverview($tv['overview']);
         $series->setPosterPath($tv['poster_path']);
-        $series->setBackdropPath($tv['backdrop_path']);
-        $series->setFirstAirDate($tv['first_air_date'] ? new DatePoint($tv['first_air_date']) : null);
-        $series->setVisitNumber(0);
-        $series->setCreatedAt($date);
+        $series->setSlug($slugger->slug($tv['name']));
+        $series->setStatus($tv['status']);
+        $series->setTmdbId($id);
         $series->setUpdatedAt($date);
+        $series->setVisitNumber(0);
         $this->seriesRepository->save($series, true);
 
         return [
@@ -1677,24 +1679,38 @@ class SeriesController extends AbstractController
 
     public function getSeriesLocations(Series $series, string $locale): array
     {
-        $seriesLocation = $this->seriesRepository->oneSeriesLocations($series, $locale);
-        if (empty($seriesLocation)) {
+        $seriesLocations = $series->getLocations()['locations'] ?? [];
+        dump($seriesLocations);
+        if (empty($seriesLocations)) {
             return ['map' => null, 'locations' => null];
         }
         $map = new Map();
-        $count = count($seriesLocation['locations']);
+        $count = count($seriesLocations);
         if ($count > 1) {
             $map->fitBoundsToMarkers();
         } else {
             $map->zoom(10)
-                ->center(new Point($seriesLocation['locations'][0]['latitude'], $seriesLocation['locations'][0]['longitude']));
+                ->center(new Point($seriesLocations[0]['latitude'], $seriesLocations[0]['longitude']));
         }
 
-        foreach ($seriesLocation['locations'] as $location) {
-            $map->addMarker(new Marker(new Point($location['latitude'], $location['longitude']), $seriesLocation['name'], new InfoWindow('<strong>' . $seriesLocation['name'] . '</strong> - ' . $location['description'], '<img src="' . $location['image'] . '" alt="' . $location['description'] . '" style="height: auto; width: 100%">')));
-        }
-        dump($seriesLocation['locations']);
-        return ['map' => $map, 'locations' => $seriesLocation['locations']];
+        $seriesLocations = array_map(function ($location)  use($series, $locale, $map) {
+            $localizedName = $series->getLocalizedName($locale)?->getName();
+            $name = $series->getName();
+            $uuid = Uuid::v7()->toString();
+            if ($localizedName) {
+                $name = $localizedName .' - '. $name;
+            }
+            $map->addMarker(new Marker(
+                new Point($location['latitude'], $location['longitude']),
+                $name,
+                new InfoWindow('<strong>' . $name . '</strong> - ' . $location['description'], '<img src="' . $location['image'] . '" alt="' . $location['description'] . '" style="height: auto; width: 100%">'),
+                ['draggable' => false, 'data-uuid' => $uuid]
+            ));
+            $location['uuid'] = $uuid;
+            return $location;
+        }, $seriesLocations);
+        dump($seriesLocations);
+        return ['map' => $map, 'locations' => $seriesLocations];
     }
 
     public function now(): DateTimeImmutable

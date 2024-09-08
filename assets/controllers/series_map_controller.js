@@ -56,17 +56,17 @@ export default class extends Controller {
     _onInfoWindowBeforeCreate(event) {
         // The infoWindow is not created, yet
         // You can use this event to configure the infoWindow before it is created
-        console.log(event.detail.definition);
+        // console.log(event.detail.definition);
         // The associated marker instance is also available
-        console.log(event.detail.marker);
+        // console.log(event.detail.marker);
     }
 
     _onInfoWindowAfterCreate(event) {
         // The infoWindow is created
         // The instance depends on the renderer you are using
-        console.log(event.detail.infoWindow);
+        // console.log(event.detail.infoWindow);
         // The associated marker instance is also available
-        console.log(event.detail.marker);
-        console.log(event);
+        // console.log(event.detail.marker);
+        // console.log(event);
     }
 }
