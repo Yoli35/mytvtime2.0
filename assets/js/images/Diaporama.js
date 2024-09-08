@@ -32,7 +32,7 @@ export class Diaporama {
         const srcArray = Array.from(images, image => {
             return image.getAttribute("src")
         });
-        const svgs = document.querySelector(".svgs");
+        const svgs = document.querySelector("#svgs");
         const xmark = svgs.querySelector("#xmark").querySelector("svg").cloneNode(true);
         const arrowLeft = svgs.querySelector("#arrow-left").querySelector("svg").cloneNode(true);
         const arrowRight = svgs.querySelector("#arrow-right").querySelector("svg").cloneNode(true);
