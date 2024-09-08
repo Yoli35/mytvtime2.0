@@ -4,7 +4,7 @@
 {% endif %}
 <div class="card">
     {% if series.tmdb is defined %}
-        {% set url = path('app_series_tmdb', {'id': series.id, 'slug': series.slug }) %}
+        {% set url = path('app_series_tmdb', {'id': series.id, 'slug': series.slug|length  ?series.slug : 'no-slug' }) %}
     {% else %}
         {% set url = path('app_series_show', {'id': series.id, 'slug': series.localized_slug ?? series.slug }) %}
     {% endif %}
@@ -57,9 +57,15 @@
                 {% endif %}
             </div>
             {% if series.progress is defined %}
-                <div class="progress{% if ended %} that-s-all-folks{% endif %}{% if start %} start-this-series{% endif %}">
-                    <div class="progress-bar" style="width: {{ series.progress }}%"></div>
-                </div>
+                {% if series.status == "In Production" %}
+                    <div class="status">{{ 'In production'|trans }}</div>
+                {% elseif start and series.id|hasSeriesStartedAiring %}
+                    <div class="status coming-soon">{{ 'Coming soon'|trans }}</div>
+                {% else %}
+                    <div class="progress{% if ended %} that-s-all-folks{% endif %}{% if start %} start-this-series{% endif %}">
+                        <div class="progress-bar" style="width: {{ series.progress }}%"></div>
+                    </div>
+                {% endif %}
             {% endif %}
         </div>
         <div class="name{% if ids is defined and series.id in ids %} added{% endif %}">

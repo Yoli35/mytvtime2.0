@@ -18,7 +18,6 @@ class EpisodeExtension extends AbstractExtension
             new TwigFilter('countEpisodeNotifications', [EpisodeExtensionRuntime::class, 'countEpisodeNotifications']),
             new TwigFilter('listEpisodeNotifications', [EpisodeExtensionRuntime::class, 'listEpisodeNotifications']),
             new TwigFilter('listEpisodeOfTheDay', [EpisodeExtensionRuntime::class, 'listEpisodeOfTheDay']),
-            new TwigFilter('seriesHistory', [EpisodeExtensionRuntime::class, 'seriesHistory']),
         ];
     }
 
@@ -28,7 +27,6 @@ class EpisodeExtension extends AbstractExtension
             new TwigFunction('countEpisodeNotifications', [EpisodeExtensionRuntime::class, 'countEpisodeNotifications']),
             new TwigFunction('listEpisodeNotifications', [EpisodeExtensionRuntime::class, 'listEpisodeNotifications']),
             new TwigFunction('listEpisodeOfTheDay', [EpisodeExtensionRuntime::class, 'listEpisodeOfTheDay']),
-            new TwigFunction('seriesHistory', [EpisodeExtensionRuntime::class, 'seriesHistory']),
         ];
     }
 }

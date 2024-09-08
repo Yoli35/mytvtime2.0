@@ -43,17 +43,27 @@ class UserEpisodeRepository extends ServiceEntityRepository
 
     public function lastAddedSeries(User $user, $locale, $page, $perPage): array
     {
-        $sql = "SELECT "
-            . "  s.id as id, s.tmdb_id as tmdbId,"
-            . "	 s.`name` as name, s.`slug` as slug, sln.`name` as localizedName, sln.`slug` as localizedSlug, s.`poster_path` as posterPath, "
-            . "  us.`favorite` as favorite, us.`progress` as progress, "
-            . "  us.`last_episode` as episodeNumber, us.`last_season` as seasonNumber "
-            . "FROM `user_series` us "
-            . "INNER JOIN `series` s ON s.`id` = us.`series_id` "
-            . "LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' "
-            . "WHERE us.`user_id`= " . $user->getId() . " "
-            . "ORDER BY us.`added_at` DESC "
-            . "LIMIT $perPage OFFSET " . ($page - 1) * $perPage;
+        $userId = $user->getId();
+        $offset = ($page - 1) * $perPage;
+        $sql = "SELECT 
+              s.`id`            as id,
+              s.`name`          as name,
+              s.`poster_path`   as posterPath, 
+              s.`slug`          as slug,
+              s.`status`        as status,
+              s.`tmdb_id`       as tmdbId,
+              sln.`name`        as localizedName, 
+              sln.`slug`        as localizedSlug, 
+              us.`favorite`     as favorite,
+              us.`last_episode` as episodeNumber,
+              us.`last_season`  as seasonNumber, 
+              us.`progress`     as progress
+            FROM `user_series` us 
+            INNER JOIN `series` s ON s.`id` = us.`series_id` 
+            LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' 
+            WHERE us.`user_id`=$userId 
+            ORDER BY us.`added_at` DESC 
+            LIMIT $perPage OFFSET $offset";
 
         return $this->getAll($sql);
     }
@@ -65,6 +75,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                    s.tmdb_id                       as tmdbId,
                    s.`name`                        as name,
                    s.`slug`                        as slug,
+                   s.status                        as status,
                    sln.`name`                      as localizedName,
                    sln.`slug`                      as localizedSlug,
                    s.`poster_path`                 as posterPath,

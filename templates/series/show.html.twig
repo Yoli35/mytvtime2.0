@@ -34,7 +34,9 @@
                 </div>
                 <div class="infos">
                     <div class="backdrop">
-                        <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
+                        {% if tv.backdrop_path %}
+                            <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
+                        {% endif %}
                     </div>
                     <div class="name">
                         <h1>
@@ -143,6 +145,8 @@
                             <div class="other-backdrop">
                                 <img src="{{ backdrop }}" alt="{{ 'Backdrop #' ~ loop.index ~ ' ' ~ series.name }}">
                             </div>
+                        {% else %}
+                            {{ 'No backdrop'|trans }}
                         {% endfor %}
                     </div>
                 </div>
@@ -488,7 +492,7 @@
                                 <div class="fact-content">{{ getEmojiFlag(country) ~ ' ' ~ country|country_name }}</div>
                             {% endfor %}
                         </div>
-                        <div class="fact">
+                        <div class="fact{% if tv.status == 'In Production' %} not-yet{% endif %}{% if tv.status == 'Canceled' %} canceled{% endif %}">
                             <div class="fact-label">{{ 'Status'|trans }}</div>
                             <div class="fact-content">{{ tv.status|trans }}</div>
                         </div>
@@ -621,19 +625,19 @@
                 {% endif %}
 
                 {% if tv.lists.total_results %}
-                <div class="series-group">
-                    <h2>{{ 'Lists'|trans }}</h2>
-                    <div class="lists">
-                        <ul>
-                            {% for list in tv.lists.results %}
-                                <li>
-                                    <a href="{{ path('app_series_list', {id: list.id, seriesId: series.id}) }}">
-                                        <span>{{ list.name }}</span> ({{ list.iso_3166_1|country_name }}, {{ list.item_count }} {{ 'items'|trans }}){% if list.description %} - {{ list.description }}{% endif %}
-                                    </a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
+                    <div class="series-group">
+                        <h2>{{ 'Lists'|trans }}</h2>
+                        <div class="lists">
+                            <ul>
+                                {% for list in tv.lists.results %}
+                                    <li>
+                                        <a href="{{ path('app_series_list', {id: list.id, seriesId: series.id}) }}">
+                                            <span>{{ list.name }}</span> ({{ list.iso_3166_1|country_name }}, {{ list.item_count }} {{ 'items'|trans }}){% if list.description %} - {{ list.description }}{% endif %}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </div>
                 {% endif %}
             </div>

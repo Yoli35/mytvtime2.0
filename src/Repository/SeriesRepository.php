@@ -116,6 +116,16 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function hasSeriesStartedAiring(int $seriesId, string $date): bool
+    {
+        $sql = "SELECT COUNT(*) as count
+                FROM series s
+                WHERE s.id=$seriesId AND s.first_air_date <= '$date'";
+
+        $result = $this->getOne($sql);
+        return count($result) > 0;
+    }
+
     public function getAll($sql): array
     {
         try {

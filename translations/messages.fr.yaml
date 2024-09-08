@@ -4,77 +4,80 @@ Providers: Plateformes
 Dashboard: Tableau de bord
 
 # Home
-Home: Accueil
-User: Utilisateur
-Connect: Se connecter
-My account: Mon compte
-My providers: Mes plateformes de streaming
-My networks: Mes réseaux
-User providers: Plateformes de streaming de l'utilisateur
-User networks: Réseaux de l'utilisateur
-Disconnect: Se déconnecter
-Register: S'inscrire
+A series by name/year: Une série par nom/année
+A series: Une série
+Add to pinned series: Ajouter aux séries épinglées
 Admin: Admin
-Username: Nom d'utilisateur
-Choose a username: Choisissez un nom d'utilisateur
-Email: Courriel
-Email address: Adresse courriel
-Password: Mot de passe
-Confirm password: Confirmez le mot de passe
-Re-type your password: Répétez votre mot de passe
-Country: Pays
-Your country will be used to determine the correct time for TV shows and movies.: Votre pays sera utilisé pour déterminer l'heure correcte pour les émissions de télévision et les films.
-Preferred language: Langue préférée
-Your preferred language for series descriptions and reviews. You can change this later.: Votre langue préférée pour les descriptions et les critiques de séries. Vous pouvez changer cela plus tard.
-Timezone: Fuseau horaire
-Your timezone will be used to determine the correct time for TV shows and movies.: Votre fuseau horaire sera utilisé pour déterminer l'heure correcte pour les émissions de télévision et les films.
-I agree to the terms and conditions: J'accepte les termes et conditions
-Remember me: Se souvenir de moi
-Sign in: Se connecter
-Options: Options
-Hide preview: Masquer l'aperçu
-Show preview: Afficher l'aperçu
-Theme: Thème
-Automatic: Automatique
-Light: Clair
-Dark: Sombre
-French: Français
-English: Anglais
-Recent series: Séries récentes
-Recent movies: Films récents
-Latest series added: Dernières séries ajoutées
-Your series: Vos séries
 All my series: Toutes mes séries à regarder
-Series history: Dernières séries regardées
+Among your series: Parmi vos séries
+Automatic: Automatique
+Choose a username: Choisissez un nom d'utilisateur
+Coming soon: Bientôt
+Confirm password: Confirmez le mot de passe
+Connect: Se connecter
+Country: Pays
+Dark: Sombre
+Day count: Nombre de jours
+Device: Appareil
+Disconnect: Se déconnecter
+Email address: Adresse courriel
+Email: Courriel
+English: Anglais
 Episode history (%d): Épisodes regardés ces %d derniers jours
 Episode history (%h): Épisodes regardés ces %h dernières heures
-Day count: Nombre de jours
-Last 24 hours: Dernières 24 heures
-Last 7 days: Derniers 7 jours
-Last 14 days: Derniers 14 jours
-Last 30 days: Derniers 30 jours
-Last added series: Dernières séries ajoutées
-remaining episode to see: épisode restant à voir
-remaining episodes to see: épisodes restants à voir
-A series: Une série
-Search among your series: Rechercher parmi vos séries
-Among your series: Parmi vos séries
-A series by name/year: Une série par nom/année
-New episode: Nouvel épisode
-New episode date: Nouvelle date d'épisode
-New series date: Nouvelle date de série
-Unknown: Date inconnue
-Episodes to watch: Épisodes suivants disponibles à regarder
-Pinned series: Séries épinglées
-seriess: séries
-series: série
-Add to pinned series: Ajouter aux séries épinglées
-Remove from pinned series: Retirer des séries épinglées
-In The Movie Database: Sur The Movie Database
 Episodes detail: Détails des épisodes
+Episodes to watch: Épisodes suivants disponibles à regarder
+French: Français
+Hide preview: Masquer l'aperçu
+Home: Accueil
+I agree to the terms and conditions: J'accepte les termes et conditions
+In production: En production
+In The Movie Database: Sur The Movie Database
+Last 14 days: Derniers 14 jours
+Last 24 hours: Dernières 24 heures
+Last 30 days: Derniers 30 jours
+Last 7 days: Derniers 7 jours
+Last added series: Dernières séries ajoutées
+Latest series added: Dernières séries ajoutées
+Light: Clair
+My account: Mon compte
+My networks: Mes réseaux
+My providers: Mes plateformes de streaming
+New episode date: Nouvelle date d'épisode
+New episode: Nouvel épisode
+New series date: Nouvelle date de série
+No backdrop: Pas de bannière
+Options: Options
+Password: Mot de passe
+Pinned series: Séries épinglées
+Preferred language: Langue préférée
 Rating: Note
-Device: Appareil
+Re-type your password: Répétez votre mot de passe
+Recent movies: Films récents
+Recent series: Séries récentes
+Register: S'inscrire
+Remember me: Se souvenir de moi
+Remove from pinned series: Retirer des séries épinglées
+Search among your series: Rechercher parmi vos séries
+Series history: Dernières séries regardées
+Show preview: Afficher l'aperçu
+Sign in: Se connecter
 Similar series: Séries similaires
+Theme: Thème
+Timezone: Fuseau horaire
+Unknown: Date inconnue
+User networks: Réseaux de l'utilisateur
+User providers: Plateformes de streaming de l'utilisateur
+User: Utilisateur
+Username: Nom d'utilisateur
+Your country will be used to determine the correct time for TV shows and movies.: Votre pays sera utilisé pour déterminer l'heure correcte pour les émissions de télévision et les films.
+Your preferred language for series descriptions and reviews. You can change this later.: Votre langue préférée pour les descriptions et les critiques de séries. Vous pouvez changer cela plus tard.
+Your series: Vos séries
+Your timezone will be used to determine the correct time for TV shows and movies.: Votre fuseau horaire sera utilisé pour déterminer l'heure correcte pour les émissions de télévision et les films.
+remaining episode to see: épisode à voir
+remaining episodes to see: épisodes à voir
+series: série
+seriess: séries
 
 # All my series
 Filters: Filtres

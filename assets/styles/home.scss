@@ -532,6 +532,21 @@
                         }
                     }
 
+                    .status {
+                        background-color: cadetblue;
+                        border-radius: .25rem;
+                        bottom: .25rem;
+                        color: var(--ardoise-10);
+                        left: .25rem;
+                        position: absolute;
+                        right: .25rem;
+
+                        &.coming-soon {
+                            background-color: var(--orange-40);
+                            color: var(--orange-80);
+                        }
+                    }
+
                     .progress {
                         background-color: var(--orange-20);
                         border: 1px solid var(--orange-50);
