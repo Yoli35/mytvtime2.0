@@ -36,6 +36,7 @@ class EpisodeAirDateCommand extends Command
     private bool $list = false;
 
     private const string SERIES_DATE = 'series date';
+    private const string SERIES_STATUS = 'series status';
     private const string EPISODE_NEW = 'episode';
     private const string EPISODE_DATE = 'episode date';
 
@@ -57,7 +58,8 @@ class EpisodeAirDateCommand extends Command
     {
         $this
             ->addOption('series', 's', InputOption::VALUE_REQUIRED, 'User series ID')
-            ->addOption('list', 'l', InputOption::VALUE_NONE, 'List all updates');
+            ->addOption('list', 'l', InputOption::VALUE_NONE, 'List all updates')
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Check every series');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -70,7 +72,7 @@ class EpisodeAirDateCommand extends Command
 
         if (!$seriesId) {
             $allUserSeries = $this->userSeriesRepository->findAll();
-            $force = false;
+            $force = $input->getOption('force');
         } else {
             $allUserSeries = $this->userSeriesRepository->findBy(['id' => $seriesId]);
             $force = true;
@@ -86,6 +88,7 @@ class EpisodeAirDateCommand extends Command
 
         foreach ($allUserSeries as $userSeries) {
             $series = $userSeries->getSeries();
+            $seriesId = $series->getId();
             $user = $userSeries->getUser();
             $language = $user->getPreferredLanguage() ?? "fr" . "-" . $user->getCountry() ?? "FR";
             $episodeUpdates = 0;
@@ -126,6 +129,13 @@ class EpisodeAirDateCommand extends Command
                     $notifications[] = $this->newNotification(self::SERIES_DATE, $userSeries, null, $localizedName, $airDate);
                     $newSeriesDateCount++;
                 }
+            }
+
+            if ($tv['status'] != $series->getStatus()) {
+                $series->setStatus($tv['status']);
+                $this->seriesRepository->save($series, true);
+                $notifications[] = $this->newNotification(self::SERIES_STATUS, $userSeries, null, $localizedName, $airDate);
+                $newSeriesDateCount++;
             }
 
 //            $seriesDayOffset = $this->seriesDayOffsetRepository->findOneBy(['series' => $series, 'country' => $user->getCountry() ?? 'FR']);
