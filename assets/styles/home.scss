@@ -18,6 +18,7 @@
         font-size: 1.5rem;
         font-weight: 100;
         line-height: 1.25em;
+        margin-block: 5rem;
         //margin: 2rem;
     }
 
@@ -62,6 +63,8 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            height: calc(36dvh - 1rem);
+            justify-content: center;
 
             .details {
                 display: flex;
@@ -300,6 +303,47 @@
 
         }
     }
+
+    .home-content {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: 2rem;
+        height: 100dvh;
+        overflow-y: auto;
+        scroll-snap-type: y mandatory;
+
+        .highlighted-series {
+            height: 100dvh;
+            margin-bottom: unset;
+            padding-block: 6dvh;
+            scroll-snap-align: start;
+        }
+
+        .series-group {
+            justify-content: center;
+            scroll-snap-align: start;
+            height: 100dvh;
+            margin-top: unset;
+            padding-block-start: 8dvh;
+
+            h2 {
+                font-size: 3vw;
+            }
+
+            .wrapper {
+                .content {
+                    overflow-x: auto;
+                    scroll-snap-type: x mandatory;
+                    width: 100%;
+
+                    .card {
+                        scroll-snap-align: start;
+                    }
+                }
+            }
+        }
+    }
 }
 
 @media (orientation: portrait) {
@@ -413,7 +457,7 @@
 
         .content {
             display: flex;
-            gap: .25rem;
+            gap: 1vh; /*.25rem;*/
             flex-shrink: 0;
             justify-content: flex-start;
             margin: 0 auto;
@@ -426,191 +470,196 @@
                 text-align: left;
                 width: 101%;
             }
-        }
 
-        .card {
-            background-color: var(--ardoise-90);
-            border-radius: .25rem;
-            color: var(--ardoise-10);
-            height: 18rem;
-            width: 10rem;
+            .card {
+                background-color: var(--ardoise-90);
+                border-radius: 1vh;
+                color: var(--ardoise-10);
+                /*height: 18rem;
+                width: 10rem;*/
 
-            a {
-                display: flex;
-                flex-direction: column;
-                height: 100%;
-                width: 100%;
-
-                .poster {
-                    align-items: center;
-                    background-color: var(--ardoise-80);
-                    border-radius: .25rem .25rem 0 0;
-                    color: var(--ardoise-10);
+                a {
                     display: flex;
-                    flex-shrink: 0;
-                    height: 15rem;
-                    justify-content: center;
-                    overflow: hidden;
-                    position: relative;
-                    width: 10rem;
+                    flex-direction: column;
+                    height: 100%;
+                    width: 100%;
 
-                    img {
-                        border-radius: .25rem .25rem 0 0;
-                        height: 15rem;
-                        object-fit: cover;
-                        width: 10rem;
-                    }
-
-                    .series-infos {
-                        align-items: flex-end;
-                        bottom: 1rem;
+                    .poster {
+                        align-items: center;
+                        aspect-ratio: 78 / 117;
+                        background-color: var(--ardoise-80);
+                        border-radius: 1vh 1vh 0 0;
+                        color: var(--ardoise-10);
                         display: flex;
-                        flex-direction: column;
-                        gap: .25rem;
-                        justify-content: flex-end;
-                        left: .25rem;
-                        position: absolute;
-                        right: .25rem;
+                        flex-shrink: 0;
+                        height: 75dvh; /*15rem;*/
+                        justify-content: center;
+                        overflow: hidden;
+                        position: relative;
+                        /*width: 10rem;*/
 
-                        .providers {
-                            overflow-x: auto;
-                            padding: 0 .25rem;
-                            width: 100%;
+                        img {
+                            aspect-ratio: 78 / 117;
+                            border-radius: 1vh 1vh 0 0;
+                            height: 75dvh; /* 15rem;*/
+                            object-fit: cover;
+                            width: auto; /*10rem;*/
+                        }
 
-                            .provider-content {
-                                display: flex;
-                                gap: .25rem;
+                        .series-infos {
+                            align-items: flex-end;
+                            bottom: 1rem;
+                            display: flex;
+                            flex-direction: column;
+                            gap: .25rem;
+                            justify-content: flex-end;
+                            left: .25rem;
+                            position: absolute;
+                            right: .25rem;
 
-                                .provider {
-                                    height: 2rem;
-                                    width: 2rem;
+                            .providers {
+                                overflow-x: auto;
+                                padding: 0 .25rem;
+                                width: 100%;
 
-                                    img {
-                                        border-radius: .25rem;
-                                        height: 100%;
-                                        object-fit: cover;
-                                        width: 100%;
+                                .provider-content {
+                                    display: flex;
+                                    gap: .25rem;
+
+                                    .provider {
+                                        height: 2rem;
+                                        width: 2rem;
+
+                                        img {
+                                            border-radius: .25rem;
+                                            height: 100%;
+                                            object-fit: cover;
+                                            width: 100%;
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        .favorite, .quick-watcher {
-                            align-items: center;
-                            background-color: var(--ardoise-80-alpha-50);
-                            border-radius: .25rem;
-                            color: var(--favorite-series);
-                            display: flex;
-                            height: 2rem;
-                            justify-content: center;
-                            width: 2rem;
-                        }
+                            .favorite, .quick-watcher {
+                                align-items: center;
+                                background-color: var(--ardoise-80-alpha-50);
+                                border-radius: .25rem;
+                                color: var(--favorite-series);
+                                display: flex;
+                                height: 2rem;
+                                justify-content: center;
+                                width: 2rem;
+                            }
 
-                        .episode-number {
-                            background-color: var(--ardoise-80-alpha-90);
-                            border-radius: .25rem;
-                            color: var(--ardoise-10);
-                            padding: .25rem;
-                            font-size: 1.5rem;
-                            font-weight: 400;
-                            width: fit-content;
+                            .episode-number {
+                                background-color: var(--ardoise-80-alpha-90);
+                                border-radius: .25rem;
+                                color: var(--ardoise-10);
+                                padding: .25rem;
+                                font-size: 1.5rem;
+                                font-weight: 400;
+                                width: fit-content;
 
-                            &.watched {
-                                background-color: var(--green-60);
-                                color: var(--green-10);
+                                &.watched {
+                                    background-color: var(--green-60);
+                                    color: var(--green-10);
+                                }
+                            }
+
+                            .date {
+                                background-color: var(--ardoise-80-alpha-90);
+                                border-radius: .25rem;
+                                color: var(--ardoise-10);
+                                padding: .25rem;
+                                font-size: .875rem;
+                                font-weight: 300;
+                                width: fit-content;
                             }
                         }
 
-                        .date {
-                            background-color: var(--ardoise-80-alpha-90);
+                        .status {
+                            background-color: cadetblue;
                             border-radius: .25rem;
+                            bottom: .25rem;
                             color: var(--ardoise-10);
-                            padding: .25rem;
-                            font-size: .875rem;
-                            font-weight: 300;
-                            width: fit-content;
-                        }
-                    }
+                            left: .25rem;
+                            position: absolute;
+                            right: .25rem;
 
-                    .status {
-                        background-color: cadetblue;
-                        border-radius: .25rem;
-                        bottom: .25rem;
-                        color: var(--ardoise-10);
-                        left: .25rem;
-                        position: absolute;
-                        right: .25rem;
-
-                        &.coming-soon {
-                            background-color: var(--orange-40);
-                            color: var(--orange-80);
-                        }
-                    }
-
-                    .progress {
-                        background-color: var(--orange-20);
-                        border: 1px solid var(--orange-50);
-                        height: .5rem;
-                        left: 0;
-                        position: absolute;
-                        bottom: 0;
-                        width: 100%;
-
-                        &.start-this-series {
-                            border-color: var(--astart-this-series);
-                        }
-
-                        &.up-to-date {
-                            border-color: var(--up-to-date-series);
-
-                            .progress-bar {
-                                background-color: var(--up-to-date-series);
+                            &.coming-soon {
+                                background-color: var(--orange-40);
+                                color: var(--orange-80);
                             }
                         }
 
-                        &.that-s-all-folks {
-                            border-color: var(--that-s-all-folks);
+                        .progress {
+                            background-color: var(--orange-20);
+                            border: 1px solid var(--orange-50);
+                            height: .5rem;
+                            left: 0;
+                            position: absolute;
+                            bottom: 0;
+                            width: 100%;
+
+                            &.start-this-series {
+                                border-color: var(--astart-this-series);
+                            }
+
+                            &.up-to-date {
+                                border-color: var(--up-to-date-series);
+
+                                .progress-bar {
+                                    background-color: var(--up-to-date-series);
+                                }
+                            }
+
+                            &.that-s-all-folks {
+                                border-color: var(--that-s-all-folks);
+
+                                .progress-bar {
+                                    background-color: var(--that-s-all-folks);
+                                }
+                            }
 
                             .progress-bar {
+                                background: var(--orange-50);
+                                height: .375rem;
+                                transition: width 20s linear;
+                                width: 0;
+                            }
+                        }
+
+                        .up-to-date-banner {
+                            background-color: var(--up-to-date-series);
+                            color: var(--green-50);
+                            font-weight: 600;
+                            padding: .125rem;
+                            position: absolute;
+                            right: -3rem;
+                            top: 1rem;
+                            transform: rotate(45deg);
+                            width: 10rem;
+
+                            &.ended {
                                 background-color: var(--that-s-all-folks);
+                                color: var(--up-to-date-series);
                             }
                         }
-
-                        .progress-bar {
-                            background: var(--orange-50);
-                            height: .375rem;
-                            transition: width 20s linear;
-                            width: 0;
-                        }
                     }
 
-                    .up-to-date-banner {
-                        background-color: var(--up-to-date-series);
-                        color: var(--green-50);
-                        font-weight: 600;
-                        padding: .125rem;
-                        position: absolute;
-                        right: -3rem;
-                        top: 1rem;
-                        transform: rotate(45deg);
-                        width: 10rem;
-
-                        &.ended {
-                            background-color: var(--that-s-all-folks);
-                            color: var(--up-to-date-series);
-                        }
+                    .name {
+                        align-items: center;
+                        background-color: cadetblue;
+                        border-radius: 0 0 1vh 1vh;
+                        display: flex;
+                        flex-shrink: 0;
+                        font-size: 4vh;
+                        font-weight: 500;
+                        height: 10vh;
+                        justify-content: center;
+                        line-height: 4.2vh;
+                        /*width: 10rem;*/
                     }
-                }
-
-                .name {
-                    align-items: center;
-                    display: flex;
-                    flex-shrink: 0;
-                    font-weight: 100;
-                    height: 3rem;
-                    justify-content: center;
-                    line-height: 1rem;
-                    width: 10rem;
                 }
             }
         }

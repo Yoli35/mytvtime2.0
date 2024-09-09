@@ -9,178 +9,180 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid home">
-        <div class="presentation">
-            {#            <p>My Tv Time est un site qui vous permet de gérer vos séries préférées. Vous pouvez ajouter des séries à votre liste, indiquer les épisodes que vous avez vus, et bien plus encore !</p> #}
-            {#            <p>Vous pouvez également consulter les séries les plus populaires, les séries les mieux notées, ou encore les séries les plus récentes.</p> #}
-            {#            <p>Enfin, vous pouvez filtrer les séries par plateforme de streaming pour savoir où les regarder.</p> #}
-        </div>
-        <div class="highlighted-series">
-            <div class="poster">
-                <a href="{{ path('app_series_tmdb', {'id': highlightedSeries.0.id, 'slug': highlightedSeries.0.slug}) }}">
-                    <img src="{{ highlightedSeries.0.poster_path }}" alt="{{ highlightedSeries.0.name }}">
-                </a>
-            </div>
-            <div class="infos">
-                <div class="details">
-                    <a href="{{ path('app_series_tmdb', {'id': highlightedSeries.0.id, 'slug': highlightedSeries.0.slug}) }}">
-                        <div class="name">{{ highlightedSeries.0.name }}</div>
-                    </a>
-                    <div class="overview">{{ highlightedSeries.0.overview }}</div>
-                    <div class="providers">
-                        <div class="wrapper">
-                            {% for provider in highlightedSeries.0.watch_providers %}
-                                <div class="provider"><img src="{{ provider.logo_path }}" alt=""></div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                <div class="poster-list">
-                    {% for s in highlightedSeries %}
-                        <a href="{{ path('app_series_tmdb', {'id': s.id, 'slug': s.slug}) }}">
-                            <div class="item">
-                                <div class="poster-item" id="thumb-{{ s.id }}">
-                                    <img src="{{ s.poster_path }}" alt="{{ s.name }}">
-                                </div>
-                                <div class="count"></div>
-                            </div>
-                        </a>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="loading">
-                <div class="loading-item"></div>
-                <div class="loading-item"></div>
-                <div class="loading-item"></div>
-                <div class="loading-item"></div>
-            </div>
-            {#            <div class="loading-v2"> #}
-            {#                <div class="ball-container"> #}
-            {#                </div> #}
-            {#            </div> #}
-        </div>
+        {#<div class="presentation">
+                        <p>My Tv Time est un site qui vous permet de gérer vos séries préférées. Vous pouvez ajouter des séries à votre liste, indiquer les épisodes que vous avez vus, et bien plus encore !</p>
+                        <p>Vous pouvez également consulter les séries les plus populaires, les séries les mieux notées, ou encore les séries les plus récentes.</p>
+                        <p>Enfin, vous pouvez filtrer les séries par plateforme de streaming pour savoir où les regarder.</p>
+        </div>#}
         <div class="highlight-progress">
             <div class="head"></div>
         </div>
 
-        <div class="series-group">
-            <h2>{{ 'Recent series'|trans }}</h2>
-            <div class="wrapper">
-                <div class="content">
-                    {% for s in highlightedSeries %}
-                        {{ include('_blocks/series/_card.html.twig', { series: s }) }}
-                    {% endfor %}
+        <div class="home-content" dir="ltr">
+            <div class="highlighted-series">
+                <div class="poster">
+                    <a href="{{ path('app_series_tmdb', {'id': highlightedSeries.0.id, 'slug': highlightedSeries.0.slug}) }}">
+                        <img src="{{ highlightedSeries.0.poster_path }}" alt="{{ highlightedSeries.0.name }}">
+                    </a>
+                </div>
+                <div class="infos">
+                    <div class="details">
+                        <a href="{{ path('app_series_tmdb', {'id': highlightedSeries.0.id, 'slug': highlightedSeries.0.slug}) }}">
+                            <div class="name">{{ highlightedSeries.0.name }}</div>
+                        </a>
+                        <div class="overview">{{ highlightedSeries.0.overview }}</div>
+                        <div class="providers">
+                            <div class="wrapper">
+                                {% for provider in highlightedSeries.0.watch_providers %}
+                                    <div class="provider"><img src="{{ provider.logo_path }}" alt=""></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="poster-list">
+                        {% for s in highlightedSeries %}
+                            <a href="{{ path('app_series_tmdb', {'id': s.id, 'slug': s.slug}) }}">
+                                <div class="item">
+                                    <div class="poster-item" id="thumb-{{ s.id }}">
+                                        <img src="{{ s.poster_path }}" alt="{{ s.name }}">
+                                    </div>
+                                    <div class="count"></div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="loading">
+                    <div class="loading-item"></div>
+                    <div class="loading-item"></div>
+                    <div class="loading-item"></div>
+                    <div class="loading-item"></div>
+                </div>
+                {#            <div class="loading-v2"> #}
+                {#                <div class="ball-container"> #}
+                {#                </div> #}
+                {#            </div> #}
+            </div>
+            <div class="series-group">
+                <h2>{{ 'Recent series'|trans }}</h2>
+                <div class="wrapper">
+                    <div class="content">
+                        {% for s in highlightedSeries %}
+                            {{ include('_blocks/series/_card.html.twig', { series: s }) }}
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="series-group">
-            <h2>{{ 'Recent movies'|trans }}</h2>
-            <div class="wrapper">
-                <div class="content">
-                    {% for m in highlightedMovies %}
-                        {{ include('_blocks/movie/_card-tmdb.html.twig', { movie: m }) }}
-                    {% endfor %}
+            <div class="series-group">
+                <h2>{{ 'Recent movies'|trans }}</h2>
+                <div class="wrapper">
+                    <div class="content">
+                        {% for m in highlightedMovies %}
+                            {{ include('_blocks/movie/_card-tmdb.html.twig', { movie: m }) }}
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-        </div>
-        {% if app.user %}
-            {% if episodesOfTheDay|length %}
+            {% if app.user %}
+                {% if episodesOfTheDay|length %}
+                    <div class="series-group">
+                        <h2>{{ 'Episodes of the day'|trans }} ({{ episodesOfTheDay|length }})</h2>
+                        <div class="wrapper">
+                            <div class="content">
+                                {% for s in episodesOfTheDay %}
+                                    {{ include('_blocks/series/_episode-card.html.twig', { series: s }) }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if episodesToWatch|length %}
+                    <div class="series-group">
+                        <h2>{{ 'Episodes to watch'|trans }} {# ({{ episodesToWatch|length }}) #}</h2>
+                        <div class="wrapper">
+                            <div class="content">
+                                {% for s in episodesToWatch %}
+                                    {{ include('_blocks/series/_history-card.html.twig', { series: s }) }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
                 <div class="series-group">
-                    <h2>{{ 'Episodes of the day'|trans }} ({{ episodesOfTheDay|length }})</h2>
+                    <h2>{{ 'Your series'|trans }} ({{ userSeriesCount }})</h2>
                     <div class="wrapper">
                         <div class="content">
-                            {% for s in episodesOfTheDay %}
+                            {% for s in userSeries %}
+                                {{ include('_blocks/series/_card.html.twig', { series: s }) }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="series-group">
+                    <h2>{{ 'Last added series'|trans }}</h2>
+                    <div class="wrapper">
+                        <div class="content">
+                            {% for s in lastAddedSeries %}
+                                {{ include('_blocks/series/_card.html.twig', { series: s }) }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="series-group">
+                    <h2>{{ 'Series history'|trans }}</h2>
+                    <div class="wrapper">
+                        <div class="content">
+                            {% for s in historySeries %}
+                                {{ include('_blocks/series/_episode-card.html.twig', { series: s }) }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="series-group">
+                    <div class="header">
+                        {% if dayCount == 1 %}
+                            <h2>{{ 'Episode history (%h)'|trans|format(dayCount*24) }} ({{ historyEpisode|length }})</h2>
+                        {% else %}
+                            <h2>{{ 'Episode history (%d)'|trans|format(dayCount) }} ({{ historyEpisode|length }})</h2>
+                        {% endif %}
+                        <label for="day-count">{{ 'Day count'|trans }}
+                            <select id="day-count">
+                                <option value="1"{% if dayCount == 1 %} selected{% endif %}>{{ 'Last 24 hours'|trans }}</option>
+                                <option value="7"{% if dayCount == 7 %} selected{% endif %}>{{ 'Last 7 days'|trans }}</option>
+                                <option value="14"{% if dayCount == 14 %} selected{% endif %}>{{ 'Last 14 days'|trans }}</option>
+                                <option value="30"{% if dayCount == 30 %} selected{% endif %}>{{ 'Last 30 days'|trans }}</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="wrapper">
+                        <div class="content">
+                            {% for s in historyEpisode %}
                                 {{ include('_blocks/series/_episode-card.html.twig', { series: s }) }}
                             {% endfor %}
                         </div>
                     </div>
                 </div>
             {% endif %}
-            {% if episodesToWatch|length %}
-                <div class="series-group">
-                    <h2>{{ 'Episodes to watch'|trans }} {# ({{ episodesToWatch|length }}) #}</h2>
-                    <div class="wrapper">
-                        <div class="content">
-                            {% for s in episodesToWatch %}
-                                {{ include('_blocks/series/_history-card.html.twig', { series: s }) }}
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-            <div class="series-group">
-                <h2>{{ 'Your series'|trans }} ({{ userSeriesCount }})</h2>
-                <div class="wrapper">
-                    <div class="content">
-                        {% for s in userSeries %}
-                            {{ include('_blocks/series/_card.html.twig', { series: s }) }}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            <div class="series-group">
-                <h2>{{ 'Last added series'|trans }}</h2>
-                <div class="wrapper">
-                    <div class="content">
-                        {% for s in lastAddedSeries %}
-                            {{ include('_blocks/series/_card.html.twig', { series: s }) }}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            <div class="series-group">
-                <h2>{{ 'Series history'|trans }}</h2>
-                <div class="wrapper">
-                    <div class="content">
-                        {% for s in historySeries %}
-                            {{ include('_blocks/series/_episode-card.html.twig', { series: s }) }}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
             <div class="series-group">
                 <div class="header">
-                    {% if dayCount == 1 %}
-                    <h2>{{ 'Episode history (%h)'|trans|format(dayCount*24) }} ({{ historyEpisode|length }})</h2>
-                    {% else %}
-                    <h2>{{ 'Episode history (%d)'|trans|format(dayCount) }} ({{ historyEpisode|length }})</h2>
-                    {% endif %}
-                    <label for="day-count">{{ 'Day count'|trans }}
-                        <select id="day-count">
-                            <option value="1"{% if dayCount == 1 %} selected{% endif %}>{{ 'Last 24 hours'|trans }}</option>
-                            <option value="7"{% if dayCount == 7 %} selected{% endif %}>{{ 'Last 7 days'|trans }}</option>
-                            <option value="14"{% if dayCount == 14 %} selected{% endif %}>{{ 'Last 14 days'|trans }}</option>
-                            <option value="30"{% if dayCount == 30 %} selected{% endif %}>{{ 'Last 30 days'|trans }}</option>
+                    <div class="logo">
+                        {{ providerLogo(watchProviders, provider) }}
+                    </div>
+                    <h2>{{ providerName(watchProviders, provider) }}</h2>
+                    <label for="watch-providers">{# Filtrer par plateforme de streaming #}
+                        <select id="watch-providers">
+                            {% for watchProvider in watchProviders|sort((a, b) => a.name <=> b.name) %}
+                                <option value="{{ watchProvider.id }}" data-logo="{{ watchProvider.logoPath }}"{{ watchProvider.id == provider ? ' selected':'' }}>{{ watchProvider.name }}</option>
+                            {% endfor %}
                         </select>
                     </label>
                 </div>
                 <div class="wrapper">
                     <div class="content">
-                        {% for s in historyEpisode %}
-                            {{ include('_blocks/series/_episode-card.html.twig', { series: s }) }}
+                        {% for s in filteredSeries %}
+                            {{ include('_blocks/series/_card.html.twig', { series: s }) }}
                         {% endfor %}
                     </div>
-                </div>
-            </div>
-        {% endif %}
-        <div class="series-group">
-            <div class="header">
-                <div class="logo">
-                    {{ providerLogo(watchProviders, provider) }}
-                </div>
-                <h2>{{ providerName(watchProviders, provider) }}</h2>
-                <label for="watch-providers">{# Filtrer par plateforme de streaming #}
-                    <select id="watch-providers">
-                        {% for watchProvider in watchProviders|sort((a, b) => a.name <=> b.name) %}
-                            <option value="{{ watchProvider.id }}" data-logo="{{ watchProvider.logoPath }}"{{ watchProvider.id == provider ? ' selected':'' }}>{{ watchProvider.name }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-            </div>
-            <div class="wrapper">
-                <div class="content">
-                    {% for s in filteredSeries %}
-                        {{ include('_blocks/series/_card.html.twig', { series: s }) }}
-                    {% endfor %}
                 </div>
             </div>
         </div>
