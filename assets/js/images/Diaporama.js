@@ -109,7 +109,7 @@ export class Diaporama {
         backDiapo.style.bottom = -window.scrollY + "px";
         backDiapo.style.top = window.scrollY + "px";
 
-        gThis.initShortcutsHelp(backDiapo, count);
+        /*gThis.initShortcutsHelp(backDiapo, count);*/
     }
 
     nextImage() {
@@ -120,7 +120,7 @@ export class Diaporama {
         img.setAttribute("src", gThis.diaporamaSrc[gThis.diaporamaIndex]);
     }
 
-    initShortcutsHelp(back, count) {
+    /*initShortcutsHelp(back, count) {
         const txt = {
             'title': {
                 'fr': 'Raccourcis clavier',
@@ -177,7 +177,7 @@ export class Diaporama {
         close.addEventListener("click", gThis.minimiseHelp);
         maxi.appendChild(close);
         back.appendChild(navigation);
-    }
+    }*/
 
     prevImage() {
         gThis.thumbnailDeactivate(gThis.diaporamaIndex);
