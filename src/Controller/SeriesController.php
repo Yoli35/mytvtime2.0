@@ -600,6 +600,7 @@ class SeriesController extends AbstractController
         $schedules = $this->seriesSchedules($series);
         $seriesArr = $series->toArray();
         $seriesArr['schedules'] = $schedules;
+        $seriesArr['seriesInProgress'] = !$this->userEpisodeRepository->isFullyReleased($userSeries);
         $seriesArr['images'] = [
             'backdrops' => $seriesBackdrops,
             'logos' => $seriesLogos,
@@ -620,7 +621,7 @@ class SeriesController extends AbstractController
         ];
 
         dump([
-//            'series' => $seriesArr,
+            'series' => $seriesArr,
             'tv' => $tv,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,

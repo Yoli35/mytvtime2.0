@@ -59,7 +59,7 @@
             {% if series.progress is defined %}
                 {% if series.status == "In Production" %}
                     <div class="status">{{ 'In production'|trans }}</div>
-                {% elseif start and series.id|hasSeriesStartedAiring %}
+                {% elseif start and series.released == 0 %} {# series.id|hasSeriesStartedAiring #}
                     <div class="status coming-soon">{{ 'Coming soon'|trans }}</div>
                 {% else %}
                     <div class="progress{% if ended %} that-s-all-folks{% endif %}{% if start %} start-this-series{% endif %}">

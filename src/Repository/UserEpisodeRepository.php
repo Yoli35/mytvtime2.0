@@ -41,23 +41,37 @@ class UserEpisodeRepository extends ServiceEntityRepository
         $this->em->flush();
     }
 
+    public function isFullyReleased(UserSeries $userSeries): int
+    {
+        $userId = $userSeries->getUser()->getId();
+        $userSeriesId = $userSeries->getId();
+
+        $sql = "SELECT ue.`air_date` < NOW()
+                FROM `user_episode` ue
+                WHERE ue.`user_id`=$userId AND ue.`user_series_id`=$userSeriesId
+                ORDER BY ue.`air_date` DESC LIMIT 1";
+
+        return $this->getOne($sql);
+    }
+
     public function lastAddedSeries(User $user, $locale, $page, $perPage): array
     {
         $userId = $user->getId();
         $offset = ($page - 1) * $perPage;
         $sql = "SELECT 
-              s.`id`            as id,
-              s.`name`          as name,
-              s.`poster_path`   as posterPath, 
-              s.`slug`          as slug,
-              s.`status`        as status,
-              s.`tmdb_id`       as tmdbId,
-              sln.`name`        as localizedName, 
-              sln.`slug`        as localizedSlug, 
-              us.`favorite`     as favorite,
-              us.`last_episode` as episodeNumber,
-              us.`last_season`  as seasonNumber, 
-              us.`progress`     as progress
+              s.`id`                      as id,
+              s.`name`                    as name,
+              s.`poster_path`             as posterPath, 
+              s.`slug`                    as slug,
+              s.`status`                  as status,
+              (s.first_air_date <= NOW()) as released,
+              s.`tmdb_id`                 as tmdbId,
+              sln.`name`                  as localizedName, 
+              sln.`slug`                  as localizedSlug, 
+              us.`favorite`               as favorite,
+              us.`last_episode`           as episodeNumber,
+              us.`last_season`            as seasonNumber, 
+              us.`progress`               as progress
             FROM `user_series` us 
             INNER JOIN `series` s ON s.`id` = us.`series_id` 
             LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' 

@@ -884,7 +884,7 @@ export class Show {
          ******************************************************************************/
         const broadcastInput = document.querySelector('input[name="broadcast-delay"]');
         const broadcastSubmit = document.querySelector('button[value="broadcast-delay"]');
-        broadcastSubmit.addEventListener('click', function () {
+        broadcastSubmit?.addEventListener('click', function () {
             fetch('/' + lang + '/series/broadcast/delay/' + seriesId,
                 {
                     method: 'POST',

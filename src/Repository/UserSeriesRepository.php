@@ -136,20 +136,21 @@ class UserSeriesRepository extends ServiceEntityRepository
         $userId = $user->getId();
         $offset = ($page - 1) * $perPage;
         $sql = "SELECT 
-                    s.`id`          as id,
-                    s.`name`        as name,
-                    s.`poster_path` as poster_path, 
-                    s.`tmdb_id`     as tmdbId,
-                    s.`slug`        as slug,
-                    s.status        as status,
-                    us.`user_id`    as user_id, 
-                    us.`progress`   as progress,
-                    us.`favorite`   as favorite, 
-                    sln.`name`      as localized_name,
-                    sln.`slug`      as localized_slug 
+                    s.`id`                      as id,
+                    s.`name`                    as name,
+                    s.`poster_path`             as poster_path, 
+                    s.`tmdb_id`                 as tmdbId,
+                    s.`slug`                    as slug,
+                    s.status                    as status,
+                    (s.first_air_date <= NOW()) as released,
+                    us.`user_id`                as user_id, 
+                    us.`progress`               as progress,
+                    us.`favorite`               as favorite, 
+                    sln.`name`                  as localized_name,
+                    sln.`slug`                  as localized_slug 
                 FROM `user_series` us 
                     INNER JOIN `series` s ON s.`id` = us.`series_id` 
-                    LEFT JOIN `series_localized_name` sln ON s.`id` = sln.`series_id` AND sln.locale='$locale ' 
+                    LEFT JOIN `series_localized_name` sln ON s.`id` = sln.`series_id` AND sln.locale='$locale' 
             WHERE us.user_id=$userId 
             ORDER BY s.`first_air_date` DESC 
             LIMIT $perPage OFFSET $offset";
