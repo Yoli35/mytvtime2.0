@@ -18,8 +18,7 @@
         font-size: 1.5rem;
         font-weight: 100;
         line-height: 1.25em;
-        margin-block: 5rem;
-        //margin: 2rem;
+        /*margin-block: 5rem;*/
     }
 
     .highlighted-series {
@@ -309,26 +308,26 @@
         flex-direction: column;
         flex-wrap: nowrap;
         gap: 2rem;
-        height: 100dvh;
+        /*height: 100dvh;
         overflow-y: auto;
-        scroll-snap-type: y mandatory;
+        scroll-snap-type: y mandatory;*/
 
         .highlighted-series {
-            height: 100dvh;
+            /*height: 100dvh;
             margin-bottom: unset;
             padding-block: 6dvh;
-            scroll-snap-align: start;
+            scroll-snap-align: start;*/
         }
 
         .series-group {
-            justify-content: center;
+            /*justify-content: center;
             scroll-snap-align: start;
             height: 100dvh;
             margin-top: unset;
-            padding-block-start: 8dvh;
+            padding-block-start: 8dvh;*/
 
             h2 {
-                font-size: 3vw;
+                /*font-size: 3vw;*/
             }
 
             .wrapper {
@@ -457,7 +456,7 @@
 
         .content {
             display: flex;
-            gap: 1vh; /*.25rem;*/
+            gap: .25rem; /*1vh;*/
             flex-shrink: 0;
             justify-content: flex-start;
             margin: 0 auto;
@@ -468,15 +467,15 @@
                 border-radius: .25rem;
                 padding: .25rem .5rem;
                 text-align: left;
-                width: 101%;
+                width: 100%;
             }
 
             .card {
                 background-color: var(--ardoise-90);
                 border-radius: 1vh;
                 color: var(--ardoise-10);
-                /*height: 18rem;
-                width: 10rem;*/
+                height: 18rem;
+                width: 10rem;
 
                 a {
                     display: flex;
@@ -488,29 +487,29 @@
                         align-items: center;
                         aspect-ratio: 78 / 117;
                         background-color: var(--ardoise-80);
-                        border-radius: 1vh 1vh 0 0;
+                        border-radius: .25rem .25rem 0 0;
                         color: var(--ardoise-10);
                         display: flex;
                         flex-shrink: 0;
-                        height: 75dvh; /*15rem;*/
+                        height: 15rem;/* 75dvh;*/
                         justify-content: center;
                         overflow: hidden;
                         position: relative;
-                        /*width: 10rem;*/
+                        width: 10rem;
 
                         img {
                             aspect-ratio: 78 / 117;
-                            border-radius: 1vh 1vh 0 0;
-                            height: 75dvh; /* 15rem;*/
+                            border-radius: .25rem .25rem 0 0;
+                            height: 15rem; /* 75dvh;*/
                             object-fit: cover;
-                            width: auto; /*10rem;*/
+                            width: 10rem; /*auto;*/
                         }
 
                         .series-infos {
-                            align-items: flex-end;
+                            align-items: center;
                             bottom: 1rem;
                             display: flex;
-                            flex-direction: column;
+                            flex-wrap: wrap;
                             gap: .25rem;
                             justify-content: flex-end;
                             left: .25rem;
@@ -520,13 +519,14 @@
                             .providers {
                                 overflow-x: auto;
                                 padding: 0 .25rem;
-                                width: 100%;
 
                                 .provider-content {
                                     display: flex;
                                     gap: .25rem;
 
                                     .provider {
+                                        background-color: var(--navbar-bg);
+                                        border-radius: .25rem;
                                         height: 2rem;
                                         width: 2rem;
 
@@ -594,18 +594,21 @@
 
                         .progress {
                             background-color: var(--orange-20);
-                            border: 1px solid var(--orange-50);
-                            height: .5rem;
-                            left: 0;
+                            border: 2px solid var(--orange-40);
+                            border-radius: .5rem;
+                            height: 1rem;
+                            left: .5rem;
+                            overflow: hidden;
                             position: absolute;
-                            bottom: 0;
-                            width: 100%;
+                            bottom: .5rem;
+                            width: calc(100% - 1rem);
 
                             &.start-this-series {
                                 border-color: var(--astart-this-series);
                             }
 
                             &.up-to-date {
+                                background-color: var(--up-to-date-series-bg);
                                 border-color: var(--up-to-date-series);
 
                                 .progress-bar {
@@ -623,7 +626,7 @@
 
                             .progress-bar {
                                 background: var(--orange-50);
-                                height: .375rem;
+                                height: .875rem;
                                 transition: width 20s linear;
                                 width: 0;
                             }
@@ -631,7 +634,7 @@
 
                         .up-to-date-banner {
                             background-color: var(--up-to-date-series);
-                            color: var(--green-50);
+                            color: var(--green-10);
                             font-weight: 600;
                             padding: .125rem;
                             position: absolute;
@@ -650,15 +653,15 @@
                     .name {
                         align-items: center;
                         background-color: cadetblue;
-                        border-radius: 0 0 1vh 1vh;
+                        border-radius: 0 0 .25rem .25rem;
                         display: flex;
                         flex-shrink: 0;
-                        font-size: 4vh;
+                        font-size: 1rem;
                         font-weight: 500;
-                        height: 10vh;
+                        height: 3rem;
                         justify-content: center;
-                        line-height: 4.2vh;
-                        /*width: 10rem;*/
+                        line-height: 1rem;
+                        width: 10rem;
                     }
                 }
             }

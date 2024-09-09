@@ -1649,6 +1649,10 @@ h2 {
                 line-height: 2.2rem;
             }
         }
+
+        .backdrops {
+            width: 100% !important;
+        }
     }
 
     .infos {
@@ -1659,7 +1663,7 @@ h2 {
         width: 100% !important;
     }
 
-    .content {
+    > .content {
         flex-direction: column;
 
         .right {
