@@ -578,17 +578,17 @@
                         }
 
                         .status {
-                            background-color: cadetblue;
+                            background-color: var(--orange-40);
                             border-radius: .25rem;
                             bottom: .25rem;
-                            color: var(--ardoise-10);
+                            color: var(--orange-80);
                             left: .25rem;
                             position: absolute;
                             right: .25rem;
 
                             &.coming-soon {
-                                background-color: var(--orange-40);
-                                color: var(--orange-80);
+                                background-color: cadetblue;
+                                color: var(--ardoise-10);
                             }
                         }
 
@@ -609,7 +609,7 @@
 
                             &.up-to-date {
                                 background-color: var(--up-to-date-series-bg);
-                                border-color: var(--up-to-date-series);
+                                border-color: var(--up-to-date-series-border);
 
                                 .progress-bar {
                                     background-color: var(--up-to-date-series);
@@ -617,7 +617,7 @@
                             }
 
                             &.that-s-all-folks {
-                                border-color: var(--that-s-all-folks);
+                                border-color: var(--that-s-all-folks-border);
 
                                 .progress-bar {
                                     background-color: var(--that-s-all-folks);

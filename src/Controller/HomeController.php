@@ -62,11 +62,13 @@ class HomeController extends AbstractController
                 $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
                 $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
                 $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
+                $series['released'] = true;
                 return $series;
             }, $this->userEpisodeRepository->episodesOfTheDay($user, $country, $language));
             // Épisodes à voir parmi les séries commencées
             $episodesToWatch = array_map(function ($series) {
                 $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+                $series['released'] = true;
                 return $series;
             }, $this->userEpisodeRepository->episodesToWatch($user, $country, $language, 1, 20));
             // Dernières séries ajoutées
@@ -82,6 +84,7 @@ class HomeController extends AbstractController
                 $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
                 $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
                 $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
+                $series['released'] = true;
                 return $series;
             }, $this->userEpisodeRepository->historySeries($user, $country, $language, 1, 20));
             // Historique des épisodes vus pendant les 2 semaines passées
