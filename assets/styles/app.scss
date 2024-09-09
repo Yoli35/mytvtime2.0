@@ -516,6 +516,7 @@ label:has(input[type="text"]) {
                         border: 1px solid var(--ardoise-50);
                         border-radius: .25rem;
                         height: 1rem;
+                        overflow: hidden;
                         position: relative;
                         width: 1rem;
 
@@ -526,6 +527,7 @@ label:has(input[type="text"]) {
 
                         &::after {
                             content: "";
+                            font-size: larger;
                             left: 50%;
                             position: absolute;
                             top: 50%;
