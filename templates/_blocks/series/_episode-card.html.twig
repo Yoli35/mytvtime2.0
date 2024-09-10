@@ -47,7 +47,9 @@
                 {% endif %}
             </div>
             {% if upToDate %}
-                <div class="up-to-date-banner{% if ended %} ended{% endif %}">{{ 'Up to date!'|trans }}</div>
+                <div class="up-to-date-mask">
+                    <div class="up-to-date-banner{% if ended %} ended{% endif %}">{{ (ended?'That\'s all!':'Up to date!')|trans }}</div>
+                </div>
             {% endif %}
             <div class="progress{% if upToDate %}{% if ended %} that-s-all-folks{% else %} up-to-date{% endif %}{% endif %}{% if start %} start-this-series{% endif %}">
                 <div class="progress-bar" style="width: {{ series.progress }}%"></div>
