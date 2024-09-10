@@ -278,6 +278,11 @@ label:has(input[type="text"]) {
     width: 100%;
     z-index: 100;
 
+    &:has(details[open]), &:has(.menu.open) {
+        --navbar-opacity: 1;
+        color: var(--navbar-color-hover);
+    }
+
     > a, > details {
         align-items: center;
         border-radius: .25rem;
