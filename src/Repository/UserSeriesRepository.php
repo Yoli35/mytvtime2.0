@@ -195,6 +195,8 @@ class UserSeriesRepository extends ServiceEntityRepository
                     s.`poster_path`               as poster_path, 
                     s.`tmdb_id`                   as tmdbId,
                     s.`slug`                      as slug,
+                    s.`status`                    as status,
+                    (s.first_air_date <= NOW())   as released,
                     us.`user_id`                  as user_id, 
                     us.`added_at`                 as added_at,
                     us.`progress`                 as progress,
