@@ -612,12 +612,24 @@ h2 {
                     justify-content: center;
                     padding: .5rem;
 
-                    &.canceled {
-                        background-color: var(--orange-50);
+                    &.status-rumored, &.status-planned {
+                        background-color: var(--add-this);
                     }
 
-                    &.not-yet {
+                    &.status-in-production, &.status-pilot {
+                        background-color: var(--add-this);
+                    }
+
+                    &.status-canceled {
+                        background-color: var(--red-50);
+                    }
+
+                    &.status-returning {
                         background-color: cadetblue;
+                    }
+
+                    &.watched {
+                        background-color: var(--green-50);
                     }
 
                     .fact-label {
@@ -1250,6 +1262,20 @@ h2 {
                 }
             }
 
+            .air-date {
+                align-items: center;
+                display: flex;
+                flex-wrap: wrap;
+                gap: .125rem 1rem;
+
+                > div {
+                    align-items: center;
+                    display: flex;
+                    flex-wrap: nowrap;
+                    gap: .5rem;
+                }
+            }
+
             .air-date, .episodes, .runtime {
                 font-size: 1rem;
                 font-weight: 300;
@@ -1587,7 +1613,7 @@ h2 {
     }
 }
 
-@container series-show (width < 576px) {
+@container series-show (width < 1024px) {
 
     .user-actions {
         padding-inline: 1rem;
@@ -1723,7 +1749,7 @@ h2 {
     }
 }*/
 
-@media (max-width: 576px) {
+@media (max-width: 1024px) {
     .series-show {
         .header, .schedules {
             padding: 0;
@@ -1749,6 +1775,16 @@ h2 {
 
         .content {
             flex-direction: column;
+
+            .left {
+                width: 100%;
+
+                .seasons {
+                    .season {
+                        padding-inline: 0;
+                    }
+                }
+            }
 
             h3 {
                 padding-inline-start: 1rem;
