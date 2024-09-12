@@ -20,403 +20,405 @@
         body.style.backgroundImage = "url(" + bd + ")";
     </script>
     {% include '_blocks/_menu.html.twig' %}
-    <div class="container-fluid backgroundImageOverlay movie-show">
-        <header>
-            <div class="poster">
-                <img src="/movies/posters{{ movie.poster_path }}" alt="{{ movie.title }} {{ 'poster'|trans }}">
-            </div>
-            <div class="infos">
-                {% if movie.backdrop_path %}
-                    <div class="backdrop">
-                        <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
-                    </div>
-                {% endif %}
-                <div class="title">
-                    <h1>
-                        {{ movie.title }}{% if movie.original_title and movie.original_title != movie.title %}<br><span>{{ movie.original_title }}</span>{% endif %} ({{ movie.release_date|date("Y") }})
-                    </h1>
-                    <div class="movie-tools">
-                        <div class="movie-tools-click">
-                            {{ ux_icon('fa6-solid:ellipsis-vertical', {height: '18px', width: '18px'}) }}
-                        </div>
-                        <div class="movie-tools-menu">
-                            <div id="localized-name">{{ 'Suggest a localized name'|trans }}</div>
-                            <div id="localized-overview">{{ 'Add a localized overview'|trans }}</div>
-                            <div id="additional-overview">{{ 'Add an additional overview'|trans }}</div>
-                        </div>
-                    </div>
+    <div class="container-fluid backgroundImageOverlay">
+        <div class="movie-show">
+            <header>
+                <div class="poster">
+                    <img src="/movies/posters{{ movie.poster_path }}" alt="{{ movie.title }} {{ 'poster'|trans }}">
                 </div>
-                {{ include('_blocks/forms/_delete-overview.html.twig') }}
-                {{ include('_blocks/forms/_localized-name.html.twig', {media: movie}) }}
-                {{ include('_blocks/forms/_overview.html.twig', {media: movie}) }}
-                <div class="movie-overview">{{ movie.overview }}</div>
-                {% if movie.localized_overviews|length %}
-                    <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
-                    <div class="localized overviews">
-                        {% for overview in movie.localized_overviews %}
-                            <div class="localized overview" data-id="{{ overview.id }}">
-                                <div class="content">
-                                    {{ overview.overview|nl2br }}
-                                </div>
-                                <div class="tools">
-                                    <div class="locale">{{ overview.locale|upper }}</div>
-                                    <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
-                                        {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
-                                    </div>
-                                    <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
-                                        {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
-                                    </div>
-                                </div>
+                <div class="infos">
+                    {% if movie.backdrop_path %}
+                        <div class="backdrop">
+                            <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
+                        </div>
+                    {% endif %}
+                    <div class="title">
+                        <h1>
+                            {{ movie.title }}{% if movie.original_title and movie.original_title != movie.title %}<br><span>{{ movie.original_title }}</span>{% endif %} ({{ movie.release_date|date("Y") }})
+                        </h1>
+                        <div class="movie-tools">
+                            <div class="movie-tools-click">
+                                {{ ux_icon('fa6-solid:ellipsis-vertical', {height: '18px', width: '18px'}) }}
                             </div>
-                        {% endfor %}
+                            <div class="movie-tools-menu">
+                                <div id="localized-name">{{ 'Suggest a localized name'|trans }}</div>
+                                <div id="localized-overview">{{ 'Add a localized overview'|trans }}</div>
+                                <div id="additional-overview">{{ 'Add an additional overview'|trans }}</div>
+                            </div>
+                        </div>
                     </div>
-                {% endif %}
-                {% if movie.additional_overviews|length %}
-                    <h4 class="additional-h4">{{ 'Additional overviews'|trans }}</h4>
-                    <div class="additional overviews">
-                        {% for overview in movie.additional_overviews %}
-                            <div class="additional overview" data-id="{{ overview.id }}">
-                                <div class="content">
-                                    {{ overview.overview|nl2br }}
-                                </div>
-                                <div class="tools">
-                                    {% if overview.source %}
-                                        <div class="source">
-                                            {% if overview.source.path %}
-                                                <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
-                                                    {% if overview.source.LogoPath %}
-                                                        <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
-                                                    {% else %}
-                                                        {{ overview.source.name }}
-                                                    {% endif %}
-                                                </a>
-                                            {% else %}
-                                                {{ overview.source.name }}
-                                            {% endif %}
-                                        </div>
+                    {{ include('_blocks/forms/_delete-overview.html.twig') }}
+                    {{ include('_blocks/forms/_localized-name.html.twig', {media: movie}) }}
+                    {{ include('_blocks/forms/_overview.html.twig', {media: movie}) }}
+                    <div class="movie-overview">{{ movie.overview }}</div>
+                    {% if movie.localized_overviews|length %}
+                        <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
+                        <div class="localized overviews">
+                            {% for overview in movie.localized_overviews %}
+                                <div class="localized overview" data-id="{{ overview.id }}">
+                                    <div class="content">
+                                        {{ overview.overview|nl2br }}
+                                    </div>
+                                    <div class="tools">
                                         <div class="locale">{{ overview.locale|upper }}</div>
-                                    {% endif %}
-                                    <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
-                                        {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
+                                        <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
+                                            {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
+                                        </div>
+                                        <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
+                                            {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
+                                        </div>
                                     </div>
-                                    <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if movie.additional_overviews|length %}
+                        <h4 class="additional-h4">{{ 'Additional overviews'|trans }}</h4>
+                        <div class="additional overviews">
+                            {% for overview in movie.additional_overviews %}
+                                <div class="additional overview" data-id="{{ overview.id }}">
+                                    <div class="content">
+                                        {{ overview.overview|nl2br }}
+                                    </div>
+                                    <div class="tools">
+                                        {% if overview.source %}
+                                            <div class="source">
+                                                {% if overview.source.path %}
+                                                    <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
+                                                        {% if overview.source.LogoPath %}
+                                                            <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
+                                                        {% else %}
+                                                            {{ overview.source.name }}
+                                                        {% endif %}
+                                                    </a>
+                                                {% else %}
+                                                    {{ overview.source.name }}
+                                                {% endif %}
+                                            </div>
+                                            <div class="locale">{{ overview.locale|upper }}</div>
+                                        {% endif %}
+                                        <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
+                                            {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
+                                        </div>
+                                        <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
+                                            {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </header>
+            <main>
+                <section>
+                    <div class="details">
+                        <div class="movie-details">
+                            <div class="two-parts">
+                                <div class="left">
+                                    {% if movie.providers|length %}
+                                        <div class="providers">
+                                            <div class="label">{{ 'Providers'|trans }}</div>
+                                            <div class="content">
+                                                {% for provider in movie.providers %}
+                                                    <div class="provider">
+                                                        <div class="logo"><img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}"></div>
+                                                        <div class="name">{{ provider.provider_name }}</div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if movie.genres|length %}
+                                        <div class="genres">
+                                            <div class="label">{{ 'Genres'|trans }}</div>
+                                            <div class="content">
+                                                {% for genre in movie.genres %}
+                                                    <div class="genre">{{ genre.name }}</div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    <div class="runtime">
+                                        <div class="label">{{ 'Runtime'|trans }}</div>
+                                        <div class="content">{{ movie.runtime|time }}</div>
+                                    </div>
+                                    <div class="notes">
+                                        <div class="label">{{ 'Note'|trans }}</div>
+                                        <div class="content">
+                                            <div class="note">{{ 'Average'|trans }} {{ movie.vote_average }}</div>
+                                            <div class="note">{{ 'Count'|trans }} {{ movie.vote_count }}</div>
+                                        </div>
+                                    </div>
+                                    {{ include('_blocks/movie/_release-dates.html.twig') }}
+                                    <div class="original-name">
+                                        <div class="label">{{ 'Original name'|trans }}</div>
+                                        <div class="content">{{ movie.original_title }}</div>
+                                    </div>
+                                    <div class="original-language">
+                                        <div class="label">{{ 'Original language'|trans }}</div>
+                                        <div class="content">{{ movie.original_language|language_name }}</div>
+                                    </div>
+                                    <div class="original-countries">
+                                        <div class="label">{{ 'Original Country'|trans }}</div>
+                                        <div class="content">
+                                            {% for country in movie.origin_country %}
+                                                <div class="country">{{ getEmojiFlag(country) ~ ' ' ~ country|country_name }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="status">
+                                        <div class="label">{{ 'Status'|trans }}</div>
+                                        <div class="content">{{ movie.status|trans }}</div>
+                                    </div>
+                                </div>
+                                <div class="right">
+                                    {% if movie['watch/providers'] %}
+                                        {% if movie['watch/providers'].flatrate|length %}
+                                            <h3>{{ 'Where to watch'|trans }}</h3>
+                                            <div class="providers">
+                                                <div class="wrapper">
+                                                    {% for provider in movie['watch/providers'].flatrate %}
+                                                        <div class="provider" data-title="{{ provider.provider_name }}">
+                                                            <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                                            <div>{{ provider.provider_name }}</div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if movie['watch/providers'].rent|length %}
+                                            <h3>{{ 'Where to rent'|trans }}</h3>
+                                            <div class="providers">
+                                                <div class="wrapper">
+                                                    {% for provider in movie['watch/providers'].rent %}
+                                                        <div class="provider" data-title="{{ provider.provider_name }}">
+                                                            <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                                            <div>{{ provider.provider_name }}</div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if movie['watch/providers'].buy|length %}
+                                            <h3>{{ 'Where to buy'|trans }}</h3>
+                                            <div class="providers">
+                                                <div class="wrapper">
+                                                    {% for provider in movie['watch/providers'].buy %}
+                                                        <div class="provider" data-title="{{ provider.provider_name }}">
+                                                            <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                                            <div>{{ provider.provider_name }}</div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if movie.production_companies|length %}
+                                        <div class="production-companies">
+                                            <div class="label">{{ 'Production companies'|trans }}</div>
+                                            <div class="content">
+                                                {% for pc in movie.production_companies %}
+                                                    <div class="frame">
+                                                        {% if pc.logo_path %}
+                                                            <img src="{{ pc.logo_path }}" data-title="{{ pc.name }}" alt="{{ pc.name }}" loading="lazy">
+                                                        {% else %}
+                                                            {{ pc.name }}
+                                                        {% endif %}
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if movie.production_countries|length %}
+                                        <div class="production-countries">
+                                            <div class="label">{{ 'Production countries'|trans }}</div>
+                                            <div class="content">
+                                                {% for pc in movie.production_countries %}
+                                                    <div class="frame">
+                                                        {{ getEmojiFlag(pc.iso_3166_1) ~ ' ' ~ pc.name|country_name }}
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if movie.keywords.keywords|length %}
+                                        <div class="movie-keywords">
+                                            <div class="content keyword-block">
+                                                {{ include('_blocks/movie/_keywords.html.twig', {id: movie.id, keywords: movie.keywords.keywords, missing: movie.missing_translations}) }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% if movie.found == false %}
+                            <div class="not-found">
+                                <div class="label">{{ 'Not found'|trans }}</div>
+                                <div class="content">
+                                    <p>{{ 'Movie not found on TMDB'|trans }}</p>
+                                </div>
+                                <div class="actions">
+                                    <div class="search-movie">
+                                        <label for="movieTitle">{{ 'Title'|trans }}
+                                            <input type="search" name="movieTitle" id="movieTitle" value="{{ movie.title }}">
+                                        </label>
+                                        <button id="search-tmdb">{{ 'Search'|trans }}</button>
+                                    </div>
+                                    <div class="delete-movie">
+                                        <button id="delete-movie">{{ 'Delete this movie from your watchlist'|trans }}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="user-details">
+                            <div class="user-actions">
+                                <div class="watch-links">
+                                    <div class="label">{{ 'Watch links'|trans }}</div>
+                                    {% for link in movie.direct_links %}
+                                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
+                                            <div class="watch-link">
+                                                {% if link.providerId %}
+                                                    <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}" data-title="{{ link.name ?? providers.names[link.providerId] }}">
+                                                {% else %}
+                                                    <span>{{ link.name }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </a>
+                                    {% endfor %}
+                                    <div class="add-watch-link" data-title="{{ 'Add a watch link'|trans }}">
+                                        {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                </div>
+                                <div class="watch-link-form">
+                                    <form class="form" action="" id="watch-link-form">
+                                        <div class="form-row">
+                                            <div class="form-field">
+                                                <label for="provider">{{ 'Provider'|trans }}
+                                                    <select name="provider" id="provider">
+                                                        <option value="">{{ 'Select a provider'|trans }}</option>
+                                                        {% for name, id in providers.select %}
+                                                            <option value="{{ id }}">{{ name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-field">
+                                                <label for="name">{{ 'Name'|trans }}
+                                                    <input type="text" name="name" id="name" required>
+                                                    <span class="error"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-field">
+                                                <label for="url">{{ 'URL'|trans }}
+                                                    <input type="url" name="url" id="url" required>
+                                                    <span class="error"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-field">
+                                                <button type="button">{{ 'Cancel'|trans }}</button>
+                                                <button type="submit">{{ 'Add'|trans }}</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="viewed-at{% if userMovie.lastViewedAt %} viewed{% endif %}">
+                                    {% if userMovie.lastViewedAt %}
+                                        {{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px'}) }}
+                                        {{ userMovie.lastViewedAt|format_datetime('relative_full', 'short')|capitalize }}
+                                    {% else %}
+                                        {{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px', 'data-title': 'Mark as viewed'|trans}) }}
+                                    {% endif %}
+                                </div>
+                                <div class="rating">
+                                    <div class="rating-stars">
+                                        <div class="stars" data-trans-rating="Cancel rating|{{ 'Cancel rating'|trans }}" data-trans-star="star|{{ 'star'|trans }}" data-trans-stars="stars|{{ 'stars'|trans }}">
+                                            <div class="star {{ userMovie.rating >= 1 ? "active" }}" data-value="1" data-title="{{ (userMovie.rating >= 1 ? "Cancel rating":"x star")|trans({'x': 1}) }}">
+                                                {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                            </div>
+                                            <div class="star {{ userMovie.rating >= 2 ? "active" }}" data-value="2" data-title="{{ (userMovie.rating >= 2 ? "Cancel rating":"x stars")|trans({'x': 2}) }}">
+                                                {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                            </div>
+                                            <div class="star {{ userMovie.rating >= 3 ? "active" }}" data-value="3" data-title="{{ (userMovie.rating >= 3 ? "Cancel rating":"x stars")|trans({'x': 3}) }}">
+                                                {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                            </div>
+                                            <div class="star {{ userMovie.rating >= 4 ? "active" }}" data-value="4" data-title="{{ (userMovie.rating >= 4 ? "Cancel rating":"x stars")|trans({'x': 4}) }}">
+                                                {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                            </div>
+                                            <div class="star {{ userMovie.rating >= 5 ? "active" }}" data-value="5" data-title="{{ (userMovie.rating >= 5 ? "Cancel rating":"x stars")|trans({'x': 5}) }}">
+                                                {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="actions">
+                                    {#                                <div class="action toggle-pinned-movie{% if userMovie.userPinnedSeries %} pinned{% endif %}" data-title="{{ (userMovie.userPinnedSeries ? "Remove from pinned series" : "Add to pinned series")|trans }}"> #}
+                                    {#                                    {{ ux_icon('fa6-solid:paperclip', {height: '18px', width: '18px'}) }} #}
+                                    {#                                </div> #}
+                                    <div class="action toggle-favorite-movie{% if userMovie.favorite %} favorite{% endif %}" data-title="{{ (userMovie.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
+                                        {{ ux_icon('fa6-solid:heart', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                    <div class="action remove-this-movie" data-title="{{ 'Remove this series from your watchlist'|trans }}">
                                         {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
                                     </div>
                                 </div>
                             </div>
-                        {% endfor %}
+                        </div>
                     </div>
-                {% endif %}
-            </div>
-        </header>
-        <main>
-            <section>
-                <div class="details">
+                </section>
+                <section>
+                    {{ include('_blocks/Movie/_collection.html.twig') }}
+                </section>
+                <section>
                     <div class="movie-details">
-                        <div class="two-parts">
-                            <div class="left">
-                                {% if movie.providers|length %}
-                                    <div class="providers">
-                                        <div class="label">{{ 'Providers'|trans }}</div>
-                                        <div class="content">
-                                            {% for provider in movie.providers %}
-                                                <div class="provider">
-                                                    <div class="logo"><img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}"></div>
-                                                    <div class="name">{{ provider.provider_name }}</div>
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                {% endif %}
-                                {% if movie.genres|length %}
-                                    <div class="genres">
-                                        <div class="label">{{ 'Genres'|trans }}</div>
-                                        <div class="content">
-                                            {% for genre in movie.genres %}
-                                                <div class="genre">{{ genre.name }}</div>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                {% endif %}
-                                <div class="runtime">
-                                    <div class="label">{{ 'Runtime'|trans }}</div>
-                                    <div class="content">{{ movie.runtime|time }}</div>
-                                </div>
-                                <div class="notes">
-                                    <div class="label">{{ 'Note'|trans }}</div>
-                                    <div class="content">
-                                        <div class="note">{{ 'Average'|trans }} {{ movie.vote_average }}</div>
-                                        <div class="note">{{ 'Count'|trans }} {{ movie.vote_count }}</div>
-                                    </div>
-                                </div>
-                                {{ include('_blocks/movie/_release-dates.html.twig') }}
-                                <div class="original-name">
-                                    <div class="label">{{ 'Original name'|trans }}</div>
-                                    <div class="content">{{ movie.original_title }}</div>
-                                </div>
-                                <div class="original-language">
-                                    <div class="label">{{ 'Original language'|trans }}</div>
-                                    <div class="content">{{ movie.original_language|language_name }}</div>
-                                </div>
-                                <div class="original-countries">
-                                    <div class="label">{{ 'Original Country'|trans }}</div>
-                                    <div class="content">
-                                        {% for country in movie.origin_country %}
-                                            <div class="country">{{ getEmojiFlag(country) ~ ' ' ~ country|country_name }}</div>
+                        {% if movie.credits.cast %}
+                            <div class="cast">
+                                <div class="label">{{ 'Cast'|trans }}</div>
+                                <div class="content">
+                                    <div class="wrapper">
+                                        {% for cast in movie.credits.cast %}
+                                            {{ include('_blocks/Movie/_cast.html.twig', {cast: cast, job: cast.character}) }}
                                         {% endfor %}
                                     </div>
                                 </div>
-                                <div class="status">
-                                    <div class="label">{{ 'Status'|trans }}</div>
-                                    <div class="content">{{ movie.status|trans }}</div>
+                            </div>
+                        {% endif %}
+                        {% if movie.credits.crew %}
+                            <div class="cast">
+                                <div class="label">{{ 'Crew'|trans }}</div>
+                                <div class="content">
+                                    <div class="wrapper">
+                                        {% for crew in movie.credits.crew %}
+                                            {{ include('_blocks/Movie/_cast.html.twig', {cast: crew, job: crew.job}) }}
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             </div>
-                            <div class="right">
-                                {% if movie['watch/providers'] %}
-                                    {% if movie['watch/providers'].flatrate|length %}
-                                        <h3>{{ 'Where to watch'|trans }}</h3>
-                                        <div class="providers">
-                                            <div class="wrapper">
-                                                {% for provider in movie['watch/providers'].flatrate %}
-                                                    <div class="provider" data-title="{{ provider.provider_name }}">
-                                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
-                                                        <div>{{ provider.provider_name }}</div>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    {% endif %}
-
-                                    {% if movie['watch/providers'].rent|length %}
-                                        <h3>{{ 'Where to rent'|trans }}</h3>
-                                        <div class="providers">
-                                            <div class="wrapper">
-                                                {% for provider in movie['watch/providers'].rent %}
-                                                    <div class="provider" data-title="{{ provider.provider_name }}">
-                                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
-                                                        <div>{{ provider.provider_name }}</div>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    {% endif %}
-
-                                    {% if movie['watch/providers'].buy|length %}
-                                        <h3>{{ 'Where to buy'|trans }}</h3>
-                                        <div class="providers">
-                                            <div class="wrapper">
-                                                {% for provider in movie['watch/providers'].buy %}
-                                                    <div class="provider" data-title="{{ provider.provider_name }}">
-                                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
-                                                        <div>{{ provider.provider_name }}</div>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                {% endif %}
-                                {% if movie.production_companies|length %}
-                                    <div class="production-companies">
-                                        <div class="label">{{ 'Production companies'|trans }}</div>
-                                        <div class="content">
-                                            {% for pc in movie.production_companies %}
-                                                <div class="frame">
-                                                    {% if pc.logo_path %}
-                                                        <img src="{{ pc.logo_path }}" data-title="{{ pc.name }}" alt="{{ pc.name }}" loading="lazy">
-                                                    {% else %}
-                                                        {{ pc.name }}
-                                                    {% endif %}
-                                                </div>
-                                            {% endfor %}
-                                        </div>
+                        {% endif %}
+                        {% if movie.recommendations|length %}
+                            <div class="recommendations">
+                                <div class="label">{{ 'Recommendations'|trans }}</div>
+                                <div class="content">
+                                    <div class="wrapper">
+                                        {% for recommendation in movie.recommendations %}
+                                            {{ include('_blocks/Movie/_recommandation.html.twig', {recommendation: recommendation}) }}
+                                        {% endfor %}
                                     </div>
-                                {% endif %}
-                                {% if movie.production_countries|length %}
-                                    <div class="production-countries">
-                                        <div class="label">{{ 'Production countries'|trans }}</div>
-                                        <div class="content">
-                                            {% for pc in movie.production_countries %}
-                                                <div class="frame">
-                                                    {{ getEmojiFlag(pc.iso_3166_1) ~ ' ' ~ pc.name|country_name }}
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                {% endif %}
-                                {% if movie.keywords.keywords|length %}
-                                    <div class="movie-keywords">
-                                        <div class="content keyword-block">
-                                            {{ include('_blocks/movie/_keywords.html.twig', {id: movie.id, keywords: movie.keywords.keywords, missing: movie.missing_translations}) }}
-                                        </div>
-                                    </div>
-                                {% endif %}
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
                     </div>
-                    {% if movie.found == false %}
-                        <div class="not-found">
-                            <div class="label">{{ 'Not found'|trans }}</div>
-                            <div class="content">
-                                <p>{{ 'Movie not found on TMDB'|trans }}</p>
-                            </div>
-                            <div class="actions">
-                                <div class="search-movie">
-                                    <label for="movieTitle">{{ 'Title'|trans }}
-                                        <input type="search" name="movieTitle" id="movieTitle" value="{{ movie.title }}">
-                                    </label>
-                                    <button id="search-tmdb">{{ 'Search'|trans }}</button>
-                                </div>
-                                <div class="delete-movie">
-                                    <button id="delete-movie">{{ 'Delete this movie from your watchlist'|trans }}</button>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                    <div class="user-details">
-                        <div class="user-actions">
-                            <div class="watch-links">
-                                <div class="label">{{ 'Watch links'|trans }}</div>
-                                {% for link in movie.direct_links %}
-                                    <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
-                                        <div class="watch-link">
-                                            {% if link.providerId %}
-                                                <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}" data-title="{{ link.name ?? providers.names[link.providerId] }}">
-                                            {% else %}
-                                                <span>{{ link.name }}</span>
-                                            {% endif %}
-                                        </div>
-                                    </a>
-                                {% endfor %}
-                                <div class="add-watch-link" data-title="{{ 'Add a watch link'|trans }}">
-                                    {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
-                                </div>
-                            </div>
-                            <div class="watch-link-form">
-                                <form class="form" action="" id="watch-link-form">
-                                    <div class="form-row">
-                                        <div class="form-field">
-                                            <label for="provider">{{ 'Provider'|trans }}
-                                                <select name="provider" id="provider">
-                                                    <option value="">{{ 'Select a provider'|trans }}</option>
-                                                    {% for name, id in providers.select %}
-                                                        <option value="{{ id }}">{{ name }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-field">
-                                            <label for="name">{{ 'Name'|trans }}
-                                                <input type="text" name="name" id="name" required>
-                                                <span class="error"></span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-field">
-                                            <label for="url">{{ 'URL'|trans }}
-                                                <input type="url" name="url" id="url" required>
-                                                <span class="error"></span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-field">
-                                            <button type="button">{{ 'Cancel'|trans }}</button>
-                                            <button type="submit">{{ 'Add'|trans }}</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="viewed-at{% if userMovie.lastViewedAt %} viewed{% endif %}">
-                                {% if userMovie.lastViewedAt %}
-                                    {{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px'}) }}
-                                    {{ userMovie.lastViewedAt|format_datetime('relative_full', 'short')|capitalize }}
-                                {% else %}
-                                    {{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px', 'data-title': 'Mark as viewed'|trans}) }}
-                                {% endif %}
-                            </div>
-                            <div class="rating">
-                                <div class="rating-stars">
-                                    <div class="stars" data-trans-rating="Cancel rating|{{ 'Cancel rating'|trans }}" data-trans-star="star|{{ 'star'|trans }}" data-trans-stars="stars|{{ 'stars'|trans }}">
-                                        <div class="star {{ userMovie.rating >= 1 ? "active" }}" data-value="1" data-title="{{ (userMovie.rating >= 1 ? "Cancel rating":"x star")|trans({'x': 1}) }}">
-                                            {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
-                                        </div>
-                                        <div class="star {{ userMovie.rating >= 2 ? "active" }}" data-value="2" data-title="{{ (userMovie.rating >= 2 ? "Cancel rating":"x stars")|trans({'x': 2}) }}">
-                                            {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
-                                        </div>
-                                        <div class="star {{ userMovie.rating >= 3 ? "active" }}" data-value="3" data-title="{{ (userMovie.rating >= 3 ? "Cancel rating":"x stars")|trans({'x': 3}) }}">
-                                            {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
-                                        </div>
-                                        <div class="star {{ userMovie.rating >= 4 ? "active" }}" data-value="4" data-title="{{ (userMovie.rating >= 4 ? "Cancel rating":"x stars")|trans({'x': 4}) }}">
-                                            {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
-                                        </div>
-                                        <div class="star {{ userMovie.rating >= 5 ? "active" }}" data-value="5" data-title="{{ (userMovie.rating >= 5 ? "Cancel rating":"x stars")|trans({'x': 5}) }}">
-                                            {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="actions">
-                                {#                                <div class="action toggle-pinned-movie{% if userMovie.userPinnedSeries %} pinned{% endif %}" data-title="{{ (userMovie.userPinnedSeries ? "Remove from pinned series" : "Add to pinned series")|trans }}"> #}
-                                {#                                    {{ ux_icon('fa6-solid:paperclip', {height: '18px', width: '18px'}) }} #}
-                                {#                                </div> #}
-                                <div class="action toggle-favorite-movie{% if userMovie.favorite %} favorite{% endif %}" data-title="{{ (userMovie.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
-                                    {{ ux_icon('fa6-solid:heart', {height: '18px', width: '18px'}) }}
-                                </div>
-                                <div class="action remove-this-movie" data-title="{{ 'Remove this series from your watchlist'|trans }}">
-                                    {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section>
-                {{ include('_blocks/Movie/_collection.html.twig') }}
-            </section>
-            <section>
-                <div class="movie-details">
-                    {% if movie.credits.cast %}
-                        <div class="cast">
-                            <div class="label">{{ 'Cast'|trans }}</div>
-                            <div class="content">
-                                <div class="wrapper">
-                                    {% for cast in movie.credits.cast %}
-                                        {{ include('_blocks/Movie/_cast.html.twig', {cast: cast, job: cast.character}) }}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                    {% if movie.credits.crew %}
-                        <div class="cast">
-                            <div class="label">{{ 'Crew'|trans }}</div>
-                            <div class="content">
-                                <div class="wrapper">
-                                    {% for crew in movie.credits.crew %}
-                                        {{ include('_blocks/Movie/_cast.html.twig', {cast: crew, job: crew.job}) }}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                    {% if movie.recommendations|length %}
-                        <div class="recommendations">
-                            <div class="label">{{ 'Recommendations'|trans }}</div>
-                            <div class="content">
-                                <div class="wrapper">
-                                    {% for recommendation in movie.recommendations %}
-                                        {{ include('_blocks/Movie/_recommandation.html.twig', {recommendation: recommendation}) }}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
-            </section>
-        </main>
+                </section>
+            </main>
+        </div>
         {% include('_blocks/_footer.html.twig') %}
     </div>
     <div id="globs" style="display: none">
