@@ -494,7 +494,7 @@
                                 <div class="fact-content">{{ getEmojiFlag(country) ~ ' ' ~ country|country_name }}</div>
                             {% endfor %}
                         </div>
-                        <div class="fact{% if tv.status == 'In Production' %} not-yet{% endif %}{% if tv.status == 'Canceled' %} canceled{% endif %}">
+                        <div class="fact {{ tv.status_css }}">
                             <div class="fact-label">{{ 'Status'|trans }}</div>
                             <div class="fact-content">{{ tv.status|trans }}</div>
                         </div>

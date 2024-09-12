@@ -594,6 +594,7 @@ class SeriesController extends AbstractController
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userSeries = $this->updateUserSeries($userSeries, $tv);
+        $tv['status_css'] = $this->statusCss($userSeries, $tv);
 
         $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
 
@@ -1456,6 +1457,11 @@ class SeriesController extends AbstractController
             $series->addUpdate($this->translator->trans('Overview updated'));
         }
 
+        if (strlen($tv['status']) != $series->getStatus()) {
+            $series->setStatus($tv['status']);
+            $series->addUpdate($this->translator->trans('New status') . ' → ' . $this->translator->trans($tv['status']));
+        }
+
         $dbNextEpisodeAirDate = $series->getNextEpisodeAirDate()?->format('Y-m-d');
         if ($tv['next_episode_to_air'] && $tv['next_episode_to_air']['air_date']) {
             $tvNextEpisodeAirDate = $tv['next_episode_to_air']['air_date'];
@@ -1520,6 +1526,34 @@ class SeriesController extends AbstractController
         $seriesPosters = array_values(array_map(fn($image) => "/series/posters" . $image['image_path'], $seriesPosters));
 
         return [$series, $seriesBackdrops, $seriesLogos, $seriesPosters];
+    }
+
+    public function statusCss(UserSeries $userSeries, array $tv): string
+    {
+        $status = $tv['status'];
+        $progress = $userSeries->getProgress();
+        $statusCss = 'status-';
+        if ($status == 'Returning Series') {
+            $statusCss .= 'returning';
+        } elseif ($status == 'Ended') {
+            $statusCss .= 'ended';
+        } elseif ($status == 'Canceled') {
+            $statusCss .= 'canceled';
+        } elseif ($status == 'In Production') {
+            $statusCss .= 'in-production';
+        } elseif ($status == 'Planned') {
+            $statusCss .= 'planned';
+        } elseif ($status == 'Pilot') {
+            $statusCss .= 'pilot';
+        } elseif ($status == 'Rumored') {
+            $statusCss .= 'rumored';
+        } else {
+            $statusCss .= 'unknown';
+        }
+        if ($progress == 100) {
+            $statusCss .= ' watched';
+        }
+        return $statusCss;
     }
 
     public function updateUserSeries(UserSeries $userSeries, array $tv): UserSeries

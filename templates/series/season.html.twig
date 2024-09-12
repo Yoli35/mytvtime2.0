@@ -113,7 +113,12 @@
                                         </div>
                                     </div>
                                     {% if episode.air_date %}
-                                        <div class="air-date">{{ 'Air date'|trans }} {{ episode.air_date|format_date('relative_full') }}</div>
+                                        <div class="air-date">
+                                            {{ 'Air date'|trans }} {{ episode.air_date|format_date('relative_full') }}
+                                            {% if ue  and ue.watch_at %}
+                                                <div>{{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px'}) }} {{ ue.watch_at|format_datetime('relative_medium', 'short')|capitalize }}</div>
+                                            {% endif %}
+                                        </div>
                                     {% endif %}
                                     {% if episode.runtime %}
                                         <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>

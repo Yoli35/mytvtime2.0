@@ -51,7 +51,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 WHERE ue.`user_id`=$userId AND ue.`user_series_id`=$userSeriesId
                 ORDER BY ue.`air_date` DESC LIMIT 1";
 
-        return $this->getOne($sql);
+        return $this->getOne($sql) ?? 0;
     }
 
     public function lastAddedSeries(User $user, $locale, $page, $perPage): array
