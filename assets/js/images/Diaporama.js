@@ -41,6 +41,9 @@ export class Diaporama {
         gThis.diaporamaCount = count;
         gThis.diaporamaSrc = srcArray;
 
+        const dialog = document.createElement("dialog");
+        dialog.classList.add("diaporama");
+
         const backDiapo = document.createElement("div");
         backDiapo.classList.add("back-diapo");
         const wrapperDiv = document.createElement("div");
@@ -55,8 +58,8 @@ export class Diaporama {
             thumbnails.classList.add("thumbnails");
             wrapperDiv.appendChild(thumbnails);
         }
-        document.querySelector("body").appendChild(backDiapo);
-        document.body.style.overflow = 'hidden';
+        // document.querySelector("body").appendChild(backDiapo);
+        // document.body.style.overflow = 'hidden';
 
         const closeDiv = document.createElement("div");
         closeDiv.classList.add("close");
@@ -103,11 +106,15 @@ export class Diaporama {
         imageDiv.appendChild(imgDiv);
         if (count > 1) imageDiv.appendChild(nextDiv);
 
+        dialog.appendChild(backDiapo);
+        document.querySelector("body").appendChild(dialog);
+        dialog.showModal();
+
         setTimeout(() => {
             imgDiv.classList.add("fade");
         }, 0);
-        backDiapo.style.bottom = -window.scrollY + "px";
-        backDiapo.style.top = window.scrollY + "px";
+        // backDiapo.style.bottom = -window.scrollY + "px";
+        // backDiapo.style.top = window.scrollY + "px";
 
         /*gThis.initShortcutsHelp(backDiapo, count);*/
     }
@@ -208,6 +215,7 @@ export class Diaporama {
     }
 
     closeDiaporama() {
+        const dialog = document.querySelector("dialog.diaporama");
         const backDiapo = document.querySelector(".back-diapo");
         const imgDiv = backDiapo.querySelector("img");
 
@@ -228,7 +236,9 @@ export class Diaporama {
             imgDiv.classList.remove("fade");
         }, 0);
         setTimeout(() => {
-            document.querySelector("body").removeChild(backDiapo);
+            dialog.close();
+            document.querySelector("body").removeChild(dialog);
+            // document.querySelector("body").removeChild(backDiapo);
         }, 300);
     }
 

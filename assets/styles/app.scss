@@ -58,6 +58,7 @@ body {
     min-height: 100dvh;
     line-height: 1.5rem;
     margin: 0;
+    position: relative;
 
     &.frozen {
         overflow: hidden;
@@ -1245,6 +1246,23 @@ label:has(input[type="text"]) {
     }
 }
 
+dialog {
+    &.diaporama {
+        border-radius: 0;
+        /* border: none; */
+        inset: unset;
+        margin-block: 0;
+        margin-inline: 0;
+        max-height: unset;
+        max-width: unset;
+        padding: 0;
+        position: unset;
+        width: 100%;
+        height: 100%;
+        top: 0;
+    }
+}
+
 .back-diapo {
     align-items: center;
     background-color: var(--ardoise-90-alpha-80);
@@ -1259,7 +1277,7 @@ label:has(input[type="text"]) {
         align-items: center;
         display: flex;
         flex-direction: column;
-        gap: 1em;
+        gap: 1rem;
         height: 100%;
         justify-content: center;
         width: 100%;
@@ -1267,16 +1285,17 @@ label:has(input[type="text"]) {
         .image {
             align-items: center;
             display: flex;
-            gap: 1em;
-            height: 90%;
+            gap: 1rem;
+            height: calc(100dvh - 8rem);
             justify-content: center;
+            padding: 1rem;
             position: relative;
             width: 100%;
 
             img {
-                border: 1em solid var(--ardoise-20);
-                max-height: 95dvh;
-                max-width: 90vw;
+                border: 1rem solid var(--ardoise-20);
+                max-height: 100%;
+                max-width: calc(100vw - 4rem);
                 object-fit: cover;
                 opacity: 0;
                 transition: opacity 300ms ease-in-out;
@@ -1294,10 +1313,21 @@ label:has(input[type="text"]) {
                 cursor: pointer;
                 display: flex;
                 flex-shrink: 0;
-                font-size: 2em;
-                height: 1.5em;
+                font-size: 2rem;
+                height: 3rem;
                 justify-content: center;
-                width: 1.5em;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 3rem;
+
+                &.left {
+                    left: 1rem;
+                }
+
+                &.right {
+                    right: 1rem;
+                }
             }
         }
 
@@ -1305,7 +1335,8 @@ label:has(input[type="text"]) {
             align-items: center;
             display: flex;
             justify-content: center;
-            gap: 1em;
+            gap: 1rem;
+            height: 8rem;
 
             .thumbnail {
                 position: relative;
@@ -1313,42 +1344,42 @@ label:has(input[type="text"]) {
                 img {
                     border: .25em solid var(--grey-20);
                     cursor: pointer;
-                    max-height: 4dvh;
-                    max-width: 4dvh;
+                    max-height: 4rem;
+                    max-width: 4rem;
                     object-fit: cover;
                     opacity: 1;
                 }
 
                 &.active {
                     img {
-                        border: .25em solid var(--yellow-50);
+                        border: .25em solid var(--orange-50);
                     }
                 }
 
                 &.active::before {
                     align-items: center;
-                    background-color: var(--yellow-50);
+                    background-color: var(--orange-50);
                     border-radius: 999px;
                     content: '';
                     display: flex;
                     flex-direction: column;
-                    height: .5em;
+                    height: .5rem;
                     justify-content: center;
                     left: 0;
                     position: absolute;
-                    top: -1em;
+                    top: -1rem;
                     width: 100%;
                 }
 
                 &.active::after {
                     align-items: center;
-                    background-color: var(--yellow-50);
+                    background-color: var(--orange-50);
                     border-radius: 999px;
-                    bottom: -1em;
+                    bottom: -1rem;
                     content: '';
                     display: flex;
                     flex-direction: column;
-                    height: .5em;
+                    height: .5rem;
                     justify-content: center;
                     left: 0;
                     position: absolute;
@@ -1360,8 +1391,8 @@ label:has(input[type="text"]) {
 
     .close {
         position: absolute;
-        right: 1em;
-        top: 1em;
+        right: 1rem;
+        top: 1rem;
 
         > div {
             align-items: center;
@@ -1370,10 +1401,10 @@ label:has(input[type="text"]) {
             color: var(--grey-10);
             cursor: pointer;
             display: flex;
-            font-size: 2em;
-            height: 1.5em;
+            font-size: 2rem;
+            height: 3rem;
             justify-content: center;
-            width: 1.5em;
+            width: 3rem;
         }
     }
 
