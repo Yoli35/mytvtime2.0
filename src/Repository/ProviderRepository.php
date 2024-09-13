@@ -22,6 +22,13 @@ class ProviderRepository extends ServiceEntityRepository
         parent::__construct($registry, Provider::class);
     }
 
+    public function getAllProviders(): array
+    {
+        $sql = "SELECT * FROM `provider`";
+
+        return $this->getAll($sql);
+    }
+
     public function getAllProviderIds(): array
     {
         $sql = "SELECT `provider_id` FROM `provider`";

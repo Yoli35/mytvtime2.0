@@ -18,14 +18,14 @@ class SeriesRecentSeries extends AbstractController
         // Inject dependencies if needed
     }
 
-    #[Route('/recent/series', name: 'recent_series', methods: ['GET'])]
+    #[Route('/recent/series', name: 'recent_series', methods: ['GET','OPTIONS'])]
     public function recentSeries(): Response
     {
         $slugger = new AsciiSlugger();
         $country = "FR";
         $timezone = "UTC";
         $language = "fr";
-        $seriesSelection = $this->homeController->getSeriesSelection($slugger, $country, $timezone, $language, true);
+        $seriesSelection = $this->homeController->getSeriesSelection($slugger, $country, $timezone, $language, true, true, true);
 
         return $this->json([
             'ok' => true,

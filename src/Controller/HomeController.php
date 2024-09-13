@@ -181,7 +181,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    public function getSeriesSelection(AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $language = 'fr', $forceProvider = null): array
+    public function getSeriesSelection(AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $language = 'fr', $forceProvider = null, $forcePath = false, $forceNoPoster = false): array
     {
         $page = rand(1, 5);
 
@@ -216,8 +216,11 @@ class HomeController extends AbstractController
             . "&timezone=$timezone&watch_region=$country&include_adult=false"
             . "&first_air_date.gte=$startDate&first_air_date.lte=$endDate"
             . "&with_watch_monetization_types=flatrate&with_watch_providers=$selectedProviders";
-        $seriesSelection = $this->getSelection('tv', $filterString, $slugger, $country, $timezone, $language);
+        $seriesSelection = $this->getSelection('tv', $filterString, $slugger, $country, $timezone, $language, $forcePath);
 
+        if ($forceNoPoster) {
+            return $seriesSelection;
+        }
         // array_filter pour retirer les séries sans poster & array_values() pour ré-indexer le tableau
         return array_values(array_filter($seriesSelection, function ($tv) {
             return $tv['poster_path'];
@@ -267,7 +270,7 @@ class HomeController extends AbstractController
         }));
     }
 
-    public function getSelection(string $media, string $filterString, AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $preferredLanguage = 'fr'): array
+    public function getSelection(string $media, string $filterString, AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $preferredLanguage = 'fr', bool $forcePath = false): array
     {
         if ($media === 'movie') {
             $mediaSelection = json_decode($this->tmdbService->getFilterMovie($filterString . '&append_to_response=watch/providers'), true)['results'];
@@ -281,11 +284,14 @@ class HomeController extends AbstractController
         }
 //        dump(['mediaSelection' => $mediaSelection]);
 
-        return array_map(function ($tv) use ($slugger, $media, $name, $date, $country, $timezone, $preferredLanguage) {
+        return array_map(function ($tv) use ($slugger, $media, $name, $date, $country, $timezone, $preferredLanguage, $forcePath) {
 
             $tv['tmdb'] = true;
             $this->seriesController->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), $media === 'movie' ? '/movies/' : '/series/');
-            $tv['poster_path'] = $tv['poster_path'] ? '/' . ($media === 'tv' ? 'series' : 'movies') . '/posters' . $tv['poster_path'] : null; // w780
+            if (!$forcePath) {
+                $tv['poster_path'] = $tv['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $tv['poster_path'] : null;
+            }
+//            $tv['poster_path'] = $tv['poster_path'] ? '/' . ($media === 'tv' ? 'series' : 'movies') . '/posters' . $tv['poster_path'] : null; // w780
             $tv['slug'] = strtolower($slugger->slug($tv[$media === 'tv' ? 'name' : 'title']));
             $tv['watch_providers'] = [];
 
