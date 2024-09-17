@@ -46,7 +46,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         $userId = $userSeries->getUser()->getId();
         $userSeriesId = $userSeries->getId();
 
-        $sql = "SELECT ue.`air_date` < NOW()
+        $sql = "SELECT ue.`air_date` <= NOW()
                 FROM `user_episode` ue
                 WHERE ue.`user_id`=$userId AND ue.`user_series_id`=$userSeriesId
                 ORDER BY ue.`air_date` DESC LIMIT 1";
@@ -304,6 +304,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                      ue.`episode_number`                    as episodeNumber, 
                      ue.`season_number`                     as seasonNumber,
                      ue.`watch_at`                          as watchAt,
+                     sbs.air_at                             as airAt,
                      IF(ue.vote IS NULL, 0, ue.vote)        as vote,
                      IF(sln.name IS NULL, s.name, sln.name) as displayName 
               FROM series s 
@@ -311,6 +312,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                      INNER JOIN user_episode ue ON us.id = ue.user_series_id 
                      LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                      LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
+                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id
               WHERE us.user_id = $userId 
                      AND ue.season_number > 0 
                      AND ( 

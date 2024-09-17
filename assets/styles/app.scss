@@ -931,6 +931,21 @@ label:has(input[type="text"]) {
                 display: flex;
                 position: relative;
 
+                > a {
+                    display: flex;
+                    gap: 1rem;
+
+                    .time {
+                        background-color: var(--orange-50);
+                        border-radius: .25rem;
+                        color: var(--orange-90);
+                        font-size: .75rem;
+                        font-weight: 300;
+                        margin-inline-start: auto;
+                        padding-inline: .25rem;
+                    }
+                }
+
                 .episode-of-the-day-preview, .pinned-series-preview {
                     align-items: center;
                     background-color: var(--navbar-bg);

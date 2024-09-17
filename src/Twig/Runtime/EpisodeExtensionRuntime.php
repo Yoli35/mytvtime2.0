@@ -85,6 +85,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
             'results' => array_map(function ($item) {
                 return [
                     'display' => $item['display'],
+                    'airAt' => $item['airAt'],
                     'episodeCount' => $item['episodeCount'],
                     'episodesWatched' => $item['episodesWatched'],
                     'firstEpisodeNumber' => $item['firstEpisodeNumber'],
