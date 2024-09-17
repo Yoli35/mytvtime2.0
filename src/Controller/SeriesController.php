@@ -552,7 +552,11 @@ class SeriesController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
+        /** @var Series $series */
         $series = $this->seriesRepository->findOneBy(['id' => $id]);
+        $dayOffset = $this->seriesDayOffsetRepository->findOneBy(['series' => $series, 'country' => $user->getCountry() ?? 'FR']);
+        $dayOffset = $dayOffset ? $dayOffset->getOffset() : 0;
+
         $series->setVisitNumber($series->getVisitNumber() + 1);
         $this->seriesRepository->save($series, true);
 
@@ -588,7 +592,7 @@ class SeriesController extends AbstractController
         $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
         $tv['networks'] = $this->networks($tv);
         $tv['overview'] = $this->localizedOverview($tv, $series, $request);
-        $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
+        $tv['seasons'] = $this->seasonsPosterPath($tv['seasons'], $dayOffset);
         $tv['watch/providers'] = $this->watchProviders($tv, $user->getCountry() ?? 'FR');
         $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $request->getLocale());
 
@@ -600,8 +604,10 @@ class SeriesController extends AbstractController
 
         $schedules = $this->seriesSchedules($series);
         $seriesArr = $series->toArray();
+        $nead = $seriesArr['nextEpisodeAirDate'];
+        $seriesArr['nextEpisodeAirDate']  = $nead ? $nead->modify($dayOffset . ' days') : null;
         $seriesArr['schedules'] = $schedules;
-        $seriesArr['seriesInProgress'] = !$this->userEpisodeRepository->isFullyReleased($userSeries);
+        $seriesArr['seriesInProgress'] = $this->userEpisodeRepository->isFullyReleased($userSeries);
         $seriesArr['images'] = [
             'backdrops' => $seriesBackdrops,
             'logos' => $seriesLogos,
@@ -624,6 +630,7 @@ class SeriesController extends AbstractController
         dump([
             'series' => $seriesArr,
             'tv' => $tv,
+            'dayOffset' => $dayOffset,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
         ]);
@@ -1457,7 +1464,7 @@ class SeriesController extends AbstractController
             $series->addUpdate($this->translator->trans('Overview updated'));
         }
 
-        if (strlen($tv['status']) != $series->getStatus()) {
+        if ($tv['status'] != $series->getStatus()) {
             $series->setStatus($tv['status']);
             $series->addUpdate($this->translator->trans('New status') . ' → ' . $this->translator->trans($tv['status']));
         }
@@ -1728,12 +1735,12 @@ class SeriesController extends AbstractController
                 ->center(new Point($seriesLocations[0]['latitude'], $seriesLocations[0]['longitude']));
         }
 
-        $seriesLocations = array_map(function ($location)  use($series, $locale, $map) {
+        $seriesLocations = array_map(function ($location) use ($series, $locale, $map) {
             $localizedName = $series->getLocalizedName($locale)?->getName();
             $name = $series->getName();
             $uuid = Uuid::v7()->toString();
             if ($localizedName) {
-                $name = $localizedName .' - '. $name;
+                $name = $localizedName . ' - ' . $name;
             }
             $map->addMarker(new Marker(
                 new Point($location['latitude'], $location['longitude']),
@@ -1885,10 +1892,14 @@ class SeriesController extends AbstractController
         return [];
     }
 
-    public function seasonsPosterPath(array $seasons): array
+    public function seasonsPosterPath(array $seasons, int $dayOffset = 0): array
     {
         $slugger = new AsciiSlugger();
-        return array_map(function ($season) use ($slugger) {
+        return array_map(function ($season) use ($slugger, $dayOffset) {
+            if ($dayOffset && $season['air_date']) {
+                $airDate = $season['air_date'];
+                $season['air_date'] = $this->offsetDate($airDate, $dayOffset, 'Europe/Paris');
+            }
             $season['slug'] = $slugger->slug($season['name'])->lower()->toString();
             $season['poster_path'] = $season['poster_path'] ? $this->imageConfiguration->getCompleteUrl($season['poster_path'], 'poster_sizes', 5) : null; // w500
             return $season;
