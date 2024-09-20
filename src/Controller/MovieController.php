@@ -120,14 +120,14 @@ class MovieController extends AbstractController
             'ASC' => 'Ascending',
         ];
 
-        dump([
-            'userMovies' => $userMovies,
-            'userMovieCount' => $userMovieCount,
-            'pages' => ceil($userMovieCount / $filters['perPage']),
-            'filterMeanings' => $filterMeanings,
-            'filterBoxOpen' => $filterBoxOpen,
-            'filters' => $filters,
-        ]);
+//        dump([
+//            'userMovies' => $userMovies,
+//            'userMovieCount' => $userMovieCount,
+//            'pages' => ceil($userMovieCount / $filters['perPage']),
+//            'filterMeanings' => $filterMeanings,
+//            'filterBoxOpen' => $filterBoxOpen,
+//            'filters' => $filters,
+//        ]);
         return $this->render('movie/index.html.twig', [
             'userMovies' => $userMovies,
             'userMovieCount' => $userMovieCount,
@@ -215,9 +215,9 @@ class MovieController extends AbstractController
         if ($user) {
             $movie = $this->movieRepository->findOneBy(['tmdbId' => $id]);
             if ($movie) {
-                dump(['movie' => $movie]);
+//                dump(['movie' => $movie]);
                 $userMovie = $this->userMovieRepository->findOneBy(['movie' => $movie, 'user' => $user]);
-                dump(['userMovie' => $userMovie]);
+//                dump(['userMovie' => $userMovie]);
                 if ($userMovie) {
                     return $this->redirectToRoute('app_movie_show', ['userMovieId' => $userMovie->getId()]);
                 }
@@ -235,12 +235,12 @@ class MovieController extends AbstractController
         $this->getReleaseDates($movie);
         $this->getRecommandations($movie);
 
-        dump(
-            [
-                'language' => $language,
-                'movie' => $movie,
-            ]
-        );
+//        dump(
+//            [
+//                'language' => $language,
+//                'movie' => $movie,
+//            ]
+//        );
         return $this->render('movie/tmdb.html.twig', [
             'movie' => $movie,
         ]);
@@ -288,7 +288,7 @@ class MovieController extends AbstractController
         $userMovie = new UserMovie($user, $movie, $now);
         $this->userMovieRepository->save($userMovie, true);
 
-        dump(['userMovie' => $userMovie]);
+//        dump(['userMovie' => $userMovie]);
         return $this->redirectToRoute('app_movie_show', ['userMovieId' => $userMovie->getId()]);
     }
 
@@ -392,11 +392,11 @@ class MovieController extends AbstractController
         $title = $data['title'];
         $providerId = $data['provider'];
         if ($providerId == "") $providerId = null;
-        dump([
-            'url' => $url,
-            'title' => $title,
-            'provider' => $providerId,
-        ]);
+//        dump([
+//            'url' => $url,
+//            'title' => $title,
+//            'provider' => $providerId,
+//        ]);
         $movie = $userMovie->getMovie();
 
         $watchLink = new MovieDirectLink($url, $title, $movie, $providerId);

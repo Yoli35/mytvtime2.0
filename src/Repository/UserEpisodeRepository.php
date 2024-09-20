@@ -480,7 +480,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         try {
             return $this->em->getConnection()->fetchAllAssociative($sql);
         } catch (Exception $e) {
-            dump($e->getMessage());
+//            dump($e->getMessage());
             return [];
         }
     }

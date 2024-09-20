@@ -82,7 +82,7 @@ class PeopleController extends AbstractController
             return $person;
         }, $people['results']);
 
-        dump($people);
+//        dump($people);
         return $this->render('people/index.html.twig', [
             'people' => $people,
         ]);
@@ -105,9 +105,9 @@ class PeopleController extends AbstractController
         foreach ($movieInfos as $info) {
             $indexedMovieInfos[$info['tmdbId']] = $info;
         }
-        dump([
-            'indexedMovieInfos' => $indexedMovieInfos,
-            ]);
+//        dump([
+//            'indexedMovieInfos' => $indexedMovieInfos,
+//            ]);
 
         $standing = $this->tmdbService->getPerson($id, $request->getLocale(), "images,combined_credits");
         $people = json_decode($standing, true);
