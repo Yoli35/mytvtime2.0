@@ -15,7 +15,7 @@
         gap: 1rem;
         margin-block: auto;
         margin-inline: auto;
-        max-width: 50rem;
+        width: 50rem;
 
         .form-row {
             display: flex;
@@ -71,6 +71,7 @@
                 label:has(input[type="date"]),
                 label:has(input[type="search"]),
                 label:has(input[type="text"]) {
+                    align-items: flex-start;
                     display: flex;
                     flex-direction: column;
                     gap: .25rem;
@@ -152,6 +153,7 @@
                     .input-group {
                         display: flex;
                         gap:.125rem;
+                        width: 100%;
 
                         .keyword-input {
                             appearance: none;
