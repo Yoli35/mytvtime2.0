@@ -24,7 +24,7 @@ class ProviderRepository extends ServiceEntityRepository
 
     public function getAllProviders(): array
     {
-        $sql = "SELECT * FROM `provider`";
+        $sql = "SELECT * FROM `provider` ORDER BY `name`";
 
         return $this->getAll($sql);
     }

@@ -32,7 +32,7 @@ class NetworkRepository extends ServiceEntityRepository
 
     public function getNetworkList():array
     {
-        $sql = "SELECT network_id, name, logo_path FROM network";
+        $sql = "SELECT network_id, name, logo_path FROM network ORDER BY name";
         return $this->getAll($sql);
     }
 
