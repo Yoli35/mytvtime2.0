@@ -202,6 +202,9 @@ export class Show {
          *     <div class="watch-link-tool edit" data-title="...">                    *
          *         <svg viewBox="0 0 512 512" fill="currentColor" [...] </svg>        *
          *     </div>                                                                 *
+         *     <div class="watch-link-tool copy" data-title="...">                    *
+         *         <svg viewBox="0 0 512 512" fill="currentColor" [...] </svg>        *
+         *     </div>                                                                 *
          *     <div class="watch-link-tool delete" data-title="...">                  *
          *         <svg viewBox="0 0 448 512" fill="currentColor" [...] </svg>        *
          *     </div>                                                                 *
@@ -235,6 +238,7 @@ export class Show {
             const tools = watchLink.querySelector('.watch-link-tools');
             const href = watchLink.querySelector('a').getAttribute('href');
             const edit = tools.querySelector('.watch-link-tool.edit');
+            const copy = tools.querySelector('.watch-link-tool.copy');
             const del = tools.querySelector('.watch-link-tool.delete');
             const id = tools.getAttribute('data-id');
             const provider = tools.getAttribute('data-provider');
@@ -249,6 +253,15 @@ export class Show {
                 watchLinkFormName.value = name;
                 watchLinkFormUrl.value = href;
                 gThis.displayForm(watchLinkForm);
+            });
+
+            copy.addEventListener('click', function () {
+                navigator.clipboard.writeText(href).then(function () {
+                    copy.classList.add('copied');
+                    setTimeout(function () {
+                        copy.classList.remove('copied');
+                    }, 1000);
+                });
             });
 
             del.addEventListener('click', function () {
