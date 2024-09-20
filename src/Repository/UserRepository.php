@@ -82,6 +82,24 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $this->getAll($sql);
     }
 
+    public function getUserNetworkIds($userId): array
+    {
+        $sql = "SELECT n.network_id
+                FROM network n
+                INNER JOIN user_network un ON n.id = un.network_id AND un.user_id = $userId";
+
+        return $this->getAll($sql);
+    }
+
+    public function getUserProviderIds($userId): array
+    {
+        $sql = "SELECT p.provider_id
+                FROM provider p
+                INNER JOIN user_provider up ON p.id = up.provider_id AND up.user_id = $userId";
+
+        return $this->getAll($sql);
+    }
+
     public function getAll($sql): array
     {
         try {
