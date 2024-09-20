@@ -494,6 +494,7 @@ class TMDBService
 
     public function getMovie($movieId, $locale, $details = null): ?string
     {
+        // with_release_type values: 1 = Premiere, 2 = Theatrical (limited), 3 = Theatrical, 4 = Digital, 5 = Physical, 6 = TV
         $request = 'https://api.themoviedb.org/3/movie/' . $movieId . '?api_key=' . $this->api_key . '&language=' . $locale;
         if ($details) {
             $request .= '&append_to_response=' . implode(',', $details);
