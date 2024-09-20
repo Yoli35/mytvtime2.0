@@ -32,7 +32,7 @@ class History extends AbstractController
         $user = $this->getUser();
 
         $data = json_decode($request->getContent(), true);
-        dump($data);
+//        dump($data);
 
         $type = $data['type'] ? 'episode' : 'series';
         $count = intval($data['count']);

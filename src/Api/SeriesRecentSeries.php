@@ -25,7 +25,7 @@ class SeriesRecentSeries extends AbstractController
         $country = "FR";
         $timezone = "UTC";
         $language = "fr";
-        $seriesSelection = $this->homeController->getSeriesSelection($slugger, $country, $timezone, $language, true, true, true);
+        $seriesSelection = $this->homeController->getSeriesSelection($slugger, $country, $timezone, $language, true, true);
 
         return $this->json([
             'ok' => true,

@@ -181,7 +181,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    public function getSeriesSelection(AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $language = 'fr', $forceProvider = null, $forcePath = false, $forceNoPoster = false): array
+    public function getSeriesSelection(AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $language = 'fr', $forceProvider = null, $forceNoPoster = false): array
     {
         $page = rand(1, 5);
 
@@ -216,11 +216,11 @@ class HomeController extends AbstractController
             . "&timezone=$timezone&watch_region=$country&include_adult=false"
             . "&first_air_date.gte=$startDate&first_air_date.lte=$endDate"
             . "&with_watch_monetization_types=flatrate&with_watch_providers=$selectedProviders";
-        $seriesSelection = $this->getSelection('tv', $filterString, $slugger, $country, $timezone, $language, $forcePath);
 
         if ($forceNoPoster) {
-            return $seriesSelection;
+            return $this->getAPISelection($filterString, $slugger, $timezone, $language);
         }
+        $seriesSelection = $this->getSelection('tv', $filterString, $slugger, $country, $timezone, $language);
         // array_filter pour retirer les séries sans poster & array_values() pour ré-indexer le tableau
         return array_values(array_filter($seriesSelection, function ($tv) {
             return $tv['poster_path'];
@@ -270,7 +270,7 @@ class HomeController extends AbstractController
         }));
     }
 
-    public function getSelection(string $media, string $filterString, AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $preferredLanguage = 'fr', bool $forcePath = false): array
+    public function getSelection(string $media, string $filterString, AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $preferredLanguage = 'fr'): array
     {
         if ($media === 'movie') {
             $mediaSelection = json_decode($this->tmdbService->getFilterMovie($filterString . '&append_to_response=watch/providers'), true)['results'];
@@ -284,14 +284,11 @@ class HomeController extends AbstractController
         }
 //        dump(['mediaSelection' => $mediaSelection]);
 
-        return array_map(function ($tv) use ($slugger, $media, $name, $date, $country, $timezone, $preferredLanguage, $forcePath) {
+        return array_map(function ($tv) use ($slugger, $media, $name, $date, $country, $timezone, $preferredLanguage) {
 
             $tv['tmdb'] = true;
             $this->seriesController->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), $media === 'movie' ? '/movies/' : '/series/');
-            if (!$forcePath) {
-                $tv['poster_path'] = $tv['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $tv['poster_path'] : null;
-            }
-//            $tv['poster_path'] = $tv['poster_path'] ? '/' . ($media === 'tv' ? 'series' : 'movies') . '/posters' . $tv['poster_path'] : null; // w780
+            $tv['poster_path'] = $tv['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $tv['poster_path'] : null;
             $tv['slug'] = strtolower($slugger->slug($tv[$media === 'tv' ? 'name' : 'title']));
             $tv['watch_providers'] = [];
 
@@ -310,4 +307,58 @@ class HomeController extends AbstractController
             ];
         }, $mediaSelection);
     }
+
+    public function getAPISelection(string $filterString, AsciiSlugger $slugger, ?string $timezone = 'Europe/Paris', ?string $preferredLanguage = 'fr'): array
+    {
+        $list = json_decode($this->tmdbService->getFilterTv($filterString), true)['results'] ?? [];
+
+        $tvs = [];
+        foreach ($list as $item) {
+            $tv = $item;//json_decode($this->tmdbService->getTv($item['id'], $preferredLanguage, ['watch/providers']), true);
+
+//            $this->seriesController->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+
+            $tvs[] = [
+                'date' => $this->dateService->newDateImmutable($tv['first_air_date'], $timezone)->format('d/m/Y'),
+                'id' => $tv['id'],
+                'name' => $tv['name'],
+                'overview' => $tv['overview'],
+                'poster_path' => $tv['poster_path'],
+                'slug' => strtolower($slugger->slug($tv['name'])),
+                'status' => $tv['status'] ?? 'no status',
+//                'tmdb' => true,
+                'year' => $tv['first_air_date'] ? substr($tv['first_air_date'], 0, 4) : '',
+                'videos' => $tv['videos']['results'] ?? '',
+
+                'backdrop_path' => $tv['backdrop_path'] ?? null,
+                'created_by' => $tv['created_by'] ?? null,
+                'genres' => $tv['genres'] ?? null,
+                'homepage' => $tv['homepage'] ?? null,
+                'in_production' => $tv['in_production'] ?? null,
+                'languages' => $tv['languages'] ?? null,
+                'last_air_date' => $tv['last_air_date'] ?? null,
+                'last_episode_to_air' => $tv['last_episode_to_air'] ?? null,
+                'next_episode_to_air' => $tv['next_episode_to_air'] ?? null,
+                'networks' => $tv['networks'] ?? null,
+                'number_of_episodes' => $tv['number_of_episodes'] ?? null,
+                'number_of_seasons' => $tv['number_of_seasons'] ?? null,
+                'origin_country' => $tv['origin_country'] ?? null,
+                'original_language' => $tv['original_language'] ?? null,
+                'original_name' => $tv['original_name'] ?? null,
+                'popularity' => $tv['popularity'] ?? null,
+                'production_companies' => $tv['production_companies'] ?? null,
+                'production_countries' => $tv['production_countries'] ?? null,
+                'seasons' => $tv['seasons'] ?? null,
+                'spoken_languages' => $tv['spoken_languages'] ?? null,
+                'tagline' => $tv['tagline'] ?? null,
+                'type' => $tv['type'] ?? null,
+                'vote_average' => $tv['vote_average'] ?? null,
+                'vote_count' => $tv['vote_count'] ?? null,
+                'watch_providers' => $tv['watch/providers'] ?? [],
+            ];
+        }
+        return $tvs;
+    }
+
+//    public function getAdditionalInfos
 }
