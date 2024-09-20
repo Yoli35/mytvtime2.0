@@ -939,10 +939,11 @@ label:has(input[type="text"]) {
                         background-color: var(--orange-50);
                         border-radius: .25rem;
                         color: var(--orange-90);
-                        font-size: .75rem;
+                        font-size: 1rem;
                         font-weight: 300;
+                        line-height: 1.25em;
                         margin-inline-start: auto;
-                        padding-inline: .25rem;
+                        padding-inline: .5rem;
                     }
                 }
 
