@@ -198,7 +198,7 @@
                         {% for link in series.watchLinks %}
                             <div class="watch-link" data-id="{{ link.id }}">
                                 <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
-                                    {% if link.providerId %}
+                                    {% if link.providerId > 0 %}
                                         <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}" data-title="{{ link.name ?? providers.names[link.providerId] }}">
                                     {% else %}
                                         <span>{{ link.name }}</span>
@@ -211,6 +211,9 @@
                                 >
                                     <div class="watch-link-tool edit" data-title="{{ 'Edit this watch link'|trans }}">
                                         {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                    <div class="watch-link-tool copy" data-title="{{ 'Copy this watch link'|trans }}">
+                                        {{ ux_icon('fa6-solid:copy', {height: '18px', width: '18px'}) }}
                                     </div>
                                     <div class="watch-link-name">{{ link.name }}</div>
                                     <div class="watch-link-tool delete" data-title="{{ 'Delete this watch link'|trans }}">
