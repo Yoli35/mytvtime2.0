@@ -605,7 +605,7 @@ class SeriesController extends AbstractController
         $schedules = $this->seriesSchedules($series);
         $seriesArr = $series->toArray();
         $nead = $seriesArr['nextEpisodeAirDate'];
-        $seriesArr['nextEpisodeAirDate']  = $nead ? $nead->modify($dayOffset . ' days') : null;
+        $seriesArr['nextEpisodeAirDate'] = $nead ? $nead->modify($dayOffset . ' days') : null;
         $seriesArr['schedules'] = $schedules;
         $seriesArr['seriesInProgress'] = $this->userEpisodeRepository->isFullyReleased($userSeries);
         $seriesArr['images'] = [
@@ -786,13 +786,13 @@ class SeriesController extends AbstractController
 
         $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
-//        dump([
+        dump([
 //            'series' => $series,
 //            'season' => $season,
 //            'userSeries' => $userSeries,
-//            'providers' => $providers,
+            'providers' => $providers,
 //            'devices' => $devices,
-//        ]);
+        ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
@@ -948,8 +948,6 @@ class SeriesController extends AbstractController
     #[Route('/add/episode/{id}', name: 'add_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addUserEpisode(Request $request, int $id): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $data = json_decode($request->getContent(), true);
         $showId = $data['showId'];
         $lastEpisode = $data['lastEpisode'] == "1";
@@ -965,7 +963,7 @@ class SeriesController extends AbstractController
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $id]);
 //        if ($userEpisode) {
-        //    $userEpisode->setWatchAt($this->now());
+//            $userEpisode->setWatchAt($this->now());
 //            $userEpisode->setNumberOfView($userEpisode->getNumberOfView() + 1);
 //            $this->userEpisodeRepository->save($userEpisode, true);
 //            return $this->json([
@@ -1007,11 +1005,26 @@ class SeriesController extends AbstractController
         $userEpisode->setQuickWatchDay($diff->days < 1);
         $userEpisode->setQuickWatchWeek($diff->days < 7);
 
-        if ($userEpisode->getEpisodeNumber() > 1) {
-            $previousEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'episodeNumber' => $episodeNumber - 1]);
-            if ($previousEpisode) {
-                $userEpisode->setProviderId($previousEpisode->getProviderId());
-                $userEpisode->setDeviceId($previousEpisode->getDeviceId());
+        // Si le provider et l'appareil du dernier épisode ajouté ne sont renseignés, on les récupère du précédent épisode
+        $episodeProviderId = $userEpisode->getProviderId();
+        $episodeDeviceId = $userEpisode->getDeviceId();
+        if (!$episodeProviderId || !$episodeDeviceId) {
+            if ($userEpisode->getEpisodeNumber() > 1) {
+                $previousEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'episodeNumber' => $episodeNumber - 1]);
+                if ($previousEpisode) {
+                    if (!$episodeProviderId) $userEpisode->setProviderId($previousEpisode->getProviderId());
+                    if (!$episodeDeviceId) $userEpisode->setDeviceId($previousEpisode->getDeviceId());
+                }
+            }
+            // Si on regarde le premier épisode d'une saison, on récupère le provider et l'appareil du dernier épisode
+            // de la saison précédente (hors épisodes spéciaux, donc à partir de la saison 2)
+            if ($userEpisode->getEpisodeNumber() == 1 && $seasonNumber > 1) {
+                $lastEpisodeNumberOfPreviousSeason = $tv['seasons'][$seasonNumber - 2]['episode_count'] ?? 0;
+                $previousEpisode = $lastEpisodeNumberOfPreviousSeason > 0 ? $this->userEpisodeRepository->findOneBy(['user' => $user, 'userSeries' => $userSeries, 'seasonNumber' => $seasonNumber - 1, 'episodeNumber' => $lastEpisodeNumberOfPreviousSeason]) : null;
+                if ($previousEpisode) {
+                   if (!$episodeProviderId) $userEpisode->setProviderId($previousEpisode->getProviderId());
+                   if (!$episodeDeviceId) $userEpisode->setDeviceId($previousEpisode->getDeviceId());
+                }
             }
         }
         $userEpisode->setNumberOfView($userEpisode->getNumberOfView() + 1);
@@ -1054,8 +1067,6 @@ class SeriesController extends AbstractController
     #[Route('/remove/episode/{id}', name: 'remove_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function removeUserEpisode(Request $request, int $id): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $data = json_decode($request->getContent(), true);
         $showId = $data['showId'];
         $seasonNumber = $data['seasonNumber'];
