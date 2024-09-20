@@ -483,7 +483,7 @@ export class Menu {
         if (historyMenu) {
             const historyList = navbar.querySelector("#history-list");
             const historyOptions = historyList?.querySelector("#history-options").querySelectorAll("input");
-            historyMenu.addEventListener("click", () => {
+            historyMenu.addEventListener("click", (e) => {
                 const open = historyMenu.getAttribute("open");
                 if (open === null) {
                     const firstItem = historyList.querySelector("li.history-item");
@@ -512,6 +512,16 @@ export class Menu {
                             }
                             loadingLi.remove();
                         });
+                } else {
+                    e.preventDefault();
+                    // opacity: 0; & transform: translateX(-100%);
+                    const historyList = historyMenu.querySelector("#history-list");
+                    historyList.style.opacity = 0;
+                    historyList.style.transform = "translateX(-100%)";
+                    setTimeout(() => {
+                        historyMenu.removeAttribute("open");
+                        historyList.removeAttribute("style");
+                    }, 300);
                 }
             });
             historyOptions.forEach((historyOption) => {
