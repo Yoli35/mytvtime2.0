@@ -93,6 +93,33 @@ export class Show {
         diaporama.start(logos);
 
         /******************************************************************************
+         * Remaining time when schedule is present                                    *
+         ******************************************************************************/
+        const remaining = document.querySelector('.remaining');
+        if (remaining) {
+            const inText = remaining.querySelector('span:first-child');
+            const remainingText = remaining.querySelector('span:last-child');
+            const target = remaining.getAttribute('data-target') * 1000;
+            const interval = setInterval(() => {
+                const now = (new Date().getTime());
+                const distance = target - now;
+                const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const days = d ? " " + d + " " + translations[d > 1 ? 'days' : 'day'] : "";
+                const hours = h ? " " + h + " " + translations[h > 1 ? 'hours' : 'hour'] : "";
+                const minutes = m ? " " + m + " " + translations[m > 1 ? 'minutes' : 'minute'] : "";
+                remainingText.innerHTML = days + hours + minutes;
+
+                if (distance < 0) {
+                    clearInterval(interval);
+                    inText.innerHTML = "Now";
+                    remainingText.innerHTML = "";
+                }
+            }, 1000);
+        }
+
+        /******************************************************************************
          * User's actions: rating, pinned, favorite, remove this series               *
          ******************************************************************************/
         const userActions = document.querySelector('.user-actions');
@@ -326,8 +353,7 @@ export class Show {
                         },
                         body: JSON.stringify({seriesId: seriesId, provider: provider.value, name: name.value, url: url.value})
                     }
-                ).then(async function (response)
-                {
+                ).then(async function (response) {
                     if (response.ok) {
                         const data = await response.json();
                         console.log({data});

@@ -178,13 +178,17 @@
                         {% for schedule in schedules %}
                             <div class="schedule">
                                 {% set country = user.country ?? 'FR' %}
-                                <div class="country" data-title="{{ schedule.country|country_name }}">{{ getEmojiFlag(schedule.country) }}</div>
-                                <div class="air">{{ schedule.firstAirDate|format_datetime(pattern="cccc - H:mm")|capitalize }}</div>
-                                <div>
-                                    {{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }}
-                                </div>
+                                {% if schedule.utc %}
+                                    <div class="country" data-title="{{ schedule.country|country_name }}">{{ getEmojiFlag(schedule.country) }}</div>
+                                    <div class="air">{{ schedule.firstAirDate|format_datetime(pattern="cccc - H:mm")|capitalize }}</div>
+                                    <div>
+                                        {{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                {% endif %}
                                 <div class="country" data-title="{{ country|country_name }}">{{ getEmojiFlag(country) }}</div>
                                 <div class="local-air">{{ schedule.originalDate|format_datetime(pattern="cccc - H:mm")|capitalize }}</div>
+                                {% set d = schedule.before %}
+                                <div class="remaining" data-target="{{ schedule.timestamp }}"><span>{{ 'in'|trans }}</span><span>{{ d.d ? (' ' ~ d.d ~ ' ' ~ (d.d > 1 ? 'days':'day')|trans):'' }}{{ d.h ? (' ' ~ d.h ~ ' ' ~ (d.h > 1 ? 'hours':'hour')|trans)}}{{ d.i ? (' ' ~ d.i~ ' ' ~ (d.i > 1 ? 'minutes':'minute')|trans)}}</span></div>
                             </div>
                         {% endfor %}
                     </div>
@@ -467,7 +471,8 @@
                         </div>
                     {% endif %}
 
-                    {% if series.seriesInProgress %}
+                    {#                    {% if series.seriesInProgress %} #}
+                    {% if tv.next_episode_to_air %}
                         <h3>{{ 'Broadcast delay'|trans }}</h3>
                         <div class="facts">
                             <div class="fact">

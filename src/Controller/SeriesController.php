@@ -625,15 +625,21 @@ class SeriesController extends AbstractController
             'Add to favorites' => $this->translator->trans('Add to favorites'),
             'This field is required' => $this->translator->trans('This field is required'),
             'Watch on' => $this->translator->trans('Watch on'),
+            'days' => $this->translator->trans('days'),
+            'hours' => $this->translator->trans('hours'),
+            'minutes' => $this->translator->trans('minutes'),
+            'day' => $this->translator->trans('day'),
+            'hour' => $this->translator->trans('hour'),
+            'minute' => $this->translator->trans('minute'),
         ];
 
-//        dump([
-//            'series' => $seriesArr,
+        dump([
+            'series' => $seriesArr,
 //            'tv' => $tv,
 //            'dayOffset' => $dayOffset,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
-//        ]);
+        ]);
         return $this->render('series/show.html.twig', [
             'series' => $seriesArr,
             'tv' => $tv,
@@ -1609,6 +1615,11 @@ class SeriesController extends AbstractController
             $country = $schedule->getCountry();
             $utc = $schedule->getUtc(); // int
 
+            $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
+            $target = $series->getNextEpisodeAirDate()->setTimezone(new DateTimeZone('Europe/Paris'))->setTime($airAt->format('H'), $airAt->format('i'));
+            // $target to timestamp
+            $timestamp = $target->getTimestamp();
+
             $firstAirDate = $firstAirDate->setTime($airAt->format('H'), $airAt->format('i'));
 
             $originalDate = $firstAirDate->format('Y-m-d H:i');
@@ -1619,6 +1630,11 @@ class SeriesController extends AbstractController
                 'country' => $country,
                 'firstAirDate' => $firstAirDate,
                 'originalDate' => $originalDate,
+                'utc' => $utc,
+                'now' => $now->format('Y-m-d H:i'),
+                'target' => $target->format('Y-m-d H:i'),
+                'timestamp' => $timestamp,
+                'before' => $now->diff($target),
             ];
 
         }
