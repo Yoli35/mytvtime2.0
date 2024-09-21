@@ -202,6 +202,7 @@ label:has(select) {
     gap: 1rem;
     margin-inline-start: auto;
     position: relative;
+    white-space: nowrap;
 
     .logo {
         align-items: center;
@@ -256,7 +257,7 @@ label:has(select) {
     }
 }
 
-.all-my-series {
+.all-my-series, .home {
     label:has(select) {
         select {
             margin-inline-start: auto;
