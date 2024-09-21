@@ -513,7 +513,6 @@ export class Menu {
                             loadingLi.remove();
                         });
                 } else {
-                    e.preventDefault();
                     // opacity: 0; & transform: translateX(-100%);
                     const historyList = historyMenu.querySelector("#history-list");
                     historyList.style.opacity = 0;
