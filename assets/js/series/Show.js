@@ -106,10 +106,12 @@ export class Show {
                 const d = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((distance % (1000 * 60)) / 1000);
                 const days = d ? " " + d + " " + translations[d > 1 ? 'days' : 'day'] : "";
                 const hours = h ? " " + h + " " + translations[h > 1 ? 'hours' : 'hour'] : "";
                 const minutes = m ? " " + m + " " + translations[m > 1 ? 'minutes' : 'minute'] : "";
-                remainingText.innerHTML = days + hours + minutes;
+                const secondes = s ? " " + s + " " + translations[s > 1 ? 'seconds' : 'second'] : "";
+                remainingText.innerHTML = days + hours + minutes + secondes;
 
                 if (distance < 0) {
                     clearInterval(interval);
