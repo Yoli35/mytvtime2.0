@@ -66,17 +66,19 @@ class UserSeriesRepository extends ServiceEntityRepository
     public function getUserSeriesOfTheDay(User $user, string $country, string $locale): array
     {
         $userId = $user->getId();
-        $sql = "SELECT s.`id`            as id,
-                       s.`name`          as name,
-                       sln.`name`        as localized_name,
-                       us.`progress`     as progress,
-                       us.`last_episode` as last_episode,
-                       us.`last_season`  as last_season,
-                       s.`slug`          as slug,
-                       sln.`slug`        as localized_slug,
-                       s.`poster_path`   as poster_path,
-                       sdo.offset        as day_offset,
-                       ue.air_date       as air_date,
+        $sql = "SELECT s.`id`                      as id,
+                       s.`name`                    as name,
+                       sln.`name`                  as localized_name,
+                       us.`progress`               as progress,
+                       us.`last_episode`           as last_episode,
+                       us.`last_season`            as last_season,
+                       s.`slug`                    as slug,
+                       sln.`slug`                  as localized_slug,
+                       s.`poster_path`             as poster_path,
+                       (s.first_air_date <= NOW()) as released,
+                       s.`status`                  as status,
+                       sdo.offset                  as day_offset,
+                       ue.air_date                 as air_date,
                        CASE
                            WHEN sdo.offset IS NULL THEN ue.`air_date`
                            WHEN sdo.offset = 0 THEN ue.`air_date`
@@ -109,12 +111,15 @@ class UserSeriesRepository extends ServiceEntityRepository
                         WHEN sdo.offset > 0 THEN DATE_ADD(ue.`air_date`, INTERVAL sdo.offset DAY)
                         ELSE DATE_SUB(ue.`air_date`, INTERVAL ABS(sdo.offset) DAY)
                     END as air_date,
+                    ue.`air_date` as original_air_date,
                     ue.`season_number` as season_number, ue.`episode_number` as episode_number,
                     ue.watch_at as watch_at,
                     sdo.offset as day_offset,
                     us.`last_episode` as last_episode, us.`last_season` as last_season,
                     s.`slug` as slug, sln.`slug` as localized_slug,
-                    s.`poster_path` as poster_path
+                    s.`poster_path` as poster_path,
+                    (s.first_air_date <= NOW()) as released,
+                    s.`status` as status
                 FROM `series` s
                     INNER JOIN `user_series` us ON s.`id`=us.`series_id`
                     INNER JOIN `user_episode` ue on us.`id` = ue.`user_series_id`

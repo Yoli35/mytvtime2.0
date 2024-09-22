@@ -25,6 +25,39 @@ h2 {
     padding: .5rem 1rem;
 }
 
+.series-index {
+    margin-block-start: 3rem;
+
+    .calendar {
+        align-items: center;
+        background-color: var(--green-70);
+        border-radius: .5rem;
+        color: var(--orange-50);
+        display: flex;
+        flex-direction: column;
+        height: 18rem;
+        justify-content: center;
+        width: 10rem;
+
+        .day-of-mouth {
+            font-size: 8rem;
+            line-height: 1.1em;
+        }
+
+        .day-of-week {
+            color: var(--grey-10);
+            font-size: 2rem;
+            line-height: 1.1em;
+        }
+
+        .month {
+            color: var(--grey-10);
+            font-size: 1.5rem;
+            line-height: 1.1em;
+        }
+    }
+}
+
 /* Pages: series TMDB & user series */
 .series-show {
     container: series-show / inline-size;

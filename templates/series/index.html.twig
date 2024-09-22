@@ -9,7 +9,7 @@
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-    <div class="container-fluid">
+    <div class="container-fluid series-index">
         {% if seriesOfTheDay|length %}
             <h2>{{ 'Series of the day'|trans }}</h2>
             <div class="series-group user">
@@ -54,8 +54,13 @@
                         {% set date = "" %}
                         {% for series in seriesOfTheWeek %}
                             {% if date != series.date %}
-                                <h3>{{ series.date|format_date('relative_full')|capitalize }}</h3>
+                                <h3>{{ series.date|format_date('relative_full')|capitalize }} ({{ seriesOfTheWeek|filter(s => s.date == series.date)|length }} ep.)</h3>
                                 {% set date = series.date %}
+                                <div class="calendar">
+                                    <div class="day-of-week">{{ series.date|format_datetime(pattern: "EEEE") }}</div>
+                                    <div class="day-of-mouth">{{ series.date|date('j') }}</div>
+                                    <div class="month">{{ series.date|format_datetime(pattern: "MMMM") }}</div>
+                                </div>
                             {% endif %}
                             {{ include('_blocks/series/_card.html.twig') }}
                         {% endfor %}
