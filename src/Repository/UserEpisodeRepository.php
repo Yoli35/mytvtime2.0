@@ -207,11 +207,15 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        sln.name                        as localizedName,
                        sln.slug                        as localizedSlug,
                        s.poster_path                   as posterPath,
+                       s.status                        as status,
+                       (s.first_air_date <= NOW())     as released,
                        us.favorite                     as favorite,
                        us.progress                     as progress,
                        ue.`episode_number`             as episodeNumber,
                        ue.`season_number`              as seasonNumber,
                        ue.`watch_at`                   as watchAt,
+                       sbs.`air_at`                    as airAt,
+                       sbs.`utc`                       as utc,
                        (SELECT count(*)
                         FROM user_episode cue
                         WHERE cue.user_series_id = us.id
@@ -238,6 +242,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                          INNER JOIN user_series us ON s.id = us.series_id
                          INNER JOIN user_episode ue ON us.id = ue.user_series_id
                          LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
+                         LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id
                          LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
                 WHERE us.user_id = $userId
                   AND ue.season_number > 0

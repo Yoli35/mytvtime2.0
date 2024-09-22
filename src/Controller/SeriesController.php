@@ -45,6 +45,7 @@ use App\Service\DeeplTranslator;
 use App\Service\ImageConfiguration;
 use App\Service\KeywordService;
 use App\Service\TMDBService;
+use DateInterval;
 use DateTimeImmutable;
 use DateTimeZone;
 use DeepL\DeepLException;
@@ -141,6 +142,8 @@ class SeriesController extends AbstractController
                 'id' => $us['id'],
                 'name' => $us['name'],
                 'slug' => $us['slug'],
+                'status' => $us['status'],
+                'released' => $us['released'],
                 'localized_name' => $us['localized_name'],
                 'localized_slug' => $us['localized_slug'],
                 'poster_path' => $us['poster_path'] ? '/series/posters' . $us['poster_path'] : null,
@@ -150,11 +153,22 @@ class SeriesController extends AbstractController
 
         $episodesOfTheDay = array_map(function ($ue) {
             $this->saveImage("posters", $ue['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            if ($ue['airAt']) {
+                $time = explode(':', $ue['airAt']);
+                $now = $this->now()->setTime($time[0], $time[1], $time[2]);
+                if ($ue['utc']) {
+                    $utc = $ue['utc'];
+                    $now = $now->modify($utc . ' hours');
+                }
+                $ue['airAt'] = $now->format('Y-m-d H:i:s');
+            }
             return [
                 'episode_of_the_day' => true,
                 'id' => $ue['id'],
                 'name' => $ue['name'],
                 'slug' => $ue['slug'],
+                'status' => $ue['status'],
+                'released' => $ue['released'],
                 'localized_name' => $ue['localizedName'],
                 'localized_slug' => $ue['localizedSlug'],
                 'poster_path' => $ue['posterPath'] ? '/series/posters' . $ue['posterPath'] : null,
@@ -163,6 +177,7 @@ class SeriesController extends AbstractController
                 'episode_number' => $ue['episodeNumber'],
                 'season_number' => $ue['seasonNumber'],
                 'watch_at' => $ue['watchAt'],
+                'air_at' => $ue['airAt'],
             ];
         }, $this->userEpisodeRepository->episodesOfTheDay($user, $country, $locale));
 
@@ -173,8 +188,11 @@ class SeriesController extends AbstractController
                 'episode_of_the_day' => true,
                 'id' => $us['id'],
                 'date' => $us['air_date'],
+                'original_air_date' => $us['original_air_date'],
                 'name' => $us['name'],
                 'slug' => $us['slug'],
+                'status' => $us['status'],
+                'released' => $us['released'],
                 'localized_name' => $us['localized_name'],
                 'localized_slug' => $us['localized_slug'],
                 'poster_path' => $us['poster_path'] ? '/series/posters' . $us['poster_path'] : null,
@@ -182,6 +200,7 @@ class SeriesController extends AbstractController
                 'watch_at' => $us['watch_at'],
                 'season_number' => $us['season_number'],
                 'episode_number' => $us['episode_number'],
+                'air_at' => null,
             ];
         }, $this->userSeriesRepository->getUserSeriesOfTheNext7Days($user, $country, $locale));
 
@@ -631,15 +650,17 @@ class SeriesController extends AbstractController
             'day' => $this->translator->trans('day'),
             'hour' => $this->translator->trans('hour'),
             'minute' => $this->translator->trans('minute'),
+            'seconds' => $this->translator->trans('seconds'),
+            'second' => $this->translator->trans('second'),
         ];
 
-        dump([
-            'series' => $seriesArr,
+//        dump([
+//            'series' => $seriesArr,
 //            'tv' => $tv,
 //            'dayOffset' => $dayOffset,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
-        ]);
+//        ]);
         return $this->render('series/show.html.twig', [
             'series' => $seriesArr,
             'tv' => $tv,

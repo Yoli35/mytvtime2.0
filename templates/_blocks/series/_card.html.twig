@@ -17,10 +17,15 @@
                     <div>{{ 'No poster'|trans }}</div>
                 {% endif %}
             {% endif %}
+            {% if series.episode_of_the_day is defined %}
+                {% if series.air_at %}
+                    <div class="air-at">{{ series.air_at|format_datetime('none', 'short') }}</div>
+                {% endif %}
+            {% endif %}
             <div class="series-infos">
                 {% if series.favorite is defined and series.favorite %}
                     <div class="favorite">
-                        <i class="fas fa-heart"></i>
+                        {{ ux_icon('fa6-solid:heart', {height: '18px', width: '18px'}) }}
                     </div>
                 {% endif %}
                 {% if series.watch_providers is defined and series.watch_providers|length %}
@@ -40,14 +45,6 @@
                 {% if series.episode_of_the_day is defined %}
                     <div class="episode-number{% if series.watch_at %} watched{% endif %}">{{ 'S%02dE%02d'|format(series.season_number, series.episode_number) }}</div>
                 {% endif %}
-                {#                {% if series.series_of_the_week is defined %} #}
-                {#                    <div class="date">{{ series.date|format_date('relative_full')|capitalize }}</div> #}
-                {#                {% endif %} #}
-                {#                "next_episode_season_number" => 1
-                  "next_episode_episode_number" => 5
-                  "day_offset" => null
-                  "remainingEpisodes" => 45
-                  "final_air_date" => "2018-07-11" #}
                 {% if allFiltered is defined %}
                     {% if sort == 'addedAt' %}
                         <div class="date-added" data-title="{{ 'Date added'|trans }}">{{ series.added_at|format_date('relative_full')|capitalize }}</div>

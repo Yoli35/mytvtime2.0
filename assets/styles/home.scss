@@ -505,6 +505,18 @@
                             width: 10rem; /*auto;*/
                         }
 
+                        .air-at {
+                            background-color: var(--ardoise-80-alpha-90);
+                            border-radius: .25rem;
+                            color: var(--ardoise-10);
+                            font-size: .75rem;
+                            font-weight: 300;
+                            padding: .25rem;
+                            position: absolute;
+                            right: .25rem;
+                            top: .25rem;
+                        }
+
                         .series-infos {
                             align-items: center;
                             bottom: 1rem;
