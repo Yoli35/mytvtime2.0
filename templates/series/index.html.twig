@@ -18,6 +18,7 @@
                         {% set series = episodesOfTheDay.0 %}
                         {% set date = series.date %}
                         <div class="calendar">
+                            <div class="count">{{ episodesOfTheDay|length }}</div>
                             <div class="day-of-week">{{ series.date|format_datetime(pattern: "EEEE") }}</div>
                             <div class="day-of-mouth">{{ series.date|date('j') }}</div>
                             <div class="month">{{ series.date|format_datetime(pattern: "MMMM") }}</div>
@@ -37,12 +38,14 @@
                         {% set date = "" %}
                         {% for series in seriesOfTheWeek %}
                             {% if date != series.date %}
-                                <h3>{{ series.date|format_date('relative_full')|capitalize }} ({{ seriesOfTheWeek|filter(s => s.date == series.date)|length }} ep.)</h3>
                                 {% set date = series.date %}
+{#                                <h3>{{ date|format_date('relative_full')|capitalize }} ({{ seriesOfTheWeek|filter(s => s.date == date)|length }} ep.)</h3>#}
+                                <div class="new-line"></div>
                                 <div class="calendar">
-                                    <div class="day-of-week">{{ series.date|format_datetime(pattern: "EEEE") }}</div>
-                                    <div class="day-of-mouth">{{ series.date|date('j') }}</div>
-                                    <div class="month">{{ series.date|format_datetime(pattern: "MMMM") }}</div>
+                                    <div class="count">{{ seriesOfTheWeek|filter(s => s.date == date)|length }}</div>
+                                    <div class="day-of-week">{{ date|format_datetime(pattern: "EEEE") }}</div>
+                                    <div class="day-of-mouth">{{ date|date('j') }}</div>
+                                    <div class="month">{{ date|format_datetime(pattern: "MMMM") }}</div>
                                 </div>
                             {% endif %}
                             {{ include('_blocks/series/_card.html.twig') }}

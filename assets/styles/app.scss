@@ -46,9 +46,7 @@ a {
 
 body {
     align-items: center;
-    background: var(--mtt-body-bg);
-    background-image: var(--bg);
-    background-attachment: fixed;
+    background: hsl(202, var(--saturation), var(--percent-95)) var(--bg-gradient) fixed;
     color: var(--mtt-body-color);
     display: flex;
     flex-direction: column;

@@ -32,6 +32,11 @@ h2 {
         margin-block-start: 2rem;
     }
 
+    .new-line {
+        height: .5rem;
+        width: 100%;
+    }
+
     .calendar {
         align-items: center;
         background-color: var(--green-70);
@@ -41,23 +46,37 @@ h2 {
         flex-direction: column;
         height: 18rem;
         justify-content: center;
+        position: relative;
         width: 10rem;
+
+        .count {
+            color: var(--green-60);
+            font-size: 18rem;
+            font-weight: 600;
+            inset: -.5rem 0 0 -.5rem;
+            line-height: 1em;
+            opacity: .5;
+            position: absolute;
+        }
 
         .day-of-mouth {
             font-size: 8rem;
             line-height: 1.1em;
+            z-index: 1;
         }
 
         .day-of-week {
             color: var(--grey-10);
             font-size: 2rem;
             line-height: 1.1em;
+            z-index: 1;
         }
 
         .month {
             color: var(--grey-10);
             font-size: 1.5rem;
             line-height: 1.1em;
+            z-index: 1;
         }
     }
 }
