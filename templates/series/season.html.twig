@@ -104,12 +104,18 @@
             <div class="quick-episodes">
                 {% for episode in season.episodes %}
                     {% set ue = episode.user_episode %}
-                    {% if episode.air_date and episode.air_date <= now %}
-                        <div class="quick-episode{% if ue and ue.watch_at %} watched{% endif %}" data-number="{{ episode.episode_number }}" data-title="{{ episode.air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
-                            {{ episode.episode_number }}
-                        </div>
+                    {% if episode.air_date %}
+                        {% if episode.air_date <= now %}
+                            <div class="quick-episode{% if ue and ue.watch_at %} watched{% endif %}" data-number="{{ episode.episode_number }}" data-title="{{ episode.air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
+                                {{ episode.episode_number }}
+                            </div>
+                        {% else %}
+                            <div class="future-episode" data-title="{{ episode.air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
+                                {{ episode.episode_number }}
+                            </div>
+                        {% endif %}
                     {% else %}
-                        <div class="future-episode" data-title="{{ episode.air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
+                        <div class="future-episode" data-title="{{ 'No date'|trans }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
                             {{ episode.episode_number }}
                         </div>
                     {% endif %}
