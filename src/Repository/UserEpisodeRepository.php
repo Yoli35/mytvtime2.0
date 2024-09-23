@@ -202,6 +202,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
     {
         $userId = $user->getId();
         $sql = "SELECT s.id                            as id,
+                       CURDATE()                       as date,
                        s.name                          as name,
                        s.slug                          as slug,
                        sln.name                        as localizedName,

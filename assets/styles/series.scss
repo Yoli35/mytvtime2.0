@@ -28,6 +28,10 @@ h2 {
 .series-index {
     margin-block-start: 3rem;
 
+    h2 {
+        margin-block-start: 2rem;
+    }
+
     .calendar {
         align-items: center;
         background-color: var(--green-70);

@@ -10,37 +10,20 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid series-index">
-        {% if seriesOfTheDay|length %}
-            <h2>{{ 'Series of the day'|trans }}</h2>
-            <div class="series-group user">
-                <div class="wrapper">
-                    <div class="content">
-                        {% for series in seriesOfTheDay %}
-                            {{ include('_blocks/series/_card.html.twig') }}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        {% endif %}
         {% if episodesOfTheDay|length %}
-            <h2>{{ 'Episodes of the day'|trans }}</h2>
+            <h2>{{ 'Episodes of the day'|trans }} ({{ episodesOfTheDay|length }})</h2>
             <div class="series-group user">
                 <div class="wrapper">
                     <div class="content">
+                        {% set series = episodesOfTheDay.0 %}
+                        {% set date = series.date %}
+                        <div class="calendar">
+                            <div class="day-of-week">{{ series.date|format_datetime(pattern: "EEEE") }}</div>
+                            <div class="day-of-mouth">{{ series.date|date('j') }}</div>
+                            <div class="month">{{ series.date|format_datetime(pattern: "MMMM") }}</div>
+                        </div>
                         {% for series in episodesOfTheDay %}
                             {{ include('_blocks/series/_card.html.twig') }}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-        {% if seriesToStart|length %}
-            <h2>{{ 'Series to start'|trans }}</h2>
-            <div class="series-group user">
-                <div class="wrapper">
-                    <div class="content">
-                        {% for series in seriesToStart %}
-                            {{ include('_blocks/series/_card2Start.html.twig') }}
                         {% endfor %}
                     </div>
                 </div>
@@ -68,10 +51,22 @@
                 </div>
             </div>
         {% endif %}
+        {% if seriesToStart|length %}
+            <h2>{{ 'Series to start'|trans }}</h2>
+            <div class="series-group user">
+                <div class="wrapper">
+                    <div class="content center">
+                        {% for series in seriesToStart %}
+                            {{ include('_blocks/series/_card2Start.html.twig') }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
         <h2>{{ 'Series airing this week'|trans }} ({{ seriesList|length }})</h2>
         <div class="series-group user">
             <div class="wrapper">
-                <div class="content">
+                <div class="content center">
                     {% for series in seriesList %}
                         {{ include('_blocks/series/_card.html.twig') }}
                     {% endfor %}
@@ -81,7 +76,7 @@
         <h2>{{ 'Episode history (%d)'|trans|format(14) }} ({{ episodeHistory|length }})</h2>
         <div class="series-group user">
             <div class="wrapper">
-                <div class="content">
+                <div class="content center">
                     {% for series in episodeHistory %}
                         {{ include('_blocks/series/_episode-card.html.twig') }}
                     {% endfor %}

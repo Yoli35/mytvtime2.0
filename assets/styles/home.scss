@@ -456,11 +456,15 @@
 
         .content {
             display: flex;
-            gap: .25rem; /*1vh;*/
+            gap: .25rem;
             flex-shrink: 0;
             justify-content: flex-start;
             margin: 0 auto;
             padding-block: 1rem;
+
+            &.center {
+                width: round(down, 100%, 10.25rem); /* 10rem (card) + 0.25rem (gap) */
+            }
 
             h3 {
                 background-color: var(--orange-40);
