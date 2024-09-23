@@ -135,22 +135,6 @@ class SeriesController extends AbstractController
         // Historique des épisodes vus pendant les 2 semaines passées
         $episodeHistory = $this->getEpisodeHistory($user, 14, $country, $language);
 
-        $seriesOfTheDay = array_map(function ($us) {
-            $this->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-            return [
-                'series_of_the_day' => true,
-                'id' => $us['id'],
-                'name' => $us['name'],
-                'slug' => $us['slug'],
-                'status' => $us['status'],
-                'released' => $us['released'],
-                'localized_name' => $us['localized_name'],
-                'localized_slug' => $us['localized_slug'],
-                'poster_path' => $us['poster_path'] ? '/series/posters' . $us['poster_path'] : null,
-                'progress' => $us['progress'],
-            ];
-        }, $this->userSeriesRepository->getUserSeriesOfTheDay($user, $country, $locale));
-
         $episodesOfTheDay = array_map(function ($ue) {
             $this->saveImage("posters", $ue['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             if ($ue['airAt']) {
@@ -165,6 +149,7 @@ class SeriesController extends AbstractController
             return [
                 'episode_of_the_day' => true,
                 'id' => $ue['id'],
+                'date' => $ue['date'],
                 'name' => $ue['name'],
                 'slug' => $ue['slug'],
                 'status' => $ue['status'],
@@ -221,7 +206,6 @@ class SeriesController extends AbstractController
 //        ]);
 
         return $this->render('series/index.html.twig', [
-            'seriesOfTheDay' => $seriesOfTheDay,
             'episodesOfTheDay' => $episodesOfTheDay,
             'seriesOfTheWeek' => $seriesOfTheWeek,
             'episodeHistory' => $episodeHistory,
@@ -1620,7 +1604,20 @@ class SeriesController extends AbstractController
         $seasonEpisodeCount = 0;
         foreach ($tv['seasons'] as $season) {
             if ($season['season_number'] > 0) {
-                $seasonEpisodeCount += $season['episode_count'];
+                // Si la série n'a plus d'épisode à venir, on compte les épisodes
+                // (nombre d'épisodes égal à 1 signifie que la saison est à venir, juste annoncée)
+                // de la saison qui ont une date de diffusion.
+                // Sinon, on se fie au nombre d'épisodes de la saison fourni par l'API
+                if (!$tv['next_episode_to_air']) {
+                    $s = json_decode($this->tmdbService->getTvSeason($tv['id'], $season['season_number'], 'fr-FR'), true);
+                    $episodeCount = 0;
+                    foreach ($s['episodes'] as $episode) {
+                        if ($episode['air_date']) $episodeCount++;
+                    }
+                    $seasonEpisodeCount += $episodeCount;
+                } else {
+                    $seasonEpisodeCount += $season['episode_count'];
+                }
             }
         }
         return $seasonEpisodeCount;
@@ -1951,11 +1948,15 @@ class SeriesController extends AbstractController
     {
         $user = $userSeries->getUser();
         $series = $userSeries->getSeries();
+        $next_episode_to_air = $series->getNextEpisodeAirDate();
         $slugger = new AsciiSlugger();
         $seasonEpisodes = [];
         $userEpisodes = $this->userEpisodeRepository->getUserEpisodes($user->getId(), $userSeries->getId(), $season['season_number'], $user->getPreferredLanguage() ?? 'fr');
 
         foreach ($season['episodes'] as $episode) {
+            if (!$next_episode_to_air && !$episode['air_date']) {
+                continue;
+            }
             $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
             $episode['air_date'] = ($episode['air_date'] ? $this->offsetDate($episode['air_date'], $dayOffset, $user->getTimezone() ?? 'Europe/Paris') : null);
             $episode['crew'] = array_map(function ($crew) use ($slugger, $user) {
