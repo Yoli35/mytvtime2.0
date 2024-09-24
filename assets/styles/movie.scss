@@ -87,6 +87,17 @@
             }
         }
     }
+
+    label:has(select) {
+        select {
+            margin-inline-start: auto;
+            width: unset;
+        }
+
+        &::after {
+            top: 20%;
+        }
+    }
 }
 
 .movie-show {

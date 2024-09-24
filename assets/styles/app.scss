@@ -79,7 +79,7 @@ body {
 
     h1, h2, h3, h4, h5, h6 {
         font-weight: 300;
-        line-height: 1.5;
+        line-height: 1.25;
         text-wrap: balance;
     }
 }
@@ -361,8 +361,8 @@ label:has(input[type="text"]) {
         }
 
         &#history-menu {
-             position: unset;
-         }
+            position: unset;
+        }
 
         &#history-menu[open] {
             ul#history-list {
@@ -456,7 +456,7 @@ label:has(input[type="text"]) {
                             }
                         }
 
-                        .name{
+                        .name {
                             flex-grow: 1;
                             overflow: hidden;
                             text-overflow: ellipsis;
