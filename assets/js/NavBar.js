@@ -14,9 +14,9 @@ export class NavBar {
 
     init() {
         const body = document.querySelector("body");
-        this.debugDiv = document.createElement("div");
-        this.debugDiv.classList.add("debug");
-        body.appendChild(this.debugDiv);
+        // this.debugDiv = document.createElement("div");
+        // this.debugDiv.classList.add("debug");
+        // body.appendChild(this.debugDiv);
 
         this.setOpacity();
         window.addEventListener("scroll", this.setOpacity);
@@ -40,7 +40,7 @@ export class NavBar {
 
     setOpacity() {
         const opacity = this.mapScroll(window.scrollY);
-        this.debugDiv.textContent = opacity.toFixed(2).toString() + " / " + window.scrollY.toFixed(2);
+        // this.debugDiv.textContent = opacity.toFixed(2).toString() + " / " + window.scrollY.toFixed(2);
         this.root.style.setProperty("--navbar-opacity", opacity.toString());
     }
 
