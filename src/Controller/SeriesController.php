@@ -161,6 +161,8 @@ class SeriesController extends AbstractController
                 'favorite' => $ue['favorite'],
                 'episode_number' => $ue['episodeNumber'],
                 'season_number' => $ue['seasonNumber'],
+                'upToDate' => $ue['watched_aired_episode_count'] == $ue['aired_episode_count'],
+                'remainingEpisodes' => $ue['aired_episode_count'] - $ue['watched_aired_episode_count'],
                 'watch_at' => $ue['watchAt'],
                 'air_at' => $ue['airAt'],
             ];
@@ -605,7 +607,7 @@ class SeriesController extends AbstractController
 
         $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
 
-        $schedules = $this->seriesSchedules($series);
+        $schedules = $this->seriesSchedules($user, $series);
         $seriesArr = $series->toArray();
         $nead = $seriesArr['nextEpisodeAirDate'];
         $seriesArr['nextEpisodeAirDate'] = $nead ? $nead->modify($dayOffset . ' days') : null;
@@ -636,6 +638,9 @@ class SeriesController extends AbstractController
             'minute' => $this->translator->trans('minute'),
             'seconds' => $this->translator->trans('seconds'),
             'second' => $this->translator->trans('second'),
+            'Now' => $this->translator->trans('Now'),
+            'Ended' => $this->translator->trans('Ended'),
+            'Waiting for the next episode' => $this->translator->trans('Waiting for the next episode'),
         ];
 
 //        dump([
@@ -644,6 +649,7 @@ class SeriesController extends AbstractController
 //            'dayOffset' => $dayOffset,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
+//            'schedules' => $schedules,
 //        ]);
         return $this->render('series/show.html.twig', [
             'series' => $seriesArr,
@@ -797,13 +803,13 @@ class SeriesController extends AbstractController
 
         $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
-        dump([
+//        dump([
 //            'series' => $series,
 //            'season' => $season,
 //            'userSeries' => $userSeries,
-            'providers' => $providers,
+//            'providers' => $providers,
 //            'devices' => $devices,
-        ]);
+//        ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
@@ -1033,8 +1039,8 @@ class SeriesController extends AbstractController
                 $lastEpisodeNumberOfPreviousSeason = $tv['seasons'][$seasonNumber - 2]['episode_count'] ?? 0;
                 $previousEpisode = $lastEpisodeNumberOfPreviousSeason > 0 ? $this->userEpisodeRepository->findOneBy(['user' => $user, 'userSeries' => $userSeries, 'seasonNumber' => $seasonNumber - 1, 'episodeNumber' => $lastEpisodeNumberOfPreviousSeason]) : null;
                 if ($previousEpisode) {
-                   if (!$episodeProviderId) $userEpisode->setProviderId($previousEpisode->getProviderId());
-                   if (!$episodeDeviceId) $userEpisode->setDeviceId($previousEpisode->getDeviceId());
+                    if (!$episodeProviderId) $userEpisode->setProviderId($previousEpisode->getProviderId());
+                    if (!$episodeDeviceId) $userEpisode->setDeviceId($previousEpisode->getDeviceId());
                 }
             }
         }
@@ -1623,7 +1629,7 @@ class SeriesController extends AbstractController
         return $seasonEpisodeCount;
     }
 
-    public function seriesSchedules(Series $series): array
+    public function seriesSchedules(User $user, Series $series): array
     {
         $schedules = [];
         foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
@@ -1635,7 +1641,6 @@ class SeriesController extends AbstractController
 
             $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
             $target = $series->getNextEpisodeAirDate()->setTimezone(new DateTimeZone('Europe/Paris'))->setTime($airAt->format('H'), $airAt->format('i'));
-            // $target to timestamp
             $timestamp = $target->getTimestamp();
 
             $firstAirDate = $firstAirDate->setTime($airAt->format('H'), $airAt->format('i'));
@@ -1644,6 +1649,7 @@ class SeriesController extends AbstractController
             $originalDate = str_replace(' ', 'T', $originalDate);
             $originalDate .= ($utc > 0 ? "+" : "-") . (abs($utc) < 10 ? '0' : '') . $utc . ':00';
 
+            $episode = $this->userEpisodeRepository->getNextEpisode($user, $series);
             $schedules[] = [
                 'country' => $country,
                 'firstAirDate' => $firstAirDate,
@@ -1653,6 +1659,7 @@ class SeriesController extends AbstractController
                 'target' => $target->format('Y-m-d H:i'),
                 'timestamp' => $timestamp,
                 'before' => $now->diff($target),
+                'episode' => $episode,
             ];
 
         }

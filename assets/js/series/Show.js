@@ -113,10 +113,16 @@ export class Show {
                 const secondes = s ? " " + s + " " + translations[s > 1 ? 'seconds' : 'second'] : "";
                 remainingText.innerHTML = days + hours + minutes + secondes;
 
+                // Si la date est dépassée de moins d'une heure, on arrête le compte à rebours
                 if (distance < 0) {
-                    clearInterval(interval);
-                    inText.innerHTML = "Now";
-                    remainingText.innerHTML = "";
+                    if (distance > -1000 * 60 * 60) {
+                        clearInterval(interval);
+                        inText.innerHTML = translations["Now"];
+                        remainingText.innerHTML = "";
+                    } else {
+                        inText.innerHTML = translations["Waiting for the next episode"];
+                        remainingText.innerHTML = "";
+                    }
                 }
             }, 1000);
         }

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Series;
 use App\Entity\User;
 use App\Entity\UserEpisode;
 use App\Entity\UserSeries;
@@ -196,6 +197,24 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 LIMIT 1";
 
         return $this->getOne($sql);
+    }
+
+    public function getNextEpisode(User $user, Series $series): array
+    {
+        $userId = $user->getId();
+        $seriesId = $series->getId();
+        $sql = "SELECT ue.`season_number`, ue.`episode_number`, ue.`air_date`
+                FROM user_episode ue
+                INNER JOIN user_series us ON ue.`user_series_id` = us.`id`
+                INNER JOIN series s ON us.`series_id` = s.`id`
+                WHERE us.`user_id` = $userId
+                  AND s.`id` = $seriesId
+                  AND ue.`season_number` > 0
+                  AND ue.`watch_at` IS NULL
+                ORDER BY  ue.`season_number`, ue.`episode_number`
+                LIMIT 1";
+
+        return $this->getAll($sql);
     }
 
     public function episodesOfTheDay(User $user, string $country = 'FR', string $locale = 'fr'): array
