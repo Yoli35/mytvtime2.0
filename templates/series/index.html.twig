@@ -17,10 +17,14 @@
                     <div class="content">
                         {% set series = episodesOfTheDay.0 %}
                         {% set date = series.date %}
+                        {% set dayOfMonth = series.date|date('j') %}
+                        {% if dayOfMonth == "1" and app.locale == 'fr' %}
+                            {% set dayOfMonth = '1<sup>er</sup>' %}
+                        {% endif %}
                         <div class="calendar">
                             <div class="count">{{ episodesOfTheDay|length }}</div>
-                            <div class="day-of-week">{{ series.date|format_datetime(pattern: "EEEE") }}</div>
-                            <div class="day-of-mouth">{{ series.date|date('j') }}</div>
+                            <div class="day-of-week">{{ series.date|format_datetime(pattern: "EEEE")| capitalize }}</div>
+                            <div class="day-of-mouth">{{ dayOfMonth|raw }}</div>
                             <div class="month">{{ series.date|format_datetime(pattern: "MMMM") }}</div>
                         </div>
                         {% for series in episodesOfTheDay %}
@@ -39,12 +43,27 @@
                         {% for series in seriesOfTheWeek %}
                             {% if date != series.date %}
                                 {% set date = series.date %}
+                                {% set dayOfMonth = series.date|date('j') %}
+                                {% if dayOfMonth == "1" and app.locale == 'fr' %}
+                                    {% set dayOfMonth = '1<sup>er</sup>' %}
+                                {% endif %}
+                                {% if app.locale == 'en' %}
+                                    {% if dayOfMonth == 1 %}
+                                        {% set dayOfMonth = '1<sup>st</sup>' %}
+                                    {% elseif dayOfMonth == 2 %}
+                                        {% set dayOfMonth = '2<sup>nd</sup>' %}
+                                    {% elseif dayOfMonth == 3 %}
+                                        {% set dayOfMonth = '3<sup>rd</sup>' %}
+                                    {% else %}
+                                        {% set dayOfMonth = dayOfMonth ~ '<sup>th</sup>' %}
+                                    {% endif %}
+                                {% endif %}
 {#                                <h3>{{ date|format_date('relative_full')|capitalize }} ({{ seriesOfTheWeek|filter(s => s.date == date)|length }} ep.)</h3>#}
                                 <div class="new-line"></div>
                                 <div class="calendar">
                                     <div class="count">{{ seriesOfTheWeek|filter(s => s.date == date)|length }}</div>
-                                    <div class="day-of-week">{{ date|format_datetime(pattern: "EEEE") }}</div>
-                                    <div class="day-of-mouth">{{ date|date('j') }}</div>
+                                    <div class="day-of-week">{{ date|format_datetime(pattern: "EEEE")|capitalize }}</div>
+                                    <div class="day-of-mouth">{{ dayOfMonth|raw }}</div>
                                     <div class="month">{{ date|format_datetime(pattern: "MMMM") }}</div>
                                 </div>
                             {% endif %}

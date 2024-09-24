@@ -105,14 +105,18 @@ class UserSeriesRepository extends ServiceEntityRepository
     {
         $userId = $user->getId();
         $sql = "SELECT
-                    s.`id` as id, s.`name` as name, sln.`name` as localized_name, us.`progress` as progress,
+                    s.`id` as id,
+                    s.`name` as name,
+                    sln.`name` as localized_name,
+                    us.`progress` as progress,
                     CASE 
                         WHEN sdo.offset IS NULL OR sdo.offset = 0 THEN ue.`air_date`
                         WHEN sdo.offset > 0 THEN DATE_ADD(ue.`air_date`, INTERVAL sdo.offset DAY)
                         ELSE DATE_SUB(ue.`air_date`, INTERVAL ABS(sdo.offset) DAY)
                     END as air_date,
                     ue.`air_date` as original_air_date,
-                    ue.`season_number` as season_number, ue.`episode_number` as episode_number,
+                    ue.`season_number` as season_number,
+                    ue.`episode_number` as episode_number,
                     ue.watch_at as watch_at,
                     sdo.offset as day_offset,
                     us.`last_episode` as last_episode, us.`last_season` as last_season,
@@ -126,6 +130,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale'
                 WHERE us.`user_id`=$userId
+                    AND  ue.`season_number` > 0
                     AND (
                         ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.`air_date` > CURDATE() AND ue.`air_date` <= ADDDATE(CURDATE(), INTERVAL 7 DAY))
                      OR ((sdo.offset > 0) AND ue.`air_date` > DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY) AND ue.`air_date` <= SUBDATE(ADDDATE(CURDATE(), INTERVAL 7 DAY), INTERVAL sdo.offset DAY))

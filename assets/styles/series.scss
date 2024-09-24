@@ -40,23 +40,29 @@ h2 {
     .calendar {
         align-items: center;
         background-color: var(--green-70);
-        border-radius: .5rem;
+        border-radius: .25rem;
         color: var(--orange-50);
         display: flex;
         flex-direction: column;
         height: 18rem;
         justify-content: center;
+        overflow: hidden;
         position: relative;
         width: 10rem;
 
         .count {
-            color: var(--green-60);
+            color: var(--orange-60);
             font-size: 18rem;
             font-weight: 600;
-            inset: -.5rem 0 0 -.5rem;
-            line-height: 1em;
-            opacity: .5;
+            left: 50%;
+            opacity: .25;
             position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+
+            sup {
+                font-size: 1rem !important;
+            }
         }
 
         .day-of-mouth {
