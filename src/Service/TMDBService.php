@@ -550,4 +550,9 @@ class TMDBService
             return "";
         }
     }
+
+    public function getBearer()
+    {
+        return $_ENV['TMDB_BEARER'];
+    }
 }

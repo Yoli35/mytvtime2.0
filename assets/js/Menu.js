@@ -112,7 +112,7 @@ export class Menu {
     }
 
     init() {
-        this.getImageConfig();
+        this.getTMDBConfig();
         const burger = document.querySelector(".burger");
         const navbar = document.querySelector(".navbar");
         const mainMenu = navbar.querySelector(".menu");
@@ -428,7 +428,7 @@ export class Menu {
                     method: 'GET',
                     headers: {
                         accept: 'application/json',
-                        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmN2UzYzVmZTc5NGQ1NjViNDcxMzM0YzljNWVjYWY5NiIsIm5iZiI6MTcyMDYxMDA2Ni4zMzk0NzgsInN1YiI6IjYyMDJiZjg2ZTM4YmQ4MDA5MWVjOWIzOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.D5XVKmPsIrUKnZjQBXOhsKXzXtrejlHl8KT1dmZ2oyQ'
+                        Authorization: 'Bearer ' + gThis.bearer
                     }
                 };
 
@@ -602,8 +602,8 @@ export class Menu {
         }
     }
 
-    getImageConfig() {
-        fetch('/' + gThis.lang + '/movie/image/config', {
+    getTMDBConfig() {
+        fetch('/' + gThis.lang + '/movie/tmdb/config', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -618,6 +618,7 @@ export class Menu {
             .then(data => {
                 gThis.posterUrl = data.body.poster_url;
                 gThis.profileUrl = data.body.profile_url;
+                gThis.bearer = data.body.bearer;
             })
             .catch((error) => {
                 console.error('Error:', error);

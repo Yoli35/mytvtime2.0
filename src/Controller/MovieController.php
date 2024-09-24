@@ -435,14 +435,15 @@ class MovieController extends AbstractController
         ]);
     }
 
-    #[Route('/image/config', name: 'image_config')]
-    public function getImageConfig(): Response
+    #[Route('/tmdb/config', name: 'tmdb_config')]
+    public function getTMDBConfig(): Response
     {
         return $this->json([
             'ok' => true,
             'body' => [
                 'poster_url' => $this->imageConfiguration->getUrl('poster_sizes', 0),
                 'profile_url' => $this->imageConfiguration->getUrl('profile_sizes', 0),
+                'bearer' => $this->tmdbService->getBearer(),
             ],
         ]);
     }
