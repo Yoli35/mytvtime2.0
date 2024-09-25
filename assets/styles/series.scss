@@ -1219,6 +1219,7 @@ h2 {
                     font-weight: 300;
                     padding-block: 0.25rem;
                     padding-inline: 1rem;
+                    text-wrap: balance;
 
                     &.watched {
                         background-color: var(--user-episode-actions);
