@@ -185,7 +185,7 @@ body:has(details[open]) {
     --tooltips-bg: var(--ardoise-90);
     --tooltips-color: var(--ardoise-20);
     --notification-color: var(--ardoise-10);
-    --notification-validated: var(--ardoise-40);
+    --notification-validated: var(--ardoise-25);
 }
 
 .debug {
@@ -747,7 +747,7 @@ label:has(input[type="text"]) {
             overflow-y: auto;
             position: absolute;
             right: 0;
-            top: 2rem;
+            top: 2.625rem;
 
             &.show {
                 display: flex;
@@ -800,11 +800,12 @@ label:has(input[type="text"]) {
 
     .avatar {
         margin-inline-start: auto;
+        z-index: 11;
 
         img {
-            border: 1px solid;
+            border: 2px solid;
             border-radius: 50%;
-            height: 1.5rem;
+            height: 4rem;
         }
 
         &.highlight {
