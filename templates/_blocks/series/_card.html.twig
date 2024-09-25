@@ -1,6 +1,16 @@
 {% if series.progress is defined %}
+    {% set upToDate = series.upToDate is defined and series.upToDate == 1 %}
     {% set start = series.progress==0 %}
     {% set ended = series.progress==100 %}
+    {% if  upToDate %}
+        {% if ended %}
+            {% set title = 'That\'s all, Folks!'|trans %}
+        {% else %}
+            {% set title = 'Up to date!'|trans %}
+        {% endif %}
+    {% endif %}
+{% else %}
+    {% set upToDate = 0 %}
 {% endif %}
 <div class="card">
     {% if series.tmdb is defined %}
@@ -53,6 +63,11 @@
                     <div class="episode-number" data-title="{{ 'Next episode'|trans }}">{{ 'S%02dE%02d'|format(series.next_episode_season_number, series.next_episode_episode_number) }}</div>
                 {% endif %}
             </div>
+            {% if upToDate %}
+                <div class="up-to-date-mask">
+                    <div class="up-to-date-banner{% if ended %} ended{% endif %}">{{ title }}</div>
+                </div>
+            {% endif %}
             {% if series.progress is defined %}
                 {% if series.status == "In Production" %}
                     <div class="status">{{ 'In production'|trans }}</div>
