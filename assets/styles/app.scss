@@ -296,7 +296,7 @@ label:has(input[type="text"]) {
     top: 1rem;
     transition: opacity .250ms;
     width: 100%;
-    z-index: 100;
+    z-index: 500;
 
     &:has(details[open]), &:has(.menu.open) {
         --navbar-opacity: 1;
