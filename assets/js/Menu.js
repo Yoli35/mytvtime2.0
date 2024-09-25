@@ -515,8 +515,10 @@ export class Menu {
                 } else {
                     // opacity: 0; & transform: translateX(-100%);
                     const historyList = historyMenu.querySelector("#history-list");
-                    historyList.style.opacity = 0;
                     historyList.style.transform = "translateX(-100%)";
+                    setTimeout(() => {
+                        historyList.style.opacity = "0";
+                    }, 150);
                     setTimeout(() => {
                         historyMenu.removeAttribute("open");
                         historyList.removeAttribute("style");

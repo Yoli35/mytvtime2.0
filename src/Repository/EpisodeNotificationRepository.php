@@ -32,24 +32,32 @@ class EpisodeNotificationRepository extends ServiceEntityRepository
         $this->em->flush();
     }
 
+    public function episodeNewNotificationCount(User $user): array
+    {
+        $sql = "SELECT COUNT(*) as count
+                FROM episode_notification en
+                    INNER JOIN user_episode_notification uen ON en.id = uen.episode_notification_id AND uen.user_id = :user_id
+                AND uen.validated_at IS NULL";
+
+        return $this->getAll($user, $sql);
+    }
+
     public function episodeNotificationCount(User $user): array
     {
-        $sql = "SELECT COUNT(*) as count "
-            . "FROM episode_notification en "
-            . "INNER JOIN user_episode_notification uen ON en.id = uen.episode_notification_id AND uen.user_id = :user_id "
-            . "AND uen.validated_at IS NULL";
+        $sql = "SELECT COUNT(*) as count
+            FROM episode_notification en
+                INNER JOIN user_episode_notification uen ON en.id = uen.episode_notification_id AND uen.user_id = :user_id";
 
         return $this->getAll($user, $sql);
     }
 
     public function episodeNotificationList(User $user): array
     {
-        $sql = "SELECT uen.id as id, en.message as message, en.create_at as created_at, uen.validated_at as validated_at "
-            . "FROM episode_notification en "
-            . "INNER JOIN user_episode_notification uen ON en.id = uen.episode_notification_id AND uen.user_id = :user_id "
-//            . "AND uen.validated_at IS NULL "
-            . "ORDER BY en.create_at DESC "
-            . "LIMIT 50";
+        $sql = "SELECT uen.id as id, en.message as message, en.create_at as created_at, uen.validated_at as validated_at
+                FROM episode_notification en 
+                    INNER JOIN user_episode_notification uen ON en.id = uen.episode_notification_id AND uen.user_id = :user_id
+                ORDER BY en.create_at DESC
+                LIMIT 50";
 
         return $this->getAll($user, $sql);
     }

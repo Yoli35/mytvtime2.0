@@ -19,6 +19,12 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
+    public function countNewEpisodeNotifications(User $user): int
+    {
+        $count = $this->episodeNotificationRepository->episodeNewNotificationCount($user);
+        return $count[0]['count'];
+    }
+
     public function countEpisodeNotifications(User $user): int
     {
         $count = $this->episodeNotificationRepository->episodeNotificationCount($user);
