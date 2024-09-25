@@ -1068,14 +1068,15 @@ section:has(.pages) {
     background-color: var(--navbar-bg);
     border-radius: .5rem;
     color: var(--ardoise-10);
+    font-weight: 300;
     gap: 1rem;
     margin-block-start: auto;
     padding-block: .5rem;
     width: 100%;
 
-    &.dark {
+    /*&.dark {
         color: hsl(202, 18%, 10%);
-    }
+    }*/
 
     .logo {
         align-items: center;
