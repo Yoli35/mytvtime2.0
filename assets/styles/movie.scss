@@ -237,7 +237,10 @@
                 background-color: var(--ardoise-90-alpha-50);
                 border-radius: .5rem;
                 color: var(--ardoise-10);
-                font-size: 1.25rem;
+                font-size: clamp(1rem, 1.5vw, 2rem);
+                font-weight: 300;
+                gap: .5rem;
+                line-height: clamp(1.25rem, 1.875vw, 2.5rem);
                 padding: 1rem;
             }
 
@@ -350,6 +353,7 @@
 
         .details {
             display: flex;
+            flex-direction: column-reverse;
             gap: 1rem;
         }
 
@@ -933,7 +937,7 @@
     }
 }
 
-@media (width < 920px) {
+@media (width < 1024px) {
     .movie-show {
         main {
             .movie-collection {
@@ -959,7 +963,6 @@
     .movie-show {
         main {
             .details {
-                flex-direction: column-reverse;
 
                 .movie-details {
                     > div {
@@ -973,7 +976,8 @@
     }
 }
 
-@media (orientation: portrait) {
+@media (width < 1024px) {
+    @media (orientation: portrait) {
     .movie-show {
         padding-block-start: 5rem;
 
@@ -1009,4 +1013,5 @@
             }
         }
     }
+}
 }
