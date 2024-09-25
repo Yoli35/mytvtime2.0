@@ -127,6 +127,7 @@ export class Menu {
         const personSearch = navbar.querySelector("#person-search");
 
         const historyMenu = navbar.querySelector("#history-menu");
+        const historySummary = historyMenu.querySelector("summary");
 
         burger.addEventListener("click", () => {
             burger.classList.toggle("open");
@@ -481,9 +482,12 @@ export class Menu {
         personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
         if (historyMenu) {
-            const historyList = navbar.querySelector("#history-list");
+            const historyList = historyMenu.querySelector("#history-list");
             const historyOptions = historyList?.querySelector("#history-options").querySelectorAll("input");
-            historyMenu.addEventListener("click", (e) => {
+            historyOptions.forEach((historyOption) => {
+                historyOption.addEventListener("change", this.reloadHistory);
+            });
+            historySummary.addEventListener("click", (e) => {
                 const open = historyMenu.getAttribute("open");
                 if (open === null) {
                     const firstItem = historyList.querySelector("li.history-item");
@@ -513,20 +517,14 @@ export class Menu {
                             loadingLi.remove();
                         });
                 } else {
-                    // opacity: 0; & transform: translateX(-100%);
-                    const historyList = historyMenu.querySelector("#history-list");
+                    e.preventDefault();
                     historyList.style.transform = "translateX(-100%)";
-                    setTimeout(() => {
-                        historyList.style.opacity = "0";
-                    }, 150);
+                    historyList.style.opacity = "0";
                     setTimeout(() => {
                         historyMenu.removeAttribute("open");
                         historyList.removeAttribute("style");
                     }, 300);
                 }
-            });
-            historyOptions.forEach((historyOption) => {
-                historyOption.addEventListener("change", this.reloadHistory);
             });
         }
 
@@ -739,6 +737,8 @@ export class Menu {
     }
 
     reloadHistory(e) {
+        e.stopPropagation();
+
         const historyList = document.querySelector("#history-list");
         const historyOptions = historyList.querySelector("#history-options").querySelectorAll("input");
         const historyOption = e.currentTarget;
