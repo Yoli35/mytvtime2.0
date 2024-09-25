@@ -28,6 +28,9 @@ return [
     'HighlightSeries' => [
         'path' => './assets/js/home/HighlightSeries.js',
     ],
+    'Index' => [
+        'path' => './assets/js/series/Index.js',
+    ],
     'Keyword' => [
         'path' => './assets/js/Keyword.js',
     ],

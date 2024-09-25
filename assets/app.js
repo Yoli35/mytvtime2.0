@@ -3,6 +3,7 @@ import './bootstrap.js';
 import {AverageColor} from 'AverageColor';
 import {DayCountHistory} from 'DayCountHistory';
 import {HighlightSeries} from 'HighlightSeries';
+import {Index} from 'Index';
 import {Menu} from 'Menu';
 import {Movie} from 'Movie';
 import {NavBar} from 'NavBar';
@@ -131,6 +132,10 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
 // Series & season page
+    const seriesIndex = document.querySelector(".series-index");
+    if (seriesIndex) {
+        new Index();
+    }
     const seriesShow = document.querySelector(".series-show");
     if (seriesShow) {
         // const navbar = document.querySelector(".navbar");
