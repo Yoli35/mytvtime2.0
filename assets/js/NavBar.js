@@ -52,9 +52,9 @@ export class NavBar {
 
         let scroll = 1;
         if (amount > start && amount < end) {
-            scroll = 1 - .8 *  Math.pow((amount - start) / interval, 3);
+            scroll = 1 - .9 *  Math.pow((amount - start) / interval, 3);
         } else if (amount >= end) {
-            scroll = .2;
+            scroll = .1;
         }
         return scroll;
     }
