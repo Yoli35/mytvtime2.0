@@ -102,7 +102,6 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
             ];
         }, $seriesArr);
 
-//        $results = array_values($results);
         usort($results, function ($a, $b) {
             return $a['airAt'] <=> $b['airAt'];
         });
