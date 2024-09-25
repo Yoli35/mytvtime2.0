@@ -86,23 +86,30 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
             $totalEpisodeCount += count($item['episodes']);
         }
 
+        $results = array_map(function ($item) {
+            return [
+                'display' => $item['display'],
+                'airAt' => $item['airAt'],
+                'episodeCount' => $item['episodeCount'],
+                'episodesWatched' => $item['episodesWatched'],
+                'firstEpisodeNumber' => $item['firstEpisodeNumber'],
+                'id' => $item['id'],
+                'name' => $item['displayName'],
+                'posterPath' => $item['posterPath'],
+                'progress' => 100 * $item['episodesWatched'] / $item['episodeCount'],
+                'seasonNumber' => $item['seasonNumber'],
+                'slug' => $item['localizedSlug'] ?? $item['slug'],
+            ];
+        }, $seriesArr);
+
+//        $results = array_values($results);
+        usort($results, function ($a, $b) {
+            return $a['airAt'] <=> $b['airAt'];
+        });
+
         return [
             'totalEpisodeCount' => $totalEpisodeCount,
-            'results' => array_map(function ($item) {
-                return [
-                    'display' => $item['display'],
-                    'airAt' => $item['airAt'],
-                    'episodeCount' => $item['episodeCount'],
-                    'episodesWatched' => $item['episodesWatched'],
-                    'firstEpisodeNumber' => $item['firstEpisodeNumber'],
-                    'id' => $item['id'],
-                    'name' => $item['displayName'],
-                    'posterPath' => $item['posterPath'],
-                    'progress' => 100 * $item['episodesWatched'] / $item['episodeCount'],
-                    'seasonNumber' => $item['seasonNumber'],
-                    'slug' => $item['localizedSlug'] ?? $item['slug'],
-                ];
-            }, $seriesArr),
+            'results' => $results,
         ];
     }
 
