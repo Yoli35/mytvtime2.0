@@ -31,21 +31,19 @@
                     {% endif %}
                 </div>
                 <div class="infos">
-                    {% if season.localized_name %}
-                        <h1>{{ season.localized_name.name }} ({{ series.firstAirDate|date("Y") }})</h1>
-                    {% else %}
-                        <h1>{{ series.name }} ({{ series.firstAirDate|date("Y") }})</h1>
-                    {% endif %}
+                    <div class="name">
+                        <h1>
+                            {% if season.localized_name %}
+                                <span class="localized-name-span">{{ season.localized_name.name }}</span>
+                            {% endif %}
+                            <span class="name-span">{{ series.name }} ({{ series.firstAirDate|date("Y") }})</span>
+                        </h1>
+                    </div>
                     <h2>{{ season.name }}{% if season.season_number > 1 %} ({{ season.air_date|date("Y") }}){% endif %}</h2>
                     {% if season['series_overview'] %}
                         <h4 class="localized-h4">{{ 'Overview for the series'|trans }}</h4>
                     {% endif %}
-                    <div class="overview">{{ season.overview }}</div>
-                    {% if season.deepl %}
-                        {% if season.deepl.localized %}
-                            <div class="overview deepl">{{ season.deepl.localizedOverview|raw }}</div>
-                        {% endif %}
-                    {% endif %}
+                    <div class="series-overview">{{ season.overview }}</div>
                     {% if season.localized_overviews|length %}
                         <h4 class="localized-h4">{{ 'Localized overviews for the series'|trans }}</h4>
                         <div class="localized overviews">
@@ -60,6 +58,12 @@
                                 </div>
                             {% endfor %}
                         </div>
+                    {% else %}
+                        {% if season.deepl %}
+                            {% if season.deepl.localized %}
+                                <div class="series-overview deepl">{{ season.deepl.localizedOverview|raw }}</div>
+                            {% endif %}
+                        {% endif %}
                     {% endif %}
                     {% if season.additional_overviews|length %}
                         <h4 class="additional-h4">{{ 'Additional overviews for the series'|trans }}</h4>
