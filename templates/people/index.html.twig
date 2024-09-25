@@ -12,57 +12,21 @@
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid people-index filter-page">
         <aside>
-            <article>
-                {% set start = max(1, people.page - 2) %}
-                {% set end = min(500, max(people.page + 2, start + 4)) %}
-                <div class="pages">
-                    {% if start > 1 %}
-                        {% for page in 1..min(start-1, 5) %}
-                            <a href="{{ path('app_people_index', {page: page}) }}">
-                                <button class="page{% if page==people.page %} active{% endif %}" value="{{ page }}">{{ page }}</button>
-                            </a>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="pages">
-                    {% for page in start..end %}
-                        <a href="{{ path('app_people_index', {page: page}) }}">
-                            <button class="page{% if page==people.page %} active{% endif %}" value="{{ page }}">{{ page }}</button>
-                        </a>
-                    {% endfor %}
-                </div>
-                <div class="pages">
-                    {% if end < 500 %}
-                        {% for page in max(end+1, 496)..500 %}
-                            <a href="{{ path('app_people_index', {page: page}) }}">
-                                <button class="page{% if page==people.page %} active{% endif %}" value="{{ page }}">{{ page }}</button>
-                            </a>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="pages">
-                    <form action="{{ path('app_people_index') }}" method="get">
-                        <label for="page">{{ 'Go to page'|trans }}
-                        <input type="number" name="page" value="{{ people.page }}" min="1" max="500" autofocus>
-                        </label>
-                        <button type="submit" class="page">{{ 'Go'|trans }}</button>
-                    </form>
-                </div>
-            </article>
+            {{ include('_blocks/_pagination.html.twig', {index: 1, current_page: people.page, total_pages: people.total_pages}) }}
         </aside>
         <main>
             <div class="person-list">
                 {% for p in people.results %}
                     <div class="person-card">
+                        <a href="{{ path('app_people_show', {id: p.id, slug: p.slug}) }}">
                         <div class="profile">
-                            <a href="{{ path('app_people_show', {id: p.id, slug: p.slug}) }}">
                                 {% if p.profile_path %}
                                     <img src="{{ p.profile_path }}" alt="{{ p.name }}">
                                 {% else %}
                                     {{ 'No profile'|trans }}
                                 {% endif %}
-                            </a>
                         </div>
+                        </a>
                         <div class="infos">
                             <h4>{{ p.name }}</h4>
                         </div>
@@ -105,6 +69,9 @@
                 {% endfor %}
             </div>
         </main>
+        <aside>
+            {{ include('_blocks/_pagination.html.twig', {index: 2, current_page: people.page, total_pages: people.total_pages}) }}
+        </aside>
         {% include('_blocks/_footer.html.twig') %}
     </div>
 {% endblock %}

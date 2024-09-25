@@ -322,6 +322,7 @@ class MovieController extends AbstractController
         foreach ($data as $filter) {
             $filters[$filter['key']] = $filter['value'];
         }
+
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'my movies']);
         $settings->setData($filters);
         $this->settingsRepository->save($settings, true);
@@ -336,12 +337,17 @@ class MovieController extends AbstractController
         }, $this->movieRepository->getMovieCards($user, $filters));
 
         $userMovieCount = $this->movieRepository->countMovieCards($user, $filters);
+        $totalPages = ceil($userMovieCount / $filters['perPage']);
+
+        $paginations[0] = $this->getPagination(1,$filters['page'],$totalPages,'app_movie_index',$request->getLocale());
+        $paginations[1] = $this->getPagination(2,$filters['page'],$totalPages,'app_movie_index',$request->getLocale());
 
 //        dump([
 //            'userMovies' => $userMovies,
 //            'userMovieCount' => $userMovieCount,
-//            'pages' => ceil($userMovieCount / $filters['perPage']),
+//            'total_pages' => $totalPages,
 //            'filters' => $filters,
+//            'paginations' => $paginations,
 //        ]);
 
         return $this->json([
@@ -349,8 +355,9 @@ class MovieController extends AbstractController
             'body' => [
                 'userMovies' => $userMovies,
                 'userMovieCount' => $userMovieCount,
-                'pages' => ceil($userMovieCount / $filters['perPage']),
+                'pages' => $totalPages,
                 'filters' => $filters,
+                'paginationSections' => $paginations,
             ],
         ]);
     }
@@ -445,6 +452,17 @@ class MovieController extends AbstractController
                 'profile_url' => $this->imageConfiguration->getUrl('profile_sizes', 0),
                 'bearer' => $this->tmdbService->getBearer(),
             ],
+        ]);
+    }
+
+    function getPagination(int $index, int $page, int $totalPages, string $route, string $locale): string
+    {
+        return $this->renderView('_blocks/_pagination.html.twig', [
+            'index' => $index,
+            'current_page' => $page,
+            'total_pages' => $totalPages,
+            'route' => $route,
+            '_locale' => $locale,
         ]);
     }
 

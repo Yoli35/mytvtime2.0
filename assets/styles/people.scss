@@ -1,31 +1,4 @@
 .people-index {
-    aside {
-        .pages {
-            form {
-                align-items: center;
-                display: flex;
-                gap: 1rem;
-
-                label {
-                    display: flex;
-                    align-items: center;
-                    gap: 1rem;
-
-                    input {
-                        appearance: none;
-                        background-color: var(--orange-50);
-                        border: 1px solid var(--orange-90);
-                        border-radius: .25rem;
-                        color: var(--orange-90);
-                        padding-block: 3px;
-                        padding-inline-start: .5rem;
-
-                    }
-                }
-            }
-        }
-    }
-
     main {
         .person-list {
             display: flex;
@@ -48,15 +21,11 @@
                     height: 100%;
                     width: 15rem;
 
-                    a {
+                    img {
+                        aspect-ratio: 78 / 117;
+                        border-radius: .5rem 0 0 .5rem;
                         height: 100%;
-
-                        img {
-                            aspect-ratio: 78 / 117;
-                            border-radius: .5rem 0 0 .5rem;
-                            height: 100%;
-                            object-fit: cover;
-                        }
+                        object-fit: cover;
                     }
                 }
 

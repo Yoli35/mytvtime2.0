@@ -1012,10 +1012,51 @@ label:has(input[type="text"]) {
 
 }
 
-@media (max-width: 414px) {
-    .navbar {
-        .desktop {
-            display: none;
+section:has(.pages) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem;
+    justify-content: center;
+
+    .block:has(.pages) {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .25rem;
+        justify-content: center;
+
+        .pages {
+            background-color: var(--ardoise-60-alpha-50);
+            margin-block-start: unset;
+            padding: .25rem;
+
+            .page {
+                height: unset;
+            }
+        }
+    }
+}
+
+.pages:has(form) {
+    form {
+        align-items: center;
+        display: flex;
+        gap: 1rem;
+
+        label {
+            display: flex;
+            align-items: center;
+            font-weight: 300;
+            gap: 1rem;
+
+            input {
+                appearance: none;
+                background-color: var(--orange-50);
+                border: 1px solid var(--orange-90);
+                border-radius: .25rem;
+                color: var(--orange-90);
+                /*padding-block: 3px;*/
+                padding-inline-start: .5rem;
+            }
         }
     }
 }

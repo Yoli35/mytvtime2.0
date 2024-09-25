@@ -117,13 +117,7 @@
                     </div>
                 </div>
             </article>
-            <article>
-                <div class="pages">
-                    {% for page in 1..pages %}
-                        <button class="page{% if page==filters.page %} active{% endif %}" value="{{ page }}">{{ page }}</button>
-                    {% endfor %}
-                </div>
-            </article>
+            {{ include('_blocks/_pagination.html.twig', {index: 1, current_page: filters.page, total_pages: pages}) }}
         </aside>
         <main>
             <article>
@@ -137,6 +131,9 @@
                 </div>
             </article>
         </main>
+        <aside>
+            {{ include('_blocks/_pagination.html.twig', {index: 2, current_page: filters.page, total_pages: pages}) }}
+        </aside>
         {% include('_blocks/_footer.html.twig') %}
     </div>
     <div id="svgs" style="display: none">

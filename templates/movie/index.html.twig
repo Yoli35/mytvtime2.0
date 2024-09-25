@@ -63,28 +63,7 @@
                     </div>
                 </div>
             </article>
-            <article>
-                <header>
-                    <div class="title">{{ 'Pages'|trans }}</div>
-                    <div class="pagination">
-                        <button id="previous-page" class="page">{{ ux_icon('fa6-solid:arrow-left', {height: '16px', width: '16px'}) }}</button>
-                        <button id="current-page" class="page active">{{ filters.page }}</button>
-                        <button id="next-page" class="page">{{ ux_icon('fa6-solid:arrow-right', {height: '16px', width: '16px'}) }}</button>
-                    </div>
-                    <div class="collapse" data-for="pages" data-title="{{ 'Show / hide pages'|trans }}">
-                        {% if pageBoxOpen %}
-                            {{ ux_icon('ion:chevron-collapse', {height: '18px', width: '18px'}) }}
-                        {% else %}
-                            {{ ux_icon('ion:chevron-expand', {height: '18px', width: '18px'}) }}
-                        {% endif %}
-                    </div>
-                </header>
-                <div class="pages{% if pageBoxOpen == 0 %} collapse{% endif %}">
-                    {% for page in 1..pages %}
-                        <button class="page{% if page==filters.page %} active{% endif %}" value="{{ page }}">{{ page }}</button>
-                    {% endfor %}
-                </div>
-            </article>
+            {{ include('_blocks/_pagination.html.twig', {index: 1, current_page: filters.page, total_pages: pages}) }}
         </aside>
         <main>
             <article>
@@ -98,6 +77,9 @@
                 </div>
             </article>
         </main>
+        <aside>
+            {{ include('_blocks/_pagination.html.twig', {index: 2, current_page: filters.page, total_pages: pages}) }}
+        </aside>
 
         {% include('_blocks/_footer.html.twig') %}
     </div>
@@ -114,10 +96,7 @@
             const sortSelect = document.getElementById('sort-by');
             const orderSelect = document.getElementById('order-by');
             const perPage = document.getElementById('per-page');
-            const previousPage = document.getElementById('previous-page');
-            const nextPage = document.getElementById('next-page');
             const titleFilter = document.getElementById('title-filter');
-            const pages = document.querySelectorAll('.pages button');
 
             collapseBoxes.forEach(box => {
                 box.addEventListener('click', function () {
@@ -137,25 +116,6 @@
                         saveBoxSettings(forBox, true);
                     }
                 });
-            });
-
-            pages.forEach(page => {
-                page.addEventListener('click', function () {
-                    document.querySelector('#current-page').textContent = page.value;
-                    getMovies(getParams().concat({key: 'page', value: page.value}));
-                });
-            });
-            previousPage.addEventListener('click', function () {
-                const page = parseInt(document.querySelector('#current-page').textContent);
-                if (page > 1) {
-                    getPage(page - 1);
-                }
-            });
-            nextPage.addEventListener('click', function () {
-                const page = parseInt(document.querySelector('#current-page').textContent);
-                if (page < pages.length) {
-                    getPage(page + 1);
-                }
             });
 
             titleFilter.addEventListener('input', function () {
@@ -181,13 +141,6 @@
                 getMovies(getParams().concat({key: 'page', value: 1}));
             });
 
-            function getPage(newPage) {
-                if (newPage > 0 && newPage <= pages.length) {
-                    document.querySelector('#current-page').textContent = newPage;
-                    getMovies(getParams().concat({key: 'page', value: newPage}));
-                }
-            }
-
             function getMovies(params) {
                 fetch('/' + lang + '/movie/filter', {
                     method: 'POST',
@@ -202,7 +155,7 @@
                         console.log(data);
                         const movies = data.body['userMovies'];
                         const count = data.body['userMovieCount'];
-                        const pages = data.body['pages'];
+                        const paginationSections = data.body['paginationSections'];
                         const movieCount = document.getElementById('movie-count');
                         movieCount.textContent = count;
                         const wrapper = document.querySelector('.wrapper');
@@ -210,24 +163,14 @@
                         movies.forEach(movie => {
                             wrapper.appendChild(card(movie));
                         });
-                        const PagesDiv = document.querySelector('.pages');
-                        const pageNumber = parseInt(document.querySelector('#current-page').textContent);
-                        PagesDiv.innerHTML = '';
-                        for (let i = 1; i <= pages; i++) {
-                            const button = document.createElement('button');
-                            const iString = i.toString();
-                            button.classList.add('page');
-                            button.value = iString;
-                            button.textContent = iString;
-                            if (i === pageNumber) {
-                                button.classList.add('active');
-                            }
-                            button.addEventListener('click', function () {
-                                document.querySelector('#current-page').textContent = iString;
-                                getMovies(getParams().concat({key: 'page', value: i}));
-                            });
-                            PagesDiv.appendChild(button);
-                        }
+
+                        const currentPaginationSections = document.querySelectorAll('section[id^=pagination-section]');
+                        currentPaginationSections.forEach((section, index) => {
+                            const aside = section.closest('aside');
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = paginationSections[index];
+                            aside.replaceChild(tempDiv.firstChild, section);
+                        });
                     })
                     .catch(error => console.error(error));
             }

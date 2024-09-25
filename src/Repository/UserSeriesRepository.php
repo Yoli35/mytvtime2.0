@@ -174,8 +174,8 @@ class UserSeriesRepository extends ServiceEntityRepository
         array $filters,
         array $progress = []): array
     {
-        $page = $filters['page'] ?? 1;
-        $perPage = $filters['perPage'] ?? 20;
+        $page = intval($filters['page'] ?? 1);
+        $perPage = intval($filters['perPage'] ?? 20);
         $sort = $filters['sort'] ?? 'firstAirDate';
         $order = $filters['order'] ?? 'ASC';
         $network = $filters['network'];

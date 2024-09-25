@@ -60,7 +60,7 @@ class MovieRepository extends ServiceEntityRepository
             default => 'm.release_date'
         };
 
-        if ($title) {
+        if (strlen($title)) {
             $sql = "SELECT um.id             as userMovieId,
                            m.title           as title,
                            m.poster_path     as posterPath,
@@ -96,33 +96,18 @@ class MovieRepository extends ServiceEntityRepository
     public function countMovieCards(User $user, array $filters): int
     {
         $userId = $user->getId();
-        $sort = $filters['sort'];
-        $order = $filters['order'];
-        $page = $filters['page'];
-        $perPage = $filters['perPage'];
         $title = $filters['title'];
 
-        $offset = ($page - 1) * $perPage;
-        // Sort: name, release date
-        $sort = match ($sort) {
-            'name' => 'm.title',
-            default => 'm.release_date'
-        };
-
-        if ($title) {
+        if (strlen($title)) {
             $sql = "SELECT COUNT(*) 
                     FROM movie m
                              INNER JOIN user_movie um ON m.id = um.movie_id
-                    WHERE um.user_id = $userId AND m.title LIKE '%$title%'
-                    ORDER BY $sort $order
-                    LIMIT $offset, $perPage";
+                    WHERE um.user_id = $userId AND m.title LIKE '%$title%'";
         } else {
             $sql = "SELECT COUNT(*) 
                     FROM movie m
                              INNER JOIN user_movie um ON m.id = um.movie_id
-                    WHERE um.user_id = $userId
-                    ORDER BY $sort $order
-                    LIMIT $offset, $perPage";
+                    WHERE um.user_id = $userId";
         }
 
         return $this->getOne($sql);
