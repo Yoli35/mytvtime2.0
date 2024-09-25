@@ -167,6 +167,9 @@ class SeriesController extends AbstractController
                 'air_at' => $ue['airAt'],
             ];
         }, $this->userEpisodeRepository->episodesOfTheDay($user, $country, $locale));
+        usort($episodesOfTheDay, function ($a, $b) {
+            return $a['air_at'] <=> $b['air_at'];
+        });
 
         $seriesOfTheWeek = array_map(function ($us) {
             $this->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
