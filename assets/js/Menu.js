@@ -127,7 +127,6 @@ export class Menu {
         const personSearch = navbar.querySelector("#person-search");
 
         const historyMenu = navbar.querySelector("#history-menu");
-        const historySummary = historyMenu.querySelector("summary");
 
         burger.addEventListener("click", () => {
             burger.classList.toggle("open");
@@ -482,6 +481,7 @@ export class Menu {
         personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
         if (historyMenu) {
+            const historySummary = historyMenu?.querySelector("summary");
             const historyList = historyMenu.querySelector("#history-list");
             const historyOptions = historyList?.querySelector("#history-options").querySelectorAll("input");
             historyOptions.forEach((historyOption) => {
