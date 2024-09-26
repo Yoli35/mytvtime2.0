@@ -44,7 +44,7 @@ Mandatory variables:
                         <div class="remaining" data-target="{{ schedule.timestamp }}">
 {#                            <span>{{ 'in'|trans }}</span>#}
 {#                            <span>{{ d.d ? (' ' ~ d.d ~ ' ' ~ (d.d > 1 ? 'days':'day')|trans):'' }}{{ d.h ? (' ' ~ d.h ~ ' ' ~ (d.h > 1 ? 'hours':'hour')|trans) }}{{ d.i ? (' ' ~ d.i~ ' ' ~ (d.i > 1 ? 'minutes':'minute')|trans) }}</span>#}
-                            <span></span>
+                            <span>{% if schedule.toBeContinued %}{{ 'To be continued'|trans }}{% else %}{{ 'That\'s all!'|trans }}{% endif %}</span>
                             <span></span>
                         </div>
                     </div>
@@ -85,6 +85,7 @@ Mandatory variables:
                     {% set tvne = schedule.tvNextEpisode %}
                     {% if ule %}
                         <div class="episode user">
+                            <div class="type">{{ ux_icon('fa6-solid:user', {height: "18px", width: "18px"}) }}</div>
                             <div class="episode-info">{{ 'Last episode watched'|trans }}</div>
                             <div class="episode-number">{{ "S%02dE%02d"|format(ule.season_number, ule.episode_number) }}</div>
                             <div class="episode-air-date">{{ ule.air_date_offset|format_date("relative_short")|capitalize }}</div>
@@ -93,6 +94,7 @@ Mandatory variables:
                     {% endif %}
                     {% if une %}
                         <div class="episode user">
+                            <div class="type">{{ ux_icon('fa6-solid:user', {height: "18px", width: "18px"}) }}</div>
                             <div class="episode-info">{{ 'Next episode to watch'|trans }}</div>
                             <div class="episode-number">{{ "S%02dE%02d"|format(une.season_number, une.episode_number) }}</div>
                             <div class="episode-air-date">{{ 'Not watched yet'|trans }}</div>
@@ -101,6 +103,7 @@ Mandatory variables:
                     {% endif %}
                     {% if tvle %}
                         <div class="episode tv">
+                            <div class="type">{{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}</div>
                             <div class="episode-info">{{ 'Last episode to air'|trans }}</div>
                             <div class="episode-number">{{ "S%02dE%02d"|format(tvle.season_number, tvle.episode_number) }}</div>
                             <div class="episode-name">{{ tvle.name }}</div>
@@ -109,6 +112,7 @@ Mandatory variables:
                     {% endif %}
                     {% if tvne %}
                         <div class="episode tv">
+                            <div class="type">{{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}</div>
                             <div class="episode-info">{{ 'Next episode to air'|trans }}</div>
                             <div class="episode-number">{{ "S%02dE%02d"|format(tvne.season_number, tvne.episode_number) }}</div>
                             <div class="episode-name">{{ tvne.name }}</div>

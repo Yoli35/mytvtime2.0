@@ -640,7 +640,8 @@ class SeriesController extends AbstractController
             'After tomorrow' => $this->translator->trans('After tomorrow'),
             'Now' => $this->translator->trans('Now'),
             'Ended' => $this->translator->trans('Ended'),
-            'Waiting for the next episode' => $this->translator->trans('Waiting for the next episode'),
+            'To be continued' => $this->translator->trans('To be continued'),
+            'That\'s all!' => $this->translator->trans('That\'s all!'),
         ];
 
         dump([
@@ -1677,7 +1678,7 @@ class SeriesController extends AbstractController
             $dayOfWeekArr = [
                 'en' => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
                 'fr' => ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
-                ];
+            ];
             $scheduleDayOfWeek = array_map(fn($day) => $dayOfWeekArr[$locale][$day], $schedule->getDayOfWeek());
             $scheduleDayOfWeek = ucfirst(implode(', ', $scheduleDayOfWeek));
 
@@ -1696,6 +1697,8 @@ class SeriesController extends AbstractController
 
             $userLastEpisode = $this->userEpisodeRepository->getScheduleLastEpisode($user, $series);
             $userNextEpisode = $this->userEpisodeRepository->getScheduleNextEpisode($user, $series);
+            $userLastEpisode = $userLastEpisode[0] ?? null;
+            $userNextEpisode = $userNextEpisode[0] ?? null;
 
             $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
             $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
@@ -1710,10 +1713,11 @@ class SeriesController extends AbstractController
                 'timestamp' => $timestamp,
                 'before' => $now->diff($target),
                 'dayList' => $scheduleDayOfWeek,
-                'userLastEpisode' => $userLastEpisode[0] ?? null,
-                'userNextEpisode' => $userNextEpisode[0] ?? null,
+                'userLastEpisode' => $userLastEpisode,
+                'userNextEpisode' => $userNextEpisode,
                 'tvLastEpisode' => $tvLastEpisode,
                 'tvNextEpisode' => $tvNextEpisode,
+                'toBeContinued' => $this->isToBeContinued($tv, $userLastEpisode),
             ];
 
         }
@@ -1730,6 +1734,28 @@ class SeriesController extends AbstractController
         $date = $date->format('Y-m-d H:i');
         $episode['air_date'] = str_replace(' ', 'T', $date);
         return $episode;
+    }
+
+    public function isToBeContinued(?array $tv, ?array $userLastEpisode): bool
+    {
+        if (($tv['next_episode_to_air'] && $tv['next_episode_to_air']['episode_type'] == 'standard')) {
+            return true;
+        }
+
+        if (!$tv['next_episode_to_air'] && $userLastEpisode) {
+            $episodeSeason = $this->getSeason($tv['seasons'], $userLastEpisode['season_number']);
+            if ($episodeSeason && $episodeSeason['episode_count'] < $userLastEpisode['episode_number']) {
+                return true;
+            }
+            if ($tv['status'] == 'Returning Series') {
+                return true;
+            }
+        }
+
+        if (in_array($tv['status'], ['Planned', 'In Production', 'Pilot', 'Returning Series'])) {
+            return true;
+        }
+        return false;
     }
 
     public function inImages(?string $image, array $images): bool

@@ -124,6 +124,10 @@ body:has(details[open]) {
     overflow-y: auto;
     padding: 0;
     width: 100%;
+
+    &:has(dialog[open]) {
+        overflow: hidden;
+    }
 }
 
 .container-fluid:not(:has(.backgroundImageOverlay)) {

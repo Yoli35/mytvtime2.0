@@ -98,6 +98,7 @@ export class Show {
         const remaining = document.querySelector('.remaining');
         if (remaining) {
             const inText = remaining.querySelector('span:first-child');
+            const inTextValue = inText.textContent;
             const remainingText = remaining.querySelector('span:last-child');
             const target = remaining.getAttribute('data-target') * 1000;
             const interval = setInterval(() => {
@@ -120,7 +121,7 @@ export class Show {
                         inText.innerHTML = translations["Now"];
                         remainingText.innerHTML = "";
                     } else {
-                        inText.innerHTML = translations["Waiting for the next episode"];
+                        inText.innerHTML = inTextValue;/*translations["Waiting for the next episode"];*/
                         remainingText.innerHTML = "";
                     }
                 } else {
