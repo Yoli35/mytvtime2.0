@@ -108,10 +108,10 @@ export class Show {
                 const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((distance % (1000 * 60)) / 1000);
                 const days = d ? " " + d + " " + translations[d > 1 ? 'days' : 'day'] : "";
-                const hours = h ? " " + h + " " + translations[h > 1 ? 'hours' : 'hour'] : "";
-                const minutes = m ? " " + m + " " + translations[m > 1 ? 'minutes' : 'minute'] : "";
-                const secondes = s ? " " + s + " " + translations[s > 1 ? 'seconds' : 'second'] : "";
-                remainingText.innerHTML = days + hours + minutes + secondes;
+                const hours = (h<10 ? "0":"") + h + ":";
+                const minutes = (m<10 ? "0":"") + m + ":";
+                const secondes = (s<10 ? "0":"") + s;
+                remainingText.innerHTML = hours + minutes + secondes;
 
                 // Si la date est dépassée de moins d'une heure, on arrête le compte à rebours
                 if (distance < 0) {
@@ -123,6 +123,8 @@ export class Show {
                         inText.innerHTML = translations["Waiting for the next episode"];
                         remainingText.innerHTML = "";
                     }
+                } else {
+                    inText.innerHTML = d === 1 ? translations["Tomorrow"] : (d === 2 ? translations["After tomorrow"] : days);
                 }
             }, 1000);
         }

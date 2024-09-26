@@ -47,6 +47,7 @@ use App\Service\KeywordService;
 use App\Service\TMDBService;
 use DateInterval;
 use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimeZone;
 use DeepL\DeepLException;
 use Deepl\TextResult;
@@ -610,7 +611,7 @@ class SeriesController extends AbstractController
 
         $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
 
-        $schedules = $this->seriesSchedules($user, $series);
+        $schedules = $this->seriesSchedulesV2($user, $series, $tv, $dayOffset);
         $seriesArr = $series->toArray();
         $nead = $seriesArr['nextEpisodeAirDate'];
         $seriesArr['nextEpisodeAirDate'] = $nead ? $nead->modify($dayOffset . ' days') : null;
@@ -634,26 +635,22 @@ class SeriesController extends AbstractController
             'This field is required' => $this->translator->trans('This field is required'),
             'Watch on' => $this->translator->trans('Watch on'),
             'days' => $this->translator->trans('days'),
-            'hours' => $this->translator->trans('hours'),
-            'minutes' => $this->translator->trans('minutes'),
             'day' => $this->translator->trans('day'),
-            'hour' => $this->translator->trans('hour'),
-            'minute' => $this->translator->trans('minute'),
-            'seconds' => $this->translator->trans('seconds'),
-            'second' => $this->translator->trans('second'),
+            'Tomorrow' => $this->translator->trans('Tomorrow'),
+            'After tomorrow' => $this->translator->trans('After tomorrow'),
             'Now' => $this->translator->trans('Now'),
             'Ended' => $this->translator->trans('Ended'),
             'Waiting for the next episode' => $this->translator->trans('Waiting for the next episode'),
         ];
 
-//        dump([
-//            'series' => $seriesArr,
-//            'tv' => $tv,
-//            'dayOffset' => $dayOffset,
+        dump([
+            'series' => $seriesArr,
+            'tv' => $tv,
+            'dayOffset' => $dayOffset,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
-//            'schedules' => $schedules,
-//        ]);
+            'schedules' => $schedules,
+        ]);
         return $this->render('series/show.html.twig', [
             'series' => $seriesArr,
             'tv' => $tv,
@@ -1652,7 +1649,7 @@ class SeriesController extends AbstractController
             $originalDate = str_replace(' ', 'T', $originalDate);
             $originalDate .= ($utc > 0 ? "+" : "-") . (abs($utc) < 10 ? '0' : '') . $utc . ':00';
 
-            $episode = $this->userEpisodeRepository->getNextEpisode($user, $series);
+            $episode = $this->userEpisodeRepository->getScheduleNextEpisode($user, $series);
             $schedules[] = [
                 'country' => $country,
                 'firstAirDate' => $firstAirDate,
@@ -1668,6 +1665,71 @@ class SeriesController extends AbstractController
         }
         return $schedules;
 
+    }
+
+    public function seriesSchedulesV2(User $user, Series $series, array $tv, int $dayOffset): array
+    {
+        $schedules = [];
+        $locale = $user->getPreferredLanguage() ?? 'fr';
+        foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
+            $firstAirDate = $schedule->getFirstAirDate();
+            $airAt = $schedule->getAirAt();
+            $dayOfWeekArr = [
+                'en' => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                'fr' => ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
+                ];
+            $scheduleDayOfWeek = array_map(fn($day) => $dayOfWeekArr[$locale][$day], $schedule->getDayOfWeek());
+            $scheduleDayOfWeek = ucfirst(implode(', ', $scheduleDayOfWeek));
+
+            $country = $schedule->getCountry();
+            $utc = $schedule->getUtc(); // int
+
+            $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
+            $target = $series->getNextEpisodeAirDate()->setTimezone(new DateTimeZone('Europe/Paris'))->setTime($airAt->format('H'), $airAt->format('i'));
+            $timestamp = $target->getTimestamp();
+
+            $firstAirDate = $firstAirDate->setTime($airAt->format('H'), $airAt->format('i'));
+
+            $originalDate = $firstAirDate->format('Y-m-d H:i');
+            $originalDate = str_replace(' ', 'T', $originalDate);
+            $originalDate .= ($utc > 0 ? "+" : "-") . (abs($utc) < 10 ? '0' : '') . $utc . ':00';
+
+            $userLastEpisode = $this->userEpisodeRepository->getScheduleLastEpisode($user, $series);
+            $userNextEpisode = $this->userEpisodeRepository->getScheduleNextEpisode($user, $series);
+
+            $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+            $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+
+            $schedules[] = [
+                'country' => $country,
+                'firstAirDate' => $firstAirDate,
+                'originalDate' => $originalDate,
+                'utc' => $utc,
+                'now' => $now->format('Y-m-d H:i'),
+                'target' => $target->format('Y-m-d H:i'),
+                'timestamp' => $timestamp,
+                'before' => $now->diff($target),
+                'dayList' => $scheduleDayOfWeek,
+                'userLastEpisode' => $userLastEpisode[0] ?? null,
+                'userNextEpisode' => $userNextEpisode[0] ?? null,
+                'tvLastEpisode' => $tvLastEpisode,
+                'tvNextEpisode' => $tvNextEpisode,
+            ];
+
+        }
+        return $schedules;
+    }
+
+    public function offsetEpisodeDate(?array $episode, int $offset, DateTimeInterface $time, string $timezone): ?array
+    {
+        if (!$episode) return null;
+        $date = $episode['air_date'];
+        $date = $this->dateService->newDateImmutable($date, $timezone, true);
+        $date = $date->modify('+' . $offset . ' days');
+        $date = $date->setTime($time->format('H'), $time->format('i'));
+        $date = $date->format('Y-m-d H:i');
+        $episode['air_date'] = str_replace(' ', 'T', $date);
+        return $episode;
     }
 
     public function inImages(?string $image, array $images): bool

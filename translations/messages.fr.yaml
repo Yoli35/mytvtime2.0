@@ -117,8 +117,9 @@ Add an additional overview: Ajouter un aperçu supplémentaire
 Add this series to your watchlist: Ajouter cette série à votre liste de suivi
 Add to favorites: Ajouter aux favoris
 Add: Ajouter
-Additional overviews: Aperçus supplémentaires
 Additional overviews for the series: Aperçus supplémentaires pour la série
+Additional overviews: Aperçus supplémentaires
+After tomorrow: Après-demain
 Air date: 'Date de diffusion :'
 All episodes seen: Tous les épisodes vus
 Are you sure you want to delete this overview?: Êtes-vous sûr de vouloir supprimer cet aperçu ?
@@ -127,15 +128,22 @@ Back to the series page: Retour à la page de la série
 Back to top: Retour en haut
 Backdrop added: Arrière-plan ajouté
 Backdrop updated: Arrière-plan mis à jour
+Broadcast delay: Décalage de diffusion
 Cancel rating: Annuler la note
 Canceled: Série annulée
 Cast: Casting
 Choose a device: Choisissez un appareil
 Choose a provider: Choisissez une plateforme
+Click to select, then paste your overview.: Cliquez pour sélectionner, puis collez votre aperçu.
 Continuing: Série en cours
+Copy this watch link: Copier l'adresse du lien
 Crew: Équipe
+Delay in days: Décalage en jour
+Delay: Décalage
+Delete this watch link: Supprimer ce lien pour regarder
 Delete: Supprimer
 Desktop: Ordinateur de bureau
+Edit this watch link: Modifier ce lien pour regarder
 Edit: Modifier
 Ended: Série terminée
 Episode of the day: Épisode du jour
@@ -146,23 +154,28 @@ Give a rating: Donnez une note
 In Production: En Production
 Key facts: Points clés
 Laptop: Ordinateur portable
+Last episode to air: Dernier épisode
+Last episode watched: Dernier épisode vu
 Last seen: 'Dernière vue :'
 Last watched series: Dernière séries regardées
 Localized name: Nom localisé
-Localized overviews: Aperçus localisés
 Localized overviews for the series: Aperçus localisés pour la série
+Localized overviews: Aperçus localisés
 Mark this episode as seen: Marquer cet épisode comme vu
 Mobile: Mobile
 Name updated: Nom mis à jour
 Network: Réseau
 Networks: Réseaux
+New status: Nouveau statut
 Next episode air date updated: Date de diffusion du prochain épisode mise à jour
+Next episode to air: Prochain épisode
+Next episode to watch: Prochain épisode à voir
 No date: Pas de date
 No episode seen: Aucun épisode vu
 No picture: Pas d'image
 No poster: Pas d'affiche
+Not watched yet: Pas encore vu
 Now: Maintenant
-in: Dans
 Number of episodes has changed: Le nombre d'épisodes a changé
 Original Country: Pays d'origine
 Original language: Langue originale
@@ -170,7 +183,6 @@ Original name updated: Nom original mis à jour
 Original name: Nom original
 Overview for the series: Aperçu pour la série
 Overview updated: Aperçu mis à jour
-New status: Nouveau statut
 Overview: Aperçu
 Paste your translation here: Collez (⌘ V / ⌃ V) votre traduction ici (depuis le presser-papier)
 Pilot: Pilote
@@ -182,6 +194,7 @@ Remove from favorites: Retirer des favoris
 Remove this series from your watchlist: Retirer cette série de votre liste de suivi
 Remove: Pas vu
 Returning Series: Série renouvelée
+Save: Enregistrer
 Season: Saison
 Seasons: Saisons
 See on Google: Voir sur Google
@@ -203,28 +216,26 @@ Suggest a title: Suggérer un titre
 TBA: À annoncer
 Tablet: Tablette
 Television: Télévision
+That's all!: C'est tout !
 That's all, Folks!: C'est tout, les amis !
 This field is required: Ce champ est requis
 Today: Aujourd'hui
 Tomorrow: Demain
 Translate: Traduire
+Two days ago: Il y a deux jours
 URL: URL
 Up to date!: À jour !
-That's all!: C'est tout !
 Updates: Mises à jour
 Vote: Voter
-Watch links: Liens pour regarder
-Edit this watch link: Modifier ce lien pour regarder
-Copy this watch link: Copier l'adresse du lien
-Delete this watch link: Supprimer ce lien pour regarder
 Waiting for the next episode: En attente du prochain épisode
+Watch links: Liens pour regarder
+Watch on: Regarder sur
 Watched %time% times: Vu %time% fois
 Watched again: Vu à nouveau
 Where to buy: Où acheter
 Where to rent: Où louer
 Where to watch: Où regarder
 Yesterday: Hier
-Two days ago: Il y a deux jours
 day: jour
 days: jours
 episode: épisode
@@ -232,6 +243,7 @@ episodes seen: épisodes vus
 episodes: épisodes
 hour: heure
 hours: heures
+in: Dans
 minute: minute
 minutes: minutes
 season: saison
@@ -243,12 +255,6 @@ visit: visite
 visits: visites
 x star: x étoile
 x stars: x étoiles
-Click to select, then paste your overview.: Cliquez pour sélectionner, puis collez votre aperçu.
-Watch on: Regarder sur
-Broadcast delay: Décalage de diffusion
-Delay in days: Décalage en jour
-Delay: Décalage
-Save: Enregistrer
 
 #Search
 Search: Recherche

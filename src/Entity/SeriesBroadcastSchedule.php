@@ -18,8 +18,8 @@ class SeriesBroadcastSchedule
     #[ORM\JoinColumn(nullable: false)]
     private ?Series $series = null;
 
-    #[ORM\Column]
-    private ?int $dayOfWeek = null;
+    #[ORM\Column(type: 'json')]
+    private array $dayOfWeek = [];
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?\DateTimeInterface $airAt = null;
@@ -50,12 +50,12 @@ class SeriesBroadcastSchedule
         return $this;
     }
 
-    public function getDayOfWeek(): ?int
+    public function getDayOfWeek(): array
     {
         return $this->dayOfWeek;
     }
 
-    public function setDayOfWeek(int $dayOfWeek): static
+    public function setDayOfWeek(array $dayOfWeek): static
     {
         $this->dayOfWeek = $dayOfWeek;
 

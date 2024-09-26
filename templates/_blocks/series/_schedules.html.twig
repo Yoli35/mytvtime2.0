@@ -1,0 +1,122 @@
+{#
+Mandatory variables:
+    tv.next_episode_to_air: object < ..., air_date, ...>// Next episode to air
+    series.schedules: array [<day_of_week, time>] // Schedules of the series
+    series_day_offset: object <offset, country> // Day offset for the series
+#}
+
+
+{% if series.schedules|length or series.nextEpisodeAirDate %}
+    <div class="schedules">
+        {#        {% if tv.next_episode_to_air %} #}
+        {#            #}{#        {% if series.nextEpisodeAirDate %} #}
+        {#            {% set leta = tv.last_episode_to_air %} #}
+        {#            {% set neta = tv.next_episode_to_air %} #}
+        {#            <div class="episode"> #}
+        {#                <div class="episode-number">{{ "S%02dE%02d"|format(leta.season_number, leta.episode_number) }}</div> #}
+        {#                <div class="episode-name">{{ leta.name }}</div> #}
+        {#                <div class="episode-air-date">{{ leta.air_date|format_date("relative_short")|capitalize }}</div> #}
+        {#            </div> #}
+        {#            <div class="episode"> #}
+        {#                <div class="episode-number">{{ "S%02dE%02d"|format(neta.season_number, neta.episode_number) }}</div> #}
+        {#                <div class="episode-name">{{ neta.name }}</div> #}
+        {#                <div class="episode-air-date">{{ neta.air_date|format_date("relative_short")|capitalize }}</div> #}
+        {#            </div> #}
+        {#        {% endif %} #}
+
+        {% set schedules = series.schedules %}
+        <div class="wrapper">
+            {% for schedule in schedules %}
+                <div class="schedule">
+                    {% set country = user.country ?? 'FR' %}
+                    {% if schedule.utc %}
+                        <div class="country" data-title="{{ schedule.country|country_name }}">{{ getEmojiFlag(schedule.country) }}</div>
+                        <div class="air">{{ schedule.firstAirDate|format_datetime(pattern="cccc - H:mm")|capitalize }}</div>
+                        <div>
+                            {{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }}
+                        </div>
+                    {% endif %}
+                    <div class="next-episode">
+                        <div class="country" data-title="{{ country|country_name }}">{{ getEmojiFlag(country) }}</div>
+                        <div class="local-air">{{ schedule.dayList }}</div>
+                        <div class="local-air">{{ schedule.originalDate|format_datetime(pattern="H:mm") }}</div>
+                        {% set d = schedule.before %}
+                        <div class="remaining" data-target="{{ schedule.timestamp }}">
+{#                            <span>{{ 'in'|trans }}</span>#}
+{#                            <span>{{ d.d ? (' ' ~ d.d ~ ' ' ~ (d.d > 1 ? 'days':'day')|trans):'' }}{{ d.h ? (' ' ~ d.h ~ ' ' ~ (d.h > 1 ? 'hours':'hour')|trans) }}{{ d.i ? (' ' ~ d.i~ ' ' ~ (d.i > 1 ? 'minutes':'minute')|trans) }}</span>#}
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                    {#
+                    "userLastEpisode" => array:5 [▼
+                        "season_number" => 1
+                        "episode_number" => 2
+                        "air_date" => "2024-09-18"
+                        "air_date_offset" => "2024-09-19"
+                        "watch_at" => "2024-09-20 00:20:15"
+                      ]
+                      "userNextEpisode" => array:4 [▼
+                        "season_number" => 1
+                        "episode_number" => 3
+                        "air_date" => "2024-09-25"
+                        "air_date_offset" => "2024-09-26"
+                      ]
+                      "tvLastEpisode" => array:13 [▶]
+                      "tvNextEpisode" => array:13 [▼
+                        "id" => 5348321
+                        "name" => "Épisode 4"
+                        "overview" => ""
+                        "vote_average" => 1.0
+                        "vote_count" => 1
+                        "air_date" => "2024-10-03T09:00"
+                        "episode_number" => 4
+                        "episode_type" => "standard"
+                        "production_code" => ""
+                        "runtime" => null
+                        "season_number" => 1
+                        "show_id" => 138501
+                        "still_path" => "/wOYM9OjqJB3NQwyzy5F2NSHGTG7.jpg"
+                      ]
+                    #}
+                    {% set ule = schedule.userLastEpisode %}
+                    {% set une = schedule.userNextEpisode %}
+                    {% set tvle = schedule.tvLastEpisode %}
+                    {% set tvne = schedule.tvNextEpisode %}
+                    {% if ule %}
+                        <div class="episode user">
+                            <div class="episode-info">{{ 'Last episode watched'|trans }}</div>
+                            <div class="episode-number">{{ "S%02dE%02d"|format(ule.season_number, ule.episode_number) }}</div>
+                            <div class="episode-air-date">{{ ule.air_date_offset|format_date("relative_short")|capitalize }}</div>
+                            <div class="episode-air-date">{{ ule.watch_at|format_datetime("relative_short", "short")|capitalize }}</div>
+                        </div>
+                    {% endif %}
+                    {% if une %}
+                        <div class="episode user">
+                            <div class="episode-info">{{ 'Next episode to watch'|trans }}</div>
+                            <div class="episode-number">{{ "S%02dE%02d"|format(une.season_number, une.episode_number) }}</div>
+                            <div class="episode-air-date">{{ 'Not watched yet'|trans }}</div>
+                            <div class="episode-air-date">{{ une.air_date_offset|format_date("relative_short")|capitalize }}</div>
+                        </div>
+                    {% endif %}
+                    {% if tvle %}
+                        <div class="episode tv">
+                            <div class="episode-info">{{ 'Last episode to air'|trans }}</div>
+                            <div class="episode-number">{{ "S%02dE%02d"|format(tvle.season_number, tvle.episode_number) }}</div>
+                            <div class="episode-name">{{ tvle.name }}</div>
+                            <div class="episode-air-date">{{ tvle.air_date|format_date("relative_short")|capitalize }}</div>
+                        </div>
+                    {% endif %}
+                    {% if tvne %}
+                        <div class="episode tv">
+                            <div class="episode-info">{{ 'Next episode to air'|trans }}</div>
+                            <div class="episode-number">{{ "S%02dE%02d"|format(tvne.season_number, tvne.episode_number) }}</div>
+                            <div class="episode-name">{{ tvne.name }}</div>
+                            <div class="episode-air-date">{{ tvne.air_date|format_date("relative_short")|capitalize }}</div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
