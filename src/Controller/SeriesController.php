@@ -636,6 +636,7 @@ class SeriesController extends AbstractController
             'Watch on' => $this->translator->trans('Watch on'),
             'days' => $this->translator->trans('days'),
             'day' => $this->translator->trans('day'),
+            'Since' => $this->translator->trans('Since'),
             'Tomorrow' => $this->translator->trans('Tomorrow'),
             'After tomorrow' => $this->translator->trans('After tomorrow'),
             'Now' => $this->translator->trans('Now'),
@@ -1685,9 +1686,20 @@ class SeriesController extends AbstractController
             $country = $schedule->getCountry();
             $utc = $schedule->getUtc(); // int
 
+            $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+            $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+
             $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
-            $target = $series->getNextEpisodeAirDate()->setTimezone(new DateTimeZone('Europe/Paris'))->setTime($airAt->format('H'), $airAt->format('i'));
-            $timestamp = $target->getTimestamp();
+            $nextEpisodeAiDate = $tvNextEpisode ? $this->dateService->newDateImmutable($tvNextEpisode['air_date'], 'Europe/Paris') : null;
+            $lastEpisodeAiDate = $tvLastEpisode ? $this->dateService->newDateImmutable($tvLastEpisode['air_date'], 'Europe/Paris') : null;
+            if ($nextEpisodeAiDate) {
+                $target = $nextEpisodeAiDate;
+            } elseif ($lastEpisodeAiDate) {
+                $target = $lastEpisodeAiDate;
+            } else {
+                $target = null;
+            }
+            $timestamp = $target?->getTimestamp();
 
             $firstAirDate = $firstAirDate->setTime($airAt->format('H'), $airAt->format('i'));
 
@@ -1700,18 +1712,15 @@ class SeriesController extends AbstractController
             $userLastEpisode = $userLastEpisode[0] ?? null;
             $userNextEpisode = $userNextEpisode[0] ?? null;
 
-            $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
-            $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
-
             $schedules[] = [
                 'country' => $country,
                 'firstAirDate' => $firstAirDate,
                 'originalDate' => $originalDate,
                 'utc' => $utc,
                 'now' => $now->format('Y-m-d H:i'),
-                'target' => $target->format('Y-m-d H:i'),
+                'target' => $target?->format('Y-m-d H:i'),
                 'timestamp' => $timestamp,
-                'before' => $now->diff($target),
+                'before' => $target ? $now->diff($target) : null,
                 'dayList' => $scheduleDayOfWeek,
                 'userLastEpisode' => $userLastEpisode,
                 'userNextEpisode' => $userNextEpisode,

@@ -97,35 +97,35 @@ export class Show {
          ******************************************************************************/
         const remaining = document.querySelector('.remaining');
         if (remaining) {
-            const inText = remaining.querySelector('span:first-child');
-            const inTextValue = inText.textContent;
-            const remainingText = remaining.querySelector('span:last-child');
+            const span1 = remaining.querySelector('span:first-child');
+            const span1Value = span1.textContent;
+            const span2 = remaining.querySelector('span:last-child');
             const target = remaining.getAttribute('data-target') * 1000;
-            const interval = setInterval(() => {
+            /*const interval = */setInterval(() => {
                 const now = (new Date().getTime());
                 const distance = target - now;
-                const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const s = Math.floor((distance % (1000 * 60)) / 1000);
+                const distanceAbs = Math.abs(distance);
+                const d = Math.floor(distanceAbs / (1000 * 60 * 60 * 24));
+                const h = Math.floor((distanceAbs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((distanceAbs % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((distanceAbs % (1000 * 60)) / 1000);
                 const days = d ? " " + d + " " + translations[d > 1 ? 'days' : 'day'] : "";
-                const hours = (h<10 ? "0":"") + h + ":";
-                const minutes = (m<10 ? "0":"") + m + ":";
-                const secondes = (s<10 ? "0":"") + s;
-                remainingText.innerHTML = hours + minutes + secondes;
+                const hours = (h < 10 ? "0" : "") + h + ":";
+                const minutes = (m < 10 ? "0" : "") + m + ":";
+                const secondes = (s < 10 ? "0" : "") + s;
+                const elapsedTime = '<code>' + hours + minutes + secondes + '</code>';
 
                 // Si la date est dépassée de moins d'une heure, on arrête le compte à rebours
                 if (distance < 0) {
-                    if (distance > -1000 * 60 * 60) {
-                        clearInterval(interval);
-                        inText.innerHTML = translations["Now"];
-                        remainingText.innerHTML = "";
+                    if (distanceAbs < 1000 * 60 * 60) {
+                        span1.innerHTML = translations["Now"];
                     } else {
-                        inText.innerHTML = inTextValue;/*translations["Waiting for the next episode"];*/
-                        remainingText.innerHTML = "";
+                        span1.innerHTML = span1Value;
                     }
+                    span2.innerHTML = translations["Since"] + " " + (d ? (days + ",<br>" ): "") + elapsedTime;
                 } else {
-                    inText.innerHTML = d === 1 ? translations["Tomorrow"] : (d === 2 ? translations["After tomorrow"] : days);
+                    span2.innerHTML = d === 1 ? translations["Tomorrow"] : (d === 2 ? translations["After tomorrow"] : days)
+                    + (d ? "," : "") + "<br>" + elapsedTime;
                 }
             }, 1000);
         }
