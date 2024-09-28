@@ -223,6 +223,29 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function getScheduleNextEpisodes(User $user, Series $series, $airDate): array
+    {
+        $userId = $user->getId();
+        $seriesId = $series->getId();
+        $country = $user->getCountry() ?? 'FR';
+
+        $sql = "SELECT ue.`season_number`,
+                       ue.`episode_number`,
+                       ue.`air_date`,
+                       IF(sdo.offset IS NULL, ue.`air_date`, DATE_ADD(ue.`air_date`, INTERVAL sdo.offset DAY)) as air_date_offset
+                FROM user_episode ue
+                INNER JOIN user_series us ON ue.`user_series_id` = us.`id`
+                INNER JOIN series s ON us.`series_id` = s.`id`
+                LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
+                WHERE us.`user_id` = $userId
+                  AND s.`id` = $seriesId
+                  AND ue.`season_number` > 0
+                  AND ue.`air_date` = '$airDate'
+                ORDER BY  ue.`season_number`, ue.`episode_number`";
+
+        return $this->getAll($sql);
+    }
+
     public function getScheduleLastEpisode(User $user, Series $series): array
     {
         $userId = $user->getId();

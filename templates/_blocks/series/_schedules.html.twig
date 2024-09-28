@@ -29,13 +29,13 @@ Mandatory variables:
             {% for schedule in schedules %}
                 <div class="schedule">
                     {% set country = user.country ?? 'FR' %}
-{#                    {% if schedule.utc %}#}
-{#                        <div class="country" data-title="{{ schedule.country|country_name }}">{{ getEmojiFlag(schedule.country) }}</div>#}
-{#                        <div class="air">{{ schedule.firstAirDate|format_datetime(pattern="cccc - H:mm")|capitalize }}</div>#}
-{#                        <div>#}
-{#                            {{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }}#}
-{#                        </div>#}
-{#                    {% endif %}#}
+                    {#                    {% if schedule.utc %} #}
+                    {#                        <div class="country" data-title="{{ schedule.country|country_name }}">{{ getEmojiFlag(schedule.country) }}</div> #}
+                    {#                        <div class="air">{{ schedule.firstAirDate|format_datetime(pattern="cccc - H:mm")|capitalize }}</div> #}
+                    {#                        <div> #}
+                    {#                            {{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }} #}
+                    {#                        </div> #}
+                    {#                    {% endif %} #}
                     <div class="next-episode">
                         <div class="type">{{ ux_icon('fa6-regular:clock', {height: "18px", width: "18px"}) }}</div>
                         <div class="country" data-title="{{ country|country_name }}">{{ getEmojiFlag(country) }}</div>
@@ -43,8 +43,8 @@ Mandatory variables:
                         <div class="local-air">{{ schedule.originalDate|format_datetime(pattern="H:mm") }}</div>
                         {% set d = schedule.before %}
                         <div class="remaining" data-target="{{ schedule.timestamp }}">
-{#                            <span>{{ 'in'|trans }}</span>#}
-{#                            <span>{{ d.d ? (' ' ~ d.d ~ ' ' ~ (d.d > 1 ? 'days':'day')|trans):'' }}{{ d.h ? (' ' ~ d.h ~ ' ' ~ (d.h > 1 ? 'hours':'hour')|trans) }}{{ d.i ? (' ' ~ d.i~ ' ' ~ (d.i > 1 ? 'minutes':'minute')|trans) }}</span>#}
+                            {#                            <span>{{ 'in'|trans }}</span> #}
+                            {#                            <span>{{ d.d ? (' ' ~ d.d ~ ' ' ~ (d.d > 1 ? 'days':'day')|trans):'' }}{{ d.h ? (' ' ~ d.h ~ ' ' ~ (d.h > 1 ? 'hours':'hour')|trans) }}{{ d.i ? (' ' ~ d.i~ ' ' ~ (d.i > 1 ? 'minutes':'minute')|trans) }}</span> #}
                             <span>{% if schedule.toBeContinued %}{{ 'To be continued'|trans }}{% else %}{{ 'That\'s all!'|trans }}{% endif %}</span>
                             <span></span>
                         </div>
@@ -101,6 +101,16 @@ Mandatory variables:
                             <div class="episode-air-date">{{ 'Not watched yet'|trans }}</div>
                             <div class="episode-air-date">{{ une.air_date_offset|format_date("relative_short")|capitalize }}</div>
                         </div>
+                        {% if schedule.multiple %}
+                            {% set ulne = schedule.userLastNextEpisode %}
+                            <div class="episode user last-of-group">
+                                <div class="type">{{ ux_icon('fa6-solid:user', {height: "18px", width: "18px"}) }}</div>
+                                <div class="episode-info">{{ 'Last to watch'|trans }}</div>
+                                <div class="episode-number">{{ "S%02dE%02d"|format(ulne.season_number, ulne.episode_number) }}</div>
+                                <div class="episode-air-date">{{ 'Not watched yet'|trans }}</div>
+                                <div class="episode-air-date">{{ ulne.air_date_offset|format_date("relative_short")|capitalize }}</div>
+                            </div>
+                        {% endif %}
                     {% endif %}
                     {% if tvle %}
                         <div class="episode tv">
@@ -119,6 +129,16 @@ Mandatory variables:
                             <div class="episode-name">{{ tvne.name }}</div>
                             <div class="episode-air-date">{{ tvne.air_date|format_date("relative_short")|capitalize }}</div>
                         </div>
+                        {% if schedule.multiple %}
+                            {% set ulne = schedule.userLastNextEpisode %}
+                            <div class="episode tv last-of-group">
+                                <div class="type">{{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}</div>
+                                <div class="episode-info">{{ 'Last to air'|trans }}</div>
+                                <div class="episode-number">{{ "S%02dE%02d"|format(ulne.season_number, ulne.episode_number) }}</div>
+                                <div class="episode-name">{{ 'Episode'|trans ~ ' ' ~ ulne.episode_number}}</div>
+                                <div class="episode-air-date">{{ ulne.air_date_offset|format_date("relative_short")|capitalize }}</div>
+                            </div>
+                        {% endif %}
                     {% endif %}
                 </div>
             {% endfor %}

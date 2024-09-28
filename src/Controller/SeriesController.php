@@ -1711,6 +1711,20 @@ class SeriesController extends AbstractController
             $userNextEpisode = $this->userEpisodeRepository->getScheduleNextEpisode($user, $series);
             $userLastEpisode = $userLastEpisode[0] ?? null;
             $userNextEpisode = $userNextEpisode[0] ?? null;
+            if ($userNextEpisode) {
+                $userNextEpisodes = $this->userEpisodeRepository->getScheduleNextEpisodes($user, $series, $userNextEpisode['air_date']);
+                $count = count($userNextEpisodes);
+                $multiple = $count > 1;
+                if ($multiple) {
+                    $userLastNextEpisode = $userNextEpisodes[$count - 1];
+                } else {
+                    $multiple = false;
+                    $userLastNextEpisode = null;
+                }
+            } else {
+                $multiple = false;
+                $userLastNextEpisode = null;
+            }
 
             $schedules[] = [
                 'country' => $country,
@@ -1724,6 +1738,8 @@ class SeriesController extends AbstractController
                 'dayList' => $scheduleDayOfWeek,
                 'userLastEpisode' => $userLastEpisode,
                 'userNextEpisode' => $userNextEpisode,
+                'multiple' => $multiple,
+                'userLastNextEpisode' => $userLastNextEpisode,
                 'tvLastEpisode' => $tvLastEpisode,
                 'tvNextEpisode' => $tvNextEpisode,
                 'toBeContinued' => $this->isToBeContinued($tv, $userLastEpisode),

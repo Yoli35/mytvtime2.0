@@ -101,12 +101,13 @@ export class Show {
             const span1Value = span1.textContent;
             const span2 = remaining.querySelector('span:last-child');
             const target = remaining.getAttribute('data-target') * 1000;
-            /*const interval = */setInterval(() => {
+            /*const interval = */
+            setInterval(() => {
                 const now = (new Date().getTime());
                 const distance = target - now;
                 const distanceAbs = Math.abs(distance);
                 const d = Math.floor(distanceAbs / (1000 * 60 * 60 * 24));
-                const h = Math.floor((distanceAbs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const h = (d===1 ? 24 : 0) + Math.floor((distanceAbs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // d=1 & h:m:s>0 → Après-demain
                 const m = Math.floor((distanceAbs % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((distanceAbs % (1000 * 60)) / 1000);
                 const days = d ? " " + d + " " + translations[d > 1 ? 'days' : 'day'] : "";
@@ -122,10 +123,10 @@ export class Show {
                     } else {
                         span1.innerHTML = span1Value;
                     }
-                    span2.innerHTML = translations["Since"] + " " + (d ? (days + ",<br>" ): "") + elapsedTime;
+                    span2.innerHTML = translations["Since"] + " " + (d ? (days + ",<br>") : "") + elapsedTime;
                 } else {
-                    span2.innerHTML = d === 1 ? translations["Tomorrow"] : (d === 2 ? translations["After tomorrow"] : days)
-                    + (d ? "," : "") + "<br>" + elapsedTime;
+                    span2.innerHTML = d === 0 ? translations["Tomorrow"] : (d === 1 ? translations["After tomorrow"] : days)
+                        + (d ? "," : "") + "<br>" + elapsedTime;
                 }
             }, 1000);
         }
