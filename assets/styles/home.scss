@@ -688,6 +688,11 @@
                         justify-content: center;
                         line-height: 1rem;
                         width: 10rem;
+
+                        &.added {
+                            background-color: var(--orange-50);
+                            color: var(--green-10);
+                        }
                     }
                 }
             }

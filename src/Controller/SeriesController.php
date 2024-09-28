@@ -132,6 +132,8 @@ class SeriesController extends AbstractController
             $searchResult['results'] = array_merge($searchResult['results'], json_decode($this->tmdbService->getFilterTv($searchString . "&page=$i"), true)['results']);
         }
         $series = $this->getSearchResult($searchResult, new AsciiSlugger());
+        $userSeriesTMDBIds = array_column($this->userSeriesRepository->userSeriesTMDBIds($user), 'id');
+        dump(['series' => $series, 'userSeriesTMDBIds' => $userSeriesTMDBIds]);
 
         // Historique des épisodes vus pendant les 2 semaines passées
         $episodeHistory = $this->getEpisodeHistory($user, 14, $country, $language);
@@ -164,6 +166,7 @@ class SeriesController extends AbstractController
                 'season_number' => $ue['seasonNumber'],
                 'upToDate' => $ue['watched_aired_episode_count'] == $ue['aired_episode_count'],
                 'remainingEpisodes' => $ue['aired_episode_count'] - $ue['watched_aired_episode_count'],
+                'released_episode_count' => $ue['released_episode_count'],
                 'watch_at' => $ue['watchAt'],
                 'air_at' => $ue['airAt'],
             ];
@@ -172,7 +175,7 @@ class SeriesController extends AbstractController
             return $a['air_at'] <=> $b['air_at'];
         });
 
-        $seriesOfTheWeek = array_map(function ($us) {
+        $allEpisodesOfTheWeek = array_map(function ($us) {
             $this->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return [
                 'series_of_the_week' => true,
@@ -191,25 +194,34 @@ class SeriesController extends AbstractController
                 'watch_at' => $us['watch_at'],
                 'season_number' => $us['season_number'],
                 'episode_number' => $us['episode_number'],
+                'released_episode_count' => $us['released_episode_count'],
                 'air_at' => null,
             ];
         }, $this->userSeriesRepository->getUserSeriesOfTheNext7Days($user, $country, $locale));
+        dump(['allEpisodesOfTheWeek' => $allEpisodesOfTheWeek]);
+        $seriesOfTheWeek = [];
+        foreach ($allEpisodesOfTheWeek as $us) {
+            if ($us['released_episode_count'] > 1) {
+                $seriesOfTheWeek[$us['date'].'-'.$us['id']][] = $us;
+            } else {
+                $seriesOfTheWeek[$us['date'].'-'.$us['id']][0] = $us;
+            }
+        }
 
         $seriesToStart = array_map(function ($s) {
             $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
         }, $this->userEpisodeRepository->seriesToStart($user, $locale, 1, 20));
 
-//        dump([
-//            'seriesOfTheDay' => $seriesOfTheDay,
-//            'episodesOfTheDay' => $episodesOfTheDay,
-//            'seriesOfTheWeek' => $seriesOfTheWeek,
+        dump([
+            'episodesOfTheDay' => $episodesOfTheDay,
+            'seriesOfTheWeek' => $seriesOfTheWeek,
 //            'episodeHistory' => $episodeHistory,
 //            'seriesToStart' => $seriesToStart,
 //            'seriesList' => $series,
 //            'total_results' => $searchResult['total_results'] ?? -1,
 //            'hier' => $this->now()->modify('-1 day')->format('Y-m-d'),
-//        ]);
+        ]);
 
         return $this->render('series/index.html.twig', [
             'episodesOfTheDay' => $episodesOfTheDay,
@@ -217,6 +229,7 @@ class SeriesController extends AbstractController
             'episodeHistory' => $episodeHistory,
             'seriesToStart' => $seriesToStart,
             'seriesList' => $series,
+            'userSeriesTMDBIds' => $userSeriesTMDBIds,
             'total_results' => $searchResult['total_results'] ?? -1,
         ]);
     }
@@ -2421,6 +2434,7 @@ class SeriesController extends AbstractController
                 'tmdb' => true,
                 'id' => $tv['id'],
                 'name' => $name,
+                'air_date' => $tv['first_air_date'],
                 'slug' => $slug,
                 'poster_path' => $tv['poster_path'],
             ];

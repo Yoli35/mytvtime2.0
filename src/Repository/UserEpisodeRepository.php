@@ -309,6 +309,12 @@ class UserEpisodeRepository extends ServiceEntityRepository
                                 OR ((sdo.offset > 0) AND cue.air_date <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
                                 OR ((sdo.offset < 0) AND cue.air_date <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
                             ))                         as aired_episode_count,
+                       (SELECT count(*)
+                        FROM user_episode cue
+                        WHERE cue.user_series_id = us.id
+                          AND cue.season_number = ue.season_number
+                          AND cue.air_date = ue.air_date
+                            )                          as released_episode_count,
                        us.last_watch_at                as last_watch_at,
                        ue.episode_number               as episodeNumber,
                        ue.season_number                as seasonNumber
@@ -325,7 +331,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                         OR ((sdo.offset > 0) AND ue.air_date = DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
                         OR ((sdo.offset < 0) AND ue.air_date = DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
                     )
-                ORDER BY us.last_watch_at DESC ";
+                ORDER BY season_number , episode_number";
 
         return $this->getAll($sql);
     }

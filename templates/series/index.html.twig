@@ -35,15 +35,15 @@
             </div>
         {% endif %}
         {% if seriesOfTheWeek|length %}
-            <h2>{{ 'Series of the next 7 days'|trans }} ({{ seriesOfTheWeek|length }})</h2>
+            <h2>{{ 'Series of the next 7 days'|trans }} ({{ seriesOfTheWeek|reduce((carry, s) => carry + s|length) }})</h2>
             <div class="series-group user">
                 <div class="wrapper">
                     <div class="content">
                         {% set date = "" %}
                         {% for series in seriesOfTheWeek %}
-                            {% if date != series.date %}
-                                {% set date = series.date %}
-                                {% set dayOfMonth = series.date|date('j') %}
+                            {% if date != series.0.date %}
+                                {% set date = series.0.date %}
+                                {% set dayOfMonth = series.0.date|date('j') %}
                                 {% if dayOfMonth == "1" and app.locale == 'fr' %}
                                     {% set dayOfMonth = '1<sup>er</sup>' %}
                                 {% endif %}
@@ -58,16 +58,25 @@
                                         {% set dayOfMonth = dayOfMonth ~ '<sup>th</sup>' %}
                                     {% endif %}
                                 {% endif %}
-{#                                <h3>{{ date|format_date('relative_full')|capitalize }} ({{ seriesOfTheWeek|filter(s => s.date == date)|length }} ep.)</h3>#}
                                 <div class="new-line"></div>
                                 <div class="calendar">
-                                    <div class="count">{{ seriesOfTheWeek|filter(s => s.date == date)|length }}</div>
+                                    <div class="count">{{ seriesOfTheWeek|filter(s => s.0.date == date)|reduce((carry, s) => carry + s|length) }}</div>
                                     <div class="day-of-week">{{ date|format_datetime(pattern: "EEEE")|capitalize }}</div>
                                     <div class="day-of-mouth">{{ dayOfMonth|raw }}</div>
                                     <div class="month">{{ date|format_datetime(pattern: "MMMM") }}</div>
                                 </div>
                             {% endif %}
-                            {{ include('_blocks/series/_card.html.twig') }}
+                            {% if series|length == 1 %}
+                                {{ include('_blocks/series/_card.html.twig', {series: series.0}) }}
+                            {% endif %}
+                            {% if series|length > 1 %}
+                                {% for episode in [series.0, series[series|length-1]] %}
+                                    {{ include('_blocks/series/_card.html.twig', {series: episode}) }}
+                                    {% if loop.first %}
+                                        <div class="episode-arrow"> {{ ux_icon('fa6-solid:arrow-right', {height: '32px', width: '32px'}) }}</div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>
@@ -90,7 +99,7 @@
             <div class="wrapper">
                 <div class="content center">
                     {% for series in seriesList %}
-                        {{ include('_blocks/series/_card.html.twig') }}
+                        {{ include('_blocks/series/_card.html.twig', {ids: userSeriesTMDBIds}) }}
                     {% endfor %}
                 </div>
             </div>

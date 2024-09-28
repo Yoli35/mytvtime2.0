@@ -123,6 +123,12 @@ class UserSeriesRepository extends ServiceEntityRepository
                     s.`slug` as slug, sln.`slug` as localized_slug,
                     s.`poster_path` as poster_path,
                     (s.first_air_date <= NOW()) as released,
+                    (SELECT count(*)
+                        FROM user_episode cue
+                        WHERE cue.user_series_id = us.id
+                          AND cue.season_number = ue.season_number
+                          AND cue.air_date = ue.air_date
+                            ) as released_episode_count,
                     s.`status` as status
                 FROM `series` s
                     INNER JOIN `user_series` us ON s.`id`=us.`series_id`
@@ -136,7 +142,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                      OR ((sdo.offset > 0) AND ue.`air_date` > DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY) AND ue.`air_date` <= SUBDATE(ADDDATE(CURDATE(), INTERVAL 7 DAY), INTERVAL sdo.offset DAY))
                      OR ((sdo.offset < 0) AND ue.`air_date` > DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY) AND ue.`air_date` <= ADDDATE(CURDATE(), INTERVAL (sdo.offset+7) DAY))
                         )
-                ORDER BY air_date";
+                ORDER BY air_date, season_number, episode_number";
 
         return $this->getAll($sql);
     }

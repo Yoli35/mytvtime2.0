@@ -37,6 +37,20 @@ h2 {
         width: 100%;
     }
 
+    .episode-arrow {
+        align-items: center;
+        background-color: var(--orange-50);
+        border-radius: 50%;
+        color: var(--ardoise-10);
+        display: flex;
+        height: 3rem;
+        justify-content: center;
+        margin-block-start: 8rem;
+        margin-inline: -1.625rem;
+        width: 3rem;
+        z-index: 2;
+    }
+
     .calendar {
         align-items: center;
         background-color: var(--green-70);
