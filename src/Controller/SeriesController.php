@@ -650,6 +650,7 @@ class SeriesController extends AbstractController
             'days' => $this->translator->trans('days'),
             'day' => $this->translator->trans('day'),
             'Since' => $this->translator->trans('Since'),
+            'Today' => $this->translator->trans('Today'),
             'Tomorrow' => $this->translator->trans('Tomorrow'),
             'After tomorrow' => $this->translator->trans('After tomorrow'),
             'Now' => $this->translator->trans('Now'),
@@ -1687,7 +1688,7 @@ class SeriesController extends AbstractController
         $schedules = [];
         $locale = $user->getPreferredLanguage() ?? 'fr';
         foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
-            $firstAirDate = $schedule->getFirstAirDate();
+            $firstAirDate = $series->getFirstAirDate();
             $airAt = $schedule->getAirAt();
             $dayOfWeekArr = [
                 'en' => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
@@ -1695,6 +1696,10 @@ class SeriesController extends AbstractController
             ];
             $scheduleDayOfWeek = array_map(fn($day) => $dayOfWeekArr[$locale][$day], $schedule->getDayOfWeek());
             $scheduleDayOfWeek = ucfirst(implode(', ', $scheduleDayOfWeek));
+            $dayArr = array_fill(0, 7, false);
+            foreach ($schedule->getDayOfWeek() as $day) {
+                $dayArr[$day] = true;
+            }
 
             $country = $schedule->getCountry();
             $utc = $schedule->getUtc(); // int
@@ -1703,6 +1708,8 @@ class SeriesController extends AbstractController
             $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
 
             $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
+            $tomorrow = $now->modify('+1 day')->setTime(0, 0);
+            $remainingTodayTS = $now->getTimestamp() - $tomorrow->getTimestamp();
             $nextEpisodeAiDate = $tvNextEpisode ? $this->dateService->newDateImmutable($tvNextEpisode['air_date'], 'Europe/Paris') : null;
             $lastEpisodeAiDate = $tvLastEpisode ? $this->dateService->newDateImmutable($tvLastEpisode['air_date'], 'Europe/Paris') : null;
             if ($nextEpisodeAiDate) {
@@ -1712,7 +1719,7 @@ class SeriesController extends AbstractController
             } else {
                 $target = null;
             }
-            $timestamp = $target?->getTimestamp();
+            $targetTS = $target?->getTimestamp();
 
             $firstAirDate = $firstAirDate->setTime($airAt->format('H'), $airAt->format('i'));
 
@@ -1740,15 +1747,20 @@ class SeriesController extends AbstractController
             }
 
             $schedules[] = [
+                'id' => $schedule->getId(),
                 'country' => $country,
                 'firstAirDate' => $firstAirDate,
                 'originalDate' => $originalDate,
                 'utc' => $utc,
+                'airAt' => $airAt->format('H:i'),
                 'now' => $now->format('Y-m-d H:i'),
+                'tomorrow' => $tomorrow->format('Y-m-d H:i'),
                 'target' => $target?->format('Y-m-d H:i'),
-                'timestamp' => $timestamp,
+                'targetTS' => $targetTS,
+                'remainingTodayTS' => $remainingTodayTS,
                 'before' => $target ? $now->diff($target) : null,
                 'dayList' => $scheduleDayOfWeek,
+                'dayArr' => $dayArr,
                 'userLastEpisode' => $userLastEpisode,
                 'userNextEpisode' => $userNextEpisode,
                 'multiple' => $multiple,

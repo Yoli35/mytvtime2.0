@@ -27,6 +27,7 @@ English: Anglais
 Episode history (%d): Épisodes regardés ces %d derniers jours
 Episode history (%h): Épisodes regardés ces %h dernières heures
 Episodes detail: Détails des épisodes
+Episodes of the week: Épisodes de la semaine
 Episodes to watch: Épisodes suivants disponibles à regarder
 French: Français
 Hide preview: Masquer l'aperçu
@@ -79,6 +80,15 @@ remaining episode to see: épisode à voir
 remaining episodes to see: épisodes à voir
 series: série
 seriess: séries
+
+Days of the week: Jours de la semaine
+Monday: Lundi
+Tuesday: Mardi
+Wednesday: Mercredi
+Thursday: Jeudi
+Friday: Vendredi
+Saturday: Samedi
+Sunday: Dimanche
 
 # All my series
 Filters: Filtres

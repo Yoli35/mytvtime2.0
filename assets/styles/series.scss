@@ -696,17 +696,83 @@ h2 {
             max-width: 100%;
             overflow-x: auto;
 
-            .schedule {
-                align-items: stretch;
-                /*background-color: var(--ardoise-100-alpha-20);*/
-                border-bottom: .5rem solid var(--orange-50);
-                border-radius: .5rem;
-                color: var(--ardoise-10);
+            .schedule-block {
                 display: flex;
-                flex-shrink: 0;
+                flex-direction: column;
                 gap: .5rem;
-                justify-content: center;
-                padding: .5rem 1rem;
+
+                .schedule-form {
+                    background-color: var(--orange-40-alpha-50);
+                    border: 4px dashed var(--orange-50);
+                    border-radius: .5rem;
+                    padding: 1rem;
+
+                    .form-field {
+                        align-items: center;
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 2rem;
+
+                        > div {
+                            display: flex;
+                            flex-direction: column;
+                            gap: .5rem;
+
+                            h4 {
+                                line-height: 1.75rem /* hauteur des label:has(input[type=checkbox]) */
+                            }
+
+                            label {
+                                align-items: center;
+                                border-bottom: 2px solid transparent;
+                                display: flex;
+                                gap: .5rem;
+
+                                &:hover, &.active {
+                                    border-bottom: 2px solid var(--orange-50);
+                                }
+                            }
+
+                            label:has(input[type=checkbox]) {
+                                background-color: var(--orange-50-alpha-50);
+                                border-radius: .25rem;
+                                border: 2px solid var(--orange-50);
+                                justify-content: center;
+                                padding-inline: .5rem;
+
+                                input[type=checkbox] {
+                                    display: none;
+                                }
+                            }
+
+                            label:has(input[type=checkbox]:checked) {
+                                background-color: var(--orange-50);
+                                border: 2px solid var(--orange-70);
+                            }
+
+                            input[type=time] {
+                                background-color: var(--orange-20);
+                                border: 2px solid var(--orange-50);
+                                border-radius: .25rem;
+                                color: var(--orange-90);
+                                padding-inline: .5rem;
+                            }
+                        }
+                    }
+                }
+
+                .schedule {
+                    align-items: stretch;
+                    /*background-color: var(--ardoise-100-alpha-20);*/
+                    border-bottom: .5rem solid var(--orange-50);
+                    border-radius: .5rem;
+                    color: var(--ardoise-10);
+                    display: flex;
+                    flex-shrink: 0;
+                    gap: .5rem;
+                    justify-content: center;
+                    padding: .5rem 1rem;
+                }
             }
         }
     }
@@ -1125,7 +1191,7 @@ h2 {
         }
 
         .infos {
-            background-color: var(--ardoise-70-alpha-50);
+            background-color: var(--ardoise-100-alpha-20);
             border-radius: 0 .5rem .5rem 0;
             color: var(--ardoise-10);
             display: flex;
@@ -1517,10 +1583,9 @@ h2 {
     font-weight: 400;
     gap: 0.5rem;
     height: 15rem;
-    justify-content: center;
-    padding-block: 1rem;
-    padding-inline: 0.5rem;
-    width: 3rem;
+    justify-content: flex-start;
+    padding: 0.5rem;
+    width: 3.25rem;
 
     .add-this-episode, .remove-this-episode,
     .select-provider, .select-device, .select-vote,

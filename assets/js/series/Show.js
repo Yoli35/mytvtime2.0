@@ -100,11 +100,13 @@ export class Show {
             const span1 = remaining.querySelector('span:first-child');
             const span1Value = span1.textContent;
             const span2 = remaining.querySelector('span:last-child');
-            const target = remaining.getAttribute('data-target') * 1000;
+            const targetTS = remaining.getAttribute('data-targetTS') * 1000;
+            const remainingTodayTS = remaining.getAttribute('data-remainingTodayTS') * 1000;
+            const nextDay = (remainingTodayTS - targetTS) > 0;
             /*const interval = */
             setInterval(() => {
                 const now = (new Date().getTime());
-                const distance = target - now;
+                const distance = targetTS - now;
                 const distanceAbs = Math.abs(distance);
                 const d = Math.floor(distanceAbs / (1000 * 60 * 60 * 24));
                 const h = (d===1 ? 24 : 0) + Math.floor((distanceAbs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // d=1 & h:m:s>0 → Après-demain
@@ -125,7 +127,7 @@ export class Show {
                     }
                     span2.innerHTML = translations["Since"] + " " + (d ? (days + ",<br>") : "") + elapsedTime;
                 } else {
-                    span2.innerHTML = d === 0 ? translations["Tomorrow"] : (d === 1 ? translations["After tomorrow"] : days)
+                    span2.innerHTML = (nextDay ?(d === 0 ? translations["Tomorrow"] : (d === 1 ? translations["After tomorrow"] : days)):translations['Today'])
                         + (d ? "," : "") + "<br>" + elapsedTime;
                 }
             }, 1000);
