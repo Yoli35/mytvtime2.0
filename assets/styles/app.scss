@@ -380,10 +380,11 @@ label:has(input[type="text"]) {
         ul {
             background-color: var(--navbar-bg);
             border-radius: .25rem;
+            box-shadow: 0 0 1rem var(--ardoise-100-alpha-20);
             left: 0;
             list-style: none;
             position: absolute;
-            top: 2rem;
+            top: 2.625rem;
             width: max-content;
 
             &#history-list {
