@@ -19,7 +19,7 @@
     <details>
         <summary>{{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}</summary>
         <ul>
-            <li><a href="{{ path('app_series_index') }}" class="desktop">{{ 'Series'|trans }}</a></li>
+            <li><a href="{{ path('app_series_index') }}" class="desktop">{{ 'Episodes of the week'|trans }}</a></li>
             <li><a href="{{ path('app_series_all') }}" class="desktop">{{ 'All my series'|trans }}</a></li>
             <li>
                 <label for="tv-search">
@@ -147,9 +147,11 @@
         <div class="menu">
             <a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a>
             {% if app.user %}
-                <a href="{{ path('app_movie_index') }}">{{ 'Movies'|trans }}</a>
-                <a href="{{ path('app_series_index') }}">{{ 'Series'|trans }}</a>
+                <a href="{{ path('app_movie_index') }}">{{ 'My movies'|trans }}</a>
+                <a href="{{ path('app_series_index') }}">{{ 'Episodes of the wek'|trans }}</a>
                 <a href="{{ path('app_series_all') }}">{{ 'All my series'|trans }}</a>
+                <a href="{{ path('app_people_index') }}">{{ 'People'|trans }}</a>
+                <a href="{{ path('app_map_index') }}">{{ 'Shooting locations'|trans }}</a>
                 <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
             {% endif %}
             {% if app.user %}
