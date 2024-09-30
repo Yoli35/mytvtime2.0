@@ -133,7 +133,7 @@ class SeriesController extends AbstractController
         }
         $series = $this->getSearchResult($searchResult, new AsciiSlugger());
         $userSeriesTMDBIds = array_column($this->userSeriesRepository->userSeriesTMDBIds($user), 'id');
-        dump(['series' => $series, 'userSeriesTMDBIds' => $userSeriesTMDBIds]);
+//        dump(['series' => $series, 'userSeriesTMDBIds' => $userSeriesTMDBIds]);
 
         // Historique des épisodes vus pendant les 2 semaines passées
         $episodeHistory = $this->getEpisodeHistory($user, 14, $country, $language);
@@ -198,7 +198,7 @@ class SeriesController extends AbstractController
                 'air_at' => null,
             ];
         }, $this->userSeriesRepository->getUserSeriesOfTheNext7Days($user, $country, $locale));
-        dump(['allEpisodesOfTheWeek' => $allEpisodesOfTheWeek]);
+//        dump(['allEpisodesOfTheWeek' => $allEpisodesOfTheWeek]);
         $seriesOfTheWeek = [];
         foreach ($allEpisodesOfTheWeek as $us) {
             if ($us['released_episode_count'] > 1) {
@@ -211,23 +211,26 @@ class SeriesController extends AbstractController
         $seriesToStart = array_map(function ($s) {
             $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
-        }, $this->userEpisodeRepository->seriesToStart($user, $locale, 1, 20));
+        }, $this->userEpisodeRepository->seriesToStart($user, $locale, 1, 40));
+        $seriesToStartCount = $this->userEpisodeRepository->seriesToStartCount($user, $locale);
 
-        dump([
-            'episodesOfTheDay' => $episodesOfTheDay,
-            'seriesOfTheWeek' => $seriesOfTheWeek,
+//        dump([
+//            'episodesOfTheDay' => $episodesOfTheDay,
+//            'seriesOfTheWeek' => $seriesOfTheWeek,
 //            'episodeHistory' => $episodeHistory,
 //            'seriesToStart' => $seriesToStart,
+//            'seriesToStartCount' => $seriesToStartCount,
 //            'seriesList' => $series,
 //            'total_results' => $searchResult['total_results'] ?? -1,
 //            'hier' => $this->now()->modify('-1 day')->format('Y-m-d'),
-        ]);
+//        ]);
 
         return $this->render('series/index.html.twig', [
             'episodesOfTheDay' => $episodesOfTheDay,
             'seriesOfTheWeek' => $seriesOfTheWeek,
             'episodeHistory' => $episodeHistory,
             'seriesToStart' => $seriesToStart,
+            'seriesToStartCount' => $seriesToStartCount,
             'seriesList' => $series,
             'userSeriesTMDBIds' => $userSeriesTMDBIds,
             'total_results' => $searchResult['total_results'] ?? -1,

@@ -490,6 +490,18 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function seriesToStartCount(User $user, string $locale): int
+    {
+        $userId = $user->getId();
+        $sql = "SELECT COUNT(*) as count
+                FROM `series` s
+                INNER JOIN `user_series` us ON us.series_id=s.id
+                LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.id AND sln.`locale`='$locale'
+                WHERE s.`first_air_date` <= NOW() AND us.user_id=$userId AND us.`progress`=0";
+
+        return $this->getOne($sql);
+    }
+
     /*public function getSubstituteName(int $id): mixed
     {
         $sql = "SELECT `name` "
