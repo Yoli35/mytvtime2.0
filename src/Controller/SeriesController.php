@@ -237,6 +237,23 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[Route('/search', name: 'to_start')]
+    public function serieToStart(Request $request): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+
+        $seriesToStart = array_map(function ($s) {
+            $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            return $s;
+        }, $this->userEpisodeRepository->seriesToStart($user, $locale, 1, -1));
+
+        return $this->render('series/series-to-start.html.twig', [
+            'seriesToStart' => $seriesToStart,
+        ]);
+    }
+
     #[Route('/search', name: 'search')]
     public function search(Request $request): Response
     {
@@ -2481,18 +2498,22 @@ class SeriesController extends AbstractController
             // Vérifier si l'URL de l'image est valide
             if (filter_var($imageUrl, FILTER_VALIDATE_URL)) {
                 // Récupérer le contenu de l'image à partir de l'URL
-                $imageContent = file_get_contents($imageUrl);
+                try {
+                    $imageContent = file_get_contents($imageUrl);
 
-                // Ouvrir un fichier en mode écriture binaire
-                $file = fopen($localeFile, 'wb');
+                    // Ouvrir un fichier en mode écriture binaire
+                    $file = fopen($localeFile, 'wb');
 
-                // Écrire le contenu de l'image dans le fichier
-                fwrite($file, $imageContent);
+                    // Écrire le contenu de l'image dans le fichier
+                    fwrite($file, $imageContent);
 
-                // Fermer le fichier
-                fclose($file);
+                    // Fermer le fichier
+                    fclose($file);
 
-                return true;
+                    return true;
+                } catch (Exception) {
+                    return false;
+                }
             } else {
                 return false;
             }

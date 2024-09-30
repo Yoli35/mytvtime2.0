@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Series'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid series-index">
+        {% if seriesToStart|length %}
+            <h2>
+                {{ 'Series to start'|trans }} ({{ seriesToStart|length }})
+            </h2>
+            <div class="series-group user">
+                <div class="wrapper">
+                    <div class="content center">
+                        {% for series in seriesToStart %}
+                            {{ include('_blocks/series/_card2Start.html.twig') }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% include('_blocks/_footer.html.twig') %}
+    </div>
+{% endblock %}

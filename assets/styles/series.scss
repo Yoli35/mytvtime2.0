@@ -30,6 +30,15 @@ h2 {
 
     h2 {
         margin-block-start: 2rem;
+
+        &:has(button) {
+            display: flex;
+            gap: 1rem;
+
+            button {
+                margin-inline-start: auto;
+            }
+        }
     }
 
     .new-line {

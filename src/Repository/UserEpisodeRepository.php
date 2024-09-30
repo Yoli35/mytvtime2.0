@@ -484,8 +484,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 INNER JOIN `user_series` us ON us.series_id=s.id
                 LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.id AND sln.`locale`='$locale'
                 WHERE s.`first_air_date` <= NOW() AND us.user_id=$userId AND us.`progress`=0
-                ORDER BY s.`first_air_date` DESC
-                LIMIT $perPage OFFSET $offset";
+                ORDER BY s.`first_air_date` DESC ";
+        if ($perPage > 0) $sql .= "LIMIT $perPage OFFSET $offset";
 
         return $this->getAll($sql);
     }

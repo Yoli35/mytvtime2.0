@@ -83,7 +83,10 @@
             </div>
         {% endif %}
         {% if seriesToStart|length %}
-            <h2>{{ 'Series to start'|trans }} ({{ seriesToStart|length }} / {{ seriesToStartCount }})</h2>
+            <h2>
+                {{ 'Series to start'|trans }} ({{ seriesToStart|length }} / {{ seriesToStartCount }})
+                <button class="btn btn-primary" onclick="window.location.href='{{ path('app_series_to_start') }}'">{{ 'See all'|trans }}</button>
+            </h2>
             <div class="series-group user">
                 <div class="wrapper">
                     <div class="content center">
