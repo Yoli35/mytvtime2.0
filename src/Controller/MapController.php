@@ -34,7 +34,7 @@ class MapController extends AbstractController
             ->fitBoundsToMarkers();
 
         $seriesLocations = $this->seriesRepository->seriesLocations($user, $locale);
-//        dump($seriesLocations);
+        dump($seriesLocations);
         foreach ($seriesLocations as $seriesLocation) {
             foreach ($seriesLocation['locations'] as $location) {
 //                dump($location);
@@ -44,6 +44,7 @@ class MapController extends AbstractController
 
         return $this->render('map/index.html.twig', [
             'map' => $map,
+            'seriesLocations' => $seriesLocations,
             'seriesCount' => count($seriesLocations),
         ]);
     }
