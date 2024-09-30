@@ -696,6 +696,11 @@
                     }
                 }
             }
+
+            .episode-block {
+                display: flex;
+                gap: .25rem;
+            }
         }
     }
 }
