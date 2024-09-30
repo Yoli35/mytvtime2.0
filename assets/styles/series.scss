@@ -662,6 +662,7 @@ h2 {
 
         .next-episode {
             background-color: var(--green-70);
+            cursor: pointer;
 
             .country, .local-air, .remaining {
                 align-items: center;
@@ -705,6 +706,7 @@ h2 {
                     background-color: var(--orange-40-alpha-50);
                     border: 4px dashed var(--orange-50);
                     border-radius: .5rem;
+                    display: none;
                     padding: 1rem;
 
                     .form-field {
@@ -712,6 +714,7 @@ h2 {
                         display: flex;
                         flex-wrap: wrap;
                         gap: 2rem;
+                        justify-content: center;
 
                         > div {
                             display: flex;
@@ -734,7 +737,7 @@ h2 {
                             }
 
                             label:has(input[type=checkbox]) {
-                                background-color: var(--orange-50-alpha-50);
+                                background-color: var(--orange-30);
                                 border-radius: .25rem;
                                 border: 2px solid var(--orange-50);
                                 justify-content: center;
@@ -746,8 +749,8 @@ h2 {
                             }
 
                             label:has(input[type=checkbox]:checked) {
-                                background-color: var(--orange-50);
-                                border: 2px solid var(--orange-70);
+                                background-color: var(--green-60);
+                                border: 2px solid var(--green-30);
                             }
 
                             input[type=time] {
