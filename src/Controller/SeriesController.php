@@ -1917,7 +1917,8 @@ class SeriesController extends AbstractController
     public function getEpisodeHistory(User $user, int $dayCount, string $country, string $language): array
     {
         return array_map(function ($series) {
-            $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+            $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
+//            $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
             $series['providerLogoPath'] = $series['providerLogoPath'] ? ($series['providerId'] > 0 ? $this->imageConfiguration->getCompleteUrl($series['providerLogoPath'], 'logo_sizes', 2) : '/images/providers' . $series['providerLogoPath']) : null;
             $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
             $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];

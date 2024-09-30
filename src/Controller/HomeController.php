@@ -59,7 +59,8 @@ class HomeController extends AbstractController
 
             // Episodes du jour
             $episodesOfTheDay = array_map(function ($series) {
-                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+                $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
+//                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
                 $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
                 $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
                 $series['released'] = true;
@@ -67,21 +68,24 @@ class HomeController extends AbstractController
             }, $this->userEpisodeRepository->episodesOfTheDay($user, $country, $language));
             // Épisodes à voir parmi les séries commencées
             $episodesToWatch = array_map(function ($series) {
-                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+                $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
+//                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
                 $series['released'] = true;
                 return $series;
             }, $this->userEpisodeRepository->episodesToWatch($user, $country, $language, 1, 20));
             // Dernières séries ajoutées
             $lastAddedSeries = array_map(function ($series) {
 //                $s = $serie->homeArray();
-                $series['poster_path'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+                $series['poster_path'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
+//                $series['poster_path'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
                 $series['localized_name'] = $series['localizedName'];
                 $series['localized_slug'] = $series['localizedSlug'];
                 return $series;
             }, $this->userEpisodeRepository->lastAddedSeries($user, $language, 1, 50));
             // Historique des séries vues
             $historySeries = array_map(function ($series) {
-                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+                $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
+//                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
                 $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
                 $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
                 $series['released'] = true;
