@@ -34,10 +34,9 @@ class MapController extends AbstractController
             ->fitBoundsToMarkers();
 
         $seriesLocations = $this->seriesRepository->seriesLocations($user, $locale);
-        dump($seriesLocations);
+
         foreach ($seriesLocations as $seriesLocation) {
             foreach ($seriesLocation['locations'] as $location) {
-//                dump($location);
                 $map->addMarker(new Marker(new Point($location['latitude'], $location['longitude']), $seriesLocation['name'], new InfoWindow('<strong>' . $seriesLocation['name'] . '</strong> - ' . $location['description'], '<img src="' . $location['image'] . '" alt="' . $location['description'] . '" style="height: auto; width: 100%">')));
             }
         }
