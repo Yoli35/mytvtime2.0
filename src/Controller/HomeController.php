@@ -132,6 +132,28 @@ class HomeController extends AbstractController
         $seriesSelection = $this->getSeriesSelection($slugger, $country, $timezone, $language, true);
         $movieSelection = $this->getMovieSelection($slugger, $country, $timezone, $language, true);
 
+        $movieId = $movieSelection[rand(0, count($movieSelection) - 1)]['id'];
+        $movie = json_decode($this->tmdbService->getMovie($movieId, $language, ['watch/providers', 'videos']), true);
+        $videoList = [];
+        $movieVideos = ['title' => '', 'firstVideo' => '', 'videoList' => ''];
+        if (count($movie['videos']['results'])) {
+            $movieVideos['title'] = $movie['title'];
+            $movieVideos['firstVideo'] = $movie['videos']['results'][0];
+            $videos = array_filter($movie['videos']['results'], function ($video) {
+                return $video['site'] === 'YouTube';
+            });
+            if (count($videos)) {
+                foreach ($videos as $video) {
+                    $videoList[] = $video['key'];
+                }
+            }
+            $videoList = implode(',', $videoList);
+            $movieVideos['videoList'] = $videoList;
+        } else {
+            $videos = [];
+        }
+        dump($movieVideos);
+
 //        dump([
 //            'historySeries' => $historySeries,
 //            'filterString' => $filterString,
@@ -158,6 +180,7 @@ class HomeController extends AbstractController
             'watchProviders' => $watchProviders,
             'provider' => $provider,
             'filteredSeries' => $filteredSeries,
+            'movieVideos' => $movieVideos,
         ]);
     }
 
@@ -239,7 +262,7 @@ class HomeController extends AbstractController
         $endDate = date('Y-m-d', strtotime('+6 month'));
 
         if ($forceProvider) {
-            $selectedProviders = "8|337|119|350";
+            $selectedProviders = "8|119|337|350";
         } else {
             // providers: 8|35|43|119|234|236|337|344|345|350|381
             // 8: Netflix           // 35: Rakuten TV        // 43: Starz            // 119: Amazon Prime Video

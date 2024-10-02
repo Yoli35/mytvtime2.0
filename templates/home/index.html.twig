@@ -9,11 +9,11 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid home">
-        {#<div class="presentation">
+        {# <div class="presentation">
                         <p>My Tv Time est un site qui vous permet de gérer vos séries préférées. Vous pouvez ajouter des séries à votre liste, indiquer les épisodes que vous avez vus, et bien plus encore !</p>
                         <p>Vous pouvez également consulter les séries les plus populaires, les séries les mieux notées, ou encore les séries les plus récentes.</p>
                         <p>Enfin, vous pouvez filtrer les séries par plateforme de streaming pour savoir où les regarder.</p>
-        </div>#}
+        </div> #}
         <div class="highlight-progress">
             <div class="head"></div>
         </div>
@@ -83,6 +83,23 @@
                     </div>
                 </div>
             </div>
+
+            {% if movieVideos.firstVideo|length %}
+                {% set video = movieVideos.firstVideo %}
+                {% if video.site == 'YouTube' %}
+                    <h2>{{ movieVideos.title }}</h2>
+                    <div class="series-group">
+                        <div class="video" style="width: 100%;">
+                            <object
+                                    style="width: 100%; aspect-ratio: 16/9;"
+                                    data="https://www.youtube.com/embed/{{ video.key }}?autoplay=1&mute=1&loop=1&playlist={{ movieVideos.videoList }}">
+                            </object>
+                            {# <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video.key }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> #}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+
             {% if app.user %}
                 {% if episodesOfTheDay|length %}
                     <div class="series-group">
