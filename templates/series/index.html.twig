@@ -14,7 +14,7 @@
             <h2>{{ 'Episodes of the day'|trans }} ({{ episodesOfTheDay|length }})</h2>
             <div class="series-group user">
                 <div class="wrapper">
-                    <div class="content">
+                    <div class="content center">
                         {% set series = episodesOfTheDay.0 %}
                         {% set date = series.date %}
                         {% set dayOfMonth = series.date|date('j') %}
@@ -38,7 +38,7 @@
             <h2>{{ 'Series of the next 7 days'|trans }} ({{ seriesOfTheWeek|reduce((carry, s) => carry + s|length) }})</h2>
             <div class="series-group user">
                 <div class="wrapper">
-                    <div class="content">
+                    <div class="content center">
                         {% set date = "" %}
                         {% for series in seriesOfTheWeek %}
                             {% if date != series.0.date %}
