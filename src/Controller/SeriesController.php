@@ -143,10 +143,6 @@ class SeriesController extends AbstractController
             if ($ue['airAt']) {
                 $time = explode(':', $ue['airAt']);
                 $now = $this->now()->setTime($time[0], $time[1], $time[2]);
-                if ($ue['utc']) {
-                    $utc = $ue['utc'];
-                    $now = $now->modify($utc . ' hours');
-                }
                 $ue['airAt'] = $now->format('Y-m-d H:i:s');
             }
             return [

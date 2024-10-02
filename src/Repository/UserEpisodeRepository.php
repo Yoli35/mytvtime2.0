@@ -289,7 +289,6 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        ue.`season_number`              as seasonNumber,
                        ue.`watch_at`                   as watchAt,
                        sbs.`air_at`                    as airAt,
-                       sbs.`utc`                       as utc,
                        (SELECT count(*)
                         FROM user_episode cue
                         WHERE cue.user_series_id = us.id
