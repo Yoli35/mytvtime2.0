@@ -100,9 +100,7 @@ export class Show {
             const span1 = remaining.querySelector('span:first-child');
             const span1Value = span1.textContent;
             const span2 = remaining.querySelector('span:last-child');
-            const targetTS = remaining.getAttribute('data-targetTS') * 1000;
-            const remainingTodayTS = remaining.getAttribute('data-remainingTodayTS') * 1000;
-            const nextDay = (remainingTodayTS - targetTS) > 0;
+            const targetTS = remaining.getAttribute('data-target-ts') * 1000;
             /*const interval = */
             setInterval(() => {
                 const now = (new Date().getTime());
@@ -112,11 +110,14 @@ export class Show {
                 const h = (d===1 ? 24 : 0) + Math.floor((distanceAbs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // d=1 & h:m:s>0 → Après-demain
                 const m = Math.floor((distanceAbs % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((distanceAbs % (1000 * 60)) / 1000);
-                const days = d ? " " + d + " " + translations[d > 1 ? 'days' : 'day'] : "";
+                const days = d ? (" " + d + " " + translations[d > 1 ? 'days' : 'day']) : "";
                 const hours = (h < 10 ? "0" : "") + h + ":";
                 const minutes = (m < 10 ? "0" : "") + m + ":";
                 const secondes = (s < 10 ? "0" : "") + s;
                 const elapsedTime = '<code>' + hours + minutes + secondes + '</code>';
+
+                const airDay = new Date(targetTS).getDate();
+                const currentDay = new Date().getDate();
 
                 // Si la date est dépassée de moins d'une heure, on arrête le compte à rebours
                 if (distance < 0) {
@@ -127,8 +128,21 @@ export class Show {
                     }
                     span2.innerHTML = translations["Since"] + " " + (d ? (days + ",<br>") : "") + elapsedTime;
                 } else {
-                    span2.innerHTML = (nextDay ?(d === 0 ? translations["Tomorrow"] : (d === 1 ? translations["After tomorrow"] : days)):translations['Today'])
-                        + (d ? "," : "") + "<br>" + elapsedTime;
+                    let dayPart; // today, tomorrow, after tomorrow, x days
+                    let day = airDay - currentDay;
+                    if (day === 0) {
+                        dayPart = translations["Today"];
+                    }
+                    if (day === 1) {
+                        dayPart = translations["Tomorrow"];
+                    }
+                    if (day === 2) {
+                        dayPart = translations["After tomorrow"];
+                    }
+                    if (day > 2) {
+                        dayPart = d + " " + translations['days'];
+                    }
+                    span2.innerHTML = dayPart + "<br>" + elapsedTime;
                 }
             }, 1000);
         }

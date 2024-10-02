@@ -13,22 +13,13 @@ Mandatory variables:
                 <div class="schedule-block">
                     <div class="schedule">
                         {% set country = user.country ?? 'FR' %}
-                        {#                    {% if schedule.utc %} #}
-                        {#                        <div class="country" data-title="{{ schedule.country|country_name }}">{{ getEmojiFlag(schedule.country) }}</div> #}
-                        {#                        <div class="air">{{ schedule.firstAirDate|format_datetime(pattern="cccc - H:mm")|capitalize }}</div> #}
-                        {#                        <div> #}
-                        {#                            {{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }} #}
-                        {#                        </div> #}
-                        {#                    {% endif %} #}
                         <div class="next-episode" onclick="ToggleScheduleForm({{ schedule.id }})">
                             <div class="type">{{ ux_icon('fa6-regular:clock', {height: "18px", width: "18px"}) }}</div>
                             <div class="country" data-title="{{ country|country_name }}">{{ getEmojiFlag(country) }}</div>
                             <div class="local-air">{{ schedule.dayList }}</div>
-                            <div class="local-air">{{ schedule.originalDate|format_datetime(pattern="H:mm") }}</div>
+                            <div class="local-air">{{ schedule.airAt }}</div>
                             {% set d = schedule.before %}
-                            <div class="remaining" data-targetTS="{{ schedule.targetTS }}" data-remainingTodayTS="{{ schedule.remainingTodayTS }}">
-                                {#                            <span>{{ 'in'|trans }}</span> #}
-                                {#                            <span>{{ d.d ? (' ' ~ d.d ~ ' ' ~ (d.d > 1 ? 'days':'day')|trans):'' }}{{ d.h ? (' ' ~ d.h ~ ' ' ~ (d.h > 1 ? 'hours':'hour')|trans) }}{{ d.i ? (' ' ~ d.i~ ' ' ~ (d.i > 1 ? 'minutes':'minute')|trans) }}</span> #}
+                            <div class="remaining" data-target-ts="{{ schedule.targetTS }}">
                                 <span>{% if schedule.toBeContinued %}{{ 'To be continued'|trans }}{% else %}{{ 'That\'s all!'|trans }}{% endif %}</span>
                                 <span></span>
                             </div>
@@ -37,40 +28,9 @@ Mandatory variables:
                             function ToggleScheduleForm(id) {
                                 const form = document.getElementById('schedule-form-' + id);
                                 const formBlock = form.parentElement;
-                                formBlock.style.display = formBlock.style.display === 'none' ? 'block' : 'none';
+                                formBlock.style.display = formBlock.style.display === 'block' ? 'none' : 'block';
                             }
                         </script>
-                        {#
-                        "userLastEpisode" => array:5 [▼
-                            "season_number" => 1
-                            "episode_number" => 2
-                            "air_date" => "2024-09-18"
-                            "air_date_offset" => "2024-09-19"
-                            "watch_at" => "2024-09-20 00:20:15"
-                          ]
-                          "userNextEpisode" => array:4 [▼
-                            "season_number" => 1
-                            "episode_number" => 3
-                            "air_date" => "2024-09-25"
-                            "air_date_offset" => "2024-09-26"
-                          ]
-                          "tvLastEpisode" => array:13 [▶]
-                          "tvNextEpisode" => array:13 [▼
-                            "id" => 5348321
-                            "name" => "Épisode 4"
-                            "overview" => ""
-                            "vote_average" => 1.0
-                            "vote_count" => 1
-                            "air_date" => "2024-10-03T09:00"
-                            "episode_number" => 4
-                            "episode_type" => "standard"
-                            "production_code" => ""
-                            "runtime" => null
-                            "season_number" => 1
-                            "show_id" => 138501
-                            "still_path" => "/wOYM9OjqJB3NQwyzy5F2NSHGTG7.jpg"
-                          ]
-                        #}
                         {% set ule = schedule.userLastEpisode %}
                         {% set une = schedule.userNextEpisode %}
                         {% set tvle = schedule.tvLastEpisode %}
@@ -138,7 +98,7 @@ Mandatory variables:
                                 <div class="form-field">
                                     <div>
                                         <label for="time-{{ schedule.id }}">{{ 'Time'|trans }}
-                                            <input type="time" name="time" value="{{ schedule.airAt }}" id="time-{{ schedule.id }}">
+                                            <input type="time" name="time-{{ schedule.id }}" value="{{ schedule.airAt }}" id="time-{{ schedule.id }}">
                                         </label>
                                     </div>
                                     <div>
@@ -171,6 +131,41 @@ Mandatory variables:
                                             <input type="checkbox" {% if schedule.dayArr.0 %} checked{% endif %} name="days" value="0" id="days-0">{{ 'Sunday'|trans }}
                                         </label>
                                     </div>
+                                    <div>
+                                        <button type="button" onclick="SaveSchedule({{ schedule.id }})">{{ 'Save'|trans }}</button>
+                                    </div>
+                                    <script>
+                                        function SaveSchedule(id) {
+                                            const form = document.getElementById('schedule-form-' + id);
+                                            const time = form.querySelector('input[name="time-' + id + '"]').value;
+                                            const days = form.querySelectorAll('input[name="days"]');
+                                            const dayArr = [];
+                                            days.forEach(day => {
+                                                if (day.checked) {
+                                                    dayArr.push(day.value);
+                                                }
+                                            });
+                                            const data = {
+                                                id: id,
+                                                time: time,
+                                                days: dayArr
+                                            };
+                                            fetch('{{ path('app_series_schedule_save') }}', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'X-Requested-With': 'XMLHttpRequest'
+                                                },
+                                                body: JSON.stringify(data)
+                                            })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        ToggleScheduleForm(id);
+                                                    }
+                                                });
+                                        }
+                                    </script>
                                 </div>
                             </div>
                         </form>

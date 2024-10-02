@@ -9,6 +9,7 @@ use App\Entity\EpisodeSubstituteName;
 use App\Entity\SeasonLocalizedOverview;
 use App\Entity\Series;
 use App\Entity\SeriesAdditionalOverview;
+use App\Entity\SeriesBroadcastSchedule;
 use App\Entity\SeriesDayOffset;
 use App\Entity\SeriesImage;
 use App\Entity\SeriesLocalizedName;
@@ -24,11 +25,10 @@ use App\Repository\DeviceRepository;
 use App\Repository\EpisodeLocalizedOverviewRepository;
 use App\Repository\EpisodeSubstituteNameRepository;
 use App\Repository\KeywordRepository;
-
-//use App\Repository\ProviderRepository;
 use App\Repository\NetworkRepository;
 use App\Repository\SeasonLocalizedOverviewRepository;
 use App\Repository\SeriesAdditionalOverviewRepository;
+use App\Repository\SeriesBroadcastScheduleRepository;
 use App\Repository\SeriesDayOffsetRepository;
 use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesLocalizedNameRepository;
@@ -45,7 +45,6 @@ use App\Service\DeeplTranslator;
 use App\Service\ImageConfiguration;
 use App\Service\KeywordService;
 use App\Service\TMDBService;
-use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
@@ -85,6 +84,7 @@ class SeriesController extends AbstractController
         private readonly NetworkRepository                  $networkRepository,
         private readonly SeasonLocalizedOverviewRepository  $seasonLocalizedOverviewRepository,
         private readonly SeriesAdditionalOverviewRepository $seriesAdditionalOverviewRepository,
+        private readonly SeriesBroadcastScheduleRepository  $seriesBroadcastScheduleRepository,
         private readonly SeriesDayOffsetRepository          $seriesDayOffsetRepository,
         private readonly SeriesImageRepository              $seriesImageRepository,
         private readonly SeriesRepository                   $seriesRepository,
@@ -202,16 +202,16 @@ class SeriesController extends AbstractController
         $seriesOfTheWeek = [];
         foreach ($allEpisodesOfTheWeek as $us) {
             if ($us['released_episode_count'] > 1) {
-                $seriesOfTheWeek[$us['date'].'-'.$us['id']][] = $us;
+                $seriesOfTheWeek[$us['date'] . '-' . $us['id']][] = $us;
             } else {
-                $seriesOfTheWeek[$us['date'].'-'.$us['id']][0] = $us;
+                $seriesOfTheWeek[$us['date'] . '-' . $us['id']][0] = $us;
             }
         }
 
         $seriesToStart = array_map(function ($s) {
             $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
-        }, $this->userEpisodeRepository->seriesToStart($user, $locale, 1, 40));
+        }, $this->userEpisodeRepository->seriesToStart($user, $locale, 1, 20));
         $seriesToStartCount = $this->userEpisodeRepository->seriesToStartCount($user, $locale);
 
 //        dump([
@@ -727,7 +727,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/broadcast/delay/{id}', name: 'broadcast-delay', requirements: ['id' => Requirement::DIGITS])]
+    #[Route('/broadcast/delay/{id}', name: 'broadcast_delay', requirements: ['id' => Requirement::DIGITS])]
     public function broadcastDelay(Request $request, Series $series): Response
     {
         /** @var User $user */
@@ -746,6 +746,35 @@ class SeriesController extends AbstractController
 
         return $this->json([
             'ok' => true,
+        ]);
+    }
+
+    #[Route('/schedules/save', name: 'schedule_save', methods: ['POST'])]
+    public function schedulesSave(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $id = $data['id'];
+        $time = $data['time'];
+        $dayArr = array_map(function ($d) {
+            return intval($d);
+        }, $data['days']);
+
+//        dump([
+//            'id' => $id,
+//            'time' => $time,
+//            'dayArr' => $dayArr,
+//        ]);
+        $hour = (int)substr($time, 0, 2);
+        $minute = (int)substr($time, 3, 2);
+        /** @var SeriesBroadcastSchedule $seriesBroadcastSchedule */
+        $seriesBroadcastSchedule = $this->seriesBroadcastScheduleRepository->findOneBy(['id' => $id]);
+        $seriesBroadcastSchedule->setAirAt((new DateTimeImmutable())->setTime($hour, $minute));
+        $seriesBroadcastSchedule->setDayOfWeek($dayArr);
+        $this->seriesBroadcastScheduleRepository->save($seriesBroadcastSchedule);
+
+        return $this->json([
+            'ok' => true,
+            'success' => true,
         ]);
     }
 
@@ -853,30 +882,6 @@ class SeriesController extends AbstractController
             'devices' => $devices,
         ]);
     }
-
-//    #[IsGranted('ROLE_USER')]
-//    #[Route('/add/watch/link/{id}', name: 'add_watch_link', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-//    public function addWatchLink(Request $request, int $id): Response
-//    {
-//        $data = json_decode($request->getContent(), true);
-//        $url = $data['url'];
-//        $name = $data['name'];
-//        $providerId = $data['provider'];
-//        if ($providerId == "") $providerId = null;
-//        dump([
-//            'url' => $url,
-//            'name' => $name,
-//            'provider' => $providerId,
-//        ]);
-//        $series = $this->seriesRepository->findOneBy(['id' => $id]);
-//
-//        $watchLink = new SeriesWatchLink($url, $name, $series, $providerId);
-//        $this->seriesWatchLinkRepository->save($watchLink, true);
-//
-//        return $this->json([
-//            'ok' => true,
-//        ]);
-//    }
 
     #[Route('/add/localized/name/{id}', name: 'add_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addLocalizedName(Request $request, int $id): Response
@@ -1665,50 +1670,11 @@ class SeriesController extends AbstractController
         return $seasonEpisodeCount;
     }
 
-    public function seriesSchedules(User $user, Series $series): array
-    {
-        $schedules = [];
-        foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
-            $firstAirDate = $schedule->getFirstAirDate();
-            $airAt = $schedule->getAirAt();
-
-            $country = $schedule->getCountry();
-            $utc = $schedule->getUtc(); // int
-
-            $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
-            $target = $series->getNextEpisodeAirDate()->setTimezone(new DateTimeZone('Europe/Paris'))->setTime($airAt->format('H'), $airAt->format('i'));
-            $timestamp = $target->getTimestamp();
-
-            $firstAirDate = $firstAirDate->setTime($airAt->format('H'), $airAt->format('i'));
-
-            $originalDate = $firstAirDate->format('Y-m-d H:i');
-            $originalDate = str_replace(' ', 'T', $originalDate);
-            $originalDate .= ($utc > 0 ? "+" : "-") . (abs($utc) < 10 ? '0' : '') . $utc . ':00';
-
-            $episode = $this->userEpisodeRepository->getScheduleNextEpisode($user, $series);
-            $schedules[] = [
-                'country' => $country,
-                'firstAirDate' => $firstAirDate,
-                'originalDate' => $originalDate,
-                'utc' => $utc,
-                'now' => $now->format('Y-m-d H:i'),
-                'target' => $target->format('Y-m-d H:i'),
-                'timestamp' => $timestamp,
-                'before' => $now->diff($target),
-                'episode' => $episode,
-            ];
-
-        }
-        return $schedules;
-
-    }
-
     public function seriesSchedulesV2(User $user, Series $series, array $tv, int $dayOffset): array
     {
         $schedules = [];
         $locale = $user->getPreferredLanguage() ?? 'fr';
         foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
-            $firstAirDate = $series->getFirstAirDate();
             $airAt = $schedule->getAirAt();
             $dayOfWeekArr = [
                 'en' => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
@@ -1721,15 +1687,13 @@ class SeriesController extends AbstractController
                 $dayArr[$day] = true;
             }
 
-            $country = $schedule->getCountry();
-            $utc = $schedule->getUtc(); // int
-
             $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
             $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
 
             $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
             $tomorrow = $now->modify('+1 day')->setTime(0, 0);
-            $remainingTodayTS = $now->getTimestamp() - $tomorrow->getTimestamp();
+            $remainingTodayTS = $tomorrow->getTimestamp() - $now->getTimestamp();
+            dump(['now' => $now, 'tomorrow' => $tomorrow, 'remainingTodayTS' => $remainingTodayTS]);
             $nextEpisodeAiDate = $tvNextEpisode ? $this->dateService->newDateImmutable($tvNextEpisode['air_date'], 'Europe/Paris') : null;
             $lastEpisodeAiDate = $tvLastEpisode ? $this->dateService->newDateImmutable($tvLastEpisode['air_date'], 'Europe/Paris') : null;
             if ($nextEpisodeAiDate) {
@@ -1740,12 +1704,6 @@ class SeriesController extends AbstractController
                 $target = null;
             }
             $targetTS = $target?->getTimestamp();
-
-            $firstAirDate = $firstAirDate->setTime($airAt->format('H'), $airAt->format('i'));
-
-            $originalDate = $firstAirDate->format('Y-m-d H:i');
-            $originalDate = str_replace(' ', 'T', $originalDate);
-            $originalDate .= ($utc > 0 ? "+" : "-") . (abs($utc) < 10 ? '0' : '') . $utc . ':00';
 
             $userLastEpisode = $this->userEpisodeRepository->getScheduleLastEpisode($user, $series);
             $userNextEpisode = $this->userEpisodeRepository->getScheduleNextEpisode($user, $series);
@@ -1768,16 +1726,8 @@ class SeriesController extends AbstractController
 
             $schedules[] = [
                 'id' => $schedule->getId(),
-                'country' => $country,
-                'firstAirDate' => $firstAirDate,
-                'originalDate' => $originalDate,
-                'utc' => $utc,
                 'airAt' => $airAt->format('H:i'),
-                'now' => $now->format('Y-m-d H:i'),
-                'tomorrow' => $tomorrow->format('Y-m-d H:i'),
-                'target' => $target?->format('Y-m-d H:i'),
                 'targetTS' => $targetTS,
-                'remainingTodayTS' => $remainingTodayTS,
                 'before' => $target ? $now->diff($target) : null,
                 'dayList' => $scheduleDayOfWeek,
                 'dayArr' => $dayArr,

@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\SeriesBroadcastSchedule;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,33 +17,14 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SeriesBroadcastScheduleRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $em)
     {
         parent::__construct($registry, SeriesBroadcastSchedule::class);
     }
 
-    //    /**
-    //     * @return SeriesBroadcastSchedule[] Returns an array of SeriesBroadcastSchedule objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?SeriesBroadcastSchedule
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function save(SeriesBroadcastSchedule $seriesBroadcastSchedule): void
+    {
+        $this->em->persist($seriesBroadcastSchedule);
+        $this->em->flush();
+    }
 }

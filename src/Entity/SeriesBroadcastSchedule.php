@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SeriesBroadcastScheduleRepository;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -22,7 +24,7 @@ class SeriesBroadcastSchedule
     private array $dayOfWeek = [];
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    private ?\DateTimeInterface $airAt = null;
+    private ?DateTimeInterface $airAt = null;
 
     #[ORM\Column(length: 2)]
     private ?string $country = null;
@@ -31,7 +33,7 @@ class SeriesBroadcastSchedule
     private ?int $utc = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    private ?\DateTimeImmutable $firstAirDate = null;
+    private ?DateTimeImmutable $firstAirDate = null;
 
     public function getId(): ?int
     {
@@ -62,12 +64,12 @@ class SeriesBroadcastSchedule
         return $this;
     }
 
-    public function getAirAt(): ?\DateTimeInterface
+    public function getAirAt(): ?DateTimeInterface
     {
         return $this->airAt;
     }
 
-    public function setAirAt(\DateTimeInterface $airAt): static
+    public function setAirAt(DateTimeInterface $airAt): static
     {
         $this->airAt = $airAt;
 
@@ -98,12 +100,12 @@ class SeriesBroadcastSchedule
         return $this;
     }
 
-    public function getFirstAirDate(): ?\DateTimeImmutable
+    public function getFirstAirDate(): ?DateTimeImmutable
     {
         return $this->firstAirDate;
     }
 
-    public function setFirstAirDate(\DateTimeImmutable $firstAirDate): static
+    public function setFirstAirDate(DateTimeImmutable $firstAirDate): static
     {
         $this->firstAirDate = $firstAirDate;
 
