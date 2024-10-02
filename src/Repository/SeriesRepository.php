@@ -47,7 +47,7 @@ class SeriesRepository extends ServiceEntityRepository
         }
         $sql .= "  LIMIT 20 OFFSET $offset";
 
-        return $this->em->getConnection()->fetchAllAssociative($sql);
+        return $this->getAll($sql);
     }
 
     public function userSeriesInfos(User $user): array
@@ -79,7 +79,6 @@ class SeriesRepository extends ServiceEntityRepository
                 WHERE s.`locations` IS NOT NULL AND us.user_id=$userId";
 
         $arr = $this->getAll($sql);
-//        dump($arr);
         return array_map(function ($item) {
             $decoded = json_decode($item['locations'], true);
             $item['locations'] = $decoded['locations'];
