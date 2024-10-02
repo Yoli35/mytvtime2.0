@@ -20,20 +20,17 @@ class SeriesBroadcastSchedule
     #[ORM\JoinColumn(nullable: false)]
     private ?Series $series = null;
 
-    #[ORM\Column(type: 'json')]
-    private array $dayOfWeek = [];
+    #[ORM\Column(length: 2)]
+    private ?string $country = null;
+
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    private ?DateTimeImmutable $firstAirDate = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?DateTimeInterface $airAt = null;
 
-    #[ORM\Column(length: 2)]
-    private ?string $country = null;
-
-    #[ORM\Column]
-    private ?int $utc = null;
-
-    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    private ?DateTimeImmutable $firstAirDate = null;
+    #[ORM\Column(type: 'json')]
+    private array $daysOfWeek = [];
 
     public function getId(): ?int
     {
@@ -52,14 +49,14 @@ class SeriesBroadcastSchedule
         return $this;
     }
 
-    public function getDayOfWeek(): array
+    public function getDaysOfWeek(): array
     {
-        return $this->dayOfWeek;
+        return $this->daysOfWeek;
     }
 
-    public function setDayOfWeek(array $dayOfWeek): static
+    public function setDaysOfWeek(array $daysOfWeek): static
     {
-        $this->dayOfWeek = $dayOfWeek;
+        $this->daysOfWeek = $daysOfWeek;
 
         return $this;
     }
@@ -84,18 +81,6 @@ class SeriesBroadcastSchedule
     public function setCountry(string $country): static
     {
         $this->country = $country;
-
-        return $this;
-    }
-
-    public function getUtc(): ?int
-    {
-        return $this->utc;
-    }
-
-    public function setUtc(int $utc): static
-    {
-        $this->utc = $utc;
 
         return $this;
     }

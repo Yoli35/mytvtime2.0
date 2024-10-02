@@ -679,14 +679,14 @@ class SeriesController extends AbstractController
             'That\'s all!' => $this->translator->trans('That\'s all!'),
         ];
 
-        dump([
-            'series' => $seriesArr,
-            'tv' => $tv,
-            'dayOffset' => $dayOffset,
+//        dump([
+//            'series' => $seriesArr,
+//            'tv' => $tv,
+//            'dayOffset' => $dayOffset,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
-            'schedules' => $schedules,
-        ]);
+//            'schedules' => $schedules,
+//        ]);
         return $this->render('series/show.html.twig', [
             'series' => $seriesArr,
             'tv' => $tv,
@@ -754,22 +754,19 @@ class SeriesController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $id = $data['id'];
+        $country = $data['country'];
         $time = $data['time'];
         $dayArr = array_map(function ($d) {
             return intval($d);
         }, $data['days']);
 
-//        dump([
-//            'id' => $id,
-//            'time' => $time,
-//            'dayArr' => $dayArr,
-//        ]);
         $hour = (int)substr($time, 0, 2);
         $minute = (int)substr($time, 3, 2);
         /** @var SeriesBroadcastSchedule $seriesBroadcastSchedule */
         $seriesBroadcastSchedule = $this->seriesBroadcastScheduleRepository->findOneBy(['id' => $id]);
         $seriesBroadcastSchedule->setAirAt((new DateTimeImmutable())->setTime($hour, $minute));
-        $seriesBroadcastSchedule->setDayOfWeek($dayArr);
+        $seriesBroadcastSchedule->setCountry($country);
+        $seriesBroadcastSchedule->setDaysOfWeek($dayArr);
         $this->seriesBroadcastScheduleRepository->save($seriesBroadcastSchedule);
 
         return $this->json([
@@ -1517,7 +1514,8 @@ class SeriesController extends AbstractController
             $series->addUpdate($this->translator->trans('Original name updated'));
         }
         if ($tv['first_air_date'] && !$series->getFirstAirDate()) {
-            $series->setFirstAirDate(new DatePoint($tv['first_air_date']));
+            $series->setFirstAirDate($this->dateService->newDateImmutable($tv['first_air_date'], "Europe/Paris", true));
+//            $series->setFirstAirDate(new DatePoint($tv['first_air_date']));
             $series->addUpdate($this->translator->trans('First air date updated'));
         }
 
@@ -1652,7 +1650,7 @@ class SeriesController extends AbstractController
         foreach ($tv['seasons'] as $season) {
             if ($season['season_number'] > 0) {
                 // Si la série n'a plus d'épisode à venir, on compte les épisodes
-                // (nombre d'épisodes égal à 1 signifie que la saison est à venir, juste annoncée)
+                // (nombre d'épisodes égal à un, signifie que la saison est à venir, juste annoncée)
                 // de la saison qui ont une date de diffusion.
                 // Sinon, on se fie au nombre d'épisodes de la saison fourni par l'API
                 if (!$tv['next_episode_to_air']) {
@@ -1680,10 +1678,11 @@ class SeriesController extends AbstractController
                 'en' => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
                 'fr' => ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
             ];
-            $scheduleDayOfWeek = array_map(fn($day) => $dayOfWeekArr[$locale][$day], $schedule->getDayOfWeek());
+            $daysOfWeek = $schedule->getDaysOfWeek();
+            $scheduleDayOfWeek = array_map(fn($day) => $dayOfWeekArr[$locale][$day], $daysOfWeek);
             $scheduleDayOfWeek = ucfirst(implode(', ', $scheduleDayOfWeek));
             $dayArr = array_fill(0, 7, false);
-            foreach ($schedule->getDayOfWeek() as $day) {
+            foreach ($daysOfWeek as $day) {
                 $dayArr[$day] = true;
             }
 
@@ -1693,7 +1692,7 @@ class SeriesController extends AbstractController
             $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
             $tomorrow = $now->modify('+1 day')->setTime(0, 0);
             $remainingTodayTS = $tomorrow->getTimestamp() - $now->getTimestamp();
-            dump(['now' => $now, 'tomorrow' => $tomorrow, 'remainingTodayTS' => $remainingTodayTS]);
+
             $nextEpisodeAiDate = $tvNextEpisode ? $this->dateService->newDateImmutable($tvNextEpisode['air_date'], 'Europe/Paris') : null;
             $lastEpisodeAiDate = $tvLastEpisode ? $this->dateService->newDateImmutable($tvLastEpisode['air_date'], 'Europe/Paris') : null;
             if ($nextEpisodeAiDate) {
@@ -1796,7 +1795,8 @@ class SeriesController extends AbstractController
         if (!$series) $series = new Series();
         $series->setBackdropPath($tv['backdrop_path']);
         $series->setCreatedAt($date);
-        $series->setFirstAirDate($tv['first_air_date'] ? new DatePoint($tv['first_air_date']) : null);
+        $series->setFirstAirDate($tv['first_air_date'] ? $this->dateService->newDateImmutable($tv['first_air_date'], "Europe/Paris", true) : null);
+//        $series->setFirstAirDate($tv['first_air_date'] ? new DatePoint($tv['first_air_date']) : null);
         $series->setName($tv['name']);
         $series->setOriginalName($tv['original_name']);
         $series->setOverview($tv['overview']);

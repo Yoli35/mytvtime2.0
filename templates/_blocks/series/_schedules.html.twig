@@ -94,6 +94,8 @@ Mandatory variables:
                     </div>
                     <div class="schedule-form">
                         <form id="schedule-form-{{ schedule.id }}">
+                            <input type="hidden" name="id" value="{{ schedule.id }}">
+                            <input type="hidden" name="country" value="{{ country }}">
                             <div class="form-group">
                                 <div class="form-field">
                                     <div>
@@ -137,6 +139,7 @@ Mandatory variables:
                                     <script>
                                         function SaveSchedule(id) {
                                             const form = document.getElementById('schedule-form-' + id);
+                                            const country = form.querySelector('input[name="country"]').value;
                                             const time = form.querySelector('input[name="time-' + id + '"]').value;
                                             const days = form.querySelectorAll('input[name="days"]');
                                             const dayArr = [];
@@ -147,6 +150,7 @@ Mandatory variables:
                                             });
                                             const data = {
                                                 id: id,
+                                                country: country,
                                                 time: time,
                                                 days: dayArr
                                             };
@@ -162,6 +166,7 @@ Mandatory variables:
                                                 .then(data => {
                                                     if (data.success) {
                                                         ToggleScheduleForm(id);
+                                                        window.location.reload();
                                                     }
                                                 });
                                         }
