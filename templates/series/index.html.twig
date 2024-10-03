@@ -15,8 +15,7 @@
             <div class="series-group user">
                 <div class="wrapper">
                     <div class="content center">
-                        {% set series = episodesOfTheDay.0 %}
-                        {% set date = series.date %}
+                        {% set series = episodesOfTheDay|first|first %}
                         {% set dayOfMonth = series.date|date('j') %}
                         {% if dayOfMonth == "1" and app.locale == 'fr' %}
                             {% set dayOfMonth = '1<sup>er</sup>' %}
@@ -28,7 +27,20 @@
                             <div class="month">{{ series.date|format_datetime(pattern: "MMMM") }}</div>
                         </div>
                         {% for series in episodesOfTheDay %}
-                            {{ include('_blocks/series/_card.html.twig') }}
+                            {#                            {{ include('_blocks/series/_card.html.twig', {series: series|first}) }} #}
+                            {% if series|length == 1 %}
+                                {{ include('_blocks/series/_card.html.twig', {series: series.0}) }}
+                            {% endif %}
+                            {% if series|length > 1 %}
+                                <div class="episode-block">
+                                    {% for episode in [series|first, series|last] %}
+                                        {{ include('_blocks/series/_card.html.twig', {series: episode}) }}
+                                        {% if loop.first %}
+                                            <div class="episode-arrow"> {{ ux_icon('fa6-solid:arrow-right', {height: '32px', width: '32px'}) }}</div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>
@@ -71,12 +83,12 @@
                             {% endif %}
                             {% if series|length > 1 %}
                                 <div class="episode-block">
-                                {% for episode in [series.0, series[series|length-1]] %}
-                                    {{ include('_blocks/series/_card.html.twig', {series: episode}) }}
-                                    {% if loop.first %}
-                                        <div class="episode-arrow"> {{ ux_icon('fa6-solid:arrow-right', {height: '32px', width: '32px'}) }}</div>
-                                    {% endif %}
-                                {% endfor %}
+                                    {% for episode in [series|first, series|last] %}
+                                        {{ include('_blocks/series/_card.html.twig', {series: episode}) }}
+                                        {% if loop.first %}
+                                            <div class="episode-arrow"> {{ ux_icon('fa6-solid:arrow-right', {height: '32px', width: '32px'}) }}</div>
+                                        {% endif %}
+                                    {% endfor %}
                                 </div>
                             {% endif %}
                         {% endfor %}
@@ -120,5 +132,14 @@
             </div>
         </div>
         {% include('_blocks/_footer.html.twig') %}
+        <div id="global-data" class="hidden">
+            {
+            "tmdbIds": {{ tmdbIds|json_encode|raw }},
+            "app_series_tmdb_check": "{{ path('app_series_tmdb_check') }}"
+            }
+        </div>
+        <div id="svgs" style="display: none">
+            <div id="svg-xmark">{{ ux_icon('fa6-solid:xmark', {height: '16px', width: '16px'}) }}</div>
+        </div>
     </div>
 {% endblock %}

@@ -50,6 +50,16 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function getLocalizedNames(array $seriesIds, string $locale): array
+    {
+        $ids = implode(',', $seriesIds);
+        $sql = "SELECT series_id, name
+                FROM series_localized_name
+                WHERE series_id IN ($ids) AND locale='$locale'";
+
+        return $this->getAll($sql);
+    }
+
     public function userSeriesInfos(User $user): array
     {
         $userId = $user->getId();

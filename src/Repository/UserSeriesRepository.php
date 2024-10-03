@@ -106,6 +106,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         $userId = $user->getId();
         $sql = "SELECT
                     s.`id` as id,
+                    s.`tmdb_id` as tmdb_id,
                     s.`name` as name,
                     sln.`name` as localized_name,
                     us.`progress` as progress,

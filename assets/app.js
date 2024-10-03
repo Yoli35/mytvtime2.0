@@ -134,7 +134,9 @@ window.addEventListener("DOMContentLoaded", () => {
 // Series & season page
     const seriesIndex = document.querySelector(".series-index");
     if (seriesIndex) {
-        new Index();
+        const index = new Index();
+        const globs = JSON.parse(document.querySelector("#global-data").textContent);
+        index.init(globs);
     }
     const seriesShow = document.querySelector(".series-show");
     if (seriesShow) {

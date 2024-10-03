@@ -25,6 +25,9 @@ return [
     'Diaporama' => [
         'path' => './assets/js/images/Diaporama.js',
     ],
+    'FlashMessage' => [
+        'path' => './assets/js/FlashMessage.js',
+    ],
     'HighlightSeries' => [
         'path' => './assets/js/home/HighlightSeries.js',
     ],

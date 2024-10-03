@@ -275,6 +275,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
     {
         $userId = $user->getId();
         $sql = "SELECT s.id                            as id,
+                       s.tmdb_id                       as tmdbId,
                        CURDATE()                       as date,
                        s.name                          as name,
                        s.slug                          as slug,
@@ -330,7 +331,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                         OR ((sdo.offset > 0) AND ue.air_date = DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
                         OR ((sdo.offset < 0) AND ue.air_date = DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
                     )
-                ORDER BY season_number , episode_number";
+                ORDER BY air_at, season_number , episode_number";
 
         return $this->getAll($sql);
     }

@@ -138,7 +138,7 @@ class SeriesController extends AbstractController
         // Historique des épisodes vus pendant les 2 semaines passées
         $episodeHistory = $this->getEpisodeHistory($user, 14, $country, $language);
 
-        $episodesOfTheDay = array_map(function ($ue) {
+        $AllEpisodesOfTheDay = array_map(function ($ue) {
             $this->saveImage("posters", $ue['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             if ($ue['airAt']) {
                 $time = explode(':', $ue['airAt']);
@@ -148,6 +148,7 @@ class SeriesController extends AbstractController
             return [
                 'episode_of_the_day' => true,
                 'id' => $ue['id'],
+                'tmdbId' => $ue['tmdbId'],
                 'date' => $ue['date'],
                 'name' => $ue['name'],
                 'slug' => $ue['slug'],
@@ -167,9 +168,16 @@ class SeriesController extends AbstractController
                 'air_at' => $ue['airAt'],
             ];
         }, $this->userEpisodeRepository->episodesOfTheDay($user, $country, $locale));
-        usort($episodesOfTheDay, function ($a, $b) {
-            return $a['air_at'] <=> $b['air_at'];
-        });
+        $tmdbIds = array_column($AllEpisodesOfTheDay, 'tmdbId');
+        $episodesOfTheDay = [];
+        foreach ($AllEpisodesOfTheDay as $us) {
+            if ($us['released_episode_count'] > 1) {
+                $episodesOfTheDay[$us['date'] . '-' . $us['id']][] = $us;
+            } else {
+                $episodesOfTheDay[$us['date'] . '-' . $us['id']][0] = $us;
+            }
+        }
+//        dump(['episodesOfTheDay' => $episodesOfTheDay]);
 
         $allEpisodesOfTheWeek = array_map(function ($us) {
             $this->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
@@ -177,6 +185,7 @@ class SeriesController extends AbstractController
                 'series_of_the_week' => true,
                 'episode_of_the_day' => true,
                 'id' => $us['id'],
+                'tmdb_id' => $us['tmdb_id'],
                 'date' => $us['air_date'],
                 'original_air_date' => $us['original_air_date'],
                 'name' => $us['name'],
@@ -194,7 +203,7 @@ class SeriesController extends AbstractController
                 'air_at' => null,
             ];
         }, $this->userSeriesRepository->getUserSeriesOfTheNext7Days($user, $country, $locale));
-//        dump(['allEpisodesOfTheWeek' => $allEpisodesOfTheWeek]);
+        $tmdbIds = array_values(array_unique(array_merge($tmdbIds, array_column($allEpisodesOfTheWeek, 'tmdb_id'))));
         $seriesOfTheWeek = [];
         foreach ($allEpisodesOfTheWeek as $us) {
             if ($us['released_episode_count'] > 1) {
@@ -230,6 +239,7 @@ class SeriesController extends AbstractController
             'seriesList' => $series,
             'userSeriesTMDBIds' => $userSeriesTMDBIds,
             'total_results' => $searchResult['total_results'] ?? -1,
+            'tmdbIds' => $tmdbIds,
         ]);
     }
 
@@ -1429,6 +1439,50 @@ class SeriesController extends AbstractController
         return $this->json([
             'ok' => true,
             'results' => $series,
+        ]);
+    }
+
+    #[Route('/tmdb/check', name: 'tmdb_check', methods: ['POST'])]
+    public function tmdbCheck(Request $request): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+        $data = json_decode($request->getContent(), true);
+        $tmdbIds = $data['tmdbIds'];
+
+        $dbSeries = $this->seriesRepository->findBy(['tmdbId' => $tmdbIds]);
+        $seriesIds = array_map(fn($series) => $series->getId(), $dbSeries);
+        $localizedNameArr = $this->seriesRepository->getLocalizedNames($seriesIds, $locale);
+        $localizedNames = [];
+        foreach ($localizedNameArr as $ln) {
+            $localizedNames[$ln['series_id']] = $ln['name'];
+        }
+        dump([
+            'localizedNames' => $localizedNames,
+        ]);
+
+        $updates = array_map(function ($series) use ($locale, $localizedNames) {
+            $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale, ['images']), true);
+            $updateSeries = $this->updateSeries($series, $tv);
+            $update = $updateSeries[0]->getUpdates();
+            return [
+                'id' => $series->getId(),
+                'name' => $series->getName(),
+                'localized_name' => $localizedNames[$series->getId()] ?? null,
+                'poster_path' => $series->getPosterPath(),
+                'updates' => $update];
+        }, $dbSeries);
+
+        dump([
+            'tmdbIds' => $tmdbIds,
+            'dbSeries' => $dbSeries,
+            'updates' => $updates,
+        ]);
+
+        return $this->json([
+            'ok' => true,
+            'updates' => $updates,
         ]);
     }
 
