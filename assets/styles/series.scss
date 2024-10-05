@@ -242,6 +242,7 @@ h2 {
             .name {
                 align-items: flex-start;
                 display: flex;
+                margin-block: auto 0;
                 position: relative;
                 width: 100%;
 
@@ -321,8 +322,9 @@ h2 {
                 font-size: clamp(1rem, 1.5vw, 2rem);
                 font-weight: 300;
                 gap: .5rem;
-                line-height: clamp(1.25rem, 1.875vw, 2.5rem);
                 justify-content: flex-start;
+                line-height: clamp(1.25rem, 1.875vw, 2.5rem);
+                margin-block: 0 auto;
             }
 
             .localized-h4, .additional-h4 {
@@ -343,6 +345,7 @@ h2 {
                 flex-direction: column;
                 gap: .5rem;
                 justify-content: center;
+                margin-block: auto;
                 width: 100%;
 
                 .overview {
@@ -419,6 +422,18 @@ h2 {
                         }
                     }
                 }
+            }
+
+            .no-air-date {
+                background-color: var(--orange-50);
+                border-radius: .25rem;
+                color: var(--ardoise-10);
+                font-size: 2rem;
+                font-weight: 300;
+                margin-block: auto;
+                margin-inline: auto;
+                padding-block: 1.25rem;
+                padding-inline: 2.5rem;
             }
         }
 
