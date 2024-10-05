@@ -685,14 +685,14 @@ class SeriesController extends AbstractController
             'That\'s all!' => $this->translator->trans('That\'s all!'),
         ];
 
-//        dump([
-//            'series' => $seriesArr,
+        dump([
+            'series' => $seriesArr,
 //            'tv' => $tv,
 //            'dayOffset' => $dayOffset,
-//            'userSeries' => $userSeries,
+            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'schedules' => $schedules,
-//        ]);
+        ]);
         return $this->render('series/show.html.twig', [
             'series' => $seriesArr,
             'tv' => $tv,
@@ -1452,6 +1452,7 @@ class SeriesController extends AbstractController
         $tmdbIds = $data['tmdbIds'];
 
         $dbSeries = $this->seriesRepository->findBy(['tmdbId' => $tmdbIds]);
+        $dbSeriesCount = count($dbSeries);
         $seriesIds = array_map(fn($series) => $series->getId(), $dbSeries);
         $localizedNameArr = $this->seriesRepository->getLocalizedNames($seriesIds, $locale);
         $localizedNames = [];
@@ -1483,6 +1484,7 @@ class SeriesController extends AbstractController
         return $this->json([
             'ok' => true,
             'updates' => $updates,
+            'dbSeriesCount' => $dbSeriesCount,
         ]);
     }
 
@@ -1677,16 +1679,24 @@ class SeriesController extends AbstractController
     {
         $change = false;
         $episodeCount = $this->checkNumberOfEpisodes($tv);
+        dump($episodeCount);
         if ($episodeCount != $tv['number_of_episodes']) {
             $this->addFlash('warning', $this->translator->trans('Number of episodes has changed') . '<br>' . $tv['number_of_episodes'] . ' → ' . $episodeCount);
         }
-        if (/*$userSeries->getProgress() == 100 && */ $userSeries->getViewedEpisodes() < $episodeCount) {
-            $userSeries->setProgress($userSeries->getViewedEpisodes() / $episodeCount * 100);
+        if ($episodeCount == 0 && $userSeries->getProgress() != 0) {
+            $this->addFlash('warning', 'Number of episodes is zero');
+            $userSeries->setProgress(0);
             $change = true;
-        }
-        if ($userSeries->getProgress() != 100 && $userSeries->getViewedEpisodes() === $episodeCount) {
-            $userSeries->setProgress(100);
-            $change = true;
+        } else {
+            $this->addFlash('success', 'Number of episodes is ' . $episodeCount);
+            if (/*$userSeries->getProgress() == 100 && */ $userSeries->getViewedEpisodes() < $episodeCount) {
+                $userSeries->setProgress($userSeries->getViewedEpisodes() / $episodeCount * 100);
+                $change = true;
+            }
+            if ($userSeries->getProgress() != 100 && $userSeries->getViewedEpisodes() === $episodeCount) {
+                $userSeries->setProgress(100);
+                $change = true;
+            }
         }
         if ($change) {
             $this->userSeriesRepository->save($userSeries, true);

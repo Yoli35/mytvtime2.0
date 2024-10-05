@@ -52,6 +52,8 @@ export class Index {
         }).then((data) => {
             console.log(data);
             const updates = data['updates'];
+            const checkCount = data['dbSeriesCount'];
+            this.flashMessage.add('success', 'Check count: ' + checkCount);
             updates.forEach((series) => {
                 const updates = series['updates'];
                 if (updates.length > 0) {
