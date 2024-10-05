@@ -75,11 +75,13 @@ export class Show {
          * Animation for the progress bar                                             *
          ******************************************************************************/
         const progressDiv = document.querySelector('.progress');
-        const progressBarDiv = document.querySelector('.progress-bar');
-        const progress = progressDiv.getAttribute('data-value');
-        progressBarDiv.classList.add('set');
-        progressBarDiv.style.width = progress + '%';
-        progressBarDiv.setAttribute('aria-valuenow', progress);
+        if (progressDiv) {
+            const progressBarDiv = document.querySelector('.progress-bar');
+            const progress = progressDiv.getAttribute('data-value');
+            progressBarDiv.classList.add('set');
+            progressBarDiv.style.width = progress + '%';
+            progressBarDiv.setAttribute('aria-valuenow', progress);
+        }
 
         /******************************************************************************
          * Diaporama for posters, backdrops and logos                                 *
