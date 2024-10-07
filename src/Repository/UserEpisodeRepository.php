@@ -468,18 +468,19 @@ class UserEpisodeRepository extends ServiceEntityRepository
     {
         $userId = $user->getId();
         $offset = ($page - 1) * $perPage;
-        $sql = "SELECT s.id                                                          as id,
+        $sql = "SELECT s.id                                                                      as id,
+                       s.tmdb_id                                                                 as tmdb_id,
                        IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
                        IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
-                       s.`poster_path`                                               as poster_path,
-                       s.`first_air_date`                                            as final_air_date,
+                       s.`poster_path`                                                           as poster_path,
+                       s.`first_air_date`                                                        as final_air_date,
                        (SELECT COUNT(*)
                             FROM `user_episode` ue
-                            WHERE ue.`user_series_id`=us.id)                         as number_of_episode,
+                            WHERE ue.`user_series_id`=us.id)                                     as number_of_episode,
                        (SELECT CONCAT(ue.`season_number`, '/',ue.`episode_number`)
                             FROM `user_episode` ue
                             WHERE ue.`user_series_id`=us.id AND ue.`season_number`>0 AND ue.`watch_at` IS NULL
-                            ORDER BY ue.`episode_number` LIMIT 1)                    as episode
+                            ORDER BY ue.`episode_number` LIMIT 1)                                as episode
                 FROM `series` s
                 INNER JOIN `user_series` us ON us.series_id=s.id
                 LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.id AND sln.`locale`='$locale'

@@ -28,6 +28,15 @@
             </div>
         {% endif %}
         {% include('_blocks/_footer.html.twig') %}
+        <div id="global-data" class="hidden">
+            {
+            "tmdbIds": {{ tmdbIds|json_encode|raw }},
+            "app_series_tmdb_check": "{{ path('app_series_tmdb_check') }}"
+            }
+        </div>
+        <div id="svgs" style="display: none">
+            <div id="svg-xmark">{{ ux_icon('fa6-solid:xmark', {height: '16px', width: '16px'}) }}</div>
+        </div>
     </div>
 {% endblock %}
 {% block javascripts %}

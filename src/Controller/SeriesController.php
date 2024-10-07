@@ -254,9 +254,11 @@ class SeriesController extends AbstractController
             $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
         }, $this->userEpisodeRepository->seriesToStart($user, $locale, 1, -1));
+        $tmdbIds = array_column($seriesToStart, 'tmdb_id');
 
         return $this->render('series/series-to-start.html.twig', [
             'seriesToStart' => $seriesToStart,
+            'tmdbIds' => $tmdbIds,
         ]);
     }
 
