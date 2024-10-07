@@ -126,7 +126,17 @@
                 {% endfor %}
             </div>
 
-            <h3>{{ 'Episodes'|trans }}</h3>
+            {% if externals|length %}
+            <div class="externals">
+                {% for e in externals %}
+                    <a href="{{ e.baseUrl ~ e.searchQuery }}" target="_blank" rel="noopener noreferrer">
+                        <img src="{{ e.logoPath }}" alt="{{ e.name }}">
+                    </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {#<h3>{{ 'Episodes'|trans }}</h3>#}
             <div class="content column">
                 <div class="episodes">
                     {% for episode in season.episodes %}

@@ -103,6 +103,9 @@ class Series
     #[ORM\ManyToMany(targetEntity: Network::class)]
     private Collection $networks;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $originCountry = null;
+
     public function __construct()
     {
         $this->seriesLocalizedNames = new ArrayCollection();
@@ -644,6 +647,18 @@ class Series
     public function removeNetwork(Network $network): static
     {
         $this->networks->removeElement($network);
+
+        return $this;
+    }
+
+    public function getOriginCountry(): ?array
+    {
+        return $this->originCountry;
+    }
+
+    public function setOriginCountry(?array $originCountry): static
+    {
+        $this->originCountry = $originCountry;
 
         return $this;
     }

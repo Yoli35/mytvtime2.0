@@ -30,6 +30,7 @@ use App\Repository\SeasonLocalizedOverviewRepository;
 use App\Repository\SeriesAdditionalOverviewRepository;
 use App\Repository\SeriesBroadcastScheduleRepository;
 use App\Repository\SeriesDayOffsetRepository;
+use App\Repository\SeriesExternalRepository;
 use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesLocalizedNameRepository;
 use App\Repository\SeriesLocalizedOverviewRepository;
@@ -86,6 +87,7 @@ class SeriesController extends AbstractController
         private readonly SeriesAdditionalOverviewRepository $seriesAdditionalOverviewRepository,
         private readonly SeriesBroadcastScheduleRepository  $seriesBroadcastScheduleRepository,
         private readonly SeriesDayOffsetRepository          $seriesDayOffsetRepository,
+        private readonly SeriesExternalRepository           $seriesExternalRepository,
         private readonly SeriesImageRepository              $seriesImageRepository,
         private readonly SeriesRepository                   $seriesRepository,
         private readonly SeriesLocalizedNameRepository      $seriesLocalizedNameRepository,
@@ -689,7 +691,7 @@ class SeriesController extends AbstractController
 
         dump([
             'series' => $seriesArr,
-//            'tv' => $tv,
+            'tv' => $tv,
 //            'dayOffset' => $dayOffset,
             'userSeries' => $userSeries,
 //            'providers' => $providers,
@@ -832,11 +834,11 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/show/season/{id}-{slug}/{seasonNumber}', name: 'season', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS])]
-    public function showSeason(Request $request, int $id, int $seasonNumber, string $slug): Response
+    public function showSeason(Request $request, Series $series, int $seasonNumber, string $slug): Response
     {
         /** @var User $user */
         $user = $this->getUser();
-        $series = $this->seriesRepository->findOneBy(['id' => $id]);
+//        $series = $this->seriesRepository->findOneBy(['id' => $id]);
         $seriesDayOffset = $this->seriesDayOffsetRepository->findOneBy(['series' => $series, 'country' => $user->getCountry() ?? 'FR']);
         $dayOffset = $seriesDayOffset ? $seriesDayOffset->getOffset() : 0;
 
@@ -873,18 +875,36 @@ class SeriesController extends AbstractController
 
         $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
-//        dump([
-//            'series' => $series,
-//            'season' => $season,
+
+        // https://mydramalist.com/search?q=between+us
+        $seriesCountries = $series->getOriginCountry();
+        $dbExternals = $this->seriesExternalRepository->findAll();
+        $externals = [];
+        $displayName = $series->getLocalizedName($request->getLocale())->getName() ?? $series->getName();
+        $searchName = strtolower(str_replace(' ', '+', $displayName));
+
+        foreach ($dbExternals as $dbExternal) {
+            $countries = $dbExternal->getCountries();
+            if (array_intersect($seriesCountries, $countries)) {
+                $dbExternal->setSearchQuery($dbExternal->getSearchQuery() . $searchName);
+                $externals[] = $dbExternal;
+            }
+        }
+
+            dump([
+                'series' => $series,
+                'season' => $season,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-//        ]);
+            'externals' => $externals,
+            ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
             'providers' => $providers,
             'devices' => $devices,
+            'externals' => $externals,
         ]);
     }
 
