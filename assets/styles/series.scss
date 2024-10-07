@@ -30,6 +30,7 @@ h2 {
 
     h2 {
         align-items: center;
+        display: flex;
         margin-block-start: 2rem;
 
         &:has(button) {
@@ -118,6 +119,97 @@ h2 {
             font-size: 1.5rem;
             line-height: 1.1em;
             z-index: 1;
+        }
+    }
+}
+
+.series-to-start {
+    h2 {
+        align-items: center;
+        display: flex;
+        margin-block-start: 3rem;
+
+        label {
+            align-items: center;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-start;
+            margin-inline-start: auto;
+
+            input[type="search"] {
+                background-color: var(--orange-30);
+                border: 1px solid var(--orange-70);
+                border-radius: 25rem;
+                color: var(--orange-90);
+                font-size: 1rem;
+                height: 2rem;
+                padding: 0 .5rem;
+                width: 20rem;
+
+                &::placeholder {
+                    color: var(--orange-70);
+                }
+
+                &:focus {
+                    border-color: var(--green-50);
+                    outline: none;
+                }
+            }
+        }
+    }
+
+    .series-group {
+        .wrapper {
+            .content {
+                &.center {
+                    width: round(down, 100%, 15.25rem);
+                }
+
+                .card {
+                    border-radius: .5rem;
+                    height: 27rem;
+                    transition: opacity 0.3s ease-in-out;
+                    width: 15rem;
+
+                    a {
+                        .poster {
+                            border-radius: .5rem .5rem 0 0;
+                            height: 22.5rem;
+                            width: 15rem;
+
+                            img {
+                                border-radius: .5rem .5rem 0 0;
+                                height: 22.5rem;
+                                width: 15rem;
+                            }
+
+                            .series-infos {
+                                gap: .5rem;
+                                left: .5rem;
+                                right: .5rem;
+
+                                .air-date {
+                                    background-color: var(--ardoise-80-alpha-90);
+                                    border-radius: .25rem;
+                                    color: var(--ardoise-10);
+                                    padding: .25rem .5rem;
+                                    font-size: 1.25rem;
+                                    font-weight: 300;
+                                    width: fit-content;
+                                }
+                            }
+                        }
+
+                        .name {
+                            border-radius: 0 0 .5rem .5rem;
+                            font-size: 1.25rem;
+                            font-weight: 300;
+                            line-height: 1em;
+                            width: 15rem;
+                        }
+                    }
+                }
+            }
         }
     }
 }

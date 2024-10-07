@@ -469,8 +469,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
         $userId = $user->getId();
         $offset = ($page - 1) * $perPage;
         $sql = "SELECT s.id                                                          as id,
-                       IF(sln.`name`, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
-                       IF(sln.`slug`, sln.`slug`, s.`slug`)                          as slug,
+                       IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
+                       IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
                        s.`poster_path`                                               as poster_path,
                        s.`first_air_date`                                            as final_air_date,
                        (SELECT COUNT(*)

@@ -243,7 +243,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/search', name: 'to_start')]
+    #[Route('/to/start', name: 'to_start')]
     public function serieToStart(Request $request): Response
     {
         /** @var User $user */

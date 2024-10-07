@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}my Tv Time → {{ 'Series'|trans }}{% endblock %}
+{% block title %}my Tv Time → {{ 'Series to start'|trans }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
@@ -9,10 +9,13 @@
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-    <div class="container-fluid series-index">
+    <div class="container-fluid series-to-start">
         {% if seriesToStart|length %}
             <h2>
                 {{ 'Series to start'|trans }} ({{ seriesToStart|length }})
+                <label for="filter-by-name">
+                    <input type="search" id="filter-by-name" placeholder="{{ 'Search'|trans }}">
+                </label>
             </h2>
             <div class="series-group user">
                 <div class="wrapper">
@@ -26,4 +29,28 @@
         {% endif %}
         {% include('_blocks/_footer.html.twig') %}
     </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        window.addEventListener("DOMContentLoaded", init);
+
+        function init() {
+            const filterByName = document.getElementById('filter-by-name');
+            filterByName.addEventListener('input', filterSeries);
+        }
+
+        function filterSeries() {
+            const filter = this.value.toLowerCase();
+            const series = document.querySelectorAll('.series-group.user .content .card');
+            series.forEach((s) => {
+                const title = s.querySelector('.name').textContent.toLowerCase();
+                if (title.includes(filter)) {
+                    s.style.opacity = "1";
+                } else {
+                    s.style.opacity = "0.125";
+                }
+            });
+        }
+    </script>
 {% endblock %}
