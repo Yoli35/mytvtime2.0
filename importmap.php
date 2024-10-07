@@ -46,6 +46,9 @@ return [
     'NavBar' => [
         'path' => './assets/js/NavBar.js',
     ],
+    'NetworkAndProvider' => [
+        'path' => './assets/js/user/NetworkAndProvider.js',
+    ],
     'PeopleShow' => [
         'path' => './assets/js/people/PeopleShow.js',
     ],

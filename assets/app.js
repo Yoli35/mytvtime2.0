@@ -7,6 +7,7 @@ import {Index} from 'Index';
 import {Menu} from 'Menu';
 import {Movie} from 'Movie';
 import {NavBar} from 'NavBar';
+import {NetworkAndProvider} from "NetworkAndProvider";
 import {PeopleShow} from "PeopleShow";
 import {PosterHover} from 'PosterHover';
 import {ProviderSelect} from 'ProviderSelect';
@@ -225,7 +226,14 @@ window.addEventListener("DOMContentLoaded", () => {
     if (person) {
         new PeopleShow();
     }
-// Flash messages
+
+    const networkAndProvider = document.querySelector(".user-providers");
+    if (networkAndProvider) {
+        const networkPage = document.querySelector(".user-networks");
+        new NetworkAndProvider(networkPage != null);
+    }
+
+    // Flash messages
     const flashes = document.querySelectorAll(".flash-message");
 
     flashes.forEach(flash => {

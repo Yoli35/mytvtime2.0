@@ -10,6 +10,15 @@
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid">
         <div class="user-providers">
+            <div class="provider-filter">
+                <label for="provider-filter-search">{{ 'Filter'|trans }}
+                    <input type="search" id="provider-filter-search" placeholder="{{ 'Start taping...'|trans }}">
+                </label>
+                <label for="provider-selected">
+                    <input type="checkbox" id="provider-selected">
+                    {{ 'See selected'|trans }}<span id="provider-selected-count"></span>
+                </label>
+            </div>
             <div class="providers">
                 {% for p in providers %}
                     <div class="provider">
@@ -24,36 +33,4 @@
         </div>
         {% include('_blocks/_footer.html.twig') %}
     </div>
-{% endblock %}
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-        window.addEventListener("DOMContentLoaded", () => {
-            const locale = document.documentElement.lang;
-            const providers = document.querySelector('.providers');
-            const checkboxes = providers.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    const providerId = checkbox.id.split('-')[1];
-                    const url = `/${locale}/user/provider/toggle/${providerId}`;
-                    fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({}),
-                    }).then(response => {
-                        if (response.ok) {
-                            return response.json();
-                        }
-                        throw new Error('Network response was not ok.');
-                    }).then(data => {
-                        console.log(data);
-                    }).catch(error => {
-                        console.error('There has been a problem with your fetch operation:', error);
-                    })
-                });
-            });
-        });
-    </script>
 {% endblock %}
