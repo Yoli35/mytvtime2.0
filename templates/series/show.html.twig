@@ -179,6 +179,16 @@
 
             {{ include('_blocks/series/_schedules.html.twig') }}
 
+            {% if externals|length %}
+                <div class="externals">
+                    {% for e in externals %}
+                        <a href="{{ e.fullUrl }}" target="_blank" rel="noopener noreferrer">
+                            <img src="{{ e.logoPath }}" alt="{{ e.name }}">
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             {% if userSeries %}
                 <div class="user-actions">
                     <div class="watch-links">

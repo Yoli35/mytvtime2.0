@@ -703,6 +703,7 @@ class SeriesController extends AbstractController
             'userSeries' => $userSeries,
             'providers' => $providers,
             'seriesLocations' => $this->getSeriesLocations($series, $user->getPreferredLanguage() ?? $request->getLocale()),
+            'externals' =>  $this->getExternals($series, $request->getLocale()),
             'translations' => $translations,
         ]);
     }
@@ -872,39 +873,22 @@ class SeriesController extends AbstractController
         $season['localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
         $season['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
 
-
         $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
 
-        // https://mydramalist.com/search?q=between+us
-        $seriesCountries = $series->getOriginCountry();
-        $dbExternals = $this->seriesExternalRepository->findAll();
-        $externals = [];
-        $displayName = $series->getLocalizedName($request->getLocale())->getName() ?? $series->getName();
-        $searchName = strtolower(str_replace(' ', '+', $displayName));
-
-        foreach ($dbExternals as $dbExternal) {
-            $countries = $dbExternal->getCountries();
-            if (array_intersect($seriesCountries, $countries)) {
-                $dbExternal->setSearchQuery($dbExternal->getSearchQuery() . $searchName);
-                $externals[] = $dbExternal;
-            }
-        }
-
-            dump([
-                'series' => $series,
-                'season' => $season,
+//            dump([
+//                'series' => $series,
+//                'season' => $season,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-            'externals' => $externals,
-            ]);
+//            ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
             'providers' => $providers,
             'devices' => $devices,
-            'externals' => $externals,
+            'externals' =>  $this->getExternals($series, $request->getLocale()),
         ]);
     }
 
@@ -1669,6 +1653,24 @@ class SeriesController extends AbstractController
         return [$series, $seriesBackdrops, $seriesLogos, $seriesPosters];
     }
 
+    public function getExternals(Series $series, string $locale): array
+    {// https://mydramalist.com/search?q=between+us
+        $seriesCountries = $series->getOriginCountry();
+        $dbExternals = $this->seriesExternalRepository->findAll();
+        $externals = [];
+        $displayName = $series->getLocalizedName($locale)?->getName() ?? $series->getName();
+        $searchName = strtolower(str_replace(' ', '+', $displayName));
+
+        foreach ($dbExternals as $dbExternal) {
+            $countries = $dbExternal->getCountries();
+            if (array_intersect($seriesCountries, $countries)) {
+                $dbExternal->setFullUrl($searchName);
+                $externals[] = $dbExternal;
+            }
+        }
+        return $externals;
+    }
+
     public function statusCss(UserSeries $userSeries, array $tv): string
     {
         $status = $tv['status'];
@@ -1881,6 +1883,7 @@ class SeriesController extends AbstractController
 //        $series->setFirstAirDate($tv['first_air_date'] ? new DatePoint($tv['first_air_date']) : null);
         $series->setName($tv['name']);
         $series->setOriginalName($tv['original_name']);
+        $series->setOriginCountry($tv['origin_country']);
         $series->setOverview($tv['overview']);
         $series->setPosterPath($tv['poster_path']);
         $series->setSlug($slugger->slug($tv['name']));

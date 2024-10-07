@@ -25,6 +25,8 @@ class SeriesExternal
     #[ORM\Column(length: 255)]
     private ?string $searchQuery = null;
 
+    private ?string $fullUrl = null;
+
     #[ORM\Column]
     private array $countries = [];
 
@@ -91,5 +93,15 @@ class SeriesExternal
         $this->countries = $countries;
 
         return $this;
+    }
+
+    public function getFullUrl(): ?string
+    {
+        return $this->fullUrl;
+    }
+
+    public function setFullUrl(string $query): void
+    {
+        $this->fullUrl = $this->baseUrl . $this->searchQuery . $query;
     }
 }
