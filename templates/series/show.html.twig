@@ -163,6 +163,20 @@
                     <div class="add-backdrop">
                         {{ ux_icon('ion:add-circle-outline', {height: '36px', width:'36px'}) }}
                     </div>
+                    <script>
+                        window.addEventListener("DOMContentLoaded", () => {
+
+                            const addBackdropDialog = document.querySelector('.add-backdrop-dialog');
+                            const addBackdropButton = document.querySelector('.add-backdrop');
+                            const addBackdropCancelButton = addBackdropDialog.querySelector('button[name="cancel"]');
+                            addBackdropButton.addEventListener('click', () => {
+                                addBackdropDialog.showModal();
+                            });
+                            addBackdropCancelButton.addEventListener('click', () => {
+                                addBackdropDialog.close();
+                            });
+                        });
+                    </script>
                 </div>
             </div>
 
@@ -643,10 +657,13 @@
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
-    <dialog class="add-backdrop-dialog" open>
+    <dialog class="add-backdrop-dialog">
         {{ form_start(addBackdropForm) }}
         {{ form_widget(addBackdropForm) }}
-        <button type="submit" class="btn btn-primary">{{ 'Upload it!'|trans }}</button>
+        <div class="form-row">
+            <button type="button" name="cancel">{{ 'Cancel'|trans }}</button>
+            <button type="submit">{{ 'Upload it!'|trans }}</button>
+        </div>
         {{ form_end(addBackdropForm) }}
     </dialog>
     <div id="globs" style="display: none">

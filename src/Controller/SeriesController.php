@@ -602,17 +602,23 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/show/{id}-{slug}', name: 'show', requirements: ['id' => Requirement::DIGITS])]
-    public function show(Request $request, $id, $slug): Response
+    public function show(Request $request, Series $series, $slug): Response
     {
         /** @var User $user */
         $user = $this->getUser();
-        /** @var Series $series */
-        $series = $this->seriesRepository->findOneBy(['id' => $id]);
+
         $dayOffset = $this->seriesDayOffsetRepository->findOneBy(['series' => $series, 'country' => $user->getCountry() ?? 'FR']);
         $dayOffset = $dayOffset ? $dayOffset->getOffset() : 0;
 
         $series->setVisitNumber($series->getVisitNumber() + 1);
         $this->seriesRepository->save($series, true);
+
+        $addBackdropForm = $this->createForm(AddBackdropForm::class);
+        $addBackdropForm->handleRequest($request);
+        if ($addBackdropForm->isSubmitted() && $addBackdropForm->isValid()) {
+            $data = $addBackdropForm->getData();
+            $this->addBackdrop($series, $data['file']);
+        }
 
         $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
         // Get with fr-FR language to get the localized name
@@ -690,13 +696,6 @@ class SeriesController extends AbstractController
             'To be continued' => $this->translator->trans('To be continued'),
             'That\'s all!' => $this->translator->trans('That\'s all!'),
         ];
-
-        $addBackdropForm = $this->createForm(AddBackdropForm::class);
-        $addBackdropForm->handleRequest($request);
-        if ($addBackdropForm->isSubmitted() && $addBackdropForm->isValid()) {
-            $data = $addBackdropForm->getData();
-            $this->addBackdrop($series, $data['file']);
-        }
 
         dump([
             'series' => $seriesArr,
@@ -1667,7 +1666,7 @@ class SeriesController extends AbstractController
 
         $seriesImages = $this->seriesRepository->seriesImages($series);
         $seriesBackdrops = array_filter($seriesImages, fn($image) => $image['type'] == "backdrop");
-        dump($seriesBackdrops);
+
         $seriesLogos = array_filter($seriesImages, fn($image) => $image['type'] == "logo");
         $seriesPosters = array_filter($seriesImages, fn($image) => $image['type'] == "poster");
 
