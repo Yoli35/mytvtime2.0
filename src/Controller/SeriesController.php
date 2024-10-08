@@ -20,6 +20,7 @@ use App\Entity\User;
 use App\Entity\UserEpisode;
 use App\Entity\UserPinnedSeries;
 use App\Entity\UserSeries;
+use App\Form\AddBackdropForm;
 use App\Form\SeriesAdvancedSearchType;
 use App\Form\SeriesSearchType;
 use App\Repository\DeviceRepository;
@@ -690,6 +691,13 @@ class SeriesController extends AbstractController
             'That\'s all!' => $this->translator->trans('That\'s all!'),
         ];
 
+        $addBackdropForm = $this->createForm(AddBackdropForm::class);
+        $addBackdropForm->handleRequest($request);
+        if ($addBackdropForm->isSubmitted() && $addBackdropForm->isValid()) {
+            $data = $addBackdropForm->getData();
+            $this->addBackdrop($series, $data['file']);
+        }
+
         dump([
             'series' => $seriesArr,
             'tv' => $tv,
@@ -706,7 +714,22 @@ class SeriesController extends AbstractController
             'seriesLocations' => $this->getSeriesLocations($series, $user->getPreferredLanguage() ?? $request->getLocale()),
             'externals' => $this->getExternals($series, $request->getLocale()),
             'translations' => $translations,
+            'addBackdropForm' => $addBackdropForm->createView(),
         ]);
+    }
+
+    public function addBackdrop(Series $series, UploadedFile $backdropFile): bool
+    {
+        $source = $backdropFile->getPathname();
+        $serverPath = '/public/series/backdrops/';
+        $destination = $this->getParameter('kernel.project_dir') . $serverPath . $backdropFile->getClientOriginalName();
+        if (copy($source, $destination)) {
+            $seriesImage = new SeriesImage($series, "backdrop", '/' . $backdropFile->getClientOriginalName());
+            $this->seriesImageRepository->save($seriesImage, true);
+            $this->addFlash('success', 'The backdrop has been added.');
+            return true;
+        }
+        return false;
     }
 
     #[IsGranted('ROLE_USER')]
@@ -1644,6 +1667,7 @@ class SeriesController extends AbstractController
 
         $seriesImages = $this->seriesRepository->seriesImages($series);
         $seriesBackdrops = array_filter($seriesImages, fn($image) => $image['type'] == "backdrop");
+        dump($seriesBackdrops);
         $seriesLogos = array_filter($seriesImages, fn($image) => $image['type'] == "logo");
         $seriesPosters = array_filter($seriesImages, fn($image) => $image['type'] == "poster");
 

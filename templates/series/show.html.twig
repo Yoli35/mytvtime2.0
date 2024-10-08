@@ -160,6 +160,9 @@
                             {{ 'No backdrop'|trans }}
                         {% endfor %}
                     </div>
+                    <div class="add-backdrop">
+                        {{ ux_icon('ion:add-circle-outline', {height: '36px', width:'36px'}) }}
+                    </div>
                 </div>
             </div>
 
@@ -167,9 +170,9 @@
                 <div class="header">
                     <div class="logos">
                         <div class="wrapper">
-                            {% for backdrop in series.images.logos %}
+                            {% for logo in series.images.logos %}
                                 <div class="other-backdrop">
-                                    <img src="{{ backdrop }}" alt="{{ 'Backdrop #' ~ loop.index ~ ' ' ~ series.name }}">
+                                    <img src="{{ logo }}" alt="{{ 'Backdrop #' ~ loop.index ~ ' ' ~ series.name }}">
                                 </div>
                             {% endfor %}
                         </div>
@@ -640,6 +643,12 @@
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
+    <dialog class="add-backdrop-dialog" open>
+        {{ form_start(addBackdropForm) }}
+        {{ form_widget(addBackdropForm) }}
+        <button type="submit" class="btn btn-primary">{{ 'Upload it!'|trans }}</button>
+        {{ form_end(addBackdropForm) }}
+    </dialog>
     <div id="globs" style="display: none">
         {
         {% if tv.localized_name %}
