@@ -924,6 +924,47 @@ h2 {
         }
     }
 
+    .externals {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+
+        .external {
+            background-color: var(--orange-40-alpha-50);
+            border: 2px solid var(--orange-50);
+            border-radius: .375rem;
+            color: var(--orange-90);
+            height: 3rem;
+            font-size: 1.75rem;
+            font-weight: 300;
+            overflow: hidden;
+            padding-inline: 1rem;
+            text-align: center;
+            text-wrap: nowrap;
+            width: 10rem;
+
+            &:hover {
+                background-color: var(--orange-50);
+            }
+
+            a {
+                align-items: center;
+                display: flex;
+                height: 100%;
+                justify-content: center;
+                width: 100%;
+
+                img {
+                    border-radius: .25rem;
+                    height: 3rem;
+                    object-fit: contain;
+                    width: 10rem;
+                }
+            }
+        }
+    }
+
     .content {
         display: flex;
         gap: 1rem;

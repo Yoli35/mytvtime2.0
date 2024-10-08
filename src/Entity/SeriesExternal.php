@@ -16,19 +16,22 @@ class SeriesExternal
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $logoPath = null;
 
     #[ORM\Column(length: 255)]
     private ?string $baseUrl = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $searchQuery = null;
 
     private ?string $fullUrl = null;
 
     #[ORM\Column]
     private array $countries = [];
+
+    #[ORM\Column(length: 1, nullable: true)]
+    private ?string $searchSeparator = null;
 
     public function getId(): ?int
     {
@@ -52,7 +55,7 @@ class SeriesExternal
         return $this->logoPath;
     }
 
-    public function setLogoPath(string $logoPath): static
+    public function setLogoPath(?string $logoPath): static
     {
         $this->logoPath = $logoPath;
 
@@ -76,7 +79,7 @@ class SeriesExternal
         return $this->searchQuery;
     }
 
-    public function setSearchQuery(string $searchQuery): static
+    public function setSearchQuery(?string $searchQuery): static
     {
         $this->searchQuery = $searchQuery;
 
@@ -100,8 +103,20 @@ class SeriesExternal
         return $this->fullUrl;
     }
 
-    public function setFullUrl(string $query): void
+    public function setFullUrl(?string $query): void
     {
-        $this->fullUrl = $this->baseUrl . $this->searchQuery . $query;
+        $this->fullUrl = $query ? $this->baseUrl . $this->searchQuery . $query : $this->baseUrl;
+    }
+
+    public function getSearchSeparator(): ?string
+    {
+        return $this->searchSeparator;
+    }
+
+    public function setSearchSeparator(?string $searchSeparator): static
+    {
+        $this->searchSeparator = $searchSeparator;
+
+        return $this;
     }
 }

@@ -11,6 +11,7 @@ use App\Entity\Series;
 use App\Entity\SeriesAdditionalOverview;
 use App\Entity\SeriesBroadcastSchedule;
 use App\Entity\SeriesDayOffset;
+use App\Entity\SeriesExternal;
 use App\Entity\SeriesImage;
 use App\Entity\SeriesLocalizedName;
 use App\Entity\SeriesLocalizedOverview;
@@ -703,7 +704,7 @@ class SeriesController extends AbstractController
             'userSeries' => $userSeries,
             'providers' => $providers,
             'seriesLocations' => $this->getSeriesLocations($series, $user->getPreferredLanguage() ?? $request->getLocale()),
-            'externals' =>  $this->getExternals($series, $request->getLocale()),
+            'externals' => $this->getExternals($series, $request->getLocale()),
             'translations' => $translations,
         ]);
     }
@@ -888,7 +889,7 @@ class SeriesController extends AbstractController
             'season' => $season,
             'providers' => $providers,
             'devices' => $devices,
-            'externals' =>  $this->getExternals($series, $request->getLocale()),
+            'externals' => $this->getExternals($series, $request->getLocale()),
         ]);
     }
 
@@ -1654,17 +1655,24 @@ class SeriesController extends AbstractController
     }
 
     public function getExternals(Series $series, string $locale): array
-    {// https://mydramalist.com/search?q=between+us
+    {
+        // https://mydramalist.com/search?q=between+us
+        // https://www.nautiljon.com/search.php?q=love+sick
+        // https://www.senscritique.com/search?query=Bad%20Guy%20My%20Boss
+        // https://world-of-bl.com/index.php?n=Main.HomePage&action=search&q=love+sick
         $seriesCountries = $series->getOriginCountry();
         $dbExternals = $this->seriesExternalRepository->findAll();
         $externals = [];
         $displayName = $series->getLocalizedName($locale)?->getName() ?? $series->getName();
-        $searchName = strtolower(str_replace(' ', '+', $displayName));
 
+        /** @var SeriesExternal $dbExternal */
         foreach ($dbExternals as $dbExternal) {
             $countries = $dbExternal->getCountries();
-            if (array_intersect($seriesCountries, $countries)) {
-                $dbExternal->setFullUrl($searchName);
+            $searchQuery = $dbExternal->getSearchQuery();
+            $searchSeparator = $dbExternal->getSearchSeparator();
+            $searchName = strtolower($searchSeparator ? str_replace(' ', $searchSeparator, $displayName) : $displayName);
+            if (!count($countries) || array_intersect($seriesCountries, $countries)) {
+                $dbExternal->setFullUrl($searchQuery ? $searchName : null);
                 $externals[] = $dbExternal;
             }
         }
