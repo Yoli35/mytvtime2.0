@@ -75,6 +75,9 @@ export class ToolTips {
             tail.style.backgroundColor = titleBg || "sienna";
             tooltips.setAttribute("bg", titleBg || "sienna");
             body.appendChild(imgClone);
+            if (img.getAttribute("src").includes(".svg")) {
+                imgClone.style.width = "20rem";
+            }
             const p = document.createElement("p");
             p.innerHTML = text;
             body.appendChild(p);
