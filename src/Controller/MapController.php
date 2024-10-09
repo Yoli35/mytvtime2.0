@@ -37,7 +37,8 @@ class MapController extends AbstractController
 
         foreach ($seriesLocations as $seriesLocation) {
             foreach ($seriesLocation['locations'] as $location) {
-                $map->addMarker(new Marker(new Point($location['latitude'], $location['longitude']), $seriesLocation['name'], new InfoWindow('<strong>' . $seriesLocation['name'] . '</strong> - ' . $location['description'], '<img src="' . $location['image'] . '" alt="' . $location['description'] . '" style="height: auto; width: 100%">')));
+                $infoWindow = new InfoWindow('<strong>' . $seriesLocation['name'] . '</strong> - ' . $location['description'], '<img src="' . $location['image'] . '" alt="' . $location['description'] . '" style="height: auto; width: 100%">');
+                $map->addMarker(new Marker(new Point($location['latitude'], $location['longitude']), "***".$seriesLocation['name']."***", $infoWindow, ['id' => $seriesLocation['id']]));
             }
         }
 

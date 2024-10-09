@@ -1,7 +1,11 @@
 import {Controller} from '@hotwired/stimulus';
-
+let gThis;
 export default class extends Controller {
+
     connect() {
+        gThis = this;
+        console.log(gThis)
+        this.markers = [];
         this.element.addEventListener('ux:map:pre-connect', this._onPreConnect);
         this.element.addEventListener('ux:map:connect', this._onConnect);
         this.element.addEventListener('ux:map:marker:before-create', this._onMarkerBeforeCreate);
@@ -23,15 +27,15 @@ export default class extends Controller {
     _onPreConnect(event) {
         // The map is not created, yet
         // You can use this event to configure the map before it is created
-        console.log(event.detail.options);
+        // console.log(event.detail.options);
     }
 
     _onConnect(event) {
         // The map, markers and infoWindows are created
         // The instances depend on the renderer you are using
-        console.log(event.detail.map);
-        console.log(event.detail.markers);
-        console.log(event.detail.infoWindows);
+        // console.log(event.detail.map);
+        // console.log(event.detail.markers);
+        // console.log(event.detail.infoWindows);
 
         const markerCount = event.detail.markers.length;
         const seriesMapTitle = document.querySelector('#series-map-title').querySelector('.title');
@@ -44,13 +48,15 @@ export default class extends Controller {
     _onMarkerBeforeCreate(event) {
         // The marker is not created, yet
         // You can use this event to configure the marker before it is created
-        console.log(event.detail.definition);
+        console.log(event.detail);
+        const id = event.detail.definition.extra.id;
+        gThis.markers[id] = event.detail.definition;
     }
 
     _onMarkerAfterCreate(event) {
         // The marker is created
         // The instance depends on the renderer you are using
-        console.log(event.detail.marker);
+        // console.log(event.detail.marker);
     }
 
     _onInfoWindowBeforeCreate(event) {

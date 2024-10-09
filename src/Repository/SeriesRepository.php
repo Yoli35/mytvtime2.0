@@ -86,7 +86,8 @@ class SeriesRepository extends ServiceEntityRepository
                 FROM `series` s
                          INNER JOIN user_series us ON s.id = us.series_id
                          LEFT JOIN `series_localized_name` as sln ON sln.`series_id` = s.`id` AND sln.locale='$locale'
-                WHERE s.`locations` IS NOT NULL AND us.user_id=$userId";
+                WHERE s.`locations` IS NOT NULL AND us.user_id=$userId
+                ORDER BY name";
 
         $arr = $this->getAll($sql);
         return array_map(function ($item) {
