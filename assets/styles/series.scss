@@ -1551,6 +1551,7 @@ h2 {
         opacity: 0.25;
     }
 
+    .quick-episode:first-child,
     .quick-episode.watched + * {
         cursor: pointer;
         opacity: 1;
@@ -1856,6 +1857,10 @@ h2 {
 
     .episode:has(.number.watched) + .episode:not(:has(.number.watched)) {
         display: flex;
+    }
+
+    .episode:first-child {
+        display: flex !important;
     }
 }
 
