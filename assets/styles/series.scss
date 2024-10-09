@@ -168,7 +168,7 @@ h2 {
                 .card {
                     border-radius: .5rem;
                     height: 27rem;
-                    transition: opacity 0.3s ease-in-out;
+                    transition: opacity 0.3s ease-in-out, width 0.3s ease-in-out;
                     width: 15rem;
 
                     a {

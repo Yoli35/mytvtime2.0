@@ -55,9 +55,17 @@
             series.forEach((s) => {
                 const title = s.querySelector('.name').textContent.toLowerCase();
                 if (title.includes(filter)) {
-                    s.style.opacity = "1";
+                    s.style.display = "block";
+                    setTimeout(() => {
+                        s.style.opacity = "1";
+                        s.style.width = "15rem";
+                    }, 0);
                 } else {
                     s.style.opacity = "0.125";
+                    s.style.width = "0";
+                    setTimeout(() => {
+                        s.style.display = "none";
+                    }, 300);
                 }
             });
         }
