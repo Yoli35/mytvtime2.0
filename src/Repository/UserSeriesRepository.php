@@ -322,6 +322,7 @@ class UserSeriesRepository extends ServiceEntityRepository
     public function seriesByCountry(User $user, string $country, string $locale, int $page, int $perPage): array
     {
         $userId = $user->getId();
+        $userCountry = $user->getCountry() ?? 'US';
         $offset = ($page - 1) * $perPage;
         $sql = "SELECT s.id                                                                      as id,
                        s.tmdb_id                                                                 as tmdb_id,
@@ -329,6 +330,28 @@ class UserSeriesRepository extends ServiceEntityRepository
                        IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
                        s.`poster_path`                                                           as poster_path,
                        s.`first_air_date`                                                        as final_air_date,
+                       us.`progress`                                                             as progress,
+                       s.first_air_date <= NOW()                                                 as released,
+                       s.status                                                                  as status,
+                       (SELECT count(*)
+                        FROM user_episode cue
+                        WHERE cue.user_series_id = us.id
+                          AND cue.season_number > 0
+                          AND (
+                            ((sdo.offset IS NULL OR sdo.offset = 0) AND cue.air_date <= CURDATE())
+                                OR ((sdo.offset > 0) AND cue.air_date <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
+                                OR ((sdo.offset < 0) AND cue.air_date <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
+                            )
+                          AND cue.watch_at IS NOT NULL)                                           as watched_aired_episode_count,
+                       (SELECT count(*)
+                        FROM user_episode cue
+                        WHERE cue.user_series_id = us.id
+                          AND cue.season_number > 0
+                          AND (
+                            ((sdo.offset IS NULL OR sdo.offset = 0) AND cue.air_date <= CURDATE())
+                                OR ((sdo.offset > 0) AND cue.air_date <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
+                                OR ((sdo.offset < 0) AND cue.air_date <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
+                            ))                                                                   as aired_episode_count,
                        (SELECT COUNT(*)
                             FROM `user_episode` ue
                             WHERE ue.`user_series_id`=us.id)                                     as number_of_episode,
@@ -338,6 +361,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                             ORDER BY ue.`episode_number` LIMIT 1)                                as episode
                 FROM `series` s
                 INNER JOIN `user_series` us ON us.series_id=s.id
+                LEFT JOIN `series_day_offset` sdo ON s.id = sdo.`series_id` AND sdo.`country` = '$userCountry'
                 LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.id AND sln.`locale`='$locale'
                 WHERE s.origin_country LIKE '%$country%' AND us.user_id=$userId
                 ORDER BY s.`first_air_date` DESC ";

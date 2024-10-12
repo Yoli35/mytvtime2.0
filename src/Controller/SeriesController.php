@@ -273,14 +273,18 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
-        $seriesToStart = array_map(function ($s) {
+        $series = array_map(function ($s) {
             $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $s['upToDate'] = $s['watched_aired_episode_count'] == $s['aired_episode_count'];
             return $s;
         }, $this->userSeriesRepository->seriesByCountry($user, $country, $locale, 1, -1));
-        $tmdbIds = array_column($seriesToStart, 'tmdb_id');
+        $tmdbIds = array_column($series, 'tmdb_id');
 
-        return $this->render('series/series-to-start.html.twig', [
-            'seriesToStart' => $seriesToStart,
+        dump(['series' => $series, 'tmdbIds' => $tmdbIds]);
+
+        return $this->render('series/series-by-country.html.twig', [
+            'seriesToStart' => $series,
+            'country' => $country,
             'tmdbIds' => $tmdbIds,
         ]);
     }
