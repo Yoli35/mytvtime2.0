@@ -45,8 +45,8 @@
                     {% endif %}
                     <div class="series-overview">{{ season.overview }}</div>
                     {% if season.localized_overviews|length %}
-                        <h4 class="localized-h4">{{ 'Localized overviews for the series'|trans }}</h4>
                         <div class="localized overviews">
+                            <h4 class="localized-h4">{{ 'Localized overviews for the series'|trans }}</h4>
                             {% for overview in season.localized_overviews %}
                                 <div class="localized overview" data-id="{{ overview.id }}">
                                     <div class="content" data-overview="{{ overview.overview }}">
@@ -66,8 +66,8 @@
                         {% endif %}
                     {% endif %}
                     {% if season.additional_overviews|length %}
-                        <h4 class="additional-h4">{{ 'Additional overviews for the series'|trans }}</h4>
                         <div class="additional overviews">
+                            <h4 class="additional-h4">{{ 'Additional overviews for the series'|trans }}</h4>
                             {% for overview in season.additional_overviews %}
                                 <div class="additional overview" data-id="{{ overview.id }}" data-source-id="{{ overview.source.id }}">
                                     <div class="content" data-overview="{{ overview.overview }}">
