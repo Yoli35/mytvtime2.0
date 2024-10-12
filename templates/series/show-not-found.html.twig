@@ -1,0 +1,404 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Series'|trans }} → {{ series.name }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
+{% endblock %}
+{% block body %}
+    <script>
+        const bd = '/series/posters{{ series.posterPath }}';
+        const body = document.querySelector("body");
+        body.style.backgroundSize = "cover";
+        body.style.backgroundPosition = "center";
+        body.style.backgroundRepeat = "no-repeat";
+        body.style.backgroundAttachment = "fixed";
+        body.style.backgroundImage = "url(" + bd + ")";
+    </script>
+    {% include '_blocks/_menu.html.twig' %}
+    <div class="container-fluid backgroundImageOverlay">
+        <div class="series-show user-series-show">
+            <div class="header">
+                <div class="poster">
+                    {% if series.posterPath %}
+                        <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
+                    {% else %}
+                        <div>{{ 'No poster'|trans }}</div>
+                    {% endif %}
+                    {% if series.firstAirDate %}
+                        <div class="progress" data-value="{{ userSeries.progress }}">
+                            <div class="progress-bar"></div>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="infos">
+                    <div class="backdrop">
+                        {% if series.backdropPath %}
+                            <img src="/series/backdrops{{ series.backdropPath }}" alt="{{ series.name }}">
+                        {% endif %}
+                    </div>
+                    {% if app.environment == 'dev' %}
+                        <div class="debug">{{ series.id }} / {{ series.tmdbId }}</div>
+                    {% endif %}
+                    <div class="name">
+                        <h1>
+                            <span class="name-span">{{ series.name }}</span>
+                            {% if series.firstAirDate %}
+                                <span title="{{ series.firstAirDate|date("d/m/Y") }}">({{ series.firstAirDate|date("Y") }})</span>
+                            {% endif %}
+                        </h1>
+                        <div class="series-tools">
+                            <div class="series-tools-click">
+                                {{ ux_icon('fa6-solid:ellipsis-vertical', {height: '18px', width: '18px'}) }}
+                            </div>
+                        </div>
+                    </div>
+                    <h5>
+                        {% set n = series.visitNumber %}
+                        {% if n > 1000 %}
+                            {% set n = (n / 1000)|round(1, 'floor') ~ 'k' %}
+                        {% endif %}
+                        {{ n }} {{ (n > 1 ? 'visits':'visit')|trans }}
+                    </h5>
+                    <div class="series-overview">{{ series.overview }}</div>
+                    {% if series.updates %}
+                        <h4>{{ 'Updates'|trans }}</h4>
+                        <div class="updates">
+                            <div class="wrapper">
+                                {% for update in series.updates %}
+                                    <div class="update">{{ update }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if series.firstAirDate is null %}
+                        <div class="no-air-date">{{ 'No date yet'|trans }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="header">
+                {#                <pre>{{ dump(series.images.posters) }}</pre> #}
+                {#                <pre>{{ dump(series.images.backdrops) }}</pre> #}
+                <div class="posters">
+                    <div class="wrapper">
+                        {% for poster in series.images.posters %}
+                            <div class="other-poster">
+                                <img src="{{ poster }}" alt="{{ 'Poster #' ~ loop.index ~ ' ' ~ series.name }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="backdrops">
+                    <div class="wrapper">
+                        {% for backdrop in series.images.backdrops %}
+                            <div class="other-backdrop">
+                                <img src="{{ backdrop }}" alt="{{ 'Backdrop #' ~ loop.index ~ ' ' ~ series.name }}">
+                            </div>
+                        {% else %}
+                            {{ 'No backdrop'|trans }}
+                        {% endfor %}
+                    </div>
+                    <div class="add-backdrop">
+                        {{ ux_icon('ion:add-circle-outline', {height: '36px', width:'36px'}) }}
+                    </div>
+                    <script>
+                        window.addEventListener("DOMContentLoaded", () => {
+
+                            const addBackdropDialog = document.querySelector('.add-backdrop-dialog');
+                            const addBackdropButton = document.querySelector('.add-backdrop');
+                            const addBackdropCancelButton = addBackdropDialog.querySelector('button[name="cancel"]');
+                            addBackdropButton.addEventListener('click', () => {
+                                addBackdropDialog.showModal();
+                            });
+                            addBackdropCancelButton.addEventListener('click', () => {
+                                addBackdropDialog.close();
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
+
+            {% if series.images.logos|length %}
+                <div class="header">
+                    <div class="logos">
+                        <div class="wrapper">
+                            {% for logo in series.images.logos %}
+                                <div class="other-backdrop">
+                                    <img src="{{ logo }}" alt="{{ 'Backdrop #' ~ loop.index ~ ' ' ~ series.name }}">
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {{ include('_blocks/series/_schedules.html.twig') }}
+
+            {{ include('_blocks/series/_externals.html.twig') }}
+
+            {% if userSeries %}
+                <div class="user-actions">
+                    <div class="watch-links">
+                        <div class="label">{{ 'Watch links'|trans }}</div>
+                        {% for link in series.watchLinks %}
+                            <div class="watch-link" data-id="{{ link.id }}">
+                                <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
+                                    {% if link.providerId > 0 %}
+                                        <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}" data-title="{{ link.name ?? providers.names[link.providerId] }}">
+                                    {% else %}
+                                        <span>{{ link.name }}</span>
+                                    {% endif %}
+                                </a>
+                                <div class="watch-link-tools"
+                                     data-id="{{ link.id }}"
+                                     data-provider="{{ link.providerId }}"
+                                     data-name="{{ link.name }}"
+                                >
+                                    <div class="watch-link-tool edit" data-title="{{ 'Edit this watch link'|trans }}">
+                                        {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                    <div class="watch-link-tool copy" data-title="{{ 'Copy this watch link'|trans }}">
+                                        {{ ux_icon('fa6-solid:copy', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                    <div class="watch-link-name">{{ link.name }}</div>
+                                    <div class="watch-link-tool delete" data-title="{{ 'Delete this watch link'|trans }}">
+                                        {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="add-watch-link" data-title="{{ 'Add a watch link'|trans }}">
+                            {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                        </div>
+                    </div>
+                    <div class="watch-link-form">
+                        <form class="form" action="" id="watch-link-form">
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="provider">{{ 'Provider'|trans }}
+                                        <select name="provider" id="provider">
+                                            <option value="">{{ 'Select a provider'|trans }}</option>
+                                            {% for name, id in providers.select %}
+                                                <option value="{{ id }}">{{ name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="name">{{ 'Name'|trans }}
+                                        <input type="text" name="name" id="name" required autocomplete="false">
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="url">{{ 'URL'|trans }}
+                                        <input type="url" name="url" id="url" required>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <button type="button">{{ 'Cancel'|trans }}</button>
+                                    <button type="submit">{{ 'Add'|trans }}</button>
+                                </div>
+                            </div>
+                            <input type="hidden" name="crud-type" id="crud-type" value="">{# create (new) | update (edit) | delete (remove) #}
+                            <input type="hidden" name="crud-id" id="crud-id" value="">{# id of updated watch link #}
+                        </form>
+                    </div>
+                    <div class="rating">
+                        <div class="rating-stars">
+                            <div class="stars" data-trans-rating="Cancel rating|{{ 'Cancel rating'|trans }}" data-trans-star="star|{{ 'star'|trans }}" data-trans-stars="stars|{{ 'stars'|trans }}">
+                                <div class="star {{ userSeries.rating >= 1 ? "active" }}" data-value="1" data-title="{{ (userSeries.rating >= 1 ? "Cancel rating":"x star")|trans({'x': 1}) }}">
+                                    {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                </div>
+                                <div class="star {{ userSeries.rating >= 2 ? "active" }}" data-value="2" data-title="{{ (userSeries.rating >= 2 ? "Cancel rating":"x stars")|trans({'x': 2}) }}">
+                                    {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                </div>
+                                <div class="star {{ userSeries.rating >= 3 ? "active" }}" data-value="3" data-title="{{ (userSeries.rating >= 3 ? "Cancel rating":"x stars")|trans({'x': 3}) }}">
+                                    {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                </div>
+                                <div class="star {{ userSeries.rating >= 4 ? "active" }}" data-value="4" data-title="{{ (userSeries.rating >= 4 ? "Cancel rating":"x stars")|trans({'x': 4}) }}">
+                                    {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                </div>
+                                <div class="star {{ userSeries.rating >= 5 ? "active" }}" data-value="5" data-title="{{ (userSeries.rating >= 5 ? "Cancel rating":"x stars")|trans({'x': 5}) }}">
+                                    {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% if userSeries.marathoner or userSeries.binge %}
+                        <div class="badges">
+                            {% if userSeries.binge %}
+                                <div class="badge" data-title="{{ 'A real binger!'|trans }}">
+                                    {{ ux_icon('fa:coffee', {height: '18px', width: '18px'}) }}
+                                </div>
+                            {% endif %}
+                            {% if userSeries.marathoner %}
+                                <div class="badge" data-title="{{ 'A real marathoner!'|trans }}">
+                                    {{ ux_icon('fa6-solid:bolt', {height: '18px', width: '18px'}) }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    <div class="actions">
+                        <div class="action toggle-pinned-series{% if userSeries.userPinnedSeries %} pinned{% endif %}" data-title="{{ (userSeries.userPinnedSeries ? "Remove from pinned series" : "Add to pinned series")|trans }}">
+                            {{ ux_icon('fa6-solid:paperclip', {height: '18px', width: '18px'}) }}
+                        </div>
+                        <div class="action toggle-favorite-series{% if userSeries.favorite %} favorite{% endif %}" data-title="{{ (userSeries.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
+                            {{ ux_icon('fa6-solid:heart', {height: '18px', width: '18px'}) }}
+                        </div>
+                        <div class="action remove-this-series" data-title="{{ 'Remove this series from your watchlist'|trans }}">
+                            {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="content">
+                <div class="left">
+                    <div class="all-seasons">
+                        <div>{{ 'Series not found on The Movie Database'|trans }}</div>
+                    </div>
+                </div>
+                <div class="right">
+                </div>
+            </div>
+            <div class="content">
+                <div id="series-map-title">
+                    <div class="title">{{ 'Shooting locations'|trans }}</div>
+                    <div class="add-location-button" data-title="{{ 'Add a shooting location'|trans }}">
+                        {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                    </div>
+                </div>
+                <div class="series-map">
+                    {% set map = seriesLocations.map %}
+                    {% if map %}
+                        {{ render_map(map, { 'data-controller': 'series_map', class: 'map-controller' }) }}
+                        <div class="locations">
+                            <ul>
+                                {% for location in seriesLocations.locations %}
+                                    <li data-lat="{{ location.latitude }}" data-lon="{{ location.longitude }}">
+                                        <div class="image">
+                                            <img src="{{ location.image }}" alt="{{ location.location }}">
+                                        </div>
+                                        <div class="location">
+                                            {{ location.location }}
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                    <dialog class="add-location-dialog">
+                        <form action="" id="add-location-form">
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="title">{{ 'Title'|trans }}
+                                        <input type="text" name="title" id="title" required>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="location">{{ 'Location'|trans }}
+                                        <input type="text" name="location" id="location" required>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="description">{{ 'Description'|trans }}
+                                        <input type="text" name="description" id="description" required>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="image">{{ 'Image'|trans }}
+                                        <input type="url" name="image" id="image" required>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="google-map-url">{{ 'Paste Google maps url here to obtain latitude and longitude'|trans }}
+                                        <input type="url" name="google-map-url" id="google-map-url">
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="latitude">{{ 'Latitude'|trans }}
+                                        <input type="number" name="latitude" id="latitude" step="0.0000001" required>
+                                        <span class="error"></span>
+                                    </label>
+                                    <label for="longitude">{{ 'Longitude'|trans }}
+                                        <input type="number" name="longitude" id="longitude" step="0.0000001" required>
+                                        <span class="error"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <button type="button">{{ 'Cancel'|trans }}</button>
+                                    <button type="submit">{{ 'Add'|trans }}</button>
+                                </div>
+                            </div>
+                        </form>
+                    </dialog>
+                </div>
+            </div>
+        </div>
+        {% include '_blocks/_footer.html.twig' %}
+    </div>
+    <dialog class="add-backdrop-dialog">
+        {{ form_start(addBackdropForm) }}
+        {{ form_widget(addBackdropForm) }}
+        <div class="form-row">
+            <button type="button" name="cancel">{{ 'Cancel'|trans }}</button>
+            <button type="submit">{{ 'Upload it!'|trans }}</button>
+        </div>
+        {{ form_end(addBackdropForm) }}
+    </dialog>
+    <div id="globs" style="display: none">
+        {
+            "seriesName": "{{ series.name }}",
+            "seriesId": {{ series.id }},
+            "userSeriesId": {{ userSeries.id }},
+            "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "api": {
+                "directLinkCrud": {
+                    "create": "{{ path('api_series_direct_link_create') }}",
+                    "read": "{{ path('api_series_direct_link_read', {id: 0})|slice(0,-1) }}",
+                    "update": "{{ path('api_series_direct_link_update', {id: 0})|slice(0,-1) }}",
+                    "delete": "{{ path('api_series_direct_link_delete', {id: 0})|slice(0,-1) }}"
+                }
+            }
+        }
+    </div>
+    <div id="svgs" style="display: none">
+        <div class="svg" id="arrow-down">{{ ux_icon('fa6-solid:arrow-down', {height: '18px', width: '18px'}) }}</div>
+        <div class="svg" id="arrow-up">{{ ux_icon('fa6-solid:arrow-up', {height: '18px', width: '18px'}) }}</div>
+        <div class="svg" id="arrow-left">{{ ux_icon('fa6-solid:arrow-left', {height: '18px', width: '18px'}) }}</div>
+        <div class="svg" id="arrow-right">{{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }}</div>
+        <div class="svg" id="xmark">{{ ux_icon('fa6-solid:xmark', {height: '18px', width: '18px'}) }}</div>
+        <div class="svg" id="pen">{{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}</div>
+        <div class="svg" id="trash">{{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}</div>
+    </div>
+{% endblock %}
+

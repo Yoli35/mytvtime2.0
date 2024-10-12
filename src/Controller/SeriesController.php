@@ -642,46 +642,53 @@ class SeriesController extends AbstractController
         $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
         // Get with fr-FR language to get the localized name
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "keywords", "lists", "similar"]), true);
-        if (!$tv['lists']['total_results']) {
-            // Get with en-US language to get the lists
-            $tvLists = json_decode($this->tmdbService->getTvLists($series->getTmdbId()), true);
-            $tv['lists'] = $tvLists;
-        }
-        if ($tv['similar']['total_results'] == 0) {
-            // Get with en-US language to get the similar series
-            $similar = json_decode($this->tmdbService->getTvSimilar($series->getTmdbId()), true);
-            $tv['similar'] = $similar;
-        }
-        $tv['similar']['results'] = array_map(function ($s) {
-            $s['poster_path'] = $s['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $s['poster_path'] : null;
-            $s['tmdb'] = true;
-            $s['slug'] = (new AsciiSlugger())->slug($s['name']);
-            return $s;
-        }, $tv['similar']['results']);
+        if ($tv) {
+            if (!$tv['lists']['total_results']) {
+                // Get with en-US language to get the lists
+                $tvLists = json_decode($this->tmdbService->getTvLists($series->getTmdbId()), true);
+                $tv['lists'] = $tvLists;
+            }
+            if ($tv['similar']['total_results'] == 0) {
+                // Get with en-US language to get the similar series
+                $similar = json_decode($this->tmdbService->getTvSimilar($series->getTmdbId()), true);
+                $tv['similar'] = $similar;
+            }
+            $tv['similar']['results'] = array_map(function ($s) {
+                $s['poster_path'] = $s['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $s['poster_path'] : null;
+                $s['tmdb'] = true;
+                $s['slug'] = (new AsciiSlugger())->slug($s['name']);
+                return $s;
+            }, $tv['similar']['results']);
 //        dump($tv, $tvLists, $similar);
 
-        $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-        $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
-        list($series, $seriesBackdrops, $seriesLogos, $seriesPosters) = $this->updateSeries($series, $tv);
+            $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+            list($series, $seriesBackdrops, $seriesLogos, $seriesPosters) = $this->updateSeries($series, $tv);
 
-        $tv['credits'] = $this->castAndCrew($tv);
-        $tv['localized_name'] = $series->getLocalizedName($request->getLocale());
-        $tv['localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
-        $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
-        $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
-        $tv['networks'] = $this->networks($tv);
-        $tv['overview'] = $this->localizedOverview($tv, $series, $request);
-        $tv['seasons'] = $this->seasonsPosterPath($tv['seasons'], $dayOffset);
-        $tv['watch/providers'] = $this->watchProviders($tv, $user->getCountry() ?? 'FR');
-        $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $request->getLocale());
-
+            $tv['credits'] = $this->castAndCrew($tv);
+            $tv['localized_name'] = $series->getLocalizedName($request->getLocale());
+            $tv['localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
+            $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
+            $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
+            $tv['networks'] = $this->networks($tv);
+            $tv['overview'] = $this->localizedOverview($tv, $series, $request);
+            $tv['seasons'] = $this->seasonsPosterPath($tv['seasons'], $dayOffset);
+            $tv['watch/providers'] = $this->watchProviders($tv, $user->getCountry() ?? 'FR');
+            $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $request->getLocale());
+        } else {
+            $series->setUpdates(['Series not found']);
+            $seriesBackdrops = $seriesLogos = $seriesPosters = [];
+        }
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        $userSeries = $this->updateUserSeries($userSeries, $tv);
-        $tv['status_css'] = $this->statusCss($userSeries, $tv);
+        if ($tv) {
+            $userSeries = $this->updateUserSeries($userSeries, $tv);
+            $tv['status_css'] = $this->statusCss($userSeries, $tv);
+        }
 
         $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
 
         $schedules = $this->seriesSchedulesV2($user, $series, $tv, $dayOffset);
+        dump($series);
         $seriesArr = $series->toArray();
         $nead = $seriesArr['nextEpisodeAirDate'];
         $seriesArr['nextEpisodeAirDate'] = $nead ? $nead->modify($dayOffset . ' days') : null;
@@ -724,7 +731,12 @@ class SeriesController extends AbstractController
 //            'providers' => $providers,
 //            'schedules' => $schedules,
         ]);
-        return $this->render('series/show.html.twig', [
+        if ($tv) {
+            $twig = "series/show.html.twig";
+        } else {
+            $twig = "series/show-not-found.html.twig";
+        }
+        return $this->render($twig, [
             'series' => $seriesArr,
             'tv' => $tv,
             'userSeries' => $userSeries,
@@ -1811,7 +1823,7 @@ class SeriesController extends AbstractController
         return $seasonEpisodeCount;
     }
 
-    public function seriesSchedulesV2(User $user, Series $series, array $tv, int $dayOffset): array
+    public function seriesSchedulesV2(User $user, Series $series, ?array $tv, int $dayOffset): array
     {
         $schedules = [];
         $locale = $user->getPreferredLanguage() ?? 'fr';
@@ -1829,12 +1841,17 @@ class SeriesController extends AbstractController
                 $dayArr[$day] = true;
             }
 
-            $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
-            $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+            if ($tv) {
+                $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+                $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+            } else {
+                $tvLastEpisode = null;
+                $tvNextEpisode = null;
+            }
 
             $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
-            $tomorrow = $now->modify('+1 day')->setTime(0, 0);
-            $remainingTodayTS = $tomorrow->getTimestamp() - $now->getTimestamp();
+//            $tomorrow = $now->modify('+1 day')->setTime(0, 0);
+//            $remainingTodayTS = $tomorrow->getTimestamp() - $now->getTimestamp();
 
             $nextEpisodeAiDate = $tvNextEpisode ? $this->dateService->newDateImmutable($tvNextEpisode['air_date'], 'Europe/Paris') : null;
             $lastEpisodeAiDate = $tvLastEpisode ? $this->dateService->newDateImmutable($tvLastEpisode['air_date'], 'Europe/Paris') : null;
@@ -1879,7 +1896,8 @@ class SeriesController extends AbstractController
                 'userLastNextEpisode' => $userLastNextEpisode,
                 'tvLastEpisode' => $tvLastEpisode,
                 'tvNextEpisode' => $tvNextEpisode,
-                'toBeContinued' => $this->isToBeContinued($tv, $userLastEpisode),
+                'toBeContinued' => $tv && $this->isToBeContinued($tv, $userLastEpisode),
+                'tmdbStatus' => $tv['status'] ?? 'series not found',
             ];
 
         }
