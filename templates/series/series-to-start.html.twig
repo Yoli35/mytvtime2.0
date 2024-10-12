@@ -45,12 +45,17 @@
         window.addEventListener("DOMContentLoaded", init);
 
         function init() {
+            /** @type {HTMLInputElement} */
             const filterByName = document.getElementById('filter-by-name');
             filterByName.addEventListener('input', filterSeries);
+            filterByName.focus();
+            setTimeout(() => {
+                filterSeries({target: filterByName});
+            }, 1000);
         }
 
-        function filterSeries() {
-            const filter = this.value.toLowerCase();
+        function filterSeries(e) {
+            const filter = e.target.value.toLowerCase();
             const series = document.querySelectorAll('.series-group.user .content .card');
             series.forEach((s) => {
                 const title = s.querySelector('.name').textContent.toLowerCase();
