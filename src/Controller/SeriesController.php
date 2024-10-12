@@ -266,6 +266,25 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[Route('/by/country/{country}', name: 'by_country', requirements: ['country' => '[A-Z]{2}'])]
+    public function seriesByCountry(Request $request, string $country): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+
+        $seriesToStart = array_map(function ($s) {
+            $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            return $s;
+        }, $this->userSeriesRepository->seriesByCountry($user, $country, $locale, 1, -1));
+        $tmdbIds = array_column($seriesToStart, 'tmdb_id');
+
+        return $this->render('series/series-to-start.html.twig', [
+            'seriesToStart' => $seriesToStart,
+            'tmdbIds' => $tmdbIds,
+        ]);
+    }
+
     #[Route('/search', name: 'search')]
     public function search(Request $request): Response
     {
@@ -1494,6 +1513,15 @@ class SeriesController extends AbstractController
 
         $updates = array_map(function ($series) use ($locale, $localizedNames) {
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale, ['images']), true);
+            if ($tv == null) {
+                return [
+                    'id' => $series->getId(),
+                    'name' => $series->getName(),
+                    'localized_name' => $localizedNames[$series->getId()] ?? null,
+                    'poster_path' => $series->getPosterPath(),
+                    'updates' => ['*** Series not found ***'],
+                ];
+            }
             $updateSeries = $this->updateSeries($series, $tv);
             $update = $updateSeries[0]->getUpdates();
             return [
