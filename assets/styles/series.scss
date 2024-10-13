@@ -2618,13 +2618,13 @@ h2 {
             li {
                 background-color: var(--ardoise-100-alpha-50);
                 border-radius: .25rem;
-                cursor: pointer;
                 display: flex;
                 flex-direction: column;
                 gap: .5rem;
 
                 .image {
                     aspect-ratio: 16/9;
+                    position: relative;
                     width: 15rem;
 
                     img {
@@ -2633,6 +2633,57 @@ h2 {
                         height: 100%;
                         object-fit: cover;
                         width: 100%;
+                    }
+
+                    .count {
+                        align-items: center;
+                        background-color: var(--orange-50);
+                        border-radius: 50%;
+                        color: var(--ardoise-10);
+                        display: flex;
+                        font-size: 1.25rem;
+                        font-weight: 600;
+                        height: 2rem;
+                        justify-content: center;
+                        position: absolute;
+                        right: .5rem;
+                        top: .5rem;
+                        width: 2rem;
+                    }
+
+                    .arrow {
+                        align-items: center;
+                        background-color: var(--grey-80-alpha-50);
+                        border-radius: 50%;
+                        color: var(--ardoise-10);
+                        cursor: pointer;
+                        display: flex;
+                        font-size: 1.25rem;
+                        font-weight: 600;
+                        height: 2rem;
+                        justify-content: center;
+                        opacity: 0;
+                        position: absolute;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        transition: opacity 0.3s ease-in-out;
+                        width: 2rem;
+
+                        &.left {
+                            left: .5rem;
+                        }
+
+                        &.right {
+                            right: .5rem;
+                        }
+                    }
+
+                    &:hover .arrow {
+                        opacity: 1;
+                    }
+
+                    .list {
+                        display: none;
                     }
                 }
 

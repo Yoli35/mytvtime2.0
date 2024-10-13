@@ -552,6 +552,19 @@
                                     <li data-lat="{{ location.latitude }}" data-lon="{{ location.longitude }}">
                                         <div class="image">
                                             <img src="{{ location.image }}" alt="{{ location.location }}">
+                                            {% if location.additional_images is defined %}
+                                                <div class="count">
+                                                    {{ 1 + location.additional_images|length }}
+                                                </div>
+                                                <div class="arrow left">{{ ux_icon('fa6-solid:arrow-left', {height: '18px', width: '18px'}) }}</div>
+                                                <div class="arrow right">{{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }}</div>
+                                                <div class="list">
+{#                                                    <img src="{{ location.image }}" alt="{{ location.location ~ ' - ' ~ 'image'|trans ~ ' #1' }}">#}
+                                                    {% for i in location.additional_images %}
+                                                        <img src="{{ i }}" alt="{{ location.location ~ ' - ' ~ 'image'|trans ~ ' #' ~ (loop.index + 1) }}">
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
                                         </div>
                                         <div class="location">
                                             {{ location.location }}
