@@ -2816,9 +2816,24 @@ dialog {
                     width: 100%;
 
                     .error {
-                        color: var(--error);
+                        background-color: var(--error);
+                        border-radius: .25rem;
                         font-size: .75rem;
                         font-weight: 100;
+                        margin-block-start: .25rem;
+                        padding-inline: 1rem;
+                        width: fit-content;
+                    }
+
+                    .image-preview {
+                        margin-inline: auto;
+
+                        img {
+                            border-radius: .25rem;
+                            max-height: 10rem;
+                            object-fit: cover;
+                            width: auto;
+                        }
                     }
                 }
 
@@ -2830,6 +2845,16 @@ dialog {
                     font-size: 1rem;
                     font-weight: 100;
                     padding-inline: .5rem;
+                }
+
+                input[type="url"].dragover {
+                    border-color: var(--green-50);
+                    cursor: copy;
+                    outline: 2px dashed var(--green-50);
+                }
+
+                input[type=file]::file-selector-button {
+                    display: none;
                 }
 
                 button {

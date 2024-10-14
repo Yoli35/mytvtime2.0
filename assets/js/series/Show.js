@@ -891,6 +891,7 @@ export class Show {
         const inputLongitude = addLocationForm.querySelector('input[name="longitude"]');
         const addLocationCancel = addLocationForm.querySelector('button[type="button"]');
         const addLocationSubmit = addLocationForm.querySelector('button[type="submit"]');
+        const imageInputs = addLocationForm.querySelectorAll('input[type="url"]');
 
         if (seriesMap) {
             const mapViewValue = JSON.parse(seriesMap.getAttribute('data-symfony--ux-leaflet-map--map-view-value'));
@@ -902,6 +903,7 @@ export class Show {
                 let imageList = imageDiv.querySelectorAll('img');
                 imageList = Array.from(imageList);
                 if (imageList.length > 1) {
+                    /** @type {Array<{src: string}>} */
                     const imageSrcList = imageList.map(function (image) {
                         return {src: image.src};
                     });
@@ -975,6 +977,76 @@ export class Show {
                 });
             }
         });
+
+        // Les champs de type "url" peuvent recevoir une image par glisser déposer et récupérer l'url
+        imageInputs.forEach(function (input) {
+            input.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'link';
+            });
+            input.addEventListener('dragenter', function (e) {
+                this.classList.add('dragover');
+            });
+            input.addEventListener('dragleave', function () {
+                this.classList.remove('dragover');
+            });
+            input.addEventListener('drop', function (e) {
+                e.preventDefault();
+                const files = e.dataTransfer.files;
+                if (files.length === 1) {
+                    const file = files[0];
+                    if (file.type.match('image.*')) {
+                        this.value = file.name;
+                        previewFile(file, this.closest('label').querySelector('img'));
+                    }
+                } else {
+                    let count = 0;
+                    Array.from(files).forEach(function (file) {
+                        if (file.type.match('image.*') && count < 5) {
+                            const imagePreview = imageInputs[count].closest('label').querySelector('img');
+                            imageInputs[count].value = file.name;
+                            previewFile(file, imagePreview);
+                            count++;
+                        }
+                    });
+                    for (let i = count; i < 5; i++) {
+                        const imagePreview = imageInputs[i].closest('label').querySelector('img');
+                        imageInputs[i].value = '';
+                        imagePreview.src = '';
+                    }
+                }
+            });
+        });
+
+        const inputFiles = document.querySelector('input[type="file"]');
+        inputFiles.addEventListener('change', function () {
+            console.log(this.files);
+            let count = 0;
+            Array.from(this.files).forEach(function (file) {
+                if (file.type.match('image.*') && count < 5) {
+                    const imagePreview = imageInputs[count].closest('label').querySelector('img');
+                    imageInputs[count].value = file.name;
+                    previewFile(file, imagePreview);
+                    count++;
+                }
+            });
+            for (let i = count; i < 5; i++) {
+                const imagePreview = imageInputs[i].closest('label').querySelector('img');
+                imageInputs[i].value = '';
+                imagePreview.src = '';
+            }
+        });
+
+        function previewFile(file, preview) {
+            const reader = new FileReader();
+
+            reader.addEventListener("load", () => {
+                preview.src = reader.result;
+            }, false);
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
 
         /******************************************************************************
          * Broadcast delay                                                            *
