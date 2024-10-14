@@ -979,6 +979,7 @@ label:has(input[type="text"]) {
                         background-color: var(--orange-50);
                         border-radius: .25rem;
                         color: var(--orange-90);
+                        font-family: monospace;
                         font-size: 1rem;
                         font-weight: 300;
                         line-height: 1.25em;
@@ -1017,6 +1018,19 @@ label:has(input[type="text"]) {
                             border-radius: .5rem;
                             width: 9.75rem; /* 156px;*/
                         }
+                    }
+
+                    a:not(:has(img)) {
+                        align-items: center;
+                        aspect-ratio: 78 / 117;
+                        background-color: var(--orange-50);
+                        border-radius: .5rem;
+                        display: flex;
+                        font-size: 1.5rem;
+                        gap: .5rem;
+                        justify-content: center;
+                        padding-inline: .5rem;
+                        width: 9.75rem; /* 156px;*/
                     }
                 }
             }

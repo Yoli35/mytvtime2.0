@@ -196,7 +196,11 @@
                             </a>
                             <div id="eotd-preview-1-{{ eotd.id }}" class="episode-of-the-day-preview">
                                 <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
+                                    {% if eotd.posterPath %}
                                     <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+                                    {% else %}
+                                        {{ eotd.name }}
+                                    {% endif %}
                                 </a>
                             </div>
                         </div>
@@ -219,7 +223,11 @@
                             </a>
                             <div id="eotd-preview-2-{{ eotd.id }}" class="episode-of-the-day-preview">
                                 <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
-                                    <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+                                    {% if eotd.posterPath %}
+                                        <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+                                    {% else %}
+                                        {{ eotd.name }}
+                                    {% endif %}
                                 </a>
                             </div>
                         </div>
@@ -242,7 +250,11 @@
                             </a>
                             <div id="eotd-preview-3-{{ eotd.id }}" class="episode-of-the-day-preview">
                                 <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
-                                    <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+                                    {% if eotd.posterPath %}
+                                        <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+                                    {% else %}
+                                        {{ eotd.name }}
+                                    {% endif %}
                                 </a>
                             </div>
                         </div>

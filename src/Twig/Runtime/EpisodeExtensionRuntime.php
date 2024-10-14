@@ -53,7 +53,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         foreach ($arr as $item) {
             if (!$this->seriesInArray($seriesArr, $item)) {
                 $item['episodes'] = [$item['episodeNumber']];
-                $item['posterPath'] = '/series/posters' . $item['posterPath'];
+                $item['posterPath'] = $item['posterPath'] ? '/series/posters' . $item['posterPath'] : null;
                 $item['episodesWatched'] = $item['watchAt'] === null ? 0 : 1;
                 $seriesArr[$item['id']] = $item;
             } else {
