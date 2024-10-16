@@ -97,6 +97,7 @@
             const orderSelect = document.getElementById('order-by');
             const perPage = document.getElementById('per-page');
             const titleFilter = document.getElementById('title-filter');
+            let t0 = performance.now();
 
             collapseBoxes.forEach(box => {
                 box.addEventListener('click', function () {
@@ -119,8 +120,11 @@
             });
 
             titleFilter.addEventListener('input', function () {
-                if (titleFilter.value.length > 2) {
+                // if (titleFilter.value.length > 2) {
+                const t1 = performance.now();
+                if (t1 - t0 > 500) {
                     getMovies(getParams().concat({key: 'page', value: 1}, {key: 'title', value: titleFilter.value}));
+                    t0 = t1;
                 }
             });
 
