@@ -961,6 +961,8 @@ export class Show {
             });
             if (!emptyInput) {
                 const formDatas = new FormData(addLocationForm);
+                console.log(Object.fromEntries(formDatas));
+                console.log({formDatas});
                 fetch('/' + lang + '/series/add/location/' + seriesId,
                     {
                         method: 'POST',
@@ -968,6 +970,10 @@ export class Show {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(Object.fromEntries(formDatas))
+                        /*body: formDatas,
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }*/
                     }
                 ).then(function (response) {
                     if (response.ok) {

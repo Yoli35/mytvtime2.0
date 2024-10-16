@@ -1476,7 +1476,41 @@ class SeriesController extends AbstractController
 //        dump(['locations' => $locations, 'data' => $data]);
         $data = array_filter($data, fn($key) => $key != "google-map-url", ARRAY_FILTER_USE_KEY);
 //        dump(['data' => $data]);
+        // Javascript code:
+        // fetch('/' + lang + '/series/add/location/' + seriesId,
+        //     {
+        //         method: 'POST',
+        //         body: formDatas,
+        //         headers: {
+        //             "Content-Type": "multipart/form-data"
+        //         }
+        //     }
+        // )
+        // Php code:
+//        $rawContent = $request->getContent();
+        //extract boundary for multipart form data: ------WebKitFormBoundarywRsOZ331E9nhgGan\n
+//        preg_match('/^(.*oundary.*\r\n)/', $rawContent, $matches);
+//        $boundary = $matches[1];
+//        dump($boundary);
+        //fetch the content and determine the boundary
+//        $blocks = preg_split("/$boundary/", $rawContent);
+        //parse each block
+//        foreach ($blocks as $block) {
+//            if (empty($block)) {
+//                continue;
+//            }
+//            dump($block);
+//            // if header contains filename, it is a file
+//            if (str_contains($block, 'filename')) {
+//                preg_match('/Content-Disposition: form-data; name="(.*)"; filename="(.*)"\r\nContent-Type: (.*)\r\n\r\n(...)\r\n/', $block, $matches);
+//                dump($matches);
+//            } else {
+//                preg_match('/Content-Disposition: form-data; name="([^"]*)"\r\n\r\n(.*)\r\n/', $block, $matches);
+//                dump($matches);
+//            }
+//        }
 
+        $data['uuid'] = Uuid::v4()->toString();
         $data['latitude'] = str_replace(',', '.', $data['latitude']);
         $data['longitude'] = str_replace(',', '.', $data['longitude']);
         $data['latitude'] = floatval($data['latitude']);
