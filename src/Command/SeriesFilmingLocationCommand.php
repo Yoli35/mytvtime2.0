@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Controller\SeriesController;
 use App\Entity\FilmingLocation;
 use App\Entity\FilmingLocationImage;
+use App\Repository\FilmingLocationRepository;
 use App\Repository\SeriesRepository;
 use App\Service\DateService;
 use App\Service\TMDBService;
@@ -27,10 +28,11 @@ class SeriesFilmingLocationCommand extends Command
     private float $t0;
 
     public function __construct(
-        private readonly DateService            $dateService,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly SeriesController       $seriesController,
-        private readonly SeriesRepository       $seriesRepository,
+        private readonly DateService               $dateService,
+        private readonly EntityManagerInterface    $entityManager,
+        private readonly FilmingLocationRepository $filmingLocationRepository,
+        private readonly SeriesController          $seriesController,
+        private readonly SeriesRepository          $seriesRepository,
     )
     {
         parent::__construct();
@@ -57,6 +59,8 @@ class SeriesFilmingLocationCommand extends Command
         $this->commandStart();
 
         $count = 0;
+        // Root directory
+        $rootDir = $this->seriesController->getRootDir() . '/public';
         foreach ($allSeries as $series) {
 
             $this->io->writeln(sprintf('Series (%d): %s', $series->getId(), $series->getName()));
@@ -73,13 +77,14 @@ class SeriesFilmingLocationCommand extends Command
 
             $locations = $locations['locations'];
 
-            for ($i=0;$i<count($locations);$i++) {
-                $location = $locations[$i];
-                // Generate a UUID for each location
-                if (!key_exists('uuid', $locations[$i])) {
-                    $locations[$i]['uuid'] = Uuid::v4()->toString();
+            for ($i = 0; $i < count($locations); $i++) {
+                $loc = $this->filmingLocationRepository->findOneBy(['uuid' => $locations[$i]['uuid']]);
+                if ($loc) {
+                    $this->io->writeln('Location already exists');
+                    continue;
                 }
-                /*$additionalImages = $location['additional_images'] ?? [];
+                $location = $locations[$i];
+                $additionalImages = $location['additional_images'] ?? [];
                 $description = $location['description'];
                 $images = [];
                 $images[] = $location['image'];
@@ -87,23 +92,31 @@ class SeriesFilmingLocationCommand extends Command
                 $latitude = $location['latitude'];
                 $longitude = $location['longitude'];
                 $title = $location['location'];
+                $uuid = $location['uuid'];
                 $this->io->writeln($title);
 
-                $filmingLocation = new FilmingLocation($series->getTmdbId(), $title, $description, $latitude, $longitude, true);
+                $filmingLocation = new FilmingLocation($uuid, $series->getTmdbId(), $title, $description, $latitude, $longitude, true);
                 $this->entityManager->persist($filmingLocation);
 
-                foreach ($images as $image) {
+                foreach ($images as $image) {// https://blscene.com/wp-content/uploads/2024/05/Official-Trailer-My-Love-Mix-Up-เขียนรักด้วยยางลบ-0002.webp
                     if (str_contains($image, '/images/map')) {
                         $image = str_replace('/images/map', '', $image);
                     } else {
                         // copy image to /images/map
                         // https://someurl.com/image.jpg -> /images/map/image.jpg
-                        $destination = '/images/map/' . basename($image);
-                        $this->seriesController->saveImageFromUrl($image, $destination);
+                        $basename = basename($image);
+                        $destination = $rootDir . '/images/map/' . $basename;
+                        $copied = $this->seriesController->saveImageFromUrl($image, $destination);
+                        if ($copied) {
+                            $this->io->writeln('Image [ ' . $image . ' ] copied to ' . $destination);
+                        } else {
+                            $this->io->error('Image [ ' . $image . ' ] not copied');
+                        }
+                        $image = '/' . $basename;
                     }
                     $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
                     $this->entityManager->persist($filmingLocationImage);
-                }*/
+                }
             }
             $series->setLocations(['locations' => $locations]);
 //            $this->entityManager->persist($series);

@@ -2682,4 +2682,9 @@ class SeriesController extends AbstractController
         }
         return false;
     }
+
+    public function getRootDir(): string
+    {
+        return $this->getParameter('kernel.project_dir');
+    }
 }

@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: FilmingLocationRepository::class)]
 class FilmingLocation
@@ -40,8 +41,12 @@ class FilmingLocation
     #[ORM\OneToMany(targetEntity: FilmingLocationImage::class, mappedBy: 'filmingLocation', orphanRemoval: true)]
     private Collection $filmingLocationImages;
 
-    public function __construct(int $tmdbId, string $title, string $description, float $latitude, float $longitude, bool $isSeries = false)
+    #[ORM\Column(length: 36, nullable: true)]
+    private ?string $uuid = null;
+
+    public function __construct(string $uuid, int $tmdbId, string $title, string $description, float $latitude, float $longitude, bool $isSeries = false)
     {
+        $this->uuid = $uuid;
         $this->tmdbId = $tmdbId;
         $this->title = $title;
         $this->description = $description;
@@ -154,6 +159,18 @@ class FilmingLocation
                 $filmingLocationImage->setFilmingLocation(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(?string $uuid): static
+    {
+        $this->uuid = $uuid;
 
         return $this;
     }
