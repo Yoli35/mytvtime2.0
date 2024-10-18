@@ -37,9 +37,9 @@ export default class extends Controller {
         // console.log(event.detail.markers);
         // console.log(event.detail.infoWindows);
 
-        const markerCount = event.detail.markers.length;
-        const seriesMapTitle = document.querySelector('#series-map-title').querySelector('.title');
-        seriesMapTitle.textContent += ` (${markerCount})`;
+        // const markerCount = event.detail.markers.length;
+        // const seriesMapTitle = document.querySelector('#series-map-title').querySelector('.title');
+        // seriesMapTitle.textContent += ` (${markerCount})`;
 
         // const firstInfoWindow = event.detail.infoWindows[0];
         // firstInfoWindow.options.opened = true;

@@ -25,6 +25,11 @@ export class Diaporama {
         }
     }
 
+    enable(image) {
+        image.classList.add("pointer");
+        image.addEventListener("click", this.openDiaporama);
+    }
+
     openDiaporama(e) {
         const images = gThis.diaporamaImages;
         const count = images.length;

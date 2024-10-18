@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\FilmingLocationImage;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -11,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FilmingLocationImageRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $em)
     {
         parent::__construct($registry, FilmingLocationImage::class);
     }
@@ -40,4 +41,12 @@ class FilmingLocationImageRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function save(FilmingLocationImage $filmingLocationImage, bool $true)
+    {
+        $this->em->persist($filmingLocationImage);
+
+        if ($true) {
+            $this->em->flush();
+        }
+    }
 }

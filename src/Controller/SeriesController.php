@@ -6,6 +6,8 @@ use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\EpisodeLocalizedOverview;
 use App\Entity\EpisodeSubstituteName;
+use App\Entity\FilmingLocation;
+use App\Entity\FilmingLocationImage;
 use App\Entity\SeasonLocalizedOverview;
 use App\Entity\Series;
 use App\Entity\SeriesAdditionalOverview;
@@ -26,6 +28,8 @@ use App\Form\SeriesSearchType;
 use App\Repository\DeviceRepository;
 use App\Repository\EpisodeLocalizedOverviewRepository;
 use App\Repository\EpisodeSubstituteNameRepository;
+use App\Repository\FilmingLocationImageRepository;
+use App\Repository\FilmingLocationRepository;
 use App\Repository\KeywordRepository;
 use App\Repository\NetworkRepository;
 use App\Repository\SeasonLocalizedOverviewRepository;
@@ -81,6 +85,8 @@ class SeriesController extends AbstractController
         private readonly DeeplTranslator                    $deeplTranslator,
         private readonly EpisodeLocalizedOverviewRepository $episodeLocalizedOverviewRepository,
         private readonly EpisodeSubstituteNameRepository    $episodeSubstituteNameRepository,
+        private readonly FilmingLocationImageRepository      $filmingLocationImageRepository,
+        private readonly FilmingLocationRepository          $filmingLocationRepository,
         private readonly ImageConfiguration                 $imageConfiguration,
         private readonly KeywordRepository                  $keywordRepository,
         private readonly KeywordService                     $keywordService,
@@ -727,8 +733,11 @@ class SeriesController extends AbstractController
             'That\'s all!' => $this->translator->trans('That\'s all!'),
         ];
 
+        $locations = $this->getSeriesLocations($series, $user->getPreferredLanguage() ?? $request->getLocale());
+
         dump([
             'series' => $seriesArr,
+            'locations' => $locations['filmingLocations'],
             'tv' => $tv,
 //            'dayOffset' => $dayOffset,
             'userSeries' => $userSeries,
@@ -745,7 +754,7 @@ class SeriesController extends AbstractController
             'tv' => $tv,
             'userSeries' => $userSeries,
             'providers' => $providers,
-            'seriesLocations' => $this->getSeriesLocations($series, $user->getPreferredLanguage() ?? $request->getLocale()),
+            'seriesLocations' => $locations,
             'externals' => $this->getExternals($series, $request->getLocale()),
             'translations' => $translations,
             'addBackdropForm' => $addBackdropForm->createView(),
@@ -1510,17 +1519,146 @@ class SeriesController extends AbstractController
 //            }
 //        }
 
-        $data['uuid'] = Uuid::v4()->toString();
+        $uuid = $data['uuid'] = Uuid::v4()->toString();
+        $title = $data['title'];
+        $description = $data['description'];
         $data['latitude'] = str_replace(',', '.', $data['latitude']);
         $data['longitude'] = str_replace(',', '.', $data['longitude']);
-        $data['latitude'] = floatval($data['latitude']);
-        $data['longitude'] = floatval($data['longitude']);
+        $latitude = $data['latitude'] = floatval($data['latitude']);
+        $longitude = $data['longitude'] = floatval($data['longitude']);
+        $tmdbId = $series->getTmdbId();
+
         $locations['locations'][] = $data;
         $series->setLocations($locations);
         $this->seriesRepository->save($series, true);
 
+        $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $description, $latitude, $longitude, true);
+        $this->filmingLocationRepository->save($filmingLocation, true);
+
+        $images = [];
+        $images[0] = $data['image'];
+        $rootDir = $this->getParameter('kernel.project_dir') . '/public';
+        $messages = [];
+        $n = 0;
+        foreach ($images as $image) {
+            if (str_contains($image, '/images/map')) {
+                $image = str_replace('/images/map', '', $image);
+            } else {
+                $basename = basename($image);
+                $destination = $rootDir . '/images/map/' . $basename;
+                $copied = $this->saveImageFromUrl($image, $destination);
+                if ($copied) {
+                    $messages[] = 'Image [ ' . $image . ' ] copied to ' . $destination;
+                } else {
+                    $messages[] = 'Image [ ' . $image . ' ] not copied';
+                }
+                $image = '/' . $basename;
+            }
+            $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
+            $this->filmingLocationImageRepository->save($filmingLocationImage, true);
+
+            if ($n == 0) {
+                $filmingLocation->setStill($filmingLocationImage);
+                $this->filmingLocationRepository->save($filmingLocation, true);
+            }
+            $n++;
+        }
+
         return $this->json([
             'ok' => true,
+            'filmingLocation' => $filmingLocation,
+            'filmingLocationImage' => $filmingLocationImage,
+            'messages' => $messages,
+        ]);
+    }
+
+    #[Route('/edit/location/{id}', name: 'edit_location', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function editLocation(Request $request, Series $series): Response
+    {
+        $locations = $series->getLocations();
+        $data = json_decode($request->getContent(), true);
+//        dump(['locations' => $locations, 'data' => $data]);
+        $data = array_filter($data, fn($key) => $key != "google-map-url", ARRAY_FILTER_USE_KEY);
+//        dump(['data' => $data]);
+        // Javascript code:
+        // fetch('/' + lang + '/series/add/location/' + seriesId,
+        //     {
+        //         method: 'POST',
+        //         body: formDatas,
+        //         headers: {
+        //             "Content-Type": "multipart/form-data"
+        //         }
+        //     }
+        // )
+        // Php code:
+//        $rawContent = $request->getContent();
+        //extract boundary for multipart form data: ------WebKitFormBoundarywRsOZ331E9nhgGan\n
+//        preg_match('/^(.*oundary.*\r\n)/', $rawContent, $matches);
+//        $boundary = $matches[1];
+//        dump($boundary);
+        //fetch the content and determine the boundary
+//        $blocks = preg_split("/$boundary/", $rawContent);
+        //parse each block
+//        foreach ($blocks as $block) {
+//            if (empty($block)) {
+//                continue;
+//            }
+//            dump($block);
+//            // if header contains filename, it is a file
+//            if (str_contains($block, 'filename')) {
+//                preg_match('/Content-Disposition: form-data; name="(.*)"; filename="(.*)"\r\nContent-Type: (.*)\r\n\r\n(...)\r\n/', $block, $matches);
+//                dump($matches);
+//            } else {
+//                preg_match('/Content-Disposition: form-data; name="([^"]*)"\r\n\r\n(.*)\r\n/', $block, $matches);
+//                dump($matches);
+//            }
+//        }
+
+        $uuid = $data['uuid'] = Uuid::v4()->toString();
+        $title = $data['title'];
+        $description = $data['description'];
+        $data['latitude'] = str_replace(',', '.', $data['latitude']);
+        $data['longitude'] = str_replace(',', '.', $data['longitude']);
+        $latitude = $data['latitude'] = floatval($data['latitude']);
+        $longitude = $data['longitude'] = floatval($data['longitude']);
+
+
+        $locations['locations'][] = $data;
+        $series->setLocations($locations);
+        $this->seriesRepository->save($series, true);
+
+        $filmingLocation = new FilmingLocation($uuid, $title, $description, $latitude, $longitude, true);
+        $this->filmingLocationRepository->save($filmingLocation, true);
+
+        $image = $data['image'];
+        $rootDir = $this->getParameter('kernel.project_dir') . '/public';
+        $messages = [];
+        if (str_contains($image, '/images/map')) {
+            $image = str_replace('/images/map', '', $image);
+        } else {
+            // copy image to /images/map
+            // https://someurl.com/image.jpg -> /images/map/image.jpg
+            $basename = basename($image);
+            $destination = $rootDir . '/images/map/' . $basename;
+            $copied = $this->saveImageFromUrl($image, $destination);
+            if ($copied) {
+                $messages[] = 'Image [ ' . $image . ' ] copied to ' . $destination;
+            } else {
+                $messages[] = 'Image [ ' . $image . ' ] not copied';
+            }
+            $image = '/' . $basename;
+        }
+        $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
+        $this->filmingLocationImageRepository->save($filmingLocationImage, true);
+
+        $filmingLocation->setStill($filmingLocationImage);
+        $this->filmingLocationRepository->save($filmingLocation, true);
+
+        return $this->json([
+            'ok' => true,
+            'filmingLocation' => $filmingLocation,
+            'filmingLocationImage' => $filmingLocationImage,
+            'messages' => $messages,
         ]);
     }
 
@@ -2108,8 +2246,11 @@ class SeriesController extends AbstractController
             $location['uuid'] = $uuid;
             return $location;
         }, $seriesLocations);
+
+        $tmdbId = $series->getTmdbId();
+        $filmingLocations = $this->filmingLocationRepository->findBy(['tmdbId' => $tmdbId]);
 //        dump($seriesLocations);
-        return ['map' => $map, 'locations' => $seriesLocations];
+        return ['map' => $map, 'locations' => $seriesLocations, 'filmingLocations' => $filmingLocations];
     }
 
     public function now(): DateTimeImmutable

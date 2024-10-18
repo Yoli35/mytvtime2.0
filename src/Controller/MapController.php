@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\FilmingLocationImageRepository;
+use App\Repository\FilmingLocationRepository;
 use App\Repository\SeriesRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +19,9 @@ use Symfony\UX\Map\Point;
 class MapController extends AbstractController
 {
     public function __construct(
-        private readonly SeriesRepository $seriesRepository,
+        private readonly FilmingLocationImageRepository $filmingLocationImageRepository,
+        private readonly FilmingLocationRepository      $filmingLocationRepository,
+        private readonly SeriesRepository               $seriesRepository,
     )
     {
     }
@@ -35,10 +39,13 @@ class MapController extends AbstractController
 
         $seriesLocations = $this->seriesRepository->seriesLocations($user, $locale);
 
+        $filmingLocationCount = $this->filmingLocationRepository->count();
+        $filmingLocationImageCount = $this->filmingLocationImageRepository->count();
+
         foreach ($seriesLocations as $seriesLocation) {
             foreach ($seriesLocation['locations'] as $location) {
                 $infoWindow = new InfoWindow('<strong>' . $seriesLocation['name'] . '</strong> - ' . $location['description'], '<img src="' . $location['image'] . '" alt="' . $location['description'] . '" style="height: auto; width: 100%">');
-                $map->addMarker(new Marker(new Point($location['latitude'], $location['longitude']), "***".$seriesLocation['name']."***", $infoWindow, ['id' => $seriesLocation['id']]));
+                $map->addMarker(new Marker(new Point($location['latitude'], $location['longitude']), "***" . $seriesLocation['name'] . "***", $infoWindow, ['id' => $seriesLocation['id']]));
             }
         }
 
@@ -46,6 +53,8 @@ class MapController extends AbstractController
             'map' => $map,
             'seriesLocations' => $seriesLocations,
             'seriesCount' => count($seriesLocations),
+            'filmingLocationCount' => $filmingLocationCount,
+            'filmingLocationImageCount' => $filmingLocationImageCount,
         ]);
     }
 }

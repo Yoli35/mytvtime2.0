@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Controller\SeriesController;
 use App\Entity\FilmingLocation;
 use App\Entity\FilmingLocationImage;
+use App\Repository\FilmingLocationImageRepository;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\SeriesRepository;
 use App\Service\DateService;
@@ -28,11 +29,12 @@ class SeriesFilmingLocationCommand extends Command
     private float $t0;
 
     public function __construct(
-        private readonly DateService               $dateService,
-        private readonly EntityManagerInterface    $entityManager,
-        private readonly FilmingLocationRepository $filmingLocationRepository,
-        private readonly SeriesController          $seriesController,
-        private readonly SeriesRepository          $seriesRepository,
+        private readonly DateService                    $dateService,
+        private readonly EntityManagerInterface         $entityManager,
+        private readonly FilmingLocationImageRepository $filmingLocationImageRepository,
+        private readonly FilmingLocationRepository      $filmingLocationRepository,
+        private readonly SeriesController               $seriesController,
+        private readonly SeriesRepository               $seriesRepository,
     )
     {
         parent::__construct();
@@ -96,11 +98,12 @@ class SeriesFilmingLocationCommand extends Command
                 $this->io->writeln($title);
 
                 $filmingLocation = new FilmingLocation($uuid, $series->getTmdbId(), $title, $description, $latitude, $longitude, true);
-                $this->entityManager->persist($filmingLocation);
+                $this->filmingLocationRepository->save($filmingLocation, true);
 
+                $n = 0;
                 foreach ($images as $image) {// https://blscene.com/wp-content/uploads/2024/05/Official-Trailer-My-Love-Mix-Up-เขียนรักด้วยยางลบ-0002.webp
                     if (str_contains($image, '/images/map')) {
-                        $image = str_replace('/images/map', '', $image);
+                        $image = str_replace('/images/map/', '/', $image);
                     } else {
                         // copy image to /images/map
                         // https://someurl.com/image.jpg -> /images/map/image.jpg
@@ -115,7 +118,13 @@ class SeriesFilmingLocationCommand extends Command
                         $image = '/' . $basename;
                     }
                     $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
-                    $this->entityManager->persist($filmingLocationImage);
+                    $this->filmingLocationImageRepository->save($filmingLocationImage, true);
+
+                    if ($n == 0) {
+                        $filmingLocation->setStill($filmingLocationImage);
+                        $this->filmingLocationRepository->save($filmingLocation, true);
+                    }
+                    $n++;
                 }
             }
             $series->setLocations(['locations' => $locations]);

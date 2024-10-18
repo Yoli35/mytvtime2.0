@@ -90,11 +90,23 @@ export class Show {
         const posters = document.querySelector('.posters')?.querySelectorAll('img');
         const backdrops = document.querySelector('.backdrops')?.querySelectorAll('img');
         const logos = document.querySelector('.logos')?.querySelectorAll('img');
-        const locationImages = document.querySelector('.locations')?.querySelectorAll('img');
+        // const locationImages = document.querySelector('.locations')?.querySelectorAll('img');
+        const locationDBImages = document.querySelectorAll('.image.db');
         diaporama.start(posters);
         diaporama.start(backdrops);
         diaporama.start(logos);
-        diaporama.start(locationImages);
+        // diaporama.start(locationImages);
+        locationDBImages.forEach(function (locationDBImage) {
+            const list = locationDBImage.querySelector('.list');
+            if (list) {
+                const images = list.querySelectorAll('img');
+                diaporama.start(images);
+                const image = locationDBImage.querySelector('img');
+                diaporama.enable(image);
+            } else {
+                diaporama.start(locationDBImage.querySelectorAll('img'));
+            }
+        });
 
         /******************************************************************************
          * Remaining time when schedule is present                                    *
@@ -111,7 +123,7 @@ export class Show {
                 const distance = targetTS - now;
                 const distanceAbs = Math.abs(distance);
                 const d = Math.floor(distanceAbs / (1000 * 60 * 60 * 24));
-                const h = (d === 1 ? 24 : 0) + Math.floor((distanceAbs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // d=1 & h:m:s>0 → Après-demain
+                const h = (d === 1 ? 24 : 0) + Math.floor((distanceAbs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const m = Math.floor((distanceAbs % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((distanceAbs % (1000 * 60)) / 1000);
                 const days = d ? (" " + d + " " + translations[d > 1 ? 'days' : 'day']) : "";
@@ -897,30 +909,45 @@ export class Show {
             const mapViewValue = JSON.parse(seriesMap.getAttribute('data-symfony--ux-leaflet-map--map-view-value'));
             console.log({mapViewValue});
 
-            const locationsDiv = document.querySelector('.locations');
+            const locationsDiv = document.querySelector('.temp-locations');
             const imageDivs = locationsDiv.querySelectorAll('.image');
-            imageDivs.forEach(function (imageDiv) {
-                let imageList = imageDiv.querySelectorAll('img');
-                imageList = Array.from(imageList);
-                if (imageList.length > 1) {
-                    /** @type {Array<{src: string}>} */
-                    const imageSrcList = imageList.map(function (image) {
-                        return {src: image.src};
-                    });
-                    const imageImg = imageDiv.querySelector('img');
-                    const leftArrow = imageDiv.querySelector('.arrow.left');
-                    const rightArrow = imageDiv.querySelector('.arrow.right');
-                    const imageListLength = imageList.length;
-                    const lastIndex = imageListLength - 1;
-                    let i = 0;
-                    leftArrow.addEventListener('click', function () {
-                        i = i === 0 ? lastIndex : (i - 1);
-                        imageImg.src = imageSrcList[i].src;
-                    });
-                    rightArrow.addEventListener('click', function () {
-                        i = i === lastIndex ? 0 : (i + 1);
-                        imageImg.src = imageSrcList[i].src;
-                    });
+            let imageSrcLists = [];
+            let currentImages = [];
+            imageDivs.forEach(function (imageDiv, imageDivIndex) {
+                const isDB = imageDiv.classList.contains('db');
+                const listDiv = imageDiv.querySelector('.list');
+                let imageList;
+                if (listDiv) {
+                    if (isDB) {
+                        imageList = listDiv.querySelectorAll('img');
+                    } else {
+                        imageList = imageDiv.querySelectorAll('img');
+                    }
+                    imageList = Array.from(imageList);
+                    if (imageList.length > 1) {
+                        imageSrcLists[imageDivIndex] = imageList.map(function (image) {
+                            return {src: image.src};
+                        });
+                        const imageImg = imageDiv.querySelector('img');
+                        const leftArrow = imageDiv.querySelector('.arrow.left');
+                        const rightArrow = imageDiv.querySelector('.arrow.right');
+                        currentImages[imageDivIndex] = 0;
+
+                        leftArrow.addEventListener('click', function () {
+                            const lastIndex = imageSrcLists[imageDivIndex].length - 1;
+                            let i = currentImages[imageDivIndex];
+                            i = i === 0 ? lastIndex : (i - 1);
+                            currentImages[imageDivIndex] = i;
+                            imageImg.src = imageSrcLists[imageDivIndex][i].src;
+                        });
+                        rightArrow.addEventListener('click', function () {
+                            const lastIndex = imageSrcLists[imageDivIndex].length - 1;
+                            let i = currentImages[imageDivIndex];
+                            i = i === lastIndex ? 0 : (i + 1);
+                            currentImages[imageDivIndex] = i;
+                            imageImg.src = imageSrcLists[imageDivIndex][i].src;
+                        });
+                    }
                 }
             });
         }
@@ -990,7 +1017,7 @@ export class Show {
                 e.preventDefault();
                 e.dataTransfer.dropEffect = 'link';
             });
-            input.addEventListener('dragenter', function (e) {
+            input.addEventListener('dragenter', function () {
                 this.classList.add('dragover');
             });
             input.addEventListener('dragleave', function () {
