@@ -370,6 +370,30 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function episodesFromTheLast7Days(User $user, string $locale): array
+    {
+        $userId = $user->getId();
+        # Séries vues au cours des 7 derniers jours avec le dernier épisode vu et la date/heure et le nombre d'épisodes vus
+        $sql = "SELECT
+                        IF(slo.name IS NOT NULL, CONCAT(slo.name, ' - ', s.name), s.name) as name,
+                        us.`last_watch_at`                                                as last_watch_at,
+                          IF(us.`progress`>100, 100, ROUND(us.`progress`, 2))               as progress,
+                          us.`last_season`				                                       as last_season,
+                          us.`last_episode`                                                 as last_episode,
+                          (SELECT COUNT(*)
+                           FROM `user_episode` ue
+                           WHERE ue.`user_series_id`=us.`id`
+                    AND ue.`watch_at` IS NOT NULL
+                    AND ue.`watch_at`>=DATE_SUB(NOW(), INTERVAL 7 DAY)
+                           )                                                                as episode_count
+                FROM `user_series` us
+                INNER JOIN `series` s ON s.id=us.`series_id`
+                LEFT JOIN `series_localized_name` slo ON slo.`series_id`=s.`id` AND slo.`locale`='$locale'
+                WHERE us.user_id=$userId us.`last_watch_at`>=DATE_SUB(NOW(), INTERVAL 7 DAY)
+                ORDER BY us.`last_watch_at` DESC";
+        return $this->getAll($sql);
+    }
+
     public function getAll($sql): array
     {
         try {
