@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\FilmingLocation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,36 +18,50 @@ class FilmingLocationRepository extends ServiceEntityRepository
         parent::__construct($registry, FilmingLocation::class);
     }
 
-    //    /**
-    //     * @return FilmingLocation[] Returns an array of FilmingLocation objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('f')
-    //            ->andWhere('f.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('f.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function locations(?int $tmdbId): array
+    {
+        $sql = "SELECT fl.id, fl.title, fl.latitude, fl.longitude, fl.description, fli.path as still_path
+                FROM filming_location fl
+                    LEFT JOIN filming_location_image fli ON fl.`still_id` = fli.`id`
+                WHERE tmdb_id = $tmdbId";
 
-    //    public function findOneBySomeField($value): ?FilmingLocation
-    //    {
-    //        return $this->createQueryBuilder('f')
-    //            ->andWhere('f.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return $this->getAll($sql);
+    }
+
+    public function locationImages(array $filmingLocationIds): array
+    {
+        $filmingLocationIds = implode(',', $filmingLocationIds);
+        $sql = "SELECT fli.filming_location_id, fli.path as path
+                FROM `filming_location_image` fli
+                WHERE fli.filming_location_id IN ($filmingLocationIds)";
+
+        return $this->getAll($sql);
+    }
+
     public function save(FilmingLocation $filmingLocation, bool $true): void
     {
         $this->em->persist($filmingLocation);
 
         if ($true) {
             $this->em->flush();
+        }
+    }
+
+    public function getAll($sql): array
+    {
+        try {
+            return $this->em->getConnection()->fetchAllAssociative($sql);
+        } catch (Exception) {
+            return [];
+        }
+    }
+
+    public function getOne($sql): array
+    {
+        try {
+            return $this->em->getConnection()->fetchAssociative($sql);
+        } catch (Exception) {
+            return [];
         }
     }
 }

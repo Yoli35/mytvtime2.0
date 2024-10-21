@@ -1566,8 +1566,8 @@ class SeriesController extends AbstractController
 
         return $this->json([
             'ok' => true,
-            'filmingLocation' => $filmingLocation,
-            'filmingLocationImage' => $filmingLocationImage,
+//            'filmingLocation' => $filmingLocation,
+//            'filmingLocationImage' => $filmingLocationImage,
             'messages' => $messages,
         ]);
     }
@@ -2216,10 +2216,14 @@ class SeriesController extends AbstractController
 
     public function getSeriesLocations(Series $series, string $locale): array
     {
+        $tmdbId = $series->getTmdbId();
+//        $filmingLocations = $this->filmingLocationRepository->findBy(['tmdbId' => $tmdbId]);
+        $filmingLocations = $this->getFilmingLocations($tmdbId);
+
         $seriesLocations = $series->getLocations()['locations'] ?? [];
 //        dump($seriesLocations);
         if (empty($seriesLocations)) {
-            return ['map' => null, 'locations' => null];
+            return ['map' => null, 'locations' => null, 'filmingLocations' => $filmingLocations];
         }
         $map = new Map();
         $count = count($seriesLocations);
@@ -2247,10 +2251,29 @@ class SeriesController extends AbstractController
             return $location;
         }, $seriesLocations);
 
-        $tmdbId = $series->getTmdbId();
-        $filmingLocations = $this->filmingLocationRepository->findBy(['tmdbId' => $tmdbId]);
-//        dump($seriesLocations);
+        //        dump($seriesLocations);
         return ['map' => $map, 'locations' => $seriesLocations, 'filmingLocations' => $filmingLocations];
+    }
+
+    public function getFilmingLocations(int $tmdbId): array
+    {
+        $filmingLocations = $this->filmingLocationRepository->locations($tmdbId);
+        $filmingLocationIds = array_map(fn($location) => $location['id'], $filmingLocations);
+        $filmingLocationImages = $this->filmingLocationRepository->locationImages($filmingLocationIds);
+        $flImages = [];
+        foreach ($filmingLocationImages as $image) {
+            $flImages[$image['filming_location_id']][] = $image;
+        }
+        foreach ($filmingLocations as &$location) {
+            $location['filmingLocationImages'] = $flImages[$location['id']] ?? [];
+        }
+        dump([
+            'findBy' => $this->filmingLocationRepository->findBy(['tmdbId' => $tmdbId]),
+            'filmingLocations' => $filmingLocations,
+            'filmingLocationIds' => $filmingLocationIds,
+            'filmingLocationImages' => $filmingLocationImages
+        ]);
+        return $filmingLocations;
     }
 
     public function now(): DateTimeImmutable
