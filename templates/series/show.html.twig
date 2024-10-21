@@ -579,7 +579,7 @@
                                     {% for location in seriesLocations.filmingLocations %}
                                         <li data-lat="{{ location.latitude }}" data-lon="{{ location.longitude }}">
                                             <div class="image db">
-                                                <img src="/images/map{{ location.still.path }}" alt="{{ location.title }}">
+                                                <img src="/images/map{{ location.still_path }}" alt="{{ location.title }}">
                                                 {% if location.filmingLocationImages|length-1 %}
                                                     <div class="count">
                                                         {{ location.filmingLocationImages|length }}
