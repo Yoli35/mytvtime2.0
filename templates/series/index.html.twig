@@ -36,7 +36,11 @@
                                     {% for episode in [series|first, series|last] %}
                                         {{ include('_blocks/series/_card.html.twig', {series: episode}) }}
                                         {% if loop.first %}
-                                            <div class="episode-arrow"> {{ ux_icon('fa6-solid:arrow-right', {height: '32px', width: '32px'}) }}</div>
+                                            {% if series|length == 2 %}
+                                                <div class="episode-arrow">&</div>
+                                            {% else %}
+                                                <div class="episode-arrow"> {{ ux_icon('fa6-solid:arrow-right', {height: '32px', width: '32px'}) }}</div>
+                                            {% endif %}
                                         {% endif %}
                                     {% endfor %}
                                 </div>
@@ -86,7 +90,11 @@
                                     {% for episode in [series|first, series|last] %}
                                         {{ include('_blocks/series/_card.html.twig', {series: episode}) }}
                                         {% if loop.first %}
-                                            <div class="episode-arrow"> {{ ux_icon('fa6-solid:arrow-right', {height: '32px', width: '32px'}) }}</div>
+                                            {% if series|length == 2 %}
+                                                <div class="episode-arrow">&</div>
+                                            {% else %}
+                                                <div class="episode-arrow"> {{ ux_icon('fa6-solid:arrow-right', {height: '32px', width: '32px'}) }}</div>
+                                            {% endif %}
                                         {% endif %}
                                     {% endfor %}
                                 </div>

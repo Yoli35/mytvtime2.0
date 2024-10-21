@@ -700,6 +700,15 @@
             .episode-block {
                 display: flex;
                 gap: .25rem;
+
+                > div:first-child {
+                    box-shadow: .25rem 0 .5rem .125rem #0000007f;
+                }
+
+                > div:last-child {
+                    margin-inline-start: -3rem;
+                    z-index: -1;
+                }
             }
         }
     }
