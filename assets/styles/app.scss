@@ -555,7 +555,7 @@ label:has(input[type="text"]) {
                     justify-content: flex-start;
                     padding-block: 1rem;
 
-                    input[type=checkbox] {
+                    /*input[type=checkbox] {
                         appearance: none;
                         background-color: var(--ardoise-80);
                         border: 1px solid var(--ardoise-50);
@@ -582,7 +582,7 @@ label:has(input[type="text"]) {
                         &:checked::after {
                             content: "✖︎";
                         }
-                    }
+                    }*/
                 }
 
                 label:has(input[type="search"]) {

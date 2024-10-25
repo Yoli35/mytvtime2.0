@@ -58,12 +58,12 @@
             {% if history.list %}
                 <ul id="history-list" data-last="{{ history.last }}">
                     <li id="history-options">
-                        <label><input id="history-option-type" type="checkbox"{% if history.type == 'episode' %} checked{% endif %}>{{ 'Episodes detail'|trans }}</label>
+                        <label><input id="history-option-type" type="checkbox"{% if history.type == 'episode' %} checked{% endif %} switch>{{ 'Episodes detail'|trans }}</label>
                         <label>{{ 'Page'|trans }}<input id="history-option-page" type="number" value="{{ history.page }}"></label>
                         <label>{{ 'Count'|trans }}<input id="history-option-count" type="number" value="{{ history.count }}"></label>
-                        <label><input id="history-option-vote" type="checkbox"{% if history.vote %} checked{% endif %}>{{ 'Rating'|trans }}</label>
-                        <label><input id="history-option-device" type="checkbox"{% if history.device %} checked{% endif %}>{{ 'Device'|trans }}</label>
-                        <label><input id="history-option-provider" type="checkbox"{% if history.provider %} checked{% endif %}>{{ 'Provider'|trans }}</label>
+                        <label><input id="history-option-vote" type="checkbox"{% if history.vote %} checked{% endif %} switch>{{ 'Rating'|trans }}</label>
+                        <label><input id="history-option-device" type="checkbox"{% if history.device %} checked{% endif %} switch>{{ 'Device'|trans }}</label>
+                        <label><input id="history-option-provider" type="checkbox"{% if history.provider %} checked{% endif %} switch>{{ 'Provider'|trans }}</label>
                     </li>
                     {% for h in history.list %}
                         <li class="history-item" id="{{ h.episodeId }}">

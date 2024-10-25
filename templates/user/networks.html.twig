@@ -15,7 +15,7 @@
                     <input type="search" id="provider-filter-search" placeholder="{{ 'Start taping...'|trans }}">
                 </label>
                 <label for="provider-selected">
-                    <input type="checkbox" id="provider-selected">
+                    <input type="checkbox" switch id="provider-selected">
                     {{ 'See selected'|trans }}<span id="provider-selected-count"></span>
                 </label>
             </div>
@@ -27,7 +27,7 @@
                                 class="provider__label"
                                 data-title="{{ n.name }} ({{ n.id }})"
                                 data-title-bg="white">
-                            <input type="checkbox" id="network-{{ n.id }}"{% if n.id in userNetworkIds %} checked{% endif %}>
+                            <input type="checkbox" switch id="network-{{ n.id }}"{% if n.id in userNetworkIds %} checked{% endif %}>
                             {% if n.logo %}
                                 <img src="{{ n.logo }}" alt="{{ n.name }}" class="provider__logo">
                             {% else %}

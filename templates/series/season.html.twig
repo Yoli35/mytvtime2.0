@@ -40,10 +40,13 @@
                         </h1>
                     </div>
                     <h2>{{ season.name }}{% if season.season_number > 1 %} ({{ season.air_date|date("Y") }}){% endif %}</h2>
-                    {% if season['series_overview'] %}
-                        <h4 class="localized-h4">{{ 'Overview for the series'|trans }}</h4>
+                    {% if season.overview %}
+                        <div class="series-overview">{{ season.overview }}</div>
+                    {% else %}
+                        {% if season['series_overview'] %}
+                            <h4 class="localized-h4">{{ 'Overview for the series'|trans }}</h4>
+                        {% endif %}
                     {% endif %}
-                    <div class="series-overview">{{ season.overview }}</div>
                     {% if season.localized_overviews|length %}
                         <div class="localized overviews">
                             <h4 class="localized-h4">{{ 'Localized overviews for the series'|trans }}</h4>
@@ -58,12 +61,12 @@
                                 </div>
                             {% endfor %}
                         </div>
-                    {% else %}
+                    {#{% else %}
                         {% if season.deepl %}
                             {% if season.deepl.localized %}
                                 <div class="series-overview deepl">{{ season.deepl.localizedOverview|raw }}</div>
                             {% endif %}
-                        {% endif %}
+                        {% endif %}#}
                     {% endif %}
                     {% if season.additional_overviews|length %}
                         <div class="additional overviews">
@@ -146,7 +149,7 @@
                                 <div class="still" data-series-id="{{ series.tmdbId }}" data-season-id="{{ season.id }}" data-episode-id="{{ episode.id }}">
                                     {% if episode.still_path %}
                                         <img src="{{ episode.still_path }}" alt="{{ episode.name }}">
-                                    {% elseif ue.still is defined and ue.still%}
+                                    {% elseif ue.still is defined and ue.still %}
                                         <img src="/series/stills/{{ ue.still }}" alt="{{ episode.name }}">
                                     {% else %}
                                         <div class="no-poster">{{ 'No poster'|trans }}</div>
