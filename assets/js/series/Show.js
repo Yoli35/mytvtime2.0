@@ -132,20 +132,20 @@ export class Show {
                 const secondes = (s < 10 ? "0" : "") + s;
                 const elapsedTime = '<code>' + hours + minutes + secondes + '</code>';
 
-                const airDay = new Date(targetTS).getDate();
-                const currentDay = new Date().getDate();
+                const airDay = new Date(targetTS).getTime();
+                const currentDay = new Date().getTime();
 
                 // Si la date est dépassée de moins d'une heure, on arrête le compte à rebours
                 if (distance < 0) {
-                    if (distanceAbs < 1000 * 60 * 60) {
+                    if (distanceAbs < 1000 * 3600) {
                         span1.innerHTML = translations["Now"];
                     } else {
-                        span1.innerHTML = span1Value;
+                        span1.innerHTML = span1Value + ', ' + translations["available"];
                     }
-                    span2.innerHTML = translations["Since"] + " " + (d ? (days + ",<br>") : "") + elapsedTime;
+                    span2.innerHTML = translations["since"] + " " + (d ? (days + ",<br>") : "") + elapsedTime;
                 } else {
                     let dayPart; // today, tomorrow, after tomorrow, x days
-                    let day = airDay - currentDay;
+                    let day = Math.round((airDay - currentDay)  / (1000 * 3600 * 24));
                     if (day === 0) {
                         dayPart = translations["Today"];
                     }
