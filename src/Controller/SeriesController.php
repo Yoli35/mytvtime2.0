@@ -85,7 +85,7 @@ class SeriesController extends AbstractController
         private readonly DeeplTranslator                    $deeplTranslator,
         private readonly EpisodeLocalizedOverviewRepository $episodeLocalizedOverviewRepository,
         private readonly EpisodeSubstituteNameRepository    $episodeSubstituteNameRepository,
-        private readonly FilmingLocationImageRepository      $filmingLocationImageRepository,
+        private readonly FilmingLocationImageRepository     $filmingLocationImageRepository,
         private readonly FilmingLocationRepository          $filmingLocationRepository,
         private readonly ImageConfiguration                 $imageConfiguration,
         private readonly KeywordRepository                  $keywordRepository,
@@ -305,16 +305,7 @@ class SeriesController extends AbstractController
 
         $simpleForm->handleRequest($request);
         if ($simpleForm->isSubmitted() && $simpleForm->isValid()) {
-            $query = $simpleSeriesSearch->getQuery();
-            $language = $simpleSeriesSearch->getLanguage();
-            $page = $simpleSeriesSearch->getPage();
-            $firstAirDateYear = $simpleSeriesSearch->getFirstAirDateYear();
-
-            $searchString = "&query=$query&include_adult=false&page=$page";
-            if (strlen($firstAirDateYear)) $searchString .= "&first_air_date_year=$firstAirDateYear";
-            if (strlen($language)) $searchString .= "&language=$language";
-
-            $searchResult = json_decode($this->tmdbService->searchTv($searchString), true);
+            $searchResult = $this->handleSearch($simpleSeriesSearch);
             if ($searchResult['total_results'] == 1) {
                 return $this->getOneResult($searchResult['results'][0], $slugger);
             }
@@ -331,6 +322,46 @@ class SeriesController extends AbstractController
                 'page' => $searchResult['page'] ?? 0,
             ],
         ]);
+    }
+
+    #[Route('/search/all', name: 'search_all')]
+    public function searchAll(Request $request): Response
+    {
+        $slugger = new AsciiSlugger();
+        $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
+        $simpleSeriesSearch->setQuery($request->get('q'));
+        $simpleForm = $this->createForm(SeriesSearchType::class, $simpleSeriesSearch);
+        $searchResult = $this->handleSearch($simpleSeriesSearch);
+        if ($searchResult['total_results'] == 1) {
+            return $this->getOneResult($searchResult['results'][0], $slugger);
+        }
+        $series = $this->getSearchResult($searchResult, $slugger);
+
+        return $this->render('series/search.html.twig', [
+            'form' => $simpleForm->createView(),
+            'title' => 'Search a series',
+            'seriesList' => $series,
+            'results' => [
+                'total_results' => $searchResult['total_results'] ?? -1,
+                'total_pages' => $searchResult['total_pages'] ?? 0,
+                'page' => $searchResult['page'] ?? 0,
+            ],
+        ]);
+
+    }
+
+    public function handleSearch($simpleSeriesSearch): array
+    {
+        $query = $simpleSeriesSearch->getQuery();
+        $language = $simpleSeriesSearch->getLanguage();
+        $page = $simpleSeriesSearch->getPage();
+        $firstAirDateYear = $simpleSeriesSearch->getFirstAirDateYear();
+
+        $searchString = "&query=$query&include_adult=false&page=$page";
+        if (strlen($firstAirDateYear)) $searchString .= "&first_air_date_year=$firstAirDateYear";
+        if (strlen($language)) $searchString .= "&language=$language";
+
+        return json_decode($this->tmdbService->searchTv($searchString), true);
     }
 
     #[IsGranted('ROLE_USER')]
@@ -711,26 +742,29 @@ class SeriesController extends AbstractController
         ];
 
         $translations = [
-            'Localized overviews' => $this->translator->trans('Localized overviews'),
-            'Additional overviews' => $this->translator->trans('Additional overviews'),
-            'Edit' => $this->translator->trans('Edit'),
-            'Delete' => $this->translator->trans('Delete'),
-            'Add' => $this->translator->trans('Add'),
-            'Update' => $this->translator->trans('Update'),
-            'Remove from favorites' => $this->translator->trans('Remove from favorites'),
             'Add to favorites' => $this->translator->trans('Add to favorites'),
-            'This field is required' => $this->translator->trans('This field is required'),
-            'Watch on' => $this->translator->trans('Watch on'),
-            'days' => $this->translator->trans('days'),
-            'day' => $this->translator->trans('day'),
+            'Add' => $this->translator->trans('Add'),
+            'Additional overviews' => $this->translator->trans('Additional overviews'),
+            'After tomorrow' => $this->translator->trans('After tomorrow'),
+            'Available' => $this->translator->trans('Available'),
+            'Delete' => $this->translator->trans('Delete'),
+            'Edit' => $this->translator->trans('Edit'),
+            'Ended' => $this->translator->trans('Ended'),
+            'Localized overviews' => $this->translator->trans('Localized overviews'),
+            'Now' => $this->translator->trans('Now'),
+            'Remove from favorites' => $this->translator->trans('Remove from favorites'),
             'Since' => $this->translator->trans('Since'),
+            'That\'s all!' => $this->translator->trans('That\'s all!'),
+            'This field is required' => $this->translator->trans('This field is required'),
+            'To be continued' => $this->translator->trans('To be continued'),
             'Today' => $this->translator->trans('Today'),
             'Tomorrow' => $this->translator->trans('Tomorrow'),
-            'After tomorrow' => $this->translator->trans('After tomorrow'),
-            'Now' => $this->translator->trans('Now'),
-            'Ended' => $this->translator->trans('Ended'),
-            'To be continued' => $this->translator->trans('To be continued'),
-            'That\'s all!' => $this->translator->trans('That\'s all!'),
+            'Update' => $this->translator->trans('Update'),
+            'Watch on' => $this->translator->trans('Watch on'),
+            'available' => $this->translator->trans('available'),
+            'day' => $this->translator->trans('day'),
+            'days' => $this->translator->trans('days'),
+            'since' => $this->translator->trans('since'),
         ];
 
         $locations = $this->getSeriesLocations($series, $user->getPreferredLanguage() ?? $request->getLocale());
@@ -926,7 +960,7 @@ class SeriesController extends AbstractController
             $season['poster_path'] = $series->getPosterPath();
         }
 
-        $season['deepl'] = $this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
+        $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
         $season['episodes'] = $this->seasonEpisodes($season, $userSeries, $dayOffset);
         $season['credits'] = $this->castAndCrew($season);
         $season['watch/providers'] = $this->watchProviders($season, $user->getCountry() ?? 'FR');
@@ -1959,13 +1993,17 @@ class SeriesController extends AbstractController
             $userSeries->setProgress(0);
             $change = true;
         } else {
-            $this->addFlash('success', 'Number of episodes is ' . $episodeCount);
             if (/*$userSeries->getProgress() == 100 && */ $userSeries->getViewedEpisodes() < $episodeCount) {
-                $userSeries->setProgress($userSeries->getViewedEpisodes() / $episodeCount * 100);
-                $change = true;
+                $newProgress = $userSeries->getViewedEpisodes() / $episodeCount * 100;
+                if ($newProgress != $userSeries->getProgress()) {
+                    $userSeries->setProgress($newProgress);
+                    $this->addFlash('success', 'Progress updated to ' . $newProgress . '%');
+                    $change = true;
+                }
             }
             if ($userSeries->getProgress() != 100 && $userSeries->getViewedEpisodes() === $episodeCount) {
                 $userSeries->setProgress(100);
+                $this->addFlash('success', 'Progress fixed to 100%');
                 $change = true;
             }
         }

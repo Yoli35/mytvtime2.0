@@ -12,7 +12,7 @@
         {% include '_blocks/_menu.html.twig' %}
         <div class="series-search">
             <h1>{{ title|trans }}</h1>
-            {{ form_start(form, {'attr': {'class': 'form'}}) }}
+            {{ form_start(form, {'action': path('app_series_search'), 'attr': {'class': 'form'}}) }}
             <div class="form-row">
                 <div class="form-field">
                     <label for="{{ form.query.vars.id }}">
@@ -32,6 +32,7 @@
             <div class="form-row">
                 <button type="submit">{{ 'Send'|trans }}</button>
             </div>
+            {{ form_end(form) }}
             <div class="series-search-result">
                 <div class="header">
                     {% if results.total_results > 0 %}
@@ -56,14 +57,13 @@
                     {% endif %}
                 </div>
                 <div class="wrapper">
-{#                    <div class="content">#}
-                        {% for series in seriesList %}
-                            {{ include('_blocks/series/_card.html.twig') }}
-                        {% endfor %}
-{#                    </div>#}
+                    {#                    <div class="content">#}
+                    {% for series in seriesList %}
+                        {{ include('_blocks/series/_card.html.twig') }}
+                    {% endfor %}
+                    {#                    </div>#}
                 </div>
             </div>
-            {{ form_end(form) }}
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>

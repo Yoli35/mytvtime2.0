@@ -538,12 +538,22 @@ export class Menu {
         if (value.length > 2) {
             const ul = searchMenu.closest("li").querySelector(".search-results ul");
             if (!ul) return;
-            const type = ul.getAttribute("data-type");
+            let type = ul.getAttribute("data-type");
             // console.log({ul});
             // console.log(e.key);
             if (e.key === 'Enter') {
                 e.preventDefault();
-                const li = ul.querySelector("li.active") || ul.querySelector("li");
+                const li = ul.querySelector("li.active")/* || ul.querySelector("li")*/;
+
+                if (!li) {
+                    if (type === 'tv') {
+                        type = 'series';
+                    }
+                    window.location.href = '/' + gThis.lang + '/' + type + '/search/all?q=' + value;
+
+                    return;
+                }
+
                 const id = li.getAttribute("data-id");
 
                 const details = li.closest("details");
@@ -773,8 +783,8 @@ export class Menu {
                 body: JSON.stringify(options)
             })
                 .then(response => {
-                console.log(response.ok, 'Options saved');
-            })
+                    console.log(response.ok, 'Options saved');
+                })
                 .catch((error) => {
                     console.error('Error:', error);
                 });
