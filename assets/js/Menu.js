@@ -274,7 +274,7 @@ export class Menu {
                             a.appendChild(posterDiv);
                             const titleDiv = document.createElement("div");
                             titleDiv.classList.add("title");
-                            titleDiv.innerHTML = result.title;
+                            titleDiv.innerHTML = result.title + ' (' + result.release_date.slice(0, 4) + ')';
                             a.appendChild(titleDiv);
                             // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
                             a.addEventListener("auxclick", (e) => {
