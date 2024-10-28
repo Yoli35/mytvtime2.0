@@ -68,7 +68,13 @@
                     {% for h in history.list %}
                         <li class="history-item" id="{{ h.episodeId }}">
                             <a class="history" href="{{ path('app_series_season', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber}) }}">
-                                <div class="poster"><img src="/series/posters{{ h.posterPath }}" alt="{{ h.name }}"></div>
+                                <div class="poster">
+                                    {% if h.posterPath %}
+                                        <img src="/series/posters{{ h.posterPath }}" alt="{{ h.name }}">
+                                    {% else %}
+                                        {{ h.name|slice(0,1)|upper }}
+                                    {% endif %}
+                                </div>
                                 <div class="name">{{ h.name }}</div>
                                 {% if h.vote %}
                                     <div class="vote{% if history.vote == 0 %} hidden{% endif %}">{{ h.vote }}</div>
@@ -169,7 +175,8 @@
                                data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
                                style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
                                 <div>{{ eotd.display }}</div>
-                                {% if eotd.airAt %}<div class="time">{{ eotd.airAt|slice(0,5) }}</div>{% endif %}
+                                {% if eotd.airAt %}
+                                    <div class="time">{{ eotd.airAt|slice(0,5) }}</div>{% endif %}
                             </a>
                             <div id="eotd-preview-1-{{ eotd.id }}" class="episode-of-the-day-preview">
                                 <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
@@ -192,12 +199,13 @@
                                data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
                                style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
                                 <div>{{ eotd.display }}</div>
-                                {% if eotd.airAt %}<div class="time">{{ eotd.airAt|slice(0,5) }}</div>{% endif %}
+                                {% if eotd.airAt %}
+                                    <div class="time">{{ eotd.airAt|slice(0,5) }}</div>{% endif %}
                             </a>
                             <div id="eotd-preview-1-{{ eotd.id }}" class="episode-of-the-day-preview">
                                 <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
                                     {% if eotd.posterPath %}
-                                    <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+                                        <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
                                     {% else %}
                                         {{ eotd.name }}
                                     {% endif %}
@@ -219,7 +227,8 @@
                                data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
                                style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
                                 <div>{{ eotd.display }}</div>
-                                {% if eotd.airAt %}<div class="time">{{ eotd.airAt|slice(0,5) }}</div>{% endif %}
+                                {% if eotd.airAt %}
+                                    <div class="time">{{ eotd.airAt|slice(0,5) }}</div>{% endif %}
                             </a>
                             <div id="eotd-preview-2-{{ eotd.id }}" class="episode-of-the-day-preview">
                                 <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
@@ -246,7 +255,8 @@
                                data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
                                style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
                                 <div>{{ eotd.display }}</div>
-                                {% if eotd.airAt %}<div class="time">{{ eotd.airAt|slice(0,5) }}</div>{% endif %}
+                                {% if eotd.airAt %}
+                                    <div class="time">{{ eotd.airAt|slice(0,5) }}</div>{% endif %}
                             </a>
                             <div id="eotd-preview-3-{{ eotd.id }}" class="episode-of-the-day-preview">
                                 <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
