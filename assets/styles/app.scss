@@ -461,8 +461,11 @@ label:has(input[type="text"]) {
                         .poster {
                             align-items: center;
                             aspect-ratio: 78 / 117;
+                            background-color: var(--orange-50);
+                            border-radius: .125rem;
+                            color: var(--orange-90);
                             display: flex;
-                            font-size: .5rem;
+                            font-size: 1.5rem;
                             height: 3rem;
                             justify-content: center;
                             text-align: center;
