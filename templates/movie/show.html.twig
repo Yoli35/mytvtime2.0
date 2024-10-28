@@ -34,6 +34,9 @@
                     {% endif %}
                     <div class="title">
                         <h1>
+                            {% if movie.localized_name %}
+                                <span>{{ movie.localized_name.name }}</span>
+                            {% endif %}
                             {{ movie.title }}{% if movie.original_title and movie.original_title != movie.title %}<br><span>{{ movie.original_title }}</span>{% endif %} ({{ movie.release_date|date("Y") }})
                         </h1>
                         <div class="movie-tools">
@@ -50,7 +53,7 @@
                     {{ include('_blocks/forms/_delete-overview.html.twig') }}
                     {{ include('_blocks/forms/_localized-name.html.twig', {media: movie}) }}
                     {{ include('_blocks/forms/_overview.html.twig', {media: movie}) }}
-                    <div class="movie-overview">{{ movie.overview }}</div>
+                    <div class="movie-overview">{{ movie.overview|nl2br }}</div>
                     {% if movie.localized_overviews|length %}
                         <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
                         <div class="localized overviews">

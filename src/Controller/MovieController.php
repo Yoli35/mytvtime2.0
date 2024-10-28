@@ -5,11 +5,13 @@ namespace App\Controller;
 use App\Entity\Movie;
 use App\Entity\MovieCollection;
 use App\Entity\MovieDirectLink;
+use App\Entity\MovieLocalizedName;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserMovie;
 use App\Repository\MovieCollectionRepository;
 use App\Repository\MovieDirectLinkRepository;
+use App\Repository\MovieLocalizedNameRepository;
 use App\Repository\MovieRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
@@ -32,18 +34,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class MovieController extends AbstractController
 {
     public function __construct(
-        private readonly DateService               $dateService,
-        private readonly ImageConfiguration        $imageConfiguration,
-        private readonly KeywordService            $keywordService,
-        private readonly MovieCollectionRepository $movieCollectionRepository,
-        private readonly MovieDirectLinkRepository $movieDirectLinkRepository,
-        private readonly MovieRepository           $movieRepository,
-        private readonly SettingsRepository        $settingsRepository,
-        private readonly SourceRepository          $sourceRepository,
-        private readonly TMDBService               $tmdbService,
-        private readonly TranslatorInterface       $translator,
-        private readonly UserMovieRepository       $userMovieRepository,
-        private readonly WatchProviderRepository   $watchProviderRepository,
+        private readonly DateService                  $dateService,
+        private readonly ImageConfiguration           $imageConfiguration,
+        private readonly KeywordService               $keywordService,
+        private readonly MovieCollectionRepository    $movieCollectionRepository,
+        private readonly MovieDirectLinkRepository    $movieDirectLinkRepository,
+        private readonly MovieLocalizedNameRepository $movieLocalizedNameRepository,
+        private readonly MovieRepository              $movieRepository,
+        private readonly SettingsRepository           $settingsRepository,
+        private readonly SourceRepository             $sourceRepository,
+        private readonly TMDBService                  $tmdbService,
+        private readonly TranslatorInterface          $translator,
+        private readonly UserMovieRepository          $userMovieRepository,
+        private readonly WatchProviderRepository      $watchProviderRepository,
     )
     {
     }
@@ -140,14 +143,14 @@ class MovieController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    #[Route('/show/{userMovieId}', name: 'show', requirements: ['userMovieId' => '\d+'])]
-    public function show(Request $request, int $userMovieId): Response
+    #[Route('/show/{id}', name: 'show', requirements: ['id' => '\d+'])]
+    public function show(Request $request, UserMovie $userMovie): Response
     {
         /** @var User $user */
         $user = $this->getUser();
         $locale = $request->getLocale();
         $language = ($user->getPreferredLanguage() ?? $locale) . '-' . ($user->getCountry() ?? ($locale === 'fr' ? 'FR' : 'US'));
-        $userMovie = $this->userMovieRepository->find($userMovieId);
+
         $tmdbId = $userMovie->getMovie()->getTmdbId();
         $dbMovie = $userMovie->getMovie();
         $movie = json_decode($this->tmdbService->getMovie($tmdbId, $language, ['videos,images,credits,recommendations,keywords,watch/providers,release_dates']), true);
@@ -192,13 +195,13 @@ class MovieController extends AbstractController
         ];
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
 
-//        dump([
+        dump([
 //                'language' => $language,
-//            'movie' => $movie,
+            'movie' => $movie,
 //            'userMovie' => $userMovie,
 //                'providers' => $providers,
 //                'translations' => $translations,
-//        ]);
+        ]);
         return $this->render('movie/show.html.twig', [
             'userMovie' => $userMovie,
             'movie' => $movie,
@@ -219,7 +222,7 @@ class MovieController extends AbstractController
                 $userMovie = $this->userMovieRepository->findOneBy(['movie' => $movie, 'user' => $user]);
 //                dump(['userMovie' => $userMovie]);
                 if ($userMovie) {
-                    return $this->redirectToRoute('app_movie_show', ['userMovieId' => $userMovie->getId()]);
+                    return $this->redirectToRoute('app_movie_show', ['id' => $userMovie->getId()]);
                 }
             }
         }
@@ -274,7 +277,7 @@ class MovieController extends AbstractController
         if ($movie) {
             $userMovie = $this->userMovieRepository->findOneBy(['movie' => $movie, 'user' => $user]);
             if ($userMovie) {
-                return $this->redirectToRoute('app_movie_show', ['userMovieId' => $userMovie->getId()]);
+                return $this->redirectToRoute('app_movie_show', ['id' => $userMovie->getId()]);
             }
         } else {
             $tmdbMovie = json_decode($this->tmdbService->getMovie($id, 'fr-FR', ['videos,images,credits,recommendations,watch/providers,release_dates']), true);
@@ -289,7 +292,7 @@ class MovieController extends AbstractController
         $this->userMovieRepository->save($userMovie, true);
 
 //        dump(['userMovie' => $userMovie]);
-        return $this->redirectToRoute('app_movie_show', ['userMovieId' => $userMovie->getId()]);
+        return $this->redirectToRoute('app_movie_show', ['id' => $userMovie->getId()]);
     }
 
     #[IsGranted('ROLE_USER')]
@@ -339,8 +342,8 @@ class MovieController extends AbstractController
         $userMovieCount = $this->movieRepository->countMovieCards($user, $filters);
         $totalPages = ceil($userMovieCount / $filters['perPage']);
 
-        $paginations[0] = $this->getPagination(1,$filters['page'],$totalPages,'app_movie_index',$request->getLocale());
-        $paginations[1] = $this->getPagination(2,$filters['page'],$totalPages,'app_movie_index',$request->getLocale());
+        $paginations[0] = $this->getPagination(1, $filters['page'], $totalPages, 'app_movie_index', $request->getLocale());
+        $paginations[1] = $this->getPagination(2, $filters['page'], $totalPages, 'app_movie_index', $request->getLocale());
 
 //        dump([
 //            'userMovies' => $userMovies,
@@ -452,6 +455,29 @@ class MovieController extends AbstractController
                 'profile_url' => $this->imageConfiguration->getUrl('profile_sizes', 0),
                 'bearer' => $this->tmdbService->getBearer(),
             ],
+        ]);
+    }
+
+    #[Route('/add/localized/name/{id}', name: 'add_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function addLocalizedName(Request $request, UserMovie $userMovie): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $name = $data['name'];
+        $movie = $this->movieRepository->findOneBy(['id' => $userMovie->getMovie()->getId()]);
+        $slugger = new AsciiSlugger();
+
+        $localizedName = $this->movieLocalizedNameRepository->findOneBy(['movie' => $movie, 'locale' => $request->getLocale()]);
+        if ($localizedName) {
+            $localizedName->setName($name);
+            $localizedName->setSlug($slugger->slug($name));
+        } else {
+            $slug = $slugger->slug($name)->lower()->toString();
+            $localizedName = new MovieLocalizedName($movie, $name, $slug, $request->getLocale());
+        }
+        $this->movieLocalizedNameRepository->save($localizedName, true);
+
+        return $this->json([
+            'ok' => true,
         ]);
     }
 
@@ -621,15 +647,19 @@ class MovieController extends AbstractController
 
     public function getAdditionalOverviews(array &$movie, Movie $dbMovie): void
     {
+        if ($movie['overview'] == null || $movie['overview'] == "") {
+            $movie['overview'] = $dbMovie->getOverview();
+        }
         $movie['additional_overviews'] = $dbMovie->getMovieAdditionalOverviews()->toArray();
     }
 
     public function getLocalizedName(array &$movie, Movie $dbMovie): void
     {
-        $arr = array_filter($dbMovie->getMovieLocalizedNames()->toArray(), function ($name) {
+        /*$arr = array_filter($dbMovie->getMovieLocalizedNames()->toArray(), function ($name) {
             return $name['iso_3166_1'] === 'FR';
-        });
-        $movie['localized_name'] = count($arr) ? $arr[0] : null;
+        });*/
+        $localizedName = $this->movieLocalizedNameRepository->findOneBy(['movie' => $dbMovie, 'locale' => 'fr']);
+        $movie['localized_name'] = $localizedName;
     }
 
     public function getLocalizedOverviews(array &$movie, Movie $dbMovie): void

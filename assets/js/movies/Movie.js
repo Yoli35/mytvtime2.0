@@ -301,7 +301,7 @@ export class Movie {
             if (!name.value) {
                 name.nextElementSibling.textContent = gThis.translations['This field is required'];
             } else {
-                fetch('/' + gThis.lang + '/series/add/localized/name/' + gThis.userMovieId, {
+                fetch('/' + gThis.lang + '/movie/add/localized/name/' + gThis.userMovieId, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
