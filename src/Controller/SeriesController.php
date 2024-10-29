@@ -223,10 +223,11 @@ class SeriesController extends AbstractController
             }
         }
 
+        $order= 'firstAirDate'; // TODO: ajouter un menu pour choisir l'ordre (firstAirDate, lastWatched, addedAt, ...)
         $seriesToStart = array_map(function ($s) {
             $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
-        }, $this->userEpisodeRepository->seriesToStart($user, $locale, 1, 20));
+        }, $this->userEpisodeRepository->seriesToStart($user, $locale, $order, 1, 20));
         $seriesToStartCount = $this->userEpisodeRepository->seriesToStartCount($user, $locale);
 
 //        dump([
@@ -263,7 +264,7 @@ class SeriesController extends AbstractController
         $seriesToStart = array_map(function ($s) {
             $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
-        }, $this->userEpisodeRepository->seriesToStart($user, $locale, 1, -1));
+        }, $this->userEpisodeRepository->seriesToStart($user, $locale, 'addedAt', 1, -1));
         $tmdbIds = array_column($seriesToStart, 'tmdb_id');
 
         return $this->render('series/series-to-start.html.twig', [
