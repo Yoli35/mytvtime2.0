@@ -464,10 +464,14 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function seriesToStart(User $user, string $locale, int $page, int $perPage): array
+    public function seriesToStart(User $user, string $locale, string $order,  int $page, int $perPage): array
     {
         $userId = $user->getId();
         $offset = ($page - 1) * $perPage;
+        match ($order) {
+            'addedAt' => $order = 'us.`added_at`',
+            default => $order = 's.`first_air_date`'
+        };
         $sql = "SELECT s.id                                                                      as id,
                        s.tmdb_id                                                                 as tmdb_id,
                        IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
@@ -485,7 +489,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 INNER JOIN `user_series` us ON us.series_id=s.id
                 LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.id AND sln.`locale`='$locale'
                 WHERE s.`first_air_date` <= NOW() AND us.user_id=$userId AND us.`progress`=0
-                ORDER BY s.`first_air_date` DESC ";
+                ORDER BY $order DESC ";
         if ($perPage > 0) $sql .= "LIMIT $perPage OFFSET $offset";
 
         return $this->getAll($sql);
@@ -571,6 +575,36 @@ class UserEpisodeRepository extends ServiceEntityRepository
             ->setParameter('seasonNumber', $seasonNumber);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function inProgressSeriesForTwig(User $user, string $locale): array
+    {
+        $userId = $user->getId();
+        $sql = "SELECT s.`id` as id,
+                       s.poster_path as posterPath, 
+                       IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
+                       IF(sln.`name` IS NOT NULL, sln.`slug`, s.`slug`) as slug,
+                       ue.episode_id as episodeId,
+                       ue.`season_number` as nextEpisodeSeason,
+                       (SELECT ue1.`episode_number`
+                        FROM `user_episode` ue1
+                        WHERE ue1.`user_series_id`=us.`id` AND ue1.`season_number`=ue.`season_number` AND ue1.`watch_at` IS NULL
+                        ORDER BY ue1.`episode_id` LIMIT 1) as nextEpisodeNumber,
+                       (SELECT COUNT(*)
+                        FROM `user_episode` ue2
+                        WHERE ue2.`user_series_id`=us.`id` AND ue2.`season_number`=ue.`season_number`) as seasonEpisodeCount,
+                       (SELECT COUNT(*)
+                        FROM `user_episode` ue3
+                        WHERE ue3.`user_series_id`=us.`id` AND ue3.`season_number`=ue.`season_number` AND ue3.`watch_at` IS NOT NULL) as seasonViewedEpisodeCount
+                FROM `user_episode` ue
+                LEFT JOIN `user_series` us ON us.`id`=ue.`user_series_id`
+                LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale'
+                WHERE ue.`user_id`=$userId AND ue.`watch_at` IS NOT NULL
+                ORDER BY ue.`watch_at` DESC
+                LIMIT 1";
+
+        return $this->getAll($sql);
     }
 
     public function getAll($sql): array

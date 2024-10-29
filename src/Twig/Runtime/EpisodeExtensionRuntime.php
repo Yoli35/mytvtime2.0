@@ -112,6 +112,33 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         ];
     }
 
+    public function inProgressSeries(User $user, string $locale = 'fr'): array
+    {
+        $arr = $this->userEpisodeRepository->inProgressSeriesForTwig($user, $locale);
+        $inProgress = $arr[0] ?? [];
+        $ok = $inProgress['id'] ?? null;
+
+        if (!$ok) {
+            return [
+                'ok' => null,
+            ];
+        }
+        $id = $inProgress['id'];
+        return [
+            'ok' => true,
+            'id' => $id,
+            'name' => $inProgress['name'],
+            'slug' => $inProgress['slug'],
+            'posterPath' => $inProgress['posterPath'] ? '/series/posters' . $inProgress['posterPath'] : null,
+            'episodeId' => $inProgress['episodeId'],
+            'episodeCount' => $inProgress['seasonEpisodeCount'],
+            'seasonNumber' => $inProgress['nextEpisodeSeason'],
+            'nextEpisode' => $inProgress['nextEpisodeNumber'],
+            'progress' => 100 * $inProgress['seasonViewedEpisodeCount'] / $inProgress['seasonEpisodeCount'],
+        ];
+    }
+
+
     private function seriesInArray($seriesArr, $item): bool
     {
         return key_exists($item['id'], $seriesArr);

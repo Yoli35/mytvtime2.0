@@ -118,6 +118,7 @@ export class Menu {
         const mainMenu = navbar.querySelector(".menu");
         const eotdMenuItems = document.querySelectorAll("a[id^='eotd-menu-item-']");
         const pinnedMenuItems = document.querySelectorAll("a[id^='pinned-menu-item-']");
+        const seriesInProgress = document.querySelector("a[id^='sip-menu-item-']");
         const body = document.querySelector("body");
         const notifications = document.querySelector(".notifications");
         const detailsElements = document.querySelectorAll("details");
@@ -185,6 +186,25 @@ export class Menu {
                 }, 0);
             });
         });
+
+        if (seriesInProgress) {
+            const id = seriesInProgress.id.split("-")[3];
+            const sipPreview = document.querySelector(`#sip-preview-${id}`);
+            seriesInProgress.addEventListener("mouseenter", () => {
+                sipPreview.classList.add("open");
+                setTimeout(() => {
+                    sipPreview.classList.add("show");
+                }, 0);
+            });
+            seriesInProgress.addEventListener("mouseleave", () => {
+                setTimeout(() => {
+                    sipPreview.classList.remove("show");
+                    setTimeout(() => {
+                        sipPreview.classList.remove("open");
+                    }, 250);
+                }, 0);
+            });
+        }
 
         notifications?.addEventListener("click", () => {
             const menu = notifications.querySelector(".menu-notifications");

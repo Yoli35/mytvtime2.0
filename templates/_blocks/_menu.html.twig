@@ -271,6 +271,35 @@
                     {% endfor %}
                 {% endif %}
 
+                {% set inProgress = inProgressSeries(app.user, app.user.preferredLanguage??'fr') %}
+                {% if inProgress.ok %}
+                    <div class="separation">{{ 'Series in progress'|trans }} - {% if inProgress.nextEpisode %}{{ 'Next episode'|trans }}{% else %}{{ 'That\'s all!'|trans }}{% endif %}</div>
+                    <div class="a-preview">
+                        <a href="{{ path('app_series_season', {id: inProgress.id, slug: inProgress.slug, seasonNumber: inProgress.seasonNumber}) }}"
+                           id="sip-menu-item-{{ inProgress.id }}"
+                           data-episode-count="{{ inProgress.episodeCount }}"
+                           data-first-episode-number="1"
+                           style="background: linear-gradient(90deg, var(--green-50) {{ inProgress.progress }}%, transparent {{ inProgress.progress }}%)">
+                            {{ inProgress.name }} {{ 'S%02dE%02d'|format(inProgress.seasonNumber, inProgress.nextEpisode) }}
+                        </a>
+                        <div id="sip-preview-{{ inProgress.id }}" class="episode-of-the-day-preview">
+                            <a href="{{ path('app_series_season', {id: inProgress.id, slug: inProgress.slug, seasonNumber: inProgress.seasonNumber}) }}">
+                                {% if inProgress.posterPath %}
+                                    <img src="{{ inProgress.posterPath }}" alt="{{ inProgress.name }}">
+                                {% else %}
+                                    {{ inProgress.name }}
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if seriesName is defined %}
+                    <div class="separation">{{ 'Back to the series page'|trans }}</div>
+                    <a href="{{ seriesLink }}">
+                        <em>{{ ux_icon('fa6-solid:arrow-left-long', {height: '18px', width: '18px'}) }}</em>&nbsp;{{ seriesName }}
+                    </a>
+                {% endif %}
+
                 {% set pinnedSeries=pinnedSeries(app.user, app.user.preferredLanguage??'fr') %}
                 {% set l = pinnedSeries|length %}
                 {% if l %}
@@ -288,12 +317,6 @@
                             </div>
                         </div>
                     {% endfor %}
-                {% endif %}
-                {% if seriesName is defined %}
-                    <div class="separation">{{ 'Back to the series page'|trans }}</div>
-                    <a href="{{ seriesLink }}">
-                        <em>{{ ux_icon('fa6-solid:arrow-left-long', {height: '18px', width: '18px'}) }}</em>&nbsp;{{ seriesName }}
-                    </a>
                 {% endif %}
             {% endif %}
             <div class="separation">{{ 'Search'|trans }}</div>
