@@ -10,8 +10,9 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid series-index">
-        {% if episodesOfTheDay|length %}
-            <h2>{{ 'Today'|trans }} ({{ episodesOfTheDay|length }})</h2>
+        {% set count = episodesOfTheDay|reduce((carry, s) => carry + s|length) %}
+        {% if count %}
+            <h2>{{ 'Today'|trans }} ({{ count }})</h2>
             <div class="series-group user">
                 <div class="wrapper">
                     <div class="content center">
@@ -21,7 +22,7 @@
                             {% set dayOfMonth = '1<sup>er</sup>' %}
                         {% endif %}
                         <div class="calendar">
-                            <div class="count">{{ episodesOfTheDay|length }}</div>
+                            <div class="count">{{ count }}</div>
                             <div class="day-of-week">{{ series.date|format_datetime(pattern: "EEEE")| capitalize }}</div>
                             <div class="day-of-mouth">{{ dayOfMonth|raw }}</div>
                             <div class="month">{{ series.date|format_datetime(pattern: "MMMM") }}</div>
