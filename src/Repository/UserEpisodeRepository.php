@@ -415,8 +415,10 @@ class UserEpisodeRepository extends ServiceEntityRepository
         $userId = $user->getId();
         $sql = "SELECT s.id                            as id,
                        s.tmdb_id                       as tmdbId,
-                       s.`name`                        as name,
-                       s.`slug`                        as slug,
+                       IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
+                       IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
+                       /*s.`name`                        as name,*/
+                       /*s.`slug`                        as slug,*/
                        sln.`name`                      as localizedName,
                        sln.`slug`                      as localizedSlug,
                        s.`poster_path`                 as posterPath,

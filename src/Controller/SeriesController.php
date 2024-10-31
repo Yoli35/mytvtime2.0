@@ -146,7 +146,7 @@ class SeriesController extends AbstractController
 //        dump(['series' => $series, 'userSeriesTMDBIds' => $userSeriesTMDBIds]);
 
         // Historique des épisodes vus pendant les 2 semaines passées
-        $episodeHistory = $this->getEpisodeHistory($user, 14, $country, $language);
+        $episodeHistory = $this->getEpisodeHistory($user, 14, $country, $locale);
 
         $AllEpisodesOfTheDay = array_map(function ($ue) {
             $this->saveImage("posters", $ue['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
@@ -2241,8 +2241,10 @@ class SeriesController extends AbstractController
         }
     }
 
-    public function getEpisodeHistory(User $user, int $dayCount, string $country, string $language): array
+    public function getEpisodeHistory(User $user, int $dayCount, string $country, string $locale): array
     {
+        $arr = $this->userEpisodeRepository->historyEpisode($user, $dayCount, $country, $locale);
+        dump($arr);
         return array_map(function ($series) {
             $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
 //            $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
@@ -2250,7 +2252,7 @@ class SeriesController extends AbstractController
             $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
             $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
             return $series;
-        }, $this->userEpisodeRepository->historyEpisode($user, $dayCount, $country, $language));
+        }, $arr);
     }
 
     public function getSeriesLocations(Series $series, string $locale): array
