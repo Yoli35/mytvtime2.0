@@ -156,6 +156,38 @@ h2 {
                     outline: none;
                 }
             }
+
+            select {
+                background-color: var(--orange-30);
+                border: 1px solid var(--orange-70);
+                border-radius: .5rem;
+                color: var(--orange-90);
+                font-size: 1rem;
+                height: 2rem;
+                padding: 0 .5rem;
+                width: 15rem;
+
+                &:focus {
+                    border-color: var(--green-50);
+                    outline: none;
+                }
+            }
+        }
+
+        label:has(select)::after {
+            border-bottom: 6px solid var(--ardoise-20);
+            border-left: 6px solid transparent;
+            border-right: 6px solid var(--ardoise-20);
+            border-top: 6px solid transparent;
+            content: "";
+            display: block;
+            height: 6px;
+            position: absolute;
+            right: 0.75rem;
+            top: 20%;
+            transform: rotate(45deg);
+            width: 6px;
+            z-index: 2;
         }
     }
 

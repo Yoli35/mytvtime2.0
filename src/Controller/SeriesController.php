@@ -223,7 +223,7 @@ class SeriesController extends AbstractController
             }
         }
 
-        $order= 'firstAirDate'; // TODO: ajouter un menu pour choisir l'ordre (firstAirDate, lastWatched, addedAt, ...)
+        $order = 'firstAirDate'; // TODO: ajouter un menu pour choisir l'ordre (firstAirDate, lastWatched, addedAt, ...)
         $seriesToStart = array_map(function ($s) {
             $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
@@ -280,6 +280,18 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
+        $usc = $this->userSeriesRepository->getUserSeriesCountries($user);
+        $userSeriesCountries = [];
+        foreach ($usc as $arr) {
+            $arr = json_decode($arr['origin_country'], true);
+            foreach ($arr as $originCountry) {
+                $userSeriesCountries[] = $originCountry;
+            }
+        }
+        $userSeriesCountries = array_unique($userSeriesCountries);
+        sort($userSeriesCountries);
+        dump($userSeriesCountries);
+
         $series = array_map(function ($s) {
             $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             $s['upToDate'] = $s['watched_aired_episode_count'] == $s['aired_episode_count'];
@@ -290,7 +302,8 @@ class SeriesController extends AbstractController
         dump(['series' => $series, 'tmdbIds' => $tmdbIds]);
 
         return $this->render('series/series-by-country.html.twig', [
-            'seriesToStart' => $series,
+            'seriesByCountry' => $series,
+            'userSeriesCountries' => $userSeriesCountries,
             'country' => $country,
             'tmdbIds' => $tmdbIds,
         ]);

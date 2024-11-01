@@ -394,6 +394,20 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function getUserSeriesCountries(User $user): array
+    {
+        $userId = $user->getId();
+
+        $sql = "SELECT s.`origin_country`
+                FROM user_series us
+                         INNER JOIN `series` s ON s.`id` = us.`series_id`
+                WHERE us.`user_id`=$userId
+                GROUP BY s.`origin_country`
+                ORDER BY s.`origin_country`";
+
+        return $this->getAll($sql);
+    }
+
     public function getAll($sql): array
     {
         try {
