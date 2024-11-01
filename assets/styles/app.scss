@@ -85,6 +85,10 @@ body {
         margin: 0;
     }
 
+    input[type="checkbox"][switch] {
+        accent-color: hsl(166, 50%, 50%);
+    }
+
     .hidden {
         display: none;
     }
