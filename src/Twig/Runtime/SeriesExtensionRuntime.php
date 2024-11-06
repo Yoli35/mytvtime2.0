@@ -50,7 +50,6 @@ readonly class SeriesExtensionRuntime implements RuntimeExtensionInterface
         $history = array_map(function ($item) use ($user) {
             if (!$item['posterPath']) {
                 $posters = $this->seriesRepository->seriesPosters($item['id']);
-                dump($posters);
                 if (count($posters)) {
                     $item['posterPath'] = $posters[rand(0, count($posters) - 1)]['image_path'];
                 }
