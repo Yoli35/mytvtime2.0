@@ -1,5 +1,8 @@
 <div class="card">
     {% set url = path('app_series_show', {'id': series.id, 'slug': series.slug }) %}
+    {% set toStart = series.progress==0 %}
+    {% set upToDate = series.progress==100 %}
+    {% set inProgress = (series.progress>0 and series.progress<100) %}
     <a href="{{ url }}">
         <div class="poster">
             {% if series.poster_path is defined %}
@@ -26,13 +29,13 @@
                 <div class="status">{{ 'In production'|trans }}</div>
             {% elseif series.progress==0 and series.released == 0 %} {# series.id|hasSeriesStartedAiring #}
                 <div class="status coming-soon">{{ 'Coming soon'|trans }}</div>
-            {% else %}
-                <div class="progress{% if series.progress==100 %} that-s-all-folks{% endif %}{% if series.progress==0 %} start-this-series{% endif %}">
+            {% elseif inProgress %}
+                <div class="progress">
                     <div class="progress-bar" style="width: {{ series.progress }}%"></div>
                 </div>
             {% endif %}
         </div>
-        <div class="name">
+        <div class="name by-country{% if upToDate %} up-to-date{% endif %}{% if toStart %} to-start{% endif %}">
             {{ series.name }}
         </div>
     </a>
