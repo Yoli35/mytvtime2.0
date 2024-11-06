@@ -14,6 +14,7 @@ class SeriesExtension extends AbstractExtension
         return [
             new TwigFilter('seriesHistory', [SeriesExtensionRuntime::class, 'seriesHistory']),
             new TwigFilter('hasSeriesStartedAiring', [SeriesExtensionRuntime::class, 'hasSeriesStartedAiring']),
+            new TwigFilter('getUserCountrySettings', [SeriesExtensionRuntime::class, 'getUserCountrySettings']),
         ];
     }
 
@@ -21,6 +22,7 @@ class SeriesExtension extends AbstractExtension
     {
         return [
             new TwigFunction('seriesHistory', [SeriesExtensionRuntime::class, 'seriesHistory']),
+            new TwigFunction('getUserCountrySettings', [SeriesExtensionRuntime::class, 'getUserCountrySettings']),
         ];
     }
 }

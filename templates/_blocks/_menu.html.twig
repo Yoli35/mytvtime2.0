@@ -3,55 +3,57 @@
 {% set route_params = app.request.attributes.get('_route_params') %}
 <nav class="navbar">
     <a href="{{ path('app_home') }}" accesskey="<">{{ ux_icon('ion:home', {height: "18px", width: "18px"}) }}</a>
-    <details>
-        <summary>{{ ux_icon('fa6-solid:film', {height: "18px", width: "18px"}) }}</summary>
-        <ul>
-            <li><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'My movies'|trans }}</a></li>
-            <li>
-                <label for="movie-search">
-                    <input type="search" id="movie-search" class="search" spellcheck="false">
-                    {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                </label>
-                <div class="search-results"></div>
-            </li>
-        </ul>
-    </details>
-    <details>
-        <summary>{{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}</summary>
-        <ul>
-            <li><a href="{{ path('app_series_index') }}" class="desktop">{{ 'Episodes of the week'|trans }}</a></li>
-            <li><a href="{{ path('app_series_all') }}" class="desktop">{{ 'All my series'|trans }}</a></li>
-            <li><a href="{{ path('app_series_to_start') }}">{{ 'Series to start'|trans }}</a></li>
-            <li>
-                <label for="tv-search">
-                    <input type="search" id="tv-search" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}">
-                    {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                </label>
-                <div class="search-results"></div>
-            </li>
-            <li>
-                <label for="tv-search-db">
-                    <input type="search" id="tv-search-db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}">
-                    {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                </label>
-                <div class="search-results"></div>
-            </li>
-        </ul>
-    </details>
-    <details>
-        <summary>{{ ux_icon('fa6-solid:user', {height: "18px", width: "18px"}) }}</summary>
-        <ul>
-            <li><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></li>
-            <li>
-                <label for="person-search">
-                    <input type="search" id="person-search" class="search" spellcheck="false">
-                    {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                </label>
-                <div class="search-results"></div>
-            </li>
-        </ul>
-    </details>
     {% if app.user %}
+        <details>
+            <summary>{{ ux_icon('fa6-solid:film', {height: "18px", width: "18px"}) }}</summary>
+            <ul>
+                <li><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'My movies'|trans }}</a></li>
+                <li>
+                    <label for="movie-search">
+                        <input type="search" id="movie-search" class="search" spellcheck="false">
+                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                    </label>
+                    <div class="search-results"></div>
+                </li>
+            </ul>
+        </details>
+        <details>
+            <summary>{{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}</summary>
+            <ul>
+                {% set country=getUserCountrySettings(app.user) %}
+                <li><a href="{{ path('app_series_index') }}" class="desktop">{{ 'Episodes of the week'|trans }}</a></li>
+                <li><a href="{{ path('app_series_all') }}" class="desktop">{{ 'All my series'|trans }}</a></li>
+                <li><a href="{{ path('app_series_to_start') }}">{{ 'Series to start'|trans }}</a></li>
+                <li><a href="{{ path('app_series_by_country', {country: country}) }}">{{ 'Series by country'|trans }} - {{ country|country_name }}</a></li>
+                <li>
+                    <label for="tv-search">
+                        <input type="search" id="tv-search" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}">
+                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                    </label>
+                    <div class="search-results"></div>
+                </li>
+                <li>
+                    <label for="tv-search-db">
+                        <input type="search" id="tv-search-db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}">
+                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                    </label>
+                    <div class="search-results"></div>
+                </li>
+            </ul>
+        </details>
+        <details>
+            <summary>{{ ux_icon('fa6-solid:user', {height: "18px", width: "18px"}) }}</summary>
+            <ul>
+                <li><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></li>
+                <li>
+                    <label for="person-search">
+                        <input type="search" id="person-search" class="search" spellcheck="false">
+                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                    </label>
+                    <div class="search-results"></div>
+                </li>
+            </ul>
+        </details>
         <details id="history-menu">
             <summary>{{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }}</summary>
             {% set history = seriesHistory(app.user) %}
@@ -97,8 +99,8 @@
                 </ul>
             {% endif %}
         </details>
+        <a href="{{ path('app_map_index') }}" class="desktop">{{ ux_icon('ion:map-outline', {height: "18px", width: "18px"}) }}</a>
     {% endif %}
-    <a href="{{ path('app_map_index') }}" class="desktop">{{ ux_icon('ion:map-outline', {height: "18px", width: "18px"}) }}</a>
     <a href="{{ path('app_contact_form') }}" class="desktop">{{ ux_icon('ion:mail', {height: "18px", width: "18px"}) }}</a>
 
     {% set p = '' %}

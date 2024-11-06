@@ -280,6 +280,17 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'by country']);
+        if (!$settings) {
+            $settings = new Settings($user, 'by country', ['country' => $country]);
+            $this->settingsRepository->save($settings, true);
+        } else {
+            $data = $settings->getData();
+            $data['country'] = $country;
+            $settings->setData($data);
+            $this->settingsRepository->save($settings, true);
+        }
+
         $usc = $this->userSeriesRepository->getUserSeriesCountries($user);
         $userSeriesCountries = [];
         foreach ($usc as $arr) {

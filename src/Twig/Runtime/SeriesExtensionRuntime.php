@@ -83,4 +83,15 @@ readonly class SeriesExtensionRuntime implements RuntimeExtensionInterface
         $date = $this->dateService->newDateImmutable('now', 'UTC')->format('Y-m-d');
         return $this->seriesRepository->hasSeriesStartedAiring($seriesId, $date);
     }
+
+    public function getUserCountrySettings(User $user): string
+    {
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'by country']);
+        if ($settings) {
+            $country = $settings->getData()['country'];
+        } else {
+            $country = $user->getCountry() ?? 'FR';
+        }
+        return $country;
+    }
 }
