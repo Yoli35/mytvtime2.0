@@ -117,6 +117,22 @@ export class Season {
     }
 
     init() {
+        const watchLinks = document.querySelectorAll('.watch-link');
+        watchLinks.forEach(function (watchLink) {
+            const tools = watchLink.querySelector('.watch-link-tools');
+            const href = watchLink.querySelector('a').getAttribute('href');
+            const copy = tools.querySelector('.watch-link-tool.copy');
+
+            copy.addEventListener('click', function () {
+                navigator.clipboard.writeText(href).then(function () {
+                    copy.classList.add('copied');
+                    setTimeout(function () {
+                        copy.classList.remove('copied');
+                    }, 1000);
+                });
+            });
+        });
+
         const quickEpisodeLinks = document.querySelectorAll('.quick-episode');
         quickEpisodeLinks.forEach(episode => {
             episode.addEventListener('click', e => {
@@ -410,6 +426,9 @@ export class Season {
                 const substituteNameDiv = episode.closest('.episode').querySelector('.substitute');
                 substituteNameDiv?.classList.add('watched');
 
+                const episodeWatchLinks = episode.closest('.episode').querySelector('.watch-links');
+                episodeWatchLinks?.classList.add('hidden');
+
                 // Mise à jour du menu
                 const seriesId = episode.getAttribute('data-series-id');
                 let episodesOfTheDayInMenu = document.querySelectorAll('a[id^="eotd-menu-item-"]');
@@ -594,6 +613,9 @@ export class Season {
 
                 const substituteNameDiv = episode.closest('.episode').querySelector('.substitute');
                 substituteNameDiv?.classList.add('watched');
+
+                const episodeWatchLinks = episode.closest('.episode').querySelector('.watch-links');
+                episodeWatchLinks?.classList.remove('hidden');
 
                 const newEpisode = document.createElement('div');
                 newEpisode.classList.add('add-this-episode');

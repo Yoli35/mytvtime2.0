@@ -4,6 +4,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
 {% endblock %}
 {% block body %}
     <script>
@@ -61,12 +62,12 @@
                                 </div>
                             {% endfor %}
                         </div>
-                    {#{% else %}
+                        {# {% else %}
                         {% if season.deepl %}
                             {% if season.deepl.localized %}
                                 <div class="series-overview deepl">{{ season.deepl.localizedOverview|raw }}</div>
                             {% endif %}
-                        {% endif %}#}
+                        {% endif %} #}
                     {% endif %}
                     {% if season.additional_overviews|length %}
                         <div class="additional overviews">
@@ -106,6 +107,8 @@
                     </a>
                 </div>
             </div>
+
+            {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, hidden: false}) }}
 
             {% set now = 'now'|date("Y-m-d") %}
             <div class="quick-episodes">
@@ -173,6 +176,7 @@
                                             {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
                                         </div>
                                     </div>
+                                    {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, hidden: (ue.watch_at != null)}) }}
                                     {% if episode.air_date %}
                                         <div class="air-date">
                                             {{ 'Air date'|trans }} {{ episode.air_date|format_date('relative_full') }}
