@@ -1712,6 +1712,17 @@ h2 {
             scroll-behavior: smooth;
             width: 100%;
 
+            /*.user-actions {
+                & .watch-links {
+                    & .watch-link {
+                        .watch-link-tools {
+                            left: 2.25rem;
+                            top: -.25rem
+                        }
+                    }
+                }
+            }*/
+
             .episode-name {
                 align-items: center;
                 display: flex;
@@ -1846,9 +1857,9 @@ h2 {
 
                 > div {
                     align-items: center;
-                    background-color: var(--green-50);
+                    background-color: cadetblue;
                     border-radius: .25rem;
-                    border: 1px solid var(--green-60);
+                   /* border: 1px solid var(--green-60);*/
                     display: flex;
                     flex-wrap: nowrap;
                     gap: .5rem;
