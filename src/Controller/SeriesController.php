@@ -290,7 +290,6 @@ class SeriesController extends AbstractController
         }
         $userSeriesCountries = array_unique($userSeriesCountries);
         sort($userSeriesCountries);
-        dump($userSeriesCountries);
 
         $series = array_map(function ($s) {
             $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
@@ -298,8 +297,6 @@ class SeriesController extends AbstractController
             return $s;
         }, $this->userSeriesRepository->seriesByCountry($user, $country, $locale, 1, -1));
         $tmdbIds = array_column($series, 'tmdb_id');
-
-        dump(['series' => $series, 'tmdbIds' => $tmdbIds]);
 
         return $this->render('series/series-by-country.html.twig', [
             'seriesByCountry' => $series,
@@ -435,13 +432,9 @@ class SeriesController extends AbstractController
             'startStatus' => $data['startStatus'],
             'endStatus' => $data['endStatus'],
         ];
-        /*$filterValues = [
-            'series-started' => 'us.progress > 0',
-            'series-not-started' => 'us.progress = 0',
-            'series-watched' => 'us.progress = 100',
-            'series-not-watched' => 'us.progress < 100',
-            'series-favorite' => 'us.favorite = 1',
-        ];*/
+        $startStatus = $data['startStatus'];
+        $endStatus = $data['endStatus'];
+
         $filterMeanings = [
             'name' => 'Name',
             'addedAt' => 'Date added',
@@ -452,17 +445,29 @@ class SeriesController extends AbstractController
             'ASC' => 'Ascending',
         ];
 
+        $progress = [];
+        /*if ($startStatus === 'series-started') {
+            $progress[] = 'us.progress > 0';
+        } elseif ($startStatus === 'series-not-started') {
+            $progress[] = 'us.progress = 0';
+        }
+        if ($endStatus === 'series-ended') {
+            $progress[]= 'us.progress = 100';
+        } elseif ($endStatus === 'series-not-ended') {
+            $progress[] = 'us.progress < 100';
+        }*/
+
         /** @var UserSeries[] $userSeries */
         $userSeries = $this->userSeriesRepository->getAllSeries(
             $user,
             $localisation,
             $filters,
-            [/*'us.progress > 0', */ 'us.progress < 100']);
+            $progress);
         $userSeriesCount = $this->userSeriesRepository->countAllSeries(
             $user,
             $localisation,
             $filters,
-            [/*'us.progress > 0', */ 'us.progress < 100']);
+            $progress);
 
         $userSeries = array_map(function ($series) {
             $series['poster_path'] = $series['poster_path'] ? $this->imageConfiguration->getCompleteUrl($series['poster_path'], 'poster_sizes', 5) : null;
@@ -624,6 +629,8 @@ class SeriesController extends AbstractController
 //                dump(['season' => $season, 'season us' => $seasonUs]);
                 if ($season['overview'] == "" && $seasonUs)
                     $tv['seasons'][$key]['overview'] = $seasonUs['overview'];
+                if (!key_exists('name', $season)) $season['name'] = "";
+                if (!key_exists('name', $seasonUs)) $seasonUs['name'] = "";
                 if ($season['name'] == "" || ($season['name'] == "Saison " . $season['season_number'] && $seasonUs['name'] != "Season " . $season['season_number']))
                     $tv['seasons'][$key]['name'] .= ' - ' . $seasonUs['name'];
             }
@@ -991,13 +998,13 @@ class SeriesController extends AbstractController
         $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
 
-//            dump([
-//                'series' => $series,
+            dump([
+                'series' => $series,
 //                'season' => $season,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-//            ]);
+            ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,

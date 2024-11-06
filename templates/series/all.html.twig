@@ -42,18 +42,18 @@
                     <div class="filter">
                         <label for="series-started">{{ 'Series started'|trans }}
                             <select id="series-started">
-                                <option value="">{{ 'All'|trans }}</option>
+                                <option value="series-all">{{ 'All'|trans }}</option>
                                 <option value="series-started"{% if filters.startStatus=='series-started' %} selected{% endif %}>{{ 'Yes'|trans }}</option>
                                 <option value="series-not-started"{% if filters.startStatus=='series-not-started' %} selected{% endif %}>{{ 'No'|trans }}
                             </select>
                         </label>
                     </div>
                     <div class="filter">
-                        <label for="series-watched">{{ 'Watched series'|trans }}
-                            <select id="series-watched">
-                                <option value="all">{{ 'All'|trans }}</option>
-                                <option value="series-watched"{% if filters.endStatus=='series-watched' %} selected{% endif %}>{{ 'Yes'|trans }}</option>
-                                <option value="series-not-watched"{% if filters.endStatus=='series-not-watched' %} selected{% endif %}>{{ 'No'|trans }}
+                        <label for="series-ended">{{ 'Watched series'|trans }}
+                            <select id="series-ended">
+                                <option value="series-all">{{ 'All'|trans }}</option>
+                                <option value="series-ended"{% if filters.endStatus=='series-watched' %} selected{% endif %}>{{ 'Yes'|trans }}</option>
+                                <option value="series-not-ended"{% if filters.endStatus=='series-not-watched' %} selected{% endif %}>{{ 'No'|trans }}
                             </select>
                         </label>
                     </div>
@@ -155,7 +155,7 @@
             const sortSelect = document.getElementById('sort-by');
             const orderSelect = document.getElementById('order-by');
             const seriesStarted = document.getElementById('series-started');
-            const seriesWatched = document.getElementById('series-watched');
+            const seriesWatched = document.getElementById('series-ended');
             const network = document.getElementById('network');
             const perPage = document.getElementById('per-page');
             const pages = document.querySelectorAll('.pages button');
@@ -174,27 +174,27 @@
 
             pages.forEach(page => {
                 page.addEventListener('click', function () {
-                    window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: page.value}));
+                    window.location.href = newUrl(window.location.href, getParams(), page.value);
                 });
             });
 
             sortSelect.addEventListener('change', function () {
-                window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
+                window.location.href = newUrl(window.location.href, getParams());
             });
             orderSelect.addEventListener('change', function () {
-                window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
+                window.location.href = newUrl(window.location.href, getParams());
             });
             seriesStarted.addEventListener('change', function () {
-                window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
+                window.location.href = newUrl(window.location.href, getParams());
             });
             seriesWatched.addEventListener('change', function () {
-                window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
+                window.location.href = newUrl(window.location.href, getParams());
             });
             perPage.addEventListener('change', function () {
-                window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
+                window.location.href = newUrl(window.location.href, getParams());
             });
             network.addEventListener('change', function () {
-                window.location.href = newUrl(window.location.href, getParams().concat({key: 'page', value: 1}));
+                window.location.href = newUrl(window.location.href, getParams());
             });
 
             function getParams() {
@@ -208,7 +208,8 @@
                 ];
             }
 
-            function newUrl(href, params) {
+            function newUrl(href, params, page = 1) {
+                params.concat({key: 'page', page});
                 const url = new URL(href);
                 params.forEach(param => {
                     url.searchParams.set(param.key, param.value);
