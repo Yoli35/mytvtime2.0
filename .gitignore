@@ -26,6 +26,9 @@
 /assets/vendor/
 ###< symfony/asset-mapper ###
 
+/public/series/
+/public/movies/
+
 /.gitignore
 /.php-version
 /composer.lock
