@@ -127,6 +127,15 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function seriesPosters(int $seriesId): array
+    {
+        $sql = "SELECT image_path
+                FROM series_image si
+                WHERE series_id=$seriesId AND type='poster'";
+
+        return $this->getAll($sql);
+    }
+
     public function hasSeriesStartedAiring(int $seriesId, string $date): bool
     {
         $sql = "SELECT COUNT(*) as count

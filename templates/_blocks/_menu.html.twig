@@ -69,7 +69,7 @@
                         <li class="history-item" id="{{ h.episodeId }}">
                             <a class="history" href="{{ path('app_series_season', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber}) }}">
                                 <div class="poster">
-                                    {% if h.posterPath %}
+                                    {% if h.posterPath|length %}
                                         <img src="/series/posters{{ h.posterPath }}" alt="{{ h.name }}">
                                     {% else %}
                                         {{ h.name|slice(0,1)|upper }}

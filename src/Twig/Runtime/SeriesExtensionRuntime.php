@@ -48,6 +48,13 @@ readonly class SeriesExtensionRuntime implements RuntimeExtensionInterface
         $provider = $data['provider'];
 
         $history = array_map(function ($item) use ($user) {
+            if (!$item['posterPath']) {
+                $posters = $this->seriesRepository->seriesPosters($item['id']);
+                dump($posters);
+                if (count($posters)) {
+                    $item['posterPath'] = $posters[rand(0, count($posters) - 1)]['image_path'];
+                }
+            }
             $item['lastWatchAt'] = $this->dateService->newDateImmutable($item['lastWatchAt'], 'UTC')->setTimezone(new \DateTimeZone($user->getTimezone() ?? 'Europe/Paris'));
             $item['providerLogoPath'] = $item['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($item['providerLogoPath'], 'logo_sizes', 2) : null;
             return $item;
