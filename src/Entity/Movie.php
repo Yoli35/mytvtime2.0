@@ -93,6 +93,9 @@ class Movie
     #[ORM\OneToMany(targetEntity: MovieLocalizedOverview::class, mappedBy: 'movie', orphanRemoval: true)]
     private Collection $movieLocalizedOverviews;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $additionalInfos = null;
+
     public function __toString(): string
     {
         return $this->title;
@@ -452,6 +455,18 @@ class Movie
                 $movieLocalizedOverview->setMovie(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAdditionalInfos(): ?array
+    {
+        return $this->additionalInfos;
+    }
+
+    public function setAdditionalInfos(?array $additionalInfos): static
+    {
+        $this->additionalInfos = $additionalInfos;
 
         return $this;
     }

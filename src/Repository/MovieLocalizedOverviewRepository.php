@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\MovieLocalizedOverview;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -11,33 +12,16 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MovieLocalizedOverviewRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $em)
     {
         parent::__construct($registry, MovieLocalizedOverview::class);
     }
 
-    //    /**
-    //     * @return MovieLocalizedOverview[] Returns an array of MovieLocalizedOverview objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('m.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?MovieLocalizedOverview
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function save(MovieLocalizedOverview $movieLocalizedOverview, bool $flush = false): void
+    {
+        $this->em->persist($movieLocalizedOverview);
+        if ($flush) {
+            $this->em->flush();
+        }
+    }
 }

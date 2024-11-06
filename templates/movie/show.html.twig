@@ -146,13 +146,15 @@
                                         <div class="label">{{ 'Runtime'|trans }}</div>
                                         <div class="content">{{ movie.runtime|time }}</div>
                                     </div>
-                                    <div class="notes">
-                                        <div class="label">{{ 'Note'|trans }}</div>
-                                        <div class="content">
-                                            <div class="note">{{ 'Average'|trans }} {{ movie.vote_average }}</div>
-                                            <div class="note">{{ 'Count'|trans }} {{ movie.vote_count }}</div>
+                                    {% if movie.vote_average and movie.vote_count %}
+                                        <div class="notes">
+                                            <div class="label">{{ 'Note'|trans }}</div>
+                                            <div class="content">
+                                                <div class="note">{{ 'Average'|trans }} {{ movie.vote_average }}</div>
+                                                <div class="note">{{ 'Count'|trans }} {{ movie.vote_count }}</div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    {% endif %}
                                     {{ include('_blocks/movie/_release-dates.html.twig') }}
                                     <div class="original-name">
                                         <div class="label">{{ 'Original name'|trans }}</div>
@@ -219,7 +221,7 @@
                                             </div>
                                         {% endif %}
                                     {% endif %}
-                                    {% if movie.production_companies|length %}
+{#                                    {% if movie.production_companies|length %}#}
                                         <div class="production-companies">
                                             <div class="label">{{ 'Production companies'|trans }}</div>
                                             <div class="content">
@@ -233,8 +235,11 @@
                                                     </div>
                                                 {% endfor %}
                                             </div>
+                                            <div class="add">
+                                                {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                                            </div>
                                         </div>
-                                    {% endif %}
+{#                                    {% endif %}#}
                                     {% if movie.production_countries|length %}
                                         <div class="production-countries">
                                             <div class="label">{{ 'Production countries'|trans }}</div>

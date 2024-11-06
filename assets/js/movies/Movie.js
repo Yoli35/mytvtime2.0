@@ -412,7 +412,7 @@ export class Movie {
             }
             let data = {source: source.value, overview: overviewField.value, type: type, crud: hiddenInputTool.getAttribute('data-crud'), locale: gThis.lang};
 
-            fetch('/' + gThis.lang + '/series/add/edit/overview/' + gThis.userMovieId, {
+            fetch('/' + gThis.lang + '/movie/add/edit/overview/' + gThis.userMovieId, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -3,15 +3,19 @@
 namespace App\Controller;
 
 use App\Entity\Movie;
+use App\Entity\MovieAdditionalOverview;
 use App\Entity\MovieCollection;
 use App\Entity\MovieDirectLink;
 use App\Entity\MovieLocalizedName;
+use App\Entity\MovieLocalizedOverview;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserMovie;
+use App\Repository\MovieAdditionalOverviewRepository;
 use App\Repository\MovieCollectionRepository;
 use App\Repository\MovieDirectLinkRepository;
 use App\Repository\MovieLocalizedNameRepository;
+use App\Repository\MovieLocalizedOverviewRepository;
 use App\Repository\MovieRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
@@ -34,19 +38,21 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class MovieController extends AbstractController
 {
     public function __construct(
-        private readonly DateService                  $dateService,
-        private readonly ImageConfiguration           $imageConfiguration,
-        private readonly KeywordService               $keywordService,
-        private readonly MovieCollectionRepository    $movieCollectionRepository,
-        private readonly MovieDirectLinkRepository    $movieDirectLinkRepository,
-        private readonly MovieLocalizedNameRepository $movieLocalizedNameRepository,
-        private readonly MovieRepository              $movieRepository,
-        private readonly SettingsRepository           $settingsRepository,
-        private readonly SourceRepository             $sourceRepository,
-        private readonly TMDBService                  $tmdbService,
-        private readonly TranslatorInterface          $translator,
-        private readonly UserMovieRepository          $userMovieRepository,
-        private readonly WatchProviderRepository      $watchProviderRepository,
+        private readonly DateService                       $dateService,
+        private readonly ImageConfiguration                $imageConfiguration,
+        private readonly KeywordService                    $keywordService,
+        private readonly MovieAdditionalOverviewRepository $movieAdditionalOverviewRepository,
+        private readonly MovieCollectionRepository         $movieCollectionRepository,
+        private readonly MovieDirectLinkRepository         $movieDirectLinkRepository,
+        private readonly MovieLocalizedNameRepository      $movieLocalizedNameRepository,
+        private readonly MovieLocalizedOverviewRepository  $movieLocalizedOverviewRepository,
+        private readonly MovieRepository                   $movieRepository,
+        private readonly SettingsRepository                $settingsRepository,
+        private readonly SourceRepository                  $sourceRepository,
+        private readonly TMDBService                       $tmdbService,
+        private readonly TranslatorInterface               $translator,
+        private readonly UserMovieRepository               $userMovieRepository,
+        private readonly WatchProviderRepository           $watchProviderRepository,
     )
     {
     }
@@ -481,6 +487,74 @@ class MovieController extends AbstractController
         ]);
     }
 
+//    #[IsGranted('ROLE_USER')]
+    #[Route('/add/edit/overview/{id}', name: 'add_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function addOverview(Request $request, UserMovie $userMovie): Response
+    {
+        $movie = $userMovie->getMovie();
+        $data = json_decode($request->getContent(), true);
+//        dump($data);
+        $overviewId = $data['overviewId'] ?? "";
+        $overviewId = $overviewId == "" ? null : intval($overviewId);
+        $overviewType = $data['type'];
+        $overview = $data['overview'];
+        $locale = $data['locale'];
+        $source = null;
+
+        if ($overviewType == "additional") {
+            $sourceId = $data['source'];
+            $source = $this->sourceRepository->findOneBy(['id' => $sourceId]);
+            if ($overviewId) {
+                $movieAdditionalOverview = $this->movieAdditionalOverviewRepository->findOneBy(['id' => $overviewId]);
+                $movieAdditionalOverview->setOverview($overview);
+                $movieAdditionalOverview->setSource($source);
+                $this->movieAdditionalOverviewRepository->save($movieAdditionalOverview, true);
+            } else {
+                $seriesAdditionalOverview = new MovieAdditionalOverview($movie, $overview, $locale, $source);
+                $this->movieAdditionalOverviewRepository->save($seriesAdditionalOverview, true);
+                $overviewId = $seriesAdditionalOverview->getId();
+            }
+        }
+        if ($overviewType == "localized") {
+            if ($overviewId) {
+                $movieLocalizedOverview = $this->movieLocalizedOverviewRepository->findOneBy(['id' => $overviewId]);
+                $movieLocalizedOverview->setOverview($overview);
+                $this->movieLocalizedOverviewRepository->save($movieLocalizedOverview, true);
+            } else {
+                $movieLocalizedOverview = new MovieLocalizedOverview($movie, $overview, $locale);
+                $this->movieLocalizedOverviewRepository->save($movieLocalizedOverview, true);
+                $overviewId = $movieLocalizedOverview->getId();
+            }
+        }
+
+        return $this->json([
+            'ok' => true,
+            'body' => [
+                'id' => $overviewId,
+                'source' => $source ? ['id' => $source->getId(), 'name' => $source->getName(), 'path' => $source->getPath(), 'logoPath' => $source->getLogoPath()] : null,
+            ]
+        ]);
+    }
+
+    #[Route('/add/infos/{id}', name: 'add_infos', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function addInfos(Request $request, Movie $movie): Response
+    {
+        $data = json_decode($request->getContent(), true);
+
+        dump($movie, $data);
+        // "production_companies": [
+        //    {
+        //      "id": 14,
+        //      "logo_path": "/m6AHu84oZQxvq7n1rsvMNJIAsMu.png",
+        //      "name": "Miramax",
+        //      "origin_country": "US"
+        //    },
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
     function getPagination(int $index, int $page, int $totalPages, string $route, string $locale): string
     {
         return $this->renderView('_blocks/_pagination.html.twig', [
@@ -702,7 +776,7 @@ class MovieController extends AbstractController
 
     public function getSources(array &$movie): void
     {
-        $sources = $this->sourceRepository->findAll();
+        $sources = $this->sourceRepository->findBy([], ['name' => 'ASC']);
         $movie['sources'] = $sources;
     }
 
