@@ -16,6 +16,9 @@ Mandatory variables:
                         <div class="next-episode" onclick="ToggleScheduleForm({{ schedule.id }})">
                             <div class="type">{{ ux_icon('fa6-regular:clock', {height: "18px", width: "18px"}) }}</div>
                             <div class="country" data-title="{{ country|country_name }}">{{ getEmojiFlag(country) }}</div>
+                            {% if schedule.providerId %}
+                                <div class="provider"><img src="{{ schedule.providerLogo }}" alt="{{ schedule.providerName }}" data-title="{{ schedule.providerName }}"></div>
+                            {% endif %}
                             <div class="local-air">{{ schedule.dayList }}</div>
                             <div class="local-air">{{ schedule.airAt }}</div>
                             {% set d = schedule.before %}
@@ -102,6 +105,14 @@ Mandatory variables:
                                         <label for="time-{{ schedule.id }}">{{ 'Time'|trans }}
                                             <input type="time" name="time-{{ schedule.id }}" value="{{ schedule.airAt }}" id="time-{{ schedule.id }}">
                                         </label>
+                                        <label for="provider-{{ schedule.id }}">{{ 'Provider'|trans }}
+                                            <select id="provider-{{ schedule.id }}" name="provider">
+                                                <option value="">{{ 'Select a provider'|trans }}</option>
+                                                {% for providerName, providerId in providers.select %}
+                                                    <option value="{{ providerId }}" {% if providerId == schedule.providerId %}selected{% endif %}>{{ providerName }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </label>
                                     </div>
                                     <div>
                                         <h4>{{ 'Days of the week'|trans }}</h4>
@@ -141,6 +152,7 @@ Mandatory variables:
                                             const form = document.getElementById('schedule-form-' + id);
                                             const country = form.querySelector('input[name="country"]').value;
                                             const time = form.querySelector('input[name="time-' + id + '"]').value;
+                                            const provider = form.querySelector('select[name="provider"]').value;
                                             const days = form.querySelectorAll('input[name="days"]');
                                             const dayArr = [];
                                             days.forEach(day => {
@@ -152,7 +164,8 @@ Mandatory variables:
                                                 id: id,
                                                 country: country,
                                                 time: time,
-                                                days: dayArr
+                                                days: dayArr,
+                                                provider: provider
                                             };
                                             fetch('{{ path('app_series_schedule_save') }}', {
                                                 method: 'POST',

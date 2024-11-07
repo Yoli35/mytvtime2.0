@@ -993,6 +993,18 @@ label:has(input[type="text"]) {
                         margin-inline-start: auto;
                         padding-inline: .5rem;
                     }
+
+                    .provider {
+                        height: 1.75rem;
+                        width: 1.75rem;
+
+                        img {
+                            border-radius: .25rem;
+                            height: 100%;
+                            object-fit: cover;
+                            width: 100%;
+                        }
+                    }
                 }
 
                 .episode-of-the-day-preview, .pinned-series-preview {

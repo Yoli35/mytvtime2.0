@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\EpisodeNotificationRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Service\DateService;
+use App\Service\ImageConfiguration;
 use Twig\Extension\RuntimeExtensionInterface;
 
 readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
@@ -13,6 +14,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
     public function __construct(
         private DateService                   $dateService,
         private EpisodeNotificationRepository $episodeNotificationRepository,
+        private ImageConfiguration            $imageConfiguration,
         private UserEpisodeRepository         $userEpisodeRepository
     )
     {
@@ -54,6 +56,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
             if (!$this->seriesInArray($seriesArr, $item)) {
                 $item['episodes'] = [$item['episodeNumber']];
                 $item['posterPath'] = $item['posterPath'] ? '/series/posters' . $item['posterPath'] : null;
+                $item['providerLogoPath'] = $item['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($item['providerLogoPath'], 'logo_sizes', 2) : null;
                 $item['episodesWatched'] = $item['watchAt'] === null ? 0 : 1;
                 $seriesArr[$item['id']] = $item;
             } else {
@@ -96,6 +99,8 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
                 'id' => $item['id'],
                 'name' => $item['displayName'],
                 'posterPath' => $item['posterPath'],
+                'providerLogoPath' => $item['providerLogoPath'],
+                'providerName' => $item['providerName'],
                 'progress' => 100 * $item['episodesWatched'] / $item['episodeCount'],
                 'seasonNumber' => $item['seasonNumber'],
                 'slug' => $item['localizedSlug'] ?? $item['slug'],

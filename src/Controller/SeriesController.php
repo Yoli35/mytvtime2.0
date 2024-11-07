@@ -32,6 +32,7 @@ use App\Repository\FilmingLocationImageRepository;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\KeywordRepository;
 use App\Repository\NetworkRepository;
+use App\Repository\ProviderRepository;
 use App\Repository\SeasonLocalizedOverviewRepository;
 use App\Repository\SeriesAdditionalOverviewRepository;
 use App\Repository\SeriesBroadcastScheduleRepository;
@@ -91,6 +92,7 @@ class SeriesController extends AbstractController
         private readonly KeywordRepository                  $keywordRepository,
         private readonly KeywordService                     $keywordService,
         private readonly NetworkRepository                  $networkRepository,
+        private readonly ProviderRepository                 $providerRepository,
         private readonly SeasonLocalizedOverviewRepository  $seasonLocalizedOverviewRepository,
         private readonly SeriesAdditionalOverviewRepository $seriesAdditionalOverviewRepository,
         private readonly SeriesBroadcastScheduleRepository  $seriesBroadcastScheduleRepository,
@@ -819,8 +821,8 @@ class SeriesController extends AbstractController
             'tv' => $tv,
 //            'dayOffset' => $dayOffset,
             'userSeries' => $userSeries,
-//            'providers' => $providers,
-//            'schedules' => $schedules,
+            'providers' => $providers,
+            'schedules' => $schedules,
         ]);
         if ($tv) {
             $twig = "series/show.html.twig";
@@ -912,6 +914,7 @@ class SeriesController extends AbstractController
         $id = $data['id'];
         $country = $data['country'];
         $time = $data['time'];
+        $provider = $data['provider'];
         $dayArr = array_map(function ($d) {
             return intval($d);
         }, $data['days']);
@@ -923,6 +926,7 @@ class SeriesController extends AbstractController
         $seriesBroadcastSchedule->setAirAt((new DateTimeImmutable())->setTime($hour, $minute));
         $seriesBroadcastSchedule->setCountry($country);
         $seriesBroadcastSchedule->setDaysOfWeek($dayArr);
+        $seriesBroadcastSchedule->setProviderId($provider);
         $this->seriesBroadcastScheduleRepository->save($seriesBroadcastSchedule);
 
         return $this->json([
@@ -2141,9 +2145,20 @@ class SeriesController extends AbstractController
                 $userLastNextEpisode = null;
             }
 
+            $providerId = $schedule->getProviderId();
+            dump($providerId);
+            if ($providerId) {
+                $provider = $this->providerRepository->findOneBy(['providerId' => $providerId]);
+                $providerName = $provider->getName();
+                $providerLogo = $provider->getLogoPath() ? $this->imageConfiguration->getUrl('logo_sizes', 2) . $provider->getLogoPath() : null;
+            }
+
             $schedules[] = [
                 'id' => $schedule->getId(),
                 'airAt' => $airAt->format('H:i'),
+                'providerId' => $providerId,
+                'providerName' => $providerName ?? null,
+                'providerLogo' => $providerLogo ?? null,
                 'targetTS' => $targetTS,
                 'before' => $target ? $now->diff($target) : null,
                 'dayList' => $scheduleDayOfWeek,

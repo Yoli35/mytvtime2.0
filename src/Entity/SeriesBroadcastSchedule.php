@@ -32,6 +32,9 @@ class SeriesBroadcastSchedule
     #[ORM\Column(type: 'json')]
     private array $daysOfWeek = [];
 
+    #[ORM\Column(nullable: true)]
+    private ?int $providerId = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -93,6 +96,18 @@ class SeriesBroadcastSchedule
     public function setFirstAirDate(DateTimeImmutable $firstAirDate): static
     {
         $this->firstAirDate = $firstAirDate;
+
+        return $this;
+    }
+
+    public function getProviderId(): ?int
+    {
+        return $this->providerId;
+    }
+
+    public function setProviderId(?int $providerId): static
+    {
+        $this->providerId = $providerId;
 
         return $this;
     }

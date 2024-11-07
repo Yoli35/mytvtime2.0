@@ -921,6 +921,18 @@ h2 {
                 font-size: 3rem;
             }
 
+            .provider {
+                height: 3rem;
+                width: 3rem;
+
+                img {
+                    border-radius: .25rem;
+                    height: 3rem;
+                    object-fit: cover;
+                    width: 3rem;
+                }
+            }
+
             .remaining {
                 align-items: center;
                 display: flex;
@@ -977,6 +989,10 @@ h2 {
                                 &:hover, &.active {
                                     border-bottom: 2px solid var(--orange-50);
                                 }
+                            }
+
+                            label:has(select)::after {
+                                top: 20%;
                             }
 
                             label:has(input[type=checkbox]) {
