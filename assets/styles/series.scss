@@ -124,10 +124,11 @@ h2 {
     }
 }
 
-.series-to-start {
+.series-to-start, .series-by-country {
     h2 {
         align-items: center;
         display: flex;
+        gap: 1rem;
         margin-block-start: 3rem;
 
         label {
@@ -135,7 +136,7 @@ h2 {
             display: flex;
             gap: 1rem;
             justify-content: flex-start;
-            margin-inline-start: auto;
+            /*margin-inline-start: auto;*/
 
             input[type="search"] {
                 background-color: var(--orange-30);
@@ -189,6 +190,28 @@ h2 {
             width: 6px;
             z-index: 2;
         }
+
+        .legend {
+            align-items: center;
+            border-radius: .25rem;
+            display: flex;
+            font-size: 1.25rem;
+            justify-content: center;
+            padding-block: .25rem;
+            padding-inline: 1rem;
+
+            &.to-start {
+                background-color: var(--series-to-start);
+            }
+
+            &.up-to-date {
+                background-color: var(--series-up-to-date);
+            }
+
+            &.in-progress {
+                background-color: var(--ardoise-30-alpha-50);
+            }
+        }
     }
 
     .series-group {
@@ -218,6 +241,7 @@ h2 {
 
                             .series-infos {
                                 gap: .5rem;
+                                justify-content: center;
                                 left: .5rem;
                                 right: .5rem;
 
@@ -240,31 +264,49 @@ h2 {
                             border-radius: 0 0 .5rem .5rem;
                             font-size: 1.25rem;
                             font-weight: 300;
-                            line-height: 1em;
+                            line-height: 1.1em;
                             overflow-y: auto;
                             padding-inline: .5rem;
                             text-align: center;
                             text-wrap: balance;
                             width: 15rem;
-
-                            &.by-country {
-                                height: 5rem;
-                            }
-
-                            &.to-start {
-                                background-color: var(--orange-50);
-                                color: var(--orange-90);
-                            }
-
-                            &.up-to-date {
-                                background-color: var(--green-50);
-                                color: var(--green-10);
-                            }
                         }
                     }
 
                     &:has(.name.by-country) {
                         height: 27.5rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.series-by-country {
+    .series-group {
+        .wrapper {
+            .content {
+                .card {
+                    a {
+                        .poster {
+                            .status {
+                                bottom: -0.75rem;
+                            }
+                        }
+
+                        .name {
+                            &.by-country {
+                                height: 5rem;
+                            }
+
+                            &.to-start {
+                                background-color: var(--series-to-start);
+                            }
+
+                            &.up-to-date {
+                                background-color: var(--series-up-to-date);
+                            }
+                        }
                     }
                 }
             }
@@ -1884,7 +1926,7 @@ h2 {
                     align-items: center;
                     background-color: cadetblue;
                     border-radius: .25rem;
-                   /* border: 1px solid var(--green-60);*/
+                    /* border: 1px solid var(--green-60);*/
                     display: flex;
                     flex-wrap: nowrap;
                     gap: .5rem;

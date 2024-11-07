@@ -307,7 +307,19 @@ class SeriesController extends AbstractController
             $s['upToDate'] = $s['watched_aired_episode_count'] == $s['aired_episode_count'];
             return $s;
         }, $this->userSeriesRepository->seriesByCountry($user, $country, $locale, 1, -1));
+        // le tableau $series est trié par date de première diffusion décroissante, mais certaines séries n'ont pas de date de première diffusion.
+        // Ces séries sans date de première diffusion doivent être placées en début de tableau.
+        usort($series, function ($a, $b) {
+            if ($a['final_air_date'] == $b['final_air_date']) return 0;
+            if ($a['final_air_date'] == null) return -1;
+            if ($b['final_air_date'] == null) return 1;
+            return $a['final_air_date'] < $b['final_air_date'] ? 1 : -1;
+        });
+
+
         $tmdbIds = array_column($series, 'tmdb_id');
+
+        dump($series);
 
         return $this->render('series/series-by-country.html.twig', [
             'seriesByCountry' => $series,

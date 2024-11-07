@@ -13,7 +13,11 @@
                 {% endif %}
             {% endif %}
             <div class="series-infos">
-                <div class="air-date" data-title="{{ 'Episode air date'|trans }}">{{ series.final_air_date|format_date('relative_full')|capitalize }}</div>
+                {% if series.final_air_date %}
+                    <div class="air-date" data-title="{{ 'Episode air date'|trans }}">{{ series.final_air_date|format_date('relative_full')|capitalize }}</div>
+                {% else %}
+                    <div class="air-date" data-title="{{ 'First air date'|trans }}">{{ 'No date'|trans }}</div>
+                {% endif %}
             </div>
             {% if series.progress and series.upToDate %}
                 {% if series.progress==100 %}

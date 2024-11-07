@@ -135,7 +135,8 @@ window.addEventListener("DOMContentLoaded", () => {
 // Series & season page
     const seriesIndex = document.querySelector(".series-index");
     const seriesToStart = document.querySelector(".series-to-start");
-    if (seriesIndex || seriesToStart) {
+    const seriesByCountry = document.querySelector(".series-by-country");
+    if (seriesIndex || seriesToStart || seriesByCountry) {
         const index = new Index();
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         index.init(globs);

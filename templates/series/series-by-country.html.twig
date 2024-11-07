@@ -9,10 +9,13 @@
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-    <div class="container-fluid series-to-start">
+    <div class="container-fluid series-by-country">
         {% if seriesByCountry|length %}
             <h2>
                 {{ 'Series by country'|trans }} - {{ country|country_name }} ({{ seriesByCountry|length }})
+                <div class="legend to-start">{{ 'To start'|trans }}</div>
+                <div class="legend in-progress">{{ 'In progress'|trans }}</div>
+                <div class="legend up-to-date">{{ 'Up to date'|trans }}</div>
                 <label for="filter-by-country">
                     <select id="filter-by-country">
                         <option value="">{{ 'All'|trans }}</option>
