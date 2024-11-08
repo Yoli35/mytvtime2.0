@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}my Tv Time → {{ 'Series to start'|trans }}{% endblock %}
+{% block title %}my Tv Time → {{ 'Series by country'|trans }} - {{ country|country_name }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
