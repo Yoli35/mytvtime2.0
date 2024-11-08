@@ -604,6 +604,7 @@
 
                             &.coming-soon {
                                 background-color: cadetblue;
+                                bottom: -.75rem;
                                 color: var(--ardoise-10);
                             }
                         }
@@ -700,13 +701,15 @@
             .episode-block {
                 display: flex;
                 gap: .25rem;
+                margin-inline-end: .5rem;
 
                 > div:first-child {
                     box-shadow: .25rem 0 .5rem .125rem #0000007f;
                 }
 
                 > div:last-child {
-                    margin-inline-start: -3rem;
+                    margin-inline-start: -6rem;
+                    transform: rotate(3deg);
                     z-index: -1;
                 }
             }
