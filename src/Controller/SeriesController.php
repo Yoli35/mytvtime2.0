@@ -1781,26 +1781,48 @@ class SeriesController extends AbstractController
             'localizedNames' => $localizedNames,
         ]);
 
-        $updates = array_map(function ($series) use ($locale, $localizedNames) {
+        $now = $this->now();
+        $tmdbCalls = 0;
+        $updates = [];
+
+        foreach ($dbSeries as $series) {
+            $lastUpdate = $series->getUpdatedAt();
+            $interval = $now->diff($lastUpdate);
+
+            if ($interval->days < 1) {
+                $updates[] = [
+//                    'id' => $series->getId(),
+//                    'name' => $series->getName(),
+//                    'localized_name' => $localizedNames[$series->getId()] ?? null,
+//                    'poster_path' => $series->getPosterPath(),
+                    'updates' => [], // '*** Updated less than 24 hours ago ***'
+                ];
+                continue;
+            }
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale, ['images']), true);
+            $tmdbCalls++;
             if ($tv == null) {
-                return [
+                $updates[] = [
                     'id' => $series->getId(),
                     'name' => $series->getName(),
                     'localized_name' => $localizedNames[$series->getId()] ?? null,
                     'poster_path' => $series->getPosterPath(),
                     'updates' => ['*** Series not found ***'],
                 ];
+                continue;
             }
             $updateSeries = $this->updateSeries($series, $tv);
             $update = $updateSeries[0]->getUpdates();
-            return [
+            $updates[] =[
                 'id' => $series->getId(),
                 'name' => $series->getName(),
                 'localized_name' => $localizedNames[$series->getId()] ?? null,
                 'poster_path' => $series->getPosterPath(),
                 'updates' => $update];
-        }, $dbSeries);
+            $series->setUpdatedAt($now);
+            $this->seriesRepository->save($series);
+        }
+        $this->seriesRepository->flush();
 
         dump([
             'tmdbIds' => $tmdbIds,
@@ -1812,6 +1834,7 @@ class SeriesController extends AbstractController
             'ok' => true,
             'updates' => $updates,
             'dbSeriesCount' => $dbSeriesCount,
+            'tmdbCalls' => $tmdbCalls,
         ]);
     }
 

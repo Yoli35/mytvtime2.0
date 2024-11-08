@@ -33,6 +33,11 @@ class SeriesRepository extends ServiceEntityRepository
         }
     }
 
+    public function flush(): void
+    {
+        $this->em->flush();
+    }
+
     public function search(User $user, string $query, ?int $firstAirDateYear, int $page = 1): array
     {
         $userId = $user->getId();
