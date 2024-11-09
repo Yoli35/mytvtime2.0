@@ -386,7 +386,7 @@ class SeriesController extends AbstractController
 
     }
 
-    public function handleSearch($simpleSeriesSearch): array
+    public function handleSearch($simpleSeriesSearch): mixed
     {
         $query = $simpleSeriesSearch->getQuery();
         $language = $simpleSeriesSearch->getLanguage();
@@ -1964,7 +1964,7 @@ class SeriesController extends AbstractController
                 if (!$this->inImages($img['file_path'], $seriesImages)) {
                     $seriesImage = new SeriesImage($series, $dbType, $img['file_path']);
                     $this->seriesImageRepository->save($seriesImage, true);
-                    $series->addUpdate($this->translator->trans($dbType . ' added'));
+                    $series->addUpdate($this->translator->trans(ucfirst($dbType) . ' added'));
                 }
             }
             $tv['images'][$type] = array_map(function ($image) use ($type, $sizes, $imageConfigType) {
