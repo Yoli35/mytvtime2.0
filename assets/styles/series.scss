@@ -124,23 +124,25 @@ h2 {
 
         .banner-mask {
             border-radius: .25rem;
-            height: 5rem;
-            left: 5rem;
+            height: 8rem;
+            left: 2rem;
             overflow: hidden;
             position: absolute;
-            right: -1px;
-            top: -1px;
+            right: 0;
+            top: 0;
 
             .banner {
                 background-color: var(--up-to-date-series);
                 color: var(--green-10);
+                font-size: 1.25rem;
                 font-weight: 600;
-                padding: .125rem;
+                padding: .25rem;
                 position: absolute;
-                right: -3rem;
-                top: 1rem;
+                right: -2.25rem;
+                top: 1.75rem;
                 transform: rotate(45deg) translate(0px,-1px);
                 width: 10rem;
+                z-index: 1;
 
                 &.premiere {
                     background-color: var(--orange-50);
