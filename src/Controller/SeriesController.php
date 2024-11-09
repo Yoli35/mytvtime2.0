@@ -1809,6 +1809,8 @@ class SeriesController extends AbstractController
                     'poster_path' => $series->getPosterPath(),
                     'updates' => ['*** Series not found ***'],
                 ];
+                $series->setUpdatedAt($now);
+                $this->seriesRepository->save($series);
                 continue;
             }
             $updateSeries = $this->updateSeries($series, $tv);
