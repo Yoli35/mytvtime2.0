@@ -140,7 +140,7 @@ h2 {
                 position: absolute;
                 right: -2.25rem;
                 top: 1.75rem;
-                transform: rotate(45deg) translate(0px,-1px);
+                transform: rotate(45deg) translate(0px, -1px);
                 width: 10rem;
                 z-index: 1;
 
@@ -1460,6 +1460,29 @@ h2 {
             }
         }
     }
+}
+
+#series-season.series-show {
+    .user-actions:has(+ .quick-episodes) {
+        justify-content: center;
+
+        .watch-links {
+            margin-inline-end: unset;
+        }
+    }
+
+    .watch-links {
+        background-color: var(--orange-50);
+        border-radius: .25rem;
+        color: hsl(0, 0%, 5%);
+        padding-block: .125rem;
+        padding-inline: .75rem .125rem;
+
+        .label {
+            font-weight: 600;
+    }
+}
+
 }
 
 .add-backdrop-dialog {
