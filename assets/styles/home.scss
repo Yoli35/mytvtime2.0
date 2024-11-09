@@ -669,6 +669,11 @@
                                 transform: rotate(45deg) translate(0px,-1px);
                                 width: 10rem;
 
+                                &.premiere {
+                                    background-color: var(--orange-50);
+                                    color: var(--orange-90);
+                                }
+
                                 &.ended {
                                     background-color: var(--that-s-all-folks);
                                     color: var(--green-10);

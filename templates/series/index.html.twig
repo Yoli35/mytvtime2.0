@@ -26,6 +26,11 @@
                             <div class="day-of-week">{{ series.date|format_datetime(pattern: "EEEE")| capitalize }}</div>
                             <div class="day-of-mouth">{{ dayOfMonth|raw }}</div>
                             <div class="month">{{ series.date|format_datetime(pattern: "MMMM") }}</div>
+                            {% if episodesOfTheDay|reduce((carry, s) => carry + (s.0.episode_number is defined and s.0.episode_number == 1)) %}
+                                <div class="banner-mask">
+                                    <div class="banner premiere">{{ 'Premiere'|trans }}</div>
+                                </div>
+                            {% endif %}
                         </div>
                         {% for series in episodesOfTheDay %}
                             {#                            {{ include('_blocks/series/_card.html.twig', {series: series|first}) }} #}
@@ -81,6 +86,11 @@
                                     <div class="day-of-week">{{ date|format_datetime(pattern: "EEEE")|capitalize }}</div>
                                     <div class="day-of-mouth">{{ dayOfMonth|raw }}</div>
                                     <div class="month">{{ date|format_datetime(pattern: "MMMM") }}</div>
+                                    {% if seriesOfTheWeek|filter(s => s.0.date == date)|reduce((carry, s) => carry + (s.0.episode_number is defined and s.0.episode_number == 1)) %}
+                                        <div class="banner-mask">
+                                            <div class="banner premiere">{{ 'Premiere'|trans }}</div>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             {% endif %}
                             {% if series|length == 1 %}

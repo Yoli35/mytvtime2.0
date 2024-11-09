@@ -12,6 +12,7 @@
 {% else %}
     {% set upToDate = 0 %}
 {% endif %}
+{% set premiere = series.episode_number is defined and series.episode_number == 1 %}
 <div class="card">
     {% if series.tmdb is defined %}
         {% set url = path('app_series_tmdb', {'id': series.id, 'slug': series.slug|length  ?series.slug : 'no-slug' }) %}
@@ -66,6 +67,11 @@
             {% if upToDate %}
                 <div class="up-to-date-mask">
                     <div class="up-to-date-banner{% if ended %} ended{% endif %}">{{ title }}</div>
+                </div>
+            {% endif %}
+            {% if premiere %}
+                <div class="up-to-date-mask">
+                    <div class="up-to-date-banner premiere">{{ 'Premiere'|trans }}</div>
                 </div>
             {% endif %}
             {% if series.progress is defined %}

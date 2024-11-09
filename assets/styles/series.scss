@@ -121,6 +121,38 @@ h2 {
             line-height: 1.1em;
             z-index: 1;
         }
+
+        .banner-mask {
+            border-radius: .25rem;
+            height: 5rem;
+            left: 5rem;
+            overflow: hidden;
+            position: absolute;
+            right: -1px;
+            top: -1px;
+
+            .banner {
+                background-color: var(--up-to-date-series);
+                color: var(--green-10);
+                font-weight: 600;
+                padding: .125rem;
+                position: absolute;
+                right: -3rem;
+                top: 1rem;
+                transform: rotate(45deg) translate(0px,-1px);
+                width: 10rem;
+
+                &.premiere {
+                    background-color: var(--orange-50);
+                    color: var(--orange-90);
+                }
+
+                /*&.ended {
+                    background-color: var(--that-s-all-folks);
+                    color: var(--green-10);
+                }*/
+            }
+        }
     }
 }
 
