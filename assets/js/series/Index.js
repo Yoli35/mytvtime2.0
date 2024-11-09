@@ -12,6 +12,11 @@ export class Index {
         this.init = this.init.bind(this);
         this.startDate = new Date();
         this.flashMessage = new FlashMessage();
+        this.lang = document.querySelector('html').getAttribute('lang');
+        this.translations = {
+            'fr': {'more': 'et %d de plus', 'update': 'Mise à jour', 'success': 'Succès', 'check_count': 'Vérifications: %d / %d'},
+            'en': {'more': 'and %d more', 'update': 'Update', 'success': 'Success', 'check_count': 'Checks: %d / %d'}
+        };
     }
 
     init(globs) {
@@ -54,17 +59,29 @@ export class Index {
             const updates = data['updates'];
             const checkCount = data['dbSeriesCount'];
             const tmdbCalls = data['tmdbCalls'];
-            this.flashMessage.add('success', 'Check count: ' + tmdbCalls + ' / ' + checkCount);
-            updates.forEach((series) => {
+            // this.flashMessage.add('success', 'Check count: ' + tmdbCalls + ' / ' + checkCount);
+            this.flashMessage.add('success', this.translations[this.lang]['check_count'].replace('%d', tmdbCalls).replace('%d', checkCount));
+                updates.forEach((series) => {
                 const updates = series['updates'];
                 if (updates.length > 0) {
                     // On crée un nouveau flash message
                     console.log('Adding flash message for ', series['name']);
+                    let content;
+                    if (updates.length === 1) {
+                        content = updates[0];
+                    } else {
+                        // content = updates[0] + ' and ' + (updates.length - 1) + ' more';
+                        content = updates[0] + ' ' + this.translations[this.lang]['more'].replace('%d', updates.length - 1) + '<ul>';
+                        for (let i = 1; i < updates.length; i++) {
+                            content += '<li>' + updates[i] + '</li>';
+                        }
+                        content += '</ul>';
+                    }
                     this.flashMessage.add('update', {
                         name: series['name'],
                         localized_name: series['localized_name'],
                         poster_path: series['poster_path'],
-                        content: updates.map((update) => update).join('<br>'),
+                        content: content,
                     });
                 }
             });

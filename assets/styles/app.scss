@@ -1637,7 +1637,7 @@ dialog {
     position: absolute;
     top: -4rem;
     transition: opacity 300ms ease-in-out;
-    z-index: 10;
+    z-index: 510;
 
     &.show {
         opacity: 1;
@@ -1798,10 +1798,12 @@ dialog {
             }
 
             .infos {
-                align-items: center;
+                align-items: flex-start;
                 display: flex;
                 flex-direction: column;
                 gap: .25rem;
+                height: 5rem;
+                overflow-y: auto;
                 padding-inline-end: 3rem;
 
                 .name {
@@ -1810,6 +1812,11 @@ dialog {
 
                 .content {
                     font-weight: 100;
+
+                    ul {
+                        list-style: circle inside;
+                        padding-inline-start: 1rem;
+                    }
                 }
             }
         }

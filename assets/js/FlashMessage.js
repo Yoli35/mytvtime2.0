@@ -53,6 +53,7 @@ export class FlashMessage {
             }
             infosDiv.appendChild(nameDiv);
             const contentDiv = document.createElement('div');
+            contentDiv.classList.add('content');
             contentDiv.innerHTML = message.content;
             infosDiv.appendChild(contentDiv);
             flashMessageDiv.appendChild(infosDiv);
