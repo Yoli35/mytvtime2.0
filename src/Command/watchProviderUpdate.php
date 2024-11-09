@@ -29,7 +29,6 @@ class watchProviderUpdate extends Command
 
     public function __construct(
         private readonly DateService             $dateService,
-        private readonly EntityManagerInterface  $entityManager,
         private readonly TMDBService             $tmdbService,
         private readonly WatchProviderRepository $watchProviderRepository,
     )
@@ -51,6 +50,7 @@ class watchProviderUpdate extends Command
 
         $newCount = 0;
         $updatedCount = 0;
+        $modifiedProviderCountries = [];
         foreach ($tvProviders['results'] as $tvProvider) {
             $this->io->write(sprintf('Provider (%d): %s', $tvProvider['provider_id'], $tvProvider['provider_name']));
 
@@ -64,7 +64,15 @@ class watchProviderUpdate extends Command
                 $watchProvider->setProviderName($tvProvider['provider_name']);
                 $watchProvider->setLogoPath($tvProvider['logo_path']);
                 $watchProvider->setDisplayPriority($tvProvider['display_priority']);
-                $watchProvider->setDisplayPriorities($tvProvider['display_priorities']);
+                $tvCountries = array_keys($tvProvider['display_priorities']);
+                $dbCountries = array_keys($watchProvider->getDisplayPriorities());
+                // Differences between old ($dbCountries) and new ($tvCountries) countries
+                $diff = array_diff($dbCountries, $tvCountries);
+                if (!empty($diff)) {
+                    $this->io->write(' - Countries removed: ' . implode(', ', $diff));
+                    $modifiedProviderCountries[] = sprintf('Provider (%d): %s - Countries removed: %s', $tvProvider['provider_id'], $tvProvider['provider_name'], implode(', ', $diff));
+                }
+                //$watchProvider->setDisplayPriorities($tvProvider['display_priorities']);
                 $this->io->writeln(' - Updated');
                 $updatedCount++;
             }
@@ -75,7 +83,7 @@ class watchProviderUpdate extends Command
         }
         $this->watchProviderRepository->flush();
 
-        $this->commandEnd($newCount, $updatedCount);
+        $this->commandEnd($newCount, $updatedCount, $modifiedProviderCountries);
 
         return Command::SUCCESS;
     }
@@ -89,11 +97,14 @@ class watchProviderUpdate extends Command
         $this->t0 = microtime(true);
     }
 
-    public function commandEnd(int $newCount, int $updatedCount): void
+    public function commandEnd(int $newCount, int $updatedCount, array $modifiedProviderCountries): void
     {
         $this->io->newLine(2);
         $this->io->writeln(sprintf('Providers added: %d', $newCount));
         $this->io->writeln(sprintf('Providers updated: %d', $updatedCount));
+        foreach ($modifiedProviderCountries as $modifiedProviderCountry) {
+            $this->io->writeln($modifiedProviderCountry);
+        }
 
         $t1 = microtime(true);
         $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
