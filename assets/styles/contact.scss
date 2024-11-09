@@ -1,6 +1,7 @@
 .contact, .profile, .series-search, .series-show {
     margin-block: auto;
     margin-inline: auto;
+    width: min(60rem, 80%);
 
     h1 {
         color: var(--ardoise-10);
