@@ -191,25 +191,33 @@ h2 {
             z-index: 2;
         }
 
-        .legend {
-            align-items: center;
-            border-radius: .25rem;
+        .legends {
+            background-color: var(--ardoise-90);
+            border-radius: .5rem;
             display: flex;
-            font-size: 1.25rem;
-            justify-content: center;
-            padding-block: .25rem;
-            padding-inline: 1rem;
+            gap: .25rem;
+            padding: .25rem;
 
-            &.to-start {
-                background-color: var(--series-to-start);
-            }
+            .legend {
+                align-items: center;
+                border-radius: .25rem;
+                display: flex;
+                font-size: 1.25rem;
+                justify-content: center;
+                padding-block: .25rem;
+                padding-inline: 1rem;
 
-            &.up-to-date {
-                background-color: var(--series-up-to-date);
-            }
+                &.to-start {
+                    background-color: var(--series-to-start);
+                }
 
-            &.in-progress {
-                background-color: var(--ardoise-30-alpha-50);
+                &.up-to-date {
+                    background-color: var(--series-up-to-date);
+                }
+
+                &.in-progress {
+                    background-color: var(--ardoise-30-alpha-50);
+                }
             }
         }
     }
@@ -2587,8 +2595,6 @@ h2 {
 
 /* Rechercher une série */
 .series-search {
-    width: 100%;
-
     .series-search-result {
         align-items: center;
         color: var(--ardoise-10);
@@ -2848,6 +2854,7 @@ h2 {
                     justify-content: center;
                     padding-inline: .5rem;
                     text-align: center;
+                    text-wrap: balance;
                     width: 15rem;
                 }
             }

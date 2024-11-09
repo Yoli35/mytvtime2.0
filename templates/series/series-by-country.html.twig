@@ -13,9 +13,11 @@
         {% if seriesByCountry|length %}
             <h2>
                 {{ 'Series by country'|trans }} - {{ country|country_name }} ({{ seriesByCountry|length }})
-                <div class="legend to-start">{{ 'To start'|trans }}</div>
-                <div class="legend in-progress">{{ 'In progress'|trans }}</div>
-                <div class="legend up-to-date">{{ 'Up to date'|trans }}</div>
+                <div class="legends">
+                    <div class="legend to-start" data-title="{{ 'To start'|trans }}">{{ ux_icon('ion:battery-dead', {height: '16px', width: '16px'}) }}</div>
+                    <div class="legend in-progress" data-title="{{ 'In progress'|trans }}">{{ ux_icon('ion:battery-half', {height: '16px', width: '16px'}) }}</div>
+                    <div class="legend up-to-date" data-title="{{ 'Up to date'|trans }}">{{ ux_icon('ion:battery-full', {height: '16px', width: '16px'}) }}</div>
+                </div>
                 <label for="filter-by-country">
                     <select id="filter-by-country">
                         <option value="">{{ 'All'|trans }}</option>
