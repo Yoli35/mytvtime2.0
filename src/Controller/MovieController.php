@@ -34,7 +34,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route('/{_locale}/movie', name: 'app_movie_', requirements: ['_locale' => 'fr|en'])]
+#[Route('/{_locale}/movie', name: 'app_movie_', requirements: ['_locale' => 'fr|en|kr'])]
 class MovieController extends AbstractController
 {
     public function __construct(

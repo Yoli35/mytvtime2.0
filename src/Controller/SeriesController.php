@@ -76,7 +76,7 @@ use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
 
-#[Route('/{_locale}/series', name: 'app_series_', requirements: ['_locale' => 'fr|en|de|es'])]
+#[Route('/{_locale}/series', name: 'app_series_', requirements: ['_locale' => 'fr|en|kr'])]
 class SeriesController extends AbstractController
 {
     public function __construct(

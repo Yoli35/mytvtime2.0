@@ -14,7 +14,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route('/{_locale}/contact', name: 'app_contact_', requirements: ['_locale' => 'fr|en|de|es'])]
+#[Route('/{_locale}/contact', name: 'app_contact_', requirements: ['_locale' => 'fr|en|kr'])]
 class ContactController extends AbstractController
 {
     public function __construct(

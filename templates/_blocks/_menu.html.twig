@@ -374,6 +374,7 @@
             <div class="separation">{{ 'Language'|trans }}</div>
             <a href="{{ path(route, route_params|merge({'_locale': 'fr'})) ~ p }}"{% if app.locale=='fr' %} class="active"{% endif %}>{{ 'French'|trans }}</a>
             <a href="{{ path(route, route_params|merge({'_locale': 'en'})) ~ p }}"{% if app.locale=='en' %} class="active"{% endif %}>{{ 'English'|trans }}</a>
+            <a href="{{ path(route, route_params|merge({'_locale': 'kr'})) ~ p }}"{% if app.locale=='kr' %} class="active"{% endif %}>{{ 'Korean'|trans }}</a>
         </div>
     </div>
 </nav>

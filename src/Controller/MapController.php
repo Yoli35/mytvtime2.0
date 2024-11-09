@@ -15,7 +15,7 @@ use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
 
-#[Route('/{_locale}/map', name: 'app_map_', requirements: ['_locale' => 'fr|en'])]
+#[Route('/{_locale}/map', name: 'app_map_', requirements: ['_locale' => 'fr|en|kr'])]
 class MapController extends AbstractController
 {
     public function __construct(

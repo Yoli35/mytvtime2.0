@@ -9,7 +9,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    #[Route('/{_locale}/login', name: 'app_login', requirements: ['locale' => 'fr|en|de|es'], methods: ['GET', 'POST'])]
+    #[Route('/{_locale}/login', name: 'app_login', requirements: ['locale' => 'fr|en|kr'], methods: ['GET', 'POST'])]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         // get the login error if there is one

@@ -1,0 +1,503 @@
+#Admin
+Users: 사용자
+Providers: 제공자
+Dashboard: 대시보드
+more notifications: 더 많은 알림
+
+# Home
+A series by name/year: 이름/년도로 시리즈
+A series: 시리즈
+Add to pinned series: 고정된 시리즈에 추가
+Admin: 관리자
+All my series: 내 시리즈 전체
+Among your series: 당신의 시리즈 중
+Automatic: 자동
+Choose a username: 사용자 이름을 선택하세요
+Coming soon: 곧 출시됩니다
+Confirm password: 비밀번호 확인
+Connect: 연결
+Country: 국가
+Dark: 어두운
+Day count: 일 수
+Device: 장치
+Disconnect: 연결 해제
+Email address: 이메일 주소
+Email: 이메일
+English: 영어
+Episode history (%d): 지난 %d 일 동안의 에피소드 기록
+Episode history (%h): 지난 %h 시간 동안의 에피소드 기록
+Episodes detail: 에피소드 상세
+Episodes of the week: 이번 주의 에피소드
+Episodes to watch: 볼 에피소드
+French: 프랑스어
+Hide preview: 미리보기 숨기기
+Home: 홈
+I agree to the terms and conditions: 약관에 동의합니다
+In production: 제작 중
+In The Movie Database: 무비 데이터베이스에
+Korean: 한국어
+Last 14 days: 지난 14일
+Last 24 hours: 지난 24시간
+Last 30 days: 지난 30일
+Last 7 days: 지난 7일
+Last added series: 최근 추가된 시리즈
+Latest series added: 최근 추가된 시리즈
+Light: 밝은
+My account: 내 계정
+My networks: 내 네트워크
+My providers: 내 제공자
+New episode date: 새로운 에피소드 날짜
+New episode: 새로운 에피소드
+New series date: 새로운 시리즈 날짜
+No backdrop: 배경 없음
+Options: 옵션
+Password: 비밀번호
+Pinned series: 고정된 시리즈
+Preferred language: 선호하는 언어
+Rating: 평가
+Re-type your password: 비밀번호 다시 입력
+Recent movies: 최근 영화
+Recent series: 최근 시리즈
+Register: 등록
+Remember me: 기억하기
+Remove from pinned series: 고정된 시리즈에서 제거
+Search among your series: 당신의 시리즈 중 검색
+Series history: 시리즈 기록
+Show preview: 미리보기 보기
+Sign in: 로그인
+Similar series: 비슷한 시리즈
+Theme: 테마
+Timezone: 시간대
+Unknown: 알 수 없음
+User networks: 사용자 네트워크
+User providers: 사용자 제공자
+User: 사용자
+Username: 사용자 이름
+Your country will be used to determine the correct time for TV shows and movies.: 귀하의 국가는 TV 프로그램 및 영화의 올바른 시간을 결정하는 데 사용됩니다.
+Your preferred language for series descriptions and reviews. You can change this later.: 시리즈 설명 및 리뷰를 위한 선호하는 언어입니다. 나중에 변경할 수 있습니다.
+Your series: 당신의 시리즈
+Your timezone will be used to determine the correct time for TV shows and movies.: 귀하의 시간대는 TV 프로그램 및 영화의 올바른 시간을 결정하는 데 사용됩니다.
+remaining episode to see: 볼 남은 에피소드
+remaining episodes to see: 볼 남은 에피소드
+series: 시리즈
+seriess: 시리즈
+
+#Days of the week
+Days of the week: 요일
+Monday: 월요일
+Tuesday: 화요일
+Wednesday: 수요일
+Thursday: 목요일
+Friday: 금요일
+Saturday: 토요일
+Sunday: 일요일
+
+# All my series
+Filters: 필터
+Show / hide filter options: 필터 옵션 표시/숨기기
+Pages: 페이지
+Show / hide pages: 페이지 표시/숨기기
+My series: 내 시리즈
+Number of elements per page: 페이지당 요소 수
+Series started: 시작된 시리즈
+Watched series: 본 시리즈
+Yes: 예
+No: 아니요
+All: 모두
+Sort: 정렬
+Order: 순서
+Descending: 내림차순
+Ascending: 오름차순
+Number of element per page: 페이지당 요소 수
+Default: 기본값
+First air date: 첫 방송일
+Last series watched: 마지막으로 본 시리즈
+Date added: 추가된 날짜
+Episode air date: 에피소드 방송일
+Next episode: 다음 에피소드
+remaining episode: 남은 에피소드
+remaining episodes: 남은 에피소드
+Series to start: 시작할 시리즈
+
+# Series Show
+1 episode seen: 1 에피소드 본
+A real binger!: 진정한 중독자!
+A real marathoner!: 진정한 마라토너!
+Add a localized overview: 지역화된 개요 추가
+Add a watch link: 시청 링크 추가
+Add an additional overview: 추가 개요 추가
+Add this series to your watchlist: 이 시리즈를 시청 목록에 추가
+Add to favorites: 즐겨찾기에 추가
+Add: 추가
+Additional image: 추가 이미지
+Additional overviews for the series: 시리즈에 대한 추가 개요
+Additional overviews: 추가 개요
+After tomorrow: 모레 이후
+Air date: 방송일
+All episodes seen: 모든 에피소드 본
+Are you sure you want to delete this overview?: 이 개요를 삭제하시겠습니까?
+Available: 사용 가능
+Back to series: 시리즈로 돌아가기
+Back to the series page: 시리즈 페이지로 돌아가기
+Back to top: 맨 위로
+Backdrop added: 배경 추가됨
+Backdrop updated: 배경 업데이트됨
+Broadcast delay: 방송 지연
+Cancel rating: 평가 취소
+Canceled: 취소됨
+Cast: 캐스트
+Choose a device: 장치 선택
+Choose a provider: 제공자 선택
+Click to select, then paste your overview.: 선택하려면 클릭한 다음 개요를 붙여넣으세요.
+Continuing: 계속 중
+Copy this watch link: 이 시청 링크 복사
+Crew: 스텝
+Delay in days: 일별 지연
+Delay: 지연
+Delete this watch link: 이 시청 링크 삭제
+Delete: 삭제
+Desktop: 데스크탑
+Drag and drop a file or click to browse: 파일을 끌어다 놓거나 클릭하여 찾아보세요
+Drop your file here: 파일을 여기에 놓으세요
+Drop your images files here: 이미지 파일을 여기에 놓으세요
+Edit this watch link: 이 시청 링크 편집
+Edit: 편집
+Ended: 종료됨
+Episode: 에피소드
+Episode of the day: 오늘의 에피소드
+Episodes of the day: 오늘의 에피소드
+Episodes: 에피소드
+First air date updated: 첫 방송일 업데이트됨
+Give a rating: 평가하기
+In Production: 제작 중
+In progress: 진행 중
+Key facts: 주요 사실
+Laptop: 노트북
+Last episode to air: 마지막 방송 에피소드
+Last episode watched: 마지막으로 본 에피소드
+Last seen: 마지막으로 본
+Last to air: 마지막 방송
+Last to watch: 마지막으로 볼
+Last watched series: 마지막으로 본 시리즈
+Localized name: 지역화된 이름
+Localized overviews for the series: 시리즈에 대한 지역화된 개요
+Localized overviews: 지역화된 개요
+Logo added: 로고 추가됨
+Mark this episode as seen: 이 에피소드를 본 것으로 표시
+Mobile: 모바일
+Name updated: 이름 업데이트됨
+Network: 네트워크
+Networks: 네트워크
+New status: 새로운 상태
+Next episode air date updated: 다음 에피소드 방송일 업데이트됨
+Next episode to air: 다음 방송 에피소드
+Next episode to watch: 다음으로 볼 에피소드
+No date: 날짜 없음
+No date yet: 아직 날짜 없음
+No episode seen: 에피소드 없음
+No picture: 사진 없음
+No poster: 포스터 없음
+Not watched yet: 아직 보지 않음
+Now: 지금
+Number of episodes has changed: 에피소드 수가 변경되었습니다
+Original Country: 원본 국가
+Original language: 원본 언어
+Original name updated: 원본 이름 업데이트됨
+Original name: 원본 이름
+Overview for the series: 시리즈 개요
+Overview updated: 개요 업데이트됨
+Overview: 개요
+Paste your translation here: 번역을 여기에 붙여넣으세요
+Pilot: 시리즈 프리미어
+Planned: 계획됨
+Poster added: 포스터 추가됨
+Poster updated: 포스터 업데이트됨
+Provider: 제공자
+Remove from favorites: 즐겨찾기에서 제거
+Remove this series from your watchlist: 이 시리즈를 시청 목록에서 제거
+Remove: 제거
+Returning Series: 돌아오는 시리즈
+Save: 저장
+Season: 시즌
+Seasons: 시즌
+See all: 모두 보기
+See on Google: Google에서 보기
+Select a provider: 제공자 선택
+Select a source: 소스 선택
+Series added to your watchlist: 시리즈가 시청 목록에 추가되었습니다
+Series airing this week: 이번 주 방영되는 시리즈
+Series already in your watchlist: 이미 시청 목록에 있는 시리즈
+Series by country: 국가별 시리즈
+Series finale: 시리즈 종영
+Series in progress: 진행 중인 시리즈
+Series not found on The Movie Database: 무비 데이터베이스에서 시리즈를 찾을 수 없습니다
+Series of the day: 오늘의 시리즈
+Series of the next 7 days: 다음 7일의 시리즈
+Series: 시리즈
+Since: 이후
+Slug updated: 슬러그 업데이트됨
+Source: 소스
+Status: 상태
+Suggest a localized name: 지역화된 이름 제안
+Suggest a name: 이름 제안
+Suggest a title: 제목 제안
+TBA: 발표 예정
+Tablet: 태블릿
+Television: 텔레비전
+That's all!: 이것으로 끝!
+That's all, Folks!: 이것으로 끝입니다!
+This field is required: 이 필드는 필수입니다
+Time: 시간
+To be continued: 계속될 예정
+To start: 시작할 예정
+Today: 오늘
+Tomorrow: 내일
+Translate: 번역
+Two days ago: 이틀 전
+URL: URL
+Up to date!: 최신 상태!
+Updates: 업데이트
+Upload it!: 업로드하세요!
+Up to date: 최신 상태
+Vote: 투표
+Watch links: 시청 링크
+Watch on: 시청
+Watched time times: time번 본
+Watched again: 다시 본
+Where to buy: 어디서 구매할까요
+Where to rent: 어디서 대여할까요
+Where to watch: 어디서 볼까요
+Yesterday: 어제
+available: 사용 가능
+day: 일
+days: 일
+episode: 에피소드
+episodes seen: 에피소드 본
+episodes: 에피소드
+hour: 시간
+hours: 시간
+image: 이미지
+images: 이미지
+in: 에
+locations: 위치
+minute: 분
+minutes: 분
+season: 시즌
+second: 초
+seconds: 초
+since: 이후
+star: 별
+stars: 별
+visit: 방문
+visits: 방문
+x star: x 별
+x stars: x 별
+
+#Search
+Search: 검색
+Search a series: 시리즈 검색
+Advanced search: 고급 검색
+Page: 페이지
+Language: 언어
+First air date year: 첫 방송일 년도
+Name of the series: 시리즈 이름
+Search results: 검색 결과
+No results: 결과 없음
+results: 결과
+Go to page: 페이지로 이동
+After: 이후
+Before: 이전
+Origin country: 원산지 국가
+Monetization type: 수익화 유형
+Flatrate: 정액제
+Watch providers: 시청 제공자
+Keywords: 키워드
+Start tapping to search: 검색을 시작하세요
+And: 그리고
+Or: 또는
+All keywords: 모든 키워드
+Any keywords: 모든 키워드
+Runtime less than: 런타임이 다음보다 짧은
+Runtime greater than: 런타임이 다음보다 긴
+Free: 무료
+Rent: 대여
+Buy: 구매
+Ads: 광고
+Documentary: 다큐멘터리
+News: 뉴스
+Miniseries: 미니시리즈
+Reality: 리얼리티
+Scripted: 스크립트
+Talk Show: 토크쇼
+Video: 비디오
+Type: 유형
+Sort by: 정렬 기준
+Popularity descending: 인기도 내림차순
+Popularity ascending: 인기도 오름차순
+Vote average descending: 평균 투표 내림차순
+Vote average ascending: 평균 투표 오름차순
+First air date descending: 첫 방송일 내림차순
+First air date ascending: 첫 방송일 오름차순
+Original name descending: 원본 이름 내림차순
+Original name ascending: 원본 이름 오름차순
+Name descending: 이름 내림차순
+Name ascending: 이름 오름차순
+Vote count descending: 투표 수 내림차순
+Vote count ascending: 투표 수 오름차순
+
+# People
+People: 사람
+Personal Informations: 개인 정보
+Known for Department: 부서로 알려진
+Acting: 연기
+Known appearances: 알려진 출연
+Gender: 성별
+Female: 여성
+Male: 남성
+Birthday: 생일
+old: 세
+Place of Birth: 출생지
+Also known as: 다른 이름
+Known for: 알려진
+Movie: 영화
+Serie: 시리즈
+tv: TV
+movie: 영화
+Self: 자신
+Himself: 그 자신
+Herself: 그 여자 자신
+Homepage: 홈페이지
+as.job: 로서
+Directing: 감독
+Production: 제작
+Writing: 작가
+Go: 가기
+Lists: 목록
+items: 항목
+#job.Adaptation.he: 적응
+#job.Animation.she: 애니메이션
+#job.Assistant Director.he:
+#job.Associate Producer.he:
+#job.Associate Producer.she:
+#job.Author.he:
+#job.Book.he:
+#job.Characters.he:
+#job.Cinematography.he:
+#job.Co-Executive Producer.he:
+#job.Co-Producer.he:
+#job.Co-Producer.she:
+#job.Co-Writer.he:
+#job.Comic Book.he:
+#job.Conductor.he:
+#job.Creative Producer.he:
+#job.Creator.he:
+#job.Creator.she:
+#job.Development Producer.he:
+#job.Development Producer.she:
+#job.Dialogue.he:
+#job.Director of Photography.he:
+#job.Director.he:
+#job.Director.she:
+#job.Documentation & Support.he:
+#job.Documentation & Support.she:
+#job.Editor.he:
+#job.Executive Co-Producer.he:
+#job.Executive Co-Producer.she:
+#job.Executive Producer.he:
+#job.Executive Producer.she:
+#job.Idea.he:
+#job.Idea.she:
+#job.Lighting Technician.he:
+#job.Music Director.he:
+#job.Music Supervisor.he:
+#job.Music.he:
+#job.Novel.he:
+#job.Original Music Composer.he:
+#job.Original Story.he:
+#job.Presenter.he:
+#job.Producer.he:
+#job.Producer.she:
+#job.Production Assistant.he:
+#job.Production Design.he:
+#job.Production Executive.he:
+#job.Production Sound Mixer.he:
+#job.Screenplay.he:
+#job.Screenstory.he:
+#job.Script.he:
+#job.Songs.he:
+#job.Songs.she:
+#job.Sound Mixer.he:
+#job.Story.he:
+#job.Stunts.he:
+#job.Teleplay.he:
+#job.Thanks.he:
+#job.Thanks.she:
+#job.Writer.he:
+#job.Writer.she:
+
+# Contact
+Contact: 연락
+Name: 이름
+Subject: 주제
+Message: 메시지
+Cancel: 취소
+Send: 보내기
+Contact form: 연락 양식
+Contact message: 연락 메시지
+From: 보낸 사람
+Your message has been sent: 메시지가 전송되었습니다
+An error occurred, please try again later: 오류가 발생했습니다. 나중에 다시 시도하세요
+
+# User / Profile
+Profile: 프로필
+Preferred Language: 선호하는 언어
+Avatar: 아바타
+Banner: 배너
+Update: 업데이트
+Drop your file here or click to upload: 파일을 여기에 놓거나 클릭하여 업로드하세요
+Filter: 필터
+Start taping...: 타이핑을 시작하세요...
+See selected: 선택된 항목 보기
+
+# Movies
+Movies: 영화
+movies: 영화
+Title: 제목
+My movies: 내 영화
+poster: 포스터
+backdrop: 배경
+Genres: 장르
+Collection: 컬렉션
+Runtime: 런타임
+Note: 노트
+Average: 평균
+Count: 수
+Release date: 개봉일
+Recommendations: 추천
+Add this movie to your watchlist: 이 영화를 시청 목록에 추가
+Premiere: 프리미어
+Theatrical (limited): 극장 (한정)
+Theatrical: 극장
+Digital: 디지털
+Physical: 물리적
+TV: TV
+Released: 출시됨
+Production companies: 제작사
+Production countries: 제작 국가
+Mark as viewed: 본 것으로 표시
+Not found: 찾을 수 없음
+Movie not found on TMDB: TMDB에서 영화를 찾을 수 없습니다
+Search on TMDB: TMDB에서 검색
+Delete this movie from your watchlist: 이 영화를 시청 목록에서 삭제
+
+
+# Map
+Shooting locations for your count series: count 시리즈의 촬영 장소
+Shooting locations: 촬영 장소
+Add a shooting location: 촬영 장소 추가
+Location: 위치
+Latitude: 위도
+Longitude: 경도
+Description: 설명
+Image: 이미지
+Paste Google maps url here to obtain latitude and longitude: 위도와 경도를 얻으려면 Google 지도 URL을 여기에 붙여넣으세요
