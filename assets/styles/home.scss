@@ -693,6 +693,9 @@
                         height: 3rem;
                         justify-content: center;
                         line-height: 1rem;
+                        padding-inline: .5rem;
+                        text-align: center;
+                        text-wrap: balance;
                         width: 10rem;
 
                         &.added {

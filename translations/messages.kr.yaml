@@ -501,3 +501,26 @@ Longitude: 경도
 Description: 설명
 Image: 이미지
 Paste Google maps url here to obtain latitude and longitude: 위도와 경도를 얻으려면 Google 지도 URL을 여기에 붙여넣으세요
+
+# Week
+Dimanche: 일요일
+Lundi: 월요일
+Mardi: 화요일
+Mercredi: 수요일
+Jeudi: 목요일
+Vendredi: 금요일
+Samedi: 토요일
+
+#Months
+January: 1월
+February: 2월
+March: 3월
+April: 4월
+May: 5월
+June: 6월
+July: 7월
+August: 8월
+September: 9월
+October: 10월
+November: 11월
+December: 12월
