@@ -157,6 +157,9 @@ class SeriesController extends AbstractController
                 $now = $this->now()->setTime($time[0], $time[1], $time[2]);
                 $ue['airAt'] = $now->format('Y-m-d H:i:s');
             }
+            if (!$ue['posterPath']) {
+                $ue['poster_path'] = $this->getAlternatePosterPath($ue['id']);
+            }
             return [
                 'episode_of_the_day' => true,
                 'id' => $ue['id'],
@@ -193,6 +196,9 @@ class SeriesController extends AbstractController
 
         $allEpisodesOfTheWeek = array_map(function ($us) {
             $this->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            if (!$us['poster_path']) {
+                $us['poster_path'] = $this->getAlternatePosterPath($us['id']);
+            }
             return [
                 'series_of_the_week' => true,
                 'episode_of_the_day' => true,
@@ -1025,13 +1031,13 @@ class SeriesController extends AbstractController
         $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
 
-            dump([
-                'series' => $series,
-//                'season' => $season,
+//            dump([
+//            'series' => $series,
+//            'season' => $season,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-            ]);
+//       ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
@@ -1815,7 +1821,7 @@ class SeriesController extends AbstractController
             }
             $updateSeries = $this->updateSeries($series, $tv);
             $update = $updateSeries[0]->getUpdates();
-            $updates[] =[
+            $updates[] = [
                 'id' => $series->getId(),
                 'name' => $series->getName(),
                 'localized_name' => $localizedNames[$series->getId()] ?? null,
@@ -2327,15 +2333,26 @@ class SeriesController extends AbstractController
     public function getEpisodeHistory(User $user, int $dayCount, string $country, string $locale): array
     {
         $arr = $this->userEpisodeRepository->historyEpisode($user, $dayCount, $country, $locale);
-        dump($arr);
+
         return array_map(function ($series) {
+            if (!$series['posterPath']) {
+                $series['posterPath'] = $this->getAlternatePosterPath($series['id']);
+            }
             $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
-//            $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
             $series['providerLogoPath'] = $series['providerLogoPath'] ? ($series['providerId'] > 0 ? $this->imageConfiguration->getCompleteUrl($series['providerLogoPath'], 'logo_sizes', 2) : '/images/providers' . $series['providerLogoPath']) : null;
             $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
             $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
             return $series;
         }, $arr);
+    }
+
+    public function getAlternatePosterPath(int $id): ?string
+    {
+        $posters = $this->seriesRepository->seriesPosters($id);
+        if (count($posters)) {
+            return $posters[rand(0, count($posters) - 1)]['image_path'];
+        }
+        return null;
     }
 
     public function getSeriesLocations(Series $series, string $locale): array

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}my Tv Time → {{ 'Series'|trans }}{% endblock %}
+{% block title %}my Tv Time → {{ 'Series'|trans }} → {{ 'Episodes of the week'|trans }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
@@ -23,7 +23,7 @@
                         {% endif %}
                         <div class="calendar">
                             <div class="count">{{ count }}</div>
-                            <div class="day-of-week">{{ series.date|format_datetime(pattern: "EEEE")| capitalize }}</div>
+                            <div class="day-of-week">{{ series.date|format_datetime(pattern: "EEEE")|capitalize }}</div>
                             <div class="day-of-mouth">{{ dayOfMonth|raw }}</div>
                             <div class="month">{{ series.date|format_datetime(pattern: "MMMM") }}</div>
                             {% if episodesOfTheDay|reduce((carry, s) => carry + (s.0.episode_number is defined and s.0.episode_number == 1)) %}
@@ -33,9 +33,8 @@
                             {% endif %}
                         </div>
                         {% for series in episodesOfTheDay %}
-                            {#                            {{ include('_blocks/series/_card.html.twig', {series: series|first}) }} #}
                             {% if series|length == 1 %}
-                                {{ include('_blocks/series/_card.html.twig', {series: series.0}) }}
+                                {{ include('_blocks/series/_card.html.twig', {series: series|first}) }}
                             {% endif %}
                             {% if series|length > 1 %}
                                 <div class="episode-block">
