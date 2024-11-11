@@ -661,11 +661,14 @@ export class Season {
             for (const provider of flatrate) {
                 gThis.addProviderItem(provider, episodeId, providerList, selectProviderDiv);
             }
-        } else {
+            const separator = document.createElement('div');
+            separator.classList.add('separator');
+            providerList.appendChild(separator);
+        }/* else {*/
             for (const provider of gThis.providerArray) {
                 gThis.addProviderItem(provider, episodeId, providerList, selectProviderDiv);
             }
-        }
+        /*}*/
         gThis.listInput(providerList);
         gThis.toolTips.hide();
         gThis.toolTips.init(providerList);
