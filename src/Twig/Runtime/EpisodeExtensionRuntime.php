@@ -2,6 +2,7 @@
 
 namespace App\Twig\Runtime;
 
+use App\Controller\SeriesController;
 use App\Entity\User;
 use App\Repository\EpisodeNotificationRepository;
 use App\Repository\UserEpisodeRepository;
@@ -15,6 +16,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         private DateService                   $dateService,
         private EpisodeNotificationRepository $episodeNotificationRepository,
         private ImageConfiguration            $imageConfiguration,
+        private SeriesController              $seriesController,
         private UserEpisodeRepository         $userEpisodeRepository
     )
     {
@@ -55,6 +57,9 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         foreach ($arr as $item) {
             if (!$this->seriesInArray($seriesArr, $item)) {
                 $item['episodes'] = [$item['episodeNumber']];
+                if ($item['posterPath'] === null) {
+                    $item['posterPath'] = $this->seriesController->getAlternatePosterPath($item['id']);
+                }
                 $item['posterPath'] = $item['posterPath'] ? '/series/posters' . $item['posterPath'] : null;
                 $item['providerLogoPath'] = $item['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($item['providerLogoPath'], 'logo_sizes', 2) : null;
                 $item['episodesWatched'] = $item['watchAt'] === null ? 0 : 1;

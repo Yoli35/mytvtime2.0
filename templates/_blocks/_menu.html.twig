@@ -372,9 +372,18 @@
             <div class="menu-theme" data-theme="light">{{ 'Light'|trans }}</div>
             <div class="menu-theme" data-theme="dark">{{ 'Dark'|trans }}</div>
             <div class="separation">{{ 'Language'|trans }}</div>
-            <a href="{{ path(route, route_params|merge({'_locale': 'fr'})) ~ p }}"{% if app.locale=='fr' %} class="active"{% endif %}>{{ 'French'|trans }}</a>
-            <a href="{{ path(route, route_params|merge({'_locale': 'en'})) ~ p }}"{% if app.locale=='en' %} class="active"{% endif %}>{{ 'English'|trans }}</a>
-            <a href="{{ path(route, route_params|merge({'_locale': 'kr'})) ~ p }}"{% if app.locale=='kr' %} class="active"{% endif %}>{{ 'Korean'|trans }}</a>
+            <a href="{{ path(route, route_params|merge({'_locale': 'fr'})) ~ p }}"{% if app.locale=='fr' %} class="active"{% endif %}>
+                {{ getEmojiFlag('FR') }} Français - French - 프랑스어
+                {#{{ 'French'|trans }}#}
+            </a>
+            <a href="{{ path(route, route_params|merge({'_locale': 'en'})) ~ p }}"{% if app.locale=='en' %} class="active"{% endif %}>
+                {{ getEmojiFlag('GB') }} Anglais - English - 영어
+                {#{{ 'English'|trans }}#}
+            </a>
+            <a href="{{ path(route, route_params|merge({'_locale': 'kr'})) ~ p }}"{% if app.locale=='kr' %} class="active"{% endif %}>
+                {{ getEmojiFlag('KR') }} Coréen - Korean - 한국어
+                {#{{ 'Korean'|trans }}#}
+            </a>
         </div>
     </div>
 </nav>
