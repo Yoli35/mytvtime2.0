@@ -33,6 +33,10 @@ h2 {
         display: flex;
         margin-block-start: 2rem;
 
+        &:first-of-type {
+            margin-block-start: 0;
+        }
+
         &:has(button) {
             display: flex;
             gap: 1rem;
@@ -2143,6 +2147,15 @@ h2 {
                     background-color: var(--orange-50);
                 }
             }
+
+            .separator {
+                background-color: var(--orange-50);
+                flex-shrink: 0;
+                height: 2rem;
+                margin-inline: 3px;
+                width: 2px;
+            }
+            }
         }
     }
 }
@@ -2991,6 +3004,11 @@ h2 {
             line-height: 1.25em;
         }
     }
+}
+
+.leaflet-popup-content {
+    font-size: 1rem !important;
+    font-weight: 300 !important;
 }
 
 dialog {
