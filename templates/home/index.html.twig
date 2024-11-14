@@ -88,17 +88,30 @@
                 {% set video = movieVideos.firstVideo %}
                 {% if video.site == 'YouTube' %}
                     <h2>{{ movieVideos.title }}</h2>
-                    <div class="series-group">
-                        <div class="video" style="width: 100%;">
-                            <object
-                                    style="width: 100%; aspect-ratio: 16/9;"
+                    {#                    <div class="series-group"> #}
+                    {#                        <div class="video" style="width: 100%;"> #}
+                    <div class="video-background">
+                        <div class="video-background__inner">
+                            <object class="video-background__video"
+                                    {#                                    style="width: 100%; aspect-ratio: 16/9;" #}
                                     data="https://www.youtube.com/embed/{{ video.key }}?autoplay=1&mute=1&loop=1&playlist={{ movieVideos.videoList }}">
                             </object>
-                            {# <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video.key }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> #}
+                            {#                        </div> #}
+                            {#                    </div> #}
                         </div>
                     </div>
                 {% endif %}
             {% endif %}
+
+            {# <div class="video-background">
+                <!-- The video container -->
+                <div class="video-background__inner">
+                    <video class="video-background__video" src="/videos/make-up-make-me-grow-up.mp4" autoplay loop muted controls></video>
+                </div>
+
+                <!-- The content -->
+                <div class="video-background__content">Make Up, Make Me Grow Up!</div>
+            </div> #}
 
             {% if app.user %}
                 {% if episodesOfTheDay|length %}
