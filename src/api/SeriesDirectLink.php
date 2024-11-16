@@ -32,7 +32,7 @@ class SeriesDirectLink extends AbstractController
         $url = $data['url'];
         $name = $data['name'];
         $seriesId = $data['seriesId'];
-        $seasonNumber = $data['seasonNumber'] ?? null;
+        $seasonNumber = intval($data['seasonNumber']) ?? -1;
         $providerId = $data['provider'];
         if ($providerId == "") $providerId = null;
         $series = $this->seriesRepository->findOneBy(['id' => $seriesId]);
@@ -61,7 +61,7 @@ class SeriesDirectLink extends AbstractController
         $data = json_decode($request->getContent(), true);
         $url = $data['url'];
         $name = $data['name'];
-        $seasonNumber = $data['seasonNumber'] ?? null;
+        $seasonNumber = intval($data['seasonNumber']) ?? -1;
         $providerId = $data['provider'];
         if ($providerId == "") $providerId = null;
 

@@ -98,7 +98,7 @@ class SeriesWatchLink
 
     public function setSeasonNumber(?int $seasonNumber): static
     {
-        $this->seasonNumber = $seasonNumber;
+        $this->seasonNumber = $seasonNumber ?? -1;
 
         return $this;
     }

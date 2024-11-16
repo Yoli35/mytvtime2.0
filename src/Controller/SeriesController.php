@@ -1031,13 +1031,13 @@ class SeriesController extends AbstractController
         $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
 
-            dump([
+//            dump([
 //            'series' => $series,
-            'season' => $season,
+//            'season' => $season,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-       ]);
+//       ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,

@@ -1,10 +1,12 @@
-{% if watchLinks|length %}
+{% set links = watchLinks|filter(link => link.seasonNumber==seasonNumber or link.seasonNumber == -1) %}
+
+{% if links|length %}
     <div class="user-actions">
         <div class="watch-links{% if hidden %} hidden{% endif %}">
             <div class="label">{{ 'Watch links'|trans }}</div>
-            {% for link in watchLinks %}
+            {% for link in links %}
                 {% set linkSeasonNumber = link.seasonNumber ?? -1 %}
-                {% if linkSeasonNumber == seasonNumber %}
+                {% if linkSeasonNumber == seasonNumber or linkSeasonNumber == -1 %}
                     <div class="watch-link" data-id="{{ link.id }}">
                         <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
                             {% if link.providerId > 0 %}
