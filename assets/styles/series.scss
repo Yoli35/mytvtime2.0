@@ -1696,7 +1696,7 @@ h2 {
     .quick-episode {
         align-items: center;
         background-color: var(--ardoise-80-alpha-50);
-        border: 2px solid var(--ardoise-100-alpha-50);
+        border: 2px solid var(--ardoise-30-alpha-50);
         border-radius: .25rem;
         color: var(--ardoise-10);
         cursor: pointer;
@@ -1745,7 +1745,7 @@ h2 {
     .future-episode {
         align-items: center;
         background-color: var(--ardoise-40-alpha-50);
-        border: 2px solid var(--ardoise-100-alpha-50);
+        border: 2px dashed var(--ardoise-30-alpha-50);
         border-radius: .25rem;
         color: var(--ardoise-30);
         display: flex;
@@ -1864,16 +1864,19 @@ h2 {
             scroll-behavior: smooth;
             width: 100%;
 
-            /*.user-actions {
+            .user-actions {
                 & .watch-links {
                     & .watch-link {
                         .watch-link-tools {
-                            left: 2.25rem;
-                            top: -.25rem
+                            background-color: var(--ardoise-90-alpha-80);
+
+                            .watch-link-name {
+                                padding-inline-end: 1rem;
+                            }
                         }
                     }
                 }
-            }*/
+            }
 
             .episode-name {
                 align-items: center;

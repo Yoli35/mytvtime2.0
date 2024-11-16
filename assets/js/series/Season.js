@@ -122,13 +122,17 @@ export class Season {
             const tools = watchLink.querySelector('.watch-link-tools');
             const href = watchLink.querySelector('a').getAttribute('href');
             const copy = tools.querySelector('.watch-link-tool.copy');
+            const linkNameDiv = tools.querySelector('.watch-link-name');
+            const name = linkNameDiv.innerText;
 
             copy.addEventListener('click', function () {
                 navigator.clipboard.writeText(href).then(function () {
                     copy.classList.add('copied');
+                    linkNameDiv.innerText = gThis.text['copied'];
                     setTimeout(function () {
                         copy.classList.remove('copied');
-                    }, 1000);
+                        linkNameDiv.innerText = name;
+                    }, 2000);
                 });
             });
         });
