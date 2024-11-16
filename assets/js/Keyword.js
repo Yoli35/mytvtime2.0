@@ -104,12 +104,14 @@ export class Keyword {
     keywordTranslationSelect(content) {
         const locale = document.querySelector("html").getAttribute("lang");
         const languages = {
-            "en": [["fr", "French"], ["en", "English"]],
-            "fr": [["fr", "Français"], ["en", "Anglais"]]
+            "en": [["fr", "🇫🇷 French"], ["en", "🇬🇧 English"], ["kr", "🇰🇷 Korean"]],
+            "fr": [["fr", "🇫🇷 Français"], ["en", "🇬🇧 Anglais"], ["kr", "🇰🇷 Coréen"]],
+            "kr": [["kr", "🇫🇷 한국어"], ["en", "🇬🇧 영어"], ["fr", "🇰🇷 프랑스어"]]
         };
         const label = {
             "en": "Language:",
-            "fr": "Langue :"
+            "fr": "Langue :",
+            "kr": "언어 :"
         };
         let select = ' \
             <label for="language">' + label[locale] + '&nbsp;\n \
