@@ -263,6 +263,25 @@
                                     </label>
                                 </div>
                             </div>
+                            {% set numberOfSeason = tv.seasons|length %}
+                            {% if numberOfSeason > 1 %}
+                                <div class="form-row">
+                                    <div class="form-field">
+                                        <label for="season-number">{{ 'Season'|trans }}
+                                            <select id="season-number" name="season-number">
+                                                <option value="-1">{{ 'All seasons'|trans }}</option>
+                                                {% for i in 1..numberOfSeason %}
+                                                    {% set seasonNumber = tv.seasons[i-1].season_number %}
+                                                    <option value="{{ seasonNumber }}">{{ seasonNumber ? ('Season x'|trans({'x': seasonNumber})):('Special episodes'|trans) }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <span class="error"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <input type="hidden" name="season-number" id="season-number" value="{{ tv.seasons[0].season_number }}">
+                            {% endif %}
                             <div class="form-row">
                                 <div class="form-field">
                                     <button type="button">{{ 'Cancel'|trans }}</button>

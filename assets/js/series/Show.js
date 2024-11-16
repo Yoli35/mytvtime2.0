@@ -287,6 +287,7 @@ export class Show {
         const watchLinkFormProvider = watchLinkForm.querySelector('#provider');
         const watchLinkFormName = watchLinkForm.querySelector('#name');
         const watchLinkFormUrl = watchLinkForm.querySelector('#url');
+        const watchLinkFormSaisonNumber = watchLinkForm.querySelector('#season-number');
         const watchLinkFormType = watchLinkForm.querySelector('#crud-type');
         const watchLinkFormId = watchLinkForm.querySelector('#crud-id');
         const form = document.querySelector('#watch-link-form');
@@ -302,6 +303,7 @@ export class Show {
             watchLinkFormProvider.value = "";
             watchLinkFormName.value = "";
             watchLinkFormUrl.value = "";
+            watchLinkFormSaisonNumber.value = "-1";
             gThis.displayForm(watchLinkForm);
         });
 
@@ -314,6 +316,7 @@ export class Show {
             const id = tools.getAttribute('data-id');
             const provider = tools.getAttribute('data-provider');
             const name = tools.getAttribute('data-name');
+            const seasonNumber = tools.getAttribute('data-season-number');
 
             edit.addEventListener('click', function () {
                 watchLinkFormType.value = 'update';
@@ -323,6 +326,7 @@ export class Show {
                 watchLinkFormProvider.value = provider;
                 watchLinkFormName.value = name;
                 watchLinkFormUrl.value = href;
+                watchLinkFormSaisonNumber.value = seasonNumber;
                 gThis.displayForm(watchLinkForm);
             });
 
@@ -363,6 +367,7 @@ export class Show {
             const provider = form.querySelector('#provider');
             const name = form.querySelector('#name');
             const url = form.querySelector('#url');
+            const seasonNumber = form.querySelector('#season-number');
             const type = form.querySelector('#crud-type');
             const errors = form.querySelectorAll('.error');
             errors.forEach(function (error) {
@@ -395,7 +400,7 @@ export class Show {
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({seriesId: seriesId, provider: provider.value, name: name.value, url: url.value})
+                        body: JSON.stringify({seriesId: seriesId, provider: provider.value, name: name.value, url: url.value, seasonNumber: seasonNumber.value})
                     }
                 ).then(async function (response) {
                     if (response.ok) {

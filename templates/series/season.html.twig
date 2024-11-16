@@ -108,7 +108,7 @@
                 </div>
             </div>
 
-            {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, hidden: false}) }}
+            {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: false}) }}
 
             {% set now = 'now'|date("Y-m-d") %}
             <div class="quick-episodes">
@@ -176,7 +176,7 @@
                                             {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
                                         </div>
                                     </div>
-                                    {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, hidden: (ue.watch_at != null)}) }}
+                                    {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (ue.watch_at != null)}) }}
                                     {% if episode.air_date %}
                                         <div class="air-date">
                                             {{ 'Air date'|trans }} {{ episode.air_date|format_date('relative_full') }}

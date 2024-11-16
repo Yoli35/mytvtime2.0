@@ -14,23 +14,27 @@ class SeriesWatchLink
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $url = null;
+    private ?string $url;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    private ?string $name;
 
     #[ORM\ManyToOne(inversedBy: 'seriesWatchLinks')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Series $series = null;
+    private ?Series $series;
 
     #[ORM\Column(nullable: true)]
-    private ?int $providerId = null;
+    private ?int $seasonNumber = null;
 
-    public function __construct(string $url, string $name, Series $series, ?int $providerId)
+    #[ORM\Column(nullable: true)]
+    private ?int $providerId;
+
+    public function __construct(string $url, string $name, Series $series, ?int $seasonNumber, ?int $providerId)
     {
         $this->url = $url;
         $this->name = $name;
         $this->series = $series;
+        $this->seasonNumber = $seasonNumber;
         $this->providerId = $providerId;
     }
 
@@ -83,6 +87,18 @@ class SeriesWatchLink
     public function setProviderId(?int $providerId): static
     {
         $this->providerId = $providerId;
+
+        return $this;
+    }
+
+    public function getSeasonNumber(): ?int
+    {
+        return $this->seasonNumber;
+    }
+
+    public function setSeasonNumber(?int $seasonNumber): static
+    {
+        $this->seasonNumber = $seasonNumber;
 
         return $this;
     }

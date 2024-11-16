@@ -29,14 +29,15 @@ class SeriesDirectLink extends AbstractController
     public function create(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
-        $seriesId = $data['seriesId'];
         $url = $data['url'];
         $name = $data['name'];
+        $seriesId = $data['seriesId'];
+        $seasonNumber = $data['seasonNumber'] ?? null;
         $providerId = $data['provider'];
         if ($providerId == "") $providerId = null;
         $series = $this->seriesRepository->findOneBy(['id' => $seriesId]);
 
-        $watchLink = new SeriesWatchLink($url, $name, $series, $providerId);
+        $watchLink = new SeriesWatchLink($url, $name, $series, $seasonNumber, $providerId);
         $this->seriesWatchLinkRepository->save($watchLink, true);
 
         return $this->json([
@@ -60,11 +61,13 @@ class SeriesDirectLink extends AbstractController
         $data = json_decode($request->getContent(), true);
         $url = $data['url'];
         $name = $data['name'];
+        $seasonNumber = $data['seasonNumber'] ?? null;
         $providerId = $data['provider'];
         if ($providerId == "") $providerId = null;
 
         $watchLink->setUrl($url);
         $watchLink->setName($name);
+        $watchLink->setSeasonNumber($seasonNumber);
         $watchLink->setProviderId($providerId);
         $this->seriesWatchLinkRepository->save($watchLink, true);
 
