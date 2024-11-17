@@ -2,33 +2,35 @@
 
 {% if links|length %}
     <div class="user-actions">
-        <div class="watch-links{% if hidden %} hidden{% endif %}">
-            <div class="label">{{ 'Watch links'|trans }}</div>
-            {% for link in links %}
-                {% set linkSeasonNumber = link.seasonNumber ?? -1 %}
-                {% if linkSeasonNumber == seasonNumber or linkSeasonNumber == -1 %}
-                    <div class="watch-link" data-id="{{ link.id }}">
-                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
-                            {% if link.providerId > 0 %}
-                                <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}" data-title="{{ link.name ?? providers.names[link.providerId] }}">
-                            {% else %}
-                                <span>{{ link.name }}</span>
-                            {% endif %}
-                        </a>
-                        <div class="watch-link-tools"
-                             data-id="{{ link.id }}"
-                             data-provider="{{ link.providerId }}"
-                             data-name="{{ link.name }}"
-                             data-season-number="{{ linkSeasonNumber }}"
-                        >
-                            <div class="watch-link-tool copy" data-title="{{ 'Copy this watch link'|trans }}">
-                                {{ ux_icon('fa6-solid:copy', {height: '18px', width: '18px'}) }}
+        <div class="wrapper">
+            <div class="watch-links{% if hidden %} hidden{% endif %}">
+                <div class="label">{{ 'Watch links'|trans }}</div>
+                {% for link in links %}
+                    {% set linkSeasonNumber = link.seasonNumber ?? -1 %}
+                    {% if linkSeasonNumber == seasonNumber or linkSeasonNumber == -1 %}
+                        <div class="watch-link" data-id="{{ link.id }}">
+                            <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
+                                {% if link.providerId > 0 %}
+                                    <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}" data-title="{{ link.name ?? providers.names[link.providerId] }}">
+                                {% else %}
+                                    <span>{{ link.name }}</span>
+                                {% endif %}
+                            </a>
+                            <div class="watch-link-tools"
+                                 data-id="{{ link.id }}"
+                                 data-provider="{{ link.providerId }}"
+                                 data-name="{{ link.name }}"
+                                 data-season-number="{{ linkSeasonNumber }}"
+                            >
+                                <div class="watch-link-tool copy" data-title="{{ 'Copy this watch link'|trans }}">
+                                    {{ ux_icon('fa6-solid:copy', {height: '18px', width: '18px'}) }}
+                                </div>
+                                <div class="watch-link-name">{{ link.name }}</div>
                             </div>
-                            <div class="watch-link-name">{{ link.name }}</div>
                         </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 {% endif %}

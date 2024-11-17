@@ -1,15 +1,18 @@
 {% if externals|length %}
     <div class="externals">
-        {% for e in externals %}
-            <div class="external" data-title="{{ e.name }}">
-                <a href="{{ e.fullUrl }}" target="_blank" rel="noopener noreferrer">
-                    {% if e.logoPath %}
-                        <img src="{{ e.logoPath }}" alt="{{ e.name }}">
-                    {% else %}
-                        <div>{{ e.name }}</div>
-                    {% endif %}
-                </a>
-            </div>
-        {% endfor %}
+        <h2>{{ 'External sources'|trans }}</h2>
+        <div class="wrapper">
+            {% for e in externals %}
+                <div class="external" data-title="{{ e.name }}">
+                    <a href="{{ e.fullUrl }}" target="_blank" rel="noopener noreferrer">
+                        {% if e.logoPath %}
+                            <img src="{{ e.logoPath }}" alt="{{ e.name }}">
+                        {% else %}
+                            <div>{{ e.name }}</div>
+                        {% endif %}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endif %}

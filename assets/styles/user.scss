@@ -1,226 +1,235 @@
 
 .user-actions {
-    align-items: center;
     display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: flex-end;
-    position: relative;
+    flex-direction: column;
+    gap: .25rem;
 
-    .watch-links {
+    h2 {
+        background-color: transparent;
+    }
+
+    .wrapper {
         align-items: center;
         display: flex;
-        gap: .5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
         justify-content: center;
-        margin-inline-end: auto;
+        position: relative;
 
-        &.hidden {
-            display: none;
+        .watch-links {
+            align-items: center;
+            display: flex;
+            gap: .5rem;
+            justify-content: center;
+
+            &.hidden {
+                display: none;
+            }
+
+            .label {
+                font-size: 1rem;
+                font-weight: 300;
+            }
+
+            .watch-link {
+                background-color: cadetblue;
+                border-radius: .25rem;
+                position: relative;
+
+                span {
+                    align-items: center;
+                    background-color: var(--ardoise-80-alpha-50);
+                    border-radius: .25rem;
+                    color: var(--ardoise-10);
+                    display: flex;
+                    font-size: 1rem;
+                    font-weight: 300;
+                    justify-content: center;
+                    padding: .5rem 1rem;
+                }
+
+                img {
+                    border-radius: .25rem;
+                    height: 2rem;
+                    object-fit: cover;
+                    width: 2rem;
+                }
+
+                &:hover .watch-link-tools {
+                    display: flex;
+                }
+
+                .watch-link-tools {
+                    align-items: center;
+                    background-color: var(--ardoise-90-alpha-50);
+                    border-radius: 1.25rem;
+                    display: none;
+                    gap: .5rem;
+                    justify-content: center;
+                    left: -1.5rem;
+                    padding: .25rem;
+                    position: absolute;
+                    top: 2rem;
+
+                    .watch-link-name {
+                        color: var(--ardoise-10);
+                        white-space: nowrap;
+                    }
+
+                    .watch-link-tool {
+                        align-items: center;
+                        border-radius: 50%;
+                        cursor: pointer;
+                        display: flex;
+                        flex-shrink: 0;
+                        height: 2rem;
+                        justify-content: center;
+                        width: 2rem;
+
+                        &.edit {
+                            background-color: var(--orange-50);
+                            color: var(--ardoise-10);
+                        }
+
+                        &.copy {
+                            background-color: var(--green-50);
+                            color: var(--ardoise-10);
+                            transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+                            &.copied {
+                                background-color: var(--green-90);
+                                box-shadow: 0 0 .5rem .25rem var(--orange-50);
+                            }
+                        }
+
+                        &.delete {
+                            background-color: var(--remove-this-series);
+                            color: var(--ardoise-10);
+                        }
+                    }
+                }
+            }
+
+            .add-watch-link {
+                align-items: center;
+                background-color: var(--orange-50);
+                border-radius: .25rem;
+                color: var(--orange-90);
+                cursor: pointer;
+                display: flex;
+                height: 2rem;
+                justify-content: center;
+                width: 2rem;
+            }
         }
 
-        .label {
+        .viewed-at {
+            align-items: center;
+            background-color: var(--orange-50);
+            border-radius: .25rem;
+            color: var(--ardoise-10);
+            cursor: pointer;
+            display: flex;
             font-size: 1rem;
             font-weight: 300;
+            gap: .5rem;
+            justify-content: center;
+            margin-inline-end: auto;
+            padding: .5rem;
+
+            &.viewed {
+                background-color: var(--green-50);
+                color: var(--ardoise-10);
+            }
         }
 
-        .watch-link {
-            background-color: cadetblue;
+        .rating {
+            align-items: center;
+            background-color: var(--ardoise-80-alpha-50);
             border-radius: .25rem;
-            position: relative;
+            color: var(--ardoise-10);
+            display: flex;
+            font-size: 1rem;
+            font-weight: 300;
+            gap: .5rem;
+            justify-content: center;
+            padding: .5rem;
 
-            span {
+            .rating-stars {
+                display: flex;
+                gap: 0;
+                justify-content: center;
+
+                .stars {
+                    display: flex;
+
+                    .star {
+                        color: var(--ardoise-10);
+                        cursor: pointer;
+                        padding-inline: .125rem;
+
+                        &.active {
+                            color: var(--orange-50);
+                        }
+                    }
+                }
+            }
+        }
+
+        .badges {
+            align-items: center;
+            display: flex;
+            gap: .5rem;
+            justify-content: center;
+
+            .badge {
                 align-items: center;
-                background-color: var(--ardoise-80-alpha-50);
+                background-color: var(--marathoner-series);
                 border-radius: .25rem;
                 color: var(--ardoise-10);
                 display: flex;
                 font-size: 1rem;
                 font-weight: 300;
+                gap: .25rem;
                 justify-content: center;
-                padding: .5rem 1rem;
+                padding: .5rem;
             }
+        }
 
-            img {
-                border-radius: .25rem;
-                height: 2rem;
-                object-fit: cover;
-                width: 2rem;
-            }
+        .actions {
+            display: flex;
+            gap: .5rem;
 
-            &:hover .watch-link-tools {
-                display: flex;
-            }
-
-            .watch-link-tools {
+            .action {
                 align-items: center;
-                background-color: var(--ardoise-90-alpha-50);
-                border-radius: 1.25rem;
-                display: none;
-                gap: .5rem;
+                border-radius: .25rem;
+                color: var(--ardoise-10);
+                cursor: pointer;
+                display: flex;
+                height: 2rem;
                 justify-content: center;
-                left: -1.5rem;
-                padding: .25rem;
-                position: absolute;
-                top: 2rem;
 
-                .watch-link-name {
-                    color: var(--ardoise-10);
-                    white-space: nowrap;
+                &.remove-this-series {
+                    background-color: var(--remove-this-series);
+                    width: 2rem;
                 }
 
-                .watch-link-tool {
-                    align-items: center;
-                    border-radius: 50%;
-                    cursor: pointer;
-                    display: flex;
-                    flex-shrink: 0;
-                    height: 2rem;
-                    justify-content: center;
+                &.toggle-favorite-series {
+                    background-color: var(--ardoise-80-alpha-50);
                     width: 2rem;
 
-                    &.edit {
-                        background-color: var(--orange-50);
-                        color: var(--ardoise-10);
-                    }
-
-                    &.copy {
-                        background-color: var(--green-50);
-                        color: var(--ardoise-10);
-                        transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-
-                        &.copied {
-                            background-color: var(--green-90);
-                            box-shadow: 0 0 .5rem .25rem var(--orange-50);
-                        }
-                    }
-
-                    &.delete {
-                        background-color: var(--remove-this-series);
-                        color: var(--ardoise-10);
+                    &.favorite {
+                        color: var(--favorite-series);
                     }
                 }
-            }
-        }
 
-        .add-watch-link {
-            align-items: center;
-            background-color: var(--orange-50);
-            border-radius: .25rem;
-            color: var(--orange-90);
-            cursor: pointer;
-            display: flex;
-            height: 2rem;
-            justify-content: center;
-            width: 2rem;
-        }
-    }
+                &.toggle-pinned-series {
+                    background-color: var(--ardoise-80-alpha-50);
+                    width: 2rem;
 
-    .viewed-at {
-        align-items: center;
-        background-color: var(--orange-50);
-        border-radius: .25rem;
-        color: var(--ardoise-10);
-        cursor: pointer;
-        display: flex;
-        font-size: 1rem;
-        font-weight: 300;
-        gap: .5rem;
-        justify-content: center;
-        margin-inline-end: auto;
-        padding: .5rem;
-
-        &.viewed {
-            background-color: var(--green-50);
-            color: var(--ardoise-10);
-        }
-    }
-
-    .rating {
-        align-items: center;
-        background-color: var(--ardoise-80-alpha-50);
-        border-radius: .25rem;
-        color: var(--ardoise-10);
-        display: flex;
-        font-size: 1rem;
-        font-weight: 300;
-        gap: .5rem;
-        justify-content: center;
-        padding: .5rem;
-
-        .rating-stars {
-            display: flex;
-            gap: 0;
-            justify-content: center;
-
-            .stars {
-                display: flex;
-
-                .star {
-                    color: var(--ardoise-10);
-                    cursor: pointer;
-                    padding-inline: .125rem;
-
-                    &.active {
-                        color: var(--orange-50);
+                    &.pinned {
+                        color: var(--favorite-series);
                     }
-                }
-            }
-        }
-    }
-
-    .badges {
-        align-items: center;
-        display: flex;
-        gap: .5rem;
-        justify-content: center;
-
-        .badge {
-            align-items: center;
-            background-color: var(--marathoner-series);
-            border-radius: .25rem;
-            color: var(--ardoise-10);
-            display: flex;
-            font-size: 1rem;
-            font-weight: 300;
-            gap: .25rem;
-            justify-content: center;
-            padding: .5rem;
-        }
-    }
-
-    .actions {
-        display: flex;
-        gap: .5rem;
-
-        .action {
-            align-items: center;
-            border-radius: .25rem;
-            color: var(--ardoise-10);
-            cursor: pointer;
-            display: flex;
-            height: 2rem;
-            justify-content: center;
-
-            &.remove-this-series {
-                background-color: var(--remove-this-series);
-                width: 2rem;
-            }
-
-            &.toggle-favorite-series {
-                background-color: var(--ardoise-80-alpha-50);
-                width: 2rem;
-
-                &.favorite {
-                    color: var(--favorite-series);
-                }
-            }
-
-            &.toggle-pinned-series {
-                background-color: var(--ardoise-80-alpha-50);
-                width: 2rem;
-
-                &.pinned {
-                    color: var(--favorite-series);
                 }
             }
         }
