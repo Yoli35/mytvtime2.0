@@ -23,7 +23,7 @@ class SeriesBroadcastSchedule
     #[ORM\Column(length: 2)]
     private ?string $country = null;
 
-    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $firstAirDate = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]

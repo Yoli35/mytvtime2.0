@@ -5,9 +5,15 @@ Mandatory variables:
     series_day_offset: object <offset, country> // Day offset for the series
 #}
 
-
-{% if series.schedules|length or series.nextEpisodeAirDate %}
-    <div class="schedules">
+<div class="schedules">
+    <h2>
+        {{ 'Schedules'|trans }}
+        <div class="new-schedule" onclick="ToggleScheduleForm(0)">
+            {{ ux_icon('fa6-solid:plus', {height: "18px", width: "18px"}) }}
+        </div>
+    </h2>
+    {{ include('_blocks/series/_schedules-form.html.twig', {schedule: series.emptySchedule, country: user.country ?? 'FR'}) }}
+    {% if series.schedules|length or series.nextEpisodeAirDate %}
         <div class="wrapper">
             {% for schedule in series.schedules %}
                 <div class="schedule-block">
@@ -27,13 +33,6 @@ Mandatory variables:
                                 <span></span>
                             </div>
                         </div>
-                        <script>
-                            function ToggleScheduleForm(id) {
-                                const form = document.getElementById('schedule-form-' + id);
-                                const formBlock = form.parentElement;
-                                formBlock.style.display = formBlock.style.display === 'block' ? 'none' : 'block';
-                            }
-                        </script>
                         {% set ule = schedule.userLastEpisode %}
                         {% set une = schedule.userNextEpisode %}
                         {% set tvle = schedule.tvLastEpisode %}
@@ -95,101 +94,10 @@ Mandatory variables:
                             {% endif %}
                         {% endif %}
                     </div>
-                    <div class="schedule-form">
-                        <form id="schedule-form-{{ schedule.id }}">
-                            <input type="hidden" name="id" value="{{ schedule.id }}">
-                            <input type="hidden" name="country" value="{{ country }}">
-                            <div class="form-group">
-                                <div class="form-field">
-                                    <div>
-                                        <label for="time-{{ schedule.id }}">{{ 'Time'|trans }}
-                                            <input type="time" name="time-{{ schedule.id }}" value="{{ schedule.airAt }}" id="time-{{ schedule.id }}">
-                                        </label>
-                                        <label for="provider-{{ schedule.id }}">{{ 'Provider'|trans }}
-                                            <select id="provider-{{ schedule.id }}" name="provider">
-                                                <option value="">{{ 'Select a provider'|trans }}</option>
-                                                {% for providerName, providerId in providers.select %}
-                                                    <option value="{{ providerId }}" {% if providerId == schedule.providerId %}selected{% endif %}>{{ providerName }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <h4>{{ 'Days of the week'|trans }}</h4>
-                                        <label for="days-1">
-                                            <input type="checkbox" switch {% if schedule.dayArr.1 %} checked{% endif %} name="days" value="1" id="days-1">{{ 'Monday'|trans }}
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label for="days-2">
-                                            <input type="checkbox" switch {% if schedule.dayArr.2 %} checked{% endif %} name="days" value="2" id="days-2">{{ 'Tuesday'|trans }}
-                                        </label>
-                                        <label for="days-3">
-                                            <input type="checkbox" switch {% if schedule.dayArr.3 %} checked{% endif %} name="days" value="3" id="days-3">{{ 'Wednesday'|trans }}
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label for="days-4">
-                                            <input type="checkbox" switch {% if schedule.dayArr.4 %} checked{% endif %} name="days" value="4" id="days-4">{{ 'Thursday'|trans }}
-                                        </label>
-                                        <label for="days-5">
-                                            <input type="checkbox" switch {% if schedule.dayArr.5 %} checked{% endif %} name="days" value="5" id="days-5">{{ 'Friday'|trans }}
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label for="days-6">
-                                            <input type="checkbox" switch {% if schedule.dayArr.6 %} checked{% endif %} name="days" value="6" id="days-6">{{ 'Saturday'|trans }}
-                                        </label>
-                                        <label for="days-0">
-                                            <input type="checkbox" switch {% if schedule.dayArr.0 %} checked{% endif %} name="days" value="0" id="days-0">{{ 'Sunday'|trans }}
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <button type="button" onclick="SaveSchedule({{ schedule.id }})">{{ 'Save'|trans }}</button>
-                                    </div>
-                                    <script>
-                                        function SaveSchedule(id) {
-                                            const form = document.getElementById('schedule-form-' + id);
-                                            const country = form.querySelector('input[name="country"]').value;
-                                            const time = form.querySelector('input[name="time-' + id + '"]').value;
-                                            const provider = form.querySelector('select[name="provider"]').value;
-                                            const days = form.querySelectorAll('input[name="days"]');
-                                            const dayArr = [];
-                                            days.forEach(day => {
-                                                if (day.checked) {
-                                                    dayArr.push(day.value);
-                                                }
-                                            });
-                                            const data = {
-                                                id: id,
-                                                country: country,
-                                                time: time,
-                                                days: dayArr,
-                                                provider: provider
-                                            };
-                                            fetch('{{ path('app_series_schedule_save') }}', {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/json',
-                                                    'X-Requested-With': 'XMLHttpRequest'
-                                                },
-                                                body: JSON.stringify(data)
-                                            })
-                                                .then(response => response.json())
-                                                .then(data => {
-                                                    if (data.success) {
-                                                        ToggleScheduleForm(id);
-                                                        window.location.reload();
-                                                    }
-                                                });
-                                        }
-                                    </script>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                    {{ include('_blocks/series/_schedules-form.html.twig', {schedule: schedule, country: country}) }}
                 </div>
             {% endfor %}
         </div>
-    </div>
-{% endif %}
+    {% endif %}
+    {{ include('_blocks/series/_schedules-js.html.twig') }}
+</div>

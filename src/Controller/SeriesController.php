@@ -781,11 +781,13 @@ class SeriesController extends AbstractController
         $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
 
         $schedules = $this->seriesSchedulesV2($user, $series, $tv, $dayOffset);
+        $emptySchedule = $this->emptySchedule();
         dump($series);
         $seriesArr = $series->toArray();
         $nead = $seriesArr['nextEpisodeAirDate'];
         $seriesArr['nextEpisodeAirDate'] = $nead ? $nead->modify($dayOffset . ' days') : null;
         $seriesArr['schedules'] = $schedules;
+        $seriesArr['emptySchedule'] = $emptySchedule;
         $seriesArr['seriesInProgress'] = $this->userEpisodeRepository->isFullyReleased($userSeries);
         $seriesArr['images'] = [
             'backdrops' => $seriesBackdrops,
@@ -921,14 +923,21 @@ class SeriesController extends AbstractController
         $country = $data['country'];
         $time = $data['time'];
         $provider = $data['provider'];
+        $seriesId = $data['seriesId'];
         $dayArr = array_map(function ($d) {
             return intval($d);
         }, $data['days']);
 
         $hour = (int)substr($time, 0, 2);
         $minute = (int)substr($time, 3, 2);
-        /** @var SeriesBroadcastSchedule $seriesBroadcastSchedule */
-        $seriesBroadcastSchedule = $this->seriesBroadcastScheduleRepository->findOneBy(['id' => $id]);
+
+        if ($id === 0) {
+            $seriesBroadcastSchedule = new SeriesBroadcastSchedule();
+            $seriesBroadcastSchedule->setSeries($this->seriesRepository->findOneBy(['id' => $seriesId]));
+        } else {
+            $seriesBroadcastSchedule = $this->seriesBroadcastScheduleRepository->findOneBy(['id' => $id]);
+        }
+
         $seriesBroadcastSchedule->setAirAt((new DateTimeImmutable())->setTime($hour, $minute));
         $seriesBroadcastSchedule->setCountry($country);
         $seriesBroadcastSchedule->setDaysOfWeek($dayArr);
@@ -2203,9 +2212,31 @@ class SeriesController extends AbstractController
                 'toBeContinued' => $tv && $this->isToBeContinued($tv, $userLastEpisode),
                 'tmdbStatus' => $tv['status'] ?? 'series not found',
             ];
-
         }
         return $schedules;
+    }
+
+    public function emptySchedule(): array{
+        $dayArrEmpty = array_fill(0, 7, false);
+        return [
+            'id' => 0,
+            'airAt' => "12:00",
+            'providerId' => null,
+            'providerName' => null,
+            'providerLogo' => null,
+            'targetTS' => null,
+            'before' => null,
+            'dayList' => [],
+            'dayArr' => $dayArrEmpty,
+            'userLastEpisode' => null,
+            'userNextEpisode' => null,
+            'multiple' => null,
+            'userLastNextEpisode' => null,
+            'tvLastEpisode' => null,
+            'tvNextEpisode' => null,
+            'toBeContinued' => null,
+            'tmdbStatus' => null,
+        ];
     }
 
     public function offsetEpisodeDate(?array $episode, int $offset, DateTimeInterface $time, string $timezone): ?array

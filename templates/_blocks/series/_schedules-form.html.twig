@@ -1,0 +1,56 @@
+<div class="schedule-form">
+    <form id="schedule-form-{{ schedule.id }}">
+        <input type="hidden" name="id" value="{{ schedule.id }}">
+        <input type="hidden" name="country-{{ schedule.id }}" value="{{ country }}">
+        <div class="form-group">
+            <div class="form-field">
+                <div>
+                    <label for="time-{{ schedule.id }}">{{ 'Time'|trans }}
+                        <input type="time" name="time-{{ schedule.id }}" value="{{ schedule.airAt }}" id="time-{{ schedule.id }}">
+                    </label>
+                    <label for="provider-{{ schedule.id }}">{{ 'Provider'|trans }}
+                        <select id="provider-{{ schedule.id }}" name="provider-{{ schedule.id }}">
+                            <option value="">{{ 'Select a provider'|trans }}</option>
+                            {% for providerName, providerId in providers.select %}
+                                <option value="{{ providerId }}" {% if providerId == schedule.providerId %}selected{% endif %}>{{ providerName }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                </div>
+                <div>
+                    <h4>{{ 'Days of the week'|trans }}</h4>
+                    <label for="days-{{ schedule.id }}-1">
+                        <input type="checkbox" switch {% if schedule.dayArr.1 %} checked{% endif %} name="days-{{ schedule.id }}" value="1" id="days-{{ schedule.id }}-1">{{ 'Monday'|trans }}
+                    </label>
+                </div>
+                <div>
+                    <label for="days-{{ schedule.id }}-2">
+                        <input type="checkbox" switch {% if schedule.dayArr.2 %} checked{% endif %} name="days-{{ schedule.id }}" value="2" id="days-{{ schedule.id }}-2">{{ 'Tuesday'|trans }}
+                    </label>
+                    <label for="days-{{ schedule.id }}-3">
+                        <input type="checkbox" switch {% if schedule.dayArr.3 %} checked{% endif %} name="days-{{ schedule.id }}" value="3" id="days-{{ schedule.id }}-3">{{ 'Wednesday'|trans }}
+                    </label>
+                </div>
+                <div>
+                    <label for="days-{{ schedule.id }}-4">
+                        <input type="checkbox" switch {% if schedule.dayArr.4 %} checked{% endif %} name="days-{{ schedule.id }}" value="4" id="days-{{ schedule.id }}-4">{{ 'Thursday'|trans }}
+                    </label>
+                    <label for="days-{{ schedule.id }}-5">
+                        <input type="checkbox" switch {% if schedule.dayArr.5 %} checked{% endif %} name="days-{{ schedule.id }}" value="5" id="days-{{ schedule.id }}-5">{{ 'Friday'|trans }}
+                    </label>
+                </div>
+                <div>
+                    <label for="days-{{ schedule.id }}-6">
+                        <input type="checkbox" switch {% if schedule.dayArr.6 %} checked{% endif %} name="days-{{ schedule.id }}" value="6" id="days-{{ schedule.id }}-6">{{ 'Saturday'|trans }}
+                    </label>
+                    <label for="days-{{ schedule.id }}-0">
+                        <input type="checkbox" switch {% if schedule.dayArr.0 %} checked{% endif %} name="days-{{ schedule.id }}" value="0" id="days-{{ schedule.id }}-0">{{ 'Sunday'|trans }}
+                    </label>
+                </div>
+                <div>
+                    <button type="button" onclick="SaveSchedule({{ schedule.id }})">{{ 'Save'|trans }}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

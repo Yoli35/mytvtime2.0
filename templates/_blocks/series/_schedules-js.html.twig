@@ -1,0 +1,48 @@
+<script>
+    function SaveSchedule(id) {
+        const form = document.getElementById('schedule-form-' + id);
+        const countrySelector = 'input[name="country-' + id + '"]';
+        const country = form.querySelector(countrySelector).value;
+        const timeSelector = 'input[name="time-' + id + '"]';
+        const time = form.querySelector(timeSelector).value;
+        const providerSelector = 'select[name="provider-' + id + '"]';
+        const provider = form.querySelector(providerSelector).value;
+        const daysSelector = 'input[name="days-' + id + '"]';
+        const days = form.querySelectorAll(daysSelector);
+        const dayArr = [];
+        days.forEach(day => {
+            if (day.checked) {
+                dayArr.push(day.value);
+            }
+        });
+        const data = {
+            id: id,
+            country: country,
+            time: time,
+            days: dayArr,
+            provider: provider,
+            seriesId: {{ series.id }}
+        };
+        fetch('{{ path('app_series_schedule_save') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    ToggleScheduleForm(id);
+                    window.location.reload();
+                }
+            });
+    }
+
+    function ToggleScheduleForm(id) {
+        const form = document.getElementById('schedule-form-' + id);
+        const formBlock = form.parentElement;
+        formBlock.style.display = formBlock.style.display === 'block' ? 'none' : 'block';
+    }
+</script>
