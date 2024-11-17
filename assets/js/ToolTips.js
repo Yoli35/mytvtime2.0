@@ -116,6 +116,10 @@ export class ToolTips {
         const windowWidth = window.innerWidth;
         const visualViewport = window.visualViewport;
 
+        if (evt.pageX === 0 && evt.pageY === 0) {
+            return;
+        }
+
         if (img) img.style.maxHeight = (fromTopViewport - 64) + "px";
 
         const left = evt.pageX - (width / 2);
