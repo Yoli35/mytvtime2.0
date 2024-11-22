@@ -110,6 +110,23 @@ class TMDBService
         }
     }
 
+    public function getTvImages(int $showId, bool $addEnglish): ?string
+    {
+        try {
+            $response = $this->client->request(
+                'GET',
+                'https://api.themoviedb.org/3/tv/' . $showId . '/images?api_key=' . $this->api_key .'&include_image_language=fr' . ($addEnglish ? ',en' : ''),
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable) {
+                return "";
+            }
+        } catch (Throwable) {
+            return "";
+        }
+    }
+
     public function getTvLists(int $showId): ?string
     {
         $request = 'https://api.themoviedb.org/3/tv/' . $showId . '/lists?api_key=' . $this->api_key;
