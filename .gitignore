@@ -7,7 +7,9 @@
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
-/public/series/
+/public/series/posters/
+/public/series/backdrops/
+/public/series/logos/
 /public/movies/
 /public/videos/
 /var/

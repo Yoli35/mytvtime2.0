@@ -735,6 +735,7 @@ class SeriesController extends AbstractController
         $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
         // Get with fr-FR language to get the localized name
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "keywords", "lists", "similar"]), true);
+        dump($tv);
         if ($tv) {
             if (!$tv['lists']['total_results']) {
                 // Get with en-US language to get the lists
@@ -757,6 +758,7 @@ class SeriesController extends AbstractController
             $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
             list($series, $seriesBackdrops, $seriesLogos, $seriesPosters) = $this->updateSeries($series, $tv);
+            dump(['series posters' => $seriesPosters]);
 
             $tv['credits'] = $this->castAndCrew($tv);
             $tv['localized_name'] = $series->getLocalizedName($request->getLocale());
@@ -1792,9 +1794,6 @@ class SeriesController extends AbstractController
         foreach ($localizedNameArr as $ln) {
             $localizedNames[$ln['series_id']] = $ln['name'];
         }
-        dump([
-            'localizedNames' => $localizedNames,
-        ]);
 
         $now = $this->now();
         $tmdbCalls = 0;
@@ -1804,16 +1803,16 @@ class SeriesController extends AbstractController
             $lastUpdate = $series->getUpdatedAt();
             $interval = $now->diff($lastUpdate);
 
-            if ($interval->days < 1) {
-                $updates[] = [
+//            if ($interval->days < 1) {
+//                $updates[] = [
 //                    'id' => $series->getId(),
 //                    'name' => $series->getName(),
 //                    'localized_name' => $localizedNames[$series->getId()] ?? null,
 //                    'poster_path' => $series->getPosterPath(),
-                    'updates' => [], // '*** Updated less than 24 hours ago ***'
-                ];
-                continue;
-            }
+//                    'updates' => [], // '*** Updated less than 24 hours ago ***'
+//                ];
+//                continue;
+//            }
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale, ['images']), true);
             $tmdbCalls++;
             if ($tv == null) {
@@ -1960,7 +1959,16 @@ class SeriesController extends AbstractController
             $series->addUpdate($this->translator->trans('Next episode air date updated') . ' → ' . $nextEpisodeAirDate?->format('d-m-Y'));
         }
 
+        $sizes = ['backdrops' => 3, 'logos' => 5, 'posters' => 5];
         $seriesImages = $series->getSeriesImages()->toArray();
+        foreach ($seriesImages as $seriesImage) {
+            $type = $seriesImage->getType();
+            $imageConfigType = $type . '_sizes';
+            $type .= 's';
+            $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]);
+            dump(['type' => $type, 'series Image' => $seriesImage, 'url' => $url]);
+            $this->saveImage($type, $seriesImage->getImagePath(), $url);
+        }
 
         if (!$this->inImages($tv['poster_path'], $seriesImages)) {
             $seriesImage = new SeriesImage($series, "poster", $tv['poster_path']);
@@ -1973,10 +1981,10 @@ class SeriesController extends AbstractController
             $series->addUpdate($this->translator->trans('Backdrop added'));
         }
 
-        $sizes = ['backdrops' => 3, 'logos' => 5, 'posters' => 5];
         foreach (['backdrops', 'logos', 'posters'] as $type) {
             $dbType = substr($type, 0, -1);
-            $imageConfigType = substr($type, 0, -1) . '_sizes';
+            $imageConfigType = $dbType . '_sizes';
+            $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]);
             foreach ($tv['images'][$type] as $img) {
                 if (!$this->inImages($img['file_path'], $seriesImages)) {
                     $seriesImage = new SeriesImage($series, $dbType, $img['file_path']);
