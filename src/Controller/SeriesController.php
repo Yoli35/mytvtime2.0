@@ -1545,7 +1545,7 @@ class SeriesController extends AbstractController
 
         $n = count($keywords);
         for ($i = 0; $i < $n; $i++) {
-            $line = $keywords[$i]['original'] . ': ' . $keywords[$i]['translated'] . "\n";
+            $line = $keywords[$i]['original'] . ': ' . str_replace(':', '→', $keywords[$i]['translated']) . "\n";
             $keywordYaml[] = $line;
         }
         usort($keywordYaml, fn($a, $b) => $a <=> $b);
