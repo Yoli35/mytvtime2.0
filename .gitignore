@@ -12,6 +12,8 @@
 /public/videos/
 /var/
 /vendor/
+/Archive.zip
+
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###
