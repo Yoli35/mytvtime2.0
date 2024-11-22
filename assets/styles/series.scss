@@ -396,6 +396,7 @@ h2 {
             display: flex;
             flex-shrink: 0;
             justify-content: center;
+            max-height: 60rem;
             position: relative;
             width: 40vw;
 
@@ -2480,6 +2481,7 @@ h2 {
             flex-shrink: 0;
             height: 135cqi !important;
             margin-inline: auto;
+            max-height: unset;
             width: 90cqi !important;
         }
 
