@@ -345,6 +345,56 @@ label:has(input[type="text"]) {
         }
     }
 
+    > button {
+        align-items: center;
+        anchor-name: --popover-test;
+        background-color: transparent;
+        border-radius: .25rem;
+        border: none;
+        color: var(--navbar-color);
+        display: flex;
+        height: 2rem;
+        justify-content: center;
+        padding-inline: .5rem;
+        transition: background-color .250ms, color .250ms;
+
+        &:hover,
+        &:has(+ div[popover]:popover-open) {
+            background-color: var(--orange-50);
+        }
+
+        & + div[popover] {
+            border-radius: .25rem;
+            border: none;
+            inset: auto;
+            margin: 0;
+            margin-block-start: .75rem;
+            overflow: hidden;
+            position-anchor: --popover-test;
+            position: absolute;
+            right: anchor(right);
+            top: anchor(bottom);
+
+            &:popover-open {
+                display: flex;
+            }
+
+            ul {
+                display: flex;
+                flex-direction: column;
+
+                li {
+                    background-color: var(--orange-50);
+                    padding-inline: .5rem;
+
+                    &:hover {
+                        background-color: var(--orange-40);
+                    }
+                }
+            }
+        }
+    }
+
     /*&:has(> a:hover) > a:not(:hover),
     &:has(> a:hover) > details:not(:hover),
     &:has(> details:hover) > details:not(:hover),
@@ -693,7 +743,7 @@ label:has(input[type="text"]) {
         background-color: var(--navbar-bg);
         opacity: 1;
 
-        a {
+        a, > button {
             color: var(--navbar-color-hover);
         }
 
