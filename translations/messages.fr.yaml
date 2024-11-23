@@ -299,6 +299,19 @@ visits: visites
 x star: x étoile
 x stars: x étoiles
 
+#Schedule form
+Override the Movie Database schedule: Remplacer l'horaire de The Movie Database
+Override TMDB: Remplacer TMDB
+Frequency: Fréquence
+Once: Une fois
+Daily: Quotidien
+Weekly, one at a time: Hebdomadaire, un à la fois
+Weekly, two at a time: Hebdomadaire, deux à la fois
+Weekly, three at a time: Hebdomadaire, trois à la fois
+Weekly, all at once: Hebdomadaire, tous à la fois
+Weekly, two, then one: Hebdomadaire, deux, puis un
+Weekly, three, then one: Hebdomadaire, trois, puis un
+
 #Search
 Search: Recherche
 Search a series: Rechercher une série

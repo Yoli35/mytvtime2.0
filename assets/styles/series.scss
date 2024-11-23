@@ -1058,6 +1058,15 @@ h2 {
                     flex-direction: column;
                     gap: .5rem;
 
+                    .date-time {
+                        display: flex;
+                        gap: .5rem;
+
+                        label:has(input[type=checkbox]) {
+                            padding-inline: 0;
+                        }
+                    }
+
                     h4 {
                         line-height: 1.75rem /* hauteur des label:has(input[type=checkbox]) */
                     }
@@ -1095,7 +1104,7 @@ h2 {
                         /*border: 2px solid var(--green-30);*/
                     }
 
-                    input[type=time] {
+                    input[type=time], input[type=date] {
                         background-color: var(--orange-20);
                         border: 2px solid var(--orange-50);
                         border-radius: .25rem;

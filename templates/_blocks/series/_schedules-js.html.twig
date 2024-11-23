@@ -5,6 +5,12 @@
         const country = form.querySelector(countrySelector).value;
         const timeSelector = 'input[name="time-' + id + '"]';
         const time = form.querySelector(timeSelector).value;
+        const dateSelector = 'input[name="date-' + id + '"]';
+        const date = form.querySelector(dateSelector).value;
+        const overrideSelector = 'input[name="override-' + id + '"]';
+        const override = form.querySelector(overrideSelector).checked;
+        const frequencySelector = 'select[name="frequency-' + id + '"]';
+        const frequency = form.querySelector(frequencySelector).value;
         const providerSelector = 'select[name="provider-' + id + '"]';
         const provider = form.querySelector(providerSelector).value;
         const daysSelector = 'input[name="days-' + id + '"]';
@@ -18,7 +24,10 @@
         const data = {
             id: id,
             country: country,
+            date: date,
             time: time,
+            override: override,
+            frequency: frequency,
             days: dayArr,
             provider: provider,
             seriesId: {{ series.id }}

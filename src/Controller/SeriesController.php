@@ -923,12 +923,17 @@ class SeriesController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $id = $data['id'];
         $country = $data['country'];
+        $date = $data['date'];
         $time = $data['time'];
+        $override = $data['override'];
+        $frequency = $data['frequency'];
         $provider = $data['provider'];
         $seriesId = $data['seriesId'];
         $dayArr = array_map(function ($d) {
             return intval($d);
         }, $data['days']);
+
+        dump($data);
 
         $hour = (int)substr($time, 0, 2);
         $minute = (int)substr($time, 3, 2);
@@ -940,7 +945,10 @@ class SeriesController extends AbstractController
             $seriesBroadcastSchedule = $this->seriesBroadcastScheduleRepository->findOneBy(['id' => $id]);
         }
 
+        $seriesBroadcastSchedule->setFirstAirDate($this->dateService->newDateImmutable($date, "Europe/Paris", true));
         $seriesBroadcastSchedule->setAirAt((new DateTimeImmutable())->setTime($hour, $minute));
+        $seriesBroadcastSchedule->setFrequency($frequency);
+        $seriesBroadcastSchedule->setOverride($override);
         $seriesBroadcastSchedule->setCountry($country);
         $seriesBroadcastSchedule->setDaysOfWeek($dayArr);
         $seriesBroadcastSchedule->setProviderId($provider);
@@ -2139,6 +2147,9 @@ class SeriesController extends AbstractController
         $locale = $user->getPreferredLanguage() ?? 'fr';
         foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
             $airAt = $schedule->getAirAt();
+            $firstAirDate = $schedule->getFirstAirDate();
+            $frequency = $schedule->getFrequency();
+            $override = $schedule->isOverride();
             $dayOfWeekArr = [
                 'en' => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
                 'fr' => ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
@@ -2194,7 +2205,6 @@ class SeriesController extends AbstractController
             }
 
             $providerId = $schedule->getProviderId();
-            dump($providerId);
             if ($providerId) {
                 $provider = $this->providerRepository->findOneBy(['providerId' => $providerId]);
                 $providerName = $provider->getName();
@@ -2204,6 +2214,9 @@ class SeriesController extends AbstractController
             $schedules[] = [
                 'id' => $schedule->getId(),
                 'airAt' => $airAt->format('H:i'),
+                'firstAirDate' => $firstAirDate,
+                'frequency' => $frequency ?? 0,
+                'override' => $override ?? false,
                 'providerId' => $providerId,
                 'providerName' => $providerName ?? null,
                 'providerLogo' => $providerLogo ?? null,
@@ -2229,6 +2242,9 @@ class SeriesController extends AbstractController
         return [
             'id' => 0,
             'airAt' => "12:00",
+            'firstAirDate' => null,
+            'frequency' => 0,
+            'override' => false,
             'providerId' => null,
             'providerName' => null,
             'providerLogo' => null,

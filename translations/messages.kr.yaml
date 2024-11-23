@@ -300,6 +300,19 @@ visits: 방문
 x star: x 별
 x stars: x 별
 
+# Schedule form
+Override the Movie Database schedule: 무비 데이터베이스 일정 재정의
+Override TMDB: TMDB 재정의
+Frequency: 빈도
+Once: 한 번
+Daily: 매일
+Weekly, one at a time: 주간, 한 번에 하나
+Weekly, two at a time: 주간, 두 번에 하나
+Weekly, three at a time: 주간, 세 번에 하나
+Weekly, all at once: 주간, 한꺼번에
+Weekly, two, then one: 주간, 두 번, 그리고 하나
+Weekly, three, then one: 주간, 세 번, 그리고 하나
+
 #Search
 Search: 검색
 Search a series: 시리즈 검색

@@ -5,9 +5,33 @@
         <div class="form-group">
             <div class="form-field">
                 <div>
-                    <label for="time-{{ schedule.id }}">{{ 'Time'|trans }}
-                        <input type="time" name="time-{{ schedule.id }}" value="{{ schedule.airAt }}" id="time-{{ schedule.id }}">
-                    </label>
+                    <div class="date-time">
+                        <label for="date-{{ schedule.id }}">{{ 'First air date'|trans }}
+                            <input type="date" name="date-{{ schedule.id }}" value="{% if schedule.firstAirDate %}{{ schedule.firstAirDate|format_date('short') }}{% endif %}" id="date-{{ schedule.id }}">
+                        </label>
+                        <label for="time-{{ schedule.id }}">{{ 'Time'|trans }}
+                            <input type="time" name="time-{{ schedule.id }}" value="{{ schedule.airAt }}" id="time-{{ schedule.id }}">
+                        </label>
+                    </div>
+                    <div class="date-time">
+                        <label for="override-{{ schedule.id }}" data-title="{{ 'Override the Movie Database schedule'|trans }}">
+                            <input type="checkbox" switch name="override-{{ schedule.id }}" id="override-{{ schedule.id }}" {% if schedule.override %}checked{% endif %}>
+                            {{ 'Override TMDB'|trans }}
+                        </label>
+                        <label for="frequency-{{ schedule.id }}">
+                            <select name="frequency-{{ schedule.id }}" id="frequency-{{ schedule.id }}">
+                                <option value="">{{ 'Frequency'|trans }}</option>
+                                <option value="1" {% if schedule.frequency == 1 %}selected{% endif %}>{{ 'Once'|trans }}</option>
+                                <option value="2" {% if schedule.frequency == 2 %}selected{% endif %}>{{ 'Daily'|trans }}</option>
+                                <option value="3" {% if schedule.frequency == 3 %}selected{% endif %}>{{ 'Weekly, one at a time'|trans }}</option>
+                                <option value="4" {% if schedule.frequency == 4 %}selected{% endif %}>{{ 'Weekly, two at a time'|trans }}</option>
+                                <option value="5" {% if schedule.frequency == 5 %}selected{% endif %}>{{ 'Weekly, three at a time'|trans }}</option>
+                                <option value="6" {% if schedule.frequency == 6 %}selected{% endif %}>{{ 'Weekly, all at once'|trans }}</option>
+                                <option value="7" {% if schedule.frequency == 7 %}selected{% endif %}>{{ 'Weekly, two, then one'|trans }}</option>
+                                <option value="8" {% if schedule.frequency == 8 %}selected{% endif %}>{{ 'Weekly, three, then one'|trans }}</option>
+                            </select>
+                        </label>
+                    </div>
                     <label for="provider-{{ schedule.id }}">{{ 'Provider'|trans }}
                         <select id="provider-{{ schedule.id }}" name="provider-{{ schedule.id }}">
                             <option value="">{{ 'Select a provider'|trans }}</option>

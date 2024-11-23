@@ -35,6 +35,12 @@ class SeriesBroadcastSchedule
     #[ORM\Column(nullable: true)]
     private ?int $providerId = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $frequency = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $override = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -108,6 +114,30 @@ class SeriesBroadcastSchedule
     public function setProviderId(?int $providerId): static
     {
         $this->providerId = $providerId;
+
+        return $this;
+    }
+
+    public function getFrequency(): ?int
+    {
+        return $this->frequency;
+    }
+
+    public function setFrequency(?int $frequency): static
+    {
+        $this->frequency = $frequency;
+
+        return $this;
+    }
+
+    public function isOverride(): ?bool
+    {
+        return $this->override;
+    }
+
+    public function setOverride(?bool $override): static
+    {
+        $this->override = $override;
 
         return $this;
     }
