@@ -2,20 +2,14 @@
 
 namespace App\Command;
 
-use App\Entity\Network;
-use App\Entity\Series;
-use App\Entity\WatchProvider;
-use App\Repository\NetworkRepository;
+use App\Controller\SeriesController;
 use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesRepository;
-use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
-use App\Service\TMDBService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\ImageConfiguration;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -29,10 +23,11 @@ class reloadImages extends Command
     private float $t0;
 
     public function __construct(
-        private readonly DateService           $dateService,
-        private readonly SeriesRepository      $seriesRepository,
+        private readonly DateService        $dateService,
+        private readonly ImageConfiguration $imageConfiguration,
+        private readonly SeriesController   $seriesController,
         private readonly SeriesImageRepository $seriesImageRepository,
-        private readonly TMDBService           $tmdbService,
+        private readonly SeriesRepository   $seriesRepository,
     )
     {
         parent::__construct();
@@ -48,15 +43,28 @@ class reloadImages extends Command
 
         $this->commandStart();
 
-        $seriesAll = $this->seriesRepository->findBy([], ['id' => 'DESC'], 10, 0);
+        $seriesAll = $this->seriesRepository->findBy([], ['id' => 'DESC'], 10000, 0);
+
+        $root = $this->seriesController->getProjectDir() . '/public';
+        $this->io->writeln('Project directory: ' . $root);
+        $this->io->newLine();
 
         $seriesArr = [];
-        $tmdbs = [];
-        $count = 0;
-        $dbImageCount = ['poster' => 0, 'backdrop' => 0, 'logo' => 0, 'total' => 0];
-        $tmdbsImageCount = ['poster' => 0, 'backdrop' => 0, 'logo' => 0, 'total' => 0];
-
-//        $projectDirectory = $this->getParameter('kernel.project_dir');
+        $dbImageCount = [
+            'posters' => 0,
+            'backdrops' => 0,
+            'logos' => 0,
+            'total' => 0,
+            'saved posters' => 0,
+            'saved backdrops' => 0,
+            'saved logos' => 0,
+            'saved total' => 0,
+            'removed posters' => 0,
+            'removed backdrops' => 0,
+            'removed logos' => 0,
+            'removed total' => 0,
+        ];
+        $sizes = ['backdrops' => 3, 'logos' => 5, 'posters' => 5];
 
         foreach ($seriesAll as $series) {
             $seriesId = $series->getId();
@@ -68,64 +76,41 @@ class reloadImages extends Command
             $tmdbId = $series->getTmdbId();
 
             $this->io->writeln(sprintf('Series %d: %s', $seriesId, $seriesName));
-            $count++;
             $seriesArr[$seriesId] = ['id' => $seriesId, 'tmdbId' => $tmdbId, 'name' => $seriesName, 'backdrop' => [], 'poster' => [], 'logo' => []];
 
             $seriesImages = $series->getSeriesImages();
 
             foreach ($seriesImages as $seriesImage) {
                 $type = $seriesImage->getType();
+                $types = $seriesImage->getType() . 's';
                 $imagePath = $seriesImage->getImagePath();
                 $seriesArr[$seriesId][$type][] = $imagePath;
-                $dbImageCount[$type]++;
+                $dbImageCount[$types]++;
                 $dbImageCount['total']++;
-                $this->io->writeln(sprintf('  %s: %s → %s', $type, $imagePath, $this->fileExists('/series/' . $type . $imagePath) ? 'OK' : 'KO'));
+                $localFileExists = $this->fileExists($root . '/series/' . $types . $imagePath);
+                $this->io->writeln(sprintf('  %s: %s → %s', $type, $imagePath, $localFileExists ? 'OK' : 'KO'));
+                if (!$localFileExists) {
+                    $imageConfigType = $type . '_sizes';
+                    $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$types]);
+                    $this->seriesController->saveImage($types, $imagePath, $url);
+                    $this->io->writeln(sprintf('  %s: %s → %s', $type, $url . $imagePath, '/series/' . $types . $imagePath));
+                    $localFileExists = $this->fileExists($root . '/series/' . $types . $imagePath);
+                    if ($localFileExists) {
+                        $this->io->success(sprintf('  %s: %s → OK', $type, $imagePath));
+                        $dbImageCount['saved ' . $types]++;
+                        $dbImageCount['saved total']++;
+                    } else {
+                        $this->seriesImageRepository->remove($seriesImage);
+                        $this->io->warning(sprintf('  %s: %s → reference removed', $type, $imagePath));
+                        $dbImageCount['removed ' . $types]++;
+                        $dbImageCount['removed total']++;
+                    }
+                }
             }
             $this->io->newLine();
-
-            $addEnglish = $localizedNames != null;
-
-            $tmdb = json_decode($this->tmdbService->getTvImages($tmdbId, $addEnglish), true);
-            $tmdbs[$seriesId] = ['id' => $tmdbId, 'name' => $seriesName, 'language' => $addEnglish ? 'fr,en' : 'fr', 'backdrops' => [], 'posters' => [], 'logos' => []];
-            if (!$tmdb) {
-                $this->io->error('TMDB error');
-                continue;
-            }
-            foreach ($tmdb['posters'] as $poster) {
-                $tmdbs[$seriesId]['posters'][] = $poster['file_path'];
-            }
-            foreach ($tmdb['backdrops'] as $backdrop) {
-                $tmdbs[$seriesId]['backdrops'][] = $backdrop['file_path'];
-            }
-            foreach ($tmdb['logos'] as $logo) {
-                $tmdbs[$seriesId]['logos'][] = $logo['file_path'];
-            }
-            $tmdbsImageCount['poster'] += count($tmdbs[$seriesId]['posters']);
-            $tmdbsImageCount['backdrop'] += count($tmdbs[$seriesId]['backdrops']);
-            $tmdbsImageCount['logo'] += count($tmdbs[$seriesId]['logos']);
-            $tmdbsImageCount['total'] += count($tmdbs[$seriesId]['posters']) + count($tmdbs[$seriesId]['backdrops']) + count($tmdbs[$seriesId]['logos']);
         }
-        /*dump([
-            'count' => $count,
-            'dbImageCount' => $dbImageCount,
-            'tmdbsImageCount' => $tmdbsImageCount,
-            'seriesArr' => $seriesArr,
-            'tmdbs' => $tmdbs,
-        ]);*/
-        /*foreach ($seriesIds as $seriesId) {
-            $s = $series[$seriesId];
-            $t = $tmdbs[$seriesId];
-            dump([
-                'id' => $seriesId,
-                'series' => $s,
-                'tmdbs' => $t,
-            ]);
-        }*/
 
-        $newCount = 0;
-        $deletedCount = 0;
-
-        $this->commandEnd($newCount, $deletedCount);
+        $this->commandEnd($dbImageCount);
 
         return Command::SUCCESS;
     }
@@ -144,11 +129,23 @@ class reloadImages extends Command
         $this->t0 = microtime(true);
     }
 
-    public function commandEnd(int $newCount, int $deletedCount): void
+    public function commandEnd(array $images): void
     {
         $this->io->newLine(2);
-        $this->io->writeln(sprintf('Images added: %d', $newCount));
-        $this->io->writeln(sprintf('Image references deleted: %d', $deletedCount));
+        $this->io->writeln(sprintf('Images checked: %d', $images['total']));
+        $this->io->writeln(sprintf('Images added: %d', $images['saved total']));
+        $this->io->writeln(sprintf('Images removed: %d', $images['removed total']));
+        $this->io->newLine();
+
+        $this->io->writeln(sprintf('Posters: %d → %d', $images['posters'], $images['saved posters']));
+        $this->io->writeln(sprintf('Backdrops: %d → %d', $images['backdrops'], $images['saved backdrops']));
+        $this->io->writeln(sprintf('Logos: %d → %d', $images['logos'], $images['saved logos']));
+        $this->io->newLine();
+
+        $this->io->writeln(sprintf('Posters: %d', $images['removed posters']));
+        $this->io->writeln(sprintf('Backdrops: %d', $images['removed backdrops']));
+        $this->io->writeln(sprintf('Logos: %d', $images['removed logos']));
+        $this->io->newLine();
 
         $t1 = microtime(true);
         $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');

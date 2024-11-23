@@ -1966,7 +1966,7 @@ class SeriesController extends AbstractController
             $imageConfigType = $type . '_sizes';
             $type .= 's';
             $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]);
-            dump(['type' => $type, 'series Image' => $seriesImage, 'url' => $url]);
+//            dump(['type' => $type, 'series Image' => $seriesImage, 'url' => $url]);
             $this->saveImage($type, $seriesImage->getImagePath(), $url);
         }
 
@@ -2974,6 +2974,11 @@ class SeriesController extends AbstractController
             'id' => $tv['id'],
             'slug' => $slugger->slug($tv['name'])->lower()->toString(),
         ]);
+    }
+
+    public function getProjectDir(): string
+    {
+        return $this->getParameter('kernel.project_dir');
     }
 
     public function saveImage($type, $imagePath, $imageUrl, $localPath = "/series/"): void
