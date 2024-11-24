@@ -342,7 +342,10 @@
                             <div class="action toggle-favorite-series{% if userSeries.favorite %} favorite{% endif %}" data-title="{{ (userSeries.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
                                 {{ ux_icon('fa6-solid:heart', {height: '18px', width: '18px'}) }}
                             </div>
-                            <div class="action remove-this-series" data-title="{{ 'Remove this series from your watchlist'|trans }}">
+                            <div class="action remove-this-series"
+                                 data-tmdb-id="{{ series.tmdbId }}"
+                                 data-slug="{{ tv.localized_name.slug ?? series.slug }}"
+                                 data-title="{{ 'Remove this series from your watchlist'|trans }}">
                                 {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
                             </div>
                         </div>

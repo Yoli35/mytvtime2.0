@@ -256,7 +256,9 @@ export class Show {
                     }
                 ).then(function (response) {
                     if (response.ok) {
-                        window.location.href = '/' + lang + '/series/tmdb/{{ series.tmdbId }}-{{ series.slug }}';
+                        const tmdbId = removeThisSeries.getAttribute('data-tmdb-id');
+                        const slug = removeThisSeries.getAttribute('data-slug');
+                        window.location.href = '/' + lang + '/series/tmdb/' + tmdbId + '-' + slug;
                     }
                 });
             });
