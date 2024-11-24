@@ -300,6 +300,10 @@ visits: 방문
 x star: x 별
 x stars: x 별
 
+Add a backdrop: 배경 추가
+Add all available backdrops from TMDB: TMDB에서 사용 가능한 모든 배경 추가
+Add all available backdrops: 사용 가능한 모든 배경 추가
+
 # Schedule form
 Override the Movie Database schedule: 무비 데이터베이스 일정 재정의
 Override TMDB: TMDB 재정의
