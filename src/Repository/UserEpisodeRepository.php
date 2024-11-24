@@ -290,6 +290,9 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        ue.`season_number`              as seasonNumber,
                        ue.`watch_at`                   as watchAt,
                        sbs.`air_at`                    as airAt,
+                       sbs.`provider_id`               as providerId,
+                       wp.`provider_name`              as providerName,
+                       wp.`logo_path`                  as providerLogoPath,
                        (SELECT count(*)
                         FROM user_episode cue
                         WHERE cue.user_series_id = us.id
@@ -323,6 +326,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                          INNER JOIN user_episode ue ON us.id = ue.user_series_id
                          LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                          LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id
+                         LEFT JOIN watch_provider wp ON sbs.provider_id = wp.provider_id
                          LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
                 WHERE us.user_id = $userId
                   AND ue.season_number > 0

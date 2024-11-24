@@ -150,7 +150,9 @@ class SeriesController extends AbstractController
         // Historique des épisodes vus pendant les 2 semaines passées
         $episodeHistory = $this->getEpisodeHistory($user, 14, $country, $locale);
 
-        $AllEpisodesOfTheDay = array_map(function ($ue) {
+        $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+
+        $AllEpisodesOfTheDay = array_map(function ($ue) use ($providerUrl) {
             $this->saveImage("posters", $ue['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             if ($ue['airAt']) {
                 $time = explode(':', $ue['airAt']);
@@ -181,6 +183,9 @@ class SeriesController extends AbstractController
                 'released_episode_count' => $ue['released_episode_count'],
                 'watch_at' => $ue['watchAt'],
                 'air_at' => $ue['airAt'],
+//                'provider_logo_path' => $ue['providerLogoPath'],
+//                'provider_name' => $ue['providerName'],
+                'watch_providers' => $ue['providerId'] ? [['logo_path' => $providerUrl . $ue['providerLogoPath'], 'provider_name' => $ue['providerName']]] : [],
             ];
         }, $this->userEpisodeRepository->episodesOfTheDay($user, $country, $locale));
         $tmdbIds = array_column($AllEpisodesOfTheDay, 'tmdbId');
@@ -194,7 +199,7 @@ class SeriesController extends AbstractController
         }
 //        dump(['episodesOfTheDay' => $episodesOfTheDay]);
 
-        $allEpisodesOfTheWeek = array_map(function ($us) {
+        $allEpisodesOfTheWeek = array_map(function ($us) use ($providerUrl) {
             $this->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             if (!$us['poster_path']) {
                 $us['poster_path'] = $this->getAlternatePosterPath($us['id']);
@@ -218,7 +223,10 @@ class SeriesController extends AbstractController
                 'season_number' => $us['season_number'],
                 'episode_number' => $us['episode_number'],
                 'released_episode_count' => $us['released_episode_count'],
-                'air_at' => null,
+                'air_at' => $us['air_at'],
+                'provider_logo_path' => $us['provider_logo_path'],
+                'provider_name' => $us['provider_name'],
+                'watch_providers' => $us['provider_id'] ? [['logo_path' => $providerUrl . $us['provider_logo_path'], 'provider_name' => $us['provider_name']]] : [],
             ];
         }, $this->userSeriesRepository->getUserSeriesOfTheNext7Days($user, $country, $locale));
         $tmdbIds = array_values(array_unique(array_merge($tmdbIds, array_column($allEpisodesOfTheWeek, 'tmdb_id'))));
@@ -735,7 +743,7 @@ class SeriesController extends AbstractController
         $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
         // Get with fr-FR language to get the localized name
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "keywords", "lists", "similar"]), true);
-        dump($tv);
+//        dump($tv);
         if ($tv) {
             if (!$tv['lists']['total_results']) {
                 // Get with en-US language to get the lists
@@ -758,7 +766,7 @@ class SeriesController extends AbstractController
             $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
             list($series, $seriesBackdrops, $seriesLogos, $seriesPosters) = $this->updateSeries($series, $tv);
-            dump(['series posters' => $seriesPosters]);
+//            dump(['series posters' => $seriesPosters]);
 
             $tv['credits'] = $this->castAndCrew($tv);
             $tv['localized_name'] = $series->getLocalizedName($request->getLocale());
@@ -784,7 +792,7 @@ class SeriesController extends AbstractController
 
         $schedules = $this->seriesSchedulesV2($user, $series, $tv, $dayOffset);
         $emptySchedule = $this->emptySchedule();
-        dump($series);
+//        dump($series);
         $seriesArr = $series->toArray();
         $nead = $seriesArr['nextEpisodeAirDate'];
         $seriesArr['nextEpisodeAirDate'] = $nead ? $nead->modify($dayOffset . ' days') : null;
@@ -825,15 +833,15 @@ class SeriesController extends AbstractController
 
         $locations = $this->getSeriesLocations($series, $user->getPreferredLanguage() ?? $request->getLocale());
 
-        dump([
-            'series' => $seriesArr,
-            'locations' => $locations['filmingLocations'],
-            'tv' => $tv,
+//        dump([
+//            'series' => $seriesArr,
+//            'locations' => $locations['filmingLocations'],
+//            'tv' => $tv,
 //            'dayOffset' => $dayOffset,
-            'userSeries' => $userSeries,
-            'providers' => $providers,
-            'schedules' => $schedules,
-        ]);
+//            'userSeries' => $userSeries,
+//            'providers' => $providers,
+//            'schedules' => $schedules,
+//        ]);
         if ($tv) {
             $twig = "series/show.html.twig";
         } else {
@@ -2237,7 +2245,8 @@ class SeriesController extends AbstractController
         return $schedules;
     }
 
-    public function emptySchedule(): array{
+    public function emptySchedule(): array
+    {
         $dayArrEmpty = array_fill(0, 7, false);
         return [
             'id' => 0,
