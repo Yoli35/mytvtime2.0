@@ -722,7 +722,7 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/show/{id}-{slug}', name: 'show', requirements: ['id' => Requirement::DIGITS])]
-    public function show(Request $request, Series $series, $slug): Response
+    public function show(Request $request, Series $series, string $slug): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -1589,6 +1589,70 @@ class SeriesController extends AbstractController
         return $this->json([
             'ok' => true,
             'keywords' => $keywordBlock,
+        ]);
+    }
+
+    #[Route('/get/backdrops/{id}', name: 'get_backdrops', requirements: ['id' => Requirement::DIGITS], methods: 'POST')]
+    public function getAllBackdrops(int $id): Response
+    {
+        $images = json_decode($this->tmdbService->getAllTvImages($id), true);
+        $backdrops = $images['backdrops'];
+        $posters = $images['posters'];
+
+        return $this->json([
+            'ok' => true,
+            'success' => true,
+            'backdrops' => $backdrops,
+            'backdropUrl' => $this->imageConfiguration->getUrl('backdrop_sizes', 2),
+            'posters' => $posters,
+            'posterUrl' => $this->imageConfiguration->getUrl('poster_sizes', 2),
+        ]);
+    }
+
+    #[Route('/add/backdrops', name: 'add_backdrops', methods: 'POST')]
+    public function addAllBackdrops(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $tmdbId = $data['seriesId'];
+        $series = $this->seriesRepository->findOneBy(['tmdbId' => $tmdbId]);
+        $images = $series->getSeriesImages()->toArray();
+
+        $backdrops = $data['backdrops'];
+        $posters = $data['posters'];
+
+        $backdropUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
+        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+
+        $addedBackdropCount = 0;
+        $addedPosterCount = 0;
+
+        foreach ($backdrops as $backdrop) {
+            if (!$this->inImages($backdrop['file_path'], $images)) {
+                $seriesImage = new SeriesImage($series, "backdrop", $backdrop['file_path']);
+                $this->seriesImageRepository->save($seriesImage);
+                $this->saveImage("backdrops", $backdrop['file_path'], $backdropUrl);
+                $addedBackdropCount++;
+            }
+        }
+        foreach ($posters as $poster) {
+            if (!$this->inImages($poster['file_path'], $images)) {
+                $seriesImage = new SeriesImage($series, "poster", $poster['file_path']);
+                $this->seriesImageRepository->save($seriesImage);
+                $this->saveImage("posters", $poster['file_path'], $posterUrl);
+                $addedPosterCount++;
+            }
+        }
+
+        if ($addedBackdropCount + $addedPosterCount > 0) {
+            $this->seriesImageRepository->flush();
+        }
+
+        return $this->json([
+            'ok' => true,
+            'success' => true,
+            'addedBackdrops' => $addedBackdropCount,
+            'addedPosters' => $addedPosterCount,
         ]);
     }
 

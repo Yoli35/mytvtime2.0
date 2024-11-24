@@ -826,8 +826,16 @@ h2 {
                 top: 1rem;
             }
 
+            .add-all-backdrops {
+                cursor: pointer;
+                display: none;
+                position: absolute;
+                right: 1rem;
+                top: 3.5rem;
+            }
+
             &:hover {
-                .add-backdrop {
+                .add-backdrop, .add-all-backdrops {
                     display: block;
                 }
             }
@@ -1535,21 +1543,86 @@ h2 {
 
 }
 
-.add-backdrop-dialog {
+.add-backdrop-dialog, .add-all-backdrops-dialog {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     background-color: var(--orange-30-alpha-75);
     border-color: var(--orange-50);
     border-radius: .5rem;
-    /*display: none;*/
     gap: 1rem;
     padding: 1rem;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1000;
+    z-index: 500;
+}
 
+.add-all-backdrops-dialog {
+    .dialog-header {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        padding-inline: 1rem;
+        width: 100%;
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 100;
+            line-height: 1.25em;
+            margin-block: 0;
+            width: 100%;
+        }
+
+        button {
+            background-color: var(--orange-50);
+            border: 2px solid var(--orange-80);
+            border-radius: .25rem;
+            color: var(--ardoise-10);
+            cursor: pointer;
+            font-weight: 300;
+            padding: .25rem .5rem;
+
+            &:hover {
+                background-color: var(--orange-40);
+                border: 2px solid var(--orange-60);
+            }
+        }
+    }
+
+    .dialog-body {
+        .all-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            justify-content: center;
+            padding: 1rem;
+
+            .backdrop-item {
+                aspect-ratio: 16/9;
+                border-radius: .25rem;
+                height: 7rem;
+            }
+
+            .poster-item {
+                aspect-ratio: 78/117;
+                border-radius: .25rem;
+                height: 7rem;
+            }
+
+            .backdrop-item, .poster-item {
+                img {
+                    border-radius: .25rem;
+                    height: 100%;
+                    object-fit: cover;
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
+.add-backdrop-dialog {
     .dropzone-container {
         border: 2px dashed var(--orange-50);
         padding: 2rem 1rem;

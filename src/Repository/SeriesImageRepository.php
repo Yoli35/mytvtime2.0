@@ -28,6 +28,11 @@ class SeriesImageRepository extends ServiceEntityRepository
         if ($flush) $this->em->flush();
     }
 
+    public function flush(): void
+    {
+        $this->em->flush();
+    }
+
     public function remove(SeriesImage $seriesImage): void
     {
         $this->em->remove($seriesImage);

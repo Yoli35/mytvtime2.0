@@ -160,23 +160,28 @@
                             {{ 'No backdrop'|trans }}
                         {% endfor %}
                     </div>
-                    <div class="add-backdrop">
+                    <div class="add-backdrop" data-title="{{ 'Add a backdrop'|trans }}">
                         {{ ux_icon('ion:add-circle-outline', {height: '36px', width:'36px'}) }}
                     </div>
-                    <script>
-                        window.addEventListener("DOMContentLoaded", () => {
-
-                            const addBackdropDialog = document.querySelector('.add-backdrop-dialog');
-                            const addBackdropButton = document.querySelector('.add-backdrop');
-                            const addBackdropCancelButton = addBackdropDialog.querySelector('button[name="cancel"]');
-                            addBackdropButton.addEventListener('click', () => {
-                                addBackdropDialog.showModal();
-                            });
-                            addBackdropCancelButton.addEventListener('click', () => {
-                                addBackdropDialog.close();
-                            });
-                        });
-                    </script>
+                    <div class="add-all-backdrops"
+                         data-series-id="{{ series.tmdbId }}"
+                         data-series-name="{{ tv.localized_name.name ?? series.name }}"
+                         data-title="{{ 'Add all available badrops from TMDB'|trans }}">
+                        {{ ux_icon('ion:arrow-down-circle-outline', {height: '36px', width:'36px'}) }}
+                    </div>
+                    <dialog id="add-all-backdrops-dialog" class="add-all-backdrops-dialog">
+                        <div class="dialog-content">
+                            <div class="dialog-header">
+                                <h2>{{ 'Add all available backdrops'|trans }}</h2>
+                                <button name="cancel">{{ 'Cancel'|trans }}</button>
+                                <button name="add">{{ 'Add'|trans }}</button>
+                            </div>
+                            <div class="dialog-body">
+                                <div class="all-images">
+                                </div>
+                            </div>
+                        </div>
+                    </dialog>
                 </div>
             </div>
 
