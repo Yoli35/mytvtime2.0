@@ -217,6 +217,7 @@ export class Diaporama {
         const selector = '.thumbnail[data-index="' + index + '"]'
         const thumbnail = document.querySelector(selector);
         thumbnail.classList.add("active");
+        thumbnail.scrollIntoView(false);
     }
 
     closeDiaporama() {

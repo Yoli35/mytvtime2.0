@@ -1518,6 +1518,8 @@ dialog {
             justify-content: center;
             gap: 1rem;
             height: 8rem;
+            overflow-x: auto;
+            width: 100%;
 
             .thumbnail {
                 position: relative;
