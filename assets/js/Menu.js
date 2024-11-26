@@ -252,253 +252,255 @@ export class Menu {
         this.initTheme();
         this.initPreview();
 
-        movieSearch.addEventListener("input", (e) => {
-            const value = e.target.value;
-            console.log({e});
-            if (value.length > 2) {
-                const searchResults = movieSearch.closest("li").querySelector(".search-results");
-                const query = encodeURIComponent(value);
-                const url = 'https://api.themoviedb.org/3/search/movie?query=' + query + '&include_adult=false&language=fr-FR&page=1';
-                const options = {
-                    method: 'GET',
-                    headers: {
-                        accept: 'application/json',
-                        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmN2UzYzVmZTc5NGQ1NjViNDcxMzM0YzljNWVjYWY5NiIsIm5iZiI6MTcyMDYxMDA2Ni4zMzk0NzgsInN1YiI6IjYyMDJiZjg2ZTM4YmQ4MDA5MWVjOWIzOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.D5XVKmPsIrUKnZjQBXOhsKXzXtrejlHl8KT1dmZ2oyQ'
-                    }
-                };
+        if (movieSearch) {
+            movieSearch.addEventListener("input", (e) => {
+                const value = e.target.value;
+                console.log({e});
+                if (value.length > 2) {
+                    const searchResults = movieSearch.closest("li").querySelector(".search-results");
+                    const query = encodeURIComponent(value);
+                    const url = 'https://api.themoviedb.org/3/search/movie?query=' + query + '&include_adult=false&language=fr-FR&page=1';
+                    const options = {
+                        method: 'GET',
+                        headers: {
+                            accept: 'application/json',
+                            Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmN2UzYzVmZTc5NGQ1NjViNDcxMzM0YzljNWVjYWY5NiIsIm5iZiI6MTcyMDYxMDA2Ni4zMzk0NzgsInN1YiI6IjYyMDJiZjg2ZTM4YmQ4MDA5MWVjOWIzOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.D5XVKmPsIrUKnZjQBXOhsKXzXtrejlHl8KT1dmZ2oyQ'
+                        }
+                    };
 
-                fetch(url, options)
-                    .then(res => res.json())
-                    /** @type {SearchResults} */
-                    .then(json => {
-                        console.log(json);
-                        searchResults.innerHTML = '';
-                        const ul = document.createElement("ul");
-                        ul.setAttribute("data-type", "movie");
-                        /** @type {Movie} */
-                        json.results.forEach((result) => {
-                            const a = document.createElement("a");
-                            a.href = '/' + gThis.lang + '/movie/tmdb/' + result.id;
-                            const li = document.createElement("li");
-                            li.setAttribute("data-id", result.id);
-                            const posterDiv = document.createElement("div");
-                            posterDiv.classList.add("poster");
-                            if (result.poster_path) {
-                                const img = document.createElement("img");
-                                img.src = result.poster_path ? gThis.posterUrl + result.poster_path : '/assets/img/no-poster.png';
-                                img.alt = result.title;
-                                posterDiv.appendChild(img);
-                            } else {
-                                posterDiv.innerHTML = 'No poster';
-                            }
-                            a.appendChild(posterDiv);
-                            const titleDiv = document.createElement("div");
-                            titleDiv.classList.add("title");
-                            titleDiv.innerHTML = result.title + ' (' + result.release_date.slice(0, 4) + ')';
-                            a.appendChild(titleDiv);
-                            // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
-                            a.addEventListener("auxclick", (e) => {
-                                const details = e.currentTarget.closest("details");
-                                ul.remove();
-                                movieSearch.value = '';
-                                details.removeAttribute("open");
+                    fetch(url, options)
+                        .then(res => res.json())
+                        /** @type {SearchResults} */
+                        .then(json => {
+                            console.log(json);
+                            searchResults.innerHTML = '';
+                            const ul = document.createElement("ul");
+                            ul.setAttribute("data-type", "movie");
+                            /** @type {Movie} */
+                            json.results.forEach((result) => {
+                                const a = document.createElement("a");
+                                a.href = '/' + gThis.lang + '/movie/tmdb/' + result.id;
+                                const li = document.createElement("li");
+                                li.setAttribute("data-id", result.id);
+                                const posterDiv = document.createElement("div");
+                                posterDiv.classList.add("poster");
+                                if (result.poster_path) {
+                                    const img = document.createElement("img");
+                                    img.src = result.poster_path ? gThis.posterUrl + result.poster_path : '/assets/img/no-poster.png';
+                                    img.alt = result.title;
+                                    posterDiv.appendChild(img);
+                                } else {
+                                    posterDiv.innerHTML = 'No poster';
+                                }
+                                a.appendChild(posterDiv);
+                                const titleDiv = document.createElement("div");
+                                titleDiv.classList.add("title");
+                                titleDiv.innerHTML = result.title + ' (' + result.release_date.slice(0, 4) + ')';
+                                a.appendChild(titleDiv);
+                                // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
+                                a.addEventListener("auxclick", (e) => {
+                                    const details = e.currentTarget.closest("details");
+                                    ul.remove();
+                                    movieSearch.value = '';
+                                    details.removeAttribute("open");
+                                });
+                                li.appendChild(a);
+                                ul.appendChild(li);
                             });
-                            li.appendChild(a);
-                            ul.appendChild(li);
-                        });
-                        searchResults.appendChild(ul);
-                    })
-                    .catch(err => console.error('error:' + err));
-            } else {
-                movieSearch.closest("li").querySelector(".search-results").innerHTML = '';
-            }
-        });
-        movieSearch.addEventListener("keydown", gThis.searchMenuNavigate);
+                            searchResults.appendChild(ul);
+                        })
+                        .catch(err => console.error('error:' + err));
+                } else {
+                    movieSearch.closest("li").querySelector(".search-results").innerHTML = '';
+                }
+            });
+            movieSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
-        tvSearch.addEventListener("input", (e) => {
-            const value = e.target.value;
-            if (value.length > 2) {
-                const searchResults = tvSearch.closest("li").querySelector(".search-results");
-                const query = encodeURIComponent(value);
-                const url = 'https://api.themoviedb.org/3/search/tv?query=' + query + '&include_adult=false&language=fr-FR&page=1';
-                const options = {
-                    method: 'GET',
-                    headers: {
-                        accept: 'application/json',
-                        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmN2UzYzVmZTc5NGQ1NjViNDcxMzM0YzljNWVjYWY5NiIsIm5iZiI6MTcyMDYxMDA2Ni4zMzk0NzgsInN1YiI6IjYyMDJiZjg2ZTM4YmQ4MDA5MWVjOWIzOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.D5XVKmPsIrUKnZjQBXOhsKXzXtrejlHl8KT1dmZ2oyQ'
-                    }
-                };
+            tvSearch.addEventListener("input", (e) => {
+                const value = e.target.value;
+                if (value.length > 2) {
+                    const searchResults = tvSearch.closest("li").querySelector(".search-results");
+                    const query = encodeURIComponent(value);
+                    const url = 'https://api.themoviedb.org/3/search/tv?query=' + query + '&include_adult=false&language=fr-FR&page=1';
+                    const options = {
+                        method: 'GET',
+                        headers: {
+                            accept: 'application/json',
+                            Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmN2UzYzVmZTc5NGQ1NjViNDcxMzM0YzljNWVjYWY5NiIsIm5iZiI6MTcyMDYxMDA2Ni4zMzk0NzgsInN1YiI6IjYyMDJiZjg2ZTM4YmQ4MDA5MWVjOWIzOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.D5XVKmPsIrUKnZjQBXOhsKXzXtrejlHl8KT1dmZ2oyQ'
+                        }
+                    };
 
-                fetch(url, options)
-                    .then(res => res.json())
-                    .then(json => {
-                        console.log(json);
-                        searchResults.innerHTML = '';
-                        const ul = document.createElement("ul");
-                        ul.setAttribute("data-type", "tv");
-                        json.results.forEach((result) => {
-                            const a = document.createElement("a");
-                            const slug = gThis.toSlug(result.name);
-                            a.href = '/' + gThis.lang + '/series/tmdb/' + result.id + '-' + slug;
-                            const li = document.createElement("li");
-                            li.setAttribute("data-id", result.id);
-                            li.setAttribute("data-slug", slug);
-                            const posterDiv = document.createElement("div");
-                            posterDiv.classList.add("poster");
-                            if (result.poster_path) {
-                                const img = document.createElement("img");
-                                img.src = gThis.posterUrl + result.poster_path;
-                                img.alt = result.title;
-                                posterDiv.appendChild(img);
-                            } else {
-                                posterDiv.innerHTML = 'No poster';
-                            }
-                            a.appendChild(posterDiv);
-                            const titleDiv = document.createElement("div");
-                            titleDiv.classList.add("title");
-                            titleDiv.innerHTML = result.name;
-                            a.appendChild(titleDiv);
-                            // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
-                            a.addEventListener("auxclick", (e) => {
-                                const details = e.currentTarget.closest("details");
-                                ul.remove();
-                                tvSearch.value = '';
-                                details.removeAttribute("open");
+                    fetch(url, options)
+                        .then(res => res.json())
+                        .then(json => {
+                            console.log(json);
+                            searchResults.innerHTML = '';
+                            const ul = document.createElement("ul");
+                            ul.setAttribute("data-type", "tv");
+                            json.results.forEach((result) => {
+                                const a = document.createElement("a");
+                                const slug = gThis.toSlug(result.name);
+                                a.href = '/' + gThis.lang + '/series/tmdb/' + result.id + '-' + slug;
+                                const li = document.createElement("li");
+                                li.setAttribute("data-id", result.id);
+                                li.setAttribute("data-slug", slug);
+                                const posterDiv = document.createElement("div");
+                                posterDiv.classList.add("poster");
+                                if (result.poster_path) {
+                                    const img = document.createElement("img");
+                                    img.src = gThis.posterUrl + result.poster_path;
+                                    img.alt = result.title;
+                                    posterDiv.appendChild(img);
+                                } else {
+                                    posterDiv.innerHTML = 'No poster';
+                                }
+                                a.appendChild(posterDiv);
+                                const titleDiv = document.createElement("div");
+                                titleDiv.classList.add("title");
+                                titleDiv.innerHTML = result.name;
+                                a.appendChild(titleDiv);
+                                // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
+                                a.addEventListener("auxclick", (e) => {
+                                    const details = e.currentTarget.closest("details");
+                                    ul.remove();
+                                    tvSearch.value = '';
+                                    details.removeAttribute("open");
+                                });
+                                li.appendChild(a);
+                                ul.appendChild(li);
                             });
-                            li.appendChild(a);
-                            ul.appendChild(li);
-                        });
-                        searchResults.appendChild(ul);
-                    })
-                    .catch(err => console.error('error:' + err));
-            } else {
-                tvSearch.closest("li").querySelector(".search-results").innerHTML = '';
-            }
-        });
-        tvSearch.addEventListener("keydown", gThis.searchMenuNavigate);
+                            searchResults.appendChild(ul);
+                        })
+                        .catch(err => console.error('error:' + err));
+                } else {
+                    tvSearch.closest("li").querySelector(".search-results").innerHTML = '';
+                }
+            });
+            tvSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
-        tvSearchDb.addEventListener("input", (e) => {
-            const value = e.target.value;
-            if (value.length > 2) {
-                const searchResults = tvSearchDb.closest("li").querySelector(".search-results");
-                const url = `/${gThis.lang}/series/fetch/search/db/tv`;
-                const options = {
-                    method: 'POST',
-                    headers: {
-                        accept: 'application/json'
-                    },
-                    body: JSON.stringify({query: value})
-                };
-                console.log({url, options});
+            tvSearchDb.addEventListener("input", (e) => {
+                const value = e.target.value;
+                if (value.length > 2) {
+                    const searchResults = tvSearchDb.closest("li").querySelector(".search-results");
+                    const url = `/${gThis.lang}/series/fetch/search/db/tv`;
+                    const options = {
+                        method: 'POST',
+                        headers: {
+                            accept: 'application/json'
+                        },
+                        body: JSON.stringify({query: value})
+                    };
+                    console.log({url, options});
 
-                fetch(url, options)
-                    .then(res => res.json())
-                    .then(json => {
-                        searchResults.innerHTML = '';
-                        const ul = document.createElement("ul");
-                        ul.setAttribute("data-type", "dbtv");
-                        /** @type {DbSeries} */
-                        json.results.forEach((result) => {
-                            const a = document.createElement("a");
-                            a.href = '/' + gThis.lang + '/series/show/' + result.series_id + '-' + result.display_slug;
-                            const li = document.createElement("li");
-                            li.setAttribute("data-id", result.series_id);
-                            li.setAttribute("data-slug", result.display_slug);
-                            const posterDiv = document.createElement("div");
-                            posterDiv.classList.add("poster");
-                            if (result.poster_path) {
-                                const img = document.createElement("img");
-                                img.src = '/series/posters' + result.poster_path;
-                                img.alt = result.display_name;
-                                posterDiv.appendChild(img);
-                            } else {
-                                posterDiv.innerHTML = 'No poster';
-                            }
-                            a.appendChild(posterDiv);
-                            const titleDiv = document.createElement("div");
-                            titleDiv.classList.add("title");
-                            titleDiv.innerHTML = result.display_name;
-                            a.appendChild(titleDiv);
-                            // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
-                            a.addEventListener("auxclick", (e) => {
-                                const details = e.currentTarget.closest("details");
-                                ul.remove();
-                                tvSearch.value = '';
-                                details.removeAttribute("open");
+                    fetch(url, options)
+                        .then(res => res.json())
+                        .then(json => {
+                            searchResults.innerHTML = '';
+                            const ul = document.createElement("ul");
+                            ul.setAttribute("data-type", "dbtv");
+                            /** @type {DbSeries} */
+                            json.results.forEach((result) => {
+                                const a = document.createElement("a");
+                                a.href = '/' + gThis.lang + '/series/show/' + result.series_id + '-' + result.display_slug;
+                                const li = document.createElement("li");
+                                li.setAttribute("data-id", result.series_id);
+                                li.setAttribute("data-slug", result.display_slug);
+                                const posterDiv = document.createElement("div");
+                                posterDiv.classList.add("poster");
+                                if (result.poster_path) {
+                                    const img = document.createElement("img");
+                                    img.src = '/series/posters' + result.poster_path;
+                                    img.alt = result.display_name;
+                                    posterDiv.appendChild(img);
+                                } else {
+                                    posterDiv.innerHTML = 'No poster';
+                                }
+                                a.appendChild(posterDiv);
+                                const titleDiv = document.createElement("div");
+                                titleDiv.classList.add("title");
+                                titleDiv.innerHTML = result.display_name;
+                                a.appendChild(titleDiv);
+                                // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
+                                a.addEventListener("auxclick", (e) => {
+                                    const details = e.currentTarget.closest("details");
+                                    ul.remove();
+                                    tvSearch.value = '';
+                                    details.removeAttribute("open");
+                                });
+                                li.appendChild(a);
+                                ul.appendChild(li);
                             });
-                            li.appendChild(a);
-                            ul.appendChild(li);
-                        });
-                        searchResults.appendChild(ul);
-                    })
-                    .catch(err => console.error('error:' + err));
-            } else {
-                tvSearch.closest("li").querySelector(".search-results").innerHTML = '';
-            }
-        });
-        tvSearchDb.addEventListener("keydown", gThis.searchMenuNavigate);
+                            searchResults.appendChild(ul);
+                        })
+                        .catch(err => console.error('error:' + err));
+                } else {
+                    tvSearch.closest("li").querySelector(".search-results").innerHTML = '';
+                }
+            });
+            tvSearchDb.addEventListener("keydown", gThis.searchMenuNavigate);
 
-        personSearch.addEventListener("input", (e) => {
-            const value = e.target.value;
-            if (value.length > 2) {
-                const searchResults = personSearch.closest("li").querySelector(".search-results");
-                const query = encodeURIComponent(value);
-                const url = 'https://api.themoviedb.org/3/search/person?query=' + query + '&include_adult=false&language=fr-FR&page=1';
-                const options = {
-                    method: 'GET',
-                    headers: {
-                        accept: 'application/json',
-                        Authorization: 'Bearer ' + gThis.bearer
-                    }
-                };
+            personSearch.addEventListener("input", (e) => {
+                const value = e.target.value;
+                if (value.length > 2) {
+                    const searchResults = personSearch.closest("li").querySelector(".search-results");
+                    const query = encodeURIComponent(value);
+                    const url = 'https://api.themoviedb.org/3/search/person?query=' + query + '&include_adult=false&language=fr-FR&page=1';
+                    const options = {
+                        method: 'GET',
+                        headers: {
+                            accept: 'application/json',
+                            Authorization: 'Bearer ' + gThis.bearer
+                        }
+                    };
 
-                fetch(url, options)
-                    .then(res => res.json())
-                    .then(json => {
-                        console.log(json);
-                        searchResults.innerHTML = '';
-                        const ul = document.createElement("ul");
-                        ul.setAttribute("data-type", "person");
-                        /** @var {Person} */
-                        json.results.forEach((result) => {
-                            const a = document.createElement("a");
-                            a.href = '/' + gThis.lang + '/people/show/' + result.id + '-' + gThis.toSlug(result.name);
-                            const li = document.createElement("li");
-                            li.setAttribute("data-id", result.id);
-                            li.setAttribute("data-slug", gThis.toSlug(result.name));
-                            const posterDiv = document.createElement("div");
-                            posterDiv.classList.add("poster");
-                            if (result.profile_path) {
-                                const img = document.createElement("img");
-                                img.src = gThis.profileUrl + result.profile_path;
-                                img.alt = result.name;
-                                posterDiv.appendChild(img);
-                            } else {
-                                posterDiv.innerHTML = 'No poster';
-                            }
-                            a.appendChild(posterDiv);
-                            const titleDiv = document.createElement("div");
-                            titleDiv.classList.add("title");
-                            titleDiv.innerHTML = result.name;
-                            a.appendChild(titleDiv);
-                            // Si le lien est ouvert dans un autre onglet, il faut supprimer le menu
-                            a.addEventListener("auxclick", (e) => {
-                                const details = e.currentTarget.closest("details");
-                                ul.remove();
-                                personSearch.value = '';
-                                details.removeAttribute("open");
+                    fetch(url, options)
+                        .then(res => res.json())
+                        .then(json => {
+                            console.log(json);
+                            searchResults.innerHTML = '';
+                            const ul = document.createElement("ul");
+                            ul.setAttribute("data-type", "person");
+                            /** @var {Person} */
+                            json.results.forEach((result) => {
+                                const a = document.createElement("a");
+                                a.href = '/' + gThis.lang + '/people/show/' + result.id + '-' + gThis.toSlug(result.name);
+                                const li = document.createElement("li");
+                                li.setAttribute("data-id", result.id);
+                                li.setAttribute("data-slug", gThis.toSlug(result.name));
+                                const posterDiv = document.createElement("div");
+                                posterDiv.classList.add("poster");
+                                if (result.profile_path) {
+                                    const img = document.createElement("img");
+                                    img.src = gThis.profileUrl + result.profile_path;
+                                    img.alt = result.name;
+                                    posterDiv.appendChild(img);
+                                } else {
+                                    posterDiv.innerHTML = 'No poster';
+                                }
+                                a.appendChild(posterDiv);
+                                const titleDiv = document.createElement("div");
+                                titleDiv.classList.add("title");
+                                titleDiv.innerHTML = result.name;
+                                a.appendChild(titleDiv);
+                                // Si le lien est ouvert dans un autre onglet, il faut supprimer le menu
+                                a.addEventListener("auxclick", (e) => {
+                                    const details = e.currentTarget.closest("details");
+                                    ul.remove();
+                                    personSearch.value = '';
+                                    details.removeAttribute("open");
+                                });
+                                li.appendChild(a);
+                                ul.appendChild(li);
                             });
-                            li.appendChild(a);
-                            ul.appendChild(li);
-                        });
-                        searchResults.appendChild(ul);
-                    })
-                    .catch(err => console.error('error:' + err));
-            } else {
-                personSearch.closest("li").querySelector(".search-results").innerHTML = '';
-            }
-        });
-        personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
+                            searchResults.appendChild(ul);
+                        })
+                        .catch(err => console.error('error:' + err));
+                } else {
+                    personSearch.closest("li").querySelector(".search-results").innerHTML = '';
+                }
+            });
+            personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
+        }
 
         if (historyMenu) {
             const historySummary = historyMenu?.querySelector("summary");
