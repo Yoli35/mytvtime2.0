@@ -154,17 +154,17 @@ class HomeController extends AbstractController
         }
         dump($movieVideos);
 
-//        dump([
+        dump([
 //            'historySeries' => $historySeries,
 //            'filterString' => $filterString,
-//            'seriesSelection' => $seriesSelection,
+            'seriesSelection' => $seriesSelection,
 //            'lastAddedSeries' => $lastAddedSeries,
 //            'userSeries' => $userSeries,
 //            'movieSelection' => $movieSelection,
 //            'episodesOfTheDay' => $episodesOfTheDay,
 //            'historyEpisode' => $historyEpisode,
 //            'filteredSeries' => $filteredSeries,
-//        ]);
+        ]);
 
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
@@ -299,6 +299,7 @@ class HomeController extends AbstractController
 
     public function getSelection(string $media, string $filterString, AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $preferredLanguage = 'fr'): array
     {
+        $root = $this->getParameter('kernel.project_dir') . '/public';
         if ($media === 'movie') {
             $mediaSelection = json_decode($this->tmdbService->getFilterMovie($filterString . '&append_to_response=watch/providers'), true)['results'];
 //            $id = 'userMovie'
@@ -311,11 +312,21 @@ class HomeController extends AbstractController
         }
 //        dump(['mediaSelection' => $mediaSelection]);
 
-        return array_map(function ($tv) use ($slugger, $media, $name, $date, $country, $timezone, $preferredLanguage) {
+        return array_map(function ($tv) use ($slugger, $root, $media, $name, $date, $country, $timezone, $preferredLanguage) {
 
             $tv['tmdb'] = true;
             $this->seriesController->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), $media === 'movie' ? '/movies/' : '/series/');
-            $tv['poster_path'] = $tv['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $tv['poster_path'] : null;
+            if ($tv['poster_path']) {
+                $localPath = ($media === 'movie' ? '/movies/' : '/series/') . 'posters' . $tv['poster_path'];
+                if (file_exists($root . $localPath)) {
+                    $tv['poster_path'] = $localPath;
+                } else {
+                    $tv['poster_path'] = $this->imageConfiguration->getUrl('poster_sizes', 5) . $tv['poster_path'];
+                }
+            } else {
+                $tv['poster_path'] = null;
+            }
+//            $tv['poster_path'] = $tv['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $tv['poster_path'] : null;
             $tv['slug'] = strtolower($slugger->slug($tv[$media === 'tv' ? 'name' : 'title']));
             $tv['watch_providers'] = [];
 
