@@ -349,7 +349,6 @@ label:has(input[type="text"]) {
     }
 
     > *:hover {
-        anchor-name: --a;
         background-color: var(--navbar-bg-hover);
         color: var(--navbar-bg-hover);
 
@@ -358,17 +357,29 @@ label:has(input[type="text"]) {
         }
     }
 
-    &::after, &::before {
+    > * {
+        anchor-name: --a;
+    }
+
+    &:has(> *:hover) {
+        .div-test {
+            display: block;
+        }
+    }
+
+    &::after, &::before, .div-test {
         background-color: var(--green-50);
         border-radius: .25rem;
+        display: none;
         height: .25rem;
         left: anchor(--a left);
         position: absolute;
+        position-anchor: --a;
         transition: left .250ms, width .250ms;
         width: anchor(--a width);
     }
 
-    &::after {
+    &::after, .div-test {
         top: 2.75rem;
     }
 
