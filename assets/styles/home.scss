@@ -334,7 +334,7 @@
                 .content {
                     overflow-x: auto;
                     scroll-snap-type: x mandatory;
-                    width: 100%;
+                    /*width: 100%;*/
 
                     .card {
                         scroll-snap-align: start;
@@ -451,6 +451,7 @@
     }
 
     .wrapper {
+        display: flex;
         overflow-x: auto;
         width: 100%;
 
@@ -693,6 +694,8 @@
                         height: 3rem;
                         justify-content: center;
                         line-height: 1rem;
+                        overflow-y: auto;
+                        padding-block: .125rem;
                         padding-inline: .5rem;
                         text-align: center;
                         text-wrap: balance;
