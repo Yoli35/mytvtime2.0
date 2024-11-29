@@ -33,7 +33,9 @@
                                 {{ localizedName.name }} -
                             {% endif %}
                             {{ tv.name }}
-                            ({{ tv.first_air_date|date("Y") }})
+                            {% if tv.first_air_date %}
+                                ({{ tv.first_air_date|date("Y") }})
+                            {% endif %}
                         </h1>
                     </div>
                     <div class="series-overview">
