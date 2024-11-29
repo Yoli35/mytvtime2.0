@@ -636,6 +636,9 @@
                     {% endif %}
                     <dialog class="add-location-dialog">
                         <form action="" id="add-location-form" enctype="multipart/form-data">
+                            <input type="hidden" name="series-id" id="series-id" value="{{ series.id }}">
+                            <input type="hidden" name="crud-type" id="crud-type" value="">{# create (new) | update (edit) | delete (remove) #}
+                            <input type="hidden" name="crud-id" id="crud-id" value="">{# id of updated location #}
                             <div class="form-row">
                                 <div class="form-field">
                                     <label for="title">{{ 'Title'|trans }}

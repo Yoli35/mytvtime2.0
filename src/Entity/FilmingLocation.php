@@ -25,6 +25,9 @@ class FilmingLocation
     #[ORM\Column(length: 255)]
     private ?string $title;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $location;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description;
 
@@ -46,11 +49,12 @@ class FilmingLocation
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?FilmingLocationImage $still = null;
 
-    public function __construct(string $uuid, int $tmdbId, string $title, string $description, float $latitude, float $longitude, bool $isSeries = false)
+    public function __construct(string $uuid, int $tmdbId, string $title, string $location, string $description, float $latitude, float $longitude, bool $isSeries = false)
     {
         $this->uuid = $uuid;
         $this->tmdbId = $tmdbId;
         $this->title = $title;
+        $this->location = $location;
         $this->description = $description;
         $this->latitude = $latitude;
         $this->longitude = $longitude;
@@ -187,5 +191,15 @@ class FilmingLocation
         $this->still = $still;
 
         return $this;
+    }
+
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?string $location): void
+    {
+        $this->location = $location;
     }
 }

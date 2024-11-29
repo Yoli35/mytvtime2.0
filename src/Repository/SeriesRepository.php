@@ -85,6 +85,7 @@ class SeriesRepository extends ServiceEntityRepository
     {
         $userId = $user->getId();
         $sql = "SELECT s.`id`                                                        as id,
+                       s.`tmdb_id`                                                   as tmdbId,
                        IF(sln.name IS NULL, s.name, CONCAT(sln.name, ' - ', s.name)) as name,
                        IF(sln.slug IS NULL, s.slug, sln.slug)                        as slug,
                        s.locations                                                   as locations

@@ -38,13 +38,18 @@ class FilmingLocationRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function save(FilmingLocation $filmingLocation, bool $true): void
+    public function save(FilmingLocation $filmingLocation, bool $flush= false): void
     {
         $this->em->persist($filmingLocation);
 
-        if ($true) {
+        if ($flush) {
             $this->em->flush();
         }
+    }
+
+    public function flush(): void
+    {
+        $this->em->flush();
     }
 
     public function getAll($sql): array

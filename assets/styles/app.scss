@@ -803,6 +803,22 @@ label:has(input[type="text"]) {
         }
     }
 
+    .debug {
+        align-items: center;
+        background-color: var(--orange-30);
+        border: 2px dashed var(--orange-50);
+        border-radius: .25rem;
+        color: var(--orange-80);
+        display: flex;
+        gap: .5rem;
+        justify-content: center;
+        margin-inline-start: auto;
+        padding: .125rem .5rem;
+        position: unset;
+        right: unset;
+        top: unset;
+    }
+
     .notifications {
         align-items: center;
         border-radius: .25rem;

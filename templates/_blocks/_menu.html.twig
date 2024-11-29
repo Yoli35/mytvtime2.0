@@ -113,7 +113,11 @@
             <li>Menu item #3</li>
         </ul>
     </div>
+{#    End test popover #}
 
+    {% if route in ['app_series_show', 'app_series_season'] and  app.environment == 'dev' %}
+        <div class="debug">{{ series.id }} / {{ series.tmdbId }}</div>
+    {% endif %}
 
     {% set p = '' %}
     {% if parameters|length %}

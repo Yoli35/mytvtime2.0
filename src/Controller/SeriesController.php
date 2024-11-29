@@ -833,6 +833,7 @@ class SeriesController extends AbstractController
 
         $locations = $this->getSeriesLocations($series, $user->getPreferredLanguage() ?? $request->getLocale());
 
+//        $this->fixFilmingLocations();
 //        dump([
 //            'series' => $seriesArr,
 //            'locations' => $locations['filmingLocations'],
@@ -1058,13 +1059,13 @@ class SeriesController extends AbstractController
         $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
 
-//            dump([
-//            'series' => $series,
+        dump([
+            'series' => $series,
 //            'season' => $season,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-//       ]);
+        ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'season' => $season,
@@ -1700,6 +1701,7 @@ class SeriesController extends AbstractController
 
         $uuid = $data['uuid'] = Uuid::v4()->toString();
         $title = $data['title'];
+        $location = $data['location'];
         $description = $data['description'];
         $data['latitude'] = str_replace(',', '.', $data['latitude']);
         $data['longitude'] = str_replace(',', '.', $data['longitude']);
@@ -1711,7 +1713,7 @@ class SeriesController extends AbstractController
         $series->setLocations($locations);
         $this->seriesRepository->save($series, true);
 
-        $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $description, $latitude, $longitude, true);
+        $filmingLocation = new FilmingLocation($uuid, $tmdbId, $location, $description, $latitude, $longitude, true);
         $this->filmingLocationRepository->save($filmingLocation, true);
 
         $images = [];
@@ -1793,8 +1795,10 @@ class SeriesController extends AbstractController
 //            }
 //        }
 
-        $uuid = $data['uuid'] = Uuid::v4()->toString();
+//        $uuid = $data['uuid'] = Uuid::v4()->toString();
+        $id = $data['crud-id'];
         $title = $data['title'];
+        $location = $data['location'];
         $description = $data['description'];
         $data['latitude'] = str_replace(',', '.', $data['latitude']);
         $data['longitude'] = str_replace(',', '.', $data['longitude']);
@@ -1806,7 +1810,13 @@ class SeriesController extends AbstractController
         $series->setLocations($locations);
         $this->seriesRepository->save($series, true);
 
-        $filmingLocation = new FilmingLocation($uuid, $title, $description, $latitude, $longitude, true);
+//        $filmingLocation = new FilmingLocation($uuid, $title, $location, $description, $latitude, $longitude, true);
+        $filmingLocation = $this->filmingLocationRepository->findOneBy(['id' => $id]);
+        $filmingLocation->setTitle($title);
+        $filmingLocation->setLocation($location);
+        $filmingLocation->setDescription($description);
+        $filmingLocation->setLatitude($latitude);
+        $filmingLocation->setLongitude($longitude);
         $this->filmingLocationRepository->save($filmingLocation, true);
 
         $image = $data['image'];
@@ -3124,5 +3134,337 @@ class SeriesController extends AbstractController
     public function getRootDir(): string
     {
         return $this->getParameter('kernel.project_dir');
+    }
+
+    public function fixFilmingLocations(): void
+    {
+        $arr = [
+            3 => 'Leaf Lake Kan Resort - Episode 10 @25:43 - 399, Tha Kradan, Si Sawat District, Kanchanaburi 71250, Thaïlande',
+            4 => 'Serene WaterPark - Episode 12 @29:00 - เลขที่ 1/11 หมู่ที่ 2 Thanon Pla, Tambon Phla, Ban Chang District, Rayong 21130, Thaïlande',
+            5 => 'The Belnord sur la 86e rue',
+            14 => 'Université de Mahidol, Salaya, Thaïlande',
+            15 => 'Tha Phae Gate - Episode 5@17:33 - Tha Phae Road, Chang Khlan Sub-district, Mueang Chiang Mai District, Chiang Mai 50200, Thaïlande',
+            16 => 'Maysa.BKK - 55/9 Sena Niwet Soi 112, Lat Phrao, Bangkok 10230, Thaïlande',
+            17 => 'Granny Café Si Wari - MQXP+W5R, Sisa Chorakhe Noi, Bang Sao Thong District, Samut Prakan 10540, Thaïlande',
+            18 => 'Greyhound Cafe Emquartier - Room 2C03 - 04 ชั้น 2 35 Sukhumvit Rd, Khlong Tan Nuea, Watthana, Bangkok 10110, Thaïlande',
+            19 => 'Parking Toys - No.1, 29 ถนน ประเสริฐมนูกิจ Chorakhe Bua, Lat Phrao, Bangkok 10230, Thaïlande',
+            20 => 'Suan Luang Rama IX - Chaloem Phrakiat Ratchakan Thi 9 Rd, เเขวง หนองบอน Prawet, Bangkok 10250, Thaïlande',
+            21 => 'Siam Amazing Park - 203 Suan Sayam Rd, Khan Na Yao, Bangkok 10230, Thaïlande',
+            22 => 'Wat Arun - 158 Thanon Wang Doem, Wat Arun, Bangkok Yai, Bangkok 10600, Thaïlande',
+            23 => 'Wat Phra That Doi Suthep - Suthep, Mueang Chiang Mai, Chiang Mai 50200, Thaïlande',
+            24 => 'Chiang Mai Zoo - 100 Huay Kaew Rd, Tambon Su Thep, Mueang Chiang Mai District, Chiang Mai 50200, Thaïlande',
+            25 => 'Ao Nam Mao Pier - Ao Nang, Mueang Krabi, Province de Krabi 81000, Thaïlande',
+            26 => 'The SeaShell - 999 Moo 6 Laemphopattana 1 Road, Sai Thai, Mueang Krabi District, Krabi 81000, Thaïlande',
+            27 => 'Railay Beach - Ao Nang, Province de Krabi, Thaïlande',
+            28 => 'Le magasin de reprographie des parents du stagiaire Ryan',
+            29 => 'Lieu de tournage, épisode 8 - Royal Thai Air Force and National Aviation Museum',
+            30 => 'Wine Connection Big C Ratchadamri',
+            31 => 'Sub-Zero Ice Skate Club Sukhumvit',
+            32 => 'Bangkok - Joe\'s apartment',
+            33 => 'Slōlē Café & Garden - 9 Chok Chai 4 Soi 52/1, Lat Phrao, Bangkok 10230, Thaïlande',
+            34 => 'Manor Studio - 103 Ramkhamhaeng 24 Alley, Lane 14, Hua Mak, Bang Kapi District, Bangkok 10240, Thaïlande',
+            35 => 'Oliva cafe - 127, Ban Klang, Mueang Pathum Thani District, Pathum Thani 12000, Thaïlande',
+            36 => 'Kaohsiung, Taïwan',
+            37 => 'Hi-ing Music Hall - Episode 8@18:18 - No. 1號, Zhen\'ai Rd, Yancheng District, Kaohsiung City, Taïwan 803',
+            38 => '804, Taïwan, Kaohsiung, District de Gushan - Episode 9 @ 11:25',
+            39 => 'Hamasen Railway Cultural Park - Episode 9 @23:45 - No. 32號, Gushan 1st Rd, Gushan District, Kaohsiung City, Taïwan 804',
+            40 => 'Concert at Sea\'s guinguette - Episode 11 - Concert - No. 109-1號, Binhai 1st Rd, Gushan District, Kaohsiung City, Taïwan 804',
+            41 => 'Kuan Du Bridge -, 121.458866',
+            42 => 'Tamsui',
+            43 => 'Pescador Café with a view of the bridge where Sheng Wang and classmates took selfies - No. 253號, Zhongzheng Rd, Tamsui District, New Taipei City, Taïwan 251',
+            44 => 'Selfies\'s Bridge in episode 3',
+            45 => 'Épisode 5, saison 1 ~ @44:00 ',
+            46 => 'Near LB Cafe - Episode 10',
+            47 => 'Commissariat - 84 Rue de Trévise 59000 Lille',
+            48 => 'Wattignies - Habitation de Morgan Alvaro',
+            49 => 'Morbecque - Le château',
+            50 => 'Le Touquet - Vacances en famille - Episode 4, saison 1',
+            51 => 'La Corse - Épisode 8, saison 2',
+            52 => 'Islande - Épisode 4, saison 3',
+            53 => 'Dunkerque - Épisode 6, saison 1',
+            54 => 'Le Quesnoy - Épisode 2, saison 2',
+            55 => 'Le Clos Barthélemy - 62156 Éterpigny',
+            56 => 'Asiatique Sky - 2194 Charoen Krung Road, Wat Phraya Krai, Bang Kho Laem, Bangkok 10120, Thaïlande',
+            57 => 'Suan Luang Rama IX - Chaloem Phrakiat Ratchakan Thi 9 Rd, เเขวง หนองบอน Prawet, Bangkok 10250, Thaïlande',
+            58 => 'Jupiter Trevi Resort and Spa - Khanong Phra, Pak Chong District, Nakhon Ratchasima 30130, Thaïlande',
+            59 => 'Ao Phrao Beach - HHV9+64X Unnamed Road Ko Kut, Ko Kut District, Trat 23000, Thaïlande',
+            60 => 'Chonthicha Seafood - JH5V+9JC 7 Ko Kut District, Trat 23000, Thaïlande',
+            61 => 'Saphan Nam Leuk Pier - MG3M+9G7, Yothathikan Trat Wat Rat-tha Ruea Nam Luek Rd, Ko Kut, Ko Kut District, Trat 23000, Thaïlande',
+            62 => 'Monfai Cultural Center / Living Museum - RX9R+M3V, Tambon Chang Phueak, Mueang Chiang Mai District, Chiang Mai 50300, Thaïlande',
+            63 => 'Khua Lek (Iron Bridge) - Q2M3+HRW, Loi Kroh Rd, Tambon Chang Moi, Mueang Chiang Mai District, Chiang Mai 50100, Thaïlande',
+            64 => 'บ้านไวทยภักดิ์ – Baan Vaithayaphak - หมู่ที่ 1 99 Hua Wiang, Sena District, Phra Nakhon Si Ayutthaya 13110, Thaïlande',
+            65 => 'บุราณ บางโตนด – Burann Bangtanode - 22 หมู่ 3, Bang Tanot, Photharam District, Ratchaburi 70120, Thaïlande',
+            66 => '13 Coins Airport Hotel - 30/55 Chulakasem 19 Alley, Tambon Bang Khen, Mueang Nonthaburi District, Nonthaburi 11000, Thaïlande',
+            67 => 'Wat Intharawat (Wat Ton Kwen) - PWFG+45F บ้านต้นเกว๋น ซอย 3 Nong Kwai, Hang Dong District, Chiang Mai 50230, Thaïlande',
+            68 => 'Seoul - Dongho Bridge - Saison 2',
+            69 => 'Samila Beach - Province de Songkhla, Thaïlande',
+            70 => 'Tinsulanonda Bridge - 5GRX+C63 ทะเลสาบสงขลา, Sathing Mo, Amphoe Singhanakhon, Songkhla 90280, Thaïlande',
+            71 => 'Hub Ho Hin (Red Rice Mill) - 5HXQ+9C4, 13 Nakhonnok St, Bo Yang, Mueang Songkhla District, Songkhla 90000, Thaïlande',
+            72 => 'Homestay Ban Nai Singtho - Unnamed Road Khuha Tai, Rattaphum District, Songkhla 90180, Thaïlande',
+            73 => 'Khao Khuha Mountain - Khuha Tai, Rattaphum District, Songkhla 90180, Thaïlande',
+            74 => 'Songkhla National Museum - 6H2Q+WCM road Wichian Chom - Rong Mueang Alley Bo Yang, Mueang Songkhla District, Songkhla 90000, Thaïlande',
+            75 => 'Chao Phraya Sky Park - PFQX+J95, Phra Pokklao Brg, Wang Burapha Phirom, Phra Nakhon, Bangkok 10200, Thaïlande',
+            76 => 'Chatuchak Weekend Market - 587, 10 Kamphaeng Phet 2 Rd, Khwaeng Chatuchak, Chatuchak, Bangkok 10900, Thaïlande',
+            77 => 'Pusan - Corée du sud - Episode 1 @46:11',
+            78 => 'Pusan - Corée du sud - Épisode 2 @10:05',
+            79 => 'Busan - Épisode 2 @46:15',
+            80 => 'Samrong Klang, Samut Prakan',
+            81 => 'Rosewood Hotel, Bangkok',
+            82 => 'Bangkok Yacht Club Condominium',
+            83 => 'Tank1969space',
+            84 => 'Red Brick Kitchen by Chef Aue, Bangkok',
+            85 => 'Soopanava Group co.,Ltd - 107, Song Khanong, Phra Pradaeng District, Samut Prakan 10130, Thailand',
+            86 => 'Thonburi District - 196 Bangkok 10160, Thaïlande',
+            87 => 'Moldna Club - 168 Soi Charan Sanitwong 92, Bang O, Bang Phlat, Bangkok 10700, Thaïlande',
+            88 => 'Si Phraya Pier - Bang Rak, Bangkok 10500, Thaïlande',
+            89 => 'Phraeng Phuthon Rd - 109 Phraeng Phuthon Rd, Khwaeng San Chao Pho Sua, Khet Phra Nakhon, Krung Thep Maha Nakhon 10200, Thaïlande',
+            90 => 'Connext Sriracha - 168 292 ม.9 Sukhumvit Rd, Bang Phra, Si Racha District, Chon Buri 20110, Thaïlande',
+            91 => 'Medici Kitchen & Bar (Hotel Muse) - 55, 55/555 โรงแรมมิวส์ กรุงเทพฯ 555 Lang Suan Rd, Lumphini, Pathum Wan, Bangkok 10330, Thaïlande',
+            92 => 'Huachiew Chalermprakiet University, Province de Samut Prakan, Thaïlande',
+            93 => 'Institut de technologie de King Mongkut, district de Lat Krabang',
+            94 => 'Doi Pha Tang - Chiang Khian, Thoeng, Province de Chiang Rai 57230, Thaïlande',
+            95 => 'Tha Phae Gate - Tha Phae Road, Chang Khlan Sub-district, Mueang Chiang Mai District, Chiang Mai 50200, Thaïlande',
+            96 => 'Huai Mae Sai Waterfall - 2P38+RP2, Mae Yao, Mueang Chiang Rai District, Chiang Rai 57100, Thaïlande',
+            97 => 'The Village was made for show in Chiang Rai',
+            98 => 'Jasmine 59 Hotel - 9 Sukhumvit 59(Boonchana Sukhumvit Rd, Klongtan-Nua Watthana, Bangkok 10110, Thaïlande',
+            99 => 'Le Khwam Luck Cafe Bar and Restaurant - 98 5 Ekkamai 22 Aly, Khlong Tan Nuea, Watthana, Bangkok 10110, Thaïlande',
+            100 => 'White House 36 - 36 Borromratchachonnani 62/6, Sala Thammasop, Tawiwattana, Bangkok 10170, Thaïlande',
+            101 => 'St. Thomas Aquinas Church - 6 Soi Ramkhamheang 184, Min Buri, Bangkok 10510, Thaïlande',
+            102 => 'Hin Khao Ngu Park - HQ9G+976, Ko Phlappla, Mueang Ratchaburi, Ratchaburi 70000, Thaïlande',
+            103 => 'Pattaya - Episode 5',
+            104 => 'Pattaya - Episode 5 @04:21',
+            105 => 'Pattaya - Episode 5 @04:24',
+            106 => 'Bangkok Yacht Club Condominium - 64 Rat Burana Rd, Bang Pakok, Rat Burana, Bangkok 10140, Thaïlande',
+            107 => 'Chao Pho Khao Yai Shrine - 5R94+7MM, Tha Thewawong, Ko Sichang District, Chon Buri 20120, Thaïlande',
+            108 => 'Azure Hostel- 589 Phra Sumen Rd, Wat Bowon Niwet, Phra Nakhon, Bangkok 10200, Thaïlande',
+            109 => 'Sai Kaew Beach - Amphoe Muang, Rayong 21160, Thaïlande',
+            110 => 'Blue Cafe Sattahip - ',
+            111 => 'Homely Nest Phrae - Episode 9 - 8 Rong Sor 3, Nai Wiang, Mueang Phrae District, Phrae 54000, Thaïlande',
+            112 => 'Sano Loi Canal, Bridge and Flats - อาคาร นนทพิมลชัย 117-118​ หมู่​ 2​ ต.โสนลอย​ อ.บางบัวทอง​ 0892054444 ​ Sano Loi, Bang Bua Thong District, Nonthaburi 11110, Thaïlande',
+            113 => 'Bebop (Coffee & Music) - Phahonyothin Rd, ลาดยาว จตุจักร Bangkok 10900, Thaïlande',
+            114 => 'Somdet Phra Srinakarin Park - Prachachuen-Parkkred Rd, Ban Mai, Pak Kret District, Nonthaburi 11120, Thaïlande',
+            115 => 'Skywalk Wat Khao Tabaek - 4369+C8G Unnamed Road Si Racha District, Chon Buri 20110, Thaïlande',
+            116 => 'Hua Lamphong train station - Rong Mueang Rd, Rong Muang, Pathum Wan, Bangkok 10330, Thaïlande',
+            150 => 'London Eye',
+            151 => 'Xi\'an Jiaotong–Liverpool University',
+            152 => 'Shanghai Science and Technology Museum',
+            153 => 'The F4\'s room was filmed at MixPace Mandela in Huangpu District',
+            154 => 'The rooftop scenes among others were filmed at Now Factory in Jiading District',
+            155 => 'Various scenes were filmed at Suzhou Poly Grand Theatre in Wuzhong District, Suzhou',
+            157 => 'Sunan Shuofang International Airport',
+            158 => 'Jiangwan Stadium, Where Si waited for Shan Cai in the rain',
+            159 => 'Changbaishan Maplewood Chalet in Jilin',
+            160 => 'Where Si and Shan Cai go after escaping his party Hyatt on the Bund Hotel in Hongkou District',
+            161 => 'Binjiang Park in Pudong',
+            162 => 'Assumption University Suvarnabhumi Campus - 88 หมู่ที่ 8 ถนน บางนา-ตราด Bang Sao Thong, Bang Sao Thong District, Samut Prakan 10540, Thaïlande',
+            163 => 'Slōlē Café & Garden - 9 Chok Chai 4 Soi 52/1, Lat Phrao, Bangkok 10230, Thaïlande',
+            164 => 'Medici Kitchen & Bar (Hotel Muse) - 55, 55/555 โรงแรมมิวส์ กรุงเทพฯ 555 Lang Suan Rd, Lumphini, Pathum Wan, Bangkok 10330, Thaïlande',
+            165 => 'China Town / Yaowarat Rd - PGR5+4W6, Yaowarat Rd, Khwaeng Samphanthawong, Khet Samphanthawong, Bangkok 10100, Thaïlande',
+            166 => 'Democracy Monument - QG42+MPQ, Ratchadamnoen Klang Rd, Wat Bowon Niwet, Phra Nakhon, Bangkok 10200, Thaïlande',
+            167 => 'Fotoclub BKK - 1158 Charoen Krung 32 Alley, Bang Rak, Bangkok 10500, Thaïlande',
+            168 => '“Eiffel Tower” - Av. Gustave Eiffel, 75007 Paris',
+            169 => 'Kopitiam by Wilai (โกปี่เตี่ยม) - 18 Thalang Rd, Tambon Talat Yai, Mueang Phuket District, Phuket 83000, Thaïlande',
+            170 => 'Promthep Cape (แหลมพรหมเทพ) - แหลมพรหมเทพ, Rawai, Mueang Phuket District, Phuket 83100, Thaïlande',
+            171 => 'Bang Neow Shrine - V9GV+JPH, Tambon Talat Yai, Mueang Phuket District, Phuket 83000, Thaïlande',
+            172 => 'Ao Po Grand Marina - 113 Pa Klok, Thalang District, Phuket 83110, Thaïlande',
+            173 => 'Thanon Talang/Soi Romanee (Various Old Town streets) - V9PQ+5MG, Tambon Talat Yai, Mueang Phuket District, Phuket 83000, Thaïlande',
+            174 => 'Cape Panwa Hotel - 27, 27/2, Mu 8 Sakdidej Rd, Wichit, Mueang Phuket District, 83000, Thaïlande',
+            175 => 'On On Hotel - 19 Phangnga Rd, Talat Yai, Mueang Phuket District, Phuket 83000, Thaïlande',
+            176 => 'Dibuk Restaurant - 69 Dibuk Rd, Tambon Talat Nuea, Mueang Phuket District, Phuket 83000, Thaïlande',
+            177 => 'Sangtham Shrine - V9MQ+P4G, Tambon Talat Yai, Mueang Phuket District, Phuket 83000, Thaïlande',
+            178 => 'Phuket Thai Hua Museum - 28 Krabi, Tambon Talat Nuea, Mueang Phuket District, Phuket 83000, Thaïlande',
+            179 => 'Laem Ka Beach - Q8HP+5RQ Unnamed Road Rawai, Mueang Phuket District, Phuket, Thaïlande',
+            180 => 'Iron Balls Parlour & Saloon - 45 Sukhumvit Rd, Khlong Toei, Bangkok 10110, Thaïlande',
+            181 => 'Banyan Tree Dinner Cruise Boat - 21/100 S Sathon Rd, Thung Maha Mek, Sathon, Bangkok 10120',
+            182 => 'Red Brick Kitchen by Chef Aue - 37 Chokchai 4 Soi 54 Yaek 6, Lat Phrao, Bangkok 10230, Thaïlande',
+            183 => 'Rosewood Hotel - Phloen Chit Rd, Khwaeng Lumphini, Pathum Wan, Krung Thep Maha Nakhon 10330, Thaïlande',
+            184 => 'Medici Kitchen & Bar (Hotel Muse) - 55, 55/555 โรงแรมมิวส์ กรุงเทพฯ 555 Lang Suan Rd, Lumphini, Pathum Wan, Bangkok 10330, Thaïlande',
+            185 => 'Sing Sing Theater - 45 Sukhumvit 45 Alley, Khwaeng Khlong Tan Nuea, Watthana, Bangkok 10110, Thaïlande',
+            186 => 'Portobello & Désiré - เกษตรนวมินทร์ ตอหม้อ 168, 40 ซ, 22 Prasert-Manukitch Rd, Lat Phrao, Bangkok 10230, Thaïlande',
+            187 => 'Wat Arun - 158 Thanon Wang Doem, Wat Arun, Bangkok Yai, Bangkok 10600, Thaïlande',
+            188 => 'Grand Canyon - 20000 Chon Buri By Pass, Huai Kapi, Chon Buri District, Chon Buri 20000, Thaïlande',
+            189 => 'Chan Ta Then Waterfall - 62RW+V5H, Bang Phra, Si Racha District, Chon Buri 20110, Thaïlande',
+            190 => 'Wat Kanlayanamit Woramahawihan - 371 ซอย อรุณอมรินทร์ 6 เเขวง วัดกัลยาณ์, Thon Buri, Bangkok 10600, Thaïlande',
+            191 => 'The House on Sathorn / W Hotel Bangkok - 106 N Sathon Rd, Silom, Bang Rak, Bangkok 10500, Thaïlande',
+            192 => 'Hotel Muse (Paranim Penthouse) - 55, 555 Lang Suan Rd, Khwaeng Lumphini, Pathum Wan, Bangkok 10330, Thaïlande',
+            193 => 'CAMELOTS - 67, 111 Ekkachai Rd, Khlong Bang Phran, Bang Bon, Bangkok 10150, Thaïlande',
+            194 => 'The Manor Studio - 103 Ramkhamhaeng 24 Alley, Lane 14, Hua Mak, Bang Kapi District, Bangkok 10240, Thaïlande',
+            195 => 'Wat Arun Ferry Pier - Wat Arun, Bangkok Yai, Bangkok 10600, Thaïlande',
+            196 => 'Chana City Residence - 829 Pracha Uthit Rd, Samsen Nok, Huai Khwang, Bangkok 10310, Thaïlande',
+            197 => 'Tinidee Hotel Bangkok Golf Club - 99/3 ถนน ติวานนท์ Bang Kadi, Amphoe Mueang Pathum Thani, Pathum Thani 12000, Thaïlande',
+            198 => '‘Eco Village’, Hua Hin Fishing Pier - HXG6+892, Hua Hin, Thaïlande',
+            199 => 'Rangsit University - 52 347 Phahonyothin Rd, Lak Hok, Mueang Pathum Thani District, Pathum Thani 12000, Thaïlande',
+            200 => 'Khao Tao Beach Lodge Old Siam - House Number 15 Khao Tao Beach 77110, Hua Hin District, Prachuap Khiri Khan 77110, Thaïlande',
+            201 => 'Sai Noi Beach - FX3J+CMV Sai Noi Beach Road Pak Nam Pran, Hua Hin District, Prachuap Khiri Khan 77220, Thaïlande',
+            202 => 'Slōlē Café & Garden - 9 Chok Chai 4 Soi 52/1, Lat Phrao, Bangkok 10230, Thaïlande',
+            203 => 'Northgate Ratchayothin - 248 Ratchadaphisek Rd, Khwaeng Lat Yao, Khet Chatuchak, Krung Thep Maha Nakhon 10900, Thaïlande',
+            204 => '43 Kamphaeng Phet Rd - Phahon Yothin Rd, Khwaeng Chatuchak, Khet Chatuchak, Krung Thep Maha Nakhon 10900, Thaïlande',
+            205 => 'Saphan Han - 4 592 Chakkraphet Rd, Wang Burapha Phirom, Phra Nakhon, Bangkok 10200, Thaïlande',
+            206 => 'Wat Arun - 158 Thanon Wang Doem, Wat Arun, Bangkok Yai, Bangkok 10600, Thaïlande',
+            207 => 'Ong Ang Walking Street - PGV3+Q4M, Wang Burapha Phirom, Phra Nakhon, Bangkok 10200, Thaïlande',
+            208 => 'Erawan Falls (Level 4) - Cette cascade du parc national d\'Erawan comporte 7 niveaux accessibles par des sentiers et des passerelles. - Tha Kradan, Amphoe Si Sawat, Province de Kanchanaburi 71250, Thaïlande',
+            209 => 'Sea Life Bangkok - ชั้น บี1-บี2 สยามพารากอน (Étage B1-B2 Siam Paragon) 991 Rama I Rd, Pathum Wan, Bangkok 10330, Thaïlande',
+            210 => 'Bang Na Pride Hotel and Residence - 2 Bang Na-Trat Frontage Rd, Bang Kaeo, Bang Phli District, Samut Prakan 10540, Thaïlande',
+            211 => 'Dream Park Resort - 17 Mu 2 Rd, Pak Phraek, Mueang Kanchanaburi District, Kanchanaburi 71000, Thaïlande',
+            212 => 'River Kwai Bridge - Tha Ma Kham, Mueang Kanchanaburi District, Kanchanaburi 71000, Thaïlande',
+            213 => 'Nang Rong Beach - ถ. หาดนางรอง (Chemin de la plage de Nang Rong.), Tambon Samaesarn, Amphoe Sattahip, Chang Wat Chon Buri 20180, Thaïlande',
+            214 => 'Marché flottant du Lotus rouge',
+            215 => 'Phra Pathom Chedi, imposant temple bouddhiste du IVe siècle avec cour centrale et gigantesque Bouddha allong',
+            216 => 'Bang Phae Pathom Pittaya School',
+            217 => 'AA Resort Hotel, Nonthaburi',
+            218 => 'Northgate Ratchayothin, Bangkok',
+            219 => 'Silpakorn University, Sanam Chandra Palace Campus',
+            220 => 'Slole Cafe & Garden, one of Zen part-time works',
+            221 => 'Charoen Nakhon 65, Bangkok, Thaïlande',
+            222 => 'Nang Rong Beach - ถ. หาดนางรอง (Chemin de la plage de Nang Rong.), Tambon Samaesarn, Amphoe Sattahip, Chang Wat Chon Buri 20180, Thaïlande',
+            223 => 'Nam Sai Beach - JW3V+8RF, Samaesarn, Sattahip District, Chon Buri 20180, Thaïlande',
+            224 => 'Tanya Sea View Resort - 99/46 Moo1, Tambon Samaesarn, Amphoe Sattahip, Chon Buri, 20180, 20180, Thaïlande',
+            225 => 'Satit Bilingual School of Rangsit University - 52/347 Muang Ake ถ. พหลโยธิน (Chemin Phahonyothin.) Lak Hok, Mueang Pathum Thani District, Pathum Thani 12000, Thaïlande',
+            226 => 'Slōlē Café & Garden - 9 Chok Chai 4 Soi 52/1, Lat Phrao, Bangkok 10230, Thaïlande',
+            227 => 'Grand Canyon - 20000 Chon Buri By Pass, Huai Kapi, Chon Buri District, Chon Buri 20000, Thaïlande',
+            228 => 'Comté de Gwinnett, Georgie',
+            229 => 'Siam Paragon - 991/1 Rama I Rd, Pathum Wan, Bangkok 10330, Thaïlande',
+            230 => 'Loong Mala - 99/6-9 อาคาร ศูนย์การค้าโชว์ดีซี AM101 บางกะปิ Huai Khwang, Bangkok 10120, Thaïlande',
+            231 => 'Monster Aquarium - 125 1, Muang Pattaya, Bang Lamung District, Chon Buri 20150, Thaïlande',
+            232 => 'The Salaya Leisure Park - บางภาษี ต 88/8 หมู่ 5 ถนน Salaya, Phutthamonthon District, Nakhon Pathom 73170, Thaïlande',
+            233 => 'Niyai Cafe, 8 Thung Mangkon 8 Alley, Chim Phli, Taling Chan, Bangkok 10170, Thailand',
+            234 => 'Pimalai Resort and Spa - 99 Moo 5 Ba Kan Tiang Beach, Ko Lanta District, Krabi 81150, Thaïlande',
+            235 => 'Kantiang Bay - 152-152/1 Moo 5 Kantiang Bay, Amphoe Ko Lanta, Chang Wat Krabi 81150, Thaïlande',
+            236 => 'Koh Lanta Old Town Pier - G3MX+35H, Ko Lanta Yai, Thaïlande',
+            237 => 'Sam Roi Yot Beach',
+            238 => 'Bhumibol Bridge - MG6Q+8RG, Industrial Ring Rd, Bang Ya Phraek, Phra Pradaeng District, Samut Prakan 10130, Thaïlande',
+            239 => 'Lappis Wine & Restaurant - โครงการเดอะมูน Nuan Chan 46 Alley, Nuanchan, Bueng Kum, Bangkok 10230, Thaïlande',
+            240 => 'Liberty Walk - 5 Soi Sangkhom Songkhro 12/1, Khwaeng Lat Phrao, Khet Lat Phrao, Krung Thep Maha Nakhon 10230, Thaïlande',
+            241 => 'Bira Circuit - W2C5+P5G, Pong, Bang Lamung District, Chon Buri 20150, Thaïlande',
+            242 => 'ZOOM Sky Bar & Restaurant - 36 Naradhiwas Rajanagarindra Rd, Yan Nawa, Sathon, Bangkok 10120, Thaïlande',
+            243 => 'Baan Cool Cafe’ &​ Arts Space - PQGF+3HX Unnamed Road Lat Krabang, Bangkok 10520, Thaïlande',
+            244 => 'Northgate Ratchayothin - 248 Ratchadaphisek Rd, Khwaeng Lat Yao, Khet Chatuchak, Krung Thep Maha Nakhon 10900, Thaïlande',
+            245 => 'Institute of Marine Science, Burapha University - 169 Long Had Bangsaen Rd, Saen Suk, Chon Buri District, Chon Buri 20131, Thaïlande',
+            246 => 'Wat Bang Phun - XHRF+76F, Rangsit-Pathum Thani 43 Alley, Bang Phun, Mueang Pathum Thani District, Pathum Thani 12000, Thaïlande',
+            247 => 'Khao Kalok Beach - Pak Nam Pran, District de Pran Buri, Province de Prachuap Khiri Khan 77120, Thaïlande',
+            248 => 'Queen Sirikit Park - 200/1 Kamphaeng Phet 2 Rd, Chatuchak, Bangkok 10900, Thaïlande',
+            249 => 'Wat Khao Sanam Chai - 1 3 Phet Kasem Rd, Nong Kae, Hua Hin District, Prachuap Khiri Khan 77110, Thaïlande',
+            250 => 'Université Rangsit, Pathum Thani',
+            251 => 'โรงเจเปาเก็งเต็ง (Pao Keng Teng Vegetarian House) - 28 Moo1, Wat Samrong, Nakhon Chai Si District, Nakhon Pathom 73120, Thaïlande',
+            252 => 'บ้านไก่คู่ (Poulet Double) - Ban Pong, Ban Pong District, Ratchaburi 70110, Thaïlande',
+            253 => 'China Town / Yaowarat Rd - PGR5+4W6, Yaowarat Rd, Khwaeng Samphanthawong, Khet Samphanthawong, Bangkok 10100, Thaïlande',
+            254 => 'ATHENA EXECUTIVE LOUNGE - 710 Pradit Manutham Rd, Khlong Chaokhunsing, Wang Thonglang, Bangkok 10310, Thaïlande',
+            255 => 'Bangsaen Aquarium - Burapha University, Saen Suk, Chon Buri District, Chon Buri 20130, Thaïlande',
+            256 => 'HIDDEN LAB - 31 Rob Khao Sam Muk, Saen Suk, Chon Buri District, Chon Buri 20130, Thaïlande',
+            257 => 'Little Town Sriracha - Sukhumvit Rd, Bang Phra, Si Racha District, Chon Buri 20110, Thaïlande',
+            258 => 'The Manor Studio - 103 Ramkhamhaeng 24 Alley, Lane 14, Hua Mak, Bang Kapi District, Bangkok 10240, Thaïlande',
+            259 => 'อ่าวพลับพลึง (Ao Phlap Phlueng), Wang Kaew Resort & จุดกางเต็นท์ สวนวังแก้ว (Emplacement pour tentes, parc Wang Kaew) - JHH6+X5R, Unnamed Rd, Chakphong, Klaeng District, Rayong 21190, Thaïlande',
+            260 => 'Wat Pha Tak Suea - 28P3+HV2, Pha Tang, Sangkhom District, Nong Khai 43160, Thaïlande',
+            261 => 'Wat Sing (Sing Temple) - 3G3R+99F หมู่ 2 บ้านสามโคก, ตําบลสามโคก อําเภอ Wat Sing, Sam Khok District, Pathum Thani 12160, Thaïlande',
+            262 => 'Wat Tham Si Mongkhon - X862+PVR, Pha Tang, Sangkhom District, Nong Khai 43160, Thaïlande',
+            263 => 'Naga fireballs viewing point – Naga Fireball Festival - 23FG+RC4 Unnamed Rd, Chumphon, Phon Phisai District, Nong Khai 43120, Thaïlande',
+            264 => 'The Manor Studio - 103 Ramkhamhaeng 24 Alley, Lane 14, Hua Mak, Bang Kapi District, Bangkok 10240, Thaïlande',
+            265 => 'Ascott Thonglor Bangkok - 1 Sukhumvit 59, Khlong Tan Nuea, Watthana, Bangkok 10110, Thaïlande',
+            266 => 'Nonsan, Corée du sud - Nonsan est une ville située au centre de la Corée du Sud, légèrement à l\'ouest, dans la province du Chungcheong du Sud',
+            267 => 'Lumpini Park - Lumphini, Pathum Wan, Bangkok 10330, Thaïlande',
+            268 => 'Cafe I Love U - Fermé - 81 ชั้น1 Prasert-Manukitch Rd, Ram Inthra, Khan Na Yao, Bangkok 10230, Thaïlande',
+            269 => 'Kwan Riam Floating Market - 45 Ramkhamhaeng 185 Alley, Min Buri, Bangkok 10510, Thaïlande',
+            270 => 'S Cobra Camp - H7PP+QM Phra Non, Nakhon Sawan, Province de Nakhon Sawan, Thaïlande',
+            271 => 'Tavi Cafe - 103 Soi Sukhumvit 64, Phra Khanong Tai, Phra Khanong, Bangkok 10260, Thaïlande',
+            272 => 'Wat Chak Daeng - เลขที่ 16 หมู่ที่ 6 ถนน เพชรหึงษ์ ซอย 10 Song Khanong, Phra Pradaeng District, Samut Prakan 10130, Thaïlande',
+            273 => 'Lam Taphen Reservoir - QCGQ+W2C, Unnamed Rd,, Ong Phra, Nong Prue District, Kanchanaburi, Thaïlande',
+            274 => 'Sai Fon Villa Apartment - 1039 31-36 ซอย ปรีดี พนมยงค์ 45 Khlong Tan Nuea, Watthana, Bangkok 10110, Thaïlande',
+            275 => 'Lalisa Ratchada 17 - 55 5 ซอย รัชดา 17 แขวงรัชดาภิเษก Din Daeng, Bangkok 10400, Thaïlande',
+            276 => 'Max Club - 1000 1st FL, Liberty Plaza Building, Thong Lo, Khlong Tan Nuea, Watthana, Bangkok 10110, Thaïlande',
+            277 => 'Bhumirak Chaloem Phra Kiat Park - 89/113 Wat Chaloem Phrakiat Alley, Bang Si Muang, Mueang Nonthaburi District, Nonthaburi 11000, Thaïlande',
+            278 => 'Dhurakij Pundit University - 110/1-4 Pracha Chuen Rd, Thung Song Hong, Lak Si, Bangkok 10210, Thaïlande',
+            279 => 'Khon Kaen, province de Khon Kaen, Thaïlande',
+            280 => 'Faculty of Engineering, Khon Kaen University',
+            281 => 'Épisode 3 - Mueang Khon Kean, Province de Khon Kaen, 40000, Thaïlande',
+            282 => 'Ton Tann Market - ตลาดต้นตาล, Thanon Mittraphap, Tambon Nai Mueang, Mueang Khon Kaen District, Khon Kaen 40110, Thaïlande',
+            283 => 'La Isla Beach Resort - 99 9, Sam Roi Yot, Sam Roi Yot District, Prachuap Khiri Khan 77120, Thaïlande',
+            284 => 'Taco Lake - ',
+            285 => 'ร้านกาแฟนิยาย-ตลิ่งชัน (Novel Coffee Shop-Taling Chan) - ',
+            286 => 'Book Circle - 172 2 Soi Pradiphat 10, แขวง พญาไท Phaya Thai, Bangkok 10400, Thaïlande',
+            287 => 'ยกพวกยิง เลเซอร์เกมส์ (Yok Pok Ying Laser Games) - 244/7 Ratchadaphisek Rd, Samsen Nok, Huai Khwang, Bangkok 10310, Thaïlande',
+            288 => 'ร้านลีโฟน เมืองเอก (Lephone Shop Muang Ake) - 300/57-60 Lam Luk Ka District, Pathum Thani 12130, Thaïlande',
+            289 => 'Knowwherestudio - ',
+            290 => 'Chinatown Salaya - 111 หมู่ 4 Borommaratchachonnani Rd, Salaya, Phutthamonthon District, Nakhon Pathom 73170, Thaïlande',
+            291 => 'Vinyl & Toys - 19 in the area of Bangkok resort, 9 Pradit Manutham Rd, Khwaeng Lat Phrao, Lat Phrao, Bangkok 10230, Thaïlande',
+            292 => 'Tsurumaki Onsen - Episode 7 -  Ryota heading back home ',
+            293 => 'Sivarom Park - Cake\'s Family House - Episode 3 (3B) - บางปู 987/102 เมือง Samut Prakan 10280, Thaïlande',
+            294 => 'Pearl Farm by Amorn Phuket Pearl - Episode 4 - 58 2 Ko Kaeo, เมือง Phuket 83200, Thaïlande',
+            295 => 'BAYPHERE HOTEL PATTAYA - RWR4+H34, 159 หมู่ที่ 2 Na Chom Thian 18 Alley, Na Chom Thian, Sattahip District, Chon Buri 20250, Thaïlande',
+            296 => 'Ambassador City Jomtien, Ocean Wing - RWQ5+PR7, 10 หมู่ที่ 2 Sukhumvit Rd, Na Chom Thian, Sattahip District, Chon Buri 20250, Thaïlande',
+            297 => 'Chae Son National Park - 343, Chae Son, Mueang Pan District, Lampang 52240, Thaïlande',
+            298 => 'The Riverside Guest House - 286 Taladkao Rd Suan Dok, Mueang Lampang District, Chang Wat Lampang 52000, Thaïlande',
+            299 => 'Wat Phrathat Lampang Luang - 271 Lampang Luang, Ko Kha District, Lampang 52130, Thaïlande',
+            300 => 'Wat Prathat Doi Prachan - ดอยพระฌาน Pa Tan, Mae Tha District, Lampang 52150, Thaïlande',
+            301 => 'Chong Nonsi Canal Park - 58 Naradhiwas Rajanagarindra Rd, Thung Maha Mek, Sathon, Bangkok 10120, Thaïlande',
+            302 => 'Chong Nonsi Skywalk - 98 N Sathon Rd, Silom, Bang Rak, Bangkok 10500, Thaïlande',
+            303 => 'Moo Yoo Rose House - Episode 10 - 99, 65, Bang Rakam, Bang Len District, Nakhon Pathom 73130, Thaïlande',
+            304 => 'ร้านเจ๊จู Gold อาหารและเครื่องดื่ม (Magasin de nourriture et de boissons Jeju Gold) - 79 3 ห้วยใหญ่ Bang Lamung District, Chon Buri 20150, Thaïlande',
+            305 => 'The Lighthouse of Cape Bali Hai - WVJ6+2VQ, Bali Hai, South Banglamung, Pattaya City, Bang Lamung District, Chon Buri, Thaïlande',
+            306 => 'Sea Meen Norwegian Church (Sjømannskirken i Pattaya) - Pattaya, Bang Lamung District, Chon Buri 20150, Thaïlande',
+            307 => 'ตลาดมารวย-หทัยราษฏร์ 54 (Marché Maruay-Hathairat 54) - 39 4, Bueng Kham Phroi, Lam Luk Ka District, Pathum Thani 12150, Thaïlande',
+            308 => 'Baan Suan Ampond Residence Homestay - 155 Khumthong-Lamtoiting 1 Road Khumthong, Lat Krabang, Bangkok 10520, Thailand',
+            309 => 'SARASINEE Mansion - 111 ซอย อินทามระ 22 แขวงรัชดาภิเษก Din Daeng, Bangkok 10400, Thaïlande',
+            310 => 'Benchakitti Park - Ratchadaphisek Rd, Khlong Toei, Bangkok 10110, Thaïlande',
+            311 => 'Secret Space - 164 ตำบล บ้าน สิงห์ ฝั่งขวา (164, sous-district de Ban Sing, côté droit) Ban Sing, Photharam District, Ratchaburi 70120, Thaïlande',
+            312 => 'AUA Language Center - 179 Ratchadamri Rd, Lumphini, Pathum Wan, Bangkok 10330, Thaïlande',
+            313 => 'ChangChui Creative Park - 460/8 Sirindhorn Rd, Bang Phlat, Bangkok 10700, Thaïlande',
+            314 => 'Away Bangkok Riverside Kene - 1 Charoen Nakhon 35 Alley, Khwaeng Bang Lamphu Lang, Khlong San, Bangkok 10600, Thaïlande',
+            315 => 'One Old Day - QFHF+RXF, Arun Amarin, Bangkok Noi, Bangkok 10700, Thaïlande',
+            316 => 'Ternajachob cafe - 24 6 Chaloem Phrakiat Ratchakan Thi 9 Rd, ประเวศ Prawet, Bangkok 10250, Thaïlande',
+            317 => 'Ratchaburi Grand Canyon - HH9M+HPV, Unnamed Road, Rang Bua, Chom Bueng District, Ratchaburi 70150, Thaïlande',
+            318 => 'Found Cafe - 8 86 ถ.นวลจันทร์ Khwaeng Nuanchan, Bueng Kum, Bangkok 10230, Thaïlande',
+            319 => 'Letana Hotel - 199/62 Kuphara 1 Alley, Bang Phli Yai, Bang Phli District, Samut Prakan 10540, Thaïlande',
+            320 => 'Bangkok Creative Playground - 4 18-19 Soi Nuan Chan 56, Nuanchan, Bueng Kum, Bangkok 10230, Thaïlande',
+            321 => 'Symmetry BKK - 653, 653/1-3 Pracha Uthit Rd, Wangthonglang, Bangkok 10310, Thaïlande',
+            322 => 'King Rama 9 Park - Chaloem Phrakiat Ratchakan Thi 9 Rd, เเขวง หนองบอน (Sous-district de Nong Bon) Prawet, Bangkok 10250, Thaïlande',
+            323 => 'Philtration - 2 Kasem San 3 Alley, Wang Mai, Pathum Wan, Bangkok 10330, Thaïlande',
+            324 => 'Nong Nam Homestay - VQ5P+H43, Samoeng Tai, Samoeng District, Chiang Mai 50250, Thaïlande',
+            325 => 'Differ Inc Chiang Mai - 66/6 Sanamkila Rd, ต.ศรีภูมิ, อ.เมืองเชียงใหม่ Chiang Mai 50200, Thaïlande',
+            326 => 'ร้านอาหารชาววัง (restaurant Royal) - เลขที่ 399/4 ถนน เชียงใหม่- ดอยสะเก็ด San Sai District, Chiang Mai 50210, Thaïlande',
+            327 => 'Samoeng Tai Sub District Municipal Food Market - 1766 1269, Samoeng Tai, Samoeng District, Chiang Mai 50250, Thaïlande',
+            328 => 'Grand Canyon Water Park - 202 ถนนเลียบคลองชลประทาน Nam Phrae, Hang Dong District, Chiang Mai 50230, Thaïlande',
+            329 => 'Lupu Bridge - 5FQJ+V89, Huangpu, Chine, 200023',
+            330 => 'Wat Dhammakatanyu (Xian Lo Dai Tien Gong) - 5 ซอยมูลนิธิธรรมกตัญญู ถนนสุขุมวิท Bang Pu Mai, Mueang Samut Prakan District, Samut Prakan 10280, Thaïlande',
+            331 => 'SO/ Bangkok - 2 N Sathon Rd, Silom, Bang Rak, Bangkok 10500, Thaïlande',
+            332 => 'Red Oven – SO/ Bangkok - 2 N Sathon Rd, Khwaeng Silom, Bang Rak, Bangkok 10500, Thaïlande',
+            333 => 'Dream World Bangkok - 62 หมู่ที่ 1 ถนน รังสิต - องครักษ์ Bueng Yitho, Thanyaburi District, Pathum Thani 12130, Thaïlande',
+            334 => 'Mariee Avenue - 9 เคหะฯวัดไพร่ฟ้า ซอย 1 Bang Luang, เมือง, Pathum Thani 12000, Thaïlande',
+            335 => 'Beach scene episode 3 - Corée du Sud, Busan, district de Suyeong',
+            336 => 'Hotel Heaven, episode 3 - The Westin Josun Busan - Corée du Sud, Busan, 67 Dongbaek-ro, Haeundae',
+            337 => 'Xiaoyou et Ximen - episode 44',
+            338 => 'Chōshi Bridge 銚子大橋 - Episode 1 - 地先 Ohashicho, Choshi, Chiba 288-0046, Japon',
+            339 => 'Chōshi Bridge 銚子大橋 - Episode 1 @ 8:38 - Michito et Hiroto',
+            340 => 'Maison de Michito, Hiroto et Lion - episode 4 @26:20 - 9532 Hasaki, Kamisu, Ibaraki 314-0408, Japon',
+            341 => 'Dongho Bridge - Seoul - Épisode 2 - Oksu-dong, Seongdong-gu, Seoul, Corée du Sud',
+            342 => 'Pattaya - Episode 6 - 436 Beach Rd, Muang Pattaya, Amphoe Bang Lamung, Chang Wat Chon Buri 20150, Thaïlande',
+            343 => 'Itaewon',
+            344 => 'Asiatique Sky - Episode 6 - 2194 Charoen Krung Road, Wat Phraya Krai, Bang Kho Laem, Bangkok 10120, Thaïlande',
+            345 => 'Wonhyo Bridge - Episode 7 - Yeouido-dong, Yeongdeungpo District, Seoul, Corée du Sud',
+            346 => 'View of the port from the roof of the building - Episode 6',
+            347 => 'Aston House - Episode 6 @13:05 - 177 Walkerhill-ro, Gwangjin District, Seoul, Corée du Sud',
+            348 => 'Altercation between Babe and a Daddy man - Episode 3 @4:22 - เลขที่ 5 หมู่10 Phetchahung Rd, Song Khanong, Phra Pradaeng District, Samut Prakan 10130, Thaïlande',
+            349 => 'Kaeng Krachan Circuit - Wangchan, Kaeng Krachan, Phetchaburi 76170, Thaïlande',
+            350 => 'Tinidee Hotel Bangkok Golf Club - 99/3 ถนน ติวานนท์ Bang Kadi, Amphoe Mueang Pathum Thani, Pathum Thani 12000, Thaïlande',
+            351 => 'CP Tower North Park - VHC7+J3X 99 อาคาร ซี.พี.ทาวเวอร์ นอร์ธปาร์ค Soi Ngam Wong Wan 47 Yaek 42, Thung Song Hong, Lak Si, Bangkok 10210, Thaïlande',
+            352 => 'แอ็กซ์ สตูดิโอ Acts studio - 9/9 หมู่ที่ 1 ซอย บางคูวัดบางบัวทอง, Bang Khu Wat, Mueang Pathum Thani District, Pathum Thani 12000, Thaïlande',
+            353 => 'Elizabeth Hotel - 169 51 Pradiphat Rd, Phaya Thai, Bangkok 10400, Thaïlande',
+            354 => 'Wat Phrathat Bangphuan - Episode 3 - PMVJ+PQM, Phra That Bang Phuan, Mueang Nong Khai District, Nong Khai 43100, Thaïlande',
+            355 => 'Pattaya Beach - Episode 10 - Province de Chonburi, Thaïlande',
+            356 => '♫ \"I don\'t have an apartment with a Han River view, or a building at Cheongsam-dong\"  ♫ - Le quartier huppé de Cheongdam-dong est connu pour sa scène gastronomique, avec ses chefs de renom qui proposent des interprétations modernes de plats coréens et internationaux. La zone attire également les foules grâce à ses enseignes de luxe installées le long de Cheongdam Fashion Street. La vie nocturne se concentre autour des discothèques, ainsi que des élégants salons à cocktails et bars à whisky. Le SongEun ArtSpace expose des œuvres d\'artistes locaux émergents, tandis que le Figure Museum W abrite de célèbres figurines d\'action.',
+            357 => 'Taipei 101 - Episode 5', 25.033, 121.564908, 423, '6b06199e-7586-4d19-b506-6bfbdef6fa28'
+        ];
+        dump($arr);
+
+        foreach ($arr as $id => $description) {
+            if ($id > 20) {
+                $filmingLocation = $this->filmingLocationRepository->findOneBy(['id' => $id]);
+                if ($filmingLocation) {
+                    $filmingLocation->setDescription($description);
+                    $filmingLocation->setLocation($filmingLocation->getTitle());
+                    $this->filmingLocationRepository->save($filmingLocation);
+                }
+            }
+        }
+        $this->filmingLocationRepository->flush();
     }
 }

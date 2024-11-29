@@ -2955,7 +2955,7 @@ h2 {
         overflow: hidden;
 
         &.all {
-            height: 80vh;
+            height: 60vh;
         }
     }
 
@@ -3070,6 +3070,15 @@ h2 {
     }
 }
 
+@media (orientation: landscape) {
+    .series-map {
+        .map-controller {
+            height: 80vh;
+            margin-inline: auto;
+            width: 80vw;
+        }
+    }
+}
 .series-map-list {
     display: flex;
     flex-wrap: wrap;
