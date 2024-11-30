@@ -29,7 +29,7 @@
             override: override,
             frequency: frequency,
             days: dayArr,
-            provider: provider,
+            provider: provider ==="" ? null : provider,
             seriesId: {{ series.id }}
         };
         fetch('{{ path('app_series_schedule_save') }}', {
