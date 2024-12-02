@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\MovieSearchDTO;
 use App\Entity\Movie;
 use App\Entity\MovieAdditionalOverview;
 use App\Entity\MovieCollection;
@@ -11,6 +12,7 @@ use App\Entity\MovieLocalizedOverview;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserMovie;
+use App\Form\MovieSearchType;
 use App\Repository\MovieAdditionalOverviewRepository;
 use App\Repository\MovieCollectionRepository;
 use App\Repository\MovieDirectLinkRepository;
@@ -146,6 +148,55 @@ class MovieController extends AbstractController
             'pageBoxOpen' => $pageBoxOpen,
             'filters' => $filters,
         ]);
+    }
+
+    #[Route('/search/all', name: 'search')]
+    public function search(Request $request): Response
+    {
+        $slugger = new AsciiSlugger();
+        if ($request->get('q')) {
+            $simpleSeriesSearch = new MovieSearchDTO($request->getLocale(), 1);
+            $simpleSeriesSearch->setQuery($request->get('q'));
+        } else {
+            // on récupère le contenu du formulaire (POST parameters)
+            $formContent = $request->get('movie_search');
+            dump($formContent);
+            $simpleSeriesSearch = new MovieSearchDTO($formContent['language'], $formContent['page']);
+            $simpleSeriesSearch->setQuery($formContent['query']);
+            $simpleSeriesSearch->setReleaseDateYear($formContent['releaseDateYear']);
+        }
+
+        $simpleForm = $this->createForm(MovieSearchType::class, $simpleSeriesSearch);
+        $searchResult = $this->handleSearch($simpleSeriesSearch);
+        if ($searchResult['total_results'] == 1) {
+            return $this->getOneResult($searchResult['results'][0], $slugger);
+        }
+        $movies = $this->getSearchResult($searchResult, $slugger);
+
+        return $this->render('movie/search.html.twig', [
+            'form' => $simpleForm->createView(),
+            'title' => 'Search a movie',
+            'movieList' => $movies,
+            'results' => [
+                'total_results' => $searchResult['total_results'] ?? -1,
+                'total_pages' => $searchResult['total_pages'] ?? 0,
+                'page' => $searchResult['page'] ?? 0,
+            ],
+        ]);
+    }
+
+    public function handleSearch(MovieSearchDTO $simpleMovieSearch): mixed
+    {
+        $query = $simpleMovieSearch->getQuery();
+        $language = $simpleMovieSearch->getLanguage();
+        $page = $simpleMovieSearch->getPage();
+        $releaseDateYear = $simpleMovieSearch->getReleaseDateYear();
+
+        $searchString = "&query=$query&include_adult=false&page=$page";
+        if (strlen($releaseDateYear)) $searchString .= "&year=$releaseDateYear";
+        if (strlen($language)) $searchString .= "&language=$language";
+
+        return json_decode($this->tmdbService->searchMovie($searchString), true);
     }
 
     #[IsGranted('ROLE_USER')]
@@ -900,6 +951,29 @@ class MovieController extends AbstractController
         $movie['found'] = false;
 
         return $movie;
+    }
+
+    public function getSearchResult($searchResult): array
+    {
+        return array_map(function ($movie) {
+            $this->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $movie['poster_path'] = $movie['poster_path'] ? '/movies/posters' . $movie['poster_path'] : null;
+
+            return [
+                'tmdb' => true,
+                'id' => $movie['id'],
+                'title' => $movie['title'],
+                'releaseDate' => $movie['release_date'],
+                'poster_path' => $movie['poster_path'],
+            ];
+        }, $searchResult['results'] ?? []);
+    }
+
+    public function getOneResult($movie, $slugger): Response
+    {
+        return $this->redirectToRoute('app_movie_tmdb', [
+            'id' => $movie['id'],
+        ]);
     }
 
     public function saveImage($type, $imagePath, $imageUrl): void

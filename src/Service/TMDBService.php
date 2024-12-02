@@ -231,6 +231,23 @@ class TMDBService
         }
     }
 
+    public function searchMovie(string $searchString): ?string
+    {
+        try {
+            $response = $this->client->request(
+                'GET',
+                'https://api.themoviedb.org/3/search/movie?api_key=' . $this->api_key . $searchString,
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable) {
+                return "";
+            }
+        } catch (Throwable) {
+            return "";
+        }
+    }
+
     public function getTvWatchProviderList($language = 'fr-FR', $region = null): ?string
     {
         try {

@@ -397,7 +397,6 @@ class SeriesController extends AbstractController
                 'page' => $searchResult['page'] ?? 0,
             ],
         ]);
-
     }
 
     public function handleSearch($simpleSeriesSearch): mixed
