@@ -28,9 +28,9 @@ export class PeopleShow {
 
         const media = document.querySelector(".person").querySelector(".known-for").querySelectorAll(".poster");
         media.forEach(m => {
-            m.addEventListener("mouseover", this.showPoster);
+            m.addEventListener("mouseenter", this.showPoster);
             m.addEventListener("mousemove", this.showPoster)
-            m.addEventListener("mouseout", this.hidePoster);
+            m.addEventListener("mouseleave", this.hidePoster);
         });
         document.addEventListener("click", this.hidePoster);
     }
@@ -110,10 +110,14 @@ export class PeopleShow {
         const poster = document.querySelector(".person").querySelector(".poster-hover");
         const pageHeight = window.innerHeight;
         const pageWidth = window.innerWidth;
-        const imageWidth = .75 * pageHeight * 78 / 117;
+        const top = evt.pageY + 16;
+        const imageHeight = Math.min(.75 * pageHeight, pageHeight - top - 32);
+        const imageWidth = imageHeight * 78 / 117;
+        const posterHeight = imageHeight + 32;
         const posterWidth = imageWidth + 32;
-        const left = Math.min(evt.layerX - 144, pageWidth - posterWidth - 32);
-        poster.setAttribute("style", "left: " + left + "px; top: " + (evt.layerY + 16) + "px;");
+        const left = Math.min(evt.pageX - 144, pageWidth - posterWidth - 32);
+
+        poster.setAttribute("style", "left: " + left + "px; top: " + top + "px; height: " + posterHeight + "px; width: " + posterWidth + "px;");
 
         if (poster.classList.contains("show")) return;
 

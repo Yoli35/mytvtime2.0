@@ -283,6 +283,7 @@
             }
 
             .poster-hover {
+                aspect-ratio: 110 / 149;
                 display: none;
                 background-color: var(--orange-50);
                 border-radius: 1.5rem;
@@ -295,7 +296,7 @@
                 img {
                     aspect-ratio: 78 / 117;
                     border-radius: .5rem;
-                    height: 75vh;
+                    /*height: 75vh;*/
                 }
 
                 &.show {
