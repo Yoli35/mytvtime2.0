@@ -53,6 +53,7 @@ use App\Service\DeeplTranslator;
 use App\Service\ImageConfiguration;
 use App\Service\KeywordService;
 use App\Service\TMDBService;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
@@ -2169,7 +2170,7 @@ class SeriesController extends AbstractController
     {
         $change = false;
         $episodeCount = $this->checkNumberOfEpisodes($tv);
-        dump($episodeCount);
+//        dump($episodeCount);
         if ($episodeCount != $tv['number_of_episodes']) {
             $this->addFlash('warning', $this->translator->trans('Number of episodes has changed') . '<br>' . $tv['number_of_episodes'] . ' → ' . $episodeCount);
         }
@@ -2226,6 +2227,7 @@ class SeriesController extends AbstractController
     {
         $schedules = [];
         $locale = $user->getPreferredLanguage() ?? 'fr';
+
         foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
             $airAt = $schedule->getAirAt();
             $firstAirDate = $schedule->getFirstAirDate();
@@ -2252,11 +2254,8 @@ class SeriesController extends AbstractController
             }
 
             $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
-//            $tomorrow = $now->modify('+1 day')->setTime(0, 0);
-//            $remainingTodayTS = $tomorrow->getTimestamp() - $now->getTimestamp();
-
-            $nextEpisodeAiDate = $tvNextEpisode ? $this->dateService->newDateImmutable($tvNextEpisode['air_date'], 'Europe/Paris') : null;
-            $lastEpisodeAiDate = $tvLastEpisode ? $this->dateService->newDateImmutable($tvLastEpisode['air_date'], 'Europe/Paris') : null;
+            $nextEpisodeAiDate = $tvNextEpisode['date'] ?? null;
+            $lastEpisodeAiDate = $tvLastEpisode['date'] ?? null;
             if ($nextEpisodeAiDate) {
                 $target = $nextEpisodeAiDate;
             } elseif ($lastEpisodeAiDate) {
@@ -2350,8 +2349,13 @@ class SeriesController extends AbstractController
         if (!$episode) return null;
         $date = $episode['air_date'];
         $date = $this->dateService->newDateImmutable($date, $timezone, true);
-        $date = $date->modify('+' . $offset . ' days');
+        try {
+            $date = $date->modify('+' . $offset . ' day');
+        } catch (DateMalformedStringException $e) {
+            $episode['error'] = $e->getMessage();
+        }
         $date = $date->setTime($time->format('H'), $time->format('i'));
+        $episode['date'] = $date;
         $date = $date->format('Y-m-d H:i');
         $episode['air_date'] = str_replace(' ', 'T', $date);
         return $episode;
@@ -2545,12 +2549,12 @@ class SeriesController extends AbstractController
         foreach ($filmingLocations as &$location) {
             $location['filmingLocationImages'] = $flImages[$location['id']] ?? [];
         }
-        dump([
+        /*dump([
             'findBy' => $this->filmingLocationRepository->findBy(['tmdbId' => $tmdbId]),
             'filmingLocations' => $filmingLocations,
             'filmingLocationIds' => $filmingLocationIds,
             'filmingLocationImages' => $filmingLocationImages
-        ]);
+        ]);*/
         return $filmingLocations;
     }
 

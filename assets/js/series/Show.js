@@ -145,7 +145,7 @@ export class Show {
                     span2.innerHTML = translations["since"] + " " + (d ? (days + ",<br>") : "") + elapsedTime;
                 } else {
                     let dayPart; // today, tomorrow, after tomorrow, x days
-                    let day = Math.round((airDay - currentDay)  / (1000 * 3600 * 24));
+                    let day = Math.floor((airDay - currentDay)  / (1000 * 3600 * 24));
                     if (day === 0) {
                         dayPart = translations["Today"];
                     }
