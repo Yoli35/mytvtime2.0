@@ -1803,14 +1803,17 @@ h2 {
 .quick-episodes {
     align-items: flex-start;
     background-color: var(--ardoise-100-alpha-20);
+    border: 2px dashed var(--orange-50);
     border-radius: .25rem;
     display: flex;
     flex-wrap: wrap;
     gap: .25rem;
     justify-content: center;
+    margin-inline: auto;
+    max-width: 23.5rem;
     overflow-x: auto;
     padding: .5rem;
-    width: 100%;
+    /*width: 100%;*/
 
     .quick-episode {
         align-items: center;
@@ -1836,15 +1839,15 @@ h2 {
             z-index: 3;
         }
 
-        &:has(+ *:hover),
-        &:hover + * {
+        &:has(+ .quick-episode:hover),
+        &:hover + .quick-episode {
             border: 2px solid var(--orange-50-alpha-50);
             transform: scale(1.30);
             z-index: 2;
         }
 
-        &:has(+ * + *:hover),
-        &:hover + * + * {
+        &:has(+ .quick-episode + .quick-episode*:hover),
+        &:hover + .quick-episode + .quick-episode {
             transform: scale(1.10);
             z-index: 1;
         }
