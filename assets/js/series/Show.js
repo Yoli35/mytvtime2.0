@@ -111,12 +111,13 @@ export class Show {
         /******************************************************************************
          * Remaining time when schedule is present                                    *
          ******************************************************************************/
-        const remaining = document.querySelector('.remaining');
-        if (remaining) {
+        const remainingDivs = document.querySelectorAll('.remaining');
+        remainingDivs.forEach(function (remaining) {
             const span1 = remaining.querySelector('span:first-child');
             const span1Value = span1.textContent;
             const span2 = remaining.querySelector('span:last-child');
             const targetTS = remaining.getAttribute('data-target-ts') * 1000;
+            const seasonCompleted = remaining.getAttribute('data-season-completed');
             /*const interval = */
             setInterval(() => {
                 const now = (new Date().getTime());
@@ -140,7 +141,11 @@ export class Show {
                     if (distanceAbs < 1000 * 3600) {
                         span1.innerHTML = translations["Now"];
                     } else {
-                        span1.innerHTML = span1Value + ', ' + translations["available"];
+                        if (seasonCompleted) {
+                            span1.innerHTML = translations["Season completed"];
+                        } else {
+                            span1.innerHTML = span1Value + ', ' + translations["available"];
+                        }
                     }
                     span2.innerHTML = translations["since"] + " " + (d ? (days + ",<br>") : "") + elapsedTime;
                 } else {
@@ -161,7 +166,7 @@ export class Show {
                     span2.innerHTML = dayPart + "<br>" + elapsedTime;
                 }
             }, 1000);
-        }
+        });
 
         /******************************************************************************
          * User's actions: rating, pinned, favorite, remove this series               *

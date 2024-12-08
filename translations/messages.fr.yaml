@@ -135,6 +135,7 @@ After tomorrow: Après-demain
 Air date: 'Date de diffusion :'
 All episodes seen: Tous les épisodes vus
 All seasons: Toutes les saisons
+Alternate schedules: Horaires alternatifs
 Are you sure you want to delete this overview?: Êtes-vous sûr de vouloir supprimer cet aperçu ?
 Available: Disponible
 Back to series: Retour à la série
@@ -221,6 +222,7 @@ Returning Series: Série renouvelée
 Save: Enregistrer
 Schedules: Horaires
 Season: Saison
+Season completed: Saison terminée
 Season x: Saison x
 Seasons: Saisons
 See all: Voir tout
@@ -307,14 +309,14 @@ Add all available backdrops: Ajouter tous les arrière-plans disponibles
 Override the Movie Database schedule: Remplacer l'horaire de The Movie Database
 Override TMDB: Remplacer TMDB
 Frequency: Fréquence
-Once: Une fois
+All at once: Tous à la fois
 Daily: Quotidien
 Weekly, one at a time: Hebdomadaire, un à la fois
 Weekly, two at a time: Hebdomadaire, deux à la fois
 Weekly, three at a time: Hebdomadaire, trois à la fois
-Weekly, all at once: Hebdomadaire, tous à la fois
 Weekly, two, then one: Hebdomadaire, deux, puis un
 Weekly, three, then one: Hebdomadaire, trois, puis un
+Weekly, selected days: Hebdomadaire, jours sélectionnés
 
 #Search
 Search: Recherche

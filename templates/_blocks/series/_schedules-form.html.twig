@@ -21,14 +21,14 @@
                         <label for="frequency-{{ schedule.id }}">
                             <select name="frequency-{{ schedule.id }}" id="frequency-{{ schedule.id }}">
                                 <option value="">{{ 'Frequency'|trans }}</option>
-                                <option value="1" {% if schedule.frequency == 1 %}selected{% endif %}>{{ 'Once'|trans }}</option>
+                                <option value="1" {% if schedule.frequency == 1 %}selected{% endif %}>{{ 'All at once'|trans }}</option>
                                 <option value="2" {% if schedule.frequency == 2 %}selected{% endif %}>{{ 'Daily'|trans }}</option>
                                 <option value="3" {% if schedule.frequency == 3 %}selected{% endif %}>{{ 'Weekly, one at a time'|trans }}</option>
                                 <option value="4" {% if schedule.frequency == 4 %}selected{% endif %}>{{ 'Weekly, two at a time'|trans }}</option>
                                 <option value="5" {% if schedule.frequency == 5 %}selected{% endif %}>{{ 'Weekly, three at a time'|trans }}</option>
-                                <option value="6" {% if schedule.frequency == 6 %}selected{% endif %}>{{ 'Weekly, all at once'|trans }}</option>
-                                <option value="7" {% if schedule.frequency == 7 %}selected{% endif %}>{{ 'Weekly, two, then one'|trans }}</option>
-                                <option value="8" {% if schedule.frequency == 8 %}selected{% endif %}>{{ 'Weekly, three, then one'|trans }}</option>
+                                <option value="6" {% if schedule.frequency == 6 %}selected{% endif %}>{{ 'Weekly, two, then one'|trans }}</option>
+                                <option value="7" {% if schedule.frequency == 7 %}selected{% endif %}>{{ 'Weekly, three, then one'|trans }}</option>
+                                <option value="8" {% if schedule.frequency == 8 %}selected{% endif %}>{{ 'Weekly, selected days'|trans }}</option>
                             </select>
                         </label>
                     </div>

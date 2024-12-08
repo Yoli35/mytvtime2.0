@@ -199,7 +199,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getOne($sql);
     }
 
-    public function getScheduleNextEpisode(User $user, Series $series): array
+    public function getScheduleNextEpisode(User $user, Series $series, int $seasonNumber): array
     {
         $userId = $user->getId();
         $seriesId = $series->getId();
@@ -215,7 +215,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                 WHERE us.`user_id` = $userId
                   AND s.`id` = $seriesId
-                  AND ue.`season_number` > 0
+                  AND ue.`season_number` = $seasonNumber
                   AND ue.`watch_at` IS NULL
                 ORDER BY  ue.`season_number`, ue.`episode_number`
                 LIMIT 1";
@@ -223,7 +223,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getScheduleNextEpisodes(User $user, Series $series, $airDate): array
+    public function getScheduleNextEpisodes(User $user, Series $series, $airDate, int $seasonNumber): array
     {
         $userId = $user->getId();
         $seriesId = $series->getId();
@@ -239,14 +239,14 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                 WHERE us.`user_id` = $userId
                   AND s.`id` = $seriesId
-                  AND ue.`season_number` > 0
+                  AND ue.`season_number` = $seasonNumber
                   AND ue.`air_date` = '$airDate'
                 ORDER BY  ue.`season_number`, ue.`episode_number`";
 
         return $this->getAll($sql);
     }
 
-    public function getScheduleLastEpisode(User $user, Series $series): array
+    public function getScheduleLastEpisode(User $user, Series $series, int $seasonNumber): array
     {
         $userId = $user->getId();
         $seriesId = $series->getId();
@@ -263,7 +263,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                 WHERE us.`user_id` = $userId
                   AND s.`id` = $seriesId
-                  AND ue.`season_number` > 0
+                  AND ue.`season_number` = $seasonNumber
                   AND ue.`watch_at` IS NOT NULL
                 ORDER BY  ue.`season_number` DESC, ue.`episode_number` DESC
                 LIMIT 1";

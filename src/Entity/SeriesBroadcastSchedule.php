@@ -41,6 +41,9 @@ class SeriesBroadcastSchedule
     #[ORM\Column(nullable: true)]
     private ?bool $override = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $seasonNumber = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -138,6 +141,18 @@ class SeriesBroadcastSchedule
     public function setOverride(?bool $override): static
     {
         $this->override = $override;
+
+        return $this;
+    }
+
+    public function getSeasonNumber(): ?int
+    {
+        return $this->seasonNumber;
+    }
+
+    public function setSeasonNumber(?int $seasonNumber): static
+    {
+        $this->seasonNumber = $seasonNumber;
 
         return $this;
     }

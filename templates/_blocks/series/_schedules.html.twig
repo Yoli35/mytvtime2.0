@@ -28,7 +28,10 @@ Mandatory variables:
                             <div class="local-air">{{ schedule.dayList }}</div>
                             <div class="local-air">{{ schedule.airAt }}</div>
                             {% set d = schedule.before %}
-                            <div class="remaining" data-target-ts="{{ schedule.targetTS }}">
+                            <div class="remaining"
+                                 data-target-ts="{{ schedule.targetTS }}"
+                                 data-season-completed="{{ schedule.seasonCompleted ? 1 : 0 }}"
+                            >
                                 <span>{% if schedule.toBeContinued %}{{ 'To be continued'|trans }}{% else %}{{ 'That\'s all!'|trans }}{% endif %}</span>
                                 <span></span>
                             </div>
@@ -97,6 +100,19 @@ Mandatory variables:
                     {{ include('_blocks/series/_schedules-form.html.twig', {schedule: schedule, country: country}) }}
                 </div>
             {% endfor %}
+        </div>
+    {% endif %}
+    {% if series.alternateSchedules|length %}
+        <h2>{{ 'Alternate schedules'|trans }}</h2>
+        <div class="wrapper">
+            <div class="schedule-block">
+                {% for as in series.alternateSchedules %}
+                    <h3> {{ 'Season'|trans }}{{ as.seasonNumber }}</h3>
+                    {% for date in as.airDays %}
+                        {{ date|format_datetime('relative_short', 'short') }}
+                    {% endfor %}
+                {% endfor %}
+            </div>
         </div>
     {% endif %}
     {{ include('_blocks/series/_schedules-js.html.twig') }}

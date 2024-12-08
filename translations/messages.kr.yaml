@@ -136,6 +136,7 @@ After tomorrow: 모레 이후
 Air date: 방송일
 All episodes seen: 모든 에피소드 본
 All seasons: 모든 시즌
+Alternate schedules: 대체 일정
 Are you sure you want to delete this overview?: 이 개요를 삭제하시겠습니까?
 Available: 사용 가능
 Back to series: 시리즈로 돌아가기
@@ -222,6 +223,7 @@ Returning Series: 돌아오는 시리즈
 Save: 저장
 Schedules: 일정
 Season: 시즌
+Season completed: 시즌 완료
 Season x: x 시즌
 Seasons: 시즌
 See all: 모두 보기
@@ -308,14 +310,14 @@ Add all available backdrops: 사용 가능한 모든 배경 추가
 Override the Movie Database schedule: 무비 데이터베이스 일정 재정의
 Override TMDB: TMDB 재정의
 Frequency: 빈도
-Once: 한 번
+All at once: 한꺼번에
 Daily: 매일
 Weekly, one at a time: 주간, 한 번에 하나
 Weekly, two at a time: 주간, 두 번에 하나
 Weekly, three at a time: 주간, 세 번에 하나
-Weekly, all at once: 주간, 한꺼번에
 Weekly, two, then one: 주간, 두 번, 그리고 하나
 Weekly, three, then one: 주간, 세 번, 그리고 하나
+Weekly, selected days: 주간, 선택된 날
 
 #Search
 Search: 검색
