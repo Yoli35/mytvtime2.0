@@ -784,6 +784,24 @@
         </div>
         {{ form_end(addBackdropForm) }}
     </dialog>
+    {% if oldSeriesAdded %}
+        <dialog class="old-series-added-dialog">
+            <div class="dialog-content">
+                <div class="dialog-header">
+                    <h2>{{ 'Old series added'|trans }}</h2>
+                </div>
+                <div class="dialog-body">
+                    <div class="message">
+                        {{ 'The series has been added to your watchlist'|trans }}.
+                        {{ 'This series is more than 2 years old'|trans }}.
+                        {{ 'Have you already watched it and want to mark all episodes as viewed?'|trans }}
+                    </div>
+                    <button name="add-and-mark">{{ 'Add and mark all episodes as viewed'|trans }}</button>
+                    <button name="add">{{ 'Add without marking all episodes as viewed'|trans }}</button>
+                </div>
+            </div>
+        </dialog>
+    {% endif %}
     <div id="globs" style="display: none">
         {
         {% if tv.localized_name %}
