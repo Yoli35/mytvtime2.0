@@ -118,6 +118,7 @@ export class Show {
             const span2 = remaining.querySelector('span:last-child');
             const targetTS = remaining.getAttribute('data-target-ts') * 1000;
             const seasonCompleted = remaining.getAttribute('data-season-completed');
+            const upToDate = remaining.getAttribute('data-up-to-date');
             /*const interval = */
             setInterval(() => {
                 const now = (new Date().getTime());
@@ -143,7 +144,11 @@ export class Show {
                     } else {
                         if (seasonCompleted) {
                             span1.innerHTML = translations["Season completed"];
-                        } else {
+                        }
+                        if (upToDate) {
+                            span1.innerHTML = translations["Up to date"];
+                        }
+                        if (!seasonCompleted && !upToDate) {
                             span1.innerHTML = span1Value + ', ' + translations["available"];
                         }
                     }
