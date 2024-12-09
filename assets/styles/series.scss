@@ -1045,6 +1045,66 @@ h2 {
                     padding: .5rem 1rem;
                 }
             }
+
+            .alternate-schedule {
+                display: flex;
+                gap: .5rem;
+
+                .air-day {
+                    align-items: center;
+                    border: 2px solid var(--orange-50);
+                    border-radius: .625rem;
+                    display: flex;
+                    flex-direction: column;
+                    width: 9rem;
+
+                    &.watched {
+                        .air-day-date {
+                            background-color: var(--green-20);
+                            color: var(--green-90);
+                        }
+                    }
+
+                    .air-day-episode {
+                        align-items: center;
+                        background-color: var(--orange-50);
+                        border-radius: .5rem .5rem 0 0;
+                        color: var(--ardoise-10);
+                        display: flex;
+                        font-size: 2rem;
+                        font-weight: 300;
+                        justify-content: center;
+                        line-height: 1.1em;
+                        padding-block: .5rem;
+                        width: 100%;
+                    }
+
+                    .air-day-date {
+                        align-items: center;
+                        background-color: var(--orange-90);
+                        border-radius: 0 0 .5rem .5rem;
+                        color: var(--orange-10);
+                        display: flex;
+                        flex-direction: column;
+                        font-size: 2rem;
+                        width: 100%;
+
+                        .day {
+                            color: var(--orange-50);
+                            font-size: 3.5rem;
+                            line-height: 1.1em;
+                        }
+
+                        .month {
+                            font-size: 1.5rem;
+                        }
+
+                        .year {
+                            font-size: 1rem;
+                        }
+                    }
+                }
+            }
         }
 
         .schedule-form {
@@ -1196,6 +1256,7 @@ h2 {
         display: flex;
         gap: 1rem;
         margin-block-end: 1rem;
+        width: 100%;
 
         &.column {
             flex-direction: column;
@@ -1231,6 +1292,8 @@ h2 {
         }
 
         .right {
+            width: calc(30% - 1rem);
+
             .providers {
                 overflow-x: auto;
 
@@ -1543,7 +1606,7 @@ h2 {
 
 }
 
-.add-backdrop-dialog, .add-all-backdrops-dialog {
+.add-backdrop-dialog, .add-all-backdrops-dialog, .old-series-added-dialog {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     background-color: var(--orange-30-alpha-75);
@@ -1558,7 +1621,7 @@ h2 {
     z-index: 500;
 }
 
-.add-all-backdrops-dialog {
+.add-all-backdrops-dialog, .old-series-added-dialog {
     .dialog-header {
         display: flex;
         gap: 1rem;
@@ -1618,6 +1681,13 @@ h2 {
                     width: 100%;
                 }
             }
+        }
+
+        .message {
+            font-size: 1rem;
+            font-weight: 300;
+            line-height: 1.25em;
+            padding-inline: 1rem;
         }
     }
 }
@@ -1810,7 +1880,7 @@ h2 {
     gap: .25rem;
     justify-content: center;
     margin-inline: auto;
-    max-width: 23.5rem;
+    //max-width: 23.5rem;
     overflow-x: auto;
     padding: .5rem;
     /*width: 100%;*/

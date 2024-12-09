@@ -6,8 +6,13 @@
             <div class="form-field">
                 <div>
                     <div class="date-time">
+                        <label for="season-number-{{ schedule.id }}">{{ 'Season'|trans }}
+                            <input type="number" name="season-number-{{ schedule.id }}" value="{{ schedule.seasonNumber }}" id="season-number-{{ schedule.id }}">
+                        </label>
+                    </div>
+                    <div class="date-time">
                         <label for="date-{{ schedule.id }}">{{ 'First air date'|trans }}
-                            <input type="date" name="date-{{ schedule.id }}" value="{% if schedule.firstAirDate %}{{ schedule.firstAirDate|format_date('short') }}{% endif %}" id="date-{{ schedule.id }}">
+                            <input type="date" name="date-{{ schedule.id }}" value="{% if schedule.firstAirDate %}{{ schedule.firstAirDate|date("Y-m-d") }}{% endif %}" id="date-{{ schedule.id }}">
                         </label>
                         <label for="time-{{ schedule.id }}">{{ 'Time'|trans }}
                             <input type="time" name="time-{{ schedule.id }}" value="{{ schedule.airAt }}" id="time-{{ schedule.id }}">
@@ -28,7 +33,9 @@
                                 <option value="5" {% if schedule.frequency == 5 %}selected{% endif %}>{{ 'Weekly, three at a time'|trans }}</option>
                                 <option value="6" {% if schedule.frequency == 6 %}selected{% endif %}>{{ 'Weekly, two, then one'|trans }}</option>
                                 <option value="7" {% if schedule.frequency == 7 %}selected{% endif %}>{{ 'Weekly, three, then one'|trans }}</option>
-                                <option value="8" {% if schedule.frequency == 8 %}selected{% endif %}>{{ 'Weekly, selected days'|trans }}</option>
+                                <option value="8" {% if schedule.frequency == 8 %}selected{% endif %}>{{ 'Weekly, four, then one'|trans }}</option>
+                                <option value="9" {% if schedule.frequency == 9 %}selected{% endif %}>{{ 'Weekly, four, then two'|trans }}</option>
+                                <option value="10" {% if schedule.frequency == 10 %}selected{% endif %}>{{ 'Weekly, selected days'|trans }}</option>
                             </select>
                         </label>
                     </div>

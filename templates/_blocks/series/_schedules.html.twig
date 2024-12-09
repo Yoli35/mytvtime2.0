@@ -31,6 +31,7 @@ Mandatory variables:
                             <div class="remaining"
                                  data-target-ts="{{ schedule.targetTS }}"
                                  data-season-completed="{{ schedule.seasonCompleted ? 1 : 0 }}"
+                                 data-up-to-date="{{ schedule.upToDate ? 1 : 0 }}"
                             >
                                 <span>{% if schedule.toBeContinued %}{{ 'To be continued'|trans }}{% else %}{{ 'That\'s all!'|trans }}{% endif %}</span>
                                 <span></span>
@@ -102,15 +103,24 @@ Mandatory variables:
             {% endfor %}
         </div>
     {% endif %}
-    {% if series.alternateSchedules|length %}
+    {% if series.alternateSchedules|reduce((carry, as) => carry + as.airDays|length) %}
         <h2>{{ 'Alternate schedules'|trans }}</h2>
         <div class="wrapper">
             <div class="schedule-block">
                 {% for as in series.alternateSchedules %}
                     <h3> {{ 'Season'|trans }}{{ as.seasonNumber }}</h3>
-                    {% for date in as.airDays %}
-                        {{ date|format_datetime('relative_short', 'short') }}
-                    {% endfor %}
+                    <div class="alternate-schedule">
+                        {% for airDay in as.airDays %}
+                            <div class="air-day{% if airDay.watched %} watched{% endif %}">
+                                <div class="air-day-episode">{{ airDay.episode }}</div>
+                                <div class="air-day-date">
+                                    <div class="day">{{ airDay.date|date("j") }}</div>
+                                    <div class="month">{{ airDay.date|date("F")|trans }}</div>
+                                    <div class="year">{{ airDay.date|date("Y") }}</div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
                 {% endfor %}
             </div>
         </div>

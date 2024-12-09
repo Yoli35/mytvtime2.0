@@ -3,10 +3,12 @@
         const form = document.getElementById('schedule-form-' + id);
         const countrySelector = 'input[name="country-' + id + '"]';
         const country = form.querySelector(countrySelector).value;
-        const timeSelector = 'input[name="time-' + id + '"]';
-        const time = form.querySelector(timeSelector).value;
+        const seasonNumberSelector = 'input[name="season-number-' + id + '"]';
+        const seasonNumber = form.querySelector(seasonNumberSelector).value;
         const dateSelector = 'input[name="date-' + id + '"]';
         const date = form.querySelector(dateSelector).value;
+        const timeSelector = 'input[name="time-' + id + '"]';
+        const time = form.querySelector(timeSelector).value;
         const overrideSelector = 'input[name="override-' + id + '"]';
         const override = form.querySelector(overrideSelector).checked;
         const frequencySelector = 'select[name="frequency-' + id + '"]';
@@ -24,6 +26,7 @@
         const data = {
             id: id,
             country: country,
+            seasonNumber: seasonNumber,
             date: date,
             time: time,
             override: override,

@@ -118,6 +118,11 @@ remaining episode: épisode restant
 remaining episodes: épisodes restants
 Series to start: Séries à commencer
 
+# Add a series
+The series has been added to your watchlist: La série a été ajoutée à votre liste de suivi
+This series is more than 2 years old: Cette série a plus de 2 ans
+Have you already watched it and want to mark all episodes as viewed?: L'avez-vous déjà regardé et souhaitez-vous marquer tous les épisodes comme vus ?
+
 # Series Show
 1 episode seen: 1 épisode vu
 A real binger!: Un vrai binge-watcher !
@@ -316,7 +321,22 @@ Weekly, two at a time: Hebdomadaire, deux à la fois
 Weekly, three at a time: Hebdomadaire, trois à la fois
 Weekly, two, then one: Hebdomadaire, deux, puis un
 Weekly, three, then one: Hebdomadaire, trois, puis un
+Weekly, four, then one: Hebdomadaire, quatre, puis un
+Weekly, four, then two: Hebdomadaire, quatre, puis deux
 Weekly, selected days: Hebdomadaire, jours sélectionnés
+
+January: Janvier
+February: Février
+March: Mars
+April: Avril
+May: Mai
+June: Juin
+July: Juillet
+August: Août
+September: Septembre
+October: Octobre
+November: Novembre
+December: Décembre
 
 #Search
 Search: Recherche
@@ -514,7 +534,6 @@ Not found: Non trouvé
 Movie not found on TMDB: Film non trouvé sur le site The Movie Database
 Search on TMDB: Rechercher sur The Movie Database
 Delete this movie from your watchlist: Supprimer ce film de votre liste de suivi
-
 
 # Map
 Shooting locations for your %d series: Lieux de tournage pour vos %d séries
