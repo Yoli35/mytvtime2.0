@@ -111,12 +111,32 @@
             {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: false}) }}
 
             {% set now = 'now'|date("Y-m-d") %}
-            <div class="quick-episodes">
-                {% if season.episodes|length > 10 %}
-                    {% set break = 10 %}
+            {% set episodeCount = season.episodes|length %}
+            {% if episodeCount > 10 %}
+                {% if episodeCount is even %}
+                    {% set break = episodeCount / 2 %}
                 {% else %}
-                    {% set break = -1 %}
+                    {% set break = (episodeCount + 1) / 2 %}
+                    {#                    {% set break = 10 %} #}
                 {% endif %}
+                {% if break > 10 %}
+                    {%  if episodeCount % 10 == 0 %}
+                        {% set break = 10 %}
+                    {% endif %}
+                    {%  if episodeCount % 9 == 0 %}
+                        {% set break = 9 %}
+                    {% endif %}
+                    {%  if episodeCount % 8 == 0 %}
+                        {% set break = 8 %}
+                    {% endif %}
+                    {%  if episodeCount % 7 == 0 %}
+                        {% set break = 7 %}
+                    {% endif %}
+                {% endif %}
+            {% else %}
+                {% set break = episodeCount %}
+            {% endif %}
+            <div class="quick-episodes" style="width: {{ 36 * break + 16 }}px;">
                 {% for episode in season.episodes %}
                     {% set ue = episode.user_episode %}
                     {% if episode.air_date %}
@@ -134,9 +154,9 @@
                             {{ episode.episode_number }}
                         </div>
                     {% endif %}
-                    {% if loop.index0 % break == break-1 %}
-                        <div class="quick-episodes-break"></div>
-                    {% endif %}
+                    {#                    {% if loop.index0 % break == break-1 %} #}
+                    {#                        <div class="quick-episodes-break"></div> #}
+                    {#                    {% endif %} #}
                 {% endfor %}
             </div>
 
