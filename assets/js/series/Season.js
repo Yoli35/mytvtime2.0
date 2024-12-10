@@ -394,6 +394,12 @@ export class Season {
             })
         }).then(function (response) {
             if (response.ok) {
+                console.log(response);
+                const airDateDiv = episode.closest('.episode').querySelector('.air-date');
+                const watchAtDiv = document.createElement('div');
+                watchAtDiv.innerHTML = response['viewedAt'];
+                airDateDiv.appendChild(watchAtDiv);
+
                 const numberDiv = episode.closest('.episode').querySelector('.number');
                 numberDiv.setAttribute('data-title', "x" + (views + 1));
 

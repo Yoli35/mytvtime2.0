@@ -108,10 +108,10 @@ Mandatory variables:
         <div class="wrapper">
             <div class="schedule-block">
                 {% for as in series.alternateSchedules %}
-                    <h3> {{ 'Season'|trans }}{{ as.seasonNumber }}</h3>
+                    <h3> {{ 'Season'|trans }} {{ as.seasonNumber }}</h3>
                     <div class="alternate-schedule">
                         {% for airDay in as.airDays %}
-                            <div class="air-day{% if airDay.watched %} watched{% endif %}">
+                            <div class="air-day{% if airDay.watched %} watched{% endif %}{% if airDay.future %} future{% endif %}">
                                 <div class="air-day-episode">{{ airDay.episode }}</div>
                                 <div class="air-day-date">
                                     <div class="day">{{ airDay.date|date("j") }}</div>
