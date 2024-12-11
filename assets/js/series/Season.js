@@ -117,6 +117,9 @@ export class Season {
     }
 
     init() {
+        // TODO: recharger la page au changement de jour (mettre à jour les dates relatives)
+        
+
         const watchLinks = document.querySelectorAll('.watch-link');
         watchLinks.forEach(function (watchLink) {
             const tools = watchLink.querySelector('.watch-link-tools');
@@ -392,12 +395,13 @@ export class Season {
                 seasonNumber: seasonNumber,
                 episodeNumber: episodeNumber
             })
-        }).then(function (response) {
-            if (response.ok) {
-                console.log(response);
+        }).then((response) => response.json())
+            .then(data => {
+                // TODO: Vérifier "data"
+                console.log(data);
                 const airDateDiv = episode.closest('.episode').querySelector('.air-date');
                 const watchAtDiv = document.createElement('div');
-                watchAtDiv.innerHTML = response['viewedAt'];
+                watchAtDiv.innerHTML = data['viewedAt'];
                 airDateDiv.appendChild(watchAtDiv);
 
                 const numberDiv = episode.closest('.episode').querySelector('.number');
@@ -511,8 +515,7 @@ export class Season {
                 episode.parentElement.appendChild(backToSeriesLink);
 
                 episode.remove();
-            }
-        });
+            });
     }
 
     updateRelativeTime(e) {
@@ -603,6 +606,7 @@ export class Season {
         }).then(function (response) {
             if (response.ok) {
                 views--;
+
                 episode.setAttribute('data-views', '' + views);
                 const numberDiv = episode.closest('.episode').querySelector('.number');
                 numberDiv.setAttribute('data-title', "x" + views);
@@ -610,6 +614,11 @@ export class Season {
                 if (views > 0) {
                     return;
                 }
+                // TODO
+                // Retirer le badge "👁️, aujourd'hui à 17:05"
+                const airDateDiv = episode.closest('.episode').querySelector('.air-date');
+                const badgeDiv = airDateDiv.querySelector('div');
+                badgeDiv.remove();
 
                 if (gThis.intervals[episodeId] > 0) {
                     clearInterval(gThis.intervals[episodeId]);
@@ -675,9 +684,9 @@ export class Season {
             separator.classList.add('separator');
             providerList.appendChild(separator);
         }/* else {*/
-            for (const provider of gThis.providerArray) {
-                gThis.addProviderItem(provider, episodeId, providerList, selectProviderDiv);
-            }
+        for (const provider of gThis.providerArray) {
+            gThis.addProviderItem(provider, episodeId, providerList, selectProviderDiv);
+        }
         /*}*/
         gThis.listInput(providerList);
         gThis.toolTips.hide();
