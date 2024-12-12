@@ -964,6 +964,9 @@ class SeriesController extends AbstractController
         $id = $data['id'];
         $country = $data['country'];
         $seasonNumber = $data['seasonNumber'];
+        $seasonPart = $data['seasonPart'];
+        $seasonPartFirstEpisode = $data['seasonPartFirstEpisode'];
+        $seasonPartEpisodeCount = $data['seasonPartEpisodeCount'];
         $date = $data['date'];
         $time = $data['time'];
         $override = $data['override'];
@@ -987,6 +990,9 @@ class SeriesController extends AbstractController
         }
 
         $seriesBroadcastSchedule->setSeasonNumber($seasonNumber);
+        $seriesBroadcastSchedule->setSeasonPart($seasonPart);
+        $seriesBroadcastSchedule->setSeasonPartFirstEpisode($seasonPartFirstEpisode);
+        $seriesBroadcastSchedule->setSeasonPartEpisodeCount($seasonPartEpisodeCount);
         $seriesBroadcastSchedule->setFirstAirDate($this->dateService->newDateImmutable($date, "Europe/Paris", true));
         $seriesBroadcastSchedule->setAirAt((new DateTimeImmutable())->setTime($hour, $minute));
         $seriesBroadcastSchedule->setFrequency($frequency);
@@ -2389,6 +2395,9 @@ class SeriesController extends AbstractController
             $schedules[] = [
                 'id' => $schedule->getId(),
                 'seasonNumber' => $schedule->getSeasonNumber(),
+                'seasonPart' => $schedule->getSeasonPart(),
+                'seasonPartFirstEpisode' => $schedule->getSeasonPartFirstEpisode(),
+                'seasonPartEpisodeCount' => $schedule->getSeasonPartEpisodeCount(),
                 'upToDate' => $userNextEpisode == null,
                 'seasonCompleted' => $endOfSeason,
                 'airAt' => $airAt->format('H:i'),
@@ -2419,6 +2428,7 @@ class SeriesController extends AbstractController
     {
         $now = $this->now();
         $seasonNumber = $schedule->getSeasonNumber();
+        $seasonPart = $schedule->getSeasonPart();
 
         if (!$tv) {
             $dayArr = [];
@@ -2570,6 +2580,9 @@ class SeriesController extends AbstractController
         return [
             'id' => 0,
             'seasonNumber' => 1,
+            'seasonPart' => 1,
+            'seasonPartFirstEpisode' => 1,
+            'seasonPartEpisodeCount' => 1,
             'airAt' => "12:00",
             'firstAirDate' => $now,
             'frequency' => 0,

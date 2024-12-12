@@ -9,6 +9,15 @@
                         <label for="season-number-{{ schedule.id }}">{{ 'Season'|trans }}
                             <input type="number" name="season-number-{{ schedule.id }}" value="{{ schedule.seasonNumber }}" id="season-number-{{ schedule.id }}">
                         </label>
+                        <label for="season-part-{{ schedule.id }}">{{ 'Part'|trans }}
+                            <input type="number" name="season-part-{{ schedule.id }}" value="{{ schedule.seasonPart }}" id="season-part-{{ schedule.id }}-{{ schedule.id }}">
+                        </label>
+                        <label for="season-part-first-episode-{{ schedule.id }}">{{ 'First episode'|trans }}
+                            <input type="number" name="season-part-first-episode-{{ schedule.id }}" value="{{ schedule.seasonPartFirstEpisode }}" id="season-part-first-episode-{{ schedule.id }}-{{ schedule.id }}-{{ schedule.id }}">
+                        </label>
+                        <label for="season-part-episode-count-{{ schedule.id }}">{{ 'Episode count'|trans }}
+                            <input type="number" name="season-part-episode-count-{{ schedule.id }}" value="{{ schedule.seasonPartEpisodeCount }}" id="season-part-first-episode-{{ schedule.id }}-{{ schedule.id }}-{{ schedule.id }}">
+                        </label>
                     </div>
                     <div class="date-time">
                         <label for="date-{{ schedule.id }}">{{ 'First air date'|trans }}

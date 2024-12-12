@@ -44,6 +44,15 @@ class SeriesBroadcastSchedule
     #[ORM\Column(nullable: true)]
     private ?int $seasonNumber = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $seasonPart = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $seasonPartFirstEpisode = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $seasonPartEpisodeCount = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -153,6 +162,42 @@ class SeriesBroadcastSchedule
     public function setSeasonNumber(?int $seasonNumber): static
     {
         $this->seasonNumber = $seasonNumber;
+
+        return $this;
+    }
+
+    public function getSeasonPart(): ?int
+    {
+        return $this->seasonPart;
+    }
+
+    public function setSeasonPart(?int $seasonPart): static
+    {
+        $this->seasonPart = $seasonPart;
+
+        return $this;
+    }
+
+    public function getSeasonPartFirstEpisode(): ?int
+    {
+        return $this->seasonPartFirstEpisode;
+    }
+
+    public function setSeasonPartFirstEpisode(?int $seasonPartFirstEpisode): static
+    {
+        $this->seasonPartFirstEpisode = $seasonPartFirstEpisode;
+
+        return $this;
+    }
+
+    public function getSeasonPartEpisodeCount(): ?int
+    {
+        return $this->seasonPartEpisodeCount;
+    }
+
+    public function setSeasonPartEpisodeCount(?int $seasonPartEpisodeCount): static
+    {
+        $this->seasonPartEpisodeCount = $seasonPartEpisodeCount;
 
         return $this;
     }

@@ -5,6 +5,12 @@
         const country = form.querySelector(countrySelector).value;
         const seasonNumberSelector = 'input[name="season-number-' + id + '"]';
         const seasonNumber = form.querySelector(seasonNumberSelector).value;
+        const seasonPartSelector = 'input[name="season-part-' + id + '"]';
+        const seasonPart = form.querySelector(seasonPartSelector).value;
+        const seasonPartFirstEpisodeSelector = 'input[name="season-part-first-episode-' + id + '"]';
+        const seasonPartFirstEpisode = form.querySelector(seasonPartFirstEpisodeSelector).value;
+        const seasonPartEpisodeCountSelector = 'input[name="season-part-episode-count-' + id + '"]';
+        const seasonPartEpisodeCount = form.querySelector(seasonPartEpisodeCountSelector).value;
         const dateSelector = 'input[name="date-' + id + '"]';
         const date = form.querySelector(dateSelector).value;
         const timeSelector = 'input[name="time-' + id + '"]';
@@ -27,6 +33,9 @@
             id: id,
             country: country,
             seasonNumber: seasonNumber,
+            seasonPart: seasonPart,
+            seasonPartFirstEpisode: seasonPartFirstEpisode,
+            seasonPartEpisodeCount: seasonPartEpisodeCount,
             date: date,
             time: time,
             override: override,
