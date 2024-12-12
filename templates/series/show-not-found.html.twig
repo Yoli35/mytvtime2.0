@@ -45,6 +45,9 @@
                     {% endif %}
                     <div class="name">
                         <h1>
+                            {% if tv.localized_name %}
+                                <span class="localized-name-span">{{ tv.localized_name.name }}</span>
+                            {% endif %}
                             <span class="name-span">{{ series.name }}</span>
                             {% if series.firstAirDate %}
                                 <span title="{{ series.firstAirDate|date("d/m/Y") }}">({{ series.firstAirDate|date("Y") }})</span>
@@ -54,8 +57,16 @@
                             <div class="series-tools-click">
                                 {{ ux_icon('fa6-solid:ellipsis-vertical', {height: '18px', width: '18px'}) }}
                             </div>
+                            <div class="series-tools-menu">
+                                <div id="localized-name">{{ 'Suggest a localized name'|trans }}</div>
+                                <div id="localized-overview">{{ 'Add a localized overview'|trans }}</div>
+                                <div id="additional-overview">{{ 'Add an additional overview'|trans }}</div>
+                            </div>
                         </div>
                     </div>
+                    {{ include('_blocks/forms/_delete-overview.html.twig') }}
+                    {{ include('_blocks/forms/_localized-name.html.twig', {media: tv}) }}
+                    {{ include('_blocks/forms/_overview.html.twig', {media: tv}) }}
                     <h5>
                         {% set n = series.visitNumber %}
                         {% if n > 1000 %}
@@ -142,123 +153,149 @@
 
             {% if userSeries %}
                 <div class="user-actions">
-                    <div class="watch-links">
-                        <div class="label">{{ 'Watch links'|trans }}</div>
-                        {% for link in series.watchLinks %}
-                            <div class="watch-link" data-id="{{ link.id }}">
-                                <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
-                                    {% if link.providerId > 0 %}
-                                        <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}" data-title="{{ link.name ?? providers.names[link.providerId] }}">
-                                    {% else %}
-                                        <span>{{ link.name }}</span>
-                                    {% endif %}
-                                </a>
-                                <div class="watch-link-tools"
-                                     data-id="{{ link.id }}"
-                                     data-provider="{{ link.providerId }}"
-                                     data-name="{{ link.name }}"
-                                >
-                                    <div class="watch-link-tool edit" data-title="{{ 'Edit this watch link'|trans }}">
-                                        {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
+                    <h2>{{ 'User actions'|trans }}</h2>
+                    <div class="wrapper">
+                        <div class="watch-links">
+                            <div class="label">{{ 'Watch links'|trans }}</div>
+                            {% for link in series.watchLinks %}
+                                <div class="watch-link" data-id="{{ link.id }}">
+                                    <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
+                                        {% if link.providerId > 0 %}
+                                            <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}" data-title="{{ link.name ?? providers.names[link.providerId] }}">
+                                        {% else %}
+                                            <span>{{ link.name }}</span>
+                                        {% endif %}
+                                    </a>
+                                    <div class="watch-link-tools"
+                                         data-id="{{ link.id }}"
+                                         data-provider="{{ link.providerId }}"
+                                         data-name="{{ link.name }}"
+                                         data-season-number="{{ link.seasonNumber }}"
+                                    >
+                                        <div class="watch-link-tool edit" data-title="{{ 'Edit this watch link'|trans }}">
+                                            {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
+                                        </div>
+                                        <div class="watch-link-tool copy" data-title="{{ 'Copy this watch link'|trans }}">
+                                            {{ ux_icon('fa6-solid:copy', {height: '18px', width: '18px'}) }}
+                                        </div>
+                                        <div class="watch-link-name">{{ link.name }}</div>
+                                        <div class="watch-link-tool delete" data-title="{{ 'Delete this watch link'|trans }}">
+                                            {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
+                                        </div>
                                     </div>
-                                    <div class="watch-link-tool copy" data-title="{{ 'Copy this watch link'|trans }}">
-                                        {{ ux_icon('fa6-solid:copy', {height: '18px', width: '18px'}) }}
+                                </div>
+                            {% endfor %}
+                            <div class="add-watch-link" data-title="{{ 'Add a watch link'|trans }}">
+                                {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                            </div>
+                        </div>
+                        <div class="watch-link-form">
+                            <form class="form" action="" id="watch-link-form">
+                                <div class="form-row">
+                                    <div class="form-field">
+                                        <label for="provider">{{ 'Provider'|trans }}
+                                            <select name="provider" id="provider">
+                                                <option value="">{{ 'Select a provider'|trans }}</option>
+                                                {% for name, id in providers.select %}
+                                                    <option value="{{ id }}">{{ name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </label>
                                     </div>
-                                    <div class="watch-link-name">{{ link.name }}</div>
-                                    <div class="watch-link-tool delete" data-title="{{ 'Delete this watch link'|trans }}">
-                                        {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-field">
+                                        <label for="name">{{ 'Name'|trans }}
+                                            <input type="text" name="name" id="name" required autocomplete="false">
+                                            <span class="error"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-field">
+                                        <label for="url">{{ 'URL'|trans }}
+                                            <input type="url" name="url" id="url" required>
+                                            <span class="error"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                {% set numberOfSeason = tv.seasons|length %}
+                                {% if numberOfSeason > 1 %}
+                                    <div class="form-row">
+                                        <div class="form-field">
+                                            <label for="season-number">{{ 'Season'|trans }}
+                                                <select id="season-number" name="season-number">
+                                                    <option value="-1">{{ 'All seasons'|trans }}</option>
+                                                    {% for i in 1..numberOfSeason %}
+                                                        {% set seasonNumber = tv.seasons[i-1].season_number %}
+                                                        <option value="{{ seasonNumber }}">{{ seasonNumber ? ('Season x'|trans({'x': seasonNumber})):('Special episodes'|trans) }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <span class="error"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <input type="hidden" name="season-number" id="season-number" value="{{ tv.seasons[0].season_number }}">
+                                {% endif %}
+                                <div class="form-row">
+                                    <div class="form-field">
+                                        <button type="button">{{ 'Cancel'|trans }}</button>
+                                        <button type="submit">{{ 'Add'|trans }}</button>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="crud-type" id="crud-type" value="">{# create (new) | update (edit) | delete (remove) #}
+                                <input type="hidden" name="crud-id" id="crud-id" value="">{# id of updated watch link #}
+                            </form>
+                        </div>
+                        <div class="rating">
+                            <div class="rating-stars">
+                                <div class="stars" data-trans-rating="Cancel rating|{{ 'Cancel rating'|trans }}" data-trans-star="star|{{ 'star'|trans }}" data-trans-stars="stars|{{ 'stars'|trans }}">
+                                    <div class="star {{ userSeries.rating >= 1 ? "active" }}" data-value="1" data-title="{{ (userSeries.rating >= 1 ? "Cancel rating":"x star")|trans({'x': 1}) }}">
+                                        {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                    <div class="star {{ userSeries.rating >= 2 ? "active" }}" data-value="2" data-title="{{ (userSeries.rating >= 2 ? "Cancel rating":"x stars")|trans({'x': 2}) }}">
+                                        {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                    <div class="star {{ userSeries.rating >= 3 ? "active" }}" data-value="3" data-title="{{ (userSeries.rating >= 3 ? "Cancel rating":"x stars")|trans({'x': 3}) }}">
+                                        {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                    <div class="star {{ userSeries.rating >= 4 ? "active" }}" data-value="4" data-title="{{ (userSeries.rating >= 4 ? "Cancel rating":"x stars")|trans({'x': 4}) }}">
+                                        {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                    <div class="star {{ userSeries.rating >= 5 ? "active" }}" data-value="5" data-title="{{ (userSeries.rating >= 5 ? "Cancel rating":"x stars")|trans({'x': 5}) }}">
+                                        {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
                                     </div>
                                 </div>
                             </div>
-                        {% endfor %}
-                        <div class="add-watch-link" data-title="{{ 'Add a watch link'|trans }}">
-                            {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
                         </div>
-                    </div>
-                    <div class="watch-link-form">
-                        <form class="form" action="" id="watch-link-form">
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="provider">{{ 'Provider'|trans }}
-                                        <select name="provider" id="provider">
-                                            <option value="">{{ 'Select a provider'|trans }}</option>
-                                            {% for name, id in providers.select %}
-                                                <option value="{{ id }}">{{ name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </label>
-                                </div>
+                        {% if userSeries.marathoner or userSeries.binge %}
+                            <div class="badges">
+                                {% if userSeries.binge %}
+                                    <div class="badge" data-title="{{ 'A real binger!'|trans }}">
+                                        {{ ux_icon('fa:coffee', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                {% endif %}
+                                {% if userSeries.marathoner %}
+                                    <div class="badge" data-title="{{ 'A real marathoner!'|trans }}">
+                                        {{ ux_icon('fa6-solid:bolt', {height: '18px', width: '18px'}) }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="name">{{ 'Name'|trans }}
-                                        <input type="text" name="name" id="name" required autocomplete="false">
-                                        <span class="error"></span>
-                                    </label>
-                                </div>
+                        {% endif %}
+                        <div class="actions">
+                            <div class="action toggle-pinned-series{% if userSeries.userPinnedSeries %} pinned{% endif %}" data-title="{{ (userSeries.userPinnedSeries ? "Remove from pinned series" : "Add to pinned series")|trans }}">
+                                {{ ux_icon('fa6-solid:paperclip', {height: '18px', width: '18px'}) }}
                             </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="url">{{ 'URL'|trans }}
-                                        <input type="url" name="url" id="url" required>
-                                        <span class="error"></span>
-                                    </label>
-                                </div>
+                            <div class="action toggle-favorite-series{% if userSeries.favorite %} favorite{% endif %}" data-title="{{ (userSeries.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
+                                {{ ux_icon('fa6-solid:heart', {height: '18px', width: '18px'}) }}
                             </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <button type="button">{{ 'Cancel'|trans }}</button>
-                                    <button type="submit">{{ 'Add'|trans }}</button>
-                                </div>
+                            <div class="action remove-this-series"
+                                 data-tmdb-id="{{ series.tmdbId }}"
+                                 data-slug="{{ tv.localized_name.slug ?? series.slug }}"
+                                 data-title="{{ 'Remove this series from your watchlist'|trans }}">
+                                {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
                             </div>
-                            <input type="hidden" name="crud-type" id="crud-type" value="">{# create (new) | update (edit) | delete (remove) #}
-                            <input type="hidden" name="crud-id" id="crud-id" value="">{# id of updated watch link #}
-                        </form>
-                    </div>
-                    <div class="rating">
-                        <div class="rating-stars">
-                            <div class="stars" data-trans-rating="Cancel rating|{{ 'Cancel rating'|trans }}" data-trans-star="star|{{ 'star'|trans }}" data-trans-stars="stars|{{ 'stars'|trans }}">
-                                <div class="star {{ userSeries.rating >= 1 ? "active" }}" data-value="1" data-title="{{ (userSeries.rating >= 1 ? "Cancel rating":"x star")|trans({'x': 1}) }}">
-                                    {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
-                                </div>
-                                <div class="star {{ userSeries.rating >= 2 ? "active" }}" data-value="2" data-title="{{ (userSeries.rating >= 2 ? "Cancel rating":"x stars")|trans({'x': 2}) }}">
-                                    {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
-                                </div>
-                                <div class="star {{ userSeries.rating >= 3 ? "active" }}" data-value="3" data-title="{{ (userSeries.rating >= 3 ? "Cancel rating":"x stars")|trans({'x': 3}) }}">
-                                    {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
-                                </div>
-                                <div class="star {{ userSeries.rating >= 4 ? "active" }}" data-value="4" data-title="{{ (userSeries.rating >= 4 ? "Cancel rating":"x stars")|trans({'x': 4}) }}">
-                                    {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
-                                </div>
-                                <div class="star {{ userSeries.rating >= 5 ? "active" }}" data-value="5" data-title="{{ (userSeries.rating >= 5 ? "Cancel rating":"x stars")|trans({'x': 5}) }}">
-                                    {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% if userSeries.marathoner or userSeries.binge %}
-                        <div class="badges">
-                            {% if userSeries.binge %}
-                                <div class="badge" data-title="{{ 'A real binger!'|trans }}">
-                                    {{ ux_icon('fa:coffee', {height: '18px', width: '18px'}) }}
-                                </div>
-                            {% endif %}
-                            {% if userSeries.marathoner %}
-                                <div class="badge" data-title="{{ 'A real marathoner!'|trans }}">
-                                    {{ ux_icon('fa6-solid:bolt', {height: '18px', width: '18px'}) }}
-                                </div>
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                    <div class="actions">
-                        <div class="action toggle-pinned-series{% if userSeries.userPinnedSeries %} pinned{% endif %}" data-title="{{ (userSeries.userPinnedSeries ? "Remove from pinned series" : "Add to pinned series")|trans }}">
-                            {{ ux_icon('fa6-solid:paperclip', {height: '18px', width: '18px'}) }}
-                        </div>
-                        <div class="action toggle-favorite-series{% if userSeries.favorite %} favorite{% endif %}" data-title="{{ (userSeries.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
-                            {{ ux_icon('fa6-solid:heart', {height: '18px', width: '18px'}) }}
-                        </div>
-                        <div class="action remove-this-series" data-title="{{ 'Remove this series from your watchlist'|trans }}">
-                            {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
                         </div>
                     </div>
                 </div>
@@ -267,8 +304,111 @@
             <div class="content">
                 <div class="left">
                     <div class="all-seasons">
-                        <div>{{ 'Series not found on The Movie Database'|trans }}</div>
+                        <div>{{ 'Seasons'|trans }}</div>
+                        {% if tv.seasons|length > 1 %}
+                            <div class="season-order">
+                                {{ ux_icon('fa6-solid:arrow-down', {height: '18px', width: '18px'}) }}
+                            </div>
+                        {% endif %}
                     </div>
+                    <div class="seasons">
+                        {% for season in tv.seasons %}
+                            <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: tv.localized_name.slug ?? series.slug}) }}">
+                                <div class="season">
+                                    <div class="poster">
+                                        {% if season.poster_path %}
+                                            <img src="{{ season.poster_path }}" alt="{{ season.name }}">
+                                        {% else %}
+                                            <div>{{ 'No poster'|trans }}</div>
+                                        {% endif %}
+                                        <div class="number">
+                                            {{ season.season_number }}
+                                        </div>
+                                    </div>
+                                    <div class="infos">
+                                        <div class="season__name">{{ season.name }}</div>
+                                        {% if season.overview %}
+                                            <div class="season__overview">{{ season.overview }}</div>
+                                        {% endif %}
+                                        <div class="season__air-date">{{ 'Air date'|trans }}
+                                            {% if season.air_date %}
+                                                {{ date(season.air_date)|format_date('relative_long') }}
+                                                {% if userSeries.lastSeason is not null and userSeries.lastSeason == season.season_number %}
+                                                    — {{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}
+                                                {% endif %}
+                                            {% else %}
+                                                {{ 'TBA'|trans }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="season__episodes">
+                                            {{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}
+                                            <div class="watched"></div>
+                                            {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
+                                            {% if viewedEpisodes == 0 %}
+                                                {{ 'No episode seen'|trans }}
+                                            {% elseif viewedEpisodes == 1 %}
+                                                {{ '1 episode seen'|trans }}
+                                            {% elseif viewedEpisodes == season.episode_count %}
+                                                {{ 'All episodes seen'|trans }}
+                                            {% else %}
+                                                {{ viewedEpisodes }} {{ 'episodes seen'|trans }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                    {% if tv.credits.cast|length %}
+                        <h3>{{ 'Cast'|trans }}</h3>
+                        <div class="cast">
+                            <div class="wrapper">
+                                {% for people in tv.credits.cast %}
+                                    <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
+                                        <div class="people" data-title="{{ people.name }}">
+                                            <div class="photo">
+                                                {% if people.profile_path %}
+                                                    <img src="{{ people.profile_path }}" alt="{{ people.name }}">
+                                                {% else %}
+                                                    {{ 'No picture'|trans }}
+                                                {% endif %}
+                                            </div>
+                                            <div class="infos">
+                                                <div class="name">{{ people.name }}</div>
+                                                <div>{{ people.character }}</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if tv.credits.crew|length %}
+                        <h3>{{ 'Crew'|trans }}</h3>
+                        <div class="crew">
+                            <div class="wrapper">
+                                {% for people in tv.credits.crew %}
+                                    <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
+                                        <div class="people" data-title="{{ people.name }}">
+                                            <div class="photo">
+                                                {% if people.profile_path %}
+                                                    <img src="{{ people.profile_path }}" alt="{{ people.name }}">
+                                                {% else %}
+                                                    {{ 'No picture'|trans }}
+                                                {% endif %}
+                                            </div>
+                                            <div class="infos">
+                                                <div class="name">{{ people.name }}</div>
+                                                <div>{{ people.job ~ ' - ' ~ people.department }}</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
                 </div>
                 <div class="right">
                 </div>

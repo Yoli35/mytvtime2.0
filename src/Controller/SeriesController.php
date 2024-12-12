@@ -740,6 +740,8 @@ class SeriesController extends AbstractController
             $data = $addBackdropForm->getData();
             $this->addBackdrop($series, $data['file']);
         }
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+        $userEpisodes = $this->userEpisodeRepository->findBy(['user' => $user, 'userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
 
         $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
         // Get with fr-FR language to get the localized name
@@ -766,25 +768,30 @@ class SeriesController extends AbstractController
 
             $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
-            list($series, $seriesBackdrops, $seriesLogos, $seriesPosters) = $this->updateSeries($series, $tv);
+            $series = $this->updateSeries($series, $tv);
 //            dump(['series posters' => $seriesPosters]);
 
+            $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
             $tv['credits'] = $this->castAndCrew($tv);
             $tv['localized_name'] = $series->getLocalizedName($request->getLocale());
             $tv['localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
-            $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
-            $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
+            $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $request->getLocale());
             $tv['networks'] = $this->networks($tv);
             $tv['overview'] = $this->localizedOverview($tv, $series, $request);
             $tv['seasons'] = $this->seasonsPosterPath($tv['seasons'], $dayOffset);
+            $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
             $tv['watch/providers'] = $this->watchProviders($tv, $user->getCountry() ?? 'FR');
-            $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $request->getLocale());
+            $noTv = [];
         } else {
             $series->setUpdates(['Series not found']);
-            $seriesBackdrops = $seriesLogos = $seriesPosters = [];
+            $noTv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
+            $noTv['credits'] = $this->castAndCrew($tv);
+            $noTv['localized_name'] = $series->getLocalizedName($request->getLocale());
+            $noTv['localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
+            $noTv['seasons'] = $this->getUserSeasons($series, $userEpisodes);
+            $noTv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
         }
-        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        $userEpisodes = $this->userEpisodeRepository->findBy(['user' => $user, 'userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+        list($seriesBackdrops, $seriesLogos, $seriesPosters) = $this->getSeriesImages($series);
 
         if ($tv) {
             $userSeries = $this->updateUserSeries($userSeries, $tv);
@@ -862,7 +869,7 @@ class SeriesController extends AbstractController
         }
         return $this->render($twig, [
             'series' => $seriesArr,
-            'tv' => $tv,
+            'tv' => $tv ?? $noTv,
             'userSeries' => $userSeries,
             'providers' => $providers,
             'seriesLocations' => $locations,
@@ -1058,6 +1065,12 @@ class SeriesController extends AbstractController
         $seriesImages = $series->getSeriesImages()->toArray();
 
         $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $request->getLocale(), ['credits', 'watch/providers']), true);
+        if (!$season) {
+            return $this->redirectToRoute('app_series_show', [
+                'id' => $series->getId(),
+                'slug' => $series->getSlug(),
+            ]);
+        }
         if ($season['poster_path']) {
             if (!$this->inImages($season['poster_path'], $seriesImages)) {
                 $seriesImage = new SeriesImage($series, "poster", $season['poster_path']);
@@ -2030,7 +2043,7 @@ class SeriesController extends AbstractController
         return $isBinge;
     }
 
-    public function updateSeries(Series $series, array $tv): array
+    public function updateSeries(Series $series, array $tv): Series
     {
         $slugger = new AsciiSlugger();
         $series->setUpdates([]);
@@ -2128,9 +2141,13 @@ class SeriesController extends AbstractController
         }
         $this->seriesRepository->save($series, true);
 
+        return $series;
+    }
+
+    public function getSeriesImages(Series $series): array
+    {
         $seriesImages = $this->seriesRepository->seriesImages($series);
         $seriesBackdrops = array_filter($seriesImages, fn($image) => $image['type'] == "backdrop");
-
         $seriesLogos = array_filter($seriesImages, fn($image) => $image['type'] == "logo");
         $seriesPosters = array_filter($seriesImages, fn($image) => $image['type'] == "poster");
 
@@ -2138,7 +2155,7 @@ class SeriesController extends AbstractController
         $seriesLogos = array_values(array_map(fn($image) => "/series/logos" . $image['image_path'], $seriesLogos));
         $seriesPosters = array_values(array_map(fn($image) => "/series/posters" . $image['image_path'], $seriesPosters));
 
-        return [$series, $seriesBackdrops, $seriesLogos, $seriesPosters];
+        return [$seriesBackdrops, $seriesLogos, $seriesPosters];
     }
 
     public function getExternals(Series $series, string $locale): array
@@ -2227,6 +2244,28 @@ class SeriesController extends AbstractController
         return $userSeries;
     }
 
+    public function getUserSeasons(Series $series, array $userEpisodes): array
+    {
+        $seasonArr = [];
+        $posterPath = '/series/posters' . $series->getPosterPath();
+        foreach ($userEpisodes as $ue) {
+            $seasonNumber = $ue->getSeasonNumber();
+            $episodeNumber = $ue->getEpisodeNumber();
+            $seasonArr[$seasonNumber][$episodeNumber]['air_date'] = $ue->getAirDate();
+        }
+        $seasons = [];
+        foreach ($seasonArr as $seasonNumber => $seasonItem) {
+            $season['air_date'] = $seasonItem[1]['air_date']->format('Y-m-d');
+            $season['episode_count'] = count($seasonItem);
+            $season['name'] = $this->translator->trans('Season') . ' ' . $seasonNumber;
+            $season['overview'] = null;
+            $season['poster_path'] = $posterPath;
+            $season['season_number'] = $seasonNumber;
+            $seasons[] = $season;
+        }
+        return $seasons;
+    }
+
     public function checkNumberOfEpisodes(array $tv): int
     {
         $seasonEpisodeCount = 0;
@@ -2258,7 +2297,7 @@ class SeriesController extends AbstractController
 
         foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
             $seasonNumber = $schedule->getSeasonNumber();
-            $episodeCount = $this->getSeasonEpisodeCount($tv['seasons'], $seasonNumber);
+            $episodeCount = $tv ? $this->getSeasonEpisodeCount($tv['seasons'], $seasonNumber) : 0;
             $airAt = $schedule->getAirAt();
             $firstAirDate = $schedule->getFirstAirDate();
             $frequency = $schedule->getFrequency();
@@ -2277,9 +2316,13 @@ class SeriesController extends AbstractController
 
             if ($tv && $tv['last_episode_to_air'] && $tv['last_episode_to_air']['season_number'] == $seasonNumber) {
                 $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
-                $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
             } else {
                 $tvLastEpisode = null;
+            }
+
+            if ($tv && $tv['next_episode_to_air'] && $tv['next_episode_to_air']['season_number'] == $seasonNumber) {
+                $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+            } else {
                 $tvNextEpisode = null;
             }
 
@@ -2300,6 +2343,16 @@ class SeriesController extends AbstractController
             $userLastEpisode = $userLastEpisode[0] ?? null;
             $userNextEpisode = $userNextEpisode[0] ?? null;
             $endOfSeason = $userLastEpisode && $userLastEpisode['episode_number'] == $episodeCount;
+            if ($target == null) // no tv ?
+            {
+                if ($userNextEpisode) {
+                    $airDateOffset = $this->dateService->newDateImmutable($userNextEpisode['air_date_offset'], 'Europe/Paris');
+                    $targetTS = $airDateOffset?->getTimestamp();
+                } elseif ($userLastEpisode) {
+                    $airDateOffset = $this->dateService->newDateImmutable($userLastEpisode['air_date_offset'], 'Europe/Paris');
+                    $targetTS = $airDateOffset?->getTimestamp();
+                }
+            }
             /*dump([
                 'episodeCount' => $episodeCount,
                 'userLastEpisode' => $userLastEpisode,
@@ -2355,16 +2408,30 @@ class SeriesController extends AbstractController
                 'userLastNextEpisode' => $userLastNextEpisode,
                 'tvLastEpisode' => $tvLastEpisode,
                 'tvNextEpisode' => $tvNextEpisode,
-                'toBeContinued' => $tv && $this->isToBeContinued($tv, $userLastEpisode),
+                'toBeContinued' => $tv ? $this->isToBeContinued($tv, $userLastEpisode) : $userNextEpisode != null,
                 'tmdbStatus' => $tv['status'] ?? 'series not found',
             ];
         }
         return $schedules;
     }
 
-    public function getAlternateSchedule(SeriesBroadcastSchedule $schedule, array $tv, array $userEpisodes): array
+    public function getAlternateSchedule(SeriesBroadcastSchedule $schedule, ?array $tv, array $userEpisodes): array
     {
+        $now = $this->now();
         $seasonNumber = $schedule->getSeasonNumber();
+
+        if (!$tv) {
+            $dayArr = [];
+            $episodeNumber = 1;
+            $airAt = $schedule->getAirAt();
+            foreach ($userEpisodes as $i => $userEpisode) {
+                $ue = $userEpisode;
+                $date = $ue->getAirDate()->setTime($airAt->format('H'), $airAt->format('i'));
+                $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $episodeNumber), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $episodeNumber), 'future' => $now < $date];
+                $episodeNumber++;
+            }
+            return ['seasonNumber' => $seasonNumber, 'airDays' => $dayArr];
+        }
         if (!$seasonNumber) {
             return ['seasonNumber' => 0, 'airDays' => []];
         }
@@ -2372,7 +2439,6 @@ class SeriesController extends AbstractController
         $firstAirDate = $schedule->getFirstAirDate();
         $airAt = $schedule->getAirAt();
         $daysOfWeek = $schedule->getDaysOfWeek();
-        $now = $this->now();
 
         /*dump(['tv' => $tv,
             'seasonNumber' => $seasonNumber,
@@ -2830,6 +2896,9 @@ class SeriesController extends AbstractController
 
     public function castAndCrew($tv): array
     {
+        if (!$tv) {
+            return ['cast' => [], 'crew' => [], 'guest_stars' => []];
+        }
         $slugger = new AsciiSlugger();
         $tv['credits']['cast'] = array_map(function ($cast) use ($slugger) {
             $cast['slug'] = $slugger->slug($cast['name'])->lower()->toString();
