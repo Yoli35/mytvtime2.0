@@ -108,6 +108,8 @@ export class Season {
         this.text = jsonGlobsObject.text;
         this.lang = document.documentElement.lang;
         this.intervals = [];
+        this.initialDay = new Date().getDate();
+        console.log(this.initialDay);
         // this.saving = null;
         // this.lastMinute = 0;
         // this.lastHour = 0;
@@ -118,7 +120,7 @@ export class Season {
 
     init() {
         // TODO: recharger la page au changement de jour (mettre à jour les dates relatives)
-        
+        setInterval(this.checkDayChange, 60000);// chaque minute
 
         const watchLinks = document.querySelectorAll('.watch-link');
         watchLinks.forEach(function (watchLink) {
@@ -270,6 +272,14 @@ export class Season {
                 }
             }
         });
+    }
+
+    checkDayChange() {
+        const currentDay = new Date().getDate();
+        console.log({'initial day': gThis.initialDay, 'current day': currentDay});
+        if (currentDay !== gThis.initialDay) {
+            window.location.reload();
+        }
     }
 
     openTitleForm(e) {
