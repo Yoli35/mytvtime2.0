@@ -324,7 +324,7 @@ class SeriesController extends AbstractController
             $s['upToDate'] = $s['watched_aired_episode_count'] == $s['aired_episode_count'];
             return $s;
         }, $this->userSeriesRepository->seriesByCountry($user, $country, $locale, 1, -1));
-        // le tableau $series est trié par date de première diffusion décroissante, mais certaines séries n'ont pas de date de première diffusion.
+        // Le tableau $series est trié par date de première diffusion décroissante, mais certaines séries n'ont pas de date de première diffusion.
         // Ces séries sans date de première diffusion doivent être placées en début de tableau.
         usort($series, function ($a, $b) {
             if ($a['final_air_date'] == $b['final_air_date']) return 0;
@@ -803,7 +803,7 @@ class SeriesController extends AbstractController
         $schedules = $this->seriesSchedulesV2($user, $series, $tv, $dayOffset);
         $emptySchedule = $this->emptySchedule();
         $alternateSchedules = array_map(function ($s) use ($tv, $userEpisodes) {
-            // Ajouter la user séries pour les épisodes vus
+            // Ajouter la "user" séries pour les épisodes vus
             return $this->getAlternateSchedule($s, $tv, array_filter($userEpisodes, function ($ue) use ($s) {
                 return $ue->getSeasonNumber() == $s->getSeasonNumber();
             }));
@@ -2395,6 +2395,7 @@ class SeriesController extends AbstractController
             $schedules[] = [
                 'id' => $schedule->getId(),
                 'seasonNumber' => $schedule->getSeasonNumber(),
+                'multiPart' => $schedule->isMultiPart(),
                 'seasonPart' => $schedule->getSeasonPart(),
                 'seasonPartFirstEpisode' => $schedule->getSeasonPartFirstEpisode(),
                 'seasonPartEpisodeCount' => $schedule->getSeasonPartEpisodeCount(),
@@ -2428,6 +2429,7 @@ class SeriesController extends AbstractController
     {
         $now = $this->now();
         $seasonNumber = $schedule->getSeasonNumber();
+        $multiPart = $schedule->isMultiPart();
         $seasonPart = $schedule->getSeasonPart();
 
         if (!$tv) {
@@ -2440,10 +2442,10 @@ class SeriesController extends AbstractController
                 $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $episodeNumber), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $episodeNumber), 'future' => $now < $date];
                 $episodeNumber++;
             }
-            return ['seasonNumber' => $seasonNumber, 'airDays' => $dayArr];
+            return ['seasonNumber' => $seasonNumber, 'multiPart'=> false, 'seasonPart' => 0, 'airDays' => $dayArr];
         }
         if (!$seasonNumber) {
-            return ['seasonNumber' => 0, 'airDays' => []];
+            return ['seasonNumber' => 0, 'multiPart'=> false, 'seasonPart' => 0,  'airDays' => []];
         }
         $frequency = $schedule->getFrequency();
         $firstAirDate = $schedule->getFirstAirDate();
@@ -2455,7 +2457,15 @@ class SeriesController extends AbstractController
             'frequency' => $frequency,
             'firstAirDate' => $firstAirDate->format('Y-m-d'),
         ]);*/
-        $episodeCount = $this->getSeason($tv['seasons'], $seasonNumber)['episode_count'];
+        if ($schedule->isMultiPart()) {
+            $firstEpisode = $schedule->getSeasonPartFirstEpisode();
+            $episodeCount = $schedule->getSeasonPartEpisodeCount();
+            $lastEpisode = $firstEpisode + $episodeCount - 1;
+        } else {
+            $firstEpisode = 1;
+            $episodeCount = $this->getSeason($tv['seasons'], $seasonNumber)['episode_count'];
+            $lastEpisode = $episodeCount;
+        }
 
         // Frequency values:
         //  1 - All at once
@@ -2474,8 +2484,8 @@ class SeriesController extends AbstractController
         $dayArr = [];
         switch ($frequency) {
             case 1: // All at once
-                for ($i = 0; $i < $episodeCount; $i++) {
-                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
+                for ($i = $firstEpisode; $i <= $lastEpisode; $i++) {
+                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
                 }
                 break;
             case 2: // Daily
@@ -2559,7 +2569,7 @@ class SeriesController extends AbstractController
                 }
                 break;
         }
-        return ['seasonNumber' => $seasonNumber, 'airDays' => $dayArr];
+        return ['seasonNumber' => $seasonNumber, 'multiPart'=> $multiPart, 'seasonPart' => $seasonPart, 'airDays' => $dayArr];
     }
 
     public function isEpisodeWatched(array $episodes, int $seasonNumber, int $episodeNumber): bool
@@ -2580,6 +2590,7 @@ class SeriesController extends AbstractController
         return [
             'id' => 0,
             'seasonNumber' => 1,
+            'multiPart' => false,
             'seasonPart' => 1,
             'seasonPartFirstEpisode' => 1,
             'seasonPartEpisodeCount' => 1,

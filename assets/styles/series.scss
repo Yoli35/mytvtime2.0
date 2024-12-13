@@ -981,6 +981,19 @@ h2 {
             background-color: var(--green-70);
             cursor: pointer;
 
+            .details {
+                display: flex;
+                gap: .5rem;
+            }
+
+            .season {
+                font-size: 1.25rem;
+                margin-block-start: 1.5rem;
+                text-align: center;
+                text-wrap: balance;
+                width: 100%;
+            }
+
             .country, .local-air, .remaining {
                 align-items: center;
                 border-radius: .25rem;
@@ -1146,6 +1159,7 @@ h2 {
                 justify-content: center;
 
                 > div {
+                    align-items: flex-start;
                     display: flex;
                     flex-direction: column;
                     gap: .5rem;
@@ -1168,6 +1182,7 @@ h2 {
                         border-bottom: 2px solid transparent;
                         display: flex;
                         gap: .5rem;
+                        margin-inline-start: 0;
 
                         &:hover, &.active {
                             border-bottom: 2px solid var(--orange-50);
@@ -1194,6 +1209,15 @@ h2 {
                     label:has(input[type=checkbox]:checked) {
                         /*background-color: var(--green-60);*/
                         /*border: 2px solid var(--green-30);*/
+                    }
+
+                    input[type=number] {
+                        background-color: var(--orange-20);
+                        border: 2px solid var(--orange-50);
+                        border-radius: .25rem;
+                        color: var(--orange-90);
+                        padding-inline: .5rem;
+                        width: 4rem;
                     }
 
                     input[type=time], input[type=date] {

@@ -9,14 +9,20 @@
                         <label for="season-number-{{ schedule.id }}">{{ 'Season'|trans }}
                             <input type="number" name="season-number-{{ schedule.id }}" value="{{ schedule.seasonNumber }}" id="season-number-{{ schedule.id }}">
                         </label>
+                    </div>
+                    <div class="date-time">
+                        <label for="multi-part-{{ schedule.id }}" data-title="{{ 'This season will be broadcast in several parts'|trans }}">
+                            <input type="checkbox" switch name="multi-part-{{ schedule.id }}" id="multi-part-{{ schedule.id }}" {% if schedule.multiPart %}checked{% endif %}>
+                            {{ 'Multi part'|trans }}
+                        </label>
                         <label for="season-part-{{ schedule.id }}">{{ 'Part'|trans }}
-                            <input type="number" name="season-part-{{ schedule.id }}" value="{{ schedule.seasonPart }}" id="season-part-{{ schedule.id }}-{{ schedule.id }}">
+                            <input type="number" name="season-part-{{ schedule.id }}" value="{{ schedule.seasonPart }}" id="season-part-{{ schedule.id }}"{% if schedule.multiPart==0 %} disabled{% endif %}>
                         </label>
                         <label for="season-part-first-episode-{{ schedule.id }}">{{ 'First episode'|trans }}
-                            <input type="number" name="season-part-first-episode-{{ schedule.id }}" value="{{ schedule.seasonPartFirstEpisode }}" id="season-part-first-episode-{{ schedule.id }}-{{ schedule.id }}-{{ schedule.id }}">
+                            <input type="number" name="season-part-first-episode-{{ schedule.id }}" value="{{ schedule.seasonPartFirstEpisode }}" id="season-part-first-episode-{{ schedule.id }}"{% if schedule.multiPart==0 %} disabled{% endif %}>
                         </label>
                         <label for="season-part-episode-count-{{ schedule.id }}">{{ 'Episode count'|trans }}
-                            <input type="number" name="season-part-episode-count-{{ schedule.id }}" value="{{ schedule.seasonPartEpisodeCount }}" id="season-part-first-episode-{{ schedule.id }}-{{ schedule.id }}-{{ schedule.id }}">
+                            <input type="number" name="season-part-episode-count-{{ schedule.id }}" value="{{ schedule.seasonPartEpisodeCount }}" id="season-part-first-episode-{{ schedule.id }}"{% if schedule.multiPart==0 %} disabled{% endif %}>
                         </label>
                     </div>
                     <div class="date-time">
@@ -62,24 +68,24 @@
                     <label for="days-{{ schedule.id }}-1">
                         <input type="checkbox" switch {% if schedule.dayArr.1 %} checked{% endif %} name="days-{{ schedule.id }}" value="1" id="days-{{ schedule.id }}-1">{{ 'Monday'|trans }}
                     </label>
-                </div>
-                <div>
+               {# </div>
+                <div>#}
                     <label for="days-{{ schedule.id }}-2">
                         <input type="checkbox" switch {% if schedule.dayArr.2 %} checked{% endif %} name="days-{{ schedule.id }}" value="2" id="days-{{ schedule.id }}-2">{{ 'Tuesday'|trans }}
                     </label>
                     <label for="days-{{ schedule.id }}-3">
                         <input type="checkbox" switch {% if schedule.dayArr.3 %} checked{% endif %} name="days-{{ schedule.id }}" value="3" id="days-{{ schedule.id }}-3">{{ 'Wednesday'|trans }}
                     </label>
-                </div>
-                <div>
+                {#</div>
+                <div>#}
                     <label for="days-{{ schedule.id }}-4">
                         <input type="checkbox" switch {% if schedule.dayArr.4 %} checked{% endif %} name="days-{{ schedule.id }}" value="4" id="days-{{ schedule.id }}-4">{{ 'Thursday'|trans }}
                     </label>
                     <label for="days-{{ schedule.id }}-5">
                         <input type="checkbox" switch {% if schedule.dayArr.5 %} checked{% endif %} name="days-{{ schedule.id }}" value="5" id="days-{{ schedule.id }}-5">{{ 'Friday'|trans }}
                     </label>
-                </div>
-                <div>
+                {#</div>
+                <div>#}
                     <label for="days-{{ schedule.id }}-6">
                         <input type="checkbox" switch {% if schedule.dayArr.6 %} checked{% endif %} name="days-{{ schedule.id }}" value="6" id="days-{{ schedule.id }}-6">{{ 'Saturday'|trans }}
                     </label>

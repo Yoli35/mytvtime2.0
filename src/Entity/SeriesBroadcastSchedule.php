@@ -53,6 +53,9 @@ class SeriesBroadcastSchedule
     #[ORM\Column(nullable: true)]
     private ?int $seasonPartEpisodeCount = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $multiPart = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -198,6 +201,18 @@ class SeriesBroadcastSchedule
     public function setSeasonPartEpisodeCount(?int $seasonPartEpisodeCount): static
     {
         $this->seasonPartEpisodeCount = $seasonPartEpisodeCount;
+
+        return $this;
+    }
+
+    public function isMultiPart(): ?bool
+    {
+        return $this->multiPart;
+    }
+
+    public function setMultiPart(?bool $multiPart): static
+    {
+        $this->multiPart = $multiPart;
 
         return $this;
     }
