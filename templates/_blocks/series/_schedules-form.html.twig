@@ -12,7 +12,7 @@
                     </div>
                     <div class="date-time">
                         <label for="multi-part-{{ schedule.id }}" data-title="{{ 'This season will be broadcast in several parts'|trans }}">
-                            <input type="checkbox" switch name="multi-part-{{ schedule.id }}" id="multi-part-{{ schedule.id }}" {% if schedule.multiPart %}checked{% endif %}>
+                            <input type="checkbox" switch onchange="toggleMultiPart({{ schedule.id }})" name="multi-part-{{ schedule.id }}" id="multi-part-{{ schedule.id }}" {% if schedule.multiPart %}checked{% endif %}>
                             {{ 'Multi part'|trans }}
                         </label>
                         <label for="season-part-{{ schedule.id }}">{{ 'Part'|trans }}

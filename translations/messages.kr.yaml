@@ -310,6 +310,11 @@ Add all available backdrops: 사용 가능한 모든 배경 추가
 Override the Movie Database schedule: 무비 데이터베이스 일정 재정의
 Override TMDB: TMDB 재정의
 Frequency: 빈도
+Multi parts: 다중 부분
+This season will be broadcast in several parts: 이 시즌은 여러 부분으로 방송됩니다
+Part: 부분
+First episode: 첫 에피소드
+Episode count: 에피소드 수
 All at once: 한꺼번에
 Daily: 매일
 Weekly, one at a time: 주간, 한 번에 하나

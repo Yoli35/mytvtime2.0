@@ -2303,7 +2303,19 @@ class SeriesController extends AbstractController
 
         foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
             $seasonNumber = $schedule->getSeasonNumber();
-            $episodeCount = $tv ? $this->getSeasonEpisodeCount($tv['seasons'], $seasonNumber) : 0;
+            if ($schedule->isMultiPart()) {
+                $multiPart = true;
+                $seasonPart = $schedule->getSeasonPart();
+                $firstEpisode = $schedule->getSeasonPartFirstEpisode();
+                $episodeCount = $schedule->getSeasonPartEpisodeCount();
+                $lastEpisode = $firstEpisode + $episodeCount - 1;
+            } else {
+                $multiPart = false;
+                $seasonPart = null;
+                $firstEpisode = 1;
+                $episodeCount = $tv ? $this->getSeasonEpisodeCount($tv['seasons'], $seasonNumber) : 0;
+                $lastEpisode = $episodeCount;
+            }
             $airAt = $schedule->getAirAt();
             $firstAirDate = $schedule->getFirstAirDate();
             $frequency = $schedule->getFrequency();
@@ -2321,13 +2333,31 @@ class SeriesController extends AbstractController
             }
 
             if ($tv && $tv['last_episode_to_air'] && $tv['last_episode_to_air']['season_number'] == $seasonNumber) {
-                $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+                if ($multiPart) {
+                    $lastEpisodeToAirNumber = $tv['last_episode_to_air']['episode_number'];
+                    if ($lastEpisodeToAirNumber >= $firstEpisode && $lastEpisodeToAirNumber <= $lastEpisode) {
+                        $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+                    } else {
+                        $tvLastEpisode = null;
+                    }
+                } else {
+                    $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+                }
             } else {
                 $tvLastEpisode = null;
             }
 
             if ($tv && $tv['next_episode_to_air'] && $tv['next_episode_to_air']['season_number'] == $seasonNumber) {
-                $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+                if ($multiPart) {
+                    $nextEpisodeToAirNumber = $tv['next_episode_to_air']['episode_number'];
+                    if ($nextEpisodeToAirNumber >= $firstEpisode && $nextEpisodeToAirNumber <= $lastEpisode) {
+                        $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+                    } else {
+                        $tvNextEpisode = null;
+                    }
+                } else {
+                    $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+                }
             } else {
                 $tvNextEpisode = null;
             }
@@ -2349,16 +2379,35 @@ class SeriesController extends AbstractController
             $userLastEpisode = $userLastEpisode[0] ?? null;
             $userNextEpisode = $userNextEpisode[0] ?? null;
             $endOfSeason = $userLastEpisode && $userLastEpisode['episode_number'] == $episodeCount;
-            if ($target == null) // no tv ?
-            {
+//            if ($target == null) // no tv ?
+//            {
                 if ($userNextEpisode) {
-                    $airDateOffset = $this->dateService->newDateImmutable($userNextEpisode['air_date_offset'], 'Europe/Paris');
-                    $targetTS = $airDateOffset?->getTimestamp();
-                } elseif ($userLastEpisode) {
-                    $airDateOffset = $this->dateService->newDateImmutable($userLastEpisode['air_date_offset'], 'Europe/Paris');
-                    $targetTS = $airDateOffset?->getTimestamp();
+                    if ($multiPart) {
+                        if ($userNextEpisode['episode_number'] >= $firstEpisode && $userNextEpisode['episode_number'] <= $lastEpisode) {
+                            $airDateOffset = $this->dateService->newDateImmutable($userNextEpisode['air_date_offset'], 'Europe/Paris');
+                            $targetTS = $airDateOffset?->getTimestamp();
+                        } else {
+                            $userNextEpisode = null;
+                        }
+                    } else {
+                        $airDateOffset = $this->dateService->newDateImmutable($userNextEpisode['air_date_offset'], 'Europe/Paris');
+                        $targetTS = $airDateOffset?->getTimestamp();
+                    }
                 }
-            }
+                if ($userLastEpisode) {
+                    if ($multiPart) {
+                        if ($userLastEpisode['episode_number'] >= $firstEpisode && $userLastEpisode['episode_number'] <= $lastEpisode) {
+                            $airDateOffset = $this->dateService->newDateImmutable($userLastEpisode['air_date_offset'], 'Europe/Paris');
+                            $targetTS = $airDateOffset?->getTimestamp();
+                        } else {
+                            $userLastEpisode = null;
+                        }
+                    } else {
+                        $airDateOffset = $this->dateService->newDateImmutable($userLastEpisode['air_date_offset'], 'Europe/Paris');
+                        $targetTS = $airDateOffset?->getTimestamp();
+                    }
+                }
+//            }
             /*dump([
                 'episodeCount' => $episodeCount,
                 'userLastEpisode' => $userLastEpisode,
@@ -2427,6 +2476,7 @@ class SeriesController extends AbstractController
 
     public function getAlternateSchedule(SeriesBroadcastSchedule $schedule, ?array $tv, array $userEpisodes): array
     {
+        $errorArr = ['seasonNumber' => 0, 'multiPart' => false, 'seasonPart' => 0, 'airDays' => []];
         $now = $this->now();
         $seasonNumber = $schedule->getSeasonNumber();
         $multiPart = $schedule->isMultiPart();
@@ -2442,21 +2492,16 @@ class SeriesController extends AbstractController
                 $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $episodeNumber), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $episodeNumber), 'future' => $now < $date];
                 $episodeNumber++;
             }
-            return ['seasonNumber' => $seasonNumber, 'multiPart'=> false, 'seasonPart' => 0, 'airDays' => $dayArr];
+            return ['seasonNumber' => $seasonNumber, 'multiPart' => false, 'seasonPart' => 0, 'airDays' => $dayArr];
         }
         if (!$seasonNumber) {
-            return ['seasonNumber' => 0, 'multiPart'=> false, 'seasonPart' => 0,  'airDays' => []];
+            return $errorArr;
         }
         $frequency = $schedule->getFrequency();
         $firstAirDate = $schedule->getFirstAirDate();
         $airAt = $schedule->getAirAt();
         $daysOfWeek = $schedule->getDaysOfWeek();
 
-        /*dump(['tv' => $tv,
-            'seasonNumber' => $seasonNumber,
-            'frequency' => $frequency,
-            'firstAirDate' => $firstAirDate->format('Y-m-d'),
-        ]);*/
         if ($schedule->isMultiPart()) {
             $firstEpisode = $schedule->getSeasonPartFirstEpisode();
             $episodeCount = $schedule->getSeasonPartEpisodeCount();
@@ -2489,44 +2534,44 @@ class SeriesController extends AbstractController
                 }
                 break;
             case 2: // Daily
-                for ($i = 0; $i < $episodeCount; $i++) {
-                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
+                for ($i = $firstEpisode; $i <= $lastEpisode; $i++) {
+                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
                     $date = $date->modify('+1 day');
                 }
                 break;
             case 3: // Weekly, one at a time
-                for ($i = 0; $i < $episodeCount; $i++) {
-                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
+                for ($i = $firstEpisode; $i <= $lastEpisode; $i++) {
+                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
                     $date = $date->modify('+1 week');
                 }
                 break;
             case 4: // Weekly, two at a time
-                for ($i = 0; $i < $episodeCount; $i += 2) {
-                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
-                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 2), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
+                for ($i = $firstEpisode; $i <= $lastEpisode; $i += 2) {
+                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
+                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
                     $date = $date->modify('+1 week');
                 }
                 break;
             case 5: // Weekly, three at a time
-                for ($i = 0; $i < $episodeCount; $i += 3) {
-                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
-                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 2), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
-                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 3), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
+                for ($i = $firstEpisode; $i <= $lastEpisode; $i += 3) {
+                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
+                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
+                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
                     $date = $date->modify('+1 week');
                 }
                 break;
             case 6: // Weekly, two, then one
                 $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, 1), 'future' => $now < $date];
-                for ($i = 1; $i < $episodeCount; $i++) {
-                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
+                for ($i = $firstEpisode + 1; $i <= $lastEpisode; $i++) {
+                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
                     $date = $date->modify('+1 week');
                 }
                 break;
             case 7: // Weekly, three, then one
                 $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, 1), 'future' => $now < $date];
                 $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, 2), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, 2), 'future' => $now < $date];
-                for ($i = 2; $i < $episodeCount; $i++) {
-                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
+                for ($i = $firstEpisode + 2; $i <= $lastEpisode; $i++) {
+                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
                     $date = $date->modify('+1 week');
                 }
                 break;
@@ -2534,17 +2579,17 @@ class SeriesController extends AbstractController
                 $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, 1), 'future' => $now < $date];
                 $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, 2), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, 2), 'future' => $now < $date];
                 $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, 3), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, 3), 'future' => $now < $date];
-                for ($i = 3; $i < $episodeCount; $i++) {
-                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
+                for ($i = $firstEpisode + 3; $i <= $lastEpisode; $i++) {
+                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
                     $date = $date->modify('+1 week');
                 }
                 break;
             case 9: // 4, then 2
                 $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, 1), 'future' => $now < $date];
                 $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, 2), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, 2), 'future' => $now < $date];
-                for ($i = 2; $i < $episodeCount; $i += 2) {
-                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
-                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
+                for ($i = $firstEpisode + 2; $i <= $lastEpisode; $i += 2) {
+                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
+                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
                     $date = $date->modify('+1 week');
                 }
                 break;
@@ -2552,24 +2597,27 @@ class SeriesController extends AbstractController
                 // dayOfWeek: 0: dimanche, 1: lundi, 2: mardi, 3: mercredi, 4: jeudi, 5: vendredi, 6: samedi
                 // First episode of the week: dayOfWeek[0]
                 // Second episode of the week: dayOfWeek[1]
+                // Third ...
                 // Le jour de la semaine du premier épisode de la semaine et le jour de la semaine de la date de premiere diffusion doivent correspondre
                 // Si ce n'est pas le cas, on décale la date de première diffusion
+                $selectedDayCount = count($daysOfWeek);
                 $firstDayOfWeek = $date->format('w');
-                if ($firstDayOfWeek != $daysOfWeek[0]) {
-                    // Error
-                    return [];
+                if (!in_array($firstDayOfWeek, $daysOfWeek)) {
+                    return $errorArr;
                 }
-                $interval = $daysOfWeek[1] - $daysOfWeek[0];
-                if ($interval < 0) $interval += 7;
-                for ($i = 0; $i < $episodeCount; $i += 2) {
-                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
-                    $date2 = $date->modify('+' . $interval . ' day');
-                    $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 2), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
-                    $date = $date->modify('+1 week');
+                for ($i = $firstEpisode; $i <= $lastEpisode; $i += $selectedDayCount) {
+                    $j = $i;
+                    foreach ($daysOfWeek as $day) {
+                        $d = $day - $firstDayOfWeek;
+                        if ($d < 0) $d += 7;
+                        $date = $firstAirDate->modify('+' . $d . ' day');
+                        $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $j), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $j), 'future' => $now < $date];
+                        $j++;
+                    }
                 }
                 break;
         }
-        return ['seasonNumber' => $seasonNumber, 'multiPart'=> $multiPart, 'seasonPart' => $seasonPart, 'airDays' => $dayArr];
+        return ['seasonNumber' => $seasonNumber, 'multiPart' => $multiPart, 'seasonPart' => $seasonPart, 'airDays' => $dayArr];
     }
 
     public function isEpisodeWatched(array $episodes, int $seasonNumber, int $episodeNumber): bool

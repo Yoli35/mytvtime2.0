@@ -5,6 +5,8 @@
         const country = form.querySelector(countrySelector).value;
         const seasonNumberSelector = 'input[name="season-number-' + id + '"]';
         const seasonNumber = form.querySelector(seasonNumberSelector).value;
+        const multiPartSelector = 'input[name="multi-part-' + id + '"]';
+        const multiPart = form.querySelector(multiPartSelector).checked;
         const seasonPartSelector = 'input[name="season-part-' + id + '"]';
         const seasonPart = form.querySelector(seasonPartSelector).value;
         const seasonPartFirstEpisodeSelector = 'input[name="season-part-first-episode-' + id + '"]';
@@ -33,6 +35,7 @@
             id: id,
             country: country,
             seasonNumber: seasonNumber,
+            multiPart: multiPart,
             seasonPart: seasonPart,
             seasonPartFirstEpisode: seasonPartFirstEpisode,
             seasonPartEpisodeCount: seasonPartEpisodeCount,
@@ -59,6 +62,27 @@
                     window.location.reload();
                 }
             });
+    }
+
+    function toggleMultiPart(id) {
+        const form = document.getElementById('schedule-form-' + id);
+        const multiPartSelector = 'input[name="multi-part-' + id + '"]';
+        const multiPart = form.querySelector(multiPartSelector).checked;
+        const seasonPartSelector = 'input[name="season-part-' + id + '"]';
+        const seasonPart = form.querySelector(seasonPartSelector);
+        const seasonPartFirstEpisodeSelector = 'input[name="season-part-first-episode-' + id + '"]';
+        const seasonPartFirstEpisode = form.querySelector(seasonPartFirstEpisodeSelector);
+        const seasonPartEpisodeCountSelector = 'input[name="season-part-episode-count-' + id + '"]';
+        const seasonPartEpisodeCount = form.querySelector(seasonPartEpisodeCountSelector);
+        if (multiPart) {
+            seasonPart.removeAttribute('disabled');
+            seasonPartFirstEpisode.removeAttribute('disabled');
+            seasonPartEpisodeCount.removeAttribute('disabled');
+        } else {
+            seasonPart.setAttribute('disabled', 'disabled');
+            seasonPartFirstEpisode.setAttribute('disabled', 'disabled');
+            seasonPartEpisodeCount.setAttribute('disabled', 'disabled');
+        }
     }
 
     function ToggleScheduleForm(id) {

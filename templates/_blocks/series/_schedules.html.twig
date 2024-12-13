@@ -116,7 +116,7 @@ Mandatory variables:
         <div class="wrapper">
             <div class="schedule-block">
                 {% for as in series.alternateSchedules %}
-                    <h3> {{ 'Season'|trans }} {{ as.seasonNumber }}{% if as.multiPart %} {{ 'Part'|trans }} {{ as.seasonPart }}{% endif %}</h3>
+                    <h3> {{ 'Season'|trans }} {{ as.seasonNumber }}{% if as.multiPart %} {{ 'Part'|trans }} {{ as.seasonPart }}{% endif %} - {{ as.airDays|length }} {{ 'episodes'|trans }}</h3>
                     <div class="alternate-schedule">
                         {% for airDay in as.airDays %}
                             <div class="air-day{% if airDay.watched %} watched{% endif %}{% if airDay.future %} future{% endif %}">
