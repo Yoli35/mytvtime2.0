@@ -27,7 +27,7 @@ export default class extends Controller {
     _onPreConnect(event) {
         // The map is not created, yet
         // You can use this event to configure the map before it is created
-        // console.log(event.detail.options);
+        console.log(event.detail);
     }
 
     _onConnect(event) {
