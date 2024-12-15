@@ -1262,10 +1262,10 @@ section:has(.pages) {
     }
 
     .powered {
-        background-image: url("../images/the-movie-db.svg");
+        aspect-ratio: 11 / 8;
+        background-image: url("../images/the-movie-database.png");
         background-size: cover;
-        height: 1rem;
-        width: 12rem;
+        height: 2rem;
 
         a {
             display: block;
