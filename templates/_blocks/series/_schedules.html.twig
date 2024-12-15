@@ -122,6 +122,7 @@ Mandatory variables:
                             <div class="air-day{% if airDay.watched %} watched{% endif %}{% if airDay.future %} future{% endif %}">
                                 <div class="air-day-episode">{{ airDay.episode }}</div>
                                 <div class="air-day-date">
+                                    <div class="day-of-week">{{ airDay.date|date("l")|trans }}</div>
                                     <div class="day">{{ airDay.date|date("j") }}</div>
                                     <div class="month">{{ airDay.date|date("F")|trans }}</div>
                                     <div class="year">{{ airDay.date|date("Y") }}</div>

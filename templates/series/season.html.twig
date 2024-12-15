@@ -165,8 +165,8 @@
             {# <h3>{{ 'Episodes'|trans }}</h3> #}
             <div class="content column">
                 <div class="episodes">
-                    {% for episode in season.episodes %}
-                        {% if episode.air_date and episode.air_date <= now %}
+                    {% for episode in season.episodes|filter(e => e.air_date and e.air_date <= now) %}
+{#                        {% if episode.air_date and episode.air_date <= now %}#}
                             {% set ue = episode.user_episode %}
                             <div class="episode" id="episode-{{ episode.episode_number }}">
                                 <div class="still" data-series-id="{{ series.tmdbId }}" data-season-id="{{ season.id }}" data-episode-id="{{ episode.id }}">
@@ -178,7 +178,7 @@
                                         <div class="no-poster">{{ 'No poster'|trans }}</div>
                                     {% endif %}
                                     <div class="number{% if ue and ue.watch_at %} watched{% endif %}"{% if ue and ue.number_of_view %} data-title="{{ 'Watched %time% times'|trans({'%time%': ue.number_of_view}) }}"{% endif %}>
-                                        {{ episode.episode_number }}
+                                        {{ episode.episode_number }}<span>/{{ episodeCount }}</span>
                                     </div>
                                     {% if episode.episode_type is defined and episode.episode_type == 'finale' %}
                                         <div class="finale">{{ 'Series finale'|trans }}</div>
@@ -201,7 +201,7 @@
                                         <div class="air-date">
                                             {{ 'Air date'|trans }} {{ episode.air_date|format_date('relative_full') }}
                                             {% if ue  and ue.watch_at %}
-                                                <div>{{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px'}) }} {{ ue.watch_at|format_datetime('relative_medium', 'short')|capitalize }}</div>
+                                                <div>{{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px'}) }} {{ ue.watch_at|format_datetime('relative_medium', 'short', timezone: 'Europe/Paris')|capitalize }}</div>
                                             {% endif %}
                                         </div>
                                     {% endif %}
@@ -317,7 +317,7 @@
                                     </a>
                                 </div>
                             </div>
-                        {% endif %}
+{#                        {% endif %}#}
                     {% endfor %}
                 </div>
                 {% if season.credits.cast|length %}

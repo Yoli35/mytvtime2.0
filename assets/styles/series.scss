@@ -1129,14 +1129,10 @@ h2 {
                         .day {
                             color: var(--orange-50);
                             font-size: 3.5rem;
-                            line-height: 1.1em;
+                            line-height: 1em;
                         }
 
-                        .month {
-                            font-size: 1.5rem;
-                        }
-
-                        .year {
+                        .day-of-week, .month, .year {
                             font-size: 1rem;
                         }
                     }
@@ -2070,13 +2066,20 @@ h2 {
                 font-weight: 500;
                 height: 2rem;
                 justify-content: center;
+                min-width: 2rem;
+                padding-inline: .75rem;
                 position: absolute;
                 right: .5rem;
                 transition: font-size 0.3s ease-in-out, height 0.3s ease-in-out, width 0.3s ease-in-out;
-                width: 2rem;
 
                 &.watched {
                     background-color: var(--user-episode-actions);
+                }
+
+                > span {
+                    display: none;
+                    font-size: 1rem;
+                    margin-block-start: .25rem;
                 }
             }
 
@@ -2318,8 +2321,17 @@ h2 {
         display: none;
     }
 
-    .episode:has(.number.watched) + .episode:not(:has(.number.watched)) {
+    .episode:has(.number.watched) + .episode:not(:has(.number.watched)),
+    .episode:last-of-type {
         display: flex;
+
+        .still {
+            .number {
+                > span {
+                    display: inline-block;
+                }
+            }
+        }
     }
 
     .episode:first-child {
@@ -2913,10 +2925,13 @@ h2 {
                 .number {
                     font-size: 3rem;
                     height: 4rem;
-                    width: 4rem;
+                    min-width: 4rem;
 
+                    > span {
+                        font-size: 2rem;
+                        margin-block-start: .75rem;
+                    }
                 }
-
             }
         }
     }
@@ -3200,6 +3215,7 @@ h2 {
         }
     }
 }
+
 .series-map-list {
     display: flex;
     flex-wrap: wrap;

@@ -72,6 +72,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
+use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
 use Symfony\UX\Map\InfoWindow;
 use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
@@ -2381,32 +2383,32 @@ class SeriesController extends AbstractController
             $endOfSeason = $userLastEpisode && $userLastEpisode['episode_number'] == $episodeCount;
 //            if ($target == null) // no tv ?
 //            {
-                if ($userNextEpisode) {
-                    if ($multiPart) {
-                        if ($userNextEpisode['episode_number'] >= $firstEpisode && $userNextEpisode['episode_number'] <= $lastEpisode) {
-                            $airDateOffset = $this->dateService->newDateImmutable($userNextEpisode['air_date_offset'], 'Europe/Paris');
-                            $targetTS = $airDateOffset?->getTimestamp();
-                        } else {
-                            $userNextEpisode = null;
-                        }
-                    } else {
+            if ($userNextEpisode) {
+                if ($multiPart) {
+                    if ($userNextEpisode['episode_number'] >= $firstEpisode && $userNextEpisode['episode_number'] <= $lastEpisode) {
                         $airDateOffset = $this->dateService->newDateImmutable($userNextEpisode['air_date_offset'], 'Europe/Paris');
                         $targetTS = $airDateOffset?->getTimestamp();
-                    }
-                }
-                if ($userLastEpisode) {
-                    if ($multiPart) {
-                        if ($userLastEpisode['episode_number'] >= $firstEpisode && $userLastEpisode['episode_number'] <= $lastEpisode) {
-                            $airDateOffset = $this->dateService->newDateImmutable($userLastEpisode['air_date_offset'], 'Europe/Paris');
-                            $targetTS = $airDateOffset?->getTimestamp();
-                        } else {
-                            $userLastEpisode = null;
-                        }
                     } else {
+                        $userNextEpisode = null;
+                    }
+                } else {
+                    $airDateOffset = $this->dateService->newDateImmutable($userNextEpisode['air_date_offset'], 'Europe/Paris');
+                    $targetTS = $airDateOffset?->getTimestamp();
+                }
+            }
+            if ($userLastEpisode) {
+                if ($multiPart) {
+                    if ($userLastEpisode['episode_number'] >= $firstEpisode && $userLastEpisode['episode_number'] <= $lastEpisode) {
                         $airDateOffset = $this->dateService->newDateImmutable($userLastEpisode['air_date_offset'], 'Europe/Paris');
                         $targetTS = $airDateOffset?->getTimestamp();
+                    } else {
+                        $userLastEpisode = null;
                     }
+                } else {
+                    $airDateOffset = $this->dateService->newDateImmutable($userLastEpisode['air_date_offset'], 'Europe/Paris');
+                    $targetTS = $airDateOffset?->getTimestamp();
                 }
+            }
 //            }
             /*dump([
                 'episodeCount' => $episodeCount,
@@ -2605,15 +2607,36 @@ class SeriesController extends AbstractController
                 if (!in_array($firstDayOfWeek, $daysOfWeek)) {
                     return $errorArr;
                 }
-                for ($i = $firstEpisode; $i <= $lastEpisode; $i += $selectedDayCount) {
+                // First date: 2024/11/28 -> 4 (thursday)
+                // Airing days 3 (wednesday), 4 (thursday)
+                // First airing day: 2024/11/28 (thursday)
+                // Second airing day: 2024/12/04 (wednesday)
+                // Third airing day: 2024/12/05 (thursday)
+                // Fourth airing day: 2024/12/11 (wednesday)
+                // ...
+                // DaysOfWeek: 3, 4
+                if ($selectedDayCount == 2) {
+                    if ($firstDayOfWeek == $daysOfWeek[1]) {
+                        $last = array_pop($daysOfWeek);
+                        array_unshift($daysOfWeek, $last);
+                    }
+                }
+                if ($selectedDayCount >= 3) {
+                    return $errorArr;
+                }
+                // DaysOfWeek: 4, 3
+                for ($i = $firstEpisode, $k = 1; $i <= $lastEpisode; $i += $selectedDayCount, $k++) {
                     $j = $i;
                     foreach ($daysOfWeek as $day) {
-                        $d = $day - $firstDayOfWeek;
-                        if ($d < 0) $d += 7;
-                        $date = $firstAirDate->modify('+' . $d . ' day');
-                        $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $j), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $j), 'future' => $now < $date];
-                        $j++;
+                        if ($j <= $lastEpisode) {
+                            $d = $day - $firstDayOfWeek;
+                            if ($d < 0) $d += 7;
+                            if ($d) $date = $date->modify('+' . $d . ' day');
+                            $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $j), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $j), 'future' => $now < $date];
+                            $j++;
+                        }
                     }
+                    $date = $firstAirDate->modify('+' . $k . ' week');
                 }
                 break;
         }
@@ -2835,6 +2858,17 @@ class SeriesController extends AbstractController
             $map->zoom(10)
                 ->center(new Point($seriesLocations[0]['latitude'], $seriesLocations[0]['longitude']));
         }
+
+        $leafletOptions = (new LeafletOptions())
+            ->tileLayer(new TileLayer(
+                url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                options: [
+                    'minZoom' => 5,
+                    'maxZoom' => 10,
+                ]
+            ));
+        $map->options($leafletOptions);
 
         $seriesLocations = array_map(function ($location) use ($series, $locale, $map) {
             $localizedName = $series->getLocalizedName($locale)?->getName();
@@ -3110,6 +3144,9 @@ class SeriesController extends AbstractController
                 $userEpisode['number_of_view'] = 0;
             }
 
+            if ($userEpisode['watch_at']) {
+                $userEpisode['watch_at'] = $this->dateService->newDateImmutable($userEpisode['watch_at'], $user->getTimezone() ?? 'Europe/Paris');
+            }
             $episode['user_episode'] = $userEpisode;
 //            $episode['substitute_name'] = $this->userEpisodeRepository->getSubstituteName($episode['id']);
             $seasonEpisodes[] = $episode;
