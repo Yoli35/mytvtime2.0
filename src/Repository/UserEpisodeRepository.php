@@ -516,6 +516,26 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getOne($sql);
     }
 
+    public function upComingSeries(User $user, string $locale, int $page, int $perPage): array
+    {
+        $userId = $user->getId();
+        $offset = ($page - 1) * $perPage;
+        $sql = "SELECT s.id                                                                      as id,
+                       s.tmdb_id                                                                 as tmdb_id,
+                       IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
+                       IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
+                       s.`poster_path`                                                           as poster_path,
+                       s.`first_air_date`                                                        as final_air_date
+                FROM `series` s
+                INNER JOIN `user_series` us ON us.series_id=s.id
+                LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.id AND sln.`locale`='$locale'
+                WHERE (s.`first_air_date` > NOW() OR s.first_air_date IS NULL) AND us.user_id=$userId
+                ORDER BY us.`added_at` DESC ";
+        if ($perPage > 0) $sql .= "LIMIT $perPage OFFSET $offset";
+
+        return $this->getAll($sql);
+    }
+
     /*public function getSubstituteName(int $id): mixed
     {
         $sql = "SELECT `name` "

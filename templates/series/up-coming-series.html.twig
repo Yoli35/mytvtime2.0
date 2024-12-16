@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Up coming series'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid series-to-start">
+        {% if seriesList|length %}
+            <h2>
+                {{ 'Up coming series'|trans }} ({{ seriesList|length }})
+                <label for="filter-by-name">
+                    <input type="search" id="filter-by-name" placeholder="{{ 'Search'|trans }}" autocomplete="off">
+                </label>
+            </h2>
+            <div class="series-group user">
+                <div class="wrapper">
+                    <div class="content center">
+                        {% for series in seriesList %}
+                            {{ include('_blocks/series/_card-up-coming.html.twig') }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% include('_blocks/_footer.html.twig') %}
+        <div id="global-data" class="hidden">
+            {
+            "tmdbIds": {{ tmdbIds|json_encode|raw }},
+            "app_series_tmdb_check": "{{ path('app_series_tmdb_check') }}"
+            }
+        </div>
+        <div id="svgs" style="display: none">
+            <div id="svg-xmark">{{ ux_icon('fa6-solid:xmark', {height: '16px', width: '16px'}) }}</div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        window.addEventListener("DOMContentLoaded", init);
+
+        function init() {
+            /** @type {HTMLInputElement} */
+            const filterByName = document.getElementById('filter-by-name');
+            filterByName.addEventListener('input', filterSeries);
+            filterByName.focus();
+            setTimeout(() => {
+                filterSeries({target: filterByName});
+            }, 1000);
+        }
+
+        function filterSeries(e) {
+            const filter = e.target.value.toLowerCase();
+            const series = document.querySelectorAll('.series-group.user .content .card');
+            series.forEach((s) => {
+                const title = s.querySelector('.name').textContent.toLowerCase();
+                if (title.includes(filter)) {
+                    s.style.display = "block";
+                    setTimeout(() => {
+                        s.style.opacity = "1";
+                        s.style.width = "15rem";
+                    }, 0);
+                } else {
+                    s.style.opacity = "0.125";
+                    s.style.width = "0";
+                    setTimeout(() => {
+                        s.style.display = "none";
+                    }, 300);
+                }
+            });
+        }
+    </script>
+{% endblock %}

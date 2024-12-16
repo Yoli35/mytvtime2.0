@@ -292,6 +292,25 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[Route('/up/coming', name: 'up_coming')]
+    public function upComingSeries(Request $request): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+
+        $series = array_map(function ($s) {
+            $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            return $s;
+        }, $this->userEpisodeRepository->upComingSeries($user, $locale, 1, -1));
+        $tmdbIds = array_column($series, 'tmdb_id');
+
+        return $this->render('series/up-coming-series.html.twig', [
+            'seriesList' => $series,
+            'tmdbIds' => $tmdbIds,
+        ]);
+    }
+
     #[Route('/by/country/{country}', name: 'by_country', requirements: ['country' => '[A-Z]{2}'])]
     public function seriesByCountry(Request $request, string $country): Response
     {
@@ -855,15 +874,15 @@ class SeriesController extends AbstractController
         $locations = $this->getSeriesLocations($series, $user->getPreferredLanguage() ?? $request->getLocale());
 
 //        $this->fixFilmingLocations();
-//        dump([
+        dump([
 //            'series' => $seriesArr,
 //            'locations' => $locations['filmingLocations'],
-//            'tv' => $tv,
+            'tv' => $tv,
 //            'dayOffset' => $dayOffset,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'schedules' => $schedules,
-//        ]);
+        ]);
         if ($tv) {
             $twig = "series/show.html.twig";
         } else {
@@ -1967,7 +1986,7 @@ class SeriesController extends AbstractController
                 continue;
             }
             $updateSeries = $this->updateSeries($series, $tv);
-            $update = $updateSeries[0]->getUpdates();
+            $update = $updateSeries->getUpdates();
             $updates[] = [
                 'id' => $series->getId(),
                 'name' => $series->getName(),
@@ -2850,7 +2869,7 @@ class SeriesController extends AbstractController
         if (empty($seriesLocations)) {
             return ['map' => null, 'locations' => null, 'filmingLocations' => $filmingLocations];
         }
-        $map = new Map();
+        $map = (new Map());
         $count = count($seriesLocations);
         if ($count > 1) {
             $map->fitBoundsToMarkers();
