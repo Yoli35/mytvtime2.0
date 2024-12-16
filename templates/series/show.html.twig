@@ -576,7 +576,8 @@
                 <div class="series-map">
                     {% set map = seriesLocations.map %}
                     {% if map %}
-                        {{ render_map(map, { 'data-controller': 'series_map', class: 'map-controller' }) }}
+{#                        {{ render_map(map, { 'data-controller': 'series_map', class: 'map-controller' }) }}#}
+                        {{ ux_map(map, { class: 'map-controller' }) }}
                         <div class="temp-locations">
                             <div class="locations">
                                 <ul>
