@@ -600,7 +600,7 @@
                                                 {% endif %}
                                             </div>
                                             <div class="location">
-                                                {{ location.title }}
+                                                {{ location.location }}
                                             </div>
                                         </li>
                                     {% endfor %}
@@ -611,8 +611,8 @@
                     <dialog class="add-location-dialog">
                         <form action="" id="add-location-form" enctype="multipart/form-data">
                             <input type="hidden" name="series-id" id="series-id" value="{{ series.id }}">
-                            <input type="hidden" name="crud-type" id="crud-type" value="">{# create (new) | update (edit) | delete (remove) #}
-                            <input type="hidden" name="crud-id" id="crud-id" value="">{# id of updated location #}
+                            <input type="hidden" name="crud-type" id="crud-type" value="create">{# create (new) | update (edit) | delete (remove) #}
+                            <input type="hidden" name="crud-id" id="crud-id" value="0">{# id of updated location #}
                             <div class="form-row">
                                 <div class="form-field">
                                     <label for="title">{{ 'Title'|trans }}
@@ -639,54 +639,54 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-field">
-                                    <label for="image">{{ 'Image'|trans }}
-                                        <input type="url" name="image" id="image" required>
+                                    <label for="image-url">{{ 'Image'|trans }}
+                                        <input type="url" name="image-url" id="image-url" required>
                                         <span class="error"></span>
                                         <div class="image-preview">
                                             <img src="" alt="">
                                         </div>
                                     </label>
-                                    {#                                    <label for="files">{{ 'Drop your images files here'|trans }} #}
-                                    {#                                        <input type="file" name="files" id="files" multiple> #}
-                                    {#                                    </label> #}
+                                    <label for="files">{{ 'Drop your images files here'|trans }}
+                                        <input type="file" name="files" id="files" multiple>
+                                    </label>
                                 </div>
                             </div>
-                            {#                            <div class="form-row"> #}
-                            {#                                <div class="form-field"> #}
-                            {#                                    <label for="additional-image-1">{{ 'Additional image'|trans }} #1 #}
-                            {#                                        <input type="url" name="additional-image-1" id="additional-image-1"> #}
-                            {#                                        <span class="error"></span> #}
-                            {#                                        <div class="image-preview"> #}
-                            {#                                            <img src="" alt=""> #}
-                            {#                                        </div> #}
-                            {#                                    </label> #}
-                            {#                                    <label for="additional-image-2">{{ 'Additional image'|trans }} #2 #}
-                            {#                                        <input type="url" name="additional-image-2" id="additional-image-2"> #}
-                            {#                                        <span class="error"></span> #}
-                            {#                                        <div class="image-preview"> #}
-                            {#                                            <img src="" alt=""> #}
-                            {#                                        </div> #}
-                            {#                                    </label> #}
-                            {#                                </div> #}
-                            {#                            </div> #}
-                            {#                            <div class="form-row"> #}
-                            {#                                <div class="form-field"> #}
-                            {#                                    <label for="additional-image-3">{{ 'Additional image'|trans }} #3 #}
-                            {#                                        <input type="url" name="additional-image-3" id="additional-image-3"> #}
-                            {#                                        <span class="error"></span> #}
-                            {#                                        <div class="image-preview"> #}
-                            {#                                            <img src="" alt=""> #}
-                            {#                                        </div> #}
-                            {#                                    </label> #}
-                            {#                                    <label for="additional-image-4">{{ 'Additional image'|trans }} #4 #}
-                            {#                                        <input type="url" name="additional-image-4" id="additional-image-4"> #}
-                            {#                                        <span class="error"></span> #}
-                            {#                                        <div class="image-preview"> #}
-                            {#                                            <img src="" alt=""> #}
-                            {#                                        </div> #}
-                            {#                                    </label> #}
-                            {#                                </div> #}
-                            {#                            </div> #}
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="additional-image-url-1">{{ 'Additional image'|trans }} #1
+                                        <input type="url" name="additional-image-url-1" id="additional-image-url-1">
+                                        <span class="error"></span>
+                                        <div class="image-preview">
+                                            <img src="" alt="">
+                                        </div>
+                                    </label>
+                                    <label for="additional-image-url-2">{{ 'Additional image'|trans }} #2
+                                        <input type="url" name="additional-image-url-2" id="additional-image-url-2">
+                                        <span class="error"></span>
+                                        <div class="image-preview">
+                                            <img src="" alt="">
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="additional-image-url-3">{{ 'Additional image'|trans }} #3
+                                        <input type="url" name="additional-image-url-3" id="additional-image-url-3">
+                                        <span class="error"></span>
+                                        <div class="image-preview">
+                                            <img src="" alt="">
+                                        </div>
+                                    </label>
+                                    <label for="additional-image-url-4">{{ 'Additional image'|trans }} #4
+                                        <input type="url" name="additional-image-url-4" id="additional-image-url-4">
+                                        <span class="error"></span>
+                                        <div class="image-preview">
+                                            <img src="" alt="">
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
                             <div class="form-row">
                                 <div class="form-field">
                                     <label for="google-map-url">{{ 'Paste Google maps url here to obtain latitude and longitude'|trans }}
@@ -824,12 +824,14 @@
             .fitBounds(latLngs);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
+            minZoom: 2,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
         locations.forEach(location => {
             let marker = L.marker([location.latitude, location.longitude]).addTo(map);
             marker.bindPopup('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>');
         });
+        if (map.getZoom() > 12)  map.setZoom(12);
     </script>
 {% endblock %}
 

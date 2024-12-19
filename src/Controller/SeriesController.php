@@ -51,6 +51,7 @@ use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\DeeplTranslator;
 use App\Service\ImageConfiguration;
+use App\Service\ImageService;
 use App\Service\KeywordService;
 use App\Service\TMDBService;
 use DateMalformedStringException;
@@ -72,6 +73,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
+
 //use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
 //use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
 //use Symfony\UX\Map\InfoWindow;
@@ -92,6 +94,7 @@ class SeriesController extends AbstractController
         private readonly FilmingLocationImageRepository     $filmingLocationImageRepository,
         private readonly FilmingLocationRepository          $filmingLocationRepository,
         private readonly ImageConfiguration                 $imageConfiguration,
+        private readonly ImageService                       $imageService,
         private readonly KeywordRepository                  $keywordRepository,
         private readonly KeywordService                     $keywordService,
         private readonly NetworkRepository                  $networkRepository,
@@ -1729,44 +1732,11 @@ class SeriesController extends AbstractController
     #[Route('/add/location/{id}', name: 'add_location', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addLocation(Request $request, Series $series): Response
     {
+        $slugger = new AsciiSlugger();
         $locations = $series->getLocations();
         $data = json_decode($request->getContent(), true);
-//        dump(['locations' => $locations, 'data' => $data]);
+        dump(['locations' => $locations, 'data' => $data]);
         $data = array_filter($data, fn($key) => $key != "google-map-url", ARRAY_FILTER_USE_KEY);
-//        dump(['data' => $data]);
-        // Javascript code:
-        // fetch('/' + lang + '/series/add/location/' + seriesId,
-        //     {
-        //         method: 'POST',
-        //         body: formDatas,
-        //         headers: {
-        //             "Content-Type": "multipart/form-data"
-        //         }
-        //     }
-        // )
-        // Php code:
-//        $rawContent = $request->getContent();
-        //extract boundary for multipart form data: ------WebKitFormBoundarywRsOZ331E9nhgGan\n
-//        preg_match('/^(.*oundary.*\r\n)/', $rawContent, $matches);
-//        $boundary = $matches[1];
-//        dump($boundary);
-        //fetch the content and determine the boundary
-//        $blocks = preg_split("/$boundary/", $rawContent);
-        //parse each block
-//        foreach ($blocks as $block) {
-//            if (empty($block)) {
-//                continue;
-//            }
-//            dump($block);
-//            // if header contains filename, it is a file
-//            if (str_contains($block, 'filename')) {
-//                preg_match('/Content-Disposition: form-data; name="(.*)"; filename="(.*)"\r\nContent-Type: (.*)\r\n\r\n(...)\r\n/', $block, $matches);
-//                dump($matches);
-//            } else {
-//                preg_match('/Content-Disposition: form-data; name="([^"]*)"\r\n\r\n(.*)\r\n/', $block, $matches);
-//                dump($matches);
-//            }
-//        }
 
         $uuid = $data['uuid'] = Uuid::v4()->toString();
         $title = $data['title'];
@@ -1778,46 +1748,87 @@ class SeriesController extends AbstractController
         $longitude = $data['longitude'] = floatval($data['longitude']);
         $tmdbId = $series->getTmdbId();
 
-        $locations['locations'][] = $data;
+        $images = [];
+        //$images[0] = $data['image'];
+        $images = array_filter($data, fn($key) => str_contains($key, 'image'), ARRAY_FILTER_USE_KEY);
+        $images = array_values($images);
+        $images = array_filter($images, fn($image) => $image != '');
+        dump(['images' => $images]);
+
+        $seriesLocation['uuid'] = $uuid;
+        $seriesLocation['title'] = $title;
+        $seriesLocation['location'] = $location;
+        $seriesLocation['description'] = $description;
+        $seriesLocation['latitude'] = $latitude;
+        $seriesLocation['longitude'] = $longitude;
+        $seriesLocation['image'] = $data['image'];
+        $additionalImages = array_slice($images, 1);
+        // TODO: Vérifier le code suivant
+        $n = 1;
+        if (count($additionalImages)) {
+            $additionalImages = array_map(function () use ($slugger, $title, $location, &$n) {
+                $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
+                $n++;
+                return '/images/map/' . $basename . '.webp';
+            }, $additionalImages);
+            $seriesLocation['additional_images'] = $additionalImages;
+        }
+        // Fin du code à vérifier
+
+        $locations['locations'][] = $seriesLocation;
         $series->setLocations($locations);
         $this->seriesRepository->save($series, true);
 
-        $filmingLocation = new FilmingLocation($uuid, $tmdbId, $location, $description, $latitude, $longitude, true);
+        $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $location, $description, $latitude, $longitude, true);
         $this->filmingLocationRepository->save($filmingLocation, true);
 
-        $images = [];
-        $images[0] = $data['image'];
-        $rootDir = $this->getParameter('kernel.project_dir') . '/public';
+        $imageMapPath = $this->getParameter('kernel.project_dir') . '/public/images/map/';
+        $imageTempPath = $this->getParameter('kernel.project_dir') . '/public/images/temp/';
         $messages = [];
-        $n = 0;
-        foreach ($images as $image) {
-            if (str_contains($image, '/images/map')) {
-                $image = str_replace('/images/map', '', $image);
+        $filmingLocationImages = [];
+        $n = 1;
+
+        foreach ($images as $imageUrl) {
+            if (str_contains($imageUrl, '/images/map')) {
+                $image = str_replace('/images/map', '', $imageUrl);
             } else {
-                $basename = basename($image);
-                $destination = $rootDir . '/images/map/' . $basename;
-                $copied = $this->saveImageFromUrl($image, $destination);
+                $extension = pathinfo($imageUrl, PATHINFO_EXTENSION);
+                $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
+                $tempName = $imageTempPath . $basename . '.' . $extension;
+                $destination = $imageMapPath . $basename . '.webp';
+
+                $copied = $this->saveImageFromUrl($imageUrl, $tempName, true);
+                dump(['image' => $basename, 'copied' => $copied]);
                 if ($copied) {
-                    $messages[] = 'Image [ ' . $image . ' ] copied to ' . $destination;
+                    $messages[] = 'Image [ ' . $imageUrl . ' ] copied to ' . $destination;
                 } else {
-                    $messages[] = 'Image [ ' . $image . ' ] not copied';
+                    $messages[] = 'Image [ ' . $imageUrl . ' ] not copied';
                 }
-                $image = '/' . $basename;
+                $webp = $this->imageService->webpImage($tempName, $destination);
+                if ($webp) {
+                    $messages[] = 'Image [ ' . $basename . ' ] converted to webp';
+                } else {
+                    $messages[] = 'Image [ ' . $basename . ' ] not converted to webp';
+                }
+                $image = '/' . $basename . '.webp';
+                dump(['image' => $image, 'copied' => $copied, 'webp' => $webp, 'destination' => $destination]);
             }
             $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
             $this->filmingLocationImageRepository->save($filmingLocationImage, true);
 
-            if ($n == 0) {
+            if ($n == 1) {
                 $filmingLocation->setStill($filmingLocationImage);
                 $this->filmingLocationRepository->save($filmingLocation, true);
             }
             $n++;
+            $filmingLocationImages[] = $filmingLocationImage;
         }
+
 
         return $this->json([
             'ok' => true,
-//            'filmingLocation' => $filmingLocation,
-//            'filmingLocationImage' => $filmingLocationImage,
+            'filmingLocation' => $filmingLocation,
+            'filmingLocationImages' => $filmingLocationImages,
             'messages' => $messages,
         ]);
     }
@@ -1827,7 +1838,7 @@ class SeriesController extends AbstractController
     {
         $locations = $series->getLocations();
         $data = json_decode($request->getContent(), true);
-//        dump(['locations' => $locations, 'data' => $data]);
+        dump(['locations' => $locations, 'data' => $data]);
         $data = array_filter($data, fn($key) => $key != "google-map-url", ARRAY_FILTER_USE_KEY);
 //        dump(['data' => $data]);
         // Javascript code:
@@ -3443,12 +3454,13 @@ class SeriesController extends AbstractController
         );
     }
 
-    public function saveImageFromUrl($imageUrl, $localeFile): bool
+    public function saveImageFromUrl(string $imageUrl, string $localeFile, bool $dontValidate = false): bool
     {
+        dump(['imageUrl' => $imageUrl, 'localeFile' => $localeFile]);
         if (!file_exists($localeFile)) {
 
             // Vérifier si l'URL de l'image est valide
-            if (filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+            if ($dontValidate || filter_var($imageUrl, FILTER_VALIDATE_URL)) {
                 // Récupérer le contenu de l'image à partir de l'URL
                 try {
                     $imageContent = file_get_contents($imageUrl);
@@ -3463,10 +3475,12 @@ class SeriesController extends AbstractController
                     fclose($file);
 
                     return true;
-                } catch (Exception) {
+                } catch (Exception $e) {
+                    dump(['exception' => $e, 'message' => $e->getMessage()]);
                     return false;
                 }
             } else {
+                dump(['message' => 'URL is not valid']);
                 return false;
             }
         }

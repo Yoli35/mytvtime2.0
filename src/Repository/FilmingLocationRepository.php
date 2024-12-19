@@ -20,7 +20,7 @@ class FilmingLocationRepository extends ServiceEntityRepository
 
     public function allLocations(): array
     {
-        $sql = "SELECT fl.id, fl.title, fl.latitude, fl.longitude, fl.description, fli.path as still_path
+        $sql = "SELECT fl.id, fl.title, fl.location, fl.latitude, fl.longitude, fl.description, fli.path as still_path
                 FROM filming_location fl
                     LEFT JOIN filming_location_image fli ON fl.`still_id` = fli.`id`
                 WHERE fl.is_series = 1";
@@ -30,7 +30,7 @@ class FilmingLocationRepository extends ServiceEntityRepository
 
     public function locations(?int $tmdbId): array
     {
-        $sql = "SELECT fl.id, fl.title, fl.latitude, fl.longitude, fl.description, fli.path as still_path
+        $sql = "SELECT fl.id, fl.title, fl.location, fl.latitude, fl.longitude, fl.description, fli.path as still_path
                 FROM filming_location fl
                     LEFT JOIN filming_location_image fli ON fl.`still_id` = fli.`id`
                 WHERE tmdb_id = $tmdbId";

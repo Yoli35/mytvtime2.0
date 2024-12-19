@@ -40,8 +40,8 @@ class MapController extends AbstractController
 
         return $this->render('map/index.html.twig', [
             'seriesLocations' => $seriesLocations,
-            'locations' => $locations['filmingLocations'],
             'seriesCount' => count($seriesLocations),
+            'locations' => $locations['filmingLocations'],
             'filmingLocationCount' => $locations['filmingLocationCount'],
             'filmingLocationImageCount' => $locations['filmingLocationImageCount'],
         ]);

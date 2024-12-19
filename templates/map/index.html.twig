@@ -16,12 +16,6 @@
         <h1>{{ 'Shooting locations for your %d series'|trans|format(seriesCount) }} ({{ filmingLocationCount }} {{ 'locations'|trans }} - {{ filmingLocationImageCount }} {{ 'images'|trans }})</h1>
             <div id="map" class="map-controller all"></div>
         </div>
-        {# <div class="series-map" id="map">
-        <div id="series-map-title">
-            <div class="title">{{ 'Shooting locations for your %d series'|trans|format(seriesCount) }} ({{ filmingLocationCount }} {{ 'locations'|trans }} - {{ filmingLocationImageCount }} {{ 'images'|trans }})</div>
-        </div>
-        {{ render_map(map, { 'data-controller': 'series_map', class: 'map-controller all'}) }}
-    </div> #}
 
         <div class="series-map-list center">
             <h2>
@@ -44,6 +38,7 @@
             {% for sl in seriesLocations %}
                 <h2>{{ sl.name }}</h2>
                 {% for loc in sl.locations %}
+{#                    {{ dump(loc) }}#}
                     <div class="series-location" data-id="{{ sl.id }}">
                         <div class="series-location-image">
                             <a href="{{ path('app_series_show', { 'id': sl.id, slug: sl.slug }) }}">
@@ -51,7 +46,7 @@
                             </a>
                         </div>
                         <div class="series-location-title">
-                            {{ loc.title ?? 'No title entry!!' }}
+                            {{ loc.location ?? 'No title entry!!' }}
                             <!-- Lien vers Google Maps -->
                             <a href="https://www.google.com/maps?q={{ loc.latitude }},{{ loc.longitude }}" target="_blank">
                                 {{ ux_icon('logos:google-maps', {height: '36px', width: '36px'}) }}
