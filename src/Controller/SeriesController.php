@@ -72,12 +72,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
-use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
-use Symfony\UX\Map\InfoWindow;
-use Symfony\UX\Map\Map;
-use Symfony\UX\Map\Marker;
-use Symfony\UX\Map\Point;
+//use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
+//use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
+//use Symfony\UX\Map\InfoWindow;
+//use Symfony\UX\Map\Map;
+//use Symfony\UX\Map\Marker;
+//use Symfony\UX\Map\Point;
 
 #[Route('/{_locale}/series', name: 'app_series_', requirements: ['_locale' => 'fr|en|kr'])]
 class SeriesController extends AbstractController
@@ -311,6 +311,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/by/country/{country}', name: 'by_country', requirements: ['country' => '[A-Z]{2}'])]
     public function seriesByCountry(Request $request, string $country): Response
     {
@@ -893,7 +894,7 @@ class SeriesController extends AbstractController
             'tv' => $tv ?? $noTv,
             'userSeries' => $userSeries,
             'providers' => $providers,
-            'seriesLocations' => $locations,
+            'locations' => $locations['filmingLocations'],
             'externals' => $this->getExternals($series, $request->getLocale()),
             'translations' => $translations,
             'addBackdropForm' => $addBackdropForm->createView(),
@@ -2861,53 +2862,13 @@ class SeriesController extends AbstractController
     public function getSeriesLocations(Series $series, string $locale): array
     {
         $tmdbId = $series->getTmdbId();
-//        $filmingLocations = $this->filmingLocationRepository->findBy(['tmdbId' => $tmdbId]);
         $filmingLocations = $this->getFilmingLocations($tmdbId);
 
         $seriesLocations = $series->getLocations()['locations'] ?? [];
-//        dump($seriesLocations);
         if (empty($seriesLocations)) {
             return ['map' => null, 'locations' => null, 'filmingLocations' => $filmingLocations];
         }
-        $map = (new Map());
-        $count = count($seriesLocations);
-        if ($count > 1) {
-            $map->fitBoundsToMarkers();
-        } else {
-            $map->zoom(10)
-                ->center(new Point($seriesLocations[0]['latitude'], $seriesLocations[0]['longitude']));
-        }
-
-        $leafletOptions = (new LeafletOptions())
-            ->tileLayer(new TileLayer(
-                url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                options: [
-                    'minZoom' => 5,
-                    'maxZoom' => 10,
-                ]
-            ));
-        $map->options($leafletOptions);
-
-        $seriesLocations = array_map(function ($location) use ($series, $locale, $map) {
-            $localizedName = $series->getLocalizedName($locale)?->getName();
-            $name = $series->getName();
-            $uuid = Uuid::v7()->toString();
-            if ($localizedName) {
-                $name = $localizedName . ' - ' . $name;
-            }
-            $map->addMarker(new Marker(
-                new Point($location['latitude'], $location['longitude']),
-                $name,
-                new InfoWindow('<strong>' . $name . '</strong> - ' . $location['description'], '<img src="' . $location['image'] . '" alt="' . $location['description'] . '" style="height: auto; width: 100%">'),
-                ['draggable' => false, 'data-uuid' => $uuid]
-            ));
-            $location['uuid'] = $uuid;
-            return $location;
-        }, $seriesLocations);
-
-        //        dump($seriesLocations);
-        return ['map' => $map, 'locations' => $seriesLocations, 'filmingLocations' => $filmingLocations];
+        return ['map' => null, 'locations' => $seriesLocations, 'filmingLocations' => $filmingLocations];
     }
 
     public function getFilmingLocations(int $tmdbId): array

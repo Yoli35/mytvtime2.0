@@ -6,77 +6,88 @@
     <link rel="stylesheet" href="{{ asset('styles/filter.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 {% endblock %}
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-<div class="container-fluid">
-    <div class="series-map" id="map">
+    <div class="container-fluid">
+        <div class="series-map">
+        <h1>{{ 'Shooting locations for your %d series'|trans|format(seriesCount) }} ({{ filmingLocationCount }} {{ 'locations'|trans }} - {{ filmingLocationImageCount }} {{ 'images'|trans }})</h1>
+            <div id="map" class="map-controller all"></div>
+        </div>
+        {# <div class="series-map" id="map">
         <div id="series-map-title">
             <div class="title">{{ 'Shooting locations for your %d series'|trans|format(seriesCount) }} ({{ filmingLocationCount }} {{ 'locations'|trans }} - {{ filmingLocationImageCount }} {{ 'images'|trans }})</div>
         </div>
         {{ render_map(map, { 'data-controller': 'series_map', class: 'map-controller all'}) }}
-    </div>
-    {#
-    [▼
-        "id" => 5
-        "name" => "Love in the air - บรรยากาศรัก เดอะซีรีส์"
-        "locations" => array:6 [▼
-          0 => array:6 [▼
-            "image" => "https://blscene.com/wp-content/uploads/2024/06/Love.in_.the_.Air_.2022.S01E01-Bhumibol-Bridge-scaled.webp"
-            "title" => "Love in the air"
-            "latitude" => 13.6608033
-            "location" => "Bhumibol Bridge"
-            "longitude" => 100.5395901
-            "description" => "Bhumibol Bridge - MG6Q+8RG, Industrial Ring Rd, Bang Ya Phraek, Phra Pradaeng District, Samut Prakan 10130, Thaïlande"
-          ]
-          1 => array:6 [▶]
-          2 => array:6 [▶]
-          3 => array:6 [▶]
-          4 => array:6 [▶]
-          5 => array:6 [▶]
-        ]
-      ]
-    #}
-    <div class="series-map-list center">
-        <h2><label for="series-map-select">{{ 'Go to' }}
-                <select id="series-map-select" onchange="gotoLocation()">
-                    {% for sl in seriesLocations %}
-                        <option value="{{ sl.id }}">{{ sl.name }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-        </h2>
-        <script>
-            function gotoLocation() {
-                const select = document.getElementById('series-map-select');
-                const id = select.options[select.selectedIndex].value;
-                const location = document.querySelector(`.series-location[data-id="${id}"]`);
-                location.scrollIntoView({behavior: 'instant', block: 'center'});
-            }
-        </script>
-        {% for sl in seriesLocations %}
-            <h2>{{ sl.name }}</h2>
-            {% for loc in sl.locations %}
-                <div class="series-location" data-id="{{ sl.id }}">
-                    <div class="series-location-image">
-                        <a href="{{ path('app_series_show', { 'id': sl.id, slug: sl.slug }) }}">
-                            <img src="{{ loc.image }}" alt="{{ loc.title ?? 'No title entry!!' }}">
-                        </a>
+    </div> #}
+
+        <div class="series-map-list center">
+            <h2>
+                <label for="series-map-select">{{ 'Go to' }}
+                    <select id="series-map-select" onchange="gotoLocation()">
+                        {% for sl in seriesLocations %}
+                            <option value="{{ sl.id }}">{{ sl.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </h2>
+            <script>
+                function gotoLocation() {
+                    const select = document.getElementById('series-map-select');
+                    const id = select.options[select.selectedIndex].value;
+                    const location = document.querySelector(`.series-location[data-id="${id}"]`);
+                    location.scrollIntoView({behavior: 'instant', block: 'center'});
+                }
+            </script>
+            {% for sl in seriesLocations %}
+                <h2>{{ sl.name }}</h2>
+                {% for loc in sl.locations %}
+                    <div class="series-location" data-id="{{ sl.id }}">
+                        <div class="series-location-image">
+                            <a href="{{ path('app_series_show', { 'id': sl.id, slug: sl.slug }) }}">
+                                <img src="{{ loc.image }}" alt="{{ loc.title ?? 'No title entry!!' }}">
+                            </a>
+                        </div>
+                        <div class="series-location-title">
+                            {{ loc.title ?? 'No title entry!!' }}
+                            <!-- Lien vers Google Maps -->
+                            <a href="https://www.google.com/maps?q={{ loc.latitude }},{{ loc.longitude }}" target="_blank">
+                                {{ ux_icon('logos:google-maps', {height: '36px', width: '36px'}) }}
+                            </a>
+                        </div>
+                        <div class="series-location-location">{{ loc.location }}</div>
+                        <div class="series-location-description">{{ loc.description }}</div>
                     </div>
-                    <div class="series-location-title">
-                        {{ loc.title ?? 'No title entry!!' }}
-                        <!-- Lien vers Google Maps -->
-                        <a href="https://www.google.com/maps?q={{ loc.latitude }},{{ loc.longitude }}" target="_blank">
-                            {{ ux_icon('logos:google-maps', {height: '36px', width: '36px'}) }}
-                        </a>
-                    </div>
-                    <div class="series-location-location">{{ loc.location }}</div>
-                    <div class="series-location-description">{{ loc.description }}</div>
-                </div>
+                {% endfor %}
             {% endfor %}
-        {% endfor %}
+        </div>
+        {% include('_blocks/_footer.html.twig') %}
     </div>
-    {% include('_blocks/_footer.html.twig') %}
-</div>
+    <div id="globs-map" style="display: none">{# {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }} #}
+        {
+        "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        }
+    </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        const L = window.L;
+        const globsData = document.querySelector('#globs-map');
+        console.log(globsData);
+        const locations = JSON.parse(globsData.textContent).locations;
+        const latLngs = locations.map(location => [location.latitude, location.longitude]);
+        console.log(locations);
+        let map = L.map('map')
+            .setView([locations[0].latitude, locations[0].longitude], 10)
+            .fitBounds(latLngs);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+        locations.forEach(location => {
+            let marker = L.marker([location.latitude, location.longitude]).addTo(map);
+            marker.bindPopup('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>');
+        });
+    </script>
 {% endblock %}

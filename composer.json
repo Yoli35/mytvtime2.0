@@ -46,8 +46,6 @@
     "symfony/uid": "7.*",
     "symfony/ux-dropzone": "v2.18.0",
     "symfony/ux-icons": "v2.18.1",
-    "symfony/ux-leaflet-map": "^2.19",
-    "symfony/ux-map": "2.*",
     "symfony/ux-turbo": "v2.18.0",
     "symfony/ux-twig-component": "v2.18.1",
     "symfony/validator": "7.*",

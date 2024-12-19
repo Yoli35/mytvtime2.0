@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 {% endblock %}
 {% block body %}
     <script>
@@ -574,41 +575,13 @@
                     </div>
                 </div>
                 <div class="series-map">
-                    {% set map = seriesLocations.map %}
-                    {% if map %}
-{#                        {{ render_map(map, { 'data-controller': 'series_map', class: 'map-controller' }) }}#}
-                        {{ ux_map(map, { class: 'map-controller' }) }}
+                    {% if locations|length %}
+                        {% set loc = locations|first %}
+                        <div id="map" class="map-controller"></div>
                         <div class="temp-locations">
                             <div class="locations">
                                 <ul>
-                                    {% for location in seriesLocations.locations %}
-                                        <li data-lat="{{ location.latitude }}" data-lon="{{ location.longitude }}">
-                                            <div class="image">
-                                                <img src="{{ location.image }}" alt="{{ location.location }}">
-                                                {% if location.additional_images is defined %}
-                                                    <div class="count">
-                                                        {{ 1 + location.additional_images|length }}
-                                                    </div>
-                                                    <div class="arrow left">{{ ux_icon('fa6-solid:arrow-left', {height: '18px', width: '18px'}) }}</div>
-                                                    <div class="arrow right">{{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }}</div>
-                                                    <div class="list">
-                                                        {#                                                    <img src="{{ location.image }}" alt="{{ location.location ~ ' - ' ~ 'image'|trans ~ ' #1' }}"> #}
-                                                        {% for i in location.additional_images %}
-                                                            <img src="{{ i }}" alt="{{ location.location ~ ' - ' ~ 'image'|trans ~ ' #' ~ (loop.index + 1) }}">
-                                                        {% endfor %}
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="location">
-                                                {{ location.location }}
-                                            </div>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            <div class="locations">
-                                <ul>
-                                    {% for location in seriesLocations.filmingLocations %}
+                                    {% for location in locations %}
                                         <li data-lat="{{ location.latitude }}" data-lon="{{ location.longitude }}">
                                             <div class="image db">
                                                 <img src="/images/map{{ location.still_path }}" alt="{{ location.title }}">
@@ -803,6 +776,11 @@
             </div>
         </dialog>
     {% endif %}
+    <div id="globs-map" style="display: none">
+        {
+        "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        }
+    </div>
     <div id="globs" style="display: none">
         {
         {% if tv.localized_name %}
@@ -833,5 +811,25 @@
         <div class="svg" id="pen">{{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}</div>
         <div class="svg" id="trash">{{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}</div>
     </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        const L = window.L;
+        const globsData = document.querySelector('#globs-map');
+        console.log(globsData);
+        const locations = JSON.parse(globsData.textContent).locations;
+        const latLngs = locations.map(location => [location.latitude, location.longitude]);
+        console.log(locations);
+        let map = L.map('map')
+            .setView([locations[0].latitude, locations[0].longitude], 10)
+            .fitBounds(latLngs);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+        locations.forEach(location => {
+            let marker = L.marker([location.latitude, location.longitude]).addTo(map);
+            marker.bindPopup('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>');
+        });
+    </script>
 {% endblock %}
 
