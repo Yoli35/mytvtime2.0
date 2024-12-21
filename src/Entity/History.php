@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\HistoryRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: HistoryRepository::class)]
@@ -21,29 +22,29 @@ class History
     private ?string $title;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $date;
+    private ?DateTimeImmutable $date;
 
     #[ORM\Column(length: 255)]
     private ?string $link;
 
-    public function __construct(User $user, string $title, string $link)
+    public function __construct(User $user, string $title, string $link, DateTimeImmutable $date)
     {
         $this->user = $user;
         $this->title = $title;
         $this->link = $link;
-        $this->date = new \DateTimeImmutable();
+        $this->date = $date;
     }
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getDate(): ?\DateTimeImmutable
+    public function getDate(): ?DateTimeImmutable
     {
         return $this->date;
     }
 
-    public function setDate(\DateTimeImmutable $date): static
+    public function setDate(DateTimeImmutable $date): static
     {
         $this->date = $date;
 

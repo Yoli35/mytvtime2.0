@@ -880,7 +880,7 @@ class SeriesController extends AbstractController
 //        $this->fixFilmingLocations();
         dump([
 //            'series' => $seriesArr,
-//            'locations' => $locations['filmingLocations'],
+            'locations' => $locations['filmingLocations'],
             'tv' => $tv,
 //            'dayOffset' => $dayOffset,
 //            'userSeries' => $userSeries,
@@ -2885,7 +2885,7 @@ class SeriesController extends AbstractController
     public function getFilmingLocations(int $tmdbId): array
     {
         $filmingLocations = $this->filmingLocationRepository->locations($tmdbId);
-        $filmingLocationIds = array_map(fn($location) => $location['id'], $filmingLocations);
+        $filmingLocationIds = array_column($filmingLocations, 'id'); //array_map(fn($location) => $location['id'], $filmingLocations);
         $filmingLocationImages = $this->filmingLocationRepository->locationImages($filmingLocationIds);
         $flImages = [];
         foreach ($filmingLocationImages as $image) {
@@ -3456,7 +3456,6 @@ class SeriesController extends AbstractController
 
     public function saveImageFromUrl(string $imageUrl, string $localeFile, bool $dontValidate = false): bool
     {
-        dump(['imageUrl' => $imageUrl, 'localeFile' => $localeFile]);
         if (!file_exists($localeFile)) {
 
             // Vérifier si l'URL de l'image est valide

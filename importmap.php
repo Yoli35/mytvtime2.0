@@ -37,6 +37,12 @@ return [
     'Keyword' => [
         'path' => './assets/js/Keyword.js',
     ],
+    /*'LeafletIcon' => [
+        'path' => 'vendor/leaflet/dist/images/marker.png',
+    ],
+    'LeafletIcon@x2' => [
+        'path' => './assets/leaflet/images/yellow-marker@x2.png ',
+    ],*/
     'Menu' => [
         'path' => './assets/js/Menu.js',
     ],

@@ -3201,7 +3201,7 @@ h2 {
                         width: 2rem;
                     }
 
-                    .arrow {
+                    .arrow, .edit {
                         align-items: center;
                         background-color: var(--grey-80-alpha-50);
                         border-radius: 50%;
@@ -3228,8 +3228,15 @@ h2 {
                         }
                     }
 
-                    &:hover .arrow {
-                        opacity: 1;
+                    .edit {
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                    }
+
+                    &:hover {
+                        .arrow, .edit {
+                            opacity: 1;
+                        }
                     }
 
                     .list {
@@ -3239,6 +3246,7 @@ h2 {
 
                 .location {
                     align-items: center;
+                    cursor: grab;
                     display: flex;
                     height: 100%;
                     justify-content: center;
@@ -3366,9 +3374,9 @@ dialog {
                 gap: .25rem;
                 width: 100%;
 
-                &:has(+ .form-field) {
+                /*&:has(+ .form-field) {
                     width: 50%;
-                }
+                }*/
 
                 &:has(button) {
                     justify-content: flex-end;
@@ -3420,7 +3428,13 @@ dialog {
                 }
 
                 input[type=file]::file-selector-button {
-                    display: none;
+
+                    background-color: var(--ardoise-80);
+                    border: 2px dashed var(--orange-50);
+                    border-radius: .25rem;
+                    color: var(--ardoise-10);
+                    cursor: pointer;
+                    padding: .25rem .5rem;
                 }
 
                 button {
@@ -3432,6 +3446,24 @@ dialog {
                     font-size: 1rem;
                     font-weight: 300;
                     padding-inline: .5rem;
+                }
+            }
+
+            .location-images {
+                display: flex;
+                gap: .5rem;
+
+                .wrapper {
+                    display: flex;
+                    gap: .5rem;
+                    overflow-x: auto;
+                }
+
+                img {
+                    border-radius: .25rem;
+                    height: 9rem;
+                    object-fit: cover;
+                    width: 16rem;
                 }
             }
         }

@@ -582,7 +582,7 @@
                             <div class="locations">
                                 <ul>
                                     {% for location in locations %}
-                                        <li data-lat="{{ location.latitude }}" data-lon="{{ location.longitude }}">
+                                        <li class="location-item" data-loc-id="{{ location.id }}">
                                             <div class="image db">
                                                 <img src="/images/map{{ location.still_path }}" alt="{{ location.title }}">
                                                 {% if location.filmingLocationImages|length-1 %}
@@ -598,8 +598,9 @@
                                                         {% endfor %}
                                                     </div>
                                                 {% endif %}
+                                                <div class="edit" data-loc-id="{{ location.id }}">{{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}</div>
                                             </div>
-                                            <div class="location">
+                                            <div class="location" data-loc-id="{{ location.id }}">
                                                 {{ location.location }}
                                             </div>
                                         </li>
@@ -639,6 +640,14 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-field">
+                                    {{ 'Urls'|trans }}
+                                </div>
+                                <div class="form-field">
+                                    {{ 'Files'|trans }}
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
                                     <label for="image-url">{{ 'Image'|trans }}
                                         <input type="url" name="image-url" id="image-url" required>
                                         <span class="error"></span>
@@ -646,8 +655,8 @@
                                             <img src="" alt="">
                                         </div>
                                     </label>
-                                    <label for="files">{{ 'Drop your images files here'|trans }}
-                                        <input type="file" name="files" id="files" multiple>
+                                    <label for="image-file">{{ 'Drop your images files here'|trans }}
+                                        <input type="file" name="image-file" id="image-file">
                                     </label>
                                 </div>
                             </div>
@@ -660,12 +669,22 @@
                                             <img src="" alt="">
                                         </div>
                                     </label>
-                                    <label for="additional-image-url-2">{{ 'Additional image'|trans }} #2
+                                    <label for="image-file-1">{{ 'Drop your images files here'|trans }}
+                                        <input type="file" name="image-file-1" id="image-file-1">
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="additional-image-url-2">{{ 'Additional image'|trans }} #1
                                         <input type="url" name="additional-image-url-2" id="additional-image-url-2">
                                         <span class="error"></span>
                                         <div class="image-preview">
                                             <img src="" alt="">
                                         </div>
+                                    </label>
+                                    <label for="image-file-2">{{ 'Drop your images files here'|trans }}
+                                        <input type="file" name="image-file-2" id="image-file-2">
                                     </label>
                                 </div>
                             </div>
@@ -678,12 +697,22 @@
                                             <img src="" alt="">
                                         </div>
                                     </label>
-                                    <label for="additional-image-url-4">{{ 'Additional image'|trans }} #4
+                                    <label for="image-file-3">{{ 'Drop your images files here'|trans }}
+                                        <input type="file" name="image-file-3" id="image-file-3">
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="additional-image-url-4">{{ 'Additional image'|trans }} #3
                                         <input type="url" name="additional-image-url-4" id="additional-image-url-4">
                                         <span class="error"></span>
                                         <div class="image-preview">
                                             <img src="" alt="">
                                         </div>
+                                    </label>
+                                    <label for="image-file-4">{{ 'Drop your images files here'|trans }}
+                                        <input type="file" name="image-file-4" id="image-file-4">
                                     </label>
                                 </div>
                             </div>
@@ -704,6 +733,21 @@
                                         <input type="number" name="longitude" id="longitude" step="0.0000001" required>
                                         <span class="error"></span>
                                     </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <div class="location-images">
+                                        <div class="still">
+                                            <h4>{{ 'Still'|trans }}</h4>
+                                            <div class="image"></div>
+                                        </div>
+                                        <div class="additional-images">
+                                            <h4>{{ 'Additional images'|trans }}</h4>
+                                            <div class="wrapper">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -792,6 +836,7 @@
         "userSeriesId": {{ userSeries.id }},
         "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "api": {
         "directLinkCrud": {
         "create": "{{ path('api_series_direct_link_create') }}",
@@ -812,7 +857,7 @@
         <div class="svg" id="trash">{{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}</div>
     </div>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script>
+    {# <script>
         const L = window.L;
         const globsData = document.querySelector('#globs-map');
         console.log(globsData);
@@ -832,6 +877,6 @@
             marker.bindPopup('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>');
         });
         if (map.getZoom() > 12)  map.setZoom(12);
-    </script>
+    </script> #}
 {% endblock %}
 

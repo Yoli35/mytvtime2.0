@@ -1,6 +1,8 @@
 import {Diaporama} from 'Diaporama';
 import {Keyword} from 'Keyword';
 import {ToolTips} from 'ToolTips';
+// import 'LeafletIcon';
+// import {iconX2} from '../../leaflet/images/marker@x2.png';
 
 let gThis = null;
 
@@ -13,10 +15,34 @@ export class Show {
      * @property {string} update
      * @property {string} delete
      */
+
     /**
      * @typedef Api
      * @type {Object}
      * @property {Crud} directLinkCrud
+     */
+
+    /** @typedef FilmingLocationImage
+     * @type {Object}
+     * @property {number} id
+     * @property {number} filming_location_id
+     * @property {string} path
+     */
+
+    /** @typedef FilmingLocation
+     * @type {Object}
+     * @property {number} id
+     * @property {number} is_series
+     * @property {number} tmdb_id
+     * @property {string} title
+     * @property {string} location
+     * @property {string} description
+     * @property {number} latitude
+     * @property {number} longitude
+     * @property {number} still_id
+     * @property {string} uuid
+     * @property {string} still_path
+     * @property {Array.<FilmingLocationImage>} filmingLocationImages
      */
 
     /**
@@ -27,6 +53,7 @@ export class Show {
      * @property {number} userSeriesId
      * @property {Array} providers
      * @property {Array} translations
+     * @property {Array.<FilmingLocation>} locations
      * @property {Api} api
      */
     /**
@@ -69,7 +96,10 @@ export class Show {
         const userSeriesId = jsonGlobsObject.userSeriesId;
         const translations = jsonGlobsObject.translations;
         const api = jsonGlobsObject.api;
-        console.log({api});
+        /*console.log({api});*/
+
+        this.filmingLocations = jsonGlobsObject.locations;
+        console.log({filmingLocations: this.filmingLocations});
 
         /******************************************************************************
          * Animation for the progress bar                                             *
@@ -909,12 +939,65 @@ export class Show {
         new Keyword('series');
 
         /******************************************************************************
+         * Leaflet map                                                                *
+         ******************************************************************************/
+            // <div id="map" class="map-controller"></div>
+        const mapDiv = document.querySelector('.map-controller');
+        if (mapDiv) {
+            const L = window.L;
+            const locations = this.filmingLocations;
+            const latLngs = locations.map(location => [location.latitude, location.longitude]);
+            let map = L.map('map')
+                .setView([locations[0].latitude, locations[0].longitude], 10)
+                .fitBounds(latLngs);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                minZoom: 2,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+            const myIcon = L.icon({
+                iconUrl: '/images/map/leaflet/marker.png',
+                iconRetinaUrl: '/images/map/leaflet/marker@x2.png',
+                iconSize: [32, 32],
+                iconAnchor: [15, 31],
+                popupAnchor: [0, -32]
+            });
+            locations.forEach(location => {
+                let marker = L.marker(
+                    [location.latitude, location.longitude],
+                    {
+                        'icon': myIcon,
+                        'title': location.location
+                    }).addTo(map);
+                marker.bindPopup('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>');
+                let markerIcon = marker.getElement();
+                markerIcon.setAttribute('data-id', location.id);
+            });
+            if (map.getZoom() > 12) map.setZoom(12);
+
+            const locationItems = document.querySelectorAll('.location-item');
+            locationItems.forEach(locationItem => {
+                const locationName = locationItem.querySelector('.location');
+                locationName.addEventListener('click', function () {
+                    const locationId = this.getAttribute('data-loc-id');
+                    // const markers = map.getPane('markerPane').children;
+                    // console.log({markers});
+                    const markerIcon = mapDiv.querySelector('.leaflet-marker-icon[data-id="' + locationId + '"]');
+                    const location = locations.find(location => location.id === parseInt(locationId));
+                    map.setView([location.latitude, location.longitude], 12);
+                    markerIcon.click();
+                });
+            });
+        }
+
+        /******************************************************************************
          * Filming location form                                                      *
          ******************************************************************************/
-        const seriesMap = document.querySelector('div[data-controller^="series-map"]');
-        const addLocationForm = document.querySelector('#add-location-form');
-        const addLocationDialog = document.querySelector('dialog.add-location-dialog');
+        const seriesMap = document.querySelector('#map');
         const addLocationButton = document.querySelector('.add-location-button');
+        const addLocationDialog = document.querySelector('dialog.add-location-dialog');
+        const addLocationForm = document.querySelector('#add-location-form');
         const inputGoogleMapsUrl = addLocationForm.querySelector('input[name="google-map-url"]');
         const inputLatitude = addLocationForm.querySelector('input[name="latitude"]');
         const inputLongitude = addLocationForm.querySelector('input[name="longitude"]');
@@ -966,22 +1049,17 @@ export class Show {
                         });
                     }
                 }
+                const editButton = imageDiv.querySelector('.edit');
+                editButton.addEventListener('click', function () {
+                    const locationId = this.getAttribute('data-loc-id');
+                    const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
+                    gThis.openLocationForm('update', location);
+                });
             });
         }
 
         addLocationButton.addEventListener('click', function () {
-            const inputs = addLocationForm.querySelectorAll('input');
-            const titleInput = addLocationForm.querySelector('input[name="title"]');
-            const locationInput = addLocationForm.querySelector('input[name="location"]');
-            inputs.forEach(function (input) {
-                if (input.getAttribute('type') !== 'hidden') {
-                    input.value = '';
-                }
-            });
-            titleInput.value = seriesName;
-            addLocationDialog.showModal();
-            locationInput.focus();
-            locationInput.select();
+            gThis.openLocationForm('create', {'title': seriesName});
         });
         inputGoogleMapsUrl.addEventListener('paste', function (e) {
             const url = e.clipboardData.getData('text');
@@ -1207,6 +1285,64 @@ export class Show {
         addBackdropCancelButton.addEventListener('click', () => {
             addBackdropDialog.close();
         });
+    }
+
+    openLocationForm(crud, location) {
+        const addLocationForm = document.querySelector('#add-location-form');
+        const addLocationDialog = document.querySelector('dialog.add-location-dialog');
+        const inputs = addLocationForm.querySelectorAll('input');
+        const crudTypeInput = addLocationForm.querySelector('input[name="crud-type"]');
+        const crudIdInput = addLocationForm.querySelector('input[name="crud-id"]');
+        const titleInput = addLocationForm.querySelector('input[name="title"]');
+        const locationInput = addLocationForm.querySelector('input[name="location"]');
+        const descriptionInput = addLocationForm.querySelector('input[name="description"]');
+        const latitudeInput = addLocationForm.querySelector('input[name="latitude"]');
+        const longitudeInput = addLocationForm.querySelector('input[name="longitude"]');
+        const locationImages = addLocationForm.querySelector(".location-images");
+
+        inputs.forEach(function (input) {
+            if (input.getAttribute('type') !== 'hidden') {
+                input.value = '';
+            }
+        });
+        titleInput.value = location.title;
+        if (crud === 'create') {
+            crudTypeInput.value = 'create';
+            locationImages.style.display = 'none';
+        } else {
+            crudTypeInput.value = 'update';
+            crudIdInput.value = location.id;
+            locationInput.value = location.location;
+            latitudeInput.value = location.latitude;
+            longitudeInput.value = location.longitude;
+            descriptionInput.value = location.description;
+
+            locationImages.style.display = 'flex';
+            const stillDiv = locationImages.querySelector('.still');
+            const imageDiv = stillDiv.querySelector('.image');
+            imageDiv.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = '/images/map' + location.still_path;
+            img.alt = location.title;
+            imageDiv.appendChild(img);
+
+            const additionalImagesDiv = locationImages.querySelector('.additional-images');
+            const wrapper = additionalImagesDiv.querySelector('.wrapper');
+            wrapper.innerHTML = '';
+            const additionalImagesArray = location.filmingLocationImages.filter(fl => fl.id !== location.still_id);
+            additionalImagesArray.forEach(function (image) {
+                const img = document.createElement('img');
+                const imageDiv = document.createElement('div');
+                imageDiv.classList.add('image');
+                img.src = '/images/map' + image.path;
+                img.alt = image.title;
+                imageDiv.appendChild(img);
+                wrapper.appendChild(imageDiv);
+            });
+        }
+        addLocationDialog.showModal();
+        locationInput.focus();
+        locationInput.select();
     }
 
     displayForm(form) {

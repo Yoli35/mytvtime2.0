@@ -2,6 +2,7 @@
 
 namespace App\Twig\Runtime;
 
+use App\Controller\SeriesController;
 use App\Entity\History;
 use App\Entity\User;
 use App\Repository\HistoryRepository;
@@ -9,7 +10,10 @@ use Twig\Extension\RuntimeExtensionInterface;
 
 class logHistoryRuntime implements RuntimeExtensionInterface
 {
-    public function __construct(private readonly HistoryRepository $historyRepository)
+    public function __construct(
+        private readonly HistoryRepository $historyRepository,
+        private readonly SeriesController $seriesController,
+    )
     {
     }
 
@@ -18,7 +22,8 @@ class logHistoryRuntime implements RuntimeExtensionInterface
 //        $titleArr = explode('→', $title);
 //        $title = end($titleArr);
 
-        $log = new History($user, $title, $link);
+        $date = $this->seriesController->now();
+        $log = new History($user, $title, $link, $date);
         $this->historyRepository->save($log, true);
     }
 
