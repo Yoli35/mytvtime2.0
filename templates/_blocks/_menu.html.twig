@@ -1,6 +1,6 @@
 {% set route = app.request.attributes.get('_route') %}
 {% set parameters = app.request.query %}
-{% set route_params = app.request.attributes.get('_route_params') %}
+{#{% set route_params = app.request.attributes.get('_route_params') %}#}
 <nav class="navbar">
     <div class="div-test"></div>
     <a href="{{ path('app_home') }}" accesskey="<">{{ ux_icon('ion:home', {height: "18px", width: "18px"}) }}</a>
@@ -91,6 +91,26 @@
                                 {% endif %}
                                 <div class="number{% if h.progress==100 %} ended{% endif %}">{{ 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) }}</div>
                                 <div class="date">{{ h.lastWatchAt|format_datetime('relative_medium', 'short', 'Europe/Paris') }}</div>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <ul>
+                    <li>{{ 'No history'|trans }}</li>
+                </ul>
+            {% endif %}
+        </details>
+        <details id="history-menu">
+            <summary>{{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }}</summary>
+            {% set history = getHistory(app.user) %}
+            {% if history|length %}
+                <ul id="history-list">
+                    {% for h in history %}
+                        <li class="history-item" id="{{ h.id }}">
+                            <a class="history" href="{{ h.link }}">
+                                <div class="name">{{ h.title }}</div>
+                                <div class="date">{{ h.date|format_datetime('relative_medium', 'short', 'Europe/Paris') }}</div>
                             </a>
                         </li>
                     {% endfor %}

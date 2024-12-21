@@ -107,16 +107,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Network::class)]
     private Collection $networks;
 
+    #[ORM\OneToMany(targetEntity: History::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $history;
+
     public function __construct()
     {
-        $this->series = new ArrayCollection();
-        $this->providers = new ArrayCollection();
-        $this->userEpisodes = new ArrayCollection();
-        $this->userEpisodeNotifications = new ArrayCollection();
-        $this->userPinnedSeries = new ArrayCollection();
-        $this->userMovies = new ArrayCollection();
-        $this->settings = new ArrayCollection();
+        $this->history = new ArrayCollection();
         $this->networks = new ArrayCollection();
+        $this->providers = new ArrayCollection();
+        $this->series = new ArrayCollection();
+        $this->settings = new ArrayCollection();
+        $this->userEpisodeNotifications = new ArrayCollection();
+        $this->userEpisodes = new ArrayCollection();
+        $this->userMovies = new ArrayCollection();
+        $this->userPinnedSeries = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -555,6 +559,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeNetwork(Network $network): static
     {
         $this->networks->removeElement($network);
+
+        return $this;
+    }
+
+    public function getHistory(): ?History
+    {
+        return $this->history;
+    }
+
+    public function setHistory(History $history): static
+    {
+        // set the owning side of the relation if necessary
+        if ($history->getUser() !== $this) {
+            $history->setUser($this);
+        }
+
+        $this->history = $history;
 
         return $this;
     }
