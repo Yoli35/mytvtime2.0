@@ -29,6 +29,11 @@ class logHistoryRuntime implements RuntimeExtensionInterface
 
     public function getHistory(User $user): array
     {
-        return $this->historyRepository->findBy(['user' => $user], ['date' => 'DESC']);
+        return $this->historyRepository->findBy(['user' => $user], ['date' => 'DESC'], 30);
+    }
+
+    public function getHistoryCount(User $user): int
+    {
+        return $this->historyRepository->count(['user' => $user]);
     }
 }

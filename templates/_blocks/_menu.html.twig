@@ -104,8 +104,14 @@
         <details id="history-menu">
             <summary>{{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }}</summary>
             {% set history = getHistory(app.user) %}
+            {% set historyCount = getHistoryCount(app.user) %}
             {% if history|length %}
                 <ul id="history-list">
+                    <li id="history-options">
+{#                        <label>{{ 'Page'|trans }}<input id="history-option-page" type="number" value="{{ history.page }}"></label>#}
+{#                        <label>{{ 'Count'|trans }}<input id="history-option-count" type="number" value="{{ historyCount }}"></label>#}
+                        {{ history|length }} / {{ historyCount }} {{ 'history entries'|trans }}
+                    </li>
                     {% for h in history %}
                         <li class="history-item" id="{{ h.id }}">
                             <a class="history" href="{{ h.link }}">

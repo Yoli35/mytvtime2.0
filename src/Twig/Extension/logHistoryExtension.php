@@ -14,6 +14,7 @@ class logHistoryExtension extends AbstractExtension
         return [
             new TwigFilter('logHistory', [logHistoryRuntime::class, 'logHistory']),
             new TwigFilter('getHistory', [logHistoryRuntime::class, 'getHistory']),
+            new TwigFilter('getHistoryCount', [logHistoryRuntime::class, 'getHistoryCount']),
         ];
     }
 
@@ -22,6 +23,7 @@ class logHistoryExtension extends AbstractExtension
         return [
             new TwigFunction('logHistory', [logHistoryRuntime::class, 'logHistory']),
             new TwigFunction('getHistory', [logHistoryRuntime::class, 'getHistory']),
+            new TwigFunction('getHistoryCount', [logHistoryRuntime::class, 'getHistoryCount']),
         ];
     }
 }
