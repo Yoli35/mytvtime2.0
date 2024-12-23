@@ -996,7 +996,7 @@ export class Show {
          ******************************************************************************/
         const seriesMap = document.querySelector('#map');
         const addLocationButton = document.querySelector('.add-location-button');
-        const addLocationDialog = document.querySelector('dialog.add-location-dialog');
+        const addLocationDialog = document.querySelector('.side-panel.add-location-dialog');
         const addLocationForm = document.querySelector('#add-location-form');
         const inputGoogleMapsUrl = addLocationForm.querySelector('input[name="google-map-url"]');
         const inputLatitude = addLocationForm.querySelector('input[name="latitude"]');
@@ -1053,51 +1053,57 @@ export class Show {
                 editButton.addEventListener('click', function () {
                     const locationId = this.getAttribute('data-loc-id');
                     const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
-                    gThis.openLocationForm('update', location);
+                    gThis.openLocationPanel('update', location);
                 });
             });
         }
 
         addLocationButton.addEventListener('click', function () {
-            gThis.openLocationForm('create', {'title': seriesName});
+            gThis.openLocationPanel('create', {'title': seriesName});
         });
         inputGoogleMapsUrl.addEventListener('paste', function (e) {
             const url = e.clipboardData.getData('text');
-            const urlParts = url.split('@')[1].split(',');
-            inputLatitude.value = urlParts[0];
-            inputLongitude.value = urlParts[1];
+            const isGoogleMapsUrl = url.match(/https:\/\/www.google.com\/maps\//);
+            let urlParts;
+            if (isGoogleMapsUrl) {
+                urlParts = url.split('@')[1].split(',');
+            } else { // 48.8566,2.3522
+                urlParts = url.split(',');
+            }
+            inputLatitude.value = parseFloat(urlParts[0].trim());
+            inputLongitude.value = parseFloat(urlParts[1].trim());
         });
         addLocationCancel.addEventListener('click', function () {
-            addLocationDialog.close();
+            gThis.closeLocationPanel();
         });
         addLocationSubmit.addEventListener('click', function (event) {
             event.preventDefault();
 
             const inputs = addLocationForm.querySelectorAll('input[required]');
             let emptyInput = false;
-            inputs.forEach(function (input) {
+            /*inputs.forEach(function (input) {
                 if (!input.value) {
                     input.nextElementSibling.textContent = translations['This field is required'];
                     emptyInput = true;
                 } else {
                     input.nextElementSibling.textContent = '';
                 }
-            });
+            });*/
             if (!emptyInput) {
-                const formDatas = new FormData(addLocationForm);
+                const formData = gThis.getFormData(addLocationForm);
                 fetch('/' + lang + '/series/add/location/' + seriesId,
                     {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify(Object.fromEntries(formDatas))
+                        body: JSON.stringify(Object.fromEntries(formData))
                     }
                 ).then(function (response) {
                     if (response.ok) {
                         window.location.reload();
                     }
-                    addLocationDialog.close();
+                    gThis.closeLocationPanel();
                 });
             }
         });
@@ -1142,7 +1148,7 @@ export class Show {
             });
         });
 
-        const inputFiles = document.querySelector('input[type="file"]');
+        /*const inputFiles = document.querySelector('input[type="file"]');
         inputFiles.addEventListener('change', function () {
             console.log(this.files);
             let count = 0;
@@ -1159,7 +1165,7 @@ export class Show {
                 imageInputs[i].value = '';
                 imagePreview.src = '';
             }
-        });
+        });*/
 
         function previewFile(file, preview) {
             const reader = new FileReader();
@@ -1287,9 +1293,41 @@ export class Show {
         });
     }
 
-    openLocationForm(crud, location) {
+    getFormData(form) {
+        const seriesIdInput = form.querySelector('input[name="series-id"]');
+        const crudTypeInput = form.querySelector('input[name="crud-type"]');
+        const crudIdInput = form.querySelector('input[name="crud-id"]');
+        const titleInput = form.querySelector('input[name="title"]');
+        const locationInput = form.querySelector('input[name="location"]');
+        const descriptionInput = form.querySelector('input[name="description"]');
+        const imageUrlInputs = form.querySelectorAll('input[name*="image-url"]');
+        const imageFileInputs = form.querySelectorAll('input[name*="image-file"]');
+        const latitudeInput = form.querySelector('input[name="latitude"]');
+        const longitudeInput = form.querySelector('input[name="longitude"]');
+
+        const formData = new FormData();
+        formData.append("series-id", seriesIdInput.value);
+        formData.append("crud-type", crudTypeInput.value);
+        formData.append("crud-id", crudIdInput.value);
+        formData.append("title", titleInput.value);
+        formData.append("location", locationInput.value);
+        formData.append("description", descriptionInput.value);
+        formData.append("latitude", latitudeInput.value);
+        formData.append("longitude", longitudeInput.value);
+        imageUrlInputs.forEach(function (input) {
+            formData.append(input.name, input.value);
+        });
+        imageFileInputs.forEach(function (input) {
+            formData.append(input.name, input.files[0]);
+        });
+        
+        return formData;
+    }
+
+
+    openLocationPanel(crud, location) {
         const addLocationForm = document.querySelector('#add-location-form');
-        const addLocationDialog = document.querySelector('dialog.add-location-dialog');
+        const addLocationDialog = document.querySelector('.side-panel.add-location-dialog');
         const inputs = addLocationForm.querySelectorAll('input');
         const crudTypeInput = addLocationForm.querySelector('input[name="crud-type"]');
         const crudIdInput = addLocationForm.querySelector('input[name="crud-id"]');
@@ -1340,9 +1378,14 @@ export class Show {
                 wrapper.appendChild(imageDiv);
             });
         }
-        addLocationDialog.showModal();
+        addLocationDialog.classList.add('open');
         locationInput.focus();
         locationInput.select();
+    }
+
+    closeLocationPanel() {
+        const addLocationDialog = document.querySelector('.side-panel.add-location-dialog');
+        addLocationDialog.classList.remove('open');
     }
 
     displayForm(form) {

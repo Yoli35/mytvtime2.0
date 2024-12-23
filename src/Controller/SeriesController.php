@@ -1748,12 +1748,24 @@ class SeriesController extends AbstractController
         $longitude = $data['longitude'] = floatval($data['longitude']);
         $tmdbId = $series->getTmdbId();
 
-        $images = [];
-        //$images[0] = $data['image'];
         $images = array_filter($data, fn($key) => str_contains($key, 'image'), ARRAY_FILTER_USE_KEY);
         $images = array_values($images);
-        $images = array_filter($images, fn($image) => $image != '');
+        $images = array_filter($images, fn($image) => $image != '' and $image != "undefined");
         dump(['images' => $images]);
+        // TODO: Vérifier le code suivant
+        $additionalImages = [];
+        $n = 1;
+        if (count($images)) {
+            $imageNames = array_map(function () use ($slugger, $title, $location, &$n) {
+                $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
+                $n++;
+                return '/images/map/' . $basename . '.webp';
+            }, $images);
+            $additionalImages = array_slice($imageNames, 1);
+            $seriesLocation['additional_images'] = $additionalImages;
+        }
+        dump(['images' => $images, 'additionalImages' => $additionalImages]);
+        // Fin du code à vérifier
 
         $seriesLocation['uuid'] = $uuid;
         $seriesLocation['title'] = $title;
@@ -1761,19 +1773,7 @@ class SeriesController extends AbstractController
         $seriesLocation['description'] = $description;
         $seriesLocation['latitude'] = $latitude;
         $seriesLocation['longitude'] = $longitude;
-        $seriesLocation['image'] = $data['image'];
-        $additionalImages = array_slice($images, 1);
-        // TODO: Vérifier le code suivant
-        $n = 1;
-        if (count($additionalImages)) {
-            $additionalImages = array_map(function () use ($slugger, $title, $location, &$n) {
-                $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
-                $n++;
-                return '/images/map/' . $basename . '.webp';
-            }, $additionalImages);
-            $seriesLocation['additional_images'] = $additionalImages;
-        }
-        // Fin du code à vérifier
+        $seriesLocation['image'] = $imageNames[0] ?? null;
 
         $locations['locations'][] = $seriesLocation;
         $series->setLocations($locations);
@@ -1789,9 +1789,9 @@ class SeriesController extends AbstractController
         $n = 1;
 
         foreach ($images as $imageUrl) {
-            if (str_contains($imageUrl, '/images/map')) {
+            /*if (str_contains($imageUrl, '/images/map')) {
                 $image = str_replace('/images/map', '', $imageUrl);
-            } else {
+            } else {*/
                 $extension = pathinfo($imageUrl, PATHINFO_EXTENSION);
                 $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
                 $tempName = $imageTempPath . $basename . '.' . $extension;
@@ -1812,7 +1812,7 @@ class SeriesController extends AbstractController
                 }
                 $image = '/' . $basename . '.webp';
                 dump(['image' => $image, 'copied' => $copied, 'webp' => $webp, 'destination' => $destination]);
-            }
+           /* }*/
             $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
             $this->filmingLocationImageRepository->save($filmingLocationImage, true);
 
@@ -1827,106 +1827,8 @@ class SeriesController extends AbstractController
 
         return $this->json([
             'ok' => true,
-            'filmingLocation' => $filmingLocation,
-            'filmingLocationImages' => $filmingLocationImages,
-            'messages' => $messages,
-        ]);
-    }
-
-    #[Route('/edit/location/{id}', name: 'edit_location', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function editLocation(Request $request, Series $series): Response
-    {
-        $locations = $series->getLocations();
-        $data = json_decode($request->getContent(), true);
-        dump(['locations' => $locations, 'data' => $data]);
-        $data = array_filter($data, fn($key) => $key != "google-map-url", ARRAY_FILTER_USE_KEY);
-//        dump(['data' => $data]);
-        // Javascript code:
-        // fetch('/' + lang + '/series/add/location/' + seriesId,
-        //     {
-        //         method: 'POST',
-        //         body: formDatas,
-        //         headers: {
-        //             "Content-Type": "multipart/form-data"
-        //         }
-        //     }
-        // )
-        // Php code:
-//        $rawContent = $request->getContent();
-        //extract boundary for multipart form data: ------WebKitFormBoundarywRsOZ331E9nhgGan\n
-//        preg_match('/^(.*oundary.*\r\n)/', $rawContent, $matches);
-//        $boundary = $matches[1];
-//        dump($boundary);
-        //fetch the content and determine the boundary
-//        $blocks = preg_split("/$boundary/", $rawContent);
-        //parse each block
-//        foreach ($blocks as $block) {
-//            if (empty($block)) {
-//                continue;
-//            }
-//            dump($block);
-//            // if header contains filename, it is a file
-//            if (str_contains($block, 'filename')) {
-//                preg_match('/Content-Disposition: form-data; name="(.*)"; filename="(.*)"\r\nContent-Type: (.*)\r\n\r\n(...)\r\n/', $block, $matches);
-//                dump($matches);
-//            } else {
-//                preg_match('/Content-Disposition: form-data; name="([^"]*)"\r\n\r\n(.*)\r\n/', $block, $matches);
-//                dump($matches);
-//            }
-//        }
-
-//        $uuid = $data['uuid'] = Uuid::v4()->toString();
-        $id = $data['crud-id'];
-        $title = $data['title'];
-        $location = $data['location'];
-        $description = $data['description'];
-        $data['latitude'] = str_replace(',', '.', $data['latitude']);
-        $data['longitude'] = str_replace(',', '.', $data['longitude']);
-        $latitude = $data['latitude'] = floatval($data['latitude']);
-        $longitude = $data['longitude'] = floatval($data['longitude']);
-
-
-        $locations['locations'][] = $data;
-        $series->setLocations($locations);
-        $this->seriesRepository->save($series, true);
-
-//        $filmingLocation = new FilmingLocation($uuid, $title, $location, $description, $latitude, $longitude, true);
-        $filmingLocation = $this->filmingLocationRepository->findOneBy(['id' => $id]);
-        $filmingLocation->setTitle($title);
-        $filmingLocation->setLocation($location);
-        $filmingLocation->setDescription($description);
-        $filmingLocation->setLatitude($latitude);
-        $filmingLocation->setLongitude($longitude);
-        $this->filmingLocationRepository->save($filmingLocation, true);
-
-        $image = $data['image'];
-        $rootDir = $this->getParameter('kernel.project_dir') . '/public';
-        $messages = [];
-        if (str_contains($image, '/images/map')) {
-            $image = str_replace('/images/map', '', $image);
-        } else {
-            // copy image to /images/map
-            // https://someurl.com/image.jpg -> /images/map/image.jpg
-            $basename = basename($image);
-            $destination = $rootDir . '/images/map/' . $basename;
-            $copied = $this->saveImageFromUrl($image, $destination);
-            if ($copied) {
-                $messages[] = 'Image [ ' . $image . ' ] copied to ' . $destination;
-            } else {
-                $messages[] = 'Image [ ' . $image . ' ] not copied';
-            }
-            $image = '/' . $basename;
-        }
-        $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
-        $this->filmingLocationImageRepository->save($filmingLocationImage, true);
-
-        $filmingLocation->setStill($filmingLocationImage);
-        $this->filmingLocationRepository->save($filmingLocation, true);
-
-        return $this->json([
-            'ok' => true,
-            'filmingLocation' => $filmingLocation,
-            'filmingLocationImage' => $filmingLocationImage,
+//            'filmingLocation' => $filmingLocation,
+//            'filmingLocationImages' => $filmingLocationImages,
             'messages' => $messages,
         ]);
     }

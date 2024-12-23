@@ -630,6 +630,18 @@ h2 {
                             right: -2rem;
                             transition: opacity 0.3s ease-in-out;
 
+                            .source, .locale, .edit {
+                                background-color: var(--orange-50);
+                            }
+
+                            .delete {
+                                background-color: var(--remove-this-series);
+                            }
+
+                            .edit, .delete {
+                                cursor: pointer;
+                            }
+
                             .source, .locale, .edit, .delete {
                                 align-items: center;
                                 border-radius: .25rem;
@@ -647,18 +659,6 @@ h2 {
                                     object-fit: cover;
                                     width: 1.75rem;
                                 }
-                            }
-
-                            .source, .locale, .edit {
-                                background-color: var(--orange-50);
-                            }
-
-                            .edit, .delete {
-                                cursor: pointer;
-                            }
-
-                            .delete {
-                                background-color: var(--remove-this-series);
                             }
                         }
                     }
@@ -1848,12 +1848,12 @@ h2 {
                 transition: font-size 0.3s ease-in-out, height 0.3s ease-in-out, width 0.3s ease-in-out;
                 width: 2rem;
 
-                &.watched {
+                &.complete {
                     background-color: var(--user-episode-actions);
                 }
             }
 
-            .finale {
+            /*.finale {
                 align-items: center;
                 background-color: var(--orange-50);
                 border-radius: .25rem;
@@ -1873,7 +1873,7 @@ h2 {
                 &.watched {
                     background-color: var(--user-episode-actions);
                 }
-            }
+            }*/
         }
 
         .infos {
@@ -3359,7 +3359,27 @@ dialog {
     position: absolute;
     width: 80%;
     z-index: 2;
+}
 
+.side-panel {
+    background-color: var(--ardoise-80-alpha-90);
+    border-radius: .5rem 0 0 .5rem;
+    opacity: 0;
+    padding: 2rem;
+    position: fixed;
+    right: 0;
+    top: 8rem;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    width: 80%;
+
+    &.open {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+dialog, .side-panel {
     form {
         display: flex;
         flex-direction: column;
@@ -3453,17 +3473,27 @@ dialog {
                 display: flex;
                 gap: .5rem;
 
+                .still, .additional-images {
+                    display: flex;
+                    flex-direction: column;
+                }
+
                 .wrapper {
                     display: flex;
                     gap: .5rem;
                     overflow-x: auto;
                 }
 
-                img {
-                    border-radius: .25rem;
-                    height: 9rem;
-                    object-fit: cover;
+                .image {
+                    flex-shrink: 0;
                     width: 16rem;
+
+                    img {
+                        border-radius: .25rem;
+                        height: 9rem;
+                        object-fit: cover;
+                        width: 16rem;
+                    }
                 }
             }
         }
