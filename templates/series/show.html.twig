@@ -366,6 +366,7 @@
                     </div>
                     <div class="seasons">
                         {% for season in tv.seasons %}
+                            {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
                             <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: tv.localized_name.slug ?? series.slug}) }}">
                                 <div class="season">
                                     <div class="poster">
@@ -374,7 +375,7 @@
                                         {% else %}
                                             <div>{{ 'No poster'|trans }}</div>
                                         {% endif %}
-                                        <div class="number">
+                                        <div class="number{% if viewedEpisodes == season.episode_count %} complete{% endif %}">
                                             {{ season.season_number }}
                                         </div>
                                     </div>
@@ -396,7 +397,6 @@
                                         <div class="season__episodes">
                                             {{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}
                                             <div class="watched"></div>
-                                            {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
                                             {% if viewedEpisodes == 0 %}
                                                 {{ 'No episode seen'|trans }}
                                             {% elseif viewedEpisodes == 1 %}
@@ -609,155 +609,6 @@
                             </div>
                         </div>
                     {% endif %}
-                    <dialog class="add-location-dialog">
-                        <form action="" id="add-location-form" enctype="multipart/form-data">
-                            <input type="hidden" name="series-id" id="series-id" value="{{ series.id }}">
-                            <input type="hidden" name="crud-type" id="crud-type" value="create">{# create (new) | update (edit) | delete (remove) #}
-                            <input type="hidden" name="crud-id" id="crud-id" value="0">{# id of updated location #}
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="title">{{ 'Title'|trans }}
-                                        <input type="text" name="title" id="title" required>
-                                        <span class="error"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="location">{{ 'Location'|trans }}
-                                        <input type="text" name="location" id="location" required>
-                                        <span class="error"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="description">{{ 'Description'|trans }}
-                                        <input type="text" name="description" id="description" required>
-                                        <span class="error"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    {{ 'Urls'|trans }}
-                                </div>
-                                <div class="form-field">
-                                    {{ 'Files'|trans }}
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="image-url">{{ 'Image'|trans }}
-                                        <input type="url" name="image-url" id="image-url" required>
-                                        <span class="error"></span>
-                                        <div class="image-preview">
-                                            <img src="" alt="">
-                                        </div>
-                                    </label>
-                                    <label for="image-file">{{ 'Drop your images files here'|trans }}
-                                        <input type="file" name="image-file" id="image-file">
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="additional-image-url-1">{{ 'Additional image'|trans }} #1
-                                        <input type="url" name="additional-image-url-1" id="additional-image-url-1">
-                                        <span class="error"></span>
-                                        <div class="image-preview">
-                                            <img src="" alt="">
-                                        </div>
-                                    </label>
-                                    <label for="image-file-1">{{ 'Drop your images files here'|trans }}
-                                        <input type="file" name="image-file-1" id="image-file-1">
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="additional-image-url-2">{{ 'Additional image'|trans }} #1
-                                        <input type="url" name="additional-image-url-2" id="additional-image-url-2">
-                                        <span class="error"></span>
-                                        <div class="image-preview">
-                                            <img src="" alt="">
-                                        </div>
-                                    </label>
-                                    <label for="image-file-2">{{ 'Drop your images files here'|trans }}
-                                        <input type="file" name="image-file-2" id="image-file-2">
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="additional-image-url-3">{{ 'Additional image'|trans }} #3
-                                        <input type="url" name="additional-image-url-3" id="additional-image-url-3">
-                                        <span class="error"></span>
-                                        <div class="image-preview">
-                                            <img src="" alt="">
-                                        </div>
-                                    </label>
-                                    <label for="image-file-3">{{ 'Drop your images files here'|trans }}
-                                        <input type="file" name="image-file-3" id="image-file-3">
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="additional-image-url-4">{{ 'Additional image'|trans }} #3
-                                        <input type="url" name="additional-image-url-4" id="additional-image-url-4">
-                                        <span class="error"></span>
-                                        <div class="image-preview">
-                                            <img src="" alt="">
-                                        </div>
-                                    </label>
-                                    <label for="image-file-4">{{ 'Drop your images files here'|trans }}
-                                        <input type="file" name="image-file-4" id="image-file-4">
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="google-map-url">{{ 'Paste Google maps url here to obtain latitude and longitude'|trans }}
-                                        <input type="url" name="google-map-url" id="google-map-url">
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="latitude">{{ 'Latitude'|trans }}
-                                        <input type="number" name="latitude" id="latitude" step="0.0000001" required>
-                                        <span class="error"></span>
-                                    </label>
-                                    <label for="longitude">{{ 'Longitude'|trans }}
-                                        <input type="number" name="longitude" id="longitude" step="0.0000001" required>
-                                        <span class="error"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <div class="location-images">
-                                        <div class="still">
-                                            <h4>{{ 'Still'|trans }}</h4>
-                                            <div class="image"></div>
-                                        </div>
-                                        <div class="additional-images">
-                                            <h4>{{ 'Additional images'|trans }}</h4>
-                                            <div class="wrapper">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <button type="button">{{ 'Cancel'|trans }}</button>
-                                    <button type="submit">{{ 'Add'|trans }}</button>
-                                </div>
-                            </div>
-                        </form>
-                    </dialog>
                 </div>
 
                 {% if tv.similar.total_results %}
@@ -802,6 +653,155 @@
         </div>
         {{ form_end(addBackdropForm) }}
     </dialog>
+    <div class="side-panel add-location-dialog">
+        <form action="" id="add-location-form" enctype="multipart/form-data">
+            <input type="hidden" name="series-id" id="series-id" value="{{ series.id }}">
+            <input type="hidden" name="crud-type" id="crud-type" value="create">{# create (new) | update (edit) | delete (remove) #}
+            <input type="hidden" name="crud-id" id="crud-id" value="0">{# id of updated location #}
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="title">{{ 'Title'|trans }}
+                        <input type="text" name="title" id="title" required>
+                        <span class="error"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="location">{{ 'Location'|trans }}
+                        <input type="text" name="location" id="location" required>
+                        <span class="error"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="description">{{ 'Description'|trans }}
+                        <input type="text" name="description" id="description" required>
+                        <span class="error"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    {{ 'Urls'|trans }}
+                </div>
+                <div class="form-field">
+                    {{ 'Files'|trans }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="image-url">{{ 'Image'|trans }}
+                        <input type="url" name="image-url" id="image-url" required>
+                        <span class="error"></span>
+                        <div class="image-preview">
+                            <img src="" alt="">
+                        </div>
+                    </label>
+                    <label for="image-file">{{ 'Drop your images files here'|trans }}
+                        <input type="file" name="image-file" id="image-file">
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="image-url-1">{{ 'Additional image'|trans }} #1
+                        <input type="url" name="image-url-1" id="image-url-1">
+                        <span class="error"></span>
+                        <div class="image-preview">
+                            <img src="" alt="">
+                        </div>
+                    </label>
+                    <label for="image-file-1">{{ 'Drop your images files here'|trans }}
+                        <input type="file" name="image-file-1" id="image-file-1" multiple>
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="image-url-2">{{ 'Additional image'|trans }} #1
+                        <input type="url" name="image-url-2" id="image-url-2">
+                        <span class="error"></span>
+                        <div class="image-preview">
+                            <img src="" alt="">
+                        </div>
+                    </label>
+                    <label for="image-file-2">{{ 'Drop your images files here'|trans }}
+                        <input type="file" name="image-file-2" id="image-file-2" multiple>
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="image-url-3">{{ 'Additional image'|trans }} #3
+                        <input type="url" name="image-url-3" id="image-url-3">
+                        <span class="error"></span>
+                        <div class="image-preview">
+                            <img src="" alt="">
+                        </div>
+                    </label>
+                    <label for="image-file-3">{{ 'Drop your images files here'|trans }}
+                        <input type="file" name="image-file-3" id="image-file-3" multiple>
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="image-url-4">{{ 'Additional image'|trans }} #3
+                        <input type="url" name="image-url-4" id="image-url-4">
+                        <span class="error"></span>
+                        <div class="image-preview">
+                            <img src="" alt="">
+                        </div>
+                    </label>
+                    <label for="image-file-4">{{ 'Drop your images files here'|trans }}
+                        <input type="file" name="image-file-4" id="image-file-4" multiple>
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="google-map-url">{{ 'Paste Google maps url here to obtain latitude and longitude'|trans }}
+                        <input type="url" name="google-map-url" id="google-map-url">
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="latitude">{{ 'Latitude'|trans }}
+                        <input type="number" name="latitude" id="latitude" step="0.0000001" required>
+                        <span class="error"></span>
+                    </label>
+                    <label for="longitude">{{ 'Longitude'|trans }}
+                        <input type="number" name="longitude" id="longitude" step="0.0000001" required>
+                        <span class="error"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <div class="location-images">
+                        <div class="still">
+                            <h4>{{ 'Still'|trans }}</h4>
+                            <div class="image"></div>
+                        </div>
+                        <div class="additional-images">
+                            <h4>{{ 'Additional images'|trans }}</h4>
+                            <div class="wrapper">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <button type="button">{{ 'Cancel'|trans }}</button>
+                    <button type="submit">{{ 'Add'|trans }}</button>
+                </div>
+            </div>
+        </form>
+    </div>
     {% if oldSeriesAdded %}
         <dialog class="old-series-added-dialog">
             <div class="dialog-content">
@@ -857,26 +857,6 @@
         <div class="svg" id="trash">{{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}</div>
     </div>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    {# <script>
-        const L = window.L;
-        const globsData = document.querySelector('#globs-map');
-        console.log(globsData);
-        const locations = JSON.parse(globsData.textContent).locations;
-        const latLngs = locations.map(location => [location.latitude, location.longitude]);
-        console.log(locations);
-        let map = L.map('map')
-            .setView([locations[0].latitude, locations[0].longitude], 10)
-            .fitBounds(latLngs);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            minZoom: 2,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
-        locations.forEach(location => {
-            let marker = L.marker([location.latitude, location.longitude]).addTo(map);
-            marker.bindPopup('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>');
-        });
-        if (map.getZoom() > 12)  map.setZoom(12);
-    </script> #}
+
 {% endblock %}
 
