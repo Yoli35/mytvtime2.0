@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\PeopleUserRating;
 use App\Entity\User;
 use App\Repository\MovieRepository;
+use App\Repository\PeopleUserRatingRepository;
 use App\Repository\SeriesRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
@@ -20,11 +22,12 @@ class PeopleController extends AbstractController
 {
 
     public function __construct(
-        private readonly DateService        $dateService,
-        private readonly ImageConfiguration $imageConfiguration,
-        private readonly MovieRepository    $movieRepository,
-        private readonly SeriesRepository   $seriesRepository,
-        private readonly TmdbService        $tmdbService
+        private readonly DateService                $dateService,
+        private readonly ImageConfiguration         $imageConfiguration,
+        private readonly MovieRepository            $movieRepository,
+        private readonly PeopleUserRatingRepository $peopleUserRatingRepository,
+        private readonly SeriesRepository           $seriesRepository,
+        private readonly TmdbService                $tmdbService
     )
     {
     }
@@ -75,7 +78,7 @@ class PeopleController extends AbstractController
             $person['profile_path'] = $person['profile_path'] ? $this->imageConfiguration->getCompleteUrl($person['profile_path'], 'profile_sizes', 2) : null;
             $person['known_for'] = array_map(function ($knownFor) {
                 $slugger = new AsciiSlugger();
-                $knownFor['slug'] = $slugger->slug($knownFor['media_type']=='movie' ? $knownFor['title']:$knownFor['name'])->lower()->toString();
+                $knownFor['slug'] = $slugger->slug($knownFor['media_type'] == 'movie' ? $knownFor['title'] : $knownFor['name'])->lower()->toString();
                 $knownFor['poster_path'] = $knownFor['poster_path'] ? $this->imageConfiguration->getCompleteUrl($knownFor['poster_path'], 'poster_sizes', 5) : null;
                 return $knownFor;
             }, $person['known_for']);
@@ -108,6 +111,11 @@ class PeopleController extends AbstractController
 //        dump([
 //            'indexedMovieInfos' => $indexedMovieInfos,
 //            ]);
+
+        $peopleUserRating = $this->peopleUserRatingRepository->getPeopleUserRating($user->getId(), $id);
+        $rating = $peopleUserRating[0]['rating'] ?? 0;
+        $avgRating = $peopleUserRating[0]['avg_rating'] ?? 0;
+        dump($peopleUserRating, $rating, $avgRating);
 
         $standing = $this->tmdbService->getPerson($id, $request->getLocale(), "images,combined_credits");
         $people = json_decode($standing, true);
@@ -228,6 +236,8 @@ class PeopleController extends AbstractController
 
         return $this->render('people/show.html.twig', [
             'people' => $people,
+            'rating' => $rating,
+            'avgRating' => $avgRating,
             'credits' => $credits,
             'count' => $count,
             'user' => $user,
@@ -382,5 +392,39 @@ class PeopleController extends AbstractController
         }
 
         return $knownFor;
+    }
+
+    #[Route('/rating', name: 'rating', methods: ['POST'])]
+    public function rating(Request $request): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $data = json_decode($request->getContent(), true);
+        $id = $data['id'];
+        $rating = $data['rating'];
+
+        $peopleUserRating = $this->peopleUserRatingRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
+
+        if (!$peopleUserRating) {
+            $peopleUserRating = new PeopleUserRating($user, $id, $rating);
+        } else {
+            $peopleUserRating->setRating($rating);
+        }
+        $this->peopleUserRatingRepository->save($peopleUserRating, true);
+
+        $peopleUserRating = $this->peopleUserRatingRepository->getPeopleUserRating($user->getId(), $id);
+        $rating = $peopleUserRating[0]['rating'] ?? 0;
+        $avgRating = $peopleUserRating[0]['avg_rating'] ?? 0;
+
+        $ratingInfosBlock = $this->renderView('_blocks/people/_rating.html.twig', [
+            'rating' => $rating,
+            'avgRating' => $avgRating,
+        ]);
+
+        return $this->json([
+            'ok' => true,
+            'block' => $ratingInfosBlock,
+        ]);
     }
 }

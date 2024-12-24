@@ -1,0 +1,30 @@
+<div class="rating-infos">
+    <h4>{{ 'Average rating'|trans }}</h4>
+    {% if avgRating %}
+        <div class="rating">
+            {% for i in 1..avgRating %}
+                {{ ux_icon('fa6-solid:star', {height: '16px', width: '16px'}) }}
+            {% endfor %}
+            {% if avgRating < 10 %}
+                {% for i in (avgRating|round(0, 'floor')+1)..10 %}
+                    {{ ux_icon('fa6-regular:star', {height: '16px', width: '16px'}) }}
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% else %}
+        <h4>{{ 'No rating yet'|trans }}</h4>
+    {% endif %}
+    <h4>{{ 'Your rating'|trans }}</h4>
+    <div class="rating user">
+        {% if rating > 0 %}
+            {% for i in 1..rating %}
+                <div class="star active" data-rating="{{ i }}" data-title="{{ i }}">{{ ux_icon('fa6-solid:star', {height: '16px', width: '16px'}) }}</div>
+            {% endfor %}
+        {% endif %}
+        {% if rating < 10 %}
+            {% for i in (rating+1)..10 %}
+                <div class="star" data-rating="{{ i }}" data-title="{{ i }}">{{ ux_icon('fa6-regular:star', {height: '16px', width: '16px'}) }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>

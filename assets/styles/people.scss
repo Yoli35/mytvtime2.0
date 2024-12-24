@@ -155,6 +155,24 @@
             }
         }
 
+        .rating-infos {align-items: flex-start;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 1rem;
+            width: 100%;
+
+            .rating {
+                align-items: center;
+                color: var(--rating);
+                display: flex;
+                gap: .25rem;
+                height: 2rem;
+                justify-content: center;
+                width: 100%;
+            }
+        }
+
         .infos {
             //@include flex-col(start, start);
             align-items: flex-start;

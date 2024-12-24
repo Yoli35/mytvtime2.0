@@ -110,6 +110,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: History::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $history;
 
+    /**
+     * @var Collection<int, PeopleUserRating>
+     */
+    #[ORM\OneToMany(targetEntity: PeopleUserRating::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $peopleUserRatings;
+
     public function __construct()
     {
         $this->history = new ArrayCollection();
@@ -121,6 +127,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userEpisodes = new ArrayCollection();
         $this->userMovies = new ArrayCollection();
         $this->userPinnedSeries = new ArrayCollection();
+        $this->peopleUserRatings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -563,19 +570,62 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getHistory(): ?History
+    /**
+     * @return Collection<int, History>
+     */
+    public function getHistory(): Collection
     {
         return $this->history;
     }
 
-    public function setHistory(History $history): static
+    public function addHistory(History $history): static
     {
-        // set the owning side of the relation if necessary
-        if ($history->getUser() !== $this) {
+        if (!$this->history->contains($history)) {
+            $this->history->add($history);
             $history->setUser($this);
         }
 
-        $this->history = $history;
+        return $this;
+    }
+
+    public function removeHistory(History $history): static
+    {
+        if ($this->history->removeElement($history)) {
+            // set the owning side to null (unless already changed)
+            if ($history->getUser() === $this) {
+                $history->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PeopleUserRating>
+     */
+    public function getPeopleUserRatings(): Collection
+    {
+        return $this->peopleUserRatings;
+    }
+
+    public function addPeopleUserRating(PeopleUserRating $peopleUserRating): static
+    {
+        if (!$this->peopleUserRatings->contains($peopleUserRating)) {
+            $this->peopleUserRatings->add($peopleUserRating);
+            $peopleUserRating->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePeopleUserRating(PeopleUserRating $peopleUserRating): static
+    {
+        if ($this->peopleUserRatings->removeElement($peopleUserRating)) {
+            // set the owning side to null (unless already changed)
+            if ($peopleUserRating->getUser() === $this) {
+                $peopleUserRating->setUser(null);
+            }
+        }
 
         return $this;
     }

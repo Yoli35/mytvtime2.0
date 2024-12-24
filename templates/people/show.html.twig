@@ -10,13 +10,15 @@
     <div class="container-fluid">
         {{ include('_blocks/_menu.html.twig') }}
         <main>
-            <div class="person">
+            <div class="person" data-id="{{ people.id }}">
                 <div class="left-column">
+                    {# {{ dump(people) }} #}
                     {% if people.profile_path|length %}
                         <div class="profile">
                             <img src="{{ imageConfig.url ~ imageConfig.profile_sizes.2 ~ people.profile_path }}" alt="{{ people.name }}" loading="lazy">
                         </div>
                     {% endif %}
+                    {{ include('_blocks/people/_rating.html.twig') }}
                     <div class="infos">
                         <h4>{{ 'Personal Informations'|trans }}</h4>
                         <div class="info">
@@ -291,6 +293,7 @@
     <div class="global-data" style="display: none">
         {
         "app_series_get_overview": "{{ path('app_series_get_overview', {id: 0})|slice(0, -1) }}",
+        "app_people_rating": "{{ path('app_people_rating') }}",
         "imgUrl": "{{ imageConfig.url ~ imageConfig.profile_sizes.2 }}"
         }
     </div>
@@ -298,5 +301,7 @@
         <div class="svg" id="arrow-left">{{ ux_icon('fa6-solid:arrow-left', {height: '18px', width: '18px'}) }}</div>
         <div class="svg" id="arrow-right">{{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }}</div>
         <div class="svg" id="xmark">{{ ux_icon('fa6-solid:xmark', {height: '18px', width: '18px'}) }}</div>
+        <div class="svg" id="solid-star">{{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}</div>
+        <div class="svg" id="regular-star">{{ ux_icon('fa6-regular:star', {height: '18px', width: '18px'}) }}</div>
     </div>
 {% endblock %}

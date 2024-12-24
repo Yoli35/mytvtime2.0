@@ -1,4 +1,5 @@
 import {Diaporama} from "Diaporama";
+import {ToolTips} from "ToolTips";
 
 let gThis = null;
 
@@ -9,7 +10,9 @@ export class PeopleShow {
         this.globs = JSON.parse(document.querySelector(".global-data").textContent);
 
         this.app_series_get_overview = this.globs.app_series_get_overview;
+        this.app_people_rating = this.globs.app_people_rating;
         this.imgUrl = this.globs.imgUrl;
+        this.toolTips = new ToolTips();
         this.diaporama = new Diaporama();
         this.start();
     }
@@ -33,6 +36,11 @@ export class PeopleShow {
             m.addEventListener("mouseleave", this.hidePoster);
         });
         document.addEventListener("click", this.hidePoster);
+
+        const stars = document.querySelector(".rating.user").querySelectorAll(".star");
+        stars.forEach(star => {
+            star.addEventListener("click", this.rate);
+        });
     }
 
     initInfos() {
@@ -137,5 +145,46 @@ export class PeopleShow {
             e.preventDefault();
         }
         poster.classList.remove("show");
+    }
+
+    rate(evt) {
+        const rating = evt.currentTarget.getAttribute("data-rating");
+        const stars = document.querySelector(".rating.user").querySelectorAll(".star");
+        stars.forEach(star => {
+            star.classList.remove("active");
+        });
+        for (let i = 0; i < rating; i++) {
+            stars[i].classList.add("active");
+        }
+        const id = document.querySelector(".person").getAttribute("data-id");
+        const data = {
+            "id": id,
+            "rating": rating
+        };
+        fetch(gThis.app_people_rating,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                const leftColumn = document.querySelector(".left-column");
+                const ratingInfos = leftColumn.querySelector(".rating-infos");
+                const newBlockDiv = document.createElement("div");
+                newBlockDiv.classList.add("temp");
+                newBlockDiv.innerHTML = data['block'];
+                const newBlock = newBlockDiv.querySelector(".rating-infos");
+                ratingInfos.innerHTML = newBlock.innerHTML;
+                newBlockDiv.remove();
+                const stars = leftColumn.querySelector(".rating.user").querySelectorAll(".star");
+                stars.forEach(star => {
+                    star.addEventListener("click", gThis.rate);
+                });
+                gThis.toolTips.init(ratingInfos);
+            });
     }
 }
