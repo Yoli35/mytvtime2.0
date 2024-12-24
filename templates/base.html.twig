@@ -27,7 +27,6 @@
 {% block body %}{% endblock %}
 {% include "_blocks/_flash-messages.html.twig" %}
 <div class="to-top{% if app.environment is same as 'dev' %} dev{% endif %}">{{ ux_icon('fa6-solid:arrow-up-long', {height: '18px', width: '18px'}) }}</div>
-{{ dump(app) }}
 </body>
 </html>
 {% if app.user %}
