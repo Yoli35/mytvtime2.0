@@ -1738,6 +1738,12 @@ class SeriesController extends AbstractController
         dump(['locations' => $locations, 'data' => $data]);
         $data = array_filter($data, fn($key) => $key != "google-map-url", ARRAY_FILTER_USE_KEY);
 
+        $crudType = $data['crud-type'];
+        $crudId = $data['crud-id'];
+        $seriesId = $data['series-id'];
+        $tmdbId = $data['tmdb-id'];
+        dump(['crudType' => $crudType, 'crudId' => $crudId, 'seriesId' => $seriesId, 'tmdbId' => $tmdbId]);
+
         $uuid = $data['uuid'] = Uuid::v4()->toString();
         $title = $data['title'];
         $location = $data['location'];
@@ -1746,47 +1752,74 @@ class SeriesController extends AbstractController
         $data['longitude'] = str_replace(',', '.', $data['longitude']);
         $latitude = $data['latitude'] = floatval($data['latitude']);
         $longitude = $data['longitude'] = floatval($data['longitude']);
-        $tmdbId = $series->getTmdbId();
+//        $tmdbId = $series->getTmdbId();
 
-        $images = array_filter($data, fn($key) => str_contains($key, 'image'), ARRAY_FILTER_USE_KEY);
+        if ($crudType === 'create') {// Toutes les images
+            $images = array_filter($data, fn($key) => str_contains($key, 'image-url'), ARRAY_FILTER_USE_KEY);
+        } else { // Images supplémentaires
+            $images = array_filter($data, fn($key) => str_contains($key, 'image-url-'), ARRAY_FILTER_USE_KEY);
+        }
         $images = array_values($images);
         $images = array_filter($images, fn($image) => $image != '' and $image != "undefined");
         dump(['images' => $images]);
         // TODO: Vérifier le code suivant
         $additionalImages = [];
-        $n = 1;
+        $firstImageIndex = 0;
+        if ($crudType === 'create') {
+            $firstImageIndex = 1;
+        }
+        if ($crudType === 'update' && count($images) > 0) {
+            // Récupérer les images supplémentaires et les compter
+            $existingAdditionalImages = $this->filmingLocationImageRepository->findBy(['filmingLocation' => $crudId]);
+            $firstImageIndex = count($existingAdditionalImages) + 1;
+        }
+        $n = $firstImageIndex;
         if (count($images)) {
             $imageNames = array_map(function () use ($slugger, $title, $location, &$n) {
                 $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
                 $n++;
                 return '/images/map/' . $basename . '.webp';
             }, $images);
-            $additionalImages = array_slice($imageNames, 1);
-            $seriesLocation['additional_images'] = $additionalImages;
+            if ($crudType === 'create') {
+                $additionalImages = array_slice($imageNames, 1);
+                $seriesLocation['additional_images'] = $additionalImages;
+            } else {
+                $additionalImages = $imageNames;
+            }
         }
         dump(['images' => $images, 'additionalImages' => $additionalImages]);
         // Fin du code à vérifier
 
-        $seriesLocation['uuid'] = $uuid;
-        $seriesLocation['title'] = $title;
-        $seriesLocation['location'] = $location;
-        $seriesLocation['description'] = $description;
-        $seriesLocation['latitude'] = $latitude;
-        $seriesLocation['longitude'] = $longitude;
-        $seriesLocation['image'] = $imageNames[0] ?? null;
+        if ($crudType === 'create') {
+            $seriesLocation['uuid'] = $uuid;
+            $seriesLocation['title'] = $title;
+            $seriesLocation['location'] = $location;
+            $seriesLocation['description'] = $description;
+            $seriesLocation['latitude'] = $latitude;
+            $seriesLocation['longitude'] = $longitude;
+            $seriesLocation['image'] = $imageNames[0] ?? null;
 
-        $locations['locations'][] = $seriesLocation;
-        $series->setLocations($locations);
-        $this->seriesRepository->save($series, true);
+            $locations['locations'][] = $seriesLocation;
+            $series->setLocations($locations);
+            $this->seriesRepository->save($series, true);
 
-        $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $location, $description, $latitude, $longitude, true);
-        $this->filmingLocationRepository->save($filmingLocation, true);
+            $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $location, $description, $latitude, $longitude, true);
+            $this->filmingLocationRepository->save($filmingLocation, true);
+        } else {
+            $filmingLocation = $this->filmingLocationRepository->findOneBy(['id' => $crudId]);
+            $filmingLocation->setTitle($title);
+            $filmingLocation->setLocation($location);
+            $filmingLocation->setDescription($description);
+            $filmingLocation->setLatitude($latitude);
+            $filmingLocation->setLongitude($longitude);
+            $this->filmingLocationRepository->save($filmingLocation, true);
+        }
 
         $imageMapPath = $this->getParameter('kernel.project_dir') . '/public/images/map/';
         $imageTempPath = $this->getParameter('kernel.project_dir') . '/public/images/temp/';
         $messages = [];
-        $filmingLocationImages = [];
-        $n = 1;
+//        $filmingLocationImages = [];
+        $n = $firstImageIndex;
 
         foreach ($images as $imageUrl) {
             /*if (str_contains($imageUrl, '/images/map')) {
@@ -1816,19 +1849,17 @@ class SeriesController extends AbstractController
             $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
             $this->filmingLocationImageRepository->save($filmingLocationImage, true);
 
-            if ($n == 1) {
+            if ($crudType === 'create' && $n == 1) {
                 $filmingLocation->setStill($filmingLocationImage);
                 $this->filmingLocationRepository->save($filmingLocation, true);
             }
             $n++;
-            $filmingLocationImages[] = $filmingLocationImage;
+//            $filmingLocationImages[] = $filmingLocationImage;
         }
 
 
         return $this->json([
             'ok' => true,
-//            'filmingLocation' => $filmingLocation,
-//            'filmingLocationImages' => $filmingLocationImages,
             'messages' => $messages,
         ]);
     }

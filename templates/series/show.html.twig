@@ -656,6 +656,7 @@
     <div class="side-panel add-location-dialog">
         <form action="" id="add-location-form" enctype="multipart/form-data">
             <input type="hidden" name="series-id" id="series-id" value="{{ series.id }}">
+            <input type="hidden" name="tmdb-id" id="tmdb-id" value="{{ tv.id }}">
             <input type="hidden" name="crud-type" id="crud-type" value="create">{# create (new) | update (edit) | delete (remove) #}
             <input type="hidden" name="crud-id" id="crud-id" value="0">{# id of updated location #}
             <div class="form-row">
@@ -686,7 +687,7 @@
                 <div class="form-field">
                     {{ 'Urls'|trans }}
                 </div>
-                <div class="form-field">
+                <div class="form-field d-none">
                     {{ 'Files'|trans }}
                 </div>
             </div>
@@ -699,7 +700,7 @@
                             <img src="" alt="">
                         </div>
                     </label>
-                    <label for="image-file">{{ 'Drop your images files here'|trans }}
+                    <label for="image-file" class="d-none">{{ 'Drop your images files here'|trans }}
                         <input type="file" name="image-file" id="image-file">
                     </label>
                 </div>
@@ -713,7 +714,7 @@
                             <img src="" alt="">
                         </div>
                     </label>
-                    <label for="image-file-1">{{ 'Drop your images files here'|trans }}
+                    <label for="image-file-1" class="d-none">{{ 'Drop your images files here'|trans }}
                         <input type="file" name="image-file-1" id="image-file-1" multiple>
                     </label>
                 </div>
@@ -727,7 +728,7 @@
                             <img src="" alt="">
                         </div>
                     </label>
-                    <label for="image-file-2">{{ 'Drop your images files here'|trans }}
+                    <label for="image-file-2" class="d-none">{{ 'Drop your images files here'|trans }}
                         <input type="file" name="image-file-2" id="image-file-2" multiple>
                     </label>
                 </div>
@@ -741,7 +742,7 @@
                             <img src="" alt="">
                         </div>
                     </label>
-                    <label for="image-file-3">{{ 'Drop your images files here'|trans }}
+                    <label for="image-file-3" class="d-none">{{ 'Drop your images files here'|trans }}
                         <input type="file" name="image-file-3" id="image-file-3" multiple>
                     </label>
                 </div>
@@ -755,7 +756,7 @@
                             <img src="" alt="">
                         </div>
                     </label>
-                    <label for="image-file-4">{{ 'Drop your images files here'|trans }}
+                    <label for="image-file-4" class="d-none">{{ 'Drop your images files here'|trans }}
                         <input type="file" name="image-file-4" id="image-file-4" multiple>
                     </label>
                 </div>

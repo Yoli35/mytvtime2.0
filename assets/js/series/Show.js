@@ -1053,13 +1053,13 @@ export class Show {
                 editButton.addEventListener('click', function () {
                     const locationId = this.getAttribute('data-loc-id');
                     const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
-                    gThis.openLocationPanel('update', location);
+                    gThis.openLocationPanel('update', location, translations['Update']);
                 });
             });
         }
 
         addLocationButton.addEventListener('click', function () {
-            gThis.openLocationPanel('create', {'title': seriesName});
+            gThis.openLocationPanel('create', {'title': seriesName}, translations['Add']);
         });
         inputGoogleMapsUrl.addEventListener('paste', function (e) {
             const url = e.clipboardData.getData('text');
@@ -1295,6 +1295,7 @@ export class Show {
 
     getFormData(form) {
         const seriesIdInput = form.querySelector('input[name="series-id"]');
+        const tmdbIdInput = form.querySelector('input[name="tmdb-id"]');
         const crudTypeInput = form.querySelector('input[name="crud-type"]');
         const crudIdInput = form.querySelector('input[name="crud-id"]');
         const titleInput = form.querySelector('input[name="title"]');
@@ -1307,6 +1308,7 @@ export class Show {
 
         const formData = new FormData();
         formData.append("series-id", seriesIdInput.value);
+        formData.append("tmdb-id", tmdbIdInput.value);
         formData.append("crud-type", crudTypeInput.value);
         formData.append("crud-id", crudIdInput.value);
         formData.append("title", titleInput.value);
@@ -1320,12 +1322,12 @@ export class Show {
         imageFileInputs.forEach(function (input) {
             formData.append(input.name, input.files[0]);
         });
-        
+
         return formData;
     }
 
 
-    openLocationPanel(crud, location) {
+    openLocationPanel(crud, location, buttonText) {
         const addLocationForm = document.querySelector('#add-location-form');
         const addLocationDialog = document.querySelector('.side-panel.add-location-dialog');
         const inputs = addLocationForm.querySelectorAll('input');
@@ -1337,6 +1339,7 @@ export class Show {
         const latitudeInput = addLocationForm.querySelector('input[name="latitude"]');
         const longitudeInput = addLocationForm.querySelector('input[name="longitude"]');
         const locationImages = addLocationForm.querySelector(".location-images");
+        const submitButton = addLocationForm.querySelector('button[type="submit"]');
 
         inputs.forEach(function (input) {
             if (input.getAttribute('type') !== 'hidden') {
@@ -1345,9 +1348,12 @@ export class Show {
         });
         titleInput.value = location.title;
         if (crud === 'create') {
+            submitButton.textContent = buttonText;
             crudTypeInput.value = 'create';
+            crudIdInput.value = 0;
             locationImages.style.display = 'none';
         } else {
+            submitButton.textContent = buttonText;
             crudTypeInput.value = 'update';
             crudIdInput.value = location.id;
             locationInput.value = location.location;
