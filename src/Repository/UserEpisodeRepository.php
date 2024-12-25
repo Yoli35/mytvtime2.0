@@ -335,7 +335,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                         OR ((sdo.offset > 0) AND ue.air_date = DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
                         OR ((sdo.offset < 0) AND ue.air_date = DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
                     )
-                ORDER BY air_at, season_number , episode_number";
+                ORDER BY sbs.air_at, ue.season_number , ue.episode_number";
 
         return $this->getAll($sql);
     }
