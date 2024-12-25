@@ -1438,25 +1438,6 @@ h2 {
 
                     }
 
-                    &.keyword-block {
-                        position: relative;
-
-                        .keyword-translation-form {
-                            display: flex;
-                            left: unset;
-                            min-width: 20rem;
-                            position: fixed;
-                            right: 0;
-                            top: 8rem;
-                            transform: translateX(100%);
-                            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-
-                            &.active {
-                                transform: translateX(0);
-                            }
-                        }
-                    }
-
                     .keywords {
                         display: flex;
                         flex-wrap: wrap;
@@ -1630,6 +1611,36 @@ h2 {
                 }
             }
         }
+    }
+}
+
+.keyword-translation-form.series {
+    display: flex;
+    left: unset;
+    min-width: 20rem;
+    position: fixed;
+    right: 0;
+    top: 8rem;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    width: 30rem;
+    z-index: 100;
+
+    &.active {
+        transform: translateX(0);
+    }
+
+    label:has(select)::after {
+        top: 20%;
+    }
+
+    input[type=text] {
+        background-color: var(--orange-20);
+        border: 2px solid var(--orange-50);
+        border-radius: .25rem;
+        color: var(--orange-90);
+        flex-grow: 1;
+        padding-inline: .5rem;
     }
 }
 
@@ -3171,10 +3182,9 @@ h2 {
 
             li {
                 background-color: var(--ardoise-100-alpha-50);
-                border-radius: .25rem;
+                border-radius: .375rem;
                 display: flex;
                 flex-direction: column;
-                gap: .5rem;
 
                 .image {
                     aspect-ratio: 16/9;
@@ -3183,7 +3193,7 @@ h2 {
 
                     &.db {
                         border: 2px solid var(--orange-50);
-                        border-radius: .25rem .25rem 0 0;
+                        border-radius: .375rem .375rem 0 0;
                     }
 
                     img {
@@ -3263,6 +3273,8 @@ h2 {
                     display: flex;
                     height: 100%;
                     justify-content: center;
+                    line-height: 1.25em;
+                    padding-block: .25rem;
                     padding-inline: .5rem;
                     text-align: center;
                     text-wrap: balance;

@@ -3,4 +3,3 @@
         <div class="keyword{% if k.name in missing %} missing{% endif %}" data-title="{{ k.name|trim|trans([], 'keywords') }}">{{ k.name }}</div>
     {% endfor %}
 </div>
-{{ include('_blocks/forms/_keyword-translation.html.twig') }}

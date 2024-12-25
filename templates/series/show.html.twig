@@ -653,6 +653,7 @@
         </div>
         {{ form_end(addBackdropForm) }}
     </dialog>
+    {{ include('_blocks/forms/_keyword-translation.html.twig') }}
     <div class="side-panel add-location-dialog">
         <form action="" id="add-location-form" enctype="multipart/form-data">
             <input type="hidden" name="series-id" id="series-id" value="{{ series.id }}">
