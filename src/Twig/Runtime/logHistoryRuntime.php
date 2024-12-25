@@ -19,11 +19,14 @@ class logHistoryRuntime implements RuntimeExtensionInterface
 
     public function logHistory(User $user, string $title, string $link): void
     {
-//        $titleArr = explode('→', $title);
-//        $title = end($titleArr);
-
+        $log = $this->historyRepository->getLastVisited($user);
         $date = $this->seriesController->now();
-        $log = new History($user, $title, $link, $date);
+
+        if ($log && $log->getTitle() === $title) {
+            $log->setDate($date);
+        } else {
+            $log = new History($user, $title, $link, $date);
+        }
         $this->historyRepository->save($log, true);
     }
 

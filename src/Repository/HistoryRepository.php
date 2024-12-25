@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\History;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,5 +25,10 @@ class HistoryRepository extends ServiceEntityRepository
         if ($flush) {
             $this->em->flush();
         }
+    }
+
+    public function getLastVisited(User $user): ?History
+    {
+        return $this->findOneBy(['user' => $user], ['date' => 'DESC']);
     }
 }
