@@ -13,44 +13,89 @@
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid">
         <div class="series-map">
-        <h1>{{ 'Shooting locations for your %d series'|trans|format(seriesCount) }} ({{ filmingLocationCount }} {{ 'locations'|trans }} - {{ filmingLocationImageCount }} {{ 'images'|trans }})</h1>
+            <h1>{{ 'Shooting locations for your %d series'|trans|format(seriesCount) }} ({{ filmingLocationCount }} {{ 'locations'|trans }} - {{ filmingLocationImageCount }} {{ 'images'|trans }})</h1>
             <div id="map" class="map-controller all"></div>
         </div>
 
         <div class="series-map-list center">
             <h2>
-                <label for="series-map-select">{{ 'Go to' }}
-                    <select id="series-map-select" onchange="gotoLocation()">
-                        {% for sl in seriesLocations %}
-                            <option value="{{ sl.id }}">{{ sl.name }}</option>
+                <label for="fl-series-map-select">{{ 'Go to' }}
+                    <select id="fl-series-map-select" onchange="gotoLocation()">
+                        {% for key,l in fl %}
+                            <option value="{{ key }}">{{ l.locations.0.title }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label for="fl-country-map-select">{{ 'Country'|trans }}
+                    <select id="fl-country-map-select" onchange="zoomTotoLocation()">
+                        <option value="">{{ 'All countries'|trans }}</option>
+                        {% for key,name in countries %}
+                            <option value="{{ key }}">{{ name }}</option>
                         {% endfor %}
                     </select>
                 </label>
             </h2>
             <script>
                 function gotoLocation() {
-                    const select = document.getElementById('series-map-select');
+                    const select = document.getElementById('fl-series-map-select');
                     const id = select.options[select.selectedIndex].value;
-                    const location = document.querySelector(`.series-location[data-id="${id}"]`);
-                    location.scrollIntoView({behavior: 'instant', block: 'center'});
+                    const locationH4 = document.querySelector(`h4[data-tmdb-id="${id}"]`);
+                    locationH4.scrollIntoView({behavior: 'instant', block: 'center'});
+                }
+
+                function zoomTotoLocation() {
+                    const select = document.getElementById('fl-country-map-select');
+                    const country = select.options[select.selectedIndex].value;
+                    const leafletMarkerIcons = document.querySelectorAll('.leaflet-marker-icon');
+                    const leafletMarkerShadows = document.querySelectorAll('.leaflet-marker-shadow');
+
+                    if (country) {
+                        const latLngs = countryBounds[country];
+                        map.fitBounds(latLngs);
+
+                        const locationIds = countryLocationIds[country];
+                        leafletMarkerIcons.forEach(markerIcon => {
+                            const tmdbId = markerIcon.getAttribute('data-tmdb-id');
+                            if (locationIds.includes(parseInt(tmdbId))) {
+                                markerIcon.style.display = 'block';
+                            } else {
+                                markerIcon.style.display = 'none';
+                            }
+                        });
+                        leafletMarkerShadows.forEach(markerShadow => {
+                            const tmdbId = markerShadow.getAttribute('data-tmdb-id');
+                            if (locationIds.includes(parseInt(tmdbId))) {
+                                markerShadow.style.display = 'block';
+                            } else {
+                                markerShadow.style.display = 'none';
+                            }
+                        });
+                    } else {
+                        map.fitBounds(latLngs);
+                        leafletMarkerIcons.forEach(markerIcon => {
+                            markerIcon.style.display = 'block';
+                        });
+                    }
                 }
             </script>
-            {% for sl in seriesLocations %}
-                <h2>{{ sl.name }}</h2>
-                {% for loc in sl.locations %}
-{#                    {{ dump(loc) }}#}
-                    <div class="series-location" data-id="{{ sl.id }}">
+            {% for key,l in fl %}
+                <h4 data-tmdb-id="{{ key }}">{{ l.locations.0.title }}</h4>
+                {% for loc in l.locations %}
+                    {#                    {{ dump(loc) }} #}
+                    <div class="series-location">
                         <div class="series-location-image">
-                            <a href="{{ path('app_series_show', { 'id': sl.id, slug: sl.slug }) }}">
-                                <img src="{{ loc.image }}" alt="{{ loc.title ?? 'No title entry!!' }}">
+                            <a href="{{ path('app_series_tmdb', { 'id': key, slug: loc.title|slug }) }}">
+                                <img src="/images/map{{ loc.still_path }}" alt="{{ loc.location ?? 'No title entry!!' }}">
                             </a>
                         </div>
                         <div class="series-location-title">
-                            {{ loc.location ?? 'No title entry!!' }}
+                            <div class="text">{{ loc.location ?? 'No title entry!!' }}</div>
                             <!-- Lien vers Google Maps -->
-                            <a href="https://www.google.com/maps?q={{ loc.latitude }},{{ loc.longitude }}" target="_blank">
-                                {{ ux_icon('logos:google-maps', {height: '36px', width: '36px'}) }}
-                            </a>
+                            <div class="google-maps">
+                                <a href="https://www.google.com/maps?q={{ loc.latitude }},{{ loc.longitude }}" target="_blank">
+                                    {{ ux_icon('logos:google-maps', {height: '36px', width: '36px'}) }}
+                                </a>
+                            </div>
                         </div>
                         <div class="series-location-location">{{ loc.location }}</div>
                         <div class="series-location-description">{{ loc.description }}</div>
@@ -62,7 +107,9 @@
     </div>
     <div id="globs-map" style="display: none">{# {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }} #}
         {
-        "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "countryLatLngs": {{ countryLatLngs|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "countryLocationIds": {{ countryLocationIds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -70,10 +117,13 @@
         const L = window.L;
         const globsData = document.querySelector('#globs-map');
         console.log(globsData);
-        const locations = JSON.parse(globsData.textContent).locations;
+        const data = JSON.parse(globsData.textContent);
+        const locations = data.locations;
+        const countryBounds = data.countryLatLngs;
+        const countryLocationIds = data.countryLocationIds;
         const latLngs = locations.map(location => [location.latitude, location.longitude]);
-        console.log(locations);
-        let map = L.map('map')
+        console.log(countryBounds);
+        let map = L.map('map', {zoomDelta: 0.25, zoomSnap: 0.25})
             .setView([locations[0].latitude, locations[0].longitude], 10)
             .fitBounds(latLngs);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -83,6 +133,8 @@
         locations.forEach(location => {
             let marker = L.marker([location.latitude, location.longitude]).addTo(map);
             marker.bindPopup('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>');
+            let markerIcon = marker.getElement();
+            markerIcon.setAttribute('data-tmdb-id', location.tmdb_id);
         });
     </script>
 {% endblock %}

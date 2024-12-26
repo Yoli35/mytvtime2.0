@@ -81,48 +81,6 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function seriesLocations(User $user, string $locale): array
-    {
-        $userId = $user->getId();
-        $sql = "SELECT s.`id`                                                        as id,
-                       s.`tmdb_id`                                                   as tmdbId,
-                       IF(sln.name IS NULL, s.name, CONCAT(sln.name, ' - ', s.name)) as name,
-                       IF(sln.slug IS NULL, s.slug, sln.slug)                        as slug,
-                       s.locations                                                   as locations
-                FROM `series` s
-                         INNER JOIN user_series us ON s.id = us.series_id
-                         LEFT JOIN `series_localized_name` as sln ON sln.`series_id` = s.`id` AND sln.locale='$locale'
-                WHERE s.`locations` IS NOT NULL AND us.user_id=$userId
-                ORDER BY name";
-
-        $arr = $this->getAll($sql);
-        return array_map(function ($item) {
-            $decoded = json_decode($item['locations'], true);
-            $item['locations'] = $decoded['locations'];
-            return $item;
-        }, $arr);
-    }
-
-    public function oneSeriesLocations(Series $series, string $locale): array
-    {
-        $seriesId = $series->getId();
-        $sql = "SELECT s.`id`                                                        as id,
-                       IF(sln.name IS NULL, s.name, CONCAT(sln.name, ' - ', s.name)) as name,
-                       s.locations                                                   as locations
-                FROM `series` s
-                         LEFT JOIN `series_localized_name` as sln ON sln.`series_id` = s.`id` AND sln.locale='$locale'
-                WHERE s.`id`=$seriesId";
-
-        $item = $this->getOne($sql);
-//        dump($item);
-        if (!$item['locations']) {
-            return [];
-        }
-        $decoded = json_decode($item['locations'], true);
-        $item['locations'] = $decoded['locations'] ?? [];
-        return $item;
-    }
-
     public function seriesImages(Series $series): array
     {
         $seriesId = $series->getId();

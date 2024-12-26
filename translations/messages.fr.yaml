@@ -550,12 +550,13 @@ Search on TMDB: Rechercher sur The Movie Database
 Delete this movie from your watchlist: Supprimer ce film de votre liste de suivi
 
 # Map
-Shooting locations for your %d series: Lieux de tournage pour vos %d séries
-Shooting locations: Lieux de tournage
 Add a shooting location: Ajouter un lieu de tournage
-Location: Lieu
-Latitude: Latitude
-Longitude: Longitude
+All countries: Tous les pays
 Description: Description
 Image: Image
+Latitude: Latitude
+Location: Lieu
+Longitude: Longitude
 Paste Google maps url here to obtain latitude and longitude: Collez l'URL de Google maps ici pour obtenir la latitude et la longitude
+Shooting locations for your %d series: Lieux de tournage pour vos %d séries
+Shooting locations: Lieux de tournage

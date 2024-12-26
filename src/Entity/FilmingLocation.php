@@ -49,6 +49,9 @@ class FilmingLocation
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?FilmingLocationImage $still = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $originCountry = null;
+
     public function __construct(string $uuid, int $tmdbId, string $title, string $location, string $description, float $latitude, float $longitude, bool $isSeries = false)
     {
         $this->uuid = $uuid;
@@ -201,5 +204,17 @@ class FilmingLocation
     public function setLocation(?string $location): void
     {
         $this->location = $location;
+    }
+
+    public function getOriginCountry(): ?array
+    {
+        return $this->originCountry;
+    }
+
+    public function setOriginCountry(?array $originCountry): static
+    {
+        $this->originCountry = $originCountry;
+
+        return $this;
     }
 }
