@@ -528,6 +528,40 @@ export class Season {
             });
     }
 
+    nowEpisode(e, episodeId = null) { // Ajuste la date de visionnage à maintenant
+        gThis.toolTips.hide();
+        const selector = episodeId ? '.remove-this-episode[data-id="' + episodeId + '"]' : null;
+        const episode = episodeId ? document.querySelector(selector) : e.currentTarget;
+        const sId = episode.getAttribute('data-show-id');
+        const id = episode.getAttribute('data-id');
+        const episodeNumber = episode.getAttribute('data-e-number');
+        const seasonNumber = episode.getAttribute('data-s-number');
+
+        fetch('/' + gThis.lang + '/series/now/episode/' + id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                showId: sId,
+                seasonNumber: seasonNumber,
+                episodeNumber: episodeNumber
+            })
+        }).then((response) => response.json())
+            .then(data => {
+                // TODO: Vérifier "data"
+                console.log(data);
+                const airDateDiv = episode.closest('.episode').querySelector('.air-date');
+                const watchAtDiv = airDateDiv.querySelector('div');
+                watchAtDiv.innerHTML = data['viewedAt'];
+                episode.setAttribute('data-title', gThis.text.now);
+                const now = new Date();
+                episode.setAttribute('data-time', now.toISOString());
+                episode.addEventListener('mouseenter', gThis.updateRelativeTime);
+            });
+    }
+
     updateRelativeTime(e) {
         const div = e.currentTarget;
         const id = div.getAttribute('data-id');
@@ -577,6 +611,8 @@ export class Season {
         const buttons = dialog.querySelectorAll('button');
         const removeButton = dialog.querySelector('button[value="remove"]');
         const watchButton = dialog.querySelector('button[value="watch"]');
+        const nowButton = dialog.querySelector('button[value="now"]');
+        const cancelButton = dialog.querySelector('button[value="cancel"]');
         buttons.forEach(button => {
             button.setAttribute('data-id', id);
             button.setAttribute('data-show-id', showId);
@@ -590,6 +626,14 @@ export class Season {
         watchButton.addEventListener('click', () => {
             dialog.close();
             gThis.addEpisode(e, id);
+        });
+        nowButton.addEventListener('click', () => {
+            dialog.close();
+            gThis.nowEpisode(e, id);
+        });
+        cancelButton.focus();
+        cancelButton.addEventListener('click', () => {
+            dialog.close();
         });
         dialog.showModal();
     }

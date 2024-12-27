@@ -2453,9 +2453,10 @@ h2 {
 
 #review-dialog {
     border: 2px solid var(--orange-50);
-    border-radius: .25rem;
+    border-radius: .5rem;
     margin-block: auto;
     margin-inline: auto;
+    width: 16rem;
 
     .content {
         background-color: var(--ardoise-80-alpha-50);
@@ -2467,6 +2468,13 @@ h2 {
             gap: 1rem;
 
             button {
+                appearance: none;
+                background-color: var(--orange-50);
+                border-radius: .25rem;
+                color: var(--ardoise-10);
+                font-size: 1.25rem;
+                font-weight: 300;
+                padding-block: .25rem;
                 padding-inline: 1rem;
             }
         }
@@ -3333,6 +3341,10 @@ h2 {
         }
 
         label::after {
+            border-bottom: 6px solid var(--ardoise-20);
+            border-left: 6px solid transparent;
+            border-right: 6px solid var(--ardoise-20);
+            border-top: 6px solid transparent;
             top: 20%;
         }
     }
