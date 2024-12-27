@@ -527,10 +527,13 @@ Delete this movie from your watchlist: 이 영화를 시청 목록에서 삭제
 # Map
 Add a shooting location: 촬영 장소 추가
 All countries: 모든 국가
+Countries: 국가
 Description: 설명
+Go to: 가기
 Image: 이미지
 Latitude: 위도
 Location: 위치
+Locations: 위치
 Longitude: 경도
 Paste Google maps url here to obtain latitude and longitude: 위도와 경도를 얻으려면 Google 지도 URL을 여기에 붙여넣으세요
 Shooting locations for your count series: count 시리즈의 촬영 장소

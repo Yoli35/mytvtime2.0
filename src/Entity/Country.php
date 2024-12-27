@@ -14,22 +14,24 @@ class Country
     private ?int $id = null;
 
     #[ORM\Column(length: 2)]
-    private ?string $code = null;
+    private ?string $code;
 
     #[ORM\Column(length: 32)]
-    private ?string $english_name = null;
+    private ?string $english_name;
+
+    private string $displayName;
 
     #[ORM\Column]
-    private ?float $lat1 = null;
+    private ?float $lat1;
 
     #[ORM\Column]
-    private ?float $lng1 = null;
+    private ?float $lng1;
 
     #[ORM\Column]
-    private ?float $lat2 = null;
+    private ?float $lat2;
 
     #[ORM\Column]
-    private ?float $lng2 = null;
+    private ?float $lng2;
 
     public function __construct(string $code, string $english_name, float $lat1, float $lng1, float $lat2, float $lng2)
     {
@@ -116,5 +118,15 @@ class Country
         $this->lng2 = $lng2;
 
         return $this;
+    }
+
+    public function getDisplayName(): string
+    {
+        return $this->displayName;
+    }
+
+    public function setDisplayName(string $displayName): void
+    {
+        $this->displayName = $displayName;
     }
 }

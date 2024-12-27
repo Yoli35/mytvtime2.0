@@ -24,14 +24,14 @@
 
         <div class="series-map-list center">
             <h2>
-                <label for="fl-series-map-select">{{ 'Go to' }}
+                <label for="fl-series-map-select">{{ 'Go to'|trans }}
                     <select id="fl-series-map-select" onchange="gotoLocation()">
                         {% for key,l in fl %}
                             <option value="{{ key }}">{{ l.locations.0.title }}</option>
                         {% endfor %}
                     </select>
                 </label>
-                <label for="fl-country-map-select">{{ 'Country'|trans }}
+                <label for="fl-country-map-select">{{ 'Locations'|trans }}
                     <select id="fl-country-map-select" onchange="zoomTotoLocation()">
                         <option value="">{{ 'All countries'|trans }}</option>
                         {% for key,name in countries %}
@@ -39,7 +39,7 @@
                         {% endfor %}
                     </select>
                 </label>
-                <label for="fl-country-bb-select">{{ 'Zoom to'|trans }}
+                <label for="fl-country-bb-select">{{ 'Countries'|trans }}
                     <select id="fl-country-bb-select" onchange="zoomTotoCountry()">
                         <option value="">{{ 'All countries'|trans }}</option>
                         {% for c in countryBoundingBoxes %}
@@ -47,7 +47,7 @@
                                     data-lat1="{{ c.lat1 }}" data-lng1="{{ c.lng1 }}"
                                     data-lat2="{{ c.lat2 }}" data-lng2="{{ c.lng2 }}"
                             >
-                                {{ c.code|country_name }}
+                                {{ c.displayName }}
                             </option>
                         {% endfor %}
                     </select>

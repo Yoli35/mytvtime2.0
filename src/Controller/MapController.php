@@ -46,10 +46,20 @@ class MapController extends AbstractController
             }
         }
 
+        $bb = array_map(function($c) {
+            $c->setDisplayName(Countries::getName($c->getCode()));
+            return $c;
+        },$this->countryRepository->findBy([], ['code' => 'ASC']));
+
         if ($request->getLocale() === 'fr') {
             uasort($countries, function ($a, $b) {
                 $a = str_replace('É', 'E', $a);
                 $b = str_replace('É', 'E', $b);
+                return strcasecmp($a, $b);
+            });
+            uasort($bb, function ($a, $b) {
+                $a = str_replace('É', 'E', $a->getDisplayName());
+                $b = str_replace('É', 'E', $b->getDisplayName());
                 return strcasecmp($a, $b);
             });
         }
@@ -72,8 +82,6 @@ class MapController extends AbstractController
                 }
             }
         }
-
-        $bb = $this->countryRepository->findBy([], ['code' => 'ASC']);
 
         dump([
             'fl' => $fl,

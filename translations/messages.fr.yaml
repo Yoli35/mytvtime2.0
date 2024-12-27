@@ -552,10 +552,13 @@ Delete this movie from your watchlist: Supprimer ce film de votre liste de suivi
 # Map
 Add a shooting location: Ajouter un lieu de tournage
 All countries: Tous les pays
+Countries: Pays
 Description: Description
+Go to: Aller à
 Image: Image
 Latitude: Latitude
 Location: Lieu
+Locations: Lieux
 Longitude: Longitude
 Paste Google maps url here to obtain latitude and longitude: Collez l'URL de Google maps ici pour obtenir la latitude et la longitude
 Shooting locations for your %d series: Lieux de tournage pour vos %d séries
