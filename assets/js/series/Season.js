@@ -619,23 +619,53 @@ export class Season {
             button.setAttribute('data-e-number', episodeNumber);
             button.setAttribute('data-s-number', seasonNumber);
         });
-        removeButton.addEventListener('click', () => {
-            dialog.close();
-            gThis.removeEpisode(id);
-        });
-        watchButton.addEventListener('click', () => {
-            dialog.close();
-            gThis.addEpisode(e, id);
-        });
-        nowButton.addEventListener('click', () => {
-            dialog.close();
-            gThis.nowEpisode(e, id);
-        });
-        cancelButton.focus();
-        cancelButton.addEventListener('click', () => {
-            dialog.close();
-        });
+        removeButton.addEventListener('click', gThis.doRemoveEpisode);
+        watchButton.addEventListener('click', gThis.doAddEpisode);
+        nowButton.addEventListener('click', gThis.doNowEpisode);
+        cancelButton.addEventListener('click', gThis.doCancelEpisode);
         dialog.showModal();
+    }
+
+    doRemoveEpisode(e) {
+        const dialog = document.querySelector("#review-dialog");
+        const episodeId = e.currentTarget.getAttribute('data-id');
+        dialog.close();
+        gThis.doRemoveEventListeners();
+        gThis.removeEpisode(episodeId);
+    }
+
+    doNowEpisode(e) {
+        const dialog = document.querySelector("#review-dialog");
+        const episodeId = e.currentTarget.getAttribute('data-id');
+        dialog.close();
+        gThis.doRemoveEventListeners();
+        gThis.nowEpisode(e, episodeId);
+    }
+
+    doAddEpisode(e) {
+        const dialog = document.querySelector("#review-dialog");
+        const episodeId = e.currentTarget.getAttribute('data-id');
+        dialog.close();
+        gThis.doRemoveEventListeners();
+        gThis.addEpisode(e, episodeId);
+    }
+
+    doCancelEpisode() {
+        const dialog = document.querySelector("#review-dialog");
+        dialog.close();
+        gThis.doRemoveEventListeners();
+    }
+
+    doRemoveEventListeners() {
+        const dialog = document.querySelector("#review-dialog");
+        const removeButton = dialog.querySelector('button[value="remove"]');
+        const watchButton = dialog.querySelector('button[value="watch"]');
+        const nowButton = dialog.querySelector('button[value="now"]');
+        const cancelButton = dialog.querySelector('button[value="cancel"]');
+        removeButton.removeEventListener('click', gThis.doRemoveEpisode);
+        watchButton.removeEventListener('click', gThis.doAddEpisode);
+        nowButton.removeEventListener('click', gThis.doNowEpisode);
+        cancelButton.removeEventListener('click', gThis.doCancelEpisode);
     }
 
     removeEpisode(episodeId) {
