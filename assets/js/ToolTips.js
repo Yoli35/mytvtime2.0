@@ -89,6 +89,8 @@ export class ToolTips {
         tooltips.setAttribute("style", style);
 
         tooltips.classList.add("show");
+        console.log("show - " + text);
+        console.log({x: evt.pageX, y: evt.pageY, width: width, height: height});
     }
 
     hide() {
@@ -100,6 +102,7 @@ export class ToolTips {
         setTimeout(() => {
             tooltips.setAttribute("style", "translate: 0px 0px;");
         }, 300);
+        console.log("hide");
     }
 
     move(evt) {
@@ -116,6 +119,9 @@ export class ToolTips {
         const windowWidth = window.innerWidth;
         const visualViewport = window.visualViewport;
 
+        console.log("move @ " + new Date().toLocaleString());
+        console.log({x: evt.pageX, y: evt.pageY, width: width, height: height, fromTopViewport: fromTopViewport});
+
         if (evt.pageX === 0 && evt.pageY === 0) {
             return;
         }
@@ -124,7 +130,7 @@ export class ToolTips {
 
         const left = evt.pageX - (width / 2);
         if (left < 0) {
-            let style = "translate: " + (evt.pageX - (width / 2) + (left * -1)) + "px " + (evt.pageY - Math.min(height, fromTopViewport)) + "px;";
+            let style = "transform: translate(" + (evt.pageX - (width / 2) + (left * -1)) + "px, " + (evt.pageY - Math.min(height, fromTopViewport)) + "px);";
             tooltips.setAttribute("style", style);
             tail.setAttribute("style", "translate: " + left + "px -.55rem;" + bg);
             return;
@@ -132,14 +138,15 @@ export class ToolTips {
 
         const right = evt.pageX + (width / 2);
         if (right > windowWidth * visualViewport.scale) {
-            let style = "translate: " + (evt.pageX - (width / 2) - (right - windowWidth)) + "px " + (evt.pageY - Math.min(height, fromTopViewport)) + "px;";
+            let style = "transform: translate(" + (evt.pageX - (width / 2) - (right - windowWidth)) + "px, " + (evt.pageY - Math.min(height, fromTopViewport)) + "px);";
             tooltips.setAttribute("style", style);
             tail.setAttribute("style", "translate: " + (right - windowWidth) + "px -.55rem;" + bg);
             return;
         }
 
-        let style = "translate: " + (evt.pageX - (width / 2)) + "px " + (evt.pageY - Math.min(height, fromTopViewport)) + "px;";
+        let style = "transform: translate(" + (evt.pageX - (width / 2)) + "px, " + (evt.pageY - Math.min(height, fromTopViewport)) + "px);";
         tooltips.setAttribute("style", style);
         tail.setAttribute("style", "translate: 0 -.55rem;" + bg);
+        console.log("move - " + style);
     }
 }
