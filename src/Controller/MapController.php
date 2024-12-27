@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\CountryRepository;
 use App\Repository\FilmingLocationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +15,7 @@ class MapController extends AbstractController
 {
     public function __construct(
         private readonly FilmingLocationRepository $filmingLocationRepository,
+        private readonly CountryRepository $countryRepository,
     )
     {
     }
@@ -71,11 +73,14 @@ class MapController extends AbstractController
             }
         }
 
+        $bb = $this->countryRepository->findBy([], ['code' => 'ASC']);
+
         dump([
             'fl' => $fl,
             'countryLatLngs' => $countryLatLngs,
             'countryLocationIds' => $countryLocationIds,
             'countries' => $countries,
+            'countryBoundingBoxes' => $bb,
 //            'filmingLocations' => $locations['filmingLocations'],
 //            'filmingLocationCount' => $locations['filmingLocationCount'],
 //            'filmingLocationImagesCount' => $locations['filmingLocationImageCount'],
@@ -86,10 +91,13 @@ class MapController extends AbstractController
             'countries' => $countries,
             'countryLatLngs' => $countryLatLngs,
             'countryLocationIds' => $countryLocationIds,
+            'countryBoundingBoxes' => $bb,
             'seriesCount' => count($fl),
             'locations' => $locations['filmingLocations'],
             'filmingLocationCount' => $locations['filmingLocationCount'],
             'filmingLocationImageCount' => $locations['filmingLocationImageCount'],
+            'leaflet' => false,
+            'mapbox' => true,
         ]);
     }
 

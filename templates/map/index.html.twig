@@ -6,7 +6,12 @@
     <link rel="stylesheet" href="{{ asset('styles/filter.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    {% if leaflet %}
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    {% endif %}
+    {% if mapbox %}
+        <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.css">
+    {% endif %}
 {% endblock %}
 
 {% block body %}
@@ -31,6 +36,19 @@
                         <option value="">{{ 'All countries'|trans }}</option>
                         {% for key,name in countries %}
                             <option value="{{ key }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label for="fl-country-bb-select">{{ 'Zoom to'|trans }}
+                    <select id="fl-country-bb-select" onchange="zoomTotoCountry()">
+                        <option value="">{{ 'All countries'|trans }}</option>
+                        {% for c in countryBoundingBoxes %}
+                            <option value="{{ c.code }}"
+                                    data-lat1="{{ c.lat1 }}" data-lng1="{{ c.lng1 }}"
+                                    data-lat2="{{ c.lat2 }}" data-lng2="{{ c.lng2 }}"
+                            >
+                                {{ c.code|country_name }}
+                            </option>
                         {% endfor %}
                     </select>
                 </label>
@@ -77,6 +95,20 @@
                         });
                     }
                 }
+
+                function zoomTotoCountry() {
+                    const select = document.getElementById('fl-country-bb-select');
+                    const country = select.options[select.selectedIndex];
+                    if (country.value === "") {
+                        map.setZoom(2);
+                    } else {
+                        const lat1 = country.getAttribute('data-lat1');
+                        const lng1 = country.getAttribute('data-lng1');
+                        const lat2 = country.getAttribute('data-lat2');
+                        const lng2 = country.getAttribute('data-lng2');
+                        map.fitBounds([[lat1, lng1], [lat2, lng2]]);
+                    }
+                }
             </script>
             {% for key,l in fl %}
                 <h4 data-tmdb-id="{{ key }}">{{ l.locations.0.title }}</h4>
@@ -112,7 +144,12 @@
         "countryLocationIds": {{ countryLocationIds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    {% if leaflet %}
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    {% endif %}
+    {% if mapbox %}
+        <script src="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.js"></script>
+    {% endif %}
     <script>
         const L = window.L;
         const globsData = document.querySelector('#globs-map');
@@ -123,12 +160,14 @@
         const countryLocationIds = data.countryLocationIds;
         const latLngs = locations.map(location => [location.latitude, location.longitude]);
         console.log(countryBounds);
-        let map = L.map('map', {zoomDelta: 0.25, zoomSnap: 0.25})
+        let map;
+        {% if leaflet %}
+        map = L.map('map', {zoomDelta: 0.25, zoomSnap: 0.25})
             .setView([locations[0].latitude, locations[0].longitude], 10)
             .fitBounds(latLngs);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
         locations.forEach(location => {
             let marker = L.marker([location.latitude, location.longitude]).addTo(map);
@@ -136,5 +175,25 @@
             let markerIcon = marker.getElement();
             markerIcon.setAttribute('data-tmdb-id', location.tmdb_id);
         });
+        {% endif %}
+        {% if mapbox %}
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaWJveTQ0IiwiYSI6ImNtNTZqcXo4ZjAxYzIyaXM3cWZ5dnNheWkifQ.yY-zdieRm3Dhlrj3vYh9hg';
+        map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v9',
+            projection: 'globe', // Display the map as a globe, since satellite-v9 defaults to Mercator
+            zoom: 1,
+            center: [30, 15]
+        });
+        map.addControl(new mapboxgl.NavigationControl());
+        locations.forEach(location => {
+            let marker = new mapboxgl.Marker()
+                .setLngLat([location.longitude, location.latitude])
+                .setPopup(new mapboxgl.Popup().setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
+                .addTo(map);
+            let markerIcon = marker.getElement();
+            markerIcon.setAttribute('data-tmdb-id', location.tmdb_id);
+        });
+        {% endif %}
     </script>
 {% endblock %}
