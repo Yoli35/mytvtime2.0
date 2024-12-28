@@ -53,6 +53,14 @@
                     </select>
                 </label>
             </h2>
+            <div class="thumbnails">
+                {% for s in settings.data.styles %}
+                    <div class="thumbnail{% if loop.index0==2 %} selected{% endif %}" data-style="{{ s.style }}">
+                        <h5>{{ s.name }}</h5>
+                        <img src="{{ s.local_path }}" alt="{{ s.name }}">
+                    </div>
+                {% endfor %}
+            </div>
             <script>
                 function gotoLocation() {
                     const select = document.getElementById('fl-series-map-select');
@@ -108,6 +116,24 @@
                         const lng2 = country.getAttribute('data-lng2');
                         map.fitBounds([[lat1, lng1], [lat2, lng2]]);
                     }
+                }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    const thumbnails = document.querySelectorAll('.thumbnail');
+                    thumbnails.forEach(thumbnail => {
+                        thumbnail.addEventListener('click', setMapStyle);
+                    });
+                });
+
+                function setMapStyle(event) {
+                    const thumbnails = document.querySelectorAll('.thumbnail');
+                    thumbnails.forEach(thumbnail => {
+                        thumbnail.classList.remove('selected');
+                    });
+                    const thumbnail = event.currentTarget;
+                    thumbnail.classList.add('selected');
+                    const style = thumbnail.getAttribute('data-style');
+                    map.setStyle(style);
                 }
             </script>
             {% for key,l in fl %}
@@ -180,10 +206,10 @@
         mapboxgl.accessToken = 'pk.eyJ1IjoiaWJveTQ0IiwiYSI6ImNtNTZqcXo4ZjAxYzIyaXM3cWZ5dnNheWkifQ.yY-zdieRm3Dhlrj3vYh9hg';
         map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v9',
+            style: 'mapbox://styles/mapbox/outdoors-v12',
             projection: 'globe', // Display the map as a globe, since satellite-v9 defaults to Mercator
-            zoom: 1,
-            center: [30, 15]
+            zoom: 5,
+            center: [2, 45]
         });
         map.addControl(new mapboxgl.NavigationControl());
         locations.forEach(location => {

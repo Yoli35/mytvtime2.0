@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Repository\CountryRepository;
 use App\Repository\FilmingLocationRepository;
+use App\Repository\SettingsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +17,8 @@ class MapController extends AbstractController
 {
     public function __construct(
         private readonly FilmingLocationRepository $filmingLocationRepository,
-        private readonly CountryRepository $countryRepository,
+        private readonly CountryRepository         $countryRepository,
+        private readonly SettingsRepository        $settingsRepository,
     )
     {
     }
@@ -23,6 +26,10 @@ class MapController extends AbstractController
     #[Route('/index', name: 'index')]
     public function index(Request $request): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'mapbox']);
+
         $locations = $this->getAllFilmingLocations();
 
         $fl = [];
@@ -46,10 +53,10 @@ class MapController extends AbstractController
             }
         }
 
-        $bb = array_map(function($c) {
+        $bb = array_map(function ($c) {
             $c->setDisplayName(Countries::getName($c->getCode()));
             return $c;
-        },$this->countryRepository->findBy([], ['code' => 'ASC']));
+        }, $this->countryRepository->findBy([], ['code' => 'ASC']));
 
         if ($request->getLocale() === 'fr') {
             uasort($countries, function ($a, $b) {
@@ -83,16 +90,16 @@ class MapController extends AbstractController
             }
         }
 
-        dump([
-            'fl' => $fl,
-            'countryLatLngs' => $countryLatLngs,
-            'countryLocationIds' => $countryLocationIds,
-            'countries' => $countries,
-            'countryBoundingBoxes' => $bb,
+//        dump([
+//            'fl' => $fl,
+//            'countryLatLngs' => $countryLatLngs,
+//            'countryLocationIds' => $countryLocationIds,
+//            'countries' => $countries,
+//            'countryBoundingBoxes' => $bb,
 //            'filmingLocations' => $locations['filmingLocations'],
 //            'filmingLocationCount' => $locations['filmingLocationCount'],
 //            'filmingLocationImagesCount' => $locations['filmingLocationImageCount'],
-        ]);
+//        ]);
 
         return $this->render('map/index.html.twig', [
             'fl' => $fl,
@@ -106,6 +113,7 @@ class MapController extends AbstractController
             'filmingLocationImageCount' => $locations['filmingLocationImageCount'],
             'leaflet' => false,
             'mapbox' => true,
+            'settings' => $settings,
         ]);
     }
 

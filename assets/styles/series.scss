@@ -3349,6 +3349,31 @@ h2 {
         }
     }
 
+    .thumbnails {
+        display: flex;
+        gap: 1rem;
+
+        .thumbnail {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+
+            img {
+                aspect-ratio: 1;
+                border-radius: 50%;
+                border: 4px solid var(--orange-50);
+                object-fit: cover;
+                width: 8rem;
+            }
+
+            &.selected {
+                img {
+                    border-color: var(--green-50);
+                }
+            }
+        }
+    }
+
     .series-location {
         background-color: var(--orange-20-alpha-25);
         border-radius: .75rem;
