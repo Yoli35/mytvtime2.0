@@ -198,6 +198,11 @@ export class Season {
             episode.addEventListener('click', this.removeOrReviewEpisode);
         });
 
+        const watchedAtDivs = document.querySelectorAll('.watched-at');
+        watchedAtDivs.forEach(watchedAtDiv => {
+            watchedAtDiv.addEventListener('click', this.modifyWatchedAtOpen);
+        });
+
         const userEpisodeProviders = document.querySelectorAll('.select-provider');
         userEpisodeProviders.forEach(provider => {
             provider.addEventListener('click', gThis.selectProvider);
@@ -410,9 +415,13 @@ export class Season {
                 // TODO: Vérifier "data"
                 console.log(data);
                 const airDateDiv = episode.closest('.episode').querySelector('.air-date');
-                const watchAtDiv = document.createElement('div');
+                let watchAtDiv = document.querySelector(".watched-at");
+                if (!watchAtDiv) {
+                    watchAtDiv = document.createElement('div');
+                    watchAtDiv.classList.add('watched-at');
+                    airDateDiv.appendChild(watchAtDiv);
+                }
                 watchAtDiv.innerHTML = data['viewedAt'];
-                airDateDiv.appendChild(watchAtDiv);
 
                 const numberDiv = episode.closest('.episode').querySelector('.number');
                 numberDiv.setAttribute('data-title', "x" + (views + 1));
@@ -537,7 +546,7 @@ export class Season {
         const episodeNumber = episode.getAttribute('data-e-number');
         const seasonNumber = episode.getAttribute('data-s-number');
 
-        fetch('/' + gThis.lang + '/series/now/episode/' + id, {
+        fetch('/' + gThis.lang + '/series/touch/episode/' + id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -553,12 +562,12 @@ export class Season {
                 // TODO: Vérifier "data"
                 console.log(data);
                 const airDateDiv = episode.closest('.episode').querySelector('.air-date');
-                const watchAtDiv = airDateDiv.querySelector('div');
+                const watchAtDiv = airDateDiv.querySelector('.watch-at');
                 watchAtDiv.innerHTML = data['viewedAt'];
+                watchAtDiv.setAttribute('data-watched-at', data['dataViewedAt']);
                 episode.setAttribute('data-title', gThis.text.now);
                 const now = new Date();
                 episode.setAttribute('data-time', now.toISOString());
-                episode.addEventListener('mouseenter', gThis.updateRelativeTime);
             });
     }
 
@@ -598,6 +607,72 @@ export class Season {
         } else {
             div.setAttribute('data-title', seconds + ' ' + (seconds > 1 ? gThis.text.seconds : gThis.text.second));
         }
+    }
+
+    modifyWatchedAtOpen(e) {
+        const watchedAtDiv = e.currentTarget;
+        const watchedAt = watchedAtDiv.getAttribute('data-watched-at');
+        const airDateDiv = watchedAtDiv.closest('.air-date');
+        const watchedAtModifyDiv = document.createElement('div');
+        watchedAtModifyDiv.classList.add('watched-at-modify');
+        const datetimeInput = document.createElement('input');
+        datetimeInput.setAttribute('type', 'datetime-local');
+        datetimeInput.setAttribute('value', watchedAt);
+        const datetimeSaveButton = document.createElement('button');
+        datetimeSaveButton.textContent = 'OK';
+        const datetimeCancelButton = document.createElement('button');
+        datetimeCancelButton.textContent = 'X';
+        watchedAtModifyDiv.appendChild(datetimeInput);
+        watchedAtModifyDiv.appendChild(datetimeSaveButton);
+        watchedAtModifyDiv.appendChild(datetimeCancelButton);
+        airDateDiv.appendChild(watchedAtModifyDiv);
+        watchedAtDiv.style.display = 'none';
+
+        datetimeSaveButton.addEventListener('click', gThis.touchEpisode);
+        datetimeCancelButton.addEventListener('click', () => {
+            watchedAtModifyDiv.remove();
+            watchedAtDiv.style.display = 'flex';
+        });
+    }
+
+    touchEpisode(e) { // Ajuste la date de visionnage à la valeur de l'input datetime-local
+        const datetimeSaveButton = e.currentTarget;
+        const airDateDiv = datetimeSaveButton.closest('.air-date');
+        const watchedAtDiv = airDateDiv.querySelector('.watched-at');
+        const watchedAtModifyDiv = datetimeSaveButton.parentElement;
+        const datetimeInput = watchedAtModifyDiv.querySelector('input');
+        const newDatetime = datetimeInput.value;
+        console.log(newDatetime);
+        const episode = datetimeSaveButton.closest('.episode').querySelector('.remove-this-episode');
+        const sId = episode.getAttribute('data-show-id');
+        const id = episode.getAttribute('data-id');
+        const episodeNumber = episode.getAttribute('data-e-number');
+        const seasonNumber = episode.getAttribute('data-s-number');
+
+        fetch('/' + gThis.lang + '/series/touch/episode/' + id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                showId: sId,
+                date: newDatetime,
+                seasonNumber: seasonNumber,
+                episodeNumber: episodeNumber
+            })
+        }).then((response) => response.json())
+            .then(data => {
+                // TODO: Vérifier "data"
+                console.log(data);
+                watchedAtDiv.innerHTML = data['viewedAt'];
+                watchedAtDiv.setAttribute('data-watched-at', data['dataViewedAt']);
+                episode.setAttribute('data-title', gThis.text.now);
+                const now = new Date();
+                episode.setAttribute('data-time', now.toISOString());
+            });
+        watchedAtModifyDiv.remove();
+        watchedAtDiv.style.display = 'flex';
     }
 
     removeOrReviewEpisode(e) {
