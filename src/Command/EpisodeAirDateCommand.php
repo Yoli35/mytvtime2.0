@@ -92,6 +92,7 @@ class EpisodeAirDateCommand extends Command
             $user = $userSeries->getUser();
             $language = $user->getPreferredLanguage() ?? "fr" . "-" . $user->getCountry() ?? "FR";
             $episodeUpdates = 0;
+            $seriesNewEpisodeCount = 0;
 
             $line = sprintf('User %s - Series (%d): %s', $user->getUsername(), $series->getId(), $series->getName());
             $localizedName = $series->getLocalizedName('fr');
@@ -171,7 +172,7 @@ class EpisodeAirDateCommand extends Command
                     if (!$userEpisode) {
                         $userEpisode = new UserEpisode($userSeries, $episodeId, $seasonNumber, $episodeNumber, null);
                         $this->userEpisodeRepository->save($userEpisode);
-                        $newEpisodeCount++;
+                        $seriesNewEpisodeCount++;
 
                         $notifications[] = $this->newNotification(self::EPISODE_NEW, $userSeries, $userEpisode, $localizedName, $airDate);
                     }
@@ -186,14 +187,24 @@ class EpisodeAirDateCommand extends Command
                     $episodeCount++;
                 }
             }
-            if ($newEpisodeCount || $episodeUpdates) {
+            $writeln = false;
+            if ($episodeUpdates) {
                 $this->episodeNotificationRepository->flush();
                 $this->userEpisodeNotificationRepository->flush();
-                $this->io->writeln(' ✅ ' . $episodeUpdates . ' episodes updated');
-                $totalEpisodeUpdates += $episodeUpdates;
-            } else {
-                $this->io->writeln(' 🟢 No episode to update');
+                $this->io->writeln(' 🟠 ' . $episodeUpdates . ' episodes updated');
+                $writeln = true;
             }
+            if ($seriesNewEpisodeCount) {
+                $this->io->writeln(' 🟢 ' . $seriesNewEpisodeCount . ' new episodes');
+                $writeln = true;
+            }
+            if (!$writeln) {
+                $this->io->writeln(' ✅');
+            }
+
+            $totalEpisodeUpdates += $episodeUpdates;
+
+            $newEpisodeCount += $seriesNewEpisodeCount;
         }
 
         $this->io->newLine(2);
@@ -201,6 +212,7 @@ class EpisodeAirDateCommand extends Command
         foreach ($notifications as $notification) {
             $this->io->writeln($notification);
         }
+
         $this->io->newLine(2);
         $this->io->writeln(sprintf('Series checked: %d', count($allUserSeries)));
         $this->io->writeln(sprintf('New series air date: %d', $newSeriesDateCount));
@@ -213,7 +225,8 @@ class EpisodeAirDateCommand extends Command
         return Command::SUCCESS;
     }
 
-    public function newNotification(string $type, UserSeries $userSeries, ?UserEpisode $userEpisode, ?SeriesLocalizedName $localizedName, ?DateTimeImmutable $airDate): string
+    public
+    function newNotification(string $type, UserSeries $userSeries, ?UserEpisode $userEpisode, ?SeriesLocalizedName $localizedName, ?DateTimeImmutable $airDate): string
     {
         $seasonNumber = $userEpisode ? $userEpisode->getSeasonNumber() : 0;
         $episodeNumber = $userEpisode ? $userEpisode->getEpisodeNumber() : 0;
@@ -240,13 +253,15 @@ class EpisodeAirDateCommand extends Command
         return $notification;
     }
 
-    public function addUserNotification(User $user, EpisodeNotification $notification): void
+    public
+    function addUserNotification(User $user, EpisodeNotification $notification): void
     {
         $userEpisodeNotification = new UserEpisodeNotification($user, $notification);
         $this->userEpisodeNotificationRepository->save($userEpisodeNotification, true);
     }
 
-    public function getUserEpisodeById($userEpisodes, $episodeId): mixed
+    public
+    function getUserEpisodeById($userEpisodes, $episodeId): mixed
     {
         array_filter($userEpisodes, function ($userEpisode) use ($episodeId) {
             return $userEpisode->getEpisodeId() == $episodeId;
@@ -259,7 +274,8 @@ class EpisodeAirDateCommand extends Command
         return null;
     }
 
-    public function findFirstNotWatchedEpisode($userEpisodes): mixed
+    public
+    function findFirstNotWatchedEpisode($userEpisodes): mixed
     {
         foreach ($userEpisodes as $userEpisode) {
             if ($userEpisode->getWatchAt() === null) {
@@ -269,7 +285,8 @@ class EpisodeAirDateCommand extends Command
         return null;
     }
 
-    public function commandStart(): void
+    public
+    function commandStart(): void
     {
         $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
         $this->io->newLine(2);
@@ -278,7 +295,8 @@ class EpisodeAirDateCommand extends Command
         $this->t0 = microtime(true);
     }
 
-    public function commandEnd(): void
+    public
+    function commandEnd(): void
     {
         $t1 = microtime(true);
         $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
