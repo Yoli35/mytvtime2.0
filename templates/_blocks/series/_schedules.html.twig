@@ -77,7 +77,7 @@ Mandatory variables:
                                 </div>
                             {% endif %}
                         {% endif %}
-                        {% if tvle %}
+                   {#     {% if tvle %}
                             <div class="episode tv">
                                 <div class="type">{{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}</div>
                                 <div class="episode-info">{{ 'Last episode to air'|trans }}</div>
@@ -104,7 +104,7 @@ Mandatory variables:
                                     <div class="episode-air-date">{{ ulne.air_date_offset|format_date("relative_short")|capitalize }}</div>
                                 </div>
                             {% endif %}
-                        {% endif %}
+                        {% endif %}#}
                     </div>
                     {{ include('_blocks/series/_schedules-form.html.twig', {schedule: schedule, country: country}) }}
                 </div>
