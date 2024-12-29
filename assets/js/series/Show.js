@@ -306,22 +306,6 @@ export class Show {
 
         /******************************************************************************
          * Watch links: add.                                                          *
-         * ****************************************************************************
-         * <div class="watch-link-tools"                                              *
-         *     data-id="142"                                                          *
-         *     data-provider="1733"                                                   *
-         *     data-name="Regarder sur Action Max Amazon Channel"                     *
-         * >                                                                          *
-         *     <div class="watch-link-tool edit" data-title="...">                    *
-         *         <svg viewBox="0 0 512 512" fill="currentColor" [...] </svg>        *
-         *     </div>                                                                 *
-         *     <div class="watch-link-tool copy" data-title="...">                    *
-         *         <svg viewBox="0 0 512 512" fill="currentColor" [...] </svg>        *
-         *     </div>                                                                 *
-         *     <div class="watch-link-tool delete" data-title="...">                  *
-         *         <svg viewBox="0 0 448 512" fill="currentColor" [...] </svg>        *
-         *     </div>                                                                 *
-         * </div>                                                                     *
          ******************************************************************************/
         const watchLinks = document.querySelectorAll('.watch-link');
         const addWatchLink = document.querySelector('.add-watch-link');
