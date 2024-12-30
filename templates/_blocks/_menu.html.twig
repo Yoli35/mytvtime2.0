@@ -101,22 +101,25 @@
                 </ul>
             {% endif %}
         </details>
-        <details id="history-menu">
+        <details id="log-menu">
             <summary>{{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }}</summary>
             {% set history = getHistory(app.user) %}
             {% set historyCount = getHistoryCount(app.user) %}
             {% if history|length %}
-                <ul id="history-list">
-                    <li id="history-options">
-{#                        <label>{{ 'Page'|trans }}<input id="history-option-page" type="number" value="{{ history.page }}"></label>#}
-{#                        <label>{{ 'Count'|trans }}<input id="history-option-count" type="number" value="{{ historyCount }}"></label>#}
+                <ul id="log-list" data-last="{{ history.0.id }}">
+                    <li id="log-options">
                         {{ history|length }} / {{ historyCount }} {{ 'history entries'|trans }}
                     </li>
+                    {% set logDate = '' %}
                     {% for h in history %}
-                        <li class="history-item" id="{{ h.id }}">
-                            <a class="history" href="{{ h.link }}">
+                        {% set d = h.date|format_date('relative_medium') %}
+                        {% if logDate != d %}
+                            {% set logDate = d %}
+                            <li class="log-date">{{ logDate|capitalize }}</li>
+                        {% endif %}
+                        <li class="log-item" data-id="{{ h.id }}">
+                            <a class="log" href="{{ h.link }}">
                                 <div class="name">{{ h.title }}</div>
-{#                                <div class="date">{{ h.date|format_datetime('relative_medium', 'short', 'Europe/Paris') }}</div>#}
                             </a>
                         </li>
                     {% endfor %}

@@ -475,12 +475,14 @@ label:has(input[type="text"]) {
             display: none
         }
 
-        &#history-menu {
+        &#history-menu,
+        &#log-menu {
             position: unset;
         }
 
-        &#history-menu[open] {
-            ul#history-list {
+        &#history-menu[open],
+        &#log-menu[open] {
+            ul {
                 opacity: 1;
                 transform: translateX(3%);
             }
@@ -496,7 +498,8 @@ label:has(input[type="text"]) {
             top: 2.625rem;
             width: max-content;
 
-            &#history-list {
+            &#history-list,
+            &#log-list {
                 left: -.5rem;
                 max-height: calc(100dvh - 5.5rem);
                 opacity: 0;
@@ -506,7 +509,8 @@ label:has(input[type="text"]) {
                 transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
             }
 
-            li#history-options {
+            li#history-options,
+            li#log-options{
                 align-items: center;
                 display: flex;
                 gap: .5rem;
@@ -539,6 +543,7 @@ label:has(input[type="text"]) {
                     > div {
                         background-color: var(--orange-50);
                         border-radius: .25rem;
+                        color: var(--orange-90);
                         padding-inline: .5rem;
                     }
                 }
@@ -634,9 +639,22 @@ label:has(input[type="text"]) {
                             padding-inline: .5rem;
                         }
                     }
+
+                    &.log {
+                        align-items: center;
+                        display: flex;
+                        gap: .5rem;
+                        justify-content: stretch;
+
+                        .name {
+                            flex-grow: 1;
+                            font-weight: 300;
+                        }
+                    }
                 }
 
-                &:hover {
+                &.log-item:hover,
+                &.history-item:hover {
                     background-color: var(--orange-40);
                 }
 

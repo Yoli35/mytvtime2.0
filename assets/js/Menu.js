@@ -129,6 +129,8 @@ export class Menu {
 
         const historyMenu = navbar.querySelector("#history-menu");
 
+        const logMenu = navbar.querySelector("#log-menu");
+
         burger.addEventListener("click", () => {
             burger.classList.toggle("open");
             navbar.classList.toggle("active");
@@ -503,7 +505,7 @@ export class Menu {
         }
 
         if (historyMenu) {
-            const historySummary = historyMenu?.querySelector("summary");
+            const historySummary = historyMenu.querySelector("summary");
             const historyList = historyMenu.querySelector("#history-list");
             const historyOptions = historyList?.querySelector("#history-options").querySelectorAll("input");
             historyOptions.forEach((historyOption) => {
@@ -534,7 +536,7 @@ export class Menu {
                             console.log(lastWatchedEpisode, lastEpisodeInHistory);
                             if (lastEpisodeInHistory !== lastWatchedEpisode) {
                                 loadingDiv.innerHTML = 'Reloading...';
-                                this.reloadHistory({currentTarget: historyOptions[0]});
+                                gThis.reloadHistory({currentTarget: historyOptions[0]});
                             }
                             loadingLi.remove();
                         });
@@ -550,6 +552,48 @@ export class Menu {
             });
         }
 
+        if (logMenu) {
+            const logSummary = logMenu.querySelector("summary");
+            const logList = logMenu.querySelector("#log-list");
+            logSummary.addEventListener("click", (e) => {
+                const open = logMenu.getAttribute("open");
+                if (open === null) {
+                    const firstItem = logList.querySelector("li.log-item");
+                    const lastId = firstItem ? firstItem.getAttribute("data-id") : 0;
+                    const loadingLi = document.createElement("li");
+                    loadingLi.classList.add("loading");
+                    const loadingDiv = document.createElement("div");
+                    loadingDiv.innerHTML = 'Loading...';
+                    loadingLi.appendChild(loadingDiv);
+                    logList.insertBefore(loadingLi, firstItem);
+                    fetch('/api/log/last', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                        .then(response => response.json())
+                        /** @var {{ok: boolean, last: number}} data */
+                        .then(data => {
+                            console.log(lastId, data);
+                            if (parseInt(lastId) !== data.last) {
+                                loadingDiv.innerHTML = 'Reloading...';
+                                gThis.reloadLog({currentTarget: logMenu});
+                            } else {
+                                loadingLi.remove();
+                            }
+                        });
+                } else {
+                    e.preventDefault();
+                    logList.style.transform = "translateX(-100%)";
+                    logList.style.opacity = "0";
+                    setTimeout(() => {
+                        logMenu.removeAttribute("open");
+                        logList.removeAttribute("style");
+                    }, 300);
+                }
+            });
+        }
     }
 
     searchMenuNavigate(e) {
@@ -888,6 +932,61 @@ export class Menu {
                     li.appendChild(a);
                     historyList.appendChild(li);
                 });
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    reloadLog(e) {
+        // api url : /api/log/load
+        const logList = document.querySelector("#log-list");
+        const logListItems = logList.querySelectorAll("li.log-item, li.log-date");
+        const lastId = logListItems[0].getAttribute("data-id");
+        const loadingLi = logList.querySelector("li.loading");
+        fetch('/api/log/load', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({lastId: lastId})
+        })
+            .then(response => response.json())
+            .then(data => {
+                let dateString = "";
+                logListItems.forEach((item) => {
+                    item.remove();
+                });
+                data.log.forEach((item) => {
+                    // format date as relative date
+                    const itemDate = new Date(item.date);
+                    const itemDateString = itemDate.toLocaleDateString();
+                    if (itemDateString !== dateString) {
+                        const now = new Date();
+                        const li = document.createElement("li");
+                        li.classList.add("log-date");
+                        li.innerHTML = itemDateString;
+                        logList.appendChild(li);
+                        dateString = itemDateString;
+                    }
+
+                    const li = document.createElement("li");
+                    li.classList.add("log-item");
+                    li.setAttribute("data-id", item.id);
+
+                    const a = document.createElement("a");
+                    a.classList.add("log");
+                    a.href = item.link;
+
+                    const nameDiv = document.createElement("div");
+                    nameDiv.classList.add("name");
+                    nameDiv.innerHTML = item.title;
+                    a.appendChild(nameDiv);
+
+                    li.appendChild(a);
+                    logList.appendChild(li);
+                });
+                loadingLi.remove();
             })
             .catch((error) => {
                 console.error('Error:', error);

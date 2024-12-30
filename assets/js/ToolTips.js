@@ -89,8 +89,8 @@ export class ToolTips {
         tooltips.setAttribute("style", style);
 
         tooltips.classList.add("show");
-        console.log("show - " + text);
-        console.log({x: evt.pageX, y: evt.pageY, width: width, height: height});
+        // console.log("show - " + text);
+        // console.log({x: evt.pageX, y: evt.pageY, width: width, height: height});
     }
 
     hide() {
@@ -102,7 +102,7 @@ export class ToolTips {
         setTimeout(() => {
             tooltips.setAttribute("style", "translate: 0px 0px;");
         }, 300);
-        console.log("hide");
+        // console.log("hide");
     }
 
     move(evt) {
@@ -119,8 +119,8 @@ export class ToolTips {
         const windowWidth = window.innerWidth;
         const visualViewport = window.visualViewport;
 
-        console.log("move @ " + new Date().toLocaleString());
-        console.log({x: evt.pageX, y: evt.pageY, width: width, height: height, fromTopViewport: fromTopViewport});
+        // console.log("move @ " + new Date().toLocaleString());
+        // console.log({x: evt.pageX, y: evt.pageY, width: width, height: height, fromTopViewport: fromTopViewport});
 
         if (evt.pageX === 0 && evt.pageY === 0) {
             return;
@@ -147,6 +147,6 @@ export class ToolTips {
         let style = "transform: translate(" + (evt.pageX - (width / 2)) + "px, " + (evt.pageY - Math.min(height, fromTopViewport)) + "px);";
         tooltips.setAttribute("style", style);
         tail.setAttribute("style", "translate: 0 -.55rem;" + bg);
-        console.log("move - " + style);
+        // console.log("move - " + style);
     }
 }
