@@ -415,10 +415,11 @@ export class Season {
                 // TODO: Vérifier "data"
                 console.log(data);
                 const airDateDiv = episode.closest('.episode').querySelector('.air-date');
-                let watchAtDiv = document.querySelector(".watched-at");
+                let watchAtDiv = airDateDiv.querySelector(".watched-at");
                 if (!watchAtDiv) {
                     watchAtDiv = document.createElement('div');
                     watchAtDiv.classList.add('watched-at');
+                    watchAtDiv.addEventListener('click', gThis.modifyWatchedAtOpen);
                     airDateDiv.appendChild(watchAtDiv);
                 }
                 watchAtDiv.innerHTML = data['viewedAt'];
@@ -562,9 +563,9 @@ export class Season {
                 // TODO: Vérifier "data"
                 console.log(data);
                 const airDateDiv = episode.closest('.episode').querySelector('.air-date');
-                const watchAtDiv = airDateDiv.querySelector('.watch-at');
-                watchAtDiv.innerHTML = data['viewedAt'];
-                watchAtDiv.setAttribute('data-watched-at', data['dataViewedAt']);
+                const watchedAtDiv = airDateDiv.querySelector('.watched-at');
+                watchedAtDiv.innerHTML = data['viewedAt'];
+                watchedAtDiv.setAttribute('data-watched-at', data['dataViewedAt']);
                 episode.setAttribute('data-title', gThis.text.now);
                 const now = new Date();
                 episode.setAttribute('data-time', now.toISOString());

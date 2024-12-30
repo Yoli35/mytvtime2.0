@@ -1391,7 +1391,7 @@ class SeriesController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $showId = $data['showId'];
-        if ($data['date']) {
+        if (key_exists('date', $data) && $data['date']) {
             $now = $this->date($data['date']);
         } else {
             $now = $this->now();
