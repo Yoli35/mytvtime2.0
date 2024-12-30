@@ -3381,10 +3381,56 @@ h2 {
         width: round(down, 100%, 20.25rem);
     }
 
-    h2 {
+    .map-tools {
         display: flex;
-        gap: 1rem;
-        margin-block-start: 2rem;
+        margin-block: 2rem;
+        position: relative;
+        width: 100%;
+
+        h2 {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .help {
+            align-items: center;
+            background-color: var(--orange-40);
+            border-radius: 50%;
+            color: var(--ardoise-10);
+            cursor: pointer;
+            display: flex;
+            font-size: 1.25rem;
+            font-weight: 300;
+            height: 2rem;
+            justify-content: center;
+            margin-inline-start: auto;
+            width: 2rem;
+
+            &:hover + .keyboard-help {
+                display: flex;
+            }
+        }
+
+        .keyboard-help {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: var(--ardoise-80-alpha-50);
+            border-radius: .5rem;
+            bottom: 8rem;
+            color: var(--ardoise-10);
+            display: none;
+            flex-direction: column;
+            gap: .5rem;
+            padding: 1rem;
+            position: absolute;
+            right: 0;
+
+            div {
+                align-items: center;
+                display: flex;
+                gap: .5rem;
+            }
+        }
     }
 
     h4 {

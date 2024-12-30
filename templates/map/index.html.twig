@@ -14,6 +14,12 @@
     {% endif %}
 {% endblock %}
 
+{% block shift %}{{ ux_icon('mdi:apple-keyboard-shift', {height: '18px', width: '18px'}) }}{% endblock %}
+{% block arrowUp %}{{ ux_icon('gg:arrow-up-r', {height: '18px', width: '18px'}) }}{% endblock %}
+{% block arrowDown %}{{ ux_icon('gg:arrow-down-r', {height: '18px', width: '18px'}) }}{% endblock %}
+{% block arrowRight %}{{ ux_icon('gg:arrow-right-r', {height: '18px', width: '18px'}) }}{% endblock %}
+{% block arrowLeft %}{{ ux_icon('gg:arrow-left-r', {height: '18px', width: '18px'}) }}{% endblock %}
+
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid">
@@ -23,36 +29,51 @@
         </div>
 
         <div class="series-map-list center">
-            <h2>
-                <label for="fl-series-map-select">{{ 'Go to'|trans }}
-                    <select id="fl-series-map-select" onchange="gotoLocation()">
-                        {% for key,l in fl %}
-                            <option value="{{ key }}">{{ l.locations.0.title }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-                <label for="fl-country-map-select">{{ 'Locations'|trans }}
-                    <select id="fl-country-map-select" onchange="zoomTotoLocation()">
-                        <option value="">{{ 'All countries'|trans }}</option>
-                        {% for key,name in countries %}
-                            <option value="{{ key }}">{{ name }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-                <label for="fl-country-bb-select">{{ 'Countries'|trans }}
-                    <select id="fl-country-bb-select" onchange="zoomTotoCountry()">
-                        <option value="">{{ 'All countries'|trans }}</option>
-                        {% for c in countryBoundingBoxes %}
-                            <option value="{{ c.code }}"
-                                    data-lat1="{{ c.lat1 }}" data-lng1="{{ c.lng1 }}"
-                                    data-lat2="{{ c.lat2 }}" data-lng2="{{ c.lng2 }}"
-                            >
-                                {{ c.displayName }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </label>
-            </h2>
+            <div class="map-tools">
+                <h2>
+                    <label for="fl-series-map-select">{{ 'Go to'|trans }}
+                        <select id="fl-series-map-select" onchange="gotoLocation()">
+                            {% for key,l in fl %}
+                                <option value="{{ key }}">{{ l.locations.0.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label for="fl-country-map-select">{{ 'Locations'|trans }}
+                        <select id="fl-country-map-select" onchange="zoomTotoLocation()">
+                            <option value="">{{ 'All countries'|trans }}</option>
+                            {% for key,name in countries %}
+                                <option value="{{ key }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label for="fl-country-bb-select">{{ 'Countries'|trans }}
+                        <select id="fl-country-bb-select" onchange="zoomTotoCountry()">
+                            <option value="">{{ 'All countries'|trans }}</option>
+                            {% for c in countryBoundingBoxes %}
+                                <option value="{{ c.code }}"
+                                        data-lat1="{{ c.lat1 }}" data-lng1="{{ c.lng1 }}"
+                                        data-lat2="{{ c.lat2 }}" data-lng2="{{ c.lng2 }}"
+                                >
+                                    {{ c.displayName }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                </h2>
+                <div class="help">?</div>
+                <div class="keyboard-help">
+                    <div>{{ 'Click the map to copy the latitude and longitude to the clipboard'|trans }}</div><div></div>
+                    <div>= / +: {{ 'Increase the zoom level by 1'|trans }}.</div>
+                    <div>{{ block('shift') }} = / {{ block('shift') }} +: {{ 'Increase the zoom level by 2'|trans }}.</div>
+                    <div>-: {{ 'Decrease the zoom level by 1'|trans }}.</div>
+                    <div>{{ block('shift') }} -: {{ 'Decrease the zoom level by 2'|trans }}.</div>
+                    <div>{{ 'Arrow keys'|trans }}: {{ 'Pan by 100 pixels'|trans }}.</div>
+                    <div>{{ block('shift') }} {{ block('arrowRight') }}: {{ 'Increase the rotation by 15 degrees'|trans }}.</div>
+                    <div>{{ block('shift') }} {{ block('arrowLeft') }}: {{ 'Decrease the rotation by 15 degrees'|trans }}.</div>
+                    <div>{{ block('shift') }} {{ block('arrowUp') }}: {{ 'Increase the pitch by 10 degrees'|trans }}.</div>
+                    <div>{{ block('shift') }} {{ block('arrowDown') }}: {{ 'Decrease the pitch by 10 degrees'|trans }}.</div>
+                </div>
+            </div>
             <div class="thumbnails">
                 {% for s in settings.data.styles %}
                     <div class="thumbnail{% if loop.index0==2 %} selected{% endif %}" data-style="{{ s.style }}">
@@ -118,7 +139,7 @@
                     }
                 }
 
-                document.addEventListener('DOMContentLoaded', function() {
+                document.addEventListener('DOMContentLoaded', function () {
                     const thumbnails = document.querySelectorAll('.thumbnail');
                     thumbnails.forEach(thumbnail => {
                         thumbnail.addEventListener('click', setMapStyle);
@@ -212,8 +233,20 @@
             center: [2, 45]
         });
         map.addControl(new mapboxgl.NavigationControl());
+        map.addControl(new mapboxgl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: true
+            },
+            trackUserLocation: true,
+            showUserHeading: true
+        }));
+        map.on('click', (e) => {
+            console.log(`A click event has occurred at ${e.lngLat}`);
+            // Copier les coordonnées (e.lnglat) dans le presse-papiers sous la forme "lat, lng"
+            navigator.clipboard.writeText(`${e.lngLat.lat}, ${e.lngLat.lng}`);
+        });
         locations.forEach(location => {
-            let marker = new mapboxgl.Marker()
+            let marker = new mapboxgl.Marker({color: "#B46B18FF"})
                 .setLngLat([location.longitude, location.latitude])
                 .setPopup(new mapboxgl.Popup().setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
                 .addTo(map);
