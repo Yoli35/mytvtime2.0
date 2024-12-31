@@ -832,7 +832,7 @@
         {% if tv.localized_name %}
             "seriesName": "{{ tv.localized_name.name }}",
         {% else %}
-            "seriesName": "{{ series.name }}",
+            "seriesName": "{{ series.name|replace({'\'': '\\\'', '"': '\\"'}) }}",
         {% endif %}
         "seriesId": {{ series.id }},
         "userSeriesId": {{ userSeries.id }},
