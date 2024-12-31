@@ -36,6 +36,11 @@ class UserEpisodeRepository extends ServiceEntityRepository
         }
     }
 
+    public function flush(): void
+    {
+        $this->em->flush();
+    }
+
     public function remove(UserEpisode $userEpisode): void
     {
         $this->em->remove($userEpisode);

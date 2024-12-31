@@ -878,15 +878,17 @@ class SeriesController extends AbstractController
         $locations = $this->getSeriesLocations($series, $user->getPreferredLanguage() ?? $request->getLocale());
 
 //        $this->fixFilmingLocations();
-        dump([
+//        dump([
 //            'series' => $seriesArr,
-            'locations' => $locations['filmingLocations'],
-            'tv' => $tv,
+//            'locations' => $locations['filmingLocations'],
+//            'tv' => $tv,
+//            'oldSeriesAdded - get' => $request->get('oldSeriesAdded'),
+//            'oldSeriesAdded - query' => $request->query->get('oldSeriesAdded'),
 //            'dayOffset' => $dayOffset,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'schedules' => $schedules,
-        ]);
+//        ]);
         if ($tv) {
             $twig = "series/show.html.twig";
         } else {
@@ -934,9 +936,10 @@ class SeriesController extends AbstractController
 
         $firstAirDate = $tv['first_air_date'] ? $this->dateService->newDateImmutable($tv['first_air_date'], 'Europe/Paris', true) : null;
         $oldSeries = false;
-        if ($firstAirDate) {
-            $nowYear = $this->now()->format('Y');
-            $firstAirDateYear = $firstAirDate->format('Y');
+        $nowYear = $this->now()->format('Y');
+        $firstAirDateYear = $firstAirDate?->format('Y');
+
+        if ($firstAirDateYear) {
             if ($nowYear - $firstAirDateYear > 2) {
                 $oldSeries = true;
             }
@@ -945,7 +948,46 @@ class SeriesController extends AbstractController
         return $this->redirectToRoute('app_series_show', [
             'id' => $series->getId(),
             'slug' => $series->getSlug(),
-            'oldSeries' => $oldSeries,
+            'oldSeriesAdded' => $oldSeries,
+        ]);
+    }
+
+    #[Route('/old/{id}', name: 'old', requirements: ['id' => Requirement::DIGITS])]
+    public function markAllEpisodeAsViewed(int $id): Response
+    {
+        $series = $this->seriesRepository->findOneBy(['id' => $id]);
+        $user = $this->getUser();
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+        $userEpisodes = $this->userEpisodeRepository->findBy(['user' => $user, 'userSeries' => $userSeries]);
+
+        $episodeCount = count($userEpisodes);
+        $watchedEpisodeCount = 0;
+        $lastEpisodeNumber = 0;
+        $lastSeasonNumber = 0;
+        $lastWatchedAt = null;
+
+        foreach ($userEpisodes as $userEpisode) {
+            if ($userEpisode->getAirDate()) {
+                $userEpisode->setWatchAt($userEpisode->getAirDate());
+                $this->userEpisodeRepository->save($userEpisode);
+                $lastEpisodeNumber = $userEpisode->getEpisodeNumber();
+                $lastSeasonNumber = $userEpisode->getSeasonNumber();
+                $lastWatchedAt = $userEpisode->getWatchAt();
+                $watchedEpisodeCount++;
+            }
+        }
+        $this->userEpisodeRepository->flush();
+
+        $userSeries->setLastEpisode($lastEpisodeNumber);
+        $userSeries->setLastSeason($lastSeasonNumber);
+        $userSeries->setLastWatchAt($lastWatchedAt);
+        $userSeries->setViewedEpisodes($watchedEpisodeCount);
+        $userSeries->setProgress($watchedEpisodeCount / $episodeCount * 100);
+
+        $this->userSeriesRepository->save($userSeries, true);
+
+        return $this->json([
+            'ok' => true,
         ]);
     }
 

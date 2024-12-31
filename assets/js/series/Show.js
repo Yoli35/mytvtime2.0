@@ -114,6 +114,39 @@ export class Show {
         }
 
         /******************************************************************************
+         * Old series added ?                                                         *
+         ******************************************************************************/
+        const oldSeriesAddedPanel = document.querySelector('.old-series-added-panel');
+        if (oldSeriesAddedPanel) {
+            const noThanksButton = oldSeriesAddedPanel.querySelector('button[name="no-thanks"]');
+            const yesButton = oldSeriesAddedPanel.querySelector('button[name="yes"]');
+            noThanksButton.addEventListener('click', function () {
+                oldSeriesAddedPanel.classList.remove("open");
+                setTimeout(function () {
+                    oldSeriesAddedPanel.remove();
+                }, 300);
+            });
+            yesButton.addEventListener('click', function () {
+                fetch('/' + lang + '/series/old/' + seriesId,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                ).then(function (response) {
+                    if (response.ok) {
+                        oldSeriesAddedPanel.classList.remove("open");
+                        setTimeout(function () {
+                            // Get the url without ? and everything after
+                            window.location.href = window.location.href.split('?')[0];
+                        }, 1000);
+                    }
+                });
+            });
+        }
+
+        /******************************************************************************
          * Diaporama for posters, backdrops and logos                                 *
          ******************************************************************************/
         const diaporama = new Diaporama();

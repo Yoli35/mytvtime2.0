@@ -137,6 +137,24 @@
                         <div class="no-air-date">{{ 'No date yet'|trans }}</div>
                     {% endif %}
                 </div>
+                {% if oldSeriesAdded %}
+                    <div class="side-panel old-series-added-panel open">
+                        <div class="dialog-content">
+                            <div class="dialog-header">
+                                <h2>{{ 'Addition of older series'|trans }}</h2>
+                            </div>
+                            <div class="dialog-body">
+                                <div class="message">{{ 'The series has been added to your watchlist'|trans }}.</div>
+                                <div class="message">{{ 'This series is more than 2 years old'|trans }}.</div>
+                                <div class="message">{{ 'Have you already watched it and want to mark all episodes as viewed?'|trans }}</div>
+                            </div>
+                            <div class="dialog-footer">
+                                <button name="no-thanks" data-title="{{ 'Episodes are considered viewed on the day of broadcast'|trans }}.">{{ 'No, thanks'|trans }}</button>
+                                <button name="yes" data-title="{{ 'Start watching the series now!'|trans }}.">{{ 'Yes'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
 
             <div class="header">
@@ -184,6 +202,15 @@
                         </div>
                     </dialog>
                 </div>
+                <dialog class="add-backdrop-dialog">
+                    {{ form_start(addBackdropForm) }}
+                    {{ form_widget(addBackdropForm) }}
+                    <div class="form-row">
+                        <button type="button" name="cancel">{{ 'Cancel'|trans }}</button>
+                        <button type="submit">{{ 'Upload it!'|trans }}</button>
+                    </div>
+                    {{ form_end(addBackdropForm) }}
+                </dialog>
             </div>
 
             {% if series.images.logos|length %}
@@ -197,6 +224,15 @@
                             {% endfor %}
                         </div>
                     </div>
+                    <dialog class="add-backdrop-dialog">
+                        {{ form_start(addBackdropForm) }}
+                        {{ form_widget(addBackdropForm) }}
+                        <div class="form-row">
+                            <button type="button" name="cancel">{{ 'Cancel'|trans }}</button>
+                            <button type="submit">{{ 'Upload it!'|trans }}</button>
+                        </div>
+                        {{ form_end(addBackdropForm) }}
+                    </dialog>
                 </div>
             {% endif %}
 
@@ -644,15 +680,6 @@
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
-    <dialog class="add-backdrop-dialog">
-        {{ form_start(addBackdropForm) }}
-        {{ form_widget(addBackdropForm) }}
-        <div class="form-row">
-            <button type="button" name="cancel">{{ 'Cancel'|trans }}</button>
-            <button type="submit">{{ 'Upload it!'|trans }}</button>
-        </div>
-        {{ form_end(addBackdropForm) }}
-    </dialog>
     {{ include('_blocks/forms/_keyword-translation.html.twig') }}
     <div class="side-panel add-location-dialog">
         <form action="" id="add-location-form" enctype="multipart/form-data">
@@ -804,24 +831,6 @@
             </div>
         </form>
     </div>
-    {% if oldSeriesAdded %}
-        <dialog class="old-series-added-dialog">
-            <div class="dialog-content">
-                <div class="dialog-header">
-                    <h2>{{ 'Old series added'|trans }}</h2>
-                </div>
-                <div class="dialog-body">
-                    <div class="message">
-                        {{ 'The series has been added to your watchlist'|trans }}.
-                        {{ 'This series is more than 2 years old'|trans }}.
-                        {{ 'Have you already watched it and want to mark all episodes as viewed?'|trans }}
-                    </div>
-                    <button name="add-and-mark">{{ 'Add and mark all episodes as viewed'|trans }}</button>
-                    <button name="add">{{ 'Add without marking all episodes as viewed'|trans }}</button>
-                </div>
-            </div>
-        </dialog>
-    {% endif %}
     <div id="globs-map" style="display: none">
         {
         "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
