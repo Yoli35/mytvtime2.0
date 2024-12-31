@@ -85,6 +85,7 @@ airplane flight: vol d'avion
 airplane hijacking: détournement d'avion
 airplane: avion
 airship: dirigeable
+alaska: alaska
 alaska native: alaska native
 alaskan malamute: malamute d'alaska
 albuquerque, new mexico: albuquerque, nouveau mexique
@@ -526,16 +527,16 @@ creatures: créatures
 crew: équipe
 crime boss: chef de file du crime
 crime drama: drame policier
-crime fighter: police de l'air et des sols
+crime fighter: combattant du crime
 crime investigation: enquête sur le crime
-crime lord: criminel de guerre
+crime lord: seigneur du crime
 criminal consultant: criminologue
-criminal investigation: criminel de guerre
-criminal lawyer: criminel de guerre
-criminal mastermind: criminel de guerre
+criminal investigation: enquête criminelle
+criminal lawyer: avocat pénaliste
+criminal mastermind: cerveau criminel
 criminal organization: organisation criminelle
-criminal profiler: criminel de guerre
-criminal underworld: criminel de guerre
+criminal profiler: profileur criminel
+criminal underworld: monde criminel
 criminal: criminel
 criminals: criminels
 crooked cop: flic véreux
@@ -1411,8 +1412,8 @@ millennial: millénaire
 millennials: millénaires
 milwaukee wisconsin: milwaukee wisconsin
 mind control: contrôle de l'esprit
-mind reading: contrôle de l'esprit
-mind transfer: transfert de l'esprit
+mind reading: lecture de l'esprit
+mind transfer: transfert d'esprit
 mining: exploitation minière
 miniseries: mini-série
 misanthrophy: misanthropie
