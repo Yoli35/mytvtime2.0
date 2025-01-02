@@ -253,9 +253,8 @@ label:has(select) {
         border-radius: .25rem;
         color: var(--ardoise-10);
         outline: none;
-        /*margin-inline-start: auto;*/
-        padding-block: 0;
-        padding-inline: .5rem 2rem;
+        padding-block: .25rem;
+        padding-inline: 1rem 2rem;
         width: 100%;
     }
 

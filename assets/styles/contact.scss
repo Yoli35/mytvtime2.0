@@ -68,14 +68,20 @@
                     resize: vertical;
                 }
 
-                label:has(select),
                 label:has(input[type="date"]),
+                label:has(input[type="email"]),
                 label:has(input[type="search"]),
-                label:has(input[type="text"]) {
+                label:has(input[type="text"]),
+                label:has(select),
+                label:has(textarea) {
                     align-items: flex-start;
                     display: flex;
                     flex-direction: column;
                     gap: .25rem;
+                }
+
+                label:has(.vich-image) {
+                    flex-direction: column;
                 }
 
                 label:has(input[type=file]) {
@@ -98,10 +104,11 @@
                     }
 
                     .vich-image {
+                        align-items: center;
                         display: flex;
-                        flex-direction: column;
                         flex-grow: 1;
-                        gap: 1rem;
+                        gap: .5rem;
+                        width: 100%;
 
                         input[type=file]::file-selector-button {
                             background-color: var(--ardoise-80);
@@ -114,6 +121,7 @@
                         }
 
                         div {
+                            align-items: center;
                             display: flex;
                             gap: 1rem;
 
@@ -153,7 +161,7 @@
 
                     .input-group {
                         display: flex;
-                        gap:.125rem;
+                        gap: .125rem;
                         width: 100%;
 
                         .keyword-input {
