@@ -415,14 +415,15 @@ export class Season {
                 // TODO: Vérifier "data"
                 console.log(data);
                 const airDateDiv = episode.closest('.episode').querySelector('.air-date');
-                let watchAtDiv = airDateDiv.querySelector(".watched-at");
-                if (!watchAtDiv) {
-                    watchAtDiv = document.createElement('div');
-                    watchAtDiv.classList.add('watched-at');
-                    watchAtDiv.addEventListener('click', gThis.modifyWatchedAtOpen);
-                    airDateDiv.appendChild(watchAtDiv);
+                let watchedAtDiv = airDateDiv.querySelector(".watched-at");
+                if (!watchedAtDiv) {
+                    watchedAtDiv = document.createElement('div');
+                    watchedAtDiv.classList.add('watched-at');
+                    watchedAtDiv.addEventListener('click', gThis.modifyWatchedAtOpen);
+                    airDateDiv.appendChild(watchedAtDiv);
                 }
-                watchAtDiv.innerHTML = data['viewedAt'];
+                watchedAtDiv.innerHTML = data['viewedAt'];
+                watchedAtDiv.setAttribute('data-watched-at', data['dataViewedAt']);
 
                 const numberDiv = episode.closest('.episode').querySelector('.number');
                 numberDiv.setAttribute('data-title', "x" + (views + 1));
@@ -774,11 +775,9 @@ export class Season {
                 if (views > 0) {
                     return;
                 }
-                // TODO
-                // Retirer le badge "👁️, aujourd'hui à 17:05"
                 const airDateDiv = episode.closest('.episode').querySelector('.air-date');
-                const badgeDiv = airDateDiv.querySelector('div');
-                badgeDiv.remove();
+                const watchedAtDiv = airDateDiv.querySelector('.watched-at');
+                watchedAtDiv.remove();
 
                 if (gThis.intervals[episodeId] > 0) {
                     clearInterval(gThis.intervals[episodeId]);
