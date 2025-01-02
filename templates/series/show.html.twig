@@ -204,7 +204,7 @@
                 </div>
                 <dialog class="add-backdrop-dialog">
                     {{ form_start(addBackdropForm) }}
-                    {{ form_widget(addBackdropForm) }}
+                    {{ form_widget(addBackdropForm.file) }}
                     <div class="form-row">
                         <button type="button" name="cancel">{{ 'Cancel'|trans }}</button>
                         <button type="submit">{{ 'Upload it!'|trans }}</button>
@@ -224,7 +224,7 @@
                             {% endfor %}
                         </div>
                     </div>
-                    <dialog class="add-backdrop-dialog">
+                    {#<dialog class="add-backdrop-dialog">
                         {{ form_start(addBackdropForm) }}
                         {{ form_widget(addBackdropForm) }}
                         <div class="form-row">
@@ -232,7 +232,7 @@
                             <button type="submit">{{ 'Upload it!'|trans }}</button>
                         </div>
                         {{ form_end(addBackdropForm) }}
-                    </dialog>
+                    </dialog>#}
                 </div>
             {% endif %}
 
