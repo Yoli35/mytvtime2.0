@@ -408,7 +408,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                      INNER JOIN user_episode ue ON us.id = ue.user_series_id 
                      LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                      LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
-                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id
+                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number
                      LEFT JOIN provider p ON sbs.provider_id = p.provider_id
               WHERE us.user_id = $userId 
                      AND ue.season_number > 0 
