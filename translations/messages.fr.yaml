@@ -171,7 +171,8 @@ Delete: Supprimer
 Desktop: Ordinateur de bureau
 Drag and drop a file or click to browse: Glissez-déposez un fichier ou cliquez pour parcourir
 Drop your file here: Déposez votre fichier ici
-Drop your images files here: Déposez vos images ici
+Drop your image file here: Déposez votre image ici
+Drop your additional images files here: Déposez vos images supplémentaires ici
 Edit this watch link: Modifier ce lien pour regarder
 Edit: Modifier
 Ended: Série terminée
@@ -180,7 +181,9 @@ Episode of the day: Épisode du jour
 Episodes of the day: Épisodes du jour
 Episodes: Épisodes
 External sources: Sources externes
-Files: Fichiers
+Local files: Fichiers depuis votre ordinateur
+No image currently selected for upload: Pas d'image actuellement sélectionnée pour le téléversement
+No additional images currently selected for upload: Pas d'images supplémentaires actuellement sélectionnées pour le téléversement
 First air date updated: Date de première diffusion mise à jour
 Give a rating: Donnez une note
 In Production: En Production

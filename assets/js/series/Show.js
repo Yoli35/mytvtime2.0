@@ -188,7 +188,7 @@ export class Show {
                 const distance = targetTS - now;
                 const distanceAbs = Math.abs(distance);
                 const d = Math.floor(distanceAbs / (1000 * 60 * 60 * 24));
-                const h = (d === 1 ? 24 : 0) + Math.floor((distanceAbs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const h = /*(d === 1 ? 24 : 0) +*/ Math.floor((distanceAbs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const m = Math.floor((distanceAbs % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((distanceAbs % (1000 * 60)) / 1000);
                 const days = d ? (" " + d + " " + translations[d > 1 ? 'days' : 'day']) : "";
@@ -806,7 +806,8 @@ export class Show {
                         const newContentText = overviewField.value;
                         contentDiv.setAttribute('data-overview', newContentText);
                         // replace \n by <br>
-                        contentDiv.innerHTML = newContentText.replace(/\n/g, '<br>');
+                        //contentDiv.innerHTML = newContentText.replace(/\n/g, '<br>');
+                        contentDiv.textContent = newContentText;
 
                         /*const toolsDiv = overviewDiv.querySelector('.tools');
                         const sourceDiv = toolsDiv.querySelector('.source');
@@ -1014,7 +1015,7 @@ export class Show {
         const seriesMap = document.querySelector('#map');
         const addLocationButton = document.querySelector('.add-location-button');
         const addLocationDialog = document.querySelector('.side-panel.add-location-dialog');
-        const addLocationForm = document.querySelector('#add-location-form');
+        const addLocationForm = addLocationDialog.querySelector('form');
         const inputGoogleMapsUrl = addLocationForm.querySelector('input[name="google-map-url"]');
         const inputLatitude = addLocationForm.querySelector('input[name="latitude"]');
         const inputLongitude = addLocationForm.querySelector('input[name="longitude"]');
@@ -1125,64 +1126,97 @@ export class Show {
             }
         });
 
-        // Les champs de type "url" peuvent recevoir une image par glisser déposer et récupérer l'url
-        imageInputs.forEach(function (input) {
-            input.addEventListener('dragover', function (e) {
-                e.preventDefault();
-                e.dataTransfer.dropEffect = 'link';
-            });
-            input.addEventListener('dragenter', function () {
-                this.classList.add('dragover');
-            });
-            input.addEventListener('dragleave', function () {
-                this.classList.remove('dragover');
-            });
-            input.addEventListener('drop', function (e) {
-                e.preventDefault();
-                const files = e.dataTransfer.files;
-                if (files.length === 1) {
-                    const file = files[0];
-                    if (file.type.match('image.*')) {
-                        this.value = file.name;
-                        previewFile(file, this.closest('label').querySelector('img'));
-                    }
+        imageInputs.forEach(function (imageInput) {
+            // Les champs de type "url" peuvent être modifiés pour afficher une image
+            imageInput.addEventListener('input', function () {
+                const img = this.closest('.form-field').querySelector('img');
+                if (this.value.includes('~/')) {
+                    img.src = this.value.replace('~/', '/images/map/');
                 } else {
-                    let count = 0;
-                    Array.from(files).forEach(function (file) {
-                        if (file.type.match('image.*') && count < 5) {
-                            const imagePreview = imageInputs[count].closest('label').querySelector('img');
-                            imageInputs[count].value = file.name;
-                            previewFile(file, imagePreview);
-                            count++;
-                        }
-                    });
-                    for (let i = count; i < 5; i++) {
-                        const imagePreview = imageInputs[i].closest('label').querySelector('img');
-                        imageInputs[i].value = '';
-                        imagePreview.src = '';
-                    }
+                    img.src = this.value;
                 }
+            });
+            // Les champs de type "url" peuvent recevoir un fichier image par glisser-déposer
+            imageInput.addEventListener('drop', function (e) {
+                e.preventDefault();
+                const file = e.dataTransfer.files[0];
+                const img = this.closest('.form-field').querySelector('img');
+                img.src = URL.createObjectURL(file);
+                this.value = img.src;
             });
         });
 
-        /*const inputFiles = document.querySelector('input[type="file"]');
-        inputFiles.addEventListener('change', function () {
-            console.log(this.files);
-            let count = 0;
-            Array.from(this.files).forEach(function (file) {
-                if (file.type.match('image.*') && count < 5) {
-                    const imagePreview = imageInputs[count].closest('label').querySelector('img');
-                    imageInputs[count].value = file.name;
-                    previewFile(file, imagePreview);
-                    count++;
-                }
-            });
-            for (let i = count; i < 5; i++) {
-                const imagePreview = imageInputs[i].closest('label').querySelector('img');
-                imageInputs[i].value = '';
-                imagePreview.src = '';
+        // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file
+        const imageFile = addLocationForm.querySelector('input[name="image-file"]');
+        imageFile.addEventListener("change", updateImageDisplay);
+        const imageFiles = addLocationForm.querySelector('input[name="image-files"]');
+        imageFiles.addEventListener("change", updateImageDisplay);
+
+        function updateImageDisplay(e) {
+            const input = e.target;
+            const inputName = input.name;
+            const preview = addLocationForm.querySelector('.preview-' + inputName);
+            while (preview.firstChild) {
+                preview.removeChild(preview.firstChild);
             }
-        });*/
+
+            const curFiles = input.files;
+            if (curFiles.length === 0) {
+                const div = document.createElement("div");
+                div.textContent = "No files currently selected for upload";
+                preview.appendChild(div);
+            } else {
+                const list = document.createElement("ol");
+                preview.appendChild(list);
+
+                for (const file of curFiles) {
+                    const listItem = document.createElement("li");
+                    const div = document.createElement("div");
+                    if (validFileType(file)) {
+                        div.textContent = `${file.name}, ${returnFileSize(file.size)}`;
+                        const image = document.createElement("img");
+                        image.src = URL.createObjectURL(file);
+                        image.alt = image.title = file.name;
+
+                        listItem.appendChild(div);
+                        listItem.appendChild(image);
+                    } else {
+                        div.textContent = `File name ${file.name}: Not a valid file type. Update your selection.`;
+                        listItem.appendChild(div);
+                    }
+
+                    list.appendChild(listItem);
+                }
+            }
+        }
+
+        // https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
+        const fileTypes = [
+            "image/apng",
+            "image/bmp",
+            "image/gif",
+            "image/jpeg",
+            "image/pjpeg",
+            "image/png",
+            "image/svg+xml",
+            "image/tiff",
+            "image/webp",
+            "image/x-icon",
+        ];
+
+        function validFileType(file) {
+            return fileTypes.includes(file.type);
+        }
+
+        function returnFileSize(number) {
+            if (number < 1e3) {
+                return `${number} bytes`;
+            } else if (number >= 1e3 && number < 1e6) {
+                return `${(number / 1e3).toFixed(1)} KB`;
+            } else {
+                return `${(number / 1e6).toFixed(1)} MB`;
+            }
+        }
 
         function previewFile(file, preview) {
             const reader = new FileReader();
