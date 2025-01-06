@@ -410,14 +410,14 @@ class UserEpisodeRepository extends ServiceEntityRepository
                      LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
                      LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number
                      LEFT JOIN provider p ON sbs.provider_id = p.provider_id
-              WHERE us.user_id = $userId 
-                     AND ue.season_number > 0 
+              WHERE us.user_id = $userId
                      AND ( 
                          ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.air_date = '$day') 
                       OR ((sdo.offset > 0) AND ue.air_date = DATE_SUB('$day', INTERVAL sdo.offset DAY)) 
                       OR ((sdo.offset < 0) AND ue.air_date = DATE_ADD('$day', INTERVAL ABS(sdo.offset) DAY)) 
                          ) 
               ORDER BY displayName ";
+        //       (WHERE ...) AND ue.season_number > 0
 
         return $this->getAll($sql);
     }
