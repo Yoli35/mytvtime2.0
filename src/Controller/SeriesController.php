@@ -2399,7 +2399,7 @@ class SeriesController extends AbstractController
                 $dayArr[$day] = true;
             }
 
-            if ($tv && $tv['last_episode_to_air'] && $tv['last_episode_to_air']['season_number'] == $seasonNumber) {
+/*            if ($tv && $tv['last_episode_to_air'] && $tv['last_episode_to_air']['season_number'] == $seasonNumber) {
                 if ($multiPart) {
                     $lastEpisodeToAirNumber = $tv['last_episode_to_air']['episode_number'];
                     if ($lastEpisodeToAirNumber >= $firstEpisode && $lastEpisodeToAirNumber <= $lastEpisode) {
@@ -2427,7 +2427,7 @@ class SeriesController extends AbstractController
                 }
             } else {
                 $tvNextEpisode = null;
-            }
+            }*/
 
             $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
             $nextEpisodeAiDate = $tvNextEpisode['date'] ?? null;
@@ -2445,47 +2445,43 @@ class SeriesController extends AbstractController
             $userNextEpisode = $this->userEpisodeRepository->getScheduleNextEpisode($user, $series, $seasonNumber);
             $userLastEpisode = $userLastEpisode[0] ?? null;
             $userNextEpisode = $userNextEpisode[0] ?? null;
+            dump([
+                'userLastEpisode' => $userLastEpisode,
+                'userNextEpisode' => $userNextEpisode,
+            ]);
+            $userLastEpisode = $this->offsetEpisodeDate($userLastEpisode, $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+            $userNextEpisode = $this->offsetEpisodeDate($userNextEpisode, $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+            dump([
+                'episodeCount' => $episodeCount,
+                'userLastEpisode' => $userLastEpisode,
+                'userNextEpisode' => $userNextEpisode,
+            ]);
             $endOfSeason = $userLastEpisode && $userLastEpisode['episode_number'] == $episodeCount;
-//            if ($target == null) // no tv ?
-//            {
+
             $target = null;
+            $targetTS = null;
             if (!$userNextEpisode && $userLastEpisode) {
                 if ($multiPart) {
                     if ($userLastEpisode['episode_number'] >= $firstEpisode && $userLastEpisode['episode_number'] <= $lastEpisode) {
-                        $airDateOffset = $this->dateService->newDateImmutable($userLastEpisode['air_date_offset'], 'Europe/Paris');
-                        $target = $airDateOffset->setTime($airAtHour, $airAtMinute);
-                        $targetTS = $target->getTimestamp();
+                        $targetTS = $userLastEpisode['date']->getTimestamp();
                     } else {
                         $userLastEpisode = null;
                     }
                 } else {
-                    $airDateOffset = $this->dateService->newDateImmutable($userLastEpisode['air_date_offset'], 'Europe/Paris');
-                    $target = $airDateOffset->setTime($airAtHour, $airAtMinute);
-                    $targetTS = $target->getTimestamp();
+                    $targetTS = $userLastEpisode['date']->getTimestamp();
                 }
             }
             if ($userNextEpisode) {
                 if ($multiPart) {
                     if ($userNextEpisode['episode_number'] >= $firstEpisode && $userNextEpisode['episode_number'] <= $lastEpisode) {
-                        $airDateOffset = $this->dateService->newDateImmutable($userNextEpisode['air_date_offset'], 'Europe/Paris');
-                        $target = $airDateOffset->setTime($airAtHour, $airAtMinute);
-                        $targetTS = $target->getTimestamp();
+                        $targetTS = $userNextEpisode['date']->getTimestamp();
                     } else {
                         $userNextEpisode = null;
                     }
                 } else {
-                    $airDateOffset = $this->dateService->newDateImmutable($userNextEpisode['air_date_offset'], 'Europe/Paris');
-                    $target = $airDateOffset->setTime($airAtHour, $airAtMinute);
-                    $targetTS = $target->getTimestamp();
+                    $targetTS = $userNextEpisode['date']->getTimestamp();
                 }
             }
-//            }
-            /*dump([
-                'episodeCount' => $episodeCount,
-                'userLastEpisode' => $userLastEpisode,
-                'userNextEpisode' => $userNextEpisode,
-                'endOfSeason' => $endOfSeason,
-            ]);*/
 
             if ($userNextEpisode) {
                 $userNextEpisodes = $this->userEpisodeRepository->getScheduleNextEpisodes($user, $series, $userNextEpisode['air_date'], $seasonNumber);
@@ -2502,8 +2498,7 @@ class SeriesController extends AbstractController
                 $userLastNextEpisode = null;
             }
             if ($userNextEpisode == null) {
-                $airDateOffset = $this->dateService->newDateImmutable($userLastEpisode['air_date_offset'], 'Europe/Paris');
-                $targetTS = $airDateOffset?->getTimestamp();
+                $targetTS = $userLastEpisode['date']->getTimestamp();
             }
 
             $providerId = $schedule->getProviderId();
@@ -2537,8 +2532,8 @@ class SeriesController extends AbstractController
                 'userNextEpisode' => $userNextEpisode,
                 'multiple' => $multiple,
                 'userLastNextEpisode' => $userLastNextEpisode,
-                'tvLastEpisode' => $tvLastEpisode,
-                'tvNextEpisode' => $tvNextEpisode,
+//                'tvLastEpisode' => $tvLastEpisode,
+//                'tvNextEpisode' => $tvNextEpisode,
                 'toBeContinued' => $tv ? $this->isToBeContinued($tv, $userLastEpisode) : $userNextEpisode != null,
                 'tmdbStatus' => $tv['status'] ?? 'series not found',
             ];
@@ -2771,6 +2766,7 @@ class SeriesController extends AbstractController
         $episode['date'] = $date;
         $date = $date->format('Y-m-d H:i');
         $episode['air_date'] = str_replace(' ', 'T', $date);
+
         return $episode;
     }
 
