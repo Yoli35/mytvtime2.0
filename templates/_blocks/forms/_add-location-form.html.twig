@@ -29,6 +29,27 @@
             </div>
         </div>
         <div class="form-row">
+            <div class="form-field">
+                <label for="google-map-url">{{ 'Paste Google maps url here to obtain latitude and longitude'|trans }}
+                    <input type="url" name="google-map-url" id="google-map-url">
+                </label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field">
+                <label for="latitude">{{ 'Latitude'|trans }}
+                    <input type="number" name="latitude" id="latitude" step="0.0000001" required>
+                    <span class="error"></span>
+                </label>
+            </div>
+            <div class="form-field">
+                <label for="longitude">{{ 'Longitude'|trans }}
+                    <input type="number" name="longitude" id="longitude" step="0.0000001" required>
+                    <span class="error"></span>
+                </label>
+            </div>
+        </div>
+        <div class="form-row">
             <div class="form-column">
                 <div class="form-field">
                     {{ 'Urls'|trans }}
@@ -81,7 +102,7 @@
             </div>
             <div class="form-column">
                 <div class="form-field">
-                    {{ 'Local files'|trans }}
+                    {{ 'Local files'|trans }} ({{ 'Thumbnail, additional images'|trans }})
                 </div>
                 <div class="form-field">
                     <label for="image-file" class="">{{ 'Drop your image file here'|trans }}
@@ -99,27 +120,6 @@
                         <p>{{ 'No additional images currently selected for upload'|trans }}</p>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-field">
-                <label for="google-map-url">{{ 'Paste Google maps url here to obtain latitude and longitude'|trans }}
-                    <input type="url" name="google-map-url" id="google-map-url">
-                </label>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-field">
-                <label for="latitude">{{ 'Latitude'|trans }}
-                    <input type="number" name="latitude" id="latitude" step="0.0000001" required>
-                    <span class="error"></span>
-                </label>
-            </div>
-            <div class="form-field">
-                <label for="longitude">{{ 'Longitude'|trans }}
-                    <input type="number" name="longitude" id="longitude" step="0.0000001" required>
-                    <span class="error"></span>
-                </label>
             </div>
         </div>
         <div class="form-row">

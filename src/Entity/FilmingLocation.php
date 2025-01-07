@@ -65,6 +65,15 @@ class FilmingLocation
         $this->filmingLocationImages = new ArrayCollection();
     }
 
+    public function update(string $title, string $location, string $description, float $latitude, float $longitude): void
+    {
+        $this->title = $title;
+        $this->location = $location;
+        $this->description = $description;
+        $this->latitude = $latitude;
+        $this->longitude = $longitude;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

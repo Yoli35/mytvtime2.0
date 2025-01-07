@@ -41,12 +41,17 @@ class FilmingLocationImageRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-    public function save(FilmingLocationImage $filmingLocationImage, bool $true)
+    public function save(FilmingLocationImage $filmingLocationImage, bool $flush = false): void
     {
         $this->em->persist($filmingLocationImage);
 
-        if ($true) {
+        if ($flush) {
             $this->em->flush();
         }
+    }
+
+    public function flush(): void
+    {
+        $this->em->flush();
     }
 }

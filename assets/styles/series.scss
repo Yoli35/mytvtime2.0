@@ -1808,8 +1808,17 @@ h2 {
 .add-backdrop-dialog {
     .dropzone-container {
         border: 2px dashed var(--orange-50);
-        padding: 2rem 1rem;
+        /*padding: 2rem 1rem;*/
         border-radius: .5rem;
+
+        .dropzone-preview-image {
+            aspect-ratio: 16/9;
+            border-radius: .25rem;
+            border: 2px solid var(--orange-50);
+            height: 9rem;
+            max-width: unset;
+            min-width: unset;
+        }
     }
 
     .dropzone-placeholder {
@@ -3776,6 +3785,12 @@ dialog, .side-panel {
 }
 
 .add-location-dialog {
+    .form-column {
+        background-color: var(--ardoise-80-alpha-50);
+        border-radius: .5rem;
+        padding: 1rem;
+    }
+
     .location-images {
         display: flex;
         gap: .5rem;

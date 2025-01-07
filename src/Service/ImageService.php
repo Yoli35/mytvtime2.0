@@ -5,7 +5,7 @@ namespace App\Service;
 class ImageService
 {
 
-    public static function webpImage(string $sourcePath, string $destPath, int $quality = 100, int $width = 1280, int $height = 720, bool $removeOld = true): ?string
+    public static function webpImage(string $sourcePath, string $destPath, int $quality = 100, int $width = 1920, int $height = 1080, bool $removeOld = true): ?string
     {
         $destination = $destPath;
 
@@ -16,9 +16,7 @@ class ImageService
 
         if ($info['mime'] == 'image/jpeg')
             $image = imagecreatefromjpeg($sourcePath);
-        elseif ($isAlpha = $info['mime'] == 'image/gif') {
-            $image = imagecreatefromgif($sourcePath);
-        } elseif ($isAlpha = $info['mime'] == 'image/png') {
+        elseif ($isAlpha = $info['mime'] == 'image/png') {
             $image = imagecreatefrompng($sourcePath);
         } elseif ($isAlpha = $info['mime'] == 'image/webp') {
             $image = imagecreatefromwebp($sourcePath);
@@ -51,25 +49,32 @@ class ImageService
                 'sourceY' => $sourceY,
             ]);
             $newImage = imagecreatetruecolor($width, $height);
-            if ($isAlpha) {
-                imagealphablending($newImage, false);
-                imagesavealpha($newImage, true);
-                if ($sourceX || $sourceY)
+            // On ajoute un fond noir pour les images dont l'aspect ratio est différent de 16 / 9 (1920 / 1080)
+            if ($sourceX || $sourceY) {
+                if ($isAlpha) {
+                    imagealphablending($newImage, false);
+                    imagesavealpha($newImage, true);
                     imagefilledrectangle($newImage, 0, 0, $width, $height, imagecolorallocatealpha($newImage, 0, 0, 0, 127));
-            } else {
-                if ($sourceX || $sourceY)
+                } else {
                     imagefill($newImage, 0, 0, imagecolorallocate($newImage, 0, 0, 0));
+                }
             }
-            imagecopyresampled($newImage, $image, 0, 0, $sourceX, $sourceY, $width, $height, $sourceWidth, $sourceHeight);
+            $successfullyResampled = imagecopyresampled($newImage, $image, 0, 0, $sourceX, $sourceY, $width, $height, $sourceWidth, $sourceHeight);
 
-            imagewebp($newImage, $destination, $quality);
+            if (!$successfullyResampled) {
+                imagedestroy($newImage);
+                imagedestroy($image);
+                return null;
+            }
+            $successfullyConverted = imagewebp($newImage, $destination, $quality);
             imagedestroy($newImage);
+            imagedestroy($image);
         } else {
-            imagewebp($image, $destination, $quality);
+            $successfullyConverted = imagewebp($image, $destination, $quality);
             imagedestroy($image);
         }
 
-        if ($removeOld) unlink($sourcePath);
+        if ($successfullyConverted  && $removeOld) unlink($sourcePath);
 
         return $destination;
     }

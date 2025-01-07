@@ -1827,8 +1827,33 @@ class SeriesController extends AbstractController
     {
         $slugger = new AsciiSlugger();
         $locations = $series->getLocations();
-        $data = json_decode($request->getContent(), true);
-        dump(['locations' => $locations, 'data' => $data]);
+
+        $data = $request->request->all();
+        $files = $request->files->all();
+
+        $imageFiles = [];
+        foreach ($files as $key => $file) {
+            if ($file instanceof UploadedFile) {
+                // Est-ce qu'il s'agit d'une image ?
+                $mimeType = $file->getMimeType();
+                if (str_starts_with($mimeType, 'image')) {
+                    $imageFiles[$key] = $file;
+                }
+            }
+        }
+
+        dump([
+            'data' => $data,
+            'image files' => $imageFiles,
+        ]);
+
+        if ($data['location'] == 'test') {
+            return $this->json([
+                'ok' => true,
+                'testMode' => true,
+                'message' => 'Test location',
+            ]);
+        }
         $data = array_filter($data, fn($key) => $key != "google-map-url", ARRAY_FILTER_USE_KEY);
 
         $crudType = $data['crud-type'];
@@ -1898,23 +1923,20 @@ class SeriesController extends AbstractController
 
             $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $location, $description, $latitude, $longitude, true);
             $filmingLocation->setOriginCountry($series->getOriginCountry());
-            $this->filmingLocationRepository->save($filmingLocation, true);
         } else {
             $filmingLocation = $this->filmingLocationRepository->findOneBy(['id' => $crudId]);
-            $filmingLocation->setTitle($title);
-            $filmingLocation->setLocation($location);
-            $filmingLocation->setDescription($description);
-            $filmingLocation->setLatitude($latitude);
-            $filmingLocation->setLongitude($longitude);
-            $this->filmingLocationRepository->save($filmingLocation, true);
+            $filmingLocation->update($title, $location, $description, $latitude, $longitude);
         }
+        $this->filmingLocationRepository->save($filmingLocation, true);
 
         $imageMapPath = $this->getParameter('kernel.project_dir') . '/public/images/map/';
         $imageTempPath = $this->getParameter('kernel.project_dir') . '/public/images/temp/';
         $messages = [];
-//        $filmingLocationImages = [];
         $n = $firstImageIndex;
 
+        /******************************************************************************
+         * Images ajoutées avec Url                                                   *
+         ******************************************************************************/
         foreach ($images as $imageUrl) {
             if (str_starts_with($imageUrl, '~/')) {
                 $image = str_replace('~/', '/', $imageUrl);
@@ -1925,32 +1947,64 @@ class SeriesController extends AbstractController
                 $destination = $imageMapPath . $basename . '.webp';
 
                 $copied = $this->saveImageFromUrl($imageUrl, $tempName, true);
-                dump(['image' => $basename, 'copied' => $copied]);
                 if ($copied) {
-                    $messages[] = 'Image [ ' . $imageUrl . ' ] copied to ' . $destination;
+                    $webp = $this->imageService->webpImage($tempName, $destination);
+                    if ($webp) {
+                        $image = '/' . $basename . '.webp';
+                    } else {
+                        $image = null;
+                    }
                 } else {
-                    $messages[] = 'Image [ ' . $imageUrl . ' ] not copied';
+                    $image = null;
                 }
-                $webp = $this->imageService->webpImage($tempName, $destination);
-                if ($webp) {
-                    $messages[] = 'Image [ ' . $basename . ' ] converted to webp';
-                } else {
-                    $messages[] = 'Image [ ' . $basename . ' ] not converted to webp';
-                }
-                $image = '/' . $basename . '.webp';
-                dump(['image' => $image, 'copied' => $copied, 'webp' => $webp, 'destination' => $destination]);
             }
-            $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
-            $this->filmingLocationImageRepository->save($filmingLocationImage, true);
+            if ($image) {
+                $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
+                $this->filmingLocationImageRepository->save($filmingLocationImage, true);
 
-            if ($crudType === 'create' && $n == 1) {
-                $filmingLocation->setStill($filmingLocationImage);
-                $this->filmingLocationRepository->save($filmingLocation, true);
+                if ($crudType === 'create' && $n == 1) {
+                    $filmingLocation->setStill($filmingLocationImage);
+                    $this->filmingLocationRepository->save($filmingLocation, true);
+                }
+                $n++;
             }
-            $n++;
-//            $filmingLocationImages[] = $filmingLocationImage;
         }
 
+        /******************************************************************************
+         * Images ajoutées depuis des fichiers locaux (type : UploadedFile)           *
+         ******************************************************************************/
+        foreach ($imageFiles as $key => $file) {
+            $extension = $file->guessExtension();
+            $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
+            $tempName = $imageTempPath . $basename . '.' . $extension;
+            $destination = $imageMapPath . $basename . '.webp';
+
+            $copied = $file->move($imageTempPath, $basename . '.' . $extension);
+            if ($copied) {
+                $webp = $this->imageService->webpImage($tempName, $destination);
+                if ($webp) {
+                    $image = '/' . $basename . '.webp';
+                } else {
+                    $image = null;
+                }
+            } else {
+                $image = null;
+            }
+            if ($image) {
+                $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
+                $this->filmingLocationImageRepository->save($filmingLocationImage, true);
+
+                if ($key === 'image-file') { // la vignette
+                    $filmingLocation->setStill($filmingLocationImage);
+                    $this->filmingLocationRepository->save($filmingLocation, true);
+                }
+                $n++;
+            }
+        }
+        if ($n > $firstImageIndex) {
+            $addedImageCount = $n - $firstImageIndex;
+            $messages[] = $addedImageCount . $addedImageCount > 1 ? ' images ajoutées' : ' image ajoutée';
+        }
 
         return $this->json([
             'ok' => true,
@@ -2399,35 +2453,35 @@ class SeriesController extends AbstractController
                 $dayArr[$day] = true;
             }
 
-/*            if ($tv && $tv['last_episode_to_air'] && $tv['last_episode_to_air']['season_number'] == $seasonNumber) {
-                if ($multiPart) {
-                    $lastEpisodeToAirNumber = $tv['last_episode_to_air']['episode_number'];
-                    if ($lastEpisodeToAirNumber >= $firstEpisode && $lastEpisodeToAirNumber <= $lastEpisode) {
-                        $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
-                    } else {
-                        $tvLastEpisode = null;
-                    }
-                } else {
-                    $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
-                }
-            } else {
-                $tvLastEpisode = null;
-            }
+            /*            if ($tv && $tv['last_episode_to_air'] && $tv['last_episode_to_air']['season_number'] == $seasonNumber) {
+                            if ($multiPart) {
+                                $lastEpisodeToAirNumber = $tv['last_episode_to_air']['episode_number'];
+                                if ($lastEpisodeToAirNumber >= $firstEpisode && $lastEpisodeToAirNumber <= $lastEpisode) {
+                                    $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+                                } else {
+                                    $tvLastEpisode = null;
+                                }
+                            } else {
+                                $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+                            }
+                        } else {
+                            $tvLastEpisode = null;
+                        }
 
-            if ($tv && $tv['next_episode_to_air'] && $tv['next_episode_to_air']['season_number'] == $seasonNumber) {
-                if ($multiPart) {
-                    $nextEpisodeToAirNumber = $tv['next_episode_to_air']['episode_number'];
-                    if ($nextEpisodeToAirNumber >= $firstEpisode && $nextEpisodeToAirNumber <= $lastEpisode) {
-                        $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
-                    } else {
-                        $tvNextEpisode = null;
-                    }
-                } else {
-                    $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
-                }
-            } else {
-                $tvNextEpisode = null;
-            }*/
+                        if ($tv && $tv['next_episode_to_air'] && $tv['next_episode_to_air']['season_number'] == $seasonNumber) {
+                            if ($multiPart) {
+                                $nextEpisodeToAirNumber = $tv['next_episode_to_air']['episode_number'];
+                                if ($nextEpisodeToAirNumber >= $firstEpisode && $nextEpisodeToAirNumber <= $lastEpisode) {
+                                    $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+                                } else {
+                                    $tvNextEpisode = null;
+                                }
+                            } else {
+                                $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+                            }
+                        } else {
+                            $tvNextEpisode = null;
+                        }*/
 
             $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
             $nextEpisodeAiDate = $tvNextEpisode['date'] ?? null;

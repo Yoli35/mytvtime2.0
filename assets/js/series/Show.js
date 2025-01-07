@@ -1099,27 +1099,36 @@ export class Show {
 
             const inputs = addLocationForm.querySelectorAll('input[required]');
             let emptyInput = false;
-            /*inputs.forEach(function (input) {
-                if (!input.value) {
-                    input.nextElementSibling.textContent = translations['This field is required'];
-                    emptyInput = true;
+            inputs.forEach(function (input) {
+                // la première image (image-url) est requise, mais peut être remplacée par un fichier (image-file)
+                if (input.name === 'image-url') {
+                    if(!input.value && !input.closest('.form-row').querySelector('input[name="image-file"]').value) {
+                        input.nextElementSibling.textContent = translations['This field is required'];
+                        emptyInput = true;
+                    } else {
+                        input.nextElementSibling.textContent = '';
+                    }
                 } else {
-                    input.nextElementSibling.textContent = '';
-                }
-            });*/
+                        if (!input.value) {
+                            input.nextElementSibling.textContent = translations['This field is required'];
+                            emptyInput = true;
+                        } else {
+                            input.nextElementSibling.textContent = '';
+                        }
+                    }
+            });
             if (!emptyInput) {
                 const formData = gThis.getFormData(addLocationForm);
                 fetch('/' + lang + '/series/add/location/' + seriesId,
                     {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(Object.fromEntries(formData))
+                        body: formData
                     }
-                ).then(function (response) {
+                ).then(async function (response) {
                     if (response.ok) {
-                        window.location.reload();
+                        const data = await response.json();
+                        console.log({data});
+                        // window.location.reload();
                     }
                     gThis.closeLocationPanel();
                 });
@@ -1129,11 +1138,26 @@ export class Show {
         imageInputs.forEach(function (imageInput) {
             // Les champs de type "url" peuvent être modifiés pour afficher une image
             imageInput.addEventListener('input', function () {
+                let validValue = false;
+                const path = this.value;
                 const img = this.closest('.form-field').querySelector('img');
-                if (this.value.includes('~/')) {
-                    img.src = this.value.replace('~/', '/images/map/');
-                } else {
-                    img.src = this.value;
+                // is it a valid url?
+                const isUrl = path.match(/https?:\/\/.+\.(jpg|jpeg|png|gif|webp)/);
+                if (isUrl) {
+                    img.src = path;
+                    validValue = true;
+                }
+                if (this.value.includes('~/')) { // for dev test
+                    const filename = path.split('/').pop();
+                    // is a valid filename?
+                    const isFilename = filename.match(/.+\.jpg|jpeg|png|gif|webp/);
+                    if (isFilename) {
+                        img.src = this.value.replace('~/', '/images/map/');
+                        validValue = true;
+                    }
+                }
+                if (!validValue) {
+                    img.src = '';
                 }
             });
             // Les champs de type "url" peuvent recevoir un fichier image par glisser-déposer
@@ -1143,6 +1167,8 @@ export class Show {
                 const img = this.closest('.form-field').querySelector('img');
                 img.src = URL.createObjectURL(file);
                 this.value = img.src;
+                console.log({file});
+                console.log(img.src)
             });
         });
 
@@ -1192,16 +1218,16 @@ export class Show {
 
         // https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
         const fileTypes = [
-            "image/apng",
-            "image/bmp",
-            "image/gif",
+            /* "image/apng",*/
+            /* "image/bmp",*/
+            /* "image/gif",*/
             "image/jpeg",
-            "image/pjpeg",
+            /* "image/pjpeg",*/
             "image/png",
-            "image/svg+xml",
-            "image/tiff",
+            /* "image/svg+xml",*/
+            /* "image/tiff",*/
             "image/webp",
-            "image/x-icon",
+            /* "image/x-icon",*/
         ];
 
         function validFileType(file) {
@@ -1353,7 +1379,8 @@ export class Show {
         const locationInput = form.querySelector('input[name="location"]');
         const descriptionInput = form.querySelector('input[name="description"]');
         const imageUrlInputs = form.querySelectorAll('input[name*="image-url"]');
-        const imageFileInputs = form.querySelectorAll('input[name*="image-file"]');
+        const imageFileInput = form.querySelector('input[name="image-file"]');
+        const imageFilesInput = form.querySelector('input[name*="image-files"]');
         const latitudeInput = form.querySelector('input[name="latitude"]');
         const longitudeInput = form.querySelector('input[name="longitude"]');
 
@@ -1370,8 +1397,9 @@ export class Show {
         imageUrlInputs.forEach(function (input) {
             formData.append(input.name, input.value);
         });
-        imageFileInputs.forEach(function (input) {
-            formData.append(input.name, input.files[0]);
+        formData.append(imageFileInput.name, imageFileInput.files[0]);
+        Array.from(imageFilesInput.files).forEach(function (file, index) {
+            formData.append('additional-image-' + index, file);
         });
 
         return formData;
