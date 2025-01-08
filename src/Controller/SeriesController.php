@@ -64,6 +64,7 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Clock\DatePoint;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -1825,6 +1826,8 @@ class SeriesController extends AbstractController
     #[Route('/add/location/{id}', name: 'add_location', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addLocation(Request $request, Series $series): Response
     {
+        $messages = [];
+
         $slugger = new AsciiSlugger();
         $locations = $series->getLocations();
 
@@ -1846,6 +1849,14 @@ class SeriesController extends AbstractController
             'data' => $data,
             'image files' => $imageFiles,
         ]);
+        // "image-url" => "blob:https://localhost:8000/71698467-714e-4b2e-b6b3-a285619ea272"
+        $testUrl = $data['image-url'];
+        if (str_starts_with($testUrl, 'blob')) {
+            $blob = $data['image-url-blob'];
+
+            $imageResulPath = $this->blobToWebp($blob, $data['title'], $data['location'], 100);
+            dump($imageResulPath);
+        }
 
         if ($data['location'] == 'test') {
             return $this->json([
@@ -1877,7 +1888,7 @@ class SeriesController extends AbstractController
         } else { // Images supplémentaires
             $images = array_filter($data, fn($key) => str_contains($key, 'image-url-'), ARRAY_FILTER_USE_KEY);
         }
-        $images = array_values($images);
+//        $images = array_values($images);
         $images = array_filter($images, fn($image) => $image != '' and $image != "undefined");
         dump(['images' => $images]);
         // TODO: Vérifier le code suivant
@@ -1929,33 +1940,40 @@ class SeriesController extends AbstractController
         }
         $this->filmingLocationRepository->save($filmingLocation, true);
 
-        $imageMapPath = $this->getParameter('kernel.project_dir') . '/public/images/map/';
-        $imageTempPath = $this->getParameter('kernel.project_dir') . '/public/images/temp/';
-        $messages = [];
         $n = $firstImageIndex;
-
-        /******************************************************************************
-         * Images ajoutées avec Url                                                   *
-         ******************************************************************************/
-        foreach ($images as $imageUrl) {
+        /**************************************************************************************
+         * En mode dev, on peut ajouter des FilmingLocationImage sans passer par le           *
+         * téléversement : ~/some-picture.webp                                                *
+         * SINON :                                                                            *
+         * Images ajoutées avec Url (https://website/some-pisture.png)                        *
+         * ou par glisser-déposer (blob:https://website/71698467-714e-4b2e-b6b3-a285619ea272) *
+         **************************************************************************************/
+        foreach ($images as $name => $imageUrl) {
             if (str_starts_with($imageUrl, '~/')) {
                 $image = str_replace('~/', '/', $imageUrl);
             } else {
-                $extension = pathinfo($imageUrl, PATHINFO_EXTENSION);
-                $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
-                $tempName = $imageTempPath . $basename . '.' . $extension;
-                $destination = $imageMapPath . $basename . '.webp';
+                if (str_starts_with('blob:', $imageUrl)) {
+                    $blob = $data[$name . '-blob'];
+                    $image = $this->blobToWebp($blob, $data['title'], $data['location'], $n);
+                    dump('blob', $image);
+                } else {
+                    /*$extension = pathinfo($imageUrl, PATHINFO_EXTENSION);
+                    $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
+                    $tempName = $imageTempPath . $basename . '.' . $extension;
+                    $destination = $imageMapPath . $basename . '.webp';
 
-                $copied = $this->saveImageFromUrl($imageUrl, $tempName, true);
-                if ($copied) {
-                    $webp = $this->imageService->webpImage($tempName, $destination);
-                    if ($webp) {
-                        $image = '/' . $basename . '.webp';
+                    $copied = $this->saveImageFromUrl($imageUrl, $tempName, true);
+                    if ($copied) {
+                        $webp = $this->imageService->webpImage($tempName, $destination);
+                        if ($webp) {
+                            $image = '/' . $basename . '.webp';
+                        } else {
+                            $image = null;
+                        }
                     } else {
                         $image = null;
-                    }
-                } else {
-                    $image = null;
+                    }*/
+                    $image = $this->urlToWebp($imageUrl, $title, $location, $n);
                 }
             }
             if ($image) {
@@ -1974,22 +1992,23 @@ class SeriesController extends AbstractController
          * Images ajoutées depuis des fichiers locaux (type : UploadedFile)           *
          ******************************************************************************/
         foreach ($imageFiles as $key => $file) {
-            $extension = $file->guessExtension();
+            /*$extension = $file->guessExtension();
             $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
             $tempName = $imageTempPath . $basename . '.' . $extension;
             $destination = $imageMapPath . $basename . '.webp';
 
-            $copied = $file->move($imageTempPath, $basename . '.' . $extension);
-            if ($copied) {
+            try {
+                $file->move($imageTempPath, $basename . '.' . $extension);
                 $webp = $this->imageService->webpImage($tempName, $destination);
                 if ($webp) {
                     $image = '/' . $basename . '.webp';
                 } else {
                     $image = null;
                 }
-            } else {
+            } catch (FileException $e) {
                 $image = null;
-            }
+            }*/
+            $image = $this->fileToWebp($file, $title, $location, $n);
             if ($image) {
                 $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
                 $this->filmingLocationImageRepository->save($filmingLocationImage, true);
@@ -2010,6 +2029,97 @@ class SeriesController extends AbstractController
             'ok' => true,
             'messages' => $messages,
         ]);
+    }
+
+    public function blobToWebp(string $blob, string $title, string $location, int $n): ?string
+    {
+        $slugger = new AsciiSlugger();
+        $imageMapPath = $this->getParameter('kernel.project_dir') . '/public/images/map/';
+        $imageTempPath = $this->getParameter('kernel.project_dir') . '/public/images/temp/';
+
+        // blob = [data:image/png;base64,iVB...] => raw image = base64_decode('iVB...')
+        $imageType = preg_match('/^data:image\/(\w+);base64,/', $blob, $matches);
+        if ($imageType) {
+            $extension = $matches[1];
+            $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
+            $tempName = $imageTempPath . $basename . '.' . $extension;
+            $destination = $imageMapPath . $basename . '.webp';
+            $blob = base64_decode(preg_replace('/^data:image\/\w+;base64,/', '', $blob));
+
+            if ($blob && $image = imagecreatefromstring($blob)) {
+                ob_start();
+                if ($extension === 'png') {
+                    imagepng($image);
+                } elseif ($extension === 'jpeg') {
+                    imagejpeg($image);
+                } elseif ($extension === 'webp') {
+                    imagewebp($image);
+                } else {
+                    ob_clean();
+                    return null;
+                }
+                $imageData = ob_get_contents();
+                ob_end_clean();
+                $copied = file_put_contents($tempName, $imageData);
+                if ($copied) {
+                    $webp = $this->imageService->webpImage($tempName, $destination, 90);
+                    if ($webp) {
+                        return '/' . $basename . '.webp';
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public function urlToWebp(string $url, string $title, string $location, int $n): ?string
+    {
+        $slugger = new AsciiSlugger();
+        $imageMapPath = $this->getParameter('kernel.project_dir') . '/public/images/map/';
+        $imageTempPath = $this->getParameter('kernel.project_dir') . '/public/images/temp/';
+
+        $extension = pathinfo($url, PATHINFO_EXTENSION);
+        $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
+        $tempName = $imageTempPath . $basename . '.' . $extension;
+        $destination = $imageMapPath . $basename . '.webp';
+
+        $copied = $this->saveImageFromUrl($url, $tempName, true);
+        if ($copied) {
+            $webp = $this->imageService->webpImage($tempName, $destination);
+            if ($webp) {
+                $image = '/' . $basename . '.webp';
+            } else {
+                $image = null;
+            }
+        } else {
+            $image = null;
+        }
+        return $image;
+    }
+
+    public function fileToWebp(UploadedFile $file, string $title, string $location, int $n): ?string
+    {
+        $slugger = new AsciiSlugger();
+        $imageMapPath = $this->getParameter('kernel.project_dir') . '/public/images/map/';
+        $imageTempPath = $this->getParameter('kernel.project_dir') . '/public/images/temp/';
+
+        $extension = $file->guessExtension();
+        $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
+        $tempName = $imageTempPath . $basename . '.' . $extension;
+        $destination = $imageMapPath . $basename . '.webp';
+
+        try {
+            $file->move($imageTempPath, $basename . '.' . $extension);
+            $webp = $this->imageService->webpImage($tempName, $destination);
+            if ($webp) {
+                $image = '/' . $basename . '.webp';
+            } else {
+                $image = null;
+            }
+        } catch (FileException $e) {
+            $image = null;
+        }
+        return $image;
     }
 
     #[Route('/fetch/search/db/tv', name: 'fetch_search_db_tv', methods: ['POST'])]

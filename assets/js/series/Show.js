@@ -1022,6 +1022,19 @@ export class Show {
         const addLocationCancel = addLocationForm.querySelector('button[type="button"]');
         const addLocationSubmit = addLocationForm.querySelector('button[type="submit"]');
         const imageInputs = addLocationForm.querySelectorAll('input[type="url"]');
+        // Dev test
+        const locationInput = addLocationForm.querySelector('input[name="location"]');
+        locationInput.addEventListener('input', function () {
+            const location = this.value;
+            if (location.length === 4 && location === 'test') {
+                const descriptionInput = addLocationForm.querySelector('input[name="description"]');
+                descriptionInput.value = 'bla bla bla';
+                const latitudeInput = addLocationForm.querySelector('input[name="latitude"]');
+                latitudeInput.value = 48.8566;
+                const longitudeInput = addLocationForm.querySelector('input[name="longitude"]');
+                longitudeInput.value = 2.3522;
+            }
+        });
 
         if (seriesMap) {
             const mapViewValue = JSON.parse(seriesMap.getAttribute('data-symfony--ux-leaflet-map--map-view-value'));
@@ -1150,7 +1163,7 @@ export class Show {
                 if (this.value.includes('~/')) { // for dev test
                     const filename = path.split('/').pop();
                     // is a valid filename?
-                    const isFilename = filename.match(/.+\.jpg|jpeg|png|gif|webp/);
+                    const isFilename = filename.match(/.+\.jpg|jpeg|png|webp/);
                     if (isFilename) {
                         img.src = this.value.replace('~/', '/images/map/');
                         validValue = true;
@@ -1169,6 +1182,9 @@ export class Show {
                 this.value = img.src;
                 console.log({file});
                 console.log(img.src)
+                const blobPreviewDiv = this.closest('.form-field').querySelector('.blob-preview');
+                const blobPreview = blobPreviewDiv.querySelector('img');
+                previewFile(file, blobPreview);
             });
         });
 
@@ -1249,6 +1265,7 @@ export class Show {
 
             reader.addEventListener("load", () => {
                 preview.src = reader.result;
+                console.log({reader});
             }, false);
             if (file) {
                 reader.readAsDataURL(file);
@@ -1396,6 +1413,12 @@ export class Show {
         formData.append("longitude", longitudeInput.value);
         imageUrlInputs.forEach(function (input) {
             formData.append(input.name, input.value);
+            if (input.value.includes('blob:')) {
+                const blobPreviewDiv = input.closest('.form-field').querySelector('.blob-preview');
+                const blobPreview = blobPreviewDiv.querySelector('img');
+                const file = blobPreview.src;
+                formData.append(input.name + '-blob', file);
+            }
         });
         formData.append(imageFileInput.name, imageFileInput.files[0]);
         Array.from(imageFilesInput.files).forEach(function (file, index) {

@@ -10,6 +10,9 @@ class ImageService
         $destination = $destPath;
 
         $info = getimagesize($sourcePath);
+        if ($info === false) {
+            return null;
+        }
         $isAlpha = false;
         $sourceWidth = $info[0];
         $sourceHeight = $info[1];
