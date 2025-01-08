@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use http\Env\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Throwable;
 
@@ -27,7 +26,7 @@ class ThetvdbService
             $response = $this->client->request('GET', 'https://api.thetvdb.com/series/' . $id, [
                 'headers' => [
                     'accept: application/json',
-                    'Authorization: Bearer a1e4780f-729e-475e-a6a0-d4e8d0b494ce'
+                    'Authorization: Bearer '
                 ]
             ]);
             return $response->getContent();
