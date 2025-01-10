@@ -1833,9 +1833,14 @@ class SeriesController extends AbstractController
 
         $data = $request->request->all();
         $files = $request->files->all();
+        dump([
+            'data' => $data,
+            'files' => $files,
+        ]);
 
         $imageFiles = [];
         foreach ($files as $key => $file) {
+            dump($file);
             if ($file instanceof UploadedFile) {
                 // Est-ce qu'il s'agit d'une image ?
                 $mimeType = $file->getMimeType();
@@ -1844,7 +1849,6 @@ class SeriesController extends AbstractController
                 }
             }
         }
-
         dump([
             'data' => $data,
             'image files' => $imageFiles,
