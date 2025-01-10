@@ -84,14 +84,15 @@ export class Keyword {
         let fields = '';
         keywords.forEach(keyword => {
             console.log(keyword);
+            keyword = keyword.trim();
             const field = ' \
             <div class="field">\n \
                 <div class="translation">\n \
-                    <label for="translated-' + index + '">' + keyword + '\n \
-                        <input id="translated-' + index + '" type="text" data-original="' + keyword + '" value="' + keyword + '" style="width: ' + gThis.maxLength + 'ch">\n \
+                    <label for="translated-' + index + '"><div class="keyword">' + keyword + '</div>\n \
+                        <input id="translated-' + index + '" type="text" data-original="' + keyword + '" value="' + keyword + '">\n \
                     </label>\n \
                 </div>\n \
-            </div>\n';
+            </div>\n';/* style="width: ' + gThis.maxLength + 'ch"*/
             index++;
             fields += field;
         });
