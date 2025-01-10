@@ -1441,6 +1441,7 @@ export class Show {
         const latitudeInput = addLocationForm.querySelector('input[name="latitude"]');
         const longitudeInput = addLocationForm.querySelector('input[name="longitude"]');
         const locationImages = addLocationForm.querySelector(".location-images");
+        const additionalImagesDiv = addLocationForm.querySelector('.additional-images');
         const submitButton = addLocationForm.querySelector('button[type="submit"]');
 
         inputs.forEach(function (input) {
@@ -1472,7 +1473,6 @@ export class Show {
             img.alt = location.title;
             imageDiv.appendChild(img);
 
-            const additionalImagesDiv = locationImages.querySelector('.additional-images');
             const wrapper = additionalImagesDiv.querySelector('.wrapper');
             wrapper.innerHTML = '';
             const additionalImagesArray = location.filmingLocationImages.filter(fl => fl.id !== location.still_id);

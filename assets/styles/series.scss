@@ -690,6 +690,7 @@ h2 {
                 flex-shrink: 0;
                 gap: .5rem;
                 justify-content: flex-start;
+                padding-block-end: .5rem;
 
                 .update {
                     background-color: var(--orange-50);
@@ -3799,16 +3800,22 @@ dialog, .side-panel {
     .location-images {
         display: flex;
         gap: .5rem;
+        width: 100%;
 
         .still, .additional-images {
             display: flex;
             flex-direction: column;
         }
 
-        .wrapper {
-            display: flex;
-            gap: .5rem;
-            overflow-x: auto;
+        .additional-images {
+            width: calc(100% - 17rem);
+
+            .wrapper {
+                display: flex;
+                gap: .5rem;
+                overflow-x: auto;
+                width: 100%;
+            }
         }
 
         .image {
