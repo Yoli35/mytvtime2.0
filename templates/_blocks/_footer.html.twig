@@ -2,13 +2,25 @@
 {% set route_params = app.request.attributes.get('_route_params') %}
 
 <div class="home-footer">
-    <div class="logo">myTvTime ©</div>
-{#    <a href="{{ path('app_contact', {from: route|slice(4), params: route_params|serialize(format = 'json', context = [])}) }}"><i class="fa-solid fa-envelope"></i> {{ 'Contact'|trans }}</a>#}
-{#    <a href="{{ path('app_rgpd') }}"><i class="fa-solid fa-file-contract"></i> {{ 'Confidentiality policy'|trans }}</a>#}
-    <div class="powered"><a href="https://www.themoviedb.org/" target="_blank"></a></div>
+    <div class="mytvtime">
+        <a class="logo" href="{{ path('app_home') }}">
+            <img src="/android-chrome-192x192.png" alt="Logo myTvTime">
+        </a>
+        <div>
+            <a href="{{ path('app_home') }}">myTvTime ©</a>
+        </div>
+    </div>
+    <div class="powered">
+        <a class="logo" href="https://www.themoviedb.org/" target="_blank">
+            <img src="/images/the-movie-database.png" alt="Logo The Movie Database">
+        </a>
+        <div>
+            <a href="https://www.themoviedb.org/" target="_blank">The Movie Database</a>
+        </div>
+    </div>
 </div>
 <script>
     window.addEventListener("DOMContentLoaded", () => {
-        document.querySelector(".home-footer").querySelector(".logo").innerHTML += new Date().getFullYear();
+        document.querySelector(".home-footer").querySelector(".mytvtime").querySelector('div').querySelector('a').innerHTML += new Date().getFullYear();
     })
 </script>

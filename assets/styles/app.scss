@@ -1262,32 +1262,24 @@ section:has(.pages) {
         color: hsl(202, 18%, 10%);
     }*/
 
-    .logo {
+    .mytvtime, .powered {
         align-items: center;
         display: flex;
-        justify-content: end;
-        background-image: url("../images/logo.png");
-        background-position: left;
-        background-repeat: no-repeat;
-        background-size: 2rem 2rem;
+        gap: .5rem;
         height: 2rem;
-        padding-left: 3rem;
-    }
+        justify-content: flex-start;
 
-    a {
-        color: var(--ardoise-10);
-    }
+        .logo {
+            height: 2rem;
 
-    .powered {
-        aspect-ratio: 11 / 8;
-        background-image: url("../images/the-movie-database.png");
-        background-size: cover;
-        height: 2rem;
+            img {
+                height: 100%;
+                width: auto;
+            }
+        }
 
         a {
-            display: block;
-            height: 100%;
-            width: 100%;
+            color: var(--ardoise-10);
         }
     }
 }
