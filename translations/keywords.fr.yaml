@@ -21,6 +21,7 @@
 22nd century: 22e siècle
 23rd century: 23e siècle
 24th century: 24e siècle
+3d animation: animation 3d
 5th century: 5ème siècle
 80s throwback: Retour aux années 80
 8th century: 8e siècle
@@ -85,8 +86,8 @@ airplane flight: vol d'avion
 airplane hijacking: détournement d'avion
 airplane: avion
 airship: dirigeable
-alaska: alaska
 alaska native: alaska native
+alaska: alaska
 alaskan malamute: malamute d'alaska
 albuquerque, new mexico: albuquerque, nouveau mexique
 alcoholic father: père alcoolique
@@ -133,6 +134,7 @@ android: androïde
 anesthesiologist: anesthésiste
 angel: ange
 anger: remords
+angry: en colère
 animal behaviour: comportement animal
 animal evolution: évolution animale
 animal transformation: animal transformation
@@ -273,6 +275,7 @@ biological weapon: arme biologique
 biology: biologie
 bionic: bionique
 biotechnology: biotechnologie
+bird: oiseau
 birmingham: birmingham
 bisexual man: homme bisexuel
 bisexual woman: femme bisexuelle
@@ -296,6 +299,7 @@ blended family: famille recomposée
 blind: aveugle
 boarding school: pensionnat
 boat chase: poursuite en bateau
+boat: bateau
 body horror: horreur corporelle
 body switch: changement de corps
 body-swap: corps-échangiste
@@ -369,6 +373,7 @@ cancer: cancer
 cannabis: cannabis
 capitalism: capitalisme
 captain: capitaine
+capybara: capybara
 car accident: accident de voiture
 car mechanic: mécanicien auto
 car racing: course automobile
@@ -380,6 +385,7 @@ cartel: cartel
 cartoon: caricature
 caste system: système de castes
 cat eating: chat mangeur
+cat: chat
 cataclysm: cataclysme
 catastrophe: catastrophe
 cattle rustling: le vol de bétail
@@ -648,6 +654,7 @@ divorce: divorce
 divorced parents: parents divorcés
 doctor: docteur
 documentary: documentaire
+dog: chien
 dojo: dojo
 doll: poupée
 dome: dôme
@@ -886,6 +893,7 @@ flashback: flashback
 flight attendant: hôtesse de l'air
 flight: vol
 flirting: flirt
+flood: inondation
 florida keys: florida keys
 florida: Floride
 flower: fleur
@@ -943,6 +951,7 @@ gang: gang
 gangster: gangster
 gay club: club gay
 gay interest: intérêt pour les gays
+gay kiss: baiser gay
 gay pornography: pornographie gay
 gay relationship: relation gay
 gay romance: romance gay
@@ -982,6 +991,7 @@ god: dieu
 gods: dieux
 godzilla: godzilla
 gold mining town: ville minière
+golden retriever: golden retriever
 good deed: bonne action
 good versus evil: bien contre mal
 google: google
@@ -1063,6 +1073,7 @@ high society: haute société
 highway patrol: patrouille de l'autoroute
 hijack: détournement
 hijacking: détournement d'avion
+hiking: randonnée
 hilarious: hilarant
 hip-hop: hip-hop
 historical comedy: comédie historique
@@ -1539,6 +1550,7 @@ nhs: nhs
 nightclub: boîte de nuit
 nightmare: cauchemar
 no electricity: pas d'électricité
+noise: bruit
 non monogamian: non monogame
 non-binary: non binaire
 nonlinear timeline: ligne de temps non-linéaire
@@ -1776,6 +1788,7 @@ quebec: quebec
 queens, new york city: queens, new york city
 queer: queer
 quest: quête
+quiet: calme
 race against time: course contre le temps
 racism: racisme
 racist cop: flic raciste
@@ -2003,6 +2016,7 @@ sibling: frère ou sœur
 siblings: frères et sœurs
 sicilian mafia: mafia sicilienne
 sign languages: langues des signes
+silence: silence
 silent: silencieux
 silicon valley: silicon valley
 silo: silo
@@ -2121,6 +2135,7 @@ storm chaser: chasseur de tempêtes
 storm: tempête
 story-based drama: drame basé sur une histoire
 storybook: livre de contes
+straightforward: simple
 strategy game: jeu de stratégie
 straw hat: chapeau de paille
 streamer: streamer
@@ -2177,6 +2192,7 @@ survey: enquête
 survival horror: survival horror
 survival show: émission de survie
 survival: survie
+survivalist: survivaliste
 survive: survivre
 suspense thriller: thriller à suspense
 suspense: suspense
