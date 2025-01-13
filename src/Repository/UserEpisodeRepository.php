@@ -228,7 +228,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getScheduleNextEpisodes(User $user, Series $series, $airDate, int $seasonNumber): array
+    public function getScheduleNextEpisodes(User $user, Series $series, $airDate, int $seasonNumber, int $firstEpisodeNumber, int $lastEpisodeNumber): array
     {
         $userId = $user->getId();
         $seriesId = $series->getId();
@@ -245,13 +245,14 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 WHERE us.`user_id` = $userId
                   AND s.`id` = $seriesId
                   AND ue.`season_number` = $seasonNumber
+                  AND ue.episode_number >= $firstEpisodeNumber AND ue.episode_number <= $lastEpisodeNumber
                   AND ue.`air_date` = '$airDate'
                 ORDER BY  ue.`season_number`, ue.`episode_number`";
 
         return $this->getAll($sql);
     }
 
-    public function getScheduleLastEpisode(User $user, Series $series, int $seasonNumber): array
+    public function getScheduleLastEpisode(User $user, Series $series, int $seasonNumber, int $firstEpisodeNumber, int $lastEpisodeNumber): array
     {
         $userId = $user->getId();
         $seriesId = $series->getId();
@@ -269,6 +270,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 WHERE us.`user_id` = $userId
                   AND s.`id` = $seriesId
                   AND ue.`season_number` = $seasonNumber
+                  AND ue.episode_number >= $firstEpisodeNumber AND ue.episode_number <= $lastEpisodeNumber
                   AND ue.`watch_at` IS NOT NULL
                 ORDER BY  ue.`season_number` DESC, ue.`episode_number` DESC
                 LIMIT 1";

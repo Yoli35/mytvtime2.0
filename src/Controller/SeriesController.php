@@ -2553,8 +2553,8 @@ class SeriesController extends AbstractController
             }
             $targetTS = $target?->getTimestamp();*/
 
-            $userLastEpisode = $this->userEpisodeRepository->getScheduleLastEpisode($user, $series, $seasonNumber);
-            $userNextEpisode = $this->userEpisodeRepository->getScheduleNextEpisode($user, $series, $seasonNumber);
+            $userLastEpisode = $this->userEpisodeRepository->getScheduleLastEpisode($user, $series, $seasonNumber, $firstEpisode, $lastEpisode);
+            $userNextEpisode = $this->userEpisodeRepository->getScheduleNextEpisode($user, $series, $seasonNumber, $firstEpisode, $lastEpisode);
             $userLastEpisode = $userLastEpisode[0] ?? null;
             $userNextEpisode = $userNextEpisode[0] ?? null;
             dump([
@@ -2567,6 +2567,10 @@ class SeriesController extends AbstractController
                 'episodeCount' => $episodeCount,
                 'userLastEpisode' => $userLastEpisode,
                 'userNextEpisode' => $userNextEpisode,
+                'multiPart' => $multiPart,
+                'seasonPart' => $seasonPart,
+                'firstEpisode' => $firstEpisode,
+                'lastEpisode' => $lastEpisode,
             ]);
             $endOfSeason = $userLastEpisode && $userLastEpisode['episode_number'] == $episodeCount;
 
@@ -2576,6 +2580,7 @@ class SeriesController extends AbstractController
                 if ($multiPart) {
                     if ($userLastEpisode['episode_number'] >= $firstEpisode && $userLastEpisode['episode_number'] <= $lastEpisode) {
                         $targetTS = $userLastEpisode['date']->getTimestamp();
+                        dump('done!');
                     } else {
                         $userLastEpisode = null;
                     }
@@ -2609,6 +2614,7 @@ class SeriesController extends AbstractController
                 $multiple = false;
                 $userLastNextEpisode = null;
             }
+            dump(['userLastEpisode' => $userLastEpisode, 'userNextEpisode' => $userNextEpisode, 'userLastNextEpisode' => $userLastNextEpisode]);
             if ($userNextEpisode == null) {
                 $targetTS = $userLastEpisode['date']->getTimestamp();
             }
