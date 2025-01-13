@@ -1644,14 +1644,30 @@ class SeriesController extends AbstractController
     {
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('file');
-        $filename = '/' . $uploadedFile->getClientOriginalName();
-        $stillPath = $this->getParameter('kernel.project_dir') . '/public/series/stills' . $filename;
-        $copy = $this->copyImage($uploadedFile->getPathname(), $stillPath);
+        $basename = $uploadedFile->getClientOriginalName();
+        $extension = $uploadedFile->guessExtension();
+        $imageTempPath = $this->getParameter('kernel.project_dir') . '/public/images/temp/';
+        $tempName = $imageTempPath . $basename . '.' . $extension;
+        $stillPath = $this->getParameter('kernel.project_dir') . '/public/series/stills/' . $basename . '.webp';
+        $copy = false;
 
-        if ($copy) {
+        try {
+            $uploadedFile->move($imageTempPath, $basename . '.' . $extension);
+            $webp = $this->imageService->webpImage($tempName, $stillPath, 90, 480, 270);
+            if ($webp) {
+                $imagePath = '/' . $basename . '.webp';
+            } else {
+                $imagePath = null;
+            }
+        } catch (FileException $e) {
+            $imagePath = null;
+        }
+
+        if ($imagePath) {
             $episode = $this->userEpisodeRepository->findOneBy(['episodeId' => $id]);
-            $episode->setStill($filename);
+            $episode->setStill($imagePath);
             $this->userEpisodeRepository->save($episode, true);
+            $copy = true;
         }
 
         return $this->json([
@@ -2601,7 +2617,7 @@ class SeriesController extends AbstractController
             }
 
             if ($userNextEpisode) {
-                $userNextEpisodes = $this->userEpisodeRepository->getScheduleNextEpisodes($user, $series, $userNextEpisode['air_date'], $seasonNumber);
+                $userNextEpisodes = $this->userEpisodeRepository->getScheduleNextEpisodes($user, $series, $userNextEpisode['air_date'], $seasonNumber, $firstEpisode, $lastEpisode);
                 $count = count($userNextEpisodes);
                 $multiple = $count > 1;
                 if ($multiple) {
@@ -3621,7 +3637,7 @@ class SeriesController extends AbstractController
         return true;
     }
 
-    public function copyImage($source, $destination): bool
+    public function copyImage(string $source, string $destination): bool
     {
         if (!file_exists($destination)) {
             if (file_exists($source)) {

@@ -256,7 +256,7 @@ export class Season {
                 if (clipboardItem.type.startsWith('image/')) {
                     // Save the image in %kernel.dir%/public/series/stills/season-xx/episode-xx.jpg
                     const formData = new FormData();
-                    formData.append('file', clipboardItem, fileName + clipboardItem.type.split('/')[1]);
+                    formData.append('file', clipboardItem, fileName);/*+ clipboardItem.type.split('/')[1]*/
                     const response = await fetch('/' + gThis.lang + '/series/episode/still/' + episodeId, {
                         method: 'POST',
                         body: formData
