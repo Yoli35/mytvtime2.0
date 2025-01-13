@@ -1029,9 +1029,11 @@ class SeriesController extends AbstractController
     public function schedulesSave(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
+        dump($data);
         $id = $data['id'];
         $country = $data['country'];
         $seasonNumber = $data['seasonNumber'];
+        $seasonMultiPart = $data['multiPart'];
         $seasonPart = $data['seasonPart'];
         $seasonPartFirstEpisode = $data['seasonPartFirstEpisode'];
         $seasonPartEpisodeCount = $data['seasonPartEpisodeCount'];
@@ -1058,6 +1060,7 @@ class SeriesController extends AbstractController
         }
 
         $seriesBroadcastSchedule->setSeasonNumber($seasonNumber);
+        $seriesBroadcastSchedule->setMultiPart($seasonMultiPart);
         $seriesBroadcastSchedule->setSeasonPart($seasonPart);
         $seriesBroadcastSchedule->setSeasonPartFirstEpisode($seasonPartFirstEpisode);
         $seriesBroadcastSchedule->setSeasonPartEpisodeCount($seasonPartEpisodeCount);
@@ -1124,7 +1127,7 @@ class SeriesController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    #[Route('/show/season/{id}-{slug}/{seasonNumber}', name: 'season', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS])]
+    #[Route('/season/{id}-{slug}/{seasonNumber}', name: 'season', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS])]
     public function showSeason(Request $request, Series $series, int $seasonNumber, string $slug): Response
     {
         /** @var User $user */
@@ -1188,7 +1191,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/add/localized/name/{id}', name: 'add_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    #[Route('/localized/name/add/{id}', name: 'add_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addLocalizedName(Request $request, int $id): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -1211,7 +1214,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/localized/name/{id}', name: 'delete_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    #[Route('/localized/name/delete/{id}', name: 'delete_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function deleteLocalizedName(Request $request, int $id): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -1233,7 +1236,7 @@ class SeriesController extends AbstractController
     }
 
 //    #[IsGranted('ROLE_USER')]
-    #[Route('/add/edit/overview/{id}', name: 'add_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    #[Route('/overview/add/edit/{id}', name: 'add_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addOverview(Request $request, int $id): Response
     {
         $serie = $this->seriesRepository->findOneBy(['id' => $id]);
@@ -1281,7 +1284,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/overview/{id}', name: 'delete_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    #[Route('/overview/delete/{id}', name: 'delete_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function deleteOverview(Request $request, int $id): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -1308,7 +1311,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/add/episode/{id}', name: 'add_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    #[Route('/episode/add/{id}', name: 'add_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addUserEpisode(Request $request, int $id): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -1430,7 +1433,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/touch/episode/{id}', name: 'touch_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    #[Route('/episode/touch/{id}', name: 'touch_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function touchUserEpisode(Request $request, int $id): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -1480,7 +1483,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/remove/episode/{id}', name: 'remove_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    #[Route('/episode/remove/{id}', name: 'remove_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function removeUserEpisode(Request $request, int $id): Response
     {
         $data = json_decode($request->getContent(), true);

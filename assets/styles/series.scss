@@ -1156,6 +1156,16 @@ h2 {
                 gap: 2rem;
                 justify-content: center;
 
+                .group {
+                    background-color: var(--orange-20-alpha-25);
+                    border-radius: .25rem;
+                    padding: .5rem;
+
+                    &.full{
+                        width: 100%;
+                    }
+                }
+
                 > div {
                     align-items: flex-start;
                     display: flex;
