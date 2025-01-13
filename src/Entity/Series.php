@@ -94,9 +94,6 @@ class Series
     #[ORM\OneToMany(targetEntity: SeasonLocalizedOverview::class, mappedBy: 'series', orphanRemoval: true)]
     private Collection $seasonLocalizedOverviews;
 
-    #[ORM\Column(nullable: true)]
-    private ?array $locations = null;
-
     /**
      * @var Collection<int, Network>
      */
@@ -108,16 +105,16 @@ class Series
 
     public function __construct()
     {
-        $this->seriesLocalizedNames = new ArrayCollection();
-        $this->seriesWatchLinks = new ArrayCollection();
-        $this->seriesImages = new ArrayCollection();
-        $this->seriesBroadcastSchedules = new ArrayCollection();
-        $this->updates = [];
-        $this->seriesLocalizedOverviews = new ArrayCollection();
-        $this->seriesAdditionalOverviews = new ArrayCollection();
-        $this->seriesDayOffsets = new ArrayCollection();
-        $this->seasonLocalizedOverviews = new ArrayCollection();
         $this->networks = new ArrayCollection();
+        $this->seasonLocalizedOverviews = new ArrayCollection();
+        $this->seriesAdditionalOverviews = new ArrayCollection();
+        $this->seriesBroadcastSchedules = new ArrayCollection();
+        $this->seriesDayOffsets = new ArrayCollection();
+        $this->seriesImages = new ArrayCollection();
+        $this->seriesLocalizedNames = new ArrayCollection();
+        $this->seriesLocalizedOverviews = new ArrayCollection();
+        $this->seriesWatchLinks = new ArrayCollection();
+        $this->updates = [];
     }
 
     public function getId(): ?int
@@ -611,18 +608,6 @@ class Series
                 $seasonLocalizedOverview->setSeries(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getLocations(): ?array
-    {
-        return $this->locations;
-    }
-
-    public function setLocations(?array $locations): static
-    {
-        $this->locations = $locations;
 
         return $this;
     }

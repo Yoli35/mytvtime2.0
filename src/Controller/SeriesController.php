@@ -874,11 +874,11 @@ class SeriesController extends AbstractController
             'since' => $this->translator->trans('since'),
             'Season completed' => $this->translator->trans('Season completed'),
             'Up to date' => $this->translator->trans('Up to date'),
+            'Not a valid file type. Update your selection' => $this->translator->trans('Not a valid file type. Update your selection'),
         ];
 
-        $locations = $this->getSeriesLocations($series, $user->getPreferredLanguage() ?? $request->getLocale());
+        $filmingLocations = $this->getFilmingLocations($series->getTmdbId());
 
-//        $this->fixFilmingLocations();
 //        dump([
 //            'series' => $seriesArr,
 //            'locations' => $locations['filmingLocations'],
@@ -900,7 +900,7 @@ class SeriesController extends AbstractController
             'tv' => $tv ?? $noTv,
             'userSeries' => $userSeries,
             'providers' => $providers,
-            'locations' => $locations['filmingLocations'],
+            'locations' => $filmingLocations,
             'externals' => $this->getExternals($series, $request->getLocale()),
             'translations' => $translations,
             'addBackdropForm' => $addBackdropForm->createView(),
@@ -1829,7 +1829,6 @@ class SeriesController extends AbstractController
         $messages = [];
 
         $slugger = new AsciiSlugger();
-        $locations = $series->getLocations();
 
         $data = $request->request->all();
         $files = $request->files->all();
@@ -1885,7 +1884,6 @@ class SeriesController extends AbstractController
         $data['longitude'] = str_replace(',', '.', $data['longitude']);
         $latitude = $data['latitude'] = floatval($data['latitude']);
         $longitude = $data['longitude'] = floatval($data['longitude']);
-//        $tmdbId = $series->getTmdbId();
 
         if ($crudType === 'create') {// Toutes les images
             $images = array_filter($data, fn($key) => str_contains($key, 'image-url'), ARRAY_FILTER_USE_KEY);
@@ -1906,36 +1904,10 @@ class SeriesController extends AbstractController
             $existingAdditionalImages = $this->filmingLocationImageRepository->findBy(['filmingLocation' => $crudId]);
             $firstImageIndex = count($existingAdditionalImages) + 1;
         }
-        $n = $firstImageIndex;
-        if (count($images)) {
-            $imageNames = array_map(function () use ($slugger, $title, $location, &$n) {
-                $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
-                $n++;
-                return '/images/map/' . $basename . '.webp';
-            }, $images);
-            if ($crudType === 'create') {
-                $additionalImages = array_slice($imageNames, 1);
-                $seriesLocation['additional_images'] = $additionalImages;
-            } else {
-                $additionalImages = $imageNames;
-            }
-        }
-        dump(['images' => $images, 'additionalImages' => $additionalImages]);
+
         // Fin du code à vérifier
 
         if ($crudType === 'create') {
-            $seriesLocation['uuid'] = $uuid;
-            $seriesLocation['title'] = $title;
-            $seriesLocation['location'] = $location;
-            $seriesLocation['description'] = $description;
-            $seriesLocation['latitude'] = $latitude;
-            $seriesLocation['longitude'] = $longitude;
-            $seriesLocation['image'] = $imageNames[0] ?? null;
-
-            $locations['locations'][] = $seriesLocation;
-            $series->setLocations($locations);
-            $this->seriesRepository->save($series, true);
-
             $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $location, $description, $latitude, $longitude, true);
             $filmingLocation->setOriginCountry($series->getOriginCountry());
         } else {
@@ -1947,7 +1919,7 @@ class SeriesController extends AbstractController
         $n = $firstImageIndex;
         /**************************************************************************************
          * En mode dev, on peut ajouter des FilmingLocationImage sans passer par le           *
-         * téléversement : ~/some-picture.webp                                                *
+         * téléversement : "~/some picture.webp"                                              *
          * SINON :                                                                            *
          * Images ajoutées avec Url (https://website/some-pisture.png)                        *
          * ou par glisser-déposer (blob:https://website/71698467-714e-4b2e-b6b3-a285619ea272) *
@@ -1961,22 +1933,6 @@ class SeriesController extends AbstractController
                     $image = $this->blobToWebp($blob, $data['title'], $data['location'], $n);
                     dump('blob', $image);
                 } else {
-                    /*$extension = pathinfo($imageUrl, PATHINFO_EXTENSION);
-                    $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
-                    $tempName = $imageTempPath . $basename . '.' . $extension;
-                    $destination = $imageMapPath . $basename . '.webp';
-
-                    $copied = $this->saveImageFromUrl($imageUrl, $tempName, true);
-                    if ($copied) {
-                        $webp = $this->imageService->webpImage($tempName, $destination);
-                        if ($webp) {
-                            $image = '/' . $basename . '.webp';
-                        } else {
-                            $image = null;
-                        }
-                    } else {
-                        $image = null;
-                    }*/
                     $image = $this->urlToWebp($imageUrl, $title, $location, $n);
                 }
             }
@@ -1996,22 +1952,7 @@ class SeriesController extends AbstractController
          * Images ajoutées depuis des fichiers locaux (type : UploadedFile)           *
          ******************************************************************************/
         foreach ($imageFiles as $key => $file) {
-            /*$extension = $file->guessExtension();
-            $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
-            $tempName = $imageTempPath . $basename . '.' . $extension;
-            $destination = $imageMapPath . $basename . '.webp';
-
-            try {
-                $file->move($imageTempPath, $basename . '.' . $extension);
-                $webp = $this->imageService->webpImage($tempName, $destination);
-                if ($webp) {
-                    $image = '/' . $basename . '.webp';
-                } else {
-                    $image = null;
-                }
-            } catch (FileException $e) {
-                $image = null;
-            }*/
+            dump(['key' => $key, 'file' => $file]);
             $image = $this->fileToWebp($file, $title, $location, $n);
             if ($image) {
                 $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
@@ -2059,7 +2000,7 @@ class SeriesController extends AbstractController
                 } elseif ($extension === 'webp') {
                     imagewebp($image);
                 } else {
-                    ob_clean();
+                    ob_end_clean();
                     return null;
                 }
                 $imageData = ob_get_contents();
@@ -3073,22 +3014,10 @@ class SeriesController extends AbstractController
         return null;
     }
 
-    public function getSeriesLocations(Series $series, string $locale): array
-    {
-        $tmdbId = $series->getTmdbId();
-        $filmingLocations = $this->getFilmingLocations($tmdbId);
-
-        $seriesLocations = $series->getLocations()['locations'] ?? [];
-        if (empty($seriesLocations)) {
-            return ['map' => null, 'locations' => null, 'filmingLocations' => $filmingLocations];
-        }
-        return ['map' => null, 'locations' => $seriesLocations, 'filmingLocations' => $filmingLocations];
-    }
-
     public function getFilmingLocations(int $tmdbId): array
     {
         $filmingLocations = $this->filmingLocationRepository->locations($tmdbId);
-        $filmingLocationIds = array_column($filmingLocations, 'id'); //array_map(fn($location) => $location['id'], $filmingLocations);
+        $filmingLocationIds = array_column($filmingLocations, 'id');
         $filmingLocationImages = $this->filmingLocationRepository->locationImages($filmingLocationIds);
         $flImages = [];
         foreach ($filmingLocationImages as $image) {
@@ -3097,12 +3026,6 @@ class SeriesController extends AbstractController
         foreach ($filmingLocations as &$location) {
             $location['filmingLocationImages'] = $flImages[$location['id']] ?? [];
         }
-        /*dump([
-            'findBy' => $this->filmingLocationRepository->findBy(['tmdbId' => $tmdbId]),
-            'filmingLocations' => $filmingLocations,
-            'filmingLocationIds' => $filmingLocationIds,
-            'filmingLocationImages' => $filmingLocationImages
-        ]);*/
         return $filmingLocations;
     }
 
