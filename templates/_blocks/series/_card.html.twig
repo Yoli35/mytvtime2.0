@@ -64,14 +64,14 @@
                     <div class="episode-number" data-title="{{ 'Next episode'|trans }}">{{ 'S%02dE%02d'|format(series.next_episode_season_number, series.next_episode_episode_number) }}</div>
                 {% endif %}
             </div>
-            {% if upToDate %}
-                <div class="up-to-date-mask">
-                    <div class="up-to-date-banner{% if ended %} ended{% endif %}">{{ title }}</div>
-                </div>
-            {% endif %}
             {% if premiere %}
                 <div class="up-to-date-mask">
                     <div class="up-to-date-banner premiere">{{ 'Premiere'|trans }}</div>
+                </div>
+            {% endif %}
+            {% if upToDate %}
+                <div class="up-to-date-mask">
+                    <div class="up-to-date-banner{% if ended %} ended{% endif %}">{{ title }}</div>
                 </div>
             {% endif %}
             {% if series.progress is defined %}
