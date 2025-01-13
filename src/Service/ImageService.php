@@ -4,7 +4,6 @@ namespace App\Service;
 
 class ImageService
 {
-
     public static function webpImage(string $sourcePath, string $destPath, int $quality = 100, int $width = 1920, int $height = 1080, bool $removeOld = true): ?string
     {
         $destination = $destPath;
@@ -77,7 +76,7 @@ class ImageService
             imagedestroy($image);
         }
 
-        if ($successfullyConverted  && $removeOld) unlink($sourcePath);
+        if ($successfullyConverted && $removeOld) unlink($sourcePath);
 
         return $destination;
     }
