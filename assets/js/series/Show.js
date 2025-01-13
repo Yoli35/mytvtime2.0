@@ -1022,6 +1022,7 @@ export class Show {
         const addLocationCancel = addLocationForm.querySelector('button[type="button"]');
         const addLocationSubmit = addLocationForm.querySelector('button[type="submit"]');
         const imageInputs = addLocationForm.querySelectorAll('input[type="url"]');
+        console.log({imageInputs});
         // Dev test
         const locationInput = addLocationForm.querySelector('input[name="location"]');
         locationInput.addEventListener('input', function () {
@@ -1111,17 +1112,20 @@ export class Show {
             event.preventDefault();
 
             const inputs = addLocationForm.querySelectorAll('input[required]');
+            const crudTypeInput = addLocationForm.querySelector('input[name="crud-type"]');
             let emptyInput = false;
-            inputs.forEach(function (input) {
-                // la première image (image-url) est requise, mais peut être remplacée par un fichier (image-file)
-                if (input.name === 'image-url') {
-                    if(!input.value && !input.closest('.form-row').querySelector('input[name="image-file"]').value) {
-                        input.nextElementSibling.textContent = translations['This field is required'];
-                        emptyInput = true;
+            if (crudTypeInput.value === 'create') {
+                inputs.forEach(function (input) {
+                    // la première image (image-url) est requise, mais peut être remplacée par un fichier (image-file)
+                    // en mode création
+                    if (input.name === 'image-url') {
+                        if (!input.value && !input.closest('.form-row').querySelector('input[name="image-file"]').value) {
+                            input.nextElementSibling.textContent = translations['This field is required'];
+                            emptyInput = true;
+                        } else {
+                            input.nextElementSibling.textContent = '';
+                        }
                     } else {
-                        input.nextElementSibling.textContent = '';
-                    }
-                } else {
                         if (!input.value) {
                             input.nextElementSibling.textContent = translations['This field is required'];
                             emptyInput = true;
@@ -1129,7 +1133,8 @@ export class Show {
                             input.nextElementSibling.textContent = '';
                         }
                     }
-            });
+                });
+            }
             if (!emptyInput) {
                 const formData = gThis.getFormData(addLocationForm);
                 fetch('/' + lang + '/series/add/location/' + seriesId,
@@ -1141,7 +1146,7 @@ export class Show {
                     if (response.ok) {
                         const data = await response.json();
                         console.log({data});
-                        // window.location.reload();
+                        window.location.reload();
                     }
                     gThis.closeLocationPanel();
                 });
@@ -1201,7 +1206,6 @@ export class Show {
             while (preview.firstChild) {
                 preview.removeChild(preview.firstChild);
             }
-
             const curFiles = input.files;
             if (curFiles.length === 0) {
                 const div = document.createElement("div");
@@ -1223,7 +1227,7 @@ export class Show {
                         listItem.appendChild(div);
                         listItem.appendChild(image);
                     } else {
-                        div.textContent = `File name ${file.name}: Not a valid file type. Update your selection.`;
+                        div.innerHTML = `${file.name}<span class="error">${translations['Not a valid file type. Update your selection']}.</span>`;
                         listItem.appendChild(div);
                     }
 
@@ -1244,6 +1248,7 @@ export class Show {
             /* "image/tiff",*/
             "image/webp",
             /* "image/x-icon",*/
+            /*"image/heic",*/
         ];
 
         function validFileType(file) {
