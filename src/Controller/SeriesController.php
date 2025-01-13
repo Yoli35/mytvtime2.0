@@ -1762,7 +1762,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/get/backdrops/{id}', name: 'get_backdrops', requirements: ['id' => Requirement::DIGITS], methods: 'POST')]
+    #[Route('/backdrops/get/{id}', name: 'get_backdrops', requirements: ['id' => Requirement::DIGITS], methods: 'POST')]
     public function getAllBackdrops(int $id): Response
     {
         $images = json_decode($this->tmdbService->getAllTvImages($id), true);
@@ -1779,7 +1779,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/add/backdrops', name: 'add_backdrops', methods: 'POST')]
+    #[Route('/backdrops/add', name: 'add_backdrops', methods: 'POST')]
     public function addAllBackdrops(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -1826,7 +1826,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/add/location/{id}', name: 'add_location', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    #[Route('/location/add/{id}', name: 'add_location', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addLocation(Request $request, Series $series): Response
     {
         $messages = [];

@@ -630,7 +630,7 @@ export class Show {
         lnDelete?.addEventListener('click', function (event) {
             event.preventDefault();
 
-            fetch('/' + lang + '/series/delete/localized/name/' + seriesId,
+            fetch('/' + lang + '/series/localized/name/delete/' + seriesId,
                 {
                     method: 'POST',
                     headers: {
@@ -657,7 +657,7 @@ export class Show {
             if (!name.value) {
                 name.nextElementSibling.textContent = gThis.translations['This field is required'];
             } else {
-                fetch('/' + lang + '/series/add/localized/name/' + seriesId,
+                fetch('/' + lang + '/series/localized/name/add/' + seriesId,
                     {
                         method: 'POST',
                         headers: {
@@ -790,7 +790,7 @@ export class Show {
                 locale: lang
             };
 
-            fetch('/' + lang + '/series/add/edit/overview/' + seriesId, {
+            fetch('/' + lang + '/series/overview/add/edit/' + seriesId, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -931,7 +931,7 @@ export class Show {
 
             const overviewType = deleteOverviewForm.querySelector('#overview-type').value;
             const overviewId = deleteOverviewForm.querySelector('#overview-id').value;
-            fetch('/' + lang + '/series/delete/overview/' + overviewId, {
+            fetch('/' + lang + '/series/overview/delete/' + overviewId, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1137,7 +1137,7 @@ export class Show {
             }
             if (!emptyInput) {
                 const formData = gThis.getFormData(addLocationForm);
-                fetch('/' + lang + '/series/add/location/' + seriesId,
+                fetch('/' + lang + '/series/location/add/' + seriesId,
                     {
                         method: 'POST',
                         body: formData
@@ -1316,7 +1316,7 @@ export class Show {
         let addAllPosters = [];
 
         addAllBackdropsButton.addEventListener('click', () => {
-            fetch('/' + lang + '/series/get/backdrops/' + tmdbId, {
+            fetch('/' + lang + '/series/backdrops/get/' + tmdbId, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1367,7 +1367,7 @@ export class Show {
                 backdrops: addAllBackdrops,
                 posters: addAllPosters
             };
-            fetch('/' + lang + '/series/add/backdrops', {
+            fetch('/' + lang + '/series/backdrops/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

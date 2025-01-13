@@ -398,7 +398,7 @@ export class Season {
         const seasonNumber = episode.getAttribute('data-s-number');
         const lastEpisode = episode.getAttribute('data-last-episode');
         const views = parseInt(episode.getAttribute('data-views') ?? "0");
-        fetch('/' + gThis.lang + '/series/add/episode/' + id, {
+        fetch('/' + gThis.lang + '/series/episode/add/' + id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -548,7 +548,7 @@ export class Season {
         const episodeNumber = episode.getAttribute('data-e-number');
         const seasonNumber = episode.getAttribute('data-s-number');
 
-        fetch('/' + gThis.lang + '/series/touch/episode/' + id, {
+        fetch('/' + gThis.lang + '/series/episode/touch/' + id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -651,7 +651,7 @@ export class Season {
         const episodeNumber = episode.getAttribute('data-e-number');
         const seasonNumber = episode.getAttribute('data-s-number');
 
-        fetch('/' + gThis.lang + '/series/touch/episode/' + id, {
+        fetch('/' + gThis.lang + '/series/episode/touch/' + id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -753,7 +753,7 @@ export class Season {
         const seasonNumber = episode.getAttribute('data-s-number');
         const lastEpisode = episode.getAttribute('data-last-episode');
         let views = parseInt(episode.getAttribute('data-views'));
-        fetch('/' + gThis.lang + '/series/remove/episode/' + episodeId, {
+        fetch('/' + gThis.lang + '/series/episode/remove/' + episodeId, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
