@@ -544,14 +544,6 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    /*public function getSubstituteName(int $id): mixed
-    {
-        $sql = "SELECT `name` "
-            . "FROM `episode_substitute_name` "
-            . "WHERE `episode_id`=$id";
-        return $this->getOne($sql);
-    }*/
-
     public function getEpisodeListBetweenIds($userId, $startId, $endId): array
     {
         $sql = "SELECT ue.`episode_number`, ue.`season_number`, ue.`user_series_id`, ue.`watch_at` "
@@ -642,6 +634,26 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 LIMIT 1";
 
         return $this->getAll($sql);
+    }
+
+    public function seasonProgress(UserSeries $userSeries, int $seasonNumber):? float
+    {
+        $userSeriesId = $userSeries->getId();
+        $sql = "SELECT
+                    (
+                     SELECT COUNT(*)
+                        FROM `user_episode` ue
+                        WHERE ue.`user_series_id`=$userSeriesId AND ue.`season_number`=$seasonNumber
+                     ) as episodeCount,
+                    (
+                     SELECT COUNT(*)
+                        FROM `user_episode` ue
+                        WHERE ue.`user_series_id`=$userSeriesId AND ue.`season_number`=$seasonNumber AND ue.`watch_at` IS NOT NULL
+                     ) as episodeWatchedCount";
+
+        $result = $this->getOne($sql);
+
+        return $result ? $result['episodeWatchedCount'] / $result['episodeCount'] * 100 : null;
     }
 
     public function getAll($sql): array

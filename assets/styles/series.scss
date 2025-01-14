@@ -424,8 +424,8 @@ h2 {
                 width: calc(100% - 2rem);
 
                 &.full {
-                    background-color: var(--green-20);
-                    border-color: var(--green-50);
+                    background-color: var(--green-80);
+                    border-color: var(--green-70);
                     transition: background-color 2s ease-out, border-color 2s ease-out;
 
                     .progress-bar {

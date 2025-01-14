@@ -122,19 +122,7 @@ export class Season {
         /******************************************************************************
          * Animation for the progress bar                                             *
          ******************************************************************************/
-        const progressDiv = document.querySelector('.progress');
-        if (progressDiv) {
-            const progressBarDiv = document.querySelector('.progress-bar');
-            const progress = progressDiv.getAttribute('data-value');
-            progressBarDiv.classList.add('set');
-            progressBarDiv.style.width = progress + '%';
-            progressBarDiv.setAttribute('aria-valuenow', progress);
-            if (progress === "100") {
-                setTimeout(() => {
-                    progressDiv.classList.add('full');
-                }, 1000);
-            }
-        }
+        this.setProgress();
 
         // TODO: recharger la page au changement de jour (mettre à jour les dates relatives)
         setInterval(this.checkDayChange, 60000);// chaque minute
@@ -296,6 +284,22 @@ export class Season {
         });
     }
 
+    setProgress() {
+        const progressDiv = document.querySelector('.progress');
+        if (progressDiv) {
+            const progressBarDiv = document.querySelector('.progress-bar');
+            const progress = progressDiv.getAttribute('data-value');
+            progressBarDiv.classList.add('set');
+            progressBarDiv.style.width = progress + '%';
+            progressBarDiv.setAttribute('aria-valuenow', progress);
+            if (progress === "100") {
+                setTimeout(() => {
+                    progressDiv.classList.add('full');
+                }, 1000);
+            }
+        }
+    }
+
     checkDayChange() {
         const currentDay = new Date().getDate();
         console.log({'initial day': gThis.initialDay, 'current day': currentDay});
@@ -453,6 +457,9 @@ export class Season {
                 if (episodeId) {
                     return;
                 }
+                const progressDiv = document.querySelector('.progress');
+                progressDiv.setAttribute('data-value', data['progress']);
+                gThis.setProgress();
 
                 const newEpisode = document.createElement('div');
                 newEpisode.classList.add('remove-this-episode');
@@ -781,8 +788,8 @@ export class Season {
                 seasonNumber: seasonNumber,
                 episodeNumber: episodeNumber
             })
-        }).then(function (response) {
-            if (response.ok) {
+        }).then((response) => response.json())
+            .then(data => {
                 views--;
 
                 episode.setAttribute('data-views', '' + views);
@@ -792,6 +799,10 @@ export class Season {
                 if (views > 0) {
                     return;
                 }
+                const progressDiv = document.querySelector('.progress');
+                progressDiv.setAttribute('data-value', data['progress']);
+                gThis.setProgress();
+
                 const airDateDiv = episode.closest('.episode').querySelector('.air-date');
                 const watchedAtDiv = airDateDiv.querySelector('.watched-at');
                 watchedAtDiv.remove();
@@ -838,8 +849,7 @@ export class Season {
                 episode.parentElement.appendChild(backToTopSeries);
 
                 episode.remove();
-            }
-        });
+            });
     }
 
     selectProvider(e) {
