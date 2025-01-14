@@ -400,14 +400,6 @@ h2 {
             position: relative;
             width: 40vw;
 
-            a {
-                align-items: center;
-                display: flex;
-                height: 100%;
-                justify-content: center;
-                width: 100%;
-            }
-
             img {
                 border-radius: .5rem;
                 height: 100%;
@@ -416,7 +408,7 @@ h2 {
             }
 
             div {
-                font-size: 2vw;
+                font-size: 2vw; /* No poster */
             }
 
             .progress {
@@ -431,6 +423,17 @@ h2 {
                 right: 1rem;
                 width: calc(100% - 2rem);
 
+                &.full {
+                    background-color: var(--green-20);
+                    border-color: var(--green-50);
+                    transition: background-color 2s ease-out, border-color 2s ease-out;
+
+                    .progress-bar {
+                        background-color: var(--green-50);
+                        transition: background-color 2s ease-out;
+                    }
+                }
+
                 .progress-bar {
                     background-color: var(--orange-50);
                     border-radius: 999px;
@@ -441,6 +444,15 @@ h2 {
                         transition: width 2s ease-out;
                     }
                 }
+            }
+
+            .debug {
+                font-size: 2rem;
+                font-weight: 300;
+                left: 2rem;
+                line-height: 1.25em;
+                position: absolute;
+                top: 2rem
             }
         }
 
@@ -465,15 +477,6 @@ h2 {
 
             &.dark {
                 color: #030303; /*var(--ardoise-90);*/
-            }
-
-            .debug {
-                font-size: 2rem;
-                font-weight: 300;
-                line-height: 1.25em;
-                position: absolute;
-                right: 2rem;
-                top: 2rem
             }
 
             h1 {
@@ -2143,6 +2146,23 @@ h2 {
                 height: 100%;
                 object-fit: cover;
                 width: 100%;
+            }
+
+            .custom-still {
+                aspect-ratio: 16/9;
+                border-radius: .25rem;
+                border: 2px solid var(--orange-50);
+                bottom: .5rem;
+                height: 4rem;
+                left: .5rem;
+                position: absolute;
+
+                img {
+                    border-radius: .125rem;
+                    height: 100%;
+                    object-fit: cover;
+                    width: 100%;
+                }
             }
 
             .number {

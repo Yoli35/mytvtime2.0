@@ -1184,6 +1184,7 @@ class SeriesController extends AbstractController
         ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
+            'userSeries' => $userSeries,
             'season' => $season,
             'providers' => $providers,
             'devices' => $devices,

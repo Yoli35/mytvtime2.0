@@ -34,6 +34,9 @@
                             <div class="progress-bar"></div>
                         </div>
                     {% endif %}
+                    {% if app.environment == 'dev' %}
+                        <div class="debug">{{ series.id }} / {{ userSeries.id }} / {{ tv.id }}</div>
+                    {% endif %}
                 </div>
                 <div class="infos">
                     <div class="backdrop">
@@ -41,9 +44,6 @@
                             <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
                         {% endif %}
                     </div>
-                    {% if app.environment == 'dev' %}
-                        <div class="debug">{{ series.id }} / {{ tv.id }}</div>
-                    {% endif %}
                     <div class="name">
                         <h1>
                             {% if tv.localized_name %}

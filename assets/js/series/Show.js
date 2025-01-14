@@ -111,6 +111,11 @@ export class Show {
             progressBarDiv.classList.add('set');
             progressBarDiv.style.width = progress + '%';
             progressBarDiv.setAttribute('aria-valuenow', progress);
+            if (progress === "100") {
+                setTimeout(() => {
+                    progressDiv.classList.add('full');
+                }, 1000);
+            }
         }
 
         /******************************************************************************

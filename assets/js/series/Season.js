@@ -119,6 +119,23 @@ export class Season {
     }
 
     init() {
+        /******************************************************************************
+         * Animation for the progress bar                                             *
+         ******************************************************************************/
+        const progressDiv = document.querySelector('.progress');
+        if (progressDiv) {
+            const progressBarDiv = document.querySelector('.progress-bar');
+            const progress = progressDiv.getAttribute('data-value');
+            progressBarDiv.classList.add('set');
+            progressBarDiv.style.width = progress + '%';
+            progressBarDiv.setAttribute('aria-valuenow', progress);
+            if (progress === "100") {
+                setTimeout(() => {
+                    progressDiv.classList.add('full');
+                }, 1000);
+            }
+        }
+
         // TODO: recharger la page au changement de jour (mettre à jour les dates relatives)
         setInterval(this.checkDayChange, 60000);// chaque minute
 
