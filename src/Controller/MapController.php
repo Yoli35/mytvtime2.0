@@ -90,16 +90,16 @@ class MapController extends AbstractController
             }
         }
 
-//        dump([
-//            'fl' => $fl,
+        dump([
+            'fl' => $fl,
 //            'countryLatLngs' => $countryLatLngs,
 //            'countryLocationIds' => $countryLocationIds,
 //            'countries' => $countries,
 //            'countryBoundingBoxes' => $bb,
-//            'filmingLocations' => $locations['filmingLocations'],
+            'filmingLocations' => $locations['filmingLocations'],
 //            'filmingLocationCount' => $locations['filmingLocationCount'],
 //            'filmingLocationImagesCount' => $locations['filmingLocationImageCount'],
-//        ]);
+        ]);
 
         return $this->render('map/index.html.twig', [
             'fl' => $fl,

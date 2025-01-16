@@ -3531,6 +3531,12 @@ h2 {
         margin-block: 2rem 1rem;
         padding: .25rem 1rem;
         width: 100%;
+
+        a {
+            display: block;
+            height: 100%;
+            width: 100%;
+        }
     }
 
     h2:has(select) {
@@ -3540,7 +3546,7 @@ h2 {
             border-radius: .25rem;
             font-size: 1.25rem;
             line-height: 1.25em;
-            padding-inline: .5rem;
+            padding-inline: .5rem 2rem;
         }
 
         label::after {
@@ -3588,11 +3594,34 @@ h2 {
         width: 20rem;
 
         .series-location-image {
+            position: relative;
+
             img {
                 aspect-ratio: 16/9;
                 border-radius: .5rem;
                 object-fit: cover;
                 width: 100%;
+            }
+
+            .image-count {
+                align-items: center;
+                background-color: var(--orange-50);
+                border-radius: 50%;
+                color: var(--ardoise-10);
+                display: flex;
+                font-size: 1.25rem;
+                font-weight: 300;
+                height: 2rem;
+                justify-content: center;
+                padding: .25rem;
+                position: absolute;
+                right: .5rem;
+                top: .5rem;
+                width: 2rem;
+            }
+
+            .image-list {
+                display: none;
             }
         }
 

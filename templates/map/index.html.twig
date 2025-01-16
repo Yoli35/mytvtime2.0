@@ -32,14 +32,15 @@
             <div class="map-tools">
                 <h2>
                     <label for="fl-series-map-select">{{ 'Go to'|trans }}
-                        <select id="fl-series-map-select" onchange="gotoLocation()">
+                        <select id="fl-series-map-select">
+                            <option value="" data-country="">{{ 'All series'|trans }}</option>
                             {% for key,l in fl %}
-                                <option value="{{ key }}">{{ l.locations.0.title }}</option>
+                                <option value="{{ key }}" data-country="{{ l.country.0 }}">{{ l.locations.0.title }} ({{ l.locations|length }})</option>
                             {% endfor %}
                         </select>
                     </label>
                     <label for="fl-country-map-select">{{ 'Locations'|trans }}
-                        <select id="fl-country-map-select" onchange="zoomTotoLocation()">
+                        <select id="fl-country-map-select">
                             <option value="">{{ 'All countries'|trans }}</option>
                             {% for key,name in countries %}
                                 <option value="{{ key }}">{{ name }}</option>
@@ -47,7 +48,7 @@
                         </select>
                     </label>
                     <label for="fl-country-bb-select">{{ 'Countries'|trans }}
-                        <select id="fl-country-bb-select" onchange="zoomTotoCountry()">
+                        <select id="fl-country-bb-select">
                             <option value="">{{ 'All countries'|trans }}</option>
                             {% for c in countryBoundingBoxes %}
                                 <option value="{{ c.code }}"
@@ -62,7 +63,8 @@
                 </h2>
                 <div class="help">?</div>
                 <div class="keyboard-help">
-                    <div>{{ 'Click the map to copy the latitude and longitude to the clipboard'|trans }}</div><div></div>
+                    <div>{{ 'Click the map to copy the latitude and longitude to the clipboard'|trans }}</div>
+                    <div></div>
                     <div>= / +: {{ 'Increase the zoom level by 1'|trans }}.</div>
                     <div>{{ block('shift') }} = / {{ block('shift') }} +: {{ 'Increase the zoom level by 2'|trans }}.</div>
                     <div>-: {{ 'Decrease the zoom level by 1'|trans }}.</div>
@@ -83,11 +85,60 @@
                 {% endfor %}
             </div>
             <script>
-                function gotoLocation() {
-                    const select = document.getElementById('fl-series-map-select');
+                document.addEventListener('DOMContentLoaded', function () {
+                    const flSeriesMapSelect = document.getElementById('fl-series-map-select');
+                    const flCountryMapSelect = document.getElementById('fl-country-map-select');
+                    const flCountryBbSelect = document.getElementById('fl-country-bb-select');
+                    const thumbnails = document.querySelectorAll('.thumbnail');
+
+                    flSeriesMapSelect.addEventListener('change', gotoLocation);
+                    flCountryMapSelect.addEventListener('change', zoomTotoLocation);
+                    flCountryBbSelect.addEventListener('change', zoomTotoCountry);
+
+                    thumbnails.forEach(thumbnail => {
+                        thumbnail.addEventListener('click', setMapStyle);
+                    });
+                });
+
+                function gotoLocation(e) {
+                    /*const select = document.getElementById('fl-series-map-select');
                     const id = select.options[select.selectedIndex].value;
                     const locationH4 = document.querySelector(`h4[data-tmdb-id="${id}"]`);
-                    locationH4.scrollIntoView({behavior: 'instant', block: 'center'});
+                    locationH4.scrollIntoView({behavior: 'instant', block: 'center'});*/
+                    const select = e.currentTarget;
+                    const value = select.options[select.selectedIndex].value;
+                    let country;
+                    if (value !== "") {
+                        const locationItemsToHide = document.querySelectorAll('*[data-tmdb-id]');
+                        const locationItemsToShow = document.querySelectorAll(`*[data-tmdb-id="${value}"]`);
+                        locationItemsToHide.forEach(locationItem => {
+                            locationItem.style.display = 'none';
+                        });
+                        locationItemsToShow.forEach(locationItem => {
+                            locationItem.style.display = locationItem.classList.contains(".series-location") ? "flex" : "block";
+                        });
+                        const h4 = document.querySelector(`h4[data-tmdb-id="${value}"]`);
+                        country = h4?.getAttribute('data-country') || "";
+                    } else {
+                        const locationItems = document.querySelectorAll('*[data-tmdb-id]');
+                        locationItems.forEach(locationItem => {
+                            locationItem.style.display = locationItem.classList.contains(".series-location") ? "flex" : "block";
+                        });
+                        country = "";
+                    }
+                    console.log(country);
+                    const flCountryBbSelect = document.getElementById('fl-country-bb-select');
+                    flCountryBbSelect.selectedIndex = getSelectIndex(flCountryBbSelect, country);
+                    zoomTotoCountry();
+                }
+
+                function getSelectIndex(select, value) {
+                    for (let i = 0; i < select.options.length; i++) {
+                        if (select.options[i].value === value) {
+                            return i;
+                        }
+                    }
+                    return 0;
                 }
 
                 function zoomTotoLocation() {
@@ -139,12 +190,6 @@
                     }
                 }
 
-                document.addEventListener('DOMContentLoaded', function () {
-                    const thumbnails = document.querySelectorAll('.thumbnail');
-                    thumbnails.forEach(thumbnail => {
-                        thumbnail.addEventListener('click', setMapStyle);
-                    });
-                });
 
                 function setMapStyle(event) {
                     const thumbnails = document.querySelectorAll('.thumbnail');
@@ -158,14 +203,22 @@
                 }
             </script>
             {% for key,l in fl %}
-                <h4 data-tmdb-id="{{ key }}">{{ l.locations.0.title }}</h4>
+                <h4 data-tmdb-id="{{ key }}" data-country="{{ l.country.0 }}">
+                    <a href="{{ path('app_series_tmdb', { 'id': key, slug: l.locations.0.title|slug }) }}" target="_blank">
+                        {{ l.locations.0.title }} ({{ l.locations|length }})
+                    </a>
+                </h4>
                 {% for loc in l.locations %}
                     {#                    {{ dump(loc) }} #}
-                    <div class="series-location">
-                        <div class="series-location-image">
-                            <a href="{{ path('app_series_tmdb', { 'id': key, slug: loc.title|slug }) }}">
-                                <img src="/images/map{{ loc.still_path }}" alt="{{ loc.location ?? 'No title entry!!' }}">
-                            </a>
+                    <div class="series-location" data-tmdb-id="{{ key }}">
+                        <div class="series-location-image" data-title="{{ loc.location }}">
+                            <img src="/images/map{{ loc.still_path }}" alt="{{ loc.location ?? 'No title entry!!' }}">
+                            <div class="image-count">{{ loc.filmingLocationImages|length }}</div>
+                            <div class="image-list">
+                                {% for image in loc.filmingLocationImages %}
+                                    <img src="/images/map{{ image.path }}" alt="{{ loc.title }} #{{ loop.index }}">
+                                {% endfor %}
+                            </div>
                         </div>
                         <div class="series-location-title">
                             <div class="text">{{ loc.location ?? 'No title entry!!' }}</div>
@@ -252,6 +305,9 @@
                 .addTo(map);
             let markerIcon = marker.getElement();
             markerIcon.setAttribute('data-tmdb-id', location.tmdb_id);
+            // markerIcon.setAttribute('data-country', location.country);
+            markerIcon.setAttribute('data-latitude', location.latitude);
+            markerIcon.setAttribute('data-longitude', location.longitude);
         });
         {% endif %}
     </script>
