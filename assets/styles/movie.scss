@@ -711,7 +711,6 @@
             flex-direction: column;
             flex-grow: 1;
             gap: 1rem;
-            margin-inside: 0;
             padding: 1rem;
 
             label {
@@ -723,11 +722,10 @@
                 display: flex;
                 gap: 1rem;
                 height: 20rem;
-                justify-content: center;
+                justify-content: space-around;
 
-                .poster a {
+                .collection-poster {
                     align-items: center;
-                    aspect-ratio: 78 / 117;
                     background-color: var(--green-70-alpha-50);
                     border-radius: .5rem;
                     display: flex;
@@ -735,15 +733,13 @@
                     justify-content: center;
 
                     img {
+                        aspect-ratio: 78 / 117;
                         border-radius: .5rem;
                         height: 100%;
-                        object-fit: cover;
-                        width: 100%;
                     }
                 }
 
-                .infos a {
-                    aspect-ratio: 16 / 9;
+                .collection-infos {
                     display: flex;
                     flex-direction: column;
                     gap: .5rem;
@@ -754,30 +750,21 @@
                     .name {
                         background-color: var(--ardoise-100-alpha-20);
                         border-radius: .25rem;
-                        bottom: 1rem;
+                        bottom: 2rem;
                         color: var(--orange-50);
                         font-size: 2rem;
-                        font-weight: 300;
-                        margin-block: 0;
-                        padding: .125rem .5rem;
-                        text-align: center;
+                        font-weight: 600;
+                        left: 50%;
                         position: absolute;
-                        right: 1rem;
+                        text-wrap: nowrap;
+                        transform: translate(-50%, -50%);
                     }
-
-                    .collection-backdrop {
-                        inset: 0;
-                        overflow: auto;
-                        position: absolute;
-                        z-index: -1;
 
                         img {
+                            aspect-ratio: 16 / 9;
                             border-radius: .5rem;
                             height: 100%;
-                            object-fit: cover;
-                            width: 100%;
                         }
-                    }
                 }
             }
         }
