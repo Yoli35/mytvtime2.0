@@ -651,7 +651,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
                         WHERE ue.`user_series_id`=$userSeriesId AND ue.`season_number`=$seasonNumber AND ue.`watch_at` IS NOT NULL
                      ) as episodeWatchedCount";
 
-        $result = $this->getOne($sql);
+        $result = $this->getAll($sql);
+        $result = $result[0] ?? null;
 
         return $result ? $result['episodeWatchedCount'] / $result['episodeCount'] * 100 : null;
     }

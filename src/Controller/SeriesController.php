@@ -1496,6 +1496,7 @@ class SeriesController extends AbstractController
                 $this->userEpisodeRepository->save($userEpisode, true);
                 return $this->json([
                     'ok' => true,
+                    'progress' => $this->userEpisodeRepository->seasonProgress($userSeries, $seasonNumber),
                 ]);
             }
 
@@ -1526,6 +1527,7 @@ class SeriesController extends AbstractController
                         $this->userSeriesRepository->save($userSeries, true);
                         return $this->json([
                             'ok' => true,
+                            'progress' => $this->userEpisodeRepository->seasonProgress($userSeries, $seasonNumber),
                         ]);
                     }
                 }
