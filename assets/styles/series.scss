@@ -3700,6 +3700,26 @@ dialog {
         opacity: 1;
         transform: translateX(0);
     }
+
+    .scroll-down-to-submit {
+        bottom: 0;
+        display: none;
+        justify-content: center;
+        padding-block: 1rem;
+        position: absolute;
+        width: 100%;
+
+        button {
+            background-color: var(--emerald-50);
+            border-radius: .25rem;
+            color: var(--ardoise-10);
+            cursor: pointer;
+            font-size: 1.25rem;
+            font-weight: 300;
+            padding-block: .25rem;
+            padding-inline: 1rem;
+        }
+    }
 }
 
 dialog, .side-panel {

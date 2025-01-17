@@ -700,7 +700,6 @@ export class Show {
             submitButton.textContent = translations['Add'];
             gThis.displayForm(overviewForm);
         });
-
         seriesToolsAdditionalOverview.addEventListener('click', function () {
             const firstRow = ovForm.querySelector('.form-row:first-child');
             const hiddenInputTool = ovForm.querySelector('#tool');
@@ -711,7 +710,6 @@ export class Show {
             submitButton.textContent = translations['Add'];
             gThis.displayForm(overviewForm);
         });
-
         ovCancel.addEventListener('click', function () {
             gThis.hideForm(overviewForm);
         });
@@ -763,7 +761,6 @@ export class Show {
         deleteOvCancel.addEventListener('click', function () {
             gThis.hideForm(deleteOverviewForm);
         });
-
         ovAdd.addEventListener('click', function (event) {
             event.preventDefault();
 
@@ -930,7 +927,6 @@ export class Show {
                 }
             });
         });
-
         deleteOvDelete.addEventListener('click', function (event) {
             event.preventDefault();
 
