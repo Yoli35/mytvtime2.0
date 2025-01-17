@@ -54,8 +54,8 @@ Mandatory variables:
                                 <div class="type">{{ ux_icon('fa6-solid:user', {height: "18px", width: "18px"}) }}</div>
                                 <div class="episode-info">{{ 'Last episode watched'|trans }}</div>
                                 <div class="episode-number">{{ "S%02dE%02d"|format(ule.season_number, ule.episode_number) }}</div>
-                                <div class="episode-air-date">{{ ule.air_date_offset|format_date("relative_short")|capitalize }}</div>
-                                <div class="episode-air-date">{{ ule.watch_at|format_datetime("relative_short", "short")|capitalize }}</div>
+                                <div class="episode-air-date" data-title="{{ 'Episode air date'|trans }}">{{ ule.air_date_offset|format_date("relative_short")|capitalize }}</div>
+                                <div class="episode-air-date" data-title="{{ 'View date'|trans }}">{{ ule.watch_at|format_datetime("relative_short", "short")|capitalize }}</div>
                             </div>
                         {% endif %}
                         {% if une %}
@@ -63,8 +63,8 @@ Mandatory variables:
                                 <div class="type">{{ ux_icon('fa6-solid:user', {height: "18px", width: "18px"}) }}</div>
                                 <div class="episode-info">{{ 'Next episode to watch'|trans }}</div>
                                 <div class="episode-number">{{ "S%02dE%02d"|format(une.season_number, une.episode_number) }}</div>
-                                <div class="episode-air-date">{{ 'Not watched yet'|trans }}</div>
-                                <div class="episode-air-date">{{ une.air_date_offset|format_date("relative_short")|capitalize }}</div>
+                                <div class="episode-air-date" data-title="{{ 'Episode air date'|trans }}">{{ une.air_date_offset|format_date("relative_short")|capitalize }}</div>
+                                <div class="episode-air-date" data-title="{{ 'View date'|trans }}">{{ 'Not watched yet'|trans }}</div>
                             </div>
                             {% if schedule.multiple %}
                                 {% set ulne = schedule.userLastNextEpisode %}
@@ -72,8 +72,8 @@ Mandatory variables:
                                     <div class="type">{{ ux_icon('fa6-solid:user', {height: "18px", width: "18px"}) }}</div>
                                     <div class="episode-info">{{ 'Last to watch'|trans }}</div>
                                     <div class="episode-number">{{ "S%02dE%02d"|format(ulne.season_number, ulne.episode_number) }}</div>
-                                    <div class="episode-air-date">{{ 'Not watched yet'|trans }}</div>
-                                    <div class="episode-air-date">{{ ulne.air_date_offset|format_date("relative_short")|capitalize }}</div>
+                                    <div class="episode-air-date" data-title="{{ 'Episode air date'|trans }}">{{ ulne.air_date_offset|format_date("relative_short")|capitalize }}</div>
+                                    <div class="episode-air-date" data-title="{{ 'View date'|trans }}">{{ 'Not watched yet'|trans }}</div>
                                 </div>
                             {% endif %}
                         {% endif %}

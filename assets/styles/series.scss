@@ -970,7 +970,10 @@ h2 {
             }
 
             .episode-info {
+                background-color: var(--orange-20-alpha-25);
+                border-radius: .25rem;
                 max-width: 8rem;
+                padding: .25rem;
             }
 
             .episode-info, .episode-name, .episode-air-date {
