@@ -792,7 +792,7 @@ h2 {
                 gap: .5rem;
                 height: 7.25rem;
                 justify-content: flex-start;
-                overflow-x: hidden;
+                overflow-x: auto;
                 margin-inline: auto;
                 padding-inline: 1rem;
 
@@ -802,10 +802,10 @@ h2 {
             }
 
             img {
-                border: 2px solid var(--orange-50);
+                /*border: 2px solid var(--orange-50);*/
                 border-radius: .25rem;
                 height: 7rem;
-                object-fit: cover;
+                object-fit: contain;
 
                 &.pointer {
                     cursor: pointer;
@@ -854,8 +854,10 @@ h2 {
             }
 
             .other-logo {
+                background-color: var(--ardoise-100-alpha-20);
                 border-radius: .25rem;
                 height: 7rem;
+                padding: .5rem;
                 width: auto;
             }
         }
@@ -1324,9 +1326,9 @@ h2 {
             flex-direction: column;
         }
 
-        .left {
+        .content-seasons {
             flex-shrink: 0;
-            width: 70%;
+            /*width: 70%;*/
 
             .all-seasons {
                 display: flex;
@@ -1353,15 +1355,18 @@ h2 {
             }
         }
 
-        .right {
-            width: calc(30% - 1rem);
+        .content-infos {
+            /*width: calc(30% - 1rem);*/
 
             .providers {
                 overflow-x: auto;
 
                 .wrapper {
                     display: flex;
+                    flex-wrap: nowrap;
                     gap: 1rem;
+                    margin-inline: auto;
+                    width: fit-content;
 
                     .provider {
                         align-items: center;

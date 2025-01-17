@@ -220,7 +220,7 @@
                     <div class="logos">
                         <div class="wrapper">
                             {% for logo in series.images.logos %}
-                                <div class="other-backdrop">
+                                <div class="other-logo">
                                     <img src="{{ logo }}" alt="{{ 'Backdrop #' ~ loop.index ~ ' ' ~ series.name }}">
                                 </div>
                             {% endfor %}
@@ -233,7 +233,6 @@
 
             {{ include('_blocks/series/_externals.html.twig') }}
 
-            {#            {% if userSeries %} #}
             <div class="user-actions">
                 <h2>{{ 'User actions'|trans }}</h2>
                 <div class="wrapper">
@@ -381,10 +380,112 @@
                     </div>
                 </div>
             </div>
-            {#            {% endif %} #}
 
-            <div class="content">
-                <div class="left">
+            <div class="content column">
+                <div class="content-infos">
+                    {% if tv['watch/providers'].flatrate|length %}
+                        <h3>{{ 'Where to watch'|trans }}</h3>
+                        <div class="providers">
+                            <div class="wrapper">
+                                {% for provider in tv['watch/providers'].flatrate %}
+                                    <div class="provider" data-title="{{ provider.provider_name }}">
+                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                        <div>{{ provider.provider_name }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if tv['watch/providers'].rent|length %}
+                        <h3>{{ 'Where to rent'|trans }}</h3>
+                        <div class="providers">
+                            <div class="wrapper">
+                                {% for provider in tv['watch/providers'].rent %}
+                                    <div class="provider" data-title="{{ provider.provider_name }}">
+                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                        <div>{{ provider.provider_name }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if tv['watch/providers'].buy|length %}
+                        <h3>{{ 'Where to buy'|trans }}</h3>
+                        <div class="providers">
+                            <div class="wrapper">
+                                {% for provider in tv['watch/providers'].buy %}
+                                    <div class="provider" data-title="{{ provider.provider_name }}">
+                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                        <div>{{ provider.provider_name }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {#                    {% if series.seriesInProgress %} #}
+                    {% if tv.next_episode_to_air %}
+                        <h3>{{ 'Broadcast delay'|trans }}</h3>
+                        <div class="facts">
+                            <div class="fact">
+                                <div class="broadcast-delay">
+                                    <label for="broadcast-delay" data-title="{{ 'Delay in days'|trans }}">{{ 'Delay'|trans }}
+                                        <input type="number" id="broadcast-delay" name="broadcast-delay" value="{{ series.dayOffsets.0.offset??0 }}"/>
+                                    </label>
+                                    <button class="save" value="broadcast-delay">{{ 'Save'|trans }}</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <h3>{{ 'Key facts'|trans }}</h3>
+                    <div class="facts">
+                        <div class="fact">
+                            <div class="fact-label">{{ 'Original name'|trans }}</div>
+                            <div class="fact-content">{{ tv.original_name }}</div>
+                        </div>
+                        <div class="fact">
+                            <div class="fact-label">{{ 'Original language'|trans }}</div>
+                            <div class="fact-content">{{ tv.original_language|language_name }}</div>
+                        </div>
+                        <div class="fact">
+                            <div class="fact-label">{{ 'Original Country'|trans }}</div>
+                            {% for country in tv.origin_country %}
+                                <div class="fact-content">{{ getEmojiFlag(country) ~ ' ' ~ country|country_name }}</div>
+                            {% endfor %}
+                        </div>
+                        {% if tv.networks|length %}
+                            <div class="fact">
+                                <div class="fact-label">{{ (tv.networks|length>1?'Networks':'Network')|trans }}</div>
+                                <div class="networks">
+                                    {% for network in tv.networks %}
+                                        <div class="network-detail">
+                                            <div class="frame">
+                                                {% if network.logo_path %}
+                                                    <img src="{{ network.logo_path }}" alt="{{ network.name }}" loading="lazy">
+                                                {% else %}
+                                                    {{ network.name }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if tv.keywords.results|length %}
+                            <div class="fact keyword-block">
+                                {{ include('_blocks/series/_keywords.html.twig', {id: tv.id, keywords: tv.keywords.results, missing: tv.missing_translations}) }}
+                            </div>
+                        {% endif %}
+                        <div class="fact {{ tv.status_css }}">
+                            <div class="fact-label">{{ 'Status'|trans }}</div>
+                            <div class="fact-content">{{ tv.status|trans }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-seasons">
                     <div class="all-seasons">
                         <div>{{ 'Seasons'|trans }}</div>
                         {% if tv.seasons|length > 1 %}
@@ -491,109 +592,6 @@
                         </div>
                     {% endif %}
 
-                </div>
-                <div class="right">
-                    {% if tv['watch/providers'].flatrate|length %}
-                        <h3>{{ 'Where to watch'|trans }}</h3>
-                        <div class="providers">
-                            <div class="wrapper">
-                                {% for provider in tv['watch/providers'].flatrate %}
-                                    <div class="provider" data-title="{{ provider.provider_name }}">
-                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
-                                        <div>{{ provider.provider_name }}</div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {% if tv['watch/providers'].rent|length %}
-                        <h3>{{ 'Where to rent'|trans }}</h3>
-                        <div class="providers">
-                            <div class="wrapper">
-                                {% for provider in tv['watch/providers'].rent %}
-                                    <div class="provider" data-title="{{ provider.provider_name }}">
-                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
-                                        <div>{{ provider.provider_name }}</div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {% if tv['watch/providers'].buy|length %}
-                        <h3>{{ 'Where to buy'|trans }}</h3>
-                        <div class="providers">
-                            <div class="wrapper">
-                                {% for provider in tv['watch/providers'].buy %}
-                                    <div class="provider" data-title="{{ provider.provider_name }}">
-                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
-                                        <div>{{ provider.provider_name }}</div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {#                    {% if series.seriesInProgress %} #}
-                    {% if tv.next_episode_to_air %}
-                        <h3>{{ 'Broadcast delay'|trans }}</h3>
-                        <div class="facts">
-                            <div class="fact">
-                                <div class="broadcast-delay">
-                                    <label for="broadcast-delay" data-title="{{ 'Delay in days'|trans }}">{{ 'Delay'|trans }}
-                                        <input type="number" id="broadcast-delay" name="broadcast-delay" value="{{ series.dayOffsets.0.offset??0 }}"/>
-                                    </label>
-                                    <button class="save" value="broadcast-delay">{{ 'Save'|trans }}</button>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    <h3>{{ 'Key facts'|trans }}</h3>
-                    <div class="facts">
-                        <div class="fact">
-                            <div class="fact-label">{{ 'Original name'|trans }}</div>
-                            <div class="fact-content">{{ tv.original_name }}</div>
-                        </div>
-                        <div class="fact">
-                            <div class="fact-label">{{ 'Original language'|trans }}</div>
-                            <div class="fact-content">{{ tv.original_language|language_name }}</div>
-                        </div>
-                        <div class="fact">
-                            <div class="fact-label">{{ 'Original Country'|trans }}</div>
-                            {% for country in tv.origin_country %}
-                                <div class="fact-content">{{ getEmojiFlag(country) ~ ' ' ~ country|country_name }}</div>
-                            {% endfor %}
-                        </div>
-                        <div class="fact {{ tv.status_css }}">
-                            <div class="fact-label">{{ 'Status'|trans }}</div>
-                            <div class="fact-content">{{ tv.status|trans }}</div>
-                        </div>
-                        {% if tv.networks|length %}
-                            <div class="fact">
-                                <div class="fact-label">{{ (tv.networks|length>1?'Networks':'Network')|trans }}</div>
-                                <div class="networks">
-                                    {% for network in tv.networks %}
-                                        <div class="network-detail">
-                                            <div class="frame">
-                                                {% if network.logo_path %}
-                                                    <img src="{{ network.logo_path }}" alt="{{ network.name }}" loading="lazy">
-                                                {% else %}
-                                                    {{ network.name }}
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endif %}
-                        {% if tv.keywords.results|length %}
-                            <div class="fact keyword-block">
-                                {{ include('_blocks/series/_keywords.html.twig', {id: tv.id, keywords: tv.keywords.results, missing: tv.missing_translations}) }}
-                            </div>
-                        {% endif %}
-                    </div>
                 </div>
             </div>
             <div class="content">
