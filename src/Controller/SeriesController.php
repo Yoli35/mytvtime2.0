@@ -598,8 +598,6 @@ class SeriesController extends AbstractController
             $series = $this->getDbSearchResult($user, $query, $page, $firstAirDateYear);
         }
 
-        dump($series);
-
         if (count($series) == 1) {
             return $this->redirectToRoute('app_series_show', [
                 'id' => $series[0]['id'],
