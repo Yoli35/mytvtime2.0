@@ -1023,6 +1023,9 @@ export class Show {
         const addLocationCancel = addLocationForm.querySelector('button[type="button"]');
         const addLocationSubmit = addLocationForm.querySelector('button[type="submit"]');
         const imageInputs = addLocationForm.querySelectorAll('input[type="url"]');
+        const submitRow = addLocationForm.querySelector('.form-row.submit-row');
+        const scrollDownToSubmitDiv = addLocationDialog.querySelector('.scroll-down-to-submit');
+        const scrollDownToSubmitButton = scrollDownToSubmitDiv.querySelector('button');
         console.log({imageInputs});
         // Dev test
         const locationInput = addLocationForm.querySelector('input[name="location"]');
@@ -1036,6 +1039,27 @@ export class Show {
                 const longitudeInput = addLocationForm.querySelector('input[name="longitude"]');
                 longitudeInput.value = 2.3522;
             }
+        });
+
+        // Lorsque le panneau devient trop haut la div "submit-row" disparait.
+        // Si la div "submit-row" est hors du cadre, la div "scroll-down-to-submit" apparaît.
+        // Si la div "submit-row" est visible, la div "scroll-down-to-submit" disparaît.
+        const observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                console.log(entry)
+                if (entry.isIntersecting) {
+                    scrollDownToSubmitDiv.style.display = 'none';
+                } else {
+                    scrollDownToSubmitDiv.style.display = 'flex';
+                }
+            });
+        });
+        observer.observe(submitRow);
+        scrollDownToSubmitButton.addEventListener('click', function () {
+            // addLocationDialog > frame > form > submit-row
+            // frame overflow-y: auto;
+            // faire apparaitre la div "submit-row" dans le cadre
+            addLocationDialog.querySelector('.frame').scrollTo(0, submitRow.offsetTop);
         });
 
         if (seriesMap) {

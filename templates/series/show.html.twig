@@ -139,18 +139,20 @@
                 </div>
                 {% if oldSeriesAdded %}
                     <div class="side-panel old-series-added-panel open">
-                        <div class="dialog-content">
-                            <div class="dialog-header">
-                                <h2>{{ 'Addition of older series'|trans }}</h2>
-                            </div>
-                            <div class="dialog-body">
-                                <div class="message">{{ 'The series has been added to your watchlist'|trans }}.</div>
-                                <div class="message">{{ 'This series is more than 2 years old'|trans }}.</div>
-                                <div class="message">{{ 'Have you already watched it and want to mark all episodes as viewed?'|trans }}</div>
-                            </div>
-                            <div class="dialog-footer">
-                                <button name="no-thanks" data-title="{{ 'Episodes are considered viewed on the day of broadcast'|trans }}.">{{ 'No, thanks'|trans }}</button>
-                                <button name="yes" data-title="{{ 'Start watching the series now!'|trans }}.">{{ 'Yes'|trans }}</button>
+                        <div class="frame">
+                            <div class="dialog-content">
+                                <div class="dialog-header">
+                                    <h2>{{ 'Addition of older series'|trans }}</h2>
+                                </div>
+                                <div class="dialog-body">
+                                    <div class="message">{{ 'The series has been added to your watchlist'|trans }}.</div>
+                                    <div class="message">{{ 'This series is more than 2 years old'|trans }}.</div>
+                                    <div class="message">{{ 'Have you already watched it and want to mark all episodes as viewed?'|trans }}</div>
+                                </div>
+                                <div class="dialog-footer">
+                                    <button name="no-thanks" data-title="{{ 'Episodes are considered viewed on the day of broadcast'|trans }}.">{{ 'No, thanks'|trans }}</button>
+                                    <button name="yes" data-title="{{ 'Start watching the series now!'|trans }}.">{{ 'Yes'|trans }}</button>
+                                </div>
                             </div>
                         </div>
                     </div>

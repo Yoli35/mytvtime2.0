@@ -3687,8 +3687,6 @@ dialog {
     border-radius: .5rem 0 0 .5rem;
     max-height: calc(100vh - 16rem);
     opacity: 0;
-    overflow-y: auto;
-    padding: 2rem;
     position: fixed;
     right: 0;
     top: 8rem;
@@ -3701,23 +3699,31 @@ dialog {
         transform: translateX(0);
     }
 
-    .scroll-down-to-submit {
-        bottom: 0;
-        display: none;
-        justify-content: center;
-        padding-block: 1rem;
-        position: absolute;
-        width: 100%;
+    .frame {
+        max-height: calc(100vh - 16rem);
+        overflow-y: auto;
+        padding: 2rem;
+        scroll-behavior: smooth;
 
-        button {
-            background-color: var(--emerald-50);
-            border-radius: .25rem;
-            color: var(--ardoise-10);
-            cursor: pointer;
-            font-size: 1.25rem;
-            font-weight: 300;
-            padding-block: .25rem;
-            padding-inline: 1rem;
+        .scroll-down-to-submit {
+            bottom: 0;
+            display: none;
+            justify-content: center;
+            padding-block: 1rem;
+            position: absolute;
+            width: 100%;
+
+            button {
+                background-color: var(--emerald-50);
+                border-radius: .25rem;
+                border: none;
+                color: var(--ardoise-10);
+                cursor: pointer;
+                font-size: 1.25rem;
+                font-weight: 300;
+                padding-block: .25rem;
+                padding-inline: 1rem;
+            }
         }
     }
 }
