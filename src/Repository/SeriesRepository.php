@@ -43,12 +43,13 @@ class SeriesRepository extends ServiceEntityRepository
         $userId = $user->getId();
         $offset = ($page - 1) * 20;
 
-        $sql = "SELECT s.* "
-            . "  FROM user_series us "
-            . "  JOIN series s ON us.series_id = s.id "
-            . "  WHERE us.user_id = $userId AND s.name LIKE '%$query%' ";
+        $sql = "SELECT s.* 
+                FROM user_series us 
+                    INNER JOIN series s ON us.series_id = s.id 
+                    LEFT JOIN series_localized_name sln ON s.id = sln.series_id
+                WHERE us.user_id = $userId AND (s.name LIKE '%$query%' OR sln.name LIKE '%$query%') ";
         if ($firstAirDateYear) {
-            $sql .= "AND s.first_air_date LIKE '$firstAirDateYear%' ";
+            $sql .= "AND YEAR(s.first_air_date) LIKE $firstAirDateYear ";
         }
         $sql .= "  LIMIT 20 OFFSET $offset";
 

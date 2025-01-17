@@ -372,7 +372,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/search', name: 'search')]
+    #[Route('/tmdb/search', name: 'search')]
     public function search(Request $request): Response
     {
         $series = [];
@@ -391,6 +391,7 @@ class SeriesController extends AbstractController
 
         return $this->render('series/search.html.twig', [
             'form' => $simpleForm->createView(),
+            'action' => 'app_series_search',
             'title' => 'Search a series',
             'seriesList' => $series,
             'results' => [
@@ -574,14 +575,19 @@ class SeriesController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    #[Route('/search/db', name: 'search_db')]
+    #[Route('/db/search', name: 'search_db')]
     public function searchDB(Request $request): Response
     {
         /** @var User $user */
         $user = $this->getUser();
+        $searchName = $request->get('name');
 
         $series = [];
         $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
+        if ($searchName) {
+            $series = $this->getDbSearchResult($user, $searchName, 1, null);
+            $simpleSeriesSearch->setQuery($searchName);
+        }
         $simpleForm = $this->createForm(SeriesSearchType::class, $simpleSeriesSearch);
 
         $simpleForm->handleRequest($request);
@@ -589,24 +595,21 @@ class SeriesController extends AbstractController
             $query = $simpleSeriesSearch->getQuery();
             $page = $simpleSeriesSearch->getPage();
             $firstAirDateYear = $simpleSeriesSearch->getFirstAirDateYear();
-
-            $series = array_map(function ($s) {
-                $s['poster_path'] = $s['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $s['poster_path'] : null;
-                return $s;
-            }, $this->seriesRepository->search($user, $query, $firstAirDateYear, $page));
-
-            if (count($series) == 1) {
-                return $this->redirectToRoute('app_series_show', [
-                    'id' => $series[0]['id'],
-                    'slug' => $series[0]['slug'],
-                ]);
-            }
+            $series = $this->getDbSearchResult($user, $query, $page, $firstAirDateYear);
         }
 
-//        dump($series);
+        dump($series);
+
+        if (count($series) == 1) {
+            return $this->redirectToRoute('app_series_show', [
+                'id' => $series[0]['id'],
+                'slug' => $series[0]['slug'],
+            ]);
+        }
 
         return $this->render('series/search.html.twig', [
             'form' => $simpleForm->createView(),
+            'action' => 'app_series_search_db',
             'title' => 'Search among your series',
             'seriesList' => $series,
             'results' => [
@@ -615,6 +618,14 @@ class SeriesController extends AbstractController
                 'page' => $searchResult['page'] ?? 0,
             ],
         ]);
+    }
+
+    public function getDbSearchResult($user, $query, $page, $firstAirDateYear): mixed
+    {
+        return array_map(function ($s) {
+            $s['poster_path'] = $s['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $s['poster_path'] : null;
+            return $s;
+        }, $this->seriesRepository->search($user, $query, $firstAirDateYear, $page));
     }
 
     #[Route('/advanced/search', name: 'advanced_search')]

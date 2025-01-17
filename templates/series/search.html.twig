@@ -12,7 +12,7 @@
         {% include '_blocks/_menu.html.twig' %}
         <div class="series-search">
             <h1>{{ title|trans }}</h1>
-            {{ form_start(form, {'action': path('app_series_search'), 'attr': {'class': 'form'}}) }}
+            {{ form_start(form, {'action': path(action), 'attr': {'class': 'form'}}) }}
             <div class="form-row">
                 <div class="form-field">
                     <label for="{{ form.query.vars.id }}">

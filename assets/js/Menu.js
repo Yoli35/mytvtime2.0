@@ -613,9 +613,11 @@ export class Menu {
 
                 if (!li) {
                     if (type === 'tv') {
-                        type = 'series';
+                        window.location.href = '/' + gThis.lang + '/series/search/all?q=' + value;
                     }
-                    window.location.href = '/' + gThis.lang + '/' + type + '/search/all?q=' + value;
+                    if (type === 'dbtv') {
+                        window.location.href = '/' + gThis.lang + '/series/db/search/?name=' + value;
+                    }
 
                     return;
                 }
