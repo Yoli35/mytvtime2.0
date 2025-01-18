@@ -1184,6 +1184,21 @@ class SeriesController extends AbstractController
         $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
         $devices = $this->deviceRepository->deviceArray();
 
+        // Nouvelle saison, premier épisode non vu
+        if ($season['season_number'] > 1 &&  $season['episodes'][0]['user_episode']['watch_at'] == null) {
+            $firstEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $season['season_number'], 'episodeNumber' => 1]);
+            $previousSeasonNumber = $season['season_number'] - 1;
+            $lastEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $previousSeasonNumber], ['episodeNumber' => 'DESC']);
+            $season['episodes'][0]['user_episode']['provider_id'] = $providerId = $lastEpisode->getProviderId();
+            $season['episodes'][0]['user_episode']['provider_logo_path'] = $providers['logos'][$providerId];
+//            $season['episodes'][0]['user_episode']['device_id'] = $deviceId = $lastEpisode->getDeviceId();
+            if ($firstEpisode->getProviderId() != $providerId) {
+                $firstEpisode->setProviderId($providerId);
+//                $firstEpisode->setDeviceId($deviceId);
+                $this->userEpisodeRepository->save($firstEpisode, true);
+            }
+        }
+
         dump([
 //            'series' => $series,
             'season' => $season,
