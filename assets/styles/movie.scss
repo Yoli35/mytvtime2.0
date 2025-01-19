@@ -53,7 +53,7 @@
 
                 .viewed {
                     align-items: center;
-                    background-color: var(--ardoise-80-alpha-90);
+                    background-color: var(--orange-50-alpha-80);
                     bottom: 0;
                     position: absolute;
                     display: flex;
@@ -61,7 +61,14 @@
                     justify-content: center;
                     padding: .5rem;
                     text-align: center;
-                    width: 100%
+                    text-wrap: nowrap;
+                    text-overflow: ellipsis;
+                    text-shadow: 1px 1px 1px var(--ardoise-90);
+                    width: 100%;
+
+                    svg {
+                        flex-shrink: 0;
+                    }
                 }
             }
 
