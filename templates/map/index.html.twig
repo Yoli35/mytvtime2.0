@@ -145,6 +145,16 @@
                     const flCountryBbSelect = document.getElementById('fl-country-bb-select');
                     flCountryBbSelect.selectedIndex = getSelectIndex(flCountryBbSelect, country);
                     zoomToCountry();
+
+                    // Lorsqu'on change de series, on veut que le bouton "Zoom to" soit actif pour les pays
+                    const zoomToCountryButtons = document.querySelectorAll('.to-country');
+                    zoomToCountryButtons.forEach(button => {
+                        button.classList.add('active');
+                    });
+                    const zoomToMarkersButtons = document.querySelectorAll('.to-markers');
+                    zoomToMarkersButtons.forEach(button => {
+                        button.classList.remove('active');
+                    });
                 }
 
                 function getSelectIndex(select, value) {
@@ -158,6 +168,9 @@
 
                 function zoomToSeriesCountry(e) {
                     const target = e.currentTarget;
+                    const locationsButton = target.parentElement.querySelector('.to-markers');
+                    locationsButton.classList.remove('active');
+                    target.classList.add('active');
                     const countryCode = target.getAttribute('data-country');
                     const select = document.getElementById('fl-country-bb-select');
                     select.selectedIndex = getSelectIndex(select, countryCode);
@@ -166,6 +179,9 @@
 
                 function zoomToSeriesLocations(e) {
                     const target = e.currentTarget;
+                    const countryButton = target.parentElement.querySelector('.to-country');
+                    countryButton.classList.remove('active');
+                    target.classList.add('active');
                     let minLat = parseFloat(target.getAttribute('data-min-lat'));
                     let maxLat = parseFloat(target.getAttribute('data-max-lat'));
                     let minLng = parseFloat(target.getAttribute('data-min-lng'));
@@ -247,20 +263,18 @@
                             </a>
                             <div class="zoom-to">
                                 {{ 'Zoom to'|trans }}
-                                <div class="to-country active" data-country="{{ l.country.0 }}">
-                                    {{ l.country.0|country_name }}
-                                </div>
-                                <div class="to-markers"
-                                        {#{% for loc in l.locations %}
-                                            data-lat-{{ loop.index0 }}="{{ loc.latitude }}"
-                                            data-lng-{{ loop.index0 }}="{{ loc.longitude }}"
-                                        {% endfor %}#}
-                                        data-min-lat="{{ min(l.locations|map(loc => loc.latitude)) }}"
-                                        data-max-lat="{{ max(l.locations|map(loc => loc.latitude)) }}"
-                                        data-min-lng="{{ min(l.locations|map(loc => loc.longitude)) }}"
-                                        data-max-lng="{{ max(l.locations|map(loc => loc.longitude)) }}"
-                                >
-                                    {{ 'Locations'|trans }}
+                                <div class="buttons">
+                                    <div class="to-country active" data-country="{{ l.country.0 }}">
+                                        {{ l.country.0|country_name }}
+                                    </div>
+                                    <div class="to-markers"
+                                         data-min-lat="{{ min(l.locations|map(loc => loc.latitude)) }}"
+                                         data-max-lat="{{ max(l.locations|map(loc => loc.latitude)) }}"
+                                         data-min-lng="{{ min(l.locations|map(loc => loc.longitude)) }}"
+                                         data-max-lng="{{ max(l.locations|map(loc => loc.longitude)) }}"
+                                    >
+                                        {{ 'Locations'|trans }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
