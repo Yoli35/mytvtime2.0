@@ -92,11 +92,20 @@
                     const thumbnails = document.querySelectorAll('.thumbnail');
 
                     flSeriesMapSelect.addEventListener('change', gotoLocation);
-                    flCountryMapSelect.addEventListener('change', zoomTotoLocation);
-                    flCountryBbSelect.addEventListener('change', zoomTotoCountry);
+                    flCountryMapSelect.addEventListener('change', zoomToLocation);
+                    flCountryBbSelect.addEventListener('change', zoomToCountry);
 
                     thumbnails.forEach(thumbnail => {
                         thumbnail.addEventListener('click', setMapStyle);
+                    });
+
+                    const allSeriesLocations = document.querySelector('.all-series-locations');
+                    const seriesLocations = allSeriesLocations.querySelectorAll('.series-locations');
+                    seriesLocations.forEach(loc => {
+                        const toCountry = loc.querySelector('.to-country');
+                        const toMarkers = loc.querySelector('.to-markers');
+                        toCountry.addEventListener('click', zoomToSeriesCountry);
+                        toMarkers.addEventListener('click', zoomToSeriesLocations);
                     });
                 });
 
@@ -105,31 +114,37 @@
                     const id = select.options[select.selectedIndex].value;
                     const locationH4 = document.querySelector(`h4[data-tmdb-id="${id}"]`);
                     locationH4.scrollIntoView({behavior: 'instant', block: 'center'});*/
+                    const map = document.getElementById('map');
+                    const allSeriesLocations = document.querySelector('.all-series-locations');
                     const select = e.currentTarget;
                     const value = select.options[select.selectedIndex].value;
                     let country;
                     if (value !== "") {
-                        const locationItemsToHide = document.querySelectorAll('*[data-tmdb-id]');
-                        const locationItemsToShow = document.querySelectorAll(`*[data-tmdb-id="${value}"]`);
-                        locationItemsToHide.forEach(locationItem => {
+                        const markerToHide = map.querySelectorAll(`.mapboxgl-marker:not([data-tmdb-id="${value}"])`);
+                        markerToHide.forEach(marker => {
+                            marker.style.display = 'none';
+                        });
+                        const markerToShow = map.querySelectorAll(`.mapboxgl-marker[data-tmdb-id="${value}"]`);
+                        markerToShow.forEach(marker => {
+                            marker.style.display = 'block';
+                        });
+                        const seriesLocationsToHide = allSeriesLocations.querySelectorAll(`.series-locations:not([data-tmdb-id="${value}"])`);
+                        const serieLocations = document.querySelector(`.series-locations[data-tmdb-id="${value}"]`);
+                        seriesLocationsToHide.forEach(locationItem => {
                             locationItem.style.display = 'none';
                         });
-                        locationItemsToShow.forEach(locationItem => {
-                            locationItem.style.display = locationItem.classList.contains(".series-location") ? "flex" : "block";
-                        });
-                        const h4 = document.querySelector(`h4[data-tmdb-id="${value}"]`);
-                        country = h4?.getAttribute('data-country') || "";
+                        serieLocations.style.display = "flex";
+                        country = serieLocations?.getAttribute('data-country') || "";
                     } else {
-                        const locationItems = document.querySelectorAll('*[data-tmdb-id]');
-                        locationItems.forEach(locationItem => {
-                            locationItem.style.display = locationItem.classList.contains(".series-location") ? "flex" : "block";
+                        allSeriesLocations.forEach(loc => {
+                            loc.style.display = "flex";
                         });
                         country = "";
                     }
                     console.log(country);
                     const flCountryBbSelect = document.getElementById('fl-country-bb-select');
                     flCountryBbSelect.selectedIndex = getSelectIndex(flCountryBbSelect, country);
-                    zoomTotoCountry();
+                    zoomToCountry();
                 }
 
                 function getSelectIndex(select, value) {
@@ -141,7 +156,28 @@
                     return 0;
                 }
 
-                function zoomTotoLocation() {
+                function zoomToSeriesCountry(e) {
+                    const target = e.currentTarget;
+                    const countryCode = target.getAttribute('data-country');
+                    const select = document.getElementById('fl-country-bb-select');
+                    select.selectedIndex = getSelectIndex(select, countryCode);
+                    zoomToCountry();
+                }
+
+                function zoomToSeriesLocations(e) {
+                    const target = e.currentTarget;
+                    let minLat = parseFloat(target.getAttribute('data-min-lat'));
+                    let maxLat = parseFloat(target.getAttribute('data-max-lat'));
+                    let minLng = parseFloat(target.getAttribute('data-min-lng'));
+                    let maxLng = parseFloat(target.getAttribute('data-max-lng'));
+                    minLat -= 0.1;
+                    maxLat += 0.1;
+                    minLng -= 0.1;
+                    maxLng += 0.1;
+                    map.fitBounds([[minLng, minLat], [maxLng, maxLat]]);
+                }
+
+                function zoomToLocation() {
                     const select = document.getElementById('fl-country-map-select');
                     const country = select.options[select.selectedIndex].value;
                     const leafletMarkerIcons = document.querySelectorAll('.leaflet-marker-icon');
@@ -176,12 +212,13 @@
                     }
                 }
 
-                function zoomTotoCountry() {
+                function zoomToCountry() {
                     const select = document.getElementById('fl-country-bb-select');
                     const country = select.options[select.selectedIndex];
                     if (country.value === "") {
                         map.setZoom(2);
                     } else {
+                        // dans la base les latitudes et longitudes sont inversées
                         const lat1 = country.getAttribute('data-lat1');
                         const lng1 = country.getAttribute('data-lng1');
                         const lat2 = country.getAttribute('data-lat2');
@@ -189,7 +226,6 @@
                         map.fitBounds([[lat1, lng1], [lat2, lng2]]);
                     }
                 }
-
 
                 function setMapStyle(event) {
                     const thumbnails = document.querySelectorAll('.thumbnail');
@@ -202,38 +238,62 @@
                     map.setStyle(style);
                 }
             </script>
-            {% for key,l in fl %}
-                <h4 data-tmdb-id="{{ key }}" data-country="{{ l.country.0 }}">
-                    <a href="{{ path('app_series_tmdb', { 'id': key, slug: l.locations.0.title|slug }) }}" target="_blank">
-                        {{ l.locations.0.title }} ({{ l.locations|length }})
-                    </a>
-                </h4>
-                {% for loc in l.locations %}
-                    {#                    {{ dump(loc) }} #}
-                    <div class="series-location" data-tmdb-id="{{ key }}">
-                        <div class="series-location-image" data-title="{{ loc.location }}">
-                            <img src="/images/map{{ loc.still_path }}" alt="{{ loc.location ?? 'No title entry!!' }}">
-                            <div class="image-count">{{ loc.filmingLocationImages|length }}</div>
-                            <div class="image-list">
-                                {% for image in loc.filmingLocationImages %}
-                                    <img src="/images/map{{ image.path }}" alt="{{ loc.title }} #{{ loop.index }}">
-                                {% endfor %}
+            <div class="all-series-locations">
+                {% for key,l in fl %}
+                    <div class="series-locations" data-tmdb-id="{{ key }}" data-country="{{ l.country.0 }}">
+                        <div class="series-location-header">
+                            <a href="{{ path('app_series_tmdb', { 'id': key, slug: l.locations.0.title|slug }) }}" target="_blank">
+                                {{ l.locations.0.title }} ({{ l.locations|length }})
+                            </a>
+                            <div class="zoom-to">
+                                {{ 'Zoom to'|trans }}
+                                <div class="to-country active" data-country="{{ l.country.0 }}">
+                                    {{ l.country.0|country_name }}
+                                </div>
+                                <div class="to-markers"
+                                        {#{% for loc in l.locations %}
+                                            data-lat-{{ loop.index0 }}="{{ loc.latitude }}"
+                                            data-lng-{{ loop.index0 }}="{{ loc.longitude }}"
+                                        {% endfor %}#}
+                                        data-min-lat="{{ min(l.locations|map(loc => loc.latitude)) }}"
+                                        data-max-lat="{{ max(l.locations|map(loc => loc.latitude)) }}"
+                                        data-min-lng="{{ min(l.locations|map(loc => loc.longitude)) }}"
+                                        data-max-lng="{{ max(l.locations|map(loc => loc.longitude)) }}"
+                                >
+                                    {{ 'Locations'|trans }}
+                                </div>
                             </div>
                         </div>
-                        <div class="series-location-title">
-                            <div class="text">{{ loc.location ?? 'No title entry!!' }}</div>
-                            <!-- Lien vers Google Maps -->
-                            <div class="google-maps">
-                                <a href="https://www.google.com/maps?q={{ loc.latitude }},{{ loc.longitude }}" target="_blank">
-                                    {{ ux_icon('logos:google-maps', {height: '36px', width: '36px'}) }}
-                                </a>
-                            </div>
+                        <div class="series-location-content">
+                            {% for loc in l.locations %}
+                                {#                    {{ dump(loc) }} #}
+                                <div class="series-location" data-tmdb-id="{{ key }}">
+                                    <div class="series-location-image" data-title="{{ loc.location }}">
+                                        <img src="/images/map{{ loc.still_path }}" alt="{{ loc.location ?? 'No title entry!!' }}">
+                                        <div class="image-count">{{ loc.filmingLocationImages|length }}</div>
+                                        <div class="image-list">
+                                            {% for image in loc.filmingLocationImages %}
+                                                <img src="/images/map{{ image.path }}" alt="{{ loc.title }} #{{ loop.index }}">
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="series-location-title">
+                                        <div class="text">{{ loc.location ?? 'No title entry!!' }}</div>
+                                        <!-- Lien vers Google Maps -->
+                                        <div class="google-maps">
+                                            <a href="https://www.google.com/maps?q={{ loc.latitude }},{{ loc.longitude }}" target="_blank">
+                                                {{ ux_icon('logos:google-maps', {height: '36px', width: '36px'}) }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="series-location-location">{{ loc.location }}</div>
+                                    <div class="series-location-description">{{ loc.description }}</div>
+                                </div>
+                            {% endfor %}
                         </div>
-                        <div class="series-location-location">{{ loc.location }}</div>
-                        <div class="series-location-description">{{ loc.description }}</div>
                     </div>
                 {% endfor %}
-            {% endfor %}
+            </div>
         </div>
         {% include('_blocks/_footer.html.twig') %}
     </div>
