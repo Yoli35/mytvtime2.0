@@ -1190,7 +1190,7 @@ class SeriesController extends AbstractController
             $previousSeasonNumber = $season['season_number'] - 1;
             $lastEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $previousSeasonNumber], ['episodeNumber' => 'DESC']);
             $season['episodes'][0]['user_episode']['provider_id'] = $providerId = $lastEpisode->getProviderId();
-            $season['episodes'][0]['user_episode']['provider_logo_path'] = $providers['logos'][$providerId];
+            $season['episodes'][0]['user_episode']['provider_logo_path'] = $providerId ? $providers['logos'][$providerId] : null;
 //            $season['episodes'][0]['user_episode']['device_id'] = $deviceId = $lastEpisode->getDeviceId();
             if ($firstEpisode->getProviderId() != $providerId) {
                 $firstEpisode->setProviderId($providerId);
