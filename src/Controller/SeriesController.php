@@ -1868,14 +1868,18 @@ class SeriesController extends AbstractController
     {
         $messages = [];
 
-        $slugger = new AsciiSlugger();
-
         $data = $request->request->all();
         $files = $request->files->all();
         dump([
             'data' => $data,
             'files' => $files,
         ]);
+        if (empty($data) && empty($files)) {
+            return $this->json([
+                'ok' => false,
+                'message' => 'No data',
+            ]);
+        }
 
         $imageFiles = [];
         foreach ($files as $key => $file) {
@@ -1892,16 +1896,15 @@ class SeriesController extends AbstractController
             'data' => $data,
             'image files' => $imageFiles,
         ]);
-        // "image-url" => "blob:https://localhost:8000/71698467-714e-4b2e-b6b3-a285619ea272"
-        $testUrl = $data['image-url'];
-        if (str_starts_with($testUrl, 'blob')) {
-            $blob = $data['image-url-blob'];
-
-            $imageResulPath = $this->blobToWebp($blob, $data['title'], $data['location'], 100);
-            dump($imageResulPath);
-        }
-
         if ($data['location'] == 'test') {
+            // "image-url" => "blob:https://localhost:8000/71698467-714e-4b2e-b6b3-a285619ea272"
+            $testUrl = $data['image-url'];
+            if (str_starts_with($testUrl, 'blob')) {
+                $blob = $data['image-url-blob'];
+                $imageResultPath = $this->blobToWebp($blob, $data['title'], $data['location'], 100);
+                dump($imageResultPath);
+            }
+
             return $this->json([
                 'ok' => true,
                 'testMode' => true,
@@ -1912,11 +1915,8 @@ class SeriesController extends AbstractController
 
         $crudType = $data['crud-type'];
         $crudId = $data['crud-id'];
-        $seriesId = $data['series-id'];
-        $tmdbId = $data['tmdb-id'];
-        dump(['crudType' => $crudType, 'crudId' => $crudId, 'seriesId' => $seriesId, 'tmdbId' => $tmdbId]);
+//        $seriesId = $data['series-id'];
 
-        $uuid = $data['uuid'] = Uuid::v4()->toString();
         $title = $data['title'];
         $location = $data['location'];
         $description = $data['description'];
@@ -1934,20 +1934,17 @@ class SeriesController extends AbstractController
         $images = array_filter($images, fn($image) => $image != '' and $image != "undefined");
         dump(['images' => $images]);
         // TODO: Vérifier le code suivant
-        $additionalImages = [];
-        $firstImageIndex = 0;
-        if ($crudType === 'create') {
-            $firstImageIndex = 1;
-        }
+        $firstImageIndex = 1;
         if ($crudType === 'update' && count($images) > 0) {
             // Récupérer les images supplémentaires et les compter
             $existingAdditionalImages = $this->filmingLocationImageRepository->findBy(['filmingLocation' => $crudId]);
-            $firstImageIndex = count($existingAdditionalImages) + 1;
+            $firstImageIndex += count($existingAdditionalImages);
         }
-
         // Fin du code à vérifier
 
         if ($crudType === 'create') {
+            $uuid = $data['uuid'] = Uuid::v4()->toString();
+            $tmdbId = $data['tmdb-id'];
             $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $location, $description, $latitude, $longitude, true);
             $filmingLocation->setOriginCountry($series->getOriginCountry());
         } else {
