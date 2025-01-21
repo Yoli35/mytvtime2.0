@@ -136,7 +136,12 @@
                         serieLocations.style.display = "flex";
                         country = serieLocations?.getAttribute('data-country') || "";
                     } else {
-                        allSeriesLocations.forEach(loc => {
+                        const allSeriesLocationDivs = allSeriesLocations.querySelectorAll('.series-locations');
+                        const allMarkers = map.querySelectorAll('.mapboxgl-marker');
+                        allMarkers.forEach(marker => {
+                            marker.style.display = 'block';
+                        });
+                        allSeriesLocationDivs.forEach(loc => {
                             loc.style.display = "flex";
                         });
                         country = "";
@@ -232,7 +237,9 @@
                     const select = document.getElementById('fl-country-bb-select');
                     const country = select.options[select.selectedIndex];
                     if (country.value === "") {
-                        map.setZoom(2);
+                        const center = map.getCenter();
+                        map.setZoom(3);
+                        map.easeTo({ center, duration: 1000, easing: (n) => n });
                     } else {
                         // dans la base les latitudes et longitudes sont inversées
                         const lat1 = country.getAttribute('data-lat1');
