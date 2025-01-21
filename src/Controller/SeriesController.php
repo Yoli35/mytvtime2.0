@@ -1623,40 +1623,34 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/episode/update/name/{id}', name: 'update_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function episodeTitle(Request $request, int $id): Response
+    #[Route('/episode/update/info/{id}', name: 'update_info', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function episodeUpdateInfo(Request $request, int $id): Response
     {
         $data = json_decode($request->getContent(), true);
-        $name = $data['name'];
-        $substitute = $this->episodeSubstituteNameRepository->findOneBy(['episodeId' => $id]);
-        if ($substitute) {
-            $substitute->setName($name);
-        } else {
-            $substitute = new EpisodeSubstituteName($id, $name);
+        $content = $data['content'];
+        $type = $data['type'];
+
+        if ($type === 'name') {
+            $esn = $this->episodeSubstituteNameRepository->findOneBy(['episodeId' => $id]);
+            if ($esn) {
+                $esn->setName($content);
+            } else {
+                $esn = new EpisodeSubstituteName($id, $content);
+            }
+            $this->episodeSubstituteNameRepository->save($esn, true);
         }
-        $this->episodeSubstituteNameRepository->save($substitute, true);
+        if ($type === 'overview'){
+            $elo = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $id]);
+            if ($elo) {
+                $elo->setOverview($content);
+            } else {
+                $elo = new EpisodeLocalizedOverview($id, $content, $request->getLocale());
+            }
+            $this->episodeLocalizedOverviewRepository->save($elo, true);
+        }
 
         return $this->json([
             'ok' => true,
-        ]);
-    }
-
-    #[Route('/episode/localize/overview/{id}', name: 'localize_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function episodeLocalizeOverview(Request $request, int $id): Response
-    {
-        $data = json_decode($request->getContent(), true);
-        $overview = $data['overview'];
-        $elo = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $id]);
-        if ($elo) {
-            $elo->setOverview($overview);
-        } else {
-            $elo = new EpisodeLocalizedOverview($id, $overview, $request->getLocale());
-        }
-        $this->episodeLocalizedOverviewRepository->save($elo, true);
-
-        return $this->json([
-            'ok' => true,
-            'overview' => $overview,
         ]);
     }
 

@@ -204,7 +204,11 @@
                                             {{ ue.substitute_name }}
                                         </div>
                                     {% endif %}
-                                    <div class="edit" data-title="{{ 'Suggest a title'|trans }}" data-id="{{ episode.id }}">
+                                    <div class="edit"
+                                         data-title="{{ 'Suggest a title'|trans }}"
+                                         data-id="{{ episode.id }}"
+                                         data-type="name"
+                                    >
                                         {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
                                     </div>
                                 </div>
@@ -220,32 +224,28 @@
                                 {% if episode.runtime %}
                                     <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
                                 {% endif %}
-                                {% if episode.overview %}
-                                    <div class="overview">{{ episode.overview }}</div>
-                                    {#                                    {% elseif season.deepl %} #}
-                                    {#                                        {% set episode_overview = season.deepl.us_episode_overviews[episode.episode_number - 1] %} #}
-                                    {#                                        <div class="overview us" data-id="{{ episode.id }}"> #}
-                                    {#                                            {% if episode_overview|length %} #}
-                                    {#                                                {{ season.deepl.us_episode_overviews[episode.episode_number - 1] }} #}
-                                    {#                                            {% else %} #}
-                                    {#                                                {{ 'Click to select, then paste your overview.'|trans }} #}
-                                    {#                                            {% endif %} #}
-                                    {#                                            <div class="translate" data-title="{{ 'Paste your translation here'|trans }}"> #}
-                                    {#                                                {{ ux_icon('fa6-solid:language', {height: '18px', width: '18px'}) }} #}
-                                    {#                                            </div> #}
-                                    {#                                        </div> #}
-                                {% else %}
-                                    <div class="overview us" data-id="{{ episode.id }}">
-                                        {% if ue.localized_overview|length %}
-                                            {{ ue.localized_overview }}
-                                        {% else %}
-                                            {{ 'Click to select, then paste your overview.'|trans }}
-                                        {% endif %}
-                                        <div class="translate" data-title="{{ 'Paste your translation here'|trans }}">
-                                            {{ ux_icon('fa6-solid:language', {height: '18px', width: '18px'}) }}
+                                <div class="episode-overview" data-id="{{ episode.id }}">
+                                    {% if episode.overview %}
+                                        <div class="overview">
+                                            {{ episode.overview }}
                                         </div>
+                                    {% endif %}
+                                    {% if ue.localized_overview|length %}
+                                        <div class="overview additional">
+                                            {{ ue.localized_overview }}
+                                        </div>
+                                    {% endif %}
+                                    {% if (episode.overview or ue.localized_overview|length) == 0 %}
+                                        <div class="overview additional">{{ 'No overview'|trans }}</div>
+                                    {% endif %}
+                                    <div class="edit"
+                                         data-title="{{ 'Suggest an overview'|trans }}"
+                                         data-id="{{ episode.id }}"
+                                         data-type="overview"
+                                    >
+                                        {{ ux_icon("fa6-solid:pen", {height: '18px', width: '18px'}) }}
                                     </div>
-                                {% endif %}
+                                </div>
                                 {% if episode.guest_stars %}
                                     <div class="guest-stars">
                                         <div class="wrapper">
@@ -447,7 +447,8 @@
         "hour": "{{ 'hour'|trans }}",
         "minute": "{{ 'minute'|trans }}",
         "second": "{{ 'second'|trans }}",
-        "copied": "{{ 'The link has been copied to your clipboard'|trans }}"
+        "copied": "{{ 'The link has been copied to your clipboard'|trans }}",
+        "additional": "{{ 'No overview'|trans }}"
         }
         }
     </div>

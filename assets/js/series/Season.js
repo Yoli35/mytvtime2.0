@@ -89,6 +89,7 @@ export class Season {
          * @property {string} hour
          * @property {string} minute
          * @property {string} second
+         * @property {string} additional
          */
         /**
          * @typedef Globs
@@ -173,24 +174,10 @@ export class Season {
             info.addEventListener('mouseleave', () => {
                 info.scrollTop = 0;
             });
-            const edit = info.querySelector('.edit');
-            edit.addEventListener('click', this.openTitleForm);
-        });
-
-        const usOverviews = document.querySelectorAll('.overview.us');
-        usOverviews.forEach(overview => {
-            overview.addEventListener('paste', this.pasteTranslation);
-
-            // const text = overview.innerText;
-            // const svgPlus = overview.querySelector('svg');
-            overview.addEventListener('click', () => {
-                // Select the text
-                const range = document.createRange();
-                range.selectNodeContents(overview);
-                const selection = window.getSelection();
-                selection.removeAllRanges();
-                selection.addRange(range);
-            });
+            const episodeNameEdit = info.querySelector('.episode-name>.edit');
+            episodeNameEdit.addEventListener('click', this.openTitleForm);
+            const episodeOverviewEdit = info.querySelector('.episode-overview>.edit');
+            episodeOverviewEdit.addEventListener('click', this.openTitleForm);
         });
 
         const addThisEpisode = document.querySelectorAll('.add-this-episode');
@@ -310,19 +297,39 @@ export class Season {
 
     openTitleForm(e) {
         const editDiv = e.currentTarget;
-        const nameDiv = editDiv.closest('.episode-name');
-        const contentDiv = nameDiv.querySelector('.name');
-        let substituteDiv = nameDiv.querySelector('.substitute');
-        const name = substituteDiv?.innerText.length ? substituteDiv.innerText : contentDiv.innerText;
+        const type = editDiv.getAttribute('data-type');
+        const selector = '.episode-' + type;
+        const fieldDiv = editDiv.closest(selector);
+        let contentDiv, substituteDiv, fieldContent;
+        if (type === 'name') {
+            contentDiv = fieldDiv.querySelector('.name');
+            substituteDiv = fieldDiv.querySelector('.substitute');
+            fieldContent = substituteDiv?.innerText.length ? substituteDiv.innerText : contentDiv.innerText;
+        } else {
+            contentDiv = fieldDiv.querySelector('.overview');
+            substituteDiv = fieldDiv.querySelector('.additional');
+            fieldContent = substituteDiv.innerText;
+        }
         const form = document.createElement('form');
         form.setAttribute('method', 'post');
         form.setAttribute('action', '');
         form.setAttribute('autocomplete', 'off');
-        const input = document.createElement('input');
+        const input = document.createElement(type === 'name' ? 'input' : 'textarea');
         input.setAttribute('type', 'text');
-        input.setAttribute('name', 'title');
-        input.setAttribute('value', name);
-        input.setAttribute('maxlength', '255');
+        input.setAttribute('name', type);
+        if (type === 'name') {
+            input.setAttribute('value', fieldContent);
+            input.setAttribute('maxlength', '255');
+        } else {
+            input.textContent = fieldContent;
+            input.setAttribute('rows', '5');
+            input.addEventListener('keyup', (e) => {
+                const field = e.currentTarget;
+                if (field.scrollHeight > field.clientHeight) {
+                    field.style.height = `${field.scrollHeight}px`;
+                }
+            });
+        }
         input.setAttribute('required', '');
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -337,32 +344,37 @@ export class Season {
         submit.textContent = 'OK';
         submit.addEventListener('click', (e) => {
             e.preventDefault();
-            const substituteName = input.value;
-            fetch('/' + gThis.lang + '/series/episode/update/name/' + editDiv.getAttribute('data-id'), {
+            fieldContent = input.value;
+            fetch('/' + gThis.lang + '/series/episode/update/info/' + editDiv.getAttribute('data-id'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({
-                    name: substituteName
+                    content: fieldContent,
+                    type: type
                 })
             }).then(function (response) {
                 if (response.ok) {
-                    const needToCreateSubstitute = substituteName.length && !substituteDiv;
+                    const needToCreateSubstitute = type === 'name' && fieldContent.length && !substituteDiv;
                     if (needToCreateSubstitute) {
                         substituteDiv = document.createElement('div');
                         substituteDiv.classList.add('substitute');
-                        nameDiv.insertBefore(substituteDiv, editDiv);
-                        const episodeWatched = nameDiv.closest('.episode').querySelector('.remove-this-episode');
+                        contentDiv.insertBefore(substituteDiv, editDiv);
+                        const episodeWatched = contentDiv.closest('.episode').querySelector('.remove-this-episode');
                         if (episodeWatched) {
                             substituteDiv.classList.add('watched');
                         }
                     }
-                    if (substituteName.length) {
-                        substituteDiv.innerText = substituteName;
+                    if (fieldContent.length) {
+                        substituteDiv.innerText = fieldContent;
                     } else {
-                        substituteDiv.remove();
+                        if (type === 'name') {
+                            substituteDiv.remove();
+                        } else {
+                            substituteDiv.innerText = gThis.text['additional'];
+                        }
                     }
                 }
                 form.remove();
@@ -378,35 +390,14 @@ export class Season {
             form.remove();
         });
         form.appendChild(cancel);
-        nameDiv.appendChild(form);
+        contentDiv.appendChild(form);
 
         input.focus();
         input.select();
-    }
 
-    pasteTranslation(e) {
-        e.preventDefault();
-        const overviewDiv = e.currentTarget;
-        const localizedText = e.clipboardData.getData('text/plain');
-        fetch('/' + gThis.lang + '/series/episode/localize/overview/' + overviewDiv.getAttribute('data-id'), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-                overview: localizedText
-            })
-        }).then(function (response) {
-            return response.json();
-        }).then(function (json) {
-            // if (response.ok) {
-            gThis.toolTips.hide();
-            overviewDiv.innerText = json.overview;
-            overviewDiv.classList.remove('us');
-            overviewDiv.removeEventListener('paste', gThis.pasteTranslation);
-            // }
-        });
+        if (type === 'overview') {
+            form.scrollIntoView({block: "end", inline: "nearest", behavior: 'smooth'});
+        }
     }
 
     addEpisode(e, episodeId = null) {
