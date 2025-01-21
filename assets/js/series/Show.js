@@ -1,4 +1,5 @@
 import {Diaporama} from 'Diaporama';
+import {FlashMessage} from "FlashMessage";
 import {Keyword} from 'Keyword';
 import {ToolTips} from 'ToolTips';
 // import 'LeafletIcon';
@@ -83,6 +84,7 @@ export class Show {
     constructor() {
         gThis = this;
         this.toolTips = new ToolTips();
+        this.flashMessage = new FlashMessage();
         this.init();
     }
 
@@ -239,6 +241,22 @@ export class Show {
                     span2.innerHTML = dayPart + "<br>" + elapsedTime;
                 }
             }, 1000);
+        });
+        /******************************************************************************
+         * Alternate schedule : l'épisode avec la date de diffusion la plus proche de *
+         * maintenant doit être visible.                                              *
+         ******************************************************************************/
+        const alternateSchedules = document.querySelectorAll('.alternate-schedule');
+        alternateSchedules.forEach(function (alternateSchedule) {
+            const firstFutureAirDay = alternateSchedule.querySelector('.future.air-day');
+            if (firstFutureAirDay){
+                firstFutureAirDay.scrollIntoView({behavior: 'smooth', block: 'center'});
+            } else {
+                const lastWatchedAirDay = alternateSchedule.querySelector('.air-day.watched:last-of-type');
+                if (lastWatchedAirDay) {
+                    lastWatchedAirDay.scrollIntoView({behavior: 'smooth', block: 'center'});
+                }
+            }
         });
 
         /******************************************************************************
@@ -1141,7 +1159,7 @@ export class Show {
             let emptyInput = false;
             if (crudTypeInput.value === 'create') {
                 inputs.forEach(function (input) {
-                    // la première image (image-url) est requise, mais peut être remplacée par un fichier (image-file)
+                    // la première image ("image-url") est requise, mais peut être remplacée par un fichier (image-file)
                     // en mode création
                     if (input.name === 'image-url') {
                         if (!input.value && !input.closest('.form-row').querySelector('input[name="image-file"]').value) {
@@ -1168,10 +1186,12 @@ export class Show {
                         body: formData
                     }
                 ).then(async function (response) {
+                    const data = await response.json();
+                    console.log({data});
                     if (response.ok) {
-                        const data = await response.json();
-                        console.log({data});
                         window.location.reload();
+                    } else {
+                        gThis.flashMessage.add('error', data.message);
                     }
                     gThis.closeLocationPanel();
                 });
@@ -1203,7 +1223,7 @@ export class Show {
                     img.src = '';
                 }
             });
-            // Les champs de type "url" peuvent recevoir un fichier image par glisser-déposer
+            // Les champs de type "url" peuvent recevoir un fichier de type image par glisser-déposer
             imageInput.addEventListener('drop', function (e) {
                 e.preventDefault();
                 const file = e.dataTransfer.files[0];
