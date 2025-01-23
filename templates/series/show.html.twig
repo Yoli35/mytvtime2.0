@@ -505,7 +505,7 @@
                                         {% else %}
                                             <div>{{ 'No poster'|trans }}</div>
                                         {% endif %}
-                                        <div class="number{% if viewedEpisodes == season.episode_count %} complete{% endif %}">
+                                        <div class="number{% if viewedEpisodes and viewedEpisodes == season.episode_count %} complete{% endif %}">
                                             {{ season.season_number }}
                                         </div>
                                     </div>
