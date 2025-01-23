@@ -1,3 +1,4 @@
+import {FlashMessage} from "FlashMessage";
 import {ToolTips} from 'ToolTips';
 
 let gThis;
@@ -116,6 +117,7 @@ export class Season {
         // this.lastHour = 0;
         // this.lastDay = 0;
 
+        this.flashMessage = new FlashMessage();
         this.toolTips = new ToolTips();
     }
 
@@ -361,7 +363,7 @@ export class Season {
                     if (needToCreateSubstitute) {
                         substituteDiv = document.createElement('div');
                         substituteDiv.classList.add('substitute');
-                        contentDiv.insertBefore(substituteDiv, editDiv);
+                        fieldDiv.insertBefore(substituteDiv, editDiv);
                         const episodeWatched = contentDiv.closest('.episode').querySelector('.remove-this-episode');
                         if (episodeWatched) {
                             substituteDiv.classList.add('watched');
@@ -448,6 +450,14 @@ export class Season {
                 if (episodeId) {
                     return;
                 }
+
+                const messages = data['messages'];
+                if (messages.length) {
+                    messages.forEach(message => {
+                        gThis.flashMessage.add('success', message);
+                    });
+                }
+
                 const progressDiv = document.querySelector('.progress');
                 progressDiv.setAttribute('data-value', data['progress']);
                 gThis.setProgress();
