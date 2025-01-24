@@ -719,11 +719,12 @@ class SeriesController extends AbstractController
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
 
-//        dump($tv);
+        dump($tv);
         return $this->render('series/tmdb.html.twig', [
             'tv' => $tv,
             'localizedName' => $localizedName,
             'localizedOverview' => $localizedOverview,
+            'externals' => $this->getTMDBExternals($tv['name'], $tv['origin_country']),
         ]);
     }
 
@@ -2391,6 +2392,25 @@ class SeriesController extends AbstractController
         $dbExternals = $this->seriesExternalRepository->findAll();
         $externals = [];
         $displayName = $series->getLocalizedName($locale)?->getName() ?? $series->getName();
+
+        /** @var SeriesExternal $dbExternal */
+        foreach ($dbExternals as $dbExternal) {
+            $countries = $dbExternal->getCountries();
+            $searchQuery = $dbExternal->getSearchQuery();
+            $searchSeparator = $dbExternal->getSearchSeparator();
+            $searchName = strtolower($searchSeparator ? str_replace(' ', $searchSeparator, $displayName) : $displayName);
+            if (!count($countries) || array_intersect($seriesCountries, $countries)) {
+                $dbExternal->setFullUrl($searchQuery ? $searchName : null);
+                $externals[] = $dbExternal;
+            }
+        }
+        return $externals;
+    }
+
+    public function getTMDBExternals($displayName, $seriesCountries): array
+    {
+        $dbExternals = $this->seriesExternalRepository->findAll();
+        $externals = [];
 
         /** @var SeriesExternal $dbExternal */
         foreach ($dbExternals as $dbExternal) {

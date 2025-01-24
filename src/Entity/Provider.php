@@ -22,6 +22,12 @@ class Provider
     #[ORM\Column]
     private ?int $providerId = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $home = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $searchQuery = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +65,30 @@ class Provider
     public function setProviderId(int $providerId): static
     {
         $this->providerId = $providerId;
+
+        return $this;
+    }
+
+    public function getHome(): ?string
+    {
+        return $this->home;
+    }
+
+    public function setHome(?string $home): static
+    {
+        $this->home = $home;
+
+        return $this;
+    }
+
+    public function getSearchQuery(): ?string
+    {
+        return $this->searchQuery;
+    }
+
+    public function setSearchQuery(?string $searchQuery): static
+    {
+        $this->searchQuery = $searchQuery;
 
         return $this;
     }
