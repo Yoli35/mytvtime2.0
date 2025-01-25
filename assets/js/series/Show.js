@@ -883,7 +883,7 @@ export class Show {
                     const contentDiv = document.createElement('div');
                     contentDiv.classList.add('content');
                     contentDiv.setAttribute('data-overview', overviewField.value);
-                    contentDiv.textContent = overviewField.value.replace(/\n/g, '<br>');
+                    contentDiv.innerHTML = overviewField.value.replace(/\n/g, '<br>');
                     overviewDiv.appendChild(contentDiv);
 
                     const toolsDiv = document.createElement('div');
