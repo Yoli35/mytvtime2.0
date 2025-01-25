@@ -2015,90 +2015,137 @@ h2 {
     }
 }
 
-.quick-episodes {
-    align-items: flex-start;
-    background-color: var(--ardoise-100-alpha-20);
-    border: 2px dashed var(--orange-50);
-    border-radius: .25rem;
+.season-stuff {
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
-    gap: .25rem;
+    gap: .5rem;
     justify-content: center;
-    margin-inline: auto;
-    //max-width: 23.5rem;
-    overflow-x: auto;
-    padding: .5rem;
-    /*width: 100%;*/
 
-    .quick-episode {
-        align-items: center;
-        background-color: var(--ardoise-80-alpha-50);
-        border: 2px solid var(--ardoise-30-alpha-50);
-        border-radius: .25rem;
-        color: var(--ardoise-10);
-        cursor: pointer;
-        display: flex;
-        gap: .5rem;
-        justify-content: center;
-        padding: .25rem;
-        transition: transform 0.3s linear, border 0.3s linear;
-        width: 2rem;
-
-        &.watched {
-            background-color: var(--user-episode-actions);
-        }
-
-        &:hover {
-            border: 2px solid var(--orange-50);
-            transform: scale(1.5);
-            z-index: 3;
-        }
-
-        &:has(+ .quick-episode:hover),
-        &:hover + .quick-episode {
-            border: 2px solid var(--orange-50-alpha-50);
-            transform: scale(1.30);
-            z-index: 2;
-        }
-
-        &:has(+ .quick-episode + .quick-episode*:hover),
-        &:hover + .quick-episode + .quick-episode {
-            transform: scale(1.10);
-            z-index: 1;
-        }
-    }
-
-    .quick-episode:not(.watched) {
-        cursor: not-allowed;
-        opacity: 0.25;
-    }
-
-    .quick-episode:first-child,
-    .quick-episode.watched + * {
-        cursor: pointer;
-        opacity: 1;
-    }
-
-    .future-episode {
-        align-items: center;
-        background-color: var(--ardoise-40-alpha-50);
-        border: 2px dashed var(--ardoise-30-alpha-50);
-        border-radius: .25rem;
-        color: var(--ardoise-30);
-        display: flex;
-        gap: .5rem;
-        justify-content: center;
-        padding: .25rem;
-        width: 2rem;
-    }
-
-    .quick-episodes-break {
-        height: 0;
+    h2 {
+        background-color: transparent;
+        padding-inline: 1rem;
         width: 100%;
+    }
+
+    .sizes {
+        background-color: var(--ardoise-100-alpha-20);
+        /*border: 2px dashed var(--orange-50);*/
+        border-radius: .5rem;
+        display: flex;
+        gap: .5rem;
+        padding: .5rem;
+
+        .size-item {
+            align-items: center;
+            background-color: var(--ardoise-100-alpha-20);
+            border-radius: .25rem;
+            color: var(--ardoise-10);
+            display: flex;
+            height: 2rem;
+            justify-content: center;
+            padding: .5rem;
+            transition: background-color 0.3s linear;
+            width: 2rem;
+
+            &.active {
+                background-color: var(--user-episode-actions);
+            }
+
+            &:hover {
+                background-color: var(--orange-50);
+            }
+        }
+    }
+
+    .quick-episodes {
+        align-items: flex-start;
+        background-color: var(--ardoise-100-alpha-20);
+        /*border: 2px dashed var(--orange-50);*/
+        border-radius: .25rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: .25rem;
+        justify-content: center;
+        overflow-x: auto;
+        padding: .5rem;
+
+        .quick-episode {
+            align-items: center;
+            background-color: var(--ardoise-80-alpha-50);
+            border: 2px solid var(--ardoise-30-alpha-50);
+            border-radius: .25rem;
+            color: var(--ardoise-10);
+            cursor: pointer;
+            display: flex;
+            gap: .5rem;
+            justify-content: center;
+            padding: .25rem;
+            transition: transform 0.3s linear, border 0.3s linear;
+            width: 2rem;
+
+            &.watched {
+                background-color: var(--user-episode-actions);
+            }
+
+            &:hover {
+                border: 2px solid var(--orange-50);
+                transform: scale(1.5);
+                z-index: 3;
+            }
+
+            &:has(+ .quick-episode:hover),
+            &:hover + .quick-episode {
+                border: 2px solid var(--orange-50-alpha-50);
+                transform: scale(1.30);
+                z-index: 2;
+            }
+
+            &:has(+ .quick-episode + .quick-episode*:hover),
+            &:hover + .quick-episode + .quick-episode {
+                transform: scale(1.10);
+                z-index: 1;
+            }
+        }
+
+        .quick-episode:not(.watched) {
+            cursor: not-allowed;
+            opacity: 0.25;
+        }
+
+        .quick-episode:first-child,
+        .quick-episode.watched + * {
+            cursor: pointer;
+            opacity: 1;
+        }
+
+        .future-episode {
+            align-items: center;
+            background-color: var(--ardoise-40-alpha-50);
+            border: 2px dashed var(--ardoise-30-alpha-50);
+            border-radius: .25rem;
+            color: var(--ardoise-30);
+            display: flex;
+            gap: .5rem;
+            justify-content: center;
+            padding: .25rem;
+            width: 2rem;
+        }
+
+        .quick-episodes-break {
+            height: 0;
+            width: 100%;
+        }
     }
 }
 
 #series-season {
+    .externals {
+        h2{
+            padding: 0 1rem;
+        }
+    }
+
     .user-actions {
         .watch-links {
             .watch-link {
@@ -2115,6 +2162,7 @@ h2 {
 }
 
 .episodes {
+    --episode-height: 15rem;
     display: flex;
     flex-direction: column;
     gap: .5rem;
@@ -2124,7 +2172,7 @@ h2 {
         align-items: flex-start;
         display: flex;
         gap: .5rem;
-        height: 15rem;
+        height: var(--episode-height);
         justify-content: flex-start;
         padding-inline: 1rem;
         width: 100%;
@@ -2232,7 +2280,7 @@ h2 {
             display: flex;
             flex-direction: column;
             gap: .5rem;
-            height: 15rem;
+            height: var(--episode-height);
             justify-content: flex-start;
             overflow-y: auto;
             padding-block: 1rem;
@@ -2550,7 +2598,7 @@ h2 {
     font-size: 1.25rem;
     font-weight: 400;
     gap: 0.5rem;
-    height: 15rem;
+    height: var(--episode-height);
     justify-content: flex-start;
     padding: 0.5rem;
     width: 3.25rem;
@@ -2577,6 +2625,12 @@ h2 {
     .remove-this-episode,
     .select-provider, .select-device, .select-vote {
         background-color: var(--user-episode-actions);
+    }
+
+    .select-vote {
+        input[id^="vote-"] {
+            width: 3rem;
+        }
     }
 
     .select-provider, .select-device, .select-vote {

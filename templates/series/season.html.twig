@@ -115,56 +115,71 @@
                 </div>
             </div>
 
-            {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: false}) }}
+            <div class="season-stuff">
+{#                <h2>{{ 'Season stuff'|trans }}</h2>#}
+                {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: false}) }}
 
-            {% set now = 'now'|date("Y-m-d") %}
-            {% set episodeCount = season.episodes|length %}
-            {% if episodeCount > 10 %}
-                {% if episodeCount is even %}
-                    {% set break = episodeCount / 2 %}
+                <div class="sizes" data-user-series-id="{{ userSeries.id }}">
+                    <div class="size-item{% if episodeDivSize == '15rem' %} active{% endif %}" data-size="15rem">
+                        {{ ux_icon('fa:list-ul', {height: '18px', width: '18px'}) }}
+                    </div>
+                    <div class="size-item{% if episodeDivSize == '20rem' %} active{% endif %}" data-size="20rem">
+                        {{ ux_icon('fa:th-list', {height: '18px', width: '18px'}) }}
+                    </div>
+                    <div class="size-item{% if episodeDivSize == '25rem' %} active{% endif %}" data-size="25rem">
+                        {{ ux_icon('el:th-list', {height: '18px', width: '18px'}) }}
+                    </div>
+                </div>
+
+                {% set now = 'now'|date("Y-m-d") %}
+                {% set episodeCount = season.episodes|length %}
+                {% if episodeCount > 10 %}
+                    {% if episodeCount is even %}
+                        {% set break = episodeCount / 2 %}
+                    {% else %}
+                        {% set break = (episodeCount + 1) / 2 %}
+                        {#                    {% set break = 10 %} #}
+                    {% endif %}
+                    {% if break > 10 %}
+                        {% if episodeCount % 10 == 0 %}
+                            {% set break = 10 %}
+                        {% endif %}
+                        {% if episodeCount % 9 == 0 %}
+                            {% set break = 9 %}
+                        {% endif %}
+                        {% if episodeCount % 8 == 0 %}
+                            {% set break = 8 %}
+                        {% endif %}
+                        {% if episodeCount % 7 == 0 %}
+                            {% set break = 7 %}
+                        {% endif %}
+                    {% endif %}
                 {% else %}
-                    {% set break = (episodeCount + 1) / 2 %}
-                    {#                    {% set break = 10 %} #}
+                    {% set break = episodeCount %}
                 {% endif %}
-                {% if break > 10 %}
-                    {% if episodeCount % 10 == 0 %}
-                        {% set break = 10 %}
-                    {% endif %}
-                    {% if episodeCount % 9 == 0 %}
-                        {% set break = 9 %}
-                    {% endif %}
-                    {% if episodeCount % 8 == 0 %}
-                        {% set break = 8 %}
-                    {% endif %}
-                    {% if episodeCount % 7 == 0 %}
-                        {% set break = 7 %}
-                    {% endif %}
-                {% endif %}
-            {% else %}
-                {% set break = episodeCount %}
-            {% endif %}
-            <div class="quick-episodes" style="width: {{ 36 * break + 16 }}px;">
-                {% for episode in season.episodes %}
-                    {% set ue = episode.user_episode %}
-                    {% if episode.air_date %}
-                        {% if episode.air_date <= now %}
-                            <div class="quick-episode{% if ue and ue.watch_at %} watched{% endif %}" data-number="{{ episode.episode_number }}" data-title="{{ episode.air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
-                                {{ episode.episode_number }}
-                            </div>
+                <div class="quick-episodes" style="width: {{ 36 * break + 16 }}px;">
+                    {% for episode in season.episodes %}
+                        {% set ue = episode.user_episode %}
+                        {% if episode.air_date %}
+                            {% if episode.air_date <= now %}
+                                <div class="quick-episode{% if ue and ue.watch_at %} watched{% endif %}" data-number="{{ episode.episode_number }}" data-title="{{ episode.air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
+                                    {{ episode.episode_number }}
+                                </div>
+                            {% else %}
+                                <div class="future-episode" data-title="{{ episode.air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
+                                    {{ episode.episode_number }}
+                                </div>
+                            {% endif %}
                         {% else %}
-                            <div class="future-episode" data-title="{{ episode.air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
+                            <div class="future-episode" data-title="{{ 'No date'|trans }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
                                 {{ episode.episode_number }}
                             </div>
                         {% endif %}
-                    {% else %}
-                        <div class="future-episode" data-title="{{ 'No date'|trans }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
-                            {{ episode.episode_number }}
-                        </div>
-                    {% endif %}
-                    {#                    {% if loop.index0 % break == break-1 %} #}
-                    {#                        <div class="quick-episodes-break"></div> #}
-                    {#                    {% endif %} #}
-                {% endfor %}
+                        {#                    {% if loop.index0 % break == break-1 %} #}
+                        {#                        <div class="quick-episodes-break"></div> #}
+                        {#                    {% endif %} #}
+                    {% endfor %}
+                </div>
             </div>
 
             {{ include('_blocks/series/_externals.html.twig') }}
@@ -302,11 +317,12 @@
                                         {% endif %}
                                     </div>
                                     <div class="select-vote" data-id="{{ episode.id }}" data-title="{{ 'Give a rating'|trans }}">
-                                        {% if ue.vote %}
-                                            {{ ue.vote }}
-                                        {% else %}
-                                            {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
-                                        {% endif %}
+                                        {#                                        {% if ue.vote %} #}
+                                        {#                                            {{ ue.vote }} #}
+                                        {#                                        {% else %} #}
+                                        {#                                            {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }} #}
+                                        {#                                        {% endif %} #}
+                                        {{ ue.vote ?? ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
                                     </div>
                                 {% else %}
                                     <div class="add-this-episode" data-id="{{ episode.id }}"

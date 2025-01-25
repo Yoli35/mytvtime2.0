@@ -150,6 +150,42 @@ export class Season {
             });
         });
 
+        const sizesDiv = document.querySelector('.sizes');
+        const userSeriesId = sizesDiv.getAttribute('data-user-series-id');
+        const sizesItemDivs = sizesDiv.querySelectorAll('.size-item');
+        const activeSizeItemDiv = sizesDiv.querySelector('.size-item.active');
+        const initialSize = activeSizeItemDiv.getAttribute('data-size');
+        const episodesDiv = document.querySelector('.episodes');
+        episodesDiv.style.setProperty('--episode-height', initialSize);
+
+        sizesItemDivs.forEach(function (sizeItem) {
+            sizeItem.addEventListener('click', function (e) {
+                const sizeItemDiv = e.currentTarget;
+                if (sizeItemDiv.classList.contains('active')) {
+                    return;
+                }
+                const size = sizeItemDiv.getAttribute('data-size');
+                activeSizeItemDiv.classList.remove('active');
+                sizeItemDiv.classList.add('active');
+                episodesDiv.style.setProperty('--episode-height', size);
+
+                fetch('/' + gThis.lang + '/series/episode/height/' + userSeriesId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        height: size
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                    });
+            });
+        });
+
         const quickEpisodeLinks = document.querySelectorAll('.quick-episode');
         quickEpisodeLinks.forEach(episode => {
             episode.addEventListener('click', e => {
@@ -862,6 +898,7 @@ export class Season {
         const flatrate = gThis.seasonProvider['flatrate'];
         const providerList = document.createElement('div');
         providerList.classList.add('list');
+        providerList.setAttribute('data-id', 'provider-' + episodeId);
         selectProviderDiv.appendChild(providerList);
         if (flatrate.length > 0) {
             for (const provider of flatrate) {
@@ -917,6 +954,7 @@ export class Season {
         const episodeId = selectDeviceDiv.getAttribute('data-id');
         const deviceList = document.createElement('div');
         deviceList.classList.add('list');
+        deviceList.setAttribute('data-id', 'device-' + episodeId);
         selectDeviceDiv.appendChild(deviceList);
         for (const device of gThis.devices) {
             gThis.addDeviceItem(device, episodeId, deviceList, selectDeviceDiv);
@@ -970,6 +1008,7 @@ export class Season {
         const episodeId = selectVoteDiv.getAttribute('data-id');
         const voteList = document.createElement('div');
         voteList.classList.add('list');
+        voteList.setAttribute('data-id', 'vote-' + episodeId);
         selectVoteDiv.appendChild(voteList);
         for (let i = 1; i <= 10; i++) {
             const vote = document.createElement('div');
@@ -1061,11 +1100,12 @@ export class Season {
         });
     }
 
-    listInput(list) {
-
+    listInput(list, type = 'text',size = '10') {
+        const listId = list.getAttribute('data-id');
         const input = document.createElement('input');
-        input.setAttribute('type', 'text');
-        input.setAttribute('size', '10');
+        input.setAttribute('id', listId);
+        input.setAttribute('type', type);
+        input.setAttribute('size', size);
         input.setAttribute('placeholder', gThis.text.Search);
         list.appendChild(input);
         input.addEventListener('keydown', (e) => {

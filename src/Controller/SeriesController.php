@@ -1151,6 +1151,16 @@ class SeriesController extends AbstractController
 
         $seriesImages = $series->getSeriesImages()->toArray();
 
+        $episodeSizeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'episode_div_size_' . $userSeries->getId()]);
+        if ($episodeSizeSettings) {
+            $value = $episodeSizeSettings->getData();
+            $episodeDivSize = $value['height'];
+        } else {
+            $episodeSizeSettings = new Settings($user, 'episode_div_size_' . $userSeries->getId(), ['height' => '15rem']);
+            $this->settingsRepository->save($episodeSizeSettings, true);
+            $episodeDivSize = '15rem';
+        }
+
         $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $request->getLocale(), ['credits', 'watch/providers']), true);
         if (!$season) {
             return $this->redirectToRoute('app_series_show', [
@@ -1186,7 +1196,7 @@ class SeriesController extends AbstractController
         $devices = $this->deviceRepository->deviceArray();
 
         // Nouvelle saison, premier épisode non vu
-        if ($season['season_number'] > 1 &&  $season['episodes'][0]['user_episode']['watch_at'] == null) {
+        if ($season['season_number'] > 1 && $season['episodes'][0]['user_episode']['watch_at'] == null) {
             $firstEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $season['season_number'], 'episodeNumber' => 1]);
             $previousSeasonNumber = $season['season_number'] - 1;
             $lastEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $previousSeasonNumber], ['episodeNumber' => 'DESC']);
@@ -1203,6 +1213,7 @@ class SeriesController extends AbstractController
         dump([
 //            'series' => $series,
             'season' => $season,
+            'episodeDivSize' => $episodeDivSize,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
@@ -1211,6 +1222,7 @@ class SeriesController extends AbstractController
             'series' => $series,
             'userSeries' => $userSeries,
             'season' => $season,
+            'episodeDivSize' => $episodeDivSize,
             'providers' => $providers,
             'devices' => $devices,
             'externals' => $this->getExternals($series, $request->getLocale()),
@@ -1641,6 +1653,25 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[Route('/episode/height/{userSeriesId}', name: 'episode_height', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function episodeDivHeight(Request $request, int $userSeriesId): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $episodeSizeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'episode_div_size_' . $userSeriesId]);
+        $settings = $episodeSizeSettings->getData();
+
+        $data = json_decode($request->getContent(), true);
+        $settings['height'] = $data['height'];
+
+        $episodeSizeSettings->setData($settings);
+        $this->settingsRepository->save($episodeSizeSettings, true);
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
     #[Route('/episode/update/info/{id}', name: 'update_info', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function episodeUpdateInfo(Request $request, int $id): Response
     {
@@ -1657,7 +1688,7 @@ class SeriesController extends AbstractController
             }
             $this->episodeSubstituteNameRepository->save($esn, true);
         }
-        if ($type === 'overview'){
+        if ($type === 'overview') {
             $elo = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $id]);
             if ($elo) {
                 $elo->setOverview($content);
