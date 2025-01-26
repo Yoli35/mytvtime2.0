@@ -61,6 +61,8 @@ use DateTimeZone;
 use DeepL\DeepLException;
 use Deepl\TextResult;
 use Exception;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Clock\DatePoint;
@@ -98,6 +100,7 @@ class SeriesController extends AbstractController
         private readonly ImageService                       $imageService,
         private readonly KeywordRepository                  $keywordRepository,
         private readonly KeywordService                     $keywordService,
+        private readonly LoggerInterface                    $logger,
         private readonly NetworkRepository                  $networkRepository,
         private readonly ProviderRepository                 $providerRepository,
         private readonly SeasonLocalizedOverviewRepository  $seasonLocalizedOverviewRepository,
@@ -120,6 +123,8 @@ class SeriesController extends AbstractController
     )
     {
     }
+
+    private array $blobs = [];
 
     #[IsGranted('ROLE_USER')]
     #[Route('/', name: 'index')]
@@ -1913,10 +1918,10 @@ class SeriesController extends AbstractController
 
         $data = $request->request->all();
         $files = $request->files->all();
-        dump([
+        /*dump([
             'data' => $data,
             'files' => $files,
-        ]);
+        ]);*/
         if (empty($data) && empty($files)) {
             return $this->json([
                 'ok' => false,
@@ -1926,7 +1931,7 @@ class SeriesController extends AbstractController
 
         $imageFiles = [];
         foreach ($files as $key => $file) {
-            dump($file);
+            /*dump($file);*/
             if ($file instanceof UploadedFile) {
                 // Est-ce qu'il s'agit d'une image ?
                 $mimeType = $file->getMimeType();
@@ -1935,18 +1940,19 @@ class SeriesController extends AbstractController
                 }
             }
         }
-        dump([
+        /*dump([
             'data' => $data,
             'image files' => $imageFiles,
-        ]);
+        ]);*/
         if ($data['location'] == 'test') {
             // "image-url" => "blob:https://localhost:8000/71698467-714e-4b2e-b6b3-a285619ea272"
             $testUrl = $data['image-url'];
             if (str_starts_with($testUrl, 'blob')) {
-                $blob = $data['image-url-blob'];
-                $imageResultPath = $this->blobToWebp($blob, $data['title'], $data['location'], 100);
+                $this->blobs['image-url-blob'] = $data['image-url-blob'];
+                $imageResultPath = $this->blobToWebp2('image-url-blob', $data['title'], $data['location'], 100);
                 dump($imageResultPath);
             }
+            $this->blobs['image-url-blob'] = null;
 
             return $this->json([
                 'ok' => true,
@@ -2009,9 +2015,9 @@ class SeriesController extends AbstractController
                 $image = str_replace('~/', '/', $imageUrl);
             } else {
                 if (str_starts_with('blob:', $imageUrl)) {
-                    $blob = $data[$name . '-blob'];
-                    $image = $this->blobToWebp($blob, $data['title'], $data['location'], $n);
-                    dump('blob', $image);
+                    $this->blobs[$name . '-blob'] = $data[$name . '-blob'];
+                    $image = $this->blobToWebp2($name . '-blob', $data['title'], $data['location'], $n);
+                    $this->blobs[$name . '-blob'] = null;
                 } else {
                     $image = $this->urlToWebp($imageUrl, $title, $location, $n);
                 }
@@ -2056,15 +2062,16 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    public function blobToWebp(string $blob, string $title, string $location, int $n): ?string
+    public function blobToWebp(string $name, string $title, string $location, int $n): ?string
     {
         $slugger = new AsciiSlugger();
-        $imageMapPath = $this->getParameter('kernel.project_dir') . '/public/images/map/';
-        $imageTempPath = $this->getParameter('kernel.project_dir') . '/public/images/temp/';
+        $kernelProjectDir = $this->getParameter('kernel.project_dir');
+        $imageMapPath = $kernelProjectDir . '/public/images/map/';
+        $imageTempPath = $kernelProjectDir . '/public/images/temp/';
+        $blob = $this->blobs[$name];
 
         // blob = [data:image/png;base64,iVB...] => raw image = base64_decode('iVB...')
-        $imageType = preg_match('/^data:image\/(\w+);base64,/', $blob, $matches);
-        if ($imageType) {
+        if (preg_match('/^data:image\/(\w+);base64,/', $blob, $matches)) {
             $extension = $matches[1];
             $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
             $tempName = $imageTempPath . $basename . '.' . $extension;
@@ -2095,6 +2102,60 @@ class SeriesController extends AbstractController
             }
         }
         return null;
+    }
+
+    public function blobToWebp2(string $name, string $title, string $location, int $n): ?string
+    {
+        try {
+            // Define constants for paths
+            $kernelProjectDir = $this->getParameter('kernel.project_dir');
+            $imageMapPath = $kernelProjectDir . '/public/images/map/';
+            $imageTempPath = $kernelProjectDir . '/public/images/temp/';
+            $blob = $this->blobs[$name];
+
+            // Create necessary directories
+            if (!file_exists($imageMapPath)) {
+                mkdir($imageMapPath, 0755, true);
+            }
+            if (!file_exists($imageTempPath)) {
+                mkdir($imageTempPath, 0755, true);
+            }
+
+            $slugger = new AsciiSlugger();
+            $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
+
+            // Extract image type and extension
+            if (preg_match('/^data:image\/(\w+);base64,/', $blob, $matches)) {
+                $extension = $matches[1];
+                $tempName = $imageTempPath . $basename . '.' . $extension;
+                $destination = $imageMapPath . $basename . '.webp';
+
+                // Remove 'data:image/' prefix and decode
+                $decodedBlob = base64_decode(substr($blob, strlen('data:image/' . $extension . ';base64,') - 1));
+
+                // Ensure we have a valid image data string
+                if ($decodedBlob !== false && file_put_contents($tempName, $decodedBlob)) {
+                    // Convert to WebP format
+                    $webp = $this->imageService->webpImage($tempName, $destination, 90);
+
+                    if ($webp) {
+                        return '/' . $basename . '.webp';
+                    }
+                }
+//                throw new \RuntimeException('Failed to process the image blob');
+                return null;
+            }
+
+            // If no valid image type found
+            return null;
+
+        } catch (\Throwable $e) {
+            // Log any errors and rethrow if required
+            if ($this->logger) {
+                $this->logger->error('Error in blobToWebp: ' . $e->getMessage());
+            }
+            throw $e;
+        }
     }
 
     public function urlToWebp(string $url, string $title, string $location, int $n): ?string
