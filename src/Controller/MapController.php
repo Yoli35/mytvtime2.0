@@ -26,9 +26,7 @@ class MapController extends AbstractController
     #[Route('/index', name: 'index')]
     public function index(Request $request): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'mapbox']);
+        $settings = $this->settingsRepository->findOneBy(['name' => 'mapbox']);
 
         $locations = $this->getAllFilmingLocations();
 
