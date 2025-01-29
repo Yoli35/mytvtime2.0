@@ -61,7 +61,6 @@ use DateTimeZone;
 use DeepL\DeepLException;
 use Deepl\TextResult;
 use Exception;
-use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\ClockInterface;
@@ -84,6 +83,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 //use Symfony\UX\Map\Marker;
 //use Symfony\UX\Map\Point;
 
+/** @method User|null getUser() */
 #[Route('/{_locale}/series', name: 'app_series_', requirements: ['_locale' => 'fr|en|kr'])]
 class SeriesController extends AbstractController
 {
@@ -130,7 +130,6 @@ class SeriesController extends AbstractController
     #[Route('/', name: 'index')]
     public function index(): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $country = $user->getCountry() ?? 'FR';
         $locale = $user->getPreferredLanguage() ?? 'fr';
@@ -285,7 +284,6 @@ class SeriesController extends AbstractController
     #[Route('/to/start', name: 'to_start')]
     public function serieToStart(Request $request): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
@@ -304,7 +302,6 @@ class SeriesController extends AbstractController
     #[Route('/up/coming', name: 'up_coming')]
     public function upComingSeries(Request $request): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
@@ -324,13 +321,12 @@ class SeriesController extends AbstractController
     #[Route('/by/country/{country}', name: 'by_country', requirements: ['country' => '[A-Z]{2}'])]
     public function seriesByCountry(Request $request, string $country): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'by country']);
         if (!$settings) {
-            $settings = new Settings($user, 'by country', ['country' => $country]);
+            $settings = new Settings($user, 'by country', ['country' => $country, 'keywords' => []]);
             $this->settingsRepository->save($settings, true);
         } else {
             $data = $settings->getData();
@@ -583,7 +579,6 @@ class SeriesController extends AbstractController
     #[Route('/db/search', name: 'search_db')]
     public function searchDB(Request $request): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $searchName = $request->get('name');
 
@@ -634,7 +629,6 @@ class SeriesController extends AbstractController
     #[Route('/advanced/search', name: 'advanced_search')]
     public function advancedSearch(Request $request): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $series = [];
         $slugger = new AsciiSlugger();
@@ -672,7 +666,6 @@ class SeriesController extends AbstractController
     #[Route('/tmdb/{id}-{slug}', name: 'tmdb', requirements: ['id' => Requirement::DIGITS])]
     public function tmdb(Request $request, $id, $slug): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
         $userSeries = ($user && $series) ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
@@ -737,7 +730,6 @@ class SeriesController extends AbstractController
     #[Route('/list/{id}/{seriesId}', name: 'list', requirements: ['id' => Requirement::DIGITS, 'showId' => Requirement::DIGITS])]
     public function list(Request $request, int $id, int $seriesId): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $page = $request->get('page') ?? 1;
         $series = $this->seriesRepository->findOneBy(['id' => $seriesId]);
@@ -766,7 +758,6 @@ class SeriesController extends AbstractController
     #[Route('/show/{id}-{slug}', name: 'show', requirements: ['id' => Requirement::DIGITS])]
     public function show(Request $request, Series $series, string $slug): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
 
         $dayOffset = $this->seriesDayOffsetRepository->findOneBy(['series' => $series, 'country' => $user->getCountry() ?? 'FR']);
@@ -919,7 +910,7 @@ class SeriesController extends AbstractController
             'externals' => $this->getExternals($series, $request->getLocale()),
             'translations' => $translations,
             'addBackdropForm' => $addBackdropForm->createView(),
-            'oldSeriesAdded' => $request->get('oldSeriesAdded'),
+            'oldSeriesAdded' => $request->get('oldSeriesAdded') === 'true',
         ]);
     }
 
@@ -941,7 +932,6 @@ class SeriesController extends AbstractController
     #[Route('/add/{id}', name: 'add', requirements: ['id' => Requirement::DIGITS])]
     public function addUserSeries(int $id): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $date = $this->now();
 
@@ -1021,7 +1011,6 @@ class SeriesController extends AbstractController
     #[Route('/broadcast/delay/{id}', name: 'broadcast_delay', requirements: ['id' => Requirement::DIGITS])]
     public function broadcastDelay(Request $request, Series $series): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $data = json_decode($request->getContent(), true);
         $delay = $data['delay'];
@@ -1097,7 +1086,6 @@ class SeriesController extends AbstractController
     #[Route('/pinned/{id}', name: 'pinned', requirements: ['id' => Requirement::DIGITS])]
     public function pinnedSeries(Request $request, UserSeries $userSeries): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $data = json_decode($request->getContent(), true);
         $newPinnedValue = $data['newStatus'];
@@ -1145,7 +1133,6 @@ class SeriesController extends AbstractController
     #[Route('/season/{id}-{slug}/{seasonNumber}', name: 'season', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS])]
     public function showSeason(Request $request, Series $series, int $seasonNumber, string $slug): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
 //        $series = $this->seriesRepository->findOneBy(['id' => $id]);
         $seriesDayOffset = $this->seriesDayOffsetRepository->findOneBy(['series' => $series, 'country' => $user->getCountry() ?? 'FR']);
@@ -1365,7 +1352,6 @@ class SeriesController extends AbstractController
 
         $messages = [];
 
-        /** @var User $user */
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $country = $user->getCountry() ?? 'FR';
@@ -1499,7 +1485,6 @@ class SeriesController extends AbstractController
         $seasonNumber = $data['seasonNumber'];
         $episodeNumber = $data['episodeNumber'];
 
-        /** @var User $user */
         $user = $this->getUser();
         $country = $user->getCountry() ?? 'FR';
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
@@ -1544,7 +1529,7 @@ class SeriesController extends AbstractController
         $seasonNumber = $data['seasonNumber'];
         $episodeNumber = $data['episodeNumber'];
         $locale = $request->getLocale();
-        /** @var User $user */
+
         $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
@@ -1610,7 +1595,6 @@ class SeriesController extends AbstractController
     #[Route('/episode/provider/{episodeId}', name: 'episode_provider', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function userEpisodeProvider(Request $request, int $episodeId): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $episodeId]);
         $data = json_decode($request->getContent(), true);
@@ -1627,7 +1611,6 @@ class SeriesController extends AbstractController
     #[Route('/episode/device/{episodeId}', name: 'episode_device', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function userEpisodeDevice(Request $request, int $episodeId): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $episodeId]);
         $data = json_decode($request->getContent(), true);
@@ -1644,7 +1627,6 @@ class SeriesController extends AbstractController
     #[Route('/episode/vote/{episodeId}', name: 'episode_vote', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function userEpisodeVote(Request $request, int $episodeId): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $episodeId]);
         $data = json_decode($request->getContent(), true);
@@ -1661,7 +1643,6 @@ class SeriesController extends AbstractController
     #[Route('/episode/height/{userSeriesId}', name: 'episode_height', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function episodeDivHeight(Request $request, int $userSeriesId): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $episodeSizeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'episode_div_size_' . $userSeriesId]);
         $settings = $episodeSizeSettings->getData();
@@ -1713,15 +1694,24 @@ class SeriesController extends AbstractController
     {
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('file');
+        dump($uploadedFile);
         $basename = $uploadedFile->getClientOriginalName();
-        $extension = $uploadedFile->guessExtension();
-        $imageTempPath = $this->getParameter('kernel.project_dir') . '/public/images/temp/';
-        $tempName = $imageTempPath . $basename . '.' . $extension;
-        $stillPath = $this->getParameter('kernel.project_dir') . '/public/series/stills/' . $basename . '.webp';
+        $projectDir = $this->getParameter('kernel.project_dir');
+        $imageTempPath = $projectDir . '/public/images/temp/';
+        $tempName = $imageTempPath . $basename;
+        $stillPath = $projectDir . '/public/series/stills/' . $basename . '.webp';
+
+        try {
+            $uploadedFile->move($imageTempPath, $basename);
+        } catch (FileException $e) {
+            return $this->json([
+                'ok' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
         $copy = false;
 
         try {
-            $uploadedFile->move($imageTempPath, $basename . '.' . $extension);
             $webp = $this->imageService->webpImage($tempName, $stillPath, 90, 480, 270);
             if ($webp) {
                 $imagePath = '/' . $basename . '.webp';
@@ -1768,7 +1758,6 @@ class SeriesController extends AbstractController
     #[Route('/settings/save', name: 'settings_save', methods: 'POST')]
     public function saveSettings(Request $request): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $data = json_decode($request->getContent(), true);
         $name = $data['name'];
@@ -2211,7 +2200,6 @@ class SeriesController extends AbstractController
     #[Route('/fetch/search/db/tv', name: 'fetch_search_db_tv', methods: ['POST'])]
     public function fetchSearchDbTv(Request $request): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $data = json_decode($request->getContent(), true);
@@ -2227,7 +2215,6 @@ class SeriesController extends AbstractController
     #[Route('/tmdb/check', name: 'tmdb_check', methods: ['POST'])]
     public function tmdbCheck(Request $request): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $data = json_decode($request->getContent(), true);
@@ -3198,7 +3185,6 @@ class SeriesController extends AbstractController
 
     public function now(): DateTimeImmutable
     {
-        /** @var User $user */
         $user = $this->getUser();
         if ($user->getTimezone()) {
             $timezone = $user->getTimezone();
@@ -3215,7 +3201,6 @@ class SeriesController extends AbstractController
 
     public function date(string $dateString): DateTimeImmutable
     {
-        /** @var User $user */
         $user = $this->getUser();
         if ($user->getTimezone()) {
             $timezone = $user->getTimezone();
