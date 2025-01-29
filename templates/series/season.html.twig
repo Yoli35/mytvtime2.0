@@ -247,7 +247,7 @@
                                     {% endif %}
                                     {% if ue.localized_overview|length %}
                                         <div class="overview additional">
-                                            {{ ue.localized_overview }}
+                                            {{ ue.localized_overview|nl2br }}
                                         </div>
                                     {% endif %}
                                     {% if (episode.overview or ue.localized_overview|length) == 0 %}
