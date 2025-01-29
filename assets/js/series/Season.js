@@ -153,8 +153,8 @@ export class Season {
         const sizesDiv = document.querySelector('.sizes');
         const userSeriesId = sizesDiv.getAttribute('data-user-series-id');
         const sizesItemDivs = sizesDiv.querySelectorAll('.size-item');
-        const activeSizeItemDiv = sizesDiv.querySelector('.size-item.active');
-        const initialSize = activeSizeItemDiv.getAttribute('data-size');
+        const initialActiveSizeItemDiv = sizesDiv.querySelector('.size-item.active');
+        const initialSize = initialActiveSizeItemDiv.getAttribute('data-size');
         const episodesDiv = document.querySelector('.episodes');
         episodesDiv.style.setProperty('--episode-height', initialSize);
 
@@ -164,6 +164,7 @@ export class Season {
                 if (sizeItemDiv.classList.contains('active')) {
                     return;
                 }
+                const activeSizeItemDiv = sizesDiv.querySelector('.size-item.active');
                 const size = sizeItemDiv.getAttribute('data-size');
                 activeSizeItemDiv.classList.remove('active');
                 sizeItemDiv.classList.add('active');
@@ -303,6 +304,9 @@ export class Season {
                             still.src = URL.createObjectURL(clipboardItem);
                             targetStillDiv.appendChild(still);
                         }
+                    } else {
+                        console.log(response);
+                        alert('Error: see console');
                     }
                 }
             }
