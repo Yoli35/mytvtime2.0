@@ -374,6 +374,16 @@
             trackUserLocation: true,
             showUserHeading: true
         }));
+        map.on('style.load', () => {
+            map.setFog({
+                "range": [0.8, 1.2],
+                "color": "#E0861F",
+                "horizon-blend": 0.125,
+                "high-color": "#112a67",
+                "space-color": "#000000",
+                "star-intensity": 0.15
+            }); // Set the default atmosphere style
+        });
         map.on('click', (e) => {
             console.log(`A click event has occurred at ${e.lngLat}`);
             // Copier les coordonnées (e.lnglat) dans le presse-papiers sous la forme "lat, lng"
