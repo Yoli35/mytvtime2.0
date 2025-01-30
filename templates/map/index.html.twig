@@ -24,7 +24,13 @@
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid">
         <div class="series-map">
-            <h1>{{ 'Shooting locations for your %d series'|trans|format(seriesCount) }} ({{ filmingLocationCount }} {{ 'locations'|trans }} - {{ filmingLocationImageCount }} {{ 'images'|trans }})</h1>
+            <div class="series-map-header">
+                <h1>{{ 'Shooting locations for your %d series'|trans|format(seriesCount) }}</h1>
+                <div class="numbers">
+                    <div data-title="{{ filmingLocationCount }} {{ 'locations'|trans }}">{{ filmingLocationCount }} {{ ux_icon('fa6-solid:map-location-dot', {height: '32px', width: '32px'}) }}</div>
+                    <div data-title="{{ filmingLocationImageCount }} {{ 'images'|trans }}">{{ filmingLocationImageCount }} {{ ux_icon('fa:picture-o', {height: '32px', width: '32px'}) }}</div>
+                </div>
+            </div>
             <div id="map" class="map-controller all"></div>
         </div>
 
@@ -239,7 +245,7 @@
                     if (country.value === "") {
                         const center = map.getCenter();
                         map.setZoom(3);
-                        map.easeTo({ center, duration: 1000, easing: (n) => n });
+                        map.easeTo({center, duration: 1000, easing: (n) => n});
                     } else {
                         // dans la base les latitudes et longitudes sont inversées
                         const lat1 = country.getAttribute('data-lat1');

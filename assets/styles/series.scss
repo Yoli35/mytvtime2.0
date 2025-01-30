@@ -3347,12 +3347,22 @@ h2 {
         margin-block-start: 3rem;
     }
 
-    h1 {
+    .series-map-header {
+        align-items: center;
         background-color: var(--orange-40);
         border-radius: .25rem;
         color: var(--ardoise-10);
+        display: flex;
         padding-block: .25rem;
         padding-inline: 1rem;
+
+        .numbers {
+            align-items: center;
+            display: flex;
+            gap: .5rem;
+            font-size: 2rem;
+            margin-inline-start: auto;
+        }
     }
 
     .map-controller {
