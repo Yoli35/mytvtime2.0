@@ -281,7 +281,7 @@ export class Season {
             const seriesId = targetStillDiv.getAttribute('data-series-id');
             const seasonId = targetStillDiv.getAttribute('data-season-id');
             const episodeId = targetStillDiv.getAttribute('data-episode-id');
-            const fileName = seriesId + '-' + seasonId + '-' + episodeId + '.';
+            const fileName = seriesId + '-' + seasonId + '-' + episodeId;
 
             for (const clipboardItem of e.clipboardData.files) {
                 if (clipboardItem.type.startsWith('image/')) {
