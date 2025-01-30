@@ -3359,9 +3359,15 @@ h2 {
         .numbers {
             align-items: center;
             display: flex;
-            gap: .5rem;
+            gap: 1rem;
             font-size: 2rem;
             margin-inline-start: auto;
+
+            > div {
+                align-items: center;
+                display: flex;
+                gap: .5rem;
+            }
         }
     }
 
