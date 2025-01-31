@@ -9,6 +9,7 @@ use App\Repository\FilmingLocationImageRepository;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\SeriesRepository;
 use App\Service\DateService;
+use App\Service\ImageService;
 use App\Service\TMDBService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -33,6 +34,7 @@ class SeriesFilmingLocationCommand extends Command
         private readonly EntityManagerInterface         $entityManager,
         private readonly FilmingLocationImageRepository $filmingLocationImageRepository,
         private readonly FilmingLocationRepository      $filmingLocationRepository,
+        private readonly ImageService                   $imageService,
         private readonly SeriesController               $seriesController,
         private readonly SeriesRepository               $seriesRepository,
     )
@@ -62,7 +64,7 @@ class SeriesFilmingLocationCommand extends Command
 
         $count = 0;
         // Root directory
-        $rootDir = $this->seriesController->getRootDir() . '/public';
+        $rootDir = $this->seriesController->getProjectDir() . '/public';
         foreach ($allSeries as $series) {
 
             $this->io->writeln(sprintf('Series (%d): %s', $series->getId(), $series->getName()));
@@ -109,7 +111,7 @@ class SeriesFilmingLocationCommand extends Command
                         // https://someurl.com/image.jpg -> /images/map/image.jpg
                         $basename = basename($image);
                         $destination = $rootDir . '/images/map/' . $basename;
-                        $copied = $this->seriesController->saveImageFromUrl($image, $destination);
+                        $copied = $this->imageService->saveImageFromUrl($image, $destination);
                         if ($copied) {
                             $this->io->writeln('Image [ ' . $image . ' ] copied to ' . $destination);
                         } else {

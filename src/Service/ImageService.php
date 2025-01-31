@@ -2,8 +2,129 @@
 
 namespace App\Service;
 
-class ImageService
+use Exception;
+use Psr\Log\LoggerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\String\Slugger\AsciiSlugger;
+use Throwable;
+
+class ImageService extends AbstractController
 {
+
+    public function __construct(
+        private readonly LoggerInterface $logger,
+    )
+    {
+    }
+
+    public function blobToWebp2(string $blob, string $title, string $location, int $n): ?string
+    {
+        $kernelProjectDir = $this->getParameter('kernel.project_dir');
+        try {
+            // Define constants for paths
+            $imageMapPath = $kernelProjectDir . '/public/images/map/';
+            $imageTempPath = $kernelProjectDir . '/public/images/temp/';
+//            $blob = $this->blobs[$name];
+
+            // Create necessary directories
+            if (!file_exists($imageMapPath)) {
+                mkdir($imageMapPath, 0755, true);
+            }
+            if (!file_exists($imageTempPath)) {
+                mkdir($imageTempPath, 0755, true);
+            }
+
+            $slugger = new AsciiSlugger();
+            $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
+
+            // Extract image type and extension
+            if (preg_match('/^data:image\/(\w+);base64,/', $blob, $matches)) {
+                $extension = $matches[1];
+                $tempName = $imageTempPath . $basename . '.' . $extension;
+                $destination = $imageMapPath . $basename . '.webp';
+
+                // Remove 'data:image/' prefix and decode
+                $decodedBlob = base64_decode(substr($blob, strlen('data:image/' . $extension . ';base64,') - 1));
+
+                // Ensure we have a valid image data string
+                if ($decodedBlob !== false && file_put_contents($tempName, $decodedBlob)) {
+                    // Convert to WebP format
+                    $webp = $this->webpImage($tempName, $destination, 90);
+
+                    if ($webp) {
+                        return '/' . $basename . '.webp';
+                    }
+                }
+//                throw new \RuntimeException('Failed to process the image blob');
+                return null;
+            }
+
+            // If no valid image type found
+            return null;
+
+        } catch (Throwable $e) {
+            // Log any errors and rethrow if required
+            $this->logger?->error('Error in blobToWebp: ' . $e->getMessage());
+            /*throw $e;*/
+            return null;
+        }
+    }
+
+    public function urlToWebp(string $url, string $title, string $location, int $n): ?string
+    {
+        $kernelProjectDir = $this->getParameter('kernel.project_dir');
+        $slugger = new AsciiSlugger();
+        $imageMapPath = $kernelProjectDir . '/public/images/map/';
+        $imageTempPath = $kernelProjectDir . '/public/images/temp/';
+
+        $extension = pathinfo($url, PATHINFO_EXTENSION);
+        $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
+        $tempName = $imageTempPath . $basename . '.' . $extension;
+        $destination = $imageMapPath . $basename . '.webp';
+
+        $copied = $this->saveImageFromUrl($url, $tempName, true);
+        if ($copied) {
+            $webp = $this->webpImage($tempName, $destination);
+            if ($webp) {
+                $image = '/' . $basename . '.webp';
+            } else {
+                $image = null;
+            }
+        } else {
+            $image = null;
+        }
+        return $image;
+    }
+
+    public function fileToWebp(UploadedFile $file, string $title, string $location, int $n): ?string
+    {
+        $kernelProjectDir = $this->getParameter('kernel.project_dir');
+        $slugger = new AsciiSlugger();
+        $imageMapPath = $kernelProjectDir . '/public/images/map/';
+        $imageTempPath = $kernelProjectDir . '/public/images/temp/';
+
+        $extension = $file->guessExtension();
+        $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
+        $tempName = $imageTempPath . $basename . '.' . $extension;
+        $destination = $imageMapPath . $basename . '.webp';
+
+        try {
+            $file->move($imageTempPath, $basename . '.' . $extension);
+            $webp = $this->webpImage($tempName, $destination);
+            if ($webp) {
+                $image = '/' . $basename . '.webp';
+            } else {
+                $image = null;
+            }
+        } catch (FileException $e) {
+            $this->logger?->error('Error in fileToWebp: ' . $e->getMessage());
+            $image = null;
+        }
+        return $image;
+    }
+
     public static function webpImage(string $sourcePath, string $destPath, int $quality = 100, int $width = 1920, int $height = 1080, bool $removeOld = true): ?string
     {
         $destination = $destPath;
@@ -51,7 +172,7 @@ class ImageService
                 'sourceY' => $sourceY,
             ]);
             $newImage = imagecreatetruecolor($width, $height);
-            // On ajoute un fond noir pour les images dont l'aspect ratio est différent de 16 / 9 (1920 / 1080)
+            // On ajoute un fond noir pour les images dont l'aspect ratio est différent de 16 / 9 (1920 / 1080).
             if ($sourceX || $sourceY) {
                 if ($isAlpha) {
                     imagealphablending($newImage, false);
@@ -70,14 +191,55 @@ class ImageService
             }
             $successfullyConverted = imagewebp($newImage, $destination, $quality);
             imagedestroy($newImage);
-            imagedestroy($image);
         } else {
             $successfullyConverted = imagewebp($image, $destination, $quality);
-            imagedestroy($image);
         }
+        imagedestroy($image);
 
         if ($successfullyConverted && $removeOld) unlink($sourcePath);
 
         return $destination;
+    }
+
+    public function saveImage($type, $imagePath, $imageUrl, $localPath = "/series/"): void
+    {
+        if (!$imagePath) return;
+        $kernelProjectDir = $this->getParameter('kernel.project_dir');
+        $this->saveImageFromUrl(
+            $imageUrl . $imagePath,
+            $kernelProjectDir . "/public" . $localPath . $type . $imagePath
+        );
+    }
+
+    public function saveImageFromUrl(string $imageUrl, string $localeFile, bool $dontValidate = false): bool
+    {
+        if (!file_exists($localeFile)) {
+
+            // Vérifier si l'URL de l'image est valide
+            if ($dontValidate || filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+                // Récupérer le contenu de l'image à partir de l'URL
+                try {
+                    $imageContent = file_get_contents($imageUrl);
+
+                    // Ouvrir un fichier en mode écriture binaire
+                    $file = fopen($localeFile, 'wb');
+
+                    // Écrire le contenu de l'image dans le fichier
+                    fwrite($file, $imageContent);
+
+                    // Fermer le fichier
+                    fclose($file);
+
+                    return true;
+                } catch (Exception $e) {
+                    dump(['exception' => $e, 'message' => $e->getMessage()]);
+                    return false;
+                }
+            } else {
+                dump(['message' => 'URL is not valid']);
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -7,6 +7,7 @@ use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
+use App\Service\ImageService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,11 +24,12 @@ class reloadImages extends Command
     private float $t0;
 
     public function __construct(
-        private readonly DateService        $dateService,
-        private readonly ImageConfiguration $imageConfiguration,
-        private readonly SeriesController   $seriesController,
+        private readonly DateService           $dateService,
+        private readonly ImageConfiguration    $imageConfiguration,
+        private readonly ImageService          $imageService,
+        private readonly SeriesController      $seriesController,
         private readonly SeriesImageRepository $seriesImageRepository,
-        private readonly SeriesRepository   $seriesRepository,
+        private readonly SeriesRepository      $seriesRepository,
     )
     {
         parent::__construct();
@@ -92,7 +94,7 @@ class reloadImages extends Command
                 if (!$localFileExists) {
                     $imageConfigType = $type . '_sizes';
                     $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$types]);
-                    $this->seriesController->saveImage($types, $imagePath, $url);
+                    $this->imageService->saveImage($types, $imagePath, $url);
                     $this->io->writeln(sprintf('  %s: %s → %s', $type, $url . $imagePath, '/series/' . $types . $imagePath));
                     $localFileExists = $this->fileExists($root . '/series/' . $types . $imagePath);
                     if ($localFileExists) {

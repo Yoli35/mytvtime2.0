@@ -25,6 +25,7 @@ use App\Repository\UserMovieRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
+use App\Service\ImageService;
 use App\Service\KeywordService;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -42,6 +43,7 @@ class MovieController extends AbstractController
     public function __construct(
         private readonly DateService                       $dateService,
         private readonly ImageConfiguration                $imageConfiguration,
+        private readonly ImageService                      $imageService,
         private readonly KeywordService                    $keywordService,
         private readonly MovieAdditionalOverviewRepository $movieAdditionalOverviewRepository,
         private readonly MovieCollectionRepository         $movieCollectionRepository,
@@ -116,7 +118,7 @@ class MovieController extends AbstractController
             'order' => $data['order'],
         ];
         $userMovies = array_map(function ($movie) use ($slugger) {
-            $this->saveImage("posters", $movie['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->imageService->saveImage("posters", $movie['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
             $movie['slug'] = $slugger->slug($movie['title']);
             return $movie;
         }, $this->movieRepository->getMovieCards($user, $filters));
@@ -216,8 +218,8 @@ class MovieController extends AbstractController
             //TODO: if movie not found on tmdb, ask for removal
         } else {
             $movie['found'] = true;
-            $this->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-            $this->saveImage("backdrops", $movie['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+            $this->imageService->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
+            $this->imageService->saveImage("backdrops", $movie['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3), '/movies/');
         }
 
         $this->getBelongToCollection($movie);
@@ -287,8 +289,8 @@ class MovieController extends AbstractController
         $language = $locale . '-' . ($locale === 'fr' ? 'FR' : 'US');
         $movie = json_decode($this->tmdbService->getMovie($id, $language, ['videos,images,credits,recommendations,watch/providers,release_dates']), true);
 
-        $this->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-        $this->saveImage("backdrops", $movie['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+        $this->imageService->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
+        $this->imageService->saveImage("backdrops", $movie['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3), '/movies/');
 
         $this->getCredits($movie);
         $this->getProviders($movie);
@@ -311,12 +313,12 @@ class MovieController extends AbstractController
     {
         $collection = json_decode($this->tmdbService->getMovieCollection($id), true);
 
-        $this->saveImage("posters", $collection['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-        $this->saveImage("backdrops", $collection['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+        $this->imageService->saveImage("posters", $collection['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
+        $this->imageService->saveImage("backdrops", $collection['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3), '/movies/');
 
         foreach ($collection['parts'] as $part) {
-            $this->saveImage("posters", $part['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-            $this->saveImage("backdrops", $part['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+            $this->imageService->saveImage("posters", $part['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
+            $this->imageService->saveImage("backdrops", $part['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3), '/movies/');
         }
 
         return $this->render('movie/collection.html.twig', [
@@ -388,7 +390,7 @@ class MovieController extends AbstractController
         $this->settingsRepository->save($settings, true);
 
         $userMovies = array_map(function ($movie) use ($user, $slugger) {
-            $this->saveImage("posters", $movie['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->imageService->saveImage("posters", $movie['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
             $movie['slug'] = $slugger->slug($movie['title']);
             // release_date: 2024-07-24 → 24 juillet 2024
             $movie['releaseDateString'] = ucfirst($this->dateService->formatDateLong($movie['releaseDate'], $user->getTimezone() ?? 'Europe/Paris', $user->getPreferredLanguage() ?? 'fr'));
@@ -637,8 +639,8 @@ class MovieController extends AbstractController
         if (key_exists('belongs_to_collection', $movie)) {
             $collection = $movie['belongs_to_collection'];
             if ($collection) {
-                $this->saveImage("posters", $collection['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-                $this->saveImage("backdrops", $collection['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+                $this->imageService->saveImage("posters", $collection['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
+                $this->imageService->saveImage("backdrops", $collection['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3), '/movies/');
             }
         }
     }
@@ -733,7 +735,7 @@ class MovieController extends AbstractController
     public function getRecommandations(array &$movie): void
     {
         $recommandations = array_map(function ($movie) {
-            $this->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->imageService->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
             return [
                 'id' => $movie['id'],
                 'title' => $movie['title'],
@@ -956,7 +958,7 @@ class MovieController extends AbstractController
     public function getSearchResult($searchResult): array
     {
         return array_map(function ($movie) {
-            $this->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->imageService->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
             $movie['poster_path'] = $movie['poster_path'] ? '/movies/posters' . $movie['poster_path'] : null;
 
             return [
@@ -974,41 +976,5 @@ class MovieController extends AbstractController
         return $this->redirectToRoute('app_movie_tmdb', [
             'id' => $movie['id'],
         ]);
-    }
-
-    public function saveImage($type, $imagePath, $imageUrl): void
-    {
-        if (!$imagePath) return;
-        $root = $this->getParameter('kernel.project_dir');
-        $this->saveImageFromUrl(
-            $imageUrl . $imagePath,
-            $root . "/public/movies/" . $type . $imagePath
-        );
-    }
-
-    public function saveImageFromUrl($imageUrl, $localeFile): bool
-    {
-        if (!file_exists($localeFile)) {
-
-            // Vérifier si l'URL de l'image est valide
-            if (filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-                // Récupérer le contenu de l'image à partir de l'URL
-                $imageContent = file_get_contents($imageUrl);
-
-                // Ouvrir un fichier en mode écriture binaire
-                $file = fopen($localeFile, 'wb');
-
-                // Écrire le contenu de l'image dans le fichier
-                fwrite($file, $imageContent);
-
-                // Fermer le fichier
-                fclose($file);
-
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return true;
     }
 }

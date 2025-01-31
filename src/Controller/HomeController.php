@@ -9,6 +9,7 @@ use App\Repository\UserSeriesRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
+use App\Service\ImageService;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +22,7 @@ class HomeController extends AbstractController
     public function __construct(
         private readonly DateService             $dateService,
         private readonly ImageConfiguration      $imageConfiguration,
+        private readonly ImageService            $imageService,
         private readonly SeriesController        $seriesController,
         private readonly UserEpisodeRepository   $userEpisodeRepository,
         private readonly UserSeriesRepository    $userSeriesRepository,
@@ -315,7 +317,7 @@ class HomeController extends AbstractController
         return array_map(function ($tv) use ($slugger, $root, $media, $name, $date, $country, $timezone, $preferredLanguage) {
 
             $tv['tmdb'] = true;
-            $this->seriesController->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), $media === 'movie' ? '/movies/' : '/series/');
+            $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), $media === 'movie' ? '/movies/' : '/series/');
             if ($tv['poster_path']) {
                 $localPath = ($media === 'movie' ? '/movies/' : '/series/') . 'posters' . $tv['poster_path'];
                 if (file_exists($root . $localPath)) {
@@ -354,7 +356,7 @@ class HomeController extends AbstractController
         foreach ($list as $item) {
             $tv = $item;//json_decode($this->tmdbService->getTv($item['id'], $preferredLanguage, ['watch/providers']), true);
 
-//            $this->seriesController->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+//            $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
 
             $tvs[] = [
                 'date' => $this->dateService->newDateImmutable($tv['first_air_date'], $timezone)->format('d/m/Y'),

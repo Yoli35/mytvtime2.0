@@ -8,7 +8,6 @@ use App\Entity\EpisodeLocalizedOverview;
 use App\Entity\EpisodeSubstituteName;
 use App\Entity\FilmingLocation;
 use App\Entity\FilmingLocationImage;
-use App\Entity\SeasonLocalizedOverview;
 use App\Entity\Series;
 use App\Entity\SeriesAdditionalOverview;
 use App\Entity\SeriesBroadcastSchedule;
@@ -33,7 +32,6 @@ use App\Repository\FilmingLocationRepository;
 use App\Repository\KeywordRepository;
 use App\Repository\NetworkRepository;
 use App\Repository\ProviderRepository;
-use App\Repository\SeasonLocalizedOverviewRepository;
 use App\Repository\SeriesAdditionalOverviewRepository;
 use App\Repository\SeriesBroadcastScheduleRepository;
 use App\Repository\SeriesDayOffsetRepository;
@@ -61,7 +59,6 @@ use DateTimeZone;
 use DeepL\DeepLException;
 use Deepl\TextResult;
 use Exception;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Clock\DatePoint;
@@ -100,10 +97,8 @@ class SeriesController extends AbstractController
         private readonly ImageService                       $imageService,
         private readonly KeywordRepository                  $keywordRepository,
         private readonly KeywordService                     $keywordService,
-        private readonly LoggerInterface                    $logger,
         private readonly NetworkRepository                  $networkRepository,
         private readonly ProviderRepository                 $providerRepository,
-        private readonly SeasonLocalizedOverviewRepository  $seasonLocalizedOverviewRepository,
         private readonly SeriesAdditionalOverviewRepository $seriesAdditionalOverviewRepository,
         private readonly SeriesBroadcastScheduleRepository  $seriesBroadcastScheduleRepository,
         private readonly SeriesDayOffsetRepository          $seriesDayOffsetRepository,
@@ -123,8 +118,6 @@ class SeriesController extends AbstractController
     )
     {
     }
-
-    private array $blobs = [];
 
     #[IsGranted('ROLE_USER')]
     #[Route('/', name: 'index')]
@@ -164,7 +157,7 @@ class SeriesController extends AbstractController
         $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
 
         $AllEpisodesOfTheDay = array_map(function ($ue) use ($providerUrl) {
-            $this->saveImage("posters", $ue['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->imageService->saveImage("posters", $ue['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             if ($ue['airAt']) {
                 $time = explode(':', $ue['airAt']);
                 $now = $this->now()->setTime($time[0], $time[1], $time[2]);
@@ -211,7 +204,7 @@ class SeriesController extends AbstractController
 //        dump(['episodesOfTheDay' => $episodesOfTheDay]);
 
         $allEpisodesOfTheWeek = array_map(function ($us) use ($providerUrl) {
-            $this->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->imageService->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             if (!$us['poster_path']) {
                 $us['poster_path'] = $this->getAlternatePosterPath($us['id']);
             }
@@ -252,7 +245,7 @@ class SeriesController extends AbstractController
 
         $order = 'firstAirDate'; // TODO: ajouter un menu pour choisir l'ordre (firstAirDate, lastWatched, addedAt, ...)
         $seriesToStart = array_map(function ($s) {
-            $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
         }, $this->userEpisodeRepository->seriesToStart($user, $locale, $order, 1, 20));
         $seriesToStartCount = $this->userEpisodeRepository->seriesToStartCount($user, $locale);
@@ -288,7 +281,7 @@ class SeriesController extends AbstractController
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
         $seriesToStart = array_map(function ($s) {
-            $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
         }, $this->userEpisodeRepository->seriesToStart($user, $locale, 'addedAt', 1, -1));
         $tmdbIds = array_column($seriesToStart, 'tmdb_id');
@@ -306,7 +299,7 @@ class SeriesController extends AbstractController
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
         $series = array_map(function ($s) {
-            $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
         }, $this->userEpisodeRepository->upComingSeries($user, $locale, 1, -1));
         $tmdbIds = array_column($series, 'tmdb_id');
@@ -327,13 +320,12 @@ class SeriesController extends AbstractController
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'by country']);
         if (!$settings) {
             $settings = new Settings($user, 'by country', ['country' => $country, 'keywords' => []]);
-            $this->settingsRepository->save($settings, true);
         } else {
             $data = $settings->getData();
             $data['country'] = $country;
             $settings->setData($data);
-            $this->settingsRepository->save($settings, true);
         }
+        $this->settingsRepository->save($settings, true);
 
         $usc = $this->userSeriesRepository->getUserSeriesCountries($user);
         $userSeriesCountries = [];
@@ -347,7 +339,7 @@ class SeriesController extends AbstractController
         sort($userSeriesCountries);
 
         $series = array_map(function ($s) {
-            $this->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             $s['upToDate'] = $s['watched_aired_episode_count'] == $s['aired_episode_count'];
             return $s;
         }, $this->userSeriesRepository->seriesByCountry($user, $country, $locale, 1, -1));
@@ -499,8 +491,8 @@ class SeriesController extends AbstractController
             'startStatus' => $data['startStatus'],
             'endStatus' => $data['endStatus'],
         ];
-        $startStatus = $data['startStatus'];
-        $endStatus = $data['endStatus'];
+//        $startStatus = $data['startStatus'];
+//        $endStatus = $data['endStatus'];
 
         $filterMeanings = [
             'name' => 'Name',
@@ -618,7 +610,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    public function getDbSearchResult($user, $query, $page, $firstAirDateYear): mixed
+    public function getDbSearchResult($user, $query, $page, $firstAirDateYear): array
     {
         return array_map(function ($s) {
             $s['poster_path'] = $s['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $s['poster_path'] : null;
@@ -709,8 +701,8 @@ class SeriesController extends AbstractController
             }
         }
 //        dump($tv['seasons']);
-        $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-        $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+        $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+        $this->imageService->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
 
         $tv['credits'] = $this->castAndCrew($tv);
         $tv['networks'] = $this->networks($tv);
@@ -736,8 +728,8 @@ class SeriesController extends AbstractController
         $userSeriesTMDBIds = array_column($this->userSeriesRepository->userSeriesTMDBIds($user), 'id');
         $list = json_decode($this->tmdbService->getList($id, $page), true);
 
-        $this->saveImage("backdrops", $list['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
-        $this->saveImage("posters", $list['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+        $this->imageService->saveImage("backdrops", $list['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+        $this->imageService->saveImage("posters", $list['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
 
         $list['results'] = array_map(function ($item) {
             $slugger = new AsciiSlugger();
@@ -793,13 +785,13 @@ class SeriesController extends AbstractController
             $tv['similar']['results'] = array_map(function ($s) {
                 $s['poster_path'] = $s['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $s['poster_path'] : null;
                 $s['tmdb'] = true;
-                $s['slug'] = (new AsciiSlugger())->slug($s['name']);
+                $s['slug'] = new AsciiSlugger()->slug($s['name']);
                 return $s;
             }, $tv['similar']['results']);
 //        dump($tv, $tvLists, $similar);
 
-            $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-            $this->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+            $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->imageService->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
             $series = $this->updateSeries($series, $tv);
 //            dump(['series posters' => $seriesPosters]);
 
@@ -1069,7 +1061,7 @@ class SeriesController extends AbstractController
         $seriesBroadcastSchedule->setSeasonPartFirstEpisode($seasonPartFirstEpisode);
         $seriesBroadcastSchedule->setSeasonPartEpisodeCount($seasonPartEpisodeCount);
         $seriesBroadcastSchedule->setFirstAirDate($this->dateService->newDateImmutable($date, "Europe/Paris", true));
-        $seriesBroadcastSchedule->setAirAt((new DateTimeImmutable())->setTime($hour, $minute));
+        $seriesBroadcastSchedule->setAirAt(new DateTimeImmutable()->setTime($hour, $minute));
         $seriesBroadcastSchedule->setFrequency($frequency);
         $seriesBroadcastSchedule->setOverride($override);
         $seriesBroadcastSchedule->setCountry($country);
@@ -1164,7 +1156,7 @@ class SeriesController extends AbstractController
             if (!$this->inImages($season['poster_path'], $seriesImages)) {
                 $seriesImage = new SeriesImage($series, "poster", $season['poster_path']);
                 $this->seriesImageRepository->save($seriesImage, true);
-                $this->saveImage("posters", $season['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+                $this->imageService->saveImage("posters", $season['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             }
         } else {
             $season['poster_path'] = $series->getPosterPath();
@@ -1718,7 +1710,7 @@ class SeriesController extends AbstractController
             } else {
                 $imagePath = null;
             }
-        } catch (FileException $e) {
+        } catch (FileException) {
             $imagePath = null;
         }
 
@@ -1875,7 +1867,7 @@ class SeriesController extends AbstractController
             if (!$this->inImages($backdrop['file_path'], $images)) {
                 $seriesImage = new SeriesImage($series, "backdrop", $backdrop['file_path']);
                 $this->seriesImageRepository->save($seriesImage);
-                $this->saveImage("backdrops", $backdrop['file_path'], $backdropUrl);
+                $this->imageService->saveImage("backdrops", $backdrop['file_path'], $backdropUrl);
                 $addedBackdropCount++;
             }
         }
@@ -1883,7 +1875,7 @@ class SeriesController extends AbstractController
             if (!$this->inImages($poster['file_path'], $images)) {
                 $seriesImage = new SeriesImage($series, "poster", $poster['file_path']);
                 $this->seriesImageRepository->save($seriesImage);
-                $this->saveImage("posters", $poster['file_path'], $posterUrl);
+                $this->imageService->saveImage("posters", $poster['file_path'], $posterUrl);
                 $addedPosterCount++;
             }
         }
@@ -1937,11 +1929,10 @@ class SeriesController extends AbstractController
             // "image-url" => "blob:https://localhost:8000/71698467-714e-4b2e-b6b3-a285619ea272"
             $testUrl = $data['image-url'];
             if (str_starts_with($testUrl, 'blob')) {
-                $this->blobs['image-url-blob'] = $data['image-url-blob'];
-                $imageResultPath = $this->blobToWebp2('image-url-blob', $data['title'], $data['location'], 100);
+//                $this->blobs['image-url-blob'] = $data['image-url-blob'];
+                $imageResultPath = $this->imageService->blobToWebp2($data['image-url-blob'], $data['title'], $data['location'], 100);
                 dump($imageResultPath);
             }
-            $this->blobs['image-url-blob'] = null;
 
             return $this->json([
                 'ok' => true,
@@ -1992,23 +1983,22 @@ class SeriesController extends AbstractController
         $this->filmingLocationRepository->save($filmingLocation, true);
 
         $n = $firstImageIndex;
-        /**************************************************************************************
-         * En mode dev, on peut ajouter des FilmingLocationImage sans passer par le           *
-         * téléversement : "~/some picture.webp"                                              *
-         * SINON :                                                                            *
-         * Images ajoutées avec Url (https://website/some-pisture.png)                        *
-         * ou par glisser-déposer (blob:https://website/71698467-714e-4b2e-b6b3-a285619ea272) *
-         **************************************************************************************/
+        /****************************************************************************************
+         * En mode dev, on peut ajouter des FilmingLocationImage sans passer par le             *
+         * téléversement : "~/some picture.webp"                                                *
+         * SINON :                                                                              *
+         * Images ajoutées avec Url (https://website/some-pisture.png)                          *
+         * ou par glisser-déposer ("blob:https://website/71698467-714e-4b2e-b6b3-a285619ea272") *
+         ****************************************************************************************/
         foreach ($images as $name => $imageUrl) {
             if (str_starts_with($imageUrl, '~/')) {
                 $image = str_replace('~/', '/', $imageUrl);
             } else {
                 if (str_starts_with('blob:', $imageUrl)) {
-                    $this->blobs[$name . '-blob'] = $data[$name . '-blob'];
-                    $image = $this->blobToWebp2($name . '-blob', $data['title'], $data['location'], $n);
-                    $this->blobs[$name . '-blob'] = null;
+//                    $this->blobs[$name . '-blob'] = $data[$name . '-blob'];
+                    $image = $this->imageService->blobToWebp2($data[$name . '-blob'], $data['title'], $data['location'], $n);
                 } else {
-                    $image = $this->urlToWebp($imageUrl, $title, $location, $n);
+                    $image = $this->imageService->urlToWebp($imageUrl, $title, $location, $n);
                 }
             }
             if ($image) {
@@ -2028,7 +2018,7 @@ class SeriesController extends AbstractController
          ******************************************************************************/
         foreach ($imageFiles as $key => $file) {
             dump(['key' => $key, 'file' => $file]);
-            $image = $this->fileToWebp($file, $title, $location, $n);
+            $image = $this->imageService->fileToWebp($file, $title, $location, $n);
             if ($image) {
                 $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
                 $this->filmingLocationImageRepository->save($filmingLocationImage, true);
@@ -2049,152 +2039,6 @@ class SeriesController extends AbstractController
             'ok' => true,
             'messages' => $messages,
         ]);
-    }
-
-    public function blobToWebp(string $name, string $title, string $location, int $n): ?string
-    {
-        $slugger = new AsciiSlugger();
-        $kernelProjectDir = $this->getParameter('kernel.project_dir');
-        $imageMapPath = $kernelProjectDir . '/public/images/map/';
-        $imageTempPath = $kernelProjectDir . '/public/images/temp/';
-        $blob = $this->blobs[$name];
-
-        // blob = [data:image/png;base64,iVB...] => raw image = base64_decode('iVB...')
-        if (preg_match('/^data:image\/(\w+);base64,/', $blob, $matches)) {
-            $extension = $matches[1];
-            $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
-            $tempName = $imageTempPath . $basename . '.' . $extension;
-            $destination = $imageMapPath . $basename . '.webp';
-            $blob = base64_decode(preg_replace('/^data:image\/\w+;base64,/', '', $blob));
-
-            if ($blob && $image = imagecreatefromstring($blob)) {
-                ob_start();
-                if ($extension === 'png') {
-                    imagepng($image);
-                } elseif ($extension === 'jpeg') {
-                    imagejpeg($image);
-                } elseif ($extension === 'webp') {
-                    imagewebp($image);
-                } else {
-                    ob_end_clean();
-                    return null;
-                }
-                $imageData = ob_get_contents();
-                ob_end_clean();
-                $copied = file_put_contents($tempName, $imageData);
-                if ($copied) {
-                    $webp = $this->imageService->webpImage($tempName, $destination, 90);
-                    if ($webp) {
-                        return '/' . $basename . '.webp';
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    public function blobToWebp2(string $name, string $title, string $location, int $n): ?string
-    {
-        try {
-            // Define constants for paths
-            $kernelProjectDir = $this->getParameter('kernel.project_dir');
-            $imageMapPath = $kernelProjectDir . '/public/images/map/';
-            $imageTempPath = $kernelProjectDir . '/public/images/temp/';
-            $blob = $this->blobs[$name];
-
-            // Create necessary directories
-            if (!file_exists($imageMapPath)) {
-                mkdir($imageMapPath, 0755, true);
-            }
-            if (!file_exists($imageTempPath)) {
-                mkdir($imageTempPath, 0755, true);
-            }
-
-            $slugger = new AsciiSlugger();
-            $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
-
-            // Extract image type and extension
-            if (preg_match('/^data:image\/(\w+);base64,/', $blob, $matches)) {
-                $extension = $matches[1];
-                $tempName = $imageTempPath . $basename . '.' . $extension;
-                $destination = $imageMapPath . $basename . '.webp';
-
-                // Remove 'data:image/' prefix and decode
-                $decodedBlob = base64_decode(substr($blob, strlen('data:image/' . $extension . ';base64,') - 1));
-
-                // Ensure we have a valid image data string
-                if ($decodedBlob !== false && file_put_contents($tempName, $decodedBlob)) {
-                    // Convert to WebP format
-                    $webp = $this->imageService->webpImage($tempName, $destination, 90);
-
-                    if ($webp) {
-                        return '/' . $basename . '.webp';
-                    }
-                }
-//                throw new \RuntimeException('Failed to process the image blob');
-                return null;
-            }
-
-            // If no valid image type found
-            return null;
-
-        } catch (\Throwable $e) {
-            // Log any errors and rethrow if required
-            if ($this->logger) {
-                $this->logger->error('Error in blobToWebp: ' . $e->getMessage());
-            }
-            throw $e;
-        }
-    }
-
-    public function urlToWebp(string $url, string $title, string $location, int $n): ?string
-    {
-        $slugger = new AsciiSlugger();
-        $imageMapPath = $this->getParameter('kernel.project_dir') . '/public/images/map/';
-        $imageTempPath = $this->getParameter('kernel.project_dir') . '/public/images/temp/';
-
-        $extension = pathinfo($url, PATHINFO_EXTENSION);
-        $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
-        $tempName = $imageTempPath . $basename . '.' . $extension;
-        $destination = $imageMapPath . $basename . '.webp';
-
-        $copied = $this->saveImageFromUrl($url, $tempName, true);
-        if ($copied) {
-            $webp = $this->imageService->webpImage($tempName, $destination);
-            if ($webp) {
-                $image = '/' . $basename . '.webp';
-            } else {
-                $image = null;
-            }
-        } else {
-            $image = null;
-        }
-        return $image;
-    }
-
-    public function fileToWebp(UploadedFile $file, string $title, string $location, int $n): ?string
-    {
-        $slugger = new AsciiSlugger();
-        $imageMapPath = $this->getParameter('kernel.project_dir') . '/public/images/map/';
-        $imageTempPath = $this->getParameter('kernel.project_dir') . '/public/images/temp/';
-
-        $extension = $file->guessExtension();
-        $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
-        $tempName = $imageTempPath . $basename . '.' . $extension;
-        $destination = $imageMapPath . $basename . '.webp';
-
-        try {
-            $file->move($imageTempPath, $basename . '.' . $extension);
-            $webp = $this->imageService->webpImage($tempName, $destination);
-            if ($webp) {
-                $image = '/' . $basename . '.webp';
-            } else {
-                $image = null;
-            }
-        } catch (FileException $e) {
-            $image = null;
-        }
-        return $image;
     }
 
     #[Route('/fetch/search/db/tv', name: 'fetch_search_db_tv', methods: ['POST'])]
@@ -2234,8 +2078,8 @@ class SeriesController extends AbstractController
         $updates = [];
 
         foreach ($dbSeries as $series) {
-            $lastUpdate = $series->getUpdatedAt();
-            $interval = $now->diff($lastUpdate);
+//            $lastUpdate = $series->getUpdatedAt();
+//            $interval = $now->diff($lastUpdate);
 
 //            if ($interval->days < 1) {
 //                $updates[] = [
@@ -2401,7 +2245,7 @@ class SeriesController extends AbstractController
             $type .= 's';
             $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]);
 //            dump(['type' => $type, 'series Image' => $seriesImage, 'url' => $url]);
-            $this->saveImage($type, $seriesImage->getImagePath(), $url);
+            $this->imageService->saveImage($type, $seriesImage->getImagePath(), $url);
         }
 
         if (!$this->inImages($tv['poster_path'], $seriesImages)) {
@@ -2418,7 +2262,7 @@ class SeriesController extends AbstractController
         foreach (['backdrops', 'logos', 'posters'] as $type) {
             $dbType = substr($type, 0, -1);
             $imageConfigType = $dbType . '_sizes';
-            $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]);
+//            $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]);
             foreach ($tv['images'][$type] as $img) {
                 if (!$this->inImages($img['file_path'], $seriesImages)) {
                     $seriesImage = new SeriesImage($series, $dbType, $img['file_path']);
@@ -2427,19 +2271,19 @@ class SeriesController extends AbstractController
                 }
             }
             $tv['images'][$type] = array_map(function ($image) use ($type, $sizes, $imageConfigType) {
-                $this->saveImage($type, $image['file_path'], $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]));
+                $this->imageService->saveImage($type, $image['file_path'], $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]));
                 return '/series/' . $type . $image['file_path'];
             }, $tv['images'][$type]);
         }
 
         if ($tv['poster_path'] != $series->getPosterPath()) {
             $series->setPosterPath($tv['poster_path']);
-            $this->saveImage("posters", $series->getPosterPath(), $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->imageService->saveImage("posters", $series->getPosterPath(), $this->imageConfiguration->getUrl('poster_sizes', 5));
             $series->addUpdate($this->translator->trans('Poster updated'));
         }
         if ($tv['backdrop_path'] != $series->getBackdropPath()) {
             $series->setBackdropPath($tv['backdrop_path']);
-            $this->saveImage("backdrops", $series->getBackdropPath(), $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+            $this->imageService->saveImage("backdrops", $series->getBackdropPath(), $this->imageConfiguration->getUrl('backdrop_sizes', 3));
             $series->addUpdate($this->translator->trans('Backdrop updated'));
         }
         $this->seriesRepository->save($series, true);
@@ -2639,8 +2483,8 @@ class SeriesController extends AbstractController
                 $lastEpisode = $episodeCount;
             }
             $airAt = $schedule->getAirAt();
-            $airAtHour = $airAt->format('H');
-            $airAtMinute = $airAt->format('i');
+//            $airAtHour = $airAt->format('H');
+//            $airAtMinute = $airAt->format('i');
             $firstAirDate = $schedule->getFirstAirDate();
             $frequency = $schedule->getFrequency();
             $override = $schedule->isOverride();
@@ -2687,8 +2531,8 @@ class SeriesController extends AbstractController
                         }*/
 
             $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
-            $nextEpisodeAiDate = $tvNextEpisode['date'] ?? null;
-            $lastEpisodeAiDate = $tvLastEpisode['date'] ?? null;
+//            $nextEpisodeAiDate = $tvNextEpisode['date'] ?? null;
+//            $lastEpisodeAiDate = $tvLastEpisode['date'] ?? null;
             /*if ($nextEpisodeAiDate) {
                 $target = $nextEpisodeAiDate;
             } elseif ($lastEpisodeAiDate) {
@@ -2816,7 +2660,7 @@ class SeriesController extends AbstractController
             $dayArr = [];
             $episodeNumber = 1;
             $airAt = $schedule->getAirAt();
-            foreach ($userEpisodes as $i => $userEpisode) {
+            foreach ($userEpisodes as $userEpisode) {
                 $ue = $userEpisode;
                 $date = $ue->getAirDate()->setTime($airAt->format('H'), $airAt->format('i'));
                 $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $episodeNumber), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $episodeNumber), 'future' => $now < $date];
@@ -3058,10 +2902,7 @@ class SeriesController extends AbstractController
     public function inImages(?string $image, array $images): bool
     {
         if (!$image) return true;
-        foreach ($images as $img) {
-            if ($img->getimagePath() == $image) return true;
-        }
-        return false;
+        return array_any($images, fn($img) => $img->getimagePath() == $image);
     }
 
     public function addSeries($id, $date): array
@@ -3451,63 +3292,63 @@ class SeriesController extends AbstractController
         return $dateString;
     }
 
-    public function seasonLocalizedOverview($series, $season, $seasonNumber, $request): array|null
-    {
-        $locale = $request->getLocale();
-        $localized = false;
-        $localizedResult = null;
-        $localizedOverview = $this->seasonLocalizedOverviewRepository->findOneBy(['series' => $series, 'seasonNumber' => $seasonNumber, 'locale' => $locale]);
-
-        if (!$localizedOverview) {
-            if (!strlen($season['overview'])) {
-                $usSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, 'en-US'), true);
-                $season['overview'] = $usSeason['overview'];
-                if (strlen($season['overview'])) {
-                    try {
-                        $usage = $this->deeplTranslator->translator->getUsage();
-//                    dump($usage);
-                        if ($usage->character->count + strlen($season['overview']) < $usage->character->limit) {
-                            $localizedOverview = $this->deeplTranslator->translator->translateText($season['overview'], null, $locale);
-                            $localized = true;
-
-                            $seasonLocalizedOverview = new SeasonLocalizedOverview($series, $seasonNumber, $localizedOverview, $locale);
-                            $this->seasonLocalizedOverviewRepository->save($seasonLocalizedOverview, true);
-                        } else {
-                            $localizedResult = 'Limit exceeded';
-                        }
-                    } catch (DeepLException $e) {
-                        $localizedResult = 'Error: code ' . $e->getCode() . ', message: ' . $e->getMessage();
-                        $usage = [
-                            'character' => [
-                                'count' => 0,
-                                'limit' => 500000
-                            ]
-                        ];
-                    }
-                }
-                return [
-                    'us_overview' => $usSeason['overview'],
-                    'us_episode_overviews' => []/*array_map(function ($ep) use ($locale) {
-                    return $this->episodeLocalizedOverview($ep, $locale);
-                }, $usSeason['episodes'])*/,
-                    'localized' => $localized,
-                    'localizedOverview' => $localizedOverview,
-                    'localizedResult' => $localizedResult,
-                    'usage' => $usage ?? null
-                ];
-            }
-        } else {
-            return [
-                'us_overview' => null,
-                'us_episode_overviews' => [],
-                'localized' => true,
-                'localizedOverview' => $localizedOverview->getOverview(),
-                'localizedResult' => null,
-                'usage' => null
-            ];
-        }
-        return null;
-    }
+//    public function seasonLocalizedOverview($series, $season, $seasonNumber, $request): array|null
+//    {
+//        $locale = $request->getLocale();
+//        $localized = false;
+//        $localizedResult = null;
+//        $localizedOverview = $this->seasonLocalizedOverviewRepository->findOneBy(['series' => $series, 'seasonNumber' => $seasonNumber, 'locale' => $locale]);
+//
+//        if (!$localizedOverview) {
+//            if (!strlen($season['overview'])) {
+//                $usSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, 'en-US'), true);
+//                $season['overview'] = $usSeason['overview'];
+//                if (strlen($season['overview'])) {
+//                    try {
+//                        $usage = $this->deeplTranslator->translator->getUsage();
+////                    dump($usage);
+//                        if ($usage->character->count + strlen($season['overview']) < $usage->character->limit) {
+//                            $localizedOverview = $this->deeplTranslator->translator->translateText($season['overview'], null, $locale);
+//                            $localized = true;
+//
+//                            $seasonLocalizedOverview = new SeasonLocalizedOverview($series, $seasonNumber, $localizedOverview, $locale);
+//                            $this->seasonLocalizedOverviewRepository->save($seasonLocalizedOverview, true);
+//                        } else {
+//                            $localizedResult = 'Limit exceeded';
+//                        }
+//                    } catch (DeepLException $e) {
+//                        $localizedResult = 'Error: code ' . $e->getCode() . ', message: ' . $e->getMessage();
+//                        $usage = [
+//                            'character' => [
+//                                'count' => 0,
+//                                'limit' => 500000
+//                            ]
+//                        ];
+//                    }
+//                }
+//                return [
+//                    'us_overview' => $usSeason['overview'],
+//                    'us_episode_overviews' => []/*array_map(function ($ep) use ($locale) {
+//                    return $this->episodeLocalizedOverview($ep, $locale);
+//                }, $usSeason['episodes'])*/,
+//                    'localized' => $localized,
+//                    'localizedOverview' => $localizedOverview,
+//                    'localizedResult' => $localizedResult,
+//                    'usage' => $usage ?? null
+//                ];
+//            }
+//        } else {
+//            return [
+//                'us_overview' => null,
+//                'us_episode_overviews' => [],
+//                'localized' => true,
+//                'localizedOverview' => $localizedOverview->getOverview(),
+//                'localizedResult' => null,
+//                'usage' => null
+//            ];
+//        }
+//        return null;
+//    }
 
 //    public function episodeLocalizedOverview($episode, $locale): string
 //    {
@@ -3682,7 +3523,7 @@ class SeriesController extends AbstractController
     public function getSearchResult($searchResult, $slugger): array
     {
         return array_map(function ($tv) use ($slugger) {
-            $this->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             $tv['poster_path'] = $tv['poster_path'] ? '/series/posters' . $tv['poster_path'] : null;
 
             $name = $tv['name'];
@@ -3718,64 +3559,6 @@ class SeriesController extends AbstractController
     }
 
     public function getProjectDir(): string
-    {
-        return $this->getParameter('kernel.project_dir');
-    }
-
-    public function saveImage($type, $imagePath, $imageUrl, $localPath = "/series/"): void
-    {
-        if (!$imagePath) return;
-        $root = $this->getParameter('kernel.project_dir');
-        $this->saveImageFromUrl(
-            $imageUrl . $imagePath,
-            $root . "/public" . $localPath . $type . $imagePath
-        );
-    }
-
-    public function saveImageFromUrl(string $imageUrl, string $localeFile, bool $dontValidate = false): bool
-    {
-        if (!file_exists($localeFile)) {
-
-            // Vérifier si l'URL de l'image est valide
-            if ($dontValidate || filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-                // Récupérer le contenu de l'image à partir de l'URL
-                try {
-                    $imageContent = file_get_contents($imageUrl);
-
-                    // Ouvrir un fichier en mode écriture binaire
-                    $file = fopen($localeFile, 'wb');
-
-                    // Écrire le contenu de l'image dans le fichier
-                    fwrite($file, $imageContent);
-
-                    // Fermer le fichier
-                    fclose($file);
-
-                    return true;
-                } catch (Exception $e) {
-                    dump(['exception' => $e, 'message' => $e->getMessage()]);
-                    return false;
-                }
-            } else {
-                dump(['message' => 'URL is not valid']);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public function copyImage(string $source, string $destination): bool
-    {
-        if (!file_exists($destination)) {
-            if (file_exists($source)) {
-                copy($source, $destination);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public function getRootDir(): string
     {
         return $this->getParameter('kernel.project_dir');
     }
