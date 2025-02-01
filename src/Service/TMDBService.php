@@ -410,6 +410,24 @@ class TMDBService
         }
     }
 
+    public function getTvExternalIds($tvId): ?string
+    {
+        $request = "https://api.themoviedb.org/3/tv/$tvId/external_ids?api_key=$this->api_key";
+        try {
+            $response = $this->client->request(
+                'GET',
+                $request,
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable) {
+                return "";
+            }
+        } catch (Throwable) {
+            return "";
+        }
+    }
+
     public function getTvEpisodeCredits($tvId, $seasonNumber, $episodeNumber, $locale): ?string
     {
         $request = 'https://api.themoviedb.org/3/tv/' . $tvId . '/season/' . $seasonNumber . '/episode/' . $episodeNumber . '/credits?api_key=' . $this->api_key . '&language=' . $locale;

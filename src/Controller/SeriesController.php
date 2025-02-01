@@ -410,6 +410,7 @@ class SeriesController extends AbstractController
 
         return $this->render('series/search.html.twig', [
             'form' => $simpleForm->createView(),
+            'action' => 'app_series_search_all',
             'title' => 'Search a series',
             'seriesList' => $series,
             'results' => [
@@ -769,7 +770,16 @@ class SeriesController extends AbstractController
 
         $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
         // Get with fr-FR language to get the localized name
-        $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), ["images", "videos", "credits", "watch/providers", "keywords", "lists", "similar"]), true);
+        $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), [
+            "images",
+            "videos",
+            "credits",
+            "watch/providers",
+            "keywords",
+            "external_ids",
+            "lists",
+            "similar"
+        ]), true);
 //        dump($tv);
         if ($tv) {
             if (!$tv['lists']['total_results']) {
@@ -877,6 +887,9 @@ class SeriesController extends AbstractController
 
         $filmingLocations = $this->getFilmingLocations($series->getTmdbId());
 
+        $tvKeywords = $tv['keywords']['results'] ?? [];
+        $tvExternalIds = $tv['external_ids'] ?? [];
+
 //        dump([
 //            'series' => $seriesArr,
 //            'locations' => $locations['filmingLocations'],
@@ -899,7 +912,7 @@ class SeriesController extends AbstractController
             'userSeries' => $userSeries,
             'providers' => $providers,
             'locations' => $filmingLocations,
-            'externals' => $this->getExternals($series, $request->getLocale()),
+            'externals' => $this->getExternals($series, $tvKeywords, $tvExternalIds, $request->getLocale()),
             'translations' => $translations,
             'addBackdropForm' => $addBackdropForm->createView(),
             'oldSeriesAdded' => $request->get('oldSeriesAdded') === 'true',
@@ -1194,6 +1207,9 @@ class SeriesController extends AbstractController
             }
         }
 
+        $tvKeywords = json_decode($this->tmdbService->getTvKeywords($series->getTmdbId()), true);
+        $tvExternalIds = json_decode($this->tmdbService->getTvExternalIds($series->getTmdbId()), true);
+
         dump([
 //            'series' => $series,
             'season' => $season,
@@ -1209,7 +1225,7 @@ class SeriesController extends AbstractController
             'episodeDivSize' => $episodeDivSize,
             'providers' => $providers,
             'devices' => $devices,
-            'externals' => $this->getExternals($series, $request->getLocale()),
+            'externals' => $this->getExternals($series, $tvKeywords['results'] ?? [], $tvExternalIds, $request->getLocale()),
         ]);
     }
 
@@ -2305,12 +2321,14 @@ class SeriesController extends AbstractController
         return [$seriesBackdrops, $seriesLogos, $seriesPosters];
     }
 
-    public function getExternals(Series $series, string $locale): array
+    public function getExternals(Series $series, array $keywords, $externalIds, string $locale): array
     {
-        // https://mydramalist.com/search?q=between+us
-        // https://www.nautiljon.com/search.php?q=love+sick
-        // https://www.senscritique.com/search?query=Bad%20Guy%20My%20Boss
-        // https://world-of-bl.com/index.php?n=Main.HomePage&action=search&q=love+sick
+        $keywordIds = array_map(fn($k) => $k['id'], $keywords);
+        dump([
+            'keywords'=>$keywords,
+            'keyword ids' => $keywordIds,
+            'external ids' => $externalIds,
+            ]);
         $seriesCountries = $series->getOriginCountry();
         $dbExternals = $this->seriesExternalRepository->findAll();
         $externals = [];
@@ -2318,13 +2336,26 @@ class SeriesController extends AbstractController
 
         /** @var SeriesExternal $dbExternal */
         foreach ($dbExternals as $dbExternal) {
+            $dbKeywordIds = array_map(fn($k) => $k['id'], $dbExternal->getKeywords());
+            if (count($dbKeywordIds) && !array_intersect($keywordIds, $dbKeywordIds)) {
+                continue;
+            }
             $countries = $dbExternal->getCountries();
             $searchQuery = $dbExternal->getSearchQuery();
-            $searchSeparator = $dbExternal->getSearchSeparator();
-            $searchName = strtolower($searchSeparator ? str_replace(' ', $searchSeparator, $displayName) : $displayName);
-            if (!count($countries) || array_intersect($seriesCountries, $countries)) {
-                $dbExternal->setFullUrl($searchQuery ? $searchName : null);
-                $externals[] = $dbExternal;
+            $searchType = $dbExternal->getSearchType();
+            if ($searchType == "name") {
+                $searchSeparator = $dbExternal->getSearchSeparator();
+                $searchName = strtolower($searchSeparator ? str_replace(' ', $searchSeparator, $displayName) : $displayName);
+                if (!count($countries) || array_intersect($seriesCountries, $countries)) {
+                    $dbExternal->fullUrl = $searchQuery ? $searchName : null;
+                    $externals[] = $dbExternal;
+                }
+            } else {
+                $id = $externalIds[$searchType] ?? null;
+                if ($id) {
+                    $dbExternal->fullUrl = $id;
+                    $externals[] = $dbExternal;
+                }
             }
         }
         return $externals;
@@ -2342,7 +2373,7 @@ class SeriesController extends AbstractController
             $searchSeparator = $dbExternal->getSearchSeparator();
             $searchName = strtolower($searchSeparator ? str_replace(' ', $searchSeparator, $displayName) : $displayName);
             if (!count($countries) || array_intersect($seriesCountries, $countries)) {
-                $dbExternal->setFullUrl($searchQuery ? $searchName : null);
+                $dbExternal->fullUrl = $searchQuery ? $searchName : null;
                 $externals[] = $dbExternal;
             }
         }

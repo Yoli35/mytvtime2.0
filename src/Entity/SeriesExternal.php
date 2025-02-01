@@ -25,13 +25,26 @@ class SeriesExternal
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $searchQuery = null;
 
-    private ?string $fullUrl = null;
+    public ?string $fullUrl = null {
+        get {
+            return $this->fullUrl;
+        }
+        set {
+            $this->fullUrl = $value ? $this->baseUrl . $this->searchQuery . $value : $this->baseUrl;
+        }
+    }
 
     #[ORM\Column]
     private array $countries = [];
 
+    #[ORM\Column]
+    private array $keywords = [];
+
     #[ORM\Column(length: 1, nullable: true)]
     private ?string $searchSeparator = null;
+
+    #[ORM\Column(length: 16, nullable: true)]
+    private ?string $searchType = null;
 
     public function getId(): ?int
     {
@@ -98,16 +111,6 @@ class SeriesExternal
         return $this;
     }
 
-    public function getFullUrl(): ?string
-    {
-        return $this->fullUrl;
-    }
-
-    public function setFullUrl(?string $query): void
-    {
-        $this->fullUrl = $query ? $this->baseUrl . $this->searchQuery . $query : $this->baseUrl;
-    }
-
     public function getSearchSeparator(): ?string
     {
         return $this->searchSeparator;
@@ -118,5 +121,27 @@ class SeriesExternal
         $this->searchSeparator = $searchSeparator;
 
         return $this;
+    }
+
+    public function getSearchType(): ?string
+    {
+        return $this->searchType;
+    }
+
+    public function setSearchType(?string $searchType): static
+    {
+        $this->searchType = $searchType;
+
+        return $this;
+    }
+
+    public function getKeywords(): array
+    {
+        return $this->keywords;
+    }
+
+    public function setKeywords(array $keywords): void
+    {
+        $this->keywords = $keywords;
     }
 }
