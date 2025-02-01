@@ -437,9 +437,9 @@ export class Season {
         input.focus();
         input.select();
 
-        if (type === 'overview') {
+        /*if (type === 'overview') {
             form.scrollIntoView({block: "end", inline: "nearest", behavior: 'smooth'});
-        }
+        }*/
     }
 
     addEpisode(e, episodeId = null) {
