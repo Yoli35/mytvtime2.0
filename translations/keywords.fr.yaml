@@ -46,6 +46,7 @@ action thriller: action et thriller
 action: action
 actor male lead: acteur premier rôle masculin
 actor playing themself: acteur jouant son propre rôle
+actor: acteur
 actors: acteurs
 actress: actrice
 adaptation: adaptation
@@ -529,6 +530,7 @@ costume drama: théâtre en costumes
 council estate: contre-terrorisme
 counterterrorism: contre-terrorisme
 countryside setting: milieu rural
+countryside: campagne
 couple: couple
 court case: affaire judiciaire
 courthouse: tribunal
@@ -920,6 +922,7 @@ flying man: homme volant
 folklore: folklore
 food industry: industrie alimentaire
 food: nourriture
+football (soccer) player: joueur de football
 football (soccer) team: équipe de football
 football (soccer): football (soccer)
 forbidden love: amour interdit
@@ -1738,6 +1741,7 @@ police corruption: corruption dans la police
 police department: département de police
 police detective: détective de police
 police investigation: police investigation
+police officer male lead: officier de police, rôle principal masculin
 police officer: policier
 police procedural: procédure policière
 police state: État policier
