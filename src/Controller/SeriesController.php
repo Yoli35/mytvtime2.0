@@ -247,8 +247,8 @@ class SeriesController extends AbstractController
         $seriesToStart = array_map(function ($s) {
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
-        }, $this->userEpisodeRepository->seriesToStart($user, $locale, $order, 1, 20));
-        $seriesToStartCount = $this->userEpisodeRepository->seriesToStartCount($user, $locale);
+        }, $this->userSeriesRepository->seriesToStart($user, $locale, $order, 1, 20));
+        $seriesToStartCount = $this->userSeriesRepository->seriesToStartCount($user, $locale);
 
 //        dump([
 //            'episodesOfTheDay' => $episodesOfTheDay,
@@ -283,11 +283,29 @@ class SeriesController extends AbstractController
         $seriesToStart = array_map(function ($s) {
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
-        }, $this->userEpisodeRepository->seriesToStart($user, $locale, 'addedAt', 1, -1));
+        }, $this->userSeriesRepository->seriesToStart($user, $locale, 'addedAt', 1, -1));
         $tmdbIds = array_column($seriesToStart, 'tmdb_id');
 
         return $this->render('series/series-to-start.html.twig', [
             'seriesToStart' => $seriesToStart,
+            'tmdbIds' => $tmdbIds,
+        ]);
+    }
+
+    #[Route('/not/seen/in/a/while', name: 'not_seen_in_a_while')]
+    public function serieNotSeen(Request $request): Response
+    {
+        $user = $this->getUser();
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+
+        $series = array_map(function ($s) {
+            $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            return $s;
+        }, $this->userSeriesRepository->seriesNotSeenInAWhile($user, $locale, '15 DAY', 1, -1));
+        $tmdbIds = array_column($series, 'tmdb_id');
+
+        return $this->render('series/series-in-a-while.html.twig', [
+            'seriesInAWhile' => $series,
             'tmdbIds' => $tmdbIds,
         ]);
     }
@@ -301,7 +319,7 @@ class SeriesController extends AbstractController
         $series = array_map(function ($s) {
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
-        }, $this->userEpisodeRepository->upComingSeries($user, $locale, 1, -1));
+        }, $this->userSeriesRepository->upComingSeries($user, $locale, 1, -1));
         $tmdbIds = array_column($series, 'tmdb_id');
 
         return $this->render('series/up-coming-series.html.twig', [

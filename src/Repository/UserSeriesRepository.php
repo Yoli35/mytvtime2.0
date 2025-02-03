@@ -182,6 +182,94 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function seriesToStart(User $user, string $locale, string $order,  int $page, int $perPage): array
+    {
+        $userId = $user->getId();
+        $offset = ($page - 1) * $perPage;
+        match ($order) {
+            'addedAt' => $order = 'us.`added_at`',
+            default => $order = 's.`first_air_date`'
+        };
+        $sql = "SELECT s.id                                                                      as id,
+                       s.tmdb_id                                                                 as tmdb_id,
+                       IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
+                       IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
+                       s.`poster_path`                                                           as poster_path,
+                       s.`first_air_date`                                                        as final_air_date,
+                       (SELECT COUNT(*)
+                            FROM `user_episode` ue
+                            WHERE ue.`user_series_id`=us.id)                                     as number_of_episode,
+                       (SELECT CONCAT(ue.`season_number`, '/',ue.`episode_number`)
+                            FROM `user_episode` ue
+                            WHERE ue.`user_series_id`=us.id AND ue.`season_number`>0 AND ue.`watch_at` IS NULL
+                            ORDER BY ue.`episode_number` LIMIT 1)                                as episode
+                FROM `series` s
+                INNER JOIN `user_series` us ON us.series_id=s.id
+                LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.id AND sln.`locale`='$locale'
+                WHERE s.`first_air_date` <= NOW() AND us.user_id=$userId AND us.`progress`=0
+                ORDER BY $order DESC ";
+        if ($perPage > 0) $sql .= "LIMIT $perPage OFFSET $offset";
+
+        return $this->getAll($sql);
+    }
+
+    public function seriesToStartCount(User $user, string $locale): int
+    {
+        $userId = $user->getId();
+        $sql = "SELECT COUNT(*) as count
+                FROM `series` s
+                INNER JOIN `user_series` us ON us.series_id=s.id
+                LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.id AND sln.`locale`='$locale'
+                WHERE s.`first_air_date` <= NOW() AND us.user_id=$userId AND us.`progress`=0";
+
+        return $this->getOne($sql);
+    }
+
+    public function seriesNotSeenInAWhile(User $user, string $locale, string $interval, int $page, int $perPage): array
+    {
+        $userId = $user->getId();
+        $offset = ($page - 1) * $perPage;
+        $sql = "SELECT
+                    s.id                                                                      as `id`,
+                    s.tmdb_id                                                                 as `tmdb_id`,
+                    IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as `name`,
+                    IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as `slug`,
+                    s.`poster_path`                                                           as `poster_path`,
+                    us.`last_season`                                                          as `last_season`,
+                    us.`last_episode`                                                         as `last_episode`,
+                    us.`last_watch_at`                                                        as `last_viewed_at`
+                FROM `user_series` us
+                LEFT JOIN `series` s ON us.`series_id`=s.`id`
+                LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.locale='$locale'
+                WHERE us.`user_id`=$userId
+                    AND us.`progress` < 100
+                    AND us.`last_watch_at` <= DATE_SUB(NOW(), INTERVAL $interval)
+                ORDER BY us.`last_watch_at` DESC";
+        if ($perPage > 0) $sql .= "LIMIT $perPage OFFSET $offset";
+
+        return $this->getAll($sql);
+    }
+
+    public function upComingSeries(User $user, string $locale, int $page, int $perPage): array
+    {
+        $userId = $user->getId();
+        $offset = ($page - 1) * $perPage;
+        $sql = "SELECT s.id                                                                      as id,
+                       s.tmdb_id                                                                 as tmdb_id,
+                       IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
+                       IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
+                       s.`poster_path`                                                           as poster_path,
+                       s.`first_air_date`                                                        as final_air_date
+                FROM `series` s
+                INNER JOIN `user_series` us ON us.series_id=s.id
+                LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.id AND sln.`locale`='$locale'
+                WHERE (s.`first_air_date` > NOW() OR s.first_air_date IS NULL) AND us.user_id=$userId
+                ORDER BY us.`added_at` DESC ";
+        if ($perPage > 0) $sql .= "LIMIT $perPage OFFSET $offset";
+
+        return $this->getAll($sql);
+    }
+
     public function getAllSeries(
         User $user,
         array $localisation,
