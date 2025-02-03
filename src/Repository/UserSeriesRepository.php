@@ -242,6 +242,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                 LEFT JOIN `series` s ON us.`series_id`=s.`id`
                 LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.locale='$locale'
                 WHERE us.`user_id`=$userId
+                    AND us.`progress` > 0
                     AND us.`progress` < 100
                     AND us.`last_watch_at` <= DATE_SUB(NOW(), INTERVAL $interval)
                 ORDER BY us.`last_watch_at` DESC";
