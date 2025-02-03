@@ -1,6 +1,6 @@
 {% set route = app.request.attributes.get('_route') %}
 {% set parameters = app.request.query %}
-{#{% set route_params = app.request.attributes.get('_route_params') %}#}
+{# {% set route_params = app.request.attributes.get('_route_params') %} #}
 <nav class="navbar">
     <div class="div-test"></div>
     <a href="{{ path('app_home') }}" accesskey="<">{{ ux_icon('ion:home', {height: "18px", width: "18px"}) }}</a>
@@ -11,7 +11,7 @@
                 <li><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'My movies'|trans }}</a></li>
                 <li>
                     <label for="movie-search">
-                        <input type="search" id="movie-search" class="search" spellcheck="false">
+                        <input type="search" id="movie-search" data-type="movie" class="search" spellcheck="false">
                         {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                     </label>
                     <div class="search-results"></div>
@@ -24,19 +24,20 @@
                 {% set country=getUserCountrySettings(app.user) %}
                 <li><a href="{{ path('app_series_index') }}" class="desktop">{{ 'Episodes of the week'|trans }}</a></li>
                 <li><a href="{{ path('app_series_all') }}" class="desktop">{{ 'All my series'|trans }}</a></li>
+                <li><a href="{{ path('app_series_not_seen_in_a_while') }}">{{ 'Series not seen in a while'|trans }}</a></li>
                 <li><a href="{{ path('app_series_to_start') }}">{{ 'Series to start'|trans }}</a></li>
                 <li><a href="{{ path('app_series_up_coming') }}">{{ 'Up coming series'|trans }}</a></li>
                 <li><a href="{{ path('app_series_by_country', {country: country}) }}">{{ 'Series by country'|trans }} - {{ country|country_name }}</a></li>
                 <li>
                     <label for="tv-search">
-                        <input type="search" id="tv-search" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}">
+                        <input type="search" id="tv-search" data-type="tv" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}">
                         {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                     </label>
                     <div class="search-results"></div>
                 </li>
                 <li>
                     <label for="tv-search-db">
-                        <input type="search" id="tv-search-db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}">
+                        <input type="search" id="tv-search-db" data-type="db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}">
                         {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                     </label>
                     <div class="search-results"></div>
@@ -49,7 +50,7 @@
                 <li><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></li>
                 <li>
                     <label for="person-search">
-                        <input type="search" id="person-search" class="search" spellcheck="false">
+                        <input type="search" id="person-search" data-type="person" class="search" spellcheck="false">
                         {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                     </label>
                     <div class="search-results"></div>
@@ -134,8 +135,8 @@
     {% endif %}
     <a href="{{ path('app_contact_form') }}" class="desktop">{{ ux_icon('ion:mail', {height: "18px", width: "18px"}) }}</a>
 
-{#    Test popover #}
-    <button popovertarget="my-popover">{{ ux_icon('ion:bookmark-sharp', {height: '18px', width: '18px'}) }}</button>
+    {#    Test popover #}
+    <button popovertarget="my-popover">{{ ux_icon('ion:bookmark-sharp', {height: '16px', width: '16px'}) }}</button>
     <div popover id="my-popover">
         <ul>
             <li>Menu item #1</li>
@@ -143,7 +144,17 @@
             <li>Menu item #3</li>
         </ul>
     </div>
-{#    End test popover #}
+    {#    End test popover #}
+
+    <div class="multi-search">
+        <label for="multi-search">
+            <input type="search" id="multi-search" data-type="multi" class="search" spellcheck="false">
+            <span class="magnifying-glass">
+                {{ ux_icon('fa6-solid:magnifying-glass', {height: '16px', width:'16px'}) }}
+            </span>
+        </label>
+        <div class="search-results"></div>
+    </div>
 
     {% if route in ['app_series_show', 'app_series_season'] and  app.environment == 'dev' %}
         <div class="debug">{{ series.id }} / {{ userSeries.id }} / {{ series.tmdbId }}</div>
@@ -205,6 +216,7 @@
                 <a href="{{ path('app_movie_index') }}">{{ 'My movies'|trans }}</a>
                 <a href="{{ path('app_series_index') }}">{{ 'Episodes of the week'|trans }}</a>
                 <a href="{{ path('app_series_all') }}">{{ 'All my series'|trans }}</a>
+                <a href="{{ path('app_series_not_seen_in_a_while') }}">{{ 'Series not seen in a while'|trans }}</a>
                 <a href="{{ path('app_series_to_start') }}">{{ 'Series to start'|trans }}</a>
                 <a href="{{ path('app_series_up_coming') }}">{{ 'Up coming series'|trans }}</a>
                 <a href="{{ path('app_people_index') }}">{{ 'People'|trans }}</a>
@@ -228,9 +240,9 @@
                                     <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
                                 {% endif %}
                                 <div class="provider">
-                                {% if eotd.providerLogoPath %}
-                                    <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
-                                {% endif %}
+                                    {% if eotd.providerLogoPath %}
+                                        <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
+                                    {% endif %}
                                 </div>
                             </a>
                             <div id="eotd-preview-1-{{ eotd.id }}" class="episode-of-the-day-preview">
@@ -421,15 +433,15 @@
             <div class="separation">{{ 'Language'|trans }}</div>
             <a href="{{ path(route, route_params|merge({'_locale': 'fr'})) ~ p }}"{% if app.locale=='fr' %} class="active"{% endif %}>
                 {{ getEmojiFlag('FR') }} Français - French - 프랑스어
-                {#{{ 'French'|trans }}#}
+                {# {{ 'French'|trans }} #}
             </a>
             <a href="{{ path(route, route_params|merge({'_locale': 'en'})) ~ p }}"{% if app.locale=='en' %} class="active"{% endif %}>
                 {{ getEmojiFlag('GB') }} Anglais - English - 영어
-                {#{{ 'English'|trans }}#}
+                {# {{ 'English'|trans }} #}
             </a>
             <a href="{{ path(route, route_params|merge({'_locale': 'kr'})) ~ p }}"{% if app.locale=='kr' %} class="active"{% endif %}>
                 {{ getEmojiFlag('KR') }} Coréen - Korean - 한국어
-                {#{{ 'Korean'|trans }}#}
+                {# {{ 'Korean'|trans }} #}
             </a>
         </div>
     </div>

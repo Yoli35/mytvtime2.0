@@ -126,6 +126,7 @@ export class Menu {
         const tvSearch = navbar.querySelector("#tv-search");
         const tvSearchDb = navbar.querySelector("#tv-search-db");
         const personSearch = navbar.querySelector("#person-search");
+        const multiSearch = navbar.querySelector("#multi-search");
 
         const historyMenu = navbar.querySelector("#history-menu");
 
@@ -502,6 +503,9 @@ export class Menu {
                 }
             });
             personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
+
+            multiSearch.addEventListener("input", gThis.searchFetch);
+            multiSearch.addEventListener("keydown", gThis.searchMenuNavigate);
         }
 
         if (historyMenu) {
@@ -596,13 +600,121 @@ export class Menu {
         }
     }
 
+    searchFetch(e) {
+        const searchInput = e.target;
+        const value = searchInput.value;
+        const searchResults = searchInput.parentElement.parentElement.querySelector(".search-results");
+        if (value.length < 3) {
+            if (searchResults.innerHTML.length) searchResults.innerHTML = '';
+            return;
+        }
+        const searchType = searchInput.getAttribute("data-type");
+        const tmdbAPI = 'https://api.themoviedb.org/3/search/';
+        const tvdbAPI = `/${gThis.lang}/series/fetch/search/db/tv`;
+        const baseHref = `/${gThis.lang}/`;
+        const resultNames = {
+            'movie': 'title',
+            'tv': 'name',
+            'dbtv': 'display_name',
+            'person': 'name'
+        }
+        const hRefs = {
+            'movie': 'movie/tmdb/',
+            'tv': 'series/tmdb/',
+            'dbtv': 'series/show/',
+            'person': 'people/show/',
+            'multi': 'search/all?q='
+        };
+        const imagePaths = {
+            'movie': gThis.posterUrl,
+            'tv': gThis.posterUrl,
+            'dbtv': '/series/posters',
+            'person': gThis.profileUrl
+        };
+        const resultPaths = {
+            'movie': 'poster_path',
+            'tv': 'poster_path',
+            'dbtv': 'poster_path',
+            'person': 'profile_path'
+        };
+
+        let query, url, options;
+        if (searchType === 'tvdb') {
+            url = tvdbAPI;
+            options = {
+                method: 'POST',
+                headers: {
+                    accept: 'application/json'
+                },
+                body: JSON.stringify({query: value})
+            };
+        } else {
+            query = encodeURIComponent(value);
+            url = tmdbAPI + searchType + '?query=' + query + '&include_adult=false&language=fr-FR&page=1';
+            options = {
+                method: 'GET',
+                headers: {
+                    accept: 'application/json',
+                    Authorization: 'Bearer ' + gThis.bearer
+                }
+            };
+        }
+
+        fetch(url, options)
+            .then(res => res.json())
+            .then(json => {
+                console.log(json);
+                searchResults.innerHTML = '';
+                const ul = document.createElement("ul");
+                ul.setAttribute("data-type", searchType);
+
+                json.results.forEach((result) => {
+                    const type = result['media_type'] || searchType; // Pour les résultats de recherche multi
+                    const a = document.createElement("a");
+                    a.href = baseHref + hRefs[type] + result['id'] + '-' + gThis.toSlug(result[resultNames[type]]);
+                    const li = document.createElement("li");
+                    li.setAttribute("data-id", result['id']);
+                    li.setAttribute("data-slug", gThis.toSlug(result[resultNames[type]]));
+                    const posterDiv = document.createElement("div");
+                    posterDiv.classList.add("poster");
+                    const imageResult = resultPaths[type];
+                    if (result[imageResult]) {
+                        const img = document.createElement("img");
+                        img.src = imagePaths[type] + result[imageResult];
+                        img.alt = result[resultNames[type]];
+                        posterDiv.appendChild(img);
+                    } else {
+                        posterDiv.innerHTML = 'No poster';
+                    }
+                    a.appendChild(posterDiv);
+                    const titleDiv = document.createElement("div");
+                    titleDiv.classList.add("title");
+                    titleDiv.innerHTML = result[resultNames[type]];
+                    a.appendChild(titleDiv);
+                    // Si le lien est ouvert dans un autre onglet, il faut supprimer le menu
+                    /*a.addEventListener("auxclick", (e) => {
+                        const details = e.currentTarget.closest("details");
+                        ul.remove();
+                        personSearch.value = '';
+                        details.removeAttribute("open");
+                    });*/
+                    li.appendChild(a);
+                    li.setAttribute("dta-type", type);
+                    ul.appendChild(li);
+                });
+                searchResults.appendChild(ul);
+            })
+            .catch(err => console.error('error:' + err));
+
+    }
+
     searchMenuNavigate(e) {
         // movieSearch, tvSearch, tvSearchDb or personSearch
         const searchMenu = e.target;
         // console.log({e});
         const value = e.target.value;
         if (value.length > 2) {
-            const ul = searchMenu.closest("li").querySelector(".search-results ul");
+            const ul = searchMenu.parentElement.parentElement.querySelector(".search-results ul");
             if (!ul) return;
             let type = ul.getAttribute("data-type");
             // console.log({ul});
@@ -618,7 +730,6 @@ export class Menu {
                     if (type === 'dbtv') {
                         window.location.href = '/' + gThis.lang + '/series/db/search/?name=' + value;
                     }
-
                     return;
                 }
 
@@ -627,7 +738,7 @@ export class Menu {
                 const details = li.closest("details");
                 ul.remove();
                 e.target.value = '';
-                details.removeAttribute("open");
+                details?.removeAttribute("open");
 
                 if (type === 'movie') {
                     window.location.href = '/' + gThis.lang + '/movie/tmdb/' + id;
