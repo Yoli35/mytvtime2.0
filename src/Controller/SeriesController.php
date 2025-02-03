@@ -2112,19 +2112,19 @@ class SeriesController extends AbstractController
         $updates = [];
 
         foreach ($dbSeries as $series) {
-//            $lastUpdate = $series->getUpdatedAt();
-//            $interval = $now->diff($lastUpdate);
+            $lastUpdate = $series->getUpdatedAt();
+            $interval = $now->diff($lastUpdate);
 
-//            if ($interval->days < 1) {
-//                $updates[] = [
-//                    'id' => $series->getId(),
-//                    'name' => $series->getName(),
-//                    'localized_name' => $localizedNames[$series->getId()] ?? null,
-//                    'poster_path' => $series->getPosterPath(),
-//                    'updates' => [], // '*** Updated less than 24 hours ago ***'
-//                ];
-//                continue;
-//            }
+            if ($interval->days < 1) {
+                $updates[] = [
+                    'id' => $series->getId(),
+                    'name' => $series->getName(),
+                    'localized_name' => $localizedNames[$series->getId()] ?? null,
+                    'poster_path' => $series->getPosterPath(),
+                    'updates' => [], // '*** Updated less than 24 hours ago ***'
+                ];
+                continue;
+            }
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale, ['images']), true);
             $tmdbCalls++;
             if ($tv == null) {
