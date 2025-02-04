@@ -9,6 +9,11 @@
                     <div>{{ 'No poster'|trans }}</div>
                 {% endif %}
             {% endif %}
+            {% if series.provider_logo_path %}
+                <div class="provider" data-title="{{ series.link_name }}">
+                    <img src="{{ series.provider_logo_path }}" alt="{{ series.provider_name }}">
+                </div>
+            {% endif %}
             <div class="series-infos">
                 <div class="air-date" data-title="{{ 'Episode air date'|trans }}">{{ series.final_air_date|format_date('relative_full')|capitalize }}</div>
             </div>

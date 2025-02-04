@@ -282,6 +282,7 @@ class SeriesController extends AbstractController
 
         $seriesToStart = array_map(function ($s) {
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $s['provider_logo_path'] = $s['provider_logo_path'] ? $this->imageConfiguration->getUrl('logo_sizes', 3) . $s['provider_logo_path'] : null;
             return $s;
         }, $this->userSeriesRepository->seriesToStart($user, $locale, 'addedAt', 1, -1));
         $tmdbIds = array_column($seriesToStart, 'tmdb_id');

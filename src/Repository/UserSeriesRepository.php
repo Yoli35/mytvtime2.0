@@ -196,17 +196,18 @@ class UserSeriesRepository extends ServiceEntityRepository
                        IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
                        s.`poster_path`                                                           as poster_path,
                        s.`first_air_date`                                                        as final_air_date,
+                       swl.`name`	                                                             as link_name,
+                       wp.`logo_path`                                                            as provider_logo_path,
+                       wp.`provider_name`                                                        as provider_name,
                        (SELECT COUNT(*)
                             FROM `user_episode` ue
-                            WHERE ue.`user_series_id`=us.id)                                     as number_of_episode,
-                       (SELECT CONCAT(ue.`season_number`, '/',ue.`episode_number`)
-                            FROM `user_episode` ue
-                            WHERE ue.`user_series_id`=us.id AND ue.`season_number`>0 AND ue.`watch_at` IS NULL
-                            ORDER BY ue.`episode_number` LIMIT 1)                                as episode
+                            WHERE ue.`user_series_id`=us.id)                                     as number_of_episode
                 FROM `series` s
-                INNER JOIN `user_series` us ON us.series_id=s.id
+                INNER JOIN `user_series` us ON us.series_id=s.id AND us.`progress`=0
                 LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.id AND sln.`locale`='$locale'
-                WHERE s.`first_air_date` <= NOW() AND us.user_id=$userId AND us.`progress`=0
+                LEFT JOIN `series_watch_link` swl ON swl.`series_id`=s.id
+                LEFT JOIN `watch_provider` wp ON wp.`provider_id`=swl.`provider_id`
+                WHERE s.`first_air_date` <= NOW() AND us.user_id=$userId
                 ORDER BY $order DESC ";
         if ($perPage > 0) $sql .= "LIMIT $perPage OFFSET $offset";
 

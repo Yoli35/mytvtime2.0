@@ -285,6 +285,23 @@ h2 {
                                 width: 15rem;
                             }
 
+                            .provider {
+                                background-color: var(--orange-20);
+                                border-radius: .25rem;
+                                height: 3rem;
+                                position: absolute;
+                                right: 1rem;
+                                top: 1rem;
+                                width: 3rem;
+
+                                img {
+                                    border-radius: .25rem;
+                                    height: 3rem;
+                                    object-fit: cover;
+                                    width: 3rem;
+                                }
+                            }
+
                             .series-infos {
                                 gap: .5rem;
                                 justify-content: center;
@@ -3201,6 +3218,12 @@ h2 {
                     }
                 }
             }
+        }
+    }
+
+    .season-stuff {
+        .sizes {
+            display: none;
         }
     }
 
