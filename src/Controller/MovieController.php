@@ -27,6 +27,7 @@ use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use App\Service\KeywordService;
+use App\Service\MovieService;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,6 +52,7 @@ class MovieController extends AbstractController
         private readonly MovieLocalizedNameRepository      $movieLocalizedNameRepository,
         private readonly MovieLocalizedOverviewRepository  $movieLocalizedOverviewRepository,
         private readonly MovieRepository                   $movieRepository,
+        private readonly MovieService                      $movieService,
         private readonly SettingsRepository                $settingsRepository,
         private readonly SourceRepository                  $sourceRepository,
         private readonly TMDBService                       $tmdbService,
@@ -220,6 +222,19 @@ class MovieController extends AbstractController
             $movie['found'] = true;
             $this->imageService->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
             $this->imageService->saveImage("backdrops", $movie['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3), '/movies/');
+
+            $updated = $this->movieService->checkMovieImage('', $movie, $dbMovie, 'backdrop');
+            $updated = $this->movieService->checkMovieImage('', $movie, $dbMovie, 'poster') || $updated;
+
+            $updated = $this->movieService->checkMovieCollection('', $movie, $dbMovie) || $updated;
+
+            $updated = $this->movieService->checkMovieInfos('', $movie, $dbMovie) || $updated;
+
+            if ($updated) {
+                $now = $this->dateService->newDateImmutable('now', $user->getTimezone() ?? 'Europe/Paris');
+                $movie->setUpdatedAt($now);
+                $this->movieRepository->save($dbMovie, true);
+            }
         }
 
         $this->getBelongToCollection($movie);
@@ -608,6 +623,48 @@ class MovieController extends AbstractController
         ]);
     }
 
+    #[Route('/keywords/save', name: 'keywords_save', methods: ['POST'])]
+    public function translationSave(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $tmdbId = $data['id'];
+        $keywords = $data['keywords'];
+        $language = $data['language'];
+
+        $keywordYaml = $this->keywordService->getTranslationLines($language);
+
+        $n = count($keywords);
+        for ($i = 0; $i < $n; $i++) {
+            $line = $keywords[$i]['original'] . ': ' . $keywords[$i]['translated'] . "\n";
+            $keywordYaml[] = $line;
+        }
+        usort($keywordYaml, fn($a, $b) => $a <=> $b);
+
+        $filename = '../translations/keywords.' . $language . '.yaml';
+        $res = fopen($filename, 'w');
+
+        foreach ($keywordYaml as $line) {
+            fputs($res, $line);
+        }
+        fclose($res);
+
+        $movieKeywords = json_decode($this->tmdbService->getMovieKeywords($tmdbId), true);
+
+        $missingKeywords = $this->keywordService->keywordsTranslation($movieKeywords['keywords'], $language);
+        $keywordBlock = $this->renderView('_blocks/movie/_keywords.html.twig', [
+            'id' => $tmdbId,
+            'keywords' => $movieKeywords['keywords'],
+            'missing' => $missingKeywords,
+        ]);
+
+        // fetch response
+        return $this->json([
+            'ok' => true,
+            'keywords' => $keywordBlock,
+        ]);
+    }
+
     function getPagination(int $index, int $page, int $totalPages, string $route, string $locale): string
     {
         return $this->renderView('_blocks/_pagination.html.twig', [
@@ -668,48 +725,6 @@ class MovieController extends AbstractController
             return $p;
         }, $movie['production_companies'] ?? []);
         $movie['production_companies'] = $pc;
-    }
-
-    #[Route('/keywords/save', name: 'keywords_save', methods: ['POST'])]
-    public function translationSave(Request $request): Response
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $tmdbId = $data['id'];
-        $keywords = $data['keywords'];
-        $language = $data['language'];
-
-        $keywordYaml = $this->keywordService->getTranslationLines($language);
-
-        $n = count($keywords);
-        for ($i = 0; $i < $n; $i++) {
-            $line = $keywords[$i]['original'] . ': ' . $keywords[$i]['translated'] . "\n";
-            $keywordYaml[] = $line;
-        }
-        usort($keywordYaml, fn($a, $b) => $a <=> $b);
-
-        $filename = '../translations/keywords.' . $language . '.yaml';
-        $res = fopen($filename, 'w');
-
-        foreach ($keywordYaml as $line) {
-            fputs($res, $line);
-        }
-        fclose($res);
-
-        $movieKeywords = json_decode($this->tmdbService->getMovieKeywords($tmdbId), true);
-
-        $missingKeywords = $this->keywordService->keywordsTranslation($movieKeywords['keywords'], $language);
-        $keywordBlock = $this->renderView('_blocks/movie/_keywords.html.twig', [
-            'id' => $tmdbId,
-            'keywords' => $movieKeywords['keywords'],
-            'missing' => $missingKeywords,
-        ]);
-
-        // fetch response
-        return $this->json([
-            'ok' => true,
-            'keywords' => $keywordBlock,
-        ]);
     }
 
     public function getReleaseDates(array &$movie): void

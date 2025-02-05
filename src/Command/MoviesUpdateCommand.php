@@ -3,14 +3,9 @@
 namespace App\Command;
 
 use App\Entity\Movie;
-use App\Entity\MovieCollection;
-use App\Entity\MovieImage;
-use App\Repository\MovieCollectionRepository;
-use App\Repository\MovieImageRepository;
 use App\Repository\MovieRepository;
 use App\Service\DateService;
-use App\Service\ImageConfiguration;
-use App\Service\ImageService;
+use App\Service\MovieService;
 use App\Service\TMDBService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -28,20 +23,12 @@ class MoviesUpdateCommand extends Command
 {
     private SymfonyStyle $io;
     private float $t0;
-    private string $root;
-    /**
-     * @var array|int[]
-     */
-    private array $sizes;
 
     public function __construct(
         private readonly DateService               $dateService,
         private readonly EntityManagerInterface    $entityManager,
-        private readonly ImageConfiguration        $imageConfiguration,
-        private readonly ImageService              $imageService,
-        private readonly MovieCollectionRepository $movieCollectionRepository,
-        private readonly MovieImageRepository      $movieImageRepository,
         private readonly MovieRepository           $movieRepository,
+        private readonly MovieService              $movieService,
         private readonly TMDBService               $tmdbService,
     )
     {
@@ -60,16 +47,10 @@ class MoviesUpdateCommand extends Command
 
         $movieId = $input->getOption('movie');
 
-        // Demander la langue souhaitée (par défaut fr)
-        // Demander la région souhaitée (par défaut FR)
-        // Demander la timezone souhaitée (par défaut Europe/Paris)
         $locale = $this->io->ask('Language', 'fr');
         $region = $this->io->ask('Region', 'FR');
         $timezone = $this->io->ask('Timezone', 'Europe/Paris');
         $language = $locale . '-' . $region;
-
-        $this->root = $this->imageService->getProjectDir() . '/public';
-        $this->sizes = ['backdrop' => 3, 'logo' => 5, 'poster' => 5];
 
         if (!$movieId) {
             $allMovies = $this->movieRepository->findAll();
@@ -78,7 +59,6 @@ class MoviesUpdateCommand extends Command
         }
         $movieCount = min(10000, count($allMovies));
         $startIndex = 1450;
-        $now = $this->dateService->newDateImmutable('now', $timezone);
 
         $this->commandStart();
 
@@ -114,14 +94,22 @@ class MoviesUpdateCommand extends Command
                 continue;
             }
 
-            $updated = $this->checkMovieImage($title, $m, $movie, 'backdrop');
-            $updated = $this->checkMovieImage($title, $m, $movie, 'poster') || $updated;
+            $messages = [];
+            $updated = $this->movieService->checkMovieImage($title, $m, $movie, 'backdrop', true);
+            $messages = array_merge($messages, $this->movieService->getMessages());
+            $updated = $this->movieService->checkMovieImage($title, $m, $movie, 'poster', true) || $updated;
+            $messages = array_merge($messages, $this->movieService->getMessages());
 
-            $updated = $this->checkBelongsToCollection($title, $m, $movie) || $updated;
+            $updated = $this->movieService->checkMovieCollection($title, $m, $movie, true) || $updated;
+            $messages = array_merge($messages, $this->movieService->getMessages());
 
-            $updated = $this->checkMovieInfos($title, $m, $movie) || $updated;
+            $updated = $this->movieService->checkMovieInfos($title, $m, $movie, true) || $updated;
+            $messages = array_merge($messages, $this->movieService->getMessages());
+
+            $this->writeMessages($messages);
 
             if ($updated) {
+                $now = $this->dateService->newDateImmutable('now', $timezone);
                 $movie->setUpdatedAt($now);
                 $this->movieRepository->save($movie);
             }
@@ -138,137 +126,11 @@ class MoviesUpdateCommand extends Command
         return Command::SUCCESS;
     }
 
-    public function checkMovieImage(string $title, array $tmdbMovie, Movie $movie, string $imageType): bool
+    public function writeMessages(array $messages): void
     {
-        $movieImages = array_filter($movie->getMovieImages()->toArray(), fn($i) => $i->getType() === $imageType);
-
-        $updated = false;
-        $tmdbImage = $tmdbMovie[$imageType . '_path'];
-        $getter = 'get' . ucfirst($imageType) . 'Path';
-        $setter = 'set' . ucfirst($imageType) . 'Path';
-        $image = $movie->$getter();
-        $this->io->writeln('[' . $title . '] ' . 'Current / actual poster: ' . $image . ' / ' . $tmdbImage);
-        if ($tmdbImage !== $image) {
-            $this->io->writeln('[' . $title . '] ' . 'Updating ' . $imageType . ' image');
-            $movie->$setter($tmdbImage);
-            $updated = true;
-            $imageArr = [$tmdbImage, $image];
-        } else {
-            $imageArr = [$tmdbImage];
+        foreach ($messages as $message) {
+            $this->io->writeln($message);
         }
-        foreach ($imageArr as $i) {
-            if (!$i) {
-                continue;
-            }
-            if (!$this->imageInArray($i, $movieImages)) {
-                $this->io->writeln('[' . $title . '] ' . 'Adding ' . $imageType . ' image: ' . $i);
-                $movieImage = new MovieImage($movie, $imageType, $i);
-                $movie->addMovieImage($movieImage);
-                $this->movieImageRepository->save($movieImage);
-                $updated = true;
-            }
-            if (!$this->fileExists($this->root . '/movies/' . $imageType . 's' . $i)) {
-                $this->io->writeln('[' . $title . '] ' . ucfirst($imageType) . ' image does not exist');
-                $url = $this->imageConfiguration->getUrl('poster_sizes', $this->sizes[$imageType]);
-                if ($this->imageService->saveImage($imageType . 's', $i, $url, '/movies/')) {
-                    $this->io->writeln('[' . $title . '] ' . ucfirst($imageType) . ' image saved: ' . $i);
-                }
-            }
-        }
-        return $updated;
-    }
-
-    public function checkBelongsToCollection(string $title, array $tmdbMovie, Movie $movie): bool
-    {
-        $updated = false;
-        $tmdbCollection = $tmdbMovie['belongs_to_collection'];
-        if ($tmdbCollection) {
-            $tmdbCollectionId = $tmdbCollection['id'];
-            $this->io->write('[' . $title . '] ' . 'Updating collection');
-            $dbCollection = $this->movieCollectionRepository->findOneBy(['tmdbId' => $tmdbCollectionId]);
-            if (!$dbCollection) {
-                $this->io->writeln(' by creating new collection "' . $tmdbCollection['name'] . '"');
-                $dbCollection = new MovieCollection();
-                $save = true;
-            } else {
-                $this->io->writeln(' "' . $tmdbCollection['name'] . '"');
-                $save = false;
-            }
-            $dbCollection->setTmdbId($tmdbCollectionId);
-            if ($dbCollection->getName() !== $tmdbCollection['name']) {
-                $this->io->writeln('[' . $title . '] ' . 'Updating collection name');
-                $save = true;
-            }
-            $dbCollection->setName($tmdbCollection['name']);
-            if ($dbCollection->getPosterPath() !== $tmdbCollection['poster_path']) {
-                $this->io->writeln('[' . $title . '] ' . 'Updating collection poster');
-                $save = true;
-            }
-            $dbCollection->setPosterPath($tmdbCollection['poster_path']);
-            if ($dbCollection->getBackdropPath() !== $tmdbCollection['backdrop_path']) {
-                $this->io->writeln('[' . $title . '] ' . 'Updating collection backdrop');
-                $save = true;
-            }
-            $dbCollection->setBackdropPath($tmdbCollection['backdrop_path']);
-            $this->movieCollectionRepository->save($dbCollection, $save);
-            $collection = $movie->getCollection();
-            $collectionId = $collection?->getTmdbId() ?? 'null';
-            $this->io->writeln('[' . $title . '] ' . 'Current / actual collection: ' . $collectionId . ' / ' . $tmdbCollectionId);
-            if ($tmdbCollectionId !== $collectionId) {
-                $movie->setCollection($dbCollection);
-                $updated = true;
-            }
-        } else {
-            $this->io->writeln('[' . $title . '] ' . 'No collection');
-            $collection = $movie->getCollection();
-            if ($collection) {
-                $this->io->writeln('[' . $title . '] ' . 'Removing collection');
-                $movie->setCollection(null);
-                $updated = true;
-            }
-        }
-        return $updated;
-    }
-
-    public function checkMovieInfos(string $title, array $tmdbMovie, Movie $movie): bool
-    {
-        $updated = false;
-
-        // checking "origin_country", "original_language", "original_title", "overview", "release_date",
-        //          "runtime", "status", "tagline", "title", "vote_average", "vote_count"
-        $fields = ['original_language', 'original_title', 'overview', 'release_date',
-            'runtime', 'status', 'tagline', 'title', 'vote_average', 'vote_count'];
-        foreach ($fields as $field) {
-            // snake case to camel case
-            $ccField = lcfirst(str_replace('_', '', ucwords($field, '_')));
-            $getter = 'get' . ucfirst($ccField);
-            $setter = 'set' . ucfirst($ccField);
-            $tmdbValue = $tmdbMovie[$field];
-            $dbValue = $movie->$getter();
-            if ($field == 'release_date') {
-                $dbValue = $dbValue?->format('Y-m-d');
-            }
-            $this->io->writeln('[' . $title . '] ' . $field . ': ' . $dbValue . ' / ' . $tmdbValue);
-            if ($tmdbValue !== $dbValue) {
-                $this->io->writeln('[' . $title . '] ' . 'Updating ' . $field);
-                if ($field == 'release_date') {
-                    $tmdbValue = $this->dateService->newDateFromUTC($tmdbValue, true);
-                }
-                $movie->$setter($tmdbValue);
-                $updated = true;
-            }
-        }
-        return $updated;
-    }
-
-    public function imageInArray(string $image, array $images): bool
-    {
-        return array_any($images, fn($i) => $i->getImagePath() === $image);
-    }
-
-    public function fileExists(string $path): bool
-    {
-        return file_exists($path) && is_file($path);
     }
 
     public function commandStart(): void
