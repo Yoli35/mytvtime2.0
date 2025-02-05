@@ -96,6 +96,15 @@ class Movie
     #[ORM\Column(nullable: true)]
     private ?array $additionalInfos = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    /**
+     * @var Collection<int, MovieImage>
+     */
+    #[ORM\OneToMany(targetEntity: MovieImage::class, mappedBy: 'movie', orphanRemoval: true)]
+    private Collection $movieImages;
+
     public function __toString(): string
     {
         return $this->title;
@@ -122,6 +131,7 @@ class Movie
         $this->movieAdditionalOverviews = new ArrayCollection();
         $this->movieLocalizedNames = new ArrayCollection();
         $this->movieLocalizedOverviews = new ArrayCollection();
+        $this->movieImages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -407,6 +417,12 @@ class Movie
         return $this->movieLocalizedNames;
     }
 
+    public function getMovieLocalizedName(string $locale): ?MovieLocalizedName
+    {
+        return array_find($this->movieLocalizedNames->toArray(), fn($movieLocalizedName) => $movieLocalizedName->getLocale() === $locale);
+
+    }
+
     public function addMovieLocalizedName(MovieLocalizedName $movieLocalizedName): static
     {
         if (!$this->movieLocalizedNames->contains($movieLocalizedName)) {
@@ -467,6 +483,48 @@ class Movie
     public function setAdditionalInfos(?array $additionalInfos): static
     {
         $this->additionalInfos = $additionalInfos;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MovieImage>
+     */
+    public function getMovieImages(): Collection
+    {
+        return $this->movieImages;
+    }
+
+    public function addMovieImage(MovieImage $movieImage): static
+    {
+        if (!$this->movieImages->contains($movieImage)) {
+            $this->movieImages->add($movieImage);
+            $movieImage->setMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMovieImage(MovieImage $movieImage): static
+    {
+        if ($this->movieImages->removeElement($movieImage)) {
+            // set the owning side to null (unless already changed)
+            if ($movieImage->getMovie() === $this) {
+                $movieImage->setMovie(null);
+            }
+        }
 
         return $this;
     }

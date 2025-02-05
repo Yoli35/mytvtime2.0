@@ -201,11 +201,11 @@ class ImageService extends AbstractController
         return $destination;
     }
 
-    public function saveImage($type, $imagePath, $imageUrl, $localPath = "/series/"): void
+    public function saveImage($type, $imagePath, $imageUrl, $localPath = "/series/"): bool
     {
-        if (!$imagePath) return;
+        if (!$imagePath) return false;
         $kernelProjectDir = $this->getParameter('kernel.project_dir');
-        $this->saveImageFromUrl(
+        return $this->saveImageFromUrl(
             $imageUrl . $imagePath,
             $kernelProjectDir . "/public" . $localPath . $type . $imagePath
         );
@@ -241,5 +241,10 @@ class ImageService extends AbstractController
             }
         }
         return true;
+    }
+
+    public function getProjectDir(): string
+    {
+        return $this->getParameter('kernel.project_dir');
     }
 }
