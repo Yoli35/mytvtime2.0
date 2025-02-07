@@ -127,6 +127,14 @@
         </main>
         {% include('_blocks/_footer.html.twig') %}
     </div>
+    <div id="globs" style="display: none">
+        {
+        "userMovieId": 0,
+        "tmdbId": {{ movie.id }},
+        "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        }
+    </div>
     {% if app.user %}
         <a href="{{ path('app_movie_add', {id: movie.id}) }}">
             <div class="add-this">{{ 'Add this movie to your watchlist'|trans }}</div>

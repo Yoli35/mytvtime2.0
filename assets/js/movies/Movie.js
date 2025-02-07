@@ -24,10 +24,10 @@ export class Movie {
 
         /** @var {Globs} */
         const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
-        this.providers = jsonGlobsObject.providers;
-        this.userMovieId = jsonGlobsObject.userMovieId;
-        this.tmdbId = jsonGlobsObject.tmdbId;
-        this.translations = jsonGlobsObject.translations;
+        this.providers = jsonGlobsObject?.providers;
+        this.userMovieId = jsonGlobsObject?.userMovieId;
+        this.tmdbId = jsonGlobsObject?.tmdbId;
+        this.translations = jsonGlobsObject?.translations;
         this.lang = document.documentElement.lang;
         gThis.init();
     }

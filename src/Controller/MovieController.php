@@ -232,7 +232,7 @@ class MovieController extends AbstractController
 
             if ($updated) {
                 $now = $this->dateService->newDateImmutable('now', $user->getTimezone() ?? 'Europe/Paris');
-                $movie->setUpdatedAt($now);
+                $dbMovie->setUpdatedAt($now);
                 $this->movieRepository->save($dbMovie, true);
             }
         }
@@ -320,6 +320,8 @@ class MovieController extends AbstractController
 //        );
         return $this->render('movie/tmdb.html.twig', [
             'movie' => $movie,
+            'providers' => [],
+            'translations' => [],
         ]);
     }
 
