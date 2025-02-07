@@ -671,10 +671,13 @@ export class Menu {
                 json.results.forEach((result) => {
                     const type = result['media_type'] || searchType; // Pour les résultats de recherche multi
                     const a = document.createElement("a");
-                    a.href = baseHref + hRefs[type] + result['id'] + '-' + gThis.toSlug(result[resultNames[type]]);
+                    let url = baseHref + hRefs[type] + result['id'];
+                    if (type != 'movie') url += '-' + gThis.toSlug(result[resultNames[type]]);
+                    a.href = url;
                     const li = document.createElement("li");
                     li.setAttribute("data-id", result['id']);
                     li.setAttribute("data-slug", gThis.toSlug(result[resultNames[type]]));
+                    li.setAttribute("data-type", type);
                     const posterDiv = document.createElement("div");
                     posterDiv.classList.add("poster");
                     const imageResult = resultPaths[type];
@@ -699,7 +702,6 @@ export class Menu {
                         details.removeAttribute("open");
                     });*/
                     li.appendChild(a);
-                    li.setAttribute("dta-type", type);
                     ul.appendChild(li);
                 });
                 searchResults.appendChild(ul);
