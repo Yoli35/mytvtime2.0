@@ -25,6 +25,7 @@ export class NavBar {
     navBarColor(hsl) {
 
         this.root.style.setProperty("--navbar-bg", "hsl(" + hsl.h + ", " + hsl.s + "%, 38%)");
+        this.root.style.setProperty("--navbar-border", "hsl(" + hsl.h + ", " + hsl.s + "%, 60%)");
         this.root.style.setProperty("--navbar-bg-50", "hsla(" + hsl.h + ", " + hsl.s + "%, 28%, .5)");
         this.root.style.setProperty("--navbar-bg-75", "hsla(" + hsl.h + ", " + hsl.s + "%, 28%, .75)");
         // this.root.style.setProperty("--navbar-bg", "hsl(" + hsl.h + ", " + hsl.s + "%, " + (hsl.l - 10) + "%)");
@@ -47,10 +48,9 @@ export class NavBar {
         this.root.style.setProperty("--navbar-opacity", opacity.toString());
     }
 
-    mapScroll(amount)
-    {
+    mapScroll(amount) {
         const start = 100;
-        const end = 400;
+        const end = 800;
         const interval = end - start;
 
         let scroll = 1;

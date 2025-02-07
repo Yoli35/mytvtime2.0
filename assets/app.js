@@ -229,6 +229,11 @@ window.addEventListener("DOMContentLoaded", () => {
         new PeopleShow();
     }
 
+    const seriesMap = document.querySelector(".series-map");
+    if (seriesMap) {
+        navBar.navBarColor({h: 32, s: 76, l: 30});
+    }
+
     const networkAndProvider = document.querySelector(".user-providers");
     if (networkAndProvider) {
         const networkPage = document.querySelector(".user-networks");
