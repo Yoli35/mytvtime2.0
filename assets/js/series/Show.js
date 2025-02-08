@@ -246,7 +246,7 @@ export class Show {
          * Alternate schedule : l'épisode avec la date de diffusion la plus proche de *
          * maintenant doit être visible.                                              *
          ******************************************************************************/
-        const alternateSchedules = document.querySelectorAll('.alternate-schedule');
+        /*const alternateSchedules = document.querySelectorAll('.alternate-schedule');
         alternateSchedules.forEach(function (alternateSchedule) {
             const firstFutureAirDay = alternateSchedule.querySelector('.future.air-day');
             if (firstFutureAirDay){
@@ -257,7 +257,7 @@ export class Show {
                     lastWatchedAirDay.scrollIntoView({behavior: 'smooth', block: 'center'});
                 }
             }
-        });
+        });*/
 
         /******************************************************************************
          * User's actions: rating, pinned, favorite, remove this series               *
