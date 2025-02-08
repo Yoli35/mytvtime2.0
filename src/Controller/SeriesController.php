@@ -147,7 +147,7 @@ class SeriesController extends AbstractController
         for ($i = 2; $i <= $searchResult['total_pages']; $i++) {
             $searchResult['results'] = array_merge($searchResult['results'], json_decode($this->tmdbService->getFilterTv($searchString . "&page=$i"), true)['results']);
         }
-        $series = $this->getSearchResult($searchResult, new AsciiSlugger());
+        $seriesList = $this->getSearchResult($searchResult, new AsciiSlugger());
         $userSeriesTMDBIds = array_column($this->userSeriesRepository->userSeriesTMDBIds($user), 'id');
 //        dump(['series' => $series, 'userSeriesTMDBIds' => $userSeriesTMDBIds]);
 
@@ -249,6 +249,23 @@ class SeriesController extends AbstractController
             return $s;
         }, $this->userSeriesRepository->seriesToStart($user, $locale, $order, 1, 20));
         $seriesToStartCount = $this->userSeriesRepository->seriesToStartCount($user, $locale);
+        $series = [];
+        // Plusieurs résultats pour une même série, à cause de différents liens de streaming (link_name, provider_logo_path, "provider_name)
+        // On ne garde que le premier résultat pour chaque série et on ajoute les providers dans un tableau "watch_links"
+        foreach ($seriesToStart as $s) {
+            if (!array_key_exists($s['id'], $series)) {
+                $series[$s['id']] = $s;
+                $series[$s['id']]['watch_links'] = [];
+            }
+            if ($s['link_name']) {
+                $series[$s['id']]['watch_links'][] = [
+                    'link_name' => $s['link_name'],
+                    'logo_path' => $s['provider_logo_path'],
+                    'provider_name' => $s['provider_name']
+                ];
+            }
+        }
+        $seriesToStart = array_values($series);
 
 //        dump([
 //            'episodesOfTheDay' => $episodesOfTheDay,
@@ -267,7 +284,7 @@ class SeriesController extends AbstractController
             'episodeHistory' => $episodeHistory,
             'seriesToStart' => $seriesToStart,
             'seriesToStartCount' => $seriesToStartCount,
-            'seriesList' => $series,
+            'seriesList' => $seriesList,
             'userSeriesTMDBIds' => $userSeriesTMDBIds,
             'total_results' => $searchResult['total_results'] ?? -1,
             'tmdbIds' => $tmdbIds,
@@ -287,6 +304,25 @@ class SeriesController extends AbstractController
         }, $this->userSeriesRepository->seriesToStart($user, $locale, 'addedAt', 1, -1));
         $tmdbIds = array_column($seriesToStart, 'tmdb_id');
 
+        $series = [];
+        // Plusieurs résultats pour une même série, à cause de différents liens de streaming (link_name, provider_logo_path, "provider_name)
+        // On ne garde que le premier résultat pour chaque série et on ajoute les providers dans un tableau "watch_links"
+        foreach ($seriesToStart as $s) {
+            if (!array_key_exists($s['id'], $series)) {
+                $series[$s['id']] = $s;
+                $series[$s['id']]['watch_links'] = [];
+            }
+            if ($s['link_name']) {
+                $series[$s['id']]['watch_links'][] = [
+                    'link_name' => $s['link_name'],
+                    'logo_path' => $s['provider_logo_path'],
+                    'provider_name' => $s['provider_name']
+                ];
+            }
+        }
+        $seriesToStart = array_values($series);
+
+        dump($seriesToStart, $series);
         return $this->render('series/series-to-start.html.twig', [
             'seriesToStart' => $seriesToStart,
             'tmdbIds' => $tmdbIds,
@@ -2344,10 +2380,10 @@ class SeriesController extends AbstractController
     {
         $keywordIds = array_map(fn($k) => $k['id'], $keywords);
         dump([
-            'keywords'=>$keywords,
+            'keywords' => $keywords,
             'keyword ids' => $keywordIds,
             'external ids' => $externalIds,
-            ]);
+        ]);
         $seriesCountries = $series->getOriginCountry();
         $dbExternals = $this->seriesExternalRepository->findAll();
         $externals = [];

@@ -9,9 +9,19 @@
                     <div>{{ 'No poster'|trans }}</div>
                 {% endif %}
             {% endif %}
-            {% if series.provider_logo_path %}
-                <div class="provider" data-title="{{ series.link_name }}">
-                    <img src="{{ series.provider_logo_path }}" alt="{{ series.provider_name }}">
+            {% if series.watch_links|length %}
+                <div class="watch-links">
+                    {% for watch_link in series.watch_links %}
+                        {% if watch_link.logo_path %}
+                            <div class="provider" data-title="{{ watch_link.link_name }}">
+                                <img src="{{ watch_link.logo_path }}" alt="{{ watch_link.provider_name }}">
+                            </div>
+                        {% else %}
+                            <div class="provider-name">
+                                {{ watch_link.link_name }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             {% endif %}
             <div class="series-infos">
