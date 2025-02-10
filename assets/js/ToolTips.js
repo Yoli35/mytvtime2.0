@@ -144,6 +144,11 @@ export class ToolTips {
             return;
         }
 
+        if ((evt.pageX - (width / 2)) === 0 || (evt.pageY - Math.min(height, fromTopViewport)) === 0) {
+            console.log("Anomaly detected");
+            return;
+        }
+
         let style = "transform: translate(" + (evt.pageX - (width / 2)) + "px, " + (evt.pageY - Math.min(height, fromTopViewport)) + "px);";
         tooltips.setAttribute("style", style);
         tail.setAttribute("style", "translate: 0 -.55rem;" + bg);

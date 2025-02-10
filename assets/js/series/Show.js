@@ -49,7 +49,6 @@ export class Show {
     /**
      * @typedef Globs
      * @type {Object}
-     * @property {string} seriesName
      * @property {number} seriesId
      * @property {number} userSeriesId
      * @property {Array} providers
@@ -94,7 +93,7 @@ export class Show {
         const svgs = document.querySelector('div#svgs');
         const providers = jsonGlobsObject.providers;
         const seriesId = jsonGlobsObject.seriesId;
-        const seriesName = jsonGlobsObject.seriesName;
+        const seriesName = document.querySelector('span.name-span').textContent;//jsonGlobsObject.seriesName;
         const userSeriesId = jsonGlobsObject.userSeriesId;
         const translations = jsonGlobsObject.translations;
         const api = jsonGlobsObject.api;
