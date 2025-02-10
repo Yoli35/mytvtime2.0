@@ -5,11 +5,11 @@ Dashboard: 대시보드
 more notifications: 더 많은 알림
 
 # Home
+Any questions or comments?: 질문이나 의견이 있으십니까?
 A series by name/year: 이름/년도로 시리즈
 A series: 시리즈
 Add to pinned series: 고정된 시리즈에 추가
 Admin: 관리자
-All my series: 내 시리즈 전체
 Among your series: 당신의 시리즈 중
 Automatic: 자동
 Choose a username: 사용자 이름을 선택하세요
@@ -27,7 +27,6 @@ English: 영어
 Episode history (%d): 지난 %d 일 동안의 에피소드 기록
 Episode history (%h): 지난 %h 시간 동안의 에피소드 기록
 Episodes detail: 에피소드 상세
-Episodes of the week: 이번 주의 에피소드
 Episodes to watch: 볼 에피소드
 French: 프랑스어
 Hide preview: 미리보기 숨기기
@@ -63,6 +62,12 @@ Remember me: 기억하기
 Remove from pinned series: 고정된 시리즈에서 제거
 Search among your series: 당신의 시리즈 중 검색
 Series history: 시리즈 기록
+Series.by country: 국가별 시리즈
+Series.in progress: 현재 시청 중인 시리즈
+Series.not seen in a while: 오랫동안 본 시리즈 없음
+Series.to start: 시작할 시리즈
+Series.up coming series: 다가오는 시리즈
+Series.week:  이번 주의 에피소드
 Show preview: 미리보기 보기
 Sign in: 로그인
 Similar series: 비슷한 시리즈

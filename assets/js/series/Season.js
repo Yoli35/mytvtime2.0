@@ -1023,21 +1023,6 @@ export class Season {
             vote.addEventListener('click', () => {
                 const voteValue = vote.getAttribute('data-vote');
                 gThis.saveVote(episodeId, voteValue, selectVoteDiv, voteList);
-                // fetch('/' + gThis.lang + '/series/episode/vote/' + episodeId, {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //         'X-Requested-With': 'XMLHttpRequest'
-                //     },
-                //     body: JSON.stringify({
-                //         vote: voteValue
-                //     })
-                // }).then(function (response) {
-                //     if (response.ok) {
-                //         selectVoteDiv.innerHTML = voteValue;
-                //         voteList.remove();
-                //     }
-                // });
             });
             voteList.appendChild(vote);
         }

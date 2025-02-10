@@ -683,11 +683,6 @@
     </div>
     <div id="globs" style="display: none">{#|replace({'\'': '\\\'', '"': '\\"'})#}
         {
-        {% if tv.localized_name %}
-            "seriesName": "{{ tv.localized_name.name }}",
-        {% else %}
-            "seriesName": "{{ series.name }}",
-        {% endif %}
         "seriesId": {{ series.id }},
         "userSeriesId": {{ userSeries.id }},
         "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},

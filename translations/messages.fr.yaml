@@ -5,11 +5,11 @@ Dashboard: Tableau de bord
 more notifications: notifications supplémentaires
 
 # Home
+Any questions or comments?: Des questions ou des commentaires ?
 A series by name/year: Une série par nom/année
 A series: Une série
 Add to pinned series: Ajouter aux séries épinglées
 Admin: Admin
-All my series: Toutes mes séries à regarder
 Among your series: Parmi vos séries
 Automatic: Automatique
 Choose a username: Choisissez un nom d'utilisateur
@@ -27,7 +27,6 @@ English: Anglais
 Episode history (%d): Épisodes regardés ces %d derniers jours
 Episode history (%h): Épisodes regardés ces %h dernières heures
 Episodes detail: Détails des épisodes
-Episodes of the week: Épisodes de la semaine
 Episodes to watch: Épisodes suivants disponibles à regarder
 French: Français
 Hide preview: Masquer l'aperçu
@@ -63,6 +62,12 @@ Remember me: Se souvenir de moi
 Remove from pinned series: Retirer des séries épinglées
 Search among your series: Rechercher parmi vos séries
 Series history: Dernières séries regardées
+Series.by country: Par pays
+Series.in progress: En cours de visionnage
+Series.not seen in a while: Non vues depuis un moment
+Series.to start: À commencer
+Series.up coming series: À venir
+Series.week: Épisodes de la semaine
 Show preview: Afficher l'aperçu
 Sign in: Se connecter
 Similar series: Séries similaires
@@ -117,7 +122,6 @@ Episode air date: Date de diffusion de l'épisode
 Next episode: Prochain épisode
 remaining episode: épisode restant
 remaining episodes: épisodes restants
-Series to start: Séries à commencer
 
 # Add a series
 Addition of older series: Ajout de séries plus anciennes
@@ -255,13 +259,11 @@ Select a source: Sélectionnez une source
 Series added to your watchlist: Série ajoutée à votre liste de suivi
 Series airing this week: Séries diffusées cette semaine
 Series already in your watchlist: Série déjà dans votre liste de suivi
-Series by country: Séries par pays
 Series finale: Fin de la saison
 Series in progress: Séries en cours
 Series not found on The Movie Database: Série non trouvée sur The Movie Database
 Series of the day: Série du jour
 Series of the next 7 days: Séries des 7 prochains jours
-Series not seen in a while: Séries non vues depuis un moment
 Series: Séries
 Since: Depuis
 Slug updated: Slug mis à jour
@@ -293,7 +295,6 @@ Urls: URLs
 Up to date!: À jour !
 Updates: Mises à jour
 Upload it!: Téléversez-le !
-Up coming series: Séries à venir
 Up to date: À jour
 User actions: Actions de l'utilisateur
 View date: Date de vue
