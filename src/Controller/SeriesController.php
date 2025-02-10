@@ -64,6 +64,7 @@ use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Clock\DatePoint;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -1090,9 +1091,10 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/schedules/save', name: 'schedule_save', methods: ['POST'])]
-    public function schedulesSave(Request $request): Response
+    public function schedulesSave(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        $inputBag = $request->getPayload();
+        /*$data = json_decode($request->getContent(), true);
         dump($data);
         $id = $data['id'];
         $country = $data['country'];
@@ -1109,9 +1111,23 @@ class SeriesController extends AbstractController
         $seriesId = $data['seriesId'];
         $dayArr = array_map(function ($d) {
             return intval($d);
-        }, $data['days']);
-
-//        dump($data);
+        }, $data['days']);*/
+        $id = $inputBag->get('id');
+        $country = $inputBag->get('country');
+        $seasonNumber = $inputBag->get('seasonNumber');
+        $seasonMultiPart = $inputBag->get('multiPart');
+        $seasonPart = $inputBag->get('seasonPart');
+        $seasonPartFirstEpisode = $inputBag->get('seasonPartFirstEpisode');
+        $seasonPartEpisodeCount = $inputBag->get('seasonPartEpisodeCount');
+        $date = $inputBag->get('date');
+        $time = $inputBag->get('time');
+        $override = $inputBag->get('override');
+        $frequency = $inputBag->get('frequency');
+        $provider = $inputBag->get('provider');
+        $seriesId = $inputBag->get('seriesId');
+        $dayArr = array_map(function ($d) {
+            return intval($d);
+        }, (array)$inputBag->filter('days', [], \FILTER_DEFAULT, ['flags' => \FILTER_REQUIRE_ARRAY]));
 
         $hour = (int)substr($time, 0, 2);
         $minute = (int)substr($time, 3, 2);
@@ -1137,7 +1153,11 @@ class SeriesController extends AbstractController
         $seriesBroadcastSchedule->setProviderId($provider);
         $this->seriesBroadcastScheduleRepository->save($seriesBroadcastSchedule);
 
-        return $this->json([
+        /*return $this->json([
+            'ok' => true,
+            'success' => true,
+        ]);*/
+        return new JsonResponse([
             'ok' => true,
             'success' => true,
         ]);
@@ -1688,19 +1708,22 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/episode/vote/{episodeId}', name: 'episode_vote', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function userEpisodeVote(Request $request, int $episodeId): Response
+    public function userEpisodeVote(Request $request, int $episodeId): JsonResponse
     {
-        $user = $this->getUser();
-        $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $episodeId]);
-        $data = json_decode($request->getContent(), true);
-        $vote = $data['vote'];
+        if ($request->isMethod('POST')) {
+            $user = $this->getUser();
+            $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $episodeId]);
+            //$data = json_decode($request->getContent(), true);
+            $vote = $request->getPayload()->get('vote'); //$data['vote'];
 
-        $userEpisode->setVote($vote);
-        $this->userEpisodeRepository->save($userEpisode, true);
+            $userEpisode->setVote($vote);
+            $this->userEpisodeRepository->save($userEpisode, true);
+        }
 
-        return $this->json([
+        /*return $this->json([
             'ok' => true,
-        ]);
+        ]);*/
+        return new JsonResponse(['ok' => true]);
     }
 
     #[Route('/episode/height/{userSeriesId}', name: 'episode_height', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
