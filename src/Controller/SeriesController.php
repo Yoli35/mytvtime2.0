@@ -454,9 +454,10 @@ class SeriesController extends AbstractController
     #[Route('/search/all', name: 'search_all')]
     public function searchAll(Request $request): Response
     {
+        dump($request->query->all());
         $slugger = new AsciiSlugger();
         $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
-        $simpleSeriesSearch->setQuery($request->get('q'));
+        if ($request->get('q')) $simpleSeriesSearch->setQuery($request->get('q'));
         $simpleForm = $this->createForm(SeriesSearchType::class, $simpleSeriesSearch);
         $searchResult = $this->handleSearch($simpleSeriesSearch);
         if ($searchResult['total_results'] == 1) {
@@ -1427,11 +1428,18 @@ class SeriesController extends AbstractController
     #[Route('/episode/add/{id}', name: 'add_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addUserEpisode(Request $request, int $id): Response
     {
-        $data = json_decode($request->getContent(), true);
+        $inputBag = $request->getPayload();
+        /*$data = json_decode($request->getContent(), true);
         $showId = $data['showId'];
         $lastEpisode = $data['lastEpisode'] == "1";
         $seasonNumber = $data['seasonNumber'];
         $episodeNumber = $data['episodeNumber'];
+        $reviewed = $data['reviewed'] == "1";*/
+        $showId = $inputBag->get('showId');
+        $lastEpisode = $inputBag->get('lastEpisode') == "1";
+        $seasonNumber = $inputBag->get('seasonNumber');
+        $episodeNumber = $inputBag->get('episodeNumber');
+        $ueId = $inputBag->get('ueId');
 
         $messages = [];
 
@@ -1441,27 +1449,30 @@ class SeriesController extends AbstractController
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
         $dayOffset = $series->getSeriesDayOffset($country);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $id]);
+//        $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $id]);
+        $userEpisodes = $this->userEpisodeRepository->findBy(['user' => $user, 'episodeId' => $id]);
 
         $now = $this->now();
-        if (!$userEpisode) {
+//        if (!$userEpisode) {
             $userEpisode = new UserEpisode($userSeries, $id, $seasonNumber, $episodeNumber, $now);
-        } else {
-            $userEpisode->setWatchAt($now);
-        }
+//        } else {
+//            $userEpisode->setWatchAt($now);
+//        }
 
-        $airDate = $userEpisode->getAirDate();
-        if (!$airDate) {
+        if (count($userEpisodes)) {
+            $firstViewedUserEpisode = $userEpisodes[0];
+            $airDate = $firstViewedUserEpisode->getAirDate();
+            $userEpisode->setAirDate($airDate);
+        } else {
             $episode = json_decode($this->tmdbService->getTvEpisode($showId, $seasonNumber, $episodeNumber, $locale), true);
             $airDate = $this->date($episode['air_date'] . " 09:00:00");
             $userEpisode->setAirDate($airDate);
+            if ($dayOffset > 0) {
+                $airDate = $airDate->modify("+$dayOffset days");
+            } elseif ($dayOffset < 0) {
+                $airDate = $airDate->modify("$dayOffset days");
+            }
         }
-        if ($dayOffset > 0) {
-            $airDate = $airDate->modify("+$dayOffset days");
-        } elseif ($dayOffset < 0) {
-            $airDate = $airDate->modify("$dayOffset days");
-        }
-
         $tv = json_decode($this->tmdbService->getTv($showId, $locale), true);
 
         $diff = $now->diff($airDate);

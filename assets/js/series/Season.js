@@ -448,6 +448,7 @@ export class Season {
         const episode = episodeId ? document.querySelector(selector) : e.currentTarget;
         const sId = episode.getAttribute('data-show-id');
         const id = episode.getAttribute('data-id');
+        const ueId = episode.getAttribute('data-ue-id');
         const episodeNumber = episode.getAttribute('data-e-number');
         const seasonNumber = episode.getAttribute('data-s-number');
         const lastEpisode = episode.getAttribute('data-last-episode');
@@ -462,7 +463,8 @@ export class Season {
                 showId: sId,
                 lastEpisode: lastEpisode,
                 seasonNumber: seasonNumber,
-                episodeNumber: episodeNumber
+                episodeNumber: episodeNumber,
+                ueId: ueId
             })
         }).then((response) => response.json())
             .then(data => {
