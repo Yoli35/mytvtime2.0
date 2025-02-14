@@ -2271,20 +2271,28 @@ h2 {
                 width: 100%;
             }
 
-            .custom-still {
-                aspect-ratio: 16/9;
-                border-radius: .25rem;
-                border: 2px solid var(--orange-50);
+            .custom-stills {
                 bottom: .5rem;
-                height: 4rem;
+                display: flex;
+                gap: .5rem;
+                justify-content: flex-start;
                 left: .5rem;
+                overflow-x: auto;
                 position: absolute;
+                right: .5rem;
 
-                img {
-                    border-radius: .125rem;
-                    height: 100%;
-                    object-fit: cover;
-                    width: 100%;
+                .custom-still {
+                    aspect-ratio: 16/9;
+                    border-radius: .25rem;
+                    border: 2px solid var(--orange-50);
+                    height: 4rem;
+
+                    img {
+                        border-radius: .125rem;
+                        height: 100%;
+                        object-fit: cover;
+                        width: 100%;
+                    }
                 }
             }
 

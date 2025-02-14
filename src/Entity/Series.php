@@ -103,6 +103,12 @@ class Series
     #[ORM\Column(nullable: true)]
     private ?array $originCountry = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $numberOfEpisode = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $numberOfSeason = null;
+
     public function __construct()
     {
         $this->networks = new ArrayCollection();
@@ -644,6 +650,30 @@ class Series
     public function setOriginCountry(?array $originCountry): static
     {
         $this->originCountry = $originCountry;
+
+        return $this;
+    }
+
+    public function getNumberOfEpisode(): ?int
+    {
+        return $this->numberOfEpisode;
+    }
+
+    public function setNumberOfEpisode(?int $numberOfEpisode): static
+    {
+        $this->numberOfEpisode = $numberOfEpisode;
+
+        return $this;
+    }
+
+    public function getNumberOfSeason(): ?int
+    {
+        return $this->numberOfSeason;
+    }
+
+    public function setNumberOfSeason(?int $numberOfSeason): static
+    {
+        $this->numberOfSeason = $numberOfSeason;
 
         return $this;
     }

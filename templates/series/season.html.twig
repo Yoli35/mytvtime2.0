@@ -116,7 +116,7 @@
             </div>
 
             <div class="season-stuff">
-{#                <h2>{{ 'Season stuff'|trans }}</h2>#}
+                {#                <h2>{{ 'Season stuff'|trans }}</h2> #}
                 {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: false}) }}
 
                 <div class="sizes" data-user-series-id="{{ userSeries.id }}">
@@ -194,13 +194,18 @@
                             <div class="still" data-series-id="{{ series.tmdbId }}" data-season-id="{{ season.id }}" data-episode-id="{{ episode.id }}">
                                 {% if episode.still_path %}
                                     <img src="{{ episode.still_path }}" alt="{{ episode.name }}">
-                                    {% if ue.still ?? 0 %}
-                                        <div class="custom-still" data-title="{{ episode.name }}">
-                                            <img src="/series/stills/{{ ue.still }}" alt="{{ episode.name }}">
+                                    {% if episode.stills|length %}
+                                        <div class="custom-stills">
+                                            {% for still in episode.stills %}
+                                                <div class="custom-still" data-title="{{ episode.name }}">
+                                                    <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }}">
+                                                </div>
+                                            {% endfor %}
                                         </div>
                                     {% endif %}
-                                {% elseif ue.still ?? 0 %}{# is defined and ue.still #}
-                                    <img src="/series/stills/{{ ue.still }}" alt="{{ episode.name }}">
+                                {% elseif episode.stills|length %}{# is defined and ue.still #}
+                                    {% set still = episode.stills|last %}
+                                    <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }}">
                                 {% else %}
                                     <div class="no-poster">{{ 'No poster'|trans }}</div>
                                 {% endif %}
@@ -303,21 +308,21 @@
                                          data-title="{{ ue.watch_at|format_datetime('relative_short', 'short')|capitalize }}">
                                         {{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px'}) }}
                                     </div>
-                                    <div class="select-provider" data-id="{{ episode.id }}" data-title="{{ (ue.provider_id ?'Choose a provider':ue.provider_name)|trans }}">
+                                    <div class="select-provider" data-ue-id="{{ ue.id }}" data-title="{{ (ue.provider_id ?'Choose a provider':ue.provider_name)|trans }}">
                                         {% if ue.provider_id %}
                                             <img src="{{ ue.provider_logo_path }}" alt="{{ ue.provider_name }}">
                                         {% else %}
                                             {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
                                         {% endif %}
                                     </div>
-                                    <div class="select-device" data-id="{{ episode.id }}" data-title="{{ 'Choose a device'|trans }}">
+                                    <div class="select-device" data-ue-id="{{ ue.id }}" data-title="{{ 'Choose a device'|trans }}">
                                         {% if ue.device_id %}
                                             {{ ux_icon(ue.device_svg, {height: '18px', width: '18px'}) }}
                                         {% else %}
                                             {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
                                         {% endif %}
                                     </div>
-                                    <div class="select-vote" data-id="{{ episode.id }}" data-title="{{ 'Give a rating'|trans }}">
+                                    <div class="select-vote" data-ue-id="{{ ue.id }}" data-title="{{ 'Give a rating'|trans }}">
                                         {#                                        {% if ue.vote %} #}
                                         {#                                            {{ ue.vote }} #}
                                         {#                                        {% else %} #}
@@ -327,6 +332,7 @@
                                     </div>
                                 {% else %}
                                     <div class="add-this-episode" data-id="{{ episode.id }}"
+                                         data-ue-id="{{ ue.id }}"
                                          data-series-id="{{ series.id }}"
                                          data-last-episode="{{ loop.last ?? 0 }}"
                                          data-show-id="{{ episode.show_id }}"

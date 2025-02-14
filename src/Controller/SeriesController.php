@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\EpisodeLocalizedOverview;
+use App\Entity\EpisodeStill;
 use App\Entity\EpisodeSubstituteName;
 use App\Entity\FilmingLocation;
 use App\Entity\FilmingLocationImage;
@@ -26,6 +27,7 @@ use App\Form\SeriesAdvancedSearchType;
 use App\Form\SeriesSearchType;
 use App\Repository\DeviceRepository;
 use App\Repository\EpisodeLocalizedOverviewRepository;
+use App\Repository\EpisodeStillRepository;
 use App\Repository\EpisodeSubstituteNameRepository;
 use App\Repository\FilmingLocationImageRepository;
 use App\Repository\FilmingLocationRepository;
@@ -91,6 +93,7 @@ class SeriesController extends AbstractController
         private readonly DeviceRepository                   $deviceRepository,
         private readonly DeeplTranslator                    $deeplTranslator,
         private readonly EpisodeLocalizedOverviewRepository $episodeLocalizedOverviewRepository,
+        private readonly EpisodeStillRepository             $episodeStillRepository,
         private readonly EpisodeSubstituteNameRepository    $episodeSubstituteNameRepository,
         private readonly FilmingLocationImageRepository     $filmingLocationImageRepository,
         private readonly FilmingLocationRepository          $filmingLocationRepository,
@@ -252,7 +255,7 @@ class SeriesController extends AbstractController
         $seriesToStartCount = $this->userSeriesRepository->seriesToStartCount($user, $locale);
         $series = [];
         // Plusieurs résultats pour une même série, à cause de différents liens de streaming (link_name, provider_logo_path, "provider_name)
-        // On ne garde que le premier résultat pour chaque série et on ajoute les providers dans un tableau "watch_links"
+        // On ne garde que le premier résultat pour chaque série et on ajoute les providers dans un tableau "watch_links".
         foreach ($seriesToStart as $s) {
             if (!array_key_exists($s['id'], $series)) {
                 $series[$s['id']] = $s;
@@ -307,7 +310,7 @@ class SeriesController extends AbstractController
 
         $series = [];
         // Plusieurs résultats pour une même série, à cause de différents liens de streaming (link_name, provider_logo_path, "provider_name)
-        // On ne garde que le premier résultat pour chaque série et on ajoute les providers dans un tableau "watch_links"
+        // On ne garde que le premier résultat pour chaque série et on ajoute les providers dans un tableau "watch_links".
         foreach ($seriesToStart as $s) {
             if (!array_key_exists($s['id'], $series)) {
                 $series[$s['id']] = $s;
@@ -823,7 +826,7 @@ class SeriesController extends AbstractController
             $this->addBackdrop($series, $data['file']);
         }
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        $userEpisodes = $this->userEpisodeRepository->findBy(['user' => $user, 'userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+        $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
 
         $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
         // Get with fr-FR language to get the localized name
@@ -947,6 +950,12 @@ class SeriesController extends AbstractController
         $tvKeywords = $tv['keywords']['results'] ?? [];
         $tvExternalIds = $tv['external_ids'] ?? [];
 
+        if (!$series->getNumberOfEpisode()) {
+            $series->setNumberOfEpisode($tv['number_of_episodes']);
+            $series->setNumberOfSeason($tv['number_of_seasons']);
+            $this->seriesRepository->save($series, true);
+        }
+
 //        dump([
 //            'series' => $seriesArr,
 //            'locations' => $locations['filmingLocations'],
@@ -1026,7 +1035,7 @@ class SeriesController extends AbstractController
         $series = $this->seriesRepository->findOneBy(['id' => $id]);
         $user = $this->getUser();
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        $userEpisodes = $this->userEpisodeRepository->findBy(['user' => $user, 'userSeries' => $userSeries]);
+        $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries]);
 
         $episodeCount = count($userEpisodes);
         $watchedEpisodeCount = 0;
@@ -1215,7 +1224,7 @@ class SeriesController extends AbstractController
     public function showSeason(Request $request, Series $series, int $seasonNumber, string $slug): Response
     {
         $user = $this->getUser();
-//        $series = $this->seriesRepository->findOneBy(['id' => $id]);
+
         $seriesDayOffset = $this->seriesDayOffsetRepository->findOneBy(['series' => $series, 'country' => $user->getCountry() ?? 'FR']);
         $dayOffset = $seriesDayOffset ? $seriesDayOffset->getOffset() : 0;
 
@@ -1285,6 +1294,13 @@ class SeriesController extends AbstractController
 
         $tvKeywords = json_decode($this->tmdbService->getTvKeywords($series->getTmdbId()), true);
         $tvExternalIds = json_decode($this->tmdbService->getTvExternalIds($series->getTmdbId()), true);
+
+        if (!$series->getNumberOfEpisode()) {
+            $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
+            $series->setNumberOfEpisode($tv['number_of_episodes']);
+            $series->setNumberOfSeason($tv['number_of_seasons']);
+            $this->seriesRepository->save($series, true);
+        }
 
         dump([
 //            'series' => $series,
@@ -1440,51 +1456,41 @@ class SeriesController extends AbstractController
         $seasonNumber = $inputBag->get('seasonNumber');
         $episodeNumber = $inputBag->get('episodeNumber');
         $ueId = $inputBag->get('ueId');
+        $new = false;
 
         $messages = [];
 
         $user = $this->getUser();
-        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $country = $user->getCountry() ?? 'FR';
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
         $dayOffset = $series->getSeriesDayOffset($country);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-//        $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $id]);
-        $userEpisodes = $this->userEpisodeRepository->findBy(['user' => $user, 'episodeId' => $id]);
+        $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $ueId]);
+        $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'episodeId' => $id], ['id' => 'ASC']);
 
         $now = $this->now();
-//        if (!$userEpisode) {
+        if ($userEpisode->getWatchAt()) { // Si l'épisode a déjà été vu
             $userEpisode = new UserEpisode($userSeries, $id, $seasonNumber, $episodeNumber, $now);
-//        } else {
+            $new = true;
+        } //else {
 //            $userEpisode->setWatchAt($now);
 //        }
 
-        if (count($userEpisodes)) {
-            $firstViewedUserEpisode = $userEpisodes[0];
-            $airDate = $firstViewedUserEpisode->getAirDate();
+        $firstViewedUserEpisode = $userEpisodes[0];
+        $airDate = $firstViewedUserEpisode->getAirDate();
+        if ($new) {
             $userEpisode->setAirDate($airDate);
-        } else {
-            $episode = json_decode($this->tmdbService->getTvEpisode($showId, $seasonNumber, $episodeNumber, $locale), true);
-            $airDate = $this->date($episode['air_date'] . " 09:00:00");
-            $userEpisode->setAirDate($airDate);
-            if ($dayOffset > 0) {
-                $airDate = $airDate->modify("+$dayOffset days");
-            } elseif ($dayOffset < 0) {
-                $airDate = $airDate->modify("$dayOffset days");
-            }
+            $lastViewedUserEpisode = $userEpisodes[count($userEpisodes) - 1];
+            $userEpisode->setProviderId($lastViewedUserEpisode->getProviderId());
+            $userEpisode->setDeviceId($lastViewedUserEpisode->getDeviceId());
         }
-        $tv = json_decode($this->tmdbService->getTv($showId, $locale), true);
 
+        if ($dayOffset > 0) {
+            $airDate = $airDate->modify("+$dayOffset days");
+        } elseif ($dayOffset < 0) {
+            $airDate = $airDate->modify("$dayOffset days");
+        }
         $diff = $now->diff($airDate);
-//        dump([
-//            'day offset' => $dayOffset,
-//            'airDate' => $airDate,
-//            'now' => $now,
-//            'days' => $diff->days,
-//            'hours' => $diff->h,
-//            'minutes' => $diff->i,
-//            'secondes' => $diff->s
-//        ]);
         $quickWatchDay = $diff->days < 1;
         $quickWatchWeek = $diff->days < 7;
         $userEpisode->setQuickWatchDay($quickWatchDay);
@@ -1494,29 +1500,6 @@ class SeriesController extends AbstractController
                 $messages[] = $this->translator->trans('Quick day watch badge unlocked');
             } else {
                 $messages[] = $this->translator->trans('Quick week watch badge unlocked');
-            }
-        }
-
-        // Si le provider et l'appareil du dernier épisode ajouté ne sont renseignés, on les récupère du précédent épisode
-        $episodeProviderId = $userEpisode->getProviderId();
-        $episodeDeviceId = $userEpisode->getDeviceId();
-        if (!$episodeProviderId || !$episodeDeviceId) {
-            if ($userEpisode->getEpisodeNumber() > 1) {
-                $previousEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'episodeNumber' => $episodeNumber - 1]);
-                if ($previousEpisode) {
-                    if (!$episodeProviderId) $userEpisode->setProviderId($previousEpisode->getProviderId());
-                    if (!$episodeDeviceId) $userEpisode->setDeviceId($previousEpisode->getDeviceId());
-                }
-            }
-            // Si on regarde le premier épisode d'une saison, on récupère le provider et l'appareil du dernier épisode
-            // de la saison précédente (hors épisodes spéciaux, donc à partir de la saison 2)
-            if ($userEpisode->getEpisodeNumber() == 1 && $seasonNumber > 1) {
-                $lastEpisodeNumberOfPreviousSeason = $tv['seasons'][$seasonNumber - 2]['episode_count'] ?? 0;
-                $previousEpisode = $lastEpisodeNumberOfPreviousSeason > 0 ? $this->userEpisodeRepository->findOneBy(['user' => $user, 'userSeries' => $userSeries, 'seasonNumber' => $seasonNumber - 1, 'episodeNumber' => $lastEpisodeNumberOfPreviousSeason]) : null;
-                if ($previousEpisode) {
-                    if (!$episodeProviderId) $userEpisode->setProviderId($previousEpisode->getProviderId());
-                    if (!$episodeDeviceId) $userEpisode->setDeviceId($previousEpisode->getDeviceId());
-                }
             }
         }
         $userEpisode->setNumberOfView($userEpisode->getNumberOfView() + 1);
@@ -1535,7 +1518,7 @@ class SeriesController extends AbstractController
 
         // Si on regarde 3 épisodes en moins d'un jour, on considère que c'est un marathon
         if (!$userSeries->getMarathoner() && $episodeNumber >= 3) {
-            $episodes = $this->userEpisodeRepository->findBy(['user' => $user, 'userSeries' => $userSeries, 'seasonNumber' => $seasonNumber], ['watchAt' => 'DESC'], 3);
+            $episodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber], ['watchAt' => 'DESC'], 3);
 //            dump($episodes);
             if ($episodes[0]->getEpisodeNumber() - $episodes[1]->getEpisodeNumber() == 1 && $episodes[1]->getEpisodeNumber() - $episodes[2]->getEpisodeNumber() == 1) {
                 $firstViewAt = $episodes[0]->getWatchAt();
@@ -1552,8 +1535,10 @@ class SeriesController extends AbstractController
             $userSeries->setLastWatchAt($now);
             $userSeries->setLastEpisode($episodeNumber);
             $userSeries->setLastSeason($seasonNumber);
-            $userSeries->setViewedEpisodes($userSeries->getViewedEpisodes() + 1);
-            $userSeries->setProgress($userSeries->getViewedEpisodes() / $tv['number_of_episodes'] * 100);
+            if (!$new) {
+                $userSeries->setViewedEpisodes($userSeries->getViewedEpisodes() + 1);
+                $userSeries->setProgress($userSeries->getViewedEpisodes() / $series->getNumberOfEpisode() * 100);
+            }
             $this->userSeriesRepository->save($userSeries, true);
         }
         $viewedAt = $this->translator->trans('Today') . ', ' . $now->format('H:i');
@@ -1584,7 +1569,7 @@ class SeriesController extends AbstractController
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
         $dayOffset = $series->getSeriesDayOffset($country);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $id]);
+        $userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $id]);
 
         $userEpisode->setWatchAt($now);
 
@@ -1627,7 +1612,7 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $id]);
+        $userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $id]);
         if ($userEpisode) {
             if ($userEpisode->getNumberOfView() > 1) {
                 $userEpisode->setNumberOfView($userEpisode->getNumberOfView() - 1);
@@ -1651,7 +1636,7 @@ class SeriesController extends AbstractController
         if ($episodeNumber > 1 && $seasonNumber > 0) {
             for ($j = $seasonNumber; $j > 0; $j--) {
                 for ($i = $episodeNumber - 1; $i > 0; $i--) {
-                    $episode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'userSeries' => $userSeries, 'seasonNumber' => $j, 'episodeNumber' => $i]);
+                    $episode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $j, 'episodeNumber' => $i]);
                     if ($episode && $episode->getWatchAt()) {
                         $userSeries->setLastEpisode($episode->getEpisodeNumber());
                         $userSeries->setLastSeason($episode->getSeasonNumber());
@@ -1686,54 +1671,36 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/episode/provider/{episodeId}', name: 'episode_provider', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function userEpisodeProvider(Request $request, int $episodeId): Response
-    {
-        $user = $this->getUser();
-        $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $episodeId]);
-        $data = json_decode($request->getContent(), true);
-        $providerId = $data['providerId'];
-
-        $userEpisode->setProviderId($providerId);
-        $this->userEpisodeRepository->save($userEpisode, true);
-
-        return $this->json([
-            'ok' => true,
-        ]);
-    }
-
-    #[Route('/episode/device/{episodeId}', name: 'episode_device', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function userEpisodeDevice(Request $request, int $episodeId): Response
-    {
-        $user = $this->getUser();
-        $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $episodeId]);
-        $data = json_decode($request->getContent(), true);
-        $deviceId = $data['deviceId'];
-
-        $userEpisode->setDeviceId($deviceId);
-        $this->userEpisodeRepository->save($userEpisode, true);
-
-        return $this->json([
-            'ok' => true,
-        ]);
-    }
-
-    #[Route('/episode/vote/{episodeId}', name: 'episode_vote', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function userEpisodeVote(Request $request, int $episodeId): JsonResponse
+    #[Route('/episode/provider/{id}', name: 'episode_provider', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function userEpisodeProvider(Request $request, UserEpisode $userEpisode): JsonResponse
     {
         if ($request->isMethod('POST')) {
-            $user = $this->getUser();
-            $userEpisode = $this->userEpisodeRepository->findOneBy(['user' => $user, 'episodeId' => $episodeId]);
-            //$data = json_decode($request->getContent(), true);
-            $vote = $request->getPayload()->get('vote'); //$data['vote'];
+            $providerId = $request->getPayload()->get('providerId');
+            $userEpisode->setProviderId($providerId);
+            $this->userEpisodeRepository->save($userEpisode, true);
+        }
+        return new JsonResponse(['ok' => true]);
+    }
 
+    #[Route('/episode/device/{id}', name: 'episode_device', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function userEpisodeDevice(Request $request, UserEpisode $userEpisode): JsonResponse
+    {
+        if ($request->isMethod('POST')) {
+            $deviceId = $request->getPayload()->get('deviceId');
+            $userEpisode->setDeviceId($deviceId);
+            $this->userEpisodeRepository->save($userEpisode, true);
+        }
+        return new JsonResponse(['ok' => true]);
+    }
+
+    #[Route('/episode/vote/{id}', name: 'episode_vote', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function userEpisodeVote(Request $request, UserEpisode $userEpisode): JsonResponse
+    {
+        if ($request->isMethod('POST')) {
+            $vote = $request->getPayload()->get('vote');
             $userEpisode->setVote($vote);
             $this->userEpisodeRepository->save($userEpisode, true);
         }
-
-        /*return $this->json([
-            'ok' => true,
-        ]);*/
         return new JsonResponse(['ok' => true]);
     }
 
@@ -1791,12 +1758,26 @@ class SeriesController extends AbstractController
     {
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('file');
-        dump($uploadedFile);
+//        dump($uploadedFile);
         $basename = $uploadedFile->getClientOriginalName();
         $projectDir = $this->getParameter('kernel.project_dir');
         $imageTempPath = $projectDir . '/public/images/temp/';
         $tempName = $imageTempPath . $basename;
         $stillPath = $projectDir . '/public/series/stills/' . $basename . '.webp';
+
+        // Ajout d'un suffixe si le fichier existe déjà
+        $copyCount = 0;
+        $testName = $basename;
+        do {
+            if ($copyCount > 0) {
+                $testName = $projectDir . '/public/series/stills' . $basename . '-' . $copyCount . '.webp';
+            }
+            $copyCount++;
+        } while (file_exists($testName));
+        if ($copyCount > 1) {
+            $basename = $basename . '-' . $copyCount;
+            $stillPath = $projectDir . '/public/series/stills/' . $basename . '.webp';
+        }
 
         try {
             $uploadedFile->move($imageTempPath, $basename);
@@ -1809,7 +1790,7 @@ class SeriesController extends AbstractController
         $copy = false;
 
         try {
-            $webp = $this->imageService->webpImage($tempName, $stillPath, 90, 480, 270);
+            $webp = $this->imageService->webpImage($tempName, $stillPath, 90, 1280, 720);
             if ($webp) {
                 $imagePath = '/' . $basename . '.webp';
             } else {
@@ -1820,9 +1801,8 @@ class SeriesController extends AbstractController
         }
 
         if ($imagePath) {
-            $episode = $this->userEpisodeRepository->findOneBy(['episodeId' => $id]);
-            $episode->setStill($imagePath);
-            $this->userEpisodeRepository->save($episode, true);
+            $episodeStill = new EpisodeStill($id, $imagePath);
+            $this->episodeStillRepository->save($episodeStill, true);
             $copy = true;
         }
 
@@ -3315,11 +3295,17 @@ class SeriesController extends AbstractController
         $seasonEpisodes = [];
         $userEpisodes = $this->userEpisodeRepository->getUserEpisodes($user->getId(), $userSeries->getId(), $season['season_number'], $user->getPreferredLanguage() ?? 'fr');
 
+        $episodeIds = array_column($userEpisodes, 'episode_id');
+        $stills = $this->episodeStillRepository->getSeasonStills($episodeIds);
+
         foreach ($season['episodes'] as $episode) {
             if (!$next_episode_to_air && !$episode['air_date']) {
                 continue;
             }
             $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
+            $episode['stills'] = array_filter($stills, function ($still) use ($episode) {
+                return $still['episode_id'] == $episode['id'];
+            });
             $episode['air_date'] = ($episode['air_date'] ? $this->offsetDate($episode['air_date'], $dayOffset, $user->getTimezone() ?? 'Europe/Paris') : null);
             $episode['crew'] = array_map(function ($crew) use ($slugger, $user) {
                 if (key_exists('person_id', $crew)) return null;

@@ -565,6 +565,7 @@ export class Season {
                     const providerDiv = document.createElement('div');
                     providerDiv.classList.add('select-provider');
                     providerDiv.setAttribute('data-id', id);
+                    providerDiv.setAttribute('data-provider-id', '0');
                     providerDiv.setAttribute('data-title', gThis.text.provider);
                     providerDiv.appendChild(gThis.getSvg('plus'));
                     providerDiv.addEventListener('click', gThis.selectProvider);
@@ -581,6 +582,7 @@ export class Season {
                     const device = document.createElement('div');
                     device.classList.add('select-device');
                     device.setAttribute('data-id', id);
+                    device.setAttribute('data-device-id', '0');
                     device.setAttribute('data-title', gThis.text.device);
                     device.appendChild(gThis.getSvg('plus'));
                     device.addEventListener('click', gThis.selectDevice);
@@ -900,7 +902,7 @@ export class Season {
             return;
         }
         const selectProviderDiv = e.currentTarget
-        const episodeId = selectProviderDiv.getAttribute('data-id');
+        const episodeId = selectProviderDiv.getAttribute('data-ue-id');
         const flatrate = gThis.seasonProvider['flatrate'];
         const providerList = document.createElement('div');
         providerList.classList.add('list');
@@ -957,7 +959,7 @@ export class Season {
             return;
         }
         const selectDeviceDiv = e.currentTarget;
-        const episodeId = selectDeviceDiv.getAttribute('data-id');
+        const episodeId = selectDeviceDiv.getAttribute('data-ue-id');
         const deviceList = document.createElement('div');
         deviceList.classList.add('list');
         deviceList.setAttribute('data-id', 'device-' + episodeId);
@@ -1011,7 +1013,7 @@ export class Season {
             return;
         }
         const selectVoteDiv = e.currentTarget;
-        const episodeId = selectVoteDiv.getAttribute('data-id');
+        const episodeId = selectVoteDiv.getAttribute('data-ue-id');
         const voteList = document.createElement('div');
         voteList.classList.add('list');
         voteList.setAttribute('data-id', 'vote-' + episodeId);

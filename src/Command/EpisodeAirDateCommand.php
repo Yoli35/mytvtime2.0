@@ -94,7 +94,7 @@ class EpisodeAirDateCommand extends Command
             $episodeUpdates = 0;
             $seriesNewEpisodeCount = 0;
 
-            $line = sprintf('User %s - Series (%d): %s', $user->getUsername(), $series->getId(), $series->getName());
+            $line = sprintf('User %s - Series (%d): %s', $user->getUsername(), $seriesId, $series->getName());
             $localizedName = $series->getLocalizedName('fr');
             if ($localizedName) {
                 $line .= ' - ' . $localizedName->getName();
@@ -137,6 +137,12 @@ class EpisodeAirDateCommand extends Command
                 $this->seriesRepository->save($series, true);
                 $notifications[] = $this->newNotification(self::SERIES_STATUS, $userSeries, null, $localizedName, $airDate);
                 $newSeriesDateCount++;
+            }
+
+            if (!$series->getNumberOfEpisode()) {
+                $series->setNumberOfEpisode($tv['number_of_episodes']);
+                $series->setNumberOfSeason($tv['number_of_seasons']);
+                $this->seriesRepository->save($series, true);
             }
 
 //            $seriesDayOffset = $this->seriesDayOffsetRepository->findOneBy(['series' => $series, 'country' => $user->getCountry() ?? 'FR']);
