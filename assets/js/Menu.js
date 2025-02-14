@@ -668,16 +668,19 @@ export class Menu {
                 const ul = document.createElement("ul");
                 ul.setAttribute("data-type", searchType);
 
-                json.results.forEach((result) => {
+                json.results.forEach((result, index) => {
+                    console.log({index});
                     const type = result['media_type'] || searchType; // Pour les résultats de recherche multi
                     const a = document.createElement("a");
                     let url = baseHref + hRefs[type] + result['id'];
-                    if (type != 'movie') url += '-' + gThis.toSlug(result[resultNames[type]]);
+                    if (type !== 'movie') url += '-' + gThis.toSlug(result[resultNames[type]]);
                     a.href = url;
+                    a.target = "_blank";
                     const li = document.createElement("li");
                     li.setAttribute("data-id", result['id']);
                     li.setAttribute("data-slug", gThis.toSlug(result[resultNames[type]]));
                     li.setAttribute("data-type", type);
+                    if (!index) li.classList.add("active");
                     const posterDiv = document.createElement("div");
                     posterDiv.classList.add("poster");
                     const imageResult = resultPaths[type];
@@ -694,13 +697,13 @@ export class Menu {
                     titleDiv.classList.add("title");
                     titleDiv.innerHTML = result[resultNames[type]];
                     a.appendChild(titleDiv);
-                    // Si le lien est ouvert dans un autre onglet, il faut supprimer le menu
-                    /*a.addEventListener("auxclick", (e) => {
-                        const details = e.currentTarget.closest("details");
-                        ul.remove();
-                        personSearch.value = '';
-                        details.removeAttribute("open");
-                    });*/
+                    a.addEventListener("click", (e) => {
+                        const menuDiv = e.currentTarget.closest(".multi-search");
+                        const multiSearchInput = menuDiv.querySelector("input");
+                        const resultsDiv = menuDiv.querySelector(".search-results");
+                        resultsDiv.innerHTML = '';
+                        multiSearchInput.value = '';
+                    });
                     li.appendChild(a);
                     ul.appendChild(li);
                 });
@@ -711,7 +714,7 @@ export class Menu {
     }
 
     searchMenuNavigate(e) {
-        // movieSearch, tvSearch, tvSearchDb or personSearch
+        // movieSearch, tvSearch, tvSearchDb, personSearch or multiSearch
         const searchMenu = e.target;
         // console.log({e});
         const value = e.target.value;

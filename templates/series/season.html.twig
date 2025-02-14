@@ -160,19 +160,19 @@
                 <div class="quick-episodes" style="width: {{ 36 * break + 16 }}px;">
                     {% for episode in season.episodes %}
                         {% set ue = episode.user_episode %}
-                        {% if episode.air_date %}
-                            {% if episode.air_date <= now %}
-                                <div class="quick-episode{% if ue and ue.watch_at %} watched{% endif %}" data-number="{{ episode.episode_number }}" data-title="{{ episode.air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
+                        {% if ue.air_date %}
+                            {% if ue.air_date <= now %}
+                                <div class="quick-episode{% if ue and ue.watch_at %} watched{% endif %}" data-number="{{ ue.episode_number }}" data-title="{{ ue.air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
                                     {{ episode.episode_number }}
                                 </div>
                             {% else %}
-                                <div class="future-episode" data-title="{{ episode.air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
-                                    {{ episode.episode_number }}
+                                <div class="future-episode" data-title="{{ ue.air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
+                                    {{ ue.episode_number }}
                                 </div>
                             {% endif %}
                         {% else %}
                             <div class="future-episode" data-title="{{ 'No date'|trans }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
-                                {{ episode.episode_number }}
+                                {{ ue.episode_number }}
                             </div>
                         {% endif %}
                         {#                    {% if loop.index0 % break == break-1 %} #}
@@ -187,7 +187,7 @@
             {# <h3>{{ 'Episodes'|trans }}</h3> #}
             <div class="content column">
                 <div class="episodes">
-                    {% for episode in season.episodes|filter(e => e.air_date and e.air_date <= now) %}
+                    {% for episode in season.episodes|filter(e => e.user_episode.air_date and e.user_episode.air_date <= now) %}
                         {#                        {% if episode.air_date and episode.air_date <= now %} #}
                         {% set ue = episode.user_episode %}
                         <div class="episode" id="episode-{{ episode.episode_number }}">
@@ -293,6 +293,7 @@
                             <div class="user-episode">
                                 {% if ue and ue.watch_at %}
                                     <div class="remove-this-episode" data-id="{{ episode.id }}"
+                                         data-ue-id="{{ ue.id }}"
                                          data-series-id="{{ series.id }}"
                                          data-last-episode="{{ loop.last ?? 0 }}"
                                          data-show-id="{{ episode.show_id }}"

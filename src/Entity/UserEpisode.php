@@ -59,6 +59,8 @@ class UserEpisode
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $still = null;
 
+    private ?DateTimeImmutable $alternativeAirDate = null;
+
     public function __construct(UserSeries $userSeries, int $episodeId, int $seasonNumber, int $episodeNumber, ?DateTimeImmutable $watchAt)
     {
         $this->user = $userSeries->getUser();
@@ -241,5 +243,15 @@ class UserEpisode
         $this->still = $still;
 
         return $this;
+    }
+
+    public function getAlternativeAirDate(): ?DateTimeImmutable
+    {
+        return $this->alternativeAirDate;
+    }
+
+    public function setAlternativeAirDate(?DateTimeImmutable $alternativeAirDate): void
+    {
+        $this->alternativeAirDate = $alternativeAirDate;
     }
 }

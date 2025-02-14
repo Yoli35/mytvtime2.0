@@ -825,6 +825,7 @@ label:has(input[type="text"]) {
             align-items: center;
             display: flex;
             gap: .5rem;
+            position: relative;
 
             input {
                 appearance: none;
@@ -835,7 +836,7 @@ label:has(input[type="text"]) {
                 font-size: 1rem;
                 font-weight: 300;
                 height: 2rem;
-                padding-inline: 1rem;
+                padding-inline: 1rem 3rem;
                 width: 20rem;
 
                 &:focus {
@@ -845,19 +846,22 @@ label:has(input[type="text"]) {
 
             .magnifying-glass {
                 align-items: center;
-                background-color: var(--orange-50);
                 border-radius: 5rem;
-                color: var(--orange-90);
+                color: var(--orange-40);
                 cursor: pointer;
-                display: none;
+                display: flex;
                 font-size: 1rem;
-                height: 2rem;
+                height: 1.5rem;
                 justify-content: center;
-                width: 2rem;
+                position: absolute;
+                right: .5rem;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 1.5rem;
             }
 
             &:has(input:focus) .magnifying-glass {
-                display: flex;
+                color: var(--orange-70);
             }
         }
 
