@@ -688,6 +688,7 @@ export class Season {
 
     modifyWatchedAtOpen(e) {
         const watchedAtDiv = e.currentTarget;
+        const userEpisodeId = watchedAtDiv.getAttribute('data-ue-id');
         const watchedAt = watchedAtDiv.getAttribute('data-watched-at');
         const airDateDiv = watchedAtDiv.closest('.air-date');
         const watchedAtModifyDiv = document.createElement('div');
@@ -697,13 +698,15 @@ export class Season {
         datetimeInput.setAttribute('value', watchedAt);
         const datetimeSaveButton = document.createElement('button');
         datetimeSaveButton.textContent = 'OK';
+        datetimeSaveButton.setAttribute('data-ue-id', userEpisodeId);
         const datetimeCancelButton = document.createElement('button');
         datetimeCancelButton.textContent = 'X';
         watchedAtModifyDiv.appendChild(datetimeInput);
         watchedAtModifyDiv.appendChild(datetimeSaveButton);
         watchedAtModifyDiv.appendChild(datetimeCancelButton);
         airDateDiv.appendChild(watchedAtModifyDiv);
-        watchedAtDiv.style.display = 'none';
+        // watchedAtDiv.style.display = 'none';
+        watchedAtDiv.classList.add('editing');
 
         datetimeSaveButton.addEventListener('click', gThis.touchEpisode);
         datetimeCancelButton.addEventListener('click', () => {
@@ -714,15 +717,15 @@ export class Season {
 
     touchEpisode(e) { // Ajuste la date de visionnage à la valeur de l'input datetime-local
         const datetimeSaveButton = e.currentTarget;
+        const id = datetimeSaveButton.getAttribute('data-ue-id');
         const airDateDiv = datetimeSaveButton.closest('.air-date');
-        const watchedAtDiv = airDateDiv.querySelector('.watched-at');
+        const watchedAtDiv = airDateDiv.querySelector('.watched-at[data-ue-id="' + id + '"]');
         const watchedAtModifyDiv = datetimeSaveButton.parentElement;
         const datetimeInput = watchedAtModifyDiv.querySelector('input');
         const newDatetime = datetimeInput.value;
         console.log(newDatetime);
         const episode = datetimeSaveButton.closest('.episode').querySelector('.remove-this-episode');
         const sId = episode.getAttribute('data-show-id');
-        const id = episode.getAttribute('data-id');
         const episodeNumber = episode.getAttribute('data-e-number');
         const seasonNumber = episode.getAttribute('data-s-number');
 
@@ -742,14 +745,22 @@ export class Season {
             .then(data => {
                 // TODO: Vérifier "data"
                 console.log(data);
-                watchedAtDiv.innerHTML = data['viewedAt'];
+                const block = document.createElement('div');
+                block.innerHTML = data['watchedAtBlock'];
+                const newWatchedAtDiv = block.querySelector('.watched-at');
+                // Remplacer watchedAtDiv par newWatchedAtDiv
+                watchedAtDiv.replaceWith(newWatchedAtDiv);
+                // watchedAtDiv.innerHTML = newWatchedAtDiv.innerHTML;
+                // watchedAtDiv.setAttribute('data-watched-at', data['dataViewedAt']);
+                /*watchedAtDiv.innerHTML = data['viewedAt'];
                 watchedAtDiv.setAttribute('data-watched-at', data['dataViewedAt']);
-                episode.setAttribute('data-title', gThis.text.now);
+                episode.setAttribute('data-title', gThis.text.now);*/
                 const now = new Date();
                 episode.setAttribute('data-time', now.toISOString());
             });
         watchedAtModifyDiv.remove();
-        watchedAtDiv.style.display = 'flex';
+        // watchedAtDiv.style.display = 'flex';
+        watchedAtDiv.classList.remove('editing');
     }
 
     removeOrReviewEpisode(e) {
@@ -757,6 +768,7 @@ export class Season {
         const dialog = document.querySelector("#review-dialog");
         const episode = e.currentTarget;
         const id = episode.getAttribute('data-id');
+        const ueId = episode.getAttribute('data-ue-id');
         const showId = episode.getAttribute('data-show-id');
         const episodeNumber = episode.getAttribute('data-e-number');
         const seasonNumber = episode.getAttribute('data-s-number');
@@ -767,6 +779,7 @@ export class Season {
         const cancelButton = dialog.querySelector('button[value="cancel"]');
         buttons.forEach(button => {
             button.setAttribute('data-id', id);
+            button.setAttribute('data-ue-id', ueId);
             button.setAttribute('data-show-id', showId);
             button.setAttribute('data-e-number', episodeNumber);
             button.setAttribute('data-s-number', seasonNumber);
@@ -788,7 +801,7 @@ export class Season {
 
     doNowEpisode(e) {
         const dialog = document.querySelector("#review-dialog");
-        const episodeId = e.currentTarget.getAttribute('data-id');
+        const episodeId = e.currentTarget.getAttribute('data-ue-id');
         dialog.close();
         gThis.doRemoveEventListeners();
         gThis.nowEpisode(e, episodeId);

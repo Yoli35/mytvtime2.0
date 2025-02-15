@@ -1278,7 +1278,7 @@ class SeriesController extends AbstractController
         $devices = $this->deviceRepository->deviceArray();
 
         // Nouvelle saison, premier épisode non vu
-        if ($season['season_number'] > 1 && $season['episodes'][0]['user_episode']['watch_at'] == null) {
+        if ($season['season_number'] > 1 && count($season['episodes']) && $season['episodes'][0]['user_episode']['watch_at'] == null) {
             $firstEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $season['season_number'], 'episodeNumber' => 1]);
             $previousSeasonNumber = $season['season_number'] - 1;
             $lastEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $previousSeasonNumber], ['episodeNumber' => 'DESC']);
@@ -1445,12 +1445,7 @@ class SeriesController extends AbstractController
     public function addUserEpisode(Request $request, int $id): Response
     {
         $inputBag = $request->getPayload();
-        /*$data = json_decode($request->getContent(), true);
-        $showId = $data['showId'];
-        $lastEpisode = $data['lastEpisode'] == "1";
-        $seasonNumber = $data['seasonNumber'];
-        $episodeNumber = $data['episodeNumber'];
-        $reviewed = $data['reviewed'] == "1";*/
+
         $showId = $inputBag->get('showId');
         $lastEpisode = $inputBag->get('lastEpisode') == "1";
         $seasonNumber = $inputBag->get('seasonNumber');
@@ -1505,15 +1500,17 @@ class SeriesController extends AbstractController
 //        $userEpisode->setNumberOfView($userEpisode->getNumberOfView() + 1);
         $userEpisode->setNumberOfView(1);
 
-        if ($episodeNumber > 1) {
-            $previousUserEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'episodeNumber' => $episodeNumber - 1]);
-            $userEpisode->setProviderId($previousUserEpisode->getProviderId());
-            $userEpisode->setDeviceId($previousUserEpisode->getDeviceId());
-        } else {
-            if ($seasonNumber > 1) {
-                $previousUserEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber - 1], ['episodeNumber' => 'DESC']);
+        if (!$new) {
+            if ($episodeNumber > 1) {
+                $previousUserEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'episodeNumber' => $episodeNumber - 1]);
                 $userEpisode->setProviderId($previousUserEpisode->getProviderId());
                 $userEpisode->setDeviceId($previousUserEpisode->getDeviceId());
+            } else {
+                if ($seasonNumber > 1) {
+                    $previousUserEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber - 1], ['episodeNumber' => 'DESC']);
+                    $userEpisode->setProviderId($previousUserEpisode->getProviderId());
+                    $userEpisode->setDeviceId($previousUserEpisode->getDeviceId());
+                }
             }
         }
 
@@ -1567,7 +1564,7 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/episode/touch/{id}', name: 'touch_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function touchUserEpisode(Request $request, int $id): Response
+    public function touchUserEpisode(Request $request, UserEpisode $userEpisode): Response
     {
         $data = json_decode($request->getContent(), true);
         $showId = $data['showId'];
@@ -1576,15 +1573,16 @@ class SeriesController extends AbstractController
         } else {
             $now = $this->now();
         }
-        $seasonNumber = $data['seasonNumber'];
-        $episodeNumber = $data['episodeNumber'];
+        $seasonNumber = $userEpisode->getEpisodeNumber();// $data['seasonNumber'];
+        $episodeNumber = $userEpisode->getSeasonNumber();// $data['episodeNumber'];
 
         $user = $this->getUser();
         $country = $user->getCountry() ?? 'FR';
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
         $dayOffset = $series->getSeriesDayOffset($country);
-        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        $userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $id]);
+        $userSeries = $userEpisode->getUserSeries();
+//        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+//        $userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $id]);
 
         $userEpisode->setWatchAt($now);
 
@@ -1607,11 +1605,18 @@ class SeriesController extends AbstractController
             $userSeries->setLastSeason($seasonNumber);
             $this->userSeriesRepository->save($userSeries, true);
         }
+        $svg = '<svg viewBox="0 0 576 512" fill="currentColor" height="18px" width="18px" aria-hidden="true"><path fill="currentColor" d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32M144 256a144 144 0 1 1 288 0a144 144 0 1 1-288 0m144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3"></path></svg>';
         $viewedAt = $this->translator->trans('Today') . ', ' . $now->format('H:i');
+
+        $watchedAtBlock = $this->renderView('_blocks/series/_watched-at.html.twig', [
+            'e' => ['id' => $userEpisode->getId(), 'watch_at' => $now->format('Y-m-d H:i:s')],
+        ]);
+
         return $this->json([
             'ok' => true,
-            'viewedAt' => '<svg viewBox="0 0 576 512" fill="currentColor" height="18px" width="18px" aria-hidden="true"><path fill="currentColor" d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32M144 256a144 144 0 1 1 288 0a144 144 0 1 1-288 0m144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3"></path></svg> ' . $viewedAt,
+            'viewedAt' => $svg . ' ' . $viewedAt,
             'dataViewedAt' => $now->format('Y-m-d H:i:s'),
+            'watchedAtBlock' => $watchedAtBlock,
         ]);
     }
 
@@ -3302,10 +3307,10 @@ class SeriesController extends AbstractController
         $slugger = new AsciiSlugger();
         $seasonEpisodes = [];
         $userEpisodes = $this->userEpisodeRepository->getUserEpisodes($user->getId(), $userSeries->getId(), $season['season_number'], $user->getPreferredLanguage() ?? 'fr');
+        dump($userEpisodes);
 
         $episodeIds = array_column($userEpisodes, 'episode_id');
         $stills = $this->episodeStillRepository->getSeasonStills($episodeIds);
-        dump($stills);
 
         foreach ($season['episodes'] as $episode) {
             if (!$next_episode_to_air && !$episode['air_date']) {
@@ -3342,6 +3347,8 @@ class SeriesController extends AbstractController
             }, $episode['guest_stars']);
 
             $userEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number']);//$userSeries->getEpisode($episode['id']);
+            $userEpisodeList = $this->getUserEpisodes($userEpisodes, $episode['episode_number']);
+
             if (empty($userEpisode)) {
                 $ue = new UserEpisode($userSeries, $episode['id'], $season['season_number'], $episode['episode_number'], null);
                 $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris') : null;
@@ -3373,6 +3380,7 @@ class SeriesController extends AbstractController
                 $userEpisode['watch_at'] = $this->dateService->newDateImmutable($userEpisode['watch_at'], $user->getTimezone() ?? 'Europe/Paris');
             }
             $episode['user_episode'] = $userEpisode;
+            $episode['user_episodes'] = $userEpisodeList;
 //            $episode['substitute_name'] = $this->userEpisodeRepository->getSubstituteName($episode['id']);
             $seasonEpisodes[] = $episode;
         }
@@ -3391,6 +3399,20 @@ class SeriesController extends AbstractController
             }
         }
         return [];
+    }
+
+    public function getUserEpisodes(array $userEpisodes, int $episodeNumber): array
+    {
+        $episodes = array_filter($userEpisodes, function ($userEpisode) use ($episodeNumber) {
+            return $userEpisode['episode_number'] == $episodeNumber;
+        });
+        foreach ($episodes as $episode) {
+            if ($episode['provider_id'] > 0)
+                $episode['provider_logo_path'] = $episode['provider_logo_path'] ? $this->imageConfiguration->getCompleteUrl($episode['provider_logo_path'], 'logo_sizes', 2) : null; // w45
+            else
+                $episode['provider_logo_path'] = '/images/providers/' . $episode['provider_logo_path'];
+        }
+        return $episodes;
     }
 
     public function offsetDate(string $dateString, int $offset, string $timezone): ?string

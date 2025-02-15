@@ -190,7 +190,8 @@
                     {% for episode in season.episodes|filter(e => e.user_episode.air_date and e.user_episode.air_date <= now) %}
                         {#                        {% if episode.air_date and episode.air_date <= now %} #}
                         {% set ue = episode.user_episode %}
-                        <div class="episode" id="episode-{{ episode.episode_number }}">
+                        {% set ues = episode.user_episodes %}
+                        <div class="episode" id="episode-{{ episode.episode_number }}" data-ue-id="{{ ue.id }}">
                             <div class="still" data-series-id="{{ series.tmdbId }}" data-season-id="{{ season.id }}" data-episode-id="{{ episode.id }}">
                                 {% if episode.still_path %}
                                     <img src="{{ episode.still_path }}" alt="{{ episode.name }}">
@@ -236,7 +237,11 @@
                                     <div class="air-date">
                                         {{ 'Air date'|trans }} {{ episode.air_date|format_date('relative_full') }}
                                         {% if ue  and ue.watch_at %}
-                                            <div class="watched-at" data-watched-at="{{ ue.watch_at|date("Y-m-d H:i:s", "Europe/Paris") }}">{{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px'}) }} {{ ue.watch_at|format_datetime('relative_medium', 'short', timezone: 'Europe/Paris')|capitalize }}</div>
+                                            <div class="watch-at-list">
+                                                {% for e in ues %}
+                                                    {{ include ('_blocks/series/_watched-at.html.twig', {e: e}) }}
+                                                {% endfor %}
+                                            </div>
                                         {% endif %}
                                     </div>
                                 {% endif %}

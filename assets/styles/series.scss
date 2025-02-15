@@ -2601,15 +2601,27 @@ h2 {
                 flex-wrap: wrap;
                 gap: .125rem 1rem;
 
-                .watched-at {
-                    align-items: center;
-                    background-color: cadetblue;
-                    border-radius: .25rem;
-                    cursor: grab;
+                .watch-at-list {
                     display: flex;
-                    flex-wrap: nowrap;
                     gap: .5rem;
-                    padding: .25rem 1rem;
+                    justify-content: center;
+                    padding-inline: 1rem;
+
+                    .watched-at {
+                        align-items: center;
+                        background-color: cadetblue;
+                        border-radius: .25rem;
+                        cursor: grab;
+                        display: flex;
+                        flex-wrap: nowrap;
+                        gap: .5rem;
+                        padding: .25rem 1rem;
+
+                        &.editing {
+                            background-color: var(--orange-50);
+                            cursor: pointer;
+                        }
+                    }
                 }
 
                 .watched-at-modify {
