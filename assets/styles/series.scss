@@ -2271,15 +2271,35 @@ h2 {
                 width: 100%;
             }
 
+            &:hover {
+                .custom-stills {
+                    background-color: var(--orange-40-alpha-50);
+                    border-color: var(--orange-50);
+                }
+
+                .custom-stills-text {
+                    display: flex;
+                }
+            }
+
             .custom-stills {
+                border-radius: .5rem;
+                border: 2px dashed transparent;
                 bottom: .5rem;
                 display: flex;
                 gap: .5rem;
                 justify-content: flex-start;
                 left: .5rem;
+                min-height: 4rem;
                 overflow-x: auto;
+                padding: .5rem;
                 position: absolute;
                 right: .5rem;
+
+                &.active {
+                    background-color: var(--green-40-alpha-50);
+                    border-color: var(--green-30);
+                }
 
                 .custom-still {
                     aspect-ratio: 16/9;
@@ -2293,6 +2313,29 @@ h2 {
                         object-fit: cover;
                         width: 100%;
                     }
+                }
+            }
+
+            .custom-stills-text {
+                align-items: center;
+                border-radius: .5rem;
+                border: 2px dashed transparent;
+                bottom: .5rem;
+                color: var(--orange-60);
+                display: none;
+                font-size: 1.5rem;
+                font-weight: 900;
+                gap: .5rem;
+                justify-content: center;
+                left: .5rem;
+                min-height: 4rem;
+                overflow-x: auto;
+                padding: .5rem;
+                position: absolute;
+                right: .5rem;
+
+                &.active {
+                    color: var(--green-30);
                 }
             }
 

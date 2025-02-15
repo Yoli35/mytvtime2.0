@@ -1472,9 +1472,9 @@ class SeriesController extends AbstractController
         if ($userEpisode->getWatchAt()) { // Si l'épisode a déjà été vu
             $userEpisode = new UserEpisode($userSeries, $id, $seasonNumber, $episodeNumber, $now);
             $new = true;
-        } //else {
-//            $userEpisode->setWatchAt($now);
-//        }
+        } else {
+            $userEpisode->setWatchAt($now);
+        }
 
         $firstViewedUserEpisode = $userEpisodes[0];
         $airDate = $firstViewedUserEpisode->getAirDate();
@@ -1502,7 +1502,20 @@ class SeriesController extends AbstractController
                 $messages[] = $this->translator->trans('Quick week watch badge unlocked');
             }
         }
-        $userEpisode->setNumberOfView($userEpisode->getNumberOfView() + 1);
+//        $userEpisode->setNumberOfView($userEpisode->getNumberOfView() + 1);
+        $userEpisode->setNumberOfView(1);
+
+        if ($episodeNumber > 1) {
+            $previousUserEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'episodeNumber' => $episodeNumber - 1]);
+            $userEpisode->setProviderId($previousUserEpisode->getProviderId());
+            $userEpisode->setDeviceId($previousUserEpisode->getDeviceId());
+        } else {
+            if ($seasonNumber > 1) {
+                $previousUserEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber - 1], ['episodeNumber' => 'DESC']);
+                $userEpisode->setProviderId($previousUserEpisode->getProviderId());
+                $userEpisode->setDeviceId($previousUserEpisode->getDeviceId());
+            }
+        }
 
         $this->userEpisodeRepository->save($userEpisode, true);
 
@@ -1548,6 +1561,8 @@ class SeriesController extends AbstractController
             'dataViewedAt' => $now->format('Y-m-d H:i:s'),
             'progress' => $this->userEpisodeRepository->seasonProgress($userSeries, $seasonNumber),
             'messages' => $messages,
+            'deviceId' => $userEpisode->getDeviceId() ?? 0,
+            'providerId' => $userEpisode->getProviderId() ?? 0,
         ]);
     }
 
@@ -3297,6 +3312,7 @@ class SeriesController extends AbstractController
 
         $episodeIds = array_column($userEpisodes, 'episode_id');
         $stills = $this->episodeStillRepository->getSeasonStills($episodeIds);
+        dump($stills);
 
         foreach ($season['episodes'] as $episode) {
             if (!$next_episode_to_air && !$episode['air_date']) {

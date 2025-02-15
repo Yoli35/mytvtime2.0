@@ -250,6 +250,21 @@ export class Season {
             // vote.addEventListener('wheel', gThis.wheelVote);
         });
 
+        const customStillsTextDivs = document.querySelectorAll('.custom-stills-text');
+        // const customStillsTextDivs = document.querySelectorAll('.custom-stills-text');
+        customStillsTextDivs.forEach(customStillsTextDiv => {
+            customStillsTextDiv.addEventListener('click', (e) => {
+                const customStillsDiv = customStillsTextDiv.parentElement.querySelector('.custom-stills');
+                customStillsDiv.classList.add('active');
+                customStillsTextDiv.classList.add('active');
+                customStillsTextDiv.addEventListener('paste', gThis.pasteStill);
+                setTimeout(() => {
+                    customStillsDiv.classList.remove('active');
+                    customStillsTextDiv.classList.remove('active');
+                    customStillsTextDiv.removeEventListener('paste', gThis.pasteStill);
+                }, 4000);
+            });
+        });
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 const list = document.querySelector('.list');
@@ -269,7 +284,7 @@ export class Season {
             }
         });
 
-        document.addEventListener('paste', async (e) => {
+        /*document.addEventListener('paste', async (e) => {
             // Récupérer l'élément sous la souris
             const target = e.target;
             const targetStillDiv = target.classList.contains('.still') ? target : target.closest('.still');
@@ -287,7 +302,7 @@ export class Season {
                 if (clipboardItem.type.startsWith('image/')) {
                     // Save the image in %kernel.dir%/public/series/stills/season-xx/episode-xx.jpg
                     const formData = new FormData();
-                    formData.append('file', clipboardItem, fileName);/*+ clipboardItem.type.split('/')[1]*/
+                    formData.append('file', clipboardItem, fileName);/!*+ clipboardItem.type.split('/')[1]*!/
                     const response = await fetch('/' + gThis.lang + '/series/episode/still/' + episodeId, {
                         method: 'POST',
                         body: formData
@@ -310,7 +325,7 @@ export class Season {
                     }
                 }
             }
-        });
+        });*/
     }
 
     setProgress() {
@@ -507,6 +522,7 @@ export class Season {
                 const newEpisode = document.createElement('div');
                 newEpisode.classList.add('remove-this-episode');
                 newEpisode.setAttribute('data-id', id);
+                newEpisode.setAttribute('data-ue-id', ueId);
                 newEpisode.setAttribute('data-show-id', sId);
                 newEpisode.setAttribute('data-e-number', episodeNumber);
                 newEpisode.setAttribute('data-s-number', seasonNumber);
@@ -559,39 +575,64 @@ export class Season {
                 if (previousProvider) {
                     const clone = previousProvider.cloneNode(true);
                     clone.setAttribute('data-id', id);
+                    clone.setAttribute('data-ue-id', ueId);
                     clone.addEventListener('click', gThis.selectProvider);
                     episode.parentElement.appendChild(clone);
                 } else {
+                    const providerId = data['providerId'];
                     const providerDiv = document.createElement('div');
                     providerDiv.classList.add('select-provider');
                     providerDiv.setAttribute('data-id', id);
-                    providerDiv.setAttribute('data-provider-id', '0');
-                    providerDiv.setAttribute('data-title', gThis.text.provider);
-                    providerDiv.appendChild(gThis.getSvg('plus'));
+                    providerDiv.setAttribute('data-ue-id', ueId);
+                    providerDiv.setAttribute('data-provider-id', providerId);
+                    if (providerId) {
+                        providerDiv.innerHTML = '<img src="' + gThis.providers.logos[providerId] + '" alt="' + gThis.providers.names[providerId] + '">';
+                        providerDiv.setAttribute('data-title', gThis.providers.names[providerId]);
+                        gThis.toolTips.init(providerDiv);
+                    } else {
+                        providerDiv.setAttribute('data-title', gThis.text.provider);
+                        providerDiv.appendChild(gThis.getSvg('plus'));
+                    }
                     providerDiv.addEventListener('click', gThis.selectProvider);
                     episode.parentElement.appendChild(providerDiv);
                 }
 
                 const previousDevice = previousEpisode?.parentElement.querySelector('.select-device');
+                const deviceId = data['deviceId'];
                 if (previousDevice) {
                     const clone = previousDevice.cloneNode(true);
                     clone.setAttribute('data-id', id);
+                    clone.setAttribute('data-ue-id', ueId);
                     clone.addEventListener('click', gThis.selectDevice);
                     episode.parentElement.appendChild(clone);
                 } else {
-                    const device = document.createElement('div');
-                    device.classList.add('select-device');
-                    device.setAttribute('data-id', id);
-                    device.setAttribute('data-device-id', '0');
-                    device.setAttribute('data-title', gThis.text.device);
-                    device.appendChild(gThis.getSvg('plus'));
-                    device.addEventListener('click', gThis.selectDevice);
-                    episode.parentElement.appendChild(device);
+                    const deviceDiv = document.createElement('div');
+                    deviceDiv.classList.add('select-device');
+                    deviceDiv.setAttribute('data-id', id);
+                    deviceDiv.setAttribute('data-ue-id', ueId);
+                    deviceDiv.setAttribute('data-device-id', deviceId);
+                    if (deviceId) {
+                        /* {id: 1, name: "Television", logo_path: "/device-tv.png", svg: "fa6-solid:tv"}
+                           {id: 2, name: "Mobile", logo_path: "/device-mobile.png", svg: "fa6-solid:mobile-screen-button"}
+                           {id: 3, name: "Tablet", logo_path: "/device-tablet.png", svg: "fa6-solid:tablet-screen-button"}
+                           {id: 4, name: "Laptop", logo_path: "/device-laptop.png", svg: "fa6-solid:laptop"}
+                           {id: 5, name: "Desktop", logo_path: "/device-desktop.png", svg: "fa6-solid:desktop"} */
+                        deviceDiv.innerHTML = '';
+                        deviceDiv.appendChild(gThis.getSvg('device-' + gThis.devices[deviceId]['id']));
+                        deviceDiv.setAttribute('data-title', gThis.text[gThis.devices[deviceId]['name']]);
+                        gThis.toolTips.init(deviceDiv);
+                    } else {
+                        deviceDiv.setAttribute('data-title', gThis.text.device);
+                        deviceDiv.appendChild(gThis.getSvg('plus'));
+                    }
+                    deviceDiv.addEventListener('click', gThis.selectDevice);
+                    episode.parentElement.appendChild(deviceDiv);
                 }
 
                 const vote = document.createElement('div');
                 vote.classList.add('select-vote');
                 vote.setAttribute('data-id', id);
+                vote.setAttribute('data-ue-id', ueId);
                 vote.setAttribute('data-title', gThis.text.rating);
                 vote.appendChild(gThis.getSvg('plus'));
                 vote.addEventListener('click', gThis.selectVote);
@@ -1091,6 +1132,49 @@ export class Season {
                 }
             }
         });
+    }
+
+    async pasteStill(e) {
+        // Récupérer l'élément sous la souris
+        const target = e.target;
+        const targetStillDiv = target.classList.contains('.custom-stills-text') ? target : target.closest('.still');
+
+        if (!targetStillDiv) {
+            return;
+        }
+        e.preventDefault();
+        const seriesId = targetStillDiv.getAttribute('data-series-id');
+        const seasonId = targetStillDiv.getAttribute('data-season-id');
+        const episodeId = targetStillDiv.getAttribute('data-episode-id');
+        const fileName = seriesId + '-' + seasonId + '-' + episodeId;
+
+        for (const clipboardItem of e.clipboardData.files) {
+            if (clipboardItem.type.startsWith('image/')) {
+                // Save the image in %kernel.dir%/public/series/stills/season-xx/episode-xx.jpg
+                const formData = new FormData();
+                formData.append('file', clipboardItem, fileName);/*+ clipboardItem.type.split('/')[1]*/
+                const response = await fetch('/' + gThis.lang + '/series/episode/still/' + episodeId, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (response.ok) {
+                    let still;
+                    still = targetStillDiv.querySelector('img');
+                    if (still) {
+                        still.src = URL.createObjectURL(clipboardItem);
+                    } else {
+                        const noPoster = targetStillDiv.querySelector('.no-poster');
+                        noPoster?.remove();
+                        still = document.createElement('img');
+                        still.src = URL.createObjectURL(clipboardItem);
+                        targetStillDiv.appendChild(still);
+                    }
+                } else {
+                    console.log(response);
+                    alert('Error: see console');
+                }
+            }
+        }
     }
 
     listInput(list, type = 'text',size = '10') {

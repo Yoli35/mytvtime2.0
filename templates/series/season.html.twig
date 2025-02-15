@@ -194,21 +194,20 @@
                             <div class="still" data-series-id="{{ series.tmdbId }}" data-season-id="{{ season.id }}" data-episode-id="{{ episode.id }}">
                                 {% if episode.still_path %}
                                     <img src="{{ episode.still_path }}" alt="{{ episode.name }}">
-                                    {% if episode.stills|length %}
-                                        <div class="custom-stills">
-                                            {% for still in episode.stills %}
-                                                <div class="custom-still" data-title="{{ episode.name }}">
-                                                    <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }}">
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
                                 {% elseif episode.stills|length %}{# is defined and ue.still #}
                                     {% set still = episode.stills|last %}
                                     <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }}">
                                 {% else %}
                                     <div class="no-poster">{{ 'No poster'|trans }}</div>
                                 {% endif %}
+                                <div class="custom-stills">
+                                    {% for still in episode.stills %}
+                                        <div class="custom-still" data-title="{{ episode.name }}">
+                                            <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }}">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="custom-stills-text">{{ 'Paste your image here'|trans }}</div>
                                 <div class="number{% if ue and ue.watch_at %} watched{% endif %}"{% if ue and ue.number_of_view %} data-title="{{ 'Watched %time% times'|trans({'%time%': ue.number_of_view}) }}"{% endif %}>
                                     {{ episode.episode_number }}<span>/{{ episodeCount }}</span>
                                 </div>
