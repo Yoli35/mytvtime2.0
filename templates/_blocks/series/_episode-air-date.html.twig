@@ -1,0 +1,12 @@
+{% if episode.air_date %}
+    <div class="air-date">
+        {{ 'Air date'|trans }} {{ episode.air_date|format_date('relative_full') }}
+        {% if ue  and ue.watch_at %}
+            <div class="watch-at-list">
+                {% for e in ues %}
+                    {{ include ('_blocks/series/_watched-at.html.twig', {e: e}) }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endif %}

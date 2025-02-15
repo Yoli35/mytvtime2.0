@@ -47,6 +47,18 @@ class UserEpisodeRepository extends ServiceEntityRepository
         $this->em->flush();
     }
 
+    public function getUserEpisodeViews(int $userId, int $episodeId): array
+    {
+        $sql = "SELECT ue.id as id,
+                       ue.watch_at as watch_at
+                FROM user_episode ue 
+                WHERE ue.user_id = $userId 
+                  AND ue.episode_id = $episodeId
+                ORDER BY ue.id";
+
+        return $this->getAll($sql);
+    }
+
     public function isFullyReleased(UserSeries $userSeries): int
     {
         $userId = $userSeries->getUser()->getId();

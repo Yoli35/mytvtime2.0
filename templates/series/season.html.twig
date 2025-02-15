@@ -209,7 +209,7 @@
                                     {% endfor %}
                                 </div>
                                 <div class="custom-stills-text">{{ 'Click here to add an image'|trans }}</div>
-                                <div class="number{% if ue and ue.watch_at %} watched{% endif %}"{% if ue and ue.number_of_view %} data-title="{{ 'Watched %time% times'|trans({'%time%': ue.number_of_view}) }}"{% endif %}>
+                                <div class="number{% if ue and ue.watch_at %} watched{% endif %}" data-title="{{ 'Watched %time% times'|trans({'%time%': ues|length}) }}">
                                     {{ episode.episode_number }}<span>/{{ episodeCount }}</span>
                                 </div>
                                 {% if episode.episode_type is defined and episode.episode_type == 'finale' %}
@@ -233,18 +233,7 @@
                                     </div>
                                 </div>
                                 {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (ue.watch_at != null)}) }}
-                                {% if episode.air_date %}
-                                    <div class="air-date">
-                                        {{ 'Air date'|trans }} {{ episode.air_date|format_date('relative_full') }}
-                                        {% if ue  and ue.watch_at %}
-                                            <div class="watch-at-list">
-                                                {% for e in ues %}
-                                                    {{ include ('_blocks/series/_watched-at.html.twig', {e: e}) }}
-                                                {% endfor %}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                {% endif %}
+                                {{ include('_blocks/series/_episode-air-date.html.twig', {episode: episode, ue: ue, ues: episode.user_episodes}) }}
                                 {% if episode.runtime %}
                                     <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
                                 {% endif %}
@@ -308,7 +297,7 @@
                                          data-show-id="{{ episode.show_id }}"
                                          data-s-number="{{ episode.season_number }}"
                                          data-e-number="{{ episode.episode_number }}"
-                                         data-views="{{ ue.number_of_view }}"
+                                         data-views="{{ episode.user_episodes|length }}"
                                          data-title="{{ ue.watch_at|format_datetime('relative_short', 'short')|capitalize }}">
                                         {{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px'}) }}
                                     </div>

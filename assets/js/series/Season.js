@@ -451,18 +451,13 @@ export class Season {
                 // TODO: Vérifier "data"
                 console.log(data);
                 const airDateDiv = episode.closest('.episode').querySelector('.air-date');
-                let watchedAtDiv = airDateDiv.querySelector(".watched-at");
-                if (!watchedAtDiv) {
-                    watchedAtDiv = document.createElement('div');
-                    watchedAtDiv.classList.add('watched-at');
-                    watchedAtDiv.addEventListener('click', gThis.modifyWatchedAtOpen);
-                    airDateDiv.appendChild(watchedAtDiv);
-                }
-                watchedAtDiv.innerHTML = data['viewedAt'];
-                watchedAtDiv.setAttribute('data-watched-at', data['dataViewedAt']);
+                const block = document.createElement('div');
+                block.innerHTML = data['airDateBlock'];
+                const newAirDateDiv = block.querySelector('.air-date');
+                airDateDiv.replaceWith(newAirDateDiv);
 
                 const numberDiv = episode.closest('.episode').querySelector('.number');
-                numberDiv.setAttribute('data-title', "x" + (views + 1));
+                numberDiv.setAttribute('data-title', data['views']);
 
                 episode.setAttribute('data-views', '' + (views + 1));
                 episode.setAttribute('data-title', gThis.text.now);
@@ -748,13 +743,8 @@ export class Season {
                 const block = document.createElement('div');
                 block.innerHTML = data['watchedAtBlock'];
                 const newWatchedAtDiv = block.querySelector('.watched-at');
-                // Remplacer watchedAtDiv par newWatchedAtDiv
                 watchedAtDiv.replaceWith(newWatchedAtDiv);
-                // watchedAtDiv.innerHTML = newWatchedAtDiv.innerHTML;
-                // watchedAtDiv.setAttribute('data-watched-at', data['dataViewedAt']);
-                /*watchedAtDiv.innerHTML = data['viewedAt'];
-                watchedAtDiv.setAttribute('data-watched-at', data['dataViewedAt']);
-                episode.setAttribute('data-title', gThis.text.now);*/
+                episode.setAttribute('data-title', gThis.text.now);
                 const now = new Date();
                 episode.setAttribute('data-time', now.toISOString());
             });
