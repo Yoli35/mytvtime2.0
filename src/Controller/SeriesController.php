@@ -1782,16 +1782,8 @@ class SeriesController extends AbstractController
 
         // Ajout d'un suffixe si le fichier existe déjà
         $copyCount = 0;
-        $testName = $basename;
-        do {
-            if ($copyCount > 0) {
-                $testName = $projectDir . '/public/series/stills' . $basename . '-' . $copyCount . '.webp';
-            }
-            $copyCount++;
-        } while (file_exists($testName));
-        if ($copyCount > 1) {
-            $basename = $basename . '-' . $copyCount;
-            $stillPath = $projectDir . '/public/series/stills/' . $basename . '.webp';
+        while (file_exists($stillPath)) {
+            $stillPath = $projectDir . '/public/series/stills/' . $basename . '-' . ++$copyCount . '.webp';
         }
 
         try {
@@ -1807,6 +1799,7 @@ class SeriesController extends AbstractController
         try {
             $webp = $this->imageService->webpImage($tempName, $stillPath, 90, 1280, 720);
             if ($webp) {
+                if ($copyCount) $basename .= '-' . $copyCount;
                 $imagePath = '/' . $basename . '.webp';
             } else {
                 $imagePath = null;
