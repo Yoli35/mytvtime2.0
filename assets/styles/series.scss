@@ -2318,21 +2318,18 @@ h2 {
 
             .custom-stills-text {
                 align-items: center;
+                background-color: var(--orange-10);
                 border-radius: .5rem;
-                border: 2px dashed transparent;
-                bottom: .5rem;
+                bottom: 5.75rem;
                 color: var(--orange-60);
                 display: none;
                 font-size: 1.5rem;
                 font-weight: 900;
                 gap: .5rem;
                 justify-content: center;
-                left: .5rem;
-                min-height: 4rem;
                 overflow-x: auto;
-                padding: .5rem;
+                padding: .25rem 1rem;
                 position: absolute;
-                right: .5rem;
 
                 &.active {
                     color: var(--green-30);

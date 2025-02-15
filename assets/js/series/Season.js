@@ -111,7 +111,6 @@ export class Season {
         this.lang = document.documentElement.lang;
         this.intervals = [];
         this.initialDay = new Date().getDate();
-        console.log(this.initialDay);
         // this.saving = null;
         // this.lastMinute = 0;
         // this.lastHour = 0;
@@ -251,20 +250,30 @@ export class Season {
         });
 
         const customStillsTextDivs = document.querySelectorAll('.custom-stills-text');
-        // const customStillsTextDivs = document.querySelectorAll('.custom-stills-text');
         customStillsTextDivs.forEach(customStillsTextDiv => {
-            customStillsTextDiv.addEventListener('click', (e) => {
+            customStillsTextDiv.addEventListener('click', () => {
                 const customStillsDiv = customStillsTextDiv.parentElement.querySelector('.custom-stills');
+                customStillsTextDiv.innerText = gThis.text['paste'] + ' - 4';
                 customStillsDiv.classList.add('active');
                 customStillsTextDiv.classList.add('active');
                 customStillsTextDiv.addEventListener('paste', gThis.pasteStill);
+                let countDown = 4;
+                let intervalId = setInterval(() => {
+                    customStillsTextDiv.innerText = gThis.text['paste'] + ' - ' + --countDown;
+                    console.log(countDown);
+                    if (countDown === 1) {
+                        clearInterval(intervalId);
+                    }
+                }, 1000);
                 setTimeout(() => {
+                    customStillsTextDiv.innerText = gThis.text['click'];
                     customStillsDiv.classList.remove('active');
                     customStillsTextDiv.classList.remove('active');
                     customStillsTextDiv.removeEventListener('paste', gThis.pasteStill);
                 }, 4000);
             });
         });
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 const list = document.querySelector('.list');
@@ -283,49 +292,6 @@ export class Season {
                 }
             }
         });
-
-        /*document.addEventListener('paste', async (e) => {
-            // Récupérer l'élément sous la souris
-            const target = e.target;
-            const targetStillDiv = target.classList.contains('.still') ? target : target.closest('.still');
-
-            if (!targetStillDiv) {
-                return;
-            }
-            e.preventDefault();
-            const seriesId = targetStillDiv.getAttribute('data-series-id');
-            const seasonId = targetStillDiv.getAttribute('data-season-id');
-            const episodeId = targetStillDiv.getAttribute('data-episode-id');
-            const fileName = seriesId + '-' + seasonId + '-' + episodeId;
-
-            for (const clipboardItem of e.clipboardData.files) {
-                if (clipboardItem.type.startsWith('image/')) {
-                    // Save the image in %kernel.dir%/public/series/stills/season-xx/episode-xx.jpg
-                    const formData = new FormData();
-                    formData.append('file', clipboardItem, fileName);/!*+ clipboardItem.type.split('/')[1]*!/
-                    const response = await fetch('/' + gThis.lang + '/series/episode/still/' + episodeId, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    if (response.ok) {
-                        let still;
-                        still = targetStillDiv.querySelector('img');
-                        if (still) {
-                            still.src = URL.createObjectURL(clipboardItem);
-                        } else {
-                            const noPoster = targetStillDiv.querySelector('.no-poster');
-                            noPoster?.remove();
-                            still = document.createElement('img');
-                            still.src = URL.createObjectURL(clipboardItem);
-                            targetStillDiv.appendChild(still);
-                        }
-                    } else {
-                        console.log(response);
-                        alert('Error: see console');
-                    }
-                }
-            }
-        });*/
     }
 
     setProgress() {
@@ -346,7 +312,6 @@ export class Season {
 
     checkDayChange() {
         const currentDay = new Date().getDate();
-        console.log({'initial day': gThis.initialDay, 'current day': currentDay});
         if (currentDay !== gThis.initialDay) {
             window.location.reload();
         }

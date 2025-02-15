@@ -207,7 +207,7 @@
                                         </div>
                                     {% endfor %}
                                 </div>
-                                <div class="custom-stills-text">{{ 'Paste your image here'|trans }}</div>
+                                <div class="custom-stills-text">{{ 'Click here to add an image'|trans }}</div>
                                 <div class="number{% if ue and ue.watch_at %} watched{% endif %}"{% if ue and ue.number_of_view %} data-title="{{ 'Watched %time% times'|trans({'%time%': ue.number_of_view}) }}"{% endif %}>
                                     {{ episode.episode_number }}<span>/{{ episodeCount }}</span>
                                 </div>
@@ -470,7 +470,9 @@
         "minute": "{{ 'minute'|trans }}",
         "second": "{{ 'second'|trans }}",
         "copied": "{{ 'The link has been copied to your clipboard'|trans }}",
-        "additional": "{{ 'No overview'|trans }}"
+        "additional": "{{ 'No overview'|trans }}",
+        "click": "{{ 'Click here to add an image'|trans }}",
+        "paste": "{{ 'Paste your image here (green)'|trans }}"
         }
         }
     </div>
