@@ -160,6 +160,18 @@
         <div class="debug">{{ series.id }} / {{ userSeries.id }} / {{ series.tmdbId }}</div>
     {% endif %}
 
+    {% if route in ['app_series_tmdb'] and  app.environment == 'dev' %}
+        <div class="debug">{{ tv.id }}</div>
+    {% endif %}
+
+    {% if route in ['app_movie_show'] and  app.environment == 'dev' %}
+        <div class="debug">{{ dbMovie.id }} / {{ userMovie.id }}} / {{ movie.id }}</div>
+    {% endif %}
+
+    {% if route in ['app_movie_tmdb'] and  app.environment == 'dev' %}
+        <div class="debug">{{ movie.id }}</div>
+    {% endif %}
+
     {% set p = '' %}
     {% if parameters|length %}
         {% for key, value in parameters %}

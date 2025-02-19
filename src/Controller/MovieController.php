@@ -279,6 +279,7 @@ class MovieController extends AbstractController
         return $this->render('movie/show.html.twig', [
             'userMovie' => $userMovie,
             'movie' => $movie,
+            'dbMovie' => $dbMovie,
             'providers' => $providers,
             'translations' => $translations,
         ]);

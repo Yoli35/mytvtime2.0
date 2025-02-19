@@ -48,7 +48,9 @@
                     <div class="name">
                         <h1>
                             {% if tv.localized_name %}
-                                <span class="localized-name-span">{{ tv.localized_name.name }}</span>
+                                <span class="localized-name-span">{{ tv.localized_name.name }}</span><br>
+                            {% elseif tv.original_language != app.locale and tv.name == tv.original_name and tv.translations %}
+                                <span class="localized-name-span">{{ tv.translations.data.name }}</span><br>
                             {% endif %}
                             <span class="name-span">{{ series.name }}</span>
                             {% if series.firstAirDate %}
@@ -454,7 +456,7 @@
                         <div class="fact">
                             <div class="fact-label">{{ 'Original Country'|trans }}</div>
                             {% for country in tv.origin_country %}
-                                <div class="fact-content">{{ getEmojiFlag(country) ~ ' ' ~ country|country_name }}</div>
+                                <div class="fact-content"><span>{{ getEmojiFlag(country) }}</span> {{ country|country_name }}</div>
                             {% endfor %}
                         </div>
                         {% if tv.networks|length %}

@@ -741,7 +741,7 @@ class SeriesController extends AbstractController
             $localizedName = null;
             $localizedOverview = null;
         }
-        $tv = json_decode($this->tmdbService->getTv($id, $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords", "similar"]), true);
+        $tv = json_decode($this->tmdbService->getTv($id, $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords", "similar", "translations"]), true);
 
 //        dump($localizedName);
         $this->checkTmdbSlug($tv, $slug, $localizedName?->getSlug());
@@ -769,6 +769,7 @@ class SeriesController extends AbstractController
         $tv['networks'] = $this->networks($tv);
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
+        $tv['translations'] = $this->getTranslations($tv, $user);
 
         dump($tv);
         return $this->render('series/tmdb.html.twig', [
@@ -777,6 +778,67 @@ class SeriesController extends AbstractController
             'localizedOverview' => $localizedOverview,
             'externals' => $this->getTMDBExternals($tv['name'], $tv['origin_country']),
         ]);
+    }
+
+    public function getTranslations(array $tv, User $user): ?array
+    {
+        // "translations" => array:10 [▼
+        //      0 => array:5 [▼
+        //        "iso_3166_1" => "CN"
+        //        "iso_639_1" => "zh"
+        //        "name" => "普通话"
+        //        "english_name" => "Mandarin"
+        //        "data" => array:4 [▶]
+        //      ]
+        //      1 => array:5 [▼
+        //        "iso_3166_1" => "US"
+        //        "iso_639_1" => "en"
+        //        "name" => "English"
+        //        "english_name" => "English"
+        //        "data" => array:4 [▼
+        //          "name" => "Reunion: The Sound of the Providence"
+        //          "overview" => "Ten years after their last mission, the famed tomb raiders Wu Xie, Wang Pang Zi, and Zhang Qi Ling have moved on, believing their days of adventure are behind t ▶"
+        //          "homepage" => ""
+        //          "tagline" => ""
+        //        ]
+        //      ]
+        $country = $user->getCountry() ?? 'FR'; // user iso_3166_1
+        $locale = $user->getPreferredLanguage() ?? 'fr'; // user iso_639_1
+        $translations = $tv['translations']['translations'];
+        $translation = null;
+
+        foreach ($translations as $t) {
+            if ($t['iso_3166_1'] == $country && $t['iso_639_1'] == $locale) {
+                $translation = $t;
+                break;
+            }
+        }
+        if ($translation == null) {
+            foreach ($translations as $t) {
+                if ($t['iso_3166_1'] == $country) {
+                    $translation = $t;
+                    break;
+                }
+            }
+        }
+        if ($translation == null) {
+            foreach ($translations as $t) {
+                if ($t['iso_639_1'] == $locale) {
+                    $translation = $t;
+                    break;
+                }
+            }
+        }
+        // get en-Us if null
+        if ($translation == null) {
+            foreach ($translations as $t) {
+                if ($t['iso_3166_1'] == 'US' && $t['iso_639_1'] == 'en') {
+                    $translation = $t;
+                    break;
+                }
+            }
+        }
+        return $translation;
     }
 
     #[IsGranted('ROLE_USER')]
@@ -838,7 +900,8 @@ class SeriesController extends AbstractController
             "keywords",
             "external_ids",
             "lists",
-            "similar"
+            "similar",
+            "translations",
         ]), true);
 //        dump($tv);
         if ($tv) {
@@ -875,6 +938,7 @@ class SeriesController extends AbstractController
             $tv['seasons'] = $this->seasonsPosterPath($tv['seasons'], $dayOffset);
             $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
             $tv['watch/providers'] = $this->watchProviders($tv, $user->getCountry() ?? 'FR');
+            $tv['translations'] = $this->getTranslations($tv, $user);
             $noTv = [];
         } else {
             $series->setUpdates(['Series not found']);
