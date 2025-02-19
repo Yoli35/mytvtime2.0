@@ -939,6 +939,14 @@ class SeriesController extends AbstractController
             $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
             $tv['watch/providers'] = $this->watchProviders($tv, $user->getCountry() ?? 'FR');
             $tv['translations'] = $this->getTranslations($tv, $user);
+            if ($tv['localized_name'] == null && $tv['translations'] && $tv['name'] != $tv['translations']['data']['name']) {
+                $slugger = new AsciiSlugger();
+                $slug = $slugger->slug($tv['translations']['data']['name'])->lower()->toString();
+                $newLocalizedName = new SeriesLocalizedName($series, $tv['translations']['data']['name'], $slug, $request->getLocale());
+                $this->seriesLocalizedNameRepository->save($newLocalizedName, true);
+                $tv['localized_name'] = $newLocalizedName;
+                $this->addFlash('success', 'The series name “' . $newLocalizedName->getName() . '” has been added to the database.');
+            }
             $noTv = [];
         } else {
             $series->setUpdates(['Series not found']);
