@@ -127,7 +127,8 @@ export class Season {
         this.setProgress();
 
         // TODO: recharger la page au changement de jour (mettre à jour les dates relatives)
-        setInterval(this.checkDayChange, 60000);// chaque minute
+        //setInterval(this.checkDayChange, 60000);// chaque minute
+        this.reloadOnDayChange();
 
         const watchLinks = document.querySelectorAll('.watch-link');
         watchLinks.forEach(function (watchLink) {
@@ -315,6 +316,16 @@ export class Season {
         if (currentDay !== gThis.initialDay) {
             window.location.reload();
         }
+    }
+
+    reloadOnDayChange() {
+        const now = new Date();
+        const midnightMinusOneSecond = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+        const timeToMidnightMinusOneSecond = midnightMinusOneSecond - now;
+        console.log('Reload in ' + Math.floor(timeToMidnightMinusOneSecond / 3600000) + ':' + Math.floor(timeToMidnightMinusOneSecond % 3600000 / 60000) + ':' + Math.floor(timeToMidnightMinusOneSecond % 60000 / 1000));
+        setTimeout(() => {
+            window.location.reload();
+        }, timeToMidnightMinusOneSecond + 2000); // reload at noon + 1 second
     }
 
     openTitleForm(e) {
