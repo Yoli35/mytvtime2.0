@@ -180,9 +180,6 @@
                                 {{ ue.episode_number }}
                             </div>
                         {% endif %}
-                        {#                    {% if loop.index0 % break == break-1 %} #}
-                        {#                        <div class="quick-episodes-break"></div> #}
-                        {#                    {% endif %} #}
                     {% endfor %}
                 </div>
             </div>
@@ -355,25 +352,33 @@
                 </div>
                 {% if season.credits.cast|length %}
                     <h3>{{ 'Cast'|trans }}</h3>
-                    <div class="cast">
-                        <div class="wrapper">
-                            {% for people in season.credits.cast %}
-                                <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
-                                    <div class="people">
-                                        <div class="photo">
-                                            {% if people.profile_path %}
-                                                <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                                            {% else %}
-                                                {{ 'No picture'|trans }}
-                                            {% endif %}
+                    <div class="cast-and-name">
+                        <div class="cast">
+                            <div class="wrapper">
+                                {% for people in season.credits.cast %}
+                                    <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
+                                        <div class="people">
+                                            <div class="photo">
+                                                {% if people.profile_path %}
+                                                    <img src="{{ people.profile_path }}" alt="{{ people.name }}">
+                                                {% else %}
+                                                    {{ 'No picture'|trans }}
+                                                {% endif %}
+                                            </div>
+                                            <div class="infos">
+                                                <div class="name">{{ people.name }}</div>
+                                                <div>{{ people.character }}</div>
+                                            </div>
                                         </div>
-                                        <div class="infos">
-                                            <div class="name">{{ people.name }}</div>
-                                            <div>{{ people.character }}</div>
-                                        </div>
-                                    </div>
-                                </a>
-                            {% endfor %}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="series-name">
+                            {% if season.localized_name %}
+                                <span class="localized-name-span">{{ season.localized_name.name }}</span>
+                            {% endif %}
+                            <span class="name-span">{{ series.name }} ({{ series.firstAirDate|date("Y") }})</span>
                         </div>
                     </div>
                 {% endif %}

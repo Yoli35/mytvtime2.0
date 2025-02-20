@@ -544,10 +544,6 @@ h2 {
                 color: #030303; /*var(--ardoise-90);*/
             }
 
-            h1 {
-                line-height: 1.25em;
-            }
-
             .name {
                 align-items: flex-start;
                 display: flex;
@@ -2246,6 +2242,41 @@ h2 {
                         padding-inline-end: 1rem;
                     }
                 }
+            }
+        }
+    }
+
+    .cast-and-name {
+        display: flex;
+        gap: 1rem;
+
+        .series-name {
+            align-items: flex-end;
+            display: flex;
+            flex-direction: column;
+            font-size: clamp(1rem, 4vw, 4rem);
+            font-weight: 100;
+            gap: .5rem;
+            justify-content: center;
+            line-height: clamp(1.25rem, 6.25vw, 5rem);
+            margin-block: auto;
+            min-width: fit-content;
+            position: relative;
+            text-align: left;
+
+            span {
+                background-color: var(--ardoise-90-alpha-20);
+                border-radius: .5rem;
+                padding-inline: .5rem;
+            }
+
+            .localized-name-span {
+                color: var(--orange-70);
+            }
+
+        .cast {
+            max-width: 100%;
+            width: fit-content;
             }
         }
     }
