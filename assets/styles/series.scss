@@ -2130,6 +2130,24 @@ h2 {
         }
     }
 
+    .edit-episode-infos {
+        align-items: center;
+        background-color: var(--ardoise-100-alpha-20);
+        border-radius: .25rem;
+        color: var(--ardoise-10);
+        cursor: pointer;
+        display: flex;
+        height: 2rem;
+        justify-content: center;
+        padding: .5rem;
+        transition: background-color 0.3s linear;
+        width: 2rem;
+
+        &:hover {
+            background-color: var(--orange-50);
+        }
+    }
+
     .quick-episodes {
         align-items: flex-start;
         background-color: var(--ardoise-100-alpha-20);
@@ -4261,6 +4279,56 @@ dialog, .side-panel {
                 height: 9rem;
                 object-fit: cover;
                 width: 16rem;
+            }
+        }
+    }
+}
+
+.edit-episode-infos-dialog {
+    .form-row {
+        background-color: var(--ardoise-80-alpha-50);
+        border-radius: .5rem;
+        padding: 1rem;
+
+        &:has(.episode-number) {
+            position: relative;
+        }
+
+        .episode-number {
+            align-items: center;
+            aspect-ratio: 1;
+            background-color: var(--orange-50);
+            border-radius: .25rem;
+            display: flex;
+            font-size: 2rem;
+            justify-content: center;
+            line-height: 2rem;
+            padding-inline: .5rem;
+            position: absolute;
+        }
+
+        .form-field:has(.still) {
+            align-items: center;
+            justify-content: center;
+            width: 12rem;
+
+            .still {
+                align-items: center;
+                aspect-ratio: 16/9;
+                background-color: var(--green-50);
+                border-radius: .25rem;
+                display: flex;
+                flex-direction: column;
+                gap: .5rem;
+                justify-content: center;
+                width: 10rem;
+
+                img {
+                    aspect-ratio: 16/9;
+                    border-radius: .25rem;
+                    object-fit: cover;
+                    width: 100%;
+                }
             }
         }
     }

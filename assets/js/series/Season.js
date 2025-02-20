@@ -110,7 +110,7 @@ export class Season {
         this.text = jsonGlobsObject.text;
         this.lang = document.documentElement.lang;
         this.intervals = [];
-        this.initialDay = new Date().getDate();
+        // this.initialDay = new Date().getDate();
         // this.saving = null;
         // this.lastMinute = 0;
         // this.lastHour = 0;
@@ -185,6 +185,31 @@ export class Season {
                         console.log(data);
                     });
             });
+        });
+
+        const editEpisodeInfosButton = document.querySelector('.edit-episode-infos');
+        editEpisodeInfosButton.addEventListener('click', this.openEditEpisodeInfosPanel);
+        const editEpisodeInfosDialog = document.querySelector('.side-panel.edit-episode-infos-dialog');
+        const editEpisodeInfosForm = editEpisodeInfosDialog.querySelector('form');
+        const submitRow = editEpisodeInfosForm.querySelector('.form-row.submit-row');
+        const scrollDownToSubmitDiv = editEpisodeInfosDialog.querySelector('.scroll-down-to-submit');
+        const scrollDownToSubmitButton = scrollDownToSubmitDiv.querySelector('button');
+        const observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                console.log(entry)
+                if (entry.isIntersecting) {
+                    scrollDownToSubmitDiv.style.display = 'none';
+                } else {
+                    scrollDownToSubmitDiv.style.display = 'flex';
+                }
+            });
+        });
+        observer.observe(submitRow);
+        scrollDownToSubmitButton.addEventListener('click', function () {
+            // addLocationDialog > frame > form > submit-row
+            // frame overflow-y: auto;
+            // faire apparaitre la div "submit-row" dans le cadre
+            editEpisodeInfosDialog.querySelector('.frame').scrollTo(0, submitRow.offsetTop);
         });
 
         const quickEpisodeLinks = document.querySelectorAll('.quick-episode');
@@ -311,12 +336,12 @@ export class Season {
         }
     }
 
-    checkDayChange() {
+    /*checkDayChange() {
         const currentDay = new Date().getDate();
         if (currentDay !== gThis.initialDay) {
             window.location.reload();
         }
-    }
+    }*/
 
     reloadOnDayChange() {
         const now = new Date();
@@ -326,6 +351,53 @@ export class Season {
         setTimeout(() => {
             window.location.reload();
         }, timeToMidnightMinusOneSecond + 2000); // reload at noon + 1 second
+    }
+
+    openEditEpisodeInfosPanel() {
+        const editEpisodeInfosForm = document.querySelector('#edit-episode-infos-form');
+        const editEpisodeInfosDialog = document.querySelector('.side-panel.edit-episode-infos-dialog');
+        const textareas = editEpisodeInfosForm.querySelectorAll('textarea');
+        textareas.forEach(textarea => {
+            // ajuster la hauteur du textarea pour que le contenu soit entièrement visible si il y a un contenu
+            if (textarea.scrollHeight > textarea.clientHeight) {
+                textarea.style.height = textarea.scrollHeight + 'px';
+            }
+            textarea.addEventListener('keyup', (e) => {
+                const field = e.currentTarget;
+                if (field.scrollHeight > field.clientHeight) {
+                    field.style.height = `${field.scrollHeight}px`;
+                }
+            });
+        });
+        const submitRow = editEpisodeInfosForm.querySelector('.form-row.submit-row');
+        const cancelButton = submitRow.querySelector('button[type="button"]');
+        cancelButton.addEventListener('click', () => {
+            editEpisodeInfosDialog.classList.remove('open');
+        });
+        const submitButton = submitRow.querySelector('button[type="submit"]');
+        submitButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            const formData = new FormData(editEpisodeInfosForm);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+            fetch('/' + gThis.lang + '/series/episode/update/infos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(data)
+            }).then(function (response) {
+                if (response.ok) {
+                    editEpisodeInfosDialog.classList.remove('open');
+                    window.location.reload();
+                }
+            });
+        });
+
+        editEpisodeInfosDialog.classList.add('open');
     }
 
     openTitleForm(e) {

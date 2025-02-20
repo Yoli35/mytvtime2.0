@@ -131,6 +131,10 @@
                     </div>
                 </div>
 
+                <div class="edit-episode-infos" data-title="{{ 'Edit all episodes name and overview'|trans }}">
+                    {{ ux_icon('basil:edit-alt-outline', {height: '24px', width: '24px'}) }}
+                </div>
+
                 {% set now = 'now'|date("Y-m-d") %}
                 {% set episodeCount = season.episodes|length %}
                 {% if episodeCount > 10 %}
@@ -437,6 +441,9 @@
             </form>
         </div>
     </dialog>
+
+    {{ include('_blocks/forms/_edit-episode-infos-form.html.twig') }}
+
     <div id="globs" style="display: none">
         {
         "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},

@@ -1820,7 +1820,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/episode/update/info/{id}', name: 'update_info', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    #[Route('/episode/update/info/{id}', name: 'episode_update_info', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function episodeUpdateInfo(Request $request, int $id): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -1849,6 +1849,86 @@ class SeriesController extends AbstractController
         return $this->json([
             'ok' => true,
         ]);
+    }
+
+    #[Route('/episode/update/infos', name: 'episode_update_infos', methods: ['POST'])]
+    public function episodeUpdateInfos(Request $request): JsonResponse
+    {
+        $createdTitleCount = 0;
+        $createdOverviewCount = 0;
+        $updatedTitleCount = 0;
+        $updatedOverviewCount = 0;
+
+        if ($request->isMethod('POST')) {
+            $payload = $request->getPayload();
+            dump($payload);
+            // payload :
+            // [▼
+            //    "title-1519985" => "Special Investigation Department"
+            //    "overview-1519985" => "Guo Chang Cheng obtient un emploi au sein du mystérieux département SID de Dragon City. Pour sa première affaire, il est emmené avec l'équipe SID à l'université ▶"
+            //    "title-1566801" => "Épisode 2"
+            //    "overview-1566801" => ""
+            //    ...
+            // ]
+            // "title-12345" => $type = "title", $episodeId = 12345
+            // "overview-12345" => $type = "overview", $episodeId = 12345
+            foreach ($payload as $key => $value) {
+                // split $key with '-' to get $type and $episodeId
+                $parts = explode('-', $key);
+                $type = $parts[0];
+                $episodeId = $parts[1];
+                $content = $value;
+                dump([
+                    'type' => $type,
+                    'episodeId' => $episodeId,
+                    'content' => $content,
+                ]);
+                if ($content === "") {
+                    continue;
+                }
+                if ($type === 'title' && !str_contains($content, 'pisode')) {
+                    $esn = $this->episodeSubstituteNameRepository->findOneBy(['episodeId' => $episodeId]);
+                    if ($esn) {
+                        if ($content === $esn->getName()) {
+                            continue;
+                        }
+                        $esn->setName($content);
+                        $updatedTitleCount++;
+                    } else {
+                        $esn = new EpisodeSubstituteName($episodeId, $content);
+                        $createdTitleCount++;
+                    }
+                    $this->episodeSubstituteNameRepository->save($esn, true);
+                }
+                if ($type === 'overview') {
+                    $elo = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $episodeId]);
+                    if ($elo) {
+                        if ($content === $elo->getOverview()) {
+                            continue;
+                        }
+                        $elo->setOverview($content);
+                        $updatedOverviewCount++;
+                    } else {
+                        $elo = new EpisodeLocalizedOverview($episodeId, $content, $request->getLocale());
+                        $createdOverviewCount++;
+                    }
+                    $this->episodeLocalizedOverviewRepository->save($elo, true);
+                }
+            }
+        }
+        $this->addFlash('success', 'Titles and overviews updated.<br>' .
+            'Created titles: ' . $createdTitleCount . '<br>' .
+            'Created overviews: ' . $createdOverviewCount . '<br>' .
+            'Updated titles: ' . $updatedTitleCount . '<br>' .
+            'Updated overviews: ' . $updatedOverviewCount
+        );
+        return new JsonResponse([
+            'ok' => true,
+            'createdTitleCount' => $createdTitleCount,
+            'createdOverviewCount' => $createdOverviewCount,
+            'updatedTitleCount' => $updatedTitleCount,
+            'updatedOverviewCount' => $updatedOverviewCount,
+            ]);
     }
 
     #[Route('/episode/still/{id}', name: 'still', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]

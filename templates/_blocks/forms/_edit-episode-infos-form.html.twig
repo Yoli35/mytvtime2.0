@@ -1,0 +1,54 @@
+<div class="side-panel edit-episode-infos-dialog">
+    <div class="frame">
+        <form action="" id="edit-episode-infos-form" enctype="multipart/form-data">
+            {% for episode in season.episodes %}
+                {% set ue = episode.user_episode %}
+                <div class="form-row" id="episode-{{ episode.episode_number }}">
+                    <div class="episode-number">#{{ episode.episode_number }}</div>
+                    <div class="form-field">
+                        <div class="still" id="still-{{ episode.episode_number }}">
+                            {% if episode.still_path %}
+                                <img src="{{ episode.still_path }}" alt="{{ episode.name }}">
+                            {% elseif episode.stills|length %}{# is defined and ue.still #}
+                                {% set still = episode.stills|last %}
+                                <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }}">
+                            {% else %}
+                                <div class="no-poster">{{ 'No poster'|trans }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-column">
+                        <div class="form-field">
+                            <label for="title-{{ episode.id }}">{{ 'Title'|trans }} #{{ episode.episode_number }}
+                                <input type="text"
+                                       name="title-{{ episode.id }}"
+                                       id="title-{{ episode.id }}"
+                                       value="{{ ue.substitute_name ?? episode.name }}"
+                                >
+                                <span class="error"></span>
+                            </label>
+                            <label for="overview-{{ episode.id }}">{{ 'Overview'|trans }} #{{ episode.episode_number }}
+                                <textarea
+                                        name="overview-{{ episode.id }}"
+                                        id="overview-{{ episode.id }}"
+                                >{{ ue.localized_overview ?? episode.overview }}</textarea>
+                                <span class="error"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="form-row submit-row">
+                <div class="form-field">
+                    <button type="button">{{ 'Cancel'|trans }}</button>
+                </div>
+                <div class="form-field">
+                    <button type="submit">{{ 'Add'|trans }}</button>
+                </div>
+            </div>
+        </form>
+        <div class="scroll-down-to-submit">
+            <button>{{ 'Scroll down to submit'|trans }}</button>
+        </div>
+    </div>
+</div>
