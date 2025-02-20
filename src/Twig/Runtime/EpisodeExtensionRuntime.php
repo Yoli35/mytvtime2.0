@@ -98,6 +98,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
             return [
                 'display' => $item['display'],
                 'airAt' => $item['airAt'],
+                'customDate' => $item['customDate'],
                 'episodeCount' => $item['episodeCount'],
                 'episodesWatched' => $item['episodesWatched'],
                 'firstEpisodeNumber' => $item['firstEpisodeNumber'],

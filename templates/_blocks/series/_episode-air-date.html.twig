@@ -1,6 +1,6 @@
 {% if episode.air_date %}
     <div class="air-date">
-        {{ 'Air date'|trans }} {{ episode.air_date|format_date('relative_full') }}
+        {{ 'Air date'|trans }} {{ episode.air_date|format_datetime('relative_full', 'short')|replace({', 00:00': ""}) }}
         {% if ue  and ue.watch_at %}
             <div class="watch-at-list">
                 {% for e in ues %}

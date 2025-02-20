@@ -141,15 +141,23 @@ class UserSeriesRepository extends ServiceEntityRepository
                     INNER JOIN `user_episode` ue on us.`id` = ue.`user_series_id`
                     LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id
+                    LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                     LEFT JOIN watch_provider wp ON sbs.provider_id = wp.provider_id
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale'
                 WHERE us.`user_id`=$userId
                     AND  ue.`season_number` > 0
-                    AND (
-                        ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.`air_date` > CURDATE() AND ue.`air_date` <= ADDDATE(CURDATE(), INTERVAL 7 DAY))
-                     OR ((sdo.offset > 0) AND ue.`air_date` > DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY) AND ue.`air_date` <= SUBDATE(ADDDATE(CURDATE(), INTERVAL 7 DAY), INTERVAL sdo.offset DAY))
-                     OR ((sdo.offset < 0) AND ue.`air_date` > DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY) AND ue.`air_date` <= ADDDATE(CURDATE(), INTERVAL (sdo.offset+7) DAY))
+                    AND
+                    (
+                        (
+                            ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.`air_date` > CURDATE() AND ue.`air_date` <= ADDDATE(CURDATE(), INTERVAL 7 DAY))
+                         OR ((sdo.offset > 0) AND ue.`air_date` > DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY) AND ue.`air_date` <= SUBDATE(ADDDATE(CURDATE(), INTERVAL 7 DAY), INTERVAL sdo.offset DAY))
+                         OR ((sdo.offset < 0) AND ue.`air_date` > DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY) AND ue.`air_date` <= ADDDATE(CURDATE(), INTERVAL (sdo.offset+7) DAY))
                         )
+                     OR (
+                         sbd.id IS NOT NULL
+                         AND DATE(sbd.date) = CURDATE()
+                        )
+                    )
                 ORDER BY air_date, air_at, season_number, episode_number";
 
         return $this->getAll($sql);

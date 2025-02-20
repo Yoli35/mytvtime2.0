@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\SeriesBroadcastScheduleRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -55,6 +57,17 @@ class SeriesBroadcastSchedule
 
     #[ORM\Column(nullable: true)]
     private ?bool $multiPart = null;
+
+    /**
+     * @var Collection<int, SeriesBroadcastDate>
+     */
+    #[ORM\OneToMany(targetEntity: SeriesBroadcastDate::class, mappedBy: 'seriesBroadcastSchedule', orphanRemoval: true)]
+    private Collection $customDates;
+
+    public function __construct()
+    {
+        $this->customDates = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -215,5 +228,37 @@ class SeriesBroadcastSchedule
         $this->multiPart = $multiPart;
 
         return $this;
+    }
+
+    public function addCustomDate(SeriesBroadcastDate $customDate): static
+    {
+        if (!$this->customDates->contains($customDate)) {
+            $this->customDates->add($customDate);
+            $customDate->setSeriesBroadcastSchedule($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomDate(SeriesBroadcastDate $customDate): static
+    {
+        if ($this->customDates->removeElement($customDate)) {
+            // set the owning side to null (unless already changed)
+            if ($customDate->getSeriesBroadcastSchedule() === $this) {
+                $customDate->setSeriesBroadcastSchedule(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCustomDates(): Collection
+    {
+        return $this->customDates;
+    }
+
+    public function setCustomDates(Collection $customDates): void
+    {
+        $this->customDates = $customDates;
     }
 }

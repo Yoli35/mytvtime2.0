@@ -135,7 +135,7 @@
                     {{ ux_icon('basil:edit-alt-outline', {height: '24px', width: '24px'}) }}
                 </div>
 
-                {% set now = 'now'|date("Y-m-d") %}
+                {% set now = 'now'|date("Y-m-d H:i") %}
                 {% set episodeCount = season.episodes|length %}
                 {% if episodeCount > 10 %}
                     {% if episodeCount is even %}
@@ -164,13 +164,14 @@
                 <div class="quick-episodes" style="width: {{ 36 * break + 16 }}px;">
                     {% for episode in season.episodes %}
                         {% set ue = episode.user_episode %}
-                        {% if ue.air_date %}
-                            {% if ue.air_date <= now %}
-                                <div class="quick-episode{% if ue and ue.watch_at %} watched{% endif %}" data-number="{{ ue.episode_number }}" data-title="{{ ue.air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
+                        {% set air_date = episode.air_date %}
+                        {% if air_date %}
+                            {% if air_date <= now %}
+                                <div class="quick-episode{% if ue and ue.watch_at %} watched{% endif %}" data-number="{{ ue.episode_number }}" data-title="{{ air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
                                     {{ episode.episode_number }}
                                 </div>
                             {% else %}
-                                <div class="future-episode" data-title="{{ ue.air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
+                                <div class="future-episode" data-title="{{ air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
                                     {{ ue.episode_number }}
                                 </div>
                             {% endif %}
@@ -191,7 +192,7 @@
             {# <h3>{{ 'Episodes'|trans }}</h3> #}
             <div class="content column">
                 <div class="episodes">
-                    {% for episode in season.episodes|filter(e => e.user_episode.air_date and e.user_episode.air_date <= now) %}
+                    {% for episode in season.episodes|filter(e => e.air_date and e.air_date <= now) %}
                         {#                        {% if episode.air_date and episode.air_date <= now %} #}
                         {% set ue = episode.user_episode %}
                         {% set ues = episode.user_episodes %}

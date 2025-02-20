@@ -346,14 +346,22 @@ class UserEpisodeRepository extends ServiceEntityRepository
                          INNER JOIN user_episode ue ON us.id = ue.user_series_id
                          LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                          LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id
+                         LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                          LEFT JOIN watch_provider wp ON sbs.provider_id = wp.provider_id
                          LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
                 WHERE us.user_id = $userId
                   AND ue.season_number > 0
-                  AND (
-                    ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.air_date = CURDATE())
-                        OR ((sdo.offset > 0) AND ue.air_date = DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
-                        OR ((sdo.offset < 0) AND ue.air_date = DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
+                  AND 
+                    (
+                        (
+                        ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.air_date = CURDATE())
+                            OR ((sdo.offset > 0) AND ue.air_date = DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
+                            OR ((sdo.offset < 0) AND ue.air_date = DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
+                        )
+                     OR (
+                         sbd.id IS NOT NULL
+                         AND DATE(sbd.date) = CURDATE()
+                        )
                     )
                 ORDER BY sbs.air_at, ue.season_number , ue.episode_number";
 
@@ -414,6 +422,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                      ue.`season_number`                     as seasonNumber,
                      ue.`watch_at`                          as watchAt,
                      sbs.air_at                             as airAt,
+                     sbd.date                               as customDate,
                      p.name                                 as providerName,
                      p.logo_path                            as providerLogoPath,
                      IF(ue.vote IS NULL, 0, ue.vote)        as vote,
@@ -424,13 +433,23 @@ class UserEpisodeRepository extends ServiceEntityRepository
                      LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                      LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
                      LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number
+                     LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                      LEFT JOIN provider p ON sbs.provider_id = p.provider_id
               WHERE us.user_id = $userId
-                     AND ( 
-                         ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.air_date = '$day') 
-                      OR ((sdo.offset > 0) AND ue.air_date = DATE_SUB('$day', INTERVAL sdo.offset DAY)) 
-                      OR ((sdo.offset < 0) AND ue.air_date = DATE_ADD('$day', INTERVAL ABS(sdo.offset) DAY)) 
-                         ) 
+                     AND (
+                            (
+                             sbd.id IS NULL
+                             AND ( 
+                                 ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.air_date = '$day') 
+                              OR ((sdo.offset > 0) AND ue.air_date = DATE_SUB('$day', INTERVAL sdo.offset DAY)) 
+                              OR ((sdo.offset < 0) AND ue.air_date = DATE_ADD('$day', INTERVAL ABS(sdo.offset) DAY)) 
+                                 ) 
+                             )
+                         OR (
+                             sbd.id IS NOT NULL
+                             AND DATE(sbd.date) = '$day'
+                            )
+                         )
               ORDER BY displayName ";
         //       (WHERE ...) AND ue.season_number > 0
 

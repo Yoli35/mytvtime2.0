@@ -1170,6 +1170,11 @@ label:has(input[type="text"]) {
                     display: flex;
                     gap: 1rem;
 
+                    > div {
+                        display: flex;
+                        gap: .5rem;
+                    }
+
                     .time {
                         background-color: var(--orange-50);
                         border-radius: .25rem;

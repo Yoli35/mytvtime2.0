@@ -249,7 +249,12 @@
                                data-episode-count="{{ eotd.episodeCount }}"
                                data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
                                style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
-                                <div>{{ eotd.display }}</div>
+                                <div>
+                                    {{ eotd.display }}
+                                    {% if eotd.customDate %}
+                                        {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
+                                    {% endif %}
+                                </div>
                                 {% if eotd.airAt %}
                                     <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
                                 {% endif %}
@@ -279,7 +284,12 @@
                                data-episode-count="{{ eotd.episodeCount }}"
                                data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
                                style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
-                                <div>{{ eotd.display }}</div>
+                                <div>
+                                    {{ eotd.display }}
+                                    {% if eotd.customDate %}
+                                        {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
+                                    {% endif %}
+                                </div>
                                 {% if eotd.airAt %}
                                     <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
                                 {% endif %}
@@ -313,7 +323,12 @@
                                data-episode-count="{{ eotd.episodeCount }}"
                                data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
                                style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
-                                <div>{{ eotd.display }}</div>
+                                <div>
+                                    {{ eotd.display }}
+                                    {% if eotd.customDate %}
+                                        {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
+                                    {% endif %}
+                                </div>
                                 {% if eotd.airAt %}
                                     <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
                                 {% endif %}
@@ -347,7 +362,12 @@
                                data-episode-count="{{ eotd.episodeCount }}"
                                data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
                                style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
-                                <div>{{ eotd.display }}</div>
+                                <div>
+                                    {{ eotd.display }}
+                                    {% if eotd.customDate %}
+                                        {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
+                                    {% endif %}
+                                </div>
                                 {% if eotd.airAt %}
                                     <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
                                 {% endif %}
