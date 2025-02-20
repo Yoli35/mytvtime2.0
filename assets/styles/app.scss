@@ -1173,6 +1173,11 @@ label:has(input[type="text"]) {
                     > div {
                         display: flex;
                         gap: .5rem;
+
+                        svg {
+                            flex-shrink: 0;
+                            margin-inline-end: 1rem;
+                        }
                     }
 
                     .time {
