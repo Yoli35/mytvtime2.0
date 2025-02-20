@@ -3590,7 +3590,7 @@ class SeriesController extends AbstractController
         return [];
     }
 
-    public function getEpisodeDate(array $episode): string
+    public function getEpisodeDate(array $episode): ?string
     {
         $episodeId = $episode['id'];
         /** @var SeriesBroadcastDate $seriesBroadcastDate */
