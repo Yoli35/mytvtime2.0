@@ -135,7 +135,7 @@ class EpisodeAirDateCommand extends Command
             if ($tv['status'] != $series->getStatus()) {
                 $series->setStatus($tv['status']);
                 $this->seriesRepository->save($series, true);
-                $notifications[] = $this->newNotification(self::SERIES_STATUS, $userSeries, null, $localizedName, $airDate);
+                $notifications[] = $this->newNotification(self::SERIES_STATUS, $userSeries, null, $localizedName, null);
                 $newSeriesDateCount++;
             }
 
@@ -269,26 +269,16 @@ class EpisodeAirDateCommand extends Command
     public
     function getUserEpisodeById($userEpisodes, $episodeId): mixed
     {
-        array_filter($userEpisodes, function ($userEpisode) use ($episodeId) {
+        /*array_filter($userEpisodes, function ($userEpisode) use ($episodeId) {
             return $userEpisode->getEpisodeId() == $episodeId;
-        });
-        foreach ($userEpisodes as $userEpisode) {
-            if ($userEpisode->getEpisodeId() == $episodeId) {
-                return $userEpisode;
-            }
-        }
-        return null;
+        });*/
+        return array_find($userEpisodes, fn($userEpisode) => $userEpisode->getEpisodeId() == $episodeId);
     }
 
     public
     function findFirstNotWatchedEpisode($userEpisodes): mixed
     {
-        foreach ($userEpisodes as $userEpisode) {
-            if ($userEpisode->getWatchAt() === null) {
-                return $userEpisode;
-            }
-        }
-        return null;
+        return array_find($userEpisodes, fn($userEpisode) => $userEpisode->getWatchAt() === null);
     }
 
     public
