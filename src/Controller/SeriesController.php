@@ -1627,9 +1627,11 @@ class SeriesController extends AbstractController
             $this->userSeriesRepository->save($userSeries, true);
         }
 
+        $sbd = $this->seriesBroadcastDateRepository->findOneBy(['episodeId' => $id]);
+        $airDate = $sbd ? $sbd->getDate() : $userEpisode->getAirDate();
         $ues = $this->userEpisodeRepository->getUserEpisodeViews($user->getId(), $id);
         $airDateBlock = $this->renderView('_blocks/series/_episode-air-date.html.twig', [
-            'episode' => ['air_date' => $userEpisode->getAirDate()->format('Y-m-d')],
+            'episode' => ['air_date' => $airDate->format('Y-m-d, H:i')],
             'ue' => ['watch_at' => $userEpisode->getWatchAt()->format('Y-m-d')],
             'ues' => $ues,
         ]);
