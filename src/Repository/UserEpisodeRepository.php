@@ -9,7 +9,6 @@ use App\Entity\UserSeries;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -150,6 +149,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
     {
         $userId = $user->getId();
         $offset = ($page - 1) * $count;
+        $sql = null;
         if ($list == 'series') {
             $sql = "SELECT s.id                            as id,
                            ue.episode_id                   as episodeId,
@@ -201,7 +201,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                     LIMIT $count OFFSET $offset";
         }
 
-        return $this->getAll($sql);
+        return $sql ? $this->getAll($sql) : [];
     }
 
     public function getLastWatchedEpisode(User $user): int
@@ -521,7 +521,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getUserEpisodes(int $userId, int $userSeriesId, int $seasonNumber, string $locale): array
+    public function getUserEpisodesDB(int $userSeriesId, int $seasonNumber, string $locale): array
     {
         $sql = "SELECT ue.id             as id,
                        ue.episode_id     as episode_id,
@@ -530,6 +530,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        ue.episode_number as episode_number,
                        ue.watch_at       as watch_at,
                        ue.air_date       as air_date,
+                       sbd.date          as custom_date,
                        ue.provider_id    as provider_id,
                        p.name            as provider_name,
                        p.logo_path       as provider_logo_path,
@@ -541,37 +542,15 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        ue.number_of_view as number_of_view,
                        ue.still          as still
                 FROM user_episode ue
+                         LEFT JOIN series_broadcast_date sbd ON ue.episode_id = sbd.episode_id
                          LEFT JOIN episode_substitute_name esn ON ue.episode_id = esn.episode_id
                          LEFT JOIN episode_localized_overview elo ON ue.episode_id = elo.episode_id AND elo.locale = '$locale'
                          LEFT JOIN provider p ON ue.provider_id = p.provider_id
                          LEFT JOIN device d ON ue.device_id = d.id
-                WHERE ue.user_id = $userId
-                  AND ue.user_series_id = $userSeriesId
+                WHERE ue.user_series_id = $userSeriesId
                   AND ue.season_number = $seasonNumber";
 
         return $this->getAll($sql);
-    }
-
-    // Query builder version of getUserEpisodes
-    public function getUserEpisodesQueryBuilder(User $user, UserSeries $userSeries, int $seasonNumber, string $locale): array
-    {
-        $qb = $this->createQueryBuilder('ue');
-        $qb->select('ue.id', 'ue.episodeId', 'ue.episodeNumber', 'ue.watchAt', 'ue.airDate', 'ue.vote', 'ue.numberOfView', 'ue.still',
-            'esn.name as substituteName', 'elo.overview as localizedOverview',
-            'ue.providerId', 'p.name as providerName', 'p.logoPath as providerLogoPath',
-            'ue.deviceId', 'd.name as deviceName', 'd.logoPath as deviceLogoPath', 'd.svg as deviceSvg')
-            ->leftJoin('App\Entity\EpisodeSubstituteName', 'esn', Expr\Join::WITH, 'ue.episodeId = esn.episodeId')
-            ->leftJoin('App\Entity\EpisodeLocalizedOverview', 'elo', Expr\Join::WITH, 'ue.episodeId = elo.episodeId AND elo.locale = ' . $qb->expr()->literal($locale))
-            ->leftJoin('App\Entity\Provider', 'p', Expr\Join::WITH, 'ue.providerId = p.providerId')
-            ->leftJoin('App\Entity\Device', 'd', Expr\Join::WITH, 'ue.deviceId = d.id')
-            ->where('ue.user = :user')
-            ->andWhere('ue.userSeries = :userSeries')
-            ->andWhere('ue.seasonNumber = :seasonNumber')
-            ->setParameter('user', $user)
-            ->setParameter('userSeries', $userSeries)
-            ->setParameter('seasonNumber', $seasonNumber);
-
-        return $qb->getQuery()->getResult();
     }
 
     public function inProgressSeriesForTwig(User $user, string $locale): array
@@ -604,7 +583,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function seasonProgress(UserSeries $userSeries, int $seasonNumber):? float
+    public function seasonProgress(UserSeries $userSeries, int $seasonNumber): ?float
     {
         $userSeriesId = $userSeries->getId();
         $sql = "SELECT
@@ -629,8 +608,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
     {
         try {
             return $this->em->getConnection()->fetchAllAssociative($sql);
-        } catch (Exception $e) {
-//            dump($e->getMessage());
+        } catch (Exception) {
             return [];
         }
     }
