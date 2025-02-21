@@ -246,12 +246,7 @@ class UserSeries
 
     public function getEpisode(int $episodeId): ?UserEpisode
     {
-        foreach ($this->getUserEpisodes() as $userEpisode) {
-            if ($userEpisode->getEpisodeId() === $episodeId) {
-                return $userEpisode;
-            }
-        }
-        return null;
+        return array_find($this->getUserEpisodes()->toArray(), fn($userEpisode) => $userEpisode->getEpisodeId() === $episodeId);
     }
 
     public function getMarathoner(): ?bool
