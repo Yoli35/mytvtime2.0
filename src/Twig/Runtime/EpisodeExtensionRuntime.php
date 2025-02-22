@@ -74,19 +74,32 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
             if (count($item['episodes']) > 2) {
                 $start = $this->minNumberInArray($item['episodes']);
                 $end = $this->maxNumberInArray($item['episodes']);
-                if ($locale === 'en')
-                    $display = sprintf('S%02dE%02d to S%02dE%02d', $seasonNumber, $start, $seasonNumber, $end);
-                else
-                    $display = sprintf('S%02dE%02d à S%02dE%02d', $seasonNumber, $start, $seasonNumber, $end);
+                if ($locale === 'en') {
+                    if ($seasonNumber)
+                        $display = sprintf('S%02dE%02d to S%02dE%02d', $seasonNumber, $start, $seasonNumber, $end);
+                    else
+                        $display = sprintf('Specials #%02d to #%02d', $start, $end);
+                } else {
+                    if ($seasonNumber)
+                        $display = sprintf('S%02dE%02d à S%02dE%02d', $seasonNumber, $start, $seasonNumber, $end);
+                    else
+                        $display = sprintf('Épisodes spéciaux #%02d à #%02d', $start, $end);
+                }
                 $seriesArr[$key]['firstEpisodeNumber'] = $start;
             } elseif (count($item['episodes']) > 1) {
                 $start = $this->minNumberInArray($item['episodes']);
                 $end = $this->maxNumberInArray($item['episodes']);
-                $display = sprintf('S%02dE%02d & S%02dE%02d', $seasonNumber, $start, $seasonNumber, $end);
+                if ($seasonNumber)
+                    $display = sprintf('S%02dE%02d & S%02dE%02d', $seasonNumber, $start, $seasonNumber, $end);
+                else
+                    $display = sprintf('Specials #%02d & #%02d', $start, $end);
                 $seriesArr[$key]['firstEpisodeNumber'] = $start;
             } else {
                 $episodeNumber = $item['episodes'][0];
-                $display = sprintf('S%02dE%02d', $seasonNumber, $episodeNumber);
+                if ($seasonNumber)
+                    $display = sprintf('S%02dE%02d', $seasonNumber, $episodeNumber);
+                else
+                    $display = sprintf('Special #%02d', $episodeNumber);
                 $seriesArr[$key]['firstEpisodeNumber'] = $episodeNumber;
             }
             $seriesArr[$key]['display'] = $item['displayName'] . ' ' . $display;

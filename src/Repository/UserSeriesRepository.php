@@ -145,7 +145,6 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN watch_provider wp ON sbs.provider_id = wp.provider_id
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale'
                 WHERE us.`user_id`=$userId
-                    AND  ue.`season_number` > 0
                     AND
                     (
                         (
@@ -159,6 +158,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                         )
                     )
                 ORDER BY air_date, air_at, season_number, episode_number";
+//        AND  ue.`season_number` > 0
 
         return $this->getAll($sql);
     }
