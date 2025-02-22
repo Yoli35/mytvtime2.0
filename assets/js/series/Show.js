@@ -93,7 +93,7 @@ export class Show {
         const svgs = document.querySelector('div#svgs');
         const providers = jsonGlobsObject.providers;
         const seriesId = jsonGlobsObject.seriesId;
-        const seriesName = document.querySelector('span.name-span').textContent;//jsonGlobsObject.seriesName;
+        const seriesName = document.querySelector('span.localized-name-span, span.name-span').textContent;//jsonGlobsObject.seriesName;
         const userSeriesId = jsonGlobsObject.userSeriesId;
         const translations = jsonGlobsObject.translations;
         const api = jsonGlobsObject.api;
@@ -1477,7 +1477,6 @@ export class Show {
         return formData;
     }
 
-
     openLocationPanel(crud, location, buttonText) {
         const addLocationForm = document.querySelector('#add-location-form');
         const addLocationDialog = document.querySelector('.side-panel.add-location-dialog');
@@ -1499,14 +1498,12 @@ export class Show {
             }
         });
         titleInput.value = location.title;
+        submitButton.textContent = buttonText;
+        crudTypeInput.value = crud;
         if (crud === 'create') {
-            submitButton.textContent = buttonText;
-            crudTypeInput.value = 'create';
             crudIdInput.value = 0;
             locationImages.style.display = 'none';
         } else {
-            submitButton.textContent = buttonText;
-            crudTypeInput.value = 'update';
             crudIdInput.value = location.id;
             locationInput.value = location.location;
             latitudeInput.value = location.latitude;

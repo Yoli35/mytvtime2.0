@@ -2200,7 +2200,13 @@ class SeriesController extends AbstractController
         $data = array_filter($data, fn($key) => $key != "google-map-url", ARRAY_FILTER_USE_KEY);
 
         $crudType = $data['crud-type'];
+        $new = $crudType === 'create';
         $crudId = $data['crud-id'];
+
+        if (!$new)
+            $filmingLocation = $this->filmingLocationRepository->findOneBy(['id' => $crudId]);
+        else
+            $filmingLocation = null;
 //        $seriesId = $data['series-id'];
 
         $title = $data['title'];
@@ -2221,20 +2227,21 @@ class SeriesController extends AbstractController
         dump(['images' => $images]);
         // TODO: Vérifier le code suivant
         $firstImageIndex = 1;
-        if ($crudType === 'update' && count($images) > 0) {
-            // Récupérer les images supplémentaires et les compter
-            $existingAdditionalImages = $this->filmingLocationImageRepository->findBy(['filmingLocation' => $crudId]);
+        if ($filmingLocation) {
+            // Récupérer les images existantes et les compter
+            $existingAdditionalImages = $this->filmingLocationImageRepository->findBy(['filmingLocation' => $filmingLocation]);
+            dump(['existingAdditionalImages' => $existingAdditionalImages]);
             $firstImageIndex += count($existingAdditionalImages);
+            dump(['firstImageIndex' => $firstImageIndex]);
         }
         // Fin du code à vérifier
 
-        if ($crudType === 'create') {
+        if (!$filmingLocation) {
             $uuid = $data['uuid'] = Uuid::v4()->toString();
             $tmdbId = $data['tmdb-id'];
             $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $location, $description, $latitude, $longitude, true);
             $filmingLocation->setOriginCountry($series->getOriginCountry());
         } else {
-            $filmingLocation = $this->filmingLocationRepository->findOneBy(['id' => $crudId]);
             $filmingLocation->update($title, $location, $description, $latitude, $longitude);
         }
         $this->filmingLocationRepository->save($filmingLocation, true);
@@ -3509,7 +3516,7 @@ class SeriesController extends AbstractController
             $episode['stills'] = array_filter($stills, function ($still) use ($episode) {
                 return $still['episode_id'] == $episode['id'];
             });
-            if ($userEpisode['custom_date']) {
+            if (key_exists('custom_date', $userEpisode) && $userEpisode['custom_date']) {
                 $episode['air_date'] = $userEpisode['custom_date'];
             } else {
                 $episode['air_date'] = $episode['air_date'] ? $this->dateOffset($episode['air_date'], $dayOffset, $user->getTimezone() ?? 'Europe/Paris') : null;
