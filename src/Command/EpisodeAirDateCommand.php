@@ -152,7 +152,7 @@ class EpisodeAirDateCommand extends Command
             $firstUnseenEpisode = $this->findFirstNotWatchedEpisode($userEpisodes);
             $startingSeason = $firstUnseenEpisode ? $firstUnseenEpisode->getSeasonNumber() : 1;
             foreach ($tv['seasons'] as $season) {
-                if (!$force && $season['season_number'] < $startingSeason) {
+                if (!$force && $season['season_number'] > 0 && $season['season_number'] < $startingSeason) {
                     continue;
                 }
                 $seasonNumber = $season['season_number'];
