@@ -1917,12 +1917,20 @@ class SeriesController extends AbstractController
                 }
             }
         }
-        $this->addFlash('success', 'Titles and overviews updated.<br>' .
-            'Created titles: ' . $createdTitleCount . '<br>' .
-            'Created overviews: ' . $createdOverviewCount . '<br>' .
-            'Updated titles: ' . $updatedTitleCount . '<br>' .
-            'Updated overviews: ' . $updatedOverviewCount
-        );
+        $message = 'Titles and overviews updated.<br>';
+        if ($createdTitleCount) {
+            $message .= 'Created titles: ' . $createdTitleCount . '<br>';
+        }
+        if ($createdOverviewCount) {
+            $message .= 'Created overviews: ' . $createdOverviewCount . '<br>';
+        }
+        if ($updatedTitleCount) {
+            $message .= 'Updated titles: ' . $updatedTitleCount . '<br>';
+        }
+        if ($updatedOverviewCount) {
+            $message .= 'Updated overviews: ' . $updatedOverviewCount;
+        }
+        $this->addFlash('success', $message);
         return new JsonResponse([
             'ok' => true,
             'createdTitleCount' => $createdTitleCount,
