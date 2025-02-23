@@ -18,13 +18,18 @@ class FilmingLocationRepository extends ServiceEntityRepository
         parent::__construct($registry, FilmingLocation::class);
     }
 
-    public function allLocations(): array
+    public function allLocations(string $order = 'title', int $page = 1, int $perPage = 50): array
     {
         $sql = "SELECT fl.*, fli.path as still_path
                 FROM filming_location fl
                     LEFT JOIN filming_location_image fli ON fl.`still_id` = fli.`id`
-                WHERE fl.is_series = 1
-                ORDER BY fl.title, fl.still_id";
+                WHERE fl.is_series = 1";
+
+        match ($order) {
+            'creation' => $sql .= " ORDER BY fl.created_at DESC LIMIT $perPage OFFSET " . ($page - 1) * $perPage,
+            'update' => $sql .= " ORDER BY fl.updated_at DESC LIMIT $perPage OFFSET " . ($page - 1) * $perPage,
+            default => $sql .= " ORDER BY fl.title, fl.still_id",
+        };
 
         return $this->getAll($sql);
     }

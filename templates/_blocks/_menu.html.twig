@@ -45,7 +45,7 @@
             </ul>
         </details>
         <details>
-            <summary>{{ ux_icon('fa6-solid:user', {height: "18px", width: "18px"}) }}</summary>
+            <summary>{{ ux_icon('fa6-regular:user', {height: "18px", width: "18px"}) }}</summary>
             <ul>
                 <li><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></li>
                 <li>
@@ -131,19 +131,27 @@
                 </ul>
             {% endif %}
         </details>
-        <a href="{{ path('app_map_index') }}" class="desktop">{{ ux_icon('ion:map-outline', {height: "18px", width: "18px"}) }}</a>
+        <details>
+            <summary>{{ ux_icon('ion:map-outline', {height: "18px", width: "18px"}) }}</summary>
+            <ul>
+                <li><a href="{{ path('app_map_index') }}" class="desktop">{{ 'Shooting locations'|trans }}</a></li>
+                <li><a href="{{ path('app_map_last_creations') }}" class="desktop">{{ 'Recent additions'|trans }}</a></li>
+                <li><a href="{{ path('app_map_last_updates') }}" class="desktop">{{ 'Recent updates'|trans }}</a></li>
+            </ul>
+        </details>
+        {#        <a href="{{ path('app_map_index') }}" class="desktop">{{ ux_icon('ion:map-outline', {height: "18px", width: "18px"}) }}</a> #}
     {% endif %}
     <a href="{{ path('app_contact_form') }}" class="desktop">{{ ux_icon('ion:mail', {height: "18px", width: "18px"}) }}</a>
 
     {#    Test popover #}
-    <button popovertarget="my-popover">{{ ux_icon('ion:bookmark-sharp', {height: '16px', width: '16px'}) }}</button>
-    <div popover id="my-popover">
-        <ul>
-            <li>Menu item #1</li>
-            <li>Menu item #2</li>
-            <li>Menu item #3</li>
-        </ul>
-    </div>
+    {#    <button popovertarget="my-popover">{{ ux_icon('ion:bookmark-sharp', {height: '16px', width: '16px'}) }}</button> #}
+    {#    <div popover id="my-popover"> #}
+    {#        <ul> #}
+    {#            <li>Menu item #1</li> #}
+    {#            <li>Menu item #2</li> #}
+    {#            <li>Menu item #3</li> #}
+    {#        </ul> #}
+    {#    </div> #}
     {#    End test popover #}
 
     <div class="multi-search">

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\CountryRepository;
+use App\Repository\FilmingLocationImageRepository;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\SettingsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,9 +17,10 @@ use Symfony\Component\Routing\Attribute\Route;
 class MapController extends AbstractController
 {
     public function __construct(
-        private readonly FilmingLocationRepository $filmingLocationRepository,
-        private readonly CountryRepository         $countryRepository,
-        private readonly SettingsRepository        $settingsRepository,
+        private readonly FilmingLocationRepository      $filmingLocationRepository,
+        private readonly FilmingLocationImageRepository $filmingLocationImageRepository,
+        private readonly CountryRepository              $countryRepository,
+        private readonly SettingsRepository             $settingsRepository,
     )
     {
     }
@@ -28,7 +30,8 @@ class MapController extends AbstractController
     {
         $settings = $this->settingsRepository->findOneBy(['name' => 'mapbox']);
 
-        $locations = $this->getAllFilmingLocations();
+        $locations = $this->getAllFilmingLocations('title');
+        dump($locations);
 
         $fl = [];
         $countries = [];
@@ -115,9 +118,38 @@ class MapController extends AbstractController
         ]);
     }
 
-    public function getAllFilmingLocations(): array
+    #[Route('/last-creations', name: 'last_creations')]
+    public function lastCreations(): Response
     {
-        $filmingLocations = $this->filmingLocationRepository->allLocations();
+        $settings = $this->settingsRepository->findOneBy(['name' => 'mapbox']);
+        $locations = $this->getAllFilmingLocations('creation');
+        dump($locations);
+
+        return $this->render('map/last-creations.html.twig', [
+            'locations' => $locations['filmingLocations'],
+            'filmingLocationCount' => $locations['filmingLocationCount'],
+            'filmingLocationImageCount' => $locations['filmingLocationImageCount'],
+            'settings' => $settings,
+        ]);
+    }
+
+    #[Route('/last-updates', name: 'last_updates')]
+    public function lastUpdates(): Response
+    {
+        $settings = $this->settingsRepository->findOneBy(['name' => 'mapbox']);
+        $locations = $this->getAllFilmingLocations('update');
+
+        return $this->render('map/last-updates.html.twig', [
+            'locations' => $locations['filmingLocations'],
+            'filmingLocationCount' => $locations['filmingLocationCount'],
+            'filmingLocationImageCount' => $locations['filmingLocationImageCount'],
+            'settings' => $settings,
+        ]);
+    }
+
+    public function getAllFilmingLocations(string $order): array
+    {
+        $filmingLocations = $this->filmingLocationRepository->allLocations($order);
         $filmingLocationIds = array_column($filmingLocations, 'id');
 
         $filmingLocationImages = $this->filmingLocationRepository->locationImages($filmingLocationIds);
@@ -131,7 +163,8 @@ class MapController extends AbstractController
 
         return [
             'filmingLocations' => $filmingLocations,
-            'filmingLocationCount' => count($filmingLocations),
-            'filmingLocationImageCount' => count($filmingLocationImages),];
+            'filmingLocationCount' => $this->filmingLocationRepository->count(),//count($filmingLocations),
+            'filmingLocationImageCount' => $this->filmingLocationImageRepository->count(),//count($filmingLocationImages),
+            ];
     }
 }
