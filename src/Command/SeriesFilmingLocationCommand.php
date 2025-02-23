@@ -22,7 +22,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[AsCommand(
     name: 'app:series:filming-location',
-    description: 'Move series locations field to filming_location and filming_location_image tables',
+    description: 'Set createdAt & updatedAt fields in filming_location and filming_location_image tables',
 )]
 class SeriesFilmingLocationCommand extends Command
 {
@@ -63,74 +63,57 @@ class SeriesFilmingLocationCommand extends Command
         $this->commandStart();
 
         $count = 0;
-        // Root directory
         $rootDir = $this->seriesController->getProjectDir() . '/public';
+        $imagePath = $rootDir . '/images/map';
+
         foreach ($allSeries as $series) {
 
-            $this->io->writeln(sprintf('Series (%d): %s', $series->getId(), $series->getName()));
-            $localizedName = $series->getLocalizedName('fr');
-            if ($localizedName) {
-                $this->io->writeln('Localized name: ' . $localizedName->getName());
-            }
+            $tmdbId = $series->getTmdbId();
+            $filmingLocations = $this->seriesController->getFilmingLocations($tmdbId);
 
-            $locations = $series->getLocations();
-            if (!$locations) {
-                $this->io->writeln('No locations found');
+            if (empty($filmingLocations)) {
                 continue;
             }
+            $this->io->write(sprintf('Series (%d): %s', $series->getId(), $series->getName()));
+            $localizedName = $series->getLocalizedName('fr');
+            if ($localizedName) {
+                $this->io->writeln(' - ' . $localizedName->getName());
+            } else {
+                $this->io->newLine();
+            }
 
-            $locations = $locations['locations'];
-
-            for ($i = 0; $i < count($locations); $i++) {
-                $loc = $this->filmingLocationRepository->findOneBy(['uuid' => $locations[$i]['uuid']]);
-                if ($loc) {
-                    $this->io->writeln('Location already exists');
+            foreach ($filmingLocations as $filmingLocation) {
+//                dump($filmingLocation);
+                if ($filmingLocation['created_at']) {
                     continue;
                 }
-                $location = $locations[$i];
-                $additionalImages = $location['additional_images'] ?? [];
-                $description = $location['description'];
-                $images = [];
-                $images[] = $location['image'];
-                $images = array_merge($images, $additionalImages);
-                $latitude = $location['latitude'];
-                $longitude = $location['longitude'];
-                $title = $location['location'];
-                $uuid = $location['uuid'];
-                $this->io->writeln($title);
 
-                $filmingLocation = new FilmingLocation($uuid, $series->getTmdbId(), $title, $description, $latitude, $longitude, true);
-                $this->filmingLocationRepository->save($filmingLocation, true);
+                foreach ($filmingLocation['filmingLocationImages'] as &$image) {
+                    $path = $imagePath . $image['path'];
+                    if (file_exists($path)) {
+                        $image['date'] = date("Y-m-d H:i:s.", filemtime($path));
 
-                $n = 0;
-                foreach ($images as $image) {// https://blscene.com/wp-content/uploads/2024/05/Official-Trailer-My-Love-Mix-Up-เขียนรักด้วยยางลบ-0002.webp
-                    if (str_contains($image, '/images/map')) {
-                        $image = str_replace('/images/map/', '/', $image);
-                    } else {
-                        // copy image to /images/map
-                        // https://someurl.com/image.jpg -> /images/map/image.jpg
-                        $basename = basename($image);
-                        $destination = $rootDir . '/images/map/' . $basename;
-                        $copied = $this->imageService->saveImageFromUrl($image, $destination);
-                        if ($copied) {
-                            $this->io->writeln('Image [ ' . $image . ' ] copied to ' . $destination);
-                        } else {
-                            $this->io->error('Image [ ' . $image . ' ] not copied');
+                        $fliDB = $this->filmingLocationImageRepository->findOneBy(['id' => $image['id']]);
+                        if ($fliDB) {
+                            $fliDB->setCreatedAt($this->dateService->newDateImmutable($image['date'], 'Europe/Paris'));
+                            $this->filmingLocationImageRepository->save($fliDB);
                         }
-                        $image = '/' . $basename;
                     }
-                    $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
-                    $this->filmingLocationImageRepository->save($filmingLocationImage, true);
+                }
+                // trier les images par date
+                usort($filmingLocation['filmingLocationImages'], function ($a, $b) {
+                    return $a['date'] <=> $b['date'];
+                });
+                $firstDate = $filmingLocation['filmingLocationImages'][0]['date'];
+                $lastDate = $filmingLocation['filmingLocationImages'][count($filmingLocation['filmingLocationImages']) - 1]['date'];
 
-                    if ($n == 0) {
-                        $filmingLocation->setStill($filmingLocationImage);
-                        $this->filmingLocationRepository->save($filmingLocation, true);
-                    }
-                    $n++;
+                $flDb = $this->filmingLocationRepository->findOneBy(['id' => $filmingLocation['id']]);
+                if ($flDb) {
+                    $flDb->setCreatedAt($this->dateService->newDateImmutable($firstDate, 'Europe/Paris'));
+                    $flDb->setUpdatedAt($this->dateService->newDateImmutable($lastDate, 'Europe/Paris'));
+                    $this->filmingLocationRepository->save($flDb);
                 }
             }
-            $series->setLocations(['locations' => $locations]);
-//            $this->entityManager->persist($series);
 
             $count++;
             if ($count % 10 === 0) {
@@ -150,11 +133,14 @@ class SeriesFilmingLocationCommand extends Command
         $this->io->newLine(2);
         $this->io->title('Series origin country update Command');
         $this->io->writeln('Series origin country update Command started at ' . $now->format('Y-m-d H:i:s'));
+        $this->io->newLine();
+
         $this->t0 = microtime(true);
     }
 
     public function commandEnd(int $count): void
     {
+        $this->io->newLine();
         $this->io->writeln(sprintf('Series updated: %d', $count));
 
         $t1 = microtime(true);

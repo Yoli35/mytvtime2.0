@@ -52,6 +52,12 @@ class FilmingLocation
     #[ORM\Column(nullable: true)]
     private ?array $originCountry = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
     public function __construct(string $uuid, int $tmdbId, string $title, string $location, string $description, float $latitude, float $longitude, bool $isSeries = false)
     {
         $this->uuid = $uuid;
@@ -223,6 +229,30 @@ class FilmingLocation
     public function setOriginCountry(?array $originCountry): static
     {
         $this->originCountry = $originCountry;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

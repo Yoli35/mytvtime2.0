@@ -20,6 +20,9 @@ class FilmingLocationImage
     #[ORM\Column(length: 255)]
     private ?string $path;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
+
     public function __construct(FilmingLocation $filmingLocation, string $path)
     {
         $this->filmingLocation = $filmingLocation;
@@ -51,6 +54,18 @@ class FilmingLocationImage
     public function setPath(string $path): static
     {
         $this->path = $path;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
