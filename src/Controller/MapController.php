@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Repository\CountryRepository;
 use App\Repository\FilmingLocationImageRepository;
 use App\Repository\FilmingLocationRepository;
@@ -72,13 +71,6 @@ class MapController extends AbstractController
             });
         }
 
-        // "fl" => array:90 [▼
-        //    236900 => array:2 [▼
-        //      "locations" => array:5 [▶]
-        //      "country" => array:1 [▼
-        //        0 => "TH"
-        //      ]
-        //    ]
         foreach ($fl as $tmdbId => $data) {
             foreach ($data['country'] as $country) {
                 foreach ($data['locations'] as $location) {
@@ -118,39 +110,40 @@ class MapController extends AbstractController
         ]);
     }
 
-    #[Route('/last-creations', name: 'last_creations')]
-    public function lastCreations(): Response
+    #[Route('/last-locations', name: 'last_locations')]
+    public function lastLocations(Request $request): Response
     {
+        $type = $request->get('type', 'creation');
+        $page = $request->get('page', 1);
+        $perPage = 50;
         $settings = $this->settingsRepository->findOneBy(['name' => 'mapbox']);
-        $locations = $this->getAllFilmingLocations('creation');
-        dump($locations);
+        $locations = $this->getAllFilmingLocations($type, $page, $perPage);
 
         return $this->render('map/last-creations.html.twig', [
             'locations' => $locations['filmingLocations'],
             'filmingLocationCount' => $locations['filmingLocationCount'],
             'filmingLocationImageCount' => $locations['filmingLocationImageCount'],
+            'center' => $locations['center'],
+            'type' => $type,
+            'page' => $page,
+            'pages' => ceil($locations['filmingLocationCount'] / $perPage),
             'settings' => $settings,
         ]);
     }
 
-    #[Route('/last-updates', name: 'last_updates')]
-    public function lastUpdates(): Response
+    public function getAllFilmingLocations(string $order, int $page = 1, int $perPage = 50): array
     {
-        $settings = $this->settingsRepository->findOneBy(['name' => 'mapbox']);
-        $locations = $this->getAllFilmingLocations('update');
-
-        return $this->render('map/last-updates.html.twig', [
-            'locations' => $locations['filmingLocations'],
-            'filmingLocationCount' => $locations['filmingLocationCount'],
-            'filmingLocationImageCount' => $locations['filmingLocationImageCount'],
-            'settings' => $settings,
-        ]);
-    }
-
-    public function getAllFilmingLocations(string $order): array
-    {
-        $filmingLocations = $this->filmingLocationRepository->allLocations($order);
+        $filmingLocations = $this->filmingLocationRepository->allLocations($order, $page, $perPage);
         $filmingLocationIds = array_column($filmingLocations, 'id');
+
+        // Point moyen [longitude, latitude] à partir de $filmingLocations
+        $center = [0, 0];
+        foreach ($filmingLocations as $location) {
+            $center[0] += $location['longitude'];
+            $center[1] += $location['latitude'];
+        }
+        $center[0] /= count($filmingLocations);
+        $center[1] /= count($filmingLocations);
 
         $filmingLocationImages = $this->filmingLocationRepository->locationImages($filmingLocationIds);
         $flImages = [];
@@ -165,6 +158,7 @@ class MapController extends AbstractController
             'filmingLocations' => $filmingLocations,
             'filmingLocationCount' => $this->filmingLocationRepository->count(),//count($filmingLocations),
             'filmingLocationImageCount' => $this->filmingLocationImageRepository->count(),//count($filmingLocationImages),
-            ];
+            'center' => $center,
+        ];
     }
 }

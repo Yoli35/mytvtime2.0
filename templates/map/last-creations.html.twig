@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}my Tv Time → {{ 'Recent additions'|trans }}{% endblock %}
+{% block title %}my Tv Time → {{ (type=='creation' ? 'Recent additions':'Recent updates')|trans }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/filter.scss') }}">
@@ -20,7 +20,7 @@
     <div class="container-fluid">
         <div class="series-map">
             <div class="series-map-header">
-                <h1>{{ 'Recent additions'|trans }}</h1>
+                <h1>{{ (type=='creation' ? 'Recent additions':'Recent updates')|trans }}</h1>
                 <div class="numbers">
                     <div data-title="{{ filmingLocationCount }} {{ 'locations'|trans }}">{{ filmingLocationCount }} {{ ux_icon('fa6-solid:map-location-dot', {height: '32px', width: '32px'}) }}</div>
                     <div data-title="{{ filmingLocationImageCount }} {{ 'images'|trans }}">{{ filmingLocationImageCount }} {{ ux_icon('fa:picture-o', {height: '32px', width: '32px'}) }}</div>
@@ -31,6 +31,17 @@
 
         <div class="series-map-list center">
             <div class="map-tools">
+                <div class="pages">
+                    {% for p in 1..pages %}
+                        <div class="page">
+                            {% if p == page %}
+                                <span>{{ p }}</span>
+                            {% else %}
+                                <a href="{{ path('app_map_last_locations', { page: p, type: type }) }}">{{ p }}</a>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
                 <div class="help">?</div>
                 <div class="keyboard-help">
                     <div>{{ 'Click the map to copy the latitude and longitude to the clipboard'|trans }}</div>
@@ -174,7 +185,7 @@
                                     </div>
                                 </div>
                                 <div class="series-location-title">
-                                    <div class="text">{{ loc.location ?? 'No title entry!!' }}</div>
+                                    <div class="text">{{ loc.title ?? 'No title entry!!' }}</div>
                                     <!-- Lien vers Google Maps -->
                                     <div class="google-maps">
                                         <a href="https://www.google.com/maps?q={{ loc.latitude }},{{ loc.longitude }}" target="_blank">
@@ -194,16 +205,20 @@
     </div>
     <div id="globs-map" style="display: none">{# {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }} #}
         {
-        "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "latitude": {{ center.0 }},
+        "longitude": {{ center.1 }}
         }
     </div>
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.js"></script>
+    <script src="/map/index.js"></script>
     <script>
         const L = window.L;
         const globsData = document.querySelector('#globs-map');
         console.log(globsData);
         const data = JSON.parse(globsData.textContent);
         const locations = data.locations;
+        const center = [data.latitude, data.longitude];
         const latLngs = locations.map(location => [location.latitude, location.longitude]);
         let map;
 
@@ -213,7 +228,7 @@
             style: 'mapbox://styles/mapbox/outdoors-v12',
             projection: 'globe', // Display the map as a globe, since satellite-v9 defaults to Mercator
             zoom: 2.5,
-            center: [105.6710599319008, 23.933327611870226]//[2, 45]
+            center: center // [105.6710599319008, 23.933327611870226]//[2, 45]
         });
         map.addControl(new mapboxgl.NavigationControl());
         map.addControl(new mapboxgl.GeolocateControl({
@@ -238,6 +253,13 @@
             // Copier les coordonnées (e.lnglat) dans le presse-papiers sous la forme "lat, lng"
             navigator.clipboard.writeText(`${e.lngLat.lat}, ${e.lngLat.lng}`);
         });
+
+        mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js');
+        const language = new MapboxLanguage();
+        map.on('style.load', () => {
+            map.setStyle(language.setLanguage(map.getStyle(), '{{ app.locale }}'));
+        });
+
         locations.forEach(location => {
             let marker = new mapboxgl.Marker({color: "#B46B18FF"})
                 .setLngLat([location.longitude, location.latitude])

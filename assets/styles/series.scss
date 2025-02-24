@@ -3870,6 +3870,34 @@ h2 {
                 gap: .5rem;
             }
         }
+
+        .pages {
+            align-items: center;
+            display: flex;
+            flex-grow: 1;
+            gap: .25rem;
+            justify-content: center;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+
+            .page {
+                appearance: none;
+                background-color: var(--ardoise-60);
+                border: 1px solid var(--ardoise-50);
+                border-radius: .25em;
+                color: var(--ardoise-10);
+                font-size: 1rem;
+                font-weight: 300;
+                padding-block: .125rem;
+                padding-inline: 1rem;
+                scroll-snap-align: start;
+
+                &:has(span) {
+                    background-color: var(--orange-40);
+                    color: var(--orange-90);
+                }
+            }
+        }
     }
 
     h2:has(select) {

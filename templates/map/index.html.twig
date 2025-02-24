@@ -336,6 +336,7 @@
     {% endif %}
     {% if mapbox %}
         <script src="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.js"></script>
+        <script src="/map/index.js"></script>
     {% endif %}
     <script>
         const L = window.L;
@@ -395,6 +396,13 @@
             // Copier les coordonnées (e.lnglat) dans le presse-papiers sous la forme "lat, lng"
             navigator.clipboard.writeText(`${e.lngLat.lat}, ${e.lngLat.lng}`);
         });
+
+        mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js');
+        const language = new MapboxLanguage();
+        map.on('style.load', () => {
+            map.setStyle(language.setLanguage(map.getStyle(), '{{ app.locale }}'));
+        });
+
         locations.forEach(location => {
             let marker = new mapboxgl.Marker({color: "#B46B18FF"})
                 .setLngLat([location.longitude, location.latitude])
