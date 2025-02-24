@@ -35,8 +35,10 @@ export class ToolTips {
 
     initElement(element) {
         element.addEventListener('mousemove', this.move.bind(this));
-        element.addEventListener('mouseover', this.show.bind(this));
-        element.addEventListener('mouseout', this.hide.bind(this));
+        element.addEventListener('mouseenter', this.show.bind(this));
+        element.addEventListener('mouseleave', this.hide.bind(this));
+        // element.addEventListener('mouseover', this.show.bind(this));
+        // element.addEventListener('mouseout', this.hide.bind(this));
     }
 
     createTooltips() {
