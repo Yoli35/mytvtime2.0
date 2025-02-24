@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
-#[Route('{_locale}/people', name: 'app_people_', requirements: ['_locale' => 'fr|en|kr'])]
+#[Route('{_locale}/people', name: 'app_people_', requirements: ['_locale' => 'fr|en|ko'])]
 class PeopleController extends AbstractController
 {
 

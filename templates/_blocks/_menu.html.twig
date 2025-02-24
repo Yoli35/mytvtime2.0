@@ -135,8 +135,8 @@
             <summary>{{ ux_icon('ion:map-outline', {height: "18px", width: "18px"}) }}</summary>
             <ul>
                 <li><a href="{{ path('app_map_index') }}" class="desktop">{{ 'Shooting locations'|trans }}</a></li>
-                <li><a href="{{ path('app_map_last_locations', { page: 1, type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></li>
-                <li><a href="{{ path('app_map_last_locations', { page: 1, type: 'update' }) }}" class="desktop">{{ 'Recent updates'|trans }}</a></li>
+                <li><a href="{{ path('app_map_last_locations', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></li>
+                <li><a href="{{ path('app_map_last_locations', { type: 'update' }) }}" class="desktop">{{ 'Recent updates'|trans }}</a></li>
             </ul>
         </details>
         {#        <a href="{{ path('app_map_index') }}" class="desktop">{{ ux_icon('ion:map-outline', {height: "18px", width: "18px"}) }}</a> #}
@@ -484,7 +484,7 @@
                 {{ getEmojiFlag('GB') }} Anglais - English - 영어
                 {# {{ 'English'|trans }} #}
             </a>
-            <a href="{{ path(route, route_params|merge({'_locale': 'kr'})) ~ p }}"{% if app.locale=='kr' %} class="active"{% endif %}>
+            <a href="{{ path(route, route_params|merge({'_locale': 'ko'})) ~ p }}"{% if app.locale=='ko' %} class="active"{% endif %}>
                 {{ getEmojiFlag('KR') }} Coréen - Korean - 한국어
                 {# {{ 'Korean'|trans }} #}
             </a>

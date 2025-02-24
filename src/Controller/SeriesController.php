@@ -89,7 +89,7 @@ use const FILTER_REQUIRE_ARRAY;
 //use Symfony\UX\Map\Point;
 
 /** @method User|null getUser() */
-#[Route('/{_locale}/series', name: 'app_series_', requirements: ['_locale' => 'fr|en|kr'])]
+#[Route('/{_locale}/series', name: 'app_series_', requirements: ['_locale' => 'fr|en|ko'])]
 class SeriesController extends AbstractController
 {
     public function __construct(
