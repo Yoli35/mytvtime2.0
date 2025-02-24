@@ -31,7 +31,7 @@
 
         <div class="series-map-list center">
             <div class="map-tools">
-                <div class="pages">
+                {# <div class="pages">
                     {% for p in 1..pages %}
                         <div class="page">
                             {% if p == page %}
@@ -41,6 +41,31 @@
                             {% endif %}
                         </div>
                     {% endfor %}
+                </div> #}
+                <div class="options">
+                    {{ form_start(form) }}
+                    <div class="form-row">
+                        <div class="pages">
+                            {% for p in 1..pages %}
+                                {% if p == form.page.vars.value %}
+                                    <button class="page active" name="{{ field_name(form.page) }}" value="{{ p }}">{{ p }}</button>
+                                {% else %}
+                                    <button class="page" type="submit" name="{{ field_name(form.page) }}" value="{{ p }}" data-title="{{ 'Go to page'|trans }} {{ p }}">{{ p }}</button>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <label for="{{ form.perPage.vars.id }}">
+                            {{ form.perPage.vars.label|trans }}
+                            {{ form_widget(form.perPage) }}
+                            {{ form_errors(form.perPage) }}
+                        </label>
+                        <label for="{{ form.type.vars.id }}">
+                            {{ form.type.vars.label|trans }}
+                            {{ form_widget(form.type) }}
+                            {{ form_errors(form.type) }}
+                        </label>
+                    </div>
+                    {{ form_end(form) }}
                 </div>
                 <div class="help">?</div>
                 <div class="keyboard-help">

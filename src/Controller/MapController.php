@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\DTO\MapDTO;
+use App\Form\MapType;
 use App\Repository\CountryRepository;
 use App\Repository\FilmingLocationImageRepository;
 use App\Repository\FilmingLocationRepository;
@@ -12,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/{_locale}/map', name: 'app_map_', requirements: ['_locale' => 'fr|en|kr'])]
+#[Route('/{_locale}/map', name: 'app_map_', requirements: ['_locale' => 'fr|en|ko'])]
 class MapController extends AbstractController
 {
     public function __construct(
@@ -114,12 +116,25 @@ class MapController extends AbstractController
     public function lastLocations(Request $request): Response
     {
         $type = $request->get('type', 'creation');
-        $page = $request->get('page', 1);
-        $perPage = 50;
         $settings = $this->settingsRepository->findOneBy(['name' => 'mapbox']);
+
+        $mapDTO = new MapDTO($type, 1, $perPage = 20);
+        $form = $this->createForm(MapType::class, $mapDTO);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+        } else {
+            $data = $mapDTO;
+        }
+        $type = $data->getType();
+        $page = $data->getPage();
+        $perPage = $data->getPerPage();
+
         $locations = $this->getAllFilmingLocations($type, $page, $perPage);
 
         return $this->render('map/last-creations.html.twig', [
+            'form' => $form->createView(),
             'locations' => $locations['filmingLocations'],
             'filmingLocationCount' => $locations['filmingLocationCount'],
             'filmingLocationImageCount' => $locations['filmingLocationImageCount'],
