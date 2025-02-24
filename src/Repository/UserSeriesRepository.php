@@ -344,7 +344,9 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN `series` s ON s.`id` = us.`series_id` 
                     $innerJoin
                     LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
-                    LEFT JOIN `series_localized_name` sln ON s.`id` = sln.`series_id` AND sln.locale='$locale ' 
+                    LEFT JOIN `series_localized_name` sln ON s.`id` = sln.`series_id` AND sln.locale='$locale' 
+                    LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                    LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                 WHERE us.user_id=$userId $filterString
                   AND ue.id=(SELECT ue2.id
                              FROM user_episode ue2
@@ -352,10 +354,19 @@ class UserSeriesRepository extends ServiceEntityRepository
                                AND ue2.`watch_at` IS NULL
                                AND ue2.season_number > 0
                                AND (
-                                 ((sdo.offset IS NULL OR sdo.offset = 0) AND ue2.`air_date` <= CURDATE())
-                                     OR ((sdo.offset > 0) AND ue2.`air_date` <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
-                                     OR ((sdo.offset < 0) AND ue2.`air_date` <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
-                                 )
+                                   (
+                                       sbd.id IS NULL
+                                       AND (
+                                           ((sdo.offset IS NULL OR sdo.offset = 0) AND ue2.`air_date` <= CURDATE())
+                                           OR ((sdo.offset > 0) AND ue2.`air_date` <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
+                                           OR ((sdo.offset < 0) AND ue2.`air_date` <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
+                                       )
+                                   )
+                                OR (
+                                       sbd.id IS NOT NULL
+                                       AND DATE(sbd.date) = CURDATE()
+                                   )
+                               )
                              ORDER BY ue2.air_date
                              LIMIT 1)
             ORDER BY $sort $order 
@@ -386,18 +397,30 @@ class UserSeriesRepository extends ServiceEntityRepository
                 FROM `user_series` us 
                     INNER JOIN user_episode ue ON ue.`user_series_id` = us.`id`
                     LEFT JOIN `series` s ON s.`id` = us.`series_id` 
+                    LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                    LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                     $innerJoin
                     LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                 WHERE us.user_id=$userId $filterString
                   AND ue.id=(SELECT ue2.id
                              FROM user_episode ue2
+                                 LEFT JOIN `series` s ON s.`id` = us.`series_id` 
                              WHERE ue2.user_series_id = us.id
                                AND ue2.`watch_at` IS NULL
                                AND ue2.season_number > 0
                                AND (
-                                 ((sdo.offset IS NULL OR sdo.offset = 0) AND ue2.`air_date` <= CURDATE())
-                                     OR ((sdo.offset > 0) AND ue2.`air_date` <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
-                                     OR ((sdo.offset < 0) AND ue2.`air_date` <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
+                                       (
+                                        sbd.id IS NULL
+                                        AND (
+                                            ((sdo.offset IS NULL OR sdo.offset = 0) AND ue2.`air_date` <= CURDATE())
+                                            OR ((sdo.offset > 0) AND ue2.`air_date` <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
+                                            OR ((sdo.offset < 0) AND ue2.`air_date` <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
+                                         )
+                                       )
+                                    OR (
+                                        sbd.id IS NOT NULL
+                                        AND DATE(sbd.date) = CURDATE()
+                                       )
                                  )
                              ORDER BY ue2.air_date
                              LIMIT 1)";

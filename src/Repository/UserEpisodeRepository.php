@@ -387,6 +387,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
                          LEFT JOIN `series` s ON s.`id` = us.`series_id`
                          LEFT JOIN `series_day_offset` sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                          LEFT JOIN `series_localized_name` sln ON sln.`series_id` = s.`id` AND sln.`locale` = '$locale'
+                         LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number
+                         LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                 WHERE us.`user_id` = $userId
                   AND us.progress < 100
                   AND ue.id=(SELECT ue2.id
@@ -395,10 +397,16 @@ class UserEpisodeRepository extends ServiceEntityRepository
                                AND ue2.`watch_at` IS NULL
                                AND ue2.season_number > 0
                                AND (
-                                 ((sdo.offset IS NULL OR sdo.offset = 0) AND ue2.`air_date` <= CURDATE())
-                                     OR ((sdo.offset > 0) AND ue2.`air_date` <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
-                                     OR ((sdo.offset < 0) AND ue2.`air_date` <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
-                                 )
+                                   (
+                                        ((sdo.offset IS NULL OR sdo.offset = 0) AND ue2.`air_date` <= CURDATE())
+                                        OR ((sdo.offset > 0) AND ue2.`air_date` <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
+                                        OR ((sdo.offset < 0) AND ue2.`air_date` <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
+                                    )
+                                 OR (
+                                     sbd.id IS NOT NULL
+                                     AND DATE(sbd.date) = CURDATE()
+                                    )
+                               )
                              ORDER BY ue2.air_date
                              LIMIT 1)
                   AND us.progress > 0
