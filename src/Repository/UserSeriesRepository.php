@@ -101,64 +101,46 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getUserSeriesOfTheNext7Days(User $user, string $country, string $locale): array
+    public function getUserSeriesOfTheNext7Days(User $user, string $locale): array
     {
         $userId = $user->getId();
         $sql = "SELECT
-                    s.`id`                         as id,
-                    s.`tmdb_id`                    as tmdb_id,
-                    s.`name`                       as name,
-                    sln.`name`                     as localized_name,
-                    us.`progress`                  as progress,
-                    CASE 
-                        WHEN sdo.offset IS NULL OR sdo.offset = 0 THEN ue.`air_date`
-                        WHEN sdo.offset > 0 THEN DATE_ADD(ue.`air_date`, INTERVAL sdo.offset DAY)
-                        ELSE DATE_SUB(ue.`air_date`, INTERVAL ABS(sdo.offset) DAY)
-                    END                             as air_date,
-                    ue.`air_date`                   as original_air_date,
-                    ue.`season_number`              as season_number,
-                    ue.`episode_number`             as episode_number,
-                    ue.watch_at                     as watch_at,
-                    sdo.offset                      as day_offset,
-                    us.`last_episode`               as last_episode,
-                    us.`last_season`                as last_season,
-                    s.`slug` as slug, sln.`slug`    as localized_slug,
-                    s.`poster_path`                 as poster_path,
-                    (s.first_air_date <= NOW())     as released,
-                    sbs.`air_at`                    as air_at,
-                    sbs.`provider_id`               as provider_id,
-                    wp.`provider_name`              as provider_name,
-                    wp.`logo_path`                  as provider_logo_path,
+                    s.`id`                                        as id,
+                    s.`tmdb_id`                                   as tmdb_id,
+                    s.`name`                                      as name,
+                    sln.`name`                                    as localized_name,
+                    us.`progress`                                 as progress,
+                    IF(sbd.id IS NULL, ue.`air_date`, DATE(sbd.`date`)) as air_date,
+                    ue.`air_date`                                 as original_air_date,
+                    ue.`season_number`                            as season_number,
+                    ue.`episode_number`                           as episode_number,
+                    ue.watch_at                                   as watch_at,
+                    us.`last_episode`                             as last_episode,
+                    us.`last_season`                              as last_season,
+                    s.`slug` as slug, sln.`slug`                  as localized_slug,
+                    s.`poster_path`                               as poster_path,
+                    (s.first_air_date <= NOW())                   as released,
+                    sbs.`air_at`                                  as air_at,
+                    sbs.`provider_id`                             as provider_id,
+                    wp.`provider_name`                            as provider_name,
+                    wp.`logo_path`                                as provider_logo_path,
+                    s.`status`                                    as status,
                     (SELECT count(*)
                         FROM user_episode cue
                         WHERE cue.user_series_id = us.id
                           AND cue.season_number = ue.season_number
                           AND cue.air_date = ue.air_date
-                            )                       as released_episode_count,
-                    s.`status`                      as status
+                            )                                     as released_episode_count
                 FROM `series` s
                     INNER JOIN `user_series` us ON s.`id`=us.`series_id`
                     INNER JOIN `user_episode` ue on us.`id` = ue.`user_series_id`
-                    LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id
                     LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                     LEFT JOIN watch_provider wp ON sbs.provider_id = wp.provider_id
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale'
                 WHERE us.`user_id`=$userId
-                    AND
-                    (
-                        (
-                            ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.`air_date` > CURDATE() AND ue.`air_date` <= ADDDATE(CURDATE(), INTERVAL 7 DAY))
-                         OR ((sdo.offset > 0) AND ue.`air_date` > DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY) AND ue.`air_date` <= SUBDATE(ADDDATE(CURDATE(), INTERVAL 7 DAY), INTERVAL sdo.offset DAY))
-                         OR ((sdo.offset < 0) AND ue.`air_date` > DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY) AND ue.`air_date` <= ADDDATE(CURDATE(), INTERVAL (sdo.offset+7) DAY))
-                        )
-                     OR (
-                         sbd.id IS NOT NULL
-                         AND DATE(sbd.date) = CURDATE()
-                        )
-                    )
-                ORDER BY air_date, air_at, season_number, episode_number";
-//        AND  ue.`season_number` > 0
+                    AND IF(sbd.id IS NULL, ue.`air_date` > CURDATE() AND ue.`air_date` <= ADDDATE(CURDATE(), INTERVAL 7 DAY), DATE(sbd.date) > CURDATE() AND DATE(sbd.date) <= ADDDATE(CURDATE(), INTERVAL 7 DAY))
+                ORDER BY air_date, air_at, ue.season_number, ue.episode_number";
 
         return $this->getAll($sql);
     }
@@ -234,7 +216,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getOne($sql);
     }
 
-    public function seriesNotSeenInAWhile(User $user, string $locale, string $interval, int $page, int $perPage): array
+    public function seriesNotSeenInAWhile(User $user, string $locale, string $date, int $page, int $perPage): array
     {
         $userId = $user->getId();
         $offset = ($page - 1) * $perPage;
@@ -253,7 +235,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                 WHERE us.`user_id`=$userId
                     AND us.`progress` > 0
                     AND us.`progress` < 100
-                    AND us.`last_watch_at` <= DATE_SUB(NOW(), INTERVAL $interval)
+                    AND us.`last_watch_at` <= $date
                 ORDER BY us.`last_watch_at` DESC";
         if ($perPage > 0) $sql .= "LIMIT $perPage OFFSET $offset";
 
@@ -283,8 +265,7 @@ class UserSeriesRepository extends ServiceEntityRepository
     public function getAllSeries(
         User $user,
         array $localisation,
-        array $filters,
-        array $progress = []): array
+        array $filters): array
     {
         $page = intval($filters['page'] ?? 1);
         $perPage = intval($filters['perPage'] ?? 20);
@@ -299,75 +280,56 @@ class UserSeriesRepository extends ServiceEntityRepository
             'addedAt' => 'us.`added_at`',
             default => 's.`first_air_date`',
         };
-        $filterString = array_map(fn($filter) => "AND $filter", $progress);
-        $filterString = implode(' ', $filterString);
         if ($network !== 'all') {
             $innerJoin = " INNER JOIN series_network sn ON sn.`network_id` = $network AND sn.`series_id` = s.`id` ";
         } else {
             $innerJoin = '';
         }
         $userId = $user->getId();
-        $country = $localisation['country'];
         $locale = $localisation['locale'];
         $offset = ($page - 1) * $perPage;
 
         $sql = "SELECT 
-                    s.`id`                        as id,
-                    s.`name`                      as name,
-                    s.`poster_path`               as poster_path, 
-                    s.`tmdb_id`                   as tmdbId,
-                    s.`slug`                      as slug,
-                    s.`status`                    as status,
-                    (s.first_air_date <= NOW())   as released,
-                    us.`user_id`                  as user_id, 
-                    us.`added_at`                 as added_at,
-                    us.`progress`                 as progress,
-                    us.`favorite`                 as favorite, 
-                    sln.`name`                    as localized_name,
-                    sln.`slug`                    as localized_slug,
-                    ue.air_date                   as next_episode_air_date,
-                    ue.season_number              as next_episode_season_number,
-                    ue.episode_number             as next_episode_episode_number,
-                    sdo.offset                    as day_offset,
+                    s.`id`                                         as id,
+                    s.`name`                                       as name,
+                    s.`poster_path`                                as poster_path, 
+                    s.`tmdb_id`                                    as tmdbId,
+                    s.`slug`                                       as slug,
+                    s.`status`                                     as status,
+                    (s.first_air_date <= NOW())                    as released,
+                    us.`user_id`                                   as user_id, 
+                    us.`added_at`                                  as added_at,
+                    us.`progress`                                  as progress,
+                    us.`favorite`                                  as favorite, 
+                    sln.`name`                                     as localized_name,
+                    sln.`slug`                                     as localized_slug,
+                    ue.air_date                                    as next_episode_air_date,
+                    ue.season_number                               as next_episode_season_number,
+                    ue.episode_number                              as next_episode_episode_number,
+                    IF(sbd.id IS NULL, ue.`air_date`, sbd.`date`)  as final_air_date,
                     (SELECT COUNT(*)
                     FROM user_episode ue2
                     WHERE ue2.user_series_id = us.id
                       AND ue2.season_number > 0
-                      AND ue2.`watch_at` IS NULL) as remainingEpisodes,
-                    CASE
-                        WHEN sdo.offset IS NULL OR sdo.offset = 0 THEN ue.`air_date`
-                        WHEN sdo.offset > 0 THEN DATE_ADD(ue.`air_date`, INTERVAL sdo.offset DAY)
-                        ELSE DATE_SUB(ue.`air_date`, INTERVAL ABS(sdo.offset) DAY)
-                    END                           as final_air_date
+                      AND ue2.`watch_at` IS NULL)                  as remainingEpisodes
                 FROM `user_series` us 
                     INNER JOIN user_episode ue ON ue.`user_series_id` = us.`id` 
                     LEFT JOIN `series` s ON s.`id` = us.`series_id` 
-                    $innerJoin
-                    LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                     LEFT JOIN `series_localized_name` sln ON s.`id` = sln.`series_id` AND sln.locale='$locale' 
                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
                     LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
-                WHERE us.user_id=$userId $filterString
+                WHERE us.id IN (SELECT us.id
+								FROM `user_series` us  
+                    				LEFT JOIN `series` s ON s.`id` = us.`series_id`
+                                    $innerJoin
+								WHERE us.user_id=1 AND us.progress AND us.`progress`<100) 
                   AND ue.id=(SELECT ue2.id
                              FROM user_episode ue2
                              WHERE ue2.user_series_id = us.id
                                AND ue2.`watch_at` IS NULL
                                AND ue2.season_number > 0
-                               AND (
-                                   (
-                                       sbd.id IS NULL
-                                       AND (
-                                           ((sdo.offset IS NULL OR sdo.offset = 0) AND ue2.`air_date` <= CURDATE())
-                                           OR ((sdo.offset > 0) AND ue2.`air_date` <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
-                                           OR ((sdo.offset < 0) AND ue2.`air_date` <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
-                                       )
-                                   )
-                                OR (
-                                       sbd.id IS NOT NULL
-                                       AND DATE(sbd.date) = CURDATE()
-                                   )
-                               )
-                             ORDER BY ue2.air_date
+                               AND IF(sbd.id IS NULL, ue2.`air_date` <= NOW(), DATE(sbd.date) <= NOW())
+                             ORDER BY ue2.episode_number
                              LIMIT 1)
             ORDER BY $sort $order 
             LIMIT $perPage OFFSET $offset";
@@ -379,12 +341,9 @@ class UserSeriesRepository extends ServiceEntityRepository
     public function countAllSeries(
         User $user,
         array $localisation,
-        array $filters,
-        array $progress = []): int
+        array $filters): int
     {
         $network = $filters['network'];
-        $filterString = array_map(fn($filter) => "AND $filter", $progress);
-        $filterString = implode(' ', $filterString);
         if ($network !== 'all') {
             $innerJoin = " INNER JOIN series_network sn ON sn.`network_id` = $network AND sn.`series_id` = s.`id` ";
         } else {
@@ -397,32 +356,22 @@ class UserSeriesRepository extends ServiceEntityRepository
                 FROM `user_series` us 
                     INNER JOIN user_episode ue ON ue.`user_series_id` = us.`id`
                     LEFT JOIN `series` s ON s.`id` = us.`series_id` 
+                    LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
                     LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
-                    $innerJoin
-                    LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
-                WHERE us.user_id=$userId $filterString
+                WHERE us.id IN (SELECT us.id
+								FROM `user_series` us  
+                    				LEFT JOIN `series` s ON s.`id` = us.`series_id`
+                                    $innerJoin
+								WHERE us.user_id=1 AND us.progress AND us.`progress`<100) 
                   AND ue.id=(SELECT ue2.id
                              FROM user_episode ue2
                                  LEFT JOIN `series` s ON s.`id` = us.`series_id` 
                              WHERE ue2.user_series_id = us.id
                                AND ue2.`watch_at` IS NULL
                                AND ue2.season_number > 0
-                               AND (
-                                       (
-                                        sbd.id IS NULL
-                                        AND (
-                                            ((sdo.offset IS NULL OR sdo.offset = 0) AND ue2.`air_date` <= CURDATE())
-                                            OR ((sdo.offset > 0) AND ue2.`air_date` <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
-                                            OR ((sdo.offset < 0) AND ue2.`air_date` <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
-                                         )
-                                       )
-                                    OR (
-                                        sbd.id IS NOT NULL
-                                        AND DATE(sbd.date) = CURDATE()
-                                       )
-                                 )
-                             ORDER BY ue2.air_date
+                               AND IF(sbd.id IS NULL, ue2.`air_date` <= NOW(), DATE(sbd.date) <= NOW())
+                             ORDER BY ue2.episode_number
                              LIMIT 1)";
 //        dump($sql);
         return $this->getOne($sql);

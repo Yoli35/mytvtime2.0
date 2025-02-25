@@ -245,7 +245,7 @@ class SeriesController extends AbstractController
                 'provider_name' => $us['provider_name'],
                 'watch_providers' => $us['provider_id'] ? [['logo_path' => $providerUrl . $us['provider_logo_path'], 'provider_name' => $us['provider_name']]] : [],
             ];
-        }, $this->userSeriesRepository->getUserSeriesOfTheNext7Days($user, $country, $locale));
+        }, $this->userSeriesRepository->getUserSeriesOfTheNext7Days($user, $locale));
         $tmdbIds = array_values(array_unique(array_merge($tmdbIds, array_column($allEpisodesOfTheWeek, 'tmdb_id'))));
         $seriesOfTheWeek = [];
         foreach ($allEpisodesOfTheWeek as $us) {
@@ -280,16 +280,16 @@ class SeriesController extends AbstractController
         }
         $seriesToStart = array_values($series);
 
-//        dump([
+        dump([
 //            'episodesOfTheDay' => $episodesOfTheDay,
-//            'seriesOfTheWeek' => $seriesOfTheWeek,
+            'seriesOfTheWeek' => $seriesOfTheWeek,
 //            'episodeHistory' => $episodeHistory,
 //            'seriesToStart' => $seriesToStart,
 //            'seriesToStartCount' => $seriesToStartCount,
 //            'seriesList' => $series,
 //            'total_results' => $searchResult['total_results'] ?? -1,
 //            'hier' => $this->now()->modify('-1 day')->format('Y-m-d'),
-//        ]);
+        ]);
 
         return $this->render('series/index.html.twig', [
             'episodesOfTheDay' => $episodesOfTheDay,
@@ -348,10 +348,11 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
+        $inAWhileDate = $this->dateModify($this->now(), '-15 days')->format('Y-m-d');
         $series = array_map(function ($s) {
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
-        }, $this->userSeriesRepository->seriesNotSeenInAWhile($user, $locale, '15 DAY', 1, -1));
+        }, $this->userSeriesRepository->seriesNotSeenInAWhile($user, $locale, $inAWhileDate, 1, -1));
         $tmdbIds = array_column($series, 'tmdb_id');
 
         return $this->render('series/series-in-a-while.html.twig', [
@@ -529,7 +530,7 @@ class SeriesController extends AbstractController
         // Parameters count
         if (!count($request->query->all())) {
             if (!$settings) {
-                $settings = new Settings($user, 'series to end', ['perPage' => 10, 'sort' => 'lastWatched', 'order' => 'DESC', 'startStatus' => 'series-started', 'endStatus' => 'series-not-watched', 'network' => 'all']);
+                $settings = new Settings($user, 'series to end', ['perPage' => 10, 'sort' => 'lastWatched', 'order' => 'DESC', 'network' => 'all']);
                 $this->settingsRepository->save($settings, true);
             }
         } else {
@@ -537,16 +538,12 @@ class SeriesController extends AbstractController
             $paramSort = $request->get('sort');
             $paramOrder = $request->get('order');
             $paramNetwork = $request->get('network');
-            $paramStartStatus = $request->get('startStatus');
-            $paramEndStatus = $request->get('endStatus');
             $paramPerPage = $request->get('perPage');
             $settings->setData([
                 'perPage' => $paramPerPage,
                 'sort' => $paramSort,
                 'order' => $paramOrder,
-                'network' => $paramNetwork,
-                'startStatus' => $paramStartStatus,
-                'endStatus' => $paramEndStatus,
+                'network' => $paramNetwork
             ]);
             $this->settingsRepository->save($settings, true);
             $page = $request->get('page') ?? 1;
@@ -558,11 +555,7 @@ class SeriesController extends AbstractController
             'network' => $data['network'],
             'sort' => $data['sort'],
             'order' => $data['order'],
-            'startStatus' => $data['startStatus'],
-            'endStatus' => $data['endStatus'],
         ];
-//        $startStatus = $data['startStatus'];
-//        $endStatus = $data['endStatus'];
 
         $filterMeanings = [
             'name' => 'Name',
@@ -574,29 +567,15 @@ class SeriesController extends AbstractController
             'ASC' => 'Ascending',
         ];
 
-        $progress = [];
-        /*if ($startStatus === 'series-started') {
-            $progress[] = 'us.progress > 0';
-        } elseif ($startStatus === 'series-not-started') {
-            $progress[] = 'us.progress = 0';
-        }
-        if ($endStatus === 'series-ended') {
-            $progress[]= 'us.progress = 100';
-        } elseif ($endStatus === 'series-not-ended') {
-            $progress[] = 'us.progress < 100';
-        }*/
-
         /** @var UserSeries[] $userSeries */
         $userSeries = $this->userSeriesRepository->getAllSeries(
             $user,
             $localisation,
-            $filters,
-            $progress);
+            $filters);
         $userSeriesCount = $this->userSeriesRepository->countAllSeries(
             $user,
             $localisation,
-            $filters,
-            $progress);
+            $filters);
 
         $userSeries = array_map(function ($series) {
             $series['poster_path'] = $series['poster_path'] ? $this->imageConfiguration->getCompleteUrl($series['poster_path'], 'poster_sizes', 5) : null;
@@ -949,12 +928,14 @@ class SeriesController extends AbstractController
             $tv['watch/providers'] = $this->watchProviders($tv, $user->getCountry() ?? 'FR');
             $tv['translations'] = $this->getTranslations($tv, $user);
             if ($tv['localized_name'] == null && $tv['translations'] && $tv['name'] != $tv['translations']['data']['name']) {
-                $slugger = new AsciiSlugger();
-                $slug = $slugger->slug($tv['translations']['data']['name'])->lower()->toString();
-                $newLocalizedName = new SeriesLocalizedName($series, $tv['translations']['data']['name'], $slug, $request->getLocale());
-                $this->seriesLocalizedNameRepository->save($newLocalizedName, true);
-                $tv['localized_name'] = $newLocalizedName;
-                $this->addFlash('success', 'The series name “' . $newLocalizedName->getName() . '” has been added to the database.');
+                if (strlen($tv['translations']['data']['name'])) {
+                    $slugger = new AsciiSlugger();
+                    $slug = $slugger->slug($tv['translations']['data']['name'])->lower()->toString();
+                    $newLocalizedName = new SeriesLocalizedName($series, $tv['translations']['data']['name'], $slug, $request->getLocale());
+                    $this->seriesLocalizedNameRepository->save($newLocalizedName, true);
+                    $tv['localized_name'] = $newLocalizedName;
+                    $this->addFlash('success', 'The series name “' . $newLocalizedName->getName() . '” has been added to the database.');
+                }
             }
             $noTv = [];
         } else {
@@ -1037,17 +1018,17 @@ class SeriesController extends AbstractController
             $this->seriesRepository->save($series, true);
         }
 
-//        dump([
-//            'series' => $seriesArr,
+        dump([
+            'series' => $seriesArr,
 //            'locations' => $locations['filmingLocations'],
-//            'tv' => $tv,
+            'tv' => $tv,
 //            'oldSeriesAdded - get' => $request->get('oldSeriesAdded'),
 //            'oldSeriesAdded - query' => $request->query->get('oldSeriesAdded'),
 //            'dayOffset' => $dayOffset,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'schedules' => $schedules,
-//        ]);
+        ]);
         if ($tv) {
             $twig = "series/show.html.twig";
         } else {

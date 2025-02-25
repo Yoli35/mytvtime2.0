@@ -92,7 +92,7 @@ class HomeController extends AbstractController
                 $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
                 $series['released'] = true;
                 return $series;
-            }, $this->userEpisodeRepository->historySeries($user, $country, $language, 1, 20));
+            }, $this->userEpisodeRepository->historySeries($user, $language, 1, 20));
             // Historique des épisodes vus pendant les 2 semaines passées
             $cookieDayCount = $_COOKIE['mytvtime_2_day_count'] ?? 7;
             $dayCount = $request->query->get('daycount', $cookieDayCount);
