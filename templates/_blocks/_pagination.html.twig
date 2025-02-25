@@ -1,79 +1,81 @@
 {#
-    Mandatory params:
-    - index: int            // Unique index for the form id
-    - current_page: int     // Current page number
-    - total_pages: int      // Total number of pages
+Mandatory params:
+- index: int            // Unique index for the form id
+- current_page: int     // Current page number
+- total_pages: int      // Total number of pages
 
-    Optional params:
-    - filters: array        // Filters to apply to the pagination links
+Optional params:
+- filters: array        // Filters to apply to the pagination links
 
-    route: string           // Route name from base.html.twig, otherwise it must be passed as a parameter
+route: string           // Route name from base.html.twig, otherwise it must be passed as a parameter
 
-    Autre remarque:
-        500 is the page limit imposed by the TMDB API
+Autre remarque:
+    500 is the page limit imposed by the TMDB API
 #}
-<section id="pagination-section-{{ index }}">
-    {% set page_max = min(500, total_pages) %}
-    {% set start = max(1, current_page - 2) %}
-    {% set end = min(page_max, max(current_page + 2, start + 4)) %}
-    {% if filters is defined %}
-        {% set params = filters|filter((v, k) => k!='page')|map((value, key) => "&"~key~"="~value)|join('') %}
-    {% else %}
-        {% set params = '' %}
-    {% endif %}
-    <div class="block">
-        {% if start > 1 %}
+{% if total_pages > 0 %}
+    <section id="pagination-section-{{ index }}">
+        {% set page_max = min(500, total_pages) %}
+        {% set start = max(1, current_page - 2) %}
+        {% set end = min(page_max, max(current_page + 2, start + 4)) %}
+        {% if filters is defined %}
+            {% set params = filters|filter((v, k) => k!='page')|map((value, key) => "&"~key~"="~value)|join('') %}
+        {% else %}
+            {% set params = '' %}
+        {% endif %}
+        <div class="block">
+            {% if start > 1 %}
+                <div class="pages">
+                    {% for page in 1..min(start-1, 5) %}
+                        <a href="{{ path(route, {_locale: app.locale, page: page}) ~ params }}">
+                            <button class="page{% if page==current_page %} active{% endif %}" value="{{ page }}">{{ page }}</button>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
             <div class="pages">
-                {% for page in 1..min(start-1, 5) %}
+                {% for page in start..end %}
                     <a href="{{ path(route, {_locale: app.locale, page: page}) ~ params }}">
                         <button class="page{% if page==current_page %} active{% endif %}" value="{{ page }}">{{ page }}</button>
                     </a>
                 {% endfor %}
             </div>
-        {% endif %}
-        <div class="pages">
-            {% for page in start..end %}
-                <a href="{{ path(route, {_locale: app.locale, page: page}) ~ params }}">
-                    <button class="page{% if page==current_page %} active{% endif %}" value="{{ page }}">{{ page }}</button>
-                </a>
-            {% endfor %}
         </div>
-    </div>
-    <div class="block">
-        {% if end < page_max %}
-            <div class="pages">
-                {% for page in max(end+1, page_max-4)..page_max %}
-                    <a href="{{ path(route, {_locale: app.locale, page: page}) ~ params }}">
-                        <button class="page{% if page==current_page %} active{% endif %}" value="{{ page }}">{{ page }}</button>
-                    </a>
-                {% endfor %}
-            </div>
-        {% endif %}
-        {% if page_max > 5 %}
-            <div class="pages">
-                <form id="pagination_form_{{ index }}" action="" method="get">
-                    <label for="page_{{ index }}">{{ 'Go to page'|trans }}
-                        <input type="number" name="page_{{ index }}" value="{{ current_page }}" min="1" max="{{ page_max }}" autofocus>
-                    </label>
-                    <button type="submit" class="page">{{ 'Go'|trans }}</button>
-                    <script>
-                        document.querySelector('#pagination_form_{{ index }}').addEventListener('submit', function(e) {
-                            e.preventDefault();
-                            const page = document.querySelector('input[name="page_{{ index }}"]').value;
-                            window.location.href = "{{ path(route, {_locale: app.locale}) }}" + "?page=" + page + "{{ params|raw }}";
-                        });
-                        document.querySelector('input[name="page_{{ index }}"]').addEventListener('input', function(e) {
-                            const page = e.target.value;
-                            if (page > {{ page_max }}) {
-                                e.target.value = {{ page_max }};
-                            }
-                            if (e.key === 'Enter') {
-                                document.querySelector('#pagination_form_{{ index }}').submit();
-                            }
-                        });
-                    </script>
-                </form>
-            </div>
-        {% endif %}
-    </div>
-</section>
+        <div class="block">
+            {% if end < page_max %}
+                <div class="pages">
+                    {% for page in max(end+1, page_max-4)..page_max %}
+                        <a href="{{ path(route, {_locale: app.locale, page: page}) ~ params }}">
+                            <button class="page{% if page==current_page %} active{% endif %}" value="{{ page }}">{{ page }}</button>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if page_max > 5 %}
+                <div class="pages">
+                    <form id="pagination_form_{{ index }}" action="" method="get">
+                        <label for="page_{{ index }}">{{ 'Go to page'|trans }}
+                            <input type="number" name="page_{{ index }}" value="{{ current_page }}" min="1" max="{{ page_max }}" autofocus>
+                        </label>
+                        <button type="submit" class="page">{{ 'Go'|trans }}</button>
+                        <script>
+                            document.querySelector('#pagination_form_{{ index }}').addEventListener('submit', function (e) {
+                                e.preventDefault();
+                                const page = document.querySelector('input[name="page_{{ index }}"]').value;
+                                window.location.href = "{{ path(route, {_locale: app.locale}) }}" + "?page=" + page + "{{ params|raw }}";
+                            });
+                            document.querySelector('input[name="page_{{ index }}"]').addEventListener('input', function (e) {
+                                const page = e.target.value;
+                                if (page > {{ page_max }}) {
+                                    e.target.value = {{ page_max }};
+                                }
+                                if (e.key === 'Enter') {
+                                    document.querySelector('#pagination_form_{{ index }}').submit();
+                                }
+                            });
+                        </script>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+{% endif %}

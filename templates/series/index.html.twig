@@ -87,7 +87,7 @@
                                 {% endif %}#}
                                 {% set day = date|format_datetime(pattern: "EEEE")|capitalize %}
                                 {% set month = date|format_datetime(pattern: "MMMM")|capitalize %}
-                                {% if app.locale == 'kr' %}
+                                {% if app.locale == 'ko' %}
                                     {% set day = day|trans %}
                                     {% set month = month|trans %}
                                 {% endif %}
