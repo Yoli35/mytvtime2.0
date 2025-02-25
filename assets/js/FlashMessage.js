@@ -5,6 +5,15 @@ export class FlashMessage {
 
     start() {
         console.log('FlashMessage init');
+        const flashMessagesDiv = document.querySelector('.flash-messages');
+        flashMessagesDiv.addEventListener('click', (e) => {
+            // Close all flash messages
+            const flashMessageDivs = document.querySelectorAll('.flash-message');
+            flashMessageDivs.forEach((flashMessageDiv) => {
+                const closeDiv = flashMessageDiv.querySelector('.closure-countdown, .close');
+                closeDiv.click();
+            });
+        });
     }
 
     /**
