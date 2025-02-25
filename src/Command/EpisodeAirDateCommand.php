@@ -157,7 +157,7 @@ class EpisodeAirDateCommand extends Command
                 }
                 $seasonNumber = $season['season_number'];
                 $tvSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $language), true);
-                $episodes = $tvSeason['episodes'];
+                $episodes = $tvSeason ? $tvSeason['episodes'] : [];
                 if (!count($episodes)) {
                     $this->io->writeln(' 🚫 No episodes for season ' . $seasonNumber);
                     continue;
