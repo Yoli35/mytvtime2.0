@@ -863,9 +863,6 @@ class SeriesController extends AbstractController
     {
         $user = $this->getUser();
 
-        $dayOffset = $this->seriesDayOffsetRepository->findOneBy(['series' => $series, 'country' => $user->getCountry() ?? 'FR']);
-        $dayOffset = $dayOffset ? $dayOffset->getOffset() : 0;
-
         $series->setVisitNumber($series->getVisitNumber() + 1);
         $this->seriesRepository->save($series, true);
 
@@ -923,7 +920,7 @@ class SeriesController extends AbstractController
             $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $request->getLocale());
             $tv['networks'] = $this->networks($tv);
             $tv['overview'] = $this->localizedOverview($tv, $series, $request);
-            $tv['seasons'] = $this->seasonsPosterPath($tv['seasons'], $dayOffset);
+            $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
             $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
             $tv['watch/providers'] = $this->watchProviders($tv, $user->getCountry() ?? 'FR');
             $tv['translations'] = $this->getTranslations($tv, $user);
@@ -956,7 +953,7 @@ class SeriesController extends AbstractController
 
         $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
 
-        $schedules = $this->seriesSchedulesV2($user, $series, $tv, $dayOffset);
+        $schedules = $this->seriesSchedulesV2($user, $series, $tv);
         $emptySchedule = $this->emptySchedule();
         $alternateSchedules = array_map(function ($s) use ($tv, $userEpisodes) {
             // Ajouter la "user" séries pour les épisodes vus
@@ -966,8 +963,6 @@ class SeriesController extends AbstractController
         }, $series->getSeriesBroadcastSchedules()->toArray());
 
         $seriesArr = $series->toArray();
-        $nead = $seriesArr['nextEpisodeAirDate'];
-        $seriesArr['nextEpisodeAirDate'] = $nead ? $nead->modify($dayOffset . ' days') : null;
         $seriesArr['schedules'] = $schedules;
         $seriesArr['emptySchedule'] = $emptySchedule;
         $seriesArr['alternateSchedules'] = $alternateSchedules;
@@ -2744,12 +2739,14 @@ class SeriesController extends AbstractController
         return $seasonEpisodeCount;
     }
 
-    public function seriesSchedulesV2(User $user, Series $series, ?array $tv, int $dayOffset): array
+    public function seriesSchedulesV2(User $user, Series $series, ?array $tv): array
     {
         $schedules = [];
         $locale = $user->getPreferredLanguage() ?? 'fr';
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
 
         foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
+            dump($schedule);
             $seasonNumber = $schedule->getSeasonNumber();
             if ($schedule->isMultiPart()) {
                 $multiPart = true;
@@ -2824,24 +2821,22 @@ class SeriesController extends AbstractController
             }
             $targetTS = $target?->getTimestamp();*/
 
-            $userLastEpisode = $this->userEpisodeRepository->getScheduleLastEpisode($user, $series, $seasonNumber, $firstEpisode, $lastEpisode);
-            $userNextEpisode = $this->userEpisodeRepository->getScheduleNextEpisode($user, $series, $seasonNumber, $firstEpisode, $lastEpisode);
+            $userLastEpisode = $this->userEpisodeRepository->getScheduleLastEpisode($schedule->getId(), $userSeries->getId());
+            $userNextEpisode = $this->userEpisodeRepository->getScheduleNextEpisode($schedule->getId(), $userSeries->getId());
             $userLastEpisode = $userLastEpisode[0] ?? null;
             $userNextEpisode = $userNextEpisode[0] ?? null;
             dump([
                 'userLastEpisode' => $userLastEpisode,
                 'userNextEpisode' => $userNextEpisode,
             ]);
-            $userLastEpisode = $this->offsetEpisodeDate($userLastEpisode, $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
-            $userNextEpisode = $this->offsetEpisodeDate($userNextEpisode, $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+            $userLastEpisode = $this->setEpisodeDatetime($userLastEpisode, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+            $userNextEpisode = $this->setEpisodeDatetime($userNextEpisode, $airAt, $user->getTimezone() ?? 'Europe/Paris');
             dump([
                 'episodeCount' => $episodeCount,
                 'userLastEpisode' => $userLastEpisode,
                 'userNextEpisode' => $userNextEpisode,
                 'multiPart' => $multiPart,
                 'seasonPart' => $seasonPart,
-                'firstEpisode' => $firstEpisode,
-                'lastEpisode' => $lastEpisode,
             ]);
             $endOfSeason = $userLastEpisode && $userLastEpisode['episode_number'] == $episodeCount;
 
@@ -2872,7 +2867,8 @@ class SeriesController extends AbstractController
             }
 
             if ($userNextEpisode) {
-                $userNextEpisodes = $this->userEpisodeRepository->getScheduleNextEpisodes($user, $series, $userNextEpisode['air_date'], $seasonNumber, $firstEpisode, $lastEpisode);
+                $userNextEpisodes = $this->userEpisodeRepository->getScheduleNextEpisodes($schedule->getId(), $userSeries->getId(), $userNextEpisode['air_date']);
+                dump($userNextEpisodes);
                 $count = count($userNextEpisodes);
                 $multiple = $count > 1;
                 if ($multiple) {
@@ -3153,16 +3149,12 @@ class SeriesController extends AbstractController
         ];
     }
 
-    public function offsetEpisodeDate(?array $episode, int $offset, DateTimeInterface $time, string $timezone): ?array
+    public function setEpisodeDatetime(?array $episode, DateTimeInterface $time, string $timezone): ?array
     {
         if (!$episode) return null;
         $date = $episode['air_date'];
         $date = $this->dateService->newDateImmutable($date, $timezone, true);
-        try {
-            $date = $date->modify('+' . $offset . ' day');
-        } catch (DateMalformedStringException $e) {
-            $episode['error'] = $e->getMessage();
-        }
+
         $date = $date->setTime($time->format('H'), $time->format('i'));
         $episode['date'] = $date;
         $date = $date->format('Y-m-d H:i');
@@ -3466,14 +3458,10 @@ class SeriesController extends AbstractController
         return 0;
     }
 
-    public function seasonsPosterPath(array $seasons, int $dayOffset = 0): array
+    public function seasonsPosterPath(array $seasons): array
     {
         $slugger = new AsciiSlugger();
-        return array_map(function ($season) use ($slugger, $dayOffset) {
-            if ($dayOffset && $season['air_date']) {
-                $airDate = $season['air_date'];
-                $season['air_date'] = $this->dateOffset($airDate, $dayOffset, 'Europe/Paris');
-            }
+        return array_map(function ($season) use ($slugger) {
             $season['slug'] = $slugger->slug($season['name'])->lower()->toString();
             $season['poster_path'] = $season['poster_path'] ? $this->imageConfiguration->getCompleteUrl($season['poster_path'], 'poster_sizes', 5) : null; // w500
             return $season;

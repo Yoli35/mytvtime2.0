@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Series;
+use App\Entity\SeriesBroadcastSchedule;
 use App\Entity\User;
 use App\Entity\UserEpisode;
 use App\Entity\UserSeries;
@@ -213,74 +214,51 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getOne($sql);
     }
 
-    public function getScheduleNextEpisode(User $user, Series $series, int $seasonNumber, int $firstEpisodeNumber, int $lastEpisodeNumber): array
+    public function getScheduleNextEpisode(int $id, int $userSeriesIde): array
     {
-        $userId = $user->getId();
-        $seriesId = $series->getId();
-        $country = $user->getCountry() ?? 'FR';
-
         $sql = "SELECT ue.`season_number`,
                        ue.`episode_number`,
-                       ue.`air_date`,
-                       IF(sdo.offset IS NULL, ue.`air_date`, DATE_ADD(ue.`air_date`, INTERVAL sdo.offset DAY)) as air_date_offset
+                       IF(sbd.id, DATE(sbd.date), ue.`air_date`) as air_date
                 FROM user_episode ue
-                INNER JOIN user_series us ON ue.`user_series_id` = us.`id`
-                INNER JOIN series s ON us.`series_id` = s.`id`
-                LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
-                WHERE us.`user_id` = $userId
-                  AND s.`id` = $seriesId
-                  AND ue.`season_number` = $seasonNumber
-                  AND ue.episode_number >= $firstEpisodeNumber AND ue.episode_number <= $lastEpisodeNumber
-                  AND ue.`watch_at` IS NULL
+                    INNER JOIN user_series us ON us.id=$userSeriesIde AND ue.`user_series_id` = us.`id`
+                    LEFT JOIN series_broadcast_schedule sbs ON sbs.id=$id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                    LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
+                WHERE sbs.season_number = ue.season_number
+                    AND ue.`watch_at` IS NULL
                 ORDER BY  ue.`season_number`, ue.`episode_number`
                 LIMIT 1";
 
         return $this->getAll($sql);
     }
 
-    public function getScheduleNextEpisodes(User $user, Series $series, $airDate, int $seasonNumber, int $firstEpisodeNumber, int $lastEpisodeNumber): array
+    public function getScheduleNextEpisodes(int $id, int $usId, string $airDate): array
     {
-        $userId = $user->getId();
-        $seriesId = $series->getId();
-        $country = $user->getCountry() ?? 'FR';
-
+        dump($id, $usId, $airDate);
         $sql = "SELECT ue.`season_number`,
                        ue.`episode_number`,
-                       ue.`air_date`,
-                       IF(sdo.offset IS NULL, ue.`air_date`, DATE_ADD(ue.`air_date`, INTERVAL sdo.offset DAY)) as air_date_offset
+                       IF(sbs.override, DATE(sbd.date), ue.`air_date`) as air_date
                 FROM user_episode ue
-                INNER JOIN user_series us ON ue.`user_series_id` = us.`id`
-                INNER JOIN series s ON us.`series_id` = s.`id`
-                LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
-                WHERE us.`user_id` = $userId
-                  AND s.`id` = $seriesId
-                  AND ue.`season_number` = $seasonNumber
-                  AND ue.episode_number >= $firstEpisodeNumber AND ue.episode_number <= $lastEpisodeNumber
-                  AND ue.`air_date` = '$airDate'
+                    INNER JOIN user_series us ON us.id = $usId AND ue.`user_series_id` = us.`id`
+                    LEFT JOIN series_broadcast_schedule sbs ON sbs.id = $id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                    LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
+                WHERE sbs.season_number = ue.season_number
+                    AND ue.`air_date` = DATE('$airDate')
                 ORDER BY  ue.`season_number`, ue.`episode_number`";
 
         return $this->getAll($sql);
     }
 
-    public function getScheduleLastEpisode(User $user, Series $series, int $seasonNumber, int $firstEpisodeNumber, int $lastEpisodeNumber): array
+    public function getScheduleLastEpisode(int $id, int $userSeriesId): array
     {
-        $userId = $user->getId();
-        $seriesId = $series->getId();
-        $country = $user->getCountry() ?? 'FR';
-
         $sql = "SELECT ue.`season_number`,
                        ue.`episode_number`,
-                       ue.`air_date`,
-                       IF(sdo.offset IS NULL, ue.`air_date`, DATE_ADD(ue.`air_date`, INTERVAL sdo.offset DAY)) as air_date_offset,
+                       IF(sbs.override, DATE(sbd.date), ue.`air_date`) as air_date,
                        ue.`watch_at`
                 FROM user_episode ue
-                INNER JOIN user_series us ON ue.`user_series_id` = us.`id`
-                INNER JOIN series s ON us.`series_id` = s.`id`
-                LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
-                WHERE us.`user_id` = $userId
-                  AND s.`id` = $seriesId
-                  AND ue.`season_number` = $seasonNumber
-                  AND ue.episode_number >= $firstEpisodeNumber AND ue.episode_number <= $lastEpisodeNumber
+                    INNER JOIN user_series us ON us.`id`=$userSeriesId AND ue.user_series_id=us.id
+                    LEFT JOIN series_broadcast_schedule sbs ON sbs.id=$id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                    LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
+                WHERE sbs.season_number = ue.season_number
                   AND ue.`watch_at` IS NOT NULL
                 ORDER BY  ue.`season_number` DESC, ue.`episode_number` DESC
                 LIMIT 1";
