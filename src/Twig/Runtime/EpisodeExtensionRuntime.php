@@ -40,7 +40,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         return $this->episodeNotificationRepository->episodeNotificationList($user);
     }
 
-    public function listEpisodeOfTheDay(User $user, int $interval, string $country = 'FR', string $locale = 'fr'): array
+    public function listEpisodeOfTheDay(User $user, int $interval, string $locale = 'fr'): array
     {
         $date = $this->dateService->newDateImmutable('now', $user->getTimezone() ?? 'Europe/Paris');
 
@@ -51,7 +51,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         if ($interval < 0)
             $date = $date->modify(sprintf('%d day', $interval))->format('Y-m-d');
 
-        $arr = $this->userEpisodeRepository->episodesOfTheDayForTwig($user, $date, $country, $locale);
+        $arr = $this->userEpisodeRepository->episodesOfTheDayForTwig($user, $date, $locale);
         $seriesArr = [];
         $totalEpisodeCount = 0;
         foreach ($arr as $item) {

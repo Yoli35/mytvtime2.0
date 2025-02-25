@@ -362,7 +362,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function episodesOfTheDayForTwig(User $user, string $day, string $country = 'FR', string $locale = 'fr'): array
+    public function episodesOfTheDayForTwig(User $user, string $day, string $locale = 'fr'): array
     {
         $userId = $user->getId();
         $sql = "SELECT 
@@ -384,26 +384,12 @@ class UserEpisodeRepository extends ServiceEntityRepository
               FROM series s 
                      INNER JOIN user_series us ON s.id = us.series_id 
                      INNER JOIN user_episode ue ON us.id = ue.user_series_id 
-                     LEFT JOIN series_day_offset sdo ON s.id = sdo.series_id AND sdo.country = '$country'
                      LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
-                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number
+                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
                      LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                      LEFT JOIN provider p ON sbs.provider_id = p.provider_id
               WHERE us.user_id = $userId
-                     AND (
-                            (
-                             sbd.id IS NULL
-                             AND ( 
-                                 ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.air_date = '$day') 
-                              OR ((sdo.offset > 0) AND ue.air_date = DATE_SUB('$day', INTERVAL sdo.offset DAY)) 
-                              OR ((sdo.offset < 0) AND ue.air_date = DATE_ADD('$day', INTERVAL ABS(sdo.offset) DAY)) 
-                                 ) 
-                             )
-                         OR (
-                             sbd.id IS NOT NULL
-                             AND DATE(sbd.date) = '$day'
-                            )
-                         )
+                     AND IF(sbd.id, DATE(sbd.date) = '$day', ue.air_date = '$day')
               ORDER BY displayName ";
         //       (WHERE ...) AND ue.season_number > 0
 
