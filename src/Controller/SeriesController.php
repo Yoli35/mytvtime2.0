@@ -2325,6 +2325,7 @@ class SeriesController extends AbstractController
         $tmdbCalls = 0;
         $updates = [];
 
+        $t0 = microtime(true);
         foreach ($dbSeries as $series) {
             $lastUpdate = $series->getUpdatedAt();
             $interval = $now->diff($lastUpdate);
@@ -2363,6 +2364,12 @@ class SeriesController extends AbstractController
                 'updates' => $update];
             $series->setUpdatedAt($now);
             $this->seriesRepository->save($series);
+
+            $t1 = microtime(true);
+            $interval = $t1 - $t0;
+            if ($interval > 25) {
+                break;
+            }
         }
         $this->seriesRepository->flush();
 
