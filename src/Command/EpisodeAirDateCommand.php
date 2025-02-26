@@ -10,7 +10,6 @@ use App\Entity\UserEpisodeNotification;
 use App\Entity\UserSeries;
 use App\Repository\EpisodeNotificationRepository;
 
-//use App\Repository\SeriesDayOffsetRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\UserEpisodeNotificationRepository;
 use App\Repository\UserEpisodeRepository;
@@ -43,7 +42,6 @@ class EpisodeAirDateCommand extends Command
     public function __construct(
         private readonly DateService                       $dateService,
         private readonly EpisodeNotificationRepository     $episodeNotificationRepository,
-//        private readonly SeriesDayOffsetRepository         $seriesDayOffsetRepository,
         private readonly SeriesRepository                  $seriesRepository,
         private readonly UserEpisodeNotificationRepository $userEpisodeNotificationRepository,
         private readonly UserEpisodeRepository             $userEpisodeRepository,
@@ -145,9 +143,6 @@ class EpisodeAirDateCommand extends Command
                 $this->seriesRepository->save($series, true);
             }
 
-//            $seriesDayOffset = $this->seriesDayOffsetRepository->findOneBy(['series' => $series, 'country' => $user->getCountry() ?? 'FR']);
-//            $dayOffset = $seriesDayOffset ? $seriesDayOffset->getOffset() : 0;
-
             $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries]);
             $firstUnseenEpisode = $this->findFirstNotWatchedEpisode($userEpisodes);
             $startingSeason = $firstUnseenEpisode ? $firstUnseenEpisode->getSeasonNumber() : 1;
@@ -167,12 +162,7 @@ class EpisodeAirDateCommand extends Command
                     $episodeNumber = $episode['episode_number'];
                     /** @var DateTimeImmutable|null $airDate */
                     $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], 'UTC') : null;
-//                    if ($dayOffset > 0) {
-//                        $airDate = $airDate->modify('+' . $dayOffset . ' day');
-//                    }
-//                    if ($dayOffset < 0) {
-//                        $airDate = $airDate->modify($dayOffset . ' day');
-//                    }
+
                     $userEpisode = $this->getUserEpisodeById($userEpisodes, $episodeId);
 
                     if (!$userEpisode) {

@@ -13,7 +13,6 @@ use App\Entity\Series;
 use App\Entity\SeriesAdditionalOverview;
 use App\Entity\SeriesBroadcastDate;
 use App\Entity\SeriesBroadcastSchedule;
-use App\Entity\SeriesDayOffset;
 use App\Entity\SeriesExternal;
 use App\Entity\SeriesImage;
 use App\Entity\SeriesLocalizedName;
@@ -38,7 +37,6 @@ use App\Repository\ProviderRepository;
 use App\Repository\SeriesAdditionalOverviewRepository;
 use App\Repository\SeriesBroadcastDateRepository;
 use App\Repository\SeriesBroadcastScheduleRepository;
-use App\Repository\SeriesDayOffsetRepository;
 use App\Repository\SeriesExternalRepository;
 use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesLocalizedNameRepository;
@@ -112,7 +110,6 @@ class SeriesController extends AbstractController
         private readonly SeriesAdditionalOverviewRepository $seriesAdditionalOverviewRepository,
         private readonly SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
         private readonly SeriesBroadcastScheduleRepository  $seriesBroadcastScheduleRepository,
-        private readonly SeriesDayOffsetRepository          $seriesDayOffsetRepository,
         private readonly SeriesExternalRepository           $seriesExternalRepository,
         private readonly SeriesImageRepository              $seriesImageRepository,
         private readonly SeriesRepository                   $seriesRepository,
@@ -1019,7 +1016,6 @@ class SeriesController extends AbstractController
             'tv' => $tv,
 //            'oldSeriesAdded - get' => $request->get('oldSeriesAdded'),
 //            'oldSeriesAdded - query' => $request->query->get('oldSeriesAdded'),
-//            'dayOffset' => $dayOffset,
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'schedules' => $schedules,
@@ -1116,27 +1112,6 @@ class SeriesController extends AbstractController
     public function removeUserSeries(UserSeries $userSeries): Response
     {
         $this->userSeriesRepository->remove($userSeries);
-
-        return $this->json([
-            'ok' => true,
-        ]);
-    }
-
-    #[Route('/broadcast/delay/{id}', name: 'broadcast_delay', requirements: ['id' => Requirement::DIGITS])]
-    public function broadcastDelay(Request $request, Series $series): Response
-    {
-        $user = $this->getUser();
-        $data = json_decode($request->getContent(), true);
-        $delay = $data['delay'];
-
-        $seriesDayOffset = $this->seriesDayOffsetRepository->findOneBy(['series' => $series, 'country' => $user->getCountry() ?? 'FR']);
-
-        if ($seriesDayOffset) {
-            $seriesDayOffset->setOffset($delay);
-        } else {
-            $seriesDayOffset = new SeriesDayOffset($series, $delay, $user->getCountry() ?? 'FR');
-        }
-        $this->seriesDayOffsetRepository->save($seriesDayOffset);
 
         return $this->json([
             'ok' => true,
@@ -1285,9 +1260,6 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $this->logger->info('showSeason', ['series' => $series->getId(), 'season' => $seasonNumber, 'slug' => $slug]);
 
-        $seriesDayOffset = $this->seriesDayOffsetRepository->findOneBy(['series' => $series, 'country' => $user->getCountry() ?? 'FR']);
-        $dayOffset = $seriesDayOffset ? $seriesDayOffset->getOffset() : 0;
-
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
 
@@ -1321,7 +1293,7 @@ class SeriesController extends AbstractController
         }
 
         $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
-        $season['episodes'] = $this->seasonEpisodes($season, $userSeries, $dayOffset);
+        $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
         $season['credits'] = $this->castAndCrew($season);
         $season['watch/providers'] = $this->watchProviders($season, $user->getCountry() ?? 'FR');
         if ($season['overview'] == "") {
@@ -1518,7 +1490,6 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $country = $user->getCountry() ?? 'FR';
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
-        $dayOffset = $series->getSeriesDayOffset($country);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $ueId]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'episodeId' => $id], ['id' => 'ASC']);
@@ -1539,13 +1510,6 @@ class SeriesController extends AbstractController
             $userEpisode->setProviderId($lastViewedUserEpisode->getProviderId());
             $userEpisode->setDeviceId($lastViewedUserEpisode->getDeviceId());
         } else {
-            if ($dayOffset > 0) {
-//                $airDate = $airDate->modify("+$dayOffset days");
-                $airDate = $this->dateModify($airDate, "+$dayOffset days");
-            } elseif ($dayOffset < 0) {
-//                $airDate = $airDate->modify("$dayOffset days");
-                $airDate = $this->dateModify($airDate, "$dayOffset days");
-            }
             $diff = $now->diff($airDate);
             $quickWatchDay = $diff->days < 1;
             $quickWatchWeek = $diff->days < 7;
@@ -1649,7 +1613,6 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $country = $user->getCountry() ?? 'FR';
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
-        $dayOffset = $series->getSeriesDayOffset($country);
         $userSeries = $userEpisode->getUserSeries();
 //        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
 //        $userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $id]);
@@ -1657,13 +1620,6 @@ class SeriesController extends AbstractController
         $userEpisode->setWatchAt($now);
 
         $airDate = $userEpisode->getAirDate();
-        if ($dayOffset > 0) {
-//            $airDate = $airDate->modify("+$dayOffset days");
-            $airDate = $this->dateModify($airDate, "+$dayOffset days");
-        } elseif ($dayOffset < 0) {
-//            $airDate = $airDate->modify("$dayOffset days");
-            $airDate = $this->dateModify($airDate, "$dayOffset days");
-        }
 
         $diff = $now->diff($airDate);
         $userEpisode->setQuickWatchDay($diff->days < 1);
@@ -2753,7 +2709,7 @@ class SeriesController extends AbstractController
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
 
         foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
-            dump($schedule);
+//            dump($schedule);
             $seasonNumber = $schedule->getSeasonNumber();
             if ($schedule->isMultiPart()) {
                 $multiPart = true;
@@ -2786,65 +2742,25 @@ class SeriesController extends AbstractController
                 $dayArr[$day] = true;
             }
 
-            /*            if ($tv && $tv['last_episode_to_air'] && $tv['last_episode_to_air']['season_number'] == $seasonNumber) {
-                            if ($multiPart) {
-                                $lastEpisodeToAirNumber = $tv['last_episode_to_air']['episode_number'];
-                                if ($lastEpisodeToAirNumber >= $firstEpisode && $lastEpisodeToAirNumber <= $lastEpisode) {
-                                    $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
-                                } else {
-                                    $tvLastEpisode = null;
-                                }
-                            } else {
-                                $tvLastEpisode = $this->offsetEpisodeDate($tv['last_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
-                            }
-                        } else {
-                            $tvLastEpisode = null;
-                        }
-
-                        if ($tv && $tv['next_episode_to_air'] && $tv['next_episode_to_air']['season_number'] == $seasonNumber) {
-                            if ($multiPart) {
-                                $nextEpisodeToAirNumber = $tv['next_episode_to_air']['episode_number'];
-                                if ($nextEpisodeToAirNumber >= $firstEpisode && $nextEpisodeToAirNumber <= $lastEpisode) {
-                                    $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
-                                } else {
-                                    $tvNextEpisode = null;
-                                }
-                            } else {
-                                $tvNextEpisode = $this->offsetEpisodeDate($tv['next_episode_to_air'], $dayOffset, $airAt, $user->getTimezone() ?? 'Europe/Paris');
-                            }
-                        } else {
-                            $tvNextEpisode = null;
-                        }*/
-
             $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
-//            $nextEpisodeAiDate = $tvNextEpisode['date'] ?? null;
-//            $lastEpisodeAiDate = $tvLastEpisode['date'] ?? null;
-            /*if ($nextEpisodeAiDate) {
-                $target = $nextEpisodeAiDate;
-            } elseif ($lastEpisodeAiDate) {
-                $target = $lastEpisodeAiDate;
-            } else {
-                $target = null;
-            }
-            $targetTS = $target?->getTimestamp();*/
 
             $userLastEpisode = $this->userEpisodeRepository->getScheduleLastEpisode($schedule->getId(), $userSeries->getId());
             $userNextEpisode = $this->userEpisodeRepository->getScheduleNextEpisode($schedule->getId(), $userSeries->getId());
             $userLastEpisode = $userLastEpisode[0] ?? null;
             $userNextEpisode = $userNextEpisode[0] ?? null;
-            dump([
-                'userLastEpisode' => $userLastEpisode,
-                'userNextEpisode' => $userNextEpisode,
-            ]);
+//            dump([
+//                'userLastEpisode' => $userLastEpisode,
+//                'userNextEpisode' => $userNextEpisode,
+//            ]);
             $userLastEpisode = $this->setEpisodeDatetime($userLastEpisode, $airAt, $user->getTimezone() ?? 'Europe/Paris');
             $userNextEpisode = $this->setEpisodeDatetime($userNextEpisode, $airAt, $user->getTimezone() ?? 'Europe/Paris');
-            dump([
-                'episodeCount' => $episodeCount,
-                'userLastEpisode' => $userLastEpisode,
-                'userNextEpisode' => $userNextEpisode,
-                'multiPart' => $multiPart,
-                'seasonPart' => $seasonPart,
-            ]);
+//            dump([
+//                'episodeCount' => $episodeCount,
+//                'userLastEpisode' => $userLastEpisode,
+//                'userNextEpisode' => $userNextEpisode,
+//                'multiPart' => $multiPart,
+//                'seasonPart' => $seasonPart,
+//            ]);
             $endOfSeason = $userLastEpisode && $userLastEpisode['episode_number'] == $episodeCount;
 
             $target = null;
@@ -2853,7 +2769,7 @@ class SeriesController extends AbstractController
                 if ($multiPart) {
                     if ($userLastEpisode['episode_number'] >= $firstEpisode && $userLastEpisode['episode_number'] <= $lastEpisode) {
                         $targetTS = $userLastEpisode['date']->getTimestamp();
-                        dump('done!');
+//                        dump('done!');
                     } else {
                         $userLastEpisode = null;
                     }
@@ -2875,7 +2791,7 @@ class SeriesController extends AbstractController
 
             if ($userNextEpisode) {
                 $userNextEpisodes = $this->userEpisodeRepository->getScheduleNextEpisodes($schedule->getId(), $userSeries->getId(), $userNextEpisode['air_date']);
-                dump($userNextEpisodes);
+//                dump($userNextEpisodes);
                 $count = count($userNextEpisodes);
                 $multiple = $count > 1;
                 if ($multiple) {
@@ -2888,7 +2804,7 @@ class SeriesController extends AbstractController
                 $multiple = false;
                 $userLastNextEpisode = null;
             }
-            dump(['userLastEpisode' => $userLastEpisode, 'userNextEpisode' => $userNextEpisode, 'userLastNextEpisode' => $userLastNextEpisode]);
+//            dump(['userLastEpisode' => $userLastEpisode, 'userNextEpisode' => $userNextEpisode, 'userLastNextEpisode' => $userLastNextEpisode]);
             if ($userNextEpisode == null) {
                 $targetTS = $userLastEpisode['date']->getTimestamp();
             }
@@ -3475,7 +3391,7 @@ class SeriesController extends AbstractController
         }, $seasons);
     }
 
-    public function seasonEpisodes(array $season, UserSeries $userSeries, int $dayOffset): array
+    public function seasonEpisodes(array $season, UserSeries $userSeries): array
     {
         $user = $userSeries->getUser();
         $series = $userSeries->getSeries();
@@ -3502,8 +3418,6 @@ class SeriesController extends AbstractController
             });
             if (key_exists('custom_date', $userEpisode) && $userEpisode['custom_date']) {
                 $episode['air_date'] = $userEpisode['custom_date'];
-            } else {
-                $episode['air_date'] = $episode['air_date'] ? $this->dateOffset($episode['air_date'], $dayOffset, $user->getTimezone() ?? 'Europe/Paris') : null;
             }
             $episode['crew'] = array_map(function ($crew) use ($slugger, $user) {
                 if (key_exists('person_id', $crew)) return null;
@@ -3594,18 +3508,6 @@ class SeriesController extends AbstractController
                 $episode['provider_logo_path'] = '/images/providers/' . $episode['provider_logo_path'];
         }
         return $episodes;
-    }
-
-    public function dateOffset(string $dateString, int $offset, string $timezone): ?string
-    {
-        if ($dateString && $offset) {
-            $date = $this->dateService->newDateImmutable($dateString, $timezone);
-            if ($offset > 0)
-                $offset = "+$offset";
-            $date = $this->dateModify($date, "$offset days");
-            $dateString = $date->format('Y-m-d');
-        }
-        return $dateString;
     }
 
     public function dateModify(DateTimeImmutable $date, string $modify): DateTimeImmutable

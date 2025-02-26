@@ -83,12 +83,6 @@ class Series
     private ?string $status = null;
 
     /**
-     * @var Collection<int, SeriesDayOffset>
-     */
-    #[ORM\OneToMany(targetEntity: SeriesDayOffset::class, mappedBy: 'series', orphanRemoval: true)]
-    private Collection $seriesDayOffsets;
-
-    /**
      * @var Collection<int, SeasonLocalizedOverview>
      */
     #[ORM\OneToMany(targetEntity: SeasonLocalizedOverview::class, mappedBy: 'series', orphanRemoval: true)]
@@ -115,7 +109,6 @@ class Series
         $this->seasonLocalizedOverviews = new ArrayCollection();
         $this->seriesAdditionalOverviews = new ArrayCollection();
         $this->seriesBroadcastSchedules = new ArrayCollection();
-        $this->seriesDayOffsets = new ArrayCollection();
         $this->seriesImages = new ArrayCollection();
         $this->seriesLocalizedNames = new ArrayCollection();
         $this->seriesLocalizedOverviews = new ArrayCollection();
@@ -265,9 +258,6 @@ class Series
         return [
             'backdropPath' => $this->getBackdropPath(),
             'createdAt' => $this->getCreatedAt(),
-            'dayOffsets' => array_filter(array_map(function ($dayOffset) {
-                return ['offset' => $dayOffset->getOffset(), 'country' => $dayOffset->getCountry()];
-            }, $this->getSeriesDayOffsets()->toArray()), fn($dayOffset) => $dayOffset['country'] === $country),
             'firstAirDate' => $this->getFirstAirDate(),
             'id' => $this->getId(),
             'images' => $this->getSeriesImages()->toArray(),
@@ -544,46 +534,6 @@ class Series
     public function setStatus(?string $status): static
     {
         $this->status = $status;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, SeriesDayOffset>
-     */
-    public function getSeriesDayOffsets(): Collection
-    {
-        return $this->seriesDayOffsets;
-    }
-
-    public function getSeriesDayOffset($country): int
-    {
-        foreach ($this->seriesDayOffsets as $seriesDayOffset) {
-            if ($seriesDayOffset->getCountry() === $country) {
-                return $seriesDayOffset->getOffset();
-            }
-        }
-        return 0;
-    }
-
-    public function addSeriesDayOffset(SeriesDayOffset $seriesDayOffset): static
-    {
-        if (!$this->seriesDayOffsets->contains($seriesDayOffset)) {
-            $this->seriesDayOffsets->add($seriesDayOffset);
-            $seriesDayOffset->setSeries($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSeriesDayOffset(SeriesDayOffset $seriesDayOffset): static
-    {
-        if ($this->seriesDayOffsets->removeElement($seriesDayOffset)) {
-            // set the owning side to null (unless already changed)
-            if ($seriesDayOffset->getSeries() === $this) {
-                $seriesDayOffset->setSeries(null);
-            }
-        }
 
         return $this;
     }
