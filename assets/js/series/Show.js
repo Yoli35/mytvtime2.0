@@ -1255,29 +1255,31 @@ export class Show {
                 const div = document.createElement("div");
                 div.textContent = "No files currently selected for upload";
                 preview.appendChild(div);
-            } else {
-                const list = document.createElement("ol");
-                preview.appendChild(list);
-
-                for (const file of curFiles) {
-                    const listItem = document.createElement("li");
-                    const div = document.createElement("div");
-                    if (validFileType(file)) {
-                        div.textContent = `${file.name}, ${returnFileSize(file.size)}`;
-                        const image = document.createElement("img");
-                        image.src = URL.createObjectURL(file);
-                        image.alt = image.title = file.name;
-
-                        listItem.appendChild(div);
-                        listItem.appendChild(image);
-                    } else {
-                        div.innerHTML = `${file.name}<span class="error">${translations['Not a valid file type. Update your selection']}.</span>`;
-                        listItem.appendChild(div);
-                    }
-
-                    list.appendChild(listItem);
-                }
+                return;
             }
+            
+            const list = document.createElement("ol");
+            preview.appendChild(list);
+
+            for (const file of curFiles) {
+                const listItem = document.createElement("li");
+                const div = document.createElement("div");
+                if (validFileType(file)) {
+                    div.textContent = `${file.name}, ${returnFileSize(file.size)}`;
+                    const image = document.createElement("img");
+                    image.src = URL.createObjectURL(file);
+                    image.alt = image.title = file.name;
+
+                    listItem.appendChild(div);
+                    listItem.appendChild(image);
+                } else {
+                    div.innerHTML = `${file.name}<span class="error">${translations['Not a valid file type. Update your selection']}.</span>`;
+                    listItem.appendChild(div);
+                }
+
+                list.appendChild(listItem);
+            }
+
         }
 
         // https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types

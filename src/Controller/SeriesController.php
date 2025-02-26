@@ -79,13 +79,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use const FILTER_DEFAULT;
 use const FILTER_REQUIRE_ARRAY;
 
-//use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
-//use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
-//use Symfony\UX\Map\InfoWindow;
-//use Symfony\UX\Map\Map;
-//use Symfony\UX\Map\Marker;
-//use Symfony\UX\Map\Point;
-
 /** @method User|null getUser() */
 #[Route('/{_locale}/series', name: 'app_series_', requirements: ['_locale' => 'fr|en|ko'])]
 class SeriesController extends AbstractController
