@@ -37,6 +37,12 @@
                         {{ form_widget(form.country) }}
                     </label>
                 </div>
+                <div class="form-field">
+                    <label for="{{ form.timezone.vars.id }}">
+                        {{ form.timezone.vars.label|trans }}
+                        {{ form_widget(form.timezone) }}
+                    </label>
+                </div>
             </div>
             <div class="form-row">
                 <div class="form-field">
@@ -48,19 +54,12 @@
             </div>
             <div class="form-row">
                 <div class="form-field">
-                    <label for="{{ form.timezone.vars.id }}">
-                        {{ form.timezone.vars.label|trans }}
-                        {{ form_widget(form.timezone) }}
-                    </label>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-field">
                     <label for="{{ form.avatarFile.vars.id }}" class="">{{ form.avatarFile.vars.label|trans }}
                         {{ form_widget(form.avatarFile) }}
                     </label>
                     <div class="preview-avatar-file">
                         {% if user.avatar %}
+                            <p>{{ user.avatar }}</p>
                             <img src="/images/users/avatars/{{ user.avatar }}" alt="{{ user.username }}">
                         {% else %}
                             <p>{{ 'No image currently selected for upload'|trans }}</p>
@@ -75,6 +74,7 @@
                     </label>
                     <div class="preview-banner-file">
                         {% if user.banner %}
+                            <p>{{ user.banner }}</p>
                             <img src="/images/users/banners/{{ user.banner }}" alt="{{ user.username }}">
                         {% else %}
                             <p>{{ 'No image currently selected for upload'|trans }}</p>
@@ -87,12 +87,11 @@
             </div>
             {{ form_end(form) }}
         </div>
-        <script>
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach((checkbox) => {
-                checkbox.setAttribute('switch', '');
-            });
-        </script>
+        <div id="globs" style="display: none">
+            {
+            "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+            }
+        </div>
         {% include('_blocks/_footer.html.twig') %}
     </div>
 {% endblock %}

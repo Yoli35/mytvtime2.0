@@ -2,23 +2,22 @@
 
 namespace App\Controller;
 
-use App\Entity\Provider;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Repository\EpisodeNotificationRepository;
 use App\Repository\NetworkRepository;
 use App\Repository\ProviderRepository;
 use App\Repository\UserEpisodeNotificationRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
-use App\Service\TMDBService;
+use App\Service\ImageService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 /** @method User|null getUser() */
@@ -31,9 +30,10 @@ class UserController extends AbstractController
         private readonly UserEpisodeNotificationRepository $userEpisodeNotificationRepository,
         private readonly DateService                       $dateService,
         private readonly ImageConfiguration                $imageConfiguration,
+        private readonly ImageService                      $imageService,
         private readonly NetworkRepository                 $networkRepository,
         private readonly ProviderRepository                $providerRepository,
-//        private readonly TMDBService                       $tmdbService,
+        private readonly TranslatorInterface               $translator,
         private readonly WatchProviderRepository           $watchProviderRepository,
     )
     {
@@ -48,15 +48,36 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $files = $request->files->all();
+            /*dump([
+                'user' => $user,
+                'avatar' => $files['user']['avatarFile'],
+                'banner' => $files['user']['bannerFile'],
+            ]);*/
+            if ($avatarFile = $files['user']['avatarFile']) {
+                if ($newAvatarFileName = $this->imageService->userFiles2Webp($avatarFile, 'avatars', $user->getUsername())) {
+                    $user->setAvatar($newAvatarFileName);
+                }
+            }
+            if ($bannerFile = $files['user']['bannerFile']) {
+                if ($newBannerFileName = $this->imageService->userFiles2Webp($bannerFile, 'banners', $user->getUsername())) {
+                    $user->setBanner($newBannerFileName);
+                }
+            }
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
             return $this->redirectToRoute('app_home');
         }
 
+        $translations = [
+            'Not a valid file type. Update your selection' => $this->translator->trans('Not a valid file type. Update your selection'),
+        ];
+
         return $this->render('user/profile.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
+            'translations' => $translations,
         ]);
     }
 

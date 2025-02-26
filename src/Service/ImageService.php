@@ -125,6 +125,33 @@ class ImageService extends AbstractController
         return $image;
     }
 
+    public function userFiles2Webp(UploadedFile $file, string $type, string $username): ?string
+    {
+        $kernelProjectDir = $this->getParameter('kernel.project_dir');
+        $slugger = new AsciiSlugger();
+        $imagePath = $kernelProjectDir . '/public/images/users/' . $type . '/';
+        $imageTempPath = $kernelProjectDir . '/public/images/temp/';
+
+        $extension = $file->guessExtension();
+        $basename = $slugger->slug($username)->lower()->toString();
+        $tempName = $imageTempPath . $basename . '.' . $extension;
+        $destination = $imagePath . $basename . '.webp';
+
+        try {
+            $file->move($imageTempPath, $basename . '.' . $extension);
+            $webp = $this->webpImage($tempName, $destination, 90, -1); // width: -1 → no resize
+            if ($webp) {
+                $image = $basename . '.webp';
+            } else {
+                $image = null;
+            }
+        } catch (FileException $e) {
+            $this->logger?->error('Error in userFiles2Webp: ' . $e->getMessage());
+            $image = null;
+        }
+        return $image;
+    }
+
     public static function webpImage(string $sourcePath, string $destPath, int $quality = 100, int $width = 1920, int $height = 1080, bool $removeOld = true): ?string
     {
         $destination = $destPath;
@@ -151,43 +178,45 @@ class ImageService extends AbstractController
             imagealphablending($image, true);
             imagesavealpha($image, true);
         }
-        if ($sourceWidth != $width || $sourceHeight != $height) {
-            $destRatio = $width / $height;
-            $sourceRation = $sourceWidth / $sourceHeight;
-            $sourceX = 0;
-            $sourceY = 0;
-            if ($sourceRation > $destRatio) {
-                $sourceWidth = $sourceHeight * $destRatio;
-                $sourceX = ($info[0] - $sourceWidth) / 2;
-            } else {
-                $sourceHeight = $sourceWidth / $destRatio;
-                $sourceY = ($info[1] - $sourceHeight) / 2;
-            }
-            dump([
-                'destRatio' => $destRatio,
-                'sourceRation' => $sourceRation,
-                'sourceWidth' => $sourceWidth,
-                'sourceHeight' => $sourceHeight,
-                'sourceX' => $sourceX,
-                'sourceY' => $sourceY,
-            ]);
-            $newImage = imagecreatetruecolor($width, $height);
-            // On ajoute un fond noir pour les images dont l'aspect ratio est différent de 16 / 9 (1920 / 1080).
-            if ($sourceX || $sourceY) {
-                if ($isAlpha) {
-                    imagealphablending($newImage, false);
-                    imagesavealpha($newImage, true);
-                    imagefilledrectangle($newImage, 0, 0, $width, $height, imagecolorallocatealpha($newImage, 0, 0, 0, 127));
+        if ($width > 0) {
+            if ($sourceWidth != $width || $sourceHeight != $height) {
+                $destRatio = $width / $height;
+                $sourceRation = $sourceWidth / $sourceHeight;
+                $sourceX = 0;
+                $sourceY = 0;
+                if ($sourceRation > $destRatio) {
+                    $sourceWidth = $sourceHeight * $destRatio;
+                    $sourceX = ($info[0] - $sourceWidth) / 2;
                 } else {
-                    imagefill($newImage, 0, 0, imagecolorallocate($newImage, 0, 0, 0));
+                    $sourceHeight = $sourceWidth / $destRatio;
+                    $sourceY = ($info[1] - $sourceHeight) / 2;
                 }
-            }
-            $successfullyResampled = imagecopyresampled($newImage, $image, 0, 0, $sourceX, $sourceY, $width, $height, $sourceWidth, $sourceHeight);
+                dump([
+                    'destRatio' => $destRatio,
+                    'sourceRation' => $sourceRation,
+                    'sourceWidth' => $sourceWidth,
+                    'sourceHeight' => $sourceHeight,
+                    'sourceX' => $sourceX,
+                    'sourceY' => $sourceY,
+                ]);
+                $newImage = imagecreatetruecolor($width, $height);
+                // On ajoute un fond noir pour les images dont l'aspect ratio est différent de 16 / 9 (1920 / 1080).
+                if ($sourceX || $sourceY) {
+                    if ($isAlpha) {
+                        imagealphablending($newImage, false);
+                        imagesavealpha($newImage, true);
+                        imagefilledrectangle($newImage, 0, 0, $width, $height, imagecolorallocatealpha($newImage, 0, 0, 0, 127));
+                    } else {
+                        imagefill($newImage, 0, 0, imagecolorallocate($newImage, 0, 0, 0));
+                    }
+                }
+                $successfullyResampled = imagecopyresampled($newImage, $image, 0, 0, $sourceX, $sourceY, $width, $height, $sourceWidth, $sourceHeight);
 
-            if (!$successfullyResampled) {
-                imagedestroy($newImage);
-                imagedestroy($image);
-                return null;
+                if (!$successfullyResampled) {
+                    imagedestroy($newImage);
+                    imagedestroy($image);
+                    return null;
+                }
             }
             $successfullyConverted = imagewebp($newImage, $destination, $quality);
             imagedestroy($newImage);

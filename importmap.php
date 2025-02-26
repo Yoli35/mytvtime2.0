@@ -61,6 +61,9 @@ return [
     'PosterHover' => [
         'path' => './assets/js/images/PosterHover.js',
     ],
+    'Profile' => [
+        'path' => './assets/js/user/Profile.js',
+    ],
     'ProviderSelect' => [
         'path' => './assets/js/home/ProviderSelect.js',
     ],

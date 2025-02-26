@@ -10,6 +10,7 @@ import {NavBar} from 'NavBar';
 import {NetworkAndProvider} from "NetworkAndProvider";
 import {PeopleShow} from "PeopleShow";
 import {PosterHover} from 'PosterHover';
+import {Profile} from 'Profile';
 import {ProviderSelect} from 'ProviderSelect';
 import {Season} from 'Season';
 import {Show} from 'Show';
@@ -130,6 +131,12 @@ window.addEventListener("DOMContentLoaded", () => {
         providerSelect.init();
         highlightSeries.init(globs);
 
+    }
+
+// Profile page
+    const profile = document.querySelector(".profile");
+    if (profile) {
+        new Profile();
     }
 
 // Series & season page
