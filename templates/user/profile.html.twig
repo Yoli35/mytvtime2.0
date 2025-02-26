@@ -56,18 +56,30 @@
             </div>
             <div class="form-row">
                 <div class="form-field">
-                    <label for="{{ form.avatarFile.vars.id }}" class="drop-zone">
-                        {{ form.avatarFile.vars.label|trans }}
+                    <label for="{{ form.avatarFile.vars.id }}" class="">{{ form.avatarFile.vars.label|trans }}
                         {{ form_widget(form.avatarFile) }}
                     </label>
+                    <div class="preview-avatar-file">
+                        {% if user.avatar %}
+                            <img src="/images/users/avatars/{{ user.avatar }}" alt="{{ user.username }}">
+                        {% else %}
+                            <p>{{ 'No image currently selected for upload'|trans }}</p>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-field">
-                    <label for="{{ form.bannerFile.vars.id }}" class="drop-zone">
-                        {{ form.bannerFile.vars.label|trans }}
+                    <label for="{{ form.bannerFile.vars.id }}" class="">{{ form.bannerFile.vars.label|trans }}
                         {{ form_widget(form.bannerFile) }}
                     </label>
+                    <div class="preview-banner-file">
+                        {% if user.banner %}
+                            <img src="/images/users/banners/{{ user.banner }}" alt="{{ user.username }}">
+                        {% else %}
+                            <p>{{ 'No image currently selected for upload'|trans }}</p>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             <div class="form-row">

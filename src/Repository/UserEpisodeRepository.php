@@ -233,7 +233,6 @@ class UserEpisodeRepository extends ServiceEntityRepository
 
     public function getScheduleNextEpisodes(int $id, int $usId, string $airDate): array
     {
-        dump($id, $usId, $airDate);
         $sql = "SELECT ue.`season_number`,
                        ue.`episode_number`,
                        IF(sbs.override, DATE(sbd.date), ue.`air_date`) as air_date
@@ -418,30 +417,23 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        p.`name`                        as providerName,
                        p.`logo_path`                   as providerLogoPath,
                        p.provider_id                   as providerId,
-                       sdo.offset                      as dayOffset,
                        (SELECT count(*)
                         FROM user_episode ue
                         WHERE ue.user_series_id = us.id
                           AND ue.season_number > 0
-                          AND (
-                            ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.`air_date` <= CURDATE())
-                                OR ((sdo.offset > 0) AND ue.`air_date` <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
-                                OR ((sdo.offset < 0) AND ue.`air_date` <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
-                            )
+                          AND IF(sbs.override, DATE(sbd.date) <= CURDATE(), ue.air_date <= CURDATE())
                           AND ue.watch_at IS NOT NULL) as watched_aired_episode_count,
                        (SELECT count(*)
                         FROM user_episode ue
                         WHERE ue.user_series_id = us.id
                           AND ue.season_number > 0
-                          AND (
-                            ((sdo.offset IS NULL OR sdo.offset = 0) AND ue.`air_date` <= CURDATE())
-                                OR ((sdo.offset > 0) AND ue.`air_date` <= DATE_SUB(CURDATE(), INTERVAL sdo.offset DAY))
-                                OR ((sdo.offset < 0) AND ue.`air_date` <= DATE_ADD(CURDATE(), INTERVAL ABS(sdo.offset) DAY))
-                            ))                         as aired_episode_count
+                          AND IF(sbs.override, DATE(sbd.date) <= CURDATE(), ue.air_date <= CURDATE())
+                                                       as aired_episode_count
                 FROM `user_episode` ue
                          INNER JOIN `user_series` us ON us.`id` = ue.`user_series_id`
                          INNER JOIN `series` s ON s.`id` = us.`series_id`
-                         LEFT JOIN `series_day_offset` sdo ON s.id = sdo.series_id AND sdo.country = '$country'
+                         LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                         LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                          LEFT JOIN `provider` p ON p.`provider_id` = ue.`provider_id`
                          LEFT JOIN `series_localized_name` sln ON sln.`series_id` = s.`id` AND sln.`locale` = '$locale'
                 WHERE ue.`user_id` = $userId

@@ -80,10 +80,6 @@
                     gap: .25rem;
                 }
 
-                label:has(.vich-image) {
-                    flex-direction: column;
-                }
-
                 label:has(input[type=file]) {
                     gap: 1rem;
                     width: 100%;
@@ -100,54 +96,6 @@
                         &:hover {
                             background-color: var(--ardoise-70);
                             border-color: var(--ardoise-50);
-                        }
-                    }
-
-                    .vich-image {
-                        align-items: center;
-                        display: flex;
-                        flex-grow: 1;
-                        gap: .5rem;
-                        width: 100%;
-
-                        input[type=file]::file-selector-button {
-                            background-color: var(--ardoise-80);
-                            border: 1px solid var(--ardoise-50);
-                            border-radius: .25em;
-                            color: var(--ardoise-10);
-                            cursor: pointer;
-                            padding-block: .25rem;
-                            padding-inline: 1rem;
-                        }
-
-                        div {
-                            align-items: center;
-                            display: flex;
-                            gap: 1rem;
-
-                            label {
-                                order: 2;
-                            }
-                        }
-
-                        img {
-                            border-radius: .25rem;
-                            height: 10rem;
-                            max-width: 100%;
-                        }
-
-                        a:not(:has(img)) {
-                            background-color: var(--ardoise-80);
-                            border: 1px solid var(--ardoise-50);
-                            border-radius: 0.25rem;
-                            padding-block: 0.25rem;
-                            padding-inline: 1rem;
-                            margin-inline-start: auto;
-
-                            &:hover {
-                                background-color: var(--ardoise-70);
-                                border-color: var(--ardoise-40);
-                            }
                         }
                     }
                 }
@@ -310,6 +258,49 @@
         }
     }
 
+}
+
+.profile {
+    .form-field:has(div[class^="preview"]) {
+        border: 2px dashed var(--orange-50);
+        border-radius: .5em;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-block: 1rem;
+        padding: 1rem;
+        width: 100%;
+
+        label {
+            flex-grow: 1;
+            width: unset !important;
+        }
+
+        .preview-avatar-file, .preview-banner-file {
+            border: 2px solid var(--orange-50);
+        }
+
+        .preview-avatar-file {
+            border-radius: 50%;
+
+            img {
+                aspect-ratio: 1 / 1;
+                border-radius: 50%;
+                height: 10rem;
+            }
+        }
+
+        .preview-banner-file {
+            border-radius: .75em;
+
+            img {
+                aspect-ratio: 16 / 9;
+                border-radius: .5em;
+                height: 10rem;
+                object-fit: cover;
+            }
+        }
+    }
 }
 
 @media (width <= 36rem) {

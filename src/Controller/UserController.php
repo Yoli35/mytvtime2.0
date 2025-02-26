@@ -21,6 +21,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 
+/** @method User|null getUser() */
 #[IsGranted('ROLE_USER')]
 #[Route('/{_locale}/user', name: 'app_user_', requirements: ['locale' => 'fr|en|ko'])]
 class UserController extends AbstractController
@@ -41,7 +42,6 @@ class UserController extends AbstractController
     #[Route('/profile', name: 'profile')]
     public function profile(Request $request): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
 
         $form = $this->createForm(UserType::class, $user);
@@ -56,6 +56,7 @@ class UserController extends AbstractController
 
         return $this->render('user/profile.html.twig', [
             'form' => $form->createView(),
+            'user' => $user,
         ]);
     }
 
