@@ -218,9 +218,11 @@ class ImageService extends AbstractController
                     imagedestroy($image);
                     return null;
                 }
+                $successfullyConverted = imagewebp($newImage, $destination, $quality);
+                imagedestroy($newImage);
+            } else {
+                $successfullyConverted = imagewebp($image, $destination, $quality);
             }
-            $successfullyConverted = imagewebp($newImage, $destination, $quality);
-            imagedestroy($newImage);
         } else {
             $successfullyConverted = imagewebp($image, $destination, $quality);
         }
