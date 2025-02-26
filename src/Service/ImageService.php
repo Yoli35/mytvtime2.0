@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use DateTimeImmutable;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -133,7 +134,7 @@ class ImageService extends AbstractController
         $imageTempPath = $kernelProjectDir . '/public/images/temp/';
 
         $extension = $file->guessExtension();
-        $basename = $slugger->slug($username)->lower()->toString();
+        $basename = $slugger->slug($username)->lower()->toString() . '-' . new DateTimeImmutable()->format('Y-m-d-H-i-s');
         $tempName = $imageTempPath . $basename . '.' . $extension;
         $destination = $imagePath . $basename . '.webp';
 
