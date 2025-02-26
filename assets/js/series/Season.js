@@ -151,24 +151,42 @@ export class Season {
         });
 
         const sizesDiv = document.querySelector('.sizes');
+        const arsDiv = document.querySelector('.aspect-ratios');
         const userSeriesId = sizesDiv.getAttribute('data-user-series-id');
         const sizesItemDivs = sizesDiv.querySelectorAll('.size-item');
+        const arsItemDivs = arsDiv.querySelectorAll('.ar-item');
+        const itemDivs = [...sizesItemDivs, ...arsItemDivs];
         const initialActiveSizeItemDiv = sizesDiv.querySelector('.size-item.active');
+        const initialActiveArItemDiv = arsDiv.querySelector('.ar-item.active');
         const initialSize = initialActiveSizeItemDiv.getAttribute('data-size');
+        const initialAr = initialActiveArItemDiv.getAttribute('data-ar');
         const episodesDiv = document.querySelector('.episodes');
         episodesDiv.style.setProperty('--episode-height', initialSize);
+        episodesDiv.style.setProperty('--episode-aspect-ratio', initialAr);
 
-        sizesItemDivs.forEach(function (sizeItem) {
-            sizeItem.addEventListener('click', function (e) {
-                const sizeItemDiv = e.currentTarget;
-                if (sizeItemDiv.classList.contains('active')) {
+        itemDivs.forEach(function (itemDiv) {
+            itemDiv.addEventListener('click', function (e) {
+                const target = e.currentTarget;
+                const type = target.getAttribute('data-type');
+                if (target.classList.contains('active')) {
                     return;
                 }
-                const activeSizeItemDiv = sizesDiv.querySelector('.size-item.active');
-                const size = sizeItemDiv.getAttribute('data-size');
-                activeSizeItemDiv.classList.remove('active');
-                sizeItemDiv.classList.add('active');
-                episodesDiv.style.setProperty('--episode-height', size);
+                if (type === 'size') {
+                    const activeSizeItemDiv = sizesDiv.querySelector('.size-item.active');
+                    activeSizeItemDiv.classList.remove('active');
+                    const newValue = itemDiv.getAttribute('data-size');
+                    episodesDiv.style.setProperty('--episode-height', newValue);
+                }
+                if (type === 'aspect-ratio') {
+                    const activeArItemDiv = arsDiv.querySelector('.ar-item.active');
+                    activeArItemDiv.classList.remove('active');
+                    const newValue = itemDiv.getAttribute('data-ar');
+                    episodesDiv.style.setProperty('--episode-aspect-ratio', newValue);
+                }
+                itemDiv.classList.add('active');
+
+                const size = sizesDiv.querySelector('.size-item.active').getAttribute('data-size');
+                const ar = arsDiv.querySelector('.ar-item.active').getAttribute('data-ar');
 
                 fetch('/' + gThis.lang + '/series/episode/height/' + userSeriesId, {
                     method: 'POST',
@@ -177,7 +195,8 @@ export class Season {
                         'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({
-                        height: size
+                        height: size,
+                        aspectRatio: ar
                     })
                 })
                     .then(response => response.json())
@@ -282,6 +301,8 @@ export class Season {
                 customStillsTextDiv.innerText = gThis.text['paste'] + ' - 4';
                 customStillsDiv.classList.add('active');
                 customStillsTextDiv.classList.add('active');
+                customStillsTextDiv.setAttribute('contenteditable', 'true');
+                customStillsTextDiv.focus();
                 customStillsTextDiv.addEventListener('paste', gThis.pasteStill);
                 let countDown = 4;
                 let intervalId = setInterval(() => {
@@ -295,6 +316,7 @@ export class Season {
                     customStillsTextDiv.innerText = gThis.text['click'];
                     customStillsDiv.classList.remove('active');
                     customStillsTextDiv.classList.remove('active');
+                    customStillsTextDiv.removeAttribute('contenteditable');
                     customStillsTextDiv.removeEventListener('paste', gThis.pasteStill);
                 }, 4000);
             });

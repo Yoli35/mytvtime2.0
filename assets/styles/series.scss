@@ -2094,6 +2094,36 @@ h2 {
         }
     }
 
+    .aspect-ratios {
+        background-color: var(--ardoise-100-alpha-20);
+        /*border: 2px dashed var(--orange-50);*/
+        border-radius: .5rem;
+        display: flex;
+        gap: .5rem;
+        padding: .5rem;
+
+        .ar-item {
+            align-items: center;
+            background-color: var(--ardoise-100-alpha-20);
+            border-radius: .25rem;
+            color: var(--ardoise-10);
+            display: flex;
+            height: 2rem;
+            justify-content: center;
+            padding: .5rem;
+            transition: background-color 0.3s linear;
+            width: 2rem;
+
+            &.active {
+                background-color: var(--user-episode-actions);
+            }
+
+            &:hover {
+                background-color: var(--orange-50);
+            }
+        }
+    }
+
     .edit-episode-infos {
         align-items: center;
         background-color: var(--ardoise-100-alpha-20);
@@ -2252,6 +2282,8 @@ h2 {
 
 .episodes {
     --episode-height: 15rem;
+    --episode-aspect-ratio: 16/9;
+
     display: flex;
     flex-direction: column;
     gap: .5rem;
@@ -2274,7 +2306,7 @@ h2 {
 
         .still {
             align-items: center;
-            aspect-ratio: 16/9;
+            aspect-ratio: var(--episode-aspect-ratio);
             background-color: var(--ardoise-100-alpha-20);
             border: 2px solid transparent;
             border-radius: .5rem;

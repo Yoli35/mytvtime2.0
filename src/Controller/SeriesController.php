@@ -1262,10 +1262,12 @@ class SeriesController extends AbstractController
         if ($episodeSizeSettings) {
             $value = $episodeSizeSettings->getData();
             $episodeDivSize = $value['height'];
+            $aspectRatio = $value['aspect-ratio'] ?? '16 / 9';
         } else {
-            $episodeSizeSettings = new Settings($user, 'episode_div_size_' . $userSeries->getId(), ['height' => '15rem']);
+            $episodeSizeSettings = new Settings($user, 'episode_div_size_' . $userSeries->getId(), ['height' => '15rem', 'aspect-ratio' => '16 / 9']);
             $this->settingsRepository->save($episodeSizeSettings, true);
             $episodeDivSize = '15rem';
+            $aspectRatio = '16 / 9';
         }
 
         $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $request->getLocale(), ['credits', 'watch/providers']), true);
@@ -1339,7 +1341,10 @@ class SeriesController extends AbstractController
             'series' => $series,
             'userSeries' => $userSeries,
             'season' => $season,
-            'episodeDivSize' => $episodeDivSize,
+            'episodeDiv' => [
+                'height'=>$episodeDivSize,
+                'aspectRatio' => $aspectRatio
+            ],
             'providers' => $providers,
             'devices' => $devices,
             'externals' => $this->getExternals($series, $tvKeywords['results'] ?? [], $tvExternalIds, $request->getLocale()),
@@ -1754,6 +1759,7 @@ class SeriesController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
         $settings['height'] = $data['height'];
+        $settings['aspect-ratio'] = $data['aspectRatio'];
 
         $episodeSizeSettings->setData($settings);
         $this->settingsRepository->save($episodeSizeSettings, true);
@@ -1894,7 +1900,7 @@ class SeriesController extends AbstractController
         $copy = false;
 
         try {
-            $webp = $this->imageService->webpImage($tempName, $stillPath, 90, 1280, 720);
+            $webp = $this->imageService->webpImage($tempName, $stillPath, 90, -1);
             if ($webp) {
                 if ($copyCount) $basename .= '-' . $copyCount;
                 $imagePath = '/' . $basename . '.webp';

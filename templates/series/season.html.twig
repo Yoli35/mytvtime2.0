@@ -120,14 +120,26 @@
                 {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: false}) }}
 
                 <div class="sizes" data-user-series-id="{{ userSeries.id }}">
-                    <div class="size-item{% if episodeDivSize == '15rem' %} active{% endif %}" data-size="15rem">
+                    <div class="size-item{% if episodeDiv.height == '15rem' %} active{% endif %}" data-size="15rem" data-type="size">
                         {{ ux_icon('fa:list-ul', {height: '18px', width: '18px'}) }}
                     </div>
-                    <div class="size-item{% if episodeDivSize == '20rem' %} active{% endif %}" data-size="20rem">
+                    <div class="size-item{% if episodeDiv.height == '20rem' %} active{% endif %}" data-size="20rem" data-type="size">
                         {{ ux_icon('fa:th-list', {height: '18px', width: '18px'}) }}
                     </div>
-                    <div class="size-item{% if episodeDivSize == '25rem' %} active{% endif %}" data-size="25rem">
+                    <div class="size-item{% if episodeDiv.height == '25rem' %} active{% endif %}" data-size="25rem" data-type="size">
                         {{ ux_icon('el:th-list', {height: '18px', width: '18px'}) }}
+                    </div>
+                </div>
+
+                <div class="aspect-ratios" data-user-series-id="{{ userSeries.id }}">
+                    <div class="ar-item{% if episodeDiv.aspectRatio == '16 / 9' %} active{% endif %}" data-ar="16 / 9" data-type="aspect-ratio">
+                        {{ ux_icon('ion:tablet-landscape-outline', {height: '18px', width: '18px'}) }}
+                    </div>
+                    <div class="ar-item{% if episodeDiv.aspectRatio == '1 / 1' %} active{% endif %}" data-ar="1 / 1" data-type="aspect-ratio">
+                        {{ ux_icon('ion:square-outline', {height: '18px', width: '18px'}) }}
+                    </div>
+                    <div class="ar-item{% if episodeDiv.aspectRatio == '9 / 16' %} active{% endif %}" data-ar="9 / 16" data-type="aspect-ratio">
+                        {{ ux_icon('ion:tablet-portrait-outline', {height: '18px', width: '18px'}) }}
                     </div>
                 </div>
 
