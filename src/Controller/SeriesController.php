@@ -2135,6 +2135,7 @@ class SeriesController extends AbstractController
         $crudType = $data['crud-type'];
         $new = $crudType === 'create';
         $crudId = $data['crud-id'];
+        $now = $this->now();
 
         if (!$new)
             $filmingLocation = $this->filmingLocationRepository->findOneBy(['id' => $crudId]);
@@ -2172,10 +2173,10 @@ class SeriesController extends AbstractController
         if (!$filmingLocation) {
             $uuid = $data['uuid'] = Uuid::v4()->toString();
             $tmdbId = $data['tmdb-id'];
-            $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $location, $description, $latitude, $longitude, true);
+            $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $location, $description, $latitude, $longitude, $now, true);
             $filmingLocation->setOriginCountry($series->getOriginCountry());
         } else {
-            $filmingLocation->update($title, $location, $description, $latitude, $longitude);
+            $filmingLocation->update($title, $location, $description, $latitude, $longitude, $now);
         }
         $this->filmingLocationRepository->save($filmingLocation, true);
 
@@ -2199,7 +2200,7 @@ class SeriesController extends AbstractController
                 }
             }
             if ($image) {
-                $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
+                $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image, $now);
                 $this->filmingLocationImageRepository->save($filmingLocationImage, true);
 
                 if ($crudType === 'create' && $n == 1) {
@@ -2217,7 +2218,7 @@ class SeriesController extends AbstractController
             dump(['key' => $key, 'file' => $file]);
             $image = $this->imageService->fileToWebp($file, $title, $location, $n);
             if ($image) {
-                $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image);
+                $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image, $now);
                 $this->filmingLocationImageRepository->save($filmingLocationImage, true);
 
                 if ($key === 'image-file') { // la vignette

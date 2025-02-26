@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\FilmingLocationImageRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FilmingLocationImageRepository::class)]
@@ -23,10 +24,11 @@ class FilmingLocationImage
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $createdAt = null;
 
-    public function __construct(FilmingLocation $filmingLocation, string $path)
+    public function __construct(FilmingLocation $filmingLocation, string $path, DateTimeImmutable $createdAt)
     {
         $this->filmingLocation = $filmingLocation;
         $this->path = $path;
+        $this->createdAt = $createdAt;
     }
 
     public function getId(): ?int

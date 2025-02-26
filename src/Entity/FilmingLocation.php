@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\FilmingLocationRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -53,12 +54,12 @@ class FilmingLocation
     private ?array $originCountry = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
+    private ?DateTimeImmutable $updatedAt = null;
 
-    public function __construct(string $uuid, int $tmdbId, string $title, string $location, string $description, float $latitude, float $longitude, bool $isSeries = false)
+    public function __construct(string $uuid, int $tmdbId, string $title, string $location, string $description, float $latitude, float $longitude, DateTimeImmutable $now, bool $isSeries = false)
     {
         $this->uuid = $uuid;
         $this->tmdbId = $tmdbId;
@@ -68,16 +69,19 @@ class FilmingLocation
         $this->latitude = $latitude;
         $this->longitude = $longitude;
         $this->isSeries = $isSeries;
+        $this->createdAt = $now;
+        $this->updatedAt = $now;
         $this->filmingLocationImages = new ArrayCollection();
     }
 
-    public function update(string $title, string $location, string $description, float $latitude, float $longitude): void
+    public function update(string $title, string $location, string $description, float $latitude, float $longitude, DateTimeImmutable $updateAt): void
     {
         $this->title = $title;
         $this->location = $location;
         $this->description = $description;
         $this->latitude = $latitude;
         $this->longitude = $longitude;
+        $this->updatedAt = $updateAt;
     }
 
     public function getId(): ?int
@@ -233,24 +237,24 @@ class FilmingLocation
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(?DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    public function setUpdatedAt(?DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
 
