@@ -49,11 +49,7 @@ class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $files = $request->files->all();
-            /*dump([
-                'user' => $user,
-                'avatar' => $files['user']['avatarFile'],
-                'banner' => $files['user']['bannerFile'],
-            ]);*/
+
             if ($avatarFile = $files['user']['avatarFile']) {
                 if ($newAvatarFileName = $this->imageService->userFiles2Webp($avatarFile, 'avatars', $user->getUsername())) {
                     $user->setAvatar($newAvatarFileName);

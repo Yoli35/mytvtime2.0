@@ -134,8 +134,8 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
 // Profile page
-    const profile = document.querySelector(".profile");
-    if (profile) {
+    const userProfile = document.querySelector(".user-profile");
+    if (userProfile) {
         new Profile();
     }
 

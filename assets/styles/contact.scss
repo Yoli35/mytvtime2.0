@@ -1,4 +1,4 @@
-.contact, .profile, .series-search, .series-show {
+.contact, .user-profile, .series-search, .series-show {
     margin-block: auto;
     margin-inline: auto;
     width: min(60rem, 80%);
@@ -260,7 +260,7 @@
 
 }
 
-.profile {
+.user-profile {
     .form-field:has(div[class^="preview"]) {
         border: 2px dashed var(--orange-50);
         border-radius: .5em;
@@ -309,7 +309,7 @@
 }
 
 @media (width <= 36rem) {
-    .contact, .profile, .series-search {
+    .contact, .user-profile, .series-search {
         margin-block-start: 4rem;
         padding-inline: .25rem;
         width: 100%;
