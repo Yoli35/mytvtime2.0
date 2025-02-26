@@ -35,7 +35,7 @@
                     </div>
                     <div class="date-time group full">
                         <label for="override-{{ schedule.id }}" data-title="{{ 'Override the Movie Database schedule'|trans }}">
-                            <input type="checkbox" switch name="override-{{ schedule.id }}" id="override-{{ schedule.id }}" {% if schedule.override %}checked{% endif %}>
+                            <input type="checkbox" switch name="override-{{ schedule.id }}" id="override-{{ schedule.id }}" {% if schedule.override %}checked{% endif %} class="big-switch">
                             {{ 'Override TMDB'|trans }}
                         </label>
                         <label for="frequency-{{ schedule.id }}">
