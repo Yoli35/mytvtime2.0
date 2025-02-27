@@ -748,6 +748,9 @@ class SeriesController extends AbstractController
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
         $tv['translations'] = $this->getTranslations($tv, $user);
+        $tv['average_episode_run_time'] = array_reduce($tv['episode_run_time'], function ($carry, $item) {
+                return $carry + $item;
+            }, 0) / count($tv['episode_run_time']);
 
         dump($tv);
         return $this->render('series/tmdb.html.twig', [
@@ -924,6 +927,10 @@ class SeriesController extends AbstractController
                     $this->addFlash('success', 'The series name “' . $newLocalizedName->getName() . '” has been added to the database.');
                 }
             }
+            $c = count($tv['episode_run_time']);
+            $tv['average_episode_run_time'] = $c ? array_reduce($tv['episode_run_time'], function ($carry, $item) {
+                    return $carry + $item;
+                }, 0) / $c : 0;
             $noTv = [];
         } else {
             $series->setUpdates(['Series not found']);
@@ -933,6 +940,7 @@ class SeriesController extends AbstractController
             $noTv['localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
             $noTv['seasons'] = $this->getUserSeasons($series, $userEpisodes);
             $noTv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
+            $noTv['average_episode_run_time'] = 0;
         }
         list($seriesBackdrops, $seriesLogos, $seriesPosters) = $this->getSeriesImages($series);
 
@@ -1342,7 +1350,7 @@ class SeriesController extends AbstractController
             'userSeries' => $userSeries,
             'season' => $season,
             'episodeDiv' => [
-                'height'=>$episodeDivSize,
+                'height' => $episodeDivSize,
                 'aspectRatio' => $aspectRatio
             ],
             'providers' => $providers,
@@ -2725,8 +2733,6 @@ class SeriesController extends AbstractController
                 $lastEpisode = $episodeCount;
             }
             $airAt = $schedule->getAirAt();
-//            $airAtHour = $airAt->format('H');
-//            $airAtMinute = $airAt->format('i');
             $firstAirDate = $schedule->getFirstAirDate();
             $frequency = $schedule->getFrequency();
             $override = $schedule->isOverride();
@@ -2813,7 +2819,15 @@ class SeriesController extends AbstractController
             if ($providerId) {
                 $provider = $this->providerRepository->findOneBy(['providerId' => $providerId]);
                 $providerName = $provider->getName();
-                $providerLogo = $provider->getLogoPath() ? $this->imageConfiguration->getUrl('logo_sizes', 2) . $provider->getLogoPath() : null;
+                $providerLogo = $provider->getLogoPath();
+                if (str_starts_with($providerLogo, '/')) {
+                    $providerLogo = $this->imageConfiguration->getUrl('logo_sizes', 2) . $providerLogo;
+                } else {
+                    $providerLogo = '/images/providers' . substr($providerLogo, 1);
+                }
+            } else {
+                $providerName = null;
+                $providerLogo = null;
             }
 
             $schedules[] = [
@@ -3486,10 +3500,10 @@ class SeriesController extends AbstractController
     {
         foreach ($userEpisodes as $userEpisode) {
             if ($userEpisode['episode_number'] == $episodeNumber) {
-                if ($userEpisode['provider_id'] > 0)
+                if (str_starts_with($userEpisode['provider_id'], '/'))
                     $userEpisode['provider_logo_path'] = $userEpisode['provider_logo_path'] ? $this->imageConfiguration->getCompleteUrl($userEpisode['provider_logo_path'], 'logo_sizes', 2) : null; // w45
                 else
-                    $userEpisode['provider_logo_path'] = '/images/providers/' . $userEpisode['provider_logo_path'];
+                    $userEpisode['provider_logo_path'] = '/images/providers' . substr($userEpisode['provider_logo_path'], 1);
                 return $userEpisode;
             }
         }
@@ -3660,10 +3674,10 @@ class SeriesController extends AbstractController
         }
         $watchProviderLogos = [];
         foreach ($providers as $provider) {
-            if ($provider['provider_id'] > 0)
+            if (str_starts_with($provider['logo_path'], '/'))
                 $watchProviderLogos[$provider['provider_id']] = $this->imageConfiguration->getCompleteUrl($provider['logo_path'], 'logo_sizes', 2);
             else
-                $watchProviderLogos[$provider['provider_id']] = '/images/providers' . $provider['logo_path'];
+                $watchProviderLogos[$provider['provider_id']] = '/images/providers' . substr($provider['logo_path'], 1);
         }
         uksort($watchProviders, function ($a, $b) {
             return strcasecmp($a, $b);
