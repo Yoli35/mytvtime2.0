@@ -18,6 +18,20 @@ class FilmingLocationRepository extends ServiceEntityRepository
         parent::__construct($registry, FilmingLocation::class);
     }
 
+    public function save(FilmingLocation $filmingLocation, bool $flush= false): void
+    {
+        $this->em->persist($filmingLocation);
+
+        if ($flush) {
+            $this->em->flush();
+        }
+    }
+
+    public function flush(): void
+    {
+        $this->em->flush();
+    }
+
     public function allLocations(string $order = 'title', int $page = 1, int $perPage = 50): array
     {
         $sql = "SELECT fl.*, fli.path as still_path
@@ -54,18 +68,13 @@ class FilmingLocationRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function save(FilmingLocation $filmingLocation, bool $flush= false): void
+    public function seriesCount(): int
     {
-        $this->em->persist($filmingLocation);
+        $sql = "SELECT COUNT(*)
+                FROM `filming_location` fl
+                GROUP BY fl.`tmdb_id`";
 
-        if ($flush) {
-            $this->em->flush();
-        }
-    }
-
-    public function flush(): void
-    {
-        $this->em->flush();
+        return count($this->getAll($sql));
     }
 
     public function getAll($sql): array

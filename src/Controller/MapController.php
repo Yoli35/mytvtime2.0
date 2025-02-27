@@ -133,11 +133,14 @@ class MapController extends AbstractController
 
         $locations = $this->getAllFilmingLocations($type, $page, $perPage);
 
+        dump(['series count' => $this->filmingLocationRepository->seriesCount()]);
+
         return $this->render('map/last-creations.html.twig', [
             'form' => $form->createView(),
             'locations' => $locations['filmingLocations'],
             'filmingLocationCount' => $locations['filmingLocationCount'],
             'filmingLocationImageCount' => $locations['filmingLocationImageCount'],
+            'seriesCount' => $this->filmingLocationRepository->seriesCount(),
             'center' => $locations['center'],
             'type' => $type,
             'page' => $page,
