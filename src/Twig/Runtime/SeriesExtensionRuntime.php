@@ -55,7 +55,15 @@ readonly class SeriesExtensionRuntime implements RuntimeExtensionInterface
                 }
             }
             $item['lastWatchAt'] = $this->dateService->newDateImmutable($item['lastWatchAt'], 'UTC')->setTimezone(new \DateTimeZone($user->getTimezone() ?? 'Europe/Paris'));
-            $item['providerLogoPath'] = $item['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($item['providerLogoPath'], 'logo_sizes', 2) : null;
+//            $item['providerLogoPath'] = $item['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($item['providerLogoPath'], 'logo_sizes', 2) : null;
+            if ($item['providerLogoPath']) {
+                if (str_starts_with($item['providerLogoPath'], '/')) {
+                    $item['providerLogoPath'] = $this->imageConfiguration->getCompleteUrl($item['providerLogoPath'], 'logo_sizes', 2);
+                }
+                if (str_starts_with($item['providerLogoPath'], '+')) {
+                    $item['providerLogoPath'] = '/images/providers' . substr($item['providerLogoPath'], 1);
+                }
+            }
             return $item;
         }, $this->userEpisodeRepository->seriesHistoryForTwig($user, $user->getPreferredLanguage() ?? 'fr', $listType, $page, $count));
 

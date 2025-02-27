@@ -61,7 +61,15 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
                     $item['posterPath'] = $this->seriesController->getAlternatePosterPath($item['id']);
                 }
                 $item['posterPath'] = $item['posterPath'] ? '/series/posters' . $item['posterPath'] : null;
-                $item['providerLogoPath'] = $item['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($item['providerLogoPath'], 'logo_sizes', 2) : null;
+                if ($item['providerLogoPath']) {
+                    if (str_starts_with($item['providerLogoPath'], '/')) {
+                        $item['providerLogoPath'] = $this->imageConfiguration->getCompleteUrl($item['providerLogoPath'], 'logo_sizes', 2);
+                    }
+                    if (str_starts_with($item['providerLogoPath'], '+')) {
+                        $item['providerLogoPath'] = '/images/providers' . substr($item['providerLogoPath'], 1);
+                    }
+                }
+//                $item['providerLogoPath'] = $item['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($item['providerLogoPath'], 'logo_sizes', 2) : null;
                 $item['episodesWatched'] = $item['watchAt'] === null ? 0 : 1;
                 $seriesArr[$item['id']] = $item;
             } else {
