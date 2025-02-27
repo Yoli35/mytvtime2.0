@@ -241,7 +241,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                     LEFT JOIN series_broadcast_schedule sbs ON sbs.id = $id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
                     LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                 WHERE sbs.season_number = ue.season_number
-                    AND ue.`air_date` = DATE('$airDate')
+                    AND IF(sbs.override, DATE(sbd.date), ue.`air_date`) = DATE('$airDate')
                 ORDER BY  ue.`season_number`, ue.`episode_number`";
 
         return $this->getAll($sql);
