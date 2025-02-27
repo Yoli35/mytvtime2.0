@@ -97,6 +97,12 @@
 
                     <h3>{{ 'Key facts'|trans }}</h3>
                     <div class="facts">
+                        {% if tv.average_episode_run_time %}
+                            <div class="fact">
+                                <div class="fact-label">{{ 'Average episode runtime'|trans }}</div>
+                                <div class="fact-content">{{ tv.average_episode_run_time }} {{ 'minutes'|trans }}</div>
+                            </div>
+                        {% endif %}
                         <div class="fact">
                             <div class="fact-label">{{ 'Original name'|trans }}</div>
                             <div class="fact-content">{{ tv.original_name }}</div>
