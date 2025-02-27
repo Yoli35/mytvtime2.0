@@ -126,8 +126,6 @@ export class Season {
          ******************************************************************************/
         this.setProgress();
 
-        // TODO: recharger la page au changement de jour (mettre à jour les dates relatives)
-        //setInterval(this.checkDayChange, 60000);// chaque minute
         this.reloadOnDayChange();
 
         const watchLinks = document.querySelectorAll('.watch-link');
@@ -378,6 +376,20 @@ export class Season {
     openEditEpisodeInfosPanel() {
         const editEpisodeInfosForm = document.querySelector('#edit-episode-infos-form');
         const editEpisodeInfosDialog = document.querySelector('.side-panel.edit-episode-infos-dialog');
+        const stillDivs = editEpisodeInfosForm.querySelectorAll('.still');
+        stillDivs.forEach(stillDiv => {
+            stillDiv.addEventListener('click', () => {
+                stillDiv.classList.add('paste');
+                stillDiv.setAttribute('contenteditable', 'true');
+                stillDiv.focus();
+                stillDiv.addEventListener('paste', gThis.pasteStill);
+                setTimeout(() => {
+                    stillDiv.classList.remove('paste');
+                    stillDiv.removeAttribute('contenteditable');
+                    stillDiv.removeEventListener('paste', gThis.pasteStill);
+                }, 4000);
+            });
+        });
         const textareas = editEpisodeInfosForm.querySelectorAll('textarea');
         textareas.forEach(textarea => {
             // ajuster la hauteur du textarea pour que le contenu soit entièrement visible si il y a un contenu
@@ -1231,6 +1243,7 @@ export class Season {
                     body: formData
                 });
                 if (response.ok) {
+                    const isEditing = targetStillDiv.getAttribute('data-editing');
                     let still;
                     still = targetStillDiv.querySelector('img');
                     if (still) {
@@ -1241,6 +1254,24 @@ export class Season {
                         still = document.createElement('img');
                         still.src = URL.createObjectURL(clipboardItem);
                         targetStillDiv.appendChild(still);
+                    }
+                    if (isEditing) {
+                        // Find the episode still (".series-season > .content.column > .episodes > .episode > .still[data-episode-id=" + episodeId + "]")
+                        // Replace the still, if exists, with the new one
+                        const episodesDiv = document.querySelector('.episodes');
+                        const episodeStill = episodesDiv.querySelector('.still[data-episode-id="' + episodeId + '"]');
+                        if (episodeStill) {
+                            const still = episodeStill.querySelector('img');
+                            if (still) {
+                                still.src = URL.createObjectURL(clipboardItem);
+                            } else {
+                                const noPoster = episodeStill.querySelector('.no-poster');
+                                noPoster?.remove();
+                                const still = document.createElement('img');
+                                still.src = URL.createObjectURL(clipboardItem);
+                                episodeStill.appendChild(still);
+                            }
+                        }
                     }
                 } else {
                     console.log(response);

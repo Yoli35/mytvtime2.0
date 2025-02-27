@@ -4428,6 +4428,10 @@ dialog, .side-panel {
                     object-fit: cover;
                     width: 100%;
                 }
+
+                &.paste {
+                    background-color: var(--orange-50);
+                }
             }
         }
     }
