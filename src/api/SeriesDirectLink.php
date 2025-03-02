@@ -103,7 +103,16 @@ class SeriesDirectLink extends AbstractController
         return [
             'id' => $provider->getProviderId(),
             'name' => $provider->getProviderName(),
-            'logoPath' => $provider->getLogoPath() ? $this->imageConfiguration->getCompleteUrl($provider->getLogoPath(), 'logo_sizes', 3) : null,
+            'logoPath' => $this->getProviderLogoFullPath($provider->getLogoPath()),
         ];
+    }
+
+    public function getProviderLogoFullPath(?string $path): ?string
+    {
+        if (!$path) return null;
+        if (str_starts_with($path, '/')) {
+            return $this->imageConfiguration->getCompleteUrl($path, 'logo_sizes', 2);
+        }
+        return '/images/providers' . substr($path, 1);
     }
 }

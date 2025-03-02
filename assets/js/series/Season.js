@@ -1242,6 +1242,7 @@ export class Season {
                     method: 'POST',
                     body: formData
                 });
+                console.log(response.json());
                 if (response.ok) {
                     const isEditing = targetStillDiv.getAttribute('data-editing');
                     let still;

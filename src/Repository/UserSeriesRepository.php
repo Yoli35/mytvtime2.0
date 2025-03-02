@@ -197,7 +197,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                 WHERE us.`user_id`=$userId
                     AND us.`progress` > 0
                     AND us.`progress` < 100
-                    AND us.`last_watch_at` <= $date
+                    AND us.`last_watch_at` <= '$date'
                 ORDER BY us.`last_watch_at` DESC";
         if ($perPage > 0) $sql .= "LIMIT $perPage OFFSET $offset";
 
