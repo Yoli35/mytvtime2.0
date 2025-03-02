@@ -726,7 +726,8 @@ export class Menu {
             // console.log(e.key);
             if (e.key === 'Enter') {
                 e.preventDefault();
-                const li = ul.querySelector("li.active")/* || ul.querySelector("li")*/;
+                const li = ul.querySelector("li.active");
+                const multiSearchMenuResultType = (type === 'multi') ? li?.getAttribute("data-type") : null;
 
                 if (!li) {
                     if (type === 'tv') {
@@ -744,6 +745,10 @@ export class Menu {
                 ul.remove();
                 e.target.value = '';
                 details?.removeAttribute("open");
+
+                if (multiSearchMenuResultType) {
+                    type = multiSearchMenuResultType;
+                }
 
                 if (type === 'movie') {
                     window.location.href = '/' + gThis.lang + '/movie/tmdb/' + id;
@@ -1056,7 +1061,7 @@ export class Menu {
             });
     }
 
-    reloadLog(e) {
+    reloadLog() {
         // api url : /api/log/load
         const logList = document.querySelector("#log-list");
         const logListItems = logList.querySelectorAll("li.log-item, li.log-date");
@@ -1080,7 +1085,7 @@ export class Menu {
                     const itemDate = new Date(item.date);
                     const itemDateString = itemDate.toLocaleDateString();
                     if (itemDateString !== dateString) {
-                        const now = new Date();
+                        // const now = new Date();
                         const li = document.createElement("li");
                         li.classList.add("log-date");
                         li.innerHTML = itemDateString;
