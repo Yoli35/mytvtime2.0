@@ -619,6 +619,11 @@
                                                         {% endfor %}
                                                     </div>
                                                 {% endif %}
+                                                {% if location.season_number and location.episode_number %}
+                                                    <div class="episode">
+                                                        {{ 'S%02dE%02d'|format(location.season_number, location.episode_number) }}
+                                                    </div>
+                                                {% endif %}
                                                 <div class="edit" data-loc-id="{{ location.id }}">{{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}</div>
                                             </div>
                                             <div class="location" data-loc-id="{{ location.id }}">

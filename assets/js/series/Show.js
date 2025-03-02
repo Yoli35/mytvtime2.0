@@ -36,6 +36,8 @@ export class Show {
      * @property {number} is_series
      * @property {number} tmdb_id
      * @property {string} title
+     * @property {number} season_number
+     * @property {number} episode_number
      * @property {string} location
      * @property {string} description
      * @property {number} latitude
@@ -1257,7 +1259,7 @@ export class Show {
                 preview.appendChild(div);
                 return;
             }
-            
+
             const list = document.createElement("ol");
             preview.appendChild(list);
 
@@ -1423,6 +1425,8 @@ export class Show {
         const crudTypeInput = form.querySelector('input[name="crud-type"]');
         const crudIdInput = form.querySelector('input[name="crud-id"]');
         const titleInput = form.querySelector('input[name="title"]');
+        const episodeNumberInput = form.querySelector('input[name="episode-number"]');
+        const seasonNumberInput = form.querySelector('input[name="season-number"]');
         const locationInput = form.querySelector('input[name="location"]');
         const descriptionInput = form.querySelector('input[name="description"]');
         const imageUrlInputs = form.querySelectorAll('input[name*="image-url"]');
@@ -1437,6 +1441,8 @@ export class Show {
         formData.append("crud-type", crudTypeInput.value);
         formData.append("crud-id", crudIdInput.value);
         formData.append("title", titleInput.value);
+        formData.append("episode-number", episodeNumberInput.value);
+        formData.append("season-number", seasonNumberInput.value);
         formData.append("location", locationInput.value);
         formData.append("description", descriptionInput.value);
         formData.append("latitude", latitudeInput.value);
@@ -1465,6 +1471,8 @@ export class Show {
         const crudTypeInput = addLocationForm.querySelector('input[name="crud-type"]');
         const crudIdInput = addLocationForm.querySelector('input[name="crud-id"]');
         const titleInput = addLocationForm.querySelector('input[name="title"]');
+        const episodeNumberInput = addLocationForm.querySelector('input[name="episode-number"]');
+        const seasonNumberInput = addLocationForm.querySelector('input[name="season-number"]');
         const locationInput = addLocationForm.querySelector('input[name="location"]');
         const descriptionInput = addLocationForm.querySelector('input[name="description"]');
         const latitudeInput = addLocationForm.querySelector('input[name="latitude"]');
@@ -1483,9 +1491,13 @@ export class Show {
         crudTypeInput.value = crud;
         if (crud === 'create') {
             crudIdInput.value = 0;
+            episodeNumberInput.value = '0';
+            seasonNumberInput.value = '0';
             locationImages.style.display = 'none';
         } else {
             crudIdInput.value = location.id;
+            episodeNumberInput.value = location.episode_number;
+            seasonNumberInput.value = location.season_number;
             locationInput.value = location.location;
             latitudeInput.value = location.latitude;
             longitudeInput.value = location.longitude;

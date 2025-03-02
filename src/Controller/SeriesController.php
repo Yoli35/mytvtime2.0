@@ -302,7 +302,7 @@ class SeriesController extends AbstractController
 
         $seriesToStart = array_map(function ($s) {
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-            $s['provider_logo_path'] = $s['provider_logo_path'] ? $this->imageConfiguration->getUrl('logo_sizes', 3) . $s['provider_logo_path'] : null;
+            $s['provider_logo_path'] = $this->getProviderLogoFullPath($s['provider_logo_path']);
             return $s;
         }, $this->userSeriesRepository->seriesToStart($user, $locale, 'addedAt', 1, -1));
         $tmdbIds = array_column($seriesToStart, 'tmdb_id');
@@ -339,6 +339,7 @@ class SeriesController extends AbstractController
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
         $inAWhileDate = $this->dateModify($this->now(), '-15 days')->format('Y-m-d');
+        dump($inAWhileDate);
         $series = array_map(function ($s) {
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
@@ -748,9 +749,10 @@ class SeriesController extends AbstractController
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
         $tv['translations'] = $this->getTranslations($tv, $user);
-        $tv['average_episode_run_time'] = array_reduce($tv['episode_run_time'], function ($carry, $item) {
+        $c = count($tv['episode_run_time']);
+        $tv['average_episode_run_time'] = $c ? array_reduce($tv['episode_run_time'], function ($carry, $item) {
                 return $carry + $item;
-            }, 0) / count($tv['episode_run_time']);
+            }, 0) / $c : 0;
 
         dump($tv);
         return $this->render('series/tmdb.html.twig', [
@@ -1013,7 +1015,7 @@ class SeriesController extends AbstractController
 
         dump([
             'series' => $seriesArr,
-//            'locations' => $locations['filmingLocations'],
+            'locations' => $filmingLocations,
             'tv' => $tv,
 //            'oldSeriesAdded - get' => $request->get('oldSeriesAdded'),
 //            'oldSeriesAdded - query' => $request->query->get('oldSeriesAdded'),
@@ -1184,7 +1186,7 @@ class SeriesController extends AbstractController
                     $seriesBroadcastDate = new SeriesBroadcastDate($seriesBroadcastSchedule, $airDay['episodeId'], $seasonNumber, $seasonPart, $airDay['episodeNumber'], $airDay['date']);
                 } else {
                     $seriesBroadcastDate = $this->seriesBroadcastDateRepository->findOneBy(['episodeId' => $airDay['episodeId']]);
-                    $seriesBroadcastDate->setAirDate($airDay['date']);
+                    $seriesBroadcastDate->setDate($airDay['date']);
                 }
                 $this->seriesBroadcastDateRepository->save($seriesBroadcastDate);
             }
@@ -1915,8 +1917,11 @@ class SeriesController extends AbstractController
             } else {
                 $imagePath = null;
             }
-        } catch (FileException) {
-            $imagePath = null;
+        } catch (FileException $e) {
+            return $this->json([
+                'ok' => false,
+                'message' => $e->getMessage(),
+            ]);
         }
 
         if ($imagePath) {
@@ -2162,6 +2167,8 @@ class SeriesController extends AbstractController
         $description = $data['description'];
         $data['latitude'] = str_replace(',', '.', $data['latitude']);
         $data['longitude'] = str_replace(',', '.', $data['longitude']);
+        $episodeNumber = intval($data['episode-number']);
+        $seasonNumber = intval($data['season-number']);
         $latitude = $data['latitude'] = floatval($data['latitude']);
         $longitude = $data['longitude'] = floatval($data['longitude']);
 
@@ -2187,10 +2194,10 @@ class SeriesController extends AbstractController
         if (!$filmingLocation) {
             $uuid = $data['uuid'] = Uuid::v4()->toString();
             $tmdbId = $data['tmdb-id'];
-            $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $location, $description, $latitude, $longitude, $now, true);
+            $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $location, $description, $latitude, $longitude, $seasonNumber, $episodeNumber, $now, true);
             $filmingLocation->setOriginCountry($series->getOriginCountry());
         } else {
-            $filmingLocation->update($title, $location, $description, $latitude, $longitude, $now);
+            $filmingLocation->update($title, $location, $description, $latitude, $longitude, $seasonNumber, $episodeNumber, $now);
         }
         $this->filmingLocationRepository->save($filmingLocation, true);
 
@@ -2819,12 +2826,7 @@ class SeriesController extends AbstractController
             if ($providerId) {
                 $provider = $this->providerRepository->findOneBy(['providerId' => $providerId]);
                 $providerName = $provider->getName();
-                $providerLogo = $provider->getLogoPath();
-                if (str_starts_with($providerLogo, '/')) {
-                    $providerLogo = $this->imageConfiguration->getUrl('logo_sizes', 2) . $providerLogo;
-                } else {
-                    $providerLogo = '/images/providers' . substr($providerLogo, 1);
-                }
+                $providerLogo = $this->getProviderLogoFullPath($provider->getLogoPath());
             } else {
                 $providerName = null;
                 $providerLogo = null;
@@ -3500,10 +3502,7 @@ class SeriesController extends AbstractController
     {
         foreach ($userEpisodes as $userEpisode) {
             if ($userEpisode['episode_number'] == $episodeNumber) {
-                if (str_starts_with($userEpisode['provider_id'], '/'))
-                    $userEpisode['provider_logo_path'] = $userEpisode['provider_logo_path'] ? $this->imageConfiguration->getCompleteUrl($userEpisode['provider_logo_path'], 'logo_sizes', 2) : null; // w45
-                else
-                    $userEpisode['provider_logo_path'] = '/images/providers' . substr($userEpisode['provider_logo_path'], 1);
+                $userEpisode['provider_logo_path'] = $this->getProviderLogoFullPath($userEpisode['provider_logo_path']);
                 return $userEpisode;
             }
         }
@@ -3674,10 +3673,7 @@ class SeriesController extends AbstractController
         }
         $watchProviderLogos = [];
         foreach ($providers as $provider) {
-            if (str_starts_with($provider['logo_path'], '/'))
-                $watchProviderLogos[$provider['provider_id']] = $this->imageConfiguration->getCompleteUrl($provider['logo_path'], 'logo_sizes', 2);
-            else
-                $watchProviderLogos[$provider['provider_id']] = '/images/providers' . substr($provider['logo_path'], 1);
+            $watchProviderLogos[$provider['provider_id']] = $this->getProviderLogoFullPath($provider['logo_path']);
         }
         uksort($watchProviders, function ($a, $b) {
             return strcasecmp($a, $b);
@@ -3693,6 +3689,15 @@ class SeriesController extends AbstractController
             'names' => $watchProviderNames,
             'list' => $list,
         ];
+    }
+
+    public function getProviderLogoFullPath(?string $path): ?string
+    {
+        if (!$path) return null;
+        if (str_starts_with($path, '/')) {
+            return $this->imageConfiguration->getCompleteUrl($path, 'logo_sizes', 2);
+        }
+        return '/images/providers' . substr($path, 1);
     }
 
     public function getKeywords(): array

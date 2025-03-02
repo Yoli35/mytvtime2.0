@@ -3739,6 +3739,22 @@ h2 {
                         width: 2rem;
                     }
 
+                    .episode {
+                        align-items: center;
+                        background-color: var(--green-60);
+                        border-radius: .25rem;
+                        bottom: .5rem;
+                        color: var(--ardoise-10);
+                        display: flex;
+                        font-size: 1.25rem;
+                        font-weight: 600;
+                        height: 2rem;
+                        justify-content: center;
+                        padding-inline: .5rem;
+                        position: absolute;
+                        right: .5rem;
+                    }
+
                     .arrow, .edit {
                         align-items: center;
                         background-color: var(--grey-80-alpha-50);
@@ -4338,6 +4354,10 @@ dialog, .side-panel {
 }
 
 .add-location-dialog {
+    .form-row {
+        flex-grow: 1;
+    }
+
     .form-column {
         background-color: var(--ardoise-80-alpha-50);
         border-radius: .5rem;
@@ -4379,6 +4399,14 @@ dialog, .side-panel {
                 object-fit: cover;
                 width: 16rem;
             }
+        }
+    }
+}
+
+@media (max-width: 920px) {
+    .add-location-dialog {
+        .form-row {
+            flex-wrap: wrap;
         }
     }
 }

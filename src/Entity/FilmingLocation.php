@@ -59,7 +59,13 @@ class FilmingLocation
     #[ORM\Column(nullable: true)]
     private ?DateTimeImmutable $updatedAt = null;
 
-    public function __construct(string $uuid, int $tmdbId, string $title, string $location, string $description, float $latitude, float $longitude, DateTimeImmutable $now, bool $isSeries = false)
+    #[ORM\Column(nullable: true)]
+    private ?int $episodeNumber = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $seasonNumber = null;
+
+    public function __construct(string $uuid, int $tmdbId, string $title, string $location, string $description, float $latitude, float $longitude, int $seasonNumber, int $episodeNumber, DateTimeImmutable $now, bool $isSeries = false)
     {
         $this->uuid = $uuid;
         $this->tmdbId = $tmdbId;
@@ -69,18 +75,22 @@ class FilmingLocation
         $this->latitude = $latitude;
         $this->longitude = $longitude;
         $this->isSeries = $isSeries;
+        $this->seasonNumber = $seasonNumber;
+        $this->episodeNumber = $episodeNumber;
         $this->createdAt = $now;
         $this->updatedAt = $now;
         $this->filmingLocationImages = new ArrayCollection();
     }
 
-    public function update(string $title, string $location, string $description, float $latitude, float $longitude, DateTimeImmutable $updateAt): void
+    public function update(string $title, string $location, string $description, float $latitude, float $longitude, int $seasonNumber, int $episodeNumber, DateTimeImmutable $updateAt): void
     {
         $this->title = $title;
         $this->location = $location;
         $this->description = $description;
         $this->latitude = $latitude;
         $this->longitude = $longitude;
+        $this->seasonNumber = $seasonNumber;
+        $this->episodeNumber = $episodeNumber;
         $this->updatedAt = $updateAt;
     }
 
@@ -257,6 +267,30 @@ class FilmingLocation
     public function setUpdatedAt(?DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getEpisodeNumber(): ?int
+    {
+        return $this->episodeNumber;
+    }
+
+    public function setEpisodeNumber(?int $episodeNumber): static
+    {
+        $this->episodeNumber = $episodeNumber;
+
+        return $this;
+    }
+
+    public function getSeasonNumber(): ?int
+    {
+        return $this->seasonNumber;
+    }
+
+    public function setSeasonNumber(?int $seasonNumber): static
+    {
+        $this->seasonNumber = $seasonNumber;
 
         return $this;
     }
