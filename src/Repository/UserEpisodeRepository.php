@@ -428,7 +428,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                         WHERE ue.user_series_id = us.id
                           AND ue.season_number > 0
                           AND IF(sbs.override, DATE(sbd.date) <= CURDATE(), ue.air_date <= CURDATE())
-                                                       as aired_episode_count
+                       )                               as aired_episode_count
                 FROM `user_episode` ue
                          INNER JOIN `user_series` us ON us.`id` = ue.`user_series_id`
                          INNER JOIN `series` s ON s.`id` = us.`series_id`
