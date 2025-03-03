@@ -1,19 +1,25 @@
 export class FlashMessage {
     constructor() {
+        this.closeAll = this.closeAll.bind(this);
         this.start();
     }
 
     start() {
         console.log('FlashMessage init');
         const flashMessagesDiv = document.querySelector('.flash-messages');
-        flashMessagesDiv.addEventListener('click', (e) => {
-            // Close all flash messages
-            const flashMessageDivs = document.querySelectorAll('.flash-message');
-            flashMessageDivs.forEach((flashMessageDiv) => {
-                const closeDiv = flashMessageDiv.querySelector('.closure-countdown, .close');
-                closeDiv.click();
-            });
+        flashMessagesDiv.addEventListener('click', this.closeAll);
+    }
+
+    closeAll(e) {
+        e.currentTarget.removeEventListener('click', this.closeAll);
+        const flashMessageDivs = document.querySelectorAll('.flash-message');
+        flashMessageDivs.forEach((flashMessageDiv) => {
+            const closeDiv = flashMessageDiv.querySelector('.closure-countdown, .close');
+            closeDiv.click();
         });
+        setTimeout(() => {
+            e.currentTarget.addEventListener('click', this.closeAll);
+        }, 1500);
     }
 
     /**
@@ -115,7 +121,7 @@ export class FlashMessage {
         }, 0);
         setTimeout(() => {
             flash.classList.add("d-none");
-            flash.parentElement.removeChild(flash);
+            flash.remove();
         }, 500);
     }
 }
