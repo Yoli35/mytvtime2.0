@@ -185,7 +185,7 @@ class UserController extends AbstractController
             return [
                 'id' => $provider['provider_id'],
                 'name' => $provider['provider_name'],
-                'logo' => $this->imageConfiguration->getCompleteUrl($provider['logo_path'], 'logo_sizes', 2)
+                'logo' => $this->getProviderLogoFullPath($provider['logo_path']), //$this->imageConfiguration->getCompleteUrl($provider['logo_path'], 'logo_sizes', 2)
             ];
         }, $providers);
         usort($arr, function ($a, $b) {
@@ -208,5 +208,14 @@ class UserController extends AbstractController
             return strcasecmp($a['name'], $b['name']);
         });
         return $arr;
+    }
+
+    public function getProviderLogoFullPath(?string $path): ?string
+    {
+        if (!$path) return null;
+        if (str_starts_with($path, '/')) {
+            return $this->imageConfiguration->getCompleteUrl($path, 'logo_sizes', 2);
+        }
+        return '/images/providers' . substr($path, 1);
     }
 }

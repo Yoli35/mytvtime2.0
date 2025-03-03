@@ -190,9 +190,7 @@ class SeriesController extends AbstractController
                 'released_episode_count' => $ue['released_episode_count'],
                 'watch_at' => $ue['watchAt'],
                 'air_at' => $ue['airAt'],
-//                'provider_logo_path' => $ue['providerLogoPath'],
-//                'provider_name' => $ue['providerName'],
-                'watch_providers' => $ue['providerId'] ? [['logo_path' => $providerUrl . $ue['providerLogoPath'], 'provider_name' => $ue['providerName']]] : [],
+                'watch_providers' => $ue['providerId'] ? [['logo_path' => $this->getProviderLogoFullPath($ue['providerLogoPath']), 'provider_name' => $ue['providerName']]] : [],
             ];
         }, $this->userEpisodeRepository->episodesOfTheDay($user, $country, $locale));
         $tmdbIds = array_column($AllEpisodesOfTheDay, 'tmdbId');
@@ -231,9 +229,7 @@ class SeriesController extends AbstractController
                 'episode_number' => $us['episode_number'],
                 'released_episode_count' => $us['released_episode_count'],
                 'air_at' => $us['air_at'],
-                'provider_logo_path' => $us['provider_logo_path'],
-                'provider_name' => $us['provider_name'],
-                'watch_providers' => $us['provider_id'] ? [['logo_path' => $providerUrl . $us['provider_logo_path'], 'provider_name' => $us['provider_name']]] : [],
+                'watch_providers' => $us['provider_id'] ? [['logo_path' => $this->getProviderLogoFullPath($us['provider_logo_path']), 'provider_name' => $us['provider_name']]] : [],
             ];
         }, $this->userSeriesRepository->getUserSeriesOfTheNext7Days($user, $locale));
         $tmdbIds = array_values(array_unique(array_merge($tmdbIds, array_column($allEpisodesOfTheWeek, 'tmdb_id'))));
@@ -1013,16 +1009,16 @@ class SeriesController extends AbstractController
             $this->seriesRepository->save($series, true);
         }
 
-        dump([
-            'series' => $seriesArr,
-            'locations' => $filmingLocations,
-            'tv' => $tv,
+//        dump([
+//            'series' => $seriesArr,
+//            'locations' => $filmingLocations,
+//            'tv' => $tv,
 //            'oldSeriesAdded - get' => $request->get('oldSeriesAdded'),
 //            'oldSeriesAdded - query' => $request->query->get('oldSeriesAdded'),
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'schedules' => $schedules,
-        ]);
+//        ]);
         if ($tv) {
             $twig = "series/show.html.twig";
         } else {
@@ -3218,7 +3214,7 @@ class SeriesController extends AbstractController
                 $series['posterPath'] = $this->getAlternatePosterPath($series['id']);
             }
             $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
-            $series['providerLogoPath'] = $series['providerLogoPath'] ? ($series['providerId'] > 0 ? $this->imageConfiguration->getCompleteUrl($series['providerLogoPath'], 'logo_sizes', 2) : '/images/providers' . $series['providerLogoPath']) : null;
+            $series['providerLogoPath'] = $this->getProviderLogoFullPath($series['providerLogoPath']);
             $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
             $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
             return $series;
