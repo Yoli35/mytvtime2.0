@@ -102,28 +102,29 @@ Saturday: Samedi
 Sunday: Dimanche
 
 # All my series
-Filters: Filtres
-Show / hide filter options: Afficher / masquer les options de filtre
-Pages: Pages
-Show / hide pages: Afficher / masquer les numéros de page
-My series: Mes séries
-Number of elements per page: Nombre d'éléments par page
-Series started: Séries commencées
-Watched series: Séries terminées
-Yes: Oui
-No: Non
 All: Toutes
-Sort: Tri
-Order: Ordre
-Descending: Décroissant
 Ascending: Croissant
-Number of element per page: Nombre d'éléments par page
+Date added: Date d'ajout
 Default: Par défaut
+Descending: Décroissant
+Episode air date: Date de diffusion de l'épisode
+Episodes of the week: Épisodes de la semaine
+Filters: Filtres
 First air date: Date de première diffusion
 Last series watched: Dernière série regardée
-Date added: Date d'ajout
-Episode air date: Date de diffusion de l'épisode
+My series: Mes séries
 Next episode: Prochain épisode
+No: Non
+Number of elements per page: Nombre d'éléments par page
+Order: Ordre
+Pages: Pages
+Series started: Séries commencées
+Series to start: Séries à commencer
+Show / hide filter options: Afficher / masquer les options de filtre
+Show / hide pages: Afficher / masquer les numéros de page
+Sort: Tri
+Watched series: Séries terminées
+Yes: Oui
 remaining episode: épisode restant
 remaining episodes: épisodes restants
 
@@ -359,6 +360,7 @@ Daily: Quotidien
 Weekly, one at a time: Hebdomadaire, un à la fois
 Weekly, two at a time: Hebdomadaire, deux à la fois
 Weekly, three at a time: Hebdomadaire, trois à la fois
+Weekly, four at a time: Hebdomadaire, quatre à la fois
 Weekly, two, then one: Hebdomadaire, deux, puis un
 Weekly, three, then one: Hebdomadaire, trois, puis un
 Weekly, four, then one: Hebdomadaire, quatre, puis un

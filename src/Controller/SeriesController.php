@@ -1339,6 +1339,7 @@ class SeriesController extends AbstractController
 //            'series' => $series,
             'season' => $season,
             'episodeDivSize' => $episodeDivSize,
+            'now' => $this->now()->format('Y-m-d H:i O'),
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
@@ -1347,6 +1348,7 @@ class SeriesController extends AbstractController
             'series' => $series,
             'userSeries' => $userSeries,
             'season' => $season,
+            'now' => $this->now()->format('Y-m-d H:i O'),
             'episodeDiv' => [
                 'height' => $episodeDivSize,
                 'aspectRatio' => $aspectRatio
@@ -2947,6 +2949,15 @@ class SeriesController extends AbstractController
                     $date = $this->dateModify($date, '+1 week');
                 }
                 break;
+            case 11: // Weekly, four at a time
+                for ($i = $firstEpisode; $i <= $lastEpisode; $i += 4) {
+                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
+                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i + 1), 'episodeNumber' => $i + 1, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
+                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i + 2), 'episodeNumber' => $i + 2, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 2), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 2), 'future' => $now < $date];
+                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i + 3), 'episodeNumber' => $i + 3, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 3), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 3), 'future' => $now < $date];
+                    $date = $this->dateModify($date, '+1 week');
+                }
+                break;
             case 6: // Weekly, two, then one
                 $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, 1), 'episodeNumber' => 1, 'episode' => sprintf('S%02dE%02d', $seasonNumber, 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, 1), 'future' => $now < $date];
                 for ($i = $firstEpisode + 1; $i <= $lastEpisode; $i++) {
@@ -3499,6 +3510,10 @@ class SeriesController extends AbstractController
         foreach ($userEpisodes as $userEpisode) {
             if ($userEpisode['episode_number'] == $episodeNumber) {
                 $userEpisode['provider_logo_path'] = $this->getProviderLogoFullPath($userEpisode['provider_logo_path']);
+                if ($userEpisode['custom_date']) {
+                    $cd = $this->dateService->newDateImmutable($userEpisode['custom_date'], 'Europe/Paris');
+                    $userEpisode['custom_date'] = $cd->format('Y-m-d H:i O');
+                }
                 return $userEpisode;
             }
         }
