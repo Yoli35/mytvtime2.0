@@ -53,12 +53,19 @@
                         {% endif %}
                         {% if people.homepage %}
                             <div class="info">
-                                <div>
+                                <div class="home-page">
                                     {{ 'Homepage'|trans }}
                                     <a href="{{ people.homepage }}" target="_blank">
-                                        {{ ux_icon('fa6-solid:link', {height: '16px', width: '16px', title: 'Homepage'|trans}) }}
+                                        {{ ux_icon('fa6-solid:link', {height: '16px', width: '16px', 'data-title': 'Homepage'|trans ~ ' → ' ~ people.homepage}) }}
                                     </a>
-                                    {{ ux_icon('fa6-solid:copy', {height: '16px', width: '16px', title: 'Copy to clipboard'|trans}) }}
+                                    <span class="copy">
+                                        {{ ux_icon('fa6-solid:copy', {height: '16px', width: '16px', 'data-title': 'Copy to clipboard'|trans}) }}
+                                    </span>
+                                    <script>
+                                        document.querySelector('.home-page .copy').addEventListener('click', function() {
+                                            navigator.clipboard.writeText("{{ people.homepage }}");
+                                        });
+                                    </script>
                                 </div>
                             </div>
                         {% endif %}
