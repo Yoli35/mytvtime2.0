@@ -73,9 +73,9 @@ export class ToolTips {
         } else {
             const imgClone = img.cloneNode(true);
             body.innerHTML = "";
-            body.style.backgroundColor = titleBg || "sienna";
-            tail.style.backgroundColor = titleBg || "sienna";
-            tooltips.setAttribute("bg", titleBg || "sienna");
+            body.style.backgroundColor = titleBg || "DarkSlateGray";
+            tail.style.backgroundColor = titleBg || "DarkSlateGray";
+            tooltips.setAttribute("bg", titleBg || "DarkSlateGray");
             body.appendChild(imgClone);
             if (img.getAttribute("src").includes(".svg")) {
                 imgClone.style.width = "20rem";
