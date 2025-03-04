@@ -11,6 +11,7 @@
     {% endif %}
     {% if mapbox %}
         <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.css">
+        <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.3/mapbox-gl-geocoder.css" type="text/css">
     {% endif %}
 {% endblock %}
 
@@ -342,6 +343,7 @@
     {% if mapbox %}
         <script src="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.js"></script>
         <script src="/map/index.js"></script>
+        <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.3/mapbox-gl-geocoder.min.js"></script>
     {% endif %}
     <script>
         const L = window.L;
@@ -378,14 +380,6 @@
             zoom: 5,
             center: [2, 45]
         });
-        map.addControl(new mapboxgl.NavigationControl());
-        map.addControl(new mapboxgl.GeolocateControl({
-            positionOptions: {
-                enableHighAccuracy: true
-            },
-            trackUserLocation: true,
-            showUserHeading: true
-        }));
         map.on('style.load', () => {
             map.setFog({
                 "range": [0.8, 1.2],
@@ -408,6 +402,21 @@
             map.setStyle(language.setLanguage(map.getStyle(), '{{ app.locale }}'));
         });
 
+        map.addControl(
+            new MapboxGeocoder({
+                accessToken: mapboxgl.accessToken,
+                mapboxgl: mapboxgl
+            })
+        );
+        map.addControl(new mapboxgl.NavigationControl());
+        map.addControl(new mapboxgl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: true
+            },
+            trackUserLocation: true,
+            showUserHeading: true
+        }));
+
         locations.forEach(location => {
             let marker = new mapboxgl.Marker({color: "#B46B18FF"})
                 .setLngLat([location.longitude, location.latitude])
@@ -420,6 +429,31 @@
             markerIcon.setAttribute('data-longitude', location.longitude);
         });
         {% endif %}
+
+        // TODO: Add a handler to modify the map and canvas height
+        const mapDiv = document.getElementById('map');
+        const mapboxglControlContainerDiv = mapDiv.querySelector('.mapboxgl-control-container');
+        const handlerDiv = document.createElement('div');
+        handlerDiv.classList.add('height-handler');
+        mapboxglControlContainerDiv.appendChild(handlerDiv);
+        // Use this handler to modify the map height
+        handlerDiv.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            let startY = e.clientY;
+            let startHeight = mapDiv.clientHeight;
+            document.addEventListener('mousemove', moveHandler);
+            document.addEventListener('mouseup', () => {
+                document.removeEventListener('mousemove', moveHandler);
+            });
+
+            function moveHandler(e) {
+                const diff = e.clientY - startY;
+                mapDiv.style.height = startHeight + diff + 'px';
+                // and the canvas
+                // const canvas = mapDiv.querySelector('.mapboxgl-canvas');
+                // canvas.style.height = startHeight + diff + 'px';
+            }
+        });
 
         const seriesLocationImages = document.querySelectorAll('.series-location-image');
         seriesLocationImages.forEach(image => {
@@ -444,8 +478,6 @@
             const oldPosition = parseInt(image.getAttribute('data-position'));
             if (oldPosition !== position) {
                 image.setAttribute('data-position', position);
-                console.log(position);
-                // on récupère le src de l'image à la position donnée
                 const imageSrc = imageList.children[position].getAttribute('src');
                 image.querySelector('img').setAttribute('src', imageSrc);
                 const toolTips = document.querySelector('.tool-tips.show');
