@@ -295,9 +295,14 @@
                             {% for loc in l.locations %}
                                 {#                    {{ dump(loc) }} #}
                                 <div class="series-location" data-tmdb-id="{{ key }}">
-                                    <div class="series-location-image" data-title="{{ loc.location }}">
+                                    <div class="series-location-image" data-title="{{ loc.location }}" data-position="0">
                                         <img src="/images/map{{ loc.still_path }}" alt="{{ loc.location ?? 'No title entry!!' }}">
                                         <div class="image-count">{{ loc.filmingLocationImages|length }}</div>
+                                        {% if loc.season_number and loc.episode_number %}
+                                            <div class="episode">
+                                                {{ 'S%02dE%02d'|format(loc.season_number, loc.episode_number) }}
+                                            </div>
+                                        {% endif %}
                                         <div class="image-list">
                                             {% for image in loc.filmingLocationImages %}
                                                 <img src="/images/map{{ image.path }}" alt="{{ loc.title }} #{{ loop.index }}">
@@ -415,5 +420,44 @@
             markerIcon.setAttribute('data-longitude', location.longitude);
         });
         {% endif %}
+
+        const seriesLocationImages = document.querySelectorAll('.series-location-image');
+        seriesLocationImages.forEach(image => {
+            image.addEventListener('mouseenter', () => {
+                image.addEventListener('mousemove', getPosition);
+            });
+            image.addEventListener('mouseleave', () => {
+                image.removeEventListener('mousemove', getPosition);
+                const imageList = image.querySelector('.image-list');
+                image.setAttribute('data-position', "0");
+                const imageSrc = imageList.children[0].getAttribute('src');
+                image.querySelector('img').setAttribute('src', imageSrc);
+            });
+        });
+
+        function getPosition(e) {
+            const image = e.currentTarget;
+            const imageList = image.querySelector('.image-list');
+            const count = imageList.children.length;
+            const imageWidth = image.clientWidth;
+            const position = Math.floor(e.offsetX / (imageWidth / count));
+            const oldPosition = parseInt(image.getAttribute('data-position'));
+            if (oldPosition !== position) {
+                image.setAttribute('data-position', position);
+                console.log(position);
+                // on récupère le src de l'image à la position donnée
+                const imageSrc = imageList.children[position].getAttribute('src');
+                image.querySelector('img').setAttribute('src', imageSrc);
+                const toolTips = document.querySelector('.tool-tips.show');
+                const toolTipsImg = toolTips?.querySelector('img');
+                if (toolTipsImg) {
+                    toolTipsImg.style.filter = 'brightness(0.5)';
+                    toolTipsImg.setAttribute('src', imageSrc);
+                    toolTipsImg.onload = () => {
+                        toolTipsImg.style.filter = 'none';
+                    };
+                }
+            }
+        }
     </script>
 {% endblock %}
