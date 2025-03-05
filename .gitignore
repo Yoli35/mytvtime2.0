@@ -46,3 +46,4 @@
 *.iml
 *.xml
 *.pem
+/node_modules/

@@ -5,6 +5,7 @@ import {DayCountHistory} from 'DayCountHistory';
 import {HighlightSeries} from 'HighlightSeries';
 import {Index} from 'Index';
 import {Menu} from 'Menu';
+import {Map} from 'Map';
 import {Movie} from 'Movie';
 import {NavBar} from 'NavBar';
 import {NetworkAndProvider} from "NetworkAndProvider";
@@ -137,6 +138,12 @@ window.addEventListener("DOMContentLoaded", () => {
     const userProfile = document.querySelector(".user-profile");
     if (userProfile) {
         new Profile();
+    }
+
+    const importMap = document.querySelector(".import-map");
+    if (importMap) {
+        console.log("Import map");
+        new Map();
     }
 
 // Series & season page

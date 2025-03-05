@@ -4076,6 +4076,17 @@ h2 {
                 flex-wrap: wrap;
                 gap: .25rem;
 
+                .series-location-date {
+                    background-color: var(--orange-50);
+                    border-radius: .25rem;
+                    font-size: 1.5rem;
+                    font-weight: 300;
+                    line-height: 1.1em;
+                    margin-block: 1rem .5rem;
+                    padding: .5rem 1rem;
+                    width: 100%;
+                }
+
                 .series-location {
                     background-color: var(--orange-20-alpha-25);
                     border-radius: .75rem;

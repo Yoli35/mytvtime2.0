@@ -18,7 +18,7 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid">
-        <div class="series-map">
+        <div class="series-map import-map">
             <div class="series-map-header">
                 <h1>{{ (type=='creation' ? 'Recent additions':'Recent updates')|trans }}</h1>
                 <div class="numbers">
@@ -32,17 +32,6 @@
 
         <div class="series-map-list center">
             <div class="map-tools">
-                {# <div class="pages">
-                    {% for p in 1..pages %}
-                        <div class="page">
-                            {% if p == page %}
-                                <span>{{ p }}</span>
-                            {% else %}
-                                <a href="{{ path('app_map_last_locations', { page: p, type: type }) }}">{{ p }}</a>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                </div> #}
                 <div class="options">
                     {{ form_start(form) }}
                     <div class="form-row">
@@ -147,59 +136,14 @@
                 }
             </script>
             <div class="all-series-locations">
-                {#
-                #filmingLocations" => array:50 [▼
-                    0 => array:15 [▼
-                      "id" => 565
-                      "is_series" => 1
-                      "tmdb_id" => 276051
-                      "title" => "GELBOYS"
-                      "location" => "Wat Pathum Wanaram School"
-                      "description" => "Wat Pathum Wanaram School - 969, 1 Ratchadamri Rd, Pathum Wan, Bangkok 10330, Thaïlande"
-                      "latitude" => 13.747698775896
-                      "longitude" => 100.5360009623
-                      "still_id" => 852
-                      "uuid" => "ebb3bf43-b070-4a9a-8136-c401c0938287"
-                      "origin_country" => "["TH"]"
-                      "created_at" => "2025-02-22 21:05:49"
-                      "updated_at" => "2025-02-22 21:05:50"
-                      "still_path" => "/gelboys-wat-pathum-wanaram-school-1.webp"
-                      "filmingLocationImages" => array:8 [▼
-                        0 => array:3 [▼
-                          "id" => 852
-                          "filming_location_id" => 565
-                          "path" => "/gelboys-wat-pathum-wanaram-school-1.webp"
-                        ]
-                        ...
-                   ]
-               ]
-                #}
-
-                {# <div class="series-location-header">
-                            <a href="{{ path('app_series_tmdb', { 'id': key, slug: l.locations.0.title|slug }) }}" target="_blank">
-                                {{ l.locations.0.title }} ({{ l.locations|length }})
-                            </a>
-                            <div class="zoom-to">
-                                {{ 'Zoom to'|trans }}
-                                <div class="buttons">
-                                    <div class="to-country active" data-country="{{ l.country.0 }}">
-                                        {{ l.country.0|country_name }}
-                                    </div>
-                                    <div class="to-markers"
-                                         data-min-lat="{{ min(l.locations|map(loc => loc.latitude)) }}"
-                                         data-max-lat="{{ max(l.locations|map(loc => loc.latitude)) }}"
-                                         data-min-lng="{{ min(l.locations|map(loc => loc.longitude)) }}"
-                                         data-max-lng="{{ max(l.locations|map(loc => loc.longitude)) }}"
-                                    >
-                                        {{ 'Locations'|trans }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div> #}
                 <div class="series-locations">
                     <div class="series-location-content">
+                        {% set date = "" %}
                         {% for loc in locations %}
-                            {#                            {{ dump(loc) }} #}
+                            {% if date != loc.created_at|date("Y-m-d") %}
+                                {% set date = loc.created_at|date("Y-m-d") %}
+                                <div class="series-location-date">{{ date|format_date('relative_long')|capitalize }}</div>
+                            {% endif %}
                             <div class="series-location" data-tmdb-id="{{ loc.tmdb_id }}">
                                 <div class="series-location-image" data-title="{{ loc.location }}">
                                     <img src="/images/map{{ loc.still_path }}" alt="{{ loc.location ?? 'No title entry!!' }}">
@@ -232,11 +176,10 @@
     <div id="globs-map" style="display: none">{# {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }} #}
         {
         "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "latitude": {{ center.0 }},
-        "longitude": {{ center.1 }}
+        "bounds": {{ bounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
-    <script src="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.js"></script>
+    {#<script src="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.js"></script>
     <script src="/map/index.js"></script>
     <script>
         const L = window.L;
@@ -252,9 +195,9 @@
         map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/outdoors-v12',
-            projection: 'globe', // Display the map as a globe, since satellite-v9 defaults to Mercator
+            projection: 'globe',
             zoom: 2.5,
-            center: center // [105.6710599319008, 23.933327611870226]//[2, 45]
+            center: center
         });
         map.addControl(new mapboxgl.NavigationControl());
         map.addControl(new mapboxgl.GeolocateControl({
@@ -297,5 +240,5 @@
             markerIcon.setAttribute('data-latitude', location.latitude);
             markerIcon.setAttribute('data-longitude', location.longitude);
         });
-    </script>
+    </script>#}
 {% endblock %}

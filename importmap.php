@@ -37,12 +37,9 @@ return [
     'Keyword' => [
         'path' => './assets/js/Keyword.js',
     ],
-    /*'LeafletIcon' => [
-        'path' => 'vendor/leaflet/dist/images/marker.png',
+    'Map' => [
+        'path' => './assets/js/Map.js',
     ],
-    'LeafletIcon@x2' => [
-        'path' => './assets/leaflet/images/yellow-marker@x2.png ',
-    ],*/
     'Menu' => [
         'path' => './assets/js/Menu.js',
     ],
@@ -84,5 +81,61 @@ return [
     ],
     '@hotwired/turbo' => [
         'version' => '7.3.0',
+    ],
+    'mapbox-gl' => [
+        'version' => '3.10.0',
+    ],
+    'mapbox-gl/dist/mapbox-gl.min.css' => [
+        'version' => '3.10.0',
+        'type' => 'css',
+    ],
+    '@mapbox/mapbox-gl-geocoder' => [
+        'version' => '5.0.3',
+    ],
+    'suggestions' => [
+        'version' => '1.7.1',
+    ],
+    'lodash.debounce' => [
+        'version' => '4.0.8',
+    ],
+    'xtend' => [
+        'version' => '4.0.2',
+    ],
+    '@mapbox/mapbox-sdk' => [
+        'version' => '0.16.1',
+    ],
+    '@mapbox/mapbox-sdk/services/geocoding' => [
+        'version' => '0.16.1',
+    ],
+    'nanoid' => [
+        'version' => '3.3.7',
+    ],
+    'subtag' => [
+        'version' => '0.5.0',
+    ],
+    '@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.min.css' => [
+        'version' => '5.0.3',
+        'type' => 'css',
+    ],
+    'fuzzy' => [
+        'version' => '0.1.3',
+    ],
+    '@mapbox/parse-mapbox-token' => [
+        'version' => '0.2.0',
+    ],
+    'eventemitter3' => [
+        'version' => '3.1.2',
+    ],
+    '@mapbox/fusspot' => [
+        'version' => '0.4.0',
+    ],
+    'base-64' => [
+        'version' => '0.1.0',
+    ],
+    'is-plain-obj' => [
+        'version' => '1.1.0',
+    ],
+    '@mapbox/mapbox-gl-language' => [
+        'version' => '1.0.1',
     ],
 ];

@@ -133,7 +133,13 @@ class MapController extends AbstractController
 
         $locations = $this->getAllFilmingLocations($type, $page, $perPage);
 
-        dump(['series count' => $this->filmingLocationRepository->seriesCount()]);
+        dump([
+            'locations' => $locations['filmingLocations'],
+            'filmingLocationCount' => $locations['filmingLocationCount'],
+            'filmingLocationImageCount' => $locations['filmingLocationImageCount'],
+            'seriesCount' => $this->filmingLocationRepository->seriesCount(),
+            'bounds' => $locations['bounds'],
+        ]);
 
         return $this->render('map/last-creations.html.twig', [
             'form' => $form->createView(),
@@ -141,7 +147,7 @@ class MapController extends AbstractController
             'filmingLocationCount' => $locations['filmingLocationCount'],
             'filmingLocationImageCount' => $locations['filmingLocationImageCount'],
             'seriesCount' => $this->filmingLocationRepository->seriesCount(),
-            'center' => $locations['center'],
+            'bounds' => $locations['bounds'],
             'type' => $type,
             'page' => $page,
             'pages' => ceil($locations['filmingLocationCount'] / $perPage),
@@ -154,14 +160,12 @@ class MapController extends AbstractController
         $filmingLocations = $this->filmingLocationRepository->allLocations($order, $page, $perPage);
         $filmingLocationIds = array_column($filmingLocations, 'id');
 
-        // Point moyen [longitude, latitude] à partir de $filmingLocations
-        $center = [0, 0];
-        foreach ($filmingLocations as $location) {
-            $center[0] += $location['longitude'];
-            $center[1] += $location['latitude'];
-        }
-        $center[0] /= count($filmingLocations);
-        $center[1] /= count($filmingLocations);
+        // Bounding box → center
+        $minLat = min(array_column($filmingLocations, 'latitude')) - .5;
+        $maxLat = max(array_column($filmingLocations, 'latitude')) + .5;
+        $minLng = min(array_column($filmingLocations, 'longitude')) - .5;
+        $maxLng = max(array_column($filmingLocations, 'longitude')) + .5;
+        $bounds = [[$maxLng, $maxLat], [$minLng, $minLat]];
 
         $filmingLocationImages = $this->filmingLocationRepository->locationImages($filmingLocationIds);
         $flImages = [];
@@ -176,7 +180,7 @@ class MapController extends AbstractController
             'filmingLocations' => $filmingLocations,
             'filmingLocationCount' => $this->filmingLocationRepository->count(),//count($filmingLocations),
             'filmingLocationImageCount' => $this->filmingLocationImageRepository->count(),//count($filmingLocationImages),
-            'center' => $center,
+            'bounds' => $bounds,
         ];
     }
 }

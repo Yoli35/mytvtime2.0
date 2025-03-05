@@ -334,7 +334,9 @@
         {
         "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "countryLatLngs": {{ countryLatLngs|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "countryLocationIds": {{ countryLocationIds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        "countryLocationIds": {{ countryLocationIds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "latitude": 2,
+        "longitude": 45
         }
     </div>
     {% if leaflet %}
@@ -351,34 +353,20 @@
         console.log(globsData);
         const data = JSON.parse(globsData.textContent);
         const locations = data.locations;
+        const center = [data.latitude, data.longitude];
         const countryBounds = data.countryLatLngs;
         const countryLocationIds = data.countryLocationIds;
         const latLngs = locations.map(location => [location.latitude, location.longitude]);
         console.log(countryBounds);
         let map;
-        {% if leaflet %}
-        map = L.map('map', {zoomDelta: 0.25, zoomSnap: 0.25})
-            .setView([locations[0].latitude, locations[0].longitude], 10)
-            .fitBounds(latLngs);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
-        locations.forEach(location => {
-            let marker = L.marker([location.latitude, location.longitude]).addTo(map);
-            marker.bindPopup('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>');
-            let markerIcon = marker.getElement();
-            markerIcon.setAttribute('data-tmdb-id', location.tmdb_id);
-        });
-        {% endif %}
-        {% if mapbox %}
+
         mapboxgl.accessToken = 'pk.eyJ1IjoiaWJveTQ0IiwiYSI6ImNtNTZqcXo4ZjAxYzIyaXM3cWZ5dnNheWkifQ.yY-zdieRm3Dhlrj3vYh9hg';
         map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/outdoors-v12',
             projection: 'globe', // Display the map as a globe, since satellite-v9 defaults to Mercator
             zoom: 5,
-            center: [2, 45]
+            center: center,
         });
         map.on('style.load', () => {
             map.setFog({
@@ -429,7 +417,6 @@
             markerIcon.setAttribute('data-latitude', location.latitude);
             markerIcon.setAttribute('data-longitude', location.longitude);
         });
-        {% endif %}
 
         // TODO: Add a handler to modify the map and canvas height
         const mapDiv = document.getElementById('map');
