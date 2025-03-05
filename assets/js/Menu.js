@@ -112,7 +112,10 @@ export class Menu {
     }
 
     init() {
+        this.reloadOnDayChange();
         this.getTMDBConfig();
+        this.initOptions();
+
         const burger = document.querySelector(".burger");
         const navbar = document.querySelector(".navbar");
         const mainMenu = navbar.querySelector(".menu");
@@ -247,13 +250,6 @@ export class Menu {
             });
             document.querySelector(".tooltip")?.classList.remove("show");
         });
-
-        this.menuPreview.addEventListener("click", this.togglePreview);
-        this.menuThemes.forEach((theme) => {
-            theme.addEventListener("click", this.setTheme);
-        });
-        this.initTheme();
-        this.initPreview();
 
         if (movieSearch) {
             movieSearch.addEventListener("input", (e) => {
@@ -598,6 +594,31 @@ export class Menu {
                 }
             });
         }
+    }
+
+    reloadOnDayChange() {
+        const now = new Date();
+        const midnightMinusOneSecond = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+        const timeToMidnightMinusOneSecond = midnightMinusOneSecond - now;
+        const randomSecondAmount = (1 + this.getRandomInt(60)) * 1000;
+        console.log('Reload in ' + Math.floor(timeToMidnightMinusOneSecond / 3600000) + ':' + Math.floor(timeToMidnightMinusOneSecond % 3600000 / 60000) + ':' + Math.floor(timeToMidnightMinusOneSecond % 60000 / 1000));
+        console.log('Reload at ' + new Date(now.getTime() + timeToMidnightMinusOneSecond + randomSecondAmount));
+        setTimeout(() => {
+            window.location.reload();
+        }, timeToMidnightMinusOneSecond + randomSecondAmount); // reload at noon + 1-60 seconds
+    }
+
+    getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+
+    initOptions() {
+        this.menuPreview.addEventListener("click", this.togglePreview);
+        this.menuThemes.forEach((theme) => {
+            theme.addEventListener("click", this.setTheme);
+        });
+        this.initTheme();
+        this.initPreview();
     }
 
     searchFetch(e) {

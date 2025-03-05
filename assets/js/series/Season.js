@@ -126,8 +126,6 @@ export class Season {
          ******************************************************************************/
         this.setProgress();
 
-        this.reloadOnDayChange();
-
         const watchLinks = document.querySelectorAll('.watch-link');
         watchLinks.forEach(function (watchLink) {
             const tools = watchLink.querySelector('.watch-link-tools');
@@ -354,23 +352,6 @@ export class Season {
                 }, 1000);
             }
         }
-    }
-
-    /*checkDayChange() {
-        const currentDay = new Date().getDate();
-        if (currentDay !== gThis.initialDay) {
-            window.location.reload();
-        }
-    }*/
-
-    reloadOnDayChange() {
-        const now = new Date();
-        const midnightMinusOneSecond = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
-        const timeToMidnightMinusOneSecond = midnightMinusOneSecond - now;
-        console.log('Reload in ' + Math.floor(timeToMidnightMinusOneSecond / 3600000) + ':' + Math.floor(timeToMidnightMinusOneSecond % 3600000 / 60000) + ':' + Math.floor(timeToMidnightMinusOneSecond % 60000 / 1000));
-        setTimeout(() => {
-            window.location.reload();
-        }, timeToMidnightMinusOneSecond + 2000); // reload at noon + 1 second
     }
 
     openEditEpisodeInfosPanel() {
