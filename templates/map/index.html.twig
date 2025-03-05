@@ -416,6 +416,7 @@
             trackUserLocation: true,
             showUserHeading: true
         }));
+        map.addControl(new mapboxgl.ScaleControl());
 
         locations.forEach(location => {
             let marker = new mapboxgl.Marker({color: "#B46B18FF"})
