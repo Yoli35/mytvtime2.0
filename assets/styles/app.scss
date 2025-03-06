@@ -840,18 +840,29 @@ label:has(input[type="text"]) {
                 font-size: 1rem;
                 font-weight: 300;
                 height: 2rem;
-                padding-inline: 1rem 3rem;
-                width: 20rem;
+                padding-inline: 0 2.5rem;
+                transition: all 300ms ease-in-out;
+                width: 0;
+
+                &::-webkit-textfield-decoration-container {
+                    display: none;
+                }
 
                 &:focus {
                     background-color: var(--orange-30);
+                    padding-inline: 1rem 3rem;
+                    width: 20rem;
+
+                    &::-webkit-textfield-decoration-container {
+                        display: flex;
+                    }
                 }
             }
 
             .magnifying-glass {
                 align-items: center;
                 border-radius: 5rem;
-                color: var(--orange-40);
+                color: var(--orange-60);
                 cursor: pointer;
                 display: flex;
                 font-size: 1rem;
@@ -871,8 +882,16 @@ label:has(input[type="text"]) {
 
         .search-results {
             background-color: var(--navbar-bg);
+            left: 0;
             padding-inline: 0;
             top: 2.25rem;
+            transition: left 300ms ease-in-out;
+        }
+
+        &:has(input:not(:focus)) {
+            .search-results {
+                left: -10rem
+            }
         }
     }
 
