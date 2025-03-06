@@ -421,11 +421,11 @@
         // TODO: Add a handler to modify the map and canvas height
         const mapDiv = document.getElementById('map');
         const mapboxglControlContainerDiv = mapDiv.querySelector('.mapboxgl-control-container');
-        const handlerDiv = document.createElement('div');
-        handlerDiv.classList.add('height-handler');
-        mapboxglControlContainerDiv.appendChild(handlerDiv);
+        const handleDiv = document.createElement('div');
+        handleDiv.classList.add('height-handle');
+        mapboxglControlContainerDiv.appendChild(handleDiv);
         // Use this handler to modify the map height
-        handlerDiv.addEventListener('mousedown', (e) => {
+        handleDiv.addEventListener('mousedown', (e) => {
             e.preventDefault();
             let startY = e.clientY;
             let startHeight = mapDiv.clientHeight;

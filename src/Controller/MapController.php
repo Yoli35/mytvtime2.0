@@ -161,10 +161,10 @@ class MapController extends AbstractController
         $filmingLocationIds = array_column($filmingLocations, 'id');
 
         // Bounding box → center
-        $minLat = min(array_column($filmingLocations, 'latitude')) - .5;
-        $maxLat = max(array_column($filmingLocations, 'latitude')) + .5;
-        $minLng = min(array_column($filmingLocations, 'longitude')) - .5;
-        $maxLng = max(array_column($filmingLocations, 'longitude')) + .5;
+        $minLat = min(array_column($filmingLocations, 'latitude'));
+        $maxLat = max(array_column($filmingLocations, 'latitude'));
+        $minLng = min(array_column($filmingLocations, 'longitude'));
+        $maxLng = max(array_column($filmingLocations, 'longitude'));
         $bounds = [[$maxLng, $maxLat], [$minLng, $minLat]];
 
         $filmingLocationImages = $this->filmingLocationRepository->locationImages($filmingLocationIds);
