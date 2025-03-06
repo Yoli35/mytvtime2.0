@@ -222,7 +222,10 @@ class MovieController extends AbstractController
             $movie['found'] = true;
             $this->imageService->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
             $this->imageService->saveImage("backdrops", $movie['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3), '/movies/');
-
+            if ($movie['belongs_to_collection']) {
+                $this->imageService->saveImage("posters", $movie['belongs_to_collection']['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
+                $this->imageService->saveImage("backdrops", $movie['belongs_to_collection']['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3), '/movies/');
+            }
             $updated = $this->movieService->checkMovieImage('', $movie, $dbMovie, 'backdrop');
             $updated = $this->movieService->checkMovieImage('', $movie, $dbMovie, 'poster') || $updated;
 
@@ -307,18 +310,19 @@ class MovieController extends AbstractController
 
         $this->imageService->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
         $this->imageService->saveImage("backdrops", $movie['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3), '/movies/');
-
+        if ($movie['belongs_to_collection']) {
+            $this->imageService->saveImage("posters", $movie['belongs_to_collection']['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
+            $this->imageService->saveImage("backdrops", $movie['belongs_to_collection']['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3), '/movies/');
+        }
         $this->getCredits($movie);
         $this->getProviders($movie);
         $this->getReleaseDates($movie);
         $this->getRecommandations($movie);
 
-//        dump(
-//            [
+        dump([
 //                'language' => $language,
-//                'movie' => $movie,
-//            ]
-//        );
+            'movie' => $movie,
+        ]);
         return $this->render('movie/tmdb.html.twig', [
             'movie' => $movie,
             'providers' => [],
