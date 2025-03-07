@@ -89,6 +89,9 @@ return [
         'version' => '3.10.0',
         'type' => 'css',
     ],
+    '@mapbox/mapbox-gl-language' => [
+        'version' => '1.0.1',
+    ],
     '@mapbox/mapbox-gl-geocoder' => [
         'version' => '5.0.3',
     ],
@@ -134,8 +137,5 @@ return [
     ],
     'is-plain-obj' => [
         'version' => '1.1.0',
-    ],
-    '@mapbox/mapbox-gl-language' => [
-        'version' => '1.0.1',
     ],
 ];

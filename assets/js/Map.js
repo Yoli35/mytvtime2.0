@@ -1,5 +1,9 @@
-import MapboxLanguage from '@mapbox/mapbox-gl-language';
 import mapboxgl from 'mapbox-gl';
+import MapboxLanguage from '@mapbox/mapbox-gl-language';
+// import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+
+// import 'mapbox-gl/dist/mapbox-gl.css';
+// import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 
 let gThis = null;
 
@@ -51,7 +55,11 @@ export class Map {
             this.map.on('style.load', () => {
                 gThis.map.setStyle(language.setLanguage(gThis.map.getStyle(), this.locale));
             });
-
+            /*this.map.addControl(new MapboxGeocoder({
+                    accessToken: mapboxgl.accessToken,
+                    mapboxgl: mapboxgl
+                })
+            );*/
             this.map.addControl(new mapboxgl.NavigationControl());
             this.map.addControl(new mapboxgl.GeolocateControl({
                 positionOptions: {
