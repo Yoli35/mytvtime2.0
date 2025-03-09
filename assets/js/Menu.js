@@ -1,3 +1,5 @@
+import {ToolTips} from "ToolTips";
+
 let gThis = null;
 
 export class Menu {
@@ -115,6 +117,8 @@ export class Menu {
         this.reloadOnDayChange();
         this.getTMDBConfig();
         this.initOptions();
+
+        this.tooltips = new ToolTips();
 
         const burger = document.querySelector(".burger");
         const navbar = document.querySelector(".navbar");
@@ -701,6 +705,7 @@ export class Menu {
                     li.setAttribute("data-id", result['id']);
                     li.setAttribute("data-slug", gThis.toSlug(result[resultNames[type]]));
                     li.setAttribute("data-type", type);
+                    li.setAttribute('data-title', result[resultNames[type]]);
                     if (!index) li.classList.add("active");
                     const posterDiv = document.createElement("div");
                     posterDiv.classList.add("poster");
@@ -728,6 +733,7 @@ export class Menu {
                     li.appendChild(a);
                     ul.appendChild(li);
                 });
+                gThis.tooltips.init(ul);
                 searchResults.appendChild(ul);
             })
             .catch(err => console.error('error:' + err));

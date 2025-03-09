@@ -532,8 +532,8 @@ class MovieController extends AbstractController
         return $this->json([
             'ok' => true,
             'body' => [
-                'poster_url' => $this->imageConfiguration->getUrl('poster_sizes', 0),
-                'profile_url' => $this->imageConfiguration->getUrl('profile_sizes', 0),
+                'poster_url' => $this->imageConfiguration->getUrl('poster_sizes', 2),
+                'profile_url' => $this->imageConfiguration->getUrl('profile_sizes', 2),
                 'bearer' => $this->tmdbService->getBearer(),
             ],
         ]);
