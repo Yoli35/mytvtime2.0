@@ -5,7 +5,20 @@
     <div class="div-test"></div>
     <a href="{{ path('app_home') }}" accesskey="<">{{ ux_icon('ion:home', {height: "18px", width: "18px"}) }}</a>
     {% if app.user %}
-        <details>
+        <div class="navbar-item">
+            {{ ux_icon('fa6-solid:film', {height: "18px", width: "18px"}) }}
+            <div class="menu movies">
+                <div class="menu-item"><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'My movies'|trans }}</a></div>
+                <div class="menu-item">
+                    <label for="movie-search">
+                        <input type="search" id="movie-search" data-type="movie" class="search" spellcheck="false">
+                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                    </label>
+                    <div class="search-results"></div>
+                </div>
+            </div>
+        </div>
+        {# <details>
             <summary>{{ ux_icon('fa6-solid:film', {height: "18px", width: "18px"}) }}</summary>
             <ul>
                 <li><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'My movies'|trans }}</a></li>
@@ -17,8 +30,34 @@
                     <div class="search-results"></div>
                 </li>
             </ul>
-        </details>
-        <details>
+        </details> #}
+        <div class="navbar-item">
+            {{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}
+            <div class="menu series">
+                {% set country=getUserCountrySettings(app.user) %}
+                <div class="menu-item"><a href="{{ path('app_series_index') }}" class="desktop">{{ 'Series.week'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_all') }}" class="desktop">{{ 'Series.in progress'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_not_seen_in_a_while') }}">{{ 'Series.not seen in a while'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_to_start') }}">{{ 'Series.to start'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_up_coming') }}">{{ 'Series.up coming series'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_series_by_country', {country: country}) }}">{{ 'Series.by country'|trans }} - {{ country|country_name(app.locale) }}</a></div>
+                <div class="menu-item">
+                    <label for="tv-search">
+                        <input type="search" id="tv-search" data-type="tv" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}">
+                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                    </label>
+                    <div class="search-results"></div>
+                </div>
+                <div class="menu-item">
+                    <label for="tv-search-db">
+                        <input type="search" id="tv-search-db" data-type="db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}">
+                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                    </label>
+                    <div class="search-results"></div>
+                </div>
+            </div>
+        </div>
+        {# <details>
             <summary>{{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}</summary>
             <ul>
                 {% set country=getUserCountrySettings(app.user) %}
@@ -43,8 +82,21 @@
                     <div class="search-results"></div>
                 </li>
             </ul>
-        </details>
-        <details>
+        </details> #}
+        <div class="navbar-item">
+            {{ ux_icon('fa6-regular:user', {height: "18px", width: "18px"}) }}
+            <div class="menu people">
+                <div class="menu-item"><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></div>
+                <div class="menu-item">
+                    <label for="person-search">
+                        <input type="search" id="person-search" data-type="person" class="search" spellcheck="false">
+                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                    </label>
+                    <div class="search-results"></div>
+                </div>
+            </div>
+        </div>
+        {# <details>
             <summary>{{ ux_icon('fa6-regular:user', {height: "18px", width: "18px"}) }}</summary>
             <ul>
                 <li><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></li>
@@ -56,53 +108,116 @@
                     <div class="search-results"></div>
                 </li>
             </ul>
-        </details>
-        <details id="history-menu">
+        </details> #}
+        <div class="navbar-item" id="history-menu">
+            {{ ux_icon('ion:time-outline', {height: "18px", width: "18px"}) }}
+            {#            {{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }} #}
+            {% set history = seriesHistory(app.user) %}
+            <div class="menu history" id="history-list" data-last="{{ history.last }}">
+                <div class="menu-item" id="history-options">
+                    <label><input id="history-option-type" type="checkbox"{% if history.type == 'episode' %} checked{% endif %} switch>{{ 'Episodes detail'|trans }}</label>
+                    <label>{{ 'Page'|trans }}<input id="history-option-page" type="number" value="{{ history.page }}"></label>
+                    <label>{{ 'Count'|trans }}<input id="history-option-count" type="number" value="{{ history.count }}"></label>
+                    <label><input id="history-option-vote" type="checkbox"{% if history.vote %} checked{% endif %} switch>{{ 'Rating'|trans }}</label>
+                    <label><input id="history-option-device" type="checkbox"{% if history.device %} checked{% endif %} switch>{{ 'Device'|trans }}</label>
+                    <label><input id="history-option-provider" type="checkbox"{% if history.provider %} checked{% endif %} switch>{{ 'Provider'|trans }}</label>
+                </div>
+                {% for h in history.list %}
+                    <div class="menu-item history-item" id="{{ h.episodeId }}">
+                        <a class="history" href="{{ path('app_series_season', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber}) }}">
+                            <div class="poster">
+                                {% if h.posterPath|length %}
+                                    <img src="/series/posters{{ h.posterPath }}" alt="{{ h.name }}">
+                                {% else %}
+                                    {{ h.name|slice(0,1)|upper }}
+                                {% endif %}
+                            </div>
+                            <div class="name">{{ h.name }}</div>
+                            {% if h.vote %}
+                                <div class="vote{% if history.vote == 0 %} hidden{% endif %}">{{ h.vote }}</div>
+                            {% endif %}
+                            {% if h.deviceSvg %}
+                                <div class="device{% if history.device == 0 %} hidden{% endif %}">{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}</div>
+                            {% endif %}
+                            {% if h.providerLogoPath %}
+                                <div class="provider{% if history.provider == 0 %} hidden{% endif %}"><img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}"></div>
+                            {% endif %}
+                            <div class="number{% if h.progress==100 %} ended{% endif %}">{{ 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) }}</div>
+                            <div class="date">{{ h.lastWatchAt|format_datetime('relative_medium', 'short', 'Europe/Paris') }}</div>
+                        </a>
+                    </div>
+                {% else %}
+                    <div>{{ 'No history'|trans }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        {# <details id="history-menu">
             <summary>{{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }}</summary>
             {% set history = seriesHistory(app.user) %}
-            {% if history.list %}
-                <ul id="history-list" data-last="{{ history.last }}">
-                    <li id="history-options">
-                        <label><input id="history-option-type" type="checkbox"{% if history.type == 'episode' %} checked{% endif %} switch>{{ 'Episodes detail'|trans }}</label>
-                        <label>{{ 'Page'|trans }}<input id="history-option-page" type="number" value="{{ history.page }}"></label>
-                        <label>{{ 'Count'|trans }}<input id="history-option-count" type="number" value="{{ history.count }}"></label>
-                        <label><input id="history-option-vote" type="checkbox"{% if history.vote %} checked{% endif %} switch>{{ 'Rating'|trans }}</label>
-                        <label><input id="history-option-device" type="checkbox"{% if history.device %} checked{% endif %} switch>{{ 'Device'|trans }}</label>
-                        <label><input id="history-option-provider" type="checkbox"{% if history.provider %} checked{% endif %} switch>{{ 'Provider'|trans }}</label>
+            <ul id="history-list" data-last="{{ history.last }}">
+                <li id="history-options">
+                    <label><input id="history-option-type" type="checkbox"{% if history.type == 'episode' %} checked{% endif %} switch>{{ 'Episodes detail'|trans }}</label>
+                    <label>{{ 'Page'|trans }}<input id="history-option-page" type="number" value="{{ history.page }}"></label>
+                    <label>{{ 'Count'|trans }}<input id="history-option-count" type="number" value="{{ history.count }}"></label>
+                    <label><input id="history-option-vote" type="checkbox"{% if history.vote %} checked{% endif %} switch>{{ 'Rating'|trans }}</label>
+                    <label><input id="history-option-device" type="checkbox"{% if history.device %} checked{% endif %} switch>{{ 'Device'|trans }}</label>
+                    <label><input id="history-option-provider" type="checkbox"{% if history.provider %} checked{% endif %} switch>{{ 'Provider'|trans }}</label>
+                </li>
+                {% for h in history.list %}
+                    <li class="history-item" id="{{ h.episodeId }}">
+                        <a class="history" href="{{ path('app_series_season', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber}) }}">
+                            <div class="poster">
+                                {% if h.posterPath|length %}
+                                    <img src="/series/posters{{ h.posterPath }}" alt="{{ h.name }}">
+                                {% else %}
+                                    {{ h.name|slice(0,1)|upper }}
+                                {% endif %}
+                            </div>
+                            <div class="name">{{ h.name }}</div>
+                            {% if h.vote %}
+                                <div class="vote{% if history.vote == 0 %} hidden{% endif %}">{{ h.vote }}</div>
+                            {% endif %}
+                            {% if h.deviceSvg %}
+                                <div class="device{% if history.device == 0 %} hidden{% endif %}">{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}</div>
+                            {% endif %}
+                            {% if h.providerLogoPath %}
+                                <div class="provider{% if history.provider == 0 %} hidden{% endif %}"><img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}"></div>
+                            {% endif %}
+                            <div class="number{% if h.progress==100 %} ended{% endif %}">{{ 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) }}</div>
+                            <div class="date">{{ h.lastWatchAt|format_datetime('relative_medium', 'short', 'Europe/Paris') }}</div>
+                        </a>
                     </li>
-                    {% for h in history.list %}
-                        <li class="history-item" id="{{ h.episodeId }}">
-                            <a class="history" href="{{ path('app_series_season', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber}) }}">
-                                <div class="poster">
-                                    {% if h.posterPath|length %}
-                                        <img src="/series/posters{{ h.posterPath }}" alt="{{ h.name }}">
-                                    {% else %}
-                                        {{ h.name|slice(0,1)|upper }}
-                                    {% endif %}
-                                </div>
-                                <div class="name">{{ h.name }}</div>
-                                {% if h.vote %}
-                                    <div class="vote{% if history.vote == 0 %} hidden{% endif %}">{{ h.vote }}</div>
-                                {% endif %}
-                                {% if h.deviceSvg %}
-                                    <div class="device{% if history.device == 0 %} hidden{% endif %}">{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}</div>
-                                {% endif %}
-                                {% if h.providerLogoPath %}
-                                    <div class="provider{% if history.provider == 0 %} hidden{% endif %}"><img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}"></div>
-                                {% endif %}
-                                <div class="number{% if h.progress==100 %} ended{% endif %}">{{ 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) }}</div>
-                                <div class="date">{{ h.lastWatchAt|format_datetime('relative_medium', 'short', 'Europe/Paris') }}</div>
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <ul>
+                {% else %}
                     <li>{{ 'No history'|trans }}</li>
-                </ul>
-            {% endif %}
-        </details>
-        <details id="log-menu">
+                {% endfor %}
+            </ul>
+        </details> #}
+        <div class="navbar-item">
+            {{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }}
+            {% set history = getHistory(app.user) %}
+            {% set historyCount = getHistoryCount(app.user) %}
+            <div class="menu log" id="log-list" data-last="{{ history.0.id }}">
+                <div class="menu-item" id="log-options">
+                    {{ history|length }} / {{ historyCount }} {{ 'history entries'|trans }}
+                </div>
+                {% set logDate = '' %}
+                {% for h in history %}
+                    {% set d = h.date|format_date('relative_medium') %}
+                    {% if logDate != d %}
+                        {% set logDate = d %}
+                        <div class="menu-item log-date">{{ logDate|capitalize }}</div>
+                    {% endif %}
+                    <div class="menu-item log-item" data-id="{{ h.id }}">
+                        <a class="log" href="{{ h.link }}">
+                            <div class="name">{{ h.title }}</div>
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="menu-item">{{ 'No history'|trans }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        {# <details id="log-menu">
             <summary>{{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }}</summary>
             {% set history = getHistory(app.user) %}
             {% set historyCount = getHistoryCount(app.user) %}
@@ -130,16 +245,23 @@
                     <li>{{ 'No history'|trans }}</li>
                 </ul>
             {% endif %}
-        </details>
-        <details>
+        </details> #}
+        <div class="navbar-item">
+            {{ ux_icon('ion:map-outline', {height: "18px", width: "18px"}) }}
+            <div class="menu map">
+                <div class="menu-item"><a href="{{ path('app_map_index') }}" class="desktop">{{ 'Shooting locations'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_map_last_locations', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_map_last_locations', { type: 'update' }) }}" class="desktop">{{ 'Recent updates'|trans }}</a></div>
+            </div>
+        </div>
+        {# <details>
             <summary>{{ ux_icon('ion:map-outline', {height: "18px", width: "18px"}) }}</summary>
             <ul>
                 <li><a href="{{ path('app_map_index') }}" class="desktop">{{ 'Shooting locations'|trans }}</a></li>
                 <li><a href="{{ path('app_map_last_locations', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></li>
                 <li><a href="{{ path('app_map_last_locations', { type: 'update' }) }}" class="desktop">{{ 'Recent updates'|trans }}</a></li>
             </ul>
-        </details>
-        {#        <a href="{{ path('app_map_index') }}" class="desktop">{{ ux_icon('ion:map-outline', {height: "18px", width: "18px"}) }}</a> #}
+        </details> #}
     {% endif %}
     <a href="{{ path('app_contact_form') }}" class="desktop">{{ ux_icon('ion:mail', {height: "18px", width: "18px"}) }}</a>
 
@@ -225,237 +347,7 @@
                 <img src="/images/users/avatars/default.png" alt="{{ app.user.username }}">
             {% endif %}
         </div>
-    {% endif %}
-    <div class="burger">
-        <span></span>
-        <span></span>
-        <span></span>
-        <div class="menu">
-            <a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a>
-            {% if app.user %}
-                <a href="{{ path('app_movie_index') }}">{{ 'My movies'|trans }}</a>
-                <div class="separation">{{ 'Series'|trans }}</div>
-                <a href="{{ path('app_series_index') }}">{{ 'Series.week'|trans }}</a>
-                <a href="{{ path('app_series_all') }}">{{ 'Series.in progress'|trans }}</a>
-                <a href="{{ path('app_series_not_seen_in_a_while') }}">{{ 'Series.not seen in a while'|trans }}</a>
-                <a href="{{ path('app_series_to_start') }}">{{ 'Series.to start'|trans }}</a>
-                <a href="{{ path('app_series_up_coming') }}">{{ 'Series.up coming series'|trans }}</a>
-                <a href="{{ path('app_people_index') }}">{{ 'People'|trans }}</a>
-                <a href="{{ path('app_map_index') }}">{{ 'Shooting locations'|trans }}</a>
-                <div class="separation">{{ 'Any questions or comments?'|trans }}</div>
-                <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
-            {% endif %}
-            {% if app.user %}
-                {% set eotdList = listEpisodeOfTheDay(app.user, -2) %}
-                {% set l = eotdList.totalEpisodeCount %}
-                {% if l %}
-                    <div class="separation">{{ 'Two days ago'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
-                    {% for eotd in eotdList.results %}
-                        <div class="a-preview">
-                            <a id="eotd-menu-item-1-{{ eotd.id }}"
-                               href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
-                               data-episode-count="{{ eotd.episodeCount }}"
-                               data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
-                               style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
-                                <div>
-                                    {{ eotd.display }}
-                                    {% if eotd.customDate %}
-                                        {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
-                                    {% endif %}
-                                    {% if eotd.seasonNumber == 0 %}
-                                        {{ ux_icon('fluent-mdl2:special-event', {'data-title': 'Specials'|trans, height: '16px', width: '16px'}) }}
-                                    {% endif %}
-                                </div>
-                                {% if eotd.airAt %}
-                                    <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
-                                {% endif %}
-                                <div class="provider">
-                                    {% if eotd.providerLogoPath %}
-                                        <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
-                                    {% endif %}
-                                </div>
-                            </a>
-                            <div id="eotd-preview-1-{{ eotd.id }}" class="episode-of-the-day-preview">
-                                <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
-                                    <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
-                                </a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-
-                {% set eotdList = listEpisodeOfTheDay(app.user, -1) %}
-                {% set l = eotdList.totalEpisodeCount %}
-                {% if l %}
-                    <div class="separation">{{ 'Yesterday'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
-                    {% for eotd in eotdList.results %}
-                        <div class="a-preview">
-                            <a id="eotd-menu-item-1-{{ eotd.id }}"
-                               href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
-                               data-episode-count="{{ eotd.episodeCount }}"
-                               data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
-                               style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
-                                <div>
-                                    {{ eotd.display }}
-                                    {% if eotd.customDate %}
-                                        {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
-                                    {% endif %}
-                                </div>
-                                {% if eotd.airAt %}
-                                    <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
-                                {% endif %}
-                                <div class="provider">
-                                    {% if eotd.providerLogoPath %}
-                                        <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
-                                    {% endif %}
-                                </div>
-                            </a>
-                            <div id="eotd-preview-1-{{ eotd.id }}" class="episode-of-the-day-preview">
-                                <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
-                                    {% if eotd.posterPath %}
-                                        <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
-                                    {% else %}
-                                        {{ eotd.name }}
-                                    {% endif %}
-                                </a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-
-                {% set eotdList = listEpisodeOfTheDay(app.user, 0) %}
-                {% set l = eotdList.totalEpisodeCount %}
-                {% if l %}
-                    <div class="separation">{{ 'Today'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
-                    {% for eotd in eotdList.results %}
-                        <div class="a-preview">
-                            <a id="eotd-menu-item-2-{{ eotd.id }}"
-                               href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
-                               data-episode-count="{{ eotd.episodeCount }}"
-                               data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
-                               style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
-                                <div>
-                                    {{ eotd.display }}
-                                    {% if eotd.customDate %}
-                                        {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
-                                    {% endif %}
-                                </div>
-                                {% if eotd.airAt %}
-                                    <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
-                                {% endif %}
-                                <div class="provider">
-                                    {% if eotd.providerLogoPath %}
-                                        <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
-                                    {% endif %}
-                                </div>
-                            </a>
-                            <div id="eotd-preview-2-{{ eotd.id }}" class="episode-of-the-day-preview">
-                                <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
-                                    {% if eotd.posterPath %}
-                                        <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
-                                    {% else %}
-                                        {{ eotd.name }}
-                                    {% endif %}
-                                </a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-
-                {% set eotdList = listEpisodeOfTheDay(app.user, 1) %}
-                {% set l = eotdList.totalEpisodeCount %}
-                {% if l %}
-                    <div class="separation">{{ 'Tomorrow'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
-                    {% for eotd in eotdList.results %}
-                        <div class="a-preview">
-                            <a id="eotd-menu-item-3-{{ eotd.id }}"
-                               href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
-                               data-episode-count="{{ eotd.episodeCount }}"
-                               data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
-                               style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
-                                <div>
-                                    {{ eotd.display }}
-                                    {% if eotd.customDate %}
-                                        {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
-                                    {% endif %}
-                                </div>
-                                {% if eotd.airAt %}
-                                    <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
-                                {% endif %}
-                                <div class="provider">
-                                    {% if eotd.providerLogoPath %}
-                                        <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
-                                    {% endif %}
-                                </div>
-                            </a>
-                            <div id="eotd-preview-3-{{ eotd.id }}" class="episode-of-the-day-preview">
-                                <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
-                                    {% if eotd.posterPath %}
-                                        <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
-                                    {% else %}
-                                        {{ eotd.name }}
-                                    {% endif %}
-                                </a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-
-                {% set inProgress = inProgressSeries(app.user, app.user.preferredLanguage??'fr') %}
-                {% if inProgress.ok %}
-                    <div class="separation">{{ 'Series in progress'|trans }} - {% if inProgress.nextEpisode %}{{ 'Next episode'|trans }}{% else %}{{ 'That\'s all!'|trans }}{% endif %}</div>
-                    <div class="a-preview">
-                        <a href="{{ path('app_series_season', {id: inProgress.id, slug: inProgress.slug, seasonNumber: inProgress.seasonNumber}) }}"
-                           id="sip-menu-item-{{ inProgress.id }}"
-                           data-episode-count="{{ inProgress.episodeCount }}"
-                           data-first-episode-number="1"
-                           style="background: linear-gradient(90deg, var(--green-50) {{ inProgress.progress }}%, transparent {{ inProgress.progress }}%)">
-                            {{ inProgress.name }}{% if inProgress.nextEpisode %} {{ 'S%02dE%02d'|format(inProgress.seasonNumber, inProgress.nextEpisode) }}{% endif %}
-                        </a>
-                        <div id="sip-preview-{{ inProgress.id }}" class="episode-of-the-day-preview">
-                            <a href="{{ path('app_series_season', {id: inProgress.id, slug: inProgress.slug, seasonNumber: inProgress.seasonNumber}) }}">
-                                {% if inProgress.posterPath %}
-                                    <img src="{{ inProgress.posterPath }}" alt="{{ inProgress.name }}">
-                                {% else %}
-                                    {{ inProgress.name }}
-                                {% endif %}
-                            </a>
-                        </div>
-                    </div>
-                {% endif %}
-                {% if seriesName is defined %}
-                    <div class="separation">{{ 'Back to the series page'|trans }}</div>
-                    <a href="{{ seriesLink }}">
-                        <em>{{ ux_icon('fa6-solid:arrow-left-long', {height: '18px', width: '18px'}) }}</em>&nbsp;{{ seriesName }}
-                    </a>
-                {% endif %}
-
-                {% set pinnedSeries=pinnedSeries(app.user, app.user.preferredLanguage??'fr') %}
-                {% set l = pinnedSeries|length %}
-                {% if l %}
-                    <div class="separation">{{ 'Pinned series'|trans }} ({{ l }} {{ (l > 1 ? 'seriess':'series')|trans }})</div>
-                    {% for series in pinnedSeries %}
-                        <div class="a-preview">
-                            <a id="pinned-menu-item-{{ series.id }}"
-                               href="{{ path('app_series_show', {id: series.id, slug: series.slug}) }}">
-                                {{ series.name }}
-                            </a>
-                            <div id="pinned-preview-{{ series.id }}" class="pinned-series-preview">
-                                <a href="{{ path('app_series_show', {id: series.id, slug: series.slug}) }}">
-                                    <img src="{{ series.posterPath }}" alt="{{ series.name }}">
-                                </a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endif %}
-            <div class="separation">{{ 'Search'|trans }}</div>
-            {% if app.user %}
-                <a href="{{ path('app_series_search_db') }}">{{ 'Among your series'|trans }}</a>
-            {% endif %}
-            <a href="{{ path('app_series_search') }}">{{ 'A series by name/year'|trans }}</a>
-            <a href="{{ path('app_series_advanced_search') }}">{{ 'Advanced search'|trans }}</a>
-            <div class="separation">{{ 'User'|trans }}</div>
+        <div class="menu user">
             {% if app.user %}
                 <a href="{{ path('app_user_profile') }}">{{ 'My account'|trans }}</a>
                 <a href="{{ path('app_user_providers') }}">{{ 'My providers'|trans }}</a>
@@ -489,6 +381,270 @@
                 {# {{ 'Korean'|trans }} #}
             </a>
         </div>
+    {% endif %}
+    <div class="burger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="menu main">
+        <a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a>
+        {% if app.user %}
+            <a href="{{ path('app_movie_index') }}">{{ 'My movies'|trans }}</a>
+            <div class="separation">{{ 'Series'|trans }}</div>
+            <a href="{{ path('app_series_index') }}">{{ 'Series.week'|trans }}</a>
+            <a href="{{ path('app_series_all') }}">{{ 'Series.in progress'|trans }}</a>
+            <a href="{{ path('app_series_not_seen_in_a_while') }}">{{ 'Series.not seen in a while'|trans }}</a>
+            <a href="{{ path('app_series_to_start') }}">{{ 'Series.to start'|trans }}</a>
+            <a href="{{ path('app_series_up_coming') }}">{{ 'Series.up coming series'|trans }}</a>
+            <a href="{{ path('app_people_index') }}">{{ 'People'|trans }}</a>
+            <a href="{{ path('app_map_index') }}">{{ 'Shooting locations'|trans }}</a>
+            <div class="separation">{{ 'Any questions or comments?'|trans }}</div>
+            <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
+        {% endif %}
+        {% if app.user %}
+            {% set eotdList = listEpisodeOfTheDay(app.user, -2) %}
+            {% set l = eotdList.totalEpisodeCount %}
+            {% if l %}
+                <div class="separation">{{ 'Two days ago'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
+                {% for eotd in eotdList.results %}
+                    <div class="a-preview">
+                        <a id="eotd-menu-item-1-{{ eotd.id }}"
+                           href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
+                           data-episode-count="{{ eotd.episodeCount }}"
+                           data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
+                           style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
+                            <div>
+                                {{ eotd.display }}
+                                {% if eotd.customDate %}
+                                    {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
+                                {% endif %}
+                                {% if eotd.seasonNumber == 0 %}
+                                    {{ ux_icon('fluent-mdl2:special-event', {'data-title': 'Specials'|trans, height: '16px', width: '16px'}) }}
+                                {% endif %}
+                            </div>
+                            {% if eotd.airAt %}
+                                <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
+                            {% endif %}
+                            <div class="provider">
+                                {% if eotd.providerLogoPath %}
+                                    <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
+                                {% endif %}
+                            </div>
+                        </a>
+                        <div id="eotd-preview-1-{{ eotd.id }}" class="episode-of-the-day-preview">
+                            <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
+                                <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% set eotdList = listEpisodeOfTheDay(app.user, -1) %}
+            {% set l = eotdList.totalEpisodeCount %}
+            {% if l %}
+                <div class="separation">{{ 'Yesterday'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
+                {% for eotd in eotdList.results %}
+                    <div class="a-preview">
+                        <a id="eotd-menu-item-1-{{ eotd.id }}"
+                           href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
+                           data-episode-count="{{ eotd.episodeCount }}"
+                           data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
+                           style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
+                            <div>
+                                {{ eotd.display }}
+                                {% if eotd.customDate %}
+                                    {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
+                                {% endif %}
+                            </div>
+                            {% if eotd.airAt %}
+                                <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
+                            {% endif %}
+                            <div class="provider">
+                                {% if eotd.providerLogoPath %}
+                                    <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
+                                {% endif %}
+                            </div>
+                        </a>
+                        <div id="eotd-preview-1-{{ eotd.id }}" class="episode-of-the-day-preview">
+                            <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
+                                {% if eotd.posterPath %}
+                                    <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+                                {% else %}
+                                    {{ eotd.name }}
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% set eotdList = listEpisodeOfTheDay(app.user, 0) %}
+            {% set l = eotdList.totalEpisodeCount %}
+            {% if l %}
+                <div class="separation">{{ 'Today'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
+                {% for eotd in eotdList.results %}
+                    <div class="a-preview">
+                        <a id="eotd-menu-item-2-{{ eotd.id }}"
+                           href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
+                           data-episode-count="{{ eotd.episodeCount }}"
+                           data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
+                           style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
+                            <div>
+                                {{ eotd.display }}
+                                {% if eotd.customDate %}
+                                    {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
+                                {% endif %}
+                            </div>
+                            {% if eotd.airAt %}
+                                <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
+                            {% endif %}
+                            <div class="provider">
+                                {% if eotd.providerLogoPath %}
+                                    <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
+                                {% endif %}
+                            </div>
+                        </a>
+                        <div id="eotd-preview-2-{{ eotd.id }}" class="episode-of-the-day-preview">
+                            <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
+                                {% if eotd.posterPath %}
+                                    <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+                                {% else %}
+                                    {{ eotd.name }}
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% set eotdList = listEpisodeOfTheDay(app.user, 1) %}
+            {% set l = eotdList.totalEpisodeCount %}
+            {% if l %}
+                <div class="separation">{{ 'Tomorrow'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
+                {% for eotd in eotdList.results %}
+                    <div class="a-preview">
+                        <a id="eotd-menu-item-3-{{ eotd.id }}"
+                           href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
+                           data-episode-count="{{ eotd.episodeCount }}"
+                           data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
+                           style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
+                            <div>
+                                {{ eotd.display }}
+                                {% if eotd.customDate %}
+                                    {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
+                                {% endif %}
+                            </div>
+                            {% if eotd.airAt %}
+                                <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
+                            {% endif %}
+                            <div class="provider">
+                                {% if eotd.providerLogoPath %}
+                                    <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
+                                {% endif %}
+                            </div>
+                        </a>
+                        <div id="eotd-preview-3-{{ eotd.id }}" class="episode-of-the-day-preview">
+                            <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
+                                {% if eotd.posterPath %}
+                                    <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+                                {% else %}
+                                    {{ eotd.name }}
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% set inProgress = inProgressSeries(app.user, app.user.preferredLanguage??'fr') %}
+            {% if inProgress.ok %}
+                <div class="separation">{{ 'Series in progress'|trans }} - {% if inProgress.nextEpisode %}{{ 'Next episode'|trans }}{% else %}{{ 'That\'s all!'|trans }}{% endif %}</div>
+                <div class="a-preview">
+                    <a href="{{ path('app_series_season', {id: inProgress.id, slug: inProgress.slug, seasonNumber: inProgress.seasonNumber}) }}"
+                       id="sip-menu-item-{{ inProgress.id }}"
+                       data-episode-count="{{ inProgress.episodeCount }}"
+                       data-first-episode-number="1"
+                       style="background: linear-gradient(90deg, var(--green-50) {{ inProgress.progress }}%, transparent {{ inProgress.progress }}%)">
+                        {{ inProgress.name }}{% if inProgress.nextEpisode %} {{ 'S%02dE%02d'|format(inProgress.seasonNumber, inProgress.nextEpisode) }}{% endif %}
+                    </a>
+                    <div id="sip-preview-{{ inProgress.id }}" class="episode-of-the-day-preview">
+                        <a href="{{ path('app_series_season', {id: inProgress.id, slug: inProgress.slug, seasonNumber: inProgress.seasonNumber}) }}">
+                            {% if inProgress.posterPath %}
+                                <img src="{{ inProgress.posterPath }}" alt="{{ inProgress.name }}">
+                            {% else %}
+                                {{ inProgress.name }}
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+            {% if seriesName is defined %}
+                <div class="separation">{{ 'Back to the series page'|trans }}</div>
+                <a href="{{ seriesLink }}">
+                    <em>{{ ux_icon('fa6-solid:arrow-left-long', {height: '18px', width: '18px'}) }}</em>&nbsp;{{ seriesName }}
+                </a>
+            {% endif %}
+
+            {% set pinnedSeries=pinnedSeries(app.user, app.user.preferredLanguage??'fr') %}
+            {% set l = pinnedSeries|length %}
+            {% if l %}
+                <div class="separation">{{ 'Pinned series'|trans }} ({{ l }} {{ (l > 1 ? 'seriess':'series')|trans }})</div>
+                {% for series in pinnedSeries %}
+                    <div class="a-preview">
+                        <a id="pinned-menu-item-{{ series.id }}"
+                           href="{{ path('app_series_show', {id: series.id, slug: series.slug}) }}">
+                            {{ series.name }}
+                        </a>
+                        <div id="pinned-preview-{{ series.id }}" class="pinned-series-preview">
+                            <a href="{{ path('app_series_show', {id: series.id, slug: series.slug}) }}">
+                                <img src="{{ series.posterPath }}" alt="{{ series.name }}">
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+        <div class="separation">{{ 'Search'|trans }}</div>
+        {% if app.user %}
+            <a href="{{ path('app_series_search_db') }}">{{ 'Among your series'|trans }}</a>
+        {% endif %}
+        <a href="{{ path('app_series_search') }}">{{ 'A series by name/year'|trans }}</a>
+        <a href="{{ path('app_series_advanced_search') }}">{{ 'Advanced search'|trans }}</a>
+        {#            <div class="separation">{{ 'User'|trans }}</div> #}
+        {#            {% if app.user %} #}
+        {#                <a href="{{ path('app_user_profile') }}">{{ 'My account'|trans }}</a> #}
+        {#                <a href="{{ path('app_user_providers') }}">{{ 'My providers'|trans }}</a> #}
+        {#                <a href="{{ path('app_user_networks') }}">{{ 'My networks'|trans }}</a> #}
+        {#                <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a> #}
+        {#                {% if 'ROLE_ADMIN' in app.user.roles %} #}
+        {#                    <div class="separation">{{ 'Admin'|trans }}</div> #}
+        {#                    <a href="{{ path('app_admin_index') }}">{{ 'Dashboard'|trans }}</a> #}
+        {#                {% endif %} #}
+        {#            {% else %} #}
+        {#                <a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a> #}
+        {#                <a href="{{ path('app_register') }}">{{ 'Register'|trans }}</a> #}
+        {#            {% endif %} #}
+        {#            <div class="separation">{{ 'Options'|trans }}</div> #}
+        {#            <div class="menu-preview" data-on="{{ 'Hide preview'|trans }}" data-off="{{ 'Show preview'|trans }}">{{ 'Hide preview'|trans }}</div> #}
+        {#            <div class="separation">{{ 'Theme'|trans }}</div> #}
+        {#            <div class="menu-theme" data-theme="auto">{{ 'Automatic'|trans }}</div> #}
+        {#            <div class="menu-theme" data-theme="light">{{ 'Light'|trans }}</div> #}
+        {#            <div class="menu-theme" data-theme="dark">{{ 'Dark'|trans }}</div> #}
+        {#            <div class="separation">{{ 'Language'|trans }}</div> #}
+        {#            <a href="{{ path(route, route_params|merge({'_locale': 'fr'})) ~ p }}"{% if app.locale=='fr' %} class="active"{% endif %}> #}
+        {#                {{ getEmojiFlag('FR') }} Français - French - 프랑스어 #}
+        {#                #}{# {{ 'French'|trans }} #}
+        {#            </a> #}
+        {#            <a href="{{ path(route, route_params|merge({'_locale': 'en'})) ~ p }}"{% if app.locale=='en' %} class="active"{% endif %}> #}
+        {#                {{ getEmojiFlag('GB') }} Anglais - English - 영어 #}
+        {#                #}{# {{ 'English'|trans }} #}
+        {#            </a> #}
+        {#            <a href="{{ path(route, route_params|merge({'_locale': 'ko'})) ~ p }}"{% if app.locale=='ko' %} class="active"{% endif %}> #}
+        {#                {{ getEmojiFlag('KR') }} Coréen - Korean - 한국어 #}
+        {#                #}{# {{ 'Korean'|trans }} #}
+        {#            </a> #}
     </div>
 </nav>
 

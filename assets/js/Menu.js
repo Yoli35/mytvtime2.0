@@ -120,9 +120,12 @@ export class Menu {
 
         this.tooltips = new ToolTips();
 
-        const burger = document.querySelector(".burger");
         const navbar = document.querySelector(".navbar");
-        const mainMenu = navbar.querySelector(".menu");
+        const navbarItems = navbar.querySelectorAll(".navbar-item");
+        const burger = navbar.querySelector(".burger");
+        const avatar = navbar.querySelector(".avatar");
+        const mainMenu = navbar.querySelector(".menu.main");
+        const userMenu = navbar.querySelector(".menu.user");
         const eotdMenuItems = document.querySelectorAll("a[id^='eotd-menu-item-']");
         const pinnedMenuItems = document.querySelectorAll("a[id^='pinned-menu-item-']");
         const seriesInProgress = document.querySelector("a[id^='sip-menu-item-']");
@@ -135,15 +138,51 @@ export class Menu {
         const personSearch = navbar.querySelector("#person-search");
         const multiSearch = navbar.querySelector("#multi-search");
 
-        const historyMenu = navbar.querySelector("#history-menu");
-
+        const historyNavbarItem = navbar.querySelector("#history-menu");
         const logMenu = navbar.querySelector("#log-menu");
+
+        /*document.addEventListener("click", (e) => {
+            if (notifications?.querySelector(".menu-notifications").classList.contains("show")) {
+                const menu = notifications.querySelector(".menu-notifications");
+                if (!menu.contains(e.target) && !notifications.contains(e.target)) {
+                    menu.classList.remove("show");
+                    e.stopPropagation();
+                    e.preventDefault();
+                }
+            }
+            document.querySelector(".tooltip")?.classList.remove("show");
+        });*/
+
+        navbarItems.forEach((item) => {
+            item.addEventListener("click", (e) => {
+                if (e.target.closest(".menu")) {
+                    return;
+                }
+                const menu = item.querySelector(".menu");
+                if (item.classList.contains("open")) {
+                    gThis.closeMenu(item, menu);
+                    return;
+                }
+                navbarItems.forEach((i) => {
+                    const m = i.querySelector(".menu");
+                    gThis.closeMenu(i, m);
+                });
+                gThis.openMenu(item, menu);
+                if (menu.classList.contains("history")) {
+                    gThis.checkHistory();
+                }
+                if (menu.classList.contains("log")) {
+                    gThis.checkLog();
+                }
+            });
+        });
 
         burger.addEventListener("click", () => {
             burger.classList.toggle("open");
-            navbar.classList.toggle("active");
+            /*navbar.classList.toggle("active");*/
             body.classList.toggle("frozen");
             if (burger.classList.contains("open")) {
+                this.closeMenu(avatar, userMenu);
                 mainMenu.classList.add("open");
                 setTimeout(() => {
                     mainMenu.classList.add("show");
@@ -153,6 +192,26 @@ export class Menu {
                     mainMenu.classList.remove("show");
                     setTimeout(() => {
                         mainMenu.classList.remove("open");
+                    }, 250);
+                }, 0);
+            }
+        });
+
+        avatar.addEventListener("click", () => {
+            avatar.classList.toggle("open");
+            /*navbar.classList.toggle("active");*/
+            body.classList.toggle("frozen");
+            if (avatar.classList.contains("open")) {
+                this.closeMenu(burger, mainMenu);
+                userMenu.classList.add("open");
+                setTimeout(() => {
+                    userMenu.classList.add("show");
+                }, 0);
+            } else {
+                setTimeout(() => {
+                    userMenu.classList.remove("show");
+                    setTimeout(() => {
+                        userMenu.classList.remove("open");
                     }, 250);
                 }, 0);
             }
@@ -219,40 +278,20 @@ export class Menu {
         notifications?.addEventListener("click", () => {
             const menu = notifications.querySelector(".menu-notifications");
             menu.classList.toggle("show");
+            if (menu.classList.contains("show")) {
+                this.closeMenu(burger, mainMenu);
+                this.closeMenu(avatar, userMenu);
+            }
             this.markNotificationsAsRead();
         });
 
-        document.addEventListener("click", (e) => {
-            if (burger.classList.contains("open") && !navbar.contains(e.target) && !burger.contains(e.target)) {
-                burger.classList.remove("open");
-                navbar.classList.remove("active");
-                body.classList.remove("frozen");
-
-                setTimeout(() => {
-                    mainMenu.classList.remove("show");
-                    setTimeout(() => {
-                        mainMenu.classList.remove("open");
-                    }, 250);
-                }, 0);
-                e.stopPropagation();
-                e.preventDefault();
-            }
-            if (notifications?.querySelector(".menu-notifications").classList.contains("show")) {
-                const menu = notifications.querySelector(".menu-notifications");
-                if (!menu.contains(e.target) && !notifications.contains(e.target)) {
-                    menu.classList.remove("show");
-                    e.stopPropagation();
-                    e.preventDefault();
-                }
-            }
-            detailsElements.forEach((details) => {
-                if (details.open && !details.contains(e.target)) {
-                    details.removeAttribute("open");
-                    e.stopPropagation();
-                    e.preventDefault();
+        detailsElements.forEach((details) => {
+            details.addEventListener("toggle", (e) => {
+                if (details.open) {
+                    this.closeMenu(burger, mainMenu);
+                    this.closeMenu(avatar, userMenu);
                 }
             });
-            document.querySelector(".tooltip")?.classList.remove("show");
         });
 
         if (movieSearch) {
@@ -260,7 +299,7 @@ export class Menu {
                 const value = e.target.value;
                 console.log({e});
                 if (value.length > 2) {
-                    const searchResults = movieSearch.closest("li").querySelector(".search-results");
+                    const searchResults = movieSearch.closest(".menu-item").querySelector(".search-results");
                     const query = encodeURIComponent(value);
                     const url = 'https://api.themoviedb.org/3/search/movie?query=' + query + '&include_adult=false&language=fr-FR&page=1';
                     const options = {
@@ -314,7 +353,7 @@ export class Menu {
                         })
                         .catch(err => console.error('error:' + err));
                 } else {
-                    movieSearch.closest("li").querySelector(".search-results").innerHTML = '';
+                    movieSearch.closest(".menu-item").querySelector(".search-results").innerHTML = '';
                 }
             });
             movieSearch.addEventListener("keydown", gThis.searchMenuNavigate);
@@ -322,7 +361,7 @@ export class Menu {
             tvSearch.addEventListener("input", (e) => {
                 const value = e.target.value;
                 if (value.length > 2) {
-                    const searchResults = tvSearch.closest("li").querySelector(".search-results");
+                    const searchResults = tvSearch.closest(".menu-item").querySelector(".search-results.tmdb");
                     const query = encodeURIComponent(value);
                     const url = 'https://api.themoviedb.org/3/search/tv?query=' + query + '&include_adult=false&language=fr-FR&page=1';
                     const options = {
@@ -376,7 +415,7 @@ export class Menu {
                         })
                         .catch(err => console.error('error:' + err));
                 } else {
-                    tvSearch.closest("li").querySelector(".search-results").innerHTML = '';
+                    tvSearch.closest(".menu-item").querySelector(".search-results").innerHTML = '';
                 }
             });
             tvSearch.addEventListener("keydown", gThis.searchMenuNavigate);
@@ -384,7 +423,7 @@ export class Menu {
             tvSearchDb.addEventListener("input", (e) => {
                 const value = e.target.value;
                 if (value.length > 2) {
-                    const searchResults = tvSearchDb.closest("li").querySelector(".search-results");
+                    const searchResults = tvSearchDb.closest(".menu-item").querySelector(".search-results");
                     const url = `/${gThis.lang}/series/fetch/search/db/tv`;
                     const options = {
                         method: 'POST',
@@ -437,7 +476,7 @@ export class Menu {
                         })
                         .catch(err => console.error('error:' + err));
                 } else {
-                    tvSearch.closest("li").querySelector(".search-results").innerHTML = '';
+                    tvSearchDb.closest(".menu-item").querySelector(".search-results").innerHTML = '';
                 }
             });
             tvSearchDb.addEventListener("keydown", gThis.searchMenuNavigate);
@@ -508,95 +547,34 @@ export class Menu {
             multiSearch.addEventListener("keydown", gThis.searchMenuNavigate);
         }
 
-        if (historyMenu) {
-            const historySummary = historyMenu.querySelector("summary");
-            const historyList = historyMenu.querySelector("#history-list");
-            const historyOptions = historyList?.querySelector("#history-options").querySelectorAll("input");
+        if (historyNavbarItem) {
+            const historyMenu = historyNavbarItem.querySelector(".menu");
+            const historyOptions = historyMenu.querySelector("#history-options").querySelectorAll("input");
             historyOptions.forEach((historyOption) => {
                 historyOption.addEventListener("change", this.reloadHistory);
             });
-            historySummary.addEventListener("click", (e) => {
-                const open = historyMenu.getAttribute("open");
-                if (open === null) {
-                    const firstItem = historyList.querySelector("li.history-item");
-                    const loadingLi = document.createElement("li");
-                    loadingLi.classList.add("loading");
-                    const loadingDiv = document.createElement("div");
-                    loadingDiv.innerHTML = 'Checking...';
-                    loadingLi.appendChild(loadingDiv);
-                    historyList.insertBefore(loadingLi, firstItem);
-                    console.log({open});
-                    fetch('/api/history/menu/last', {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
-                    })
-                        .then(response => response.json())
-                        /** @var {{ok: boolean, last: number}} data */
-                        .then(data => {
-                            const lastWatchedEpisode = data.last;
-                            const lastEpisodeInHistory = parseInt(historyList.getAttribute("data-last"));
-                            console.log(lastWatchedEpisode, lastEpisodeInHistory);
-                            if (lastEpisodeInHistory !== lastWatchedEpisode) {
-                                loadingDiv.innerHTML = 'Reloading...';
-                                gThis.reloadHistory({currentTarget: historyOptions[0]});
-                            }
-                            loadingLi.remove();
-                        });
-                } else {
-                    e.preventDefault();
-                    historyList.style.transform = "translateX(-100%)";
-                    historyList.style.opacity = "0";
-                    setTimeout(() => {
-                        historyMenu.removeAttribute("open");
-                        historyList.removeAttribute("style");
-                    }, 300);
-                }
-            });
         }
+    }
 
-        if (logMenu) {
-            const logSummary = logMenu.querySelector("summary");
-            const logList = logMenu.querySelector("#log-list");
-            logSummary.addEventListener("click", (e) => {
-                const open = logMenu.getAttribute("open");
-                if (open === null) {
-                    const firstItem = logList.querySelector("li.log-item");
-                    const lastId = firstItem ? firstItem.getAttribute("data-id") : 0;
-                    const loadingLi = document.createElement("li");
-                    loadingLi.classList.add("loading");
-                    const loadingDiv = document.createElement("div");
-                    loadingDiv.innerHTML = 'Loading...';
-                    loadingLi.appendChild(loadingDiv);
-                    logList.insertBefore(loadingLi, firstItem);
-                    fetch('/api/log/last', {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
-                    })
-                        .then(response => response.json())
-                        /** @var {{ok: boolean, last: number}} data */
-                        .then(data => {
-                            console.log(lastId, data);
-                            if (parseInt(lastId) !== data.last) {
-                                loadingDiv.innerHTML = 'Reloading...';
-                                gThis.reloadLog({currentTarget: logMenu});
-                            } else {
-                                loadingLi.remove();
-                            }
-                        });
-                } else {
-                    e.preventDefault();
-                    logList.style.transform = "translateX(-100%)";
-                    logList.style.opacity = "0";
-                    setTimeout(() => {
-                        logMenu.removeAttribute("open");
-                        logList.removeAttribute("style");
-                    }, 300);
-                }
-            });
+    openMenu(button, menu) {
+        button.classList.add("open");
+        document.body.classList.add("frozen");
+        menu.classList.add("open");
+        setTimeout(() => {
+            menu.classList.add("show");
+        }, 0);
+    }
+
+    closeMenu(button, menu) {
+        if (button.classList.contains("open")) {
+            button.classList.remove("open");
+            document.body.classList.remove("frozen");
+            setTimeout(() => {
+                menu.classList.remove("show");
+                setTimeout(() => {
+                    menu.classList.remove("open");
+                }, 250);
+            }, 0);
         }
     }
 
@@ -962,6 +940,34 @@ export class Menu {
 
     }
 
+    checkHistory() {
+        const historyList = document.querySelector("#history-list");
+        const historyOptions = historyList.querySelector("#history-options").querySelectorAll("input");
+        const firstItem = historyList.querySelector(".history-item");
+        const loadingDiv = document.createElement("div");
+        loadingDiv.classList.add("loading");
+        loadingDiv.innerHTML = 'Checking...';
+        historyList.insertBefore(loadingDiv, firstItem);
+        console.log({open});
+        fetch('/api/history/menu/last', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => response.json())
+            /** @var {{ok: boolean, last: number}} data */
+            .then(data => {
+                const lastWatchedEpisode = data.last;
+                const lastEpisodeInHistory = parseInt(historyList.getAttribute("data-last"));
+                console.log(lastWatchedEpisode, lastEpisodeInHistory);
+                if (lastEpisodeInHistory !== lastWatchedEpisode) {
+                    loadingDiv.innerHTML = 'Reloading...';
+                    gThis.reloadHistory({currentTarget: historyOptions[0]});
+                }
+                loadingDiv.remove();
+            });
+    }
     reloadHistory(e) {
         e.stopPropagation();
 
@@ -969,7 +975,7 @@ export class Menu {
         const historyOptions = historyList.querySelector("#history-options").querySelectorAll("input");
         const historyOption = e.currentTarget;
         const optionId = historyOption.id.split('-')[2];
-        const historyListItems = historyList.querySelectorAll("li.history-item");
+        const historyListItems = historyList.querySelectorAll(".history-item");
         const options = {'type': false, 'page': 1, 'count': 20, 'vote': false, 'device': false, 'provider': false};
 
         historyOptions.forEach(option => {
@@ -1021,9 +1027,10 @@ export class Menu {
                 });
                 /** @type {HistoryItem} */
                 data.list.forEach((item) => {
-                    const li = document.createElement("li");
-                    li.classList.add("history-item");
-                    li.setAttribute("id", item.episodeId);
+                    const div = document.createElement("div");
+                    div.classList.add("menu-item");
+                    div.classList.add("history-item");
+                    div.setAttribute("id", item.episodeId);
                     const a = document.createElement("a");
                     a.classList.add("history");
                     a.href = item.url;
@@ -1079,8 +1086,8 @@ export class Menu {
                     date.innerHTML = item.lastWatchAt;
                     a.appendChild(date);
 
-                    li.appendChild(a);
-                    historyList.appendChild(li);
+                    div.appendChild(a);
+                    historyList.appendChild(div);
                 });
             })
             .catch((error) => {
@@ -1088,12 +1095,39 @@ export class Menu {
             });
     }
 
+    checkLog() {
+        const logList = document.querySelector("#log-list");
+        const firstItem = logList.querySelector(".log-item");
+        const lastId = firstItem ? firstItem.getAttribute("data-id") : 0;
+        const loadingDiv = document.createElement("div");
+        loadingDiv.classList.add("loading");
+        loadingDiv.innerHTML = 'Loading...';
+        logList.insertBefore(loadingDiv, firstItem);
+        fetch('/api/log/last', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => response.json())
+            /** @var {{ok: boolean, last: number}} data */
+            .then(data => {
+                console.log(lastId, data);
+                if (parseInt(lastId) !== data.last) {
+                    loadingDiv.innerHTML = 'Reloading...';
+                    gThis.reloadLog();
+                } else {
+                    loadingDiv.remove();
+                }
+            });
+    }
+
     reloadLog() {
         // api url : /api/log/load
         const logList = document.querySelector("#log-list");
-        const logListItems = logList.querySelectorAll("li.log-item, li.log-date");
+        const logListItems = logList.querySelectorAll(".log-item");
         const lastId = logListItems[0].getAttribute("data-id");
-        const loadingLi = logList.querySelector("li.loading");
+        const loadingDiv = logList.querySelector(".loading");
         fetch('/api/log/load', {
             method: 'POST',
             headers: {
@@ -1113,16 +1147,18 @@ export class Menu {
                     const itemDateString = itemDate.toLocaleDateString();
                     if (itemDateString !== dateString) {
                         // const now = new Date();
-                        const li = document.createElement("li");
-                        li.classList.add("log-date");
-                        li.innerHTML = itemDateString;
-                        logList.appendChild(li);
+                        const div = document.createElement("div");
+                        div.classList.add("menu-item");
+                        div.classList.add("log-date");
+                        div.innerHTML = itemDateString;
+                        logList.appendChild(div);
                         dateString = itemDateString;
                     }
 
-                    const li = document.createElement("li");
-                    li.classList.add("log-item");
-                    li.setAttribute("data-id", item.id);
+                    const div = document.createElement("div");
+                    div.classList.add("menu-item");
+                    div.classList.add("log-item");
+                    div.setAttribute("data-id", item.id);
 
                     const a = document.createElement("a");
                     a.classList.add("log");
@@ -1133,8 +1169,8 @@ export class Menu {
                     nameDiv.innerHTML = item.title;
                     a.appendChild(nameDiv);
 
-                    li.appendChild(a);
-                    logList.appendChild(li);
+                    div.appendChild(a);
+                    logList.appendChild(div);
                 });
                 loadingLi.remove();
             })
