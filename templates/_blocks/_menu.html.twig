@@ -197,7 +197,7 @@
             {% set history = getHistory(app.user) %}
             {% set historyCount = getHistoryCount(app.user) %}
             <div class="menu log" id="log-list" data-last="{{ history.0.id }}">
-                <div class="menu-item" id="log-options">
+                <div class="menu-item" id="log-count">
                     {{ history|length }} / {{ historyCount }} {{ 'history entries'|trans }}
                 </div>
                 {% set logDate = '' %}
@@ -210,6 +210,7 @@
                     <div class="menu-item log-item" data-id="{{ h.id }}">
                         <a class="log" href="{{ h.link }}">
                             <div class="name">{{ h.title }}</div>
+                            <div class="time">{{ h.date|date("H:i") }}</div>
                         </a>
                     </div>
                 {% else %}

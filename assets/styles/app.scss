@@ -373,7 +373,7 @@ label:has(input[type="text"]) {
                     color: var(--navbar-color-hover);
                     padding-inline: 1rem;
 
-                    &:hover {
+                    &.log-item:hover {
                         background-color: var(--orange-50);
                         color: var(--orange-90);
                     }
@@ -399,19 +399,16 @@ label:has(input[type="text"]) {
                         }
                     }
 
-                    &.loading {
+                    .loading {
                         align-items: center;
+                        background-color: var(--orange-50);
+                        border-radius: .25rem;
+                        color: var(--orange-90);
                         display: flex;
-                        gap: .5rem;
                         height: 2rem;
                         justify-content: center;
-
-                        > div {
-                            background-color: var(--orange-50);
-                            border-radius: .25rem;
-                            color: var(--orange-90);
-                            padding-inline: .5rem;
-                        }
+                        padding-inline: .5rem;
+                        width: 100%;
                     }
 
                     a {
@@ -515,7 +512,23 @@ label:has(input[type="text"]) {
                                 flex-grow: 1;
                                 font-weight: 300;
                             }
+
+                            .time {
+                                background-color: var(--grey-95-alpha-20);
+                                border-radius: .25rem;
+                                color: var(--orange-90);
+                                font-family: monospace;
+                                padding-inline: .5rem;
+                            }
                         }
+                    }
+
+                    &.log-date {
+                        background-color: var(--orange-50);
+                        border-radius: .25rem;
+                        color: var(--orange-90);
+                        font-weight: 600;
+                        padding-inline: .5rem;
                     }
 
                     &.log-item:hover,
@@ -1271,10 +1284,10 @@ label:has(input[type="text"]) {
             opacity: 1;
         }
 
-        > *:hover {
+        /*> *:hover {
             background-color: var(--orange-50);
             color: var(--orange-90);
-        }
+        }*/
     }
 
     .menu.main, .menu.user {

@@ -88,6 +88,25 @@ export class Menu {
      * @property {string} providerLogoPath
      * @property {string} providerName
      */
+
+    /**
+     * @typedef LogData
+     * @type {Object}
+     * @property {boolean} ok
+     * @property {Array} logs
+     * @property {number} count
+     * @property {Array} dates
+     */
+
+    /** @typedef LogItem
+     * @type {Object}
+     *  @property {number} id
+     *  @property {string} title
+     *  @property {string} time
+     *  @property {string} link
+     *  @property {Date} date
+     *  @property {string} dateKey
+     */
     constructor() {
         gThis = this;
         this.menuPreview = document.querySelector(".menu-preview");
@@ -131,7 +150,7 @@ export class Menu {
         const seriesInProgress = document.querySelector("a[id^='sip-menu-item-']");
         const body = document.querySelector("body");
         const notifications = document.querySelector(".notifications");
-        const detailsElements = document.querySelectorAll("details");
+        /*const detailsElements = document.querySelectorAll("details");*/
         const movieSearch = navbar.querySelector("#movie-search");
         const tvSearch = navbar.querySelector("#tv-search");
         const tvSearchDb = navbar.querySelector("#tv-search-db");
@@ -139,7 +158,7 @@ export class Menu {
         const multiSearch = navbar.querySelector("#multi-search");
 
         const historyNavbarItem = navbar.querySelector("#history-menu");
-        const logMenu = navbar.querySelector("#log-menu");
+        //const logMenu = navbar.querySelector("#log-menu");
 
         /*document.addEventListener("click", (e) => {
             if (notifications?.querySelector(".menu-notifications").classList.contains("show")) {
@@ -285,14 +304,14 @@ export class Menu {
             this.markNotificationsAsRead();
         });
 
-        detailsElements.forEach((details) => {
+        /*detailsElements.forEach((details) => {
             details.addEventListener("toggle", (e) => {
                 if (details.open) {
                     this.closeMenu(burger, mainMenu);
                     this.closeMenu(avatar, userMenu);
                 }
             });
-        });
+        });*/
 
         if (movieSearch) {
             movieSearch.addEventListener("input", (e) => {
@@ -1100,8 +1119,11 @@ export class Menu {
         const firstItem = logList.querySelector(".log-item");
         const lastId = firstItem ? firstItem.getAttribute("data-id") : 0;
         const loadingDiv = document.createElement("div");
-        loadingDiv.classList.add("loading");
-        loadingDiv.innerHTML = 'Loading...';
+        loadingDiv.classList.add("menu-item");
+        const div = document.createElement("div");
+        div.classList.add("loading");
+        div.innerHTML = 'Loading...';
+        loadingDiv.appendChild(div);
         logList.insertBefore(loadingDiv, firstItem);
         fetch('/api/log/last', {
             method: 'GET',
@@ -1114,7 +1136,7 @@ export class Menu {
             .then(data => {
                 console.log(lastId, data);
                 if (parseInt(lastId) !== data.last) {
-                    loadingDiv.innerHTML = 'Reloading...';
+                    loadingDiv.querySelector('div').innerHTML = 'Reloading...';
                     gThis.reloadLog();
                 } else {
                     loadingDiv.remove();
@@ -1125,9 +1147,9 @@ export class Menu {
     reloadLog() {
         // api url : /api/log/load
         const logList = document.querySelector("#log-list");
-        const logListItems = logList.querySelectorAll(".log-item");
+        const logListItems = logList.querySelectorAll(".log-item, .log-date");
         const lastId = logListItems[0].getAttribute("data-id");
-        const loadingDiv = logList.querySelector(".loading");
+        const loadingDiv = logList.querySelector(".menu-item:has(.loading)");
         fetch('/api/log/load', {
             method: 'POST',
             headers: {
@@ -1136,15 +1158,21 @@ export class Menu {
             body: JSON.stringify({lastId: lastId})
         })
             .then(response => response.json())
+            /** @var LogData data */
             .then(data => {
+                const countDiv = logList.querySelector("#log-count");
+                /** @type {LogItem[]} */
+                const logs = data.logs;
                 let dateString = "";
                 logListItems.forEach((item) => {
                     item.remove();
                 });
-                data.log.forEach((item) => {
-                    // format date as relative date
-                    const itemDate = new Date(item.date);
-                    const itemDateString = itemDate.toLocaleDateString();
+                countDiv.innerHTML = data.count;
+                console.log(logs);
+                console.log(data.dates);
+                /** @type {LogItem} */
+                logs.forEach((item) => {
+                    const itemDateString = data.dates[item.dateKey];
                     if (itemDateString !== dateString) {
                         // const now = new Date();
                         const div = document.createElement("div");
@@ -1158,7 +1186,7 @@ export class Menu {
                     const div = document.createElement("div");
                     div.classList.add("menu-item");
                     div.classList.add("log-item");
-                    div.setAttribute("data-id", item.id);
+                    div.setAttribute("data-id", `${item.id}`);
 
                     const a = document.createElement("a");
                     a.classList.add("log");
@@ -1167,12 +1195,16 @@ export class Menu {
                     const nameDiv = document.createElement("div");
                     nameDiv.classList.add("name");
                     nameDiv.innerHTML = item.title;
+                    const timeDiv = document.createElement("div");
+                    timeDiv.classList.add("time");
+                    timeDiv.innerHTML = item.time;
                     a.appendChild(nameDiv);
+                    a.appendChild(timeDiv);
 
                     div.appendChild(a);
                     logList.appendChild(div);
                 });
-                loadingLi.remove();
+                loadingDiv.remove();
             })
             .catch((error) => {
                 console.error('Error:', error);

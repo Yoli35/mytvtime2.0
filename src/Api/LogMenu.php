@@ -4,16 +4,20 @@ namespace App\Api;
 
 use App\Entity\User;
 use App\Repository\HistoryRepository;
+use App\Service\DateService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/api/log', name: 'api_log_')]
 class LogMenu extends AbstractController
 {
     public function __construct(
-        private readonly HistoryRepository    $historyRepository,
+        private readonly DateService         $dateService,
+        private readonly HistoryRepository   $historyRepository,
+        private readonly TranslatorInterface $translator,
     )
     {
     }
@@ -24,18 +28,32 @@ class LogMenu extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $log = array_map(function($l) {
+        $dates = [];
+        $logs = array_map(function ($l) use ($user, &$dates) {
+            $date = $l->getDate();
+            $dateKey = $date->format('Y-m-d');
+            if (!key_exists($dateKey, $dates)) {
+                // on ajoute la date au format 'relative_medium'
+                $dates[$dateKey] = ucfirst($this->dateService->formatDateRelativeMedium(
+                    $dateKey,
+                    $user->getTimezone() ?? "Europe/Paris",
+                    $user->getPreferredLanguage() ?? 'fr'));
+            }
             return [
                 'id' => $l->getId(),
                 'title' => $l->getTitle(),
+                'time' => $date->format("H:i"),
                 'link' => $l->getLink(),
-                'date' => $l->getDate(),
+                'date' => $date,
+                'dateKey' => $dateKey,
             ];
-        }, $this->historyRepository->findBy(['user' => $user], ['date' => 'DESC'], 30));
-        dump($log);
+        }, $this->historyRepository->findBy(['user' => $user], ['date' => 'DESC'], 50));
+
         return $this->json([
             'ok' => true,
-            'log' => $log,
+            'logs' => $logs,
+            'count' => sprintf("%d / %d %s", count($logs), $this->historyRepository->count(['user' => $user]), $this->translator->trans('history entries')),
+            'dates' => $dates,
         ]);
     }
 
