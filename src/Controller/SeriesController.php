@@ -2816,11 +2816,11 @@ class SeriesController extends AbstractController
                         $userNextEpisode = null;
                     }
                 } else {
-                    $targetTS = $userNextEpisode['date']->getTimestamp();
+                    $targetTS = $userNextEpisode['date']?->getTimestamp() ?? null;
                 }
             }
 
-            if ($userNextEpisode) {
+            if ($userNextEpisode && $targetTS) {
                 $userNextEpisodes = $this->userEpisodeRepository->getScheduleNextEpisodes($schedule->getId(), $userSeries->getId(), $userNextEpisode['air_date']);
 //                dump($userNextEpisodes);
                 $count = count($userNextEpisodes);
@@ -3118,6 +3118,10 @@ class SeriesController extends AbstractController
     public function setEpisodeDatetime(?array $episode, DateTimeInterface $time, string $timezone): ?array
     {
         if (!$episode) return null;
+        if (!$episode['air_date']) {
+            $episode['date'] = null;
+            return $episode;
+        }
         $date = $episode['air_date'];
         $date = $this->dateService->newDateImmutable($date, $timezone, true);
 
