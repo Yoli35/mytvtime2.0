@@ -33,6 +33,11 @@ class UserSeriesRepository extends ServiceEntityRepository
         }
     }
 
+    public function flush(): void
+    {
+        $this->em->flush();
+    }
+
 //    public function getLastWatchedUserSeries(User $user, $locale, int $page = 1, int $perPage = 20): array
 //    {
 //        $userId = $user->getId();
@@ -276,15 +281,12 @@ class UserSeriesRepository extends ServiceEntityRepository
                       AND ue2.`watch_at` IS NULL)                  as remainingEpisodes
                 FROM `user_series` us 
                     INNER JOIN user_episode ue ON ue.`user_series_id` = us.`id` 
+                    $innerJoin
                     LEFT JOIN `series` s ON s.`id` = us.`series_id` 
                     LEFT JOIN `series_localized_name` sln ON s.`id` = sln.`series_id` AND sln.locale='$locale' 
                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
                     LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
-                WHERE us.id IN (SELECT us.id
-								FROM `user_series` us  
-                    				LEFT JOIN `series` s ON s.`id` = us.`series_id`
-                                    $innerJoin
-								WHERE us.user_id=$userId AND us.progress AND us.`progress`<100) 
+                WHERE us.user_id=$userId AND us.progress AND us.`progress`<100
                   AND ue.id=(SELECT ue2.id
                              FROM user_episode ue2
                              WHERE ue2.user_series_id = us.id
@@ -317,17 +319,13 @@ class UserSeriesRepository extends ServiceEntityRepository
         $sql = "SELECT COUNT(s.id)
                 FROM `user_series` us 
                     INNER JOIN user_episode ue ON ue.`user_series_id` = us.`id`
+                    $innerJoin
                     LEFT JOIN `series` s ON s.`id` = us.`series_id` 
                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
                     LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
-                WHERE us.id IN (SELECT us.id
-								FROM `user_series` us  
-                    				LEFT JOIN `series` s ON s.`id` = us.`series_id`
-                                    $innerJoin
-								WHERE us.user_id=$userId AND us.progress AND us.`progress`<100) 
+                WHERE us.user_id=$userId AND us.progress AND us.`progress`<100
                   AND ue.id=(SELECT ue2.id
                              FROM user_episode ue2
-                                 LEFT JOIN `series` s ON s.`id` = us.`series_id` 
                              WHERE ue2.user_series_id = us.id
                                AND ue2.`watch_at` IS NULL
                                AND ue2.season_number > 0

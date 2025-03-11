@@ -56,8 +56,8 @@ class UserEpisode
     #[ORM\Column(nullable: true, options: ['default' => 0])]
     private ?int $numberOfView;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $still = null;
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?UserEpisode $previousOccurrence = null;
 
     private ?DateTimeImmutable $alternativeAirDate = null;
 
@@ -233,14 +233,14 @@ class UserEpisode
         return $this;
     }
 
-    public function getStill(): ?string
+    public function getPreviousOccurrence(): ?UserEpisode
     {
-        return $this->still;
+        return $this->previousOccurrence;
     }
 
-    public function setStill(?string $still): static
+    public function setPreviousOccurrence(?UserEpisode $previousOccurrence): static
     {
-        $this->still = $still;
+        $this->previousOccurrence = $previousOccurrence;
 
         return $this;
     }

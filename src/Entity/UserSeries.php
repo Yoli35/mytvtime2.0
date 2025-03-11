@@ -61,6 +61,12 @@ class UserSeries
     #[ORM\Column(nullable: true)]
     private ?bool $binge = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?UserEpisode $lastUserEpisode = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?UserEpisode $nextUserEpisode = null;
+
     public function __construct(User $user, Series $serie, DateTimeImmutable $date)
     {
         $this->user = $user;
@@ -279,5 +285,29 @@ class UserSeries
     public function setUserPinnedSeries(?UserPinnedSeries $userPinnedSeries): void
     {
         $this->userPinnedSeries = $userPinnedSeries;
+    }
+
+    public function getLastUserEpisode(): ?UserEpisode
+    {
+        return $this->lastUserEpisode;
+    }
+
+    public function setLastUserEpisode(?UserEpisode $lastUserEpisode): static
+    {
+        $this->lastUserEpisode = $lastUserEpisode;
+
+        return $this;
+    }
+
+    public function getNextUserEpisode(): ?UserEpisode
+    {
+        return $this->nextUserEpisode;
+    }
+
+    public function setNextUserEpisode(?UserEpisode $nextUserEpisode): static
+    {
+        $this->nextUserEpisode = $nextUserEpisode;
+
+        return $this;
     }
 }

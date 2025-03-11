@@ -157,10 +157,11 @@ class SeriesController extends AbstractController
         // Historique des épisodes vus pendant les 2 semaines passées
         $episodeHistory = $this->getEpisodeHistory($user, 14, $country, $locale);
 
-        $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
 
-        $AllEpisodesOfTheDay = array_map(function ($ue) use ($providerUrl) {
-            $this->imageService->saveImage("posters", $ue['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+        $AllEpisodesOfTheDay = array_map(function ($ue) use ($posterUrl, $logoUrl) {
+            $this->imageService->saveImage("posters", $ue['posterPath'], $posterUrl);
             if ($ue['airAt']) {
                 $time = explode(':', $ue['airAt']);
                 $now = $this->now()->setTime($time[0], $time[1], $time[2]);
@@ -190,7 +191,7 @@ class SeriesController extends AbstractController
                 'released_episode_count' => $ue['released_episode_count'],
                 'watch_at' => $ue['watchAt'],
                 'air_at' => $ue['airAt'],
-                'watch_providers' => $ue['providerId'] ? [['logo_path' => $this->getProviderLogoFullPath($ue['providerLogoPath']), 'provider_name' => $ue['providerName']]] : [],
+                'watch_providers' => $ue['providerId'] ? [['logo_path' => $this->getProviderLogoFullPath($ue['providerLogoPath'], $logoUrl), 'provider_name' => $ue['providerName']]] : [],
             ];
         }, $this->userEpisodeRepository->episodesOfTheDay($user, $country, $locale));
         $tmdbIds = array_column($AllEpisodesOfTheDay, 'tmdbId');
@@ -204,8 +205,8 @@ class SeriesController extends AbstractController
         }
 //        dump(['episodesOfTheDay' => $episodesOfTheDay]);
 
-        $allEpisodesOfTheWeek = array_map(function ($us) use ($providerUrl) {
-            $this->imageService->saveImage("posters", $us['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+        $allEpisodesOfTheWeek = array_map(function ($us) use ($posterUrl, $logoUrl) {
+            $this->imageService->saveImage("posters", $us['poster_path'], $posterUrl);
             if (!$us['poster_path']) {
                 $us['poster_path'] = $this->getAlternatePosterPath($us['id']);
             }
@@ -229,7 +230,7 @@ class SeriesController extends AbstractController
                 'episode_number' => $us['episode_number'],
                 'released_episode_count' => $us['released_episode_count'],
                 'air_at' => $us['air_at'],
-                'watch_providers' => $us['provider_id'] ? [['logo_path' => $this->getProviderLogoFullPath($us['provider_logo_path']), 'provider_name' => $us['provider_name']]] : [],
+                'watch_providers' => $us['provider_id'] ? [['logo_path' => $this->getProviderLogoFullPath($us['provider_logo_path'], $logoUrl), 'provider_name' => $us['provider_name']]] : [],
             ];
         }, $this->userSeriesRepository->getUserSeriesOfTheNext7Days($user, $locale));
         $tmdbIds = array_values(array_unique(array_merge($tmdbIds, array_column($allEpisodesOfTheWeek, 'tmdb_id'))));
@@ -243,8 +244,8 @@ class SeriesController extends AbstractController
         }
 
         $order = 'firstAirDate'; // TODO: ajouter un menu pour choisir l'ordre (firstAirDate, lastWatched, addedAt, ...)
-        $seriesToStart = array_map(function ($s) {
-            $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+        $seriesToStart = array_map(function ($s) use ($posterUrl) {
+            $this->imageService->saveImage("posters", $s['poster_path'], $posterUrl);
             return $s;
         }, $this->userSeriesRepository->seriesToStart($user, $locale, $order, 1, 20));
         $seriesToStartCount = $this->userSeriesRepository->seriesToStartCount($user, $locale);
@@ -296,9 +297,11 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
-        $seriesToStart = array_map(function ($s) {
-            $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-            $s['provider_logo_path'] = $this->getProviderLogoFullPath($s['provider_logo_path']);
+        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+        $seriesToStart = array_map(function ($s) use ($posterUrl, $logoUrl) {
+            $this->imageService->saveImage("posters", $s['poster_path'], $posterUrl);
+            $s['provider_logo_path'] = $this->getProviderLogoFullPath($s['provider_logo_path'], $logoUrl);
             return $s;
         }, $this->userSeriesRepository->seriesToStart($user, $locale, 'addedAt', 1, -1));
         $tmdbIds = array_column($seriesToStart, 'tmdb_id');
@@ -555,6 +558,7 @@ class SeriesController extends AbstractController
         ];
 
         /** @var UserSeries[] $userSeries */
+        $t0 = microtime(true);
         $userSeries = $this->userSeriesRepository->getAllSeries(
             $user,
             $localisation,
@@ -565,7 +569,7 @@ class SeriesController extends AbstractController
             $filters);
 
         $userSeries = array_map(function ($series) {
-            $series['poster_path'] = $series['poster_path'] ? $this->imageConfiguration->getCompleteUrl($series['poster_path'], 'poster_sizes', 5) : null;
+            $series['poster_path'] = $series['poster_path'] ? '/series/posters' . $series['poster_path'] : null;
             return $series;
         }, $userSeries);
 
@@ -573,14 +577,21 @@ class SeriesController extends AbstractController
         $networks = $this->networkRepository->findBy([], ['name' => 'ASC']);
         $nlpArr = $this->networkRepository->networkLogoPaths();
         $networkLogoPaths = ['all' => null];
+        $imageConfiguration = $this->imageConfiguration->getUrl('logo_sizes', 3);
+
         foreach ($nlpArr as $nlp) {
             if ($nlp['logo_path'])
-                $networkLogoPaths[$nlp['id']] = $this->imageConfiguration->getCompleteUrl($nlp['logo_path'], 'logo_sizes', 3);
+//                $networkLogoPaths[$nlp['id']] = $this->imageConfiguration->getCompleteUrl($nlp['logo_path'], 'logo_sizes', 3);
+                $networkLogoPaths[$nlp['id']] = $imageConfiguration . $nlp['logo_path'];
             else
                 $networkLogoPaths[$nlp['id']] = null;
         }
+        $t1 = microtime(true);
 
-//        dump([
+        dump([
+            't0' => $t0,
+            't1' => $t1,
+            'diff' => $t1 - $t0,
 //            'userSeries' => $userSeries,
 //            'userSeriesCount' => $userSeriesCount,
 //            'filters' => $filters,
@@ -588,7 +599,7 @@ class SeriesController extends AbstractController
 //            'userNetworks' => $userNetworks,
 //            'networks' => $networks,
 //            'networkLogoPaths' => $networkLogoPaths,
-//        ]);
+        ]);
 
         return $this->render('series/all.html.twig', [
             'userSeries' => $userSeries,
@@ -1494,15 +1505,17 @@ class SeriesController extends AbstractController
         $messages = [];
 
         $user = $this->getUser();
-        $country = $user->getCountry() ?? 'FR';
+//        $country = $user->getCountry() ?? 'FR';
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+        $userSeriesEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
         $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $ueId]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'episodeId' => $id], ['id' => 'ASC']);
 
         $now = $this->now();
         if ($userEpisode->getWatchAt()) { // Si l'épisode a déjà été vu
             $userEpisode = new UserEpisode($userSeries, $id, $seasonNumber, $episodeNumber, $now);
+            $userEpisode->setPreviousOccurrence($userEpisodes[count($userEpisodes) - 1]);
             $new = true;
         } else {
             $userEpisode->setWatchAt($now);
@@ -1575,6 +1588,12 @@ class SeriesController extends AbstractController
             $userSeries->setLastWatchAt($now);
             $userSeries->setLastEpisode($episodeNumber);
             $userSeries->setLastSeason($seasonNumber);
+            $userSeries->setLastUserEpisode($userEpisode);
+            $nextUserEpisode = array_find($userSeriesEpisodes, function ($ue) {
+                return $ue->getWatchAt() == null;
+            });
+            $userSeries->setNextUserEpisode($nextUserEpisode);
+
             if (!$new) {
                 $userSeries->setViewedEpisodes($userSeries->getViewedEpisodes() + 1);
                 $userSeries->setProgress($userSeries->getViewedEpisodes() / $series->getNumberOfEpisode() * 100);
@@ -2720,6 +2739,7 @@ class SeriesController extends AbstractController
         $schedules = [];
         $locale = $user->getPreferredLanguage() ?? 'fr';
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 5);
 
         foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
 //            dump($schedule);
@@ -2824,7 +2844,7 @@ class SeriesController extends AbstractController
             if ($providerId) {
                 $provider = $this->providerRepository->findOneBy(['providerId' => $providerId]);
                 $providerName = $provider->getName();
-                $providerLogo = $this->getProviderLogoFullPath($provider->getLogoPath());
+                $providerLogo = $this->getProviderLogoFullPath($provider->getLogoPath(), $logoUrl);
             } else {
                 $providerName = null;
                 $providerLogo = null;
@@ -3219,13 +3239,14 @@ class SeriesController extends AbstractController
     public function getEpisodeHistory(User $user, int $dayCount, string $country, string $locale): array
     {
         $arr = $this->userEpisodeRepository->historyEpisode($user, $dayCount, $country, $locale);
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
 
-        return array_map(function ($series) {
+        return array_map(function ($series) use ($logoUrl) {
             if (!$series['posterPath']) {
                 $series['posterPath'] = $this->getAlternatePosterPath($series['id']);
             }
             $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
-            $series['providerLogoPath'] = $this->getProviderLogoFullPath($series['providerLogoPath']);
+            $series['providerLogoPath'] = $this->getProviderLogoFullPath($series['providerLogoPath'], $logoUrl);
             $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
             $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
             return $series;
@@ -3435,16 +3456,19 @@ class SeriesController extends AbstractController
             $userEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number']);
             $userEpisodeList = $this->getUserEpisodes($userEpisodes, $episode['episode_number']);
 
-            $episode['still_path'] = $episode['still_path'] ? $this->imageConfiguration->getCompleteUrl($episode['still_path'], 'still_sizes', 3) : null; // w300
+            $stillUrl = $this->imageConfiguration->getUrl('still_sizes', 3);
+            $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
+
+            $episode['still_path'] = $episode['still_path'] ? $stillUrl . $episode['still_path'] : null; // w300
             $episode['stills'] = array_filter($stills, function ($still) use ($episode) {
                 return $still['episode_id'] == $episode['id'];
             });
             if (key_exists('custom_date', $userEpisode) && $userEpisode['custom_date']) {
                 $episode['air_date'] = $userEpisode['custom_date'];
             }
-            $episode['crew'] = array_map(function ($crew) use ($slugger, $user) {
+            $episode['crew'] = array_map(function ($crew) use ($slugger, $user, $profileUrl) {
                 if (key_exists('person_id', $crew)) return null;
-                $crew['profile_path'] = $crew['profile_path'] ? $this->imageConfiguration->getCompleteUrl($crew['profile_path'], 'profile_sizes', 2) : null; // w185
+                $crew['profile_path'] = $crew['profile_path'] ? $profileUrl . $crew['profile_path'] : null; // w185
                 $crew['slug'] = $slugger->slug($crew['name'])->lower()->toString();
                 return $crew;
             }, $episode['crew'] ?? []);
@@ -3458,8 +3482,8 @@ class SeriesController extends AbstractController
             usort($episode['guest_stars'], function ($a, $b) {
                 return !$a['profile_path'] <=> !$b['profile_path'];
             });
-            $episode['guest_stars'] = array_map(function ($guest) use ($slugger, $series) {
-                $guest['profile_path'] = $guest['profile_path'] ? $this->imageConfiguration->getCompleteUrl($guest['profile_path'], 'profile_sizes', 2) : null; // w185
+            $episode['guest_stars'] = array_map(function ($guest) use ($slugger, $series, $profileUrl) {
+                $guest['profile_path'] = $guest['profile_path'] ? $profileUrl . $guest['profile_path'] : null; // w185
                 $guest['slug'] = $slugger->slug($guest['name'])->lower()->toString();
                 if (!$guest['profile_path']) {
                     $guest['google'] = 'https://www.google.com/search?q=' . urlencode($guest['name'] . ' ' . $series->getName());
@@ -3467,7 +3491,7 @@ class SeriesController extends AbstractController
                 return $guest;
             }, $episode['guest_stars']);
 
-            if (empty($userEpisode)) {
+            if ($userEpisode == null) {
                 $ue = new UserEpisode($userSeries, $episode['id'], $season['season_number'], $episode['episode_number'], null);
                 $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris') : null;
                 $ue->setAirDate($airDate);
@@ -3505,11 +3529,12 @@ class SeriesController extends AbstractController
         return $seasonEpisodes;
     }
 
-    public function getUserEpisode(array $userEpisodes, int $episodeNumber): array
+    public function getUserEpisode(array $userEpisodes, int $episodeNumber): ?array
     {
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
         foreach ($userEpisodes as $userEpisode) {
             if ($userEpisode['episode_number'] == $episodeNumber) {
-                $userEpisode['provider_logo_path'] = $this->getProviderLogoFullPath($userEpisode['provider_logo_path']);
+                $userEpisode['provider_logo_path'] = $this->getProviderLogoFullPath($userEpisode['provider_logo_path'], $logoUrl);
                 if ($userEpisode['custom_date']) {
                     $cd = $this->dateService->newDateImmutable($userEpisode['custom_date'], 'Europe/Paris');
                     $userEpisode['custom_date'] = $cd->format('Y-m-d H:i O');
@@ -3517,7 +3542,7 @@ class SeriesController extends AbstractController
                 return $userEpisode;
             }
         }
-        return [];
+        return null;
     }
 
     public function getUserEpisodes(array $userEpisodes, int $episodeNumber): array
@@ -3525,9 +3550,10 @@ class SeriesController extends AbstractController
         $episodes = array_filter($userEpisodes, function ($userEpisode) use ($episodeNumber) {
             return $userEpisode['episode_number'] == $episodeNumber;
         });
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
         foreach ($episodes as $episode) {
             if ($episode['provider_id'] > 0)
-                $episode['provider_logo_path'] = $episode['provider_logo_path'] ? $this->imageConfiguration->getCompleteUrl($episode['provider_logo_path'], 'logo_sizes', 2) : null; // w45
+                $episode['provider_logo_path'] = $episode['provider_logo_path'] ? $logoUrl . $episode['provider_logo_path'] : null;
             else
                 $episode['provider_logo_path'] = '/images/providers/' . $episode['provider_logo_path'];
         }
@@ -3683,8 +3709,9 @@ class SeriesController extends AbstractController
             $watchProviderNames[$provider['provider_id']] = $provider['provider_name'];
         }
         $watchProviderLogos = [];
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
         foreach ($providers as $provider) {
-            $watchProviderLogos[$provider['provider_id']] = $this->getProviderLogoFullPath($provider['logo_path']);
+            $watchProviderLogos[$provider['provider_id']] = $this->getProviderLogoFullPath($provider['logo_path'], $logoUrl);
         }
         uksort($watchProviders, function ($a, $b) {
             return strcasecmp($a, $b);
@@ -3702,11 +3729,11 @@ class SeriesController extends AbstractController
         ];
     }
 
-    public function getProviderLogoFullPath(?string $path): ?string
+    public function getProviderLogoFullPath(?string $path, string $tmdbUrl): ?string
     {
         if (!$path) return null;
         if (str_starts_with($path, '/')) {
-            return $this->imageConfiguration->getCompleteUrl($path, 'logo_sizes', 2);
+            return $tmdbUrl . $path;
         }
         return '/images/providers' . substr($path, 1);
     }
