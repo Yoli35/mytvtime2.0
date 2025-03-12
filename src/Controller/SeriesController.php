@@ -1186,7 +1186,7 @@ class SeriesController extends AbstractController
 
             $tv = json_decode($this->tmdbService->getTv($seriesBroadcastSchedule->getSeries()->getTmdbId(), 'fr-FR', ['seasons']), true);
             $as = $this->getAlternateSchedule($seriesBroadcastSchedule, $tv, $userEpisodes);
-
+dump($as);
             $airDays = $as['airDays'];
             foreach ($airDays as $airDay) {
                 if (!$previousOverrideStatus) {

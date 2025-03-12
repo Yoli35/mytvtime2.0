@@ -287,7 +287,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = nue.season_number AND IF(sbs.multi_part, nue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
                     LEFT JOIN `series_broadcast_date` sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.`episode_id`=nue.`episode_id`
                 WHERE us.`user_id`=$userId
-                    AND IF(sbd.`date`, sbd.`date`<=NOW(), nue.`air_date`<=NOW())
+                    AND IF(sbd.`date`, DATE(sbd.`date`)<=NOW(), nue.`air_date`<=NOW())
                     AND nue.`season_number`>0
                 ORDER BY $sort $order
                 LIMIT $perPage OFFSET $offset";
@@ -319,7 +319,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = nue.season_number AND IF(sbs.multi_part, nue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
                     LEFT JOIN `series_broadcast_date` sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.`episode_id`=nue.`episode_id`
                 WHERE us.`user_id`=$userId
-                    AND IF(sbd.`date`, sbd.`date`<=NOW(), nue.`air_date`<=NOW())
+                    AND IF(sbd.`date`, DATE(sbd.`date`)<=NOW(), nue.`air_date`<=NOW())
                     AND nue.`season_number`>0";
 //        dump($sql);
         return $this->getOne($sql);
