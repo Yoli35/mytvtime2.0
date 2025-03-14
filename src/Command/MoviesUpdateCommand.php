@@ -103,7 +103,7 @@ class MoviesUpdateCommand extends Command
             $updated = $this->movieService->checkMovieCollection($title, $m, $movie, true) || $updated;
             $messages = array_merge($messages, $this->movieService->getMessages());
 
-            $updated = $this->movieService->checkMovieInfos($title, $m, $movie, true) || $updated;
+            $updated = $this->movieService->checkMovieInfos($title, $m, $movie, $region,  true) || $updated;
             $messages = array_merge($messages, $this->movieService->getMessages());
 
             $this->writeMessages($messages);

@@ -118,9 +118,13 @@ class MovieService
         return $updated;
     }
 
-    public function checkMovieInfos(string $title, array $tmdbMovie, Movie $movie, bool $isCommand = false): bool
+    public function checkMovieInfos(string $title, array $tmdbMovie, Movie $movie, string $region, bool $isCommand = false): bool
     {
         $updated = false;
+        $tmdbReleaseDate = $this->getReleaseDate($tmdbMovie, $region);
+        if ($tmdbReleaseDate) {
+            $tmdbMovie['release_date'] = $tmdbReleaseDate;
+        }
 
         // checking "original_language", "original_title", "overview", "release_date",
         //          "runtime", "status", "tagline", "title", "vote_average", "vote_count"
@@ -157,6 +161,35 @@ class MovieService
         }
 
         return $updated;
+    }
+
+    public function getReleaseDate(array $tmdbMovie, string $region): ?string
+    {
+        $release_dates = $tmdbMovie['release_dates'];
+        // "release_dates" => array:1 [▼
+        //    "results" => array:234 [▼
+        //      0 => array:2 [▼
+        //        "iso_3166_1" => "AD"
+        //        "release_dates" => array:1 "iso_3166_1": "FR",
+        //        "release_dates": [
+        //            "certification": "",
+        //            "descriptors": [],
+        //            "iso_639_1": "",
+        //            "note": "Netflix",
+        //        →   "release_date": "2025-03-14T00:00:00.000Z", ←
+        //            "type": 4
+        //        ]
+        //      ]
+        //      ...
+        //    ]
+        //  ]
+        $regionReleaseDate = array_find($release_dates['results'], fn($i) => $i['iso_3166_1'] === $region);
+
+        if ($regionReleaseDate) {
+            $releaseDate = substr($regionReleaseDate['release_dates'][0]['release_date'], 0, 10);
+            return $releaseDate;
+        }
+        return null;
     }
 
     public function imageInArray(string $image, array $images): bool

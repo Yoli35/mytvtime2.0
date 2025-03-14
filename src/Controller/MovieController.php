@@ -231,7 +231,7 @@ class MovieController extends AbstractController
 
             $updated = $this->movieService->checkMovieCollection('', $movie, $dbMovie) || $updated;
 
-            $updated = $this->movieService->checkMovieInfos('', $movie, $dbMovie) || $updated;
+            $updated = $this->movieService->checkMovieInfos('', $movie, $dbMovie, $user->getCountry() ?? "FR") || $updated;
 
             if ($updated) {
                 $now = $this->dateService->newDateImmutable('now', $user->getTimezone() ?? 'Europe/Paris');

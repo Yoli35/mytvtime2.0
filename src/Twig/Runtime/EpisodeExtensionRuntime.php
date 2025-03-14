@@ -5,6 +5,7 @@ namespace App\Twig\Runtime;
 use App\Controller\SeriesController;
 use App\Entity\User;
 use App\Repository\EpisodeNotificationRepository;
+use App\Repository\MovieRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
@@ -16,6 +17,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         private DateService                   $dateService,
         private EpisodeNotificationRepository $episodeNotificationRepository,
         private ImageConfiguration            $imageConfiguration,
+        private MovieRepository               $movieRepository,
         private SeriesController              $seriesController,
         private UserEpisodeRepository         $userEpisodeRepository
     )
@@ -51,10 +53,12 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         if ($interval < 0)
             $date = $date->modify(sprintf('%d day', $interval))->format('Y-m-d');
 
-        $arr = $this->userEpisodeRepository->episodesOfTheDayForTwig($user, $date, $locale);
+        $sArr = $this->userEpisodeRepository->episodesOfTheDayForTwig($user, $date, $locale);
+        $mArr = $this->movieRepository->moviesOfTheDayForTwig($user, $date, $locale);
+//        dump(['date' => $date, 'movies' => $mArr]);
         $seriesArr = [];
         $totalEpisodeCount = 0;
-        foreach ($arr as $item) {
+        foreach ($sArr as $item) {
             if (!$this->seriesInArray($seriesArr, $item)) {
                 $item['episodes'] = [$item['episodeNumber']];
                 if ($item['posterPath'] === null) {
@@ -71,6 +75,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
                 }
 //                $item['providerLogoPath'] = $item['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($item['providerLogoPath'], 'logo_sizes', 2) : null;
                 $item['episodesWatched'] = $item['watchAt'] === null ? 0 : 1;
+                $item['type'] = 'series';
                 $seriesArr[$item['id']] = $item;
             } else {
                 $seriesArr[$item['id']]['episodes'][] = $item['episodeNumber'];
@@ -114,9 +119,32 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
             $seriesArr[$key]['episodeCount'] = count($item['episodes']);
             $totalEpisodeCount += count($item['episodes']);
         }
-
+        $moviesArr = [];
+        foreach ($mArr as $item) {
+            $item['type'] = 'movie';
+            $item['posterPath'] = $item['posterPath'] ? '/movies/posters' . $item['posterPath'] : null;
+            if ($item['providerLogoPath']) {
+                if (str_starts_with($item['providerLogoPath'], '/')) {
+                    $item['providerLogoPath'] = $this->imageConfiguration->getCompleteUrl($item['providerLogoPath'], 'logo_sizes', 2);
+                }
+                if (str_starts_with($item['providerLogoPath'], '+')) {
+                    $item['providerLogoPath'] = '/images/providers' . substr($item['providerLogoPath'], 1);
+                }
+            }
+            $item['episodesWatched'] = $item['watchAt'] === null ? 0 : 1;
+            $item['display'] = $item['localizedName'] ?? $item['name'];
+            $item['customDate'] = null;
+            $item['airAt'] = "00:00:00";
+            $item['seasonNumber'] = null;
+            $item['episodeCount'] = 1;
+            $item['firstEpisodeNumber'] = 1;
+            $item['localizedSlug'] = $item['slug'] = '';
+            $moviesArr[$item['id']] = $item;
+        }
+//        dump(['seriesArr' => $seriesArr, 'moviesArr' => $moviesArr]);
         $results = array_map(function ($item) {
             return [
+                'type' => $item['type'],
                 'display' => $item['display'],
                 'airAt' => $item['airAt'],
                 'customDate' => $item['customDate'],
@@ -132,8 +160,8 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
                 'seasonNumber' => $item['seasonNumber'],
                 'slug' => $item['localizedSlug'] ?? $item['slug'],
             ];
-        }, $seriesArr);
-
+        }, array_merge($seriesArr, $moviesArr));
+//        dump(['results' => $results]);
         usort($results, function ($a, $b) {
             return $a['airAt'] <=> $b['airAt'];
         });

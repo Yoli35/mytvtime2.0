@@ -1388,6 +1388,11 @@ label:has(input[type="text"]) {
                     line-height: 1.25em;
                     margin-inline-start: auto;
                     padding-inline: .5rem;
+
+                    &.movie {
+                        background-color: var(--green-50);
+                        color: var(--green-20);
+                    }
                 }
 
                 .provider {
