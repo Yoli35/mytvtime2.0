@@ -329,6 +329,31 @@ export class Menu {
                         }
                     };
 
+                    /* Object
+                           adult: false
+                           backdrop_path: "/qSJhQ8WjUcZT3XvHxedFy37KRyc.jpg"
+                           genre_ids: [35] (1)
+                           id: 643662
+                           original_language: "en"
+                           original_title: "Call Me by Your Maid"
+                           overview: "The Perlman's maid has strong reactions when an exchange student comes to stay with the family."
+                           popularity: 0.113
+                           poster_path: "/mzpTgeOiL1bFU7p7q4VoKQnEHtB.jpg"
+                           release_date: "2018-02-28"
+                           title: "Call Me by Your Maid"
+                           video: false
+                           vote_average: 5
+                           vote_count: 3
+                       Object
+                           adult: false
+                           backdrop_path: "/baLoLeFw58xMGSuxaVUinBe4Y3b.jpg"
+                           id: 1401402
+                           original_language: "en"
+                           original_title: "Call Me by Your Name Collection"
+                           overview: "The collection of movies about Elio Perlman and Oliver"
+                           poster_path: "/94DW591sFWh6kcNyuiHMgRrllFi.jpg"
+                           title: "Call Me by Your Name Collection" */
+
                     fetch(url, options)
                         .then(res => res.json())
                         /** @type {SearchResults} */
@@ -356,7 +381,7 @@ export class Menu {
                                 a.appendChild(posterDiv);
                                 const titleDiv = document.createElement("div");
                                 titleDiv.classList.add("title");
-                                titleDiv.innerHTML = result.title + ' (' + result.release_date.slice(0, 4) + ')';
+                                titleDiv.innerHTML = result.title + (result.release_date ? ' (' + result.release_date.slice(0, 4) + ')': '');
                                 a.appendChild(titleDiv);
                                 // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
                                 a.addEventListener("auxclick", (e) => {
@@ -380,7 +405,7 @@ export class Menu {
             tvSearch.addEventListener("input", (e) => {
                 const value = e.target.value;
                 if (value.length > 2) {
-                    const searchResults = tvSearch.closest(".menu-item").querySelector(".search-results.tmdb");
+                    const searchResults = tvSearch.closest(".menu-item").querySelector(".search-results");
                     const query = encodeURIComponent(value);
                     const url = 'https://api.themoviedb.org/3/search/tv?query=' + query + '&include_adult=false&language=fr-FR&page=1';
                     const options = {
@@ -636,12 +661,14 @@ export class Menu {
         const baseHref = `/${gThis.lang}/`;
         const resultNames = {
             'movie': 'title',
+            'collection': 'title',
             'tv': 'name',
             'dbtv': 'display_name',
             'person': 'name'
         }
         const hRefs = {
             'movie': 'movie/tmdb/',
+            'collection': 'movie/collection/',
             'tv': 'series/tmdb/',
             'dbtv': 'series/show/',
             'person': 'people/show/',
@@ -649,12 +676,14 @@ export class Menu {
         };
         const imagePaths = {
             'movie': gThis.posterUrl,
+            'collection': gThis.posterUrl,
             'tv': gThis.posterUrl,
             'dbtv': '/series/posters',
             'person': gThis.profileUrl
         };
         const resultPaths = {
             'movie': 'poster_path',
+            'collection': 'poster_path',
             'tv': 'poster_path',
             'dbtv': 'poster_path',
             'person': 'profile_path'
@@ -691,11 +720,15 @@ export class Menu {
                 ul.setAttribute("data-type", searchType);
 
                 json.results.forEach((result, index) => {
-                    console.log({index});
                     const type = result['media_type'] || searchType; // Pour les résultats de recherche multi
+                    if (type === 'collection') {
+                        console.log({index});
+                        console.log({result});
+                        //return; // On ne veut pas de collection
+                    }
                     const a = document.createElement("a");
                     let url = baseHref + hRefs[type] + result['id'];
-                    if (type !== 'movie') url += '-' + gThis.toSlug(result[resultNames[type]]);
+                    if (type !== 'movie' && type !== 'collection') url += '-' + gThis.toSlug(result[resultNames[type]]);
                     a.href = url;
                     a.target = "_blank";
                     const li = document.createElement("li");

@@ -49,9 +49,11 @@
                             </a>
                         </div>
                         <div class="infos">
-                            <div class="backdrop">
-                                <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
-                            </div>
+                            {% if movie.backdrop_path %}
+                                <div class="backdrop">
+                                    <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
+                                </div>
+                            {% endif %}
                             <div class="title">
                                 <h2>
                                     {{ movie.title }}{% if movie.original_title and movie.original_title != movie.title %}<br><span>{{ movie.original_title }}</span>{% endif %} ({{ movie.release_date|date("Y") }})
