@@ -148,6 +148,9 @@
                                 <div class="series-location-image" data-title="{{ loc.location }}">
                                     <img src="/images/map{{ loc.still_path }}" alt="{{ loc.location ?? 'No title entry!!' }}">
                                     <div class="image-count">{{ loc.filmingLocationImages|length }}</div>
+                                    {% if loc.episode_number %}
+                                        <div class="episode">{{ "S%02dE%02d"|format(loc.season_number, loc.episode_number) }}</div>
+                                    {% endif %}
                                     <div class="image-list">
                                         {% for image in loc.filmingLocationImages %}
                                             <img src="/images/map{{ image.path }}" alt="{{ loc.title }} #{{ loop.index }}">
@@ -179,7 +182,7 @@
         "bounds": {{ bounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
-    {#<script src="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.js"></script>
+    {# <script src="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.js"></script>
     <script src="/map/index.js"></script>
     <script>
         const L = window.L;
@@ -240,5 +243,5 @@
             markerIcon.setAttribute('data-latitude', location.latitude);
             markerIcon.setAttribute('data-longitude', location.longitude);
         });
-    </script>#}
+    </script> #}
 {% endblock %}
