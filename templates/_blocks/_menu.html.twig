@@ -404,168 +404,60 @@
             <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
         {% endif %}
         {% if app.user %}
-            {% set eotdList = listEpisodeOfTheDay(app.user, -2) %}
-            {% set l = eotdList.totalEpisodeCount %}
-            {% if l %}
-                <div class="separation">{{ 'Two days ago'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
-                {% for eotd in eotdList.results %}
-                    <div class="a-preview">
-                        <a id="eotd-menu-item-1-{{ eotd.id }}"
-                           href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
-                           data-episode-count="{{ eotd.episodeCount }}"
-                           data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
-                           style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
-                            <div>
-                                {{ eotd.display }}
-                                {% if eotd.customDate %}
-                                    {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
-                                {% endif %}
-                                {% if eotd.seasonNumber == 0 %}
-                                    {{ ux_icon('fluent-mdl2:special-event', {'data-title': 'Specials'|trans, height: '16px', width: '16px'}) }}
-                                {% endif %}
-                            </div>
-                            {% if eotd.airAt %}
-                                <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
-                            {% endif %}
-                            <div class="provider">
-                                {% if eotd.providerLogoPath %}
-                                    <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
-                                {% endif %}
-                            </div>
-                        </a>
-                        <div id="eotd-preview-1-{{ eotd.id }}" class="episode-of-the-day-preview">
-                            <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
-                                <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
-                            </a>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% endif %}
-
-            {% set eotdList = listEpisodeOfTheDay(app.user, -1) %}
-            {% set l = eotdList.totalEpisodeCount %}
-            {% if l %}
-                <div class="separation">{{ 'Yesterday'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
-                {% for eotd in eotdList.results %}
-                    {% if eotd.type == 'series' %}
-                        {% set url = path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) %}
-                    {% else %}
-                        {% set url = path('app_movie_show', {id: eotd.id}) %}
-                    {% endif %}
-                    <div class="a-preview">
-                        <a id="eotd-menu-item-1-{{ eotd.id }}"
-                           href="{{ url }}"
-                           data-episode-count="{{ eotd.episodeCount }}"
-                           data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
-                           style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
-                            <div>
-                                {{ eotd.display }}
-                                {% if eotd.customDate %}
-                                    {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
-                                {% endif %}
-                            </div>
-                            {% if eotd.type == 'series' %}
-                                <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
-                            {% else %}
-                                <div class="time movie">{{ 'Movie'|trans }}</div>
-                            {% endif %}
-                            <div class="provider">
-                                {% if eotd.providerLogoPath %}
-                                    <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
-                                {% endif %}
-                            </div>
-                        </a>
-                        <div id="eotd-preview-1-{{ eotd.id }}" class="episode-of-the-day-preview">
-                            <a href="{{ url }}">
-                                {% if eotd.posterPath %}
-                                    <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+            {%  set relativeDayStrings = {
+                "-2": 'Two days ago'|trans,
+                "-1": 'Yesterday'|trans,
+                "0": 'Today'|trans,
+                "1": 'Tomorrow'|trans,
+                "2": 'In two days'|trans
+            } %}
+            {% for relativeDay in  -2..2 %}
+                {% set eotdList = listEpisodeOfTheDay(app.user, relativeDay) %}
+                {% set l = eotdList.totalEpisodeCount %}
+                {% if l %}
+                    <div class="separation">{{ relativeDayStrings[relativeDay] }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
+                    {% for eotd in eotdList.results %}
+                        {% if eotd.type == 'series' %}
+                            {% set url = path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) %}
+                        {% else %}
+                            {% set url = path('app_movie_show', {id: eotd.id}) %}
+                        {% endif %}
+                        <div class="a-preview">
+                            <a id="eotd-menu-item-1-{{ eotd.id }}"
+                               href="{{ url }}"
+                               data-episode-count="{{ eotd.episodeCount }}"
+                               data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
+                               style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
+                                <div>
+                                    {{ eotd.display }}
+                                    {% if eotd.customDate %}
+                                        {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
+                                    {% endif %}
+                                </div>
+                                {% if eotd.type == 'series' %}
+                                    <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
                                 {% else %}
-                                    {{ eotd.name }}
+                                    <div class="time movie">{{ 'Movie'|trans }}</div>
                                 {% endif %}
+                                <div class="provider">
+                                    {% if eotd.providerLogoPath %}
+                                        <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
+                                    {% endif %}
+                                </div>
                             </a>
+                            <div id="eotd-preview-1-{{ eotd.id }}" class="episode-of-the-day-preview">
+                                <a href="{{ url }}">
+                                    {% if eotd.posterPath %}
+                                        <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+                                    {% else %}
+                                        {{ eotd.name }}
+                                    {% endif %}
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                {% endfor %}
-            {% endif %}
-
-            {% set eotdList = listEpisodeOfTheDay(app.user, 0) %}
-            {% set l = eotdList.totalEpisodeCount %}
-            {% if l %}
-                <div class="separation">{{ 'Today'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
-                {% for eotd in eotdList.results %}
-                    <div class="a-preview">
-                        <a id="eotd-menu-item-2-{{ eotd.id }}"
-                           href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
-                           data-episode-count="{{ eotd.episodeCount }}"
-                           data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
-                           style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
-                            <div>
-                                {{ eotd.display }}
-                                {% if eotd.customDate %}
-                                    {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
-                                {% endif %}
-                            </div>
-                            {% if eotd.airAt %}
-                                <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
-                            {% endif %}
-                            <div class="provider">
-                                {% if eotd.providerLogoPath %}
-                                    <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
-                                {% endif %}
-                            </div>
-                        </a>
-                        <div id="eotd-preview-2-{{ eotd.id }}" class="episode-of-the-day-preview">
-                            <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
-                                {% if eotd.posterPath %}
-                                    <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
-                                {% else %}
-                                    {{ eotd.name }}
-                                {% endif %}
-                            </a>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% endif %}
-
-            {% set eotdList = listEpisodeOfTheDay(app.user, 1) %}
-            {% set l = eotdList.totalEpisodeCount %}
-            {% if l %}
-                <div class="separation">{{ 'Tomorrow'|trans }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
-                {% for eotd in eotdList.results %}
-                    <div class="a-preview">
-                        <a id="eotd-menu-item-3-{{ eotd.id }}"
-                           href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}"
-                           data-episode-count="{{ eotd.episodeCount }}"
-                           data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
-                           style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
-                            <div>
-                                {{ eotd.display }}
-                                {% if eotd.customDate %}
-                                    {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
-                                {% endif %}
-                            </div>
-                            {% if eotd.airAt %}
-                                <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
-                            {% endif %}
-                            <div class="provider">
-                                {% if eotd.providerLogoPath %}
-                                    <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
-                                {% endif %}
-                            </div>
-                        </a>
-                        <div id="eotd-preview-3-{{ eotd.id }}" class="episode-of-the-day-preview">
-                            <a href="{{ path('app_series_season', {id: eotd.id, slug: eotd.slug, seasonNumber: eotd.seasonNumber}) }}">
-                                {% if eotd.posterPath %}
-                                    <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
-                                {% else %}
-                                    {{ eotd.name }}
-                                {% endif %}
-                            </a>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% endif %}
-
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
             {% set inProgress = inProgressSeries(app.user, app.user.preferredLanguage??'fr') %}
             {% if inProgress.ok %}
                 <div class="separation">{{ 'Series in progress'|trans }} - {% if inProgress.nextEpisode %}{{ 'Next episode'|trans }}{% else %}{{ 'That\'s all!'|trans }}{% endif %}</div>
@@ -620,39 +512,6 @@
         {% endif %}
         <a href="{{ path('app_series_search') }}">{{ 'A series by name/year'|trans }}</a>
         <a href="{{ path('app_series_advanced_search') }}">{{ 'Advanced search'|trans }}</a>
-        {#            <div class="separation">{{ 'User'|trans }}</div> #}
-        {#            {% if app.user %} #}
-        {#                <a href="{{ path('app_user_profile') }}">{{ 'My account'|trans }}</a> #}
-        {#                <a href="{{ path('app_user_providers') }}">{{ 'My providers'|trans }}</a> #}
-        {#                <a href="{{ path('app_user_networks') }}">{{ 'My networks'|trans }}</a> #}
-        {#                <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a> #}
-        {#                {% if 'ROLE_ADMIN' in app.user.roles %} #}
-        {#                    <div class="separation">{{ 'Admin'|trans }}</div> #}
-        {#                    <a href="{{ path('app_admin_index') }}">{{ 'Dashboard'|trans }}</a> #}
-        {#                {% endif %} #}
-        {#            {% else %} #}
-        {#                <a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a> #}
-        {#                <a href="{{ path('app_register') }}">{{ 'Register'|trans }}</a> #}
-        {#            {% endif %} #}
-        {#            <div class="separation">{{ 'Options'|trans }}</div> #}
-        {#            <div class="menu-preview" data-on="{{ 'Hide preview'|trans }}" data-off="{{ 'Show preview'|trans }}">{{ 'Hide preview'|trans }}</div> #}
-        {#            <div class="separation">{{ 'Theme'|trans }}</div> #}
-        {#            <div class="menu-theme" data-theme="auto">{{ 'Automatic'|trans }}</div> #}
-        {#            <div class="menu-theme" data-theme="light">{{ 'Light'|trans }}</div> #}
-        {#            <div class="menu-theme" data-theme="dark">{{ 'Dark'|trans }}</div> #}
-        {#            <div class="separation">{{ 'Language'|trans }}</div> #}
-        {#            <a href="{{ path(route, route_params|merge({'_locale': 'fr'})) ~ p }}"{% if app.locale=='fr' %} class="active"{% endif %}> #}
-        {#                {{ getEmojiFlag('FR') }} Français - French - 프랑스어 #}
-        {#                #}{# {{ 'French'|trans }} #}
-        {#            </a> #}
-        {#            <a href="{{ path(route, route_params|merge({'_locale': 'en'})) ~ p }}"{% if app.locale=='en' %} class="active"{% endif %}> #}
-        {#                {{ getEmojiFlag('GB') }} Anglais - English - 영어 #}
-        {#                #}{# {{ 'English'|trans }} #}
-        {#            </a> #}
-        {#            <a href="{{ path(route, route_params|merge({'_locale': 'ko'})) ~ p }}"{% if app.locale=='ko' %} class="active"{% endif %}> #}
-        {#                {{ getEmojiFlag('KR') }} Coréen - Korean - 한국어 #}
-        {#                #}{# {{ 'Korean'|trans }} #}
-        {#            </a> #}
     </div>
 </nav>
 
