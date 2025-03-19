@@ -83,13 +83,6 @@ export class Map {
             });
         }
 
-        const resizeMap = ({height, width}) => {
-            const containerDiv = document.getElementById('map');
-
-            containerDiv.style.width = width;
-            containerDiv.style.height = height;
-        };
-
         const initializeMapHandle = () => {
             const mapDiv = document.getElementById('map');
             const mapboxglControlContainerDiv = mapDiv.querySelector('.mapboxgl-control-container');
