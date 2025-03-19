@@ -1160,7 +1160,7 @@ h2 {
                     flex-direction: column;
                     flex-shrink: 0;
                     scroll-snap-align: start;
-                    width: 9rem;
+                    width: 6rem;
 
                     &.watched {
                         .air-day-date {
@@ -1177,9 +1177,9 @@ h2 {
                         align-items: center;
                         background-color: var(--orange-50);
                         border-radius: .5rem .5rem 0 0;
-                        color: var(--ardoise-10);
+                        color: var(--ardoise-0);
                         display: flex;
-                        font-size: 2rem;
+                        font-size: 1rem;
                         font-weight: 300;
                         justify-content: center;
                         line-height: 1.1em;
@@ -1199,12 +1199,13 @@ h2 {
 
                         .day {
                             color: var(--orange-50);
-                            font-size: 3.5rem;
+                            font-size: 2rem;
                             line-height: 1em;
                         }
 
                         .day-of-week, .month, .year {
-                            font-size: 1rem;
+                            font-size: .875rem;
+                            line-height: 1.25em;
                         }
                     }
                 }
@@ -2302,6 +2303,10 @@ h2 {
             .still, .infos, .user-episode {
                 border: 2px solid var(--orange-50);
             }
+
+            .back-to-top, .back-to-series {
+                opacity: 1;
+            }
         }
 
         .still {
@@ -2802,6 +2807,11 @@ h2 {
         justify-content: center;
         line-height: 1em;
         width: 2rem;
+    }
+
+    .back-to-top, .back-to-series {
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
     }
 
     .add-this-episode, .back-to-top, .back-to-series {

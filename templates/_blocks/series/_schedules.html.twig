@@ -47,8 +47,8 @@ Mandatory variables:
                         </div>
                         {% set ule = schedule.userLastEpisode %}
                         {% set une = schedule.userNextEpisode %}
-{#                        {% set tvle = schedule.tvLastEpisode %}#}
-{#                        {% set tvne = schedule.tvNextEpisode %}#}
+                        {#                        {% set tvle = schedule.tvLastEpisode %} #}
+                        {#                        {% set tvne = schedule.tvNextEpisode %} #}
                         {% if ule %}
                             <div class="episode user">
                                 <div class="type">{{ ux_icon('fa6-solid:user', {height: "18px", width: "18px"}) }}</div>
@@ -77,7 +77,7 @@ Mandatory variables:
                                 </div>
                             {% endif %}
                         {% endif %}
-                   {#     {% if tvle %}
+                        {#     {% if tvle %}
                             <div class="episode tv">
                                 <div class="type">{{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}</div>
                                 <div class="episode-info">{{ 'Last episode to air'|trans }}</div>
@@ -104,7 +104,7 @@ Mandatory variables:
                                     <div class="episode-air-date">{{ ulne.air_date_offset|format_date("relative_short")|capitalize }}</div>
                                 </div>
                             {% endif %}
-                        {% endif %}#}
+                        {% endif %} #}
                     </div>
                     {{ include('_blocks/series/_schedules-form.html.twig', {schedule: schedule, country: country}) }}
                 </div>
@@ -119,15 +119,17 @@ Mandatory variables:
                     <h3> {{ 'Season'|trans }} {{ as.seasonNumber }}{% if as.multiPart %} {{ 'Part'|trans }} {{ as.seasonPart }}{% endif %} - {{ as.airDays|length }} {{ 'episodes'|trans }}</h3>
                     <div class="alternate-schedule">
                         {% for airDay in as.airDays %}
-                            <div class="air-day{% if airDay.watched %} watched{% endif %}{% if airDay.future %} future{% endif %}">
-                                <div class="air-day-episode">{{ airDay.episode }}</div>
-                                <div class="air-day-date">
-                                    <div class="day-of-week">{{ airDay.date|date("l")|trans }}</div>
-                                    <div class="day">{{ airDay.date|date("j") }}</div>
-                                    <div class="month">{{ airDay.date|date("F")|trans }}</div>
-                                    <div class="year">{{ airDay.date|date("Y") }}</div>
+                            <a href="{{ airDay.url }}">
+                                <div class="air-day{% if airDay.watched %} watched{% endif %}{% if airDay.future %} future{% endif %}">
+                                    <div class="air-day-episode">{{ airDay.episode }}</div>
+                                    <div class="air-day-date">
+                                        <div class="day-of-week">{{ airDay.date|date("l")|trans }}</div>
+                                        <div class="day">{{ airDay.date|date("j") }}</div>
+                                        <div class="month">{{ airDay.date|date("F")|trans }}</div>
+                                        <div class="year">{{ airDay.date|date("Y") }}</div>
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
                         {% endfor %}
                     </div>
                 {% endfor %}

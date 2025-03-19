@@ -968,6 +968,16 @@ class SeriesController extends AbstractController
                 return $ue->getSeasonNumber() == $s->getSeasonNumber();
             }));
         }, $series->getSeriesBroadcastSchedules()->toArray());
+        foreach ($alternateSchedules as &$s) {
+            $s['airDays'] = array_map(function($day) use ($s, $series) {
+                $day['url'] = $this->generateUrl('app_series_season', [
+                        'id' => $series->getId(),
+                        'slug' => $series->getSlug(),
+                        'seasonNumber' => $s['seasonNumber'],
+                    ]) . "#episode-" . $day['episodeNumber'];
+                return $day;
+            }, $s['airDays']);
+        }
 
         $seriesArr = $series->toArray();
         $seriesArr['schedules'] = $schedules;
