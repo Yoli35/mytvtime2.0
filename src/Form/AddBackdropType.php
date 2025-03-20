@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\Dropzone\Form\DropzoneType;
 
-class AddBackdropForm extends AbstractType
+class AddBackdropType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

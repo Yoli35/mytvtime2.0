@@ -142,6 +142,7 @@ Have you already watched it and want to mark all episodes as viewed?: L'avez-vou
 A real binger!: Un vrai binge-watcher !
 A real marathoner!: Un vrai marathonien !
 Add a localized overview: Ajouter un aperçu localisé
+Add a video: Ajouter une vidéo
 Add a watch link: Ajouter un lien pour regarder
 Add an additional overview: Ajouter un aperçu supplémentaire
 Add this series to your watchlist: Ajouter cette série à votre liste de suivi
@@ -181,16 +182,16 @@ Delete this watch link: Supprimer ce lien pour regarder
 Delete: Supprimer
 Desktop: Ordinateur de bureau
 Drag and drop a file or click to browse: Glissez-déposez un fichier ou cliquez pour parcourir
+Drop your additional images files here: Déposez vos images supplémentaires ici
 Drop your file here: Déposez votre fichier ici
 Drop your image file here: Déposez votre image ici
-Drop your additional images files here: Déposez vos images supplémentaires ici
 Edit all episodes name and overview: Modifier le nom et l'aperçu de tous les épisodes
 Edit this watch link: Modifier ce lien pour regarder
 Edit: Modifier
 Ended: Série terminée
-Episode: Épisode
 Episode number: Numéro de l'épisode
 Episode of the day: Épisode du jour
+Episode: Épisode
 Episodes of the day: Épisodes du jour
 Episodes: Épisodes
 External sources: Sources externes
@@ -257,10 +258,10 @@ Returning Series: Série renouvelée
 Save: Enregistrer
 Schedules: Horaires
 Scroll down to submit: Faites défiler vers le bas pour soumettre
-Season: Saison
 Season completed: Saison terminée
 Season number: Numéro de la saison
 Season x: Saison x
+Season: Saison
 Seasons: Saisons
 See all: Voir tout
 See on Google: Voir sur Google
@@ -284,8 +285,8 @@ Status: Statut
 Still: Vignette
 Suggest a localized name: Suggérer un nom localisé
 Suggest a name: Suggérer un nom
-Suggest an overview: Suggérer un aperçu
 Suggest a title: Suggérer un titre
+Suggest an overview: Suggérer un aperçu
 TBA: À annoncer
 Tablet: Tablette
 Television: Télévision
@@ -302,12 +303,14 @@ Tomorrow: Demain
 Translate: Traduire
 Two days ago: Il y a deux jours
 URL: URL
-Urls: URLs
 Up to date!: À jour !
+Up to date: À jour
 Updates: Mises à jour
 Upload it!: Téléversez-le !
-Up to date: À jour
+Urls: URLs
 User actions: Actions de l'utilisateur
+Video Identifier (11 characters - i.e. 5KHgFEiPD4g): Identifiant de la vidéo (11 caractères - ex. 5KHgFEiPD4g)
+Videos: Vidéos
 View date: Date de vue
 Vote: Voter
 Watch links: Liens pour regarder

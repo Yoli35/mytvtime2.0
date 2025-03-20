@@ -103,6 +103,12 @@ class Series
     #[ORM\Column(nullable: true)]
     private ?int $numberOfSeason = null;
 
+    /**
+     * @var Collection<int, SeriesVideo>
+     */
+    #[ORM\OneToMany(targetEntity: SeriesVideo::class, mappedBy: 'series', orphanRemoval: true)]
+    private Collection $seriesVideos;
+
     public function __construct()
     {
         $this->networks = new ArrayCollection();
@@ -114,6 +120,7 @@ class Series
         $this->seriesLocalizedOverviews = new ArrayCollection();
         $this->seriesWatchLinks = new ArrayCollection();
         $this->updates = [];
+        $this->seriesVideos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -624,6 +631,36 @@ class Series
     public function setNumberOfSeason(?int $numberOfSeason): static
     {
         $this->numberOfSeason = $numberOfSeason;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SeriesVideo>
+     */
+    public function getSeriesVideos(): Collection
+    {
+        return $this->seriesVideos;
+    }
+
+    public function addSeriesVideo(SeriesVideo $seriesVideo): static
+    {
+        if (!$this->seriesVideos->contains($seriesVideo)) {
+            $this->seriesVideos->add($seriesVideo);
+            $seriesVideo->setSeries($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSeriesVideo(SeriesVideo $seriesVideo): static
+    {
+        if ($this->seriesVideos->removeElement($seriesVideo)) {
+            // set the owning side to null (unless already changed)
+            if ($seriesVideo->getSeries() === $this) {
+                $seriesVideo->setSeries(null);
+            }
+        }
 
         return $this;
     }

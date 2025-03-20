@@ -243,6 +243,7 @@ export class Show {
                 }
             }, 1000);
         });
+
         /******************************************************************************
          * Alternate schedule : l'épisode avec la date de diffusion la plus proche de *
          * maintenant doit être visible.                                              *
@@ -1328,7 +1329,6 @@ export class Show {
         /******************************************************************************
          + Add all backdrop & posters from TMDB to the series                         *
          ******************************************************************************/
-
         const addAllBackdropsButton = document.querySelector('.add-all-backdrops');
         const addAllBackdropsDialog = document.querySelector('.add-all-backdrops-dialog');
         const addAllBackdropsCancelButton = addAllBackdropsDialog.querySelector('button[name="cancel"]');
@@ -1416,6 +1416,21 @@ export class Show {
         });
         addBackdropCancelButton.addEventListener('click', () => {
             addBackdropDialog.close();
+        });
+
+        /******************************************************************************
+         + Add a youTube video to the series                                          *
+         ******************************************************************************/
+        const addVideoButton = document.querySelector('.add-video');
+        const addVideoDialog = document.querySelector('.add-video-dialog');
+        const addVideoCancelButton = addVideoDialog.querySelector('button[name="cancel"]');
+        const addVideoAddButton = addVideoDialog.querySelector('button[name="add"]');
+
+        addVideoButton.addEventListener('click', () => {
+            addVideoDialog.showModal();
+        });
+        addVideoCancelButton.addEventListener('click', () => {
+            addVideoDialog.close();
         });
     }
 

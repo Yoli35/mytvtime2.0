@@ -128,6 +128,7 @@ remaining episodes: 남은 에피소드
 A real binger!: 진정한 중독자!
 A real marathoner!: 진정한 마라토너!
 Add a localized overview: 지역화된 개요 추가
+Add a video: 비디오 추가
 Add a watch link: 시청 링크 추가
 Add an additional overview: 추가 개요 추가
 Add this series to your watchlist: 이 시리즈를 시청 목록에 추가
@@ -170,8 +171,8 @@ Drop your images files here: 이미지 파일을 여기에 놓으세요
 Edit this watch link: 이 시청 링크 편집
 Edit: 편집
 Ended: 종료됨
-Episode: 에피소드
 Episode of the day: 오늘의 에피소드
+Episode: 에피소드
 Episodes of the day: 오늘의 에피소드
 Episodes: 에피소드
 External sources: 외부 소스
@@ -237,9 +238,9 @@ Remove: 제거
 Returning Series: 돌아오는 시리즈
 Save: 저장
 Schedules: 일정
-Season: 시즌
 Season completed: 시즌 완료
 Season x: x 시즌
+Season: 시즌
 Seasons: 시즌
 See all: 모두 보기
 See on Google: Google에서 보기
@@ -252,9 +253,9 @@ Series by country: 국가별 시리즈
 Series finale: 시리즈 종영
 Series in progress: 진행 중인 시리즈
 Series not found on The Movie Database: 무비 데이터베이스에서 시리즈를 찾을 수 없습니다
+Series not seen in a while: 오랫동안 본 시리즈 없음
 Series of the day: 오늘의 시리즈
 Series of the next 7 days: 다음 7일의 시리즈
-Series not seen in a while: 오랫동안 본 시리즈 없음
 Series: 시리즈
 Since: 이후
 Slug updated: 슬러그 업데이트됨
@@ -263,8 +264,8 @@ Special episodes: 특별 에피소드
 Status: 상태
 Suggest a localized name: 지역화된 이름 제안
 Suggest a name: 이름 제안
-Suggest an overview: 개요 제안
 Suggest a title: 제목 제안
+Suggest an overview: 개요 제안
 TBA: 발표 예정
 Tablet: 태블릿
 Television: 텔레비전
@@ -281,15 +282,17 @@ Translate: 번역
 Two days ago: 이틀 전
 URL: URL
 Up to date!: 최신 상태!
+Up to date: 최신 상태
 Updates: 업데이트
 Upload it!: 업로드하세요!
-Up to date: 최신 상태
 User actions: 사용자 작업
+Video Identifier (11 characters - i.e. 5KHgFEiPD4g): 비디오 식별자 (11자 - 예 5KHgFEiPD4g)
+Videos: 비디오
 Vote: 투표
 Watch links: 시청 링크
 Watch on: 시청
-Watched time times: time번 본
 Watched again: 다시 본
+Watched time times: time번 본
 Where to buy: 어디서 구매할까요
 Where to rent: 어디서 대여할까요
 Where to watch: 어디서 볼까요

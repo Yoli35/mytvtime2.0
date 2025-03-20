@@ -232,6 +232,35 @@
                 </div>
             {% endif %}
 
+            <div class="videos">
+                <div class="video-tools">
+                    <h2>{{ 'Videos'|trans }}</h2>
+                    <div class="video-tool add-video" data-title="{{ 'Add a video'|trans }}">
+                        {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                    </div>
+                    {% if series.videos|length > 1 %}
+                        <div class="video-tool">
+                            {{ ux_icon('material-symbols:collapse-all', {height: '18px', width: '18px'}) }}
+                        </div>
+                    {% endif %}
+                </div>
+                {% for video in series.videos %}
+                    <div class="video">
+                        <iframe src="https://www.youtube.com/embed/{{ video.link }}" title="{{ video.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                {% endfor %}
+                <dialog class="add-video-dialog">
+                    {{ form_start(addVideoForm) }}
+                    {{ form_widget(addVideoForm.title) }}
+                    {{ form_widget(addVideoForm.link) }}
+                    <div class="form-row">
+                        <button type="button" name="cancel">{{ 'Cancel'|trans }}</button>
+                        <button type="submit" name="add">{{ 'Add'|trans }}</button>
+                    </div>
+                    {{ form_end(addVideoForm) }}
+                </dialog>
+            </div>
+
             {{ include('_blocks/series/_schedules.html.twig') }}
 
             {{ include('_blocks/series/_externals.html.twig') }}
@@ -679,7 +708,7 @@
         "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
-    <div id="globs" style="display: none">{#|replace({'\'': '\\\'', '"': '\\"'})#}
+    <div id="globs" style="display: none">{# |replace({'\'': '\\\'', '"': '\\"'}) #}
         {
         "seriesId": {{ series.id }},
         "userSeriesId": {{ userSeries.id }},

@@ -17,14 +17,16 @@ use App\Entity\SeriesExternal;
 use App\Entity\SeriesImage;
 use App\Entity\SeriesLocalizedName;
 use App\Entity\SeriesLocalizedOverview;
+use App\Entity\SeriesVideo;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserEpisode;
 use App\Entity\UserPinnedSeries;
 use App\Entity\UserSeries;
-use App\Form\AddBackdropForm;
+use App\Form\AddBackdropType;
 use App\Form\SeriesAdvancedSearchType;
 use App\Form\SeriesSearchType;
+use App\Form\SeriesVideoType;
 use App\Repository\DeviceRepository;
 use App\Repository\EpisodeLocalizedOverviewRepository;
 use App\Repository\EpisodeStillRepository;
@@ -42,6 +44,7 @@ use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesLocalizedNameRepository;
 use App\Repository\SeriesLocalizedOverviewRepository;
 use App\Repository\SeriesRepository;
+use App\Repository\SeriesVideoRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
 use App\Repository\UserEpisodeRepository;
@@ -86,8 +89,8 @@ class SeriesController extends AbstractController
     public function __construct(
         private readonly ClockInterface                     $clock,
         private readonly DateService                        $dateService,
-        private readonly DeviceRepository                   $deviceRepository,
         private readonly DeeplTranslator                    $deeplTranslator,
+        private readonly DeviceRepository                   $deviceRepository,
         private readonly EpisodeLocalizedOverviewRepository $episodeLocalizedOverviewRepository,
         private readonly EpisodeStillRepository             $episodeStillRepository,
         private readonly EpisodeSubstituteNameRepository    $episodeSubstituteNameRepository,
@@ -105,9 +108,10 @@ class SeriesController extends AbstractController
         private readonly SeriesBroadcastScheduleRepository  $seriesBroadcastScheduleRepository,
         private readonly SeriesExternalRepository           $seriesExternalRepository,
         private readonly SeriesImageRepository              $seriesImageRepository,
-        private readonly SeriesRepository                   $seriesRepository,
         private readonly SeriesLocalizedNameRepository      $seriesLocalizedNameRepository,
         private readonly SeriesLocalizedOverviewRepository  $seriesLocalizedOverviewRepository,
+        private readonly SeriesVideoRepository              $seriesVideoRepository,
+        private readonly SeriesRepository                   $seriesRepository,
         private readonly SettingsRepository                 $settingsRepository,
         private readonly SourceRepository                   $sourceRepository,
         private readonly TMDBService                        $tmdbService,
@@ -868,11 +872,17 @@ class SeriesController extends AbstractController
         $series->setVisitNumber($series->getVisitNumber() + 1);
         $this->seriesRepository->save($series, true);
 
-        $addBackdropForm = $this->createForm(AddBackdropForm::class);
+        $addBackdropForm = $this->createForm(AddBackdropType::class);
         $addBackdropForm->handleRequest($request);
         if ($addBackdropForm->isSubmitted() && $addBackdropForm->isValid()) {
             $data = $addBackdropForm->getData();
             $this->addBackdrop($series, $data['file']);
+        }
+        $addVideoForm = $this->createForm(SeriesVideoType::class, new SeriesVideo($series, "", ""));
+        $addVideoForm->handleRequest($request);
+        if ($addVideoForm->isSubmitted() && $addVideoForm->isValid()) {
+            $data = $addVideoForm->getData();
+            $this->addVideo($series, $data);
         }
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
@@ -969,7 +979,7 @@ class SeriesController extends AbstractController
             }));
         }, $series->getSeriesBroadcastSchedules()->toArray());
         foreach ($alternateSchedules as &$s) {
-            $s['airDays'] = array_map(function($day) use ($s, $series) {
+            $s['airDays'] = array_map(function ($day) use ($s, $series) {
                 $day['url'] = $this->generateUrl('app_series_season', [
                         'id' => $series->getId(),
                         'slug' => $series->getSlug(),
@@ -989,6 +999,7 @@ class SeriesController extends AbstractController
             'logos' => $seriesLogos,
             'posters' => $seriesPosters,
         ];
+        $seriesArr['videos'] = $series->getSeriesVideos();
 
         $translations = [
             'Add to favorites' => $this->translator->trans('Add to favorites'),
@@ -1054,6 +1065,7 @@ class SeriesController extends AbstractController
             'externals' => $this->getExternals($series, $tvKeywords, $tvExternalIds, $request->getLocale()),
             'translations' => $translations,
             'addBackdropForm' => $addBackdropForm->createView(),
+            'addVideoForm' => $addVideoForm->createView(),
             'oldSeriesAdded' => $request->get('oldSeriesAdded') === 'true',
         ]);
     }
@@ -2383,6 +2395,12 @@ class SeriesController extends AbstractController
             'dbSeriesCount' => $dbSeriesCount,
             'tmdbCalls' => $tmdbCalls,
         ]);
+    }
+
+    public function addVideo(Series $series, SeriesVideo $video): bool
+    {
+        $this->seriesVideoRepository->save($video, true);
+        return true;
     }
 
     public function addBackdrop(Series $series, UploadedFile $backdropFile): bool
