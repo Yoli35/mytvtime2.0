@@ -528,7 +528,7 @@ export class Menu {
             personSearch.addEventListener("input", (e) => {
                 const value = e.target.value;
                 if (value.length > 2) {
-                    const searchResults = personSearch.closest("li").querySelector(".search-results");
+                    const searchResults = personSearch.closest(".menu-item").querySelector(".search-results");
                     const query = encodeURIComponent(value);
                     const url = 'https://api.themoviedb.org/3/search/person?query=' + query + '&include_adult=false&language=fr-FR&page=1';
                     const options = {
@@ -582,7 +582,7 @@ export class Menu {
                         })
                         .catch(err => console.error('error:' + err));
                 } else {
-                    personSearch.closest("li").querySelector(".search-results").innerHTML = '';
+                    personSearch.closest(".menu-item").querySelector(".search-results").innerHTML = '';
                 }
             });
             personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
