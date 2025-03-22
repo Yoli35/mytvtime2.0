@@ -208,6 +208,60 @@
                     font-weight: 300;
                     padding-left: 0;
                 }
+
+                form {
+                    display: flex;
+                    flex-direction: column;
+                    gap: .5rem;
+
+                    ul {
+                        align-items: flex-start;
+                        display: flex;
+                        flex-direction: column;
+                        gap: .25rem;
+                        justify-content: center;
+                        list-style-type: none;
+                        margin-block-start: 0;
+                        padding-left: 0;
+
+                        li {
+                            background-color: var(--ardoise-90-alpha-10);
+                            border-radius: .5rem;
+                            color: var(--ardoise-20);
+                            font-weight: 100;
+                            overflow-x: auto;
+                            padding: .125rem .5rem;
+                            text-wrap: nowrap;
+
+                            /*label {
+                                cursor: pointer;
+                            }*/
+
+                            &:has(input[checked]) {
+                                background-color: var(--orange-50);
+                                color: var(--orange-90);
+                                font-weight: 300;
+                            }
+                        }
+                    }
+
+                    button {
+                        background-color: var(--orange-50);
+                        border-radius: .5rem;
+                        border: none;
+                        color: var(--orange-90);
+                        cursor: pointer;
+                        font-weight: 300;
+                        margin-inline: auto;
+                        padding: .125rem .5rem;
+
+                        &:hover {
+                            background-color: var(--orange-40);
+                            color: var(--orange-90);
+                            font-weight: 300;
+                        }
+                    }
+                }
             }
         }
 

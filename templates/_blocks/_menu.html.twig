@@ -287,20 +287,26 @@
         <div class="search-results"></div>
     </div>
 
-    {% if route in ['app_series_show', 'app_series_season'] and  app.environment == 'dev' %}
-        <div class="debug">{{ series.id }} / {{ userSeries.id }} / {{ series.tmdbId }}</div>
-    {% endif %}
+    {% if app.environment == 'dev' %}
+        {% if route in ['app_series_show', 'app_series_season'] %}
+            <div class="debug">{{ series.id }} / {{ userSeries.id }} / {{ series.tmdbId }}</div>
+        {% endif %}
 
-    {% if route in ['app_series_tmdb'] and  app.environment == 'dev' %}
-        <div class="debug">{{ tv.id }}</div>
-    {% endif %}
+        {% if route in ['app_series_tmdb'] %}
+            <div class="debug">{{ tv.id }}</div>
+        {% endif %}
 
-    {% if route in ['app_movie_show'] and  app.environment == 'dev' %}
-        <div class="debug">{{ dbMovie.id }} / {{ userMovie.id }}} / {{ movie.id }}</div>
-    {% endif %}
+        {% if route in ['app_movie_show'] %}
+            <div class="debug">{{ dbMovie.id }} / {{ userMovie.id }}} / {{ movie.id }}</div>
+        {% endif %}
 
-    {% if route in ['app_movie_tmdb'] and  app.environment == 'dev' %}
-        <div class="debug">{{ movie.id }}</div>
+        {% if route in ['app_movie_tmdb'] %}
+            <div class="debug">{{ movie.id }}</div>
+        {% endif %}
+
+        {% if route in ['app_people_show'] %}
+            <div class="debug">{{ people.id }}</div>
+        {% endif %}
     {% endif %}
 
     {% set p = '' %}
@@ -404,7 +410,7 @@
             <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
         {% endif %}
         {% if app.user %}
-            {%  set relativeDayStrings = {
+            {% set relativeDayStrings = {
                 "-2": 'Two days ago'|trans,
                 "-1": 'Yesterday'|trans,
                 "0": 'Today'|trans,

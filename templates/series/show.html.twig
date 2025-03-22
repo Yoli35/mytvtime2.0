@@ -580,7 +580,11 @@
                                                 {% endif %}
                                             </div>
                                             <div class="infos">
-                                                <div class="name">{{ people.name }}</div>
+                                                {% if people.preferred_name %}
+                                                    <div class="preferred-name">{{ people.preferred_name }}</div>
+                                                {% else %}
+                                                    <div class="name">{{ people.name }}</div>
+                                                {% endif %}
                                                 <div>{{ people.character }}</div>
                                             </div>
                                         </div>
@@ -604,8 +608,11 @@
                                                     {{ 'No picture'|trans }}
                                                 {% endif %}
                                             </div>
-                                            <div class="infos">
-                                                <div class="name">{{ people.name }}</div>
+                                            <div class="infos">{% if people.preferred_name %}
+                                                    <div class="preferred-name">{{ people.preferred_name }}</div>
+                                                {% else %}
+                                                    <div class="name">{{ people.name }}</div>
+                                                {% endif %}
                                                 <div>{{ people.job ~ ' - ' ~ people.department }}</div>
                                             </div>
                                         </div>

@@ -7,18 +7,18 @@
 {% endblock %}
 
 {% block body %}
+    {% set preferredName = people.preferredName.name ?? none %}
     <div class="container-fluid">
         {{ include('_blocks/_menu.html.twig') }}
         <main>
             <div class="person" data-id="{{ people.id }}">
                 <div class="left-column">
-                    {# {{ dump(people) }} #}
                     {% if people.profile_path|length %}
                         <div class="profile">
                             <img src="{{ imageConfig.url ~ imageConfig.profile_sizes.2 ~ people.profile_path }}" alt="{{ people.name }}" loading="lazy">
                         </div>
                     {% endif %}
-                    {{ include('_blocks/people/_rating.html.twig') }}
+                    {{ include('_blocks/people/_rating.html.twig', {rating: people.userRating, avgRating: people.avgRating}) }}
                     <div class="infos">
                         <h4>{{ 'Personal Informations'|trans }}</h4>
                         <div class="info">
@@ -62,7 +62,7 @@
                                         {{ ux_icon('fa6-solid:copy', {height: '16px', width: '16px', 'data-title': 'Copy to clipboard'|trans}) }}
                                     </span>
                                     <script>
-                                        document.querySelector('.home-page .copy').addEventListener('click', function() {
+                                        document.querySelector('.home-page .copy').addEventListener('click', function () {
                                             navigator.clipboard.writeText("{{ people.homepage }}");
                                         });
                                     </script>
@@ -71,10 +71,7 @@
                         {% endif %}
                         {% if people.also_known_as|length %}
                             <div class="info">
-                                <div>{{ 'Also known as'|trans }}</div>
-                                {% for name in people.also_known_as %}
-                                    <div>{{ name }}</div>
-                                {% endfor %}
+                                {{ include ('_blocks/people/_preferred-name.html.twig', {people: people, preferredName: preferredName}) }}
                             </div>
                         {% endif %}
                     </div>
@@ -90,7 +87,7 @@
                 </div>
                 <div class="right-column">
                     <div class="content">
-                        <h1>{{ people.name }}</h1>
+                        <h1>{{ people.name }}{% if preferredName %}<span class="preferred-name"> - {{ preferredName }}</span>{% endif %}</h1>
                         {% if people.biography|length %}
                             <div class="bio">
                                 {{ people.biography|nl2br }}
@@ -301,6 +298,7 @@
         {
         "app_series_get_overview": "{{ path('app_series_get_overview', {id: 0})|slice(0, -1) }}",
         "app_people_rating": "{{ path('app_people_rating') }}",
+        "app_people_preferred_name": "{{ path('app_people_preferred_name') }}",
         "imgUrl": "{{ imageConfig.url ~ imageConfig.profile_sizes.2 }}"
         }
     </div>

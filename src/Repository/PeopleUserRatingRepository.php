@@ -38,7 +38,7 @@ class PeopleUserRatingRepository extends ServiceEntityRepository
                 FROM people_user_rating  pur
                 WHERE tmdb_id = $id";
 
-        return $this->getAll($sql);
+        return $this->getOne($sql);
     }
 
     public function getAll($sql): array

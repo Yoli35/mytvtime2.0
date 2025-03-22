@@ -3054,9 +3054,13 @@ h2 {
                 overflow: hidden;
                 width: 9rem;
 
-                .name {
+                .name, .preferred-name {
                     font-size: .875rem;
                     font-weight: 300;
+                }
+
+                .preferred-name {
+                    color: var(--orange-80);
                 }
 
                 div {

@@ -35,6 +35,7 @@ use App\Repository\FilmingLocationImageRepository;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\KeywordRepository;
 use App\Repository\NetworkRepository;
+use App\Repository\PeopleUserPreferredNameRepository;
 use App\Repository\ProviderRepository;
 use App\Repository\SeriesAdditionalOverviewRepository;
 use App\Repository\SeriesBroadcastDateRepository;
@@ -102,6 +103,7 @@ class SeriesController extends AbstractController
         private readonly KeywordService                     $keywordService,
         private readonly MonologLogger                      $logger,
         private readonly NetworkRepository                  $networkRepository,
+        private readonly PeopleUserPreferredNameRepository  $peopleUserPreferredNameRepository,
         private readonly ProviderRepository                 $providerRepository,
         private readonly SeriesAdditionalOverviewRepository $seriesAdditionalOverviewRepository,
         private readonly SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
@@ -3297,6 +3299,9 @@ class SeriesController extends AbstractController
     public function getFilmingLocations(int $tmdbId): array
     {
         $filmingLocations = $this->filmingLocationRepository->locations($tmdbId);
+        if (count($filmingLocations) == 0) {
+            return [];
+        }
         $filmingLocationIds = array_column($filmingLocations, 'id');
         $filmingLocationImages = $this->filmingLocationRepository->locationImages($filmingLocationIds);
         $flImages = [];
@@ -3400,20 +3405,42 @@ class SeriesController extends AbstractController
         if (!$tv) {
             return ['cast' => [], 'crew' => [], 'guest_stars' => []];
         }
+        $castIds = array_column($tv['credits']['cast'], 'id');
+        $castIds = array_merge($castIds, array_column($tv['credits']['guest_stars'] ?? [], 'id'));
+        $castIds = array_unique($castIds);
+        $arr = $this->peopleUserPreferredNameRepository->getPreferredNames($castIds);
+        $preferredNames = [];
+        foreach ($arr as $name) {
+            $preferredNames[$name['tmdb_id']] = $name['name'];
+        }
+
         $slugger = new AsciiSlugger();
-        $tv['credits']['cast'] = array_map(function ($cast) use ($slugger) {
+        $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
+        $tv['credits']['cast'] = array_map(function ($cast) use ($slugger, $profileUrl, $preferredNames) {
             $cast['slug'] = $slugger->slug($cast['name'])->lower()->toString();
-            $cast['profile_path'] = $cast['profile_path'] ? $this->imageConfiguration->getCompleteUrl($cast['profile_path'], 'profile_sizes', 2) : null; // w185
+            $cast['profile_path'] = $cast['profile_path'] ? $profileUrl . $cast['profile_path'] : null; // w185
+            $cast['preferred_name'] = null;
+            if (key_exists($cast['id'], $preferredNames)) {
+                $cast['preferred_name'] = $preferredNames[$cast['id']];
+            }
             return $cast;
         }, $tv['credits']['cast'] ?? []);
-        $tv['credits']['guest_stars'] = array_map(function ($cast) use ($slugger) {
+        $tv['credits']['guest_stars'] = array_map(function ($cast) use ($slugger, $profileUrl, $preferredNames) {
             $cast['slug'] = $slugger->slug($cast['name'])->lower()->toString();
-            $cast['profile_path'] = $cast['profile_path'] ? $this->imageConfiguration->getCompleteUrl($cast['profile_path'], 'profile_sizes', 2) : null; // w185
+            $cast['profile_path'] = $cast['profile_path'] ? $profileUrl . $cast['profile_path'] : null; // w185
+            $cast['preferred_name'] = null;
+            if (key_exists($cast['id'], $preferredNames)) {
+                $cast['preferred_name'] = $preferredNames[$cast['id']];
+            }
             return $cast;
         }, $tv['credits']['guest_stars'] ?? []);
-        $tv['credits']['crew'] = array_map(function ($crew) use ($slugger) {
+        $tv['credits']['crew'] = array_map(function ($crew) use ($slugger, $profileUrl, $preferredNames) {
             $crew['slug'] = $slugger->slug($crew['name'])->lower()->toString();
-            $crew['profile_path'] = $crew['profile_path'] ? $this->imageConfiguration->getCompleteUrl($crew['profile_path'], 'profile_sizes', 2) : null; // w185
+            $crew['profile_path'] = $crew['profile_path'] ? $profileUrl . $crew['profile_path'] : null; // w185
+            $crew['preferred_name'] = null;
+            if (key_exists($crew['id'], $preferredNames)) {
+                $crew['preferred_name'] = $preferredNames[$crew['id']];
+            }
             return $crew;
         }, $tv['credits']['crew'] ?? []);
 
@@ -3426,6 +3453,7 @@ class SeriesController extends AbstractController
         usort($tv['credits']['crew'], function ($a, $b) {
             return !$a['profile_path'] <=> !$b['profile_path'];
         });
+        dump($tv['credits']);
         return $tv['credits'];
     }
 

@@ -11,6 +11,7 @@ export class PeopleShow {
 
         this.app_series_get_overview = this.globs.app_series_get_overview;
         this.app_people_rating = this.globs.app_people_rating;
+        this.app_people_preferred_name = this.globs.app_people_preferred_name;
         this.imgUrl = this.globs.imgUrl;
         this.toolTips = new ToolTips();
         this.diaporama = new Diaporama();
@@ -41,6 +42,10 @@ export class PeopleShow {
         stars.forEach(star => {
             star.addEventListener("click", this.rate);
         });
+
+        const preferredNameForm = document.querySelector(".preferred-name");
+        const preferredNameSubmit = preferredNameForm.querySelector("button[type=submit]");
+        preferredNameSubmit.addEventListener("click", this.preferredName);
     }
 
     initInfos() {
@@ -185,6 +190,53 @@ export class PeopleShow {
                     star.addEventListener("click", gThis.rate);
                 });
                 gThis.toolTips.init(ratingInfos);
+            });
+    }
+
+    preferredName(e) {
+        e.preventDefault();
+        const preferredNameForm = document.querySelector(".preferred-name");
+        const id = preferredNameForm.querySelector("input[name=id]").value;
+        const formData = new FormData(preferredNameForm);
+        const preferredName = formData.get("also_known_as");
+        const data = {
+            "id": id,
+            "name": preferredName
+        };
+        fetch(gThis.globs.app_people_preferred_name,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                const leftColumn = document.querySelector(".left-column");
+                const preferredNameInfos = leftColumn.querySelector(".preferred-name-infos");
+                const newBlockDiv = document.createElement("div");
+                newBlockDiv.classList.add("temp");
+                newBlockDiv.innerHTML = data['block'];
+                const newBlock = newBlockDiv.querySelector(".preferred-name-infos");
+                preferredNameInfos.innerHTML = newBlock.innerHTML;
+                newBlockDiv.remove();
+
+                // form and submit button have been replaced
+                const preferredNameForm = document.querySelector(".preferred-name");
+                const preferredNameSubmit = preferredNameForm.querySelector("button[type=submit]");
+                preferredNameSubmit.addEventListener("click", gThis.preferredName);
+
+                // display the new preferred name in the h1
+                const h1 = document.querySelector("h1");
+                let preferredNameSpan = h1.querySelector("span.preferred-name");
+                if (!preferredNameSpan) {
+                    preferredNameSpan = document.createElement("span");
+                    preferredNameSpan.classList.add("preferred-name");
+                    h1.appendChild(preferredNameSpan);
+                }
+                preferredNameSpan.innerHTML = ' - ' + data['preferred-name'];
             });
     }
 }

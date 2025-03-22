@@ -106,6 +106,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: PeopleUserRating::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $peopleUserRatings;
 
+    /**
+     * @var Collection<int, PeopleUserPreferredName>
+     */
+    #[ORM\OneToMany(targetEntity: PeopleUserPreferredName::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $peopleUserPreferedNames;
+
     public function __construct()
     {
         $this->history = new ArrayCollection();
@@ -118,6 +124,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userMovies = new ArrayCollection();
         $this->userPinnedSeries = new ArrayCollection();
         $this->peopleUserRatings = new ArrayCollection();
+        $this->peopleUserPreferedNames = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -614,6 +621,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($peopleUserRating->getUser() === $this) {
                 $peopleUserRating->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PeopleUserPreferredName>
+     */
+    public function getPeopleUserPreferedNames(): Collection
+    {
+        return $this->peopleUserPreferedNames;
+    }
+
+    public function addPeopleUserPreferedName(PeopleUserPreferredName $peopleUserPreferedName): static
+    {
+        if (!$this->peopleUserPreferedNames->contains($peopleUserPreferedName)) {
+            $this->peopleUserPreferedNames->add($peopleUserPreferedName);
+            $peopleUserPreferedName->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePeopleUserPreferedName(PeopleUserPreferredName $peopleUserPreferedName): static
+    {
+        if ($this->peopleUserPreferedNames->removeElement($peopleUserPreferedName)) {
+            // set the owning side to null (unless already changed)
+            if ($peopleUserPreferedName->getUser() === $this) {
+                $peopleUserPreferedName->setUser(null);
             }
         }
 
