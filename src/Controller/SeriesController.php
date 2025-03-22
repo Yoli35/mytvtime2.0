@@ -870,6 +870,8 @@ class SeriesController extends AbstractController
     public function show(Request $request, Series $series, string $slug): Response
     {
         $user = $this->getUser();
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+        $country = $user->getCountry() ?? 'FR';
 
         $series->setVisitNumber($series->getVisitNumber() + 1);
         $this->seriesRepository->save($series, true);
@@ -889,7 +891,7 @@ class SeriesController extends AbstractController
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
 
-        $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
+        $this->checkSlug($series, $slug, $locale);
         // Get with fr-FR language to get the localized name
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), [
             "images",
@@ -914,16 +916,18 @@ class SeriesController extends AbstractController
                 $similar = json_decode($this->tmdbService->getTvSimilar($series->getTmdbId()), true);
                 $tv['similar'] = $similar;
             }
-            $tv['similar']['results'] = array_map(function ($s) {
-                $s['poster_path'] = $s['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $s['poster_path'] : null;
+            $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+            $backdropUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
+            $tv['similar']['results'] = array_map(function ($s) use ($posterUrl) {
+                $s['poster_path'] = $s['poster_path'] ? $posterUrl . $s['poster_path'] : null;
                 $s['tmdb'] = true;
                 $s['slug'] = new AsciiSlugger()->slug($s['name']);
                 return $s;
             }, $tv['similar']['results']);
 //        dump($tv, $tvLists, $similar);
 
-            $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-            $this->imageService->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+            $this->imageService->saveImage("posters", $tv['poster_path'], $posterUrl);
+            $this->imageService->saveImage("backdrops", $tv['backdrop_path'], $backdropUrl);
             $series = $this->updateSeries($series, $tv);
 //            dump(['series posters' => $seriesPosters]);
 
@@ -931,18 +935,18 @@ class SeriesController extends AbstractController
             $tv['credits'] = $this->castAndCrew($tv);
             $tv['localized_name'] = $series->getLocalizedName($request->getLocale());
             $tv['localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
-            $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $request->getLocale());
+            $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $locale);
             $tv['networks'] = $this->networks($tv);
             $tv['overview'] = $this->localizedOverview($tv, $series, $request);
             $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
             $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
-            $tv['watch/providers'] = $this->watchProviders($tv, $user->getCountry() ?? 'FR');
+            $tv['watch/providers'] = $this->watchProviders($tv, $country);
             $tv['translations'] = $this->getTranslations($tv, $user);
             if ($tv['localized_name'] == null && $tv['translations'] && $tv['name'] != $tv['translations']['data']['name']) {
                 if (strlen($tv['translations']['data']['name'])) {
                     $slugger = new AsciiSlugger();
                     $slug = $slugger->slug($tv['translations']['data']['name'])->lower()->toString();
-                    $newLocalizedName = new SeriesLocalizedName($series, $tv['translations']['data']['name'], $slug, $request->getLocale());
+                    $newLocalizedName = new SeriesLocalizedName($series, $tv['translations']['data']['name'], $slug, $locale);
                     $this->seriesLocalizedNameRepository->save($newLocalizedName, true);
                     $tv['localized_name'] = $newLocalizedName;
                     $this->addFlash('success', 'The series name “' . $newLocalizedName->getName() . '” has been added to the database.');
@@ -955,10 +959,10 @@ class SeriesController extends AbstractController
             $noTv = [];
         } else {
             $series->setUpdates(['Series not found']);
-            $noTv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
+            $noTv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($locale);
             $noTv['credits'] = $this->castAndCrew($tv);
-            $noTv['localized_name'] = $series->getLocalizedName($request->getLocale());
-            $noTv['localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
+            $noTv['localized_name'] = $series->getLocalizedName($locale);
+            $noTv['localized_overviews'] = $series->getLocalizedOverviews($locale);
             $noTv['seasons'] = $this->getUserSeasons($series, $userEpisodes);
             $noTv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
             $noTv['average_episode_run_time'] = 0;
@@ -970,7 +974,7 @@ class SeriesController extends AbstractController
             $tv['status_css'] = $this->statusCss($userSeries, $tv);
         }
 
-        $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
+        $providers = $this->getWatchProviders($country);
 
         $schedules = $this->seriesSchedulesV2($user, $series, $tv);
         $emptySchedule = $this->emptySchedule();
@@ -1043,8 +1047,22 @@ class SeriesController extends AbstractController
             $this->seriesRepository->save($series, true);
         }
 
+        $seriesAround = $this->userSeriesRepository->getSeriesAround($user, $series->getId(), $locale);
+        $previousSeries = null;
+        $nextSeries = null;
+        if (count($seriesAround) == 2) {
+            $previousSeries = $seriesAround[0];
+            $nextSeries = $seriesAround[1];
+        }
+        if (count($seriesAround) == 1) {
+            $previousSeries = $seriesAround[0]['id'] < $userSeries->getId() ? $seriesAround[0] : null;
+            $nextSeries = $seriesAround[0]['id'] > $userSeries->getId() ? $seriesAround[0] : null;
+        }
+
 //        dump([
 //            'series' => $seriesArr,
+//            'previousSeries' => $previousSeries,
+//            'nextSeries' => $nextSeries,
 //            'locations' => $filmingLocations,
 //            'tv' => $tv,
 //            'oldSeriesAdded - get' => $request->get('oldSeriesAdded'),
@@ -1060,6 +1078,8 @@ class SeriesController extends AbstractController
         }
         return $this->render($twig, [
             'series' => $seriesArr,
+            'previousSeries' => $previousSeries,
+            'nextSeries' => $nextSeries,
             'tv' => $tv ?? $noTv,
             'userSeries' => $userSeries,
             'providers' => $providers,
@@ -1292,10 +1312,12 @@ class SeriesController extends AbstractController
     public function showSeason(Request $request, Series $series, int $seasonNumber, string $slug): Response
     {
         $user = $this->getUser();
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+        $country = $user->getCountry() ?? 'FR';
         $this->logger->info('showSeason', ['series' => $series->getId(), 'season' => $seasonNumber, 'slug' => $slug]);
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        $this->checkSlug($series, $slug, $user->getPreferredLanguage() ?? $request->getLocale());
+        $this->checkSlug($series, $slug, $locale);
 
         $seriesImages = $series->getSeriesImages()->toArray();
 
@@ -1331,7 +1353,7 @@ class SeriesController extends AbstractController
         $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
         $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
         $season['credits'] = $this->castAndCrew($season);
-        $season['watch/providers'] = $this->watchProviders($season, $user->getCountry() ?? 'FR');
+        $season['watch/providers'] = $this->watchProviders($season, $country);
         if ($season['overview'] == "") {
             $season['overview'] = $series->getOverview();
             $season['series_overview'] = true;
@@ -1342,7 +1364,7 @@ class SeriesController extends AbstractController
         $season['localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
         $season['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
 
-        $providers = $this->getWatchProviders($user->getCountry() ?? 'FR');
+        $providers = $this->getWatchProviders($country);
         $devices = $this->deviceRepository->deviceArray();
 
         // Nouvelle saison, premier épisode non vu
@@ -3453,7 +3475,6 @@ class SeriesController extends AbstractController
         usort($tv['credits']['crew'], function ($a, $b) {
             return !$a['profile_path'] <=> !$b['profile_path'];
         });
-        dump($tv['credits']);
         return $tv['credits'];
     }
 

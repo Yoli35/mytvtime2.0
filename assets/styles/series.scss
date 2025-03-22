@@ -837,7 +837,7 @@ h2 {
             display: flex;
         }
 
-        .backdrops, .logos, .posters {
+        .backdrops, .logos, .posters, .series {
             align-items: center;
             background-color: var(--ardoise-100-alpha-20);
             border-radius: .5rem;
@@ -930,6 +930,41 @@ h2 {
                 aspect-ratio: 78/117;
                 border-radius: .25rem;
                 height: 7rem;
+            }
+        }
+
+        .series {
+            height: 4rem;
+            justify-content: space-around;
+            width: 100%;
+
+            .previous-series, .next-series {
+                align-items: center;
+                background-color: var(--ardoise-100-alpha-20);
+                border-radius: .25rem;
+                color: var(--ardoise-10);
+                cursor: pointer;
+                display: flex;
+                font-size: 1.25rem;
+                font-weight: 300;
+                gap: .5rem;
+                justify-content: center;
+                height: 3rem;
+                line-height: 1.25em;
+                padding-inline: 2rem;
+                width: fit-content;
+
+                &:hover {
+                    background-color: var(--orange-50);
+                }
+
+                img {
+                    border-radius: .25rem;
+                    display: none;
+                    height: 3rem;
+                    object-fit: cover;
+                    width: 3rem;
+                }
             }
         }
     }

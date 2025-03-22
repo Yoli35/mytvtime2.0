@@ -429,6 +429,36 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function getSeriesAround(User $user, int $userSeriesId, string $locale): array
+    {
+        $userId = $user->getId();
+        $sql = "SELECT
+                    s.`id` as id,
+                    IF(sln.`id`, sln.`name`, s.`name`) as name,
+                    IF(sln.`id`, sln.`slug`, s.`slug`) as slug,
+                    s.`poster_path` as poster_path
+                FROM `user_series` us
+                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale'
+                WHERE us.`user_id`=$userId
+                  AND (us.`id`=(
+                                SELECT us1.`id` as previoud_id
+                                FROM `user_series` us1
+                                WHERE us1.`id`<$userSeriesId AND us1.`user_id`=$userId
+                                ORDER BY id DESC
+                                LIMIT 1
+                            )
+                                   
+                  OR us.`id`=(
+                                SELECT us2.`id` as previoud_id
+                                FROM `user_series` us2
+                                WHERE us2.`id`>$userSeriesId AND us2.`user_id`=$userId
+                                ORDER BY id
+                                LIMIT 1
+                            ))";
+
+        return $this->getAll($sql);
+    }
     public function getAll($sql): array
     {
         try {

@@ -224,10 +224,37 @@
                         <div class="wrapper">
                             {% for logo in series.images.logos %}
                                 <div class="other-logo">
-                                    <img src="{{ logo }}" alt="{{ 'Backdrop #' ~ loop.index ~ ' ' ~ series.name }}">
+                                    <img src="{{ logo }}" alt="{{ 'Logo #' ~ loop.index ~ ' ' ~ series.name }}">
                                 </div>
                             {% endfor %}
                         </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if previousSeries or nextSeries %}
+                <div class="header">
+                    <div class="series">
+                        {% if previousSeries %}
+                            <a href="{{ path('app_series_show', {id: previousSeries.id, slug: previousSeries.slug}) }}"
+                               class="previous-series" data-title="{{ 'Previous series'|trans }}">
+                                {{ ux_icon('fa6-solid:arrow-left', {height: '18px', width: '18px'}) }}
+                                {{ previousSeries.name }}
+                                {% if previousSeries.poster_path %}
+                                    <img src="/series/posters{{ previousSeries.poster_path }}" alt="{{ 'Poster of the previous series'|trans }}">
+                                {% endif %}
+                            </a>
+                        {% endif %}
+                        {% if nextSeries %}
+                            <a href="{{ path('app_series_show', {id: nextSeries.id, slug: nextSeries.slug}) }}"
+                               class="next-series" data-title="{{ 'Next series'|trans }}">
+                                {{ nextSeries.name }}
+                                {{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }}
+                                {% if nextSeries.poster_path %}
+                                    <img src="/series/posters{{ nextSeries.poster_path }}" alt="{{ 'Poster of the next series'|trans }}">
+                                {% endif %}
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             {% endif %}
@@ -680,7 +707,7 @@
         "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
-    <div id="globs" style="display: none">{# |replace({'\'': '\\\'', '"': '\\"'}) #}
+    <div id="globs" style="display: none">{# |replace({'\'': '\\\'', '"': '\\"'}}) #}
         {
         "seriesId": {{ series.id }},
         "userSeriesId": {{ userSeries.id }},
