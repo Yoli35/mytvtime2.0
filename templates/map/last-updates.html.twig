@@ -54,61 +54,6 @@
                     </div>
                 {% endfor %}
             </div>
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const thumbnails = document.querySelectorAll('.thumbnail');
-                    thumbnails.forEach(thumbnail => {
-                        thumbnail.addEventListener('click', setMapStyle);
-                    });
-
-                    /*const allSeriesLocations = document.querySelector('.all-series-locations');
-                    const seriesLocations = allSeriesLocations.querySelectorAll('.series-locations');
-                    seriesLocations.forEach(loc => {
-                        const toCountry = loc.querySelector('.to-country');
-                        const toMarkers = loc.querySelector('.to-markers');
-                        toCountry.addEventListener('click', zoomToSeriesCountry);
-                        toMarkers.addEventListener('click', zoomToSeriesLocations);
-                    });*/
-                });
-
-                function zoomToSeriesCountry(e) {
-                    const target = e.currentTarget;
-                    const locationsButton = target.parentElement.querySelector('.to-markers');
-                    locationsButton.classList.remove('active');
-                    target.classList.add('active');
-                    const countryCode = target.getAttribute('data-country');
-                    const select = document.getElementById('fl-country-bb-select');
-                    select.selectedIndex = getSelectIndex(select, countryCode);
-                    zoomToCountry();
-                }
-
-                function zoomToSeriesLocations(e) {
-                    const target = e.currentTarget;
-                    const countryButton = target.parentElement.querySelector('.to-country');
-                    countryButton.classList.remove('active');
-                    target.classList.add('active');
-                    let minLat = parseFloat(target.getAttribute('data-min-lat'));
-                    let maxLat = parseFloat(target.getAttribute('data-max-lat'));
-                    let minLng = parseFloat(target.getAttribute('data-min-lng'));
-                    let maxLng = parseFloat(target.getAttribute('data-max-lng'));
-                    minLat -= 0.1;
-                    maxLat += 0.1;
-                    minLng -= 0.1;
-                    maxLng += 0.1;
-                    map.fitBounds([[minLng, minLat], [maxLng, maxLat]]);
-                }
-
-                function setMapStyle(event) {
-                    const thumbnails = document.querySelectorAll('.thumbnail');
-                    thumbnails.forEach(thumbnail => {
-                        thumbnail.classList.remove('selected');
-                    });
-                    const thumbnail = event.currentTarget;
-                    thumbnail.classList.add('selected');
-                    const style = thumbnail.getAttribute('data-style');
-                    map.setStyle(style);
-                }
-            </script>
             <div class="all-series-locations">
                 {#
                 #filmingLocations" => array:50 [▼
@@ -249,5 +194,23 @@
             markerIcon.setAttribute('data-latitude', location.latitude);
             markerIcon.setAttribute('data-longitude', location.longitude);
         });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', setMapStyle);
+            });
+        });
+
+        function setMapStyle(event) {
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach(thumbnail => {
+                thumbnail.classList.remove('selected');
+            });
+            const thumbnail = event.currentTarget;
+            thumbnail.classList.add('selected');
+            const style = thumbnail.getAttribute('data-style');
+            map.setStyle(style);
+        }
     </script>
 {% endblock %}

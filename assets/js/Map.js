@@ -114,6 +114,11 @@ export class Map {
         initializeMap();
         initializeMapHandle();
 
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('click', this.setMapStyle);
+        });
+
         const seriesLocationImages = document.querySelectorAll('.series-location-image');
         seriesLocationImages.forEach(image => {
             image.addEventListener('mouseenter', () => {
@@ -150,5 +155,16 @@ export class Map {
                 };
             }
         }
+    }
+
+    setMapStyle(event) {
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach(thumbnail => {
+            thumbnail.classList.remove('selected');
+        });
+        const thumbnail = event.currentTarget;
+        thumbnail.classList.add('selected');
+        const style = thumbnail.getAttribute('data-style');
+        gThis.map.setStyle(style);
     }
 }
