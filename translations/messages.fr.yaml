@@ -224,6 +224,7 @@ New status: Nouveau statut
 Next episode air date updated: Date de diffusion du prochain épisode mise à jour
 Next episode to air: Prochain épisode
 Next episode to watch: Prochain épisode à voir
+Next series: Série suivante
 No additional images currently selected for upload: Pas d'images supplémentaires actuellement sélectionnées pour le téléversement
 No date yet: Pas encore de date
 No date: Pas de date
@@ -247,7 +248,10 @@ Paste your translation here: Collez (⌘ V / ⌃ V) votre traduction ici (depuis
 Pilot: Pilote
 Planned: Planifié
 Poster added: Affiche ajoutée
+Poster of the next series: Affiche de la série suivante
+Poster of the previous series: Affiche de la série précédente
 Poster updated: Affiche mise à jour
+Previous series: Série précédente
 Provider: Plateforme
 Quick day watch badge unlocked: Badge de visionnage rapide débloqué
 Quick week watch badge unlocked: Badge de visionnage rapide hebdomadaire débloqué
@@ -529,6 +533,121 @@ job.Thanks.he: Remerciements
 job.Thanks.she: Remerciements
 job.Writer.he: Auteur
 job.Writer.she: Auteure
+
+#job
+"\"A\" Camera Operator": Opérateur de caméra "A"
+ADR Supervisor: Superviseur ADR
+Art Department Assistant: Assistant du département artistique
+Art Department Coordinator: Coordinateur du département artistique
+Art Department Trainee: Stagiaire du département artistique
+Art Direction: Direction artistique
+Art: Art
+Assistant Director: Assistant réalisateur
+Assistant Hairstylist: Assistant coiffeur
+Assistant Makeup Artist: Assistant maquilleur
+Assistant Property Master: Assistant maître des accessoires
+Associate Producer: Producteur associé
+Camera Operator: Opérateur de caméra
+Camera: Caméra
+Casting: Casting
+Characters: Personnages
+Cinematography: Cinématographie
+Co-Director: Co-réalisateur
+Co-Executive Producer: Producteur co-exécutif
+Co-Producer: Co-producteur
+Colorist: Coloriste
+Comic Book: Bande dessinée
+Conceptual Design: Conception conceptuelle
+Consulting Producer: Producteur consultant
+Controller: Contrôleur
+Costume & Make-Up: Costume et Maquillage
+Costume Design: Conception de costumes
+Costume Designer: Costumier
+Creative Producer: Producteur créatif
+Digital Compositor: Compositing numérique
+Director of Photography: Directeur de la photographie
+Director: Réalisateur
+Editing: Montage
+Editor: Monteur
+Executive Producer: Producteur exécutif
+Executive Story Editor: Scénariste exécutif
+Foley Artist: Artiste Foley
+Foley Editor: Monteur Foley
+Hair Assistant: Assistant coiffeur
+Hair Designer: Coiffeur
+Head of Production: Responsable de la production
+In Memory Of: En mémoire de
+Key Makeup Artist: Maquilleur principal
+Line Producer: Producteur de ligne
+Local Casting: Casting local
+Location Coordinator: Coordinateur de localisation
+Main Title Theme Composer: Compositeur du thème principal
+Makeup Artist: Maquilleur
+Makeup Designer: Maquilleur
+Music Editor: Monteur musical
+Music Supervisor: Superviseur musical
+Music: Musique
+Novel: Roman
+Original Concept: Concept original
+Original Music Composer: Compositeur de musique originale
+Original Series Creator: Créateur de la série originale
+Other: Autre
+Post Production Supervisor: Superviseur de post-production
+Producer: Producteur
+Production Assistant: Assistant de production
+Production Controller: Contrôleur de production
+Production Design: Conception (production)
+Production Manager: Responsable de la production
+Production Sound Mixer: Mixeur son (production)
+Production Supervisor: Superviseur de production
+Prosthetic Designer: Concepteur de prothèses
+Prosthetic Makeup Artist: Maquilleur prothétique
+Screenplay: Scénario
+Screenstory: Histoire
+Script Supervisor: Superviseur de script
+Second Assistant Director: Deuxième assistant réalisateur
+Second Unit Director: Réalisateur de la deuxième équipe
+Security: Sécurité
+Senior Visual Effects Supervisor: Superviseur des effets visuels senior
+Series Director: Réalisateur de la série
+Set Decorating Coordinator: Coordinateur de décoration de plateau
+Set Decoration Buyer: Acheteur de décoration de plateau
+Set Decoration: Décoration
+Set Designer: Concepteur de plateau
+Set Dresser: Décorateur de plateau
+Sound Designer: Concepteur sonore
+Sound Editor: Monteur son
+Sound Effects Editor: Monteur son
+Sound Mixer: Mixeur son
+Sound Re-Recording Mixer: Mixeur son
+Sound Supervisor: Superviseur son
+Sound: Son
+Staff Writer: Scénariste
+Stand In: Doublure
+Stereoscopic Supervisor: Superviseur stéréoscopique
+Story Editor: Éditeur d'histoire
+Storyboard Artist: Artiste de storyboard
+Stunt Coordinator: Coordinateur de cascades
+Stunt Double: Doublure de cascade
+Stunts: Cascades
+Supervising Art Director: Directeur artistique superviseur
+Supervising Music Editor: Monteur musical superviseur
+Supervising Producer: Producteur superviseur
+Supervising Sound Editor: Superviseur son
+Supervising Sound Effects Editor: Monteur son superviseur
+Thanks: Remerciements
+Theme Song Performance: Interprétation de la chanson thème
+Transportation Coordinator: Coordinateur de transport
+Unit Production Manager: Responsable de la production
+Unit Publicist: Attaché de presse
+VFX Supervisor: Superviseur VFX
+Visual Development: Développement visuel
+Visual Effects Coordinator: Coordinateur des effets visuels
+Visual Effects Producer: Producteur des effets visuels
+Visual Effects Supervisor: Superviseur des effets visuels
+Visual Effects: Effets visuels
+Vocals: Voix
+Writer: Scénariste
 
 # Contact
 Contact: Contact
