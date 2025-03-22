@@ -368,21 +368,7 @@
                         <div class="cast">
                             <div class="wrapper">
                                 {% for people in season.credits.cast %}
-                                    <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
-                                        <div class="people">
-                                            <div class="photo">
-                                                {% if people.profile_path %}
-                                                    <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                                                {% else %}
-                                                    {{ 'No picture'|trans }}
-                                                {% endif %}
-                                            </div>
-                                            <div class="infos">
-                                                <div class="name">{{ people.name }}</div>
-                                                <div>{{ people.character }}</div>
-                                            </div>
-                                        </div>
-                                    </a>
+                                    {{ include('_blocks/series/_people.html.twig', {people: people, role: people.character}) }}
                                 {% endfor %}
                             </div>
                         </div>
@@ -400,21 +386,7 @@
                     <div class="cast">
                         <div class="wrapper">
                             {% for people in season.credits.guest_stars %}
-                                <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
-                                    <div class="people">
-                                        <div class="photo">
-                                            {% if people.profile_path %}
-                                                <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                                            {% else %}
-                                                {{ 'No picture'|trans }}
-                                            {% endif %}
-                                        </div>
-                                        <div class="infos">
-                                            <div class="name">{{ people.name }}</div>
-                                            <div>{{ people.caracter }}</div>
-                                        </div>
-                                    </div>
-                                </a>
+                                {{ include('_blocks/series/_people.html.twig', {people: people, role: people.character}) }}
                             {% endfor %}
                         </div>
                     </div>
@@ -425,21 +397,7 @@
                     <div class="crew">
                         <div class="wrapper">
                             {% for people in season.credits.crew %}
-                                <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
-                                    <div class="people">
-                                        <div class="photo">
-                                            {% if people.profile_path %}
-                                                <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                                            {% else %}
-                                                {{ 'No picture'|trans }}
-                                            {% endif %}
-                                        </div>
-                                        <div class="infos">
-                                            <div class="name">{{ people.name }}</div>
-                                            <div>{{ people.job ~ ' - ' ~ people.department }}</div>
-                                        </div>
-                                    </div>
-                                </a>
+                                {{ include('_blocks/series/_people.html.twig', {people: people, role: people.job|trans ~ ' - ' ~ people.department|trans }) }}
                             {% endfor %}
                         </div>
                     </div>

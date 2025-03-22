@@ -570,25 +570,7 @@
                         <div class="cast">
                             <div class="wrapper">
                                 {% for people in tv.credits.cast %}
-                                    <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
-                                        <div class="people" data-title="{{ people.name }}">
-                                            <div class="photo">
-                                                {% if people.profile_path %}
-                                                    <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                                                {% else %}
-                                                    {{ 'No picture'|trans }}
-                                                {% endif %}
-                                            </div>
-                                            <div class="infos">
-                                                {% if people.preferred_name %}
-                                                    <div class="preferred-name">{{ people.preferred_name }}</div>
-                                                {% else %}
-                                                    <div class="name">{{ people.name }}</div>
-                                                {% endif %}
-                                                <div>{{ people.character }}</div>
-                                            </div>
-                                        </div>
-                                    </a>
+                                    {{ include('_blocks/series/_people.html.twig', { people: people, role: people.character }) }}
                                 {% endfor %}
                             </div>
                         </div>
@@ -599,24 +581,7 @@
                         <div class="crew">
                             <div class="wrapper">
                                 {% for people in tv.credits.crew %}
-                                    <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
-                                        <div class="people" data-title="{{ people.name }}">
-                                            <div class="photo">
-                                                {% if people.profile_path %}
-                                                    <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                                                {% else %}
-                                                    {{ 'No picture'|trans }}
-                                                {% endif %}
-                                            </div>
-                                            <div class="infos">{% if people.preferred_name %}
-                                                    <div class="preferred-name">{{ people.preferred_name }}</div>
-                                                {% else %}
-                                                    <div class="name">{{ people.name }}</div>
-                                                {% endif %}
-                                                <div>{{ people.job ~ ' - ' ~ people.department }}</div>
-                                            </div>
-                                        </div>
-                                    </a>
+                                    {{ include('_blocks/series/_people.html.twig', { people: people, role: people.job|trans ~ ' - ' ~ people.department|trans }) }}
                                 {% endfor %}
                             </div>
                         </div>
