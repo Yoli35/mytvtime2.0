@@ -10,6 +10,7 @@ import {Movie} from 'Movie';
 import {NavBar} from 'NavBar';
 import {NetworkAndProvider} from "NetworkAndProvider";
 import {PeopleShow} from "PeopleShow";
+import {PeopleStar} from "PeopleStar";
 import {PosterHover} from 'PosterHover';
 import {Profile} from 'Profile';
 import {ProviderSelect} from 'ProviderSelect';
@@ -241,6 +242,11 @@ window.addEventListener("DOMContentLoaded", () => {
     const person = document.querySelector(".person");
     if (person) {
         new PeopleShow();
+    }
+
+    const peopleStar = document.querySelector(".people-star");
+    if (peopleStar) {
+        new PeopleStar();
     }
 
     const seriesMap = document.querySelector(".series-map");

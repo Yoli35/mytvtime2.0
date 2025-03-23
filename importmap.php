@@ -55,6 +55,9 @@ return [
     'PeopleShow' => [
         'path' => './assets/js/people/PeopleShow.js',
     ],
+    'PeopleStar' => [
+        'path' => './assets/js/people/PeopleStar.js',
+    ],
     'PosterHover' => [
         'path' => './assets/js/images/PosterHover.js',
     ],

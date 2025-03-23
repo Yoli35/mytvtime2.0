@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Your stars'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/filter.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/people.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid people-index filter-page">
+        <main>
+            <div class="people-star">
+                {% for p in people %}
+                    <div class="person-card">
+                        <a href="{{ path('app_people_show', {id: p.tmdb_id, slug: p.slug}) }}">
+                            <div class="profile">
+                                {% if p.profile_path %}
+                                    <img src="/people/profiles{{ p.profile_path }}" alt="{{ p.name }}">
+                                {% else %}
+                                    {{ 'No profile'|trans }}
+                                {% endif %}
+                            </div>
+                        </a>
+                        <div class="infos">
+                            <div class="name">
+                                <h4>{{ p.name }}{% if p.preferred_name %} - <span>{{ p.preferred_name }}</span>{% endif %}</h4>
+                                <div class="rating">
+                                    {% if p.rating %}
+                                        <div class="rating-value">{{ p.rating }}</div>
+                                        <div class="rating-stars">
+                                            {% for i in 1..10 %}
+                                                {% if i <= p.rating %}
+                                                    <div class="rating-star">
+                                                        {{ ux_icon('fa6-solid:star', {height: '24px', width: '24px'}) }}
+                                                    </div>
+                                                {% else %}
+                                                    <div class="rating-star">
+                                                        {{ ux_icon('fa6-regular:star', {height: '24px', width: '24px'}) }}
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ 'No rating'|trans }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="content">
+                                {% if p.homepage %}
+                                    <div class="info">
+                                        <a href="{{ p.homepage }}" target="_blank">
+                                            {{ ux_icon('fa6-solid:link', {height: '24px', width: '24px'}) }}
+                                            {{ 'Homepage'|trans }}
+                                        </a>
+                                    </div>
+                                {% endif %}
+                                    <div class="info">
+                                        <div>{{ 'Birthday'|trans }}</div>
+                                        <div>{{ p.birthday|format_date('medium') }} ({{ p.age }} {{ 'old'|trans }})</div>
+                                    </div>
+                                {% if p.deathday %}
+                                    <div class="info">
+                                        <div>{{ 'Deathday'|trans }}</div>
+                                        <div>{{ p.deathday|format_date('medium') }}</div>
+                                    </div>
+                                {% endif %}
+                                {% if p.place_of_birth %}
+                                    <div class="info">
+                                        <div>{{ 'Place of birth'|trans }}</div>
+                                        <div>{{ p.place_of_birth }}</div>
+                                    </div>
+                                {% endif %}
+                                {% if p.biography %}
+                                    <div class="info">
+                                        <div>{{ p.biography|nl2br }}</div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </main>
+        {% include('_blocks/_footer.html.twig') %}
+    </div>
+{% endblock %}

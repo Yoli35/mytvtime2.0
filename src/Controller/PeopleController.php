@@ -2,22 +2,28 @@
 
 namespace App\Controller;
 
+use App\Entity\People;
 use App\Entity\PeopleUserPreferredName;
 use App\Entity\PeopleUserRating;
 use App\Entity\User;
 use App\Repository\MovieRepository;
+use App\Repository\PeopleRepository;
 use App\Repository\PeopleUserPreferredNameRepository;
 use App\Repository\PeopleUserRatingRepository;
 use App\Repository\SeriesRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
+use App\Service\ImageService;
 use App\Service\TMDBService;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @method User|null getUser() */
 #[Route('{_locale}/people', name: 'app_people_', requirements: ['_locale' => 'fr|en|ko'])]
@@ -27,11 +33,14 @@ class PeopleController extends AbstractController
     public function __construct(
         private readonly DateService                       $dateService,
         private readonly ImageConfiguration                $imageConfiguration,
+        private readonly ImageService                      $imageService,
         private readonly MovieRepository                   $movieRepository,
+        private readonly PeopleRepository                  $peopleRepository,
         private readonly PeopleUserPreferredNameRepository $peopleUserPreferredNameRepository,
         private readonly PeopleUserRatingRepository        $peopleUserRatingRepository,
         private readonly SeriesRepository                  $seriesRepository,
-        private readonly TmdbService                       $tmdbService
+        private readonly TmdbService                       $tmdbService,
+        private readonly TranslatorInterface               $translator,
     )
     {
     }
@@ -39,28 +48,98 @@ class PeopleController extends AbstractController
     #[Route('/popular', name: 'index')]
     public function index(Request $request): Response
     {
-        $user = $this->getUser();
+        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+        $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
+
+        /********************************************************************************
+         * Popular People                                                               *
+         ********************************************************************************/
         $page = $request->query->get('page', 1);
         $people = json_decode($this->tmdbService->getPopularPeople($request->getLocale(), $page), true);
 
-        $people['results'] = array_map(function ($person) {
+        $people['results'] = array_map(function ($person) use ($posterUrl, $profileUrl) {
             $slugger = new AsciiSlugger();
             $person['slug'] = $slugger->slug($person['name'])->lower()->toString();
-            $person['profile_path'] = $person['profile_path'] ? $this->imageConfiguration->getCompleteUrl($person['profile_path'], 'profile_sizes', 2) : null;
-            $person['known_for'] = array_map(function ($knownFor) {
-                $slugger = new AsciiSlugger();
+            $person['profile_path'] = $person['profile_path'] ? $profileUrl . $person['profile_path'] : null;
+            $person['known_for'] = array_map(function ($knownFor) use ($posterUrl, $slugger) {
                 $knownFor['slug'] = $slugger->slug($knownFor['media_type'] == 'movie' ? $knownFor['title'] : $knownFor['name'])->lower()->toString();
-                $knownFor['poster_path'] = $knownFor['poster_path'] ? $this->imageConfiguration->getCompleteUrl($knownFor['poster_path'], 'poster_sizes', 5) : null;
+                $knownFor['poster_path'] = $knownFor['poster_path'] ? $posterUrl . $knownFor['poster_path'] : null;
                 return $knownFor;
             }, $person['known_for']);
             return $person;
         }, $people['results']);
 
-//        dump($people);
+//        dump([
+//            'people' => $people,
+//        ]);
         return $this->render('people/index.html.twig', [
             'people' => $people,
         ]);
     }
+
+    #[Route('/star', name: 'star')]
+    public function star(Request $request): Response
+    {
+        $user = $this->getUser();
+        $now = $this->dateService->getNowImmutable( "Europe/Paris", true);
+        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+        $profilUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
+        /********************************************************************************
+         * User Star People                                                             *
+         ********************************************************************************/
+        $starPeople = $this->peopleUserRatingRepository->findBy(['user' => $user], ['rating' => 'DESC'], 20);
+        $starPeopleCount = $this->peopleUserRatingRepository->count(['user' => $user]);
+        $starPeopleIds = array_map(fn($star) => $star->getTmdbId(), $starPeople);
+        /* Gender
+            0	Not set / not specified
+            1	Female
+            2	Male
+            3	Non-binary */
+        $dbStarPeopleArr = $this->peopleRepository->getPeopleByTMDBId($starPeopleIds);
+        $dbStarPeopleIds = array_column($dbStarPeopleArr, 'tmdb_id');
+        $dbStarPeopleFinalArr = [];
+        $newPeople = 0;
+        $slugger = new AsciiSlugger();
+        foreach ($starPeopleIds as $id) {
+            $rating = array_find($starPeople, fn($person) => $person->getTmdbId() == $id);
+            if (in_array($id, $dbStarPeopleIds)) {
+                $dbPeople = array_find($dbStarPeopleArr, fn($person) => $person['tmdb_id'] == $id);
+                $dbPeople['slug'] = $slugger->slug($dbPeople['name'])->lower()->toString();
+                $dbPeople['age'] = $this->age($now, $dbPeople['birthday'], $dbPeople['deathday']);
+                $dbPeople['rating'] = $rating->getRating();
+                $this->imageService->saveImage('profiles', $dbPeople['profile_path'], $profilUrl, '/people/');
+                $dbStarPeopleFinalArr[] = $dbPeople;
+                continue;
+            }
+            $standing = $this->tmdbService->getPerson($id, $request->getLocale());
+            $people = json_decode($standing, true);
+            $dbPeople = $this->savePeople($people);
+            $dbPeople = $dbPeople->toArray();
+            $dbPeople['age'] = $this->age($now, $dbPeople['birthday'], $dbPeople['deathday']);
+            $dbPeople['rating'] = $rating->getRating();
+            $this->imageService->saveImage('profiles', $dbPeople['profile_path'], $profilUrl, '/people/');
+            $dbStarPeopleFinalArr[] = $dbPeople;
+            $newPeople++;
+        }
+        if ($newPeople > 0) {
+            $this->addFlash('success', $this->translator->trans('Number of new people added: %newPeople%', [
+                '%newPeople%' => $newPeople,
+            ]));
+        }
+
+        dump([
+            'starPeople' => $dbStarPeopleArr,
+            'starPeopleFinalArr' => $dbStarPeopleFinalArr,
+            'starPeopleCount' => $starPeopleCount,
+        ]);
+        return $this->render('people/star.html.twig', [
+            'people' => $dbStarPeopleFinalArr,
+            'peopleCount' => $starPeopleCount,
+            'profileUrl' => $profilUrl,
+            'posterUrl' => $posterUrl,
+        ]);
+    }
+
 
     #[Route('/show/{id}-{slug}', name: 'show', requirements: ['id' => Requirement::DIGITS])]
     public function people(Request $request, int $id): Response
@@ -212,6 +291,106 @@ class PeopleController extends AbstractController
         ]);
     }
 
+    #[Route('/preferred-name', name: 'preferred_name', methods: ['POST'])]
+    public function preferredName(Request $request): Response
+    {
+        // https://localhost:8000/fr/people/show/4580611-wan-phichit-nimit-phakh-phumi
+        $data = json_decode($request->getContent(), true);
+        dump($data);
+        // goto https://localhost:8000/fr/people/show/4580611-wan-phichit-nimit-phakh-phumi
+        $user = $this->getUser();
+        $id = $data['id'];
+        $name = $data['name'];
+        $peopleUserPreferredName = $this->peopleUserPreferredNameRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
+        if (!$peopleUserPreferredName) {
+            $peopleUserPreferredName = new PeopleUserPreferredName($user, $id, $name);
+        } else {
+            $peopleUserPreferredName->setName($name);
+        }
+        $this->peopleUserPreferredNameRepository->save($peopleUserPreferredName, true);
+        $peopleUserPreferredName = $this->peopleUserPreferredNameRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
+        $name = $peopleUserPreferredName->getName() ?? null;
+
+        $standing = $this->tmdbService->getPerson($id, $request->getLocale(), "images,combined_credits");
+        $people = json_decode($standing, true);
+        $nameBlock = $this->renderView('_blocks/people/_preferred-name.html.twig', [
+            'people' => $people,
+            'preferredName' => $name,
+        ]);
+        return $this->json([
+            'ok' => true,
+            'block' => $nameBlock,
+            'preferred-name' => $name,
+        ]);
+    }
+
+    #[Route('/rating', name: 'rating', methods: ['POST'])]
+    public function rating(Request $request): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $data = json_decode($request->getContent(), true);
+        $id = $data['id'];
+        $rating = $data['rating'];
+
+        $peopleUserRating = $this->peopleUserRatingRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
+
+        if (!$peopleUserRating) {
+            $peopleUserRating = new PeopleUserRating($user, $id, $rating);
+        } else {
+            $peopleUserRating->setRating($rating);
+        }
+        $this->peopleUserRatingRepository->save($peopleUserRating, true);
+
+        $peopleUserRating = $this->peopleUserRatingRepository->getPeopleUserRating($user->getId(), $id);
+        $rating = $peopleUserRating['rating'] ?? 0;
+        $avgRating = $peopleUserRating['avg_rating'] ?? 0;
+
+        $ratingInfosBlock = $this->renderView('_blocks/people/_rating.html.twig', [
+            'rating' => $rating,
+            'avgRating' => $avgRating,
+        ]);
+
+        return $this->json([
+            'ok' => true,
+            'block' => $ratingInfosBlock,
+        ]);
+    }
+
+    public function savePeople(array $people): People
+    {
+        $dbPeople = new People(
+            $people['adult'],
+            $people['also_known_as'],
+            $people['biography'],
+            $this->dateService->newDate($people['birthday'], "Europe/Paris"),
+            key_exists('deathday', $people) && $people['deathday'] ? $this->dateService->newDate($people['deathday'], "Europe/Paris") : null,
+            $people['gender'],
+            $people['homepage'],
+            $people['id'],
+            key_exists('imdb_id', $people) ? $people['imdb_id'] : null,
+            $people['known_for_department'],
+            $people['name'],
+            $people['place_of_birth'],
+            $people['profile_path']
+        );
+        $this->peopleRepository->save($dbPeople, true);
+
+        return $dbPeople;
+    }
+
+    public function age(DateTimeImmutable $now, string $birthday, ?string $deathday): int
+    {
+        $birthday = $this->dateService->newDate($birthday, "Europe/Paris", true);
+        $interval = $now->diff($birthday);
+        if ($deathday) {
+            $deathday = $this->dateService->newDate($deathday, "Europe/Paris", true);
+            $interval = $deathday->diff($birthday);
+        }
+        return $interval->y;
+    }
+
     private function makeRoles(): array
     {
         $genderedTerms = [
@@ -359,72 +538,5 @@ class PeopleController extends AbstractController
         }
 
         return $knownFor;
-    }
-
-    #[Route('/preferred-name', name: 'preferred_name', methods: ['POST'])]
-    public function preferredName(Request $request): Response
-    {
-        // https://localhost:8000/fr/people/show/4580611-wan-phichit-nimit-phakh-phumi
-        $data = json_decode($request->getContent(), true);
-        dump($data);
-        // goto https://localhost:8000/fr/people/show/4580611-wan-phichit-nimit-phakh-phumi
-        $user = $this->getUser();
-        $id = $data['id'];
-        $name = $data['name'];
-        $peopleUserPreferredName = $this->peopleUserPreferredNameRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
-        if (!$peopleUserPreferredName) {
-            $peopleUserPreferredName = new PeopleUserPreferredName($user, $id, $name);
-        } else {
-            $peopleUserPreferredName->setName($name);
-        }
-        $this->peopleUserPreferredNameRepository->save($peopleUserPreferredName, true);
-        $peopleUserPreferredName = $this->peopleUserPreferredNameRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
-        $name = $peopleUserPreferredName->getName() ?? null;
-
-        $standing = $this->tmdbService->getPerson($id, $request->getLocale(), "images,combined_credits");
-        $people = json_decode($standing, true);
-        $nameBlock = $this->renderView('_blocks/people/_preferred-name.html.twig', [
-            'people' => $people,
-            'preferredName' => $name,
-        ]);
-        return $this->json([
-            'ok' => true,
-            'block' => $nameBlock,
-            'preferred-name' => $name,
-        ]);
-    }
-
-    #[Route('/rating', name: 'rating', methods: ['POST'])]
-    public function rating(Request $request): Response
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        $data = json_decode($request->getContent(), true);
-        $id = $data['id'];
-        $rating = $data['rating'];
-
-        $peopleUserRating = $this->peopleUserRatingRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
-
-        if (!$peopleUserRating) {
-            $peopleUserRating = new PeopleUserRating($user, $id, $rating);
-        } else {
-            $peopleUserRating->setRating($rating);
-        }
-        $this->peopleUserRatingRepository->save($peopleUserRating, true);
-
-        $peopleUserRating = $this->peopleUserRatingRepository->getPeopleUserRating($user->getId(), $id);
-        $rating = $peopleUserRating['rating'] ?? 0;
-        $avgRating = $peopleUserRating['avg_rating'] ?? 0;
-
-        $ratingInfosBlock = $this->renderView('_blocks/people/_rating.html.twig', [
-            'rating' => $rating,
-            'avgRating' => $avgRating,
-        ]);
-
-        return $this->json([
-            'ok' => true,
-            'block' => $ratingInfosBlock,
-        ]);
     }
 }
