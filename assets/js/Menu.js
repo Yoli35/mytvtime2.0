@@ -961,6 +961,9 @@ export class Menu {
         if (theme !== 'auto') document.body.classList.add(theme);
         localStorage.setItem("mytvtime_2_theme", theme);
         this.checkTheme(theme);
+        // Créer un événement "theme-change" pour que les autres modules puissent l'écouter
+        const event = new Event("theme-changed");
+        document.dispatchEvent(event);
     }
 
     checkTheme(theme) {
