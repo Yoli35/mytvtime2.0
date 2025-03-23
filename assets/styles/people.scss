@@ -115,33 +115,27 @@
                 background-color: var(--orange-30-alpha-75);
                 border-radius: .5rem;
                 display: flex;
-                height: 22.5rem;
+                height: clamp(22.5rem, 40vw, 50rem);
 
                 .profile {
-                    align-items: center;
-                    background-color: var(--green-50);
-                    border-radius: .5rem 0 0 .5rem;
-                    display: flex;
-                    flex-shrink: 0;
-                    justify-content: center;
+                    aspect-ratio: 78 / 117;
                     height: 100%;
-                    width: 15rem;
 
                     img {
-                        aspect-ratio: 78 / 117;
                         border-radius: .5rem 0 0 .5rem;
                         height: 100%;
                         object-fit: cover;
+                        width: 100%;
                     }
                 }
 
                 .infos {
                     display: flex;
                     flex-direction: column;
+                    flex-grow: 1;
                     gap: .5rem;
                     justify-content: flex-start;
                     padding: 1rem;
-                    width: 100%;
 
                     .name {
                         display: flex;
@@ -832,6 +826,21 @@
 
         .tail {
             display: none;
+        }
+    }
+
+    .people-index {
+        main {
+            .people-star {
+                .person-card {
+                    flex-direction: column;
+                    height: unset;
+
+                    .profile {
+                        aspect-ratio: 1 / 1;
+                    }
+                }
+            }
         }
     }
 }

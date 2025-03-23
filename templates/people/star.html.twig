@@ -15,15 +15,15 @@
             <div class="people-star">
                 {% for p in people %}
                     <div class="person-card">
-                        <a href="{{ path('app_people_show', {id: p.tmdb_id, slug: p.slug}) }}">
-                            <div class="profile">
+                        <div class="profile">
+                            <a href="{{ path('app_people_show', {id: p.tmdb_id, slug: p.slug}) }}">
                                 {% if p.profile_path %}
                                     <img src="/people/profiles{{ p.profile_path }}" alt="{{ p.name }}">
                                 {% else %}
                                     {{ 'No profile'|trans }}
                                 {% endif %}
-                            </div>
-                        </a>
+                            </a>
+                        </div>
                         <div class="infos">
                             <div class="name">
                                 <h4>{{ p.name }}{% if p.preferred_name %} - <span>{{ p.preferred_name }}</span>{% endif %}</h4>
@@ -57,10 +57,10 @@
                                         </a>
                                     </div>
                                 {% endif %}
-                                    <div class="info">
-                                        <div>{{ 'Birthday'|trans }}</div>
-                                        <div>{{ p.birthday|format_date('medium') }} ({{ p.age }} {{ 'old'|trans }})</div>
-                                    </div>
+                                <div class="info">
+                                    <div>{{ 'Birthday'|trans }}</div>
+                                    <div>{{ p.birthday|format_date('medium') }} ({{ p.age }} {{ 'old'|trans }})</div>
+                                </div>
                                 {% if p.deathday %}
                                     <div class="info">
                                         <div>{{ 'Deathday'|trans }}</div>
