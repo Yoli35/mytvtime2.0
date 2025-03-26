@@ -1005,7 +1005,18 @@ class SeriesController extends AbstractController
             'logos' => $seriesLogos,
             'posters' => $seriesPosters,
         ];
-        $seriesArr['videos'] = $series->getSeriesVideos();
+        $seriesArr['videos'] = array_map(function($v) {
+            $vArr['title'] = $v->getTitle();
+            $link = $v->getLink();
+            if (strlen($link) === 11) {
+                $vArr['link'] = 'https://www.youtube.com/embed/' . $link;
+                $vArr['iframe'] = true;
+            } else {
+                $vArr['link'] = $link;
+                $vArr['iframe'] = false;
+            }
+            return $vArr;
+            }, $series->getSeriesVideos()->toArray());
 
         $translations = [
             'Add to favorites' => $this->translator->trans('Add to favorites'),

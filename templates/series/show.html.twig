@@ -265,17 +265,31 @@
                     <div class="video-tool add-video" data-title="{{ 'Add a video'|trans }}">
                         {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
                     </div>
-                    {% if series.videos|length > 1 %}
-                        <div class="video-tool">
+                    {% if series.videos|length > 0 %}
+                        <div class="video-tool folder">
                             {{ ux_icon('material-symbols:collapse-all', {height: '18px', width: '18px'}) }}
                         </div>
+                        <script>
+                            document.querySelector('.video-tool.folder').addEventListener('click', function () {
+                                const videoList = document.querySelector('.video-list');
+                                videoList.classList.toggle('folded');
+                            });
+                        </script>
                     {% endif %}
                 </div>
-                {% for video in series.videos %}
-                    <div class="video">
-                        <iframe src="https://www.youtube.com/embed/{{ video.link }}" title="{{ video.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                {% endfor %}
+                <div class="video-list">
+                    {% for video in series.videos %}
+                        {% if video.iframe == true %}
+                            <div class="video">
+                                <iframe src="{{ video.link }}" title="{{ video.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                {# {% else %}
+                            <video controls>
+                                <source src="{{ video.link }}" type="video/mp4" />
+                            </video> #}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
                 <dialog class="add-video-dialog">
                     {{ form_start(addVideoForm) }}
                     {{ form_widget(addVideoForm.title) }}

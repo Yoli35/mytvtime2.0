@@ -1005,15 +1005,28 @@ h2 {
             }
         }
 
-        .video {
-            aspect-ratio: 16/9;
+        .video-list {
+            display: flex;
+            gap: .5rem;
+            height: auto;
+            overflow-y: clip;
+            transition: height 30ms ease-in-out;
             width: 100%;
 
-            iframe {
-                border-radius: .5rem;
-                border: none;
-                height: 100%;
+            &.folded {
+                height: 0;
+            }
+
+            .video {
+                aspect-ratio: 16/9;
                 width: 100%;
+
+                iframe {
+                    border-radius: .5rem;
+                    border: none;
+                    height: 100%;
+                    width: 100%;
+                }
             }
         }
     }
