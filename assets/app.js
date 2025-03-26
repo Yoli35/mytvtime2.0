@@ -180,7 +180,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         navBar.navBarColor(hsl);
 
-        const additionalOverviews = document.querySelector(".additional.overviews");
+        /*const additionalOverviews = document.querySelector(".additional.overviews");
         if (additionalOverviews) {
             const imgs = additionalOverviews.querySelectorAll("img");
             imgs.forEach(img => {
@@ -194,7 +194,7 @@ window.addEventListener("DOMContentLoaded", () => {
                     sourceDiv.style.backgroundColor = "#E1E7EA";
                 }
             });
-        }
+        }*/
 
         const seasonOrder = document.querySelector(".season-order");
         seasonOrder?.addEventListener("click", () => {
