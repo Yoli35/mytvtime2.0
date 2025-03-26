@@ -259,25 +259,64 @@
                 </div>
             {% endif %}
 
+            {% set videoCount = series.videos|length %}
             <div class="videos">
                 <div class="video-tools">
-                    <h2>{{ 'Videos'|trans }}</h2>
+                    <h2>{{ 'Videos'|trans }}{% if videoCount %} ({{ videoCount }}){% endif %}</h2>
                     <div class="video-tool add-video" data-title="{{ 'Add a video'|trans }}">
                         {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
                     </div>
-                    {% if series.videos|length > 0 %}
-                        <div class="video-tool folder">
-                            {{ ux_icon('material-symbols:collapse-all', {height: '18px', width: '18px'}) }}
+                    {% if videoCount %}
+                        <div class="video-tool folder" data-title="{{ (videoListFolded ? 'Expand all videos' : 'Collapse all videos')|trans }}">
+                            {{ ux_icon('material-symbols:expand-more', {height: '18px', width: '18px'}) }}
+                            {#                            {{ ux_icon('material-symbols:collapse-all', {height: '18px', width: '18px'}) }} #}
                         </div>
                         <script>
-                            document.querySelector('.video-tool.folder').addEventListener('click', function () {
+                            const dataTitles = {
+                                'expand': '{{ 'Expand all videos'|trans }}',
+                                'collapse': '{{ 'Collapse all videos'|trans }}'
+                            };
+                            document.querySelector('.video-tool.folder').addEventListener('click', function (e) {
+                                e.preventDefault();
+                                const tool = e.currentTarget;
                                 const videoList = document.querySelector('.video-list');
                                 videoList.classList.toggle('folded');
+                                if (videoList.classList.contains('folded')) {
+                                    tool.setAttribute('data-title', dataTitles.expand);
+                                    saveSettings(1);
+                                } else {
+                                    tool.setAttribute('data-title', dataTitles.collapse);
+                                    saveSettings(0);
+                                }
                             });
+
+                            function saveSettings(newValue) {
+                                // Use fetch to send the new value to the server
+                                fetch('{{ path('app_series_settings_save') }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-Token': '{{ csrf_token('user_settings') }}'
+                                    },
+                                    body: JSON.stringify({"name": "series_video_list_folded", "value": {"folded": newValue}})
+                                })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error('Network response was not ok');
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        console.log('Settings saved:', data);
+                                    })
+                                    .catch(error => {
+                                        console.error('Error saving settings:', error);
+                                    });
+                            }
                         </script>
                     {% endif %}
                 </div>
-                <div class="video-list">
+                <div class="video-list{% if videoListFolded %} folded{% endif %}">
                     {% for video in series.videos %}
                         {% if video.iframe == true %}
                             <div class="video">

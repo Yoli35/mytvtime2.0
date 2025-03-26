@@ -1017,6 +1017,14 @@ class SeriesController extends AbstractController
             }
             return $vArr;
             }, $series->getSeriesVideos()->toArray());
+        if (count($seriesArr['videos'])) {
+            $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'series_video_list_folded']);
+            if (!$settings) {
+                $settings = new Settings($user, 'series_video_list_folded', ['folded' => true]);
+                $this->settingsRepository->save($settings, true);
+            }
+            $videoListFolded = $settings->getData()['folded'];
+        }
 
         $translations = [
             'Add to favorites' => $this->translator->trans('Add to favorites'),
@@ -1091,6 +1099,7 @@ class SeriesController extends AbstractController
             'series' => $seriesArr,
             'previousSeries' => $previousSeries,
             'nextSeries' => $nextSeries,
+            'videoListFolded' => $videoListFolded ?? true,
             'tv' => $tv ?? $noTv,
             'userSeries' => $userSeries,
             'providers' => $providers,
