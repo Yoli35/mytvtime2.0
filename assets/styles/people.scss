@@ -830,7 +830,9 @@
             display: none;
         }
     }
+}
 
+@media (max-width: 800px) {
     .people-index {
         main {
             .people-star {
