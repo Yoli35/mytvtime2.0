@@ -418,8 +418,10 @@
                 "1": 'Tomorrow'|trans,
                 "2": 'In two days'|trans
             } %}
+            {% set interval = listEpisodeOfTheInterval(app.user, "-2 day", "2 day", app.locale) %}
             {% for relativeDay in  -2..2 %}
-                {% set eotdList = listEpisodeOfTheDay(app.user, relativeDay) %}
+{#                {% set eotdList = listEpisodeOfTheDay(app.user, relativeDay) %}#}
+                {% set eotdList = interval[relativeDay] %}
                 {% set l = eotdList.totalEpisodeCount %}
                 {% if l %}
                     <div class="separation">{{ relativeDayStrings[relativeDay] }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>

@@ -398,6 +398,44 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function episodesOfTheIntervalForTwig(User $user, string $start, string $end, string $locale = 'fr'): array
+    {
+        $userId = $user->getId();
+        $sql = "SELECT
+                     IF(sbd.id, DATE(sbd.date), ue.air_date) as airDate,
+                     'series'                                as type,
+                     DATEDIFF(IF(sbd.id, DATE(sbd.date), ue.air_date), DATE(NOW())) as days,
+                     s.id                                    as id, 
+                     s.name                                  as name, 
+                     s.poster_path                           as posterPath,
+                     s.slug                                  as slug, 
+                     sln.name                                as localizedName, 
+                     sln.slug                                as localizedSlug, 
+                     ue.`episode_number`                     as episodeNumber, 
+                     ue.`season_number`                      as seasonNumber,
+                     ue.`watch_at`                           as watchAt,
+                     sbs.air_at                              as airAt,
+                     sbd.date                                as customDate,
+                     p.name                                  as providerName,
+                     p.logo_path                             as providerLogoPath,
+                     IF(ue.vote IS NULL, 0, ue.vote)         as vote,
+                     IF(sln.name IS NULL, s.name, sln.name)  as displayName 
+              FROM series s 
+                     INNER JOIN user_series us ON s.id = us.series_id 
+                     INNER JOIN user_episode ue ON us.id = ue.user_series_id 
+                     LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
+                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                     LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
+                     LEFT JOIN provider p ON sbs.provider_id = p.provider_id
+              WHERE us.user_id = $userId
+                     AND IF(sbd.id, DATE(sbd.date) >= '$start', ue.air_date >= '$start')
+                     AND IF(sbd.id, DATE(sbd.date) <= '$end',   ue.air_date <= '$end')
+              ORDER BY displayName ";
+        //       (WHERE ...) AND ue.season_number > 0
+
+        return $this->getAll($sql);
+    }
+
     public function historyEpisode(User $user, int $dayCount, string $country, string $locale): array
     {
         $userId = $user->getId();

@@ -9,6 +9,8 @@ use App\Repository\MovieRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
+use DateTimeZone;
+use Symfony\Component\Validator\Constraints\Timezone;
 use Twig\Extension\RuntimeExtensionInterface;
 
 readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
@@ -42,7 +44,160 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         return $this->episodeNotificationRepository->episodeNotificationList($user);
     }
 
-    public function listEpisodeOfTheDay(User $user, int $interval, string $locale = 'fr'): array
+    public function listEpisodeOfTheInterval(User $user, string $start, string $end, string $locale = 'fr'): array
+    {
+        $arr = [];
+        $intervalArr = [];
+        $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
+        $timezone = new DateTimeZone($user->getTimezone() ?? 'Europe/Paris');
+
+        $now = date_create_immutable("now", $timezone)->setTime(0,0);
+        $startDate = $now->modify($start)->format('Y-m-d');
+        $endDate = $now->modify($end)->format('Y-m-d');
+
+        $sArr = $this->userEpisodeRepository->episodesOfTheIntervalForTwig($user, $startDate, $endDate, $locale);
+        $mArr = $this->movieRepository->moviesOfTheIntervalForTwig($user, $startDate, $endDate, $locale);
+
+        $seriesArr = [];
+        foreach ($sArr as $item) {
+            $index = $item['days'];
+            if (!key_exists($index, $seriesArr)) {
+                $seriesArr[$index] = [];
+            }
+            if (!$this->seriesInArray($seriesArr[$index], $item)) {
+                $item['episodes'] = [$item['episodeNumber']];
+                if ($item['posterPath'] === null) {
+                    $item['posterPath'] = $this->seriesController->getAlternatePosterPath($item['id']);
+                }
+                $item['posterPath'] = $item['posterPath'] ? '/series/posters' . $item['posterPath'] : null;
+                if ($item['providerLogoPath']) {
+                    if (str_starts_with($item['providerLogoPath'], '/')) {
+                        $item['providerLogoPath'] = $providerUrl . $item['providerLogoPath'];
+                    }
+                    if (str_starts_with($item['providerLogoPath'], '+')) {
+                        $item['providerLogoPath'] = '/images/providers' . substr($item['providerLogoPath'], 1);
+                    }
+                }
+                $item['episodesWatched'] = $item['watchAt'] === null ? 0 : 1;
+                $seriesArr[$index][$item['id']] = $item;
+            } else {
+                $seriesArr[$index][$item['id']]['episodes'][] = $item['episodeNumber'];
+                $seriesArr[$index][$item['id']]['episodesWatched'] += $item['watchAt'] === null ? 0 : 1;
+            }
+        }
+
+        foreach ($seriesArr as $index => $dayArr) {
+            foreach ($dayArr as $key => $item) {
+                $seasonNumber = $item['seasonNumber'];
+                if (count($item['episodes']) > 2) {
+                    $start = $this->minNumberInArray($item['episodes']);
+                    $end = $this->maxNumberInArray($item['episodes']);
+                    if ($locale === 'en') {
+                        if ($seasonNumber)
+                            $display = sprintf('S%02dE%02d to S%02dE%02d', $seasonNumber, $start, $seasonNumber, $end);
+                        else
+                            $display = sprintf('Specials #%02d to #%02d', $start, $end);
+                    } else {
+                        if ($seasonNumber)
+                            $display = sprintf('S%02dE%02d à S%02dE%02d', $seasonNumber, $start, $seasonNumber, $end);
+                        else
+                            $display = sprintf('Épisodes spéciaux #%02d à #%02d', $start, $end);
+                    }
+                    $item['firstEpisodeNumber'] = $start;
+                } elseif (count($item['episodes']) > 1) {
+                    $start = $this->minNumberInArray($item['episodes']);
+                    $end = $this->maxNumberInArray($item['episodes']);
+                    if ($seasonNumber)
+                        $display = sprintf('S%02dE%02d & S%02dE%02d', $seasonNumber, $start, $seasonNumber, $end);
+                    else
+                        $display = sprintf('Specials #%02d & #%02d', $start, $end);
+                    $item['firstEpisodeNumber'] = $start;
+                } else {
+                    $episodeNumber = $item['episodes'][0];
+                    if ($seasonNumber)
+                        $display = sprintf('S%02dE%02d', $seasonNumber, $episodeNumber);
+                    else
+                        $display = sprintf('Special #%02d', $episodeNumber);
+                    $item['firstEpisodeNumber'] = $episodeNumber;
+                }
+                $item['display'] = $item['displayName'] . ' ' . $display;
+                $item['episodeCount'] = count($item['episodes']);
+
+                $dayArr[$key] = $item;
+            }
+            $seriesArr[$index] = $dayArr;
+        }
+
+        $movieArr = [];
+        foreach ($mArr as $item) {
+            $item['posterPath'] = $item['posterPath'] ? '/movies/posters' . $item['posterPath'] : null;
+            if ($item['providerLogoPath']) {
+                if (str_starts_with($item['providerLogoPath'], '/')) {
+                    $item['providerLogoPath'] = $providerUrl . $item['providerLogoPath'];
+                }
+                if (str_starts_with($item['providerLogoPath'], '+')) {
+                    $item['providerLogoPath'] = '/images/providers' . substr($item['providerLogoPath'], 1);
+                }
+            }
+            $item['episodesWatched'] = $item['watchAt'] === null ? 0 : 1;
+            $item['display'] = $item['localizedName'] ?? $item['name'];
+            $item['customDate'] = null;
+            $item['airAt'] = "00:00:00";
+            $item['seasonNumber'] = null;
+            $item['episodeCount'] = 1;
+            $item['firstEpisodeNumber'] = 1;
+            $item['localizedSlug'] = $item['slug'] = '';
+            $movieArr[$item['id']] = $item;
+        }
+
+        foreach ($movieArr as $item) {
+            $airDate = $item['airDate'];
+            $diff = $now->diff(date_create_immutable($airDate, $timezone));
+            $index = $diff->days * ($diff->invert ? -1 : 1);
+            if (!key_exists($index, $arr)) {
+                $seriesArr[$index] = [];
+            }
+            $seriesArr[$index][] = $item;
+        }
+        ksort($seriesArr);
+
+        $resultArr = [];
+        foreach ($seriesArr as $indexKey => $itemArr) {
+            $totalEpisodeCount = array_reduce($itemArr, function ($carry, $item) {;
+                return $carry + $item['episodeCount'];
+            }, 0);
+            $results = array_map(function ($item) {
+                return [
+                    'type' => $item['type'],
+                    'display' => $item['display'],
+                    'airAt' => $item['airAt'],
+                    'customDate' => $item['customDate'],
+                    'episodeCount' => $item['episodeCount'],
+                    'episodesWatched' => $item['episodesWatched'],
+                    'firstEpisodeNumber' => $item['firstEpisodeNumber'],
+                    'id' => $item['id'],
+                    'name' => $item['displayName'],
+                    'posterPath' => $item['posterPath'],
+                    'providerLogoPath' => $item['providerLogoPath'],
+                    'providerName' => $item['providerName'],
+                    'progress' => 100 * $item['episodesWatched'] / $item['episodeCount'],
+                    'seasonNumber' => $item['seasonNumber'],
+                    'slug' => $item['localizedSlug'] ?? $item['slug'],
+                ];
+            }, array_values($itemArr));
+            usort($results, function ($a, $b) {
+                return $a['airAt'] <=> $b['airAt'];
+            });
+            $intervalArr[$indexKey] = [
+                'index' => $indexKey,
+                'totalEpisodeCount' => $totalEpisodeCount,
+                'results' => $results,
+            ];
+        }
+        return $intervalArr;
+    }
+
+    /*public function listEpisodeOfTheDay(User $user, int $interval, string $locale = 'fr'): array
     {
         $date = $this->dateService->newDateImmutable('now', $user->getTimezone() ?? 'Europe/Paris');
 
@@ -170,7 +325,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
             'totalEpisodeCount' => $totalEpisodeCount,
             'results' => $results,
         ];
-    }
+    }*/
 
     public function inProgressSeries(User $user, string $locale = 'fr'): array
     {
