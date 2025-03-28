@@ -224,7 +224,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                     LEFT JOIN series_broadcast_schedule sbs ON sbs.id=$id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
                     LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                 WHERE sbs.season_number = ue.season_number
-                    AND ue.`watch_at` IS NULL
+                    AND ue.`watch_at` IS NULL AND ue.previous_occurrence_id IS NULL
                 ORDER BY  ue.`season_number`, ue.`episode_number`
                 LIMIT 1";
 
@@ -242,6 +242,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                     LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                 WHERE sbs.season_number = ue.season_number
                     AND IF(sbs.override, DATE(sbd.date), ue.`air_date`) = DATE('$airDate')
+                    AND ue.previous_occurrence_id IS NULL AND ue.previous_occurrence_id IS NULL
                 ORDER BY  ue.`season_number`, ue.`episode_number`";
 
         return $this->getAll($sql);
@@ -258,7 +259,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                     LEFT JOIN series_broadcast_schedule sbs ON sbs.id=$id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
                     LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                 WHERE sbs.season_number = ue.season_number
-                  AND ue.`watch_at` IS NOT NULL
+                  AND ue.`watch_at` IS NOT NULL AND ue.previous_occurrence_id IS NULL
                 ORDER BY  ue.`season_number` DESC, ue.`episode_number` DESC
                 LIMIT 1";
 
@@ -292,18 +293,20 @@ class UserEpisodeRepository extends ServiceEntityRepository
                         WHERE cue.user_series_id = us.id
                           AND cue.season_number > 0
                           AND IF(sbd.id IS NULL, cue.air_date <= CURDATE(), DATE(sbd.date) <= CURDATE())
-                          AND cue.watch_at IS NOT NULL
+                          AND cue.watch_at IS NOT NULL AND cue.previous_occurrence_id IS NULL
                        )                              as watched_aired_episode_count,
                        (SELECT count(*)
                         FROM user_episode cue
                         WHERE cue.user_series_id = us.id
                           AND cue.season_number > 0
                           AND IF(sbd.id IS NULL, cue.air_date <= CURDATE(), DATE(sbd.date) <= CURDATE())
+                          AND cue.previous_occurrence_id IS NULL
                         )                             as aired_episode_count,
                        (SELECT count(*)
                         FROM user_episode cue
                         WHERE cue.user_series_id = us.id
                           AND cue.season_number = ue.season_number
+                          AND cue.previous_occurrence_id IS NULL
                           AND cue.air_date = ue.air_date
                        )                               as released_episode_count,
                        us.last_watch_at                as last_watch_at,
@@ -400,8 +403,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
         $userId = $user->getId();
         $sql = "SELECT s.id                            as id,
                        s.tmdb_id                       as tmdbId,
-                       IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
-                       IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
+                       IF(sln.`id` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
+                       IF(sln.`id` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
                        /*s.`name`                        as name,*/
                        /*s.`slug`                        as slug,*/
                        sln.`name`                      as localizedName,
@@ -480,7 +483,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
                          LEFT JOIN provider p ON ue.provider_id = p.provider_id
                          LEFT JOIN device d ON ue.device_id = d.id
                 WHERE ue.user_series_id = $userSeriesId
-                  AND ue.season_number = $seasonNumber";
+                  AND ue.season_number = $seasonNumber
+                  AND ue.previous_occurrence_id IS NULL";
 
         return $this->getAll($sql);
     }
@@ -522,12 +526,12 @@ class UserEpisodeRepository extends ServiceEntityRepository
                     (
                      SELECT COUNT(*)
                         FROM `user_episode` ue
-                        WHERE ue.`user_series_id`=$userSeriesId AND ue.`season_number`=$seasonNumber
+                        WHERE ue.`user_series_id`=$userSeriesId AND ue.`season_number`=$seasonNumber AND ue.previous_occurrence_id IS NULL
                      ) as episodeCount,
                     (
                      SELECT COUNT(*)
                         FROM `user_episode` ue
-                        WHERE ue.`user_series_id`=$userSeriesId AND ue.`season_number`=$seasonNumber AND ue.`watch_at` IS NOT NULL
+                        WHERE ue.`user_series_id`=$userSeriesId AND ue.`season_number`=$seasonNumber AND ue.`watch_at` IS NOT NULL AND ue.previous_occurrence_id IS NULL
                      ) as episodeWatchedCount";
 
         $result = $this->getAll($sql);
