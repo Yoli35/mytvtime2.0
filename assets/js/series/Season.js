@@ -552,6 +552,10 @@ export class Season {
                 const block = document.createElement('div');
                 block.innerHTML = data['airDateBlock'];
                 const newAirDateDiv = block.querySelector('.air-date');
+                const newWatchedAtDivs = block.querySelectorAll('.watched-at');
+                newWatchedAtDivs.forEach(newWatchedAtDiv => {
+                    newWatchedAtDiv.addEventListener('click', gThis.modifyWatchedAtOpen);
+                });
                 airDateDiv.replaceWith(newAirDateDiv);
 
                 const numberDiv = episode.closest('.episode').querySelector('.number');
@@ -841,6 +845,7 @@ export class Season {
                 const block = document.createElement('div');
                 block.innerHTML = data['watchedAtBlock'];
                 const newWatchedAtDiv = block.querySelector('.watched-at');
+                newWatchedAtDiv.addEventListener('click', gThis.modifyWatchedAtOpen);
                 watchedAtDiv.replaceWith(newWatchedAtDiv);
                 episode.setAttribute('data-title', gThis.text.now);
                 const now = new Date();
