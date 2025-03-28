@@ -2371,9 +2371,10 @@ h2 {
             justify-content: center;
             line-height: clamp(1.25rem, 6.25vw, 5rem);
             margin-block: auto;
-            min-width: fit-content;
+            /*min-width: fit-content;*/
             position: relative;
             text-align: left;
+            text-wrap: stable;
 
             span {
                 background-color: var(--ardoise-90-alpha-20);
