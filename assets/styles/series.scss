@@ -2369,12 +2369,12 @@ h2 {
             font-weight: 100;
             gap: .5rem;
             justify-content: center;
-            line-height: clamp(1.25rem, 6.25vw, 5rem);
+            line-height: 1.25em;
             margin-block: auto;
             /*min-width: fit-content;*/
             position: relative;
-            text-align: left;
-            text-wrap: stable;
+            text-align: right;
+            text-wrap: balance;
             width: 50%;
 
             span {
@@ -3982,7 +3982,7 @@ h2 {
 
     &.center {
         margin-inline: auto;
-        width: round(down, 100%, 20.25rem);
+        width: 100%;
     }
 
     .map-tools {
@@ -4115,11 +4115,23 @@ h2 {
         margin-inline: auto;
         max-width: 100%;
         overflow-x: auto;
+        padding-block-end: 1rem;
 
         .thumbnail {
             display: flex;
             flex-direction: column;
             gap: .5rem;
+
+            .name {
+                align-items: center;
+                display: flex;
+                font-weight: 300;
+                height: 2.5rem;
+                justify-content: center;
+                line-height: 1.25;
+                text-wrap: balance;
+                text-align: center;
+            }
 
             img {
                 aspect-ratio: 1;
@@ -4132,6 +4144,7 @@ h2 {
             &.selected {
                 img {
                     border-color: var(--orange-50);
+                    box-shadow: 0 0 1rem .375rem var(--orange-50);
                 }
             }
         }
@@ -4141,8 +4154,9 @@ h2 {
         display: flex;
         flex-direction: column;
         gap: 1rem;
+        margin-inline: auto;
         margin-block-end: 1rem;
-        width: 100%;
+        width: round(down, 100%, 20.25rem);
 
         .series-locations {
             display: flex;

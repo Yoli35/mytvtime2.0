@@ -72,14 +72,9 @@
                     <div>{{ block('shift') }} {{ block('arrowDown') }}: {{ 'Decrease the pitch by 10 degrees'|trans }}.</div>
                 </div>
             </div>
-            <div class="thumbnails">
-                {% for s in settings.data.styles %}
-                    <div class="thumbnail{% if loop.index0==2 %} selected{% endif %}" data-style="{{ s.style }}">
-                        <h5>{{ s.name }}</h5>
-                        <img src="{{ s.local_path }}" alt="{{ s.name }}">
-                    </div>
-                {% endfor %}
-            </div>
+
+            {{ include('_blocks/map/_thumbnails.html.twig', {styles: settings.data.styles}) }}
+
             <div class="all-series-locations">
                 <div class="series-locations">
                     <div class="series-location-content">
