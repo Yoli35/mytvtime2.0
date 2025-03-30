@@ -374,9 +374,10 @@
                         </div>
                         <div class="series-name">
                             {% if season.localized_name %}
-                                <span class="localized-name-span">{{ season.localized_name.name }}</span>
+                                <span class="localized-name-span">{{ season.localized_name.name }} ({{ series.firstAirDate|date("Y") }})</span>
+                            {% else %}
+                                <span class="name-span">{{ series.name }} ({{ series.firstAirDate|date("Y") }})</span>
                             {% endif %}
-                            <span class="name-span">{{ series.name }} ({{ series.firstAirDate|date("Y") }})</span>
                         </div>
                     </div>
                 {% endif %}
