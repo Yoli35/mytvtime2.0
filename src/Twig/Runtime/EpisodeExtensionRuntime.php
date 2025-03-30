@@ -58,6 +58,16 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         $sArr = $this->userEpisodeRepository->episodesOfTheIntervalForTwig($user, $startDate, $endDate, $locale);
         $mArr = $this->movieRepository->moviesOfTheIntervalForTwig($user, $startDate, $endDate, $locale);
 
+        $startIndex = intval($start);
+        $endIndex = intval($end);
+        for ($index= $startIndex; $index <= $endIndex; $index++) {
+            $intervalArr[$index] = [
+                'index' => $index,
+                'totalEpisodeCount' => 0,
+                'results' => [],
+            ];
+        }
+
         $seriesArr = [];
         foreach ($sArr as $item) {
             $index = $item['days'];
@@ -161,7 +171,6 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         }
         ksort($seriesArr);
 
-        $resultArr = [];
         foreach ($seriesArr as $indexKey => $itemArr) {
             $totalEpisodeCount = array_reduce($itemArr, function ($carry, $item) {;
                 return $carry + $item['episodeCount'];
