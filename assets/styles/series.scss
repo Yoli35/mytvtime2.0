@@ -1433,7 +1433,16 @@ h2 {
         gap: .25rem;
 
         h2 {
+            align-items: center;
             background-color: transparent;
+            display: flex;
+            gap: .5rem;
+
+            label {
+                align-items: center;
+                display: flex;
+                gap: .5rem;
+            }
         }
 
         .wrapper {

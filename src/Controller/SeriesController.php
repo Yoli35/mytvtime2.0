@@ -2670,6 +2670,14 @@ class SeriesController extends AbstractController
                 }
             }
         }
+        dump([
+            'series' => $series,
+            'keywords' => $keywords,
+            'keyword ids' => $keywordIds,
+            'external ids' => $externalIds,
+            'dbExternals' => $dbExternals,
+            'externals' => $externals,
+        ]);
         return $externals;
     }
 
