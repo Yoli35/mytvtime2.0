@@ -578,8 +578,10 @@ export class Season {
                 }
 
                 const progressDiv = document.querySelector('.progress');
-                progressDiv.setAttribute('data-value', data['progress']);
-                gThis.setProgress();
+                if (progressDiv) {
+                    progressDiv.setAttribute('data-value', data['progress']);
+                    gThis.setProgress();
+                }
 
                 const newEpisode = document.createElement('div');
                 newEpisode.classList.add('remove-this-episode');
