@@ -31,6 +31,7 @@ export class Map {
             this.map = new mapboxgl.Map({
                 container: 'map',
                 style: 'mapbox://styles/mapbox/outdoors-v12',
+                cooperativeGestures: true,
                 projection: 'globe',
                 bounds: this.bounds,
                 fitBoundsOptions: {
@@ -45,7 +46,17 @@ export class Map {
                     "high-color": "#112a67",
                     "space-color": "#000000",
                     "star-intensity": 0.15
-                }); // Set the default atmosphere style
+                });
+
+                map.addSource('mapbox-dem', {
+                    'type': 'raster-dem',
+                    'url': 'mapbox://mapbox.terrain-rgb'
+                });
+
+                map.setTerrain({
+                    'source': 'mapbox-dem',
+                    'exaggeration': 1.5
+                });
             });
             this.map.on('click', (e) => {
                 navigator.clipboard.writeText(`${e.lngLat.lat}, ${e.lngLat.lng}`).then(r => console.log(`A click event has occurred at ${e.lngLat}`));
