@@ -239,7 +239,7 @@
                             <a href="{{ path('app_series_show', {id: previousSeries.id, slug: previousSeries.slug}) }}"
                                class="previous-series" data-title="{{ 'Previous series'|trans }}">
                                 {{ ux_icon('fa6-solid:arrow-left', {height: '18px', width: '18px'}) }}
-                                {{ previousSeries.name }}
+                                {{ previousSeries.name }} ({{ previousSeries.progress }}%)
                                 {% if previousSeries.poster_path %}
                                     <img src="/series/posters{{ previousSeries.poster_path }}" alt="{{ 'Poster of the previous series'|trans }}">
                                 {% endif %}
@@ -248,7 +248,7 @@
                         {% if nextSeries %}
                             <a href="{{ path('app_series_show', {id: nextSeries.id, slug: nextSeries.slug}) }}"
                                class="next-series" data-title="{{ 'Next series'|trans }}">
-                                {{ nextSeries.name }}
+                                {{ nextSeries.name }} ({{ nextSeries.progress }}%)
                                 {{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }}
                                 {% if nextSeries.poster_path %}
                                     <img src="/series/posters{{ nextSeries.poster_path }}" alt="{{ 'Poster of the next series'|trans }}">

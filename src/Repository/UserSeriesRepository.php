@@ -436,7 +436,8 @@ class UserSeriesRepository extends ServiceEntityRepository
                     s.`id` as id,
                     IF(sln.`id`, sln.`name`, s.`name`) as name,
                     IF(sln.`id`, sln.`slug`, s.`slug`) as slug,
-                    s.`poster_path` as poster_path
+                    s.`poster_path` as poster_path,
+                    us.progress as progress
                 FROM `user_series` us
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale'
