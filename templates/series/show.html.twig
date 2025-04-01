@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.css">
 {% endblock %}
 {% block body %}
     <script>
@@ -680,6 +680,9 @@
                     {% if locations|length %}
                         {% set loc = locations|first %}
                         <div id="map" class="map-controller"></div>
+                        <div class="series-map-list">
+                            {{ include('_blocks/map/_thumbnails.html.twig', {styles: mapSettings.data.styles}) }}
+                        </div>
                         <div class="temp-locations">
                             <div class="locations">
                                 <ul>
@@ -757,7 +760,8 @@
 
     <div id="globs-map" style="display: none">
         {
-        "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "bounds": {{ locationsBounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
     <div id="globs" style="display: none">{# |replace({'\'': '\\\'', '"': '\\"'}}) #}
@@ -786,7 +790,5 @@
         <div class="svg" id="pen">{{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}</div>
         <div class="svg" id="trash">{{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}</div>
     </div>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
 {% endblock %}
 

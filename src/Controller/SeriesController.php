@@ -1060,7 +1060,7 @@ class SeriesController extends AbstractController
             'Not a valid file type. Update your selection' => $this->translator->trans('Not a valid file type. Update your selection'),
         ];
 
-        $filmingLocations = $this->getFilmingLocations($series->getTmdbId());
+        $filmingLocationsWithBounds = $this->getFilmingLocations($series->getTmdbId());
 
         $tvKeywords = $tv['keywords']['results'] ?? [];
         $tvExternalIds = $tv['external_ids'] ?? [];
@@ -1081,7 +1081,8 @@ class SeriesController extends AbstractController
 //            'series' => $seriesArr,
 //            'previousSeries' => $previousSeries,
 //            'nextSeries' => $nextSeries,
-//            'locations' => $filmingLocations,
+//            'locations' => $filmingLocationsWithBounds['filmingLocations'],
+//            'locationsBounds' => $filmingLocationsWithBounds['bounds'],
 //            'tv' => $tv,
 //            'oldSeriesAdded - get' => $request->get('oldSeriesAdded'),
 //            'oldSeriesAdded - query' => $request->query->get('oldSeriesAdded'),
@@ -1102,7 +1103,9 @@ class SeriesController extends AbstractController
             'tv' => $tv ?? $noTv,
             'userSeries' => $userSeries,
             'providers' => $providers,
-            'locations' => $filmingLocations,
+            'locations' => $filmingLocationsWithBounds['filmingLocations'],
+            'locationsBounds' => $filmingLocationsWithBounds['bounds'],
+            'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
             'externals' => $this->getExternals($series, $tvKeywords, $tvExternalIds, $request->getLocale()),
             'translations' => $translations,
             'addBackdropForm' => $addBackdropForm->createView(),
@@ -2670,14 +2673,14 @@ class SeriesController extends AbstractController
                 }
             }
         }
-        dump([
+        /*dump([
             'series' => $series,
             'keywords' => $keywords,
             'keyword ids' => $keywordIds,
             'external ids' => $externalIds,
             'dbExternals' => $dbExternals,
             'externals' => $externals,
-        ]);
+        ]);*/
         return $externals;
     }
 
@@ -3354,7 +3357,9 @@ class SeriesController extends AbstractController
     {
         $filmingLocations = $this->filmingLocationRepository->locations($tmdbId);
         if (count($filmingLocations) == 0) {
-            return [];
+            return ['filmingLocations' => [],
+                'bounds' => []
+            ];
         }
         $filmingLocationIds = array_column($filmingLocations, 'id');
         $filmingLocationImages = $this->filmingLocationRepository->locationImages($filmingLocationIds);
@@ -3365,7 +3370,22 @@ class SeriesController extends AbstractController
         foreach ($filmingLocations as &$location) {
             $location['filmingLocationImages'] = $flImages[$location['id']] ?? [];
         }
-        return $filmingLocations;
+        // Bounding box → center
+        if (count($filmingLocations) == 1) {
+            $loc = $filmingLocations[0];
+            $bounds = [[$loc['longitude'] + .1, $loc['latitude'] + .1], [$loc['longitude'] - .1, $loc['latitude'] - .1]];
+        } else {
+            $minLat = min(array_column($filmingLocations, 'latitude'));
+            $maxLat = max(array_column($filmingLocations, 'latitude'));
+            $minLng = min(array_column($filmingLocations, 'longitude'));
+            $maxLng = max(array_column($filmingLocations, 'longitude'));
+            $bounds = [[$maxLng + .1, $maxLat + .1], [$minLng - .1, $minLat - .1]];
+        }
+
+        return [
+            'filmingLocations' => $filmingLocations,
+            'bounds' => $bounds
+        ];
     }
 
     public function now(): DateTimeImmutable

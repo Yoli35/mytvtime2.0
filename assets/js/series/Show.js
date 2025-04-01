@@ -1,9 +1,8 @@
 import {Diaporama} from 'Diaporama';
 import {FlashMessage} from "FlashMessage";
 import {Keyword} from 'Keyword';
+import {Map} from "Map";
 import {ToolTips} from 'ToolTips';
-// import 'LeafletIcon';
-// import {iconX2} from '../../leaflet/images/marker@x2.png';
 
 let gThis = null;
 
@@ -978,56 +977,11 @@ export class Show {
         new Keyword('series');
 
         /******************************************************************************
-         * Leaflet map                                                                *
+         * mapbox gl                                                                  *
          ******************************************************************************/
-            // <div id="map" class="map-controller"></div>
         const mapDiv = document.querySelector('.map-controller');
         if (mapDiv) {
-            const L = window.L;
-            const locations = this.filmingLocations;
-            const latLngs = locations.map(location => [location.latitude, location.longitude]);
-            let map = L.map('map')
-                .setView([locations[0].latitude, locations[0].longitude], 10)
-                .fitBounds(latLngs);
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                minZoom: 2,
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }).addTo(map);
-
-            const myIcon = L.icon({
-                iconUrl: '/images/map/leaflet/marker.png',
-                iconRetinaUrl: '/images/map/leaflet/marker@x2.png',
-                iconSize: [32, 32],
-                iconAnchor: [15, 31],
-                popupAnchor: [0, -32]
-            });
-            locations.forEach(location => {
-                let marker = L.marker(
-                    [location.latitude, location.longitude],
-                    {
-                        'icon': myIcon,
-                        'title': location.location
-                    }).addTo(map);
-                marker.bindPopup('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>');
-                let markerIcon = marker.getElement();
-                markerIcon.setAttribute('data-id', location.id);
-            });
-            if (map.getZoom() > 12) map.setZoom(12);
-
-            const locationItems = document.querySelectorAll('.location-item');
-            locationItems.forEach(locationItem => {
-                const locationName = locationItem.querySelector('.location');
-                locationName.addEventListener('click', function () {
-                    const locationId = this.getAttribute('data-loc-id');
-                    // const markers = map.getPane('markerPane').children;
-                    // console.log({markers});
-                    const markerIcon = mapDiv.querySelector('.leaflet-marker-icon[data-id="' + locationId + '"]');
-                    const location = locations.find(location => location.id === parseInt(locationId));
-                    map.setView([location.latitude, location.longitude], 12);
-                    markerIcon.click();
-                });
-            });
+            this.map = new Map();
         }
 
         /******************************************************************************
