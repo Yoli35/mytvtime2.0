@@ -1529,10 +1529,15 @@ h2 {
         }
 
         .content-infos {
-            /*width: calc(30% - 1rem);*/
+            position: relative;
 
             .providers {
                 overflow-x: auto;
+
+                h3 {
+                    position: sticky;
+                    left: 0;
+                }
 
                 .wrapper {
                     display: flex;
@@ -1565,6 +1570,10 @@ h2 {
                 flex-wrap: wrap;
                 gap: .5rem;
                 justify-content: center;
+
+                &.hidden {
+                    display: none;
+                }
 
                 .fact {
                     align-items: center;
@@ -1672,6 +1681,25 @@ h2 {
                         }
                     }
                 }
+            }
+
+            .toggle-visibility {
+                align-items: center;
+                background-color: var(--orange-50);
+                border-radius: 50%;
+                color: var(--ardoise-10);
+                cursor: pointer;
+                display: flex;
+                height: 2rem;
+                justify-content: center;
+                position: absolute;
+                right: 1rem;
+                top: 0;
+                width: 2rem;
+
+                /*.hidden {
+                    display: none;
+                }*/
             }
         }
 

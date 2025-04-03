@@ -239,7 +239,7 @@
                             <a href="{{ path('app_series_show', {id: previousSeries.id, slug: previousSeries.slug}) }}"
                                class="previous-series" data-title="{{ 'Previous series'|trans }}">
                                 {{ ux_icon('fa6-solid:arrow-left', {height: '18px', width: '18px'}) }}
-                                {{ previousSeries.name }} ({{ previousSeries.progress }}%)
+                                {{ previousSeries.name }} ({{ previousSeries.progress|format_number({max_fraction_digit:2}) }}%)
                                 {% if previousSeries.poster_path %}
                                     <img src="/series/posters{{ previousSeries.poster_path }}" alt="{{ 'Poster of the previous series'|trans }}">
                                 {% endif %}
@@ -248,7 +248,7 @@
                         {% if nextSeries %}
                             <a href="{{ path('app_series_show', {id: nextSeries.id, slug: nextSeries.slug}) }}"
                                class="next-series" data-title="{{ 'Next series'|trans }}">
-                                {{ nextSeries.name }} ({{ nextSeries.progress }}%)
+                                {{ nextSeries.name }} ({{ nextSeries.progress|format_number({max_fraction_digit:2}) }}%)
                                 {{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }}
                                 {% if nextSeries.poster_path %}
                                     <img src="/series/posters{{ nextSeries.poster_path }}" alt="{{ 'Poster of the next series'|trans }}">
@@ -494,49 +494,55 @@
             </div>
 
             <div class="content column">
+                {% if tv['watch/providers'].flatrate|length or tv['watch/providers'].rent|length or tv['watch/providers'].buy|length %}
+                    <div class="content-infos">
+                        <h3>{{ 'Where to watch, rent or buy'|trans }}</h3>
+                        {% if tv['watch/providers'].flatrate|length %}
+                            <div class="providers">
+                                <h3>{{ 'Where to watch'|trans }}</h3>
+                                <div class="wrapper">
+                                    {% for provider in tv['watch/providers'].flatrate %}
+                                        <div class="provider" data-title="{{ provider.provider_name }}">
+                                            <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                            <div>{{ provider.provider_name }}</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if tv['watch/providers'].rent|length %}
+                            <div class="providers">
+                                <h3>{{ 'Where to rent'|trans }}</h3>
+                                <div class="wrapper">
+                                    {% for provider in tv['watch/providers'].rent %}
+                                        <div class="provider" data-title="{{ provider.provider_name }}">
+                                            <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                            <div>{{ provider.provider_name }}</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if tv['watch/providers'].buy|length %}
+                            <div class="providers">
+                                <h3>{{ 'Where to buy'|trans }}</h3>
+                                <div class="wrapper">
+                                    {% for provider in tv['watch/providers'].buy %}
+                                        <div class="provider" data-title="{{ provider.provider_name }}">
+                                            <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                            <div>{{ provider.provider_name }}</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="toggle-visibility watch-block" data-title="{{ 'Hide all providers'|trans }}">
+                            {{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px', class: 'hidden'}) }}
+                            {{ ux_icon('fa6-solid:eye-slash', {height: '18px', width: '18px'}) }}
+                        </div>
+                    </div>
+                {% endif %}
                 <div class="content-infos">
-                    {% if tv['watch/providers'].flatrate|length %}
-                        <h3>{{ 'Where to watch'|trans }}</h3>
-                        <div class="providers">
-                            <div class="wrapper">
-                                {% for provider in tv['watch/providers'].flatrate %}
-                                    <div class="provider" data-title="{{ provider.provider_name }}">
-                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
-                                        <div>{{ provider.provider_name }}</div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {% if tv['watch/providers'].rent|length %}
-                        <h3>{{ 'Where to rent'|trans }}</h3>
-                        <div class="providers">
-                            <div class="wrapper">
-                                {% for provider in tv['watch/providers'].rent %}
-                                    <div class="provider" data-title="{{ provider.provider_name }}">
-                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
-                                        <div>{{ provider.provider_name }}</div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {% if tv['watch/providers'].buy|length %}
-                        <h3>{{ 'Where to buy'|trans }}</h3>
-                        <div class="providers">
-                            <div class="wrapper">
-                                {% for provider in tv['watch/providers'].buy %}
-                                    <div class="provider" data-title="{{ provider.provider_name }}">
-                                        <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
-                                        <div>{{ provider.provider_name }}</div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-
                     <h3>{{ 'Key facts'|trans }}</h3>
                     <div class="facts">
                         {% if tv.average_episode_run_time %}
@@ -587,7 +593,46 @@
                             <div class="fact-content">{{ tv.status|trans }}</div>
                         </div>
                     </div>
+                    <div class="toggle-visibility facts-block" data-title="{{ 'Hide all facts'|trans }}">
+                        {{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px', class: 'hidden'}) }}
+                        {{ ux_icon('fa6-solid:eye-slash', {height: '18px', width: '18px'}) }}
+                    </div>
                 </div>
+                <script>
+                    const toggleVisibilityDivs = document.querySelectorAll('.toggle-visibility');
+
+                    toggleVisibilityDivs.forEach(toggleVisibility => {
+                        const contentInfosDiv = toggleVisibility.closest('.content-infos');
+                        toggleVisibility.addEventListener('click', function (e) {
+                            const firstSvg = toggleVisibility.querySelector('svg');
+                            const toggleVisibilitySvgs = toggleVisibility.querySelectorAll('svg');
+                            e.preventDefault();
+                            toggleVisibilitySvgs.forEach(svg => {
+                                svg.classList.toggle('hidden');
+                            });
+                            if (toggleVisibility.classList.contains('watch-block')) {
+                                const providersDivs = contentInfosDiv.querySelectorAll('.providers');
+                                providersDivs.forEach(providers => {
+                                    providers.classList.toggle('hidden');
+                                });
+                                if (firstSvg.classList.contains('hidden')) {
+                                    toggleVisibility.setAttribute('data-title', '{{ 'Hide all providers'|trans }}');
+                                } else {
+                                    toggleVisibility.setAttribute('data-title', '{{ 'Show all providers'|trans }}');
+                                }
+                            }
+                            if (toggleVisibility.classList.contains('facts-block')) {
+                                const factsDiv = contentInfosDiv.querySelector('.facts');
+                                factsDiv.classList.toggle('hidden');
+                                if (firstSvg.classList.contains('hidden')) {
+                                    toggleVisibility.setAttribute('data-title', '{{ 'Hide all facts'|trans }}');
+                                } else {
+                                    toggleVisibility.setAttribute('data-title', '{{ 'Show all facts'|trans }}');
+                                }
+                            }
+                        });
+                    });
+                </script>
                 <div class="content-seasons">
                     <div class="all-seasons">
                         <div>{{ 'Seasons'|trans }}</div>
