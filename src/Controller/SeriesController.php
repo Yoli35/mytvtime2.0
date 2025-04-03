@@ -309,7 +309,7 @@ class SeriesController extends AbstractController
             $this->imageService->saveImage("posters", $s['poster_path'], $posterUrl);
             $s['provider_logo_path'] = $this->getProviderLogoFullPath($s['provider_logo_path'], $logoUrl);
             return $s;
-        }, $this->userSeriesRepository->seriesToStart($user, $locale, 'addedAt', 1, -1));
+        }, $this->userSeriesRepository->seriesToStart($user, $locale, 'firstAirDate', 1, -1));
         $tmdbIds = array_column($seriesToStart, 'tmdb_id');
 
         $series = [];
@@ -366,7 +366,7 @@ class SeriesController extends AbstractController
         $series = array_map(function ($s) {
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
-        }, $this->userSeriesRepository->upComingSeries($user, $locale, 1, -1));
+        }, $this->userSeriesRepository->upComingSeries($user, $locale, 'firstAirDate',  1, -1));
         $tmdbIds = array_column($series, 'tmdb_id');
 
         return $this->render('series/up-coming-series.html.twig', [
@@ -932,6 +932,7 @@ class SeriesController extends AbstractController
             $tv['credits'] = $this->castAndCrew($tv);
             $tv['localized_name'] = $series->getLocalizedName($request->getLocale());
             $tv['localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
+            $tv['keywords']['results'] = $this->keywordService->keywordsCleaning($tv['keywords']['results']);
             $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $locale);
             $tv['networks'] = $this->networks($tv);
             $tv['overview'] = $this->localizedOverview($tv, $series, $request);
@@ -2985,9 +2986,9 @@ class SeriesController extends AbstractController
             }
             return ['seasonNumber' => $seasonNumber, 'multiPart' => false, 'seasonPart' => 0, 'airDays' => $dayArr];
         }
-        if (!$seasonNumber) {
+        /*if (!$seasonNumber) {
             return $errorArr;
-        }
+        }*/
         $frequency = $schedule->getFrequency();
         $firstAirDate = $schedule->getFirstAirDate();
         $airAt = $schedule->getAirAt();
@@ -3582,11 +3583,12 @@ class SeriesController extends AbstractController
         $stills = $this->episodeStillRepository->getSeasonStills($episodeIds);
 
         foreach ($season['episodes'] as $episode) {
-            if (!$next_episode_to_air && !$episode['air_date']) {
+            $userEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number']);
+
+            if (!$userEpisode['custom_date'] && !$next_episode_to_air && !$episode['air_date']) {
                 continue;
             }
 
-            $userEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number']);
             $userEpisodeList = $this->getUserEpisodes($userEpisodes, $episode['episode_number']);
 
             $stillUrl = $this->imageConfiguration->getUrl('still_sizes', 3);

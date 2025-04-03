@@ -9,6 +9,20 @@ class KeywordService
     {
     }
 
+    public function keywordsCleaning(array $keywords): array
+    {
+        $keywords = array_map(function ($keyword) {
+            return ['id' => $keyword['id'], 'name' => trim($keyword['name'], " \n\r\t\v\0\u{A0}")];
+        }, $keywords);
+        $keywords = array_map(function ($keyword) {
+            return ['id' => $keyword['id'], 'name' => preg_replace('/\s+/', ' ', $keyword['name'])];
+        }, $keywords);
+        /*$keywords = array_map(function ($keyword) {
+            return ['name' => preg_replace('/[^\p{L}\p{N}\s]/u', '', $keyword['name'])];
+        }, $keywords);*/
+        return $keywords;
+    }
+
     public function keywordsTranslation($keywords, $locale): array
     {
         $translatedKeywords = $this->getTranslations($locale);
