@@ -103,6 +103,19 @@ export class Show {
         this.filmingLocations = jsonGlobsObject.locations;
         console.log({filmingLocations: this.filmingLocations});
 
+        const previousSeries = document.querySelector('.previous-series');
+        const nextSeries = document.querySelector('.next-series');
+        document.addEventListener('keyup', function (event) {
+            // "<" Arrow: Previous series
+            if (event.key === "<" && previousSeries) {
+                previousSeries.click();
+            }
+            // ">" Arrow: Next series
+            if (event.key === ">" && nextSeries) {
+                nextSeries.click();
+            }
+        });
+
         /******************************************************************************
          * Animation for the progress bar                                             *
          ******************************************************************************/
