@@ -1243,7 +1243,7 @@ export class Menu {
                 loadingDiv.remove();
             })
             .catch((error) => {
-                console.error('Error:', error);
+                console.error('Error:', error.message);
             });
     }
 
