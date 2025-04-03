@@ -545,22 +545,44 @@ job.Writer.she: Auteure
 "First Assistant \"C\" Camera": Premier assistant caméra "C"
 "Second Assistant \"A\" Camera": Second assistant caméra "A"
 "Second Assistant \"B\" Camera": Second assistant caméra "B"
+"Second Assistant \"C\" Camera": Deuxième assistant caméra "C"
 "\"A\" Camera Operator": Opérateur de caméra "A"
 "\"B\" Camera Operator": Opérateur de caméra "B"
+"\"C\" Camera Operator": Opérateur de caméra "C"
+"\"D\" Camera Operator": Opérateur de caméra "D"
+24 Frame Playback: Lecture 24 images
 3D Artist: Artiste 3D
 3D Supervisor: Superviseur 3D
+ADR & Dubbing: ADR et doublage
+ADR Coordinator: Coordinateur ADR
 ADR Editor: Monteur ADR
 ADR Mixer: Mixeur ADR
 ADR Recordist: Enregistreur ADR
 ADR Supervisor: Superviseur ADR
 ADR Voice Casting: Casting voix ADR
 Accountant: Comptable
+Acting Double: Double d'acteur
+Actor's Assistant: Assistant d'acteur
+Adaptation: Adaptation
 Additional Casting: Casting supplémentaire
+Additional Colorist: Coloriste supplémentaire
+Additional Editor: Monteur supplémentaire
 Additional Music: Musique supplémentaire
+Additional Script Supervisor: Superviseur de script supplémentaire
+Additional Second Assistant Director: Deuxième assistant réalisateur supplémentaire
+Additional Sound Re-Recording Mixer: Mixeur son supplémentaire
+Additional Soundtrack: Bande sonore supplémentaire
+Additional Wardrobe Assistant: Assistant de garde-robe supplémentaire
+Administration: Administration
+Administrative Assistant: Assistant administratif
+Animal Coordinator: Coordinateur animal
 Animation Supervisor: Superviseur d'animation
 Animation: Animation
+Apprentice Sound Editor: Apprenti monteur son
+Armorer: Armurier
 Art Department Assistant: Assistant du département artistique
 Art Department Coordinator: Coordinateur du département artistique
+Art Department Production Assistant: Assistant de production du département artistique
 Art Department Trainee: Stagiaire du département artistique
 Art Designer: Concepteur artistique
 Art Direction: Direction artistique
@@ -568,28 +590,39 @@ Art: Art
 Assistant Accountant: Assistant comptable
 Assistant Art Director: Assistant directeur artistique
 Assistant Camera: Assistant caméra
+Assistant Chef: Assistant chef
+Assistant Chief Lighting Technician: Assistant chef technicien d'éclairage
 Assistant Costume Designer: Assistant costumier
 Assistant Director Trainee: Stagiaire assistant réalisateur
 Assistant Director: Assistant réalisateur
 Assistant Editor: Assistant monteur
+Assistant Electrician: Assistant électricien
+Assistant Grip: Assistant grip
 Assistant Hairstylist: Assistant coiffeur
+Assistant Location Manager: Assistant responsable de la localisation
 Assistant Makeup Artist: Assistant maquilleur
 Assistant Production Coordinator: Assistant coordinateur de production
 Assistant Production Design: Assistant à la conception de production
 Assistant Production Manager: Assistant responsable de la production
 Assistant Property Master: Assistant maître des accessoires
+Assistant Script: Assistant script
 Assistant Set Decoration: Décoration de plateau
 Assistant Sound Editor: Assistant monteur son
 Assistant Unit Manager: Assistant responsable de l'unité
+Associate Editor: Monteur associé
 Associate Producer: Producteur associé
+Background Casting Director: Directeur de casting de figurants
 Base Camp Operator: Opérateur de camp de base
 Best Boy Electric: Assistant chef technicien d'éclairage
 Best Boy Grip: Assistant chef grip
 Best Boy Lighting Technician: Assistant chef technicien d'éclairage
 Book: Livre
 Boom Operator: Opérateur de perche
+CG Supervisor: Superviseur CG
+Camera Loader: Chargeur de caméra
 Camera Operator: Opérateur de caméra
 Camera Technician: Technicien caméra
+Camera Trainee: Stagiaire caméra
 Camera: Caméra
 Carpenter: Menuisier
 Casting Assistant: Assistant de casting
@@ -600,60 +633,99 @@ Casting: Casting
 Catering: Restauration
 Character Designer: Concepteur de personnages
 Characters: Personnages
+Chef: Chef
+Chief Lighting Technician: Chef technicien d'éclairage
 Child Wrangler: Entraîneur d'enfants
+Choreographer: Chorégraphe
 Cinematography: Cinématographie
 Clearances Coordinator: Coordinateur des autorisations
 Co-Director: Co-réalisateur
 Co-Executive Producer: Producteur co-exécutif
 Co-Producer: Co-producteur
+Color Assistant: Assistant couleur
 Color Grading: Étalonnage
 Colorist: Coloriste
 Comic Book: Bande dessinée
 Compositing Artist: Artiste de compositing
+Compositing Lead: Leader de compositing
+Compositing Supervisor: Superviseur de compositing
+Compositor: Compositing
+Compositors: Compositing
 Concept Artist: Artiste conceptuel
 Conceptual Design: Conception conceptuelle
 Conceptual Illustrator: Illustrateur conceptuel
+Conductor: Chef d'orchestre
+Construction Buyer: Acheteur de construction
 Construction Coordinator: Coordinateur de construction
+Construction Foreman: Contremaître de construction
+Construction Grip: Grip de construction
 Construction Manager: Responsable de la construction
 Consulting Producer: Producteur consultant
+Contact Lens Technician: Technicien de lentilles de contact
 Continuity: Continuité
 Controller: Contrôleur
 Coordinating Producer: Producteur coordonnateur
 Costume & Make-Up: Costume et Maquillage
 Costume Assistant: Assistant costumier
+Costume Consultant: Consultant en costumes
 Costume Coordinator: Coordinateur de costumes
 Costume Design: Conception de costumes
 Costume Designer: Costumier
+Costume Illustrator: Illustrateur de costumes
+Costume Mistress: Maîtresse de costume
 Costume Set Supervisor: Superviseur de costumes
 Costume Supervisor: Superviseur de costumes
 Costumer: Costumier
+Craft Service: Service de restauration
+Creative Consultant: Consultant créatif
 Creative Director: Directeur créatif
 Creative Producer: Producteur créatif
 Creator: Créateur
+Delegated Producer: Producteur délégué
+Development Manager: Responsable du développement
+Development Producer: Producteur de développement
 Dialect Coach: Entraîneur de dialecte
+Dialogue Coach: Entraîneur de dialogue
 Dialogue Editor: Monteur dialogue
 Digital Compositor: Compositing numérique
 Digital Effects Supervisor: Superviseur des effets numériques
 Digital Imaging Technician: Technicien d'imagerie numérique
 Digital Intermediate Colorist: Coloriste intermédiaire numérique
+Digital Intermediate Editor: Monteur intermédiaire numérique
+Digital Intermediate Producer: Producteur intermédiaire numérique
 Digital Intermediate: Intermédiaire numérique
 Director of Photography: Directeur de la photographie
 Director: Réalisateur
+Dolly Grip: Grip dolly
+Draughtsman: Dessinateur
 Driver: Chauffeur
 Editing: Montage
 Editor: Monteur
 Editorial Manager: Responsable éditorial
+Editorial Production Assistant: Assistant de production éditoriale
+Effects Supervisor: Superviseur des effets
 Electrician: Électricien
+Epk Camera Operator: Opérateur de caméra EPK
 Epk Producer: Producteur EPK
 Executive Assistant: Assistant exécutif
+Executive Consultant: Consultant exécutif
+Executive In Charge Of Production: Exécutif en charge de la production
 Executive Music Producer: Producteur musical exécutif
 Executive Producer's Assistant: Assistant du producteur exécutif
 Executive Producer: Producteur exécutif
 Executive Story Editor: Scénariste exécutif
+Executive Visual Effects Producer: Producteur exécutif des effets visuels
 Extras Casting: Casting d'extras
+Fight Choreographer: Chorégraphe de combat
+Finishing Producer: Producteur de finition
+First Assistant "D" Camera: Premier assistant caméra "D"
 First Assistant Accountant: Premier assistant comptable
 First Assistant Camera: Premier assistant caméra
 First Assistant Director: Premier assistant réalisateur
+First Assistant Hairstylist: Premier assistant coiffeur
+First Assistant Makeup Artist: Premier assistant maquilleur
+First Assistant Production Coordinator: Premier assistant coordinateur de production
+First Assistant Sound Editor: Premier assistant monteur son
 Floor Runner: Assistant de plateau
 Focus Puller: Tireur de mise au point
 Foley Artist: Artiste Foley
@@ -663,52 +735,82 @@ Foley Recordist: Enregistreur Foley
 Foley Supervisor: Superviseur Foley
 Gaffer: Éclairagiste
 Graphic Designer: Graphiste
+Graphic Novel: Roman graphique
+Greensman: Jardinier
 Grip: Grip
 Hair Assistant: Assistant coiffeur
 Hair Department Head: Chef de département coiffure
 Hair Designer: Coiffeur
 Hair Supervisor: Superviseur coiffure
+Hairdresser: Coiffeur
 Hairstylist: Coiffeur
 Head Greensman: Chef des jardiniers
 Head of Animation: Responsable de l'animation
 Head of Production: Responsable de la production
 Head of Story: Responsable de l'histoire
+Health and Safety: Santé et sécurité
+Hide all facts: Masquer tous les faits
+Hide all providers: Masquer toutes les plateformes
 Idea: Idée
 In Memory Of: En mémoire de
+Interior Designer: Designer d'intérieur
 Key Costumer: Costumier principal
 Key Grip: Grip principal
+Key Hair Stylist: Coiffeur principal
 Key Makeup Artist: Maquilleur principal
+Key Rigging Grip: Grip de gréement principal
+Lead Animator: Animateur principal
+Lead Painter: Peintre principal
+Lead Set Dresser: Décorateur de plateau principal
+Leadman: Chef d'équipe
 Legal Services: Services juridiques
+Libra Head Technician: Technicien Libra
+Lighting Artist: Artiste d'éclairage
 Lighting Director: Directeur de la photographie
+Lighting Programmer: Programmeur d'éclairage
 Lighting Technician: Technicien d'éclairage
 Lighting: Éclairage
 Line Producer: Producteur de ligne
+Loader: Chargeur
 Local Casting: Casting local
 Location Assistant: Assistant de localisation
 Location Coordinator: Coordinateur de localisation
 Location Manager: Responsable de la localisation
+Location Production Assistant: Assistant de production de localisation
 Location Scout: Chercheur de lieux
 Main Title Designer: Concepteur du générique
 Main Title Theme Composer: Compositeur du thème principal
+Makeup & Hair Assistant: Assistant maquillage et coiffure
 Makeup & Hair: Maquillage et coiffure
 Makeup Artist: Maquilleur
 Makeup Department Head: Chef de département maquillage
 Makeup Designer: Maquilleur
 Makeup Effects Designer: Concepteur d'effets de maquillage
+Makeup Effects: Maquillage d'effets
 Makeup Supervisor: Superviseur de maquillage
 Marine Coordinator: Coordinateur maritime
+Martial Arts Choreographer: Chorégraphe d'arts martiaux
+Master Lighting Artist: Artiste d'éclairage principal
 Matte Painter: Peintre de matte
+Medical Consultant: Consultant médical
 Military Consultant: Consultant militaire
+Mix Technician: Technicien de mixage
 Mixing Engineer: Ingénieur du son
+Modeling: Modélisation
 Music Arranger: Arrangeur musical
+Music Co-Supervisor: Co-superviseur musical
 Music Consultant: Consultant musical
+Music Coordinator: Coordinateur musical
+Music Director: Directeur musical
 Music Editor: Monteur musical
 Music Producer: Producteur musical
 Music Score Producer: Producteur de musique
 Music Supervisor: Superviseur musical
 Music: Musique
+Musician: Musicien
 Novel: Roman
 On Set Computer Graphics: Graphismes informatiques sur le plateau
+On Set Dresser: Décorateur de plateau
 Online Editor: Monteur en ligne
 Opening/Ending Animation: Animation d'ouverture/fermeture
 Orchestrator: Orchestrateur
@@ -719,9 +821,13 @@ Original Music Composer: Compositeur de musique originale
 Original Series Creator: Créateur de la série originale
 Original Story: Histoire originale
 Other: Autre
+Paint Coordinator: Coordinateur de peinture
 Payroll Accountant: Comptable de paie
 Picture Car Coordinator: Coordinateur de voiture de scène
+Pipeline Technical Director: Directeur technique de pipeline
+Playback Coordinator: Coordinateur de lecture
 Post Producer: Producteur de post-production
+Post Production Accountant: Comptable de post-production
 Post Production Assistant: Assistant de post-production
 Post Production Coordinator: Coordinateur de post-production
 Post Production Producer: Producteur de post-production
@@ -735,29 +841,54 @@ Production Assistant: Assistant de production
 Production Controller: Contrôleur de production
 Production Coordinator: Coordinateur de production
 Production Design: Conception (production)
+Production Designer: Concepteur de production
+Production Director: Directeur de production
+Production Driver: Conducteur de production
+Production Executive: Exécutif de production
 Production Manager: Responsable de la production
+Production Office Assistant: Assistant de bureau de production
 Production Office Coordinator: Coordinateur de bureau de production
 Production Secretary: Secrétaire de production
 Production Sound Mixer: Mixeur son (production)
 Production Supervisor: Superviseur de production
+Project Manager: Responsable de projet
 Prop Designer: Concepteur d'accessoires
 Prop Maker: Fabricant d'accessoires
+Property Builder: Constructeur d'accessoires
+Property Buyer: Acheteur d'accessoires
 Property Master: Maître des accessoires
+Propmaker: Fabricant d'accessoires
 Props: Accessoires
 Prosthetic Designer: Concepteur de prothèses
 Prosthetic Makeup Artist: Maquilleur prothétique
+Prosthetic Supervisor: Superviseur de prothèses
 Prosthetics: Prothèses
+Publicist: Attaché de presse
 Recording Supervision: Supervision de l'enregistrement
 Researcher: Chercheur
 Rigging Gaffer: Éclairagiste de gréement
+Rigging Grip: Grip de gréement
+Rotoscoping Artist: Artiste de rotoscopie
+Scenario Writer: Scénariste
+Scenic Artist: Artiste de décor
+Scientific Consultant: Consultant scientifique
+Score Engineer: Ingénieur musique
 Scoring Mixer: Mixeur de musique
 Screenplay: Scénario
 Screenstory: Histoire
+Script Consultant: Consultant en script
 Script Coordinator: Coordinateur de script
 Script Editor: Éditeur de script
 Script Supervisor: Superviseur de script
 Script: Scénario
+Sculptor: Sculpteur
+Seamstress: couturière
+Second Assistant "D" Camera: Deuxième assistant caméra "D"
+Second Assistant Accountant: Deuxième assistant comptable
+Second Assistant Camera: Deuxième assistant caméra
 Second Assistant Director: Deuxième assistant réalisateur
+Second Assistant Production Coordinator: Deuxième assistant coordinateur de production
+Second Second Assistant Director: Deuxième assistant réalisateur
 Second Unit Director of Photography: Directeur de la photographie de la deuxième équipe
 Second Unit Director: Réalisateur de la deuxième équipe
 Second Unit First Assistant Director: Premier assistant réalisateur de la deuxième équipe
@@ -765,31 +896,46 @@ Second Unit: Deuxième équipe
 Security: Sécurité
 Senior Colorist: Coloriste senior
 Senior Visual Effects Supervisor: Superviseur des effets visuels senior
+Series Composition: Composition de la série
 Series Director: Réalisateur de la série
+Set Buyer: Acheteur de plateau
 Set Costumer: Costumier de plateau
 Set Decorating Coordinator: Coordinateur de décoration de plateau
 Set Decoration Buyer: Acheteur de décoration de plateau
 Set Decoration: Décoration
 Set Designer: Concepteur de plateau
 Set Dresser: Décorateur de plateau
+Set Medic: Médecin de plateau
 Set Photographer: Photographe de plateau
 Set Production Assistant: Assistant de production de plateau
+Shading: Ombrage
+Show all facts: Afficher tous les faits
+Show all providers: Afficher toutes les plateformes
+Songs: Paroles
 Sound Assistant: Assistant son
 Sound Designer: Concepteur sonore
+Sound Director: Directeur du son
 Sound Editor: Monteur son
+Sound Effects Designer: Concepteur sonore
 Sound Effects Editor: Monteur son
 Sound Engineer: Ingénieur du son
 Sound Mixer: Mixeur son
+Sound Re-Recording Assistant: Assistant de mixage son
 Sound Re-Recording Mixer: Mixeur son
 Sound Recordist: Enregistreur son
 Sound Supervisor: Superviseur son
 Sound: Son
+Special Effects Best Boy: Assistant chef effets spéciaux
 Special Effects Coordinator: Coordinateur des effets spéciaux
+Special Effects Key Makeup Artist: Maquilleur d'effets spéciaux principal
 Special Effects Makeup Artist: Maquilleur d'effets spéciaux
 Special Effects Supervisor: Superviseur des effets spéciaux
 Special Effects Technician: Technicien des effets spéciaux
+Special Props: Accessoires spéciaux
+Specialized Driver: Conducteur spécialisé
 Staff Writer: Scénariste
 Stand In: Doublure
+Standby Art Director: Directeur artistique de secours
 Standby Carpenter: Menuisier de secours
 Standby Property Master: Maître des accessoires de secours
 Steadicam Operator: Opérateur Steadicam
@@ -799,36 +945,46 @@ Story Editor: Éditeur d'histoire
 Story Supervisor: Superviseur d'histoire
 Story: Histoire
 Storyboard Artist: Artiste de storyboard
+Storyboard: Storyboard
 Stunt Coordinator: Coordinateur de cascades
 Stunt Double: Doublure de cascade
 Stunt Driver: Conducteur de cascade
 Stunts: Cascades
+Supervising Armorer: Superviseur armurier
 Supervising Art Director: Directeur artistique superviseur
 Supervising Music Editor: Monteur musical superviseur
 Supervising Producer: Producteur superviseur
 Supervising Sound Editor: Superviseur son
 Supervising Sound Effects Editor: Monteur son superviseur
 Systems Administrators & Support: Administrateurs systèmes et support
+Tailor: tailleur
 Technical Advisor: Conseiller technique
+Techno Crane Operator: Opérateur de grue Techno
 Teleplay: Télétexte
 Thanks: Remerciements
 Theme Song Performance: Interprétation de la chanson thème
 Third Assistant Director: Troisième assistant réalisateur
 Title Designer: Concepteur de générique
+Transcriptions: Transcriptions
 Translator: Traducteur
 Transportation Captain: Capitaine de transport
 Transportation Co-Captain: Co-capitaine de transport
 Transportation Coordinator: Coordinateur de transport
 Travel Coordinator: Coordinateur de voyage
+Truck Costumer: Costumier de camion
+Truck Supervisor: Superviseur de camion
 Unit Manager: Responsable de l'unité
 Unit Production Manager: Responsable de la production
 Unit Publicist: Attaché de presse
+Utility Sound: Son utilitaire
 VFX Artist: Artiste VFX
 VFX Editor: Monteur VFX
 VFX Supervisor: Superviseur VFX
+Video Assist Operator: Opérateur vidéo d'assistance
 Visual Development: Développement visuel
 Visual Effects Art Director: Directeur artistique des effets visuels
 Visual Effects Assistant Editor: Assistant monteur des effets visuels
+Visual Effects Compositor: Compositing des effets visuels
 Visual Effects Coordinator: Coordinateur des effets visuels
 Visual Effects Director: Directeur des effets visuels
 Visual Effects Editor: Monteur des effets visuels
@@ -838,114 +994,13 @@ Visual Effects Production Manager: Responsable de production des effets visuels
 Visual Effects Supervisor: Superviseur des effets visuels
 Visual Effects: Effets visuels
 Vocals: Voix
+Wardrobe Assistant: Assistant costumier
+Wardrobe Designer: Costumier
+Wardrobe Supervisor: Superviseur de garde-robe
+Where to watch, rent or buy: Où regarder, louer ou acheter
 Writer: Scénariste
 Writers' Assistant: Assistant des scénaristes
-  
-Delegated Producer: Producteur délégué
 Writers' Production: Production des scénaristes
-Production Director: Directeur de production
-Hairdresser: Coiffeur
-Compositor: Compositing
-Fight Choreographer: Chorégraphe de combat
-Costume Consultant: Consultant en costumes
-Truck Supervisor: Superviseur de camion
-Prosthetic Supervisor: Superviseur de prothèses
-Second Assistant Accountant: Deuxième assistant comptable
-Assistant Location Manager: Assistant responsable de la localisation
-Sound Re-Recording Assistant: Assistant de mixage son
-Animal Coordinator: Coordinateur animal
-Actor's Assistant: Assistant d'acteur
-Editorial Production Assistant: Assistant de production éditoriale
-Property Buyer: Acheteur d'accessoires
-Scenic Artist: Artiste de décor
-Costume Mistress: Maîtresse de costume
-ADR Coordinator: Coordinateur ADR
-Epk Camera Operator: Opérateur de caméra EPK
-Camera Trainee: Stagiaire caméra
-Standby Art Director: Directeur artistique de secours
-Key Hair Stylist: Coiffeur principal
-First Assistant Sound Editor: Premier assistant monteur son
-Supervising Armorer: Superviseur armurier
-Libra Head Technician: Technicien Libra
-Dolly Grip: Grip dolly
-Executive Visual Effects Producer: Producteur exécutif des effets visuels
-Score Engineer: Ingénieur musique
-Choreographer: Chorégraphe
-Seamstress: couturière
-Finishing Producer: Producteur de finition
-Paint Coordinator: Coordinateur de peinture
-Tailor: tailleur
-Chef: Chef
-Construction Buyer: Acheteur de construction
-Second Assistant Production Coordinator: Deuxième assistant coordinateur de production
-First Assistant Production Coordinator: Premier assistant coordinateur de production
-On Set Dresser: Décorateur de plateau
-Construction Foreman: Contremaître de construction
-First Assistant Hairstylist: Premier assistant coiffeur
-Armorer: Armurier
-Lead Set Dresser: Décorateur de plateau principal
-Set Buyer: Acheteur de plateau
-Special Effects Key Makeup Artist: Maquilleur d'effets spéciaux principal
-Assistant Chef: Assistant chef
-Property Builder: Constructeur d'accessoires
-"Second Assistant \"C\" Camera": Deuxième assistant caméra "C"
-Playback Coordinator: Coordinateur de lecture
-Key Rigging Grip: Grip de gréement principal
-Special Effects Best Boy: Assistant chef effets spéciaux
-Mix Technician: Technicien de mixage
-Video Assist Operator: Opérateur vidéo d'assistance
-Production Office Assistant: Assistant de bureau de production
-Lead Painter: Peintre principal
-Additional Colorist: Coloriste supplémentaire
-Rigging Grip: Grip de gréement
-First Assistant Makeup Artist: Premier assistant maquilleur
-Visual Effects Compositor: Compositing des effets visuels
-Compositing Lead: Leader de compositing
-Music Director: Directeur musical
-Additional Wardrobe Assistant: Assistant de garde-robe supplémentaire
-Series Composition: Composition de la série
-Adaptation: Adaptation
-Conductor: Chef d'orchestre
-Effects Supervisor: Superviseur des effets
-Acting Double: Double d'acteur
-Associate Editor: Monteur associé
-Greensman: Jardinier
-Assistant Chief Lighting Technician: Assistant chef technicien d'éclairage
-Additional Sound Re-Recording Mixer: Mixeur son supplémentaire
-"\"D\" Camera Operator": Opérateur de caméra "D"
-First Assistant "D" Camera: Premier assistant caméra "D"
-Lighting Programmer: Programmeur d'éclairage
-Leadman: Chef d'équipe
-"\"C\" Camera Operator": Opérateur de caméra "C"
-Chief Lighting Technician: Chef technicien d'éclairage
-Truck Costumer: Costumier de camion
-Second Assistant "D" Camera: Deuxième assistant caméra "D"
-Costume Illustrator: Illustrateur de costumes
-Loader: Chargeur
-Additional Script Supervisor: Superviseur de script supplémentaire
-Martial Arts Choreographer: Chorégraphe d'arts martiaux
-Songs: Paroles
-Background Casting Director: Directeur de casting de figurants
-Special Props: Accessoires spéciaux
-Draughtsman: Dessinateur
-Sculptor: Sculpteur
-Graphic Novel: Roman graphique
-Production Executive: Exécutif de production
-Pipeline Technical Director: Directeur technique de pipeline
-Sound Director: Directeur du son
-Compositing Supervisor: Superviseur de compositing
-Modeling: Modélisation
-Lighting Artist: Artiste d'éclairage
-Interior Designer: Designer d'intérieur
-Health and Safety: Santé et sécurité
-Shading: Ombrage
-Storyboard: Storyboard
-Master Lighting Artist: Artiste d'éclairage principal
-CG Supervisor: Superviseur CG
-Medical Consultant: Consultant médical
-Transcriptions: Transcriptions
-Administrative Assistant: Assistant administratif
-Administration: Administration
 
 # Contact
 Contact: Contact
