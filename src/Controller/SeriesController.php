@@ -273,16 +273,16 @@ class SeriesController extends AbstractController
         }
         $seriesToStart = array_values($series);
 
-        dump([
+//        dump([
 //            'episodesOfTheDay' => $episodesOfTheDay,
-            'seriesOfTheWeek' => $seriesOfTheWeek,
+//            'seriesOfTheWeek' => $seriesOfTheWeek,
 //            'episodeHistory' => $episodeHistory,
 //            'seriesToStart' => $seriesToStart,
 //            'seriesToStartCount' => $seriesToStartCount,
 //            'seriesList' => $series,
 //            'total_results' => $searchResult['total_results'] ?? -1,
 //            'hier' => $this->now()->modify('-1 day')->format('Y-m-d'),
-        ]);
+//        ]);
 
         return $this->render('series/index.html.twig', [
             'episodesOfTheDay' => $episodesOfTheDay,
@@ -330,7 +330,7 @@ class SeriesController extends AbstractController
         }
         $seriesToStart = array_values($series);
 
-        dump($seriesToStart, $series);
+//        dump($seriesToStart, $series);
         return $this->render('series/series-to-start.html.twig', [
             'seriesToStart' => $seriesToStart,
             'tmdbIds' => $tmdbIds,
@@ -344,7 +344,7 @@ class SeriesController extends AbstractController
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
         $inAWhileDate = $this->dateModify($this->now(), '-15 days')->format('Y-m-d');
-        dump($inAWhileDate);
+//        dump($inAWhileDate);
         $series = array_map(function ($s) {
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
@@ -463,7 +463,7 @@ class SeriesController extends AbstractController
     #[Route('/search/all', name: 'search_all')]
     public function searchAll(Request $request): Response
     {
-        dump($request->query->all());
+//        dump($request->query->all());
         $slugger = new AsciiSlugger();
         $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
         if ($request->get('q')) $simpleSeriesSearch->setQuery($request->get('q'));
@@ -564,7 +564,7 @@ class SeriesController extends AbstractController
         ];
 
         /** @var UserSeries[] $userSeries */
-        $t0 = microtime(true);
+//        $t0 = microtime(true);
         $userSeries = $this->userSeriesRepository->getAllSeries(
             $user,
             $localisation,
@@ -592,12 +592,12 @@ class SeriesController extends AbstractController
             else
                 $networkLogoPaths[$nlp['id']] = null;
         }
-        $t1 = microtime(true);
+//        $t1 = microtime(true);
 
-        dump([
-            't0' => $t0,
-            't1' => $t1,
-            'diff' => $t1 - $t0,
+//        dump([
+//            't0' => $t0,
+//            't1' => $t1,
+//            'diff' => $t1 - $t0,
 //            'userSeries' => $userSeries,
 //            'userSeriesCount' => $userSeriesCount,
 //            'filters' => $filters,
@@ -605,7 +605,7 @@ class SeriesController extends AbstractController
 //            'userNetworks' => $userNetworks,
 //            'networks' => $networks,
 //            'networkLogoPaths' => $networkLogoPaths,
-        ]);
+//        ]);
 
         return $this->render('series/all.html.twig', [
             'userSeries' => $userSeries,
@@ -767,7 +767,7 @@ class SeriesController extends AbstractController
                 return $carry + $item;
             }, 0) / $c : 0;
 
-        dump($tv);
+//        dump($tv);
         return $this->render('series/tmdb.html.twig', [
             'tv' => $tv,
             'localizedName' => $localizedName,
@@ -1415,15 +1415,15 @@ class SeriesController extends AbstractController
             $this->seriesRepository->save($series, true);
         }
 
-        dump([
+//        dump([
 //            'series' => $series,
-            'season' => $season,
-            'episodeDivSize' => $episodeDivSize,
-            'now' => $this->now()->format('Y-m-d H:i O'),
+//            'season' => $season,
+//            'episodeDivSize' => $episodeDivSize,
+//            'now' => $this->now()->format('Y-m-d H:i O'),
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-        ]);
+//        ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'userSeries' => $userSeries,
@@ -2226,7 +2226,7 @@ class SeriesController extends AbstractController
             if (str_starts_with($testUrl, 'blob')) {
 //                $this->blobs['image-url-blob'] = $data['image-url-blob'];
                 $imageResultPath = $this->imageService->blobToWebp2($data['image-url-blob'], $data['title'], $data['location'], 100);
-                dump($imageResultPath);
+//                dump($imageResultPath);
             }
 
             return $this->json([
@@ -2265,15 +2265,15 @@ class SeriesController extends AbstractController
         }
 //        $images = array_values($images);
         $images = array_filter($images, fn($image) => $image != '' and $image != "undefined");
-        dump(['images' => $images]);
+//        dump(['images' => $images]);
         // TODO: Vérifier le code suivant
         $firstImageIndex = 1;
         if ($filmingLocation) {
             // Récupérer les images existantes et les compter
             $existingAdditionalImages = $this->filmingLocationImageRepository->findBy(['filmingLocation' => $filmingLocation]);
-            dump(['existingAdditionalImages' => $existingAdditionalImages]);
+//            dump(['existingAdditionalImages' => $existingAdditionalImages]);
             $firstImageIndex += count($existingAdditionalImages);
-            dump(['firstImageIndex' => $firstImageIndex]);
+//            dump(['firstImageIndex' => $firstImageIndex]);
         }
         // Fin du code à vérifier
 
@@ -2322,7 +2322,7 @@ class SeriesController extends AbstractController
          * Images ajoutées depuis des fichiers locaux (type : UploadedFile)           *
          ******************************************************************************/
         foreach ($imageFiles as $key => $file) {
-            dump(['key' => $key, 'file' => $file]);
+//            dump(['key' => $key, 'file' => $file]);
             $image = $this->imageService->fileToWebp($file, $title, $location, $n);
             if ($image) {
                 $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image, $now);
@@ -3819,25 +3819,27 @@ class SeriesController extends AbstractController
         $rent = $watchProviders['rent'] ?? [];
         $buy = $watchProviders['buy'] ?? [];
 
-        $flatrate = array_map(function ($wp) {
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
+
+        $flatrate = array_map(function ($wp) use ($logoUrl) {
             return [
                 'provider_id' => $wp['provider_id'],
                 'provider_name' => $wp['provider_name'],
-                'logo_path' => $wp['logo_path'] ? $this->imageConfiguration->getCompleteUrl($wp['logo_path'], 'logo_sizes', 2) : null, // w45
+                'logo_path' => $this->getProviderLogoFullPath($wp['logo_path'], $logoUrl),
             ];
         }, $flatrate);
-        $rent = array_map(function ($wp) {
+        $rent = array_map(function ($wp) use ($logoUrl) {
             return [
                 'provider_id' => $wp['provider_id'],
                 'provider_name' => $wp['provider_name'],
-                'logo_path' => $wp['logo_path'] ? $this->imageConfiguration->getCompleteUrl($wp['logo_path'], 'logo_sizes', 2) : null, // w45
+                'logo_path' => $this->getProviderLogoFullPath($wp['logo_path'], $logoUrl),
             ];
         }, $rent);
-        $buy = array_map(function ($wp) {
+        $buy = array_map(function ($wp) use ($logoUrl) {
             return [
                 'provider_id' => $wp['provider_id'],
                 'provider_name' => $wp['provider_name'],
-                'logo_path' => $wp['logo_path'] ? $this->imageConfiguration->getCompleteUrl($wp['logo_path'], 'logo_sizes', 2) : null, // w45
+                'logo_path' => $this->getProviderLogoFullPath($wp['logo_path'], $logoUrl),
             ];
         }, $buy);
         return [
