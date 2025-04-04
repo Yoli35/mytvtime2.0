@@ -527,6 +527,38 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function getUserEpisodeDB(int $userEpisodeId, string $locale): array
+    {
+        $sql = "SELECT ue.id                     as id,
+                       ue.episode_id             as episode_id,
+                       esn.name                  as substitute_name,
+                       elo.overview              as localized_overview,
+                       ue.episode_number         as episode_number,
+                       ue.watch_at               as watch_at,
+                       ue.air_date               as air_date,
+                       sbd.date                  as custom_date,
+                       ue.provider_id            as provider_id,
+                       p.name                    as provider_name,
+                       p.logo_path               as provider_logo_path,
+                       ue.device_id              as device_id,
+                       d.name                    as device_name,
+                       d.logo_path               as device_logo_path,
+                       d.svg                     as device_svg,
+                       ue.vote                   as vote,
+                       ue.number_of_view         as number_of_view,
+                       ue.previous_occurrence_id as previous_occurrence_id
+                FROM user_episode ue
+                         LEFT JOIN series_broadcast_date sbd ON ue.episode_id = sbd.episode_id
+                         LEFT JOIN episode_substitute_name esn ON ue.episode_id = esn.episode_id
+                         LEFT JOIN episode_localized_overview elo ON ue.episode_id = elo.episode_id AND elo.locale = '$locale'
+                         LEFT JOIN provider p ON ue.provider_id = p.provider_id
+                         LEFT JOIN device d ON ue.device_id = d.id
+                WHERE ue.id = $userEpisodeId";
+
+        $result = $this->getAll($sql);
+        return $result[0] ?? [];
+    }
+
     public function inProgressSeriesForTwig(User $user, string $locale): array
     {
         $userId = $user->getId();

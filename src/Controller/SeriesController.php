@@ -366,7 +366,7 @@ class SeriesController extends AbstractController
         $series = array_map(function ($s) {
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             return $s;
-        }, $this->userSeriesRepository->upComingSeries($user, $locale, 'firstAirDate',  1, -1));
+        }, $this->userSeriesRepository->upComingSeries($user, $locale, 'firstAirDate', 1, -1));
         $tmdbIds = array_column($series, 'tmdb_id');
 
         return $this->render('series/up-coming-series.html.twig', [
@@ -3575,16 +3575,35 @@ class SeriesController extends AbstractController
         $series = $userSeries->getSeries();
         $next_episode_to_air = $series->getNextEpisodeAirDate();
         $slugger = new AsciiSlugger();
+        $locale = $user->getPreferredLanguage() ?? 'fr';
         $seasonEpisodes = [];
-        $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $user->getPreferredLanguage() ?? 'fr');
-        dump($userEpisodes);
+        $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $locale);
+//        dump($userEpisodes);
 
         $episodeIds = array_column($userEpisodes, 'episode_id');
         $stills = $this->episodeStillRepository->getSeasonStills($episodeIds);
 
+//        dump($season['episodes']);
+        $newCount = 0;
         foreach ($season['episodes'] as $episode) {
             $userEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number']);
-
+//            dump($episode['episode_number'], $userEpisode);
+            if (!$userEpisode) {
+                $nue = new UserEpisode($userSeries, $episode['id'], $season['season_number'], $episode['episode_number'], null);
+                $nue->setAirDate($episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris') : null);
+                if ($episode['episode_number'] > 1) {
+                    $previousEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number'] - 1);
+                    if ($previousEpisode) {
+                        $nue->setProviderId($previousEpisode['provider_id']);
+                        $nue->setDeviceId($previousEpisode['device_id']);
+                    }
+                }
+                $this->userEpisodeRepository->save($nue, true);
+//                dump(['new user episode' => $nue]);
+                $userEpisode = $this->userEpisodeRepository->getUserEpisodeDB($nue->getId(), $locale);
+                $newCount++;
+//                dump(['db user episode' => $userEpisode]);
+            }
             if (!$userEpisode['custom_date'] && !$next_episode_to_air && !$episode['air_date']) {
                 continue;
             }
@@ -3660,6 +3679,9 @@ class SeriesController extends AbstractController
             $episode['user_episodes'] = $userEpisodeList;
 //            $episode['substitute_name'] = $this->userEpisodeRepository->getSubstituteName($episode['id']);
             $seasonEpisodes[] = $episode;
+        }
+        if ($newCount) {
+            $this->addFlash('warning', $newCount . ' new episode' . ($newCount > 1 ? 's' : '') . ' added to your watchlist');
         }
         return $seasonEpisodes;
     }
