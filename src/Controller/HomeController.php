@@ -60,14 +60,17 @@ class HomeController extends AbstractController
             }, $userSeries);
 
             // Episodes du jour
-            $episodesOfTheDay = array_map(function ($series) {
+            $arr = $this->userEpisodeRepository->episodesOfTheDay($user, $country, $language);
+            $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
+            $episodesOfTheDay = array_map(function ($series) use ($logoUrl) {
                 $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
-//                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+//              TODO: provider Logos ... /xxx → tmdb url, +/xxx → local path
+                $series['providerLogoPath'] = $this->getProviderLogoFullPath($series['providerLogoPath'], $logoUrl);
                 $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
                 $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
                 $series['released'] = true;
                 return $series;
-            }, $this->userEpisodeRepository->episodesOfTheDay($user, $country, $language));
+            }, $arr);
             // Épisodes à voir parmi les séries commencées
             $episodesToWatch = array_map(function ($series) {
                 $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
@@ -154,19 +157,19 @@ class HomeController extends AbstractController
         } else {
             $videos = [];
         }
-        dump($movieVideos);
+//        dump($movieVideos);
 
-        dump([
+//        dump([
 //            'historySeries' => $historySeries,
 //            'filterString' => $filterString,
-            'seriesSelection' => $seriesSelection,
+//            'seriesSelection' => $seriesSelection,
 //            'lastAddedSeries' => $lastAddedSeries,
 //            'userSeries' => $userSeries,
 //            'movieSelection' => $movieSelection,
 //            'episodesOfTheDay' => $episodesOfTheDay,
 //            'historyEpisode' => $historyEpisode,
 //            'filteredSeries' => $filteredSeries,
-        ]);
+//        ]);
 
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
@@ -398,6 +401,15 @@ class HomeController extends AbstractController
             ];
         }
         return $tvs;
+    }
+
+    public function getProviderLogoFullPath(?string $path, string $tmdbUrl): ?string
+    {
+        if (!$path) return null;
+        if (str_starts_with($path, '/')) {
+            return $tmdbUrl . $path;
+        }
+        return '/images/providers' . substr($path, 1);
     }
 
 //    public function getAdditionalInfos
