@@ -164,7 +164,7 @@ class MovieController extends AbstractController
         } else {
             // on récupère le contenu du formulaire (POST parameters)
             $formContent = $request->get('movie_search');
-            dump($formContent);
+//            dump($formContent);
             $simpleSeriesSearch = new MovieSearchDTO($formContent['language'], $formContent['page']);
             $simpleSeriesSearch->setQuery($formContent['query']);
             $simpleSeriesSearch->setReleaseDateYear($formContent['releaseDateYear']);
@@ -272,13 +272,13 @@ class MovieController extends AbstractController
         ];
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
 
-        dump([
+//        dump([
 //                'language' => $language,
-            'movie' => $movie,
+//            'movie' => $movie,
 //            'userMovie' => $userMovie,
 //                'providers' => $providers,
 //                'translations' => $translations,
-        ]);
+//        ]);
         return $this->render('movie/show.html.twig', [
             'userMovie' => $userMovie,
             'movie' => $movie,
@@ -319,10 +319,10 @@ class MovieController extends AbstractController
         $this->getReleaseDates($movie);
         $this->getRecommandations($movie);
 
-        dump([
-//                'language' => $language,
-            'movie' => $movie,
-        ]);
+//        dump([
+//            'language' => $language,
+//            'movie' => $movie,
+//        ]);
         return $this->render('movie/tmdb.html.twig', [
             'movie' => $movie,
             'providers' => [],
@@ -616,7 +616,7 @@ class MovieController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        dump($movie, $data);
+//        dump($movie, $data);
         // "production_companies": [
         //    {
         //      "id": 14,

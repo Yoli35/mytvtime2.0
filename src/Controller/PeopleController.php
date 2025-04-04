@@ -127,11 +127,11 @@ class PeopleController extends AbstractController
             ]));
         }
 
-        dump([
-            'starPeople' => $dbStarPeopleArr,
-            'starPeopleFinalArr' => $dbStarPeopleFinalArr,
-            'starPeopleCount' => $starPeopleCount,
-        ]);
+//        dump([
+//            'starPeople' => $dbStarPeopleArr,
+//            'starPeopleFinalArr' => $dbStarPeopleFinalArr,
+//            'starPeopleCount' => $starPeopleCount,
+//        ]);
         return $this->render('people/star.html.twig', [
             'people' => $dbStarPeopleFinalArr,
             'peopleCount' => $starPeopleCount,
@@ -163,7 +163,7 @@ class PeopleController extends AbstractController
         $credits = $people['combined_credits'];
 
         $peopleUserRating = $this->peopleUserRatingRepository->getPeopleUserRating($user->getId(), $id);
-        dump($peopleUserRating);
+//        dump($peopleUserRating);
         $people['userRating'] = $peopleUserRating['rating'] ?? 0;
         $people['avgRating'] = $peopleUserRating['avg_rating'] ?? 0;
 
@@ -294,13 +294,12 @@ class PeopleController extends AbstractController
     #[Route('/preferred-name', name: 'preferred_name', methods: ['POST'])]
     public function preferredName(Request $request): Response
     {
-        // https://localhost:8000/fr/people/show/4580611-wan-phichit-nimit-phakh-phumi
         $data = json_decode($request->getContent(), true);
-        dump($data);
-        // goto https://localhost:8000/fr/people/show/4580611-wan-phichit-nimit-phakh-phumi
         $user = $this->getUser();
+
         $id = $data['id'];
         $name = $data['name'];
+
         $peopleUserPreferredName = $this->peopleUserPreferredNameRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
         if (!$peopleUserPreferredName) {
             $peopleUserPreferredName = new PeopleUserPreferredName($user, $id, $name);
