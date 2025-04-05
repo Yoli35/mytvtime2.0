@@ -38,6 +38,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/** @method User|null getUser() */
 #[Route('/{_locale}/movie', name: 'app_movie_', requirements: ['_locale' => 'fr|en|ko'])]
 class MovieController extends AbstractController
 {
@@ -67,16 +68,8 @@ class MovieController extends AbstractController
     #[Route('/index', name: 'index')]
     public function index(Request $request): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
-        $slugger = new ASCIISlugger();
 
-//        $localisation = [
-//            'locale' => $user?->getPreferredLanguage() ?? $request->getLocale(),
-//            'country' => $user?->getCountry() ?? "FR",
-//            'language' => $user?->getPreferredLanguage() ?? $request->getLocale(),
-//            'timezone' => $user?->getTimezone() ?? "Europe/Paris"
-//        ];
         $filtersBoxSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'my movies boxes']);
         if (!$filtersBoxSettings) {
             $filtersBoxSettings = new Settings($user, 'my movies boxes', ['filters' => true, 'pages' => true]);
@@ -119,9 +112,8 @@ class MovieController extends AbstractController
             'sort' => $data['sort'],
             'order' => $data['order'],
         ];
-        $userMovies = array_map(function ($movie) use ($slugger) {
+        $userMovies = array_map(function ($movie) {
             $this->imageService->saveImage("posters", $movie['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
-            $movie['slug'] = $slugger->slug($movie['title']);
             return $movie;
         }, $this->movieRepository->getMovieCards($user, $filters));
 
@@ -157,12 +149,11 @@ class MovieController extends AbstractController
     #[Route('/search/all', name: 'search')]
     public function search(Request $request): Response
     {
-        $slugger = new AsciiSlugger();
         if ($request->get('q')) {
             $simpleSeriesSearch = new MovieSearchDTO($request->getLocale(), 1);
             $simpleSeriesSearch->setQuery($request->get('q'));
         } else {
-            // on récupère le contenu du formulaire (POST parameters)
+            // on récupère le contenu du formulaire (POST parameters).
             $formContent = $request->get('movie_search');
 //            dump($formContent);
             $simpleSeriesSearch = new MovieSearchDTO($formContent['language'], $formContent['page']);
@@ -173,9 +164,9 @@ class MovieController extends AbstractController
         $simpleForm = $this->createForm(MovieSearchType::class, $simpleSeriesSearch);
         $searchResult = $this->handleSearch($simpleSeriesSearch);
         if ($searchResult['total_results'] == 1) {
-            return $this->getOneResult($searchResult['results'][0], $slugger);
+            return $this->getOneResult($searchResult['results'][0]);
         }
-        $movies = $this->getSearchResult($searchResult, $slugger);
+        $movies = $this->getSearchResult($searchResult);
 
         return $this->render('movie/search.html.twig', [
             'form' => $simpleForm->createView(),
@@ -291,21 +282,18 @@ class MovieController extends AbstractController
     #[Route('/tmdb/{id}', name: 'tmdb', requirements: ['id' => '\d+'])]
     public function tmdb(Request $request, int $id): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         if ($user) {
             $movie = $this->movieRepository->findOneBy(['tmdbId' => $id]);
             if ($movie) {
-//                dump(['movie' => $movie]);
                 $userMovie = $this->userMovieRepository->findOneBy(['movie' => $movie, 'user' => $user]);
-//                dump(['userMovie' => $userMovie]);
                 if ($userMovie) {
                     return $this->redirectToRoute('app_movie_show', ['id' => $userMovie->getId()]);
                 }
             }
         }
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
-        $language = $locale . '-' . ($locale === 'fr' ? 'FR' : 'US');
+        $language = $locale === 'fr' ? 'fr-FR' : 'en-US';
         $movie = json_decode($this->tmdbService->getMovie($id, $language, ['videos,images,credits,recommendations,watch/providers,release_dates']), true);
 
         $this->imageService->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
@@ -331,7 +319,7 @@ class MovieController extends AbstractController
     }
 
     #[Route('/collection/{id}', name: 'collection', requirements: ['id' => '\d+'])]
-    public function collection(Request $request, int $id): Response
+    public function collection(int $id): Response
     {
         $collection = json_decode($this->tmdbService->getMovieCollection($id), true);
 
@@ -399,7 +387,6 @@ class MovieController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        $slugger = new ASCIISlugger();
 
         $data = json_decode($request->getContent(), true);
         $filters = [];
@@ -411,9 +398,8 @@ class MovieController extends AbstractController
         $settings->setData($filters);
         $this->settingsRepository->save($settings, true);
 
-        $userMovies = array_map(function ($movie) use ($user, $slugger) {
+        $userMovies = array_map(function ($movie) use ($user) {
             $this->imageService->saveImage("posters", $movie['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
-            $movie['slug'] = $slugger->slug($movie['title']);
             // release_date: 2024-07-24 → 24 juillet 2024
             $movie['releaseDateString'] = ucfirst($this->dateService->formatDateLong($movie['releaseDate'], $user->getTimezone() ?? 'Europe/Paris', $user->getPreferredLanguage() ?? 'fr'));
             $movie['lastViewedAtString'] = $movie['lastViewedAt'] ? ucfirst($this->dateService->formatDateLong($movie['lastViewedAt'], $user->getTimezone() ?? 'Europe/Paris', $user->getPreferredLanguage() ?? 'fr')) : null;
@@ -612,9 +598,9 @@ class MovieController extends AbstractController
     }
 
     #[Route('/add/infos/{id}', name: 'add_infos', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function addInfos(Request $request, Movie $movie): Response
+    public function addInfos(): Response
     {
-        $data = json_decode($request->getContent(), true);
+//        $data = json_decode($request->getContent(), true);
 
 //        dump($movie, $data);
         // "production_companies": [
@@ -686,13 +672,14 @@ class MovieController extends AbstractController
     public function getCredits(array &$movie): void
     {
         $slugger = new ASCIISlugger();
-        $movie['credits']['cast'] = array_map(function ($people) use ($slugger) {
-            $people['profile_path'] = $people['profile_path'] ? $this->imageConfiguration->getUrl('profile_sizes', 2) . $people['profile_path'] : null;
+        $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
+        $movie['credits']['cast'] = array_map(function ($people) use ($slugger, $profileUrl) {
+            $people['profile_path'] = $people['profile_path'] ? $profileUrl . $people['profile_path'] : null;
             $people['slug'] = $slugger->slug($people['name']);
             return $people;
         }, $movie['credits']['cast']);
-        $movie['credits']['crew'] = array_map(function ($people) use ($slugger) {
-            $people['profile_path'] = $people['profile_path'] ? $this->imageConfiguration->getUrl('profile_sizes', 2) . $people['profile_path'] : null;
+        $movie['credits']['crew'] = array_map(function ($people) use ($slugger, $profileUrl) {
+            $people['profile_path'] = $people['profile_path'] ? $profileUrl . $people['profile_path'] : null;
             $people['slug'] = $slugger->slug($people['name']);
             return $people;
         }, $movie['credits']['crew']);
@@ -714,8 +701,9 @@ class MovieController extends AbstractController
         $providers = array_filter($movie['watch/providers']['results'], function ($key) {
             return $key === 'FR';
         }, ARRAY_FILTER_USE_KEY);
-        $providers = array_map(function ($p) {
-            $p['logo_path'] = $this->imageConfiguration->getUrl('logo_sizes', 3) . $p['logo_path'];
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+        $providers = array_map(function ($p) use ($logoUrl) {
+            $p['logo_path'] = $p['logo_path'] ? $logoUrl . $p['logo_path'] : null;
             return $p;
         }, $providers['FR']['flatrate'] ?? []);
         $movie['watch/providers'] = null;
@@ -724,19 +712,20 @@ class MovieController extends AbstractController
 
     public function getProductionCompanies(array &$movie): void
     {
-        usort($movie['production_companies'], function ($a, $b) {
+        $pc = $movie['production_companies'] ?? [];
+        usort($pc, function ($a, $b) {
             return $b['logo_path'] <=> $a['logo_path'];
         });
-        $pc = array_map(function ($p) {
-            $p['logo_path'] = $p['logo_path'] ? $this->imageConfiguration->getUrl('logo_sizes', 1) . $p['logo_path'] : null;
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+        $pc = array_map(function ($p) use ($logoUrl) {
+            $p['logo_path'] = $p['logo_path'] ? $logoUrl . $p['logo_path'] : null;
             return $p;
-        }, $movie['production_companies'] ?? []);
+        }, $pc);
         $movie['production_companies'] = $pc;
     }
 
     public function getReleaseDates(array &$movie): void
     {
-        $types = [1 => 'Premiere', 2 => 'Theatrical (limited)', 3 => 'Theatrical', 4 => 'Digital', 5 => 'Physical', 6 => 'TV'];
         $releaseDates = array_filter($movie['release_dates']['results'], function ($rd) {
             return $rd['iso_3166_1'] === 'FR';
         });
@@ -746,7 +735,8 @@ class MovieController extends AbstractController
         } else {
             $releaseDates = [];
         }
-        $releaseDates = array_map(function ($rd) use ($types) {
+        $releaseDates = array_map(function ($rd) {
+            $types = [1 => 'Premiere', 2 => 'Theatrical (limited)', 3 => 'Theatrical', 4 => 'Digital', 5 => 'Physical', 6 => 'TV'];
             $rd['type_string'] = $types[$rd['type']];
             return $rd;
         }, $releaseDates);
@@ -756,8 +746,9 @@ class MovieController extends AbstractController
 
     public function getRecommandations(array &$movie): void
     {
-        $recommandations = array_map(function ($movie) {
-            $this->imageService->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
+        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+        $recommandations = array_map(function ($movie) use ($posterUrl) {
+            $this->imageService->saveImage("posters", $movie['poster_path'], $posterUrl, '/movies/');
             return [
                 'id' => $movie['id'],
                 'title' => $movie['title'],
@@ -816,7 +807,7 @@ class MovieController extends AbstractController
         $movie['localized_overviews'] = $dbMovie->getMovieLocalizedOverviews()->toArray();
     }
 
-    public function getWatchProviders($language, $watchRegion): array
+    public function getWatchProviders(string $language, string $watchRegion): array
     {
         $providers = json_decode($this->tmdbService->getMovieWatchProviderList($language, $watchRegion), true);
         $providers = $providers['results'];
@@ -857,89 +848,6 @@ class MovieController extends AbstractController
 
     public function createMovieFromDBMovie(Movie $dbMovie): array
     {
-        // {
-        //  "adult": false,
-        //  "backdrop_path": "/wNAhuOZ3Zf84jCIlrcI6JhgmY5q.jpg",
-        //  "belongs_to_collection": {
-        //    "id": 8945,
-        //    "name": "Mad Max Collection",
-        //    "poster_path": "/9U9QmbCDIBhqDShuIxOiS9gjKYz.jpg",
-        //    "backdrop_path": "/fhv3dWOuzeW9eXOSlr8MCHwo24t.jpg"
-        //  },
-        //  "budget": 170000000,
-        //  "genres": [
-        //    {
-        //      "id": 28,
-        //      "name": "Action"
-        //    },
-        //    {
-        //      "id": 12,
-        //      "name": "Adventure"
-        //    },
-        //    {
-        //      "id": 878,
-        //      "name": "Science Fiction"
-        //    }
-        //  ],
-        //  "homepage": "https://www.furiosaamadmaxsaga.com",
-        //  "id": 786892,
-        //  "imdb_id": "tt12037194",
-        //  "origin_country": [
-        //    "AU",
-        //    "US"
-        //  ],
-        //  "original_language": "en",
-        //  "original_title": "Furiosa: A Mad Max Saga",
-        //  "overview": "As the world fell, young Furiosa is snatched from the Green Place of Many Mothers and falls into the hands of a great Biker Horde led by the Warlord Dementus. Sweeping through the Wasteland they come across the Citadel presided over by The Immortan Joe. While the two Tyrants war for dominance, Furiosa must survive many trials as she puts together the means to find her way home.",
-        //  "popularity": 940.878,
-        //  "poster_path": "/iADOJ8Zymht2JPMoy3R7xceZprc.jpg",
-        //  "production_companies": [
-        //    {
-        //      "id": 174,
-        //      "logo_path": "/zhD3hhtKB5qyv7ZeL4uLpNxgMVU.png",
-        //      "name": "Warner Bros. Pictures",
-        //      "origin_country": "US"
-        //    },
-        //    {
-        //      "id": 28382,
-        //      "logo_path": "/xqE1fjLynj3RaZca9chctZQyfzZ.png",
-        //      "name": "Kennedy Miller Mitchell",
-        //      "origin_country": "AU"
-        //    },
-        //    {
-        //      "id": 216687,
-        //      "logo_path": null,
-        //      "name": "Domain Entertainment",
-        //      "origin_country": "US"
-        //    }
-        //  ],
-        //  "production_countries": [
-        //    {
-        //      "iso_3166_1": "AU",
-        //      "name": "Australia"
-        //    },
-        //    {
-        //      "iso_3166_1": "US",
-        //      "name": "United States of America"
-        //    }
-        //  ],
-        //  "release_date": "2024-05-22",
-        //  "revenue": 172775791,
-        //  "runtime": 149,
-        //  "spoken_languages": [
-        //    {
-        //      "english_name": "English",
-        //      "iso_639_1": "en",
-        //      "name": "English"
-        //    }
-        //  ],
-        //  "status": "Released",
-        //  "tagline": "Fury is born.",
-        //  "title": "Furiosa: A Mad Max Saga",
-        //  "video": false,
-        //  "vote_average": 7.62,
-        //  "vote_count": 2538
-        //}
         $movie['backdrop_path'] = $dbMovie->getBackdropPath();
         $movie['belongs_to_collection'] = $dbMovie->getCollection();
         $movie['genres'] = [];
@@ -977,7 +885,7 @@ class MovieController extends AbstractController
         return $movie;
     }
 
-    public function getSearchResult($searchResult): array
+    public function getSearchResult(array $searchResult): array
     {
         return array_map(function ($movie) {
             $this->imageService->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
@@ -993,7 +901,7 @@ class MovieController extends AbstractController
         }, $searchResult['results'] ?? []);
     }
 
-    public function getOneResult($movie, $slugger): Response
+    public function getOneResult(array $movie): Response
     {
         return $this->redirectToRoute('app_movie_tmdb', [
             'id' => $movie['id'],

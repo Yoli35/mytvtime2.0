@@ -16,7 +16,6 @@ use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use App\Service\TMDBService;
 use DateTimeImmutable;
-use DateTimeInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -310,7 +309,7 @@ class PeopleController extends AbstractController
         $peopleUserPreferredName = $this->peopleUserPreferredNameRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
         $name = $peopleUserPreferredName->getName() ?? null;
 
-        $standing = $this->tmdbService->getPerson($id, $request->getLocale(), "images,combined_credits");
+        $standing = $this->tmdbService->getPerson($id, $request->getLocale());
         $people = json_decode($standing, true);
         $nameBlock = $this->renderView('_blocks/people/_preferred-name.html.twig', [
             'people' => $people,
