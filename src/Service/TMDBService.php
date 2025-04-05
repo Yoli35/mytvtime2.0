@@ -626,7 +626,7 @@ class TMDBService
         }
     }
 
-    public function getBearer()
+    public function getBearer(): string
     {
         return $_ENV['TMDB_BEARER'];
     }
