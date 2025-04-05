@@ -250,8 +250,9 @@ class SeriesController extends AbstractController
         }
 
         $order = 'firstAirDate'; // TODO: ajouter un menu pour choisir l'ordre (firstAirDate, lastWatched, addedAt, ...)
-        $seriesToStart = array_map(function ($s) use ($posterUrl) {
+        $seriesToStart = array_map(function ($s) use ($posterUrl, $logoUrl) {
             $this->imageService->saveImage("posters", $s['poster_path'], $posterUrl);
+            $s['provider_logo_path'] = $this->getProviderLogoFullPath($s['provider_logo_path'], $logoUrl);
             return $s;
         }, $this->userSeriesRepository->seriesToStart($user, $locale, $order, 1, 20));
         $seriesToStartCount = $this->userSeriesRepository->seriesToStartCount($user, $locale);
