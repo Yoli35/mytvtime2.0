@@ -1058,6 +1058,7 @@ export class Season {
                 })
             }).then(function (response) {
                 if (response.ok) {
+                    gThis.toolTips.hide();
                     selectProviderDiv.innerHTML = '<img src="' + gThis.providers.logos[providerId] + '" alt="' + gThis.providers.names[providerId] + '">';
                     selectProviderDiv.setAttribute('data-title', gThis.providers.names[providerId]);
                     gThis.toolTips.init(selectProviderDiv);
@@ -1105,6 +1106,7 @@ export class Season {
                 })
             }).then(function (response) {
                 if (response.ok) {
+                    gThis.toolTips.hide();
                     selectDeviceDiv.innerHTML = '';
                     selectDeviceDiv.appendChild(gThis.getSvg('device-' + device['id']));
                     selectDeviceDiv.setAttribute('data-title', gThis.text[device['name']]);

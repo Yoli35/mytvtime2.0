@@ -96,7 +96,7 @@ export class ToolTips {
     }
 
     hide() {
-        const tooltips = this.tooltipsElement;
+        const tooltips = document.querySelector(".tool-tips");/*this.tooltipsElement;*/
         if (!tooltips) {
             return;
         }
