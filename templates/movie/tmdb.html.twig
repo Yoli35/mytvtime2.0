@@ -82,7 +82,7 @@
                 </div>
             </section>
             <section>
-                {{ include('_blocks/Movie/_collection.html.twig') }}
+                {{ include('_blocks/movie/_collection.html.twig') }}
             </section>
             <section>
                 <div class="movie-details">
@@ -92,7 +92,7 @@
                             <div class="content">
                                 <div class="wrapper">
                                     {% for cast in movie.credits.cast %}
-                                        {{ include('_blocks/Movie/_cast.html.twig', {cast: cast, job: cast.character}) }}
+                                        {{ include('_blocks/movie/_cast.html.twig', {cast: cast, job: cast.character}) }}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -104,7 +104,7 @@
                             <div class="content">
                                 <div class="wrapper">
                                     {% for crew in movie.credits.crew %}
-                                        {{ include('_blocks/Movie/_cast.html.twig', {cast: crew, job: crew.job}) }}
+                                        {{ include('_blocks/movie/_cast.html.twig', {cast: crew, job: crew.job}) }}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -116,7 +116,7 @@
                             <div class="content">
                                 <div class="wrapper">
                                     {% for recommendation in movie.recommendations %}
-                                        {{ include('_blocks/Movie/_recommandation.html.twig', {recommendation: recommendation}) }}
+                                        {{ include('_blocks/movie/_recommandation.html.twig', {recommendation: recommendation}) }}
                                     {% endfor %}
                                 </div>
                             </div>
