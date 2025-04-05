@@ -347,48 +347,54 @@
                 </div>
             </div>
         {% endif %}
-        <div class="avatar">
+    {% endif %}
+    <div class="avatar">
+        {% if app.user %}
             {% if app.user.avatar %}
                 <img src="/images/users/avatars/{{ app.user.avatar }}" alt="{{ app.user.username }}">
             {% else %}
-                <img src="/images/users/avatars/default.png" alt="{{ app.user.username }}">
+                <img src="/images/users/avatars/default.png" alt="{{ app.user ? app.user.username : ('Guest'|trans) }}">
             {% endif %}
-        </div>
-        <div class="menu user">
-            {% if app.user %}
-                <a href="{{ path('app_user_profile') }}">{{ 'My account'|trans }}</a>
-                <a href="{{ path('app_user_providers') }}">{{ 'My providers'|trans }}</a>
-                <a href="{{ path('app_user_networks') }}">{{ 'My networks'|trans }}</a>
-                <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a>
-                {% if 'ROLE_ADMIN' in app.user.roles %}
-                    <div class="separation">{{ 'Admin'|trans }}</div>
-                    <a href="{{ path('app_admin_index') }}">{{ 'Dashboard'|trans }}</a>
-                {% endif %}
-            {% else %}
-                <a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a>
-                <a href="{{ path('app_register') }}">{{ 'Register'|trans }}</a>
+        {% else %}
+            <div class="svg">
+                {{ ux_icon('material-symbols:login', {height: '24px', width: '24px'}) }}
+            </div>
+        {% endif %}
+    </div>
+    <div class="menu user">
+        {% if app.user %}
+            <a href="{{ path('app_user_profile') }}">{{ 'My account'|trans }}</a>
+            <a href="{{ path('app_user_providers') }}">{{ 'My providers'|trans }}</a>
+            <a href="{{ path('app_user_networks') }}">{{ 'My networks'|trans }}</a>
+            <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a>
+            {% if 'ROLE_ADMIN' in app.user.roles %}
+                <div class="separation">{{ 'Admin'|trans }}</div>
+                <a href="{{ path('app_admin_index') }}">{{ 'Dashboard'|trans }}</a>
             {% endif %}
-            <div class="separation">{{ 'Options'|trans }}</div>
-            <div class="menu-preview" data-on="{{ 'Hide preview'|trans }}" data-off="{{ 'Show preview'|trans }}">{{ 'Hide preview'|trans }}</div>
-            <div class="separation">{{ 'Theme'|trans }}</div>
-            <div class="menu-theme" data-theme="auto">{{ 'Automatic'|trans }}</div>
-            <div class="menu-theme" data-theme="light">{{ 'Light'|trans }}</div>
-            <div class="menu-theme" data-theme="dark">{{ 'Dark'|trans }}</div>
-            <div class="separation">{{ 'Language'|trans }}</div>
-            <a href="{{ path(route, route_params|merge({'_locale': 'fr'})) ~ p }}"{% if app.locale=='fr' %} class="active"{% endif %}>
-                {{ getEmojiFlag('FR') }} Français - French - 프랑스어
-                {# {{ 'French'|trans }} #}
-            </a>
-            <a href="{{ path(route, route_params|merge({'_locale': 'en'})) ~ p }}"{% if app.locale=='en' %} class="active"{% endif %}>
-                {{ getEmojiFlag('GB') }} Anglais - English - 영어
-                {# {{ 'English'|trans }} #}
-            </a>
-            <a href="{{ path(route, route_params|merge({'_locale': 'ko'})) ~ p }}"{% if app.locale=='ko' %} class="active"{% endif %}>
-                {{ getEmojiFlag('KR') }} Coréen - Korean - 한국어
-                {# {{ 'Korean'|trans }} #}
-            </a>
-        </div>
-    {% endif %}
+        {% else %}
+            <a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a>
+            <a href="{{ path('app_register') }}">{{ 'Register'|trans }}</a>
+        {% endif %}
+        <div class="separation">{{ 'Options'|trans }}</div>
+        <div class="menu-preview" data-on="{{ 'Hide preview'|trans }}" data-off="{{ 'Show preview'|trans }}">{{ 'Hide preview'|trans }}</div>
+        <div class="separation">{{ 'Theme'|trans }}</div>
+        <div class="menu-theme" data-theme="auto">{{ 'Automatic'|trans }}</div>
+        <div class="menu-theme" data-theme="light">{{ 'Light'|trans }}</div>
+        <div class="menu-theme" data-theme="dark">{{ 'Dark'|trans }}</div>
+        <div class="separation">{{ 'Language'|trans }}</div>
+        <a href="{{ path(route, route_params|merge({'_locale': 'fr'})) ~ p }}"{% if app.locale=='fr' %} class="active"{% endif %}>
+            {{ getEmojiFlag('FR') }} Français - French - 프랑스어
+            {# {{ 'French'|trans }} #}
+        </a>
+        <a href="{{ path(route, route_params|merge({'_locale': 'en'})) ~ p }}"{% if app.locale=='en' %} class="active"{% endif %}>
+            {{ getEmojiFlag('GB') }} Anglais - English - 영어
+            {# {{ 'English'|trans }} #}
+        </a>
+        <a href="{{ path(route, route_params|merge({'_locale': 'ko'})) ~ p }}"{% if app.locale=='ko' %} class="active"{% endif %}>
+            {{ getEmojiFlag('KR') }} Coréen - Korean - 한국어
+            {# {{ 'Korean'|trans }} #}
+        </a>
+    </div>
     <div class="burger">
         <span></span>
         <span></span>
@@ -419,7 +425,7 @@
             } %}
             {% set interval = listEpisodeOfTheInterval(app.user, "-2 day", "2 day", app.locale) %}
             {% for relativeDay in  -2..2 %}
-{#                {% set eotdList = listEpisodeOfTheDay(app.user, relativeDay) %}#}
+                {#                {% set eotdList = listEpisodeOfTheDay(app.user, relativeDay) %} #}
                 {% set eotdList = interval[relativeDay] %}
                 {% set l = eotdList.totalEpisodeCount %}
                 {% if l %}

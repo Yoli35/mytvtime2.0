@@ -109,6 +109,7 @@ export class Menu {
      */
     constructor() {
         gThis = this;
+        this.userMenu = document.querySelector(".menu.user");
         this.menuPreview = document.querySelector(".menu-preview");
         this.menuThemes = document.querySelectorAll(".menu-theme");
         this.init = this.init.bind(this);
@@ -639,12 +640,14 @@ export class Menu {
     }
 
     initOptions() {
-        this.menuPreview.addEventListener("click", this.togglePreview);
-        this.menuThemes.forEach((theme) => {
-            theme.addEventListener("click", this.setTheme);
-        });
-        this.initTheme();
-        this.initPreview();
+        if (this.userMenu) {
+            this.menuPreview.addEventListener("click", this.togglePreview);
+            this.menuThemes.forEach((theme) => {
+                theme.addEventListener("click", this.setTheme);
+            });
+            this.initTheme();
+            this.initPreview();
+        }
     }
 
     searchFetch(e) {
