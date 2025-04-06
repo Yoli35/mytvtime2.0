@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}my Tv Time → {{ 'Up coming series'|trans }}{% endblock %}
+{% block title %}my Tv Time → {{ 'Series.up coming series'|trans }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
@@ -12,7 +12,7 @@
     <div class="container-fluid series-to-start">
         {% if seriesList|length %}
             <h2>
-                {{ 'Up coming series'|trans }} ({{ seriesList|length }})
+                {{ 'Series.up coming series'|trans }} ({{ seriesList|length }})
                 <label for="filter-by-name">
                     <input type="search" id="filter-by-name" placeholder="{{ 'Search'|trans }}" autocomplete="off">
                 </label>
