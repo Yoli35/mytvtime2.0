@@ -288,7 +288,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     $innerJoin
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' 
-                    LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = nue.season_number AND IF(sbs.multi_part, nue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                    LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = nue.season_number AND IF(sbs.multi_part, nue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
                     LEFT JOIN `series_broadcast_date` sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.`episode_id`=nue.`episode_id`
                 WHERE us.`user_id`=$userId
                     AND IF(sbd.`date`, DATE(sbd.`date`)<=NOW(), nue.`air_date`<=NOW())
@@ -320,7 +320,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                     INNER JOIN `user_episode` nue ON nue.`id`=us.`next_user_episode_id` AND nue.`air_date` IS NOT NULL
                     $innerJoin
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
-                    LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = nue.season_number AND IF(sbs.multi_part, nue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                    LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = nue.season_number AND IF(sbs.multi_part, nue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
                     LEFT JOIN `series_broadcast_date` sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.`episode_id`=nue.`episode_id`
                 WHERE us.`user_id`=$userId
                     AND IF(sbd.`date`, DATE(sbd.`date`)<=NOW(), nue.`air_date`<=NOW())
@@ -364,7 +364,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                        s.status                                                                  as status,
                        (SELECT count(*)
                         FROM user_episode cue
-                            LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = cue.season_number AND IF(sbs.multi_part, cue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                            LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = cue.season_number AND IF(sbs.multi_part, cue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
                             LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = cue.episode_id
                         WHERE cue.user_series_id = us.id
                           AND cue.season_number > 0
@@ -372,7 +372,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                           AND cue.watch_at IS NOT NULL)                                          as watched_aired_episode_count,
                        (SELECT count(*)
                         FROM user_episode cue
-                            LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = cue.season_number AND IF(sbs.multi_part, cue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                            LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = cue.season_number AND IF(sbs.multi_part, cue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
                             LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = cue.episode_id
                         WHERE cue.user_series_id = us.id
                           AND cue.season_number > 0
