@@ -2,280 +2,140 @@
 {% set parameters = app.request.query %}
 {# {% set route_params = app.request.attributes.get('_route_params') %} #}
 <nav class="navbar">
-    <div class="div-test"></div>
-    <a href="{{ path('app_home') }}" accesskey="<">{{ ux_icon('ion:home', {height: "18px", width: "18px"}) }}</a>
-    {% if app.user %}
-        <div class="navbar-item">
-            {{ ux_icon('fa6-solid:film', {height: "18px", width: "18px"}) }}
-            <div class="menu movies">
-                <div class="menu-item"><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'My movies'|trans }}</a></div>
-                <div class="menu-item">
-                    <label for="movie-search">
-                        <input type="search" id="movie-search" data-type="movie" class="search" spellcheck="false">
-                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                    </label>
-                    <div class="search-results"></div>
-                </div>
-            </div>
-        </div>
-        {# <details>
-            <summary>{{ ux_icon('fa6-solid:film', {height: "18px", width: "18px"}) }}</summary>
-            <ul>
-                <li><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'My movies'|trans }}</a></li>
-                <li>
-                    <label for="movie-search">
-                        <input type="search" id="movie-search" data-type="movie" class="search" spellcheck="false">
-                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                    </label>
-                    <div class="search-results"></div>
-                </li>
-            </ul>
-        </details> #}
-        <div class="navbar-item">
-            {{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}
-            <div class="menu series">
-                {% set country=getUserCountrySettings(app.user) %}
-                <div class="menu-item"><a href="{{ path('app_series_index') }}" class="desktop">{{ 'Series.week'|trans }}</a></div>
-                <div class="menu-item"><a href="{{ path('app_series_all') }}" class="desktop">{{ 'Series.in progress'|trans }}</a></div>
-                <div class="menu-item"><a href="{{ path('app_series_not_seen_in_a_while') }}">{{ 'Series.not seen in a while'|trans }}</a></div>
-                <div class="menu-item"><a href="{{ path('app_series_to_start') }}">{{ 'Series.to start'|trans }}</a></div>
-                <div class="menu-item"><a href="{{ path('app_series_up_coming') }}">{{ 'Series.up coming series'|trans }}</a></div>
-                <div class="menu-item"><a href="{{ path('app_series_by_country', {country: country}) }}">{{ 'Series.by country'|trans }} - {{ country|country_name(app.locale) }}</a></div>
-                <div class="menu-item">
-                    <label for="tv-search">
-                        <input type="search" id="tv-search" data-type="tv" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}">
-                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                    </label>
-                    <div class="search-results"></div>
-                </div>
-                <div class="menu-item">
-                    <label for="tv-search-db">
-                        <input type="search" id="tv-search-db" data-type="db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}">
-                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                    </label>
-                    <div class="search-results"></div>
-                </div>
-            </div>
-        </div>
-        {# <details>
-            <summary>{{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}</summary>
-            <ul>
-                {% set country=getUserCountrySettings(app.user) %}
-                <li><a href="{{ path('app_series_index') }}" class="desktop">{{ 'Series.week'|trans }}</a></li>
-                <li><a href="{{ path('app_series_all') }}" class="desktop">{{ 'Series.in progress'|trans }}</a></li>
-                <li><a href="{{ path('app_series_not_seen_in_a_while') }}">{{ 'Series.not seen in a while'|trans }}</a></li>
-                <li><a href="{{ path('app_series_to_start') }}">{{ 'Series.to start'|trans }}</a></li>
-                <li><a href="{{ path('app_series_up_coming') }}">{{ 'Series.up coming series'|trans }}</a></li>
-                <li><a href="{{ path('app_series_by_country', {country: country}) }}">{{ 'Series.by country'|trans }} - {{ country|country_name(app.locale) }}</a></li>
-                <li>
-                    <label for="tv-search">
-                        <input type="search" id="tv-search" data-type="tv" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}">
-                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                    </label>
-                    <div class="search-results"></div>
-                </li>
-                <li>
-                    <label for="tv-search-db">
-                        <input type="search" id="tv-search-db" data-type="db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}">
-                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                    </label>
-                    <div class="search-results"></div>
-                </li>
-            </ul>
-        </details> #}
-        <div class="navbar-item">
-            {{ ux_icon('fa6-regular:user', {height: "18px", width: "18px"}) }}
-            <div class="menu people">
-                <div class="menu-item"><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></div>
-                <div class="menu-item"><a href="{{ path('app_people_star') }}" class="desktop">{{ 'Star people'|trans }}</a></div>
-                <div class="menu-item">
-                    <label for="person-search">
-                        <input type="search" id="person-search" data-type="person" class="search" spellcheck="false">
-                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                    </label>
-                    <div class="search-results"></div>
-                </div>
-            </div>
-        </div>
-        {# <details>
-            <summary>{{ ux_icon('fa6-regular:user', {height: "18px", width: "18px"}) }}</summary>
-            <ul>
-                <li><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></li>
-                <li>
-                    <label for="person-search">
-                        <input type="search" id="person-search" data-type="person" class="search" spellcheck="false">
-                        {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                    </label>
-                    <div class="search-results"></div>
-                </li>
-            </ul>
-        </details> #}
-        <div class="navbar-item" id="history-menu">
-            {{ ux_icon('ic:outline-view-day', {height: "18px", width: "18px"}) }}
-            {#            {{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }} #}
-            {% set history = seriesHistory(app.user) %}
-            <div class="menu history" id="history-list" data-last="{{ history.last }}">
-                <div class="menu-item" id="history-options">
-                    <label><input id="history-option-type" type="checkbox"{% if history.type == 'episode' %} checked{% endif %} switch>{{ 'Episodes detail'|trans }}</label>
-                    <label>{{ 'Page'|trans }}<input id="history-option-page" type="number" value="{{ history.page }}"></label>
-                    <label>{{ 'Count'|trans }}<input id="history-option-count" type="number" value="{{ history.count }}"></label>
-                    <label><input id="history-option-vote" type="checkbox"{% if history.vote %} checked{% endif %} switch>{{ 'Rating'|trans }}</label>
-                    <label><input id="history-option-device" type="checkbox"{% if history.device %} checked{% endif %} switch>{{ 'Device'|trans }}</label>
-                    <label><input id="history-option-provider" type="checkbox"{% if history.provider %} checked{% endif %} switch>{{ 'Provider'|trans }}</label>
-                </div>
-                {% for h in history.list %}
-                    <div class="menu-item history-item" id="{{ h.episodeId }}">
-                        <a class="history" href="{{ path('app_series_season', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber}) }}">
-                            <div class="poster">
-                                {% if h.posterPath|length %}
-                                    <img src="/series/posters{{ h.posterPath }}" alt="{{ h.name }}">
-                                {% else %}
-                                    {{ h.name|slice(0,1)|upper }}
-                                {% endif %}
-                            </div>
-                            <div class="name">{{ h.name }}</div>
-                            {% if h.vote %}
-                                <div class="vote{% if history.vote == 0 %} hidden{% endif %}">{{ h.vote }}</div>
-                            {% endif %}
-                            {% if h.deviceSvg %}
-                                <div class="device{% if history.device == 0 %} hidden{% endif %}">{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}</div>
-                            {% endif %}
-                            {% if h.providerLogoPath %}
-                                <div class="provider{% if history.provider == 0 %} hidden{% endif %}"><img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}"></div>
-                            {% endif %}
-                            <div class="number{% if h.progress==100 %} ended{% endif %}">{{ 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) }}</div>
-                            <div class="date">{{ h.lastWatchAt|format_datetime('relative_medium', 'short', 'Europe/Paris') }}</div>
-                        </a>
+    <div class="navbar-items">
+        <a href="{{ path('app_home') }}" accesskey="<">{{ ux_icon('ion:home', {height: "18px", width: "18px"}) }}</a>
+        {% if app.user %}
+            <div class="navbar-item">
+                {{ ux_icon('fa6-solid:film', {height: "18px", width: "18px"}) }}
+                <div class="menu movies">
+                    <div class="menu-item"><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'My movies'|trans }}</a></div>
+                    <div class="menu-item">
+                        <label for="movie-search">
+                            <input type="search" id="movie-search" data-type="movie" class="search" spellcheck="false">
+                            {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                        </label>
+                        <div class="search-results"></div>
                     </div>
-                {% else %}
-                    <div>{{ 'No history'|trans }}</div>
-                {% endfor %}
-            </div>
-        </div>
-        {# <details id="history-menu">
-            <summary>{{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }}</summary>
-            {% set history = seriesHistory(app.user) %}
-            <ul id="history-list" data-last="{{ history.last }}">
-                <li id="history-options">
-                    <label><input id="history-option-type" type="checkbox"{% if history.type == 'episode' %} checked{% endif %} switch>{{ 'Episodes detail'|trans }}</label>
-                    <label>{{ 'Page'|trans }}<input id="history-option-page" type="number" value="{{ history.page }}"></label>
-                    <label>{{ 'Count'|trans }}<input id="history-option-count" type="number" value="{{ history.count }}"></label>
-                    <label><input id="history-option-vote" type="checkbox"{% if history.vote %} checked{% endif %} switch>{{ 'Rating'|trans }}</label>
-                    <label><input id="history-option-device" type="checkbox"{% if history.device %} checked{% endif %} switch>{{ 'Device'|trans }}</label>
-                    <label><input id="history-option-provider" type="checkbox"{% if history.provider %} checked{% endif %} switch>{{ 'Provider'|trans }}</label>
-                </li>
-                {% for h in history.list %}
-                    <li class="history-item" id="{{ h.episodeId }}">
-                        <a class="history" href="{{ path('app_series_season', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber}) }}">
-                            <div class="poster">
-                                {% if h.posterPath|length %}
-                                    <img src="/series/posters{{ h.posterPath }}" alt="{{ h.name }}">
-                                {% else %}
-                                    {{ h.name|slice(0,1)|upper }}
-                                {% endif %}
-                            </div>
-                            <div class="name">{{ h.name }}</div>
-                            {% if h.vote %}
-                                <div class="vote{% if history.vote == 0 %} hidden{% endif %}">{{ h.vote }}</div>
-                            {% endif %}
-                            {% if h.deviceSvg %}
-                                <div class="device{% if history.device == 0 %} hidden{% endif %}">{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}</div>
-                            {% endif %}
-                            {% if h.providerLogoPath %}
-                                <div class="provider{% if history.provider == 0 %} hidden{% endif %}"><img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}"></div>
-                            {% endif %}
-                            <div class="number{% if h.progress==100 %} ended{% endif %}">{{ 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) }}</div>
-                            <div class="date">{{ h.lastWatchAt|format_datetime('relative_medium', 'short', 'Europe/Paris') }}</div>
-                        </a>
-                    </li>
-                {% else %}
-                    <li>{{ 'No history'|trans }}</li>
-                {% endfor %}
-            </ul>
-        </details> #}
-        <div class="navbar-item">
-            {{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }}
-            {% set history = getHistory(app.user) %}
-            {% set historyCount = getHistoryCount(app.user) %}
-            <div class="menu log" id="log-list" data-last="{{ history.0.id }}">
-                <div class="menu-item" id="log-count">
-                    {{ history|length }} / {{ historyCount }} {{ 'history entries'|trans }}
                 </div>
-                {% set logDate = '' %}
-                {% for h in history %}
-                    {% set d = h.date|format_date('relative_medium') %}
-                    {% if logDate != d %}
-                        {% set logDate = d %}
-                        <div class="menu-item log-date">{{ logDate|capitalize }}</div>
-                    {% endif %}
-                    <div class="menu-item log-item" data-id="{{ h.id }}">
-                        <a class="log" href="{{ h.link }}">
-                            <div class="name">{{ h.title }}</div>
-                            <div class="time">{{ h.date|date("H:i") }}</div>
-                        </a>
-                    </div>
-                {% else %}
-                    <div class="menu-item">{{ 'No history'|trans }}</div>
-                {% endfor %}
             </div>
-        </div>
-        {# <details id="log-menu">
-            <summary>{{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }}</summary>
-            {% set history = getHistory(app.user) %}
-            {% set historyCount = getHistoryCount(app.user) %}
-            {% if history|length %}
-                <ul id="log-list" data-last="{{ history.0.id }}">
-                    <li id="log-options">
+            <div class="navbar-item">
+                {{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}
+                <div class="menu series">
+                    {% set country=getUserCountrySettings(app.user) %}
+                    <div class="menu-item"><a href="{{ path('app_series_index') }}" class="desktop">{{ 'Series.week'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_all') }}" class="desktop">{{ 'Series.in progress'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_not_seen_in_a_while') }}">{{ 'Series.not seen in a while'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_to_start') }}">{{ 'Series.to start'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_up_coming') }}">{{ 'Series.up coming series'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_by_country', {country: country}) }}">{{ 'Series.by country'|trans }} - {{ country|country_name(app.locale) }}</a></div>
+                    <div class="menu-item">
+                        <label for="tv-search">
+                            <input type="search" id="tv-search" data-type="tv" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}">
+                            {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                        </label>
+                        <div class="search-results"></div>
+                    </div>
+                    <div class="menu-item">
+                        <label for="tv-search-db">
+                            <input type="search" id="tv-search-db" data-type="db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}">
+                            {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                        </label>
+                        <div class="search-results"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="navbar-item">
+                {{ ux_icon('fa6-regular:user', {height: "18px", width: "18px"}) }}
+                <div class="menu people">
+                    <div class="menu-item"><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_people_star') }}" class="desktop">{{ 'Star people'|trans }}</a></div>
+                    <div class="menu-item">
+                        <label for="person-search">
+                            <input type="search" id="person-search" data-type="person" class="search" spellcheck="false">
+                            {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                        </label>
+                        <div class="search-results"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="navbar-item" id="history-menu">
+                {{ ux_icon('ic:outline-view-day', {height: "18px", width: "18px"}) }}
+                {#            {{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }} #}
+                {% set history = seriesHistory(app.user) %}
+                <div class="menu history" id="history-list" data-last="{{ history.last }}">
+                    <div class="menu-item" id="history-options">
+                        <label><input id="history-option-type" type="checkbox"{% if history.type == 'episode' %} checked{% endif %} switch>{{ 'Episodes detail'|trans }}</label>
+                        <label>{{ 'Page'|trans }}<input id="history-option-page" type="number" value="{{ history.page }}"></label>
+                        <label>{{ 'Count'|trans }}<input id="history-option-count" type="number" value="{{ history.count }}"></label>
+                        <label><input id="history-option-vote" type="checkbox"{% if history.vote %} checked{% endif %} switch>{{ 'Rating'|trans }}</label>
+                        <label><input id="history-option-device" type="checkbox"{% if history.device %} checked{% endif %} switch>{{ 'Device'|trans }}</label>
+                        <label><input id="history-option-provider" type="checkbox"{% if history.provider %} checked{% endif %} switch>{{ 'Provider'|trans }}</label>
+                    </div>
+                    {% for h in history.list %}
+                        <div class="menu-item history-item" id="{{ h.episodeId }}">
+                            <a class="history" href="{{ path('app_series_season', {id: h.id, slug: h.slug, seasonNumber: h.seasonNumber}) }}">
+                                <div class="poster">
+                                    {% if h.posterPath|length %}
+                                        <img src="/series/posters{{ h.posterPath }}" alt="{{ h.name }}">
+                                    {% else %}
+                                        {{ h.name|slice(0,1)|upper }}
+                                    {% endif %}
+                                </div>
+                                <div class="name">{{ h.name }}</div>
+                                {% if h.vote %}
+                                    <div class="vote{% if history.vote == 0 %} hidden{% endif %}">{{ h.vote }}</div>
+                                {% endif %}
+                                {% if h.deviceSvg %}
+                                    <div class="device{% if history.device == 0 %} hidden{% endif %}">{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}</div>
+                                {% endif %}
+                                {% if h.providerLogoPath %}
+                                    <div class="provider{% if history.provider == 0 %} hidden{% endif %}"><img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}"></div>
+                                {% endif %}
+                                <div class="number{% if h.progress==100 %} ended{% endif %}">{{ 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) }}</div>
+                                <div class="date">{{ h.lastWatchAt|format_datetime('relative_medium', 'short', 'Europe/Paris') }}</div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div>{{ 'No history'|trans }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="navbar-item">
+                {{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }}
+                {% set history = getHistory(app.user) %}
+                {% set historyCount = getHistoryCount(app.user) %}
+                <div class="menu log" id="log-list" data-last="{{ history.0.id }}">
+                    <div class="menu-item" id="log-count">
                         {{ history|length }} / {{ historyCount }} {{ 'history entries'|trans }}
-                    </li>
+                    </div>
                     {% set logDate = '' %}
                     {% for h in history %}
                         {% set d = h.date|format_date('relative_medium') %}
                         {% if logDate != d %}
                             {% set logDate = d %}
-                            <li class="log-date">{{ logDate|capitalize }}</li>
+                            <div class="menu-item log-date">{{ logDate|capitalize }}</div>
                         {% endif %}
-                        <li class="log-item" data-id="{{ h.id }}">
+                        <div class="menu-item log-item" data-id="{{ h.id }}">
                             <a class="log" href="{{ h.link }}">
                                 <div class="name">{{ h.title }}</div>
+                                <div class="time">{{ h.date|date("H:i") }}</div>
                             </a>
-                        </li>
+                        </div>
+                    {% else %}
+                        <div class="menu-item">{{ 'No history'|trans }}</div>
                     {% endfor %}
-                </ul>
-            {% else %}
-                <ul>
-                    <li>{{ 'No history'|trans }}</li>
-                </ul>
-            {% endif %}
-        </details> #}
-        <div class="navbar-item">
-            {{ ux_icon('ion:map-outline', {height: "18px", width: "18px"}) }}
-            <div class="menu map">
-                <div class="menu-item"><a href="{{ path('app_map_index') }}" class="desktop">{{ 'Shooting locations'|trans }}</a></div>
-                <div class="menu-item"><a href="{{ path('app_map_last_locations', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></div>
+                </div>
             </div>
-        </div>
-        {# <details>
-            <summary>{{ ux_icon('ion:map-outline', {height: "18px", width: "18px"}) }}</summary>
-            <ul>
-                <li><a href="{{ path('app_map_index') }}" class="desktop">{{ 'Shooting locations'|trans }}</a></li>
-                <li><a href="{{ path('app_map_last_locations', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></li>
-                <li><a href="{{ path('app_map_last_locations', { type: 'update' }) }}" class="desktop">{{ 'Recent updates'|trans }}</a></li>
-            </ul>
-        </details> #}
-    {% endif %}
-    <a href="{{ path('app_contact_form') }}" class="desktop">{{ ux_icon('ion:mail', {height: "18px", width: "18px"}) }}</a>
-
-    {#    Test popover #}
-    {#    <button popovertarget="my-popover">{{ ux_icon('ion:bookmark-sharp', {height: '16px', width: '16px'}) }}</button> #}
-    {#    <div popover id="my-popover"> #}
-    {#        <ul> #}
-    {#            <li>Menu item #1</li> #}
-    {#            <li>Menu item #2</li> #}
-    {#            <li>Menu item #3</li> #}
-    {#        </ul> #}
-    {#    </div> #}
-    {#    End test popover #}
+            <div class="navbar-item">
+                {{ ux_icon('ion:map-outline', {height: "18px", width: "18px"}) }}
+                <div class="menu map">
+                    <div class="menu-item"><a href="{{ path('app_map_index') }}" class="desktop">{{ 'Shooting locations'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_map_last_locations', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></div>
+                </div>
+            </div>
+        {% endif %}
+        <a href="{{ path('app_contact_form') }}" class="desktop">{{ ux_icon('ion:mail', {height: "18px", width: "18px"}) }}</a>
+    </div>
 
     <div class="multi-search">
         <label for="multi-search">
