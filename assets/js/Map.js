@@ -48,12 +48,12 @@ export class Map {
                     "star-intensity": 0.15
                 });
 
-                map.addSource('mapbox-dem', {
+                gThis.map.addSource('mapbox-dem', {
                     'type': 'raster-dem',
                     'url': 'mapbox://mapbox.terrain-rgb'
                 });
 
-                map.setTerrain({
+                gThis.map.setTerrain({
                     'source': 'mapbox-dem',
                     'exaggeration': 1.5
                 });
