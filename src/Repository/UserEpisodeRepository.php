@@ -309,13 +309,13 @@ class UserEpisodeRepository extends ServiceEntityRepository
                           AND cue.previous_occurrence_id IS NULL
                           AND cue.air_date = ue.air_date
                        )                               as released_episode_count,
-                       us.last_watch_at                as last_watch_at,
+                       us.last_watch_at                as series_last_watch_at,
                        ue.episode_number               as episodeNumber,
                        ue.season_number                as seasonNumber
                 FROM series s
                          INNER JOIN user_series us ON s.id = us.series_id
                          INNER JOIN user_episode ue ON us.id = ue.user_series_id
-                         LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id
+                         LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.`season_number`=ue.`season_number` AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
                          LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                          LEFT JOIN watch_provider wp ON sbs.provider_id = wp.provider_id
                          LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
@@ -345,7 +345,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                          INNER JOIN user_episode ue ON ue.`user_series_id` = us.`id`
                          LEFT JOIN `series` s ON s.`id` = us.`series_id`
                          LEFT JOIN `series_localized_name` sln ON sln.`series_id` = s.`id` AND sln.`locale` = '$locale'
-                         LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                         LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
                          LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                 WHERE us.`user_id` = $userId
                   AND us.progress < 100

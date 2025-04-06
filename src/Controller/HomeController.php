@@ -64,7 +64,6 @@ class HomeController extends AbstractController
             $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
             $episodesOfTheDay = array_map(function ($series) use ($logoUrl) {
                 $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
-//              TODO: provider Logos ... /xxx → tmdb url, +/xxx → local path
                 $series['providerLogoPath'] = $this->getProviderLogoFullPath($series['providerLogoPath'], $logoUrl);
                 $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
                 $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
@@ -159,17 +158,17 @@ class HomeController extends AbstractController
         }
 //        dump($movieVideos);
 
-//        dump([
+        dump([
 //            'historySeries' => $historySeries,
 //            'filterString' => $filterString,
 //            'seriesSelection' => $seriesSelection,
 //            'lastAddedSeries' => $lastAddedSeries,
 //            'userSeries' => $userSeries,
 //            'movieSelection' => $movieSelection,
-//            'episodesOfTheDay' => $episodesOfTheDay,
-//            'historyEpisode' => $historyEpisode,
+            'episodesOfTheDay' => $episodesOfTheDay,
+            'historyEpisode' => $historyEpisode,
 //            'filteredSeries' => $filteredSeries,
-//        ]);
+        ]);
 
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
