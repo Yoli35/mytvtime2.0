@@ -234,6 +234,7 @@ austin, texas: austin, texas
 australia: Australie
 authoritarian: autoritaire
 autism: autisme
+autistic child: enfant autiste
 autistic: autiste
 awestruck: stupéfait
 axé: axé
@@ -252,6 +253,7 @@ bank: banque
 banker: banquier
 bar: bar
 barcelona, spain: barcelone, espagne
+barrister: avocat
 based on anime: basé sur l'anime
 based on cartoon: basé sur la bande dessinée
 based on comic strip: basé sur la bande dessinée
@@ -271,6 +273,7 @@ based on real events: basé sur des événements réels
 based on real person: basé sur une personne réelle
 based on short film: sur la base d'un court métrage
 based on short story: sur la base d'une histoire courte
+based on short: basé sur une nouvelle
 based on true story: basé sur une histoire vraie
 based on tv series: basé sur une série télévisée
 based on video game: basé sur un jeu vidéo
@@ -301,6 +304,7 @@ bermuda triangle: triangle des bermudes
 best friend: meilleur ami
 best friends: meilleur ami
 betrayal by friend: trahison par un ami
+betrayal: trahison
 bewildered: perplexe
 bickering couple: couple chamailleur
 big family: famille nombreuse
@@ -317,6 +321,7 @@ birmingham: birmingham
 birth: naissance
 bisexual man: homme bisexuel
 bisexual woman: femme bisexuelle
+bisexual: bisexuel
 bisexuality: bisexualité
 bitcoin: bitcoin
 biting: morsure
@@ -400,6 +405,7 @@ buffalo herd: troupeau de bisons
 bully: intimidation
 bullying: intimidation
 bunker: bunker
+burlesque: burlesque
 burnout: burnout
 bus: bus
 business consultant: consultant en affaires
@@ -458,6 +464,7 @@ cemetery: cimetière
 censorship: censure
 central america: Amérique centrale
 central intelligence agency (cia): agence centrale de renseignement (cia)
+cerebral: cerveau
 cgi-live action hybrid: hybride cgi-live action
 chaebol: conglomérat sud-coréen
 challenge: défi
@@ -475,6 +482,7 @@ cheerleading: chef d'orchestre
 chef male lead: chef d'orchestre masculin
 chef: chef cuisinier
 chemistry: chimie
+chernobyl: chernobyl
 chess: échecs
 chicago, illinois: chicago, illinois
 chief of police: chef de la police
@@ -510,6 +518,7 @@ cigar: cigare
 cinema: cinéma
 civil war: guerre civile
 civilization: civilisation
+class conflict: conflit de classe
 class differences: différence de classe
 classmate: classe d'âge
 classmates relationship: relation entre camarades de classe
@@ -552,6 +561,7 @@ coming of age: passage à l'âge adulte
 coming out: coming out
 commanding: commandement
 commercialism: commercialization à outrance
+communist movement: mouvement communiste
 community college: collège communautaire
 community drama: drame communautaire
 community service: service communautaire
@@ -608,6 +618,7 @@ court case: affaire judiciaire
 courthouse: tribunal
 courtroom drama: drame judiciaire
 courtroom: salle d'audience
+cousin: cousin
 cousins: cousins
 coven (akelarre): pieu (castillan (aquelarre), fait référence aux réunions de sorciers et sorcières)
 coven: clan
@@ -632,6 +643,7 @@ criminal profiler: profileur criminel
 criminal underworld: monde criminel
 criminal: criminel
 criminals: criminels
+critical: critique
 crooked cop: flic véreux
 cruel: cruel
 cruelty: cruauté
@@ -641,6 +653,7 @@ crush: coup de foudre
 crystal meth: cristaux de méthamphétamine
 cult: culte
 culte: culte
+cultural identity: l'identité culturelle
 curious: curieux
 curse: malédiction
 cyber bully: cyberintimidation
@@ -683,6 +696,7 @@ deadpan: de l'eau
 deaf-mute: sourd-muet
 deaf: sourd
 deal: marché
+death by hanging: la mort par pendaison
 death game: jeu de la mort
 death in family: mort dans la famille
 death match: mort dans la famille
@@ -707,6 +721,7 @@ defraud: fraude
 deification: deification
 deity: divinité
 delivery service: service de livraison
+demeaning: humiliant
 demigod: demi dieu
 democracy: démocratie
 demon hunter: chasseur de démons
@@ -725,6 +740,7 @@ desert town: ville du désert
 desert: désert
 deserted island: île déserte
 desertion: désertion
+desire for fame: le désir de célébrité
 desperate: désespéré
 destiny: destin
 destruction: destruction
@@ -749,6 +765,7 @@ disappearance: disparition
 disapproving parent: parent désapprouvant
 disaster movie: film catastrophe
 disaster: catastrophe
+discrimination: discrimination
 disdainful: dédaigneux
 disease: maladie
 disfigurement: défiguration
@@ -757,6 +774,7 @@ disgust: dégoût
 displaced persons: personnes déplacées
 displacement camp: camp de déplacés
 displacement: déplacement
+disrespectful: irrespectueux
 dissociative identity disorder: trouble dissociatif de l'identité
 distant  planet: planète lointaine
 distant future: futur lointain
@@ -803,6 +821,7 @@ drug rehabilitation: réhabilitation de la drogue
 drug scene: scène de la drogue
 drug smuggling: contrebande de drogue
 drug trade: commerce de la drogue
+drug trafficking: trafic de drogue
 drug trip: voyage de drogue
 drug use: consommation de drogue
 drug: drogue
@@ -833,6 +852,7 @@ ecological disaster: catastrophe écologique
 ecological footprint: empreinte écologique
 ecology: écologie
 economic struggle: lutte économique
+edgar allan poe: edgar allan poe
 egomaniac: égocentrique
 egotistical: égoïste
 egypt: Égypte
@@ -914,6 +934,8 @@ ex-couple relationship: relation ex-couple
 ex-marine: ex-marine
 excalibur: excalibur
 excited: enthousiaste
+execution by hanging: exécution par pendaison
+execution: exécution
 exhilarated: exalté
 existentialism: existentialisme
 exobiology: exobiologie
@@ -946,6 +968,7 @@ faking amnesia: simuler l'amnésie
 fall from grace: faux souvenir
 fall: chute
 false memory: faux souvenir
+fame-seeking: recherche de notoriété
 family abandonment: abandon de famille
 family business: entreprise familiale
 family comedy: comédie familiale
@@ -1103,6 +1126,7 @@ futuristic: futuriste
 galaxies: galaxies
 galaxy: galaxie
 galicia, spain: galice, espagne
+gallows: potence
 game show: jeu spectacle
 game world: monde du jeu
 game: jeu
@@ -1153,6 +1177,7 @@ global government: gouvernement global
 global politics: politique mondiale
 global threat: menace mondiale
 global warming: réchauffement de la planète
+gloomy: morose
 god: dieu
 gods: dieux
 godzilla: godzilla
@@ -1180,6 +1205,7 @@ grandfather grandson relationship: relation grand-père petit fils
 grandmother grandson relationship: relation grand-mère-petit-fils
 grandmother: grand-mère
 grandparent grandchild relationship: relation grand-parent-petit-enfant
+grave: tombeau
 great detective: grand détective
 greed: cupidité
 greedy man: homme cupide
@@ -1206,6 +1232,8 @@ hacking: piratage
 half-brother: demi-frère
 halloween: halloween
 handler: gestionnaire
+hanged woman: femme pendue
+hanging: pendaison
 hard sci-fi: science-fiction dure
 hard: dur
 hardship: difficultés
@@ -1224,6 +1252,7 @@ heartbreak: chagrin d'amour
 heartfelt: cœur sensible
 heaven: paradis
 hedonism: hédonisme
+height difference: différence de hauteur
 heiress: héritière
 heist: héritier
 helicopter: hélicoptère
@@ -1289,6 +1318,7 @@ horseman: cavalier
 hospice: hospice
 hospital: hôpital
 hotel: hôtel
+house fire: incendie de maison
 housekeeper: maison d'hôtes
 housemates relationship: relation avec les colocataires
 housemates: maison de retraite
@@ -1297,6 +1327,7 @@ human animal hybrid: hybride homme-animal
 human animal relationship: relation homme-animal
 human clone: clone humain
 human cloning: clonage humain
+human mystery: mystère humain
 human nature: nature humaine
 human vampire relationship: relation humain-vampire
 human vs alien: humain vs extraterrestre
@@ -1320,6 +1351,7 @@ illegal gambling: jeux d'argent illégaux
 illinois: illinois
 illness: maladie
 illustrator: illustrateur
+imaginative: imaginatif
 immigration: immigration
 immortal: immortel
 immortality: immortalité
@@ -1371,6 +1403,7 @@ intrigue: intrigue
 introspective: introspectif
 introvert: introverti
 intruder: intrus
+invasion of earth: invasion de la terre
 invasion: invasion
 inverted mystery: mystère inversé
 investigation: enquête
@@ -1593,6 +1626,7 @@ mass media: les médias
 mass shooting: tir de masse
 mass surveillance: surveillance de masse
 massachusetts: massachusetts
+master servant relationship: relation maître-serviteur
 masturbation: masturbation
 matchmaker: matchmaker
 matchmaking: service d'assistance à la clientèle
@@ -1677,7 +1711,9 @@ missing person: personne disparue
 missing woman: femme disparue
 mission: mission
 missouri: missouri
+mistaken identity: erreur sur la personne
 misunderstanding: incompréhension
+mob family: famille mafieuse
 mobile app: application mobile
 mobster: mafieux
 model student: étudiant modèle
@@ -1797,13 +1833,18 @@ new york city: ville de new york
 new yorker: new-yorkais
 newspaper reporter: journaliste
 nhs: nhs
+nightclub entertainer: animateur de boîte de nuit
+nightclub performer: artiste de boîte de nuit
 nightclub: boîte de nuit
+nightlife: vie nocturne
 nightmare: cauchemar
+nightmares: cauchemars
 no electricity: pas d'électricité
 noise: bruit
 non monogamian: non monogame
 non-binary: non binaire
 nonlinear timeline: ligne de temps non-linéaire
+noose: nœud coulant
 nordic folklore: folklore nordique
 nordic mythology: mythologie nordique
 nordic noir: noir nordique
@@ -1924,6 +1965,7 @@ period sitcom: période de sitcom
 persecution: persécution
 personal data: données personnelles
 perónism: péronisme
+pessimistic: pessimiste
 peugeot 403: peugeot 403
 peugeot car: voiture peugeot
 peugeot: peugeot
@@ -2052,6 +2094,8 @@ psychopath: psychopathe
 psychotic attack: attaque psychotique
 psychotic: psychotique
 pub: pub
+public execution: exécution publique
+public hanging: pendaison publique
 public humiliation: humiliation publique
 publishing house: maison d'édition
 punishment: punition
@@ -2083,6 +2127,7 @@ rape: viol
 rapist: rap
 rare disease: maladie rare
 raven: corbeau
+real time: temps réel
 realistic action: action réaliste
 reality competition: compétition de réalité
 reality show: émission de télé-réalité
@@ -2168,6 +2213,7 @@ role playing: jeu de rôle
 romance: romance
 romantic comedy: comédie romantique
 romantic drama: drame romantique
+romantic entrapment: le piège romantique
 romantic: romantique
 romcom: comédie romantique
 romulans: romuliens
@@ -2202,6 +2248,7 @@ santa claus: père Noël
 sao paulo, brazil: sao paulo, brazil
 sapphic: saphique
 sarcasm: sarcasme
+sardonic: sardonique
 satire: satire
 satirical: satirique
 savant: savant
@@ -2223,6 +2270,7 @@ school: école
 sci-fi: science-fiction
 science and nature: science et nature
 science and technology: science et technologie
+science documentary: documentaire scientifique
 science experiment: expérience scientifique
 science fiction: science fiction
 science mystery: science et technologie
@@ -2231,6 +2279,7 @@ scientist: scientifique
 scotland: scotland
 sea monster: monstre marin
 sea: mer
+search for father: recherche du père
 search: recherche
 searching for love: recherche de l'amour
 seaside: bord de mer
@@ -2354,6 +2403,7 @@ slav: slave
 slave: esclave
 slice of life: tranche de vie
 slow burn romance: romance lente
+slow burn: combustion lente
 small town america: petite ville d'amérique
 small town doctor: médecin d'une petite ville
 small town: petite ville
@@ -2381,6 +2431,7 @@ soldier: soldat
 soldiers: soldats
 solve: résoudre
 solved: résolu
+somber: sombre
 songwriter: auteur-compositeur
 sonic: sonic - Sonic, enregistré en tant que marque commerciale sous le nom de Sonic the Hedgehog, est un personnage de jeu vidéo et le personnage principal de la série de jeux vidéo Sonic the Hedgehog éditée par Sega.
 sorcery: sorcellerie
@@ -2422,6 +2473,7 @@ special ability: capacité spéciale
 special agent: agent spécial
 special air service (sas): service spécial de l'air (sas)
 special forces: forces spéciales
+special ops: opérations spéciales
 special power: pouvoir spécial
 speculative: spéculatif
 speed: vitesse
@@ -2438,6 +2490,7 @@ sports psychology: psychologie du sport
 sports: sport
 sportsmanship: esprit sportif
 spy thriller: espionnage
+spy-fi: fiction d'espionnage
 spy: espion
 stage fright: trac
 stage performance: performance scénique
@@ -2445,6 +2498,7 @@ staged death: mise en scène de la mort
 stalker: espionnage
 stand-up comedian: comédien de stand-up
 star crossed lovers: amants croisés
+star trek: star trek
 star wars universe: univers de la guerre des étoiles
 starfleet: starfleet
 starship: vaisseau spatial
@@ -2649,6 +2703,7 @@ tragic love: amour tragique
 tragic past: passé tragique
 tragic: tragique
 tragicomedy: tragicomédie
+train: train
 training: formation
 traitor: traître
 trans man: homme trans
@@ -2680,6 +2735,7 @@ trial: essai
 triangle: triangle
 tribe: tribu
 trolls: trolls
+troubled childhood: enfance difficile
 troubled marriage: mariage difficile
 troubled past: passé troublé
 troubled teen: adolescent en difficulté
@@ -2723,6 +2779,7 @@ underground: souterrain
 underworld: sous-monde
 unemployed: chômeur
 unexplained: inexpliqué
+unfaithful wife: femme infidèle
 unfaithfulness: infidélité
 unhealthy relationship: relation malsaine
 unintended consequences: conséquences involontaires
@@ -2820,6 +2877,7 @@ whodunit: whodunit
 whodunnit: roman de détection
 whorehouse: whorehouse
 widow: veuve
+widowed mother: mère veuve
 widower: veuf
 wild west: wild west
 wilderness: nature sauvage
@@ -2857,6 +2915,7 @@ wrestler: lutteur
 writer: écrivain
 wrongful conviction: condamnation injustifiée
 wrongfully accused: accusé à tort
+wry: ironique
 wuxia: Wuxia signifie littéralement « héros guerrier » ou « chevalier martial », et le genre s'inscrit dans la tradition du chevalier errant. L'histoire se déroule dans la Chine ancienne et les héros possèdent des compétences physiques incroyables, acquises généralement par un entraînement très strict dès le plus jeune âge. Les wuxia sont souvent des justiciers qui combattent les forces du mal et protègent les innocents.
 wyoming, usa: wyoming, usa
 xianxia: Xianxia (chinois simplifié 仙侠 - chinois traditionnel 仙俠) est un genre de fiction chinoise qui combine des éléments de wuxia, de mythologie chinoise et de fantasy. Les histoires se déroulent souvent dans un monde fantastique où les personnages acquièrent des pouvoirs surnaturels en cultivant leur énergie spirituelle. Les xianxia sont souvent des histoires de voyageurs qui parcourent le monde pour devenir plus forts et atteindre l'immortalité.
@@ -2887,9 +2946,11 @@ zohaib: prénom
 zombie apocalypse: zombie apocalypse
 zombie: zombie
 гей-влюбленность: amour homosexuel
+гей-герой: héros gay
 гей-отношения: relation homosexuelle
 гей-персонаж: personnage gay
 гей-поцелуй: baiser gay
+гей-секс: sexe gay
 сверхъестественное: surnaturel
 إعصار: tornade
 كوارث طبيعية: Catastrophes naturelles
