@@ -647,7 +647,7 @@
                             {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
                             <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: tv.localized_name.slug ?? series.slug}) }}">
                                 <div class="season">
-                                    <div class="poster">
+                                    <div class="poster" data-title="{{ "Season poster"|trans }}">
                                         {% if season.poster_path %}
                                             <img src="{{ season.poster_path }}" alt="{{ season.name }}">
                                         {% else %}
