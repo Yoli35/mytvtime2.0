@@ -85,9 +85,28 @@ export class ToolTips {
             body.appendChild(p);
         }
 
+        // Hauteur de l'écran
+        const fromTopViewport = evt.clientY;
+        // Si le pointeur de la souris est dans la moitié haute de l'écran, le tooltip est affiché en dessous,
+        // sinon il est affiché au-dessus.
+        let displayAbove = false, maxHeight = 0;
+        if (fromTopViewport < (window.innerHeight / 2)) {
+            maxHeight = fromTopViewport - 64;
+        } else {
+            displayAbove = true;
+            maxHeight = window.innerHeight - fromTopViewport - 64;
+        }
+
         const width = body.offsetWidth;
         const height = body.offsetHeight - 48;
-        let style = "translate: " + (evt.pageX - (width / 2)) + "px " + (evt.pageY - height) + "px; max-height: " + height + "px;";
+        let style;
+        if (displayAbove) {
+            style = "translate: " + (evt.pageX - (width / 2)) + "px " + (evt.pageY - height) + "px; max-height: " + maxHeight + "px;";
+            tail.setAttribute("style", "translate: 0 -.55rem; background-color: " + tooltips.getAttribute("bg") + ";");
+        } else {
+            style = "translate: " + (evt.pageX - (width / 2)) + "px " + (evt.pageY + 8) + "px; max-height: " + maxHeight + "px;";
+            tail.setAttribute("style", "translate: 0 -" + (height + 8) + "px; background-color: " + tooltips.getAttribute("bg") + ";");
+        }
         tooltips.setAttribute("style", style);
 
         tooltips.classList.add("show");
@@ -127,22 +146,32 @@ export class ToolTips {
         if (evt.pageX === 0 && evt.pageY === 0) {
             return;
         }
+        let maxHeight, toolTipsTranslateY, tailTranslateY;
+        if (fromTopViewport < (window.innerHeight / 2)) {
+            toolTipsTranslateY = (evt.pageY + 96);
+            tailTranslateY = body.offsetHeight + 7.2;
+            maxHeight = window.innerHeight - fromTopViewport - 64;
+        } else {
+            toolTipsTranslateY = (evt.pageY - Math.min(height, fromTopViewport));
+            tailTranslateY = 8.8;
+            maxHeight = fromTopViewport - 64;
+        }
 
-        if (img) img.style.maxHeight = (fromTopViewport - 64) + "px";
+        if (img) img.setAttribute("style", "max-height: " + maxHeight + "px");
 
         const left = evt.pageX - (width / 2);
         if (left < 0) {
-            let style = "transform: translate(" + (evt.pageX - (width / 2) + (left * -1)) + "px, " + (evt.pageY - Math.min(height, fromTopViewport)) + "px);";
+            let style = "transform: translate(" + (evt.pageX - (width / 2) + (left * -1)) + "px, " + toolTipsTranslateY + "px);";
             tooltips.setAttribute("style", style);
-            tail.setAttribute("style", "translate: " + left + "px -.55rem;" + bg);
+            tail.setAttribute("style", "translate: " + left + "px -" + tailTranslateY + "px;" + bg);
             return;
         }
 
         const right = evt.pageX + (width / 2);
         if (right > windowWidth * visualViewport.scale) {
-            let style = "transform: translate(" + (evt.pageX - (width / 2) - (right - windowWidth)) + "px, " + (evt.pageY - Math.min(height, fromTopViewport)) + "px);";
+            let style = "transform: translate(" + (evt.pageX - (width / 2) - (right - windowWidth)) + "px, " + toolTipsTranslateY + "px);";
             tooltips.setAttribute("style", style);
-            tail.setAttribute("style", "translate: " + (right - windowWidth) + "px -.55rem;" + bg);
+            tail.setAttribute("style", "translate: " + (right - windowWidth) + "px -" + tailTranslateY + "px;" + bg);
             return;
         }
 
@@ -151,9 +180,9 @@ export class ToolTips {
             return;
         }
 
-        let style = "transform: translate(" + (evt.pageX - (width / 2)) + "px, " + (evt.pageY - Math.min(height, fromTopViewport)) + "px);";
+        let style = "transform: translate(" + (evt.pageX - (width / 2)) + "px, " + toolTipsTranslateY + "px);";
         tooltips.setAttribute("style", style);
-        tail.setAttribute("style", "translate: 0 -.55rem;" + bg);
+        tail.setAttribute("style", "translate: 0 -" + tailTranslateY + "px;" + bg);
         // console.log("move - " + style);
     }
 }
