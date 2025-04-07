@@ -3,6 +3,7 @@
 {% block title %}my Tv Time → {{ 'Lists'|trans }} → {{ list.name }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
 {% endblock %}
 {% block body %}
@@ -31,13 +32,11 @@
                         {% endif %}
                     </a>
                 </div>
-                <div class="poster">
-                    {% if list.poster_path %}
+                {% if list.poster_path %}
+                    <div class="poster">
                         <img src="/series/posters{{ list.poster_path }}" alt="{{ list.name }}">
-                    {% else %}
-                        <div>{{ 'No poster'|trans }}</div>
-                    {% endif %}
-                </div>
+                    </div>
+                {% endif %}
                 <div class="infos">
                     <div class="name">
                         <h1>{{ list.name }}</h1>
@@ -58,23 +57,27 @@
                     <div class="header">
                         <div class="pages">
                             {% for page in 1..list.total_pages %}
-                                    <div class="page{% if page == list.page %} active{% endif %}">
-                                        <a href="{{ path('app_series_list', {'id': list.id, 'seriesId': series.id, 'page': page}) }}">
+                                <div class="page{% if page == list.page %} active{% endif %}">
+                                    <a href="{{ path('app_series_list', {'id': list.id, 'seriesId': series.id, 'page': page}) }}">
                                         {{ page }}
-                                        </a>
-                                    </div>
+                                    </a>
+                                </div>
                             {% endfor %}
                         </div>
                     </div>
-                    <div class="wrapper">
-                        {% for result in list.results %}
-                            {% if result.media_type == 'tv' %}
-                                {{ include('_blocks/series/_card.html.twig', {'series': result}) }}
-                            {% endif %}
-                            {% if result.media_type == 'movie' %}
-                                {{ include('_blocks/movie/_card-tmdb.html.twig', {'movie': result}) }}
-                            {% endif %}
-                        {% endfor %}
+                    <div class="series-group">
+                        <div class="wrapper">
+                            <div class="content">
+                                {% for result in list.results %}
+                                    {% if result.media_type == 'tv' %}
+                                        {{ include('_blocks/series/_card.html.twig', {'series': result}) }}
+                                    {% endif %}
+                                    {% if result.media_type == 'movie' %}
+                                        {{ include('_blocks/movie/_card-tmdb.html.twig', {'movie': result}) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
