@@ -158,17 +158,17 @@ class HomeController extends AbstractController
         }
 //        dump($movieVideos);
 
-        dump([
+//        dump([
 //            'historySeries' => $historySeries,
 //            'filterString' => $filterString,
 //            'seriesSelection' => $seriesSelection,
 //            'lastAddedSeries' => $lastAddedSeries,
 //            'userSeries' => $userSeries,
 //            'movieSelection' => $movieSelection,
-            'episodesOfTheDay' => $episodesOfTheDay,
-            'historyEpisode' => $historyEpisode,
+//            'episodesOfTheDay' => $episodesOfTheDay,
+//            'historyEpisode' => $historyEpisode,
 //            'filteredSeries' => $filteredSeries,
-        ]);
+//        ]);
 
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
