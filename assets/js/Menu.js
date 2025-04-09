@@ -146,7 +146,6 @@ export class Menu {
         const eotdMenuItems = document.querySelectorAll("a[id^='eotd-menu-item-']");
         const pinnedMenuItems = document.querySelectorAll("a[id^='pinned-menu-item-']");
         const seriesInProgress = document.querySelector("a[id^='sip-menu-item-']");
-        const body = document.querySelector("body");
         const notifications = document.querySelector(".notifications");
         const movieSearch = navbar.querySelector("#movie-search");
         const tvSearch = navbar.querySelector("#tv-search");
@@ -161,17 +160,20 @@ export class Menu {
         const menus = navbar.querySelectorAll(".menu");
         console.log({menus});
 
-        /*document.addEventListener("click", (e) => {
-            if (notifications?.querySelector(".menu-notifications").classList.contains("show")) {
-                const menu = notifications.querySelector(".menu-notifications");
-                if (!menu.contains(e.target) && !notifications.contains(e.target)) {
-                    menu.classList.remove("show");
-                    e.stopPropagation();
+        document.addEventListener("click", (e) => {
+            searchResults.forEach((searchResult) => {
+                if (searchResult.querySelector("ul") && !searchResult.parentElement.contains(e.target)) {
+                    searchResult.innerHTML = '';
+                    searchResult.classList.remove("showing-something");
                     e.preventDefault();
                 }
-            }
-            document.querySelector(".tooltip")?.classList.remove("show");
-        });*/
+            });
+            menus.forEach((menu) => {
+                if (!menu.parentElement.contains(e.target)) {
+                    this.closeMenu(menu.closest(".navbar-item"), menu);
+                }
+            });
+        });
 
         navbarItems.forEach((item) => {
             item.addEventListener("click", (e) => {
@@ -198,42 +200,18 @@ export class Menu {
         });
 
         burger.addEventListener("click", () => {
-            burger.classList.toggle("open");
-            /*navbar.classList.toggle("active");*/
-            body.classList.toggle("frozen");
-            if (burger.classList.contains("open")) {
-                this.closeMenu(avatar, userMenu);
-                mainMenu.classList.add("open");
-                setTimeout(() => {
-                    mainMenu.classList.add("show");
-                }, 0);
+            if (!burger.classList.contains("open")) {
+                this.openMenu(burger, mainMenu);
             } else {
-                setTimeout(() => {
-                    mainMenu.classList.remove("show");
-                    setTimeout(() => {
-                        mainMenu.classList.remove("open");
-                    }, 250);
-                }, 0);
+                this.closeMenu(burger, mainMenu);
             }
         });
 
         avatar.addEventListener("click", () => {
-            avatar.classList.toggle("open");
-            /*navbar.classList.toggle("active");*/
-            body.classList.toggle("frozen");
-            if (avatar.classList.contains("open")) {
-                this.closeMenu(burger, mainMenu);
-                userMenu.classList.add("open");
-                setTimeout(() => {
-                    userMenu.classList.add("show");
-                }, 0);
+            if (!avatar.classList.contains("open")) {
+                this.openMenu(avatar, userMenu);
             } else {
-                setTimeout(() => {
-                    userMenu.classList.remove("show");
-                    setTimeout(() => {
-                        userMenu.classList.remove("open");
-                    }, 250);
-                }, 0);
+                this.closeMenu(avatar, userMenu);
             }
         });
 
@@ -296,12 +274,6 @@ export class Menu {
         }
 
         notifications?.addEventListener("click", () => {
-            const menu = notifications.querySelector(".menu-notifications");
-            menu.classList.toggle("show");
-            if (menu.classList.contains("show")) {
-                this.closeMenu(burger, mainMenu);
-                this.closeMenu(avatar, userMenu);
-            }
             this.markNotificationsAsRead();
         });
 
@@ -328,6 +300,9 @@ export class Menu {
                             searchResults.innerHTML = '';
                             const ul = document.createElement("ul");
                             ul.setAttribute("data-type", "movie");
+                            if (json.results.length) {
+                                searchResults.classList.add("showing-something");
+                            }
                             /** @type {Movie} */
                             json.results.forEach((result) => {
                                 const a = document.createElement("a");
@@ -388,6 +363,9 @@ export class Menu {
                             searchResults.innerHTML = '';
                             const ul = document.createElement("ul");
                             ul.setAttribute("data-type", "tv");
+                            if (json.results.length) {
+                                searchResults.classList.add("showing-something");
+                            }
                             json.results.forEach((result) => {
                                 const a = document.createElement("a");
                                 const slug = gThis.toSlug(result.name);
@@ -449,6 +427,9 @@ export class Menu {
                             searchResults.innerHTML = '';
                             const ul = document.createElement("ul");
                             ul.setAttribute("data-type", "dbtv");
+                            if (json.results.length) {
+                                searchResults.classList.add("showing-something");
+                            }
                             /** @type {DbSeries} */
                             json.results.forEach((result) => {
                                 const a = document.createElement("a");
@@ -510,6 +491,9 @@ export class Menu {
                             searchResults.innerHTML = '';
                             const ul = document.createElement("ul");
                             ul.setAttribute("data-type", "person");
+                            if (json.results.length) {
+                                searchResults.classList.add("showing-something");
+                            }
                             /** @var {Person} */
                             json.results.forEach((result) => {
                                 const a = document.createElement("a");
@@ -936,12 +920,12 @@ export class Menu {
     checkHistory() {
         const historyList = document.querySelector("#history-list");
         const historyOptions = historyList.querySelector("#history-options").querySelectorAll("input");
-        const firstItem = historyList.querySelector(".history-item");
+        const ul = historyList.querySelector("ul");
         const loadingDiv = document.createElement("div");
         loadingDiv.classList.add("loading");
         loadingDiv.innerHTML = 'Checking...';
-        historyList.insertBefore(loadingDiv, firstItem);
-        console.log({open});
+        historyList.insertBefore(loadingDiv, ul);
+        /*console.log({open});*/
         fetch('/api/history/menu/last', {
             method: 'GET',
             headers: {
@@ -953,7 +937,7 @@ export class Menu {
             .then(data => {
                 const lastWatchedEpisode = data.last;
                 const lastEpisodeInHistory = parseInt(historyList.getAttribute("data-last"));
-                console.log(lastWatchedEpisode, lastEpisodeInHistory);
+                /*console.log(lastWatchedEpisode, lastEpisodeInHistory);*/
                 if (lastEpisodeInHistory !== lastWatchedEpisode) {
                     loadingDiv.innerHTML = 'Reloading...';
                     gThis.reloadHistory({currentTarget: historyOptions[0]});
@@ -969,7 +953,7 @@ export class Menu {
         const historyOptions = historyList.querySelector("#history-options").querySelectorAll("input");
         const historyOption = e.currentTarget;
         const optionId = historyOption.id.split('-')[2];
-        const historyListItems = historyList.querySelectorAll(".history-item");
+        const historyListItems = historyList.querySelector("ul");
         const options = {'type': false, 'page': 1, 'count': 20, 'vote': false, 'device': false, 'provider': false};
 
         historyOptions.forEach(option => {
@@ -980,7 +964,7 @@ export class Menu {
                 options[option.id.split('-')[2]] = option.value;
             }
         });
-        console.log({options});
+        /*console.log({options});*/
 
         if (optionId === 'vote' || optionId === 'device' || optionId === 'provider') {
             historyListItems.forEach((item) => {
@@ -1016,15 +1000,13 @@ export class Menu {
         })
             .then(response => response.json())
             .then(data => {
-                historyListItems.forEach((item) => {
-                    item.remove();
-                });
+                historyListItems.innerHTML = '';
                 /** @type {HistoryItem} */
                 data.list.forEach((item) => {
-                    const div = document.createElement("div");
-                    div.classList.add("menu-item");
-                    div.classList.add("history-item");
-                    div.setAttribute("id", item.episodeId);
+                    const li = document.createElement("li");
+                    li.classList.add("menu-item");
+                    li.classList.add("history-item");
+                    li.setAttribute("id", item.episodeId);
                     const a = document.createElement("a");
                     a.classList.add("history");
                     a.href = item.url;
@@ -1042,11 +1024,6 @@ export class Menu {
                     name.innerHTML = item.name;
                     a.appendChild(name);
 
-                    /*
-                        <div class="vote{% if history.vote == 0 %} hidden{% endif %}">{{ h.vote }}</div>
-                        <div class="device{% if history.device == 0 %} hidden{% endif %}">{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}</div>
-                        <div class="provider{% if history.provider == 0 %} hidden{% endif %}"><img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}"></div>
-                     */
                     const vote = document.createElement("div");
                     vote.classList.add("vote");
                     if (options.vote === false) vote.classList.add('hidden');
@@ -1080,8 +1057,8 @@ export class Menu {
                     date.innerHTML = item.lastWatchAt;
                     a.appendChild(date);
 
-                    div.appendChild(a);
-                    historyList.appendChild(div);
+                    li.appendChild(a);
+                    historyList.appendChild(li);
                 });
             })
             .catch((error) => {
@@ -1091,15 +1068,15 @@ export class Menu {
 
     checkLog() {
         const logList = document.querySelector("#log-list");
-        const firstItem = logList.querySelector(".log-item");
-        const lastId = firstItem ? firstItem.getAttribute("data-id") : 0;
+        const ul = logList.querySelector("ul");
+        const lastId = logList.getAttribute("data-last");
         const loadingDiv = document.createElement("div");
         loadingDiv.classList.add("menu-item");
         const div = document.createElement("div");
         div.classList.add("loading");
         div.innerHTML = 'Loading...';
         loadingDiv.appendChild(div);
-        logList.insertBefore(loadingDiv, firstItem);
+        logList.insertBefore(loadingDiv, ul);
         fetch('/api/log/last', {
             method: 'GET',
             headers: {
@@ -1109,21 +1086,20 @@ export class Menu {
             .then(response => response.json())
             /** @var {{ok: boolean, last: number}} data */
             .then(data => {
-                console.log(lastId, data);
+                /*console.log(lastId, data);*/
                 if (parseInt(lastId) !== data.last) {
                     loadingDiv.querySelector('div').innerHTML = 'Reloading...';
-                    gThis.reloadLog();
+                    gThis.reloadLog(lastId);
                 } else {
                     loadingDiv.remove();
                 }
             });
     }
 
-    reloadLog() {
+    reloadLog(lastId) {
         // api url : /api/log/load
         const logList = document.querySelector("#log-list");
-        const logListItems = logList.querySelectorAll(".log-item, .log-date");
-        const lastId = logListItems[0].getAttribute("data-id");
+        const ul = logList.querySelector("ul");
         const loadingDiv = logList.querySelector(".menu-item:has(.loading)");
         fetch('/api/log/load', {
             method: 'POST',
@@ -1135,33 +1111,32 @@ export class Menu {
             .then(response => response.json())
             /** @var LogData data */
             .then(data => {
+                logList.setAttribute("data-last", data.lastId);
                 const countDiv = logList.querySelector("#log-count");
                 /** @type {LogItem[]} */
                 const logs = data.logs;
                 let dateString = "";
-                logListItems.forEach((item) => {
-                    item.remove();
-                });
+                ul.innerHTML = '';
                 countDiv.innerHTML = data.count;
-                console.log(logs);
-                console.log(data.dates);
+                /*console.log(logs);
+                console.log(data.dates);*/
                 /** @type {LogItem} */
                 logs.forEach((item) => {
                     const itemDateString = data.dates[item.dateKey];
                     if (itemDateString !== dateString) {
                         // const now = new Date();
-                        const div = document.createElement("div");
-                        div.classList.add("menu-item");
-                        div.classList.add("log-date");
-                        div.innerHTML = itemDateString;
-                        logList.appendChild(div);
+                        const li = document.createElement("li");
+                        li.classList.add("menu-item");
+                        li.classList.add("log-date");
+                        li.innerHTML = itemDateString;
+                        ul.appendChild(li);
                         dateString = itemDateString;
                     }
 
-                    const div = document.createElement("div");
-                    div.classList.add("menu-item");
-                    div.classList.add("log-item");
-                    div.setAttribute("data-id", `${item.id}`);
+                    const li = document.createElement("li");
+                    li.classList.add("menu-item");
+                    li.classList.add("log-item");
+                    li.setAttribute("data-id", `${item.id}`);
 
                     const a = document.createElement("a");
                     a.classList.add("log");
@@ -1176,8 +1151,8 @@ export class Menu {
                     a.appendChild(nameDiv);
                     a.appendChild(timeDiv);
 
-                    div.appendChild(a);
-                    logList.appendChild(div);
+                    li.appendChild(a);
+                    ul.appendChild(li);
                 });
                 loadingDiv.remove();
             })

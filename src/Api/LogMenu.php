@@ -49,9 +49,12 @@ class LogMenu extends AbstractController
             ];
         }, $this->historyRepository->findBy(['user' => $user], ['date' => 'DESC'], 50));
 
+        $lastId = $logs[0]['id'] ?? 0;
+
         return $this->json([
             'ok' => true,
             'logs' => $logs,
+            'lastId' => $lastId,
             'count' => sprintf("%d / %d %s", count($logs), $this->historyRepository->count(['user' => $user]), $this->translator->trans('history entries')),
             'dates' => $dates,
         ]);
