@@ -2362,6 +2362,43 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[Route('/fetch/search/multi', name: 'fetch_search_multi', methods: ['POST'])]
+    public function fetchSearchMulti(Request $request): Response
+    {
+        $user = $this->getUser();
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+        $data = json_decode($request->getContent(), true);
+        $query = $data['query'];
+
+        if ($query === 'init') {
+            $multi = ["page" => 1, "results" => [], "total_pages" => 0, "total_results" => 0];
+        } else {
+            $multi = json_decode($this->tmdbService->searchMulti(1, $query, $locale), true);
+        }
+
+        return $this->json([
+            'ok' => true,
+            'results' => $multi['results'],
+            'posterUrl' => $this->imageConfiguration->getUrl('poster_sizes', 3),
+            'profileUrl' => $this->imageConfiguration->getUrl('profile_sizes', 3),
+        ]);
+    }
+
+    #[Route('/fetch/search/series', name: 'fetch_search_series', methods: ['POST'])]
+    public function fetchSearchSeries(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $query = $data['query'];
+
+        $searchString = "&query=$query&include_adult=false&page=1";
+        $series = json_decode($this->tmdbService->searchTv($searchString), true);
+
+        return $this->json([
+            'ok' => true,
+            'results' => $series['results'],
+        ]);
+    }
+
     #[Route('/tmdb/check', name: 'tmdb_check', methods: ['POST'])]
     public function tmdbCheck(Request $request): Response
     {

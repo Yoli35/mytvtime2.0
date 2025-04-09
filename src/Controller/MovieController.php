@@ -512,19 +512,6 @@ class MovieController extends AbstractController
         ]);
     }
 
-    #[Route('/tmdb/config', name: 'tmdb_config')]
-    public function getTMDBConfig(): Response
-    {
-        return $this->json([
-            'ok' => true,
-            'body' => [
-                'poster_url' => $this->imageConfiguration->getUrl('poster_sizes', 2),
-                'profile_url' => $this->imageConfiguration->getUrl('profile_sizes', 2),
-                'bearer' => $this->tmdbService->getBearer(),
-            ],
-        ]);
-    }
-
     #[Route('/add/localized/name/{id}', name: 'add_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addLocalizedName(Request $request, UserMovie $userMovie): Response
     {
@@ -655,6 +642,21 @@ class MovieController extends AbstractController
         return $this->json([
             'ok' => true,
             'keywords' => $keywordBlock,
+        ]);
+    }
+
+    #[Route('/fetch/search/movies', name: 'fetch_search_movies', methods: ['POST'])]
+    public function fetchSearchMovies(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $query = $data['query'];
+
+        $searchString = "&query=$query&include_adult=false&page=1";
+        $movies = json_decode($this->tmdbService->searchMovie($searchString), true);
+
+        return $this->json([
+            'ok' => true,
+            'results' => $movies['results'],
         ]);
     }
 

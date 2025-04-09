@@ -71,7 +71,7 @@ class TMDBService
         }
     }*/
 
-    /*public function multiSearch($page, $query, $locale): ?string
+    public function searchMulti($page, $query, $locale): ?string
     {
         try {
             $response = $this->client->request(
@@ -87,7 +87,58 @@ class TMDBService
         } catch (Throwable) {
             return "";
         }
-    }*/
+    }
+
+    public function searchMovie(string $searchString): ?string
+    {
+        try {
+            $response = $this->client->request(
+                'GET',
+                'https://api.themoviedb.org/3/search/movie?api_key=' . $this->api_key . $searchString,
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable) {
+                return "";
+            }
+        } catch (Throwable) {
+            return "";
+        }
+    }
+
+    public function searchPerson(string $searchString): ?string
+    {
+        try {
+            $response = $this->client->request(
+                'GET',
+                'https://api.themoviedb.org/3/search/person?api_key=' . $this->api_key . $searchString,
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable) {
+                return "";
+            }
+        } catch (Throwable) {
+            return "";
+        }
+    }
+
+    public function searchTv(string $searchString): ?string
+    {
+        try {
+            $response = $this->client->request(
+                'GET',
+                'https://api.themoviedb.org/3/search/tv?api_key=' . $this->api_key . $searchString,
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable) {
+                return "";
+            }
+        } catch (Throwable) {
+            return "";
+        }
+    }
 
     public function getTv(int $showId, string $locale, ?array $details = null): ?string
     {
@@ -211,40 +262,6 @@ class TMDBService
             }
         } catch (Throwable $exception) {
             return 'Request : ' . $exception->getMessage() . ' - code : ' . $exception->getCode();
-        }
-    }
-
-    public function searchTv(string $searchString): ?string
-    {
-        try {
-            $response = $this->client->request(
-                'GET',
-                'https://api.themoviedb.org/3/search/tv?api_key=' . $this->api_key . $searchString,
-            );
-            try {
-                return $response->getContent();
-            } catch (Throwable) {
-                return "";
-            }
-        } catch (Throwable) {
-            return "";
-        }
-    }
-
-    public function searchMovie(string $searchString): ?string
-    {
-        try {
-            $response = $this->client->request(
-                'GET',
-                'https://api.themoviedb.org/3/search/movie?api_key=' . $this->api_key . $searchString,
-            );
-            try {
-                return $response->getContent();
-            } catch (Throwable) {
-                return "";
-            }
-        } catch (Throwable) {
-            return "";
         }
     }
 
@@ -524,24 +541,6 @@ class TMDBService
             return $noOne;
         }
     }
-
-    /*public function getPersonCredits(int $id, string $locale): ?string
-    {
-        $noCredits = json_encode([]);
-        try {
-            $response = $this->client->request(
-                'GET',
-                'https://api.themoviedb.org/3/person/' . $id . '/combined_credits?api_key=' . $this->api_key . '&language=' . $locale
-            );
-            try {
-                return $response->getContent();
-            } catch (Throwable) {
-                return $noCredits;
-            }
-        } catch (Throwable) {
-            return $noCredits;
-        }
-    }*/
 
     /*public function availableRegions(): ?string
     {

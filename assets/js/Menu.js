@@ -119,9 +119,6 @@ export class Menu {
         this.setTheme = this.setTheme.bind(this);
         this.checkTheme = this.checkTheme.bind(this);
         this.lang = document.documentElement.lang;
-        /*this.avatar = document.querySelector('.avatar');*/
-        /*this.userConnected = this.avatar != null;
-        this.connexionInterval = null;*/
         this.posterUrl = null;
         this.profileUrl = null;
         this.svgs = {
@@ -151,7 +148,6 @@ export class Menu {
         const seriesInProgress = document.querySelector("a[id^='sip-menu-item-']");
         const body = document.querySelector("body");
         const notifications = document.querySelector(".notifications");
-        /*const detailsElements = document.querySelectorAll("details");*/
         const movieSearch = navbar.querySelector("#movie-search");
         const tvSearch = navbar.querySelector("#tv-search");
         const tvSearchDb = navbar.querySelector("#tv-search-db");
@@ -159,7 +155,11 @@ export class Menu {
         const multiSearch = navbar.querySelector("#multi-search");
 
         const historyNavbarItem = navbar.querySelector("#history-menu");
-        //const logMenu = navbar.querySelector("#log-menu");
+
+        const searchResults = navbar.querySelectorAll(".search-results");
+        console.log({searchResults});
+        const menus = navbar.querySelectorAll(".menu");
+        console.log({menus});
 
         /*document.addEventListener("click", (e) => {
             if (notifications?.querySelector(".menu-notifications").classList.contains("show")) {
@@ -305,55 +305,20 @@ export class Menu {
             this.markNotificationsAsRead();
         });
 
-        /*detailsElements.forEach((details) => {
-            details.addEventListener("toggle", (e) => {
-                if (details.open) {
-                    this.closeMenu(burger, mainMenu);
-                    this.closeMenu(avatar, userMenu);
-                }
-            });
-        });*/
-
         if (movieSearch) {
             movieSearch.addEventListener("input", (e) => {
                 const value = e.target.value;
                 console.log({e});
                 if (value.length > 2) {
                     const searchResults = movieSearch.closest(".menu-item").querySelector(".search-results");
-                    const query = encodeURIComponent(value);
-                    const url = 'https://api.themoviedb.org/3/search/movie?query=' + query + '&include_adult=false&language=fr-FR&page=1';
+                    const url = `/${gThis.lang}/movie/fetch/search/movies`;
                     const options = {
-                        method: 'GET',
+                        method: 'POST',
                         headers: {
-                            accept: 'application/json',
-                            Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmN2UzYzVmZTc5NGQ1NjViNDcxMzM0YzljNWVjYWY5NiIsIm5iZiI6MTcyMDYxMDA2Ni4zMzk0NzgsInN1YiI6IjYyMDJiZjg2ZTM4YmQ4MDA5MWVjOWIzOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.D5XVKmPsIrUKnZjQBXOhsKXzXtrejlHl8KT1dmZ2oyQ'
-                        }
+                            accept: 'application/json'
+                        },
+                        body: JSON.stringify({query: value})
                     };
-
-                    /* Object
-                           adult: false
-                           backdrop_path: "/qSJhQ8WjUcZT3XvHxedFy37KRyc.jpg"
-                           genre_ids: [35] (1)
-                           id: 643662
-                           original_language: "en"
-                           original_title: "Call Me by Your Maid"
-                           overview: "The Perlman's maid has strong reactions when an exchange student comes to stay with the family."
-                           popularity: 0.113
-                           poster_path: "/mzpTgeOiL1bFU7p7q4VoKQnEHtB.jpg"
-                           release_date: "2018-02-28"
-                           title: "Call Me by Your Maid"
-                           video: false
-                           vote_average: 5
-                           vote_count: 3
-                       Object
-                           adult: false
-                           backdrop_path: "/baLoLeFw58xMGSuxaVUinBe4Y3b.jpg"
-                           id: 1401402
-                           original_language: "en"
-                           original_title: "Call Me by Your Name Collection"
-                           overview: "The collection of movies about Elio Perlman and Oliver"
-                           poster_path: "/94DW591sFWh6kcNyuiHMgRrllFi.jpg"
-                           title: "Call Me by Your Name Collection" */
 
                     fetch(url, options)
                         .then(res => res.json())
@@ -382,7 +347,7 @@ export class Menu {
                                 a.appendChild(posterDiv);
                                 const titleDiv = document.createElement("div");
                                 titleDiv.classList.add("title");
-                                titleDiv.innerHTML = result.title + (result.release_date ? ' (' + result.release_date.slice(0, 4) + ')': '');
+                                titleDiv.innerHTML = result.title + (result.release_date ? ' (' + result.release_date.slice(0, 4) + ')' : '');
                                 a.appendChild(titleDiv);
                                 // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
                                 a.addEventListener("auxclick", (e) => {
@@ -407,14 +372,13 @@ export class Menu {
                 const value = e.target.value;
                 if (value.length > 2) {
                     const searchResults = tvSearch.closest(".menu-item").querySelector(".search-results");
-                    const query = encodeURIComponent(value);
-                    const url = 'https://api.themoviedb.org/3/search/tv?query=' + query + '&include_adult=false&language=fr-FR&page=1';
+                    const url = `/${gThis.lang}/series/fetch/search/series`;
                     const options = {
-                        method: 'GET',
+                        method: 'POST',
                         headers: {
-                            accept: 'application/json',
-                            Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmN2UzYzVmZTc5NGQ1NjViNDcxMzM0YzljNWVjYWY5NiIsIm5iZiI6MTcyMDYxMDA2Ni4zMzk0NzgsInN1YiI6IjYyMDJiZjg2ZTM4YmQ4MDA5MWVjOWIzOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.D5XVKmPsIrUKnZjQBXOhsKXzXtrejlHl8KT1dmZ2oyQ'
-                        }
+                            accept: 'application/json'
+                        },
+                        body: JSON.stringify({query: value})
                     };
 
                     fetch(url, options)
@@ -530,14 +494,13 @@ export class Menu {
                 const value = e.target.value;
                 if (value.length > 2) {
                     const searchResults = personSearch.closest(".menu-item").querySelector(".search-results");
-                    const query = encodeURIComponent(value);
-                    const url = 'https://api.themoviedb.org/3/search/person?query=' + query + '&include_adult=false&language=fr-FR&page=1';
+                    const url = `/${gThis.lang}/people/fetch/search/person`;
                     const options = {
-                        method: 'GET',
+                        method: 'POST',
                         headers: {
-                            accept: 'application/json',
-                            Authorization: 'Bearer ' + gThis.bearer
-                        }
+                            accept: 'application/json'
+                        },
+                        body: JSON.stringify({query: value})
                     };
 
                     fetch(url, options)
@@ -655,12 +618,15 @@ export class Menu {
         const value = searchInput.value;
         const searchResults = searchInput.parentElement.parentElement.querySelector(".search-results");
         if (value.length < 3) {
-            if (searchResults.innerHTML.length) searchResults.innerHTML = '';
+            if (searchResults.innerHTML.length) {
+                searchResults.innerHTML = '';
+                searchResults.classList.remove("showing-something");
+            }
             return;
         }
         const searchType = searchInput.getAttribute("data-type");
-        const tmdbAPI = 'https://api.themoviedb.org/3/search/';
         const tvdbAPI = `/${gThis.lang}/series/fetch/search/db/tv`;
+        const multiAPI = `/${gThis.lang}/series/fetch/search/multi`;
         const baseHref = `/${gThis.lang}/`;
         const resultNames = {
             'movie': 'title',
@@ -692,27 +658,19 @@ export class Menu {
             'person': 'profile_path'
         };
 
-        let query, url, options;
+        let url, options;
         if (searchType === 'tvdb') {
             url = tvdbAPI;
-            options = {
-                method: 'POST',
-                headers: {
-                    accept: 'application/json'
-                },
-                body: JSON.stringify({query: value})
-            };
         } else {
-            query = encodeURIComponent(value);
-            url = tmdbAPI + searchType + '?query=' + query + '&include_adult=false&language=fr-FR&page=1';
-            options = {
-                method: 'GET',
-                headers: {
-                    accept: 'application/json',
-                    Authorization: 'Bearer ' + gThis.bearer
-                }
-            };
+            url = multiAPI;
         }
+        options = {
+            method: 'POST',
+            headers: {
+                accept: 'application/json'
+            },
+            body: JSON.stringify({query: value})
+        };
 
         fetch(url, options)
             .then(res => res.json())
@@ -721,6 +679,10 @@ export class Menu {
                 searchResults.innerHTML = '';
                 const ul = document.createElement("ul");
                 ul.setAttribute("data-type", searchType);
+
+                if (json.results.length) {
+                    searchResults.classList.add("showing-something");
+                }
 
                 json.results.forEach((result, index) => {
                     const type = result['media_type'] || searchType; // Pour les résultats de recherche multi
@@ -770,7 +732,6 @@ export class Menu {
                 searchResults.appendChild(ul);
             })
             .catch(err => console.error('error:' + err));
-
     }
 
     searchMenuNavigate(e) {
@@ -862,11 +823,12 @@ export class Menu {
     }
 
     getTMDBConfig() {
-        fetch('/' + gThis.lang + '/movie/tmdb/config', {
-            method: 'GET',
+        fetch('/' + gThis.lang + '/series/fetch/search/multi', {
+            method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                accept: 'application/json'
             },
+            body: JSON.stringify({query: 'init'})
         })
             .then(response => response.json())
             /**
@@ -875,41 +837,14 @@ export class Menu {
              * @property {string} profile_url
              */
             .then(data => {
-                gThis.posterUrl = data.body.poster_url;
-                gThis.profileUrl = data.body.profile_url;
-                gThis.bearer = data.body.bearer;
+                console.log(data);
+                gThis.posterUrl = data.posterUrl;
+                gThis.profileUrl = data.profileUrl;
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
     }
-
-    /* checkConnexion() {
-         gThis.avatar.classList.add("highlight");
-         fetch('/' + gThis.lang + '/user/is-connected', {
-             method: 'GET',
-             headers: {
-                 'Content-Type': 'application/json',
-             },
-         })
-             .then(response => response.json())
-             .then(data => {
-                 if (!data.body.connected) {
-                     clearInterval(gThis.connexionInterval);
-                     gThis.avatar.remove();
-                     console.log('User disconnected')
-                 } else {
-                     gThis.avatar.classList.add("connected");
-                     setTimeout(() => {
-                         gThis.avatar.classList.remove("highlight", "connected");
-                     }, 500);
-                     console.log('User still connected')
-                 }
-             })
-             .catch((error) => {
-                 console.error('Error:', error);
-             });
-     }*/
 
     initPreview() {
         this.setPreview(localStorage.getItem("mytvtime_2_preview"));
@@ -1026,6 +961,7 @@ export class Menu {
                 loadingDiv.remove();
             });
     }
+
     reloadHistory(e) {
         e.stopPropagation();
 
