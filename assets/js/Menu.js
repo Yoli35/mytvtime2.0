@@ -199,22 +199,6 @@ export class Menu {
             });
         });
 
-        burger.addEventListener("click", () => {
-            if (!burger.classList.contains("open")) {
-                this.openMenu(burger, mainMenu);
-            } else {
-                this.closeMenu(burger, mainMenu);
-            }
-        });
-
-        avatar.addEventListener("click", () => {
-            if (!avatar.classList.contains("open")) {
-                this.openMenu(avatar, userMenu);
-            } else {
-                this.closeMenu(avatar, userMenu);
-            }
-        });
-
         eotdMenuItems.forEach((item) => {
             const group = item.id.split("-")[3]; // eotd-menu-item-{group}-{id}
             const id = item.id.split("-")[4];
