@@ -101,7 +101,9 @@ body {
     }
 }
 
-body:has(details[open]),
+body:has(.search-results.showing-something),
+body:is(.menu.main.open.show),
+body:is(.menu.user.open.show),
 body:has(dialog[open]) {
     overflow: hidden;
 }
@@ -1041,6 +1043,8 @@ label:has(input[type="text"]) {
             background-color: var(--navbar-bg);
             border-radius: .25rem;
             left: 0;
+            max-height: calc(100dvh - 5.5rem);
+            overflow-y: auto;
             padding-inline: 0;
             transition: left 300ms ease-in-out;
         }
