@@ -51,7 +51,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
         $timezone = new DateTimeZone($user->getTimezone() ?? 'Europe/Paris');
 
-        $now = date_create_immutable("now", $timezone)->setTime(0,0);
+        $now = date_create_immutable("now", $timezone)->setTime(0, 0);
         $startDate = $now->modify($start)->format('Y-m-d');
         $endDate = $now->modify($end)->format('Y-m-d');
 
@@ -60,7 +60,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
 
         $startIndex = intval($start);
         $endIndex = intval($end);
-        for ($index= $startIndex; $index <= $endIndex; $index++) {
+        for ($index = $startIndex; $index <= $endIndex; $index++) {
             $intervalArr[$index] = [
                 'index' => $index,
                 'totalEpisodeCount' => 0,
@@ -163,8 +163,9 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         foreach ($movieArr as $item) {
             $airDate = $item['airDate'];
             $diff = $now->diff(date_create_immutable($airDate, $timezone));
-            $index = $diff->days * ($diff->invert ? -1 : 1);
-            if (!key_exists($index, $arr)) {
+//            dump($diff);
+            $index = intval($diff->days * ($diff->invert ? -1 : 1));
+            if (!key_exists($index, $seriesArr)) {
                 $seriesArr[$index] = [];
             }
             $seriesArr[$index][] = $item;
@@ -172,7 +173,8 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
         ksort($seriesArr);
 
         foreach ($seriesArr as $indexKey => $itemArr) {
-            $totalEpisodeCount = array_reduce($itemArr, function ($carry, $item) {;
+            $totalEpisodeCount = array_reduce($itemArr, function ($carry, $item) {
+                ;
                 return $carry + $item['episodeCount'];
             }, 0);
             $results = array_map(function ($item) {
