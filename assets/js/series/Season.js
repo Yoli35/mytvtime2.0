@@ -373,7 +373,7 @@ export class Season {
         });
         const textareas = editEpisodeInfosForm.querySelectorAll('textarea');
         textareas.forEach(textarea => {
-            // ajuster la hauteur du textarea pour que le contenu soit entièrement visible si il y a un contenu
+            // ajuster la hauteur du textarea pour que le contenu soit entièrement visible s'i 'il y a un contenu
             if (textarea.scrollHeight > textarea.clientHeight) {
                 textarea.style.height = textarea.scrollHeight + 'px';
             }
@@ -524,13 +524,21 @@ export class Season {
         gThis.toolTips.hide();
         const selector = episodeId ? '.remove-this-episode[data-id="' + episodeId + '"]' : null;
         const episode = episodeId ? document.querySelector(selector) : e.currentTarget;
+        const userEpisode = episode.closest('.user-episode');
         const sId = episode.getAttribute('data-show-id');
+        const seriesId = episode.getAttribute('data-series-id');
         const id = episode.getAttribute('data-id');
         const ueId = episode.getAttribute('data-ue-id');
         const episodeNumber = episode.getAttribute('data-e-number');
         const seasonNumber = episode.getAttribute('data-s-number');
         const lastEpisode = episode.getAttribute('data-last-episode');
         const views = parseInt(episode.getAttribute('data-views') ?? "0");
+        const backToTopLink = episode.parentElement.querySelector('.back-to-top');
+        const backToSeriesLink = episode.parentElement.querySelector('.back-to-series').closest('a');
+        const quickEpisodeLink = document.querySelector('.quick-episode[data-number="' + episodeNumber + '"]');
+        const substituteNameDiv = episode.closest('.episode').querySelector('.substitute');
+        const episodeWatchLinks = episode.closest('.episode').querySelector('.watch-links');
+
         fetch('/' + gThis.lang + '/series/episode/add/' + id, {
             method: 'POST',
             headers: {
@@ -587,6 +595,7 @@ export class Season {
                 newEpisode.classList.add('remove-this-episode');
                 newEpisode.setAttribute('data-id', id);
                 newEpisode.setAttribute('data-ue-id', ueId);
+                newEpisode.setAttribute('data-series-id', seriesId);
                 newEpisode.setAttribute('data-show-id', sId);
                 newEpisode.setAttribute('data-e-number', episodeNumber);
                 newEpisode.setAttribute('data-s-number', seasonNumber);
@@ -597,24 +606,19 @@ export class Season {
                 gThis.intervals[id] = setInterval(gThis.updateRelativeTime, 1000, {currentTarget: newEpisode});
                 newEpisode.addEventListener('click', gThis.removeOrReviewEpisode);
                 newEpisode.appendChild(gThis.getSvg('eye'));
-                episode.parentElement.appendChild(newEpisode);
-                gThis.toolTips.init(episode.querySelector('.remove-this-episode'));
+                episode.replaceWith(newEpisode);
+                gThis.toolTips.init(newEpisode);/*episode.querySelector('.remove-this-episode'));*/
 
-                const quickEpisodeLink = document.querySelector('.quick-episode[data-number="' + episodeNumber + '"]');
                 quickEpisodeLink.classList.add('watched');
 
                 numberDiv.classList.add('watched');
 
-                const substituteNameDiv = episode.closest('.episode').querySelector('.substitute');
                 substituteNameDiv?.classList.add('watched');
 
-                const episodeWatchLinks = episode.closest('.episode').querySelector('.watch-links');
                 episodeWatchLinks?.classList.add('hidden');
 
                 // Mise à jour du menu
-                const seriesId = episode.getAttribute('data-series-id');
                 let episodesOfTheDayInMenu = document.querySelectorAll('a[id^="eotd-menu-item-"]');
-
                 episodesOfTheDayInMenu.forEach(eotd => {
                     if (eotd.getAttribute('id').includes(seriesId)) {
                         const episodeCount = parseInt(eotd.getAttribute('data-episode-count'));
@@ -634,14 +638,14 @@ export class Season {
                     }
                 });
 
-                const previousEpisode = episode.closest('.episodes').querySelector('.remove-this-episode[data-e-number="' + (episodeNumber - 1) + '"]');
+                const previousEpisode = userEpisode.closest('.episodes').querySelector('.remove-this-episode[data-e-number="' + (episodeNumber - 1) + '"]');
                 const previousProvider = previousEpisode?.parentElement.querySelector('.select-provider');
                 if (previousProvider) {
                     const clone = previousProvider.cloneNode(true);
                     clone.setAttribute('data-id', id);
                     clone.setAttribute('data-ue-id', ueId);
                     clone.addEventListener('click', gThis.selectProvider);
-                    episode.parentElement.appendChild(clone);
+                    userEpisode.insertBefore(clone, backToTopLink);
                 } else {
                     const providerId = data['providerId'];
                     const providerDiv = document.createElement('div');
@@ -658,7 +662,7 @@ export class Season {
                         providerDiv.appendChild(gThis.getSvg('plus'));
                     }
                     providerDiv.addEventListener('click', gThis.selectProvider);
-                    episode.parentElement.appendChild(providerDiv);
+                    userEpisode.insertBefore(providerDiv, backToTopLink);
                 }
 
                 const previousDevice = previousEpisode?.parentElement.querySelector('.select-device');
@@ -668,7 +672,7 @@ export class Season {
                     clone.setAttribute('data-id', id);
                     clone.setAttribute('data-ue-id', ueId);
                     clone.addEventListener('click', gThis.selectDevice);
-                    episode.parentElement.appendChild(clone);
+                    userEpisode.insertBefore(clone, backToTopLink);
                 } else {
                     const deviceDiv = document.createElement('div');
                     deviceDiv.classList.add('select-device');
@@ -676,21 +680,17 @@ export class Season {
                     deviceDiv.setAttribute('data-ue-id', ueId);
                     deviceDiv.setAttribute('data-device-id', deviceId);
                     if (deviceId) {
-                        /* {id: 1, name: "Television", logo_path: "/device-tv.png", svg: "fa6-solid:tv"}
-                           {id: 2, name: "Mobile", logo_path: "/device-mobile.png", svg: "fa6-solid:mobile-screen-button"}
-                           {id: 3, name: "Tablet", logo_path: "/device-tablet.png", svg: "fa6-solid:tablet-screen-button"}
-                           {id: 4, name: "Laptop", logo_path: "/device-laptop.png", svg: "fa6-solid:laptop"}
-                           {id: 5, name: "Desktop", logo_path: "/device-desktop.png", svg: "fa6-solid:desktop"} */
+                        const device = gThis.getDevice(deviceId);
                         deviceDiv.innerHTML = '';
-                        deviceDiv.appendChild(gThis.getSvg('device-' + gThis.devices[deviceId]['id']));
-                        deviceDiv.setAttribute('data-title', gThis.text[gThis.devices[deviceId]['name']]);
+                        deviceDiv.appendChild(gThis.getSvg('device-' + deviceId));
+                        deviceDiv.setAttribute('data-title', gThis.text[device['name']]);
                         gThis.toolTips.init(deviceDiv);
                     } else {
                         deviceDiv.setAttribute('data-title', gThis.text.device);
                         deviceDiv.appendChild(gThis.getSvg('plus'));
                     }
                     deviceDiv.addEventListener('click', gThis.selectDevice);
-                    episode.parentElement.appendChild(deviceDiv);
+                    userEpisode.insertBefore(deviceDiv, backToTopLink);
                 }
 
                 const vote = document.createElement('div');
@@ -701,15 +701,7 @@ export class Season {
                 vote.appendChild(gThis.getSvg('plus'));
                 vote.addEventListener('click', gThis.selectVote);
                 // vote.addEventListener('wheel', gThis.wheelVote);
-                episode.parentElement.appendChild(vote);
-
-                const backToTopLink = episode.parentElement.querySelector('.back-to-top');
-                episode.parentElement.appendChild(backToTopLink);
-
-                const backToSeriesLink = episode.parentElement.querySelector('.back-to-series').closest('a');
-                episode.parentElement.appendChild(backToSeriesLink);
-
-                episode.remove();
+                userEpisode.insertBefore(vote, backToTopLink);
             });
     }
 
@@ -1118,6 +1110,20 @@ export class Season {
         deviceList.appendChild(deviceSvg);
     }
 
+    getDevice(id) {
+        /* {id: 1, name: "Television", logo_path: "/device-tv.png", svg: "fa6-solid:tv"}
+           {id: 2, name: "Mobile", logo_path: "/device-mobile.png", svg: "fa6-solid:mobile-screen-button"}
+           {id: 3, name: "Tablet", logo_path: "/device-tablet.png", svg: "fa6-solid:tablet-screen-button"}
+           {id: 4, name: "Laptop", logo_path: "/device-laptop.png", svg: "fa6-solid:laptop"}
+           {id: 5, name: "Desktop", logo_path: "/device-desktop.png", svg: "fa6-solid:desktop"} */
+        const devices = gThis.devices;
+        for (const device of devices) {
+            if (device['id'] === id) {
+                return device;
+            }
+        }
+        return null;
+    }
     getSvg(id) {
         const clone = document.querySelector('.svgs').querySelector('svg[id="' + id + '"]').cloneNode(true);
         clone.removeAttribute('id');
@@ -1247,7 +1253,7 @@ export class Season {
                         targetStillDiv.appendChild(still);
                     }
                     if (isEditing) {
-                        // Find the episode still (".series-season > .content.column > .episodes > .episode > .still[data-episode-id=" + episodeId + "]")
+                        // Find the episode still (.series-season > .content.column > .episodes > .episode > .still[data-episode-id=" + episodeId + "]")
                         // Replace the still, if exists, with the new one
                         const episodesDiv = document.querySelector('.episodes');
                         const episodeStill = episodesDiv.querySelector('.still[data-episode-id="' + episodeId + '"]');
