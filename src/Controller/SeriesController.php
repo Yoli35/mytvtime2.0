@@ -1673,10 +1673,20 @@ class SeriesController extends AbstractController
 
         $sbd = $this->seriesBroadcastDateRepository->findOneBy(['episodeId' => $id]);
         $airDate = $sbd ? $sbd->getDate() : $userEpisode->getAirDate();
+        $ue = $this->userEpisodeRepository->getUserEpisodeDB($userEpisode->getId(), $user->getPreferredLanguage() ?? $request->getLocale());
+        if ($ue['custom_date']) {
+            $cd = $this->dateService->newDateImmutable($ue['custom_date'], 'Europe/Paris');
+            $ue['custom_date'] = $cd->format('Y-m-d H:i O');
+        }
+        if ($ue['air_at']) {
+            // 10:00:00 → 10:00
+            $ue['air_at'] = $this->dateService->newDateImmutable($ue['air_at'], 'Europe/Paris');
+            $ue['air_at'] = $ue['air_at']->format('H:i');
+        }
         $ues = $this->userEpisodeRepository->getUserEpisodeViews($user->getId(), $id);
         $airDateBlock = $this->renderView('_blocks/series/_episode-air-date.html.twig', [
-            'episode' => ['air_date' => $airDate->format('Y-m-d, H:i')],
-            'ue' => ['watch_at' => $userEpisode->getWatchAt()->format('Y-m-d')],
+            'episode' => ['air_date' => $airDate->format('Y-m-d')],
+            'ue' => $ue, //['watch_at' => $userEpisode->getWatchAt()->format('Y-m-d')],
             'ues' => $ues,
         ]);
 
