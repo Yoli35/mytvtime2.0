@@ -504,6 +504,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        ue.watch_at               as watch_at,
                        ue.air_date               as air_date,
                        sbd.date                  as custom_date,
+                       sbs.air_at                as air_at,
                        ue.provider_id            as provider_id,
                        p.name                    as provider_name,
                        p.logo_path               as provider_logo_path,
@@ -515,6 +516,9 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        ue.number_of_view         as number_of_view,
                        ue.previous_occurrence_id as previous_occurrence_id
                 FROM user_episode ue
+                         LEFT JOIN user_series us ON ue.user_series_id = us.id
+                         LEFT JOIN series s ON us.series_id = s.id
+                         LEFT JOIN series_broadcast_schedule sbs ON sbs.series_id = s.id
                          LEFT JOIN series_broadcast_date sbd ON ue.episode_id = sbd.episode_id
                          LEFT JOIN episode_substitute_name esn ON ue.episode_id = esn.episode_id
                          LEFT JOIN episode_localized_overview elo ON ue.episode_id = elo.episode_id AND elo.locale = '$locale'

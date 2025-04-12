@@ -1,6 +1,13 @@
 {% if episode.air_date %}
     <div class="air-date">
-        {{ 'Air date'|trans }} {{ episode.air_date|format_datetime('relative_full', 'short', timezone: "Europe/Paris")|replace({', 00:00': ""}) }}
+        {{ 'Air date'|trans }}
+        {% if ue.custom_date %}
+            {{ ue.custom_date|format_datetime('relative_full', 'short', timezone: "Europe/Paris") }}
+        {% elseif ue.air_at %}
+            {{ episode.air_date|format_date('relative_full', timezone: "Europe/Paris") }}, {{ ue.air_at }}
+        {% else %}
+            {{ episode.air_date|format_date('relative_full', timezone: "Europe/Paris") }}
+        {% endif %}
         {% if ue  and ue.watch_at %}
             <div class="watch-at-list">
                 {% for e in ues %}

@@ -1696,7 +1696,7 @@ class SeriesController extends AbstractController
     public function touchUserEpisode(Request $request, UserEpisode $userEpisode): Response
     {
         $data = json_decode($request->getContent(), true);
-        $showId = $data['showId'];
+//        $showId = $data['showId'];
         if (key_exists('date', $data) && $data['date']) {
             $now = $this->date($data['date']);
         } else {
@@ -1705,9 +1705,9 @@ class SeriesController extends AbstractController
         $seasonNumber = $userEpisode->getEpisodeNumber();// $data['seasonNumber'];
         $episodeNumber = $userEpisode->getSeasonNumber();// $data['episodeNumber'];
 
-        $user = $this->getUser();
-        $country = $user->getCountry() ?? 'FR';
-        $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
+//        $user = $this->getUser();
+//        $country = $user->getCountry() ?? 'FR';
+//        $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
         $userSeries = $userEpisode->getUserSeries();
 //        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
 //        $userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $id]);
@@ -2226,7 +2226,7 @@ class SeriesController extends AbstractController
             $testUrl = $data['image-url'];
             if (str_starts_with($testUrl, 'blob')) {
 //                $this->blobs['image-url-blob'] = $data['image-url-blob'];
-                $imageResultPath = $this->imageService->blobToWebp2($data['image-url-blob'], $data['title'], $data['location'], 100);
+                /*$imageResultPath =*/ $this->imageService->blobToWebp2($data['image-url-blob'], $data['title'], $data['location'], 100);
 //                dump($imageResultPath);
             }
 
@@ -3683,7 +3683,7 @@ class SeriesController extends AbstractController
                 return $guest;
             }, $episode['guest_stars']);
 
-            if ($userEpisode == null) {
+            /*if ($userEpisode == null) {
                 $ue = new UserEpisode($userSeries, $episode['id'], $season['season_number'], $episode['episode_number'], null);
                 $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris') : null;
                 $ue->setAirDate($airDate);
@@ -3708,7 +3708,7 @@ class SeriesController extends AbstractController
                 $userEpisode['device_svg'] = null;
                 $userEpisode['vote'] = 0;
                 $userEpisode['number_of_view'] = 0;
-            }
+            }*/
 
             if ($userEpisode['watch_at']) {
                 $userEpisode['watch_at'] = $this->dateService->newDateImmutable($userEpisode['watch_at'], $user->getTimezone() ?? 'Europe/Paris');
@@ -3734,6 +3734,11 @@ class SeriesController extends AbstractController
                     $cd = $this->dateService->newDateImmutable($userEpisode['custom_date'], 'Europe/Paris');
                     $userEpisode['custom_date'] = $cd->format('Y-m-d H:i O');
                 }
+                if ($userEpisode['air_at']) {
+                    // 10:00:00 → 10:00
+                    $userEpisode['air_at'] = $this->dateService->newDateImmutable($userEpisode['air_at'], 'Europe/Paris');
+                    $userEpisode['air_at'] = $userEpisode['air_at']->format('H:i');
+                }
                 return $userEpisode;
             }
         }
@@ -3742,9 +3747,9 @@ class SeriesController extends AbstractController
 
     public function getUserEpisodes(array $userEpisodes, int $episodeNumber): array
     {
-        $episodes = array_filter($userEpisodes, function ($userEpisode) use ($episodeNumber) {
+        $episodes = array_values(array_filter($userEpisodes, function ($userEpisode) use ($episodeNumber) {
             return $userEpisode['episode_number'] == $episodeNumber;
-        });
+        }));
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
         foreach ($episodes as $episode) {
             if ($episode['provider_id'] > 0)
