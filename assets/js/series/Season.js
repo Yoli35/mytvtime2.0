@@ -799,6 +799,17 @@ export class Season {
         // watchedAtDiv.style.display = 'none';
         watchedAtDiv.classList.add('editing');
 
+        datetimeInput.focus();
+        datetimeInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                watchedAtModifyDiv.remove();
+                watchedAtDiv.style.display = 'flex';
+            }
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                datetimeSaveButton.click();
+            }
+        });
         datetimeSaveButton.addEventListener('click', gThis.touchEpisode);
         datetimeCancelButton.addEventListener('click', () => {
             watchedAtModifyDiv.remove();
