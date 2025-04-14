@@ -70,6 +70,9 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
 
         $seriesArr = [];
         foreach ($sArr as $item) {
+            if ($item['override'] && $item['customDate'] == null) {
+                continue;
+            }
             $index = $item['days'];
             if (!key_exists($index, $seriesArr)) {
                 $seriesArr[$index] = [];

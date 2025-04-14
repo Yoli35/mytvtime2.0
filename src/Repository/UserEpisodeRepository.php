@@ -403,6 +403,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         $userId = $user->getId();
         $sql = "SELECT
                      IF(sbd.id, DATE(sbd.date), ue.air_date) as airDate,
+                     sbs.`override`                          as override,
                      'series'                                as type,
                      DATEDIFF(IF(sbd.id, DATE(sbd.date), ue.air_date), DATE(NOW())) as days,
                      s.id                                    as id, 
