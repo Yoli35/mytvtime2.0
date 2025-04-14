@@ -1416,15 +1416,15 @@ class SeriesController extends AbstractController
             $this->seriesRepository->save($series, true);
         }
 
-//        dump([
+        dump([
 //            'series' => $series,
-//            'season' => $season,
+            'season' => $season,
 //            'episodeDivSize' => $episodeDivSize,
 //            'now' => $this->now()->format('Y-m-d H:i O'),
 //            'userSeries' => $userSeries,
 //            'providers' => $providers,
 //            'devices' => $devices,
-//        ]);
+        ]);
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'userSeries' => $userSeries,
@@ -3665,7 +3665,7 @@ class SeriesController extends AbstractController
             $episode['stills'] = array_filter($stills, function ($still) use ($episode) {
                 return $still['episode_id'] == $episode['id'];
             });
-            if ($userEpisode && key_exists('custom_date', $userEpisode) && $userEpisode['custom_date']) {
+            if ($userEpisode['custom_date']) {
                 $episode['air_date'] = $userEpisode['custom_date'];
             }
             $episode['crew'] = array_map(function ($crew) use ($slugger, $user, $profileUrl) {

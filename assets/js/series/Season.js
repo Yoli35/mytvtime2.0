@@ -680,10 +680,10 @@ export class Season {
                     deviceDiv.setAttribute('data-ue-id', ueId);
                     deviceDiv.setAttribute('data-device-id', deviceId);
                     if (deviceId) {
-                        const device = gThis.getDevice(deviceId);
+                        const deviceName = gThis.getDeviceName(deviceId);
                         deviceDiv.innerHTML = '';
                         deviceDiv.appendChild(gThis.getSvg('device-' + deviceId));
-                        deviceDiv.setAttribute('data-title', gThis.text[device['name']]);
+                        deviceDiv.setAttribute('data-title', gThis.text[deviceName]);
                         gThis.toolTips.init(deviceDiv);
                     } else {
                         deviceDiv.setAttribute('data-title', gThis.text.device);
@@ -1110,7 +1110,7 @@ export class Season {
         deviceList.appendChild(deviceSvg);
     }
 
-    getDevice(id) {
+    getDeviceName(id) {
         /* {id: 1, name: "Television", logo_path: "/device-tv.png", svg: "fa6-solid:tv"}
            {id: 2, name: "Mobile", logo_path: "/device-mobile.png", svg: "fa6-solid:mobile-screen-button"}
            {id: 3, name: "Tablet", logo_path: "/device-tablet.png", svg: "fa6-solid:tablet-screen-button"}
@@ -1119,7 +1119,7 @@ export class Season {
         const devices = gThis.devices;
         for (const device of devices) {
             if (device['id'] === id) {
-                return device;
+                return device.name;
             }
         }
         return null;

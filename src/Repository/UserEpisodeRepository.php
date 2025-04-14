@@ -505,6 +505,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        ue.air_date               as air_date,
                        sbd.date                  as custom_date,
                        sbs.air_at                as air_at,
+                       /*IF(sbs.air_at, STR_TO_DATE(CONCAT(ue.`air_date`, ' ', sbs.air_at), '%Y-%m-%d %H:%i:%s'), NULL) as date_string,*/
                        ue.provider_id            as provider_id,
                        p.name                    as provider_name,
                        p.logo_path               as provider_logo_path,
@@ -542,6 +543,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        ue.air_date               as air_date,
                        sbd.date                  as custom_date,
                        sbs.air_at                as air_at,
+                       /*IF(sbs.air_at, STR_TO_DATE(CONCAT(ue.`air_date`, ' ', sbs.air_at), '%Y-%m-%d %H:%i:%s'), NULL) as date_string,*/
                        ue.provider_id            as provider_id,
                        p.name                    as provider_name,
                        p.logo_path               as provider_logo_path,
