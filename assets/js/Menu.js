@@ -696,6 +696,7 @@ export class Menu {
                         const resultsDiv = menuDiv.querySelector(".search-results");
                         resultsDiv.innerHTML = '';
                         multiSearchInput.value = '';
+                        gThis.tooltips.hide();
                     });
                     li.appendChild(a);
                     ul.appendChild(li);
