@@ -398,7 +398,7 @@
                     <div class="crew">
                         <div class="wrapper">
                             {% for people in season.credits.crew %}
-                                {{ include('_blocks/series/_people.html.twig', {people: people, role: people.job|trans ~ ' - ' ~ people.department|trans }) }}
+                                {{ include('_blocks/series/_crew.html.twig') }}
                             {% endfor %}
                         </div>
                     </div>

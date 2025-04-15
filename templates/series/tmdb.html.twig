@@ -207,21 +207,7 @@
                         <div class="crew">
                             <div class="wrapper">
                                 {% for people in tv.credits.crew %}
-                                    <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
-                                        <div class="people">
-                                            <div class="profile">
-                                                {% if people.profile_path %}
-                                                    <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                                                {% else %}
-                                                    {{ 'No picture'|trans }}
-                                                {% endif %}
-                                            </div>
-                                            <div class="infos">
-                                                <div class="name">{{ people.name }}</div>
-                                                <div>{{ people.job ~ ' - ' ~ people.department }}</div>
-                                            </div>
-                                        </div>
-                                    </a>
+                                    {{ include('_blocks/series/_crew.html.twig') }}
                                 {% endfor %}
                             </div>
                         </div>

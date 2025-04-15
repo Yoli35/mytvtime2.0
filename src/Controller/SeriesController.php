@@ -3557,15 +3557,25 @@ class SeriesController extends AbstractController
             }
             return $cast;
         }, $tv['credits']['guest_stars'] ?? []);
-        $tv['credits']['crew'] = array_map(function ($crew) use ($slugger, $profileUrl, $preferredNames) {
-            $crew['slug'] = $slugger->slug($crew['name'])->lower()->toString();
-            $crew['profile_path'] = $crew['profile_path'] ? $profileUrl . $crew['profile_path'] : null; // w185
-            $crew['preferred_name'] = null;
-            if (key_exists($crew['id'], $preferredNames)) {
-                $crew['preferred_name'] = $preferredNames[$crew['id']];
+        $crew = [];
+        foreach ($tv['credits']['crew'] as $c) {
+            $id = $c['id'];
+            if (!key_exists($id, $crew)) {
+                $crew[$id] = $c;
+                $crew[$id]['jobs'] = [];
             }
-            return $crew;
-        }, $tv['credits']['crew'] ?? []);
+            $crew[$id]['jobs'][] = $this->translator->trans($c['job']) . ' - ' . $this->translator->trans($c['department']);
+        }
+        $crew = array_values($crew);
+        $tv['credits']['crew'] = array_map(function ($c) use ($slugger, $profileUrl, $preferredNames) {
+            $c['slug'] = $slugger->slug($c['name'])->lower()->toString();
+            $c['profile_path'] = $c['profile_path'] ? $profileUrl . $c['profile_path'] : null; // w185
+            $c['preferred_name'] = null;
+            if (key_exists($c['id'], $preferredNames)) {
+                $c['preferred_name'] = $preferredNames[$c['id']];
+            }
+            return $c;
+        }, $crew);
 
         usort($tv['credits']['cast'], function ($a, $b) {
             return !$a['profile_path'] <=> !$b['profile_path'];
