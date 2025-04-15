@@ -53,10 +53,7 @@ class UserEpisode
     #[ORM\Column(nullable: true)]
     private ?bool $quickWatchWeek;
 
-    #[ORM\Column(nullable: true, options: ['default' => 0])]
-    private ?int $numberOfView;
-
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(cascade: ['persist'])]
     private ?UserEpisode $previousOccurrence = null;
 
     private ?DateTimeImmutable $alternativeAirDate = null;
@@ -71,7 +68,6 @@ class UserEpisode
         $this->watchAt = $watchAt;
         $this->quickWatchDay = false;
         $this->quickWatchWeek = false;
-        $this->numberOfView = 0;
     }
 
     public function getId(): ?int
@@ -209,16 +205,6 @@ class UserEpisode
         $this->quickWatchWeek = $quickWatchWeek;
 
         return $this;
-    }
-
-    public function getNumberOfView(): ?int
-    {
-        return $this->numberOfView;
-    }
-
-    public function setNumberOfView(?int $numberOfView): void
-    {
-        $this->numberOfView = $numberOfView;
     }
 
     public function getAirDate(): ?DateTimeImmutable

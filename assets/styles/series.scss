@@ -2838,8 +2838,9 @@ h2 {
 
                 .watch-at-list {
                     display: flex;
+                    flex-wrap: wrap;
                     gap: .5rem;
-                    justify-content: center;
+                    justify-content: flex-start;
                     padding-inline: 1rem;
 
                     .watched-at {

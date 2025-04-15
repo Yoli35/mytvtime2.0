@@ -779,6 +779,7 @@ export class Season {
 
     modifyWatchedAtOpen(e) {
         const watchedAtDiv = e.currentTarget;
+        const episodeId = watchedAtDiv.getAttribute('data-id');
         const userEpisodeId = watchedAtDiv.getAttribute('data-ue-id');
         const watchedAt = watchedAtDiv.getAttribute('data-watched-at');
         const airDateDiv = watchedAtDiv.closest('.air-date');
@@ -788,15 +789,21 @@ export class Season {
         datetimeInput.setAttribute('type', 'datetime-local');
         datetimeInput.setAttribute('value', watchedAt);
         const datetimeSaveButton = document.createElement('button');
-        datetimeSaveButton.textContent = 'OK';
+        const svgSave = gThis.getSvg('save');
+        datetimeSaveButton.appendChild(svgSave);
+        datetimeSaveButton.setAttribute('data-ue-id', userEpisodeId);
+        const datetimeDeleteButton = document.createElement('button');
+        const svgDelete = gThis.getSvg('delete');
+        datetimeDeleteButton.appendChild(svgDelete);
         datetimeSaveButton.setAttribute('data-ue-id', userEpisodeId);
         const datetimeCancelButton = document.createElement('button');
-        datetimeCancelButton.textContent = 'X';
+        const svgCancel = gThis.getSvg('cancel');
+        datetimeCancelButton.appendChild(svgCancel);
         watchedAtModifyDiv.appendChild(datetimeInput);
         watchedAtModifyDiv.appendChild(datetimeSaveButton);
+        watchedAtModifyDiv.appendChild(datetimeDeleteButton);
         watchedAtModifyDiv.appendChild(datetimeCancelButton);
         airDateDiv.appendChild(watchedAtModifyDiv);
-        // watchedAtDiv.style.display = 'none';
         watchedAtDiv.classList.add('editing');
 
         datetimeInput.focus();
@@ -811,9 +818,14 @@ export class Season {
             }
         });
         datetimeSaveButton.addEventListener('click', gThis.touchEpisode);
+        datetimeDeleteButton.addEventListener('click', () => {
+            gThis.removeEpisode(episodeId, userEpisodeId);
+            watchedAtModifyDiv.remove();
+            watchedAtDiv.remove();
+        });
         datetimeCancelButton.addEventListener('click', () => {
             watchedAtModifyDiv.remove();
-            watchedAtDiv.style.display = 'flex';
+            watchedAtDiv.classList.remove('editing');
         });
     }
 
@@ -892,9 +904,10 @@ export class Season {
     doRemoveEpisode(e) {
         const dialog = document.querySelector("#review-dialog");
         const episodeId = e.currentTarget.getAttribute('data-id');
+        const ueId = e.currentTarget.getAttribute('data-ue-id');
         dialog.close();
         gThis.doRemoveEventListeners();
-        gThis.removeEpisode(episodeId);
+        gThis.removeEpisode(episodeId, ueId);
     }
 
     doNowEpisode(e) {
@@ -931,7 +944,7 @@ export class Season {
         cancelButton.removeEventListener('click', gThis.doCancelEpisode);
     }
 
-    removeEpisode(episodeId) {
+    removeEpisode(episodeId, ueId) {
         const selector = '.remove-this-episode[data-id="' + episodeId + '"]';
         const episode = document.querySelector(selector);
         const sId = episode.getAttribute('data-show-id');
@@ -947,6 +960,7 @@ export class Season {
             },
             body: JSON.stringify({
                 showId: sId,
+                userEpisodeId: ueId,
                 seasonNumber: seasonNumber,
                 episodeNumber: episodeNumber
             })
@@ -966,7 +980,7 @@ export class Season {
                 gThis.setProgress();
 
                 const airDateDiv = episode.closest('.episode').querySelector('.air-date');
-                const watchedAtDiv = airDateDiv.querySelector('.watched-at');
+                const watchedAtDiv = airDateDiv.querySelector(`.watched-at[data-ue-id="${ueId}"]`);
                 watchedAtDiv.remove();
 
                 if (gThis.intervals[episodeId] > 0) {

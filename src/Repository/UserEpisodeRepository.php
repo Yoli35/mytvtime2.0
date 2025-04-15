@@ -495,7 +495,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getUserEpisodesDB(int $userSeriesId, int $seasonNumber, string $locale): array
+    public function getUserEpisodesDB(int $userSeriesId, int $seasonNumber, string $locale, bool $all = false): array
     {
         $sql = "SELECT ue.id                     as id,
                        ue.episode_id             as episode_id,
@@ -515,7 +515,6 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        d.logo_path               as device_logo_path,
                        d.svg                     as device_svg,
                        ue.vote                   as vote,
-                       ue.number_of_view         as number_of_view,
                        ue.previous_occurrence_id as previous_occurrence_id
                 FROM user_episode ue
                          LEFT JOIN user_series us ON ue.user_series_id = us.id
@@ -527,8 +526,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
                          LEFT JOIN provider p ON ue.provider_id = p.provider_id
                          LEFT JOIN device d ON ue.device_id = d.id
                 WHERE ue.user_series_id = $userSeriesId
-                  AND ue.season_number = $seasonNumber
-                  AND ue.previous_occurrence_id IS NULL";
+                  AND ue.season_number = $seasonNumber";
+        if (!$all) $sql .= "                  AND ue.previous_occurrence_id IS NULL";
 
         return $this->getAll($sql);
     }
@@ -553,7 +552,6 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        d.logo_path               as device_logo_path,
                        d.svg                     as device_svg,
                        ue.vote                   as vote,
-                       ue.number_of_view         as number_of_view,
                        ue.previous_occurrence_id as previous_occurrence_id
                 FROM user_episode ue
                          LEFT JOIN user_series us ON ue.user_series_id = us.id
