@@ -263,10 +263,10 @@ export class Menu {
 
         if (movieSearch) {
             movieSearch.addEventListener("input", (e) => {
+                const searchResults = movieSearch.closest(".menu-item").querySelector(".search-results");
                 const value = e.target.value;
                 console.log({e});
                 if (value.length > 2) {
-                    const searchResults = movieSearch.closest(".menu-item").querySelector(".search-results");
                     const url = `/${gThis.lang}/movie/fetch/search/movies`;
                     const options = {
                         method: 'POST',
@@ -323,14 +323,15 @@ export class Menu {
                         .catch(err => console.error('error:' + err));
                 } else {
                     movieSearch.closest(".menu-item").querySelector(".search-results").innerHTML = '';
+                    searchResults.classList.remove("showing-something");
                 }
             });
             movieSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
             tvSearch.addEventListener("input", (e) => {
+                const searchResults = tvSearch.closest(".menu-item").querySelector(".search-results");
                 const value = e.target.value;
                 if (value.length > 2) {
-                    const searchResults = tvSearch.closest(".menu-item").querySelector(".search-results");
                     const url = `/${gThis.lang}/series/fetch/search/series`;
                     const options = {
                         method: 'POST',
@@ -387,14 +388,15 @@ export class Menu {
                         .catch(err => console.error('error:' + err));
                 } else {
                     tvSearch.closest(".menu-item").querySelector(".search-results").innerHTML = '';
+                    searchResults.classList.remove("showing-something");
                 }
             });
             tvSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
             tvSearchDb.addEventListener("input", (e) => {
+                const searchResults = tvSearchDb.closest(".menu-item").querySelector(".search-results");
                 const value = e.target.value;
                 if (value.length > 2) {
-                    const searchResults = tvSearchDb.closest(".menu-item").querySelector(".search-results");
                     const url = `/${gThis.lang}/series/fetch/search/db/tv`;
                     const options = {
                         method: 'POST',
@@ -451,14 +453,15 @@ export class Menu {
                         .catch(err => console.error('error:' + err));
                 } else {
                     tvSearchDb.closest(".menu-item").querySelector(".search-results").innerHTML = '';
+                    searchResults.classList.remove("showing-something");
                 }
             });
             tvSearchDb.addEventListener("keydown", gThis.searchMenuNavigate);
 
             personSearch.addEventListener("input", (e) => {
+                const searchResults = personSearch.closest(".menu-item").querySelector(".search-results");
                 const value = e.target.value;
                 if (value.length > 2) {
-                    const searchResults = personSearch.closest(".menu-item").querySelector(".search-results");
                     const url = `/${gThis.lang}/people/fetch/search/person`;
                     const options = {
                         method: 'POST',
@@ -515,6 +518,7 @@ export class Menu {
                         .catch(err => console.error('error:' + err));
                 } else {
                     personSearch.closest(".menu-item").querySelector(".search-results").innerHTML = '';
+                    searchResults.classList.remove("showing-something");
                 }
             });
             personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
