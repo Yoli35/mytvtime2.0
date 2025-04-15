@@ -134,7 +134,7 @@ export class Show {
         }
 
         /******************************************************************************
-         * Old series added ?                                                         *
+         * Old series added?                                                          *
          ******************************************************************************/
         const oldSeriesAddedPanel = document.querySelector('.old-series-added-panel');
         if (oldSeriesAddedPanel) {
