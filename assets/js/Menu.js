@@ -156,9 +156,9 @@ export class Menu {
         const historyNavbarItem = navbar.querySelector("#history-menu");
 
         const searchResults = navbar.querySelectorAll(".search-results");
-        console.log({searchResults});
+        /*console.log({searchResults});*/
         const menus = navbar.querySelectorAll(".menu");
-        console.log({menus});
+        /*console.log({menus});*/
 
         document.addEventListener("click", (e) => {
             searchResults.forEach((searchResult) => {
@@ -815,7 +815,7 @@ export class Menu {
              * @property {string} profile_url
              */
             .then(data => {
-                console.log(data);
+                /*console.log(data);*/
                 gThis.posterUrl = data.posterUrl;
                 gThis.profileUrl = data.profileUrl;
             })

@@ -2656,6 +2656,7 @@ h2 {
             .episode-name {
                 align-items: center;
                 display: flex;
+                flex-wrap: wrap;
                 font-size: 2rem;
                 gap: 1rem;
                 justify-content: flex-start;
@@ -2913,18 +2914,29 @@ h2 {
             }
 
             .guest-stars {
+                display: flex;
                 flex-shrink: 0;
-                height: 12rem;
+                height: 16rem;
+                overflow-x: auto;
 
                 .wrapper {
+                    height: 100%;
                     padding-inline: 1rem;
 
                     .people {
-                        height: 12rem;
+                        height: 100%;
 
-                        .photo {
-                            img {
-                                border-radius: .25rem;
+                        a {
+                            display: flex;
+                            gap: .5rem;
+                            height: 100%;
+
+                            .photo {
+                                height: 100%;
+
+                                img {
+                                    border-radius: .25rem;
+                                }
                             }
                         }
                     }
