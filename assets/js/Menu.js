@@ -720,7 +720,12 @@ export class Menu {
             // console.log(e.key);
             if (e.key === 'Enter') {
                 e.preventDefault();
-                const li = ul.querySelector("li.active");
+                const li = ul.querySelector("li.active") ?? ul.querySelector("li");
+                if (type === 'multi') {
+                    e.preventDefault();
+                    li.querySelector("a").click();
+                    return;
+                }
                 const multiSearchMenuResultType = (type === 'multi') ? li?.getAttribute("data-type") : null;
 
                 if (!li) {
