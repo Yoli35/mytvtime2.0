@@ -2,7 +2,8 @@
  2- > composer install --no-dev --optimize-autoloader
  3- > APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear
  4- > cons asset-map:compile
- 5- Compress 
+ 5- Compress
+        [bin]
 		composer.json
 		composer.lock
 		config
@@ -19,19 +20,20 @@
  7- export db
  8- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/"
  9- if 7, delete all tables, then import db
-10- on server, move 
-		composer.json
-		composer.lock
+10- on server, move
+        [bin]
 		config
-		importmap.php
-		package.json
 		public
 		src
-		symfony.lock
 		templates
 		translations
 		var
-		vendor > temp
+		vendor
+		composer.json
+		composer.lock
+		importmap.php
+		package.json
+		symfony.lock > temp
 11- > unzip Archives.zip
 12- > rm Archives.zip
 13- > rm -R __MACOSX
