@@ -519,7 +519,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 FROM user_episode ue
                          LEFT JOIN user_series us ON ue.user_series_id = us.id
                          LEFT JOIN series s ON us.series_id = s.id
-                         LEFT JOIN series_broadcast_schedule sbs ON sbs.series_id = s.id
+                         LEFT JOIN series_broadcast_schedule sbs ON sbs.series_id = s.id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
                          LEFT JOIN series_broadcast_date sbd ON ue.episode_id = sbd.episode_id
                          LEFT JOIN episode_substitute_name esn ON ue.episode_id = esn.episode_id
                          LEFT JOIN episode_localized_overview elo ON ue.episode_id = elo.episode_id AND elo.locale = '$locale'
