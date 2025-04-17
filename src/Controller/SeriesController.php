@@ -1582,7 +1582,8 @@ class SeriesController extends AbstractController
         $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $ueId]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'episodeId' => $id], ['id' => 'ASC']);
 
-        $now = $this->now();
+//        $now = $this->now();
+        $now = $this->dateService->getNowImmutable($user->getTimezone() ?? 'Europe/Paris');
         if ($userEpisode->getWatchAt()) { // Si l'épisode a déjà été vu
             $userEpisode = new UserEpisode($userSeries, $id, $seasonNumber, $episodeNumber, $now);
             $userEpisode->setPreviousOccurrence($userEpisodes[count($userEpisodes) - 1]);
