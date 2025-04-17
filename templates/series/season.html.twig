@@ -115,6 +115,8 @@
                 </div>
             </div>
 
+            {{ include('_blocks/series/_externals.html.twig') }}
+
             <div class="season-stuff">
                 {#                <h2>{{ 'Season stuff'|trans }}</h2> #}
                 {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: false}) }}
@@ -150,29 +152,30 @@
                 {% set episodeCount = season.episodes|length %}
                 {% if episodeCount > 10 %}
                     {% if episodeCount is even %}
-                        {% set break = episodeCount / 2 %}
+                        {% set itemPerLine = episodeCount / 2 %}
                     {% else %}
-                        {% set break = (episodeCount + 1) / 2 %}
-                        {#                    {% set break = 10 %} #}
+                        {% set itemPerLine = (episodeCount + 1) / 2 %}
                     {% endif %}
-                    {% if break > 10 %}
+                    {% if itemPerLine > 10 %}
                         {% if episodeCount % 10 == 0 %}
-                            {% set break = 10 %}
+                            {% set itemPerLine = 10 %}
                         {% endif %}
                         {% if episodeCount % 9 == 0 %}
-                            {% set break = 9 %}
+                            {% set itemPerLine = 9 %}
                         {% endif %}
                         {% if episodeCount % 8 == 0 %}
-                            {% set break = 8 %}
+                            {% set itemPerLine = 8 %}
                         {% endif %}
                         {% if episodeCount % 7 == 0 %}
-                            {% set break = 7 %}
+                            {% set itemPerLine = 7 %}
                         {% endif %}
                     {% endif %}
+                    {% set lineCount = (episodeCount / itemPerLine)|round(0, 'ceil') %}
                 {% else %}
-                    {% set break = episodeCount %}
+                    {% set itemPerLine = episodeCount %}
+                    {% set lineCount = 1 %}
                 {% endif %}
-                <div class="quick-episodes" style="width: {{ 36 * break + 16 }}px;">
+                <div class="quick-episodes" style="height: {{ 36 * lineCount + 20 }}px; width: {{ 36 * itemPerLine + 32 }}px;">
                     {% for episode in season.episodes %}
                         {% set ue = episode.user_episode %}
                         {% set air_date = episode.air_date %}
@@ -194,8 +197,6 @@
                     {% endfor %}
                 </div>
             </div>
-
-            {{ include('_blocks/series/_externals.html.twig') }}
 
             {# <h3>{{ 'Episodes'|trans }}</h3> #}
             <div class="content column">

@@ -2316,13 +2316,13 @@ h2 {
     }
 
     .quick-episodes {
-        align-items: flex-start;
+        align-items: center;
         background-color: var(--ardoise-100-alpha-20);
-        /*border: 2px dashed var(--orange-50);*/
         border-radius: .25rem;
         display: flex;
         flex-wrap: wrap;
-        gap: .25rem;
+        /*gap: .25rem;*/
+        height: 3.5rem;
         justify-content: center;
         overflow-x: auto;
         padding: .5rem;
@@ -2336,9 +2336,11 @@ h2 {
             cursor: pointer;
             display: flex;
             gap: .5rem;
+            height: 2rem;
             justify-content: center;
+            margin-inline: .125rem;
             padding: .25rem;
-            transition: transform 0.3s linear, border 0.3s linear;
+            transition: all 0.3s linear;
             width: 2rem;
 
             &.watched {
@@ -2347,20 +2349,23 @@ h2 {
 
             &:hover {
                 border: 2px solid var(--orange-50);
-                transform: scale(1.5);
+                border-radius: 5rem;
+                transform: scale(1.75);
                 z-index: 3;
             }
 
             &:has(+ .quick-episode:hover),
             &:hover + .quick-episode {
                 border: 2px solid var(--orange-50-alpha-50);
-                transform: scale(1.30);
+                border-radius: 1rem;
+                transform: scale(1.5);
                 z-index: 2;
             }
 
-            &:has(+ .quick-episode + .quick-episode*:hover),
+            &:has(+ .quick-episode + .quick-episode:hover),
             &:hover + .quick-episode + .quick-episode {
-                transform: scale(1.10);
+                border-radius: .5rem;
+                transform: scale(1.20);
                 z-index: 1;
             }
         }
