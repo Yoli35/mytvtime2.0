@@ -1636,7 +1636,6 @@ h2 {
                                 display: flex;
                                 height: 3rem;
                                 padding: .5rem;
-                                width: 100%;
 
                                 &:hover {
                                     background-color: var(--ardoise-50);
@@ -1644,6 +1643,7 @@ h2 {
 
                                 img {
                                     height: 100%;
+                                    width: 100%;
                                 }
                             }
                         }
@@ -2436,11 +2436,10 @@ h2 {
             justify-content: center;
             line-height: 1.25em;
             margin-block: auto;
-            /*min-width: fit-content;*/
             position: relative;
             text-align: right;
-            text-wrap: balance;
-            width: 50%;
+            text-wrap: pretty;
+            max-width: 50%;
 
             span {
                 background-color: var(--ardoise-90-alpha-20);
