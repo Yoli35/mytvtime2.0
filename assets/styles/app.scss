@@ -351,6 +351,10 @@ label:has(input[type="text"]) {
         padding-inline: .5rem;
         position: relative;
         transition: background-color .250ms, color .250ms;
+
+        &:has(.burger) {
+            padding-inline: 0;
+        }
     }
 
     .navbar-item {
@@ -599,13 +603,21 @@ label:has(input[type="text"]) {
     }
 
     > *:not(.multi-search, .navbar-items):hover,
-    .navbar-item:hover,
+    .navbar-item:not(:has(.avatar)):hover,
     .navbar-items > a:hover {
         background-color: var(--navbar-bg-hover);
         color: var(--navbar-bg-hover);
 
         svg {
             color: var(--navbar-color-hover);
+        }
+    }
+
+    .navbar-item:has(.avatar):hover {
+        .avatar {
+            img {
+                border-color: var(--orange-50);
+            }
         }
     }
 
@@ -974,11 +986,11 @@ label:has(input[type="text"]) {
             color: var(--navbar-color-hover);
         }
 
-        > details {
+        /*> details {
             summary {
                 color: var(--navbar-color-hover);
             }
-        }
+        }*/
 
         .debug {
             background-color: var(--orange-20);
@@ -1202,7 +1214,7 @@ label:has(input[type="text"]) {
     }
 
     .burger {
-        border-radius: .25rem;
+        /*border-radius: .25rem;
         cursor: pointer;
         padding: .25rem .5rem;
         position: relative;
@@ -1214,12 +1226,54 @@ label:has(input[type="text"]) {
             margin-block: .25rem;
             transition: transform 250ms ease-in-out, opacity 250ms ease-in-out;
             width: 1.5rem;
+        }*/
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        gap: .25rem;
+        height: 2rem;
+        justify-content: center;
+        transition: transform 500ms ease-in-out;
+        width: 2rem;
+
+        > div {
+            border: 2px solid var(--ardoise-10);
+            border-radius: .5rem;
+            display: flex;
+            height: .75rem;
+            transition: background-color 500ms ease-in-out 500ms;
+            width: 1.75rem;
+
+            div {
+                background-color: var(--ardoise-10);
+                border-radius: 50%;
+                height: .5rem;
+                transition: transform 500ms ease-in-out 500ms;
+                width: .5rem;
+            }
+
+            &:first-child {
+                background-color: var(--ardoise-90);
+
+                div {
+                    transform: translate(1rem, 0);
+                }
+            }
+
+            &:last-child {
+                background-color: var(--ardoise-90-alpha-10);
+
+                div {
+                    transform: translate(0, 0);
+                }
+            }
         }
     }
 
     .navbar-item.open {
         .burger {
-            span:nth-child(1) {
+            transform: rotate(180deg);
+            /*span:nth-child(1) {
                 transform: translate(0, 0.5rem) rotate(135deg);
             }
 
@@ -1229,6 +1283,24 @@ label:has(input[type="text"]) {
 
             span:nth-child(3) {
                 transform: translate(0, -0.5rem) rotate(-135deg);
+            }*/
+
+            > div {
+                &:first-child {
+                    background-color: var(--ardoise-90-alpha-10);
+
+                    div {
+                        transform: translate(0, 0);
+                    }
+                }
+
+                &:last-child {
+                    background-color: var(--ardoise-90);
+
+                    div {
+                        transform: translate(1rem, 0);
+                    }
+                }
             }
         }
     }
