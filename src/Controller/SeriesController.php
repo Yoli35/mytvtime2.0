@@ -1736,6 +1736,7 @@ class SeriesController extends AbstractController
         $viewedAt = $this->translator->trans('Today') . ', ' . $now->format('H:i');
 
         $watchedAtBlock = $this->renderView('_blocks/series/_watched-at.html.twig', [
+            'episode' => ['id' => $userEpisode->getEpisodeId()],
             'e' => ['id' => $userEpisode->getId(), 'watch_at' => $now->format('Y-m-d H:i:s')],
         ]);
 
