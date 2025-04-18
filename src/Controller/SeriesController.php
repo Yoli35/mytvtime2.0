@@ -61,14 +61,10 @@ use App\Service\TMDBService;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use DateTimeInterface;
-use DateTimeZone;
 use DeepL\DeepLException;
 use Deepl\TextResult;
-use Exception;
 use Psr\Log\LoggerInterface as MonologLogger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Clock\ClockInterface;
-use Symfony\Component\Clock\DatePoint;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -88,7 +84,6 @@ use const FILTER_REQUIRE_ARRAY;
 class SeriesController extends AbstractController
 {
     public function __construct(
-        private readonly ClockInterface                     $clock,
         private readonly DateService                        $dateService,
         private readonly DeeplTranslator                    $deeplTranslator,
         private readonly DeviceRepository                   $deviceRepository,
@@ -3450,33 +3445,23 @@ class SeriesController extends AbstractController
     public function now(): DateTimeImmutable
     {
         $user = $this->getUser();
-        if ($user->getTimezone()) {
-            $timezone = $user->getTimezone();
-        } else {
-            $timezone = 'Europe/Paris';
-        }
-        $now = $this->clock->now();
-        try {
-            $now = $now->setTimezone(new DateTimeZone($timezone));
-        } catch (Exception) {
-        }
-        return $now;
+        return $this->dateService->newDateImmutable('now', $user->getTimezone() ?? 'Europe/Paris');
     }
 
     public function date(string $dateString): DateTimeImmutable
     {
         $user = $this->getUser();
-        if ($user->getTimezone()) {
-            $timezone = $user->getTimezone();
-        } else {
-            $timezone = 'Europe/Paris';
-        }
-        $date = null;
+        return $this->dateService->newDateImmutable($dateString, $user->getTimezone() ?? 'Europe/Paris');
+    }
+
+    public function dateModify(DateTimeImmutable $date, string $modify): DateTimeImmutable
+    {
         try {
-            $date = new DatePoint($dateString, new DateTimeZone($timezone));
-        } catch (Exception) {
+            return $date->modify($modify);
+        } catch (DateMalformedStringException $e) {
+            $this->logger->error($e->getMessage());
+            return $date;
         }
-        return $date;
     }
 
     public function checkSlug($series, $slug, $locale = 'fr'): bool|Response
@@ -3788,16 +3773,6 @@ class SeriesController extends AbstractController
                 $episode['provider_logo_path'] = '/images/providers/' . $episode['provider_logo_path'];
         }
         return $episodes;
-    }
-
-    public function dateModify(DateTimeImmutable $date, string $modify): DateTimeImmutable
-    {
-        try {
-            return $date->modify($modify);
-        } catch (DateMalformedStringException $e) {
-            $this->logger->error($e->getMessage());
-            return $date;
-        }
     }
 
 //    public function seasonLocalizedOverview($series, $season, $seasonNumber, $request): array|null
