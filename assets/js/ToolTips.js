@@ -15,6 +15,7 @@ export class ToolTips {
         this.tailElement = this.tooltipsElement.querySelector(".tail");
 
         this.init(element, className);
+        this.hideOnLinkClick();
     }
 
     init(element = null, className = null) {
@@ -33,6 +34,14 @@ export class ToolTips {
         }
     }
 
+    hideOnLinkClick() {
+        const links = document.querySelectorAll("a");
+        links.forEach(link => {
+            link.addEventListener("click", (evt) => {
+                this.hide();
+            });
+        });
+    }
     initElement(element) {
         element.addEventListener('mousemove', this.move.bind(this));
         element.addEventListener('mouseenter', this.show.bind(this));
