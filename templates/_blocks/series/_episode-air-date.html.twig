@@ -10,8 +10,8 @@
         {% endif %}
         {% if ue  and ue.watch_at %}
             <div class="watch-at-list">
-                {% for e in ues %}
-                    {{ include ('_blocks/series/_watched-at.html.twig', {e: e}) }}
+                {% for ue in ues %}
+                    {{ include ('_blocks/series/_watched-at.html.twig', {e: ue}) }}
                 {% endfor %}
             </div>
         {% endif %}

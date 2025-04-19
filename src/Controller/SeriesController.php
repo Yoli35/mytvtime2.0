@@ -1677,7 +1677,21 @@ class SeriesController extends AbstractController
             $ue['air_at'] = $this->dateService->newDateImmutable($ue['air_at'], 'Europe/Paris');
             $ue['air_at'] = $ue['air_at']->format('H:i');
         }
-        $ues = $this->userEpisodeRepository->getUserEpisodeViews($user->getId(), $id);
+        $ue['watch_at_db'] = $ue['watch_at'];
+        if ($ue['watch_at']) {
+            $ue['watch_at'] = $this->dateService->newDateImmutable($ue['watch_at'], 'UTC');
+        }
+        $arr = $this->userEpisodeRepository->getUserEpisodeViews($user->getId(), $id);
+        $ues = array_map(function ($ue) {
+            $ue['watch_at_db'] = $ue['watch_at'];
+            $ue['watch_at'] = $this->dateService->newDateImmutable($ue['watch_at'], 'UTC');
+            return $ue;
+        }, $arr);
+//        dump([
+//            'episode' => ['id' => $id, 'air_date' => $airDate->format('Y-m-d')],
+//            'ue' => $ue, //['watch_at' => $userEpisode->getWatchAt()->format('Y-m-d')],
+//            'ues' => $ues,
+//        ]);
         $airDateBlock = $this->renderView('_blocks/series/_episode-air-date.html.twig', [
             'episode' => ['id' => $id, 'air_date' => $airDate->format('Y-m-d')],
             'ue' => $ue, //['watch_at' => $userEpisode->getWatchAt()->format('Y-m-d')],
@@ -1726,6 +1740,10 @@ class SeriesController extends AbstractController
 
         $this->userEpisodeRepository->save($userEpisode, true);
 
+        $ue = $this->userEpisodeRepository->getUserEpisodeDB($userEpisode->getId(), $userEpisode->getUserSeries()->getUser()->getPreferredLanguage() ?? $request->getLocale());
+        $ue['watch_at_db'] = $ue['watch_at'];
+        $ue['watch_at'] = $this->dateService->newDateImmutable($ue['watch_at'], 'UTC');
+
         if ($seasonNumber) {
             $userSeries->setLastWatchAt($now);
             $userSeries->setLastEpisode($episodeNumber);
@@ -1737,7 +1755,7 @@ class SeriesController extends AbstractController
 
         $watchedAtBlock = $this->renderView('_blocks/series/_watched-at.html.twig', [
             'episode' => ['id' => $userEpisode->getEpisodeId()],
-            'e' => ['id' => $userEpisode->getId(), 'watch_at' => $now->format('Y-m-d H:i:s')],
+            'e' => $ue,
         ]);
 
         return $this->json([
@@ -3726,6 +3744,7 @@ class SeriesController extends AbstractController
                 $userEpisode['number_of_view'] = 0;
             }*/
 
+            $userEpisode['watch_at_db'] = $userEpisode['watch_at'];
             if ($userEpisode['watch_at']) {
                 $userEpisode['watch_at'] = $this->dateService->newDateImmutable($userEpisode['watch_at'], $user->getTimezone() ?? 'Europe/Paris');
             }
@@ -3755,6 +3774,10 @@ class SeriesController extends AbstractController
                     $userEpisode['air_at'] = $this->dateService->newDateImmutable($userEpisode['air_at'], 'Europe/Paris');
                     $userEpisode['air_at'] = $userEpisode['air_at']->format('H:i');
                 }
+                $userEpisode['watch_at_db'] = $userEpisode['watch_at'];
+                if ($userEpisode['watch_at']) {
+                    $ue['watch_at'] = $this->dateService->newDateImmutable($userEpisode['watch_at'], 'UTC');
+                }
                 return $userEpisode;
             }
         }
@@ -3767,13 +3790,21 @@ class SeriesController extends AbstractController
             return $userEpisode['episode_number'] == $episodeNumber;
         }));
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
+        $ues = [];
         foreach ($episodes as $episode) {
             if ($episode['provider_id'] > 0)
                 $episode['provider_logo_path'] = $episode['provider_logo_path'] ? $logoUrl . $episode['provider_logo_path'] : null;
             else
                 $episode['provider_logo_path'] = '/images/providers/' . $episode['provider_logo_path'];
+            if (!key_exists('watch_at_db', $episode)) {
+                $episode['watch_at_db'] = $episode['watch_at'];
+                if ($episode['watch_at']) {
+                    $episode['watch_at'] = $this->dateService->newDateImmutable($episode['watch_at'], 'UTC');
+                }
+            }
+            $ues[] = $episode;
         }
-        return $episodes;
+        return $ues;
     }
 
 //    public function seasonLocalizedOverview($series, $season, $seasonNumber, $request): array|null
