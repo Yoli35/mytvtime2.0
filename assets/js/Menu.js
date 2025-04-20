@@ -695,7 +695,9 @@ export class Menu {
                         const multiSearchInput = menuDiv.querySelector("input");
                         const resultsDiv = menuDiv.querySelector(".search-results");
                         resultsDiv.innerHTML = '';
+                        resultsDiv.classList.remove("showing-something");
                         multiSearchInput.value = '';
+
                         gThis.tooltips.hide();
                     });
                     li.appendChild(a);

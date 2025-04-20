@@ -1228,13 +1228,23 @@ label:has(input[type="text"]) {
             width: 1.5rem;
         }*/
         align-items: center;
+        border-radius: .25rem;
         display: flex;
         flex-direction: column;
         gap: .25rem;
-        height: 2rem;
+        height: 2.5rem;
         justify-content: center;
         transition: transform 500ms ease-in-out;
-        width: 2rem;
+        width: 2.5rem;
+
+        &:hover {
+            background-color: var(--orange-50);
+            color: var(--orange-90);
+
+            > div {
+                background-color: var(--orange-50);
+            }
+        }
 
         > div {
             border: 2px solid var(--ardoise-10);
