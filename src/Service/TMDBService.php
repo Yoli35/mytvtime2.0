@@ -388,7 +388,7 @@ class TMDBService
         }
     }
 
-    /*public function getTvEpisode(int $tvId, int $seasonNumber, int $episodeNumber, string $locale, ?array $details = null): ?string
+    public function getTvEpisode(int $tvId, int $seasonNumber, int $episodeNumber, string $locale, ?array $details = null): ?string
     {
         $request = 'https://api.themoviedb.org/3/tv/' . $tvId . '/season/' . $seasonNumber . '/episode/' . $episodeNumber . '?api_key=' . $this->api_key . '&language=' . $locale;
         if ($details) {
@@ -407,7 +407,7 @@ class TMDBService
         } catch (Throwable) {
             return "";
         }
-    }*/
+    }
 
     public function getTvKeywords(int $tvId): ?string
     {

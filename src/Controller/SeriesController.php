@@ -1576,8 +1576,15 @@ class SeriesController extends AbstractController
         $userSeriesEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
         $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $ueId]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'episodeId' => $id], ['id' => 'ASC']);
+        dump([
+            'user' => $user->getId(),
+            'showId' => $showId,
+            'seasonNumber' => $seasonNumber,
+            'episodeNumber' => $episodeNumber,
+            'ueId' => $ueId,
+            'userEpisodes' => $userEpisodes,
+        ]);
 
-//        $now = $this->now();
         $now = $this->dateService->getNowImmutable($user->getTimezone() ?? 'Europe/Paris');
         if ($userEpisode->getWatchAt()) { // Si l'épisode a déjà été vu
             $userEpisode = new UserEpisode($userSeries, $id, $seasonNumber, $episodeNumber, $now);
@@ -1589,22 +1596,31 @@ class SeriesController extends AbstractController
 
         $firstViewedUserEpisode = $userEpisodes[0];
         $airDate = $firstViewedUserEpisode->getAirDate();
+        if (!$airDate) {
+            $tmdbEpisode = json_decode($this->tmdbService->getTvEpisode($showId, $seasonNumber, $episodeNumber, 'en-US'), true);
+            $airDate = $tmdbEpisode['air_date'] ? $this->dateService->newDateImmutable($tmdbEpisode['air_date'], 'Europe/Paris', true) : null;
+            $firstViewedUserEpisode->setAirDate($airDate);
+            $this->userEpisodeRepository->save($firstViewedUserEpisode, true);
+        }
+
         if ($new) {
             $userEpisode->setAirDate($airDate);
             $lastViewedUserEpisode = $userEpisodes[count($userEpisodes) - 1];
             $userEpisode->setProviderId($lastViewedUserEpisode->getProviderId());
             $userEpisode->setDeviceId($lastViewedUserEpisode->getDeviceId());
         } else {
-            $diff = $now->diff($airDate);
-            $quickWatchDay = $diff->days < 1;
-            $quickWatchWeek = $diff->days < 7;
-            $userEpisode->setQuickWatchDay($quickWatchDay);
-            $userEpisode->setQuickWatchWeek($quickWatchWeek);
-            if ($quickWatchWeek) {
-                if ($quickWatchDay) {
-                    $messages[] = $this->translator->trans('Quick day watch badge unlocked');
-                } else {
-                    $messages[] = $this->translator->trans('Quick week watch badge unlocked');
+            if ($airDate) {
+                $diff = $now->diff($airDate);
+                $quickWatchDay = $diff->days < 1;
+                $quickWatchWeek = $diff->days < 7;
+                $userEpisode->setQuickWatchDay($quickWatchDay);
+                $userEpisode->setQuickWatchWeek($quickWatchWeek);
+                if ($quickWatchWeek) {
+                    if ($quickWatchDay) {
+                        $messages[] = $this->translator->trans('Quick day watch badge unlocked');
+                    } else {
+                        $messages[] = $this->translator->trans('Quick week watch badge unlocked');
+                    }
                 }
             }
 
