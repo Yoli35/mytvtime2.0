@@ -60,7 +60,7 @@ class HomeController extends AbstractController
             }, $userSeries);
 
             // Episodes du jour
-            $arr = $this->userEpisodeRepository->episodesOfTheDay($user, $country, $language);
+            $arr = $this->userEpisodeRepository->episodesOfTheDay($user, $language);
             $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
             $episodesOfTheDay = array_map(function ($series) use ($logoUrl) {
                 $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
@@ -76,7 +76,7 @@ class HomeController extends AbstractController
 //                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
                 $series['released'] = true;
                 return $series;
-            }, $this->userEpisodeRepository->episodesToWatch($user, $country, $language, 1, 20));
+            }, $this->userEpisodeRepository->episodesToWatch($user, $language, 1, 20));
             // Dernières séries ajoutées
             $lastAddedSeries = array_map(function ($series) {
 //                $s = $serie->homeArray();
@@ -98,7 +98,7 @@ class HomeController extends AbstractController
             // Historique des épisodes vus pendant les 2 semaines passées
             $cookieDayCount = $_COOKIE['mytvtime_2_day_count'] ?? 7;
             $dayCount = $request->query->get('daycount', $cookieDayCount);
-            $historyEpisode = $this->seriesController->getEpisodeHistory($user, $dayCount, $country, $language);
+            $historyEpisode = $this->seriesController->getEpisodeHistory($user, $dayCount, $language);
         } else {
             $userSeries = [];
             $episodesOfTheDay = [];

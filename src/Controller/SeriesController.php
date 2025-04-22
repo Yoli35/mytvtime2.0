@@ -156,7 +156,7 @@ class SeriesController extends AbstractController
 //        dump(['series' => $series, 'userSeriesTMDBIds' => $userSeriesTMDBIds]);
 
         // Historique des épisodes vus pendant les 2 semaines passées
-        $episodeHistory = $this->getEpisodeHistory($user, 14, $country, $locale);
+        $episodeHistory = $this->getEpisodeHistory($user, 14, $locale);
 
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
         $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
@@ -194,7 +194,7 @@ class SeriesController extends AbstractController
                 'air_at' => $ue['airAt'],
                 'watch_providers' => $ue['providerId'] ? [['logo_path' => $this->getProviderLogoFullPath($ue['providerLogoPath'], $logoUrl), 'provider_name' => $ue['providerName']]] : [],
             ];
-        }, $this->userEpisodeRepository->episodesOfTheDay($user, $country, $locale));
+        }, $this->userEpisodeRepository->episodesOfTheDay($user, $locale));
         $tmdbIds = array_column($AllEpisodesOfTheDay, 'tmdbId');
         $episodesOfTheDay = [];
         foreach ($AllEpisodesOfTheDay as $us) {
@@ -879,7 +879,7 @@ class SeriesController extends AbstractController
         $addVideoForm->handleRequest($request);
         if ($addVideoForm->isSubmitted() && $addVideoForm->isValid()) {
             $data = $addVideoForm->getData();
-            $this->addVideo($series, $data);
+            $this->addVideo($data);
         }
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
@@ -1576,14 +1576,14 @@ class SeriesController extends AbstractController
         $userSeriesEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
         $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $ueId]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'episodeId' => $id], ['id' => 'ASC']);
-        dump([
+        /*dump([
             'user' => $user->getId(),
             'showId' => $showId,
             'seasonNumber' => $seasonNumber,
             'episodeNumber' => $episodeNumber,
             'ueId' => $ueId,
             'userEpisodes' => $userEpisodes,
-        ]);
+        ]);*/
 
         $now = $this->dateService->getNowImmutable($user->getTimezone() ?? 'Europe/Paris');
         if ($userEpisode->getWatchAt()) { // Si l'épisode a déjà été vu
@@ -1782,8 +1782,8 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/episode/remove/{id}', name: 'remove_episode', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function removeUserEpisode(Request $request, int $id): Response
+    #[Route('/episode/remove', name: 'remove_episode', methods: ['POST'])]
+    public function removeUserEpisode(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
         $showId = $data['showId'];
@@ -1795,8 +1795,7 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-//        $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'episodeId' => $id]);
-//        dump($userEpisodes);
+
         $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $userEpisodeId]);
         if ($userEpisode) {
             if ($userEpisode->getPreviousOccurrence()) {
@@ -2421,7 +2420,7 @@ class SeriesController extends AbstractController
         $query = $data['query'];
 
         if ($query === 'init') {
-            $multi = ["page" => 1, "results" => [], "total_pages" => 0, "total_results" => 0];
+            $multi = ["results" => []];
         } else {
             $multi = json_decode($this->tmdbService->searchMulti(1, $query, $locale), true);
         }
@@ -2532,7 +2531,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    public function addVideo(Series $series, SeriesVideo $video): bool
+    public function addVideo(SeriesVideo $video): bool
     {
         $this->seriesVideoRepository->save($video, true);
         return true;
@@ -2917,13 +2916,13 @@ class SeriesController extends AbstractController
             $seasonNumber = $schedule->getSeasonNumber();
             if ($schedule->isMultiPart()) {
                 $multiPart = true;
-                $seasonPart = $schedule->getSeasonPart();
+//                $seasonPart = $schedule->getSeasonPart();
                 $firstEpisode = $schedule->getSeasonPartFirstEpisode();
                 $episodeCount = $schedule->getSeasonPartEpisodeCount();
                 $lastEpisode = $firstEpisode + $episodeCount - 1;
             } else {
                 $multiPart = false;
-                $seasonPart = null;
+//                $seasonPart = null;
                 $firstEpisode = 1;
                 $episodeCount = $tv ? $this->getSeasonEpisodeCount($tv['seasons'], $seasonNumber) : 0;
                 $lastEpisode = $episodeCount;
@@ -2935,6 +2934,7 @@ class SeriesController extends AbstractController
             $dayOfWeekArr = [
                 'en' => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
                 'fr' => ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
+                'ko' => ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
             ];
             $daysOfWeek = $schedule->getDaysOfWeek();
             $scheduleDayOfWeek = array_map(fn($day) => $dayOfWeekArr[$locale][$day], $daysOfWeek);
@@ -3416,9 +3416,9 @@ class SeriesController extends AbstractController
         }
     }
 
-    public function getEpisodeHistory(User $user, int $dayCount, string $country, string $locale): array
+    public function getEpisodeHistory(User $user, int $dayCount, string $locale): array
     {
-        $arr = $this->userEpisodeRepository->historyEpisode($user, $dayCount, $country, $locale);
+        $arr = $this->userEpisodeRepository->historyEpisode($user, $dayCount, $locale);
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
 
         return array_map(function ($series) use ($logoUrl) {
@@ -3650,9 +3650,10 @@ class SeriesController extends AbstractController
     public function seasonsPosterPath(array $seasons): array
     {
         $slugger = new AsciiSlugger();
-        return array_map(function ($season) use ($slugger) {
+        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+        return array_map(function ($season) use ($slugger, $posterUrl) {
             $season['slug'] = $slugger->slug($season['name'])->lower()->toString();
-            $season['poster_path'] = $season['poster_path'] ? $this->imageConfiguration->getCompleteUrl($season['poster_path'], 'poster_sizes', 5) : null; // w500
+            $season['poster_path'] = $season['poster_path'] ? $posterUrl . $season['poster_path'] : null;
             return $season;
         }, $seasons);
     }
@@ -3791,9 +3792,9 @@ class SeriesController extends AbstractController
                     $userEpisode['air_at'] = $userEpisode['air_at']->format('H:i');
                 }
                 $userEpisode['watch_at_db'] = $userEpisode['watch_at'];
-                if ($userEpisode['watch_at']) {
+                /*if ($userEpisode['watch_at']) {
                     $ue['watch_at'] = $this->dateService->newDateImmutable($userEpisode['watch_at'], 'UTC');
-                }
+                }*/
                 return $userEpisode;
             }
         }
@@ -3808,10 +3809,11 @@ class SeriesController extends AbstractController
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
         $ues = [];
         foreach ($episodes as $episode) {
-            if ($episode['provider_id'] > 0)
+            $episode['provider_logo_path'] = $this->getProviderLogoFullPath($episode['provider_logo_path'], $logoUrl);
+            /*if ($episode['provider_id'] > 0)
                 $episode['provider_logo_path'] = $episode['provider_logo_path'] ? $logoUrl . $episode['provider_logo_path'] : null;
             else
-                $episode['provider_logo_path'] = '/images/providers/' . $episode['provider_logo_path'];
+                $episode['provider_logo_path'] = '/images/providers/' . $episode['provider_logo_path'];*/
             if (!key_exists('watch_at_db', $episode)) {
                 $episode['watch_at_db'] = $episode['watch_at'];
                 if ($episode['watch_at']) {

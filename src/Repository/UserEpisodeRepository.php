@@ -2,8 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\Series;
-use App\Entity\SeriesBroadcastSchedule;
 use App\Entity\User;
 use App\Entity\UserEpisode;
 use App\Entity\UserSeries;
@@ -117,7 +115,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                    us.`last_season`                as seasonNumber,
                    (SELECT count(*)
                     FROM user_episode ue
-                        LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                        LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
                         LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                     WHERE ue.user_series_id = us.id
                       AND ue.season_number > 0
@@ -126,7 +124,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                    )                               as watched_aired_episode_count,
                    (SELECT count(*)
                     FROM user_episode ue
-                        LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                        LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
                         LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                     WHERE ue.user_series_id = us.id
                       AND ue.season_number > 0
@@ -221,7 +219,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        IF(sbd.id, DATE(sbd.date), ue.`air_date`) as air_date
                 FROM user_episode ue
                     INNER JOIN user_series us ON us.id=$userSeriesIde AND ue.`user_series_id` = us.`id`
-                    LEFT JOIN series_broadcast_schedule sbs ON sbs.id=$id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                    LEFT JOIN series_broadcast_schedule sbs ON sbs.id=$id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
                     LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                 WHERE sbs.season_number = ue.season_number
                     AND ue.`watch_at` IS NULL AND ue.previous_occurrence_id IS NULL
@@ -238,7 +236,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        IF(sbs.override, DATE(sbd.date), ue.`air_date`) as air_date
                 FROM user_episode ue
                     INNER JOIN user_series us ON us.id = $usId AND ue.`user_series_id` = us.`id`
-                    LEFT JOIN series_broadcast_schedule sbs ON sbs.id = $id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                    LEFT JOIN series_broadcast_schedule sbs ON sbs.id = $id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
                     LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                 WHERE sbs.season_number = ue.season_number
                     AND IF(sbs.override, DATE(sbd.date), ue.`air_date`) = DATE('$airDate')
@@ -256,7 +254,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        ue.`watch_at`
                 FROM user_episode ue
                     INNER JOIN user_series us ON us.`id`=$userSeriesId AND ue.user_series_id=us.id
-                    LEFT JOIN series_broadcast_schedule sbs ON sbs.id=$id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                    LEFT JOIN series_broadcast_schedule sbs ON sbs.id=$id AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
                     LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                 WHERE sbs.season_number = ue.season_number
                   AND ue.`watch_at` IS NOT NULL AND ue.previous_occurrence_id IS NULL
@@ -266,7 +264,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function episodesOfTheDay(User $user, string $country = 'FR', string $locale = 'fr'): array
+    public function episodesOfTheDay(User $user, string $locale = 'fr'): array
     {
         $userId = $user->getId();
         $sql = "SELECT s.id                            as id,
@@ -327,7 +325,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function episodesToWatch(User $user, string $country = 'FR', string $locale = 'fr'): array
+    public function episodesToWatch(User $user, string $locale = 'fr'): array
     {
         $userId = $user->getId();
         $sql = "SELECT s.id              as id,
@@ -364,7 +362,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function episodesOfTheDayForTwig(User $user, string $day, string $locale = 'fr'): array
+    /*public function episodesOfTheDayForTwig(User $user, string $day, string $locale = 'fr'): array
     {
         $userId = $user->getId();
         $sql = "SELECT 
@@ -387,7 +385,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                      INNER JOIN user_series us ON s.id = us.series_id 
                      INNER JOIN user_episode ue ON us.id = ue.user_series_id 
                      LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
-                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                     LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
                      LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                      LEFT JOIN provider p ON sbs.provider_id = p.provider_id
               WHERE us.user_id = $userId
@@ -396,7 +394,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         //       (WHERE ...) AND ue.season_number > 0
 
         return $this->getAll($sql);
-    }
+    }*/
 
     public function episodesOfTheIntervalForTwig(User $user, string $start, string $end, string $locale = 'fr'): array
     {
@@ -437,15 +435,13 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function historyEpisode(User $user, int $dayCount, string $country, string $locale): array
+    public function historyEpisode(User $user, int $dayCount, string $locale): array
     {
         $userId = $user->getId();
         $sql = "SELECT s.id                            as id,
                        s.tmdb_id                       as tmdbId,
-                       IF(sln.`id` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
-                       IF(sln.`id` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
-                       /*s.`name`                        as name,*/
-                       /*s.`slug`                        as slug,*/
+                       IF(sln.`id`, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
+                       IF(sln.`id`, sln.`slug`, s.`slug`)                          as slug,
                        sln.`name`                      as localizedName,
                        sln.`slug`                      as localizedSlug,
                        s.`poster_path`                 as posterPath,
@@ -474,7 +470,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 FROM `user_episode` ue
                          INNER JOIN `user_series` us ON us.`id` = ue.`user_series_id`
                          INNER JOIN `series` s ON s.`id` = us.`series_id`
-                         LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                         LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
                          LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
                          LEFT JOIN `provider` p ON p.`provider_id` = ue.`provider_id`
                          LEFT JOIN `series_localized_name` sln ON sln.`series_id` = s.`id` AND sln.`locale` = '$locale'
@@ -519,7 +515,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                 FROM user_episode ue
                          LEFT JOIN user_series us ON ue.user_series_id = us.id
                          LEFT JOIN series s ON us.series_id = s.id
-                         LEFT JOIN series_broadcast_schedule sbs ON sbs.series_id = s.id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count), 1)
+                         LEFT JOIN series_broadcast_schedule sbs ON sbs.series_id = s.id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count -1), 1)
                          LEFT JOIN series_broadcast_date sbd ON ue.episode_id = sbd.episode_id
                          LEFT JOIN episode_substitute_name esn ON ue.episode_id = esn.episode_id
                          LEFT JOIN episode_localized_overview elo ON ue.episode_id = elo.episode_id AND elo.locale = '$locale'
