@@ -2,6 +2,7 @@ import './bootstrap.js';
 
 import {AverageColor} from 'AverageColor';
 import {DayCountHistory} from 'DayCountHistory';
+import {FlashMessage} from 'FlashMessage';
 import {HighlightSeries} from 'HighlightSeries';
 import {Index} from 'Index';
 import {Menu} from 'Menu';
@@ -116,8 +117,11 @@ window.addEventListener("DOMContentLoaded", () => {
     const menu = new Menu();
     menu.init();
 
-// Tooltips
-    const toolTips = new ToolTips();
+// Flash messages
+    new FlashMessage();
+
+    // Tooltips
+    new ToolTips();
 
 // Poster hover option
     const posterHover = new PosterHover();
@@ -179,22 +183,6 @@ window.addEventListener("DOMContentLoaded", () => {
         }
 
         navBar.navBarColor(hsl);
-
-        /*const additionalOverviews = document.querySelector(".additional.overviews");
-        if (additionalOverviews) {
-            const imgs = additionalOverviews.querySelectorAll("img");
-            imgs.forEach(img => {
-                const color = averageColor.getColor(img);
-                const sourceDiv = img.closest(".source");
-                if (color.lightness > 150) {
-                    // hsl(202,18%,10%)
-                    sourceDiv.style.backgroundColor = "#151B1E";
-                } else {
-                    // hsl(202,18%,90%);
-                    sourceDiv.style.backgroundColor = "#E1E7EA";
-                }
-            });
-        }*/
 
         const seasonOrder = document.querySelector(".season-order");
         seasonOrder?.addEventListener("click", () => {
@@ -258,24 +246,5 @@ window.addEventListener("DOMContentLoaded", () => {
     if (networkAndProvider) {
         const networkPage = document.querySelector(".user-networks");
         new NetworkAndProvider(networkPage != null);
-    }
-
-    // Flash messages
-    const flashes = document.querySelectorAll(".flash-message");
-
-    flashes.forEach(flash => {
-        flash.querySelector(".close").addEventListener("click", () => {
-            closeFlash(flash);
-        });
-    });
-
-    function closeFlash(flash) {
-        setTimeout(() => {
-            flash.classList.add("hide");
-        }, 0);
-        setTimeout(() => {
-            flash.classList.add("d-none");
-            flash.parentElement.removeChild(flash);
-        }, 500);
     }
 });

@@ -1,13 +1,25 @@
+let gThis
 export class FlashMessage {
     constructor() {
         this.closeAll = this.closeAll.bind(this);
-        this.start();
+        this.dismisses = ['hide-scale', 'hide-to-left', 'hide-to-right', 'hide-to-top', 'hide-to-bottom'];
+        this.dismissesCount = this.dismisses.length;
+        if (!gThis) {
+            this.start();
+        }
     }
 
     start() {
+        gThis = this;
         console.log('FlashMessage init');
         const flashMessagesDiv = document.querySelector('.flash-messages');
         flashMessagesDiv.addEventListener('click', this.closeAll);
+        // Flash messages
+        const flashes = document.querySelectorAll(".flash-message");
+
+        flashes.forEach(flashMessageDiv => {
+            this.setupCountdown(flashMessageDiv, this.dismisses[Math.floor(Math.random() * this.dismissesCount)]);
+        });
     }
 
     closeAll(e) {
@@ -40,8 +52,7 @@ export class FlashMessage {
     add(status, message, subMessage = '') {
         const flashMessagesDiv = document.querySelector('.flash-messages');
         const svgXmark = document.querySelector('#svg-xmark').querySelector('svg').cloneNode(true);
-        const dismisses = ['hide-scale', 'hide-to-left', 'hide-to-right', 'hide-to-top', 'hide-to-bottom'];
-        const dismissClass = dismisses[Math.floor(Math.random() * dismisses.length)];
+        const dismissClass = this.dismisses[Math.floor(Math.random() * this.dismissesCount)];
 
         const flashMessageDiv = document.createElement('div');
         flashMessageDiv.classList.add('flash-message');
@@ -96,6 +107,11 @@ export class FlashMessage {
         closureCountdownDiv.appendChild(div3);
         flashMessageDiv.appendChild(closureCountdownDiv);
 
+        this.setupCountdown(flashMessageDiv, dismissClass);
+
+    }
+
+    setupCountdown(flashMessageDiv, dismissClass) {
         const closure = flashMessageDiv.querySelector('.closure-countdown');
         const closureEnd = flashMessageDiv.querySelector('.circle-end');
         closure.addEventListener('click', () => {
@@ -112,7 +128,6 @@ export class FlashMessage {
             clearInterval(i);
             this.close(flashMessageDiv, dismissClass);
         }, 30000);
-
     }
 
     close(flash, dismissClass) {
