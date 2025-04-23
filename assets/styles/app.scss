@@ -1239,11 +1239,6 @@ label:has(input[type="text"]) {
 
         &:hover {
             background-color: var(--orange-50);
-            color: var(--orange-90);
-
-            > div {
-                background-color: var(--orange-50);
-            }
         }
 
         > div {
@@ -1263,18 +1258,22 @@ label:has(input[type="text"]) {
             }
 
             &:first-child {
-                background-color: var(--ardoise-90);
+                background-color: var(--navbar-bg);
 
                 div {
+                    background-color: var(--ardoise-10);
                     transform: translate(1rem, 0);
+                    transition: all 500ms ease-in-out 500ms;
                 }
             }
 
             &:last-child {
-                background-color: var(--ardoise-90-alpha-10);
+                background-color: var(--ardoise-10);
 
                 div {
+                    background-color: var(--navbar-bg);
                     transform: translate(0, 0);
+                    transition: all 500ms ease-in-out 500ms;
                 }
             }
         }
@@ -1297,17 +1296,19 @@ label:has(input[type="text"]) {
 
             > div {
                 &:first-child {
-                    background-color: var(--ardoise-90-alpha-10);
+                    background-color: var(--ardoise-10);
 
                     div {
+                        background-color: var(--navbar-bg);
                         transform: translate(0, 0);
                     }
                 }
 
                 &:last-child {
-                    background-color: var(--ardoise-90);
+                    background-color: var(--navbar-bg);
 
                     div {
+                        background-color: var(--ardoise-10);
                         transform: translate(1rem, 0);
                     }
                 }
