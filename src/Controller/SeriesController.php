@@ -4012,19 +4012,19 @@ class SeriesController extends AbstractController
         //  *-language: "fr"
         //  *-timezone: "Europe/Paris"
         //  *-watchRegion: "FR"
-        //  -firstAirDateYear: 2023                     -> first_air_date_year
-        //  -firstAirDateGTE: null                      -> first_air_date.gte
-        //  -firstAirDateLTE: null                      -> first_air_date.lte
-        //  -withOriginCountry: null                    -> with_origin_country
-        //  -withOriginalLanguage: null                 -> with_original_language
-        //  -withWatchMonetizationTypes: "flatrate"     -> with_watch_monetization_types
-        //  -withWatchProviders: "119"                  -> with_watch_providers
+        //  -firstAirDateYear: 2023                     → first_air_date_year
+        //  -firstAirDateGTE: null                      → first_air_date.gte
+        //  -firstAirDateLTE: null                      → first_air_date.lte
+        //  -withOriginCountry: null                    → with_origin_country
+        //  -withOriginalLanguage: null                 → with_original_language
+        //  -withWatchMonetizationTypes: "flatrate"     → with_watch_monetization_types
+        //  -withWatchProviders: "119"                  → with_watch_providers
         //  -watchProviders: array:59 [▶]
-        //  -withRuntimeGTE: 0                          -> with_runtime.gte
-        //  -withRuntimeLTE: 0                          -> with_runtime.lte
-        //  -withStatus: null                           -> with_status
-        //  -withType: null                             -> with_type
-        //  -sortBy: "popularity.desc"                  -> sort_by
+        //  -withRuntimeGTE: 0                          → with_runtime.gte
+        //  -withRuntimeLTE: 0                          → with_runtime.lte
+        //  -withStatus: null                           → with_status
+        //  -withType: null                             → with_type
+        //  -sortBy: "popularity.desc"                  → sort_by
         //  *-page: 1
         //}
         $page = $data->getPage();
