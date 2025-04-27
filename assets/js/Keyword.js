@@ -21,6 +21,7 @@ export class Keyword {
         const keywordFormsCancel = keywordForm.querySelector('button[type="button"]');
         const keywordFormsSubmit = keywordForm.querySelector('button[type="submit"]');
         const keywordsDiv = document.querySelector('.keywords');
+        const keywords = keywordsDiv.querySelectorAll('.keyword');
         const missingKeywords = document.querySelectorAll('.keyword.missing');
         missingKeywords.forEach(keyword => {
             keyword.addEventListener('click', function () {
@@ -29,6 +30,20 @@ export class Keyword {
                 }
                 gThis.keywordInitFields(keywordForm, missingKeywords);
                 gThis.displayForm(keywordForm);
+            });
+        });
+        // Copier dans le presse papiers le contenu du "data-title"
+        keywords.forEach(keyword => {
+            if (keyword.classList.contains('missing')) {
+                return;
+            }
+            keyword.addEventListener('click', function () {
+                const copyText = keyword.getAttribute('data-title');
+                navigator.clipboard.writeText(copyText).then(() => {
+                    console.log('Copied to clipboard: ' + copyText);
+                }).catch(err => {
+                    console.error('Error copying text: ', err);
+                });
             });
         });
         keywordFormsCancel.addEventListener('click', function () {
