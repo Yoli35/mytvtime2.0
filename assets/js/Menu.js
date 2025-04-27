@@ -310,10 +310,13 @@ export class Menu {
                                 a.appendChild(titleDiv);
                                 // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
                                 a.addEventListener("auxclick", (e) => {
-                                    const details = e.currentTarget.closest("details");
+                                    const menuDiv = a.closest(".menu");
+                                    const navbarItem = a.closest(".navbar-item");
+                                    const resultsDiv = a.closest(".search-results");
+                                    resultsDiv.classList.remove("showing-something");
                                     ul.remove();
                                     movieSearch.value = '';
-                                    details.removeAttribute("open");
+                                    gThis.closeMenu(navbarItem, menuDiv);
                                 });
                                 li.appendChild(a);
                                 ul.appendChild(li);
@@ -375,10 +378,13 @@ export class Menu {
                                 a.appendChild(titleDiv);
                                 // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
                                 a.addEventListener("auxclick", (e) => {
-                                    const details = e.currentTarget.closest("details");
+                                    const menuDiv = a.closest(".menu");
+                                    const navbarItem = a.closest(".navbar-item");
+                                    const resultsDiv = a.closest(".search-results");
+                                    resultsDiv.classList.remove("showing-something");
                                     ul.remove();
                                     tvSearch.value = '';
-                                    details.removeAttribute("open");
+                                    gThis.closeMenu(navbarItem, menuDiv);
                                 });
                                 li.appendChild(a);
                                 ul.appendChild(li);
@@ -440,10 +446,13 @@ export class Menu {
                                 a.appendChild(titleDiv);
                                 // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
                                 a.addEventListener("auxclick", (e) => {
-                                    const details = e.currentTarget.closest("details");
+                                    const menuDiv = a.closest(".menu");
+                                    const navbarItem = a.closest(".navbar-item");
+                                    const resultsDiv = a.closest(".search-results");
+                                    resultsDiv.classList.remove("showing-something");
                                     ul.remove();
                                     tvSearch.value = '';
-                                    details.removeAttribute("open");
+                                    gThis.closeMenu(navbarItem, menuDiv);
                                 });
                                 li.appendChild(a);
                                 ul.appendChild(li);
@@ -505,10 +514,13 @@ export class Menu {
                                 a.appendChild(titleDiv);
                                 // Si le lien est ouvert dans un autre onglet, il faut supprimer le menu
                                 a.addEventListener("auxclick", (e) => {
-                                    const details = e.currentTarget.closest("details");
+                                    const menuDiv = a.closest(".menu");
+                                    const navbarItem = a.closest(".navbar-item");
+                                    const resultsDiv = a.closest(".search-results");
+                                    resultsDiv.classList.remove("showing-something");
                                     ul.remove();
                                     personSearch.value = '';
-                                    details.removeAttribute("open");
+                                    gThis.closeMenu(navbarItem, menuDiv);
                                 });
                                 li.appendChild(a);
                                 ul.appendChild(li);
@@ -740,16 +752,23 @@ export class Menu {
                     return;
                 }
 
-                const id = li.getAttribute("data-id");
-
-                const details = li.closest("details");
+                const searchResults = li.closest(".search-results");
+                const a = li.querySelector("a");
+                /* >> Fermeture du menu au cas où le lien serait ouvert dans un autre onglet ou une autre fenêtre */
                 ul.remove();
                 e.target.value = '';
-                details?.removeAttribute("open");
+                searchResults.classList.remove("showing-something");
+                const menuDiv = searchResults.closest(".menu");
+                const navbarItem = menuDiv.closest(".navbar-item");
+                gThis.closeMenu(navbarItem, menuDiv);
+                /* << */
+                a.click();
 
-                if (multiSearchMenuResultType) {
+                /*if (multiSearchMenuResultType) {
                     type = multiSearchMenuResultType;
                 }
+
+                const id = li.getAttribute("data-id");
 
                 if (type === 'movie') {
                     window.location.href = '/' + gThis.lang + '/movie/tmdb/' + id;
@@ -765,7 +784,7 @@ export class Menu {
                 if (type === 'person') {
                     const slug = li.getAttribute("data-slug");
                     window.location.href = '/' + gThis.lang + '/people/show/' + id + '-' + slug;
-                }
+                }*/
             }
             if (e.key === 'ArrowDown') {
                 e.preventDefault();
