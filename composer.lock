@@ -89,16 +89,16 @@
         },
         {
             "name": "deeplcom/deepl-php",
-            "version": "v1.11.1",
+            "version": "v1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DeepLcom/deepl-php.git",
-                "reference": "004cf73864e8547ece7e49a2b08ed7a2d6672d9c"
+                "reference": "b9a7e0385d27a99b7756ebf95e953785b90e8161"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DeepLcom/deepl-php/zipball/004cf73864e8547ece7e49a2b08ed7a2d6672d9c",
-                "reference": "004cf73864e8547ece7e49a2b08ed7a2d6672d9c",
+                "url": "https://api.github.com/repos/DeepLcom/deepl-php/zipball/b9a7e0385d27a99b7756ebf95e953785b90e8161",
+                "reference": "b9a7e0385d27a99b7756ebf95e953785b90e8161",
                 "shasum": ""
             },
             "require": {
@@ -146,9 +146,9 @@
             ],
             "support": {
                 "issues": "https://github.com/DeepLcom/deepl-php/issues",
-                "source": "https://github.com/DeepLcom/deepl-php/tree/v1.11.1"
+                "source": "https://github.com/DeepLcom/deepl-php/tree/v1.12.0"
             },
-            "time": "2025-01-17T09:36:14+00:00"
+            "time": "2025-04-25T20:00:25+00:00"
         },
         {
             "name": "doctrine/cache",
