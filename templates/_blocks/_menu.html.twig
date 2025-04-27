@@ -93,7 +93,7 @@
                                         <div class="provider{% if history.provider == 0 %} hidden{% endif %}"><img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}"></div>
                                     {% endif %}
                                     <div class="number{% if h.progress==100 %} ended{% endif %}">{{ 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) }}</div>
-                                    <div class="date">{{ h.lastWatchAt|format_datetime('relative_medium', 'short', 'Europe/Paris') }}</div>
+                                    <div class="date">{{ h.lastWatchAt|format_datetime('relative_medium', 'short') }}</div>
                                 </a>
                             </li>
                         {% else %}
