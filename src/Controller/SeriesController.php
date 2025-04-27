@@ -3772,6 +3772,11 @@ class SeriesController extends AbstractController
         }
         if ($newCount) {
             $this->addFlash('warning', $newCount . ' new episode' . ($newCount > 1 ? 's' : '') . ' added to your watchlist');
+            $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
+            $series->setNumberOfSeason($tv['number_of_seasons']);
+            $series->setNumberOfEpisode($tv['number_of_episodes']);
+            $this->seriesRepository->save($series, true);
+            $this->addFlash('success', sprintf("Series updated (%d season%s, %d episode%s)", $tv['number_of_seasons'], $tv['number_of_seasons'] > 1 ? 's' : '', $tv['number_of_episodes'], $tv['number_of_episodes'] > 1 ? 's' : ''));
         }
         return $seasonEpisodes;
     }
