@@ -189,7 +189,7 @@ class SeriesController extends AbstractController
                 'season_number' => $ue['seasonNumber'],
                 'upToDate' => $ue['watched_aired_episode_count'] == $ue['aired_episode_count'],
                 'remainingEpisodes' => $ue['aired_episode_count'] - $ue['watched_aired_episode_count'],
-                'released_episode_count' => $ue['released_episode_count'],
+                'aired_episode_count' => $ue['aired_episode_count'],
                 'watch_at' => $ue['watchAt'],
                 'air_at' => $ue['airAt'],
                 'watch_providers' => $ue['providerId'] ? [['logo_path' => $this->getProviderLogoFullPath($ue['providerLogoPath'], $logoUrl), 'provider_name' => $ue['providerName']]] : [],
@@ -198,13 +198,13 @@ class SeriesController extends AbstractController
         $tmdbIds = array_column($AllEpisodesOfTheDay, 'tmdbId');
         $episodesOfTheDay = [];
         foreach ($AllEpisodesOfTheDay as $us) {
-            if ($us['released_episode_count'] > 1) {
+            if ($us['aired_episode_count'] > 1) {
                 $episodesOfTheDay[$us['date'] . '-' . $us['id']][] = $us;
             } else {
                 $episodesOfTheDay[$us['date'] . '-' . $us['id']][0] = $us;
             }
         }
-//        dump(['episodesOfTheDay' => $episodesOfTheDay]);
+        dump(['episodesOfTheDay' => $episodesOfTheDay]);
 
         $allEpisodesOfTheWeek = array_map(function ($us) use ($posterUrl, $logoUrl) {
             $this->imageService->saveImage("posters", $us['poster_path'], $posterUrl);
@@ -963,9 +963,9 @@ class SeriesController extends AbstractController
         }
 
         $series->setVisitNumber($series->getVisitNumber() + 1);
-        if (!$series->getNumberOfEpisode()) {
-            $series->setNumberOfEpisode($tv['number_of_episodes'] ?? -1);
-            $series->setNumberOfSeason($tv['number_of_seasons'] ?? -1);
+        if (!$series->getNumberOfEpisode() || $tv['number_of_episodes'] != $series->getNumberOfEpisode()) {
+            $series->setNumberOfEpisode($tv['number_of_episodes']);
+            $series->setNumberOfSeason($tv['number_of_seasons']);
         }
         $this->seriesRepository->save($series, true);
 

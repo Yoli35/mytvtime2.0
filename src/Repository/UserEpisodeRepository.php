@@ -288,25 +288,23 @@ class UserEpisodeRepository extends ServiceEntityRepository
                        wp.`logo_path`                  as providerLogoPath,
                        (SELECT count(*)
                         FROM user_episode cue
+                            LEFT JOIN series_broadcast_schedule csbs ON s.id = csbs.series_id AND csbs.`season_number`=cue.`season_number` AND IF(csbs.multi_part, cue.episode_number BETWEEN csbs.season_part_first_episode AND (csbs.season_part_first_episode + csbs.season_part_episode_count - 1), 1)
+                            LEFT JOIN series_broadcast_date csbd ON csbd.series_broadcast_schedule_id = csbs.id AND csbd.episode_id = cue.episode_id
                         WHERE cue.user_series_id = us.id
                           AND cue.season_number > 0
-                          AND IF(sbd.id IS NULL, cue.air_date <= CURDATE(), DATE(sbd.date) <= CURDATE())
-                          AND cue.watch_at IS NOT NULL AND cue.previous_occurrence_id IS NULL
+                          AND IF(csbd.id IS NULL, cue.air_date <= CURDATE(), DATE(csbd.date) <= CURDATE())
+                          AND cue.watch_at IS NOT NULL
+                          AND cue.previous_occurrence_id IS NULL
                        )                              as watched_aired_episode_count,
                        (SELECT count(*)
                         FROM user_episode cue
+                            LEFT JOIN series_broadcast_schedule csbs ON s.id = csbs.series_id AND csbs.`season_number`=cue.`season_number` AND IF(csbs.multi_part, cue.episode_number BETWEEN csbs.season_part_first_episode AND (csbs.season_part_first_episode + csbs.season_part_episode_count - 1), 1)
+                            LEFT JOIN series_broadcast_date csbd ON csbd.series_broadcast_schedule_id = csbs.id AND csbd.episode_id = cue.episode_id
                         WHERE cue.user_series_id = us.id
                           AND cue.season_number > 0
-                          AND IF(sbd.id IS NULL, cue.air_date <= CURDATE(), DATE(sbd.date) <= CURDATE())
+                          AND IF(csbd.id IS NULL, cue.air_date <= CURDATE(), DATE(csbd.date) <= CURDATE())
                           AND cue.previous_occurrence_id IS NULL
                         )                             as aired_episode_count,
-                       (SELECT count(*)
-                        FROM user_episode cue
-                        WHERE cue.user_series_id = us.id
-                          AND cue.season_number = ue.season_number
-                          AND cue.previous_occurrence_id IS NULL
-                          AND cue.air_date = ue.air_date
-                       )                               as released_episode_count,
                        us.last_watch_at                as series_last_watch_at,
                        ue.episode_number               as episodeNumber,
                        ue.season_number                as seasonNumber
