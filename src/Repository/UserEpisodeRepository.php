@@ -267,25 +267,25 @@ class UserEpisodeRepository extends ServiceEntityRepository
     public function episodesOfTheDay(User $user, string $locale = 'fr'): array
     {
         $userId = $user->getId();
-        $sql = "SELECT s.id                            as id,
-                       s.tmdb_id                       as tmdbId,
-                       CURDATE()                       as date,
-                       s.name                          as name,
-                       s.slug                          as slug,
-                       sln.name                        as localizedName,
-                       sln.slug                        as localizedSlug,
-                       s.poster_path                   as posterPath,
-                       s.status                        as status,
-                       (s.first_air_date <= NOW())     as released,
-                       us.favorite                     as favorite,
-                       us.progress                     as progress,
-                       ue.`episode_number`             as episodeNumber,
-                       ue.`season_number`              as seasonNumber,
-                       ue.`watch_at`                   as watchAt,
-                       sbs.`air_at`                    as airAt,
-                       sbs.`provider_id`               as providerId,
-                       wp.`provider_name`              as providerName,
-                       wp.`logo_path`                  as providerLogoPath,
+        $sql = "SELECT s.id                                             as id,
+                       s.tmdb_id                                        as tmdbId,
+                       CURDATE()                                        as date,
+                       s.name                                           as name,
+                       s.slug                                           as slug,
+                       sln.name                                         as localizedName,
+                       sln.slug                                         as localizedSlug,
+                       s.poster_path                                    as posterPath,
+                       s.status                                         as status,
+                       (s.first_air_date <= NOW())                      as released,
+                       us.favorite                                      as favorite,
+                       us.progress                                      as progress,
+                       ue.`episode_number`                              as episodeNumber,
+                       ue.`season_number`                               as seasonNumber,
+                       ue.`watch_at`                                    as watchAt,
+                       sbs.`air_at`                                     as airAt,
+                       IF(sbs.`id`, sbs.provider_id, swl.`provider_id`) as providerId,
+                       wp.`provider_name`                               as providerName,
+                       wp.`logo_path`                                   as providerLogoPath,
                        (SELECT count(*)
                         FROM user_episode cue
                             LEFT JOIN series_broadcast_schedule csbs ON s.id = csbs.series_id AND csbs.`season_number`=cue.`season_number` AND IF(csbs.multi_part, cue.episode_number BETWEEN csbs.season_part_first_episode AND (csbs.season_part_first_episode + csbs.season_part_episode_count - 1), 1)
@@ -295,7 +295,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                           AND IF(csbd.id IS NULL, cue.air_date <= CURDATE(), DATE(csbd.date) <= CURDATE())
                           AND cue.watch_at IS NOT NULL
                           AND cue.previous_occurrence_id IS NULL
-                       )                              as watched_aired_episode_count,
+                       )                                                as watched_aired_episode_count,
                        (SELECT count(*)
                         FROM user_episode cue
                             LEFT JOIN series_broadcast_schedule csbs ON s.id = csbs.series_id AND csbs.`season_number`=cue.`season_number` AND IF(csbs.multi_part, cue.episode_number BETWEEN csbs.season_part_first_episode AND (csbs.season_part_first_episode + csbs.season_part_episode_count - 1), 1)
@@ -304,16 +304,17 @@ class UserEpisodeRepository extends ServiceEntityRepository
                           AND cue.season_number > 0
                           AND IF(csbd.id IS NULL, cue.air_date <= CURDATE(), DATE(csbd.date) <= CURDATE())
                           AND cue.previous_occurrence_id IS NULL
-                        )                             as aired_episode_count,
-                       us.last_watch_at                as series_last_watch_at,
-                       ue.episode_number               as episodeNumber,
-                       ue.season_number                as seasonNumber
+                        )                                               as aired_episode_count,
+                       us.last_watch_at                                 as series_last_watch_at,
+                       ue.episode_number                                as episodeNumber,
+                       ue.season_number                                 as seasonNumber
                 FROM series s
                          INNER JOIN user_series us ON s.id = us.series_id
                          INNER JOIN user_episode ue ON us.id = ue.user_series_id
                          LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.`season_number`=ue.`season_number` AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
                          LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
-                         LEFT JOIN watch_provider wp ON sbs.provider_id = wp.provider_id
+                         LEFT JOIN `series_watch_link` swl ON s.id = swl.`series_id`
+                         LEFT JOIN watch_provider wp ON wp.provider_id = IF(sbs.`id`, sbs.provider_id, swl.`provider_id`)
                          LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
                 WHERE us.user_id = $userId
                   AND IF(sbd.id IS NULL, ue.air_date = CURDATE(), DATE(sbd.date) = CURDATE())

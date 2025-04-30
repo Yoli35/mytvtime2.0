@@ -43,7 +43,7 @@
                     <div class="providers">
                         <div class="provider-content">
                             {% for provider in series.watch_providers %}
-                                <div class="provider">
+                                <div class="provider" data-title="{{ provider.provider_name }}">
                                     <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
                                 </div>
                             {% endfor %}

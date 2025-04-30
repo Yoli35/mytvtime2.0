@@ -537,6 +537,11 @@
                                 overflow-x: auto;
                                 padding: 0 .25rem;
 
+                                &:has(.provider:hover) {
+                                    transition: all .25s ease-in-out;
+                                    transform: scale(2);
+                                }
+
                                 .provider-content {
                                     display: flex;
                                     gap: .25rem;

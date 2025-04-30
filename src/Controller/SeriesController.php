@@ -158,7 +158,7 @@ class SeriesController extends AbstractController
         // Historique des épisodes vus pendant les 2 semaines passées
         $episodeHistory = $this->getEpisodeHistory($user, 14, $locale);
 
-        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 4);
         $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
 
         $AllEpisodesOfTheDay = array_map(function ($ue) use ($posterUrl, $logoUrl) {
