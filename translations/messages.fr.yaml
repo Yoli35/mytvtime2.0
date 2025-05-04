@@ -112,6 +112,7 @@ Episode air date: Date de diffusion de l'épisode
 Episodes of the week: Épisodes de la semaine
 Filters: Filtres
 First air date: Date de première diffusion
+Id: ID
 Last series watched: Dernière série regardée
 My series: Mes séries
 Next episode: Prochain épisode
@@ -119,11 +120,13 @@ No: Non
 Number of elements per page: Nombre d'éléments par page
 Order: Ordre
 Pages: Pages
+Release: Sortie
 Series started: Séries commencées
 Series to start: Séries à commencer
 Show / hide filter options: Afficher / masquer les options de filtre
 Show / hide pages: Afficher / masquer les numéros de page
 Sort: Tri
+TMDB Id: ID TMDB
 Watched series: Séries terminées
 Yes: Oui
 remaining episode: épisode restant

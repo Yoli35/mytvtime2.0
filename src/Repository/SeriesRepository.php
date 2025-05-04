@@ -111,6 +111,32 @@ class SeriesRepository extends ServiceEntityRepository
         return count($result) > 0;
     }
 
+    public function adminSeries(int $page, string $sort, string $order, int $perPage = 20): array
+    {
+        $offset = ($page - 1) * $perPage;
+        $sql = "SELECT
+                    s.poster_path,
+                    s.id,
+                    s.tmdb_id,
+                    s.name,
+                    sln.name as localized_name,
+                    s.number_of_season,
+                    s.number_of_episode,
+                    s.origin_country,
+                    s.first_air_date,
+                    s.status,
+                    wp.provider_name as provider_name,
+                    wp.logo_path as provider_logo
+                FROM series s
+                        LEFT JOIN series_localized_name sln ON s.id = sln.series_id
+                        LEFT JOIN series_watch_link swl ON s.id = swl.series_id
+                        LEFT JOIN watch_provider wp ON swl.provider_id = wp.provider_id
+                ORDER BY $sort $order
+                LIMIT $perPage OFFSET $offset";
+
+        return $this->getAll($sql);
+    }
+
     public function getAll($sql): array
     {
         try {
