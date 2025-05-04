@@ -114,6 +114,10 @@ h2 {
             font-size: 8rem;
             line-height: 1.1em;
             z-index: 1;
+
+            sup {
+                font-size: .6em;
+            }
         }
 
         .day-of-week {
@@ -121,6 +125,10 @@ h2 {
             font-size: 2rem;
             line-height: 1.1em;
             z-index: 1;
+
+            sup {
+                font-size: .6em;
+            }
         }
 
         .month {
@@ -1019,12 +1027,31 @@ h2 {
 
             .video {
                 aspect-ratio: 16/9;
+                position: relative;
                 width: 100%;
 
                 iframe {
                     border-radius: .5rem;
                     border: none;
                     height: 100%;
+                    width: 100%;
+                }
+
+                .border-top {
+                    background-color: var(--orange-50);
+                    border-radius: .5rem .5rem 0 0;
+                    height: 1rem;
+                    position: absolute;
+                    top: 0;
+                    width: 100%;
+                }
+
+                .border-bottom {
+                    background-color: var(--orange-50);
+                    border-radius: 0 0 .5rem .5rem;
+                    height: 1rem;
+                    position: absolute;
+                    bottom: 0;
                     width: 100%;
                 }
             }
