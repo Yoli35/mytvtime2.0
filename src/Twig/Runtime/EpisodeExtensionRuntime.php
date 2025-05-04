@@ -94,8 +94,10 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
                 $item['episodesWatched'] = $item['watchAt'] === null ? 0 : 1;
                 $seriesArr[$index][$item['id']] = $item;
             } else {
-                $seriesArr[$index][$item['id']]['episodes'][] = $item['episodeNumber'];
-                $seriesArr[$index][$item['id']]['episodesWatched'] += $item['watchAt'] === null ? 0 : 1;
+                if (!$this->episodeInArray($seriesArr[$index], $item)) {
+                    $seriesArr[$index][$item['id']]['episodes'][] = $item['episodeNumber'];
+                    $seriesArr[$index][$item['id']]['episodesWatched'] += $item['watchAt'] === null ? 0 : 1;
+                }
             }
         }
 
@@ -371,6 +373,17 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
     private function seriesInArray($seriesArr, $item): bool
     {
         return key_exists($item['id'], $seriesArr);
+    }
+
+    private function episodeInArray($arr, $item): bool
+    {
+        $seriesId = $item['id'];
+        $episodeNumber = $item['episodeNumber'];
+        $seasonNumber = $item['seasonNumber'];
+        $itemAlreadyInArray = array_filter($arr, function ($item) use ($episodeNumber, $seasonNumber, $seriesId) {
+            return $item['episodeNumber'] === $episodeNumber && $item['seasonNumber'] === $seasonNumber && $item['id'] === $seriesId;
+        });
+        return $itemAlreadyInArray !== [];
     }
 
     private function minNumberInArray($arr): int

@@ -414,8 +414,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
                      ue.`watch_at`                           as watchAt,
                      sbs.air_at                              as airAt,
                      sbd.date                                as customDate,
-                     p.name                                  as providerName,
-                     p.logo_path                             as providerLogoPath,
+                     wp.provider_name                        as providerName,
+                     wp.logo_path                            as providerLogoPath,
                      IF(ue.vote IS NULL, 0, ue.vote)         as vote,
                      IF(sln.name IS NULL, s.name, sln.name)  as displayName 
               FROM series s 
@@ -424,7 +424,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
                      LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
                      LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id AND sbs.season_number = ue.season_number AND IF(sbs.multi_part, ue.episode_number BETWEEN sbs.season_part_first_episode AND (sbs.season_part_first_episode + sbs.season_part_episode_count - 1), 1)
                      LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
-                     LEFT JOIN provider p ON sbs.provider_id = p.provider_id
+                     LEFT JOIN series_watch_link swl ON s.id = swl.`series_id`
+                     LEFT JOIN watch_provider wp ON wp.provider_id = IF(sbs.`id`, sbs.provider_id, swl.`provider_id`)
               WHERE us.user_id = $userId
                      AND IF(sbd.id, DATE(sbd.date) >= '$start', ue.air_date >= '$start')
                      AND IF(sbd.id, DATE(sbd.date) <= '$end',   ue.air_date <= '$end')
