@@ -9,40 +9,33 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid">
-        <h2>{{ 'Users'|trans }}</h2>
-        <div class="users">
-            <div class="user">
-                <div class="user__avatar"></div>
-                <div class="user__name">{{ 'Username'|trans }}</div>
-                <div class="user__email">{{ 'Email'|trans }}</div>
-                <div class="user__movie">{{ 'Movie'|trans }}</div>
-                <div class="user__series">{{ 'Series'|trans }}</div>
-                <div class="user__providers">{{ 'Providers'|trans }}</div>
-                <div class="user__episodes">{{ 'Episodes'|trans }}</div>
-                <div class="user__role">User</div>
-                <div class="user__role">Admin</div>
-                <div class="user__role">Switch</div>
-            </div>
-            {% for u in users %}
-                <div class="user">
-                    {% if u.avatar %}
-                    <img src="/images/users/avatars/{{ u.avatar }}" class="user__avatar" alt="{{ u.username }}">
-                    {% else %}
-                    <div class="user__avatar">
-                        {{ ux_icon('fa6-solid:user', {height: '18px', width: '18px'}) }}
-                    </div>
-                    {% endif %}
-                    <div class="user__name">{{ u.username }}</div>
-                    <div class="user__email">{{ u.email }}</div>
-                    <div class="user__movie">{{ u.movieCount }}</div>
-                    <div class="user__series">{{ u.seriesCount }}</div>
-                    <div class="user__providers">{{ u.providerCount }}</div>
-                    <div class="user__episodes">{{ u.episodeCount }}</div>
-                    <div class="user__role">{% if 'USER' in u.roles %}{{ ux_icon('fa6-solid:check', {height: '18px', width: '18px'}) }}{% endif %}</div>
-                    <div class="user__role">{% if 'ADMIN' in u.roles %}{{ ux_icon('fa6-solid:check', {height: '18px', width: '18px'}) }}{% endif %}</div>
-                    <div class="user__role">{% if 'SWITCH' in u.roles %}{{ ux_icon('fa6-solid:check', {height: '18px', width: '18px'}) }}{% endif %}</div>
+        <div class="admin">
+            <aside>
+                <h2>{{ 'Admin'|trans }}</h2>
+                <div class="admin__menu">
+                    <a href="{{ path('app_admin_users') }}"{% if route == 'app_admin_index' or route == 'app_admin_users' %} class="active"{% endif %}>{{ 'Users'|trans }}</a>
+                    <a href="{{ path('app_admin_series') }}"{% if route == 'app_admin_series' %} class="active"{% endif %}>{{ 'Series'|trans }}</a>
+                    <a href="{{ path('app_admin_movies') }}"{% if route == 'app_admin_movies' %} class="active"{% endif %}>{{ 'Movies'|trans }}</a>
+                    <a href="{{ path('app_admin_providers') }}"{% if route == 'app_admin_providers' %} class="active"{% endif %}>{{ 'Providers'|trans }}</a>
                 </div>
-            {% endfor %}
+            </aside>
+            <main>
+                {% if route == 'app_admin_index' or route == 'app_admin_users' %}
+                    {% include('_blocks/admin/users.html.twig') %}
+                {% endif %}
+                {% if route == 'app_admin_series' %}
+                    {% include('_blocks/admin/series.html.twig') %}
+                {% endif %}
+                {% if route == 'app_admin_movies' %}
+                    {% include('_blocks/admin/movies.html.twig') %}
+                {% endif %}
+                {% if route == 'app_admin_providers' %}
+                    {% include('_blocks/admin/providers.html.twig') %}
+                {% endif %}
+                {% if route == 'app_admin_settings' %}
+                    {% include('_blocks/admin/settings.html.twig') %}
+                {% endif %}
+            </main>
         </div>
     </div>
 {% endblock %}

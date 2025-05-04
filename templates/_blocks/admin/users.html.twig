@@ -1,0 +1,37 @@
+<h2>{{ 'Users'|trans }}</h2>
+<div class="admin__users">
+    <div class="user">
+        <div class="user__avatar"></div>
+        <div class="user__id">#</div>
+        <div class="user__name">{{ 'Username'|trans }}</div>
+        <div class="user__email">{{ 'Email'|trans }}</div>
+        <div class="user__movie">{{ 'Movie'|trans }}</div>
+        <div class="user__series">{{ 'Series'|trans }}</div>
+        <div class="user__providers">{{ 'Providers'|trans }}</div>
+        <div class="user__episodes">{{ 'Episodes'|trans }}</div>
+        <div class="user__role">User</div>
+        <div class="user__role">Admin</div>
+        <div class="user__role">Switch</div>
+    </div>
+    {% for u in users %}
+        <div class="user">
+            {% if u.avatar %}
+                <img src="/images/users/avatars/{{ u.avatar }}" class="user__avatar" alt="{{ u.username }}">
+            {% else %}
+                <div class="user__avatar">
+                    {{ ux_icon('fa6-solid:user', {height: '18px', width: '18px'}) }}
+                </div>
+            {% endif %}
+            <div class="user__id">{{ u.id }}</div>
+            <div class="user__name">{{ u.username }}</div>
+            <div class="user__email">{{ u.email }}</div>
+            <div class="user__movie">{{ u.movieCount }}</div>
+            <div class="user__series">{{ u.seriesCount }}</div>
+            <div class="user__providers">{{ u.providerCount }}</div>
+            <div class="user__episodes">{{ u.episodeCount }}</div>
+            <div class="user__role">{% if 'USER' in u.roles %}{{ ux_icon('fa6-solid:check', {height: '18px', width: '18px'}) }}{% endif %}</div>
+            <div class="user__role">{% if 'ADMIN' in u.roles %}{{ ux_icon('fa6-solid:check', {height: '18px', width: '18px'}) }}{% endif %}</div>
+            <div class="user__role">{% if 'SWITCH' in u.roles %}{{ ux_icon('fa6-solid:check', {height: '18px', width: '18px'}) }}{% endif %}</div>
+        </div>
+    {% endfor %}
+</div>
