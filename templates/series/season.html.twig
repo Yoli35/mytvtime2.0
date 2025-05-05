@@ -96,9 +96,11 @@
                             {% endfor %}
                         </div>
                     {% endif %}
-                    <div class="backdrop">
-                        <img src="/series/backdrops{{ series.backdropPath }}" alt="{{ series.name }}">
-                    </div>
+                    {% if series.backdropPath %}
+                        <div class="backdrop">
+                            <img src="/series/backdrops{{ series.backdropPath }}" alt="{{ series.name }}">
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="series-back">
                     <a href="{{ path('app_series_show', {id: series.id, slug: season.localized_name.slug ?? series.slug}) }}">
