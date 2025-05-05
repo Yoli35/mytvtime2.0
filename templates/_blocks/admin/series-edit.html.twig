@@ -1,0 +1,18 @@
+<h2>{{ series.name }}{% if seriesLocalizedNames|length %} - {{ seriesLocalizedNames.0.name }}{% endif %}</h2>
+<div class="admin__series">
+    <div class="edit">
+        <div class="admin__localized__names">
+            <h3>{{ 'Localized Names'|trans }}</h3>
+            <div class="admin__localized__name">
+                <div class="admin__localized__name__lang">{{ 'Language'|trans }}</div>
+                <div class="admin__localized__name__name">{{ 'Name'|trans }}</div>
+            </div>
+            {% for localizedName in seriesLocalizedNames %}
+                <div class="admin__localized__name">
+                    <div class="admin__localized__name__lang"><div>{{ localizedName.locale }}</div></div>
+                    <div class="admin__localized__name__name">{{ localizedName.name }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

@@ -13,10 +13,10 @@
             <aside>
                 <h2>{{ 'Admin'|trans }}</h2>
                 <div class="admin__menu">
-                    <a href="{{ path('app_admin_users') }}"{% if route == 'app_admin_index' or route == 'app_admin_users' %} class="active"{% endif %}>{{ 'Users'|trans }}</a>
-                    <a href="{{ path('app_admin_series') }}"{% if route == 'app_admin_series' %} class="active"{% endif %}>{{ 'Series'|trans }}</a>
-                    <a href="{{ path('app_admin_movies') }}"{% if route == 'app_admin_movies' %} class="active"{% endif %}>{{ 'Movies'|trans }}</a>
-                    <a href="{{ path('app_admin_providers') }}"{% if route == 'app_admin_providers' %} class="active"{% endif %}>{{ 'Providers'|trans }}</a>
+                    <a href="{{ path('app_admin_users') }}"{% if route starts with 'app_admin_index' or route == 'app_admin_users' %} class="active"{% endif %}>{{ 'Users'|trans }}</a>
+                    <a href="{{ path('app_admin_series') }}"{% if route starts with 'app_admin_series' %} class="active"{% endif %}>{{ 'Series'|trans }}</a>
+                    <a href="{{ path('app_admin_movies') }}"{% if route starts with 'app_admin_movies' %} class="active"{% endif %}>{{ 'Movies'|trans }}</a>
+                    <a href="{{ path('app_admin_providers') }}"{% if route starts with 'app_admin_providers' %} class="active"{% endif %}>{{ 'Providers'|trans }}</a>
                 </div>
             </aside>
             <main>
@@ -25,6 +25,9 @@
                 {% endif %}
                 {% if route == 'app_admin_series' %}
                     {% include('_blocks/admin/series.html.twig') %}
+                {% endif %}
+                {% if route == 'app_admin_series_edit' %}
+                    {% include('_blocks/admin/series-edit.html.twig') %}
                 {% endif %}
                 {% if route == 'app_admin_movies' %}
                     {% include('_blocks/admin/movies.html.twig') %}

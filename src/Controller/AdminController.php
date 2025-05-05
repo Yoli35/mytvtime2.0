@@ -57,7 +57,7 @@ class AdminController extends AbstractController
         $page = $request->query->getInt('page', 1);
         $perPage = $request->query->getInt('perPage', 20);
 
-        $series = $this->seriesRepository->adminSeries($page, $sort, $order, $perPage);
+        $series = $this->seriesRepository->adminSeries($request->getLocale(), $page, $sort, $order, $perPage);
         $seriesCount = $this->seriesRepository->count();
         $pageCount = ceil($seriesCount / $perPage);
 
@@ -80,15 +80,6 @@ class AdminController extends AbstractController
             'order' => $order,
         ]);
 
-        dump([
-            'series' => $seriesArr,
-            'pagination' => $paginationLinks,
-            'series count' => $seriesCount,
-            'page' => $page,
-            'per page' => $perPage,
-            'page count' => $pageCount,
-        ]);
-
         return $this->render('admin/index.html.twig', [
             'series' => $seriesArr,
             'pagination' => $paginationLinks,
@@ -98,6 +89,58 @@ class AdminController extends AbstractController
             'pageCount' => $pageCount,
             'sort' => $sort,
             'order' => $order,
+        ]);
+    }
+
+    #[Route('/series/{id}', name: 'series_edit')]
+    public function adminSeriesEdit(int $id): Response
+    {
+        $series = $this->seriesRepository->adminSeriesById($id);
+        if (!$series) {
+            throw $this->createNotFoundException('Series not found');
+        }
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+        $series['origin_country'] = json_decode($series['origin_country'], true);
+
+        $seriesAdditionalOverviews = $this->seriesRepository->seriesAdditionalOverviews($id);
+        $seriesBroadcastSchedules = $this->seriesRepository->seriesBroadcastSchedules($id);
+        foreach ($seriesBroadcastSchedules as &$sbs) {
+            $sbs['provider_logo'] = $this->seriesController->getProviderLogoFullPath($sbs['provider_logo'], $logoUrl);
+            $sbs['broadcast_dates'] = $this->seriesRepository->seriesBroadcastDates($sbs['id']);
+        }
+        $seriesImages = $this->seriesRepository->seriesImagesById($id);
+        $seriesLocalizedNames = $this->seriesRepository->seriesLocalizedNames($id);
+        $seriesLocalizedOverviews = $this->seriesRepository->seriesLocalizedOverviews($id);
+        $seriesNetworks = $this->seriesRepository->seriesNetworks($id);
+        $seriesNetworks = array_map(function ($sn) use ($logoUrl) {
+            $sn['logo_path'] = $this->seriesController->getProviderLogoFullPath($sn['logo_path'], $logoUrl);
+            return $sn;
+        }, $seriesNetworks);
+        $seriesWatchLinks = array_map(function ($swl) use ($logoUrl) {
+            $swl['provider_logo'] = $this->seriesController->getProviderLogoFullPath($swl['provider_logo'], $logoUrl);
+            return $swl;
+        }, $this->seriesRepository->seriesWatchLinks($id));
+
+        dump([
+            'series' => $series,
+            'series_additional_overviews' => $seriesAdditionalOverviews,
+            'series_broadcast_schedule' => $seriesBroadcastSchedules,
+            'series_images' => $seriesImages,
+            'series_localized_names' => $seriesLocalizedNames,
+            'series_localized_overviews' => $seriesLocalizedOverviews,
+            'series_networks' => $seriesNetworks,
+            'series_watch_links' => $seriesWatchLinks,
+        ]);
+
+        return $this->render('admin/index.html.twig', [
+            'series' => $series,
+            'seriesAdditionalOverviews' => $seriesAdditionalOverviews,
+            'seriesBroadcastSchedule' => $seriesBroadcastSchedules,
+            'seriesImages' => $seriesImages,
+            'seriesLocalizedNames' => $seriesLocalizedNames,
+            'seriesLocalizedOverviews' => $seriesLocalizedOverviews,
+            'seriesNetworks' => $seriesNetworks,
+            'seriesWatchLinks' => $seriesWatchLinks,
         ]);
     }
 

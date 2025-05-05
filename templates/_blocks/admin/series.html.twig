@@ -182,17 +182,10 @@
                 {{ ux_icon('fa6-solid:tv', {height: '18px', width: '18px'}) }}
             </a>
         {% endif %}
-
-{#        <div class="series__seasons">{{ 'Seasons'|trans }}</div>#}
-{#        <div class="series__episodes">{{ 'Episodes'|trans }}</div>#}
-{#        <div class="series__country">{{ 'Country'|trans }}</div>#}
-{#        <div class="series__first_air_date">{{ 'Release'|trans }}</div>#}
-{#        <div class="series__status">{{ 'Status'|trans }}</div>#}
-{#        <div class="series__provider">{{ ux_icon('fa6-solid:tv', {height: '18px', width: '18px'}) }}</div>#}
     </div>
     <div class="content">
         {% for s in series %}
-            <div class="item">
+            <a class="item" href="{{ path('app_admin_series_edit', {id: s.id}) }}">
                 {% if s.poster_path %}
                     <div data-title="{{ s.name }}">
                         <img src="/series/posters{{ s.poster_path }}" class="series__poster" alt="{{ s.name }}">
@@ -220,7 +213,7 @@
                         <img src="{{ s.provider_logo }}" alt="{{ s.provider_name }}">
                     {% endif %}
                 </div>
-            </div>
+            </a>
         {% endfor %}
     </div>
     {{ pagination|raw }}

@@ -111,7 +111,7 @@ class SeriesRepository extends ServiceEntityRepository
         return count($result) > 0;
     }
 
-    public function adminSeries(int $page, string $sort, string $order, int $perPage = 20): array
+    public function adminSeries(string $locale, int $page, string $sort, string $order, int $perPage = 20): array
     {
         $offset = ($page - 1) * $perPage;
         $sql = "SELECT
@@ -128,11 +128,108 @@ class SeriesRepository extends ServiceEntityRepository
                     wp.provider_name as provider_name,
                     wp.logo_path as provider_logo
                 FROM series s
-                        LEFT JOIN series_localized_name sln ON s.id = sln.series_id
+                        LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
                         LEFT JOIN series_watch_link swl ON s.id = swl.series_id
                         LEFT JOIN watch_provider wp ON swl.provider_id = wp.provider_id
                 ORDER BY $sort $order
                 LIMIT $perPage OFFSET $offset";
+
+        return $this->getAll($sql);
+    }
+
+    public function adminSeriesById(int $id): array
+    {
+        $sql = "SELECT *
+                FROM series s
+                WHERE s.id=$id";
+
+        return $this->getOne($sql);
+    }
+
+
+    // 'series_additional_overview'
+    public function seriesAdditionalOverviews(int $seriesId): array
+    {
+        $sql = "SELECT *
+                FROM series_additional_overview sao
+                WHERE series_id=$seriesId";
+
+        return $this->getAll($sql);
+    }
+
+    // 'series_broadcast_date'
+    public function seriesBroadcastDates(int $sbsId): array
+    {
+        $sql = "SELECT *
+                FROM series_broadcast_date sbd
+                WHERE sbd.series_broadcast_schedule_id = $sbsId";
+
+        return $this->getAll($sql);
+    }
+
+    // 'series_broadcast_schedule'
+    public function seriesBroadcastSchedules(int $seriesId): array
+    {
+        $sql = "SELECT sbs.*,
+                       wp.provider_name as provider_name,
+                       wp.logo_path as provider_logo
+                FROM series_broadcast_schedule sbs
+                LEFT JOIN watch_provider wp ON sbs.provider_id = wp.provider_id
+                WHERE sbs.series_id=$seriesId";
+
+        return $this->getAll($sql);
+    }
+
+    // 'series_image'
+    public function seriesImagesById(int $seriesId): array
+    {
+        $sql = "SELECT *
+                FROM series_image si
+                WHERE si.series_id=$seriesId";
+
+        return $this->getAll($sql);
+    }
+
+    // 'series_localized_name'
+    public function seriesLocalizedNames(int $seriesId): array
+    {
+        $sql = "SELECT *
+                FROM series_localized_name sln
+                WHERE sln.series_id=$seriesId";
+
+        return $this->getAll($sql);
+    }
+
+    // 'series_localized_overview'
+    public function seriesLocalizedOverviews(int $seriesId): array
+    {
+        $sql = "SELECT *
+                FROM series_localized_overview slo
+                WHERE slo.series_id=$seriesId";
+
+        return $this->getAll($sql);
+    }
+
+    // 'series_network'
+    public function seriesNetworks(int $seriesId): array
+    {
+        $sql = "SELECT n.*
+                FROM series_network sn
+                LEFT JOIN network n ON sn.network_id = n.id
+                WHERE sn.series_id=$seriesId";
+
+        return $this->getAll($sql);
+    }
+
+    // 'series_watch_link'
+    public function seriesWatchLinks(int $seriesId): array
+    {
+        $sql = "SELECT swl.*,
+                       wp.provider_name as provider_name,
+                       wp.logo_path as provider_logo
+                FROM series_watch_link swl
+                LEFT JOIN watch_provider wp ON swl.provider_id = wp.provider_id
+                WHERE swl.series_id=$seriesId";
 
         return $this->getAll($sql);
     }
