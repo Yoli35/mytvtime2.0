@@ -8,6 +8,7 @@ use App\Repository\ProviderRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\UserRepository;
 use App\Service\ImageConfiguration;
+use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +28,7 @@ class AdminController extends AbstractController
         private readonly SeriesController   $seriesController,
         private readonly SeriesRepository   $seriesRepository,
         private readonly UserRepository     $userRepository,
+        private readonly TMDBService       $tmdbService
     )
     {
     }
@@ -93,12 +95,21 @@ class AdminController extends AbstractController
     }
 
     #[Route('/series/{id}', name: 'series_edit')]
-    public function adminSeriesEdit(int $id): Response
+    public function adminSeriesEdit(Request $request, int $id): Response
     {
         $series = $this->seriesRepository->adminSeriesById($id);
         if (!$series) {
             throw $this->createNotFoundException('Series not found');
         }
+
+        $tmdbSeries = json_decode(
+            $this->tmdbService->getTv(
+                $series['tmdb_id'],
+                $request->getLocale()
+            /*, ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords", "similar", "translations"]*/),
+            true);
+
+
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
         $series['origin_country'] = json_decode($series['origin_country'], true);
 
@@ -123,6 +134,7 @@ class AdminController extends AbstractController
 
         dump([
             'series' => $series,
+            'tmdb_series' => $tmdbSeries,
             'series_additional_overviews' => $seriesAdditionalOverviews,
             'series_broadcast_schedule' => $seriesBroadcastSchedules,
             'series_images' => $seriesImages,
@@ -134,6 +146,7 @@ class AdminController extends AbstractController
 
         return $this->render('admin/index.html.twig', [
             'series' => $series,
+            'tmdbSeries' => $tmdbSeries,
             'seriesAdditionalOverviews' => $seriesAdditionalOverviews,
             'seriesBroadcastSchedule' => $seriesBroadcastSchedules,
             'seriesImages' => $seriesImages,
