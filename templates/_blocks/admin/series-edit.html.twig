@@ -3,7 +3,7 @@
         {{ series.name }}{% if seriesLocalizedNames|length %} - <span>{{ seriesLocalizedNames.0.name }}</span>{% endif %}
         <div class="admin__series__edit__title__id">
             {{ ux_icon('iconoir:db') }}
-            #{{ series.id }}
+            {{ series.id }}
             <div class="series__db">
                 {% for key, value in series %}
                     <div class="series__db__property">
@@ -101,7 +101,7 @@
                             </div>
                         {% elseif key == 'backdrop_path' and value|length %}
                             <div class="series__tmdb__property_value" data-title="{{ key }}">
-                                <img src="https://image.tmdb.org/t/p/w1280{{ value }}" alt="{{ key }}" class="admin__series__ebackdrop">
+                                <img src="https://image.tmdb.org/t/p/w1280{{ value }}" alt="{{ key }}" class="admin__series__backdrop">
                             </div>
                         {% elseif key == 'poster_path' and value|length %}
                             <div class="series__tmdb__property_value" data-title="{{ key }}">
@@ -120,16 +120,58 @@
     </div>
     <div class="admin__localized__names">
         <h3>{{ 'Localized Names'|trans }}</h3>
-        <div class="admin__localized__name">
-            <div class="admin__localized__name__lang">{{ 'Language'|trans }}</div>
-            <div class="admin__localized__name__name">{{ 'Name'|trans }}</div>
+        <div class="admin__columns">
+            <div class="admin__lang">{{ 'Language'|trans }}</div>
+            <div class="admin__field_name">{{ 'Name'|trans }}</div>
         </div>
         {% for localizedName in seriesLocalizedNames %}
-            <div class="admin__localized__name">
-                <div class="admin__localized__name__lang">
-                    <div>{{ localizedName.locale }}</div>
+            <div class="admin__row">
+                <div class="admin__lang">
+                    {{ localizedName.locale|upper }}
                 </div>
-                <div class="admin__localized__name__name">{{ localizedName.name }}</div>
+                <div class="admin__field">
+                    <label for="localized_name_{{ loop.index }}">
+                        <input id="localized_name_{{ loop.index }}" name="localized_name_{{ loop.index }}" value="{{ localizedName.name }}">
+                    </label>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="admin__localized__overviews">
+        <h3>{{ 'Localized Overviews'|trans }}</h3>
+        <div class="admin__columns">
+            <div class="admin__lang">{{ 'Language'|trans }}</div>
+            <div class="admin__field_name">{{ 'Overview'|trans }}</div>
+        </div>
+        {% for localizedOverview in seriesLocalizedOverviews %}
+            <div class="admin__row">
+                <div class="admin__lang">
+                    <div>{{ localizedOverview.locale|upper }}</div>
+                </div>
+                <div class="admin__field">
+                    <label for="localized_overview_{{ loop.index }}">
+                        <textarea id="localized_overview_{{ loop.index }}" name="localized_overview_{{ loop.index }}">{{ localizedOverview.overview }}</textarea>
+                    </label>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="admin__additional__overviews">
+        <h3>{{ 'Additional Overviews'|trans }}</h3>
+        <div class="admin__columns">
+            <div class="admin__lang">{{ 'Language'|trans }}</div>
+            <div class="admin__field_name">{{ 'Overview'|trans }}</div>
+        </div>
+        {% for additionalOverview in seriesAdditionalOverviews %}
+            <div class="admin__row">
+                <div class="admin__lang">
+                    <div>{{ additionalOverview.locale|upper }}</div>
+                </div>
+                <div class="admin__field">
+                    <label for="additional_overview_{{ loop.index }}">
+                        <textarea id="additional_overview_{{ loop.index }}" name="additional_overview_{{ loop.index }}">{{ additionalOverview.overview }}</textarea>
+                    </label>
+                </div>
             </div>
         {% endfor %}
     </div>

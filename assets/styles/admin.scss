@@ -409,13 +409,14 @@
                 }
 
                 svg {
-                    color: var(--orange-50);
+                    color: var(--green-50);
                     height: 2rem;
                     width: 2rem;
                 }
 
                 .series__db {
-                    background-color: var(--orange-40-alpha-50);
+                    backdrop-filter: blur(16px) brightness(.5);
+                    background-color: var(--green-40-alpha-50);
                     border-radius: .25rem;
                     color: var(--ardoise-10);
                     display: none;
@@ -423,6 +424,7 @@
                     font-size: 1rem;
                     font-weight: 300;
                     gap: .25rem;
+                    min-width: 60vw;
                     padding: .5rem 1rem;
                     position: absolute;
                     right: 0;
@@ -433,14 +435,16 @@
                         gap: .5rem;
 
                         .series__db__property_key {
-                            color: var(--orange-50);
+                            color: var(--green-90);
+                            flex-shrink: 0;
                             font-weight: bold;
                             width: 12rem;
                         }
 
                         .series__db__property_value {
                             color: var(--ardoise-10);
-                            width: 50%;
+                            flex-grow: 5;
+                            max-width: 60vw;
                         }
                     }
                 }
@@ -467,6 +471,7 @@
                 }
 
                 .series__tmdb {
+                    backdrop-filter: blur(16px) brightness(.5);
                     background-color: var(--green-40-alpha-50);
                     border-radius: .25rem;
                     color: var(--ardoise-10);
@@ -503,7 +508,7 @@
                             border-radius: .25rem;
                             color: var(--ardoise-10);
                             display: flex;
-                            flex-grow: 1;
+                            flex-grow: 5;
                             gap: .5rem;
                             line-height: 1.1em;
                             padding: .5rem;
@@ -596,29 +601,70 @@
             }
         }
 
-        .admin__localized__names {
-            .admin__localized__name {
+        .admin__additional__overviews,
+        .admin__localized__names,
+        .admin__localized__overviews {
+            width: 100%;
+
+            .admin__columns {
                 display: flex;
-                gap: .25rem;
+                gap: .5rem;
+                width: 100%;
 
-                .admin__localized__name__lang {
+                .admin__lang {
                     width: 5rem;
-
-                    div {
-                        align-items: center;
-                        background-color: var(--orange-50);
-                        border-radius: .25rem;
-                        display: flex;
-                        height: 2rem;
-                        justify-content: center;
-                        width: 2rem;
-                    }
                 }
 
-                .admin__localized__name__name {
+                .admin__field_name {
                     align-items: center;
                     display: flex;
+                    width: 100%;
+                }
+            }
 
+            .admin__row {
+                display: flex;
+                gap: .25rem;
+                width: 100%;
+
+                .admin__lang {
+                    align-items: center;
+                    background-color: var(--orange-50);
+                    border-radius: .25rem;
+                    display: flex;
+                    font-weight: bold;
+                    height: 2rem;
+                    justify-content: center;
+                    margin-inline-end: 3rem;
+                    width: 2rem;
+                }
+
+                .admin__field {
+                    align-items: center;
+                    display: flex;
+                    width: 100%;
+
+                    label {
+                        width: 100%;
+                    }
+
+                    input, textarea {
+                        appearance: none;
+                        background-color: var(--orange-40-alpha-50);
+                        border-radius: .25rem;
+                        border: 2px solid var(--orange-50);
+                        color: var(--ardoise-10);
+                        font-size: 1rem;
+                        padding: .5rem 1rem;
+                        width: 100%;
+                    }
+                }
+            }
+        }
+
+        .admin__localized__names {
+            .admin__localized__name {
+                .admin__localized__name__name {
                     input {
                         background-color: var(--ardoise-80-alpha-50);
                         border-radius: .25rem;
