@@ -185,7 +185,7 @@
     </div>
     <div class="content">
         {% for s in series %}
-            <a class="item" href="{{ path('app_admin_series_edit', {id: s.id}) }}">
+            <a class="item" href="{{ path('app_admin_series_edit', {id: s.id}) }}?p={{ page }}&s={{ sort }}&o={{ order }}&l={{ limit }}">
                 {% if s.poster_path %}
                     <div data-title="{{ s.name }}">
                         <img src="/series/posters{{ s.poster_path }}" class="series__poster" alt="{{ s.name }}">

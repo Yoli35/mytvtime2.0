@@ -14,7 +14,11 @@
                 <h2>{{ 'Admin'|trans }}</h2>
                 <div class="admin__menu">
                     <a href="{{ path('app_admin_users') }}"{% if route starts with 'app_admin_index' or route == 'app_admin_users' %} class="active"{% endif %}>{{ 'Users'|trans }}</a>
-                    <a href="{{ path('app_admin_series') }}"{% if route starts with 'app_admin_series' %} class="active"{% endif %}>{{ 'Series'|trans }}</a>
+                    {% if seriesLink is defined %}
+                        <a href="{{ seriesLink|raw }}"{% if route starts with 'app_admin_series' %} class="active"{% endif %}>{{ 'Series'|trans }}</a>
+                    {% else %}
+                        <a href="{{ path('app_admin_series') }}"{% if route starts with 'app_admin_series' %} class="active"{% endif %}>{{ 'Series'|trans }}</a>
+                    {% endif %}
                     <a href="{{ path('app_admin_movies') }}"{% if route starts with 'app_admin_movies' %} class="active"{% endif %}>{{ 'Movies'|trans }}</a>
                     <a href="{{ path('app_admin_providers') }}"{% if route starts with 'app_admin_providers' %} class="active"{% endif %}>{{ 'Providers'|trans }}</a>
                 </div>

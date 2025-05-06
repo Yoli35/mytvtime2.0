@@ -54,14 +54,14 @@ class AdminController extends AbstractController
     #[Route('/series', name: 'series')]
     public function adminSeries(Request $request): Response
     {
-        $sort = $request->query->get('sort', 'id');
-        $order = $request->query->get('order', 'desc');
-        $page = $request->query->getInt('page', 1);
-        $perPage = $request->query->getInt('perPage', 20);
+        $sort = $request->query->get('s', 'id');
+        $order = $request->query->get('o', 'desc');
+        $page = $request->query->getInt('p', 1);
+        $limit = $request->query->getInt('l', 20);
 
-        $series = $this->seriesRepository->adminSeries($request->getLocale(), $page, $sort, $order, $perPage);
+        $series = $this->seriesRepository->adminSeries($request->getLocale(), $page, $sort, $order, $limit);
         $seriesCount = $this->seriesRepository->count();
-        $pageCount = ceil($seriesCount / $perPage);
+        $pageCount = ceil($seriesCount / $limit);
 
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
         $series = array_map(function ($s) use ($logoUrl) {
@@ -78,8 +78,9 @@ class AdminController extends AbstractController
         }
 
         $paginationLinks = $this->generateLinks($pageCount, $page, $this->generateUrl('app_admin_series'), [
-            'sort' => $sort,
-            'order' => $order,
+            's' => $sort,
+            'o' => $order,
+            'l' => $limit,
         ]);
 
         return $this->render('admin/index.html.twig', [
@@ -87,7 +88,7 @@ class AdminController extends AbstractController
             'pagination' => $paginationLinks,
             'seriesCount' => $seriesCount,
             'page' => $page,
-            'perPage' => $perPage,
+            'limit' => $limit,
             'pageCount' => $pageCount,
             'sort' => $sort,
             'order' => $order,
@@ -97,6 +98,11 @@ class AdminController extends AbstractController
     #[Route('/series/{id}', name: 'series_edit')]
     public function adminSeriesEdit(Request $request, int $id): Response
     {
+        $sort = $request->query->get('s', 'id');
+        $order = $request->query->get('o', 'desc');
+        $page = $request->query->getInt('p', 1);
+        $limit = $request->query->getInt('l', 20);
+
         $series = $this->seriesRepository->adminSeriesById($id);
         if (!$series) {
             throw $this->createNotFoundException('Series not found');
@@ -108,7 +114,6 @@ class AdminController extends AbstractController
                 $request->getLocale()
             /*, ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords", "similar", "translations"]*/),
             true);
-
 
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
         $series['origin_country'] = json_decode($series['origin_country'], true);
@@ -132,7 +137,15 @@ class AdminController extends AbstractController
             return $swl;
         }, $this->seriesRepository->seriesWatchLinks($id));
 
+        $seriesLink = $this->generateSeriesLink($this->generateUrl('app_admin_series'), [
+            'l' => $limit,
+            'o' => $order,
+            'p' => $page,
+            's' => $sort,
+        ]);
+
         dump([
+            'seriesLink' => $seriesLink,
             'series' => $series,
             'tmdb_series' => $tmdbSeries,
             'series_additional_overviews' => $seriesAdditionalOverviews,
@@ -145,6 +158,7 @@ class AdminController extends AbstractController
         ]);
 
         return $this->render('admin/index.html.twig', [
+            'seriesLink' => $seriesLink,
             'series' => $series,
             'tmdbSeries' => $tmdbSeries,
             'seriesAdditionalOverviews' => $seriesAdditionalOverviews,
@@ -252,8 +266,13 @@ class AdminController extends AbstractController
      */
     private function generateLink(int $page, string $label, string $route, array $queryParams, string $activeClass = ''): string
     {
-        $queryParams['page'] = $page;
+        $queryParams['p'] = $page;
         $url = $route . '?' . http_build_query($queryParams);
         return sprintf('<a href="%s" class="page%s">%s</a>', $url, $activeClass, $label);
+    }
+
+    private function generateSeriesLink(string $route, array $queryParams): string
+    {
+        return $route . '?' . http_build_query($queryParams);
     }
 }
