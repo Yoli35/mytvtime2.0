@@ -43,9 +43,11 @@
                     <div class="series-overview">
                         {{ tv.overview|nl2br }}
                     </div>
-                    <div class="backdrop">
-                        <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }}">
-                    </div>
+                    {% if tv.backdrop_path %}
+                        <div class="backdrop">
+                            <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }}">
+                        </div>
+                    {% endif %}
                 </div>
             </div>
 
