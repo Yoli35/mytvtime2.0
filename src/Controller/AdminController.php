@@ -146,19 +146,6 @@ class AdminController extends AbstractController
             's' => $sort,
         ]);
 
-        dump([
-            'seriesLink' => $seriesLink,
-            'series' => $series,
-            'tmdb_series' => $tmdbSeries,
-            'series_additional_overviews' => $seriesAdditionalOverviews,
-            'series_broadcast_schedule' => $seriesBroadcastSchedules,
-            'series_images' => $seriesImages,
-            'series_localized_names' => $seriesLocalizedNames,
-            'series_localized_overviews' => $seriesLocalizedOverviews,
-            'series_networks' => $seriesNetworks,
-            'series_watch_links' => $seriesWatchLinks,
-        ]);
-
         return $this->render('admin/index.html.twig', [
             'seriesLink' => $seriesLink,
             'series' => $series,

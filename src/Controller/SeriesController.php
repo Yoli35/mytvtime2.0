@@ -204,7 +204,7 @@ class SeriesController extends AbstractController
                 $episodesOfTheDay[$us['date'] . '-' . $us['id']][0] = $us;
             }
         }
-        dump(['episodesOfTheDay' => $episodesOfTheDay]);
+//        dump(['episodesOfTheDay' => $episodesOfTheDay]);
 
         $allEpisodesOfTheWeek = array_map(function ($us) use ($posterUrl, $logoUrl) {
             $this->imageService->saveImage("posters", $us['poster_path'], $posterUrl);
