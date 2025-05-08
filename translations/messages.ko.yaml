@@ -108,22 +108,30 @@ Episode air date: 에피소드 방송일
 Filters: 필터
 First air date: 첫 방송일
 Id: ID
+Last air date: 마지막 방송일
 Last series watched: 마지막으로 본 시리즈
 Localized Names: 지역화된 이름
 Localized Overviews: 지역화된 개요
 My series: 내 시리즈
 Next episode: 다음 에피소드
+Next page: 다음 페이지
 No: 아니요
 Number of elements per page: 페이지당 요소 수
 Order: 순서
 Pages: 페이지
+Previous page: 이전 페이지
 Release: 출시
+Series by ID: ID로 시리즈
+Series by name: 이름으로 시리즈
 Series started: 시작된 시리즈
 Series to start: 시작할 시리즈
 Show / hide filter options: 필터 옵션 표시/숨기기
 Show / hide pages: 페이지 표시/숨기기
 Sort: 정렬
+Synopsis: 개요
 TMDB Id: TMDB ID
+The Movie DB ID: 무비 데이터베이스 ID
+The Movie DB search: 무비 데이터베이스 검색
 Watched series: 본 시리즈
 Yes: 예
 remaining episode: 남은 에피소드

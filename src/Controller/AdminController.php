@@ -14,21 +14,23 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @method User|null getUser() */
 #[IsGranted('ROLE_ADMIN')]
-#[Route('/{_locale}/admin', name: 'app_admin_', requirements: ['_locale' => 'fr|en|ko'])]
+#[Route('/{_locale}/admin', name: 'admin_', requirements: ['_locale' => 'fr|en|ko'])]
 class AdminController extends AbstractController
 {
 
     public function __construct(
-        private readonly ImageConfiguration $imageConfiguration,
-        private readonly MovieRepository    $movieRepository,
-        private readonly ProviderRepository $providerRepository,
-        private readonly SeriesController   $seriesController,
-        private readonly SeriesRepository   $seriesRepository,
-        private readonly UserRepository     $userRepository,
-        private readonly TMDBService       $tmdbService
+        private readonly ImageConfiguration  $imageConfiguration,
+        private readonly MovieRepository     $movieRepository,
+        private readonly ProviderRepository  $providerRepository,
+        private readonly SeriesController    $seriesController,
+        private readonly SeriesRepository    $seriesRepository,
+        private readonly UserRepository      $userRepository,
+        private readonly TMDBService         $tmdbService,
+        private readonly TranslatorInterface $translator
     )
     {
     }
@@ -77,7 +79,7 @@ class AdminController extends AbstractController
             }
         }
 
-        $paginationLinks = $this->generateLinks($pageCount, $page, $this->generateUrl('app_admin_series'), [
+        $paginationLinks = $this->generateLinks($pageCount, $page, $this->generateUrl('admin_series'), [
             's' => $sort,
             'o' => $order,
             'l' => $limit,
@@ -137,7 +139,7 @@ class AdminController extends AbstractController
             return $swl;
         }, $this->seriesRepository->seriesWatchLinks($id));
 
-        $seriesLink = $this->generateSeriesLink($this->generateUrl('app_admin_series'), [
+        $seriesLink = $this->generateSeriesLink($this->generateUrl('admin_series'), [
             'l' => $limit,
             'o' => $order,
             'p' => $page,
@@ -171,6 +173,73 @@ class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/series/search/id', name: 'series_search_by_id')]
+    public function adminSeriesSearchById(Request $request): Response
+    {
+        $id = $request->query->get('id');
+        if (!$id) {
+            throw $this->createNotFoundException('TMDB ID not found');
+        }
+        $tmdbIds = array_column($this->seriesRepository->adminSeriesTmdbId(), 'tmdb_id');
+        if (in_array($id, $tmdbIds)) {
+            return $this->redirectToRoute('admin_series_edit', [
+                'id' => $this->seriesRepository->adminSeriesByTmdbId($id)['id'],
+            ]);
+        }
+        $tmdbSeries = json_decode(
+            $this->tmdbService->getTv($id, 'en-US'),
+            true
+        );
+
+        if (!$tmdbSeries) {
+            throw $this->createNotFoundException('TMDB Series not found');
+        }
+
+        return $this->render('admin/index.html.twig', [
+            'series' => $tmdbSeries,
+            'posterUrl' => $this->imageConfiguration->getUrl('poster_sizes', 3),
+            'backdropUrl' => $this->imageConfiguration->getUrl('backdrop_sizes', 3),
+        ]);
+    }
+
+    #[Route('/series/search/name', name: 'series_search_by_name')]
+    public function adminSeriesSearchByName(Request $request): Response
+    {
+        $name = $request->query->get('name', '');
+        $page = $request->query->getInt('p', 1);
+
+        if (!$name) {
+            throw $this->createNotFoundException('TMDB ID not found');
+        }
+
+        $tmdbSeries = json_decode(
+            $this->tmdbService->searchTv("&query=$name&include_adult=false&page=$page"),
+            true
+        );
+
+        if (!$tmdbSeries) {
+            throw $this->createNotFoundException('TMDB Series not found');
+        }
+
+        if ($tmdbSeries['total_results'] == 1) {
+            return $this->redirectToRoute('admin_series_search_by_id', [
+                'id' => $tmdbSeries['results'][0]['id'],
+            ]);
+        }
+
+        $pagination = $this->generateLinks($tmdbSeries['total_pages'], $page, $this->generateUrl('admin_series_search_by_name'), [
+            'name' => $name,
+        ]);
+
+        return $this->render('admin/index.html.twig', [
+            'name' => $name,
+            'seriesList' => $tmdbSeries,
+            'pagination' => $pagination,
+            'posterUrl' => $this->imageConfiguration->getUrl('poster_sizes', 3),
+            'backdropUrl' => $this->imageConfiguration->getUrl('backdrop_sizes', 3),
+        ]);
+    }
+
     #[Route('/movies', name: 'movies')]
     public function adminMovies(): Response
     {
@@ -189,17 +258,6 @@ class AdminController extends AbstractController
         ]);
     }
 
-    private const MAX_VISIBLE_PAGES = 5;
-
-    /**
-     * Generate pagination links.
-     *
-     * @param int $totalPages
-     * @param int $currentPage
-     * @param string $route
-     * @param array $queryParams
-     * @return string
-     */
     public function generateLinks(int $totalPages, int $currentPage, string $route, array $queryParams = []): string
     {
         if ($totalPages <= 1) {
@@ -210,7 +268,7 @@ class AdminController extends AbstractController
 
         // Add "Previous" button
         if ($currentPage > 1) {
-            $paginationHtml .= $this->generateLink($currentPage - 1, 'Previous', $route, $queryParams);
+            $paginationHtml .= $this->generateLink($currentPage - 1, $this->translator->trans('Previous page'), $route, $queryParams);
         }
 
         // Display pages 1-4
@@ -246,7 +304,7 @@ class AdminController extends AbstractController
 
         // Add "Next" button
         if ($currentPage < $totalPages) {
-            $paginationHtml .= $this->generateLink($currentPage + 1, 'Next', $route, $queryParams);
+            $paginationHtml .= $this->generateLink($currentPage + 1, $this->translator->trans('Next page'), $route, $queryParams);
         }
 
         $paginationHtml .= '</div>';
@@ -254,17 +312,7 @@ class AdminController extends AbstractController
         return $paginationHtml;
     }
 
-    /**
-     * Helper function to generate a pagination link.
-     *
-     * @param int $page
-     * @param string $label
-     * @param string $route
-     * @param array $queryParams
-     * @param string $activeClass
-     * @return string
-     */
-    private function generateLink(int $page, string $label, string $route, array $queryParams, string $activeClass = ''): string
+     private function generateLink(int $page, string $label, string $route, array $queryParams, string $activeClass = ''): string
     {
         $queryParams['p'] = $page;
         $url = $route . '?' . http_build_query($queryParams);

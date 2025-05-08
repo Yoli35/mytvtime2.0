@@ -1,0 +1,45 @@
+<section class="admin__series__tools">
+    <div class="admin__series__tool">
+        <label for="search_by_id">{{ 'Series by ID'|trans }}
+            <input type="search" class="id" id="search_by_id" name="search_by_id" placeholder="{{ 'The Movie DB ID'|trans }}" value="">
+        </label>
+        <script>
+            document.querySelector('#search_by_id').addEventListener('keydown', function (e) {
+                if (e.keyCode === 13 && this.value) {
+                    window.location.href = '{{ path('admin_series_search_by_id') }}' + '?id=' + this.value;
+                }
+            });
+        </script>
+    </div>
+    <div class="admin__series__tool">
+        <label for="search_by_name">{{ 'Series by name'|trans }}
+            <input type="search" class="name" id="search_by_name" name="search_by_name" placeholder="{{ 'The Movie DB search'|trans }}" value="{% if name is defined %}{{ name }}{% endif %}">
+        </label>
+        <script>
+            document.querySelector('#search_by_name').addEventListener('keydown', function (e) {
+                if (e.keyCode === 13 && this.value) {
+                    window.location.href = '{{ path('admin_series_search_by_name') }}' + '?name=' + this.value;
+                }
+            });
+        </script>
+    </div>
+    {% if route == 'admin_series' %}
+        <div class="admin__series__tool">
+            <label for="limit">{{ 'Results per page'|trans }}
+                <select name="limit" id="limit">
+                    {% for l in [10, 25, 50, 100] %}
+                        <option value="{{ l }}"{% if limit == l %} selected{% endif %}>{{ l }}</option>
+                    {% endfor %}
+                </select>
+                <script>
+                    document.querySelector('#limit').addEventListener('change', function () {
+                        const url = new URL(window.location.href);
+                        url.searchParams.set('l', this.value);
+                        url.searchParams.set('p', "1");
+                        window.location.href = url.toString();
+                    });
+                </script>
+            </label>
+        </div>
+    {% endif %}
+</section>

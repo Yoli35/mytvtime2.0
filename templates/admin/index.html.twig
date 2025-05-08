@@ -13,34 +13,42 @@
             <aside>
                 <h2>{{ 'Admin'|trans }}</h2>
                 <div class="admin__menu">
-                    <a href="{{ path('app_admin_users') }}"{% if route starts with 'app_admin_index' or route == 'app_admin_users' %} class="active"{% endif %}>{{ 'Users'|trans }}</a>
+                    <a href="{{ path('admin_users') }}"{% if route starts with 'admin_index' or route == 'admin_users' %} class="active"{% endif %}>{{ 'Users'|trans }}</a>
                     {% if seriesLink is defined %}
-                        <a href="{{ seriesLink|raw }}"{% if route starts with 'app_admin_series' %} class="active"{% endif %}>{{ 'Series'|trans }}</a>
+                        <a href="{{ seriesLink|raw }}"{% if route starts with 'admin_series' %} class="active"{% endif %}>{{ 'Series'|trans }}</a>
                     {% else %}
-                        <a href="{{ path('app_admin_series') }}"{% if route starts with 'app_admin_series' %} class="active"{% endif %}>{{ 'Series'|trans }}</a>
+                        <a href="{{ path('admin_series') }}"{% if route starts with 'admin_series' %} class="active"{% endif %}>{{ 'Series'|trans }}</a>
                     {% endif %}
-                    <a href="{{ path('app_admin_movies') }}"{% if route starts with 'app_admin_movies' %} class="active"{% endif %}>{{ 'Movies'|trans }}</a>
-                    <a href="{{ path('app_admin_providers') }}"{% if route starts with 'app_admin_providers' %} class="active"{% endif %}>{{ 'Providers'|trans }}</a>
+                    <a href="{{ path('admin_movies') }}"{% if route starts with 'admin_movies' %} class="active"{% endif %}>{{ 'Movies'|trans }}</a>
+                    <a href="{{ path('admin_providers') }}"{% if route starts with 'admin_providers' %} class="active"{% endif %}>{{ 'Providers'|trans }}</a>
                 </div>
             </aside>
             <main>
-                {% if route == 'app_admin_index' or route == 'app_admin_users' %}
-                    {% include('_blocks/admin/users.html.twig') %}
+                {{ include('_blocks/admin/_series-tools.html.twig') }}
+
+                {% if route == 'admin_index' or route == 'admin_users' %}
+                    {% include('_blocks/admin/_users.html.twig') %}
                 {% endif %}
-                {% if route == 'app_admin_series' %}
-                    {% include('_blocks/admin/series.html.twig') %}
+                {% if route == 'admin_series' %}
+                    {% include('_blocks/admin/_series.html.twig') %}
                 {% endif %}
-                {% if route == 'app_admin_series_edit' %}
-                    {% include('_blocks/admin/series-edit.html.twig') %}
+                {% if route == 'admin_series_edit' %}
+                    {% include('_blocks/admin/_series-edit.html.twig') %}
                 {% endif %}
-                {% if route == 'app_admin_movies' %}
-                    {% include('_blocks/admin/movies.html.twig') %}
+                {% if route == 'admin_series_search_by_id' %}
+                    {% include('_blocks/admin/_series-detail.html.twig') %}
                 {% endif %}
-                {% if route == 'app_admin_providers' %}
-                    {% include('_blocks/admin/providers.html.twig') %}
+                {% if route == 'admin_series_search_by_name' %}
+                    {% include('_blocks/admin/_series-list.html.twig') %}
                 {% endif %}
-                {% if route == 'app_admin_settings' %}
-                    {% include('_blocks/admin/settings.html.twig') %}
+                {% if route == 'admin_movies' %}
+                    {% include('_blocks/admin/_movies.html.twig') %}
+                {% endif %}
+                {% if route == 'admin_providers' %}
+                    {% include('_blocks/admin/_providers.html.twig') %}
+                {% endif %}
+                {% if route == 'admin_settings' %}
+                    {% include('_blocks/admin/_settings.html.twig') %}
                 {% endif %}
             </main>
         </div>

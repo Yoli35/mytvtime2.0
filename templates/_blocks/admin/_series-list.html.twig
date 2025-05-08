@@ -1,0 +1,40 @@
+<section class="admin__series__list">
+    {{ pagination|raw }}
+    <div class="admin__series__list__header">
+        <div class="admin__series__list__header__poster"></div>
+        <div class="admin__series__list__header__id">{{ 'Id'|trans }}</div>
+        <div class="admin__series__list__header__name">{{ 'Name'|trans }}</div>
+        <div class="admin__series__list__header__localized_name">{{ 'Original name'|trans }}</div>
+        <div class="admin__series__list__header__country">{{ 'Country'|trans }}</div>
+        <div class="admin__series__list__header__first_air_date">{{ 'Release'|trans }}</div>
+    </div>
+    <div class="admin__series__list__content">
+        {% for s in seriesList.results %}
+            <a href="{{ path('admin_series_search_by_id', {id: s.id}) }}">
+                <div class="admin__series__list__item">
+                    <div class="admin__series__list__poster" data-title="{{ s.name }}">
+                        {% if s.poster_path %}
+                            <img src="{{ posterUrl ~ s.poster_path }}" alt="{{ s.name }}">
+                        {% else %}
+                            {{ ux_icon('fa6-solid:tv', {height: '18px', width: '18px'}) }}
+                        {% endif %}
+                    </div>
+                    <div class="admin__series__list__id">{{ s.id }}</div>
+                    <div class="admin__series__list__name">{{ s.name }}</div>
+                    <div class="admin__series__list__localized_name">{{ s.original_name }}</div>
+                    <div class="admin__series__list__country">
+                        {% if s.origin_country is not empty %}
+                            {% for country in s.origin_country %}
+                                <div data-title="{{ country|country_name }}">{{ getEmojiFlag(country) }}</div>
+                                {% if loop.index < loop.last %}, {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="admin__series__list__first_air_date">{{ s.first_air_date|date('d/m/Y') }}</div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+    {{ pagination|raw }}
+{#    {{ dump(seriesList) }}#}
+</section>
