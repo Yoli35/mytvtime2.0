@@ -59,7 +59,7 @@ class AdminController extends AbstractController
         $sort = $request->query->get('s', 'id');
         $order = $request->query->get('o', 'desc');
         $page = $request->query->getInt('p', 1);
-        $limit = $request->query->getInt('l', 20);
+        $limit = $request->query->getInt('l', 25);
 
         $series = $this->seriesRepository->adminSeries($request->getLocale(), $page, $sort, $order, $limit);
         $seriesCount = $this->seriesRepository->count();
