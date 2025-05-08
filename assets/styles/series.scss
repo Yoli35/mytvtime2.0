@@ -3664,6 +3664,15 @@ h2 {
     }
 }
 
+@media (max-width: 800px) {
+    .add-this {
+        bottom: 4rem;
+        border-radius: 0;
+        left: 0;
+        right: 0;
+    }
+}
+
 @media (min-width: 1024px) {
     .episodes {
         .episode {

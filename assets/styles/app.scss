@@ -1714,21 +1714,42 @@ section:has(.pages) {
     }
 }
 
+@property --add-this-fill-start {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: hsl(166, 18%, 50%);
+}
+
+@property --add-this-fill-end {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: hsl(32, 76%, 50%);
+}
+
 .add-this {
     align-items: center;
-    background-color: var(--add-this);
+    background: linear-gradient(45deg, var(--add-this-fill-start), var(--add-this-fill-end)) padding-box,
+                linear-gradient(-45deg, var(--add-this-fill-start), var(--add-this-fill-end)) border-box;
     bottom: 6rem;
-    border-radius: .25rem;
+    border: .75vw solid transparent;
+    border-radius: 1vw;
     color: var(--ardoise-10);
     display: flex;
-    font-size: 2rem;
+    font-size: 4vw;
     font-weight: 500;
     justify-content: center;
     line-height: 1em;
-    padding: 2rem;
+    padding: 2vw;
     position: fixed;
     right: 1rem;
     text-align: center;
+    transition: --add-this-fill-start 300ms ease-in-out, --add-this-fill-end 300ms ease-in-out;
+
+    &:hover,
+    &:focus-visible {
+        --add-this-fill-start: var(--add-this);
+        --add-this-fill-end: var(--add-this);
+    }
 }
 
 .switcher {
