@@ -1,3 +1,12 @@
+<section class="admin__series__tools">
+    <div class="admin__series__result">
+        {% if seriesList.total_results > 1 %}
+            {{ seriesList.total_results }} {{ 'seriess'|trans }}
+        {% else %}
+            {{ 'No results'|trans }}
+        {% endif %}
+    </div>
+</section>
 <section class="admin__series__list">
     {{ pagination|raw }}
     <div class="admin__series__list__header">
@@ -36,5 +45,5 @@
         {% endfor %}
     </div>
     {{ pagination|raw }}
-{#    {{ dump(seriesList) }}#}
+    {#    {{ dump(seriesList) }} #}
 </section>

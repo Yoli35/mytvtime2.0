@@ -67,12 +67,9 @@
     }
 
     main {
-        background-color: var(--ardoise-80-alpha-50);
-        border-radius: .25rem;
         display: flex;
         flex-direction: column;
         gap: 1rem;
-        padding: 1rem;
         width: 100%;
 
         .admin__actions {
@@ -194,9 +191,13 @@
     }
 
     .admin__series__tools {
+        background-color: var(--ardoise-80-alpha-50);
+        border-radius: .25rem;
         display: flex;
         flex-wrap: wrap;
         gap: 2rem;
+        justify-content: center;
+        padding: 1rem;
 
         .admin__series__tool {
             align-items: center;
@@ -253,9 +254,16 @@
                 }
             }
         }
+
+        .admin__series__result {
+            font-size: 2rem;
+            line-height: 1.25em;
+        }
     }
 
     .admin__series {
+        background-color: var(--ardoise-80-alpha-50);
+        border-radius: .25rem;
         display: flex;
         flex-direction: column;
         gap: .25rem;
