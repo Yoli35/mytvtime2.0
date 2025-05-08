@@ -235,7 +235,7 @@
                     <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a>
                     {% if 'ROLE_ADMIN' in app.user.roles %}
                         <div class="separation">{{ 'Admin'|trans }}</div>
-                        <a href="{{ path('app_admin_index') }}">{{ 'Dashboard'|trans }}</a>
+                        <a href="{{ path('admin_index') }}">{{ 'Dashboard'|trans }}</a>
                     {% endif %}
                 {% else %}
                     <a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a>
