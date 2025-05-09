@@ -52,6 +52,7 @@
                                 <option value="8" {% if schedule.frequency == 8 %}selected{% endif %}>{{ 'Weekly, four, then one'|trans }}</option>
                                 <option value="9" {% if schedule.frequency == 9 %}selected{% endif %}>{{ 'Weekly, four, then two'|trans }}</option>
                                 <option value="10" {% if schedule.frequency == 10 %}selected{% endif %}>{{ 'Weekly, selected days'|trans }}</option>
+                                <option value="12" {% if schedule.frequency == 12 %}selected{% endif %}>{{ 'Selected days, then weekly, one at a time'|trans }}</option>
                             </select>
                         </label>
                     </div>
