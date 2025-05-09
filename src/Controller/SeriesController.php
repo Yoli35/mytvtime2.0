@@ -3103,11 +3103,13 @@ class SeriesController extends AbstractController
         //  3 - Weekly, one at a time
         //  4 - Weekly, two at a time
         //  5 - Weekly, three at a time
+        // 11 - Weekly, four at a time
         //  6 - Weekly, two, then one
         //  7 - Weekly, three, then one
         //  8 - Weekly, four, then one
         //  9 - Weekly, four, then two
         // 10 - Weekly, selected days
+        // 12 - Selected days, then weekly, one at a time
 
         $firstAirDate = $firstAirDate->setTime($airAt->format('H'), $airAt->format('i'));
         $date = $firstAirDate;
@@ -3230,6 +3232,32 @@ class SeriesController extends AbstractController
                     }
 //                    $date = $firstAirDate->modify('+' . $k . ' week');
                     $date = $this->dateModify($firstAirDate, '+' . $k . ' week');
+                }
+                break;
+            case 12: // Selected days, then weekly, one at a time
+                $selectedDayCount = count($daysOfWeek);
+                $firstDayOfWeek = $date->format('w');
+                if (!in_array($firstDayOfWeek, $daysOfWeek)) {
+                    return $errorArr;
+                }
+                if ($selectedDayCount == 2) {
+                    if ($firstDayOfWeek == $daysOfWeek[1]) {
+                        $last = array_pop($daysOfWeek);
+                        array_unshift($daysOfWeek, $last);
+                    }
+                }
+                $j = $firstEpisode;
+                foreach ($daysOfWeek as $day) {
+                    $d = $day - $firstDayOfWeek;
+                    if ($d < 0) $d += 7;
+                    if ($d) $date = $this->dateModify($date, '+' . $d . ' day');
+                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $j), 'episodeNumber' => $j, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $j), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $j), 'future' => $now < $date];
+                    $j++;
+                }
+                $secondAirDate = $this->dateModify($firstAirDate, '+' . ($daysOfWeek[1] - $daysOfWeek[0]) . ' day');
+                for ($i = $selectedDayCount + 1; $i <= $lastEpisode; $i++) { // $i → episode number
+                    $date = $this->dateModify($secondAirDate, '+' . $i - $selectedDayCount . ' week');
+                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
                 }
                 break;
         }
