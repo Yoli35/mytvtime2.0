@@ -321,12 +321,6 @@
                         {% if video.iframe == true %}
                             <div class="video">
                                 <iframe src="{{ video.link }}" title="{{ video.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                {# {% else %}
-                            <video controls>
-                                <source src="{{ video.link }}" type="video/mp4" />
-                            </video> #}
-                                <div class="border-top"></div>
-                                <div class="border-bottom"></div>
                             </div>
                         {% endif %}
                     {% endfor %}

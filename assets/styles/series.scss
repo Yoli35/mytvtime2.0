@@ -1027,6 +1027,8 @@ h2 {
 
             .video {
                 aspect-ratio: 16/9;
+                mask: linear-gradient(transparent 6%, hsla(0, 100%, 100%, 1) 10%, hsla(0, 100%, 100%, 1) 90%, transparent 92%);
+                margin-block: -3rem;
                 position: relative;
                 width: 100%;
 
