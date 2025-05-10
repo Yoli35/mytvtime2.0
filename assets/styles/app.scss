@@ -1316,8 +1316,15 @@ label:has(input[type="text"]) {
         }
     }
 
+    .menu.users {
+        label::after {
+            top: 32%;
+        }
+    }
+
     .menu.main,
     .menu.user,
+    .menu.users,
     .menu.menu-notifications {
         right: 0;
         top: 3rem;
@@ -1351,6 +1358,7 @@ label:has(input[type="text"]) {
     .menu.map,
     .menu.menu-notifications,
     .menu.main,
+    .menu.users,
     .menu.user {
         background-color: var(--navbar-bg);
         border-radius: .25rem;

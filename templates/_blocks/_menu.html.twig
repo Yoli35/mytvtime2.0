@@ -213,6 +213,31 @@
                 </div>
             {% endif %}
         {% endif %}
+{#        {% set users = getUsers() %}#}
+{#        <div class="navbar-item">#}
+{#            {{ ux_icon('fa6-solid:user', {height: '18px', width: '18px'}) }}#}
+{#            <div class="menu users">#}
+{#                <label for="user-select">#}
+{#                    <select id="user-select" class="user-select">#}
+{#                        <button>#}
+{#                            <!-- Prendra le contenu HTML de l'option choisie -->#}
+{#                            <selectedcontent></selectedcontent>#}
+{#                            {{ ux_icon('iconoir:nav-arrow-down', {height: '18px', width: '18px'}) }}#}
+{#                        </button>#}
+{#                        {% for u in users %}#}
+{#                            <option value="{{ loop.index}}"{% if app.user and app.user.id == u.id %} selected{% endif %}>#}
+{#                                {% if u.avatar %}#}
+{#                                    <img src="/images/users/avatars/{{ u.avatar }}" alt="{{ u.username }}">#}
+{#                                {% else %}#}
+{#                                    <img src="/images/users/avatars/default.png" alt="{{ u.username }}">#}
+{#                                {% endif %}#}
+{#                                {{ u.username }}#}
+{#                            </option>#}
+{#                        {% endfor %}#}
+{#                    </select>#}
+{#                </label>#}
+{#            </div>#}
+{#        </div>#}
         <div class="navbar-item">
             <div class="avatar">
                 {% if app.user %}
@@ -264,11 +289,15 @@
         </div>
         <div class="navbar-item">
             <div class="burger">
-{#                <span></span>#}
-{#                <span></span>#}
-{#                <span></span>#}
-                <div><div></div></div>
-                <div><div></div></div>
+                {#                <span></span> #}
+                {#                <span></span> #}
+                {#                <span></span> #}
+                <div>
+                    <div></div>
+                </div>
+                <div>
+                    <div></div>
+                </div>
             </div>
             <div class="menu main">
                 <a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a>
