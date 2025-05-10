@@ -115,18 +115,18 @@ class SeriesRepository extends ServiceEntityRepository
     {
         $offset = ($page - 1) * $perPage;
         $sql = "SELECT
-                    s.poster_path,
-                    s.id,
-                    s.tmdb_id,
-                    s.name,
-                    sln.name as localized_name,
-                    s.number_of_season,
-                    s.number_of_episode,
-                    s.origin_country,
                     s.first_air_date,
+                    s.id,
+                    s.name,
+                    s.number_of_episode,
+                    s.number_of_season,
+                    s.origin_country,
+                    s.poster_path,
                     s.status,
-                    wp.provider_name as provider_name,
-                    wp.logo_path as provider_logo
+                    s.tmdb_id,
+                    sln.name as localized_name,
+                    wp.logo_path as provider_logo,
+                    wp.provider_name as provider_name
                 FROM series s
                         LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
                         LEFT JOIN series_watch_link swl ON s.id = swl.series_id

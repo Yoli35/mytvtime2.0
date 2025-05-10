@@ -9,180 +9,180 @@
         <div class="series__poster"></div>
         {% if sort == 'id' %}
             {% if order == 'desc' %}
-                <a class="series__id" href="{{ path('admin_series', {sort: 'id', order: 'asc'}) }}">
+                <a class="series__id" href="{{ path('admin_series', {s: 'id', o: 'asc', l: limit}) }}">
                     {{ 'Id'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
                 </a>
             {% else %}
-                <a class="series__id" href="{{ path('admin_series', {sort: 'id', order: 'desc'}) }}">
+                <a class="series__id" href="{{ path('admin_series', {s: 'id', o: 'desc', l: limit}) }}">
                     {{ 'Id'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
                 </a>
             {% endif %}
         {% else %}
-            <a class="series__id" href="{{ path('admin_series', {sort: 'id', order: 'desc'}) }}">
+            <a class="series__id" href="{{ path('admin_series', {s: 'id', o: 'desc', l: limit}) }}">
                 {{ 'Id'|trans }}
             </a>
         {% endif %}
 
         {% if sort == 'tmdb_id' %}
             {% if order == 'desc' %}
-                <a class="series__tmdb_id" href="{{ path('admin_series', {sort: 'tmdb_id', order: 'asc'}) }}">
+                <a class="series__tmdb_id" href="{{ path('admin_series', {s: 'tmdb_id', o: 'asc', l: limit}) }}">
                     {{ 'TMDB Id'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
                 </a>
             {% else %}
-                <a class="series__tmdb_id" href="{{ path('admin_series', {sort: 'tmdb_id', order: 'desc'}) }}">
+                <a class="series__tmdb_id" href="{{ path('admin_series', {s: 'tmdb_id', o: 'desc', l: limit}) }}">
                     {{ 'TMDB Id'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
                 </a>
             {% endif %}
         {% else %}
-            <a class="series__tmdb_id" href="{{ path('admin_series', {sort: 'tmdb_id', order: 'desc'}) }}">
+            <a class="series__tmdb_id" href="{{ path('admin_series', {s: 'tmdb_id', o: 'desc', l: limit}) }}">
                 {{ 'TMDB Id'|trans }}
             </a>
         {% endif %}
 
         {% if sort == 'name' %}
             {% if order == 'desc' %}
-                <a class="series__name" href="{{ path('admin_series', {sort: 'name', order: 'asc'}) }}">
+                <a class="series__name" href="{{ path('admin_series', {s: 'name', o: 'asc', l: limit}) }}">
                     {{ 'Name'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
                 </a>
             {% else %}
-                <a class="series__name" href="{{ path('admin_series', {sort: 'name', order: 'desc'}) }}">
+                <a class="series__name" href="{{ path('admin_series', {s: 'name', o: 'desc', l: limit}) }}">
                     {{ 'Name'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
                 </a>
             {% endif %}
         {% else %}
-            <a class="series__name" href="{{ path('admin_series', {sort: 'name', order: 'desc'}) }}">
+            <a class="series__name" href="{{ path('admin_series', {s: 'name', o: 'desc', l: limit}) }}">
                 {{ 'Name'|trans }}
             </a>
         {% endif %}
 
         {% if sort == 'localized_name' %}
             {% if order == 'desc' %}
-                <a class="series__localized_name" href="{{ path('admin_series', {sort: 'localized_name', order: 'asc'}) }}">
+                <a class="series__localized_name" href="{{ path('admin_series', {s: 'localized_name', o: 'asc', l: limit}) }}">
                     {{ 'Localized name'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
                 </a>
             {% else %}
-                <a class="series__localized_name" href="{{ path('admin_series', {sort: 'localized_name', order: 'desc'}) }}">
+                <a class="series__localized_name" href="{{ path('admin_series', {s: 'localized_name', o: 'desc', l: limit}) }}">
                     {{ 'Localized name'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
                 </a>
             {% endif %}
         {% else %}
-            <a class="series__localized_name" href="{{ path('admin_series', {sort: 'localized_name', order: 'desc'}) }}">
+            <a class="series__localized_name" href="{{ path('admin_series', {s: 'localized_name', o: 'desc', l: limit}) }}">
                 {{ 'Localized name'|trans }}
             </a>
         {% endif %}
 
         {% if sort == 'number_of_season' %}
             {% if order == 'desc' %}
-                <a class="series__seasons" href="{{ path('admin_series', {sort: 'number_of_season', order: 'asc'}) }}">
+                <a class="series__seasons" href="{{ path('admin_series', {s: 'number_of_season', o: 'asc', l: limit}) }}">
                     {{ 'Seasons'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
                 </a>
             {% else %}
-                <a class="series__seasons" href="{{ path('admin_series', {sort: 'number_of_season', order: 'desc'}) }}">
+                <a class="series__seasons" href="{{ path('admin_series', {s: 'number_of_season', o: 'desc', l: limit}) }}">
                     {{ 'Seasons'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
                 </a>
             {% endif %}
         {% else %}
-            <a class="series__seasons" href="{{ path('admin_series', {sort: 'number_of_season', order: 'desc'}) }}">
+            <a class="series__seasons" href="{{ path('admin_series', {s: 'number_of_season', o: 'desc', l: limit}) }}">
                 {{ 'Seasons'|trans }}
             </a>
         {% endif %}
 
         {% if sort == 'number_of_episode' %}
             {% if order == 'desc' %}
-                <a class="series__episodes" href="{{ path('admin_series', {sort: 'number_of_episode', order: 'asc'}) }}">
+                <a class="series__episodes" href="{{ path('admin_series', {s: 'number_of_episode', o: 'asc', l: limit}) }}">
                     {{ 'Episodes'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
                 </a>
             {% else %}
-                <a class="series__episodes" href="{{ path('admin_series', {sort: 'number_of_episode', order: 'desc'}) }}">
+                <a class="series__episodes" href="{{ path('admin_series', {s: 'number_of_episode', o: 'desc', l: limit}) }}">
                     {{ 'Episodes'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
                 </a>
             {% endif %}
         {% else %}
-            <a class="series__episodes" href="{{ path('admin_series', {sort: 'number_of_episode', order: 'desc'}) }}">
+            <a class="series__episodes" href="{{ path('admin_series', {s: 'number_of_episode', o: 'desc', l: limit}) }}">
                 {{ 'Episodes'|trans }}
             </a>
         {% endif %}
 
         {% if sort == 'origin_country' %}
             {% if order == 'desc' %}
-                <a class="series__country" href="{{ path('admin_series', {sort: 'origin_country', order: 'asc'}) }}">
+                <a class="series__country" href="{{ path('admin_series', {s: 'origin_country', o: 'asc', l: limit}) }}">
                     {{ 'Country'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
                 </a>
             {% else %}
-                <a class="series__country" href="{{ path('admin_series', {sort: 'origin_country', order: 'desc'}) }}">
+                <a class="series__country" href="{{ path('admin_series', {s: 'origin_country', o: 'desc', l: limit}) }}">
                     {{ 'Country'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
                 </a>
             {% endif %}
         {% else %}
-            <a class="series__country" href="{{ path('admin_series', {sort: 'origin_country', order: 'desc'}) }}">
+            <a class="series__country" href="{{ path('admin_series', {s: 'origin_country', o: 'desc', l: limit}) }}">
                 {{ 'Country'|trans }}
             </a>
         {% endif %}
 
         {% if sort == 'first_air_date' %}
             {% if order == 'desc' %}
-                <a class="series__first_air_date" href="{{ path('admin_series', {sort: 'first_air_date', order: 'asc'}) }}">
+                <a class="series__first_air_date" href="{{ path('admin_series', {s: 'first_air_date', o: 'asc', l: limit}) }}">
                     {{ 'Release'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
                 </a>
             {% else %}
-                <a class="series__first_air_date" href="{{ path('admin_series', {sort: 'first_air_date', order: 'desc'}) }}">
+                <a class="series__first_air_date" href="{{ path('admin_series', {s: 'first_air_date', o: 'desc', l: limit}) }}">
                     {{ 'Release'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
                 </a>
             {% endif %}
         {% else %}
-            <a class="series__first_air_date" href="{{ path('admin_series', {sort: 'first_air_date', order: 'desc'}) }}">
+            <a class="series__first_air_date" href="{{ path('admin_series', {s: 'first_air_date', o: 'desc', l: limit}) }}">
                 {{ 'Release'|trans }}
             </a>
         {% endif %}
 
         {% if sort == 'status' %}
             {% if order == 'desc' %}
-                <a class="series__status" href="{{ path('admin_series', {sort: 'status', order: 'asc'}) }}">
+                <a class="series__status" href="{{ path('admin_series', {s: 'status', o: 'asc', l: limit}) }}">
                     {{ 'Status'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
                 </a>
             {% else %}
-                <a class="series__status" href="{{ path('admin_series', {sort: 'status', order: 'desc'}) }}">
+                <a class="series__status" href="{{ path('admin_series', {s: 'status', o: 'desc', l: limit}) }}">
                     {{ 'Status'|trans }}
                     {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
                 </a>
             {% endif %}
         {% else %}
-            <a class="series__status" href="{{ path('admin_series', {sort: 'status', order: 'desc'}) }}">
+            <a class="series__status" href="{{ path('admin_series', {s: 'status', o: 'desc', l: limit}) }}">
                 {{ 'Status'|trans }}
             </a>
         {% endif %}
 
         {% if sort == 'provider_name' %}
             {% if order == 'desc' %}
-                <a class="series__provider" href="{{ path('admin_series', {sort: 'provider_name', order: 'asc'}) }}">
+                <a class="series__provider" href="{{ path('admin_series', {s: 'provider_name', o: 'asc', l: limit}) }}">
                     {{ ux_icon('fa6-solid:tv', {height: '18px', width: '18px'}) }}
                     {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
                 </a>
             {% else %}
-                <a class="series__provider" href="{{ path('admin_series', {sort: 'provider_name', order: 'desc'}) }}">
+                <a class="series__provider" href="{{ path('admin_series', {s: 'provider_name', o: 'desc', l: limit}) }}">
                     {{ ux_icon('fa6-solid:tv', {height: '18px', width: '18px'}) }}
                     {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
                 </a>
             {% endif %}
         {% else %}
-            <a class="series__provider" href="{{ path('admin_series', {sort: 'provider_name', order: 'desc'}) }}">
+            <a class="series__provider" href="{{ path('admin_series', {s: 'provider_name', o: 'desc', l: limit}) }}">
                 {{ ux_icon('fa6-solid:tv', {height: '18px', width: '18px'}) }}
             </a>
         {% endif %}
