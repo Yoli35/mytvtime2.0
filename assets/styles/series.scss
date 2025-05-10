@@ -1015,6 +1015,7 @@ h2 {
 
         .video-list {
             display: flex;
+            flex-wrap: wrap;
             gap: .5rem;
             height: auto;
             overflow-y: clip;
