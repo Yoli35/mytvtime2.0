@@ -282,7 +282,7 @@
                 display: flex;
                 gap: .25rem;
                 text-align: right;
-                width: 5rem;
+                width: 4rem;
             }
 
             .series__name, .series__localized_name {
@@ -312,7 +312,7 @@
             .series__status {
                 display: flex;
                 gap: .25rem;
-                width: 10rem;
+                width: 8rem;
             }
 
             .series__provider {
@@ -328,114 +328,120 @@
             flex-direction: column;
             gap: .25rem;
 
-            .item {
-                align-items: center;
+            .list__item {
                 border: 2px solid transparent;
-                border-radius: .25rem;
-                cursor: pointer;
                 display: flex;
-                font-size: .875rem;
                 gap: 1rem;
-                padding-block: .25rem;
-                padding-inline: 1rem;
-                white-space: nowrap;
 
                 &:hover {
-                    border: 2px solid var(--orange-50);
+                    .series__poster, .item {
+                        border: 2px solid var(--orange-50);
+                    }
                 }
 
                 .series__poster {
                     aspect-ratio: 78/117;
+                    border: 2px solid transparent;
                     border-radius: .25rem;
-                    width: 2rem;
+                    height: 3.25rem;
 
                     &:has(svg) {
                         align-items: center;
-                        aspect-ratio: 78/117;
-                        border: 2px solid var(--orange-50);
+                        border-color: var(--green-50);
                         display: flex;
                         justify-content: center;
-                        width: 2rem;
                     }
                 }
 
-                .series__id, .series__tmdb_id {
-                    text-align: right;
-                    width: 5rem;
-                }
-
-                .series__name, .series__localized_name {
-                    overflow-x: auto;
-                    width: 10rem;
-                }
-
-                .series__seasons, .series__episodes {
-                    text-align: right;
-                    width: 5rem;
-                }
-
-                .series__countries {
+                .item {
+                    align-items: center;
+                    border: 2px solid transparent;
+                    border-radius: .25rem;
+                    cursor: pointer;
                     display: flex;
-                    gap: .25rem;
-                    overflow-x: auto;
-                    width: 5rem;
+                    font-size: .875rem;
+                    gap: 1rem;
+                    padding-inline: 1rem;
+                    white-space: nowrap;
 
-                    .country {
-                        border-radius: .25rem;
+                    .series__id, .series__tmdb_id {
+                        text-align: right;
+                        width: 4rem;
+                    }
+
+                    .series__name, .series__localized_name {
+                        overflow-x: auto;
+                        width: 10rem;
+                    }
+
+                    .series__seasons, .series__episodes {
+                        text-align: right;
+                        width: 5rem;
+                    }
+
+                    .series__countries {
                         display: flex;
                         gap: .25rem;
-                        padding: .25rem;
-                        width: 100%;
+                        overflow-x: auto;
+                        width: 5rem;
+
+                        .country {
+                            border-radius: .25rem;
+                            display: flex;
+                            gap: .25rem;
+                            padding: .25rem;
+                            width: 100%;
+
+                            img {
+                                aspect-ratio: 1/1;
+                                border-radius: .25rem;
+                                height: 1.5rem;
+                                width: 1.5rem;
+                            }
+
+                            span {
+                                font-size: .75rem;
+                                font-weight: bold;
+                                text-align: center;
+                                width: 100%;
+                            }
+                        }
+                    }
+
+                    .series__first_air_date {
+                        width: 5rem;
+                    }
+
+                    .series__status {
+                        width: 8rem;
+                    }
+
+                    .series__provider {
+                        aspect-ratio: 1/1;
+                        width: 3rem;
 
                         img {
                             aspect-ratio: 1/1;
                             border-radius: .25rem;
-                            height: 1.5rem;
-                            width: 1.5rem;
-                        }
-
-                        span {
-                            font-size: .75rem;
-                            font-weight: bold;
-                            text-align: center;
-                            width: 100%;
+                            height: 3rem;
+                            width: 3rem;
                         }
                     }
-                }
 
-                .series__first_air_date {
-                    width: 5rem;
-                }
+                    &:nth-child(odd) {
+                        background-color: var(--ardoise-80-alpha-50);
 
-                .series__status {
-                    width: 10rem;
-                }
-
-                .series__provider {
-                    aspect-ratio: 1/1;
-                    width: 3rem;
-
-                    img {
-                        aspect-ratio: 1/1;
-                        border-radius: .25rem;
-                        height: 3rem;
-                        width: 3rem;
+                        &:hover {
+                            background-color: var(--ardoise-60-alpha-50);
+                        }
                     }
-                }
 
-                &:nth-child(odd) {
-                    background-color: var(--ardoise-80-alpha-50);
+                    &:nth-child(even) {
+                        background-color: var(--ardoise-90-alpha-50);
 
-                    &:hover {
-                        background-color: var(--ardoise-60-alpha-50);
-                    }
-                }
-
-                &:nth-child(even) {
-                    background-color: var(--ardoise-90-alpha-50);
-
-                    &:hover {
-                        background-color: var(--ardoise-70-alpha-50);
+                        &:hover {
+                            background-color: var(--ardoise-70-alpha-50);
+                        }
                     }
                 }
             }
@@ -766,7 +772,7 @@
                 color: var(--ardoise-10);
                 display: flex;
                 flex-shrink: 0;
-                height:30rem;
+                height: 30rem;
                 justify-content: center;
                 z-index: 1;
 
