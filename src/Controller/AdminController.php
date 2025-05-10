@@ -68,7 +68,16 @@ class AdminController extends AbstractController
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
         $series = array_map(function ($s) use ($logoUrl) {
             $s['origin_country'] = json_decode($s['origin_country'], true);
-            $s['provider_logo'] = $this->seriesController->getProviderLogoFullPath($s['provider_logo'], $logoUrl);
+            $p1 = $s['logo1'] ? explode('|', $s['logo1']) : [null, null];
+            $p2 = $s['logo2'] ? explode('|', $s['logo2']) : [null, null];
+            dump([
+                'logo1' => $s['logo1'],
+                'logo2' => $s['logo2'],
+                'p1' => $p1,
+                'p2' => $p2,
+            ]);
+            $s['provider_logo'] = $this->seriesController->getProviderLogoFullPath($p1[0] ?? $p2[0], $logoUrl);
+            $s['provider_name'] = $p1[1] ?? $p2[1];
             return $s;
         }, $series);
 
@@ -299,7 +308,7 @@ class AdminController extends AbstractController
         return $paginationHtml;
     }
 
-     private function generateLink(int $page, string $label, string $route, array $queryParams, string $activeClass = ''): string
+    private function generateLink(int $page, string $label, string $route, array $queryParams, string $activeClass = ''): string
     {
         $queryParams['p'] = $page;
         $url = $route . '?' . http_build_query($queryParams);

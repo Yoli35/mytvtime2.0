@@ -125,12 +125,18 @@ class SeriesRepository extends ServiceEntityRepository
                     s.status,
                     s.tmdb_id,
                     sln.name as localized_name,
-                    wp.logo_path as provider_logo,
-                    wp.provider_name as provider_name
+                    (SELECT CONCAT(wp.`logo_path`, '|', wp.`provider_name`)
+                     FROM `watch_provider` wp
+                     	  INNER JOIN `series_watch_link` swl ON s.id = swl.series_id
+                     WHERE wp.provider_id = swl.provider_id
+                     LIMIT 1) as logo1,
+                    (SELECT CONCAT(wp.`logo_path`, '|', wp.`provider_name`)
+                     FROM `watch_provider` wp
+                     	  INNER JOIN `series_broadcast_schedule` sbs ON sbs.`series_id` = s.id
+                     WHERE wp.provider_id = sbs.provider_id
+                     LIMIT 1) as logo2
                 FROM series s
                         LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
-                        LEFT JOIN series_watch_link swl ON s.id = swl.series_id
-                        LEFT JOIN watch_provider wp ON swl.provider_id = wp.provider_id
                 ORDER BY $sort $order
                 LIMIT $perPage OFFSET $offset";
 
