@@ -3215,7 +3215,13 @@ class SeriesController extends AbstractController
                         array_unshift($daysOfWeek, $last);
                     }
                 }
-                if ($selectedDayCount >= 3) {
+                if ($selectedDayCount == 3) {
+                    if ($firstDayOfWeek == $daysOfWeek[2]) {
+                        $last = array_pop($daysOfWeek);
+                        array_unshift($daysOfWeek, $last);
+                    }
+                }
+                if ($selectedDayCount > 3) {
                     return $errorArr;
                 }
                 // DaysOfWeek: 4, 3
