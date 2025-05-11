@@ -70,12 +70,7 @@ class AdminController extends AbstractController
             $s['origin_country'] = json_decode($s['origin_country'], true);
             $p1 = $s['logo1'] ? explode('|', $s['logo1']) : [null, null];
             $p2 = $s['logo2'] ? explode('|', $s['logo2']) : [null, null];
-            dump([
-                'logo1' => $s['logo1'],
-                'logo2' => $s['logo2'],
-                'p1' => $p1,
-                'p2' => $p2,
-            ]);
+
             $s['provider_logo'] = $this->seriesController->getProviderLogoFullPath($p1[0] ?? $p2[0], $logoUrl);
             $s['provider_name'] = $p1[1] ?? $p2[1];
             return $s;
