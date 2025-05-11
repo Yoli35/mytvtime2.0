@@ -186,6 +186,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
                 return [
                     'type' => $item['type'],
                     'display' => $item['display'],
+                    'displayName' => $item['displayName'],
                     'airAt' => $item['airAt'],
                     'customDate' => $item['customDate'],
                     'episodeCount' => $item['episodeCount'],
@@ -210,6 +211,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
                 'results' => $results,
             ];
         }
+//        dump(['intervalArr' => $intervalArr]);
         return $intervalArr;
     }
 
