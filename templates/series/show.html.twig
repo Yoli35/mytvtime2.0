@@ -795,8 +795,9 @@
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
-
-    {{ include('_blocks/forms/_keyword-translation.html.twig') }}
+    {% if tv.keywords.results|length %}
+        {{ include('_blocks/forms/_keyword-translation.html.twig') }}
+    {% endif %}
     {{ include('_blocks/forms/_add-location-form.html.twig') }}
 
     <div id="globs-map" style="display: none">
