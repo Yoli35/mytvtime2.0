@@ -36,7 +36,7 @@
 
 /.gitignore
 /.php-version
-/composer.lock
+composer.lock
 /yarn.lock
 /.idea-temp/
 .DS_Store
