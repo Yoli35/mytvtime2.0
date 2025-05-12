@@ -15,6 +15,29 @@
             {{ form_start(form, {'attr': {'class': 'form'}}) }}
             <div class="form-row">
                 <div class="form-field">
+                    <label for="{{ form.language.vars.id }}">
+                        {{ form.language.vars.label|trans }}
+                        {{ form_widget(form.language) }}
+                        {{ form_errors(form.language) }}
+                    </label>
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.timezone.vars.id }}">
+                        {{ form.timezone.vars.label|trans }}
+                        {{ form_widget(form.timezone) }}
+                        {{ form_errors(form.timezone) }}
+                    </label>
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.watchRegion.vars.id }}">
+                        {{ form.watchRegion.vars.label|trans }}
+                        {{ form_widget(form.watchRegion) }}
+                        {{ form_errors(form.watchRegion) }}
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
                     <label for="{{ form.firstAirDateYear.vars.id }}">
                         {{ form.firstAirDateYear.vars.label|trans }}
                         {{ form_widget(form.firstAirDateYear) }}

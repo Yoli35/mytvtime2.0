@@ -3697,6 +3697,8 @@ h2 {
 
 /* Rechercher une série */
 .series-search {
+    width: 100%;
+
     .series-search-result {
         align-items: center;
         color: var(--ardoise-10);
@@ -3754,7 +3756,7 @@ h2 {
             gap: .25rem;
             justify-content: flex-start;
             margin-inline: auto;
-            max-width: 61rem; /* 61rem = 5 cards + gap */
+            /*max-width: 61rem;*/ /* 61rem = 5 cards + gap */
             padding-block: 1rem;
             width: round(down, 100%, 12.25rem);
 

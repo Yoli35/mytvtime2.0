@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\LanguageType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -18,9 +19,16 @@ class SeriesAdvancedSearchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('language', HiddenType::class)
-            ->add('timezone', HiddenType::class)
-            ->add('watchRegion', HiddenType::class)
+            ->add('language', LanguageType::class, [
+                'label' => 'Language',
+                'preferred_choices' => ['en', 'fr'],
+            ])
+            ->add('timezone', TimezoneType::class, [
+                'label' => 'Timezone',
+            ])
+            ->add('watchRegion', CountryType::class, [
+                'label' => 'Country',
+            ])
             ->add('firstAirDateYear', NumberType::class, [
                 'label' => 'First air date year',
                 'required' => false,
