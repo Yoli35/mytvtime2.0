@@ -1,7 +1,7 @@
  1- .env: APP_ENV: prod
- 2- > composer install --no-dev --optimize-autoloader;
- 3- > APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear;
- 4- > cons asset-map:compile
+ 2- > echo 'composer prod'; composer install --no-dev --optimize-autoloader;
+ 3- > echo 'cache clear'; APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear;
+ 4- > echo 'compile assets'; cons asset-map:compile
  5- Compress
         [bin]
 		composer.json
@@ -34,11 +34,11 @@
 		importmap.php
 		package.json
 		symfony.lock > temp
-11- > unzip Archives.zip
-12- > rm Archives.zip
-13- > echo 'Removing macos files';      rm -R __MACOSX
+11- > unzip Archive.zip;
+12- > rm Archive.zip;
+13- > echo 'Removing macos files';      rm -R __MACOSX;
 14- > echo 'Removing .DS_Store files';  find ./ -depth -name ".DS_Store" -exec rm {} \;
-15- > echo 'Removing file in ./temp';   cd temp
-16- > rm -R *
+15- > echo 'Removing file in ./temp';   cd temp;
+16- > rm -R *;
 17- > cd ..;echo 'Think to reconnect the domain to the folder "/public"'
 18- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/public"
