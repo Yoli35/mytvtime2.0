@@ -3149,6 +3149,42 @@ h2 {
     background-color: #1f1f1fcf;
 }
 
+#select-provider-dialog {
+    border: 2px solid var(--orange-50);
+    border-radius: .5rem;
+    margin-block: auto;
+    margin-inline: auto;
+    width: 16rem;
+
+    .content {
+        background-color: var(--ardoise-80-alpha-50);
+        color: var(--ardoise-10);
+        display: flex;
+        gap: 1rem;
+        padding: 1rem 2rem;
+
+        form {
+            display: flex;
+            gap: 1rem;
+
+            button {
+                appearance: none;
+                background-color: var(--orange-50);
+                border-radius: .25rem;
+                color: var(--ardoise-10);
+                font-size: 1.25rem;
+                font-weight: 300;
+                padding-block: .25rem;
+                padding-inline: 1rem;
+            }
+        }
+    }
+}
+
+#select-provider-dialog::backdrop {
+    background-color: #1f1f1fcf;
+}
+
 .cast, .crew, .guest-stars {
     overflow-x: auto;
     width: 100%;

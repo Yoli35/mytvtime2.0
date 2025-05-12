@@ -534,7 +534,7 @@ export class Season {
         const lastEpisode = episode.getAttribute('data-last-episode');
         const views = parseInt(episode.getAttribute('data-views') ?? "0");
         const backToTopLink = episode.parentElement.querySelector('.back-to-top');
-        const backToSeriesLink = episode.parentElement.querySelector('.back-to-series').closest('a');
+        /*const backToSeriesLink = episode.parentElement.querySelector('.back-to-series').closest('a');*/
         const quickEpisodeLink = document.querySelector('.quick-episode[data-number="' + episodeNumber + '"]');
         const substituteNameDiv = episode.closest('.episode').querySelector('.substitute');
         const episodeWatchLinks = episode.closest('.episode').querySelector('.watch-links');
@@ -647,22 +647,53 @@ export class Season {
                     clone.addEventListener('click', gThis.selectProvider);
                     userEpisode.insertBefore(clone, backToTopLink);
                 } else {
-                    const providerId = data['providerId'];
-                    const providerDiv = document.createElement('div');
-                    providerDiv.classList.add('select-provider');
-                    providerDiv.setAttribute('data-id', id);
-                    providerDiv.setAttribute('data-ue-id', ueId);
-                    providerDiv.setAttribute('data-provider-id', providerId);
-                    if (providerId) {
-                        providerDiv.innerHTML = '<img src="' + gThis.providers.logos[providerId] + '" alt="' + gThis.providers.names[providerId] + '">';
-                        providerDiv.setAttribute('data-title', gThis.providers.names[providerId]);
-                        gThis.toolTips.init(providerDiv);
+                    const bestProviderIds = data['bestProviderIds'];
+                    if (bestProviderIds.length > 1) {
+                        const dialog = document.querySelector("#select-provider-dialog");
+                        const form = dialog.querySelector('form');
+                        const cancelButton = dialog.querySelector('button[value="cancel"]');
+                        cancelButton.addEventListener('click', () => {
+                            dialog.close();
+                        });
+                        bestProviderIds.forEach(providerId => {
+                            const providerDiv = document.createElement('div');
+                            providerDiv.classList.add('select-provider');
+                            providerDiv.setAttribute('data-id', id);
+                            providerDiv.setAttribute('data-ue-id', ueId);
+                            providerDiv.setAttribute('data-provider-id', providerId);
+                            providerDiv.innerHTML = '<img src="' + gThis.providers.logos[providerId] + '" alt="' + gThis.providers.names[providerId] + '">';
+                            providerDiv.setAttribute('data-title', gThis.providers.names[providerId]);
+                            providerDiv.addEventListener('click', () => {
+                                const deviceDiv = userEpisode.querySelector('.select-device');
+                                userEpisode.insertBefore(providerDiv, deviceDiv);
+                                const providerDivs = form.querySelectorAll('.select-provider');
+                                providerDivs.forEach(providerDiv => {
+                                    providerDiv.remove();
+                                });
+                                dialog.close();
+                            });
+                            gThis.toolTips.init(providerDiv);
+                            form.insertBefore(providerDiv, cancelButton);
+                        });
+                        dialog.showModal();
                     } else {
-                        providerDiv.setAttribute('data-title', gThis.text.provider);
-                        providerDiv.appendChild(gThis.getSvg('plus'));
+                        const providerId = data['providerId'];
+                        const providerDiv = document.createElement('div');
+                        providerDiv.classList.add('select-provider');
+                        providerDiv.setAttribute('data-id', id);
+                        providerDiv.setAttribute('data-ue-id', ueId);
+                        providerDiv.setAttribute('data-provider-id', providerId);
+                        if (providerId) {
+                            providerDiv.innerHTML = '<img src="' + gThis.providers.logos[providerId] + '" alt="' + gThis.providers.names[providerId] + '">';
+                            providerDiv.setAttribute('data-title', gThis.providers.names[providerId]);
+                            gThis.toolTips.init(providerDiv);
+                        } else {
+                            providerDiv.setAttribute('data-title', gThis.text.provider);
+                            providerDiv.appendChild(gThis.getSvg('plus'));
+                        }
+                        providerDiv.addEventListener('click', gThis.selectProvider);
+                        userEpisode.insertBefore(providerDiv, backToTopLink);
                     }
-                    providerDiv.addEventListener('click', gThis.selectProvider);
-                    userEpisode.insertBefore(providerDiv, backToTopLink);
                 }
 
                 const previousDevice = previousEpisode?.parentElement.querySelector('.select-device');
@@ -1149,6 +1180,7 @@ export class Season {
         }
         return null;
     }
+
     getSvg(id) {
         const clone = document.querySelector('.svgs').querySelector('svg[id="' + id + '"]').cloneNode(true);
         clone.removeAttribute('id');
@@ -1303,7 +1335,7 @@ export class Season {
         }
     }
 
-    listInput(list, type = 'text',size = '10') {
+    listInput(list, type = 'text', size = '10') {
         const listId = list.getAttribute('data-id');
         const input = document.createElement('input');
         input.setAttribute('id', listId);

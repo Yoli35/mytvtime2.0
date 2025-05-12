@@ -1566,6 +1566,7 @@ class SeriesController extends AbstractController
         $episodeNumber = $inputBag->get('episodeNumber');
         $ueId = $inputBag->get('ueId');
         $new = false;
+        $bestProviderIds = [];
 
         $messages = [];
 
@@ -1634,6 +1635,16 @@ class SeriesController extends AbstractController
                     $userEpisode->setProviderId($previousUserEpisode->getProviderId());
                     $userEpisode->setDeviceId($previousUserEpisode->getDeviceId());
                 }
+            }
+
+            if ($episodeNumber == 1 && $seasonNumber == 1) {
+                $watchLinks = $series->getSeriesWatchLinks()->toArray();
+                if (count($watchLinks) == 1) {
+                    $userEpisode->setProviderId($watchLinks[0]->getProviderId());
+                }
+                $bestProviderIds = array_map(function ($watchLink) {
+                    return $watchLink->getProviderId();
+                }, $watchLinks);
             }
 
             // Si on regarde 3 épisodes en moins d'un jour, on considère que c'est un marathon
@@ -1723,6 +1734,7 @@ class SeriesController extends AbstractController
             'messages' => $messages,
             'deviceId' => $userEpisode->getDeviceId() ?? 0,
             'providerId' => $userEpisode->getProviderId() ?? 0,
+            'bestProviderIds' => $bestProviderIds,
         ]);
     }
 
