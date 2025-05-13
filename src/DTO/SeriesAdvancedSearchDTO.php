@@ -54,7 +54,7 @@ class SeriesAdvancedSearchDTO
     private string $sortBy = 'popularity.desc';
     #[Assert\GreaterThanOrEqual(1)]
     #[Assert\LessThanOrEqual(500)]
-    private int $page = 1;
+    private int $page;
 
     public function __construct($locale = 'fr', $watchRegion = 'FR', $timezone = 'Europe/Paris', $page = 1)
     {

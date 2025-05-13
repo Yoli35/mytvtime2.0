@@ -13,7 +13,7 @@
     {% set upToDate = 0 %}
 {% endif %}
 {% set premiere = series.episode_number is defined and series.episode_number == 1 %}
-<div class="card">
+<div class="card"{% if dataTitle is defined %} data-title="{{ dataTitle }}"{% endif %}>
     {% if series.tmdb is defined %}
         {% set url = path('app_series_tmdb', {'id': series.id, 'slug': series.slug|length  ?series.slug : 'no-slug' }) %}
     {% else %}

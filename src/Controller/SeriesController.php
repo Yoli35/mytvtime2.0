@@ -679,11 +679,38 @@ class SeriesController extends AbstractController
         $seriesSearch = new SeriesAdvancedSearchDTO($user?->getPreferredLanguage() ?? $request->getLocale(), $user?->getCountry() ?? 'FR', $user?->getTimezone() ?? 'Europe/Paris', 1);
         $seriesSearch->setWatchProviders($watchProviders['select']);
         $seriesSearch->setKeywords($keywords);
+
+        $advancedSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'advanced search']);
+        if ($advancedSettings) {
+            $settings = $advancedSettings->getData();
+            $seriesSearch->setPage($settings['page']);
+            $seriesSearch->setLanguage($settings['language']);
+            $seriesSearch->setTimezone($settings['timezone']);
+            $seriesSearch->setWatchRegion($settings['watch region']);
+            $seriesSearch->setFirstAirDateYear($settings['first air date year']);
+            $seriesSearch->setFirstAirDateGTE($settings['first air date  GTE'] ? $this->dateService->newDateImmutable($settings['first air date  GTE'], 'Europe/Paris', true) : null);
+            $seriesSearch->setFirstAirDateLTE($settings['first air date LTE'] ? $this->dateService->newDateImmutable($settings['first air date LTE'], 'Europe/Paris', true) : null);
+            $seriesSearch->setWithOriginCountry($settings['with origin country']);
+            $seriesSearch->setWithOriginalLanguage($settings['with original language']);
+            $seriesSearch->setWithWatchMonetizationTypes($settings['with watch monetization types']);
+            $seriesSearch->setWithWatchProviders($settings['with watch providers']);
+            $seriesSearch->setWithKeywords($settings['with keywords']);
+            $seriesSearch->setWithRuntimeGTE($settings['with runtime GTE']);
+            $seriesSearch->setWithRuntimeLTE($settings['with runtime LTE']);
+            $seriesSearch->setWithStatus($settings['with status']);
+            $seriesSearch->setWithType($settings['with type']);
+            $seriesSearch->setSortBy($settings['sort by']);
+
+            $searchString = $this->getSearchString($user, $seriesSearch);
+            $searchResult = json_decode($this->tmdbService->getFilterTv($searchString), true);
+
+            $series = $this->getSearchResult($searchResult, $slugger);
+        }
         $form = $this->createForm(SeriesAdvancedSearchType::class, $seriesSearch);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $searchString = $this->getSearchString($form->getData());
+            $searchString = $this->getSearchString($user, $form->getData());
             $searchResult = json_decode($this->tmdbService->getFilterTv($searchString), true);
 
             if ($searchResult['total_results'] == 1) {
@@ -4057,7 +4084,7 @@ class SeriesController extends AbstractController
         return $keywordArray;
     }
 
-    public function getSearchString($data): string
+    public function getSearchString(?User $user, SeriesAdvancedSearchDTO $data): string
     {
         // App\DTO\SeriesAdvancedSearchDTO {#811 ▼
         //  *-language: "fr"
@@ -4078,23 +4105,33 @@ class SeriesController extends AbstractController
         //  -sortBy: "popularity.desc"                  → sort_by
         //  *-page: 1
         //}
-        $page = $data->getPage();
-        $language = $data->getLanguage();
-        $timezone = $data->getTimezone();
-        $watchRegion = $data->getWatchRegion();
-        $firstAirDateYear = $data->getFirstAirDateYear();
-        $firstAirDateGTE = $data->getFirstAirDateGTE()?->format('Y-m-d');
-        $firstAirDateLTE = $data->getFirstAirDateLTE()?->format('Y-m-d');
-        $withOriginCountry = $data->getWithOriginCountry();
-        $withOriginalLanguage = $data->getWithOriginalLanguage();
-        $withWatchMonetizationTypes = $data->getWithWatchMonetizationTypes();
-        $withWatchProviders = $data->getWithWatchProviders();
-        $withKeywords = $data->getWithKeywords();
-        $withRuntimeGTE = $data->getWithRuntimeGTE();
-        $withRuntimeLTE = $data->getWithRuntimeLTE();
-        $withStatus = $data->getWithStatus();
-        $withType = $data->getWithType();
-        $sortBy = $data->getSortBy();
+        $settings['page'] = $page = $data->getPage();
+        $settings['language'] = $language = $data->getLanguage();
+        $settings['timezone'] = $timezone = $data->getTimezone();
+        $settings['watch region'] = $watchRegion = $data->getWatchRegion();
+        $settings['first air date year'] = $firstAirDateYear = $data->getFirstAirDateYear();
+        $settings['first air date  GTE'] = $firstAirDateGTE = $data->getFirstAirDateGTE()?->format('Y-m-d');
+        $settings['first air date LTE'] = $firstAirDateLTE = $data->getFirstAirDateLTE()?->format('Y-m-d');
+        $settings['with origin country'] = $withOriginCountry = $data->getWithOriginCountry();
+        $settings['with original language'] = $withOriginalLanguage = $data->getWithOriginalLanguage();
+        $settings['with watch monetization types'] = $withWatchMonetizationTypes = $data->getWithWatchMonetizationTypes();
+        $settings['with watch providers'] = $withWatchProviders = $data->getWithWatchProviders();
+        $settings['with keywords'] = $withKeywords = $data->getWithKeywords();
+        $settings['with runtime GTE'] = $withRuntimeGTE = $data->getWithRuntimeGTE();
+        $settings['with runtime LTE'] = $withRuntimeLTE = $data->getWithRuntimeLTE();
+        $settings['with status'] = $withStatus = $data->getWithStatus();
+        $settings['with type'] = $withType = $data->getWithType();
+        $settings['sort by'] = $sortBy = $data->getSortBy();
+
+        if ($user) {
+            $advancedSearchSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'advanced search']);
+            if (!$advancedSearchSettings) {
+                $advancedSearchSettings = new Settings($user, 'advanced search', $settings);
+            } else {
+                $advancedSearchSettings->setData($settings);
+            }
+            $this->settingsRepository->save($advancedSearchSettings, true);
+        }
 
         $searchString = "&include_adult=false&page=$page&language=$language&timezone=$timezone&watch_region=$watchRegion";
         if ($firstAirDateYear) $searchString .= "&first_air_date_year=$firstAirDateYear";

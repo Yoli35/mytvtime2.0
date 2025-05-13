@@ -182,7 +182,7 @@
                 <div class="wrapper">
 {#                    <div class="content">#}
                         {% for series in seriesList %}
-                            {{ include('_blocks/series/_card.html.twig', {target: '_blank'}) }}
+                            {{ include('_blocks/series/_card.html.twig', {target: '_blank', dataTitle: series.name}) }}
                         {% endfor %}
 {#                    </div>#}
                 </div>
