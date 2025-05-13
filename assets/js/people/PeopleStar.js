@@ -30,7 +30,7 @@ export class PeopleStar {
             const img = card.querySelector("img");
             const color = this.averageColor.getColor(img);
             const hsl = this.averageColor.rgbToHsl(color);
-            card.style.backgroundColor = "hsl(" + ((hsl.h + 180) % 360) + ", " + (this.theme === 'dark' ? "50%" : "25%") + ", " + (this.theme === 'dark' ? "25%" : "75%") + ")";
+            card.style.backgroundColor = "hsl(" + ((hsl.h + 180) % 360) + ", 18%, " + (this.theme === 'dark' ? "25%" : "75%") + ")";
         });
     }
 

@@ -153,7 +153,7 @@
                         line-height: 1.75rem;
 
                         span {
-                            color: var(--orange-50);
+                            color: var(--orange-70);
                         }
                     }
 
@@ -199,6 +199,22 @@
                                 font-weight: 100;
                                 gap: .5rem;
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .people-index {
+        main {
+            .people-star {
+                .person-card {
+                    .profile {
+                        img {
+                            filter: brightness(90%);
                         }
                     }
                 }
