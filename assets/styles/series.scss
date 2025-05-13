@@ -2649,7 +2649,14 @@ h2 {
                 padding-inline: .5rem;
                 position: absolute;
                 text-align: center;
-                top: .5rem;
+
+                &.season-finale {
+                    top: .5rem;
+                }
+
+                &.series-finale {
+                    top: 3.5rem;
+                }
 
                 &.watched {
                     background-color: var(--user-episode-actions);

@@ -538,6 +538,7 @@ export class Season {
         const quickEpisodeLink = document.querySelector('.quick-episode[data-number="' + episodeNumber + '"]');
         const substituteNameDiv = episode.closest('.episode').querySelector('.substitute');
         const episodeWatchLinks = episode.closest('.episode').querySelector('.watch-links');
+        const finaleDivs = episode.closest('.episode').querySelectorAll('.finale');
 
         fetch('/' + gThis.lang + '/series/episode/add/' + id, {
             method: 'POST',
@@ -616,6 +617,10 @@ export class Season {
                 substituteNameDiv?.classList.add('watched');
 
                 episodeWatchLinks?.classList.add('hidden');
+
+                finaleDivs.forEach(f => {
+                    f.classList.add('watched');
+                });
 
                 // Mise à jour du menu
                 let episodesOfTheDayInMenu = document.querySelectorAll('a[id^="eotd-menu-item-"]');
