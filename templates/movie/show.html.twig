@@ -53,7 +53,9 @@
                     {{ include('_blocks/forms/_delete-overview.html.twig') }}
                     {{ include('_blocks/forms/_localized-name.html.twig', {media: movie}) }}
                     {{ include('_blocks/forms/_overview.html.twig', {media: movie}) }}
-                    <div class="movie-overview">{{ movie.overview|nl2br }}</div>
+                    {% if movie.overview|length %}
+                        <div class="movie-overview">{{ movie.overview|nl2br }}</div>
+                    {% endif %}
                     {% if movie.localized_overviews|length %}
                         <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
                         <div class="localized overviews">
