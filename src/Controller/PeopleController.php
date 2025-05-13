@@ -392,12 +392,16 @@ class PeopleController extends AbstractController
         return $dbPeople;
     }
 
-    public function age(DateTimeImmutable $now, string $birthday, ?string $deathday): int
+    public function age(DateTimeImmutable $now, mixed $birthday, mixed $deathday): int
     {
-        $birthday = $this->dateService->newDate($birthday, "Europe/Paris", true);
+        if (is_string($birthday)) {
+            $birthday = $this->dateService->newDate($birthday, "Europe/Paris", true);
+        }
         $interval = $now->diff($birthday);
         if ($deathday) {
-            $deathday = $this->dateService->newDate($deathday, "Europe/Paris", true);
+            if (is_string($birthday)) {
+                $deathday = $this->dateService->newDate($deathday, "Europe/Paris", true);
+            }
             $interval = $deathday->diff($birthday);
         }
         return $interval->y;
