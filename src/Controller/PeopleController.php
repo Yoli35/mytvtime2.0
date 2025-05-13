@@ -125,6 +125,13 @@ class PeopleController extends AbstractController
                 '%newPeople%' => $newPeople,
             ]));
         }
+        // Tri par vote décroissant puis par date de naissance décroissante
+        usort($dbStarPeopleFinalArr, function ($a, $b) {
+            if ($a['rating'] == $b['rating']) {
+                return $a['birthday'] <=> $b['birthday'];
+            }
+            return $b['rating'] <=> $a['rating'];
+        });
 
 //        dump([
 //            'starPeople' => $dbStarPeopleArr,

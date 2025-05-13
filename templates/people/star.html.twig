@@ -26,7 +26,7 @@
                         </div>
                         <div class="infos">
                             <h4 class="name">
-                                {% if p.preferred_name %}
+                                {% if p.preferred_name is defined and p.preferred_name %}
                                     <span>{{ p.preferred_name }}</span>
                                 {% endif %}
                                 {{ p.name }}
