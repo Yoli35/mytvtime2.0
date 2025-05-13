@@ -213,7 +213,13 @@
                             <div class="series__country" data-title="{{ c|country_name }}">{{ getEmojiFlag(c) }}</div>
                         {% endfor %}
                     </div>
-                    <div class="series__first_air_date">{{ s.first_air_date|format_date('short') }}</div>
+                    <div class="series__first_air_date">
+                        {% if s.first_air_date %}
+                            {{ s.first_air_date|format_date('short') }}
+                        {% else %}
+                            --
+                        {% endif %}
+                    </div>
                     <div class="series__status">{{ s.status|trans }}</div>
                     <div class="series__provider"{% if s.provider_logo %} data-title="{{ s.provider_name }}"{% endif %}>
                         {% if s.provider_logo %}
