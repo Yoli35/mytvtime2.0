@@ -61,19 +61,19 @@
                                     </div>
                                 {% endif %}
                                 <div class="info">
-                                    {#                                    <div>{{ 'Birthday'|trans }}</div> #}
-                                    <div>{{ p.birthday|format_date('medium') }} ({{ p.age }} {{ 'old'|trans }})</div>
+                                    {{ ux_icon('icon-park-solid:birthday-cake', {height: '18px', width: '18px'}) }}
+                                    {{ p.birthday|format_date('medium') }} ({{ p.age }} {{ 'old'|trans }})
                                 </div>
+                                {% if p.place_of_birth %}
+                                    <div class="info">
+                                        {{ ux_icon('fa6-solid:earth-africa', {height: '18px', width: '18px'}) }}
+                                        {{ p.place_of_birth }}
+                                    </div>
+                                {% endif %}
                                 {% if p.deathday %}
                                     <div class="info">
                                         <div>{{ 'Deathday'|trans }}</div>
                                         <div>{{ p.deathday|format_date('medium') }}</div>
-                                    </div>
-                                {% endif %}
-                                {% if p.place_of_birth %}
-                                    <div class="info">
-                                        <div>{{ 'Place of birth'|trans }}</div>
-                                        <div>{{ p.place_of_birth }}</div>
                                     </div>
                                 {% endif %}
                                 {# {% if p.biography %}
