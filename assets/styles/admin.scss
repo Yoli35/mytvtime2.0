@@ -18,12 +18,15 @@
             gap: 1rem;
 
             a {
+                align-items: center;
                 background-color: var(--ardoise-80-alpha-50);
                 border-radius: .25rem;
                 color: var(--ardoise-10);
                 cursor: pointer;
+                display: flex;
                 font-size: 1rem;
                 font-weight: bold;
+                gap: 1rem;
                 padding: .5rem 1rem;
                 width: 100%;
 
@@ -35,6 +38,21 @@
                 &:hover {
                     background-color: var(--orange-50);
                     color: var(--ardoise-10);
+                }
+
+                div:has(svg) {
+                    align-items: center;
+                    background-color: var(--orange-40);
+                    border-radius: .25rem;
+                    display: flex;
+                    flex-shrink: 0;
+                    justify-content: center;
+                    height: 2rem;
+                    width: 2rem;
+
+                    svg {
+                        color: var(--ardoise-10);
+                    }
                 }
             }
         }
@@ -63,6 +81,10 @@
         .admin__email {
             font-size: .875rem;
             text-align: center;
+        }
+
+        .dim {
+            margin-block-start: auto;
         }
     }
 
@@ -985,6 +1007,44 @@
                     }
                 }
             }
+        }
+    }
+}
+
+@media (width < 1400px) {
+    .admin {
+        .large {
+            display: none;
+        }
+
+        aside {
+            padding: 1rem .5rem;
+            width: 3.5rem;
+
+            .admin__menu {
+                a {
+                    padding: .25rem;
+                }
+            }
+        }
+    }
+}
+
+@media (width < 1280px) {
+    .admin {
+        flex-direction: column;
+
+        aside {
+            flex-direction: row;
+            width: 100%;
+
+            .admin__menu {
+                flex-direction: row;
+            }
+        }
+
+        .dim{
+            margin-inline-start: auto;
         }
     }
 }
