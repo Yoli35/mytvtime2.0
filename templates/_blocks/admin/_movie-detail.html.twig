@@ -1,0 +1,45 @@
+<section class="admin__series__details">
+
+    <header>
+        <div class="poster">
+            {% if movie.poster_path %}
+                <img src="{{ posterUrl ~ movie.poster_path }}" alt="{{ 'Mmovie poster'|trans }}">
+            {% else %}
+                {{ 'No poster'|trans }}
+            {% endif %}
+        </div>
+        <div class="infos">
+            <h2>{{ movie.title }}{% if movie.release_date %} ({{ movie.release_date|date("Y") }}){% endif %}</h2>
+            <div class="infos__details">
+                <div class="infos__details__title">{{ 'Title'|trans }}</div>
+                <div class="infos__details__value">{{ movie.original_name }}</div>
+            </div>
+            <div class="infos__details">
+                <div class="infos__details__title">{{ 'Synopsis'|trans }}</div>
+                <div class="infos__details__value">{{ movie.overview }}</div>
+            </div>
+            <div class="infos__details">
+                <div class="infos__details__title">{{ 'Runtime'|trans }}</div>
+                <div class="infos__details__value">{{ movie.runtime }} {{ 'minutes'|trans }}</div>
+            </div>
+            <div class="infos__details">
+                <div class="infos__details__title">{{ 'Creator'|trans }}</div>
+                <div class="infos__details__value">
+                    {% for creator in movie.created_by %}
+                        {{ creator.name }}
+                        {% if loop.index < loop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="backdrop">
+            {% if movie.backdrop_path %}
+                <img src="{{ backdropUrl ~ movie.backdrop_path }}" alt="{{ 'Movie backdrop'|trans }}">
+            {% endif %}
+        </div>
+    </header>
+    <div class="admin__series__details__actions">
+        <button>{{ 'Add this movie'|trans }}</button>
+    </div>
+{#    {{ dump(series) }}#}
+</section>

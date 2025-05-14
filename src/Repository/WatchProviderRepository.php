@@ -62,4 +62,30 @@ class WatchProviderRepository extends ServiceEntityRepository
             ->executeQuery()
             ->fetchAllAssociative();
     }
+
+    public function adminProviders(string $locale, int $page, string $sort, string $order, int $perPage = 20):array
+    {
+        $offset = ($page - 1) * $perPage;
+        $sql = "SELECT *
+                FROM watch_provider wp
+                ORDER BY $sort $order
+                LIMIT $perPage OFFSET $offset";
+
+        return $this->registry->getManager()
+            ->getConnection()->prepare($sql)
+            ->executeQuery()
+            ->fetchAllAssociative();
+    }
+
+    public function adminProviderById(int $id)
+    {
+        $sql = "SELECT *
+                FROM watch_provider wp
+                WHERE wp.id=$id";
+
+        return $this->registry->getManager()
+            ->getConnection()->prepare($sql)
+            ->executeQuery()
+            ->fetchAssociative();
+    }
 }

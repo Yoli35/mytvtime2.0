@@ -1,0 +1,137 @@
+<section class="admin__series__tools">
+    <div class="admin__series__result">
+        {{ providerCount }} {{ 'providers'|trans }}
+    </div>
+</section>
+<section class="admin__series">
+    {{ pagination|raw }}
+    {#
+    id" => 1099
+   "display_priorities" => array:1 [▶]
+   "display_priority" => 1
+    "logo_path" => "/images/providers/rakuten-viki.png"
+    "provider_name" => "Viki"
+    "provider_id" => 1390
+   "custom_provider" => true #}
+
+    <div class="list__header">
+        <div class="series__provider"></div>
+        {% if sort == 'id' %}
+            {% if order == 'desc' %}
+                <a class="series__id" href="{{ path('admin_providers', {s: 'id', o: 'asc', l: limit}) }}">
+                    {{ 'Id'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                </a>
+            {% else %}
+                <a class="series__id" href="{{ path('admin_providers', {s: 'id', o: 'desc', l: limit}) }}">
+                    {{ 'Id'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                </a>
+            {% endif %}
+        {% else %}
+            <a class="series__id" href="{{ path('admin_providers', {s: 'id', o: 'desc', l: limit}) }}">
+                {{ 'Id'|trans }}
+            </a>
+        {% endif %}
+
+        {% if sort == 'provider_id' %}
+            {% if order == 'desc' %}
+                <a class="series__tmdb_id" href="{{ path('admin_providers', {s: 'provider_id', o: 'asc', l: limit}) }}">
+                    {{ 'TMDB Id'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                </a>
+            {% else %}
+                <a class="series__tmdb_id" href="{{ path('admin_providers', {s: 'provider_id', o: 'desc', l: limit}) }}">
+                    {{ 'TMDB Id'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                </a>
+            {% endif %}
+        {% else %}
+            <a class="series__tmdb_id" href="{{ path('admin_providers', {s: 'provider_id', o: 'desc', l: limit}) }}">
+                {{ 'TMDB Id'|trans }}
+            </a>
+        {% endif %}
+
+        {% if sort == 'provider_name' %}
+            {% if order == 'desc' %}
+                <a class="series__localized_name" href="{{ path('admin_providers', {s: 'provider_name', o: 'asc', l: limit}) }}">
+                    {{ 'Name'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                </a>
+            {% else %}
+                <a class="series__localized_name" href="{{ path('admin_providers', {s: 'provider_name', o: 'desc', l: limit}) }}">
+                    {{ 'Name'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                </a>
+            {% endif %}
+        {% else %}
+            <a class="series__localized_name" href="{{ path('admin_providers', {s: 'provider_name', o: 'desc', l: limit}) }}">
+                {{ 'Name'|trans }}
+            </a>
+        {% endif %}
+
+        {% if sort == 'display_priorities' %}
+            {% if order == 'desc' %}
+                <a class="series__display_priorities" href="{{ path('admin_providers', {s: 'display_priorities', o: 'asc', l: limit}) }}">
+                    {{ 'Display priorities'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                </a>
+            {% else %}
+                <a class="series__display_priorities" href="{{ path('admin_providers', {s: 'display_priorities', o: 'desc', l: limit}) }}">
+                    {{ 'Display priorities'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                </a>
+            {% endif %}
+        {% else %}
+            <a class="series__display_priorities" href="{{ path('admin_providers', {s: 'display_priorities', o: 'desc', l: limit}) }}">
+                {{ 'Display priorities'|trans }}
+            </a>
+        {% endif %}
+
+        {% if sort == 'display_priority' %}
+            {% if order == 'desc' %}
+                <a class="series__display_priority" href="{{ path('admin_providers', {s: 'display_priority', o: 'asc', l: limit}) }}">
+                    {{ 'Display priority'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                </a>
+            {% else %}
+                <a class="series__display_priority" href="{{ path('admin_providers', {s: 'display_priority', o: 'desc', l: limit}) }}">
+                    {{ 'Display priority'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                </a>
+            {% endif %}
+        {% else %}
+            <a class="series__display_priority" href="{{ path('admin_providers', {s: 'display_priority', o: 'desc', l: limit}) }}">
+                {{ 'Display priority' |trans }}
+            </a>
+        {% endif %}
+
+    </div>
+        <div class="list__content">
+            {% for p in providers %}
+                <div class="list__item{% if p.custom_provider %} custom{% endif %}">
+                    <a class="item" href="{{ path('admin_provider_edit', {id: p.id}) }}?p={{ page }}&s={{ sort }}&o={{ order }}&l={{ limit }}">
+                        {% if p.logo_path %}
+                            <div data-title="{{ p.provider_name }} - {{ 'See the provider description'|trans }}">
+                                <img src="{{ p.logo_path }}" class="series__provider" alt="{{ p.provider_name }}">
+                            </div>
+                        {% else %}
+                            <div class="series__poster" data-title="{{ p.provider_name }} - {{ 'See the provider description'|trans }}">
+                                {{ ux_icon('healthicons:provider-fst-outline', {height: '18px', width: '18px'}) }}
+                            </div>
+                        {% endif %}
+                        <div class="series__id">{{ p.id }}</div>
+                        <div class="series__tmdb_id">{{ p.provider_id }}</div>
+                        <div class="series__name">{{ p.provider_name }}</div>
+                        <div class="series__display_priorities">
+                            {% for c, pr in p.display_priorities %}
+                                <div class="series__country" data-title="{{ c|country_name ~ ' - ' ~ pr }}">{{ getEmojiFlag(c) }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="series__display_priority">{{ p.display_priority }}</div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {{ pagination|raw }}
+</section>

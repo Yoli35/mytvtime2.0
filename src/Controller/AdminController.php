@@ -4,9 +4,9 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\MovieRepository;
-use App\Repository\ProviderRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\UserRepository;
+use App\Repository\WatchProviderRepository;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,14 +23,14 @@ class AdminController extends AbstractController
 {
 
     public function __construct(
-        private readonly ImageConfiguration  $imageConfiguration,
-        private readonly MovieRepository     $movieRepository,
-        private readonly ProviderRepository  $providerRepository,
-        private readonly SeriesController    $seriesController,
-        private readonly SeriesRepository    $seriesRepository,
-        private readonly UserRepository      $userRepository,
-        private readonly TMDBService         $tmdbService,
-        private readonly TranslatorInterface $translator
+        private readonly ImageConfiguration      $imageConfiguration,
+        private readonly MovieRepository         $movieRepository,
+        private readonly SeriesController        $seriesController,
+        private readonly SeriesRepository        $seriesRepository,
+        private readonly UserRepository          $userRepository,
+        private readonly TMDBService             $tmdbService,
+        private readonly TranslatorInterface     $translator,
+        private readonly WatchProviderRepository $watchProviderRepository
     )
     {
     }
@@ -143,7 +143,7 @@ class AdminController extends AbstractController
             return $swl;
         }, $this->seriesRepository->seriesWatchLinks($id));
 
-        $seriesLink = $this->generateSeriesLink($this->generateUrl('admin_series'), [
+        $seriesLink = $this->generateAdminUrl($this->generateUrl('admin_series'), [
             'l' => $limit,
             'o' => $order,
             'p' => $page,
@@ -232,20 +232,161 @@ class AdminController extends AbstractController
     }
 
     #[Route('/movies', name: 'movies')]
-    public function adminMovies(): Response
+    public function adminMovies(Request $request): Response
     {
-        $movies = $this->movieRepository->findAll();
+        $sort = $request->query->get('s', 'id');
+        $order = $request->query->get('o', 'desc');
+        $page = $request->query->getInt('p', 1);
+        $limit = $request->query->getInt('l', 25);
+
+        $movies = $this->movieRepository->adminMovies($request->getLocale(), $page, $sort, $order, $limit);
+        $movieCount = $this->movieRepository->count();
+        $pageCount = ceil($movieCount / $limit);
+
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+        $movies = array_map(function ($m) use ($logoUrl) {
+            $m['origin_country'] = json_decode($m['origin_country'], true);
+            $p = $m['provider'] ? explode('|', $m['provider']) : [null, null];
+
+            $m['provider_logo'] = $this->seriesController->getProviderLogoFullPath($p[1], $logoUrl);
+            $m['provider_name'] = $p[0];
+            return $m;
+        }, $movies);
+
+        $pagination = $this->generateLinks($this->movieRepository->count(), $page, $this->generateUrl('admin_movies'), [
+            's' => $sort,
+            'o' => $order,
+            'l' => $limit,
+        ]);
+
         return $this->render('admin/index.html.twig', [
             'movies' => $movies,
+            'movieCount' => $movieCount,
+            'pagination' => $pagination,
+            'page' => $page,
+            'limit' => $limit,
+            'pageCount' => $pageCount,
+            'sort' => $sort,
+            'order' => $order,
+        ]);
+    }
+
+    #[Route('/movie/{id}', name: 'movie_edit')]
+    public function adminMovieEdit(Request $request, int $id): Response
+    {
+        $sort = $request->query->get('s', 'id');
+        $order = $request->query->get('o', 'desc');
+        $page = $request->query->getInt('p', 1);
+        $limit = $request->query->getInt('l', 20);
+
+        $movie = $this->movieRepository->adminMovieById($id);
+        if (!$movie) {
+            throw $this->createNotFoundException('Series not found');
+        }
+
+        $tmdbMovie = json_decode(
+            $this->tmdbService->getMovie(
+                $movie['tmdb_id'],
+                $request->getLocale()
+            /*, ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords", "similar", "translations"]*/),
+            true);
+
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+        $movie['origin_country'] = json_decode($movie['origin_country'], true);
+
+        $movieAdditionalOverviews = $this->movieRepository->movieAdditionalOverviews($id);
+        $movieImages = $this->movieRepository->movieImagesById($id);
+        $movieLocalizedNames = $this->movieRepository->movieLocalizedNames($id);
+        $movieLocalizedOverviews = $this->movieRepository->movieLocalizedOverviews($id);
+        $movieDirectLinks = array_map(function ($swl) use ($logoUrl) {
+            $swl['provider_logo'] = $this->seriesController->getProviderLogoFullPath($swl['provider_logo'], $logoUrl);
+            return $swl;
+        }, $this->movieRepository->movieDirectLinks($id));
+
+        $movieLink = $this->generateAdminUrl($this->generateUrl('admin_movies'), [
+            'l' => $limit,
+            'o' => $order,
+            'p' => $page,
+            's' => $sort,
+        ]);
+
+        return $this->render('admin/index.html.twig', [
+            'movieLink' => $movieLink,
+            'movie' => $movie,
+            'tmdbMovie' => $tmdbMovie,
+            'movieAdditionalOverviews' => $movieAdditionalOverviews,
+            'movieImages' => $movieImages,
+            'movieLocalizedNames' => $movieLocalizedNames,
+            'movieLocalizedOverviews' => $movieLocalizedOverviews,
+            'movieDirectLinks' => $movieDirectLinks,
         ]);
     }
 
     #[Route('/providers', name: 'providers')]
-    public function adminProviders(): Response
+    public function adminProviders(Request $request): Response
     {
-        $providers = $this->providerRepository->findAll();
+        $sort = $request->query->get('s', 'id');
+        $order = $request->query->get('o', 'desc');
+        $page = $request->query->getInt('p', 1);
+        $limit = $request->query->getInt('l', 25);
+
+        $providers = $this->watchProviderRepository->adminProviders($request->getLocale(), $page, $sort, $order, $limit);
+        $providerCount = $this->watchProviderRepository->count();
+        $pageCount = ceil($providerCount / $limit);
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+        $providers = array_map(function ($p) use ($logoUrl) {
+            $p['custom_provider'] = str_starts_with($p['logo_path'], '+');
+            $p['logo_path'] = $this->seriesController->getProviderLogoFullPath($p['logo_path'], $logoUrl);
+            $p['display_priorities'] = json_decode($p['display_priorities'], true);
+            return $p;
+        }, $providers);
+        $pagination = $this->generateLinks($pageCount, $page, $this->generateUrl('admin_providers'), [
+            's' => $sort,
+            'o' => $order,
+            'l' => $limit,
+        ]);
+
         return $this->render('admin/index.html.twig', [
             'providers' => $providers,
+            'providerCount' => $providerCount,
+            'pagination' => $pagination,
+            'page' => $page,
+            'limit' => $limit,
+            'pageCount' => $pageCount,
+            'sort' => $sort,
+            'order' => $order,
+        ]);
+    }
+
+    #[Route('/provider/{id}', name: 'provider_edit')]
+    public function adminProviderEdit(Request $request, int $id): Response
+    {
+        $sort = $request->query->get('s', 'id');
+        $order = $request->query->get('o', 'desc');
+        $page = $request->query->getInt('p', 1);
+        $limit = $request->query->getInt('l', 20);
+
+        $provider = $this->watchProviderRepository->adminProviderById($id);
+        if (!$provider) {
+            throw $this->createNotFoundException('Provider not found');
+        }
+
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+        $provider['custom_provider'] = str_starts_with($provider['logo_path'], '+');
+        $provider['logo_path'] = $this->seriesController->getProviderLogoFullPath($provider['logo_path'], $logoUrl);
+        $provider['display_priorities'] = json_decode($provider['display_priorities'], true);
+
+        $providersLink = $this->generateAdminUrl($this->generateUrl('admin_providers'), [
+            'l' => $limit,
+            'o' => $order,
+            'p' => $page,
+            's' => $sort,
+        ]);
+
+        return $this->render('admin/index.html.twig', [
+            'providersLink' => $providersLink,
+            'provider' => $provider,
+            'logoUrl' => $logoUrl,
         ]);
     }
 
@@ -310,7 +451,7 @@ class AdminController extends AbstractController
         return sprintf('<a href="%s" class="page%s">%s</a>', $url, $activeClass, $label);
     }
 
-    private function generateSeriesLink(string $route, array $queryParams): string
+    private function generateAdminUrl(string $route, array $queryParams): string
     {
         return $route . '?' . http_build_query($queryParams);
     }

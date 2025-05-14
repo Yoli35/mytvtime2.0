@@ -190,7 +190,7 @@
     <div class="list__content">
         {% for s in series %}
             <div class="list__item">
-                <a href="{{ path('app_series_tmdb', {id: s.tmdb_id, slug: (s.localized_name ?? s.name)|slug}) }}" target="_blank">
+                <a href="{{ path('app_series_tmdb', {id: s.tmdb_id, slug: (s.localized_name ?? s.name)|slug}) }}" class="poster" target="_blank">
                     {% if s.poster_path %}
                         <div data-title="{{ s.localized_name ?? s.name }} - {{ 'See the series description'|trans }}">
                             <img src="/series/posters{{ s.poster_path }}" class="series__poster" alt="{{ s.name }}">

@@ -110,7 +110,7 @@ class MovieRepository extends ServiceEntityRepository
                     WHERE um.user_id = $userId";
         }
 
-        return $this->getOne($sql);
+        return $this->getOneAsInt($sql);
     }
 
     public function moviesOfTheDayForTwig(User $user, string $day, string $locale = 'fr'): array
@@ -170,12 +170,105 @@ class MovieRepository extends ServiceEntityRepository
         }
     }
 
-    public function getOne($sql): mixed
+    public function getOneAsInt($sql): mixed
     {
         try {
             return $this->em->getConnection()->fetchOne($sql);
         } catch (Exception) {
             return [];
         }
+    }
+
+    public function getOne($sql): mixed
+    {
+        try {
+            return $this->em->getConnection()->fetchAssociative($sql);
+        } catch (Exception) {
+            return [];
+        }
+    }
+
+    public function adminMovies(string $locale, int $page, string $sort, string $order, int $perPage = 20): array
+    {
+        $offset = ($page - 1) * $perPage;
+        $sql = "SELECT
+                    m.id,
+                    m.origin_country,
+                    m.poster_path,
+                    m.release_date,
+                    m.runtime,
+                    m.status,
+                    m.title,
+                    m.tmdb_id,
+                    mln.name as localized_name,
+                    (SELECT CONCAT(wp.`provider_name`, '|', wp.`logo_path`)
+                     FROM movie_direct_link mdl
+                              LEFT JOIN watch_provider wp ON mdl.provider_id = wp.provider_id
+                     WHERE mdl.movie_id = m.id
+                     LIMIT 1) as provider
+        FROM movie m
+                LEFT JOIN movie_localized_name mln ON m.id = mln.movie_id AND mln.locale = '$locale'
+                ORDER BY $sort $order
+                LIMIT $perPage OFFSET $offset";
+
+        return $this->getAll($sql);
+    }
+
+    public function adminMovieById(int $id): array
+    {
+        $sql = "SELECT *
+                FROM movie m
+                WHERE m.id=$id";
+
+        return $this->getOne($sql);
+    }
+
+    public function movieAdditionalOverviews(int $id): array
+    {
+        $sql = "SELECT *
+                FROM movie_additional_overview mao
+                WHERE mao.movie_id=$id";
+
+        return $this->getAll($sql);
+    }
+
+    public function movieImagesById(int $id): array
+    {
+        $sql = "SELECT *
+                FROM movie_image mi
+                WHERE mi.movie_id=$id";
+
+        return $this->getAll($sql);
+    }
+
+    public function movieLocalizedNames(int $id): array
+    {
+        $sql = "SELECT *
+                FROM movie_localized_name mln
+                WHERE mln.movie_id=$id";
+
+        return $this->getAll($sql);
+    }
+
+    // 'series_localized_overview'
+    public function movieLocalizedOverviews(int $id): array
+    {
+        $sql = "SELECT *
+                FROM movie_localized_overview mlo
+                WHERE mlo.movie_id=$id";
+
+        return $this->getAll($sql);
+    }
+
+    public function movieDirectLinks(int $id): array
+    {
+        $sql = "SELECT mdl.*,
+                       wp.provider_name as provider_name,
+                       wp.logo_path as provider_logo
+                FROM movie_direct_link mdl
+                LEFT JOIN watch_provider wp ON mdl.provider_id = wp.provider_id
+                WHERE mdl.movie_id=$id";
+
+        return $this->getAll($sql);
     }
 }

@@ -293,10 +293,11 @@
         .list__header {
             display: flex;
             gap: 1rem;
+            margin-inline: auto;
             padding-inline: 1rem;
             white-space: nowrap;
 
-            .series__poster {
+            .series__poster, .series__provider {
                 width: 2rem;
             }
 
@@ -314,7 +315,7 @@
                 width: 10rem;
             }
 
-            .series__seasons, .series__episodes {
+            .series__seasons, .series__episodes, .series__runtime {
                 display: flex;
                 gap: .25rem;
                 text-align: right;
@@ -322,6 +323,19 @@
             }
 
             .series__country {
+                width: 5rem;
+            }
+
+            .series__display_priorities {
+                display: flex;
+                gap: .25rem;
+                width: 15rem;
+            }
+
+            .series__display_priority {
+                display: flex;
+                gap: .25rem;
+                text-align: right;
                 width: 5rem;
             }
 
@@ -349,11 +363,18 @@
             display: flex;
             flex-direction: column;
             gap: .25rem;
+            margin-inline: auto;
 
             .list__item {
                 border: 2px solid transparent;
                 display: flex;
                 gap: 1rem;
+
+                &.custom {
+                    background-color: var(--green-50);
+                    border-radius: .375rem;
+                    color: var(--ardoise-10);
+                }
 
                 &:hover {
                     > a:first-child {
@@ -367,7 +388,7 @@
                     }
                 }
 
-                > a:first-child {
+                > a.poster {
                     display: flex;
                     flex-shrink: 0;
                     width: 2.25rem;
@@ -407,7 +428,7 @@
                         width: 10rem;
                     }
 
-                    .series__seasons, .series__episodes {
+                    .series__seasons, .series__episodes, .series__runtime {
                         text-align: right;
                         width: 5rem;
                     }
@@ -439,6 +460,20 @@
                                 width: 100%;
                             }
                         }
+                    }
+
+                    .series__display_priorities {
+                        display: flex;
+                        gap: .25rem;
+                        overflow-x: auto;
+                        width: 15rem;
+                    }
+
+                    .series__display_priority {
+                        display: flex;
+                        gap: .25rem;
+                        text-align: right;
+                        width: 5rem;
                     }
 
                     .series__first_air_date {

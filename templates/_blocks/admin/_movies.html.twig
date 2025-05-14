@@ -1,0 +1,215 @@
+<section class="admin__series__tools">
+    <div class="admin__series__result">
+        {{ movieCount }} {{ 'movies'|trans }}
+    </div>
+</section>
+<section class="admin__series">
+    {{ pagination|raw }}
+    <div class="list__header">
+        <div class="series__poster"></div>
+        {% if sort == 'id' %}
+            {% if order == 'desc' %}
+                <a class="series__id" href="{{ path('admin_movies', {s: 'id', o: 'asc', l: limit}) }}">
+                    {{ 'Id'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                </a>
+            {% else %}
+                <a class="series__id" href="{{ path('admin_movies', {s: 'id', o: 'desc', l: limit}) }}">
+                    {{ 'Id'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                </a>
+            {% endif %}
+        {% else %}
+            <a class="series__id" href="{{ path('admin_movies', {s: 'id', o: 'desc', l: limit}) }}">
+                {{ 'Id'|trans }}
+            </a>
+        {% endif %}
+
+        {% if sort == 'tmdb_id' %}
+            {% if order == 'desc' %}
+                <a class="series__tmdb_id" href="{{ path('admin_movies', {s: 'tmdb_id', o: 'asc', l: limit}) }}">
+                    {{ 'TMDB Id'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                </a>
+            {% else %}
+                <a class="series__tmdb_id" href="{{ path('admin_movies', {s: 'tmdb_id', o: 'desc', l: limit}) }}">
+                    {{ 'TMDB Id'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                </a>
+            {% endif %}
+        {% else %}
+            <a class="series__tmdb_id" href="{{ path('admin_movies', {s: 'tmdb_id', o: 'desc', l: limit}) }}">
+                {{ 'TMDB Id'|trans }}
+            </a>
+        {% endif %}
+
+        {% if sort == 'title' %}
+            {% if order == 'desc' %}
+                <a class="series__name" href="{{ path('admin_movies', {s: 'title', o: 'asc', l: limit}) }}">
+                    {{ 'Title'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                </a>
+            {% else %}
+                <a class="series__name" href="{{ path('admin_movies', {s: 'title', o: 'desc', l: limit}) }}">
+                    {{ 'Title'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                </a>
+            {% endif %}
+        {% else %}
+            <a class="series__name" href="{{ path('admin_movies', {s: 'title', o: 'desc', l: limit}) }}">
+                {{ 'Title'|trans }}
+            </a>
+        {% endif %}
+
+        {% if sort == 'localized_name' %}
+            {% if order == 'desc' %}
+                <a class="series__localized_name" href="{{ path('admin_movies', {s: 'localized_name', o: 'asc', l: limit}) }}">
+                    {{ 'Localized name'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                </a>
+            {% else %}
+                <a class="series__localized_name" href="{{ path('admin_movies', {s: 'localized_name', o: 'desc', l: limit}) }}">
+                    {{ 'Localized name'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                </a>
+            {% endif %}
+        {% else %}
+            <a class="series__localized_name" href="{{ path('admin_movies', {s: 'localized_name', o: 'desc', l: limit}) }}">
+                {{ 'Localized name'|trans }}
+            </a>
+        {% endif %}
+
+        {% if sort == 'origin_country' %}
+            {% if order == 'desc' %}
+                <a class="series__country" href="{{ path('admin_movies', {s: 'origin_country', o: 'asc', l: limit}) }}">
+                    {{ 'Country'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                </a>
+            {% else %}
+                <a class="series__country" href="{{ path('admin_movies', {s: 'origin_country', o: 'desc', l: limit}) }}">
+                    {{ 'Country'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                </a>
+            {% endif %}
+        {% else %}
+            <a class="series__country" href="{{ path('admin_movies', {s: 'origin_country', o: 'desc', l: limit}) }}">
+                {{ 'Country'|trans }}
+            </a>
+        {% endif %}
+
+        {% if sort == 'release_date' %}
+            {% if order == 'desc' %}
+                <a class="series__first_air_date" href="{{ path('admin_movies', {s: 'release_date', o: 'asc', l: limit}) }}">
+                    {{ 'Release'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                </a>
+            {% else %}
+                <a class="series__first_air_date" href="{{ path('admin_movies', {s: 'release_date', o: 'desc', l: limit}) }}">
+                    {{ 'Release'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                </a>
+            {% endif %}
+        {% else %}
+            <a class="series__first_air_date" href="{{ path('admin_movies', {s: 'release_date', o: 'desc', l: limit}) }}">
+                {{ 'Release'|trans }}
+            </a>
+        {% endif %}
+
+        {% if sort == 'status' %}
+            {% if order == 'desc' %}
+                <a class="series__status" href="{{ path('admin_movies', {s: 'status', o: 'asc', l: limit}) }}">
+                    {{ 'Status'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                </a>
+            {% else %}
+                <a class="series__status" href="{{ path('admin_movies', {s: 'status', o: 'desc', l: limit}) }}">
+                    {{ 'Status'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                </a>
+            {% endif %}
+        {% else %}
+            <a class="series__status" href="{{ path('admin_movies', {s: 'status', o: 'desc', l: limit}) }}">
+                {{ 'Status'|trans }}
+            </a>
+        {% endif %}
+
+        {% if sort == 'runtime' %}
+            {% if order == 'desc' %}
+                <a class="series__runtime" href="{{ path('admin_movies', {s: 'runtime', o: 'asc', l: limit}) }}">
+                    {{ 'Runtime'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                </a>
+            {% else %}
+                <a class="series__runtime" href="{{ path('admin_movies', {s: 'runtime', o: 'desc', l: limit}) }}">
+                    {{ 'Runtime'|trans }}
+                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                </a>
+            {% endif %}
+        {% else %}
+            <a class="series__runtime" href="{{ path('admin_movies', {s: 'runtime', o: 'desc', l: limit}) }}">
+                {{ 'Runtime' |trans}}
+            </a>
+        {% endif %}
+
+        {% if sort == 'provider' %}
+            {% if order == 'desc' %}
+                <a class="series__provider" href="{{ path('admin_movies', {s: 'provider', o: 'asc', l: limit}) }}">
+                    {{ ux_icon('fa6-solid:tv', {height: '18px', width: '18px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                </a>
+            {% else %}
+                <a class="series__provider" href="{{ path('admin_movies', {s: 'provider', o: 'desc', l: limit}) }}">
+                    {{ ux_icon('fa6-solid:tv', {height: '18px', width: '18px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                </a>
+            {% endif %}
+        {% else %}
+            <a class="series__provider" href="{{ path('admin_movies', {s: 'provider', o: 'desc', l: limit}) }}">
+                {{ ux_icon('fa6-solid:tv', {height: '18px', width: '18px'}) }}
+            </a>
+        {% endif %}
+    </div>
+    <div class="list__content">
+        {% for m in movies %}
+            <div class="list__item">
+                <a href="{{ path('app_movie_tmdb', {id: m.tmdb_id}) }}" class="poster" target="_blank">
+                    {% if m.poster_path %}
+                        <div data-title="{{ m.localized_name ?? m.title }} - {{ 'See the movie description'|trans }}">
+                            <img src="/movies/posters{{ m.poster_path }}" class="series__poster" alt="{{ m.title }}">
+                        </div>
+                    {% else %}
+                        <div class="series__poster" data-title="{{ m.localized_name ?? m.title }} - {{ 'See the movie description'|trans }}">
+                            {{ ux_icon('fa6-solid:film', {height: '18px', width: '18px'}) }}
+                        </div>
+                    {% endif %}
+                </a>
+                <a class="item" href="{{ path('admin_movie_edit', {id: m.id}) }}?p={{ page }}&s={{ sort }}&o={{ order }}&l={{ limit }}">
+                    <div class="series__id">{{ m.id }}</div>
+                    <div class="series__tmdb_id">{{ m.tmdb_id }}</div>
+                    <div class="series__name">{{ m.title }}</div>
+                    <div class="series__localized_name">{{ m.localized_name }}</div>
+                    <div class="series__countries">
+                        {% for c in m.origin_country %}
+                            <div class="series__country" data-title="{{ c|country_name }}">{{ getEmojiFlag(c) }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="series__first_air_date">
+                        {% if m.release_date %}
+                            {{ m.release_date|format_date('short') }}
+                        {% else %}
+                            --
+                        {% endif %}
+                    </div>
+                    <div class="series__status">{{ m.status|trans }}</div>
+                    <div class="series__runtime">{{ m.runtime }}</div>
+                    <div class="series__provider"{% if m.provider_logo %} data-title="{{ m.provider_name }}"{% endif %}>
+                        {% if m.provider_logo %}
+                            <img src="{{ m.provider_logo }}" alt="{{ m.provider_name }}">
+                        {% endif %}
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+    {{ pagination|raw }}
+</section>
