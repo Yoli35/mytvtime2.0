@@ -11,7 +11,10 @@
     <div class="container-fluid">
         <div class="admin">
             <aside>
-                <h2 class="large">{{ 'Admin'|trans }}</h2>
+                <div class="admin__menu_header">
+                    <div>{{ ux_icon('eos-icons:admin-outlined', {height: "18px", width: "18px"}) }}</div>
+                    <span class="large">{{ 'Admin'|trans }}</span>
+                </div>
                 <div class="admin__menu">
                     <a href="{{ path('admin_users') }}"{% if route starts with 'admin_index' or route == 'admin_users' %} class="active"{% endif %}>
                         <div>{{ ux_icon('fa6-regular:user', {height: "18px", width: "18px"}) }}</div>
@@ -34,8 +37,8 @@
                             </div>
                         </a>
                     {% endif %}
-                    {% if moviesLink is defined %}
-                        <a href="{{ moviesLink|raw }}"{% if route starts with 'admin_movie' %} class="active"{% endif %}>
+                    {% if movieLink is defined %}
+                        <a href="{{ movieLink|raw }}"{% if route starts with 'admin_movie' %} class="active"{% endif %}>
                             <div>{{ ux_icon('fa6-solid:film', {height: "18px", width: "18px"}) }}</div>
                             <div class="large">
                                 {{ 'Movies'|trans }}
