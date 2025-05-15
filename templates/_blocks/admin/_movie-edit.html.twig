@@ -20,7 +20,13 @@
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                {{ value }}
+                                {% if value is iterable %}
+                                    {% for key, item in value %}
+                                        <div>{{ key }} => {{ item }}</div>{% if loop.last == false %}<br>{% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    {{ value }}
+                                {% endif %}
                             {% endif %}
                         </div>
                     </div>
@@ -123,7 +129,7 @@
             <div class="admin__field_name">{{ 'Name'|trans }}</div>
         </div>
         {% for localizedName in movieLocalizedNames %}
-            <div class="admin__row">
+            <div class="admin__row align-center">
                 <div class="admin__lang">
                     {{ localizedName.locale|upper }}
                 </div>
@@ -142,7 +148,7 @@
             <div class="admin__field_name">{{ 'Overview'|trans }}</div>
         </div>
         {% for localizedOverview in movieLocalizedOverviews %}
-            <div class="admin__row">
+            <div class="admin__row align-center">
                 <div class="admin__lang">
                     <div>{{ localizedOverview.locale|upper }}</div>
                 </div>
@@ -161,7 +167,7 @@
             <div class="admin__field_name">{{ 'Overview'|trans }}</div>
         </div>
         {% for additionalOverview in movieAdditionalOverviews %}
-            <div class="admin__row">
+            <div class="admin__row align-center">
                 <div class="admin__lang">
                     <div>{{ additionalOverview.locale|upper }}</div>
                 </div>
@@ -172,5 +178,147 @@
                 </div>
             </div>
         {% endfor %}
+    </div>
+
+    <div class="admin__append_to_response">
+        <h3>{{ 'Additional information'|trans }}</h3>
+        <form class="admin__append_to_response__form">
+            <label for="append_to_response">{{ 'Choose an option'|trans }}
+                <select id="append_to_response" name="append_to_response">
+                    {% for label, type in appendToResponse %}
+                        <option value="{{ type.value }}{% if type.value==movie.append_to_response %} selected{% endif %}">{{ label|trans }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label for="language">{{ 'Language'|trans }}
+                <select id="language" name="language">
+                    <option value="null"></option>
+                    <hr>
+                    <option value="fr"{% if app.locale=='fr' %} selected{% endif %}>{{ 'french'|trans|capitalize }}</option>
+                    <option value="en"{% if app.locale=='en' %} selected{% endif %}>{{ 'english'|trans|capitalize }}</option>
+                    <option value="ko"{% if app.locale=='ko' %} selected{% endif %}>{{ 'korean'|trans|capitalize }}</option>
+                    <hr>
+                    {% for code, name in languages %}
+                        <option value="{{ code }}">{{ name|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label for="page">{{ 'Page'|trans }}
+                <select id="page" name="page">
+                    {% for page in [1] %}
+                        <option value="{{ page }}">{{ page }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label for="include_image_language">{{ 'Include image language'|trans }}
+                <select id="include_image_language" name="include_image_language">
+                    <option value="null"></option>
+                    <hr>
+                    <option value="fr"{% if app.locale=='fr' %} selected{% endif %}>{{ 'french'|trans|capitalize }}</option>
+                    <option value="en"{% if app.locale=='en' %} selected{% endif %}>{{ 'english'|trans|capitalize }}</option>
+                    <option value="ko"{% if app.locale=='ko' %} selected{% endif %}>{{ 'korean'|trans|capitalize }}</option>
+                    <hr>
+                    {% for code, name in languages %}
+                        <option value="{{ code }}">{{ name|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button type="submit" class="admin__append_to_response__get">
+                {{ 'Get'|trans }}
+            </button>
+        </form>
+        <div class="admin__append_to_response__results"></div>
+        <script>
+            const atrForm = document.querySelector('.admin__append_to_response__form');
+            const appendToResponseArray = {{ appendToResponse|json_encode|raw }};
+            const atrSelect = document.querySelector('#append_to_response');
+            const atrResultsDiv = document.querySelector('.admin__append_to_response__results');
+            atrSelect.addEventListener('change', async function (e) {
+                const newValue = e.target.value;
+                let language = null, page = null, include_image_language = null;
+                switch (newValue) {
+                    case 'changes':
+                        page = appendToResponseArray['Changes']['extra_fields']['page'];
+                        break;
+                    case 'credits':
+                        language = appendToResponseArray['Credits']['extra_fields']['language'];
+                        break;
+                    case 'images':
+                        language = appendToResponseArray['Images']['extra_fields']['language'];
+                        include_image_language = appendToResponseArray['Images']['extra_fields']['include_image_language'];
+                        break;
+                    case 'lists':
+                        language = appendToResponseArray['Lists']['extra_fields']['language'];
+                        page = appendToResponseArray['Lists']['extra_fields']['page'];
+                        break;
+                    case 'reviews':
+                        language = appendToResponseArray['Reviews']['extra_fields']['language'];
+                        page = appendToResponseArray['Reviews']['extra_fields']['page'];
+                        break;
+                    case 'videos':
+                        language = appendToResponseArray['Videos']['extra_fields']['language'];
+                        break;
+                }
+                const languageSelect = document.querySelector('#language');
+                const languageLabel = document.querySelector('label[for="language"]');
+                const pageSelect = document.querySelector('#page');
+                const pageLabel = document.querySelector('label[for="page"]');
+                const includeImageLanguageSelect = document.querySelector('#include_image_language');
+                const includeImageLanguageLabel = document.querySelector('label[for="include_image_language"]');
+                if (language) {
+                    languageSelect.value = language;
+                    languageLabel.style.display = 'flex';
+                } else {
+                    languageSelect.value = 'null';
+                    languageLabel.style.display = 'none';
+                }
+                if (page) {
+                    pageSelect.value = page;
+                    pageLabel.style.display = 'flex';
+                } else {
+                    pageSelect.value = 'null';
+                    pageLabel.style.display = 'none';
+                }
+                if (include_image_language) {
+                    includeImageLanguageSelect.value = include_image_language;
+                    includeImageLanguageLabel.style.display = 'flex';
+                } else {
+                    includeImageLanguageSelect.value = 'null';
+                    includeImageLanguageLabel.style.display = 'none';
+                }
+                atrResultsDiv.innerHTML = '';
+            });
+            atrForm.addEventListener('submit', (event) => {
+                const atrSelect = document.querySelector('#append_to_response');
+                const atrValue = atrSelect.value;
+                const atrUrl = '{{ path('admin_movie_append') }}';
+                const atrData = new FormData(atrForm);
+                atrData.append('append_to_response', atrValue);
+                atrData.append('id', '{{ movie.tmdb_id }}');
+                atrData.append('route', '{{ route }}');
+                atrData.append('csrf_token', '{{ csrf_token('admin_movie_edit') }}');
+                event.preventDefault();
+                fetch(atrUrl, {
+                    method: 'POST',
+                    body: atrData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        const resultsDiv = document.querySelector('.admin__append_to_response__results');
+                        resultsDiv.innerHTML = data;
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    });
+            })
+        </script>
     </div>
 </div>

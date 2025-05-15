@@ -625,6 +625,27 @@ class TMDBService
         }
     }
 
+    public function getMovieExtras(int $movieID, string $extra, ?int $page, ?string $include_image_language, ?string $language): ?string
+    {
+        $request = "https://api.themoviedb.org/3/movie/$movieID/$extra?api_key=$this->api_key";
+        if ($page) $request .= "&page=$page";
+        if ($include_image_language) $request .= "&include_image_language=$include_image_language";
+        if ($language) $request .= "&language=$language";
+        try {
+            $response = $this->client->request(
+                'GET',
+                $request,
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable) {
+                return "";
+            }
+        } catch (Throwable) {
+            return "";
+        }
+    }
+
     public function getBearer(): string
     {
         return $_ENV['TMDB_BEARER'];

@@ -10,6 +10,7 @@ use App\Repository\WatchProviderRepository;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Intl\Languages as Languages;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -271,6 +272,30 @@ class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/movie/append', name: 'movie_append', methods: ['POST'])]
+    public function movieAppend(Request $request): Response
+    {
+        $data = $request->request->all();
+        dump($data);
+        // append_to_response => "translations"
+        // csrf_token => "..."
+        // id => "1720"
+        // route => "admin_movie_edit"
+        $movieId = $data['id'];
+        $extra = $data['append_to_response'];
+        $page = $data['page'] ?? null;
+        $include_image_language = $data['include_image_language'] ?? null;
+        $language = $data['language'] ?? null;
+
+        $results = $this->tmdbService->getMovieExtras($movieId, $extra, $page, $include_image_language, $language);
+
+        return $this->render('_blocks/admin/_movie-append-results.html.twig', [
+                'extra' => $extra,
+                'results' => $results,
+            ]
+        );
+    }
+
     #[Route('/movie/{id}', name: 'movie_edit')]
     public function adminMovieEdit(Request $request, int $id): Response
     {
@@ -309,6 +334,32 @@ class AdminController extends AbstractController
             'p' => $page,
             's' => $sort,
         ]);
+        $movie['release_types'] = [
+            '1' => 'Premiere',
+            '2' => 'Theatrical (limited)',
+            '3' => 'Theatrical',
+            '4' => 'Digital',
+            '5' => 'Physical',
+            '6' => 'TV',
+        ];
+        $movie['append_to_response'] = ['translations'];
+        $appendToResponse = [
+//            'Alternative Titles' => ['value' => 'alternative_titles', 'extra_fields' => []],
+            'Changes' => ['value' => 'changes', 'extra_fields' => ['page' => 1]], // +page
+            'Credits' => ['value' => 'credits', 'extra_fields' => ['language' => 'en-US']], // +language
+            'External IDs' => ['value' => 'external_ids', 'extra_fields' => []],
+            'Images' => ['value' => 'images', 'extra_fields' => ['include_image_language'=> 'fr,null', 'language'=> '']], // +include_image_language (specify a comma separated list of ISO-639-1 values to query, for example: en,null), language
+            'Keywords' => ['value' => 'keywords', 'extra_fields' => []],
+            'Lists' => ['value' => 'lists', 'extra_fields' => ['language'=> 'en-US', 'page'=> 1]], // +language, page
+//            'Recommendations' => ['value' => 'recommendations', 'extra_fields' => ['language'=> 'en-US', 'page'=> 1]], // +language, page
+            'Release Dates' => ['value' => 'release_dates', 'extra_fields' => []], // see $movie['release_types']
+            'Reviews' => ['value' => 'reviews', 'extra_fields' => ['language'=> 'en-US', 'page'=> 1]], // +language, page
+            'Translations' => ['value' => 'translations', 'extra_fields' => []],
+            'Videos' => ['value' => 'videos', 'extra_fields' => ['language'=> 'en-US']], // +language
+            'Watch Providers' => ['value' => 'watch/providers', 'extra_fields' => []],
+        ];
+        $languages = Languages::getNames();
+        dump($languages);
 
         return $this->render('admin/index.html.twig', [
             'movieLink' => $movieLink,
@@ -319,6 +370,8 @@ class AdminController extends AbstractController
             'movieLocalizedNames' => $movieLocalizedNames,
             'movieLocalizedOverviews' => $movieLocalizedOverviews,
             'movieDirectLinks' => $movieDirectLinks,
+            'appendToResponse' => $appendToResponse,
+            'languages' => $languages,
         ]);
     }
 

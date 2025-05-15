@@ -104,8 +104,13 @@ Sunday: Dimanche
 
 # All my series
 Additional Overviews: Aperçus supplémentaires
+Additional information: Informations supplémentaires
 All: Toutes
+Alternative Titles: Titres alternatifs
 Ascending: Croissant
+Changes: Modifications
+Choose an option: Choisissez une option
+Credits: Crédits (cast, équipes techniques, ...)
 Date added: Date d'ajout
 Default: Par défaut
 Descending: Décroissant
@@ -113,23 +118,27 @@ Display priorities: Prioritiés d'affichage
 Display priority: Priorité d'affichage
 Episode air date: Date de diffusion de l'épisode
 Episodes of the week: Épisodes de la semaine
+External IDs: Identifiants externes
 Filters: Filtres
 First air date: Date de première diffusion
 Id: ID
+Images: Images
 Last air date: Date de dernière diffusion
 Last series watched: Dernière série regardée
+Latest: Dernier
 Localized Names: Noms localisés
 Localized Overviews: Aperçus localisés
 My series: Mes séries
-Next page: Page suivante
 Next episode: Prochain épisode
+Next page: Page suivante
 No: Non
 Number of elements per page: Nombre d'éléments par page
 Order: Ordre
 Pages: Pages
 Previous page: Page précédente
-providers: plateformes
+Release Dates: Dates de sortie
 Release: Sortie
+Reviews: Critiques
 See the movie description: Voir la description du film
 See the provider description: Voir la description de la plateforme
 See the series description: Voir la description de la série
@@ -139,15 +148,24 @@ Series started: Séries commencées
 Series to start: Séries à commencer
 Show / hide filter options: Afficher / masquer les options de filtre
 Show / hide pages: Afficher / masquer les numéros de page
+Similar: Similaires
 Sort: Tri
 Synopsis: Synopsis
 TMDB Id: ID TMDB
 The Movie DB ID: ID The Movie DB
 The Movie DB search: Recherche sur The Movie DB
+Translations: Traductions
+Watch Providers: Plateformes de streaming
 Watched series: Séries terminées
 Yes: Oui
+providers: plateformes
 remaining episode: épisode restant
 remaining episodes: épisodes restants
+french: français
+english: anglais
+korean: coréen
+Include image language: Inclure la langue de l'image
+Get: Obtenir
 
 # Add a series
 Addition of older series: Ajout de séries plus anciennes
