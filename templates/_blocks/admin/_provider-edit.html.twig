@@ -56,19 +56,19 @@
 {#                                                            </div>#}
 {#                                                        {% elseif sub_item_key == 'logo_path' and sub_item_value|length %}#}
 {#                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key }}">#}
-{#                                                                <img src="https://image.tmdb.org/t/p/w500{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__series__logo">#}
+{#                                                                <img src="https://image.tmdb.org/t/p/w500{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__image__logo">#}
 {#                                                            </div>#}
 {#                                                        {% elseif sub_item_key == 'still_path' and sub_item_value|length %}#}
 {#                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key }}">#}
-{#                                                                <img src="https://image.tmdb.org/t/p/w300{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__series__still">#}
+{#                                                                <img src="https://image.tmdb.org/t/p/w300{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__image__still">#}
 {#                                                            </div>#}
 {#                                                        {% elseif sub_item_key == 'poster_path' and sub_item_value|length %}#}
 {#                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key }}">#}
-{#                                                                <img src="https://image.tmdb.org/t/p/w780{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__series__poster">#}
+{#                                                                <img src="https://image.tmdb.org/t/p/w780{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__image__poster">#}
 {#                                                            </div>#}
 {#                                                        {% elseif sub_item_key == 'profile_path' and sub_item_value|length %}#}
 {#                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key }}">#}
-{#                                                                <img src="https://image.tmdb.org/t/p/h632{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__series__profile">#}
+{#                                                                <img src="https://image.tmdb.org/t/p/h632{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__image__profile">#}
 {#                                                            </div>#}
 {#                                                        {% else %}#}
 {#                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key ~ ': ' ~ sub_item_value }}">#}
@@ -80,11 +80,11 @@
 {#                                            </div>#}
 {#                                        {% elseif item_key == 'profile_path' and item_value|length %}#}
 {#                                            <div class="series__tmdb__property_value__item" data-title="{{ key }}">#}
-{#                                                <img src="https://image.tmdb.org/t/p/h632{{ item_value }}" alt="{{ item_key }}" class="admin__series__profile">#}
+{#                                                <img src="https://image.tmdb.org/t/p/h632{{ item_value }}" alt="{{ item_key }}" class="admin__image__profile">#}
 {#                                            </div>#}
 {#                                        {% elseif item_key == 'still_path' and item_value|length %}#}
 {#                                            <div class="series__tmdb__property_value__item" data-title="{{ item_key }}">#}
-{#                                                <img src="https://image.tmdb.org/t/p/w300{{ item_value }}" alt="{{ item_key }}" class="admin__series__still">#}
+{#                                                <img src="https://image.tmdb.org/t/p/w300{{ item_value }}" alt="{{ item_key }}" class="admin__image__still">#}
 {#                                            </div>#}
 {#                                        {% elseif key == 'origin_country' %}#}
 {#                                            <div class="series__tmdb__property_value__item" data-title="{{ item_value|country_name }}">#}
@@ -100,11 +100,11 @@
 {#                            </div>#}
 {#                        {% elseif key == 'backdrop_path' and value|length %}#}
 {#                            <div class="series__tmdb__property_value" data-title="{{ key }}">#}
-{#                                <img src="https://image.tmdb.org/t/p/w1280{{ value }}" alt="{{ key }}" class="admin__series__backdrop">#}
+{#                                <img src="https://image.tmdb.org/t/p/w1280{{ value }}" alt="{{ key }}" class="admin__image__backdrop">#}
 {#                            </div>#}
 {#                        {% elseif key == 'poster_path' and value|length %}#}
 {#                            <div class="series__tmdb__property_value" data-title="{{ key }}">#}
-{#                                <img src="https://image.tmdb.org/t/p/w780{{ value }}" alt="{{ key }}" class="admin__series__poster">#}
+{#                                <img src="https://image.tmdb.org/t/p/w780{{ value }}" alt="{{ key }}" class="admin__image__poster">#}
 {#                            </div>#}
 {#                        {% else %}#}
 {#                            <div class="series__tmdb__property_value">#}

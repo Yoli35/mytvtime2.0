@@ -1,21 +1,21 @@
-<div class="admin__series__edit">
-    <div class="admin__series__edit__title">
+<div class="admin__movie__edit">
+    <div class="admin__movie__edit__title">
         {{ movie.title }}{% if movieLocalizedNames|length %} - <span>{{ movieLocalizedNames.0.name }}</span>{% endif %}
-        <div class="admin__series__edit__title__id">
+        <div class="admin__movie__edit__title__id">
             {{ ux_icon('iconoir:db') }}
             {{ movie.id }}
-            <div class="series__db">
+            <div class="movie__db">
                 {% for key, value in movie %}
-                    <div class="series__db__property">
-                        <div class="series__db__property_key">{{ key }}</div>
-                        <div class="series__db__property_value">
+                    <div class="movie__db__property">
+                        <div class="movie__db__property_key">{{ key }}</div>
+                        <div class="movie__db__property_value">
                             {% if key == 'tmdb_id' %}
-                                <a href="https://www.themoviedb.org/movie/{{ value }}" target="_blank" class="admin__series__edit__title__tmdb__id__link">
+                                <a href="https://www.themoviedb.org/movie/{{ value }}" target="_blank" class="admin__movie__edit__title__tmdb__id__link">
                                     {{ value }}
                                 </a>
                             {% elseif key == 'origin_country' %}
                                 {% for c in movie.origin_country %}
-                                    <div class="admin__series__edit__title__origin_country" data-title="{{ c|country_name }}">
+                                    <div class="admin__movie__edit__title__origin_country" data-title="{{ c|country_name }}">
                                         {{ getEmojiFlag(c) }}
                                     </div>
                                 {% endfor %}
@@ -33,51 +33,51 @@
                 {% endfor %}
             </div>
         </div>
-        <div class="admin__series__edit__title__tmdb__id">
-            <img src="/images/the-movie-database.png" alt="TMDB" class="admin__series__edit__title__tmdb__id__logo">
-            <a href="https://www.themoviedb.org/movie/{{ movie.tmdb_id }}" target="_blank" class="admin__series__edit__title__tmdb__id__link">
+        <div class="admin__movie__edit__title__tmdb__id">
+            <img src="/images/the-movie-database.png" alt="TMDB" class="admin__movie__edit__title__tmdb__id__logo">
+            <a href="https://www.themoviedb.org/movie/{{ movie.tmdb_id }}" target="_blank" class="admin__movie__edit__title__tmdb__id__link">
                 {{ movie.tmdb_id }}
             </a>
-            <div class="series__tmdb">
+            <div class="movie__tmdb">
                 {% for key, value in tmdbMovie %}
-                    <div class="series__tmdb__property">
-                        <div class="series__tmdb__property_key">{{ key }}</div>
+                    <div class="movie__tmdb__property">
+                        <div class="movie__tmdb__property_key">{{ key }}</div>
                         {% if value is iterable %}
-                            <div class="series__tmdb__property_value__iterable">
+                            <div class="movie__tmdb__property_value__iterable">
                                 {% for item_key, item_value in value %}
-                                    <div class="series__tmdb__property_value__item">
-                                        <div class="series__tmdb__property_key">{{ item_key }}</div>
+                                    <div class="movie__tmdb__property_value__item">
+                                        <div class="movie__tmdb__property_key">{{ item_key }}</div>
                                         {% if item_value is iterable %}
-                                            <div class="series__tmdb__property_value__iterable">
+                                            <div class="movie__tmdb__property_value__iterable">
                                                 {% for sub_item_key, sub_item_value in item_value %}
-                                                    <div class="series__tmdb__property_value__item">
-                                                        <div class="series__tmdb__property_key">{{ sub_item_key }}</div>
+                                                    <div class="movie__tmdb__property_value__item">
+                                                        <div class="movie__tmdb__property_key">{{ sub_item_key }}</div>
                                                         {% if sub_item_key == 'origin_country' and sub_item_value|length %}
-                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key ~ ': ' ~ sub_item_value|country_name }}">
+                                                            <div class="movie__tmdb__property_value__item" data-title="{{ sub_item_key ~ ': ' ~ sub_item_value|country_name }}">
                                                                 {{ getEmojiFlag(sub_item_value) }}
                                                             </div>
                                                         {% elseif sub_item_key == 'iso_3166_1' and sub_item_value|length %}
-                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key ~ ': ' ~ sub_item_value }}">
+                                                            <div class="movie__tmdb__property_value__item" data-title="{{ sub_item_key ~ ': ' ~ sub_item_value }}">
                                                                 {{ getEmojiFlag(sub_item_value) }}
                                                             </div>
                                                         {% elseif sub_item_key == 'logo_path' and sub_item_value|length %}
-                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key }}">
-                                                                <img src="https://image.tmdb.org/t/p/w500{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__series__logo">
+                                                            <div class="movie__tmdb__property_value__item" data-title="{{ sub_item_key }}">
+                                                                <img src="https://image.tmdb.org/t/p/w500{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__image__logo">
                                                             </div>
                                                         {% elseif sub_item_key == 'still_path' and sub_item_value|length %}
-                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key }}">
-                                                                <img src="https://image.tmdb.org/t/p/w300{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__series__still">
+                                                            <div class="movie__tmdb__property_value__item" data-title="{{ sub_item_key }}">
+                                                                <img src="https://image.tmdb.org/t/p/w300{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__image__still">
                                                             </div>
                                                         {% elseif sub_item_key == 'poster_path' and sub_item_value|length %}
-                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key }}">
-                                                                <img src="https://image.tmdb.org/t/p/w780{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__series__poster">
+                                                            <div class="movie__tmdb__property_value__item" data-title="{{ sub_item_key }}">
+                                                                <img src="https://image.tmdb.org/t/p/w780{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__image__poster">
                                                             </div>
                                                         {% elseif sub_item_key == 'profile_path' and sub_item_value|length %}
-                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key }}">
-                                                                <img src="https://image.tmdb.org/t/p/h632{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__series__profile">
+                                                            <div class="movie__tmdb__property_value__item" data-title="{{ sub_item_key }}">
+                                                                <img src="https://image.tmdb.org/t/p/h632{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__image__profile">
                                                             </div>
                                                         {% else %}
-                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key ~ ': ' ~ sub_item_value }}">
+                                                            <div class="movie__tmdb__property_value__item" data-title="{{ sub_item_key ~ ': ' ~ sub_item_value }}">
                                                                 "{{ sub_item_value }}"
                                                             </div>
                                                         {% endif %}
@@ -85,19 +85,19 @@
                                                 {% endfor %}
                                             </div>
                                         {% elseif item_key == 'profile_path' and item_value|length %}
-                                            <div class="series__tmdb__property_value__item" data-title="{{ key }}">
-                                                <img src="https://image.tmdb.org/t/p/h632{{ item_value }}" alt="{{ item_key }}" class="admin__series__profile">
+                                            <div class="movie__tmdb__property_value__item" data-title="{{ key }}">
+                                                <img src="https://image.tmdb.org/t/p/h632{{ item_value }}" alt="{{ item_key }}" class="admin__image__profile">
                                             </div>
                                         {% elseif item_key == 'still_path' and item_value|length %}
-                                            <div class="series__tmdb__property_value__item" data-title="{{ item_key }}">
-                                                <img src="https://image.tmdb.org/t/p/w300{{ item_value }}" alt="{{ item_key }}" class="admin__series__still">
+                                            <div class="movie__tmdb__property_value__item" data-title="{{ item_key }}">
+                                                <img src="https://image.tmdb.org/t/p/w300{{ item_value }}" alt="{{ item_key }}" class="admin__image__still">
                                             </div>
                                         {% elseif key == 'origin_country' %}
-                                            <div class="series__tmdb__property_value__item" data-title="{{ item_value|country_name }}">
+                                            <div class="movie__tmdb__property_value__item" data-title="{{ item_value|country_name }}">
                                                 {{ getEmojiFlag(item_value) }}
                                             </div>
                                         {% else %}
-                                            <div class="series__tmdb__property_value__item" data-title="{{ item_key ~ ': ' ~ item_value }}">
+                                            <div class="movie__tmdb__property_value__item" data-title="{{ item_key ~ ': ' ~ item_value }}">
                                                 "{{ item_value }}"
                                             </div>
                                         {% endif %}
@@ -105,15 +105,15 @@
                                 {% endfor %}
                             </div>
                         {% elseif key == 'backdrop_path' and value|length %}
-                            <div class="series__tmdb__property_value" data-title="{{ key }}">
-                                <img src="https://image.tmdb.org/t/p/w1280{{ value }}" alt="{{ key }}" class="admin__series__backdrop">
+                            <div class="movie__tmdb__property_value" data-title="{{ key }}">
+                                <img src="https://image.tmdb.org/t/p/w1280{{ value }}" alt="{{ key }}" class="admin__image__backdrop">
                             </div>
                         {% elseif key == 'poster_path' and value|length %}
-                            <div class="series__tmdb__property_value" data-title="{{ key }}">
-                                <img src="https://image.tmdb.org/t/p/w780{{ value }}" alt="{{ key }}" class="admin__series__poster">
+                            <div class="movie__tmdb__property_value" data-title="{{ key }}">
+                                <img src="https://image.tmdb.org/t/p/w780{{ value }}" alt="{{ key }}" class="admin__image__poster">
                             </div>
                         {% else %}
-                            <div class="series__tmdb__property_value">
+                            <div class="movie__tmdb__property_value">
                                 "{{ value }}"
                             </div>
                         {% endif %}
@@ -228,97 +228,12 @@
             </button>
         </form>
         <div class="admin__append_to_response__results"></div>
-        <script>
-            const atrForm = document.querySelector('.admin__append_to_response__form');
-            const appendToResponseArray = {{ appendToResponse|json_encode|raw }};
-            const atrSelect = document.querySelector('#append_to_response');
-            const atrResultsDiv = document.querySelector('.admin__append_to_response__results');
-            atrSelect.addEventListener('change', async function (e) {
-                const newValue = e.target.value;
-                let language = null, page = null, include_image_language = null;
-                switch (newValue) {
-                    case 'changes':
-                        page = appendToResponseArray['Changes']['extra_fields']['page'];
-                        break;
-                    case 'credits':
-                        language = appendToResponseArray['Credits']['extra_fields']['language'];
-                        break;
-                    case 'images':
-                        language = appendToResponseArray['Images']['extra_fields']['language'];
-                        include_image_language = appendToResponseArray['Images']['extra_fields']['include_image_language'];
-                        break;
-                    case 'lists':
-                        language = appendToResponseArray['Lists']['extra_fields']['language'];
-                        page = appendToResponseArray['Lists']['extra_fields']['page'];
-                        break;
-                    case 'reviews':
-                        language = appendToResponseArray['Reviews']['extra_fields']['language'];
-                        page = appendToResponseArray['Reviews']['extra_fields']['page'];
-                        break;
-                    case 'videos':
-                        language = appendToResponseArray['Videos']['extra_fields']['language'];
-                        break;
-                }
-                const languageSelect = document.querySelector('#language');
-                const languageLabel = document.querySelector('label[for="language"]');
-                const pageSelect = document.querySelector('#page');
-                const pageLabel = document.querySelector('label[for="page"]');
-                const includeImageLanguageSelect = document.querySelector('#include_image_language');
-                const includeImageLanguageLabel = document.querySelector('label[for="include_image_language"]');
-                if (language) {
-                    languageSelect.value = language;
-                    languageLabel.style.display = 'flex';
-                } else {
-                    languageSelect.value = 'null';
-                    languageLabel.style.display = 'none';
-                }
-                if (page) {
-                    pageSelect.value = page;
-                    pageLabel.style.display = 'flex';
-                } else {
-                    pageSelect.value = 'null';
-                    pageLabel.style.display = 'none';
-                }
-                if (include_image_language) {
-                    includeImageLanguageSelect.value = include_image_language;
-                    includeImageLanguageLabel.style.display = 'flex';
-                } else {
-                    includeImageLanguageSelect.value = 'null';
-                    includeImageLanguageLabel.style.display = 'none';
-                }
-                atrResultsDiv.innerHTML = '';
-            });
-            atrForm.addEventListener('submit', (event) => {
-                const atrSelect = document.querySelector('#append_to_response');
-                const atrValue = atrSelect.value;
-                const atrUrl = '{{ path('admin_movie_append') }}';
-                const atrData = new FormData(atrForm);
-                atrData.append('append_to_response', atrValue);
-                atrData.append('id', '{{ movie.tmdb_id }}');
-                atrData.append('route', '{{ route }}');
-                atrData.append('csrf_token', '{{ csrf_token('admin_movie_edit') }}');
-                event.preventDefault();
-                fetch(atrUrl, {
-                    method: 'POST',
-                    body: atrData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.text();
-                    })
-                    .then(data => {
-                        const resultsDiv = document.querySelector('.admin__append_to_response__results');
-                        resultsDiv.innerHTML = data;
-                    })
-                    .catch(error => {
-                        console.error('There was a problem with the fetch operation:', error);
-                    });
-            })
-        </script>
     </div>
+</div>
+<div id="globs" style="display: none;">
+    {
+        "appendToResponse": {{ appendToResponse|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "atrUrl": "{{ path('admin_movie_append') }}",
+        "movieId": {{ movie.tmdb_id }}
+    }
 </div>

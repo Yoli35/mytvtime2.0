@@ -1,0 +1,36 @@
+{% set type = value|adminType %}
+<div class="value">
+    {% if type == 'null' %}
+        <div class="red">null</div>
+    {% elseif type == 'boolean' %}
+        {{ value ? 'true' : 'false' }}
+    {% elseif type == 'string' %}
+        {% if key == 'backdrop_path' %}
+            <img src="{{ urls.backdrop ~ value }}" alt="Backdrop" class="backdrop" />
+        {% elseif key == 'logo_path' %}
+            <img src="{{ urls.logo ~ value }}" alt="Logo" class="logo" />
+        {% elseif key == 'poster_path' %}
+            <img src="{{ urls.poster ~ value }}" alt="Poster" class="poster" />
+        {% elseif key == 'profile_path' %}
+            <img src="{{ urls.profile ~ value }}" alt="Profile" class="profile" />
+        {% elseif key == 'still_path' %}
+            <img src="{{ urls.still ~ value }}" alt="Profile" class="profile" />
+        {% elseif key == 'iso_3166_1' %}
+            {{ value }} <span class="flag">{{ getEmojiFlag(value) }}</span><span class="country">{{ value|country_name }}</span>
+        {% elseif key == 'iso_639_1' %}
+            {{ value }} <span class="language">{{ value|language_name }}</span>
+        {% else %}
+            "{{ value|e('html') }}"
+        {% endif %}
+    {% elseif type == 'integer' %}
+        {{ value }}
+    {% elseif type == 'float' %}
+        {{ value|number_format(2, '.', '') }}
+    {% elseif type == 'datetime' %}
+        {{ value|date('Y-m-d H:i:s') }}
+    {% elseif type == 'unknown' %}
+        <div class="red">{{ value }}</div>
+    {% else %}
+        {{ value }}
+    {% endif %}
+</div>

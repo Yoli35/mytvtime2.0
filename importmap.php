@@ -16,6 +16,9 @@ return [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
+    'AdminMovieEdit' => [
+        'path' => './assets/js/admin/AdminMovieEdit.js',
+    ],
     'AverageColor' => [
         'path' => './assets/js/images/AverageColor.js',
     ],

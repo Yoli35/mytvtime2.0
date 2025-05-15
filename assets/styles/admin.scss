@@ -120,6 +120,125 @@
                 }
             }
         }
+
+        .result {
+            background-color: var(--green-70);
+            border-radius: .25rem;
+            color: var(--ardoise-10);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            gap: 1rem;
+            padding: 1rem;
+
+            .item {
+                align-items: flex-start;
+                background-color: var(--green-50);
+                border-radius: .25rem;
+                display: flex;
+                flex-shrink: 0;
+                gap: 1rem;
+                overflow-x: auto;
+                padding: 1rem 1rem 1rem 2rem;
+
+                .key {
+                    align-items: center;
+                    background-color: var(--orange-20);
+                    border-radius: .25rem;
+                    color: var(--ardoise-10);
+                    display: flex;
+                    flex-shrink: 0;
+                    font-size: 1rem;
+                    font-weight: bold;
+                    overflow-x: auto;
+                    padding: .5rem 1rem;
+                    width: 10rem;
+                }
+
+                .value {
+                    align-items: center;
+                    background-color: var(--orange-30);
+                    border-radius: .25rem;
+                    color: var(--ardoise-10);
+                    display: flex;
+                    font-size: 1rem;
+                    font-weight: bold;
+                    padding: .5rem 1rem;
+                }
+
+                .iterable {
+                    background-color: var(--orange-20);
+                    border-radius: .25rem;
+                    color: var(--ardoise-10);
+                    display: flex;
+                    flex-direction: column;
+                    flex-shrink: 0;
+                    font-size: 1rem;
+                    font-weight: bold;
+                    gap: .5rem;
+                    padding: .5rem .5rem .5rem 1rem;
+                }
+
+                .red {
+                    background-color: red;
+                }
+
+                .backdrop {
+                    aspect-ratio: 16/9;
+                    border-radius: .25rem;
+                    height: 10rem;
+                    object-fit: cover;
+                    width: auto;
+                }
+
+                .country, .language {
+                    background-color: var(--orange-20);
+                    border-radius: .25rem;
+                    margin-inline-start: 1rem;
+                    padding: .125rem .5rem;
+                }
+
+                .flag {
+                    font-size: 2.5rem;
+                    margin-inline-start: 1rem;
+                }
+
+                .image {
+                    flex-shrink: 0;
+                }
+
+                .logo {
+                    border-radius: .25rem;
+                    height: auto;
+                    width: 15rem;
+                }
+
+                .poster {
+                    aspect-ratio: 78/117;
+                    border-radius: .25rem;
+                    height: 10rem;
+                    object-fit: cover;
+                    width: auto;
+                }
+
+                .profile {
+                    aspect-ratio: 2/3;
+                    border-radius: .25rem;
+                    height: 10rem;
+                    object-fit: cover;
+                    width: auto;
+                }
+
+                .still {
+                    border-radius: .25rem;
+                    height: 10rem;
+                    width: auto;
+                }
+
+            }
+        }
     }
 
     h2 {
@@ -524,7 +643,7 @@
         }
     }
 
-    .admin__series__edit {
+    .admin__series__edit, .admin__movie__edit {
         display: flex;
         flex-direction: column;
         gap: 1rem;
@@ -535,7 +654,8 @@
             padding: 1rem;
         }
 
-        .admin__series__edit__title {
+        .admin__series__edit__title,
+        .admin__movie__edit__title {
             display: flex;
             font-size: 2rem;
             gap: 1rem;
@@ -545,7 +665,8 @@
                 color: var(--orange-50);
             }
 
-            .admin__series__edit__title__id {
+            .admin__series__edit__title__id,
+            .admin__movie__edit__title__id {
                 align-items: center;
                 display: flex;
                 gap: .5rem;
@@ -555,7 +676,8 @@
                 &:hover {
                     cursor: pointer;
 
-                    .series__db {
+                    .series__db,
+                    .movie__db {
                         display: flex;
                     }
                 }
@@ -566,7 +688,8 @@
                     width: 2rem;
                 }
 
-                .series__db {
+                .series__db,
+                .movie__db {
                     backdrop-filter: blur(16px) brightness(.5);
                     background-color: var(--green-40-alpha-50);
                     border-radius: .25rem;
@@ -583,18 +706,21 @@
                     top: 2.5rem;
                     z-index: 30;
 
-                    .series__db__property {
+                    .series__db__property,
+                    .movie__db__property {
                         display: flex;
                         gap: .5rem;
 
-                        .series__db__property_key {
+                        .series__db__property_key,
+                        .movie__db__property_key {
                             color: var(--green-90);
                             flex-shrink: 0;
                             font-weight: bold;
                             width: 12rem;
                         }
 
-                        .series__db__property_value {
+                        .series__db__property_value,
+                        .movie__db__property_value,{
                             color: var(--ardoise-10);
                             flex-grow: 5;
                             max-width: 60vw;
@@ -603,7 +729,8 @@
                 }
             }
 
-            .admin__series__edit__title__tmdb__id {
+            .admin__series__edit__title__tmdb__id,
+            .admin__movie__edit__title__tmdb__id {
                 align-items: center;
                 display: flex;
                 gap: .5rem;
@@ -612,18 +739,21 @@
                 &:hover {
                     cursor: pointer;
 
-                    .series__tmdb {
+                    .series__tmdb,
+                    .movie__tmdb {
                         display: flex;
                     }
                 }
 
-                .admin__series__edit__title__tmdb__id__logo {
+                .admin__series__edit__title__tmdb__id__logo,
+                .admin__movie__edit__title__tmdb__id__logo {
                     aspect-ratio: 1/1;
                     border-radius: .25rem;
                     height: 2rem;
                 }
 
-                .series__tmdb {
+                .series__tmdb,
+                .movie__tmdb {
                     backdrop-filter: blur(16px) brightness(.5);
                     background-color: var(--green-40-alpha-50);
                     border-radius: .25rem;
@@ -642,12 +772,14 @@
                     top: 2.5rem;
                     z-index: 30;
 
-                    .series__tmdb__property {
+                    .series__tmdb__property,
+                    .movie__tmdb__property {
                         align-items: flex-start;
                         display: flex;
                         gap: .5rem;
 
-                        .series__tmdb__property_key {
+                        .series__tmdb__property_key,
+                        .movie__tmdb__property_key {
                             background-color: var(--green-90);
                             border-radius: .25rem;
                             color: var(--green-30);
@@ -658,7 +790,9 @@
                         }
 
                         .series__tmdb__property_value,
-                        .series__tmdb__property_value__iterable {
+                        .series__tmdb__property_value__iterable,
+                        .movie__tmdb__property_value,
+                        .movie__tmdb__property_value__iterable {
                             border-radius: .25rem;
                             color: var(--ardoise-10);
                             display: flex;
@@ -672,7 +806,8 @@
                             flex-direction: row;
                         }*/
 
-                        .series__tmdb__property_value__item {
+                        .series__tmdb__property_value__item,
+                        .movie__tmdb__property_value__item {
                             align-items: flex-start;
                             background-color: var(--green-40-alpha-500);
                             border-radius: .25rem;
@@ -680,26 +815,30 @@
                             gap: .5rem;
                             padding: .25rem;
 
-                            .series__tmdb__property_value__item {
+                            .series__tmdb__property_value__item,
+                            .movie__tmdb__property_value__item {
                                 align-items: flex-start;
                                 flex-shrink: 0;
                                 padding: .25rem;
                             }
                         }
 
-                        .series__tmdb__property_value__iterable {
+                        .series__tmdb__property_value__iterable,
+                        .movie__tmdb__property_value__iterable {
                             background-color: var(--green-40-alpha-50);
                             border-radius: .25rem;
                             flex-direction: column;
                             flex-shrink: 0;
 
-                            .series__tmdb__property_value {
+                            .series__tmdb__property_value,
+                            .movie__tmdb__property_value {
                                 display: flex;
                                 gap: .5rem;
                             }
                         }
 
-                        .series__tmdb__property_value {
+                        .series__tmdb__property_value,
+                        .movie__tmdb__property_value {
                             background-color: var(--green-40-alpha-50);
 
                             &:has(img) {
@@ -709,11 +848,14 @@
                         }
 
                         .series__tmdb__property_value,
-                        .series__tmdb__property_value__item {
+                        .series__tmdb__property_value__item,
+                        .movie__tmdb__property_value,
+                        .movie__tmdb__property_value__item {
                             background-color: var(--green-40-alpha-50);
                         }
 
-                        .series__tmdb__property_value {
+                        .series__tmdb__property_value,
+                        .movie__tmdb__property_value {
                             &:has(img) {
                                 border-radius: .375rem;
                                 padding: .125rem;
@@ -721,32 +863,32 @@
                         }
                     }
 
-                    .admin__series__backdrop {
+                    .admin__image__backdrop {
                         aspect-ratio: 16/9;
                         border-radius: .25rem;
                         height: 10rem;
                     }
 
-                    .admin__series__logo {
+                    .admin__image__logo {
                         border-radius: .25rem;
                         height: auto;
                         width: 15rem;
                     }
 
-                    .admin__series__poster {
+                    .admin__image__poster {
                         aspect-ratio: 78/117;
                         border-radius: .25rem;
                         height: 10rem;
                     }
 
-                    .admin__series__profile {
+                    .admin__image__profile {
                         aspect-ratio: 2/3;
                         border-radius: .25rem;
                         height: 10rem;
                         object-fit: cover;
                     }
 
-                    .admin__series__still {
+                    .admin__image__still {
                         border-radius: .25rem;
                         height: 10rem;
                         width: auto;
@@ -1129,7 +1271,7 @@
             }
         }
 
-        .dim{
+        .dim {
             margin-inline-start: auto;
         }
     }

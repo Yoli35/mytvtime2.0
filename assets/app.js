@@ -1,5 +1,6 @@
 import './bootstrap.js';
 
+import {AdminMovieEdit} from "AdminMovieEdit";
 import {AverageColor} from 'AverageColor';
 import {DayCountHistory} from 'DayCountHistory';
 import {FlashMessage} from 'FlashMessage';
@@ -127,7 +128,14 @@ window.addEventListener("DOMContentLoaded", () => {
     const posterHover = new PosterHover();
     posterHover.init();
 
-// Home page
+// Admin page
+    const admin = document.querySelector(".admin");
+    const adminMovieEditDiv = admin?.querySelector(".admin__movie__edit");
+    if (adminMovieEditDiv) {
+        new AdminMovieEdit();
+    }
+
+    // Home page
     if (document.querySelector(".home")) {
         const dayCountHistory = new DayCountHistory();
         const providerSelect = new ProviderSelect();

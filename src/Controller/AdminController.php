@@ -276,7 +276,6 @@ class AdminController extends AbstractController
     public function movieAppend(Request $request): Response
     {
         $data = $request->request->all();
-        dump($data);
         // append_to_response => "translations"
         // csrf_token => "..."
         // id => "1720"
@@ -287,11 +286,19 @@ class AdminController extends AbstractController
         $include_image_language = $data['include_image_language'] ?? null;
         $language = $data['language'] ?? null;
 
-        $results = $this->tmdbService->getMovieExtras($movieId, $extra, $page, $include_image_language, $language);
+        $results = json_decode($this->tmdbService->getMovieExtras($movieId, $extra, $page, $include_image_language, $language), true);
+//        dump($results);
 
         return $this->render('_blocks/admin/_movie-append-results.html.twig', [
                 'extra' => $extra,
                 'results' => $results,
+                'urls' => [
+                    'backdrop' => $this->imageConfiguration->getUrl('backdrop_sizes', 2),//w1280
+                    'logo' => $this->imageConfiguration->getUrl('logo_sizes', 5), // w500
+                    'poster' => $this->imageConfiguration->getUrl('poster_sizes', 5), // w780
+                    'still' => $this->imageConfiguration->getUrl('still_sizes', 2), // w300
+                    'profile' => $this->imageConfiguration->getUrl('profile_sizes', 2), // h632
+                ],
             ]
         );
     }
@@ -359,7 +366,6 @@ class AdminController extends AbstractController
             'Watch Providers' => ['value' => 'watch/providers', 'extra_fields' => []],
         ];
         $languages = Languages::getNames();
-        dump($languages);
 
         return $this->render('admin/index.html.twig', [
             'movieLink' => $movieLink,

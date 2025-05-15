@@ -1,0 +1,28 @@
+{% for key, value in results %}
+    <div class="item">
+        <div class="key">
+            {{ key }} <sup>({{ level }})</sup>
+            {% if level==2 and extra=='watch/providers' %}
+                <span class="flag">{{ getEmojiFlag(key) }}</span>
+            {% endif %}
+        </div>
+        {% if value is iterable %}
+            <div class="iterable">
+                {{ include('_blocks/admin/_movie-append-iterable.html.twig', { level: level+1, parent: key, results: value }) }}
+            </div>
+            {% if level==2 and extra=='images' %}
+                <div class="image" data-title="{{ parent }}">
+                    {% if parent == 'backdrops' %}
+                        <img src="{{ urls.backdrop ~ value.file_path }}" alt="Backdrop" class="backdrop"/>
+                    {% elseif parent == 'logos' %}
+                        <img src="{{ urls.logo ~ value.file_path }}" alt="Logo" class="logo"/>
+                    {% elseif parent == 'posters' %}
+                        <img src="{{ urls.poster ~ value.file_path }}" alt="Poster" class="poster"/>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            {{ include('_blocks/admin/_movie-append-item.html.twig', { key: key, value: value }) }}
+        {% endif %}
+    </div>
+{% endfor %}
