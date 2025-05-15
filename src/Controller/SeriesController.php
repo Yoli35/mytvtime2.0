@@ -3248,14 +3248,8 @@ class SeriesController extends AbstractController
                 // Fourth airing day: 2024/12/11 (wednesday)
                 // ...
                 // DaysOfWeek: 3, 4
-                if ($selectedDayCount == 2) {
-                    if ($firstDayOfWeek == $daysOfWeek[1]) {
-                        $last = array_pop($daysOfWeek);
-                        array_unshift($daysOfWeek, $last);
-                    }
-                }
-                if ($selectedDayCount == 3) {
-                    if ($firstDayOfWeek == $daysOfWeek[2]) {
+                if ($selectedDayCount > 1 && $selectedDayCount < 4) {
+                    if ($firstDayOfWeek == $daysOfWeek[$selectedDayCount - 1]) {
                         $last = array_pop($daysOfWeek);
                         array_unshift($daysOfWeek, $last);
                     }
@@ -3266,11 +3260,12 @@ class SeriesController extends AbstractController
                 // DaysOfWeek: 4, 3
                 for ($i = $firstEpisode, $k = 1; $i <= $lastEpisode; $i += $selectedDayCount, $k++) {
                     $j = $i;
+                    $firstDateOfWeek = $date;
                     foreach ($daysOfWeek as $day) {
                         if ($j <= $lastEpisode) {
                             $d = $day - $firstDayOfWeek;
                             if ($d < 0) $d += 7;
-                            if ($d) $date = $this->dateModify($date, '+' . $d . ' day');
+                            if ($d) $date = $this->dateModify($firstDateOfWeek, '+' . $d . ' day');
                             $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $j), 'episodeNumber' => $j, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $j), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $j), 'future' => $now < $date];
                             $j++;
                         }
