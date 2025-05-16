@@ -1,9 +1,10 @@
 {% for key, value in results %}
     <div class="item">
         <div class="key">
-            {{ key }} <sup>({{ level }})</sup>
+            <div>{{ key }}</div>
+            <div><sup>({{ level }})</sup></div>
             {% if level==2 and extra=='watch/providers' %}
-                <span class="flag">{{ getEmojiFlag(key) }}</span>
+                <div><span class="flag">{{ getEmojiFlag(key) }}</span></div>
             {% endif %}
         </div>
         {% if value is iterable %}

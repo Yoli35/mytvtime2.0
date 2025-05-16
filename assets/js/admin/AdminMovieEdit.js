@@ -97,9 +97,8 @@ export class AdminMovieEdit {
                     return response.text();
                 })
                 .then(data => {
-                    const resultsDiv = document.querySelector('.admin__append_to_response__results');
-                    resultsDiv.innerHTML = data;
-                    gThis.toolTip.init(resultsDiv);
+                    gThis.atrResultsDiv.innerHTML = data;
+                    gThis.toolTip.init(gThis.atrResultsDiv);
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);

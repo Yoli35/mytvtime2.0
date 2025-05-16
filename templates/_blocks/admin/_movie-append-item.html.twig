@@ -1,5 +1,5 @@
 {% set type = value|adminType %}
-<div class="value">
+<div class="value"{% if key ends with 'path' %} data-title="{{ key }}{% endif %}">
     {% if type == 'null' %}
         <div class="red">null</div>
     {% elseif type == 'boolean' %}
