@@ -1620,7 +1620,7 @@ label:has(input[type="text"]) {
     }
 }
 
-@media (width > 2000px) {
+@media (width >= 1920px) {
     body {
         align-items: flex-start;
 
@@ -1637,7 +1637,7 @@ label:has(input[type="text"]) {
             }
 
             .menu.main {
-                bottom: auto;
+                bottom: calc(3.75rem - 100vh);
                 display: flex;
                 max-height: unset;
                 max-width: unset;

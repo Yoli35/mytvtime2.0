@@ -43,6 +43,12 @@ export class NavBar {
     }
 
     setOpacity() {
+        // Largeur de la fenêtre
+        const width = window.innerWidth;
+        if (width >= 1920) {
+            this.root.style.setProperty("--navbar-opacity", "1");
+            return;
+        }
         const opacity = this.mapScroll(window.scrollY);
         // this.debugDiv.textContent = opacity.toFixed(2).toString() + " / " + window.scrollY.toFixed(2);
         this.root.style.setProperty("--navbar-opacity", opacity.toString());
