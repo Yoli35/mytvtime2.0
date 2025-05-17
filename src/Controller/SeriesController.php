@@ -1906,7 +1906,7 @@ class SeriesController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $providerId = $request->getPayload()->get('providerId');
-            $userEpisode->setProviderId($providerId);
+            $userEpisode->setProviderId($providerId == -1 ? null : $providerId);
             $this->userEpisodeRepository->save($userEpisode, true);
         }
         return new JsonResponse(['ok' => true]);
@@ -1917,7 +1917,7 @@ class SeriesController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $deviceId = $request->getPayload()->get('deviceId');
-            $userEpisode->setDeviceId($deviceId);
+            $userEpisode->setDeviceId($deviceId == -1 ? null : $deviceId);
             $this->userEpisodeRepository->save($userEpisode, true);
         }
         return new JsonResponse(['ok' => true]);
@@ -1928,7 +1928,7 @@ class SeriesController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $vote = $request->getPayload()->get('vote');
-            $userEpisode->setVote($vote);
+            $userEpisode->setVote($vote == -1 ? null : $vote);
             $this->userEpisodeRepository->save($userEpisode, true);
         }
         return new JsonResponse(['ok' => true]);

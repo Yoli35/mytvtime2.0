@@ -1074,6 +1074,7 @@ export class Season {
         const providerList = document.createElement('div');
         providerList.classList.add('list');
         providerList.setAttribute('data-id', 'provider-' + episodeId);
+        providerList.setAttribute('data-save', 'saveProvider');
         selectProviderDiv.appendChild(providerList);
         if (flatrate.length > 0) {
             for (const provider of flatrate) {
@@ -1088,6 +1089,7 @@ export class Season {
         }
         /*}*/
         gThis.listInput(providerList);
+        gThis.listTrashButton(providerList, selectProviderDiv);
         gThis.toolTips.hide();
         gThis.toolTips.init(providerList);
     }
@@ -1100,24 +1102,7 @@ export class Season {
         providerDiv.innerHTML = '<img src="' + provider['logo_path'] + '" alt="' + provider['provider_name'] + '">';
         providerDiv.addEventListener('click', () => {
             const providerId = providerDiv.getAttribute('data-provider-id');
-            fetch('/' + gThis.lang + '/series/episode/provider/' + episodeId, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({
-                    providerId: providerId
-                })
-            }).then(function (response) {
-                if (response.ok) {
-                    gThis.toolTips.hide();
-                    selectProviderDiv.innerHTML = '<img src="' + gThis.providers.logos[providerId] + '" alt="' + gThis.providers.names[providerId] + '">';
-                    selectProviderDiv.setAttribute('data-title', gThis.providers.names[providerId]);
-                    gThis.toolTips.init(selectProviderDiv);
-                    providerList.remove();
-                }
-            });
+            gThis.saveProvider(episodeId, providerId, selectProviderDiv);
         });
         providerList.appendChild(providerDiv);
     }
@@ -1131,11 +1116,12 @@ export class Season {
         const deviceList = document.createElement('div');
         deviceList.classList.add('list');
         deviceList.setAttribute('data-id', 'device-' + episodeId);
+        deviceList.setAttribute('data-save', 'saveDevice');
         selectDeviceDiv.appendChild(deviceList);
         for (const device of gThis.devices) {
             gThis.addDeviceItem(device, episodeId, deviceList, selectDeviceDiv);
         }
-        gThis.listInput(deviceList);
+        gThis.listTrashButton(deviceList, selectDeviceDiv);
         gThis.toolTips.hide();
         gThis.toolTips.init(deviceList);
     }
@@ -1148,25 +1134,7 @@ export class Season {
         deviceSvg.appendChild(gThis.getSvg('device-' + device['id']));
         deviceSvg.addEventListener('click', () => {
             const deviceId = deviceSvg.getAttribute('data-id');
-            fetch('/' + gThis.lang + '/series/episode/device/' + episodeId, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({
-                    deviceId: deviceId
-                })
-            }).then(function (response) {
-                if (response.ok) {
-                    gThis.toolTips.hide();
-                    selectDeviceDiv.innerHTML = '';
-                    selectDeviceDiv.appendChild(gThis.getSvg('device-' + device['id']));
-                    selectDeviceDiv.setAttribute('data-title', gThis.text[device['name']]);
-                    gThis.toolTips.init(selectDeviceDiv);
-                    deviceList.remove();
-                }
-            });
+            gThis.saveDevice(episodeId, deviceId, selectDeviceDiv);
         });
         deviceList.appendChild(deviceSvg);
     }
@@ -1201,6 +1169,7 @@ export class Season {
         const voteList = document.createElement('div');
         voteList.classList.add('list');
         voteList.setAttribute('data-id', 'vote-' + episodeId);
+        voteList.setAttribute('data-save', 'saveVote');
         selectVoteDiv.appendChild(voteList);
         for (let i = 1; i <= 10; i++) {
             const vote = document.createElement('div');
@@ -1210,52 +1179,70 @@ export class Season {
             vote.innerHTML = i.toString();
             vote.addEventListener('click', () => {
                 const voteValue = vote.getAttribute('data-vote');
-                gThis.saveVote(episodeId, voteValue, selectVoteDiv, voteList);
+                gThis.saveVote(episodeId, voteValue, selectVoteDiv);
             });
             voteList.appendChild(vote);
         }
+        gThis.listTrashButton(voteList, selectVoteDiv);
         gThis.toolTips.hide();
-        gThis.listInput(voteList);
     }
 
-    // wheelVote(e) {
-    //     e.preventDefault();
-    //     // Save the new value every 500ms
-    //     if (gThis.saving) {
-    //         return;
-    //     }
-    //     gThis.saving = setTimeout(() => {
-    //         if (e.deltaY > 0) {
-    //             gThis.incVote(e);
-    //         } else {
-    //             gThis.decVote(e);
-    //         }
-    //     }, 500);
-    // }
+    saveProvider(episodeId, providerId, selectProviderDiv = null) {
+        fetch('/' + gThis.lang + '/series/episode/provider/' + episodeId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                providerId: providerId
+            })
+        }).then(function (response) {
+            if (response.ok) {
+                if (selectProviderDiv) {
+                    if (providerId === -1) {
+                        const svgPlus = gThis.getSvg('plus');
+                        selectProviderDiv.innerHTML = '';
+                        selectProviderDiv.setAttribute('data-title', gThis.text.provider);
+                        selectProviderDiv.appendChild(svgPlus);
+                        gThis.toolTips.init(selectProviderDiv);
+                    } else {
+                        selectProviderDiv.innerHTML = '<img src="' + gThis.providers.logos[providerId] + '" alt="' + gThis.providers.names[providerId] + '">';
+                    }
+                }
+            }
+        });
+    }
 
-    // incVote(e) {
-    //     const selectVoteDiv = e.target;
-    //     const innerText = selectVoteDiv.innerText;
-    //     const episodeId = selectVoteDiv.getAttribute('data-id');
-    //     const voteValue = innerText === '+' ? 0 : parseInt(selectVoteDiv.innerText);
-    //     if (voteValue < 10) {
-    //         selectVoteDiv.innerText = (voteValue + 1).toString();
-    //         gThis.saveVote(episodeId, voteValue + 1);
-    //     }
-    // }
-    //
-    // decVote(e) {
-    //     const selectVoteDiv = e.target;
-    //     const innerText = selectVoteDiv.innerText;
-    //     const episodeId = selectVoteDiv.getAttribute('data-id');
-    //     const voteValue = innerText === '+' ? 11 : parseInt(selectVoteDiv.innerText);
-    //     if (voteValue > 1) {
-    //         selectVoteDiv.innerText = (voteValue - 1).toString();
-    //         gThis.saveVote(episodeId, voteValue - 1);
-    //     }
-    // }
+    saveDevice(episodeId, deviceId, selectDeviceDiv = null) {
+        fetch('/' + gThis.lang + '/series/episode/device/' + episodeId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                deviceId: deviceId
+            })
+        }).then(function (response) {
+            if (response.ok) {
+                if (selectDeviceDiv) {
+                    if (deviceId === -1) {
+                        const svgPlus = gThis.getSvg('plus');
+                        selectDeviceDiv.innerHTML = '';
+                        selectDeviceDiv.setAttribute('data-title', gThis.text.device);
+                        selectDeviceDiv.appendChild(svgPlus);
+                        gThis.toolTips.init(selectDeviceDiv);
+                    } else {
+                        selectDeviceDiv.innerHTML = '';
+                        selectDeviceDiv.appendChild(gThis.getSvg('device-' + deviceId));
+                    }
+                }
+            }
+        });
+    }
 
-    saveVote(episodeId, voteValue, selectVoteDiv = null, voteList = null) {
+    saveVote(episodeId, voteValue, selectVoteDiv = null) {
         fetch('/' + gThis.lang + '/series/episode/vote/' + episodeId, {
             method: 'POST',
             headers: {
@@ -1267,11 +1254,16 @@ export class Season {
             })
         }).then(function (response) {
             if (response.ok) {
-                if (selectVoteDiv) selectVoteDiv.innerHTML = voteValue;
-                if (voteList) voteList.remove();
-                if (gThis.saving) {
-                    clearTimeout(gThis.saving);
-                    gThis.saving = null;
+                if (selectVoteDiv) {
+                    if (voteValue === -1) {
+                        const svgPlus = gThis.getSvg('plus');
+                        selectVoteDiv.innerHTML = '';
+                        selectVoteDiv.setAttribute('data-title', gThis.text.rating);
+                        selectVoteDiv.appendChild(svgPlus);
+                        gThis.toolTips.init(selectVoteDiv);
+                    } else {
+                        selectVoteDiv.innerHTML = voteValue;
+                    }
                 }
             }
         });
@@ -1368,12 +1360,36 @@ export class Season {
         input.focus({'preventScroll': true});
     }
 
+    listTrashButton(list, selectDiv) {
+        const deleteButton = document.createElement('button');
+        const svgDelete = gThis.getSvg('delete');
+        const id = list.getAttribute('data-id').split('-')[1];
+        const saveFunction = list.getAttribute('data-save');
+
+        deleteButton.appendChild(svgDelete);
+        deleteButton.addEventListener('click', () => {
+            switch (saveFunction) {
+                case 'saveProvider':
+                    gThis.saveProvider(id, -1, selectDiv);
+                    break;
+                case 'saveDevice':
+                    gThis.saveDevice(id, -1, selectDiv);
+                    break;
+                case 'saveVote':
+                    gThis.saveVote(id, -1, selectDiv);
+                    break;
+            }
+        });
+        list.appendChild(deleteButton);
+    }
+
     handleClick(e) {
         e.preventDefault();
         e.stopPropagation();
         const list = document.querySelector('.list');
         if (list) {
             list.remove();
+            gThis.toolTips.hide();
             return true;
         }
         return false;

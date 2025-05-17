@@ -3119,18 +3119,32 @@ h2 {
                 margin-inline: 3px;
                 width: 2px;
             }
+
+            button {
+                align-items: center;
+                background-color: var(--orange-50);
+                border-radius: .25rem;
+                border: none;
+                color: var(--ardoise-0);
+                cursor: pointer;
+                display: flex;
+                flex-shrink: 0;
+                height: 2rem;
+                justify-content: center;
+                width: 2rem;
+            }
         }
     }
 
     .select-provider, .select-vote {
         .list {
-            max-width: 23rem;
+            max-width: 25.25rem;
         }
     }
 
     .select-device {
         .list {
-            max-width: 11.75rem;
+            max-width: 14rem;
         }
     }
 }
