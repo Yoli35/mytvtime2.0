@@ -12,7 +12,7 @@
         </div>
         {% if value is iterable %}
             <div class="iterable">
-                {{ include('_blocks/admin/_movie-append-iterable.html.twig', { level: level+1, parent: key, results: value }) }}
+                {{ include('_blocks/admin/_series-append-iterable.html.twig', { level: level+1, parent: key, results: value }) }}
             </div>
             {% if level==2 and extra=='images' %}
                 <div class="image" data-title="{{ parent }}">
@@ -26,7 +26,7 @@
                 </div>
             {% endif %}
         {% else %}
-            {{ include('_blocks/admin/_movie-append-item.html.twig', { key: key, value: value }) }}
+            {{ include('_blocks/admin/_series-append-item.html.twig', { key: key, value: value }) }}
         {% endif %}
     </div>
 {% endfor %}

@@ -7,6 +7,7 @@ use App\Repository\MovieRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\UserRepository;
 use App\Repository\WatchProviderRepository;
+use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,6 +25,7 @@ class AdminController extends AbstractController
 {
 
     public function __construct(
+        private readonly DateService             $dateService,
         private readonly ImageConfiguration      $imageConfiguration,
         private readonly MovieRepository         $movieRepository,
         private readonly SeriesController        $seriesController,
@@ -102,6 +104,69 @@ class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/series/append', name: 'series_append', methods: ['POST'])]
+    public function adminSeriesAppend(Request $request): Response
+    {
+        $data = $request->request->all();
+
+        $seriesId = $data['id'];
+        $extra = $data['append_to_response'];
+
+        $param = '';
+        $invalidRequest = false;
+        switch ($extra) {
+            case 'changes':
+                $page = $data['page'] ?? null;
+                $endDate = $data['end_date'] ?? null;
+                $startDate = $data['start_date'] ?? null;
+                $param = "&page=$page&start_date=$startDate&end_date=$endDate";
+                $invalidRequest = !$endDate || !$startDate;
+                break;
+            case 'credits':
+            case 'aggregate_credits':
+            case 'videos':
+                $language = $data['language'] ?? null;
+                $param = ($language ? "&language=$language" : "");
+                break;
+            case 'images':
+                $language = $data['language'] ?? null;
+                $include_image_language = $data['include_image_language'] ?? null;
+                $param = ($include_image_language ? "&include_image_language=$include_image_language" : "") . ($language ? "&language=$language" : "");
+                break;
+            case 'lists':
+            case 'reviews':
+                $page = $data['page'] ?? null;
+                $language = $data['language'] ?? null;
+                $param = "&page=$page" . ($language ? "&language=$language" : "");
+                break;
+        }
+
+        if ($invalidRequest) {
+            return $this->json([
+                'error' => $this->translator->trans("admin.series.append.invalid_request"),
+                'status' => 400,
+            ]);
+        }/* elseif ($extra==='changes') {
+            $results = ['param' => $param];
+        }*/ else {
+            $results = json_decode($this->tmdbService->getSeriesExtras($seriesId, $extra, $param), true);
+        }
+//        dump($results);
+
+        return $this->render('_blocks/admin/_series-append-results.html.twig', [
+                'extra' => $extra,
+                'results' => $results,
+                'urls' => [
+                    'backdrop' => $this->imageConfiguration->getUrl('backdrop_sizes', 2),//w1280
+                    'logo' => $this->imageConfiguration->getUrl('logo_sizes', 5), // w500
+                    'poster' => $this->imageConfiguration->getUrl('poster_sizes', 5), // w780
+                    'still' => $this->imageConfiguration->getUrl('still_sizes', 2), // w300
+                    'profile' => $this->imageConfiguration->getUrl('profile_sizes', 2), // h632
+                ],
+            ]
+        );
+    }
+
     #[Route('/series/{id}', name: 'series_edit')]
     public function adminSeriesEdit(Request $request, int $id): Response
     {
@@ -144,6 +209,24 @@ class AdminController extends AbstractController
             return $swl;
         }, $this->seriesRepository->seriesWatchLinks($id));
 
+        $now = $this->dateService->getNowImmutable("Europe/Paris", true);
+        $start = $now->modify('-14 days');
+        $series['append_to_response'] = 'translations';
+        $appendToResponse = [
+            'Alternative Titles' => ['value' => 'alternative_titles', 'extra_fields' => []],
+            'Changes' => ['value' => 'changes', 'extra_fields' => ['end_date' => $now->format("Y-m-d"), 'start_date' => $start->format("Y-m-d"), 'page' => 1]], // +page
+            'Credits' => ['value' => 'credits', 'extra_fields' => ['language' => 'en-US']], // +language
+            'Agregate credits' => ['value' => 'aggregate_credits', 'extra_fields' => ['language' => 'en-US']], // +language
+            'External IDs' => ['value' => 'external_ids', 'extra_fields' => []],
+            'Images' => ['value' => 'images', 'extra_fields' => ['include_image_language' => 'fr,null', 'language' => 'en-US']], // +include_image_language (specify a comma separated list of ISO-639-1 values to query, for example: en,null), language
+            'Keywords' => ['value' => 'keywords', 'extra_fields' => []],
+            'Lists' => ['value' => 'lists', 'extra_fields' => ['language' => 'en-US', 'page' => 1]], // +language, page
+            'Reviews' => ['value' => 'reviews', 'extra_fields' => ['language' => 'en-US', 'page' => 1]], // +language, page
+            'Translations' => ['value' => 'translations', 'extra_fields' => []],
+            'Videos' => ['value' => 'videos', 'extra_fields' => ['language' => 'en-US']], // +language
+            'Watch Providers' => ['value' => 'watch/providers', 'extra_fields' => []],
+        ];
+
         $seriesLink = $this->generateAdminUrl($this->generateUrl('admin_series'), [
             'l' => $limit,
             'o' => $order,
@@ -162,6 +245,9 @@ class AdminController extends AbstractController
             'seriesLocalizedOverviews' => $seriesLocalizedOverviews,
             'seriesNetworks' => $seriesNetworks,
             'seriesWatchLinks' => $seriesWatchLinks,
+            'appendToResponse' => $appendToResponse,
+            'appendToResponseDates' => ['end_date' => $now->format("Y-m-d"), 'start_date' => $start->format("Y-m-d")],
+            'languages' => Languages::getNames(),
         ]);
     }
 
@@ -273,7 +359,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/movie/append', name: 'movie_append', methods: ['POST'])]
-    public function movieAppend(Request $request): Response
+    public function adminMovieAppend(Request $request): Response
     {
         $data = $request->request->all();
         // append_to_response => "translations"
@@ -349,23 +435,22 @@ class AdminController extends AbstractController
             '5' => 'Physical',
             '6' => 'TV',
         ];
-        $movie['append_to_response'] = ['translations'];
+        $now = $this->dateService->getNowImmutable("Europe/Paris", true);
+        $start = $now->modify('-14 days');
+        $movie['append_to_response'] = 'translations';
         $appendToResponse = [
-//            'Alternative Titles' => ['value' => 'alternative_titles', 'extra_fields' => []],
-            'Changes' => ['value' => 'changes', 'extra_fields' => ['page' => 1]], // +page
+            'Changes' => ['value' => 'changes', 'extra_fields' => ['end_date' => $now->format("Y-m-d"), 'start_date' => $start->format("Y-m-d"), 'page' => 1]], // +page
             'Credits' => ['value' => 'credits', 'extra_fields' => ['language' => 'en-US']], // +language
             'External IDs' => ['value' => 'external_ids', 'extra_fields' => []],
-            'Images' => ['value' => 'images', 'extra_fields' => ['include_image_language'=> 'fr,null', 'language'=> '']], // +include_image_language (specify a comma separated list of ISO-639-1 values to query, for example: en,null), language
+            'Images' => ['value' => 'images', 'extra_fields' => ['include_image_language' => 'fr,null', 'language' => '']], // +include_image_language (specify a comma separated list of ISO-639-1 values to query, for example: en,null), language
             'Keywords' => ['value' => 'keywords', 'extra_fields' => []],
-            'Lists' => ['value' => 'lists', 'extra_fields' => ['language'=> 'en-US', 'page'=> 1]], // +language, page
-//            'Recommendations' => ['value' => 'recommendations', 'extra_fields' => ['language'=> 'en-US', 'page'=> 1]], // +language, page
+            'Lists' => ['value' => 'lists', 'extra_fields' => ['language' => 'en-US', 'page' => 1]], // +language, page
             'Release Dates' => ['value' => 'release_dates', 'extra_fields' => []], // see $movie['release_types']
-            'Reviews' => ['value' => 'reviews', 'extra_fields' => ['language'=> 'en-US', 'page'=> 1]], // +language, page
+            'Reviews' => ['value' => 'reviews', 'extra_fields' => ['language' => 'en-US', 'page' => 1]], // +language, page
             'Translations' => ['value' => 'translations', 'extra_fields' => []],
-            'Videos' => ['value' => 'videos', 'extra_fields' => ['language'=> 'en-US']], // +language
+            'Videos' => ['value' => 'videos', 'extra_fields' => ['language' => 'en-US']], // +language
             'Watch Providers' => ['value' => 'watch/providers', 'extra_fields' => []],
         ];
-        $languages = Languages::getNames();
 
         return $this->render('admin/index.html.twig', [
             'movieLink' => $movieLink,
@@ -377,7 +462,8 @@ class AdminController extends AbstractController
             'movieLocalizedOverviews' => $movieLocalizedOverviews,
             'movieDirectLinks' => $movieDirectLinks,
             'appendToResponse' => $appendToResponse,
-            'languages' => $languages,
+            'appendToResponseDates' => ['end_date' => $now->format("Y-m-d"), 'start_date' => $start->format("Y-m-d")],
+            'languages' => Languages::getNames(),
         ]);
     }
 

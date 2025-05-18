@@ -646,6 +646,25 @@ class TMDBService
         }
     }
 
+    public function getSeriesExtras(int $seriesID, string $extra, $param): ?string
+    {
+        $request = "https://api.themoviedb.org/3/tv/$seriesID/$extra?api_key=$this->api_key$param";
+
+        try {
+            $response = $this->client->request(
+                'GET',
+                $request,
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable) {
+                return "";
+            }
+        } catch (Throwable) {
+            return "";
+        }
+    }
+
     public function getBearer(): string
     {
         return $_ENV['TMDB_BEARER'];

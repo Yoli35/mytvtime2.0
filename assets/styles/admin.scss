@@ -135,7 +135,7 @@
 
             .item {
                 align-items: flex-start;
-                background-color: var(--green-50);
+                background-color: var(--green-60);
                 border-radius: .25rem;
                 display: flex;
                 flex-shrink: 0;
@@ -188,11 +188,31 @@
                     font-size: 1rem;
                     font-weight: bold;
                     gap: .25rem;
+                    overflow-y: hidden;
                     padding: .25rem .25rem .25rem .5rem;
+                }
+
+                .value-switch {
+                    border-bottom: .5rem solid transparent;
+                    border-left: 1rem solid var(--orange-40);
+                    border-right: .5rem solid transparent;
+                    border-top: .5rem solid transparent;
+                    cursor: pointer;
+                    height: .5rem !important;
+                    margin-inline-start: auto;
+                    transform: rotate(90deg) translate(25%, 25%);
+                    transition: all .5s ease-in-out;
+                    width: 1rem;
+
+                    &.closed {
+                        transform: rotate(0deg) translate(0%, 0%);
+                    }
                 }
 
                 .red {
                     background-color: red;
+                    border-radius: .25rem;
+                    padding: .125rem .5rem;
                 }
 
                 .backdrop {
@@ -733,7 +753,7 @@
                         }
 
                         .series__db__property_value,
-                        .movie__db__property_value,{
+                        .movie__db__property_value, {
                             color: var(--ardoise-10);
                             flex-grow: 5;
                             max-width: 60vw;

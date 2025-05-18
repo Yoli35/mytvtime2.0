@@ -186,9 +186,15 @@
             <label for="append_to_response">{{ 'Choose an option'|trans }}
                 <select id="append_to_response" name="append_to_response">
                     {% for label, type in appendToResponse %}
-                        <option value="{{ type.value }}{% if type.value==movie.append_to_response %} selected{% endif %}">{{ label|trans }}</option>
+                        <option value="{{ type.value }}"{% if type.value==movie.append_to_response %} selected{% endif %}>{{ label|trans }}</option>
                     {% endfor %}
                 </select>
+            </label>
+            <label for="end_date">{{ 'End date'|trans }}
+                <input type="date" id="end_date" name="end_date" value="{{ appendToResponseDates.end_date }}">
+            </label>
+            <label for="start_date">{{ 'Start date'|trans }}
+                <input type="date" id="start_date" name="start_date" value="{{ appendToResponseDates.start_date }}">
             </label>
             <label for="language">{{ 'Language'|trans }}
                 <select id="language" name="language">
@@ -233,6 +239,7 @@
 <div id="globs" style="display: none;">
     {
         "appendToResponse": {{ appendToResponse|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "append_to_response": "{{ movie.append_to_response }}",
         "atrUrl": "{{ path('admin_movie_append') }}",
         "movieId": {{ movie.tmdb_id }}
     }

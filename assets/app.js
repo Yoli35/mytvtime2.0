@@ -131,7 +131,8 @@ window.addEventListener("DOMContentLoaded", () => {
 // Admin page
     const admin = document.querySelector(".admin");
     const adminMovieEditDiv = admin?.querySelector(".admin__movie__edit");
-    if (adminMovieEditDiv) {
+    const adminSeriesEditDiv = admin?.querySelector(".admin__series__edit");
+    if (adminMovieEditDiv || adminSeriesEditDiv) {
         new AdminMovieEdit();
     }
 

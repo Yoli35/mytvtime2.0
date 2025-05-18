@@ -175,4 +175,68 @@
             </div>
         {% endfor %}
     </div>
+
+    <div class="admin__append_to_response">
+        <h3>{{ 'Additional information'|trans }}</h3>
+        <form class="admin__append_to_response__form">
+            <label for="append_to_response">{{ 'Choose an option'|trans }}
+                <select id="append_to_response" name="append_to_response">
+                    {% for label, type in appendToResponse %}
+                        <option value="{{ type.value }}"{% if type.value==series.append_to_response %} selected{% endif %}>{{ label|trans }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label for="end_date">{{ 'End date'|trans }}
+                <input type="date" id="end_date" name="end_date" value="{{ appendToResponseDates.end_date }}">
+            </label>
+            <label for="start_date">{{ 'Start date'|trans }}
+                <input type="date" id="start_date" name="start_date" value="{{ appendToResponseDates.start_date }}">
+            </label>
+            <label for="language">{{ 'Language'|trans }}
+                <select id="language" name="language">
+                    <option value="null"></option>
+                    <hr>
+                    <option value="fr"{% if app.locale=='fr' %} selected{% endif %}>{{ 'french'|trans|capitalize }}</option>
+                    <option value="en"{% if app.locale=='en' %} selected{% endif %}>{{ 'english'|trans|capitalize }}</option>
+                    <option value="ko"{% if app.locale=='ko' %} selected{% endif %}>{{ 'korean'|trans|capitalize }}</option>
+                    <hr>
+                    {% for code, name in languages %}
+                        <option value="{{ code }}">{{ name|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label for="page">{{ 'Page'|trans }}
+                <select id="page" name="page">
+                    {% for page in [1] %}
+                        <option value="{{ page }}">{{ page }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label for="include_image_language">{{ 'Include image language'|trans }}
+                <select id="include_image_language" name="include_image_language">
+                    <option value="null"></option>
+                    <hr>
+                    <option value="fr"{% if app.locale=='fr' %} selected{% endif %}>{{ 'french'|trans|capitalize }}</option>
+                    <option value="en"{% if app.locale=='en' %} selected{% endif %}>{{ 'english'|trans|capitalize }}</option>
+                    <option value="ko"{% if app.locale=='ko' %} selected{% endif %}>{{ 'korean'|trans|capitalize }}</option>
+                    <hr>
+                    {% for code, name in languages %}
+                        <option value="{{ code }}">{{ name|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button type="submit" class="admin__append_to_response__get">
+                {{ 'Get'|trans }}
+            </button>
+        </form>
+        <div class="admin__append_to_response__results"></div>
+    </div>
+</div>
+<div id="globs" style="display: none;">
+    {
+    "appendToResponse": {{ appendToResponse|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+    "append_to_response": "{{ series.append_to_response }}",
+    "atrUrl": "{{ path('admin_series_append') }}",
+    "movieId": {{ series.tmdb_id }}
+    }
 </div>
