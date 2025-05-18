@@ -1637,13 +1637,14 @@ label:has(input[type="text"]) {
             }
 
             .menu.main {
-                bottom: calc(3.75rem - 100vh);
+                border-right: 0;
+                bottom: calc(3.5rem - 100vh);
                 display: flex;
                 max-height: unset;
                 max-width: unset;
                 opacity: 1;
                 top: -1.5rem;
-                transform: translateX(calc(100% + 2rem));
+                transform: translateX(calc(100% + 2.125rem));
                 width: 40rem;
             }
         }
