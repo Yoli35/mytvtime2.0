@@ -16,7 +16,6 @@
         body.style.backgroundAttachment = "fixed";
         body.style.backgroundImage = "url(" + bd + ")";
     </script>
-    <div class="scroll-watcher"></div>
     {{ include('_blocks/_menu.html.twig', {seriesName: season.localized_name ? season.localized_name.name:series.name, seriesLink: path('app_series_show', {id: series.id, slug: season.localized_name.slug ?? series.slug}) }) }}
     <div class="container-fluid backgroundImageOverlay">
         <div id="series-season" class="series-show">
