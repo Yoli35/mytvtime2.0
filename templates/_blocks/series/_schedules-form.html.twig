@@ -30,7 +30,7 @@
                             <input type="date" name="date-{{ schedule.id }}" value="{% if schedule.firstAirDate %}{{ schedule.firstAirDate|date("Y-m-d") }}{% endif %}" id="date-{{ schedule.id }}">
                         </label>
                         <label for="time-{{ schedule.id }}">{{ 'Time'|trans }}
-                            <input type="time" name="time-{{ schedule.id }}" value="{{ schedule.airAt }}" id="time-{{ schedule.id }}">
+                            <input type="time" name="time-{{ schedule.id }}" value="{{ schedule.airAt }}" step="300" id="time-{{ schedule.id }}">
                         </label>
                     </div>
                     <div class="date-time group full">
