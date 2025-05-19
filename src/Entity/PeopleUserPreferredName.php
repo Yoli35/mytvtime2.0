@@ -16,7 +16,7 @@ class PeopleUserPreferredName
     #[ORM\Column]
     private ?int $tmdbId = null;
 
-    #[ORM\ManyToOne(inversedBy: 'peopleUserPreferedNames')]
+    #[ORM\ManyToOne(inversedBy: 'peopleUserPreferredNames')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
