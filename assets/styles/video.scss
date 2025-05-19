@@ -1,0 +1,60 @@
+.videos {
+    margin-block-start: 3rem;
+
+    .video-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-inline: auto;
+        width: round(down, 100%, 21rem);
+
+        .video {
+            aspect-ratio: 16/9;
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            width: 32rem;
+
+            iframe {
+                border-radius: .5rem;
+                border: none;
+                height: 100%;
+                width: 100%;
+            }
+
+            .video-infos {
+                display: flex;
+                gap: .5rem;
+
+                .video-date {
+                }
+
+                .video-link {
+                    margin-inline-start: auto;
+
+                    a {
+                        align-items: center;
+                        display: flex;
+                        gap: .5rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.video-page {
+    margin-block-start: 3rem;
+
+    .video {
+        aspect-ratio: 16/9;
+        width: 100%;
+
+        iframe {
+            border-radius: .5rem;
+            border: none;
+            height: 100%;
+            width: 100%;
+        }
+    }
+}

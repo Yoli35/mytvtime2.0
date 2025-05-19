@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'My videos'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/video.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {{ include('_blocks/_menu.html.twig') }}
+    <div class="container-fluid videos">
+        {#        <pre>{{ dump(videos) }}</pre> #}
+        {#        <pre>{{ dump(now) }}</pre> #}
+        <h1>{{ 'My videos'|trans }}</h1>
+        <div class="video-wrapper">
+            {% for userVideo in videos %}
+                {% set video = userVideo.video %}
+                <div class="video">
+                    <iframe src="https://www.youtube.com/embed/{{ video.link }}" title="{{ video.name }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-infos">
+                        <div class="video-date">{{ userVideo.createdAt|format_date('relative_short')|capitalize }} {{ 'at'|trans }} {{ userVideo.createdAt|format_time('short') }}</div>
+                        <div class="video-link">
+                            <a href="{{ path('app_video_show', {'id': userVideo.id}) }}">
+                                {{ ux_icon('mdi:youtube-tv', {height: '18px', width: '18px'}) }}
+                                <div>{{ 'See video'|trans }}</div>
+                            </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% include '_blocks/_footer.html.twig' %}
+    </div>
+{% endblock %}

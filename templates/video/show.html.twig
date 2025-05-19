@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'My videos'|trans }} → {{ video.name }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/video.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {{ include('_blocks/_menu.html.twig') }}
+    <div class="container-fluid video-page">
+        <h1>{{ video.name }}</h1>
+        <div class="video">
+            <iframe src="https://www.youtube.com/embed/{{ video.link }}" title="{{ video.name }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        {% include '_blocks/_footer.html.twig' %}
+    </div>
+{% endblock %}

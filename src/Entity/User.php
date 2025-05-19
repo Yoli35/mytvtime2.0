@@ -110,7 +110,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, PeopleUserPreferredName>
      */
     #[ORM\OneToMany(targetEntity: PeopleUserPreferredName::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $peopleUserPreferedNames;
+    private Collection $peopleUserPreferredNames;
+
+    /**
+     * @var Collection<int, UserVideo>
+     */
+    #[ORM\OneToMany(targetEntity: UserVideo::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $videos;
 
     public function __construct()
     {
@@ -124,7 +130,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userMovies = new ArrayCollection();
         $this->userPinnedSeries = new ArrayCollection();
         $this->peopleUserRatings = new ArrayCollection();
-        $this->peopleUserPreferedNames = new ArrayCollection();
+        $this->peopleUserPreferredNames = new ArrayCollection();
+        $this->videos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -324,26 +331,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?DateTimeImmutable $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
-    }
-
-    public function getAvatarSize(): ?int
-    {
-        return $this->avatarSize;
-    }
-
-    public function setAvatarSize(?int $avatarSize): void
-    {
-        $this->avatarSize = $avatarSize;
-    }
-
-    public function getBannerSize(): ?int
-    {
-        return $this->bannerSize;
-    }
-
-    public function setBannerSize(?int $bannerSize): void
-    {
-        $this->bannerSize = $bannerSize;
     }
 
     public function getAvatarFile(): ?File
@@ -630,27 +617,57 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, PeopleUserPreferredName>
      */
-    public function getPeopleUserPreferedNames(): Collection
+    public function getPeopleUserPreferredNames(): Collection
     {
-        return $this->peopleUserPreferedNames;
+        return $this->peopleUserPreferredNames;
     }
 
-    public function addPeopleUserPreferedName(PeopleUserPreferredName $peopleUserPreferedName): static
+    public function addPeopleUserPreferredName(PeopleUserPreferredName $peopleUserPreferredName): static
     {
-        if (!$this->peopleUserPreferedNames->contains($peopleUserPreferedName)) {
-            $this->peopleUserPreferedNames->add($peopleUserPreferedName);
-            $peopleUserPreferedName->setUser($this);
+        if (!$this->peopleUserPreferredNames->contains($peopleUserPreferredName)) {
+            $this->peopleUserPreferredNames->add($peopleUserPreferredName);
+            $peopleUserPreferredName->setUser($this);
         }
 
         return $this;
     }
 
-    public function removePeopleUserPreferedName(PeopleUserPreferredName $peopleUserPreferedName): static
+    public function removePeopleUserPreferredName(PeopleUserPreferredName $peopleUserPreferredName): static
     {
-        if ($this->peopleUserPreferedNames->removeElement($peopleUserPreferedName)) {
+        if ($this->peopleUserPreferredNames->removeElement($peopleUserPreferredName)) {
             // set the owning side to null (unless already changed)
-            if ($peopleUserPreferedName->getUser() === $this) {
-                $peopleUserPreferedName->setUser(null);
+            if ($peopleUserPreferredName->getUser() === $this) {
+                $peopleUserPreferredName->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserVideo>
+     */
+    public function getUserVideos(): Collection
+    {
+        return $this->videos;
+    }
+
+    public function addUserVideo(UserVideo $video): static
+    {
+        if (!$this->videos->contains($video)) {
+            $this->videos->add($video);
+            $video->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserVideo(UserVideo $video): static
+    {
+        if ($this->videos->removeElement($video)) {
+            // set the owning side to null (unless already changed)
+            if ($video->getUser() === $this) {
+                $video->setUser(null);
             }
         }
 
