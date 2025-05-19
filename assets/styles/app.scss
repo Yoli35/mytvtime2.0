@@ -86,6 +86,10 @@ body {
         margin: 0;
     }
 
+    button {
+        border: none;
+    }
+
     input[type="checkbox"][switch] {
         accent-color: hsl(166, 50%, 50%);
     }
