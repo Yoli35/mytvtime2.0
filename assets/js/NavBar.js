@@ -20,6 +20,7 @@ export class NavBar {
 
         this.setOpacity();
         window.addEventListener("scroll", this.setOpacity);
+        window.addEventListener("resize", this.setOpacity);
     }
 
     navBarColor(hsl) {
