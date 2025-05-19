@@ -7,15 +7,32 @@
             {{ value ? 'true' : 'false' }}
         {% elseif type == 'string' %}
             {% if key == 'backdrop_path' %}
-                <img src="{{ urls.backdrop ~ value }}" alt="Backdrop" class="backdrop"/>
+                <img src="{{ urls.backdrop ~ value }}" alt="Backdrop" data-title="Backdrop" class="backdrop"/>
             {% elseif key == 'logo_path' %}
-                <img src="{{ urls.logo ~ value }}" alt="Logo" class="logo"/>
+                <img src="{{ urls.logo ~ value }}" alt="Logo" data-title="Logo" class="logo"/>
             {% elseif key == 'poster_path' %}
-                <img src="{{ urls.poster ~ value }}" alt="Poster" class="poster"/>
+                <img src="{{ urls.poster ~ value }}" alt="Poster" data-title="Poster" class="poster"/>
             {% elseif key == 'profile_path' %}
-                <img src="{{ urls.profile ~ value }}" alt="Profile" class="profile"/>
+                <img src="{{ urls.profile ~ value }}" alt="Profile" data-title="Profile" class="profile"/>
             {% elseif key == 'still_path' %}
-                <img src="{{ urls.still ~ value }}" alt="Profile" class="profile"/>
+                <img src="{{ urls.still ~ value }}" alt="Profile" data-title="Profile" class="profile"/>
+            {% elseif key == 'file_path' %}
+                {% set class = parent %}
+                {% if parent == 'poster' %}
+                    {%  set url = urls.poster %}
+                {% elseif parent == 'backdrop' %}
+                    {%  set url = urls.backdrop %}
+                {% elseif parent == 'logo' or parent == 'title_logo' %}
+                    {%  set url = urls.logo %}
+                    {% set class = 'logo' %}
+                {% elseif parent == 'profile' %}
+                    {%  set url = urls.profile %}
+                {% elseif parent == 'still' %}
+                    {%  set url = urls.still %}
+                {% else %}
+                    {%  set url = urls.backdrop %}
+                {% endif %}
+                <img src="{{ url ~ value }}" alt="{{ parent|capitalize }}" data-tilte="{{ parent|capitalize }}" class="{{ class }}"/>
             {% elseif key == 'iso_3166_1' %}
                 {{ value }}{% if value %} <span class="flag">{{ getEmojiFlag(value) }}</span><span class="country">{{ value|country_name }}</span>{% endif %}
             {% elseif key == 'iso_639_1' %}
