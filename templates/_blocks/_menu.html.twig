@@ -89,17 +89,11 @@
                                         {% endif %}
                                     </div>
                                     <div class="name">{{ h.name }}</div>
-                                    {% if h.vote %}
-                                        <div class="vote{% if history.vote == 0 %} hidden{% endif %}">{{ h.vote }}</div>
-                                    {% endif %}
-                                    {% if h.deviceSvg %}
-                                        <div class="device{% if history.device == 0 %} hidden{% endif %}">{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}</div>
-                                    {% endif %}
-                                    {% if h.providerLogoPath %}
-                                        <div class="provider{% if history.provider == 0 %} hidden{% endif %}"><img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}"></div>
-                                    {% endif %}
                                     <div class="number{% if h.progress==100 %} ended{% endif %}">{{ 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) }}</div>
                                     <div class="date">{{ h.lastWatchAt|format_datetime('relative_medium', 'short') }}</div>
+                                    <div class="vote{% if history.vote == 0 %} hidden{% endif %}">{% if h.vote %}{{ h.vote }}{% endif %}</div>
+                                    <div class="device{% if history.device == 0 %} hidden{% endif %}">{% if h.deviceSvg %}{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}{% endif %}</div>
+                                    <div class="provider{% if history.provider == 0 %} hidden{% endif %}">{% if h.providerLogoPath %}<img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}">{% endif %}</div>
                                 </a>
                             </li>
                         {% else %}
@@ -219,31 +213,31 @@
                 </div>
             {% endif %}
         {% endif %}
-{#        {% set users = getUsers() %}#}
-{#        <div class="navbar-item">#}
-{#            {{ ux_icon('fa6-solid:user', {height: '18px', width: '18px'}) }}#}
-{#            <div class="menu users">#}
-{#                <label for="user-select">#}
-{#                    <select id="user-select" class="user-select">#}
-{#                        <button>#}
-{#                            <!-- Prendra le contenu HTML de l'option choisie -->#}
-{#                            <selectedcontent></selectedcontent>#}
-{#                            {{ ux_icon('iconoir:nav-arrow-down', {height: '18px', width: '18px'}) }}#}
-{#                        </button>#}
-{#                        {% for u in users %}#}
-{#                            <option value="{{ loop.index}}"{% if app.user and app.user.id == u.id %} selected{% endif %}>#}
-{#                                {% if u.avatar %}#}
-{#                                    <img src="/images/users/avatars/{{ u.avatar }}" alt="{{ u.username }}">#}
-{#                                {% else %}#}
-{#                                    <img src="/images/users/avatars/default.png" alt="{{ u.username }}">#}
-{#                                {% endif %}#}
-{#                                {{ u.username }}#}
-{#                            </option>#}
-{#                        {% endfor %}#}
-{#                    </select>#}
-{#                </label>#}
-{#            </div>#}
-{#        </div>#}
+        {#        {% set users = getUsers() %} #}
+        {#        <div class="navbar-item"> #}
+        {#            {{ ux_icon('fa6-solid:user', {height: '18px', width: '18px'}) }} #}
+        {#            <div class="menu users"> #}
+        {#                <label for="user-select"> #}
+        {#                    <select id="user-select" class="user-select"> #}
+        {#                        <button> #}
+        {#                            <!-- Prendra le contenu HTML de l'option choisie --> #}
+        {#                            <selectedcontent></selectedcontent> #}
+        {#                            {{ ux_icon('iconoir:nav-arrow-down', {height: '18px', width: '18px'}) }} #}
+        {#                        </button> #}
+        {#                        {% for u in users %} #}
+        {#                            <option value="{{ loop.index}}"{% if app.user and app.user.id == u.id %} selected{% endif %}> #}
+        {#                                {% if u.avatar %} #}
+        {#                                    <img src="/images/users/avatars/{{ u.avatar }}" alt="{{ u.username }}"> #}
+        {#                                {% else %} #}
+        {#                                    <img src="/images/users/avatars/default.png" alt="{{ u.username }}"> #}
+        {#                                {% endif %} #}
+        {#                                {{ u.username }} #}
+        {#                            </option> #}
+        {#                        {% endfor %} #}
+        {#                    </select> #}
+        {#                </label> #}
+        {#            </div> #}
+        {#        </div> #}
         <div class="navbar-item">
             <div class="avatar">
                 {% if app.user %}

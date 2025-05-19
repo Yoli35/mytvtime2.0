@@ -1043,13 +1043,11 @@ export class Menu {
                     vote.classList.add("vote");
                     if (options.vote === false) vote.classList.add('hidden');
                     vote.innerHTML = item.vote;
-                    a.appendChild(vote);
 
                     const device = document.createElement("div");
                     device.classList.add("device");
                     if (options.device === false) device.classList.add('hidden');
                     device.innerHTML = gThis.svgs[item.deviceSvg];
-                    a.appendChild(device);
 
                     const provider = document.createElement("div");
                     provider.classList.add("provider");
@@ -1060,7 +1058,6 @@ export class Menu {
                         imgProvider.alt = item.providerName;
                         provider.appendChild(imgProvider);
                     }
-                    a.appendChild(provider);
 
                     const number = document.createElement("div");
                     number.classList.add("number");
@@ -1071,6 +1068,10 @@ export class Menu {
                     date.classList.add("date");
                     date.innerHTML = item.lastWatchAt;
                     a.appendChild(date);
+
+                    a.appendChild(vote);
+                    a.appendChild(device);
+                    a.appendChild(provider);
 
                     li.appendChild(a);
                     historyList.appendChild(li);
