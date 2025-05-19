@@ -177,7 +177,7 @@ class PeopleController extends AbstractController
 
         if (key_exists('birthday', $people)) {
             $date = $this->dateService->newDate($people['birthday'], "Europe/Paris");
-            if (key_exists('deathday', $people)) {
+            if (key_exists('deathday', $people) && $people['deathday']) {
                 $now = $this->dateService->newDate($people['deathday'], "Europe/Paris");
             } else {
                 $people['deathday'] = null;
