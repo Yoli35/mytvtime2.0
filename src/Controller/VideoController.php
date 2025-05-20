@@ -4,23 +4,48 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\UserVideo;
+use App\Entity\Video;
+use App\Entity\VideoChannel;
 use App\Repository\UserVideoRepository;
+use App\Repository\VideoChannelRepository;
 use App\Repository\VideoRepository;
 use App\Service\DateService;
+use App\Service\ImageService;
+use DateTimeImmutable;
+use Google\Exception;
+use Google\Service\YouTube\ChannelListResponse;
+use Google\Service\YouTube\VideoListResponse;
+use Google_Client;
+use Google_Service_YouTube;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 /** @method User|null getUser() */
-#[ Route('/video', name: 'app_video_')]
+#[Route('/video', name: 'app_video_')]
 final class VideoController extends AbstractController
 {
+    private Google_Service_YouTube $service_YouTube;
+
+    /**
+     * @throws Exception
+     */
     public function __construct(
-        private readonly DateService $dateService,
-        private readonly UserVideoRepository $userVideoRepository,
+        private readonly DateService            $dateService,
+        private readonly ImageService           $imageService,
+        private readonly VideoChannelRepository $channelRepository,
+        private readonly VideoRepository        $videoRepository,
+        private readonly UserVideoRepository    $userVideoRepository,
     )
     {
+        $client = new Google_Client();
+        $client->setApplicationName('mytvtime');
+        $client->setScopes(['https://www.googleapis.com/auth/youtube.readonly',]);
+        $client->setAuthConfig('../config/google/mytvtime-349019-001b2f815d02.json');
+        $client->setAccessType('offline');
+
+        $this->service_YouTube = new Google_Service_YouTube($client);
     }
 
     #[Route('/', name: 'index')]
@@ -28,7 +53,23 @@ final class VideoController extends AbstractController
     {
         $user = $this->getUser();
         $now = $this->dateService->getNowImmutable($user->getTimezone(), true);
+        $newLink = $request->query->get('link');
+        if ($newLink) {
+            $link = $this->parseLink($newLink);
+//            dump(['link' => $link, 'newLink' => $newLink]);
+            if ($link) {
+                $this->addVideo($link, $now);
+            } else {
+                $this->addFlash('error', 'Invalid YouTube link: "' . $newLink . '"<br> Please provide a valid YouTube link.');
+            }
+        }
+
         $videos = $this->userVideoRepository->findBy(['user' => $user], ['createdAt' => 'DESC']);
+
+        foreach ($videos as $userVideo) {
+            $this->checkVideo($userVideo->getVideo(), $now);
+        }
+//        dump($videos);
 
         return $this->render('video/index.html.twig', [
             'videos' => $videos,
@@ -37,7 +78,7 @@ final class VideoController extends AbstractController
     }
 
     #[Route('/{id}', name: 'show')]
-    public function show(Request $request, UserVideo $userVideo): Response
+    public function show(UserVideo $userVideo): Response
     {
         $video = $userVideo->getVideo();
 
@@ -49,5 +90,151 @@ final class VideoController extends AbstractController
             'userVideo' => $userVideo,
             'video' => $video,
         ]);
+    }
+
+    private function parseLink(string $link): ?string
+    {
+        $pattern = '/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/';
+        preg_match($pattern, $link, $matches);
+        return $matches[1] ?? null;
+    }
+
+    private function getYouTubeVideo(string $videoId): ?VideoListResponse
+    {
+        try {
+            return $this->service_YouTube->videos->listVideos('contentDetails,snippet,statistics', ['id' => $videoId]);
+        } catch (\Google\Service\Exception) {
+            return null;
+        }
+    }
+
+    private function addVideo(string $link, DateTimeImmutable $now): void
+    {
+        $video = $this->videoRepository->findOneBy(['link' => $link]);
+        if (!$video) {
+            $youtubeVideo = $this->getYouTubeVideo($link);
+            $video = new Video($youtubeVideo->getItems()[0]['snippet']['title'], $link);
+            $this->checkVideo($video, $now);
+        }
+        $userVideo = $this->userVideoRepository->findOneBy(['user' => $this->getUser(), 'video' => $video]);
+        if (!$userVideo) {
+            $userVideo = new UserVideo($this->getUser(), $video);
+            $this->userVideoRepository->save($userVideo, true);
+        } else {
+            $this->addFlash('error', 'You already added this video: "' . $link . '"<br> Please provide a different YouTube link.');
+        }
+    }
+
+    private function checkVideo(?Video $video, DateTimeImmutable $now): void
+    {
+        if (!$video) {
+            return;
+        }
+        $lastUpdateAt = $video->getUpdatedAt();
+        if (!$lastUpdateAt || $now->diff($lastUpdateAt)->days > 1) {
+            $link = $video->getLink();
+            $youtubeVideo = $this->getYouTubeVideo($link);
+
+            if ($youtubeVideo) {
+                $this->video($youtubeVideo, $video, $now);
+            } else {
+                $this->addFlash('error', 'Invalid YouTube video: "' . $link . '"<br> Please provide a valid YouTube video link.');
+            }
+        }
+    }
+
+    private function video(VideoListResponse $youtubeVideo, Video $video, DateTimeImmutable $now): void
+    {
+        $channelId = $youtubeVideo->getItems()[0]['snippet']['channelId'];
+        $channel = $this->checkChannel($channelId);
+        $video->setChannel($channel);
+        $video->setPublishedAt(date_create_immutable($youtubeVideo->getItems()[0]['snippet']['publishedAt']));
+        $thumbnailUrl = null;
+        $thumbnails = (array)$youtubeVideo->getItems()[0]['snippet']['thumbnails'];
+        if (array_key_exists('high', $thumbnails) && $thumbnails['high']['url']) {
+            $thumbnailUrl = $thumbnails['high']['url'];
+        } else {
+            if (array_key_exists('medium', $thumbnails) && $thumbnails['medium']['url']) {
+                $thumbnailUrl = $thumbnails['medium']['url'];
+            } else {
+                if (array_key_exists('default', $thumbnails) && $thumbnails['default']['url']) {
+                    $thumbnailUrl = $thumbnails['default']['url'];
+                }
+            }
+        }
+        if ($thumbnailUrl) {
+            $url = pathinfo($thumbnailUrl);
+            $basename = '/' . $video->getLink() . '-' . $url['basename'];
+//            dump(['type' => 'video', 'basename' => $basename, 'dirname' => $thumbnailUrl]);
+            $this->imageService->saveImage2($thumbnailUrl, '/videos/thumbnails/' . $basename);
+        } else {
+            $basename = null;
+        }
+        $video->setThumbnail($basename);
+        $video->setTitle($youtubeVideo->getItems()[0]['snippet']['title']);
+        $video->setUpdatedAt($now);
+        $this->videoRepository->save($video, true);
+    }
+
+    private function checkChannel(string $channelId): VideoChannel
+    {
+        /** @var VideoChannel|null $channel */
+        $channel = $this->channelRepository->findOneBy(['youTubeId' => $channelId]);
+
+        $user = $this->getUser();
+        $now = $this->dateService->getNowImmutable($user->getTimeZone() ?? 'Europe/Paris');
+        $lastUpdateAt = $channel?->getUpdatedAt();
+
+        $performChecks = $lastUpdateAt == null || $lastUpdateAt->diff($now)->days > 1;
+
+        if ($performChecks) {
+            $channelListResponse = $this->getChannelSnippet($channelId);
+            $items = $channelListResponse->getItems();
+            $item = $items[0];
+            $snippet = $item['snippet'];
+            $thumbnails = (array)$snippet['thumbnails'];
+            $thumbnailUrl = null;
+            if (array_key_exists('high', $thumbnails) && $thumbnails['high']['url']) {
+                $thumbnailUrl = $thumbnails['high']['url'];
+            } else {
+                if (array_key_exists('medium', $thumbnails) && $thumbnails['medium']['url']) {
+                    $thumbnailUrl = $thumbnails['medium']['url'];
+                } else {
+                    if (array_key_exists('default', $thumbnails) && $thumbnails['default']['url']) {
+                        $thumbnailUrl = $thumbnails['default']['url'];
+                    }
+                }
+            }
+            if ($thumbnailUrl) {
+                $basename = '/' . $channelId;
+//                dump(['type' => 'channel', 'basename' => $basename, 'dirname' => $thumbnailUrl]);
+                $this->imageService->saveImage2($thumbnailUrl, '/videos/channels/thumbnails' . $basename);
+            } else {
+                $basename = null;
+            }
+
+            if ($channel == null) {
+                $channel = new VideoChannel($item['id'], $snippet['title'], $snippet['customUrl'], $thumbnailUrl, $now);
+            } else {
+                $channel->setYouTubeId($item['id']);
+                $channel->setTitle($snippet['title']);
+                $channel->setCustomUrl($snippet['customUrl']);
+                $channel->setThumbnail($basename);
+                $channel->setUpdatedAt($now);
+            }
+
+            $this->channelRepository->save($channel, true);
+        }
+
+        return $channel;
+    }
+
+    private function getChannelSnippet($channelId): ?ChannelListResponse
+    {
+        try {
+            return $this->service_YouTube->channels->listChannels('snippet', ['id' => $channelId]);
+        } catch (\Google\Service\Exception) {
+            return null;
+        }
     }
 }

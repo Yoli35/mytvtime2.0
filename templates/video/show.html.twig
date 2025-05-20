@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}my Tv Time → {{ 'My videos'|trans }} → {{ video.name }}{% endblock %}
+{% block title %}my Tv Time → {{ 'My videos'|trans }} → {{ video.title }}{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -10,9 +10,9 @@
 {% block body %}
     {{ include('_blocks/_menu.html.twig') }}
     <div class="container-fluid video-page">
-        <h1>{{ video.name }}</h1>
+        <h1>{{ video.title }}</h1>
         <div class="video">
-            <iframe src="https://www.youtube.com/embed/{{ video.link }}" title="{{ video.name }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/{{ video.link }}" title="{{ video.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
         {% include '_blocks/_footer.html.twig' %}
     </div>

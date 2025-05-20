@@ -5,6 +5,7 @@
 /.env.local
 /.env.local.php
 /.env.*.local
+/config/google/
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /public/series/posters/

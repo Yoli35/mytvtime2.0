@@ -1,21 +1,131 @@
 .videos {
     margin-block-start: 3rem;
 
+    .video-tools {
+        align-items: center;
+        background-color: var(--orange-30-alpha-75);
+        border-radius: .5rem;
+        display: flex;
+        gap: 1rem;
+        margin-block: 1rem;
+        padding: 1rem;
+
+        form {
+            align-items: center;
+            display: flex;
+            gap: 1rem;
+
+            label {
+                align-items: center;
+                display: flex;
+                gap: .5rem;
+
+                input {
+                    background-color: var(--orange-20);
+                    border: none;
+                    border-radius: .25rem;
+                    color: var(--orange-100);
+                    padding: .25rem 1rem;
+                }
+            }
+
+            button {
+                background-color: var(--orange-50);
+                border: none;
+                border-radius: .25rem;
+                color: var(--orange-100);
+                cursor: pointer;
+                padding: .25rem 1rem;
+
+                &:hover {
+                    background-color: var(--orange-60);
+                }
+            }
+        }
+    }
+
     .video-wrapper {
         display: flex;
         flex-wrap: wrap;
         gap: 1rem;
         margin-inline: auto;
-        width: round(down, 100%, 21rem);
+        width: round(down, 100%, 33rem);
 
         .video {
-            aspect-ratio: 16/9;
+            border: 2px solid transparent;
+            border-radius: .5rem;
             display: flex;
             flex-direction: column;
-            gap: .5rem;
             width: 32rem;
 
-            iframe {
+            &:hover {
+                border-color: var(--orange-100);
+            }
+
+            .thumbnail {
+                img {
+                    aspect-ratio: 16/9;
+                    border-radius: .5rem .5rem 0 0;
+                    object-fit: cover;
+                    width: 100%;
+                }
+            }
+
+            .infos {
+                background-color: var(--orange-30-alpha-75);
+                border-radius: 0 0 .5rem .5rem;
+                display: flex;
+                flex-direction: column;
+                gap: .5rem;
+                height: 9rem;
+                padding: .5rem;
+
+                .channel {
+                    align-items: center;
+                    display: flex;
+                    gap: .5rem;
+
+                    .thumbnail {
+                        img {
+                            aspect-ratio: 1;
+                            border-radius: 50%;
+                            height: 2.5rem;
+                            width: 2.5rem;
+                        }
+                    }
+
+                    .title {
+                        color: var(--orange-100);
+                        font-size: 1.25rem;
+                        font-weight: 600;
+                    }
+                }
+
+                .content {
+                    display: flex;
+                    flex-direction: column;
+                    gap: .25rem;
+
+                    .title {
+                        color: var(--orange-100);
+                        font-size: 1.25rem;
+                        font-weight: 600;
+                    }
+
+                    .at {
+                        display: flex;
+                        gap: 1rem;
+
+                        .published-at, .added-at {
+                            color: var(--orange-100);
+                            font-size: .875rem;
+                            font-weight: 400;
+                        }
+                    }
+                }
+            }
+
+            /*iframe {
                 border-radius: .5rem;
                 border: none;
                 height: 100%;
@@ -38,7 +148,7 @@
                         gap: .5rem;
                     }
                 }
-            }
+            }*/
         }
     }
 }

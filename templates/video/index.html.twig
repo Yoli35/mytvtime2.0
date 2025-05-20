@@ -13,19 +13,45 @@
         {#        <pre>{{ dump(videos) }}</pre> #}
         {#        <pre>{{ dump(now) }}</pre> #}
         <h1>{{ 'My videos'|trans }}</h1>
+        <div class="video-tools">
+            <form>
+                <label for="link">{{ 'Add a video'|trans }}
+                    <input type="text" id="link" name="link" placeholder="{{ 'Link'|trans }}" value="">
+                </label>
+                <button type="submit" id="add-video">{{ 'Add'|trans }}</button>
+            </form>
+        </div>
         <div class="video-wrapper">
             {% for userVideo in videos %}
                 {% set video = userVideo.video %}
+                {% set channel = video.channel %}
                 <div class="video">
-                    <iframe src="https://www.youtube.com/embed/{{ video.link }}" title="{{ video.name }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    <div class="video-infos">
-                        <div class="video-date">{{ userVideo.createdAt|format_date('relative_short')|capitalize }} {{ 'at'|trans }} {{ userVideo.createdAt|format_time('short') }}</div>
-                        <div class="video-link">
-                            <a href="{{ path('app_video_show', {'id': userVideo.id}) }}">
-                                {{ ux_icon('mdi:youtube-tv', {height: '18px', width: '18px'}) }}
-                                <div>{{ 'See video'|trans }}</div>
-                            </a>
+                    <div class="thumbnail">
+                        <a href="{{ path('app_video_show', {'id': userVideo.id}) }}">
+                            <img src="/videos/thumbnails{{ video.thumbnail }}" alt="{{ video.title }}">
+                        </a>
                     </div>
+                    <div class="infos">
+                        <div class="channel">
+                            <div class="thumbnail">
+                                <img src="/videos/channels/thumbnails{{ channel.thumbnail }}" alt="{{ channel.title }}">
+                            </div>
+                            <div class="title">
+                                {{ channel.title }}
+                            </div>
+                        </div>
+                        <div class="content">
+                            <div class="title">{{ video.title }}</div>
+                            <div class="at">
+                                <div class="published-at">{{ 'Published at'|trans }} {{ video.publishedAt|format_date('relative_short')|capitalize }} {{ 'at'|trans }} {{ video.publishedAt|format_time('short') }}</div>
+                                <div class="added-at">{{ 'Added at'|trans }} {{ userVideo.createdAt|format_date('relative_short')|capitalize }} {{ 'at'|trans }} {{ userVideo.createdAt|format_time('short') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="no-video">
+                    <p>{{ 'No video'|trans }}</p>
                 </div>
             {% endfor %}
         </div>
