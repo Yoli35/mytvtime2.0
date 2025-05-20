@@ -30,6 +30,7 @@
                         <a href="{{ path('app_video_show', {'id': userVideo.id}) }}">
                             <img src="/videos/thumbnails{{ video.thumbnail }}" alt="{{ video.title }}">
                         </a>
+                        <div class="duration">{{ video.durationString }}</div>
                     </div>
                     <div class="infos">
                         <div class="channel">

@@ -32,6 +32,11 @@ class Video
     #[ORM\Column]
     private ?DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $duration = null;
+
+    private ?string $durationString = null;
+
     public function __construct(string $title, string $link)
     {
         $this->title = $title;
@@ -113,5 +118,27 @@ class Video
         $this->updatedAt = $updatedAt;
 
         return $this;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(?int $duration): static
+    {
+        $this->duration = $duration;
+
+        return $this;
+    }
+
+    public function getDurationString(): ?string
+    {
+        return $this->durationString;
+    }
+
+    public function setDurationString(?string $durationString): void
+    {
+        $this->durationString = $durationString;
     }
 }

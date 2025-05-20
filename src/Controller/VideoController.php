@@ -11,6 +11,7 @@ use App\Repository\VideoChannelRepository;
 use App\Repository\VideoRepository;
 use App\Service\DateService;
 use App\Service\ImageService;
+use DateInterval;
 use DateTimeImmutable;
 use Google\Exception;
 use Google\Service\YouTube\ChannelListResponse;
@@ -141,6 +142,7 @@ final class VideoController extends AbstractController
                 $this->addFlash('error', 'Invalid YouTube video: "' . $link . '"<br> Please provide a valid YouTube video link.');
             }
         }
+        $video->setDurationString($this->formatDuration($video->getDuration()));
     }
 
     private function video(VideoListResponse $youtubeVideo, Video $video, DateTimeImmutable $now): void
@@ -172,6 +174,7 @@ final class VideoController extends AbstractController
         }
         $video->setThumbnail($basename);
         $video->setTitle($youtubeVideo->getItems()[0]['snippet']['title']);
+        $video->setDuration($this->iso8601ToSeconds($youtubeVideo->getItems()[0]['contentDetails']['duration']));
         $video->setUpdatedAt($now);
         $this->videoRepository->save($video, true);
     }
@@ -236,5 +239,42 @@ final class VideoController extends AbstractController
         } catch (\Google\Service\Exception) {
             return null;
         }
+    }
+
+    private function iso8601ToSeconds($input): int
+    {
+        try {
+            $duration = new DateInterval($input);
+            $hours_to_seconds = $duration->h * 60 * 60;
+            $minutes_to_seconds = $duration->i * 60;
+            $seconds = $duration->s;
+            return $hours_to_seconds + $minutes_to_seconds + $seconds;
+        } catch (\Exception) {
+            return 0;
+        }
+    }
+
+    public function formatDuration(int $durationInSecond): string
+    {
+        $durationInSecond--;
+        $h = floor($durationInSecond / 3600);
+        $m = floor(($durationInSecond % 3600) / 60);
+        $s = $durationInSecond % 60;
+        $duration = "";
+        if ($h > 0) {
+            $duration .= $h . ":";
+        }
+        if ($m < 10) {
+            $m = "0" . $m;
+        }
+        $duration .= $m . ":";
+        if ($s < 10) {
+            $s = "0" . $s;
+        }
+        $duration .= $s;
+
+        //dump(['durationInSecond' => $durationInSecond, 'h' => $h, 'm' => $m, 's' => $s, 'duration' => $duration]);
+
+        return $duration;
     }
 }
