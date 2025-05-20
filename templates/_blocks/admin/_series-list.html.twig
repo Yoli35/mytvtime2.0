@@ -25,7 +25,7 @@
                         {% if s.poster_path %}
                             <img src="{{ posterUrl ~ s.poster_path }}" alt="{{ s.name }}">
                         {% else %}
-                            {{ ux_icon('fa6-solid:tv', {height: '18px', width: '18px'}) }}
+                            {{ ux_icon('fa6-solid:tv') }}
                         {% endif %}
                     </div>
                     <div class="admin__series__list__id">{{ s.id }}</div>

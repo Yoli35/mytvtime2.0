@@ -14,9 +14,9 @@
             <h2>
                 {{ 'Series by country'|trans }} - {{ country|country_name }} ({{ seriesByCountry|length }})
                 <div class="legends">
-                    <div class="legend to-start" data-title="{{ 'To start'|trans }}">{{ ux_icon('ion:battery-dead', {height: '16px', width: '16px'}) }}</div>
-                    <div class="legend in-progress" data-title="{{ 'In progress'|trans }}">{{ ux_icon('ion:battery-half', {height: '16px', width: '16px'}) }}</div>
-                    <div class="legend up-to-date" data-title="{{ 'Up to date'|trans }}">{{ ux_icon('ion:battery-full', {height: '16px', width: '16px'}) }}</div>
+                    <div class="legend to-start" data-title="{{ 'To start'|trans }}">{{ ux_icon('ion:battery-dead') }}</div>
+                    <div class="legend in-progress" data-title="{{ 'In progress'|trans }}">{{ ux_icon('ion:battery-half') }}</div>
+                    <div class="legend up-to-date" data-title="{{ 'Up to date'|trans }}">{{ ux_icon('ion:battery-full') }}</div>
                 </div>
                 <label for="filter-by-country">
                     <select id="filter-by-country">
@@ -48,7 +48,7 @@
             }
         </div>
         <div id="svgs" style="display: none">
-            <div id="svg-xmark">{{ ux_icon('fa6-solid:xmark', {height: '16px', width: '16px'}) }}</div>
+            <div id="svg-xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
         </div>
     </div>
 {% endblock %}

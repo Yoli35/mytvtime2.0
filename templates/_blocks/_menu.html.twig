@@ -3,7 +3,7 @@
 {# {% set route_params = app.request.attributes.get('_route_params') %} #}
 <nav class="navbar">
     <div class="navbar-items">
-        <a href="{{ path('app_home') }}" accesskey="<">{{ ux_icon('ion:home') }}</a>
+        <a href="{{ path('app_home') }}" accesskey="<">{{ ux_icon('material-symbols:home') }}</a>
         {% if app.user %}
             <div class="navbar-item">
                 {{ ux_icon('fa6-solid:film', {height: "18px", width: "18px"}) }}
@@ -200,7 +200,7 @@
                 {% set notifications = listEpisodeNotifications(app.user) %}
                 {% set newCount = countNewEpisodeNotifications(app.user) %}
                 <div class="navbar-item notifications">
-                    <em>{{ ux_icon('fa6-solid:bell', {height: '18px', width: '18px'}) }}</em>
+                    <em>{{ ux_icon('fa6-solid:bell') }}</em>
                     {% if newCount %}
                         <span>{{ newCount }}</span>
                     {% endif %}
@@ -228,14 +228,14 @@
         {% endif %}
         {#        {% set users = getUsers() %} #}
         {#        <div class="navbar-item"> #}
-        {#            {{ ux_icon('fa6-solid:user', {height: '18px', width: '18px'}) }} #}
+        {#            {{ ux_icon('fa6-solid:user') }} #}
         {#            <div class="menu users"> #}
         {#                <label for="user-select"> #}
         {#                    <select id="user-select" class="user-select"> #}
         {#                        <button> #}
         {#                            <!-- Prendra le contenu HTML de l'option choisie --> #}
         {#                            <selectedcontent></selectedcontent> #}
-        {#                            {{ ux_icon('iconoir:nav-arrow-down', {height: '18px', width: '18px'}) }} #}
+        {#                            {{ ux_icon('iconoir:nav-arrow-down') }} #}
         {#                        </button> #}
         {#                        {% for u in users %} #}
         {#                            <option value="{{ loop.index}}"{% if app.user and app.user.id == u.id %} selected{% endif %}> #}
@@ -409,7 +409,7 @@
                     {% if seriesName is defined %}
                         <div class="separation">{{ 'Back to the series page'|trans }}</div>
                         <a href="{{ seriesLink }}">
-                            <em>{{ ux_icon('fa6-solid:arrow-left-long', {height: '18px', width: '18px'}) }}</em>&nbsp;{{ seriesName }}
+                            <em>{{ ux_icon('fa6-solid:arrow-left-long') }}</em>&nbsp;{{ seriesName }}
                         </a>
                     {% endif %}
 

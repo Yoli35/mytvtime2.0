@@ -55,7 +55,7 @@
                         </h1>
                         <div class="series-tools">
                             <div class="series-tools-click">
-                                {{ ux_icon('fa6-solid:ellipsis-vertical', {height: '18px', width: '18px'}) }}
+                                {{ ux_icon('fa6-solid:ellipsis-vertical') }}
                             </div>
                             <div class="series-tools-menu">
                                 <div id="localized-name">{{ 'Suggest a localized name'|trans }}</div>
@@ -173,20 +173,20 @@
                                          data-season-number="{{ link.seasonNumber }}"
                                     >
                                         <div class="watch-link-tool edit" data-title="{{ 'Edit this watch link'|trans }}">
-                                            {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
+                                            {{ ux_icon('fa6-solid:pen') }}
                                         </div>
                                         <div class="watch-link-tool copy" data-title="{{ 'Copy this watch link'|trans }}">
-                                            {{ ux_icon('fa6-solid:copy', {height: '18px', width: '18px'}) }}
+                                            {{ ux_icon('fa6-solid:copy') }}
                                         </div>
                                         <div class="watch-link-name">{{ link.name }}</div>
                                         <div class="watch-link-tool delete" data-title="{{ 'Delete this watch link'|trans }}">
-                                            {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
+                                            {{ ux_icon('fa6-solid:trash') }}
                                         </div>
                                     </div>
                                 </div>
                             {% endfor %}
                             <div class="add-watch-link" data-title="{{ 'Add a watch link'|trans }}">
-                                {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                                {{ ux_icon('fa6-solid:plus') }}
                             </div>
                         </div>
                         <div class="watch-link-form">
@@ -252,19 +252,19 @@
                             <div class="rating-stars">
                                 <div class="stars" data-trans-rating="Cancel rating|{{ 'Cancel rating'|trans }}" data-trans-star="star|{{ 'star'|trans }}" data-trans-stars="stars|{{ 'stars'|trans }}">
                                     <div class="star {{ userSeries.rating >= 1 ? "active" }}" data-value="1" data-title="{{ (userSeries.rating >= 1 ? "Cancel rating":"x star")|trans({'x': 1}) }}">
-                                        {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                        {{ ux_icon('fa6-solid:star') }}
                                     </div>
                                     <div class="star {{ userSeries.rating >= 2 ? "active" }}" data-value="2" data-title="{{ (userSeries.rating >= 2 ? "Cancel rating":"x stars")|trans({'x': 2}) }}">
-                                        {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                        {{ ux_icon('fa6-solid:star') }}
                                     </div>
                                     <div class="star {{ userSeries.rating >= 3 ? "active" }}" data-value="3" data-title="{{ (userSeries.rating >= 3 ? "Cancel rating":"x stars")|trans({'x': 3}) }}">
-                                        {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                        {{ ux_icon('fa6-solid:star') }}
                                     </div>
                                     <div class="star {{ userSeries.rating >= 4 ? "active" }}" data-value="4" data-title="{{ (userSeries.rating >= 4 ? "Cancel rating":"x stars")|trans({'x': 4}) }}">
-                                        {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                        {{ ux_icon('fa6-solid:star') }}
                                     </div>
                                     <div class="star {{ userSeries.rating >= 5 ? "active" }}" data-value="5" data-title="{{ (userSeries.rating >= 5 ? "Cancel rating":"x stars")|trans({'x': 5}) }}">
-                                        {{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}
+                                        {{ ux_icon('fa6-solid:star') }}
                                     </div>
                                 </div>
                             </div>
@@ -273,28 +273,28 @@
                             <div class="badges">
                                 {% if userSeries.binge %}
                                     <div class="badge" data-title="{{ 'A real binger!'|trans }}">
-                                        {{ ux_icon('fa:coffee', {height: '18px', width: '18px'}) }}
+                                        {{ ux_icon('fa:coffee') }}
                                     </div>
                                 {% endif %}
                                 {% if userSeries.marathoner %}
                                     <div class="badge" data-title="{{ 'A real marathoner!'|trans }}">
-                                        {{ ux_icon('fa6-solid:bolt', {height: '18px', width: '18px'}) }}
+                                        {{ ux_icon('fa6-solid:bolt') }}
                                     </div>
                                 {% endif %}
                             </div>
                         {% endif %}
                         <div class="actions">
                             <div class="action toggle-pinned-series{% if userSeries.userPinnedSeries %} pinned{% endif %}" data-title="{{ (userSeries.userPinnedSeries ? "Remove from pinned series" : "Add to pinned series")|trans }}">
-                                {{ ux_icon('fa6-solid:paperclip', {height: '18px', width: '18px'}) }}
+                                {{ ux_icon('fa6-solid:paperclip') }}
                             </div>
                             <div class="action toggle-favorite-series{% if userSeries.favorite %} favorite{% endif %}" data-title="{{ (userSeries.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
-                                {{ ux_icon('fa6-solid:heart', {height: '18px', width: '18px'}) }}
+                                {{ ux_icon('fa6-solid:heart') }}
                             </div>
                             <div class="action remove-this-series"
                                  data-tmdb-id="{{ series.tmdbId }}"
                                  data-slug="{{ tv.localized_name.slug ?? series.slug }}"
                                  data-title="{{ 'Remove this series from your watchlist'|trans }}">
-                                {{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}
+                                {{ ux_icon('fa6-solid:trash') }}
                             </div>
                         </div>
                     </div>
@@ -307,7 +307,7 @@
                         <div>{{ 'Seasons'|trans }}</div>
                         {% if tv.seasons|length > 1 %}
                             <div class="season-order">
-                                {{ ux_icon('fa6-solid:arrow-down', {height: '18px', width: '18px'}) }}
+                                {{ ux_icon('fa6-solid:arrow-down') }}
                             </div>
                         {% endif %}
                     </div>
@@ -417,7 +417,7 @@
                 <div id="series-map-title">
                     <div class="title">{{ 'Shooting locations'|trans }}</div>
                     <div class="add-location-button" data-title="{{ 'Add a shooting location'|trans }}">
-                        {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                        {{ ux_icon('fa6-solid:plus') }}
                     </div>
                 </div>
                 <div class="series-map">
@@ -532,13 +532,13 @@
         }
     </div>
     <div id="svgs" style="display: none">
-        <div class="svg" id="arrow-down">{{ ux_icon('fa6-solid:arrow-down', {height: '18px', width: '18px'}) }}</div>
-        <div class="svg" id="arrow-up">{{ ux_icon('fa6-solid:arrow-up', {height: '18px', width: '18px'}) }}</div>
-        <div class="svg" id="arrow-left">{{ ux_icon('fa6-solid:arrow-left', {height: '18px', width: '18px'}) }}</div>
-        <div class="svg" id="arrow-right">{{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }}</div>
-        <div class="svg" id="xmark">{{ ux_icon('fa6-solid:xmark', {height: '18px', width: '18px'}) }}</div>
-        <div class="svg" id="pen">{{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}</div>
-        <div class="svg" id="trash">{{ ux_icon('fa6-solid:trash', {height: '18px', width: '18px'}) }}</div>
+        <div class="svg" id="arrow-down">{{ ux_icon('fa6-solid:arrow-down') }}</div>
+        <div class="svg" id="arrow-up">{{ ux_icon('fa6-solid:arrow-up') }}</div>
+        <div class="svg" id="arrow-left">{{ ux_icon('fa6-solid:arrow-left') }}</div>
+        <div class="svg" id="arrow-right">{{ ux_icon('fa6-solid:arrow-right') }}</div>
+        <div class="svg" id="xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
+        <div class="svg" id="pen">{{ ux_icon('fa6-solid:pen') }}</div>
+        <div class="svg" id="trash">{{ ux_icon('fa6-solid:trash') }}</div>
     </div>
 {% endblock %}
 

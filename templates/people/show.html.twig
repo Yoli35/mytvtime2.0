@@ -142,7 +142,7 @@
                                                 <div class="year">{{ date|length == 10 ? (date|slice(0,4)) : "—" }}</div>
                                             {% endif %}
                                             <div class="info" data-id="{{ prod.id }}" data-title="{{ prod.title }}" data-type="{{ prod.media_type }}" data-poster="{{ prod.poster_path }}">
-                                                {{ ux_icon('fa6-solid:circle-info', {height: '16px', width: '16px'}) }}
+                                                {{ ux_icon('fa6-solid:circle-info') }}
                                             </div>
                                             {% if prod.media_type == "movie" %}
                                                 {% set url = "" %}
@@ -177,17 +177,17 @@
                                             <div class="extras">
                                                 {% if prod.favorite %}
                                                     <div class="favorite">
-                                                        {{ ux_icon('fa6-solid:heart', {height: '16px', width: '16px'}) }}
+                                                        {{ ux_icon('fa6-solid:heart') }}
                                                     </div>
                                                 {% endif %}
                                                 {% if prod.rating %}
                                                     <div class="rating">
                                                         {% for i in 1..prod.rating %}
-                                                            {{ ux_icon('fa6-solid:star', {height: '16px', width: '16px'}) }}
+                                                            {{ ux_icon('fa6-solid:star') }}
                                                         {% endfor %}
                                                         {% if prod.rating < 5 %}
                                                             {% for i in (prod.rating+1)..5 %}
-                                                                {{ ux_icon('fa6-regular:star', {height: '16px', width: '16px'}) }}
+                                                                {{ ux_icon('fa6-regular:star') }}
                                                             {% endfor %}
                                                         {% endif %}
                                                     </div>
@@ -237,7 +237,7 @@
                                                     <div class="year">{{ date|length == 10 ? (date|slice(0,4)) : "—" }}</div>
                                                 {% endif %}
                                                 <div class="info" data-id="{{ sub_prod.id }}" data-title="{{ sub_prod.title }}" data-type="{{ sub_prod.media_type }}" data-poster="{{ sub_prod.poster_path }}">
-                                                    {{ ux_icon('fa6-solid:circle-info', {height: '16px', width: '16px'}) }}
+                                                    {{ ux_icon('fa6-solid:circle-info') }}
                                                 </div>
                                                 {% if sub_prod.media_type == "movie" %}
                                                     {% set url = path('app_movie_tmdb', {id: sub_prod.id}) %}
@@ -288,7 +288,7 @@
                     </div>
                 </div>
                 <div class="close">
-                    {{ ux_icon('fa6-solid:xmark', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('fa6-solid:xmark') }}
                 </div>
             </div>
         </div>
@@ -303,10 +303,10 @@
         }
     </div>
     <div id="svgs" style="display: none">
-        <div class="svg" id="arrow-left">{{ ux_icon('fa6-solid:arrow-left', {height: '18px', width: '18px'}) }}</div>
-        <div class="svg" id="arrow-right">{{ ux_icon('fa6-solid:arrow-right', {height: '18px', width: '18px'}) }}</div>
-        <div class="svg" id="xmark">{{ ux_icon('fa6-solid:xmark', {height: '18px', width: '18px'}) }}</div>
-        <div class="svg" id="solid-star">{{ ux_icon('fa6-solid:star', {height: '18px', width: '18px'}) }}</div>
-        <div class="svg" id="regular-star">{{ ux_icon('fa6-regular:star', {height: '18px', width: '18px'}) }}</div>
+        <div class="svg" id="arrow-left">{{ ux_icon('fa6-solid:arrow-left') }}</div>
+        <div class="svg" id="arrow-right">{{ ux_icon('fa6-solid:arrow-right') }}</div>
+        <div class="svg" id="xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
+        <div class="svg" id="solid-star">{{ ux_icon('fa6-solid:star') }}</div>
+        <div class="svg" id="regular-star">{{ ux_icon('fa6-regular:star') }}</div>
     </div>
 {% endblock %}

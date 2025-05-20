@@ -61,12 +61,12 @@
                                     </div>
                                 {% endif %}
                                 <div class="info">
-                                    {{ ux_icon('icon-park-solid:birthday-cake', {height: '18px', width: '18px'}) }}
+                                    {{ ux_icon('icon-park-solid:birthday-cake') }}
                                     {{ p.birthday|format_date('medium') }} ({{ p.age }} {{ 'old'|trans }})
                                 </div>
                                 {% if p.place_of_birth %}
                                     <div class="info">
-                                        {{ ux_icon('fa6-solid:earth-africa', {height: '18px', width: '18px'}) }}
+                                        {{ ux_icon('fa6-solid:earth-africa') }}
                                         {{ p.place_of_birth }}
                                     </div>
                                 {% endif %}

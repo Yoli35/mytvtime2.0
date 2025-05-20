@@ -1,5 +1,5 @@
 <div class="watched-at" data-id="{{ episode.id }}" data-ue-id="{{ e.id }}" data-watched-at="{{ e.watch_at|date("Y-m-d H:i:s", "UTC") }}">
-    {{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px'}) }}
+    {{ ux_icon('fa6-solid:eye') }}
     {{ e.watch_at|format_datetime('relative_medium', 'short', timezone: "UTC")|capitalize }}
 {#    ({{ e.watch_at_db }})#}
 </div>

@@ -6,6 +6,8 @@ ux_icons:
   default_icon_attributes:
     fill: currentColor
     'font-size': '1.25em'
+    'height': '16px'
+    'width': '16px'
 
   # Icon aliases (alias => icon name)
   aliases:

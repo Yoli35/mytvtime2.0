@@ -36,7 +36,7 @@
             <div class="series-infos">
                 {% if series.favorite is defined and series.favorite %}
                     <div class="favorite">
-                        {{ ux_icon('fa6-solid:heart', {height: '18px', width: '18px'}) }}
+                        {{ ux_icon('fa6-solid:heart') }}
                     </div>
                 {% endif %}
                 {% if series.watch_providers is defined and series.watch_providers|length %}

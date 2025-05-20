@@ -109,7 +109,7 @@
                             </div>
                         {% endif %}
                         <div class="series-back-link">
-                            {{ ux_icon('fa6-solid:arrow-left', {height: '18px', width: '18px'}) }}
+                            {{ ux_icon('fa6-solid:arrow-left') }}
                             <span>{{ 'Back to series'|trans }}</span>
                         </div>
                     </a>
@@ -124,25 +124,25 @@
 
                 <div class="sizes" data-user-series-id="{{ userSeries.id }}">
                     <div class="size-item{% if episodeDiv.height == '15rem' %} active{% endif %}" data-size="15rem" data-type="size">
-                        {{ ux_icon('fa:list-ul', {height: '18px', width: '18px'}) }}
+                        {{ ux_icon('fa:list-ul') }}
                     </div>
                     <div class="size-item{% if episodeDiv.height == '20rem' %} active{% endif %}" data-size="20rem" data-type="size">
-                        {{ ux_icon('fa:th-list', {height: '18px', width: '18px'}) }}
+                        {{ ux_icon('fa:th-list') }}
                     </div>
                     <div class="size-item{% if episodeDiv.height == '25rem' %} active{% endif %}" data-size="25rem" data-type="size">
-                        {{ ux_icon('el:th-list', {height: '18px', width: '18px'}) }}
+                        {{ ux_icon('el:th-list') }}
                     </div>
                 </div>
 
                 <div class="aspect-ratios" data-user-series-id="{{ userSeries.id }}">
                     <div class="ar-item{% if episodeDiv.aspectRatio == '16 / 9' %} active{% endif %}" data-ar="16 / 9" data-type="aspect-ratio">
-                        {{ ux_icon('ion:tablet-landscape-outline', {height: '18px', width: '18px'}) }}
+                        {{ ux_icon('ion:tablet-landscape-outline') }}
                     </div>
                     <div class="ar-item{% if episodeDiv.aspectRatio == '1 / 1' %} active{% endif %}" data-ar="1 / 1" data-type="aspect-ratio">
-                        {{ ux_icon('ion:square-outline', {height: '18px', width: '18px'}) }}
+                        {{ ux_icon('ion:square-outline') }}
                     </div>
                     <div class="ar-item{% if episodeDiv.aspectRatio == '9 / 16' %} active{% endif %}" data-ar="9 / 16" data-type="aspect-ratio">
-                        {{ ux_icon('ion:tablet-portrait-outline', {height: '18px', width: '18px'}) }}
+                        {{ ux_icon('ion:tablet-portrait-outline') }}
                     </div>
                 </div>
 
@@ -251,7 +251,7 @@
                                                  data-id="{{ episode.id }}"
                                                  data-type="name"
                                             >
-                                                {{ ux_icon('fa6-solid:pen', {height: '18px', width: '18px'}) }}
+                                                {{ ux_icon('fa6-solid:pen') }}
                                             </div>
                                         </div>
                                         {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (ue.watch_at != null)}) }}
@@ -278,7 +278,7 @@
                                                  data-id="{{ episode.id }}"
                                                  data-type="overview"
                                             >
-                                                {{ ux_icon("fa6-solid:pen", {height: '18px', width: '18px'}) }}
+                                                {{ ux_icon("fa6-solid:pen") }}
                                             </div>
                                         </div>
                                         {% if episode.guest_stars %}
@@ -300,7 +300,7 @@
                                                             {% if people.google is defined %}
                                                                 <div class="google" data-title="{{ 'See on Google'|trans }}">
                                                                     <a href="{{ people.google }}" target="_blank">
-                                                                        {{ ux_icon('flat-color-icons:google', {height: '18px', width: '18px'}) }}
+                                                                        {{ ux_icon('flat-color-icons:google') }}
                                                                     </a>
                                                                 </div>
                                                             {% endif %}
@@ -321,29 +321,29 @@
                                                  data-e-number="{{ episode.episode_number }}"
                                                  data-views="{{ episode.user_episodes|length }}"
                                                  data-title="{{ ue.watch_at|format_datetime('relative_short', 'short')|capitalize }}">
-                                                {{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px'}) }}
+                                                {{ ux_icon('fa6-solid:eye') }}
                                             </div>
                                             <div class="select-provider" data-ue-id="{{ ue.id }}" data-title="{{ (ue.provider_id ?'Choose a provider':ue.provider_name)|trans }}">
                                                 {% if ue.provider_id %}
                                                     <img src="{{ ue.provider_logo_path }}" alt="{{ ue.provider_name }}">
                                                 {% else %}
-                                                    {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                                                    {{ ux_icon('fa6-solid:plus') }}
                                                 {% endif %}
                                             </div>
                                             <div class="select-device" data-ue-id="{{ ue.id }}" data-title="{{ 'Choose a device'|trans }}">
                                                 {% if ue.device_id %}
-                                                    {{ ux_icon(ue.device_svg, {height: '18px', width: '18px'}) }}
+                                                    {{ ux_icon(ue.device_svg) }}
                                                 {% else %}
-                                                    {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                                                    {{ ux_icon('fa6-solid:plus') }}
                                                 {% endif %}
                                             </div>
                                             <div class="select-vote" data-ue-id="{{ ue.id }}" data-title="{{ 'Give a rating'|trans }}">
                                                 {#                                        {% if ue.vote %} #}
                                                 {#                                            {{ ue.vote }} #}
                                                 {#                                        {% else %} #}
-                                                {#                                            {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }} #}
+                                                {#                                            {{ ux_icon('fa6-solid:plus') }} #}
                                                 {#                                        {% endif %} #}
-                                                {{ ue.vote ?? ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                                                {{ ue.vote ?? ux_icon('fa6-solid:plus') }}
                                             </div>
                                         {% else %}
                                             <div class="add-this-episode" data-id="{{ episode.id }}"
@@ -354,15 +354,15 @@
                                                  data-s-number="{{ episode.season_number }}"
                                                  data-e-number="{{ episode.episode_number }}"
                                                  data-title="{{ 'Mark this episode as seen'|trans }}">
-                                                {{ ux_icon('fa6-solid:plus', {height: '18px', width: '18px'}) }}
+                                                {{ ux_icon('fa6-solid:plus') }}
                                             </div>
                                         {% endif %}
                                         <div class="back-to-top" data-title="{{ 'Back to top'|trans }}">
-                                            {{ ux_icon('fa6-solid:arrow-up-long', {height: '18px', width: '18px'}) }}
+                                            {{ ux_icon('fa6-solid:arrow-up-long') }}
                                         </div>
                                         <a href="{{ path('app_series_show', {id: series.id, slug: season.localized_name.slug ?? series.slug}) }}">
                                             <div class="back-to-series" data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.localized_name %}{{ season.localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»">
-                                                {{ ux_icon('fa6-solid:arrow-left-long', {height: '18px', width: '18px'}) }}
+                                                {{ ux_icon('fa6-solid:arrow-left-long') }}
                                             </div>
                                         </a>
                                     </div>
@@ -481,7 +481,7 @@
         {{ ux_icon('mingcute:save-line', {id: 'save', height: '18px', width: '18px'}) }}
         {{ ux_icon('mingcute:delete-2-line', {id: 'delete', height: '18px', width: '18px'}) }}
         {{ ux_icon('fa6-solid:xmark', {id: 'cancel', height: '18px', width: '18px'}) }}
-        <div class="svg" id="svg-xmark">{{ ux_icon('fa6-solid:xmark', {height: '18px', width: '18px'}) }}</div>
+        <div class="svg" id="svg-xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
     </div>
 {% endblock %}
 {% block javascripts %}

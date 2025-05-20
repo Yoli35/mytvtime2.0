@@ -18,23 +18,23 @@
                     <div class="title">{{ 'Filters'|trans }}</div>
                     <div class="filter-values">
                         <div class="filter-value" data-title="{{ 'Sort'|trans }} / {{ 'Order'|trans }}">
-                            {{ ux_icon('ion:settings-outline', {height: '16px', width: '16px'}) }}&nbsp;
+                            {{ ux_icon('material-symbols:settings-outline') }}&nbsp;
                             {{ filterMeanings[filters.sort]|trans }}&nbsp;
                             {% if filters.order == 'DESC' %}
-                                {{ ux_icon('fa6-solid:arrow-down', {height: '16px', width: '16px'}) }}
+                                {{ ux_icon('fa6-solid:arrow-down') }}
                             {% else %}
-                                {{ ux_icon('fa6-solid:arrow-up', {height: '16px', width: '16px'}) }}
+                                {{ ux_icon('fa6-solid:arrow-up') }}
                             {% endif %}
                         </div>
                         <div class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">
-                            {{ ux_icon('ion:apps-sharp', {height: '16px', width: '16px'}) }}&nbsp;{{ filters.perPage }}
+                            {{ ux_icon('ion:apps-sharp') }}&nbsp;{{ filters.perPage }}
                         </div>
                     </div>
                     <div class="collapse" data-title="{{ 'Show / hide filter options'|trans }}">
                         {% if filterBoxOpen %}
-                            {{ ux_icon('ion:chevron-collapse', {height: '16px', width: '16px'}) }}
+                            {{ ux_icon('ion:chevron-collapse') }}
                         {% else %}
-                            {{ ux_icon('ion:chevron-expand', {height: '16px', width: '16px'}) }}
+                            {{ ux_icon('ion:chevron-expand') }}
                         {% endif %}
                     </div>
                 </header>
@@ -119,10 +119,10 @@
         {% include('_blocks/_footer.html.twig') %}
     </div>
     <div id="svgs" style="display: none">
-        <div id="arrow-down">{{ ux_icon('ion:settings-outline', {height: '16px', width: '16px'}) }}</div>
-        <div id="arrow-up">{{ ux_icon('ion:settings-outline', {height: '16px', width: '16px'}) }}</div>
-        <div id="chevron-collapse">{{ ux_icon('ion:chevron-collapse', {height: '16px', width: '16px'}) }}</div>
-        <div id="chevron-expand">{{ ux_icon('ion:chevron-expand', {height: '16px', width: '16px'}) }}</div>
+        <div id="arrow-down">{{ ux_icon('mdi:arrow-down') }}</div>
+        <div id="arrow-up">{{ ux_icon('mdi:arrow-up') }}</div>
+        <div id="chevron-collapse">{{ ux_icon('ion:chevron-collapse') }}</div>
+        <div id="chevron-expand">{{ ux_icon('ion:chevron-expand') }}</div>
     </div>
 {% endblock %}
 {% block javascripts %}

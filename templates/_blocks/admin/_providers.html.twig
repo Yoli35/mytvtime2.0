@@ -20,12 +20,12 @@
             {% if order == 'desc' %}
                 <a class="series__id" href="{{ path('admin_providers', {s: 'id', o: 'asc', l: limit}) }}">
                     {{ 'Id'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-down') }}
                 </a>
             {% else %}
                 <a class="series__id" href="{{ path('admin_providers', {s: 'id', o: 'desc', l: limit}) }}">
                     {{ 'Id'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
         {% else %}
@@ -38,12 +38,12 @@
             {% if order == 'desc' %}
                 <a class="series__tmdb_id" href="{{ path('admin_providers', {s: 'provider_id', o: 'asc', l: limit}) }}">
                     {{ 'TMDB Id'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-down') }}
                 </a>
             {% else %}
                 <a class="series__tmdb_id" href="{{ path('admin_providers', {s: 'provider_id', o: 'desc', l: limit}) }}">
                     {{ 'TMDB Id'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
         {% else %}
@@ -56,12 +56,12 @@
             {% if order == 'desc' %}
                 <a class="series__localized_name" href="{{ path('admin_providers', {s: 'provider_name', o: 'asc', l: limit}) }}">
                     {{ 'Name'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-down') }}
                 </a>
             {% else %}
                 <a class="series__localized_name" href="{{ path('admin_providers', {s: 'provider_name', o: 'desc', l: limit}) }}">
                     {{ 'Name'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
         {% else %}
@@ -74,12 +74,12 @@
             {% if order == 'desc' %}
                 <a class="series__display_priorities" href="{{ path('admin_providers', {s: 'display_priorities', o: 'asc', l: limit}) }}">
                     {{ 'Display priorities'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-down') }}
                 </a>
             {% else %}
                 <a class="series__display_priorities" href="{{ path('admin_providers', {s: 'display_priorities', o: 'desc', l: limit}) }}">
                     {{ 'Display priorities'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
         {% else %}
@@ -92,12 +92,12 @@
             {% if order == 'desc' %}
                 <a class="series__display_priority" href="{{ path('admin_providers', {s: 'display_priority', o: 'asc', l: limit}) }}">
                     {{ 'Display priority'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-down') }}
                 </a>
             {% else %}
                 <a class="series__display_priority" href="{{ path('admin_providers', {s: 'display_priority', o: 'desc', l: limit}) }}">
                     {{ 'Display priority'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
         {% else %}
@@ -117,7 +117,7 @@
                             </div>
                         {% else %}
                             <div class="series__poster" data-title="{{ p.provider_name }} - {{ 'See the provider description'|trans }}">
-                                {{ ux_icon('healthicons:provider-fst-outline', {height: '18px', width: '18px'}) }}
+                                {{ ux_icon('healthicons:provider-fst-outline') }}
                             </div>
                         {% endif %}
                         <div class="series__id">{{ p.id }}</div>

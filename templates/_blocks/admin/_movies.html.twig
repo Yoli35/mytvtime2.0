@@ -11,12 +11,12 @@
             {% if order == 'desc' %}
                 <a class="series__id" href="{{ path('admin_movies', {s: 'id', o: 'asc', l: limit}) }}">
                     {{ 'Id'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-down') }}
                 </a>
             {% else %}
                 <a class="series__id" href="{{ path('admin_movies', {s: 'id', o: 'desc', l: limit}) }}">
                     {{ 'Id'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
         {% else %}
@@ -29,12 +29,12 @@
             {% if order == 'desc' %}
                 <a class="series__tmdb_id" href="{{ path('admin_movies', {s: 'tmdb_id', o: 'asc', l: limit}) }}">
                     {{ 'TMDB Id'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-down') }}
                 </a>
             {% else %}
                 <a class="series__tmdb_id" href="{{ path('admin_movies', {s: 'tmdb_id', o: 'desc', l: limit}) }}">
                     {{ 'TMDB Id'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
         {% else %}
@@ -47,12 +47,12 @@
             {% if order == 'desc' %}
                 <a class="series__name" href="{{ path('admin_movies', {s: 'title', o: 'asc', l: limit}) }}">
                     {{ 'Title'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-down') }}
                 </a>
             {% else %}
                 <a class="series__name" href="{{ path('admin_movies', {s: 'title', o: 'desc', l: limit}) }}">
                     {{ 'Title'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
         {% else %}
@@ -65,12 +65,12 @@
             {% if order == 'desc' %}
                 <a class="series__localized_name" href="{{ path('admin_movies', {s: 'localized_name', o: 'asc', l: limit}) }}">
                     {{ 'Localized name'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-down') }}
                 </a>
             {% else %}
                 <a class="series__localized_name" href="{{ path('admin_movies', {s: 'localized_name', o: 'desc', l: limit}) }}">
                     {{ 'Localized name'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
         {% else %}
@@ -83,12 +83,12 @@
             {% if order == 'desc' %}
                 <a class="series__country" href="{{ path('admin_movies', {s: 'origin_country', o: 'asc', l: limit}) }}">
                     {{ 'Country'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-down') }}
                 </a>
             {% else %}
                 <a class="series__country" href="{{ path('admin_movies', {s: 'origin_country', o: 'desc', l: limit}) }}">
                     {{ 'Country'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
         {% else %}
@@ -101,12 +101,12 @@
             {% if order == 'desc' %}
                 <a class="series__first_air_date" href="{{ path('admin_movies', {s: 'release_date', o: 'asc', l: limit}) }}">
                     {{ 'Release'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-down') }}
                 </a>
             {% else %}
                 <a class="series__first_air_date" href="{{ path('admin_movies', {s: 'release_date', o: 'desc', l: limit}) }}">
                     {{ 'Release'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
         {% else %}
@@ -119,12 +119,12 @@
             {% if order == 'desc' %}
                 <a class="series__status" href="{{ path('admin_movies', {s: 'status', o: 'asc', l: limit}) }}">
                     {{ 'Status'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-down') }}
                 </a>
             {% else %}
                 <a class="series__status" href="{{ path('admin_movies', {s: 'status', o: 'desc', l: limit}) }}">
                     {{ 'Status'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
         {% else %}
@@ -137,12 +137,12 @@
             {% if order == 'desc' %}
                 <a class="series__runtime" href="{{ path('admin_movies', {s: 'runtime', o: 'asc', l: limit}) }}">
                     {{ 'Runtime'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-down') }}
                 </a>
             {% else %}
                 <a class="series__runtime" href="{{ path('admin_movies', {s: 'runtime', o: 'desc', l: limit}) }}">
                     {{ 'Runtime'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
         {% else %}
@@ -154,18 +154,18 @@
         {% if sort == 'provider' %}
             {% if order == 'desc' %}
                 <a class="series__provider" href="{{ path('admin_movies', {s: 'provider', o: 'asc', l: limit}) }}">
-                    {{ ux_icon('fa6-solid:tv', {height: '18px', width: '18px'}) }}
-                    {{ ux_icon('iconoir:nav-arrow-down', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('fa6-solid:tv') }}
+                    {{ ux_icon('iconoir:nav-arrow-down') }}
                 </a>
             {% else %}
                 <a class="series__provider" href="{{ path('admin_movies', {s: 'provider', o: 'desc', l: limit}) }}">
-                    {{ ux_icon('fa6-solid:tv', {height: '18px', width: '18px'}) }}
-                    {{ ux_icon('iconoir:nav-arrow-up', {height: '16px', width: '16px'}) }}
+                    {{ ux_icon('fa6-solid:tv') }}
+                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
         {% else %}
             <a class="series__provider" href="{{ path('admin_movies', {s: 'provider', o: 'desc', l: limit}) }}">
-                {{ ux_icon('fa6-solid:tv', {height: '18px', width: '18px'}) }}
+                {{ ux_icon('fa6-solid:tv') }}
             </a>
         {% endif %}
     </div>
@@ -179,7 +179,7 @@
                         </div>
                     {% else %}
                         <div class="series__poster" data-title="{{ m.localized_name ?? m.title }} - {{ 'See the movie description'|trans }}">
-                            {{ ux_icon('fa6-solid:film', {height: '18px', width: '18px'}) }}
+                            {{ ux_icon('fa6-solid:film') }}
                         </div>
                     {% endif %}
                 </a>
