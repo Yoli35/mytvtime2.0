@@ -19,9 +19,11 @@ use Google\Service\YouTube\VideoListResponse;
 use Google_Client;
 use Google_Service_YouTube;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @method User|null getUser() */
 #[Route('/video', name: 'app_video_')]
@@ -35,6 +37,7 @@ final class VideoController extends AbstractController
     public function __construct(
         private readonly DateService            $dateService,
         private readonly ImageService           $imageService,
+        private readonly TranslatorInterface    $translator,
         private readonly VideoChannelRepository $channelRepository,
         private readonly VideoRepository        $videoRepository,
         private readonly UserVideoRepository    $userVideoRepository,
@@ -65,20 +68,24 @@ final class VideoController extends AbstractController
             }
         }
 
-        $videos = $this->userVideoRepository->findBy(['user' => $user], ['createdAt' => 'DESC']);
+        $userVideos = $this->userVideoRepository->findBy(['user' => $user], ['createdAt' => 'DESC']);
 
-        foreach ($videos as $userVideo) {
+        foreach ($userVideos as $userVideo) {
             $this->checkVideo($userVideo->getVideo(), $now);
+            $this->formatDates($userVideo);
         }
-//        dump($videos);
+// trier les "user videos" par date de publication de la video
+        usort($userVideos, function (UserVideo $a, UserVideo $b) {
+            return $b->getVideo()->getPublishedAt() <=> $a->getVideo()->getPublishedAt();
+        });
 
         return $this->render('video/index.html.twig', [
-            'videos' => $videos,
+            'videos' => $userVideos,
             'now' => $now,
         ]);
     }
 
-    #[Route('/{id}', name: 'show')]
+    #[Route('/show/{id}', name: 'show')]
     public function show(UserVideo $userVideo): Response
     {
         $video = $userVideo->getVideo();
@@ -87,9 +94,36 @@ final class VideoController extends AbstractController
             throw $this->createNotFoundException('Video not found');
         }
 
+        $this->formatDates($userVideo);
+
+
         return $this->render('video/show.html.twig', [
             'userVideo' => $userVideo,
             'video' => $video,
+        ]);
+    }
+
+    #[Route('/details/{id}', name: 'details', methods: ['POST'])]
+    public function details(Request $request, ?Video $video): JsonResponse
+    {
+        if (!$request->isMethod('POST')) {
+            return new JsonResponse(['error' => 'Invalid request method'], Response::HTTP_BAD_REQUEST);
+        }
+        if (!$video) {
+            throw $this->createNotFoundException('Video not found');
+        }
+        $youtubeVideo = $this->getYouTubeVideo($video->getLink());
+
+        $channel = $video->getChannel()->toArray();
+        dump($channel);
+//        if (!$channel) {
+//            $channelId = $youtubeVideo->getItems()[0]['snippet']['channelId'];
+//            $channel = $this->checkChannel($channelId);
+//        }
+
+        return new JsonResponse([
+            'video' => $youtubeVideo->getItems()[0],
+            'channel' => $channel,
         ]);
     }
 
@@ -276,5 +310,31 @@ final class VideoController extends AbstractController
         //dump(['durationInSecond' => $durationInSecond, 'h' => $h, 'm' => $m, 's' => $s, 'duration' => $duration]);
 
         return $duration;
+    }
+
+    public function formatDates(UserVideo $userVideo): void
+    {
+        $publishedDate = $userVideo->getVideo()->getPublishedAt();
+        $addedDate = $userVideo->getCreatedAt();
+
+        $publishedAt = $this->dateService->formatDateRelativeShort($publishedDate->format('Y-m-d H:i:s'), 'Europe/Paris', 'fr');
+        $addedAt = $this->dateService->formatDateRelativeShort($addedDate->format('Y-m-d H:i:s'), 'Europe/Paris', 'fr');
+
+        if (is_numeric($publishedAt[0])) {
+            $publishedAt = $this->translator->trans("Published at") . ' ' . $publishedAt;
+        } else {
+            $publishedAt = $this->translator->trans("Published") . ' ' . $publishedAt;
+        }
+        if (is_numeric($addedAt[0])) {
+            $addedAt = $this->translator->trans("Added at") . ' ' . $addedAt;
+        } else {
+            $addedAt = $this->translator->trans("Added") . ' ' . $addedAt;
+        }
+
+        $publishedAt .= ' ' . $this->translator->trans("at") . ' ' . $publishedDate->format('H:i');
+        $addedAt .= ' ' . $this->translator->trans("at") . ' ' . $addedDate->format('H:i');
+
+        $userVideo->setPublishedAtString($publishedAt);
+        $userVideo->setAddedAtString($addedAt);
     }
 }

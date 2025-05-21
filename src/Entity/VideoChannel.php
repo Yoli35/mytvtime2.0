@@ -141,4 +141,16 @@ class VideoChannel
 
         return $this;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'youTubeId' => $this->getYouTubeId(),
+            'title' => $this->getTitle(),
+            'customUrl' => $this->getCustomUrl(),
+            'thumbnail' => $this->getThumbnail(),
+            'updatedAt' => $this->getUpdatedAt()->format('Y-m-d H:i:s'),
+        ];
+    }
 }

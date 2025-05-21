@@ -19,6 +19,7 @@ import {ProviderSelect} from 'ProviderSelect';
 import {Season} from 'Season';
 import {Show} from 'Show';
 import {ToolTips} from 'ToolTips';
+import {Videos} from 'Videos';
 
 // new ResizeObserver(entries => {
 //     entries.forEach( (entry) =>{
@@ -136,7 +137,7 @@ window.addEventListener("DOMContentLoaded", () => {
         new AdminMovieEdit();
     }
 
-    // Home page
+// Home page
     if (document.querySelector(".home")) {
         const dayCountHistory = new DayCountHistory();
         const providerSelect = new ProviderSelect();
@@ -255,5 +256,11 @@ window.addEventListener("DOMContentLoaded", () => {
     if (networkAndProvider) {
         const networkPage = document.querySelector(".user-networks");
         new NetworkAndProvider(networkPage != null);
+    }
+
+    const videoPage = document.querySelector(".video-page");
+    if (videoPage) {
+        const videos = new Videos();
+        videos.init();
     }
 });

@@ -10,10 +10,30 @@
 {% block body %}
     {{ include('_blocks/_menu.html.twig') }}
     <div class="container-fluid video-page">
-        <h1>{{ video.title }}</h1>
         <div class="video">
             <iframe src="https://www.youtube.com/embed/{{ video.link }}" title="{{ video.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
+        <h1>{{ video.title }}</h1>
+        <div class="video-infos"></div>
         {% include '_blocks/_footer.html.twig' %}
+    </div>
+    <div id="global-data" style="display: none">
+        {
+            "app_video_details": "{{ path('app_video_details', {id: video.id}) }}",
+            "published_at": "{{ userVideo.publishedAtString }}",
+            "added_at": "{{ userVideo.addedAtString }}",
+            "texts": {
+                "comments": "{{ 'comments'|trans }}",
+                "likes": "{{ 'likes'|trans }}",
+                "views": "{{ 'views'|trans }}",
+                "published": "{{ 'Published at'|trans }}",
+                "added": "{{ 'Added at'|trans }}"
+            }
+        }
+    </div>
+    <div id="svgs">
+        <div id="comment">{{ ux_icon('mdi:comment-processing')|raw }}</div>
+        <div id="like">{{ ux_icon('mdi:like')|raw }}</div>
+        <div id="view">{{ ux_icon('mdi:eye')|raw }}</div>
     </div>
 {% endblock %}

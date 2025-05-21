@@ -29,6 +29,10 @@ class UserVideo
     #[ORM\Column]
     private ?DateTimeImmutable $UpdatedAt;
 
+    private ?string $publishedAtString = null;
+
+    private ?string $addedAtString = null;
+
     public function __construct(User $user, Video $video)
     {
         $this->user = $user;
@@ -88,5 +92,25 @@ class UserVideo
         $this->UpdatedAt = $UpdatedAt;
 
         return $this;
+    }
+
+    public function getPublishedAtString(): ?string
+    {
+        return $this->publishedAtString;
+    }
+
+    public function setPublishedAtString(?string $publishedAtString): void
+    {
+        $this->publishedAtString = $publishedAtString;
+    }
+
+    public function getAddedAtString(): ?string
+    {
+        return $this->addedAtString;
+    }
+
+    public function setAddedAtString(?string $addedAtString): void
+    {
+        $this->addedAtString = $addedAtString;
     }
 }

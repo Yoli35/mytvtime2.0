@@ -126,6 +126,13 @@ class DateService
         return datefmt_format($format, $timestamp);
     }
 
+    public function formatDateRelativeShort(string $dateSting, string $timeZone, string $locale): string
+    {
+        $timestamp = strtotime($dateSting);
+        $format = datefmt_create($locale, IntlDateFormatter::RELATIVE_SHORT, IntlDateFormatter::NONE, $timeZone, IntlDateFormatter::GREGORIAN);
+        return datefmt_format($format, $timestamp);
+    }
+
     public function interval($interval): DateInterval|false
     {
         try {

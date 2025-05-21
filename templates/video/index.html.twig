@@ -44,8 +44,10 @@
                         <div class="content">
                             <div class="title">{{ video.title }}</div>
                             <div class="at">
-                                <div class="published-at">{{ 'Published at'|trans }} {{ video.publishedAt|format_date('relative_short')|capitalize }} {{ 'at'|trans }} {{ video.publishedAt|format_time('short') }}</div>
-                                <div class="added-at">{{ 'Added at'|trans }} {{ userVideo.createdAt|format_date('relative_short')|capitalize }} {{ 'at'|trans }} {{ userVideo.createdAt|format_time('short') }}</div>
+{#                                <div class="published-at">{{ 'Published at'|trans }} {{ video.publishedAt|format_date('relative_short')|capitalize }} {{ 'at'|trans }} {{ video.publishedAt|format_time('short') }}</div>#}
+{#                                <div class="added-at">{{ 'Added at'|trans }} {{ userVideo.createdAt|format_date('relative_short')|capitalize }} {{ 'at'|trans }} {{ userVideo.createdAt|format_time('short') }}</div>#}
+                                <div class="published-at">{{ userVideo.publishedAtString }}</div>
+                                <div class="added-at">{{ userVideo.addedAtString }}</div>
                             </div>
                         </div>
                     </div>

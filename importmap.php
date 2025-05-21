@@ -79,6 +79,9 @@ return [
     'Show' => [
         'path' => './assets/js/series/Show.js',
     ],
+    'Videos' => [
+        'path' => './assets/js/videos/Videos.js',
+    ],
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],
