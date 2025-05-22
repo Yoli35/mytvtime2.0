@@ -27,7 +27,7 @@ export class Index {
         console.log(this.seriesId);
         console.log(this.app_series_tmdb_check);
 
-        setInterval(() => {
+        /*setInterval(() => {
             const now = new Date();
             console.log("Index.js has been running for " + ((now - this.startDate) / 60000).toFixed(0) + " minutes");
             if (now.getDate() !== this.startDate.getDate()) {
@@ -39,7 +39,7 @@ export class Index {
             if (document.visibilityState === "visible" && new Date().getDate() !== this.startDate.getDate()) {
                 location.reload();
             }
-        });
+        });*/
 
         fetch(this.app_series_tmdb_check, {
             method: "POST",
