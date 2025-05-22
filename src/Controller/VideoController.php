@@ -15,6 +15,7 @@ use DateInterval;
 use DateTimeImmutable;
 use Google\Exception;
 use Google\Service\YouTube\ChannelListResponse;
+use Google\Service\YouTube\CommentSnippet;
 use Google\Service\YouTube\CommentThreadListResponse;
 use Google\Service\YouTube\VideoListResponse;
 use Google_Client;
@@ -31,6 +32,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class VideoController extends AbstractController
 {
     private Google_Service_YouTube $service_YouTube;
+    private int $maxResults = 10;
 
     /**
      * @throws Exception
@@ -115,36 +117,23 @@ final class VideoController extends AbstractController
         $youtubeVideo = $this->getYouTubeVideo($video->getLink());
 
         $channel = $video->getChannel()->toArray();
-        dump($channel);
+//        dump($channel);
 //        if (!$channel) {
 //            $channelId = $youtubeVideo->getItems()[0]['snippet']['channelId'];
 //            $channel = $this->checkChannel($channelId);
 //        }
 
         // Get comments
-        $comments = [];
-        $commentArray = [];
-        $nextPageToken = null;
+        $now = $this->dateService->getNowImmutable($this->getUser()->getTimeZone() ?? 'Europe/Paris');
+        $link = $video->getLink();
 
-        $list = $this->getVideoComments($video->getLink(), $nextPageToken);
-        $comments = array_merge($comments, $list->getItems());
-        $nextPageToken = $list->getNextPageToken();
-
-        foreach ($comments as $item) {
-            $comment = $item['snippet']['topLevelComment']['snippet'];
-            $commentArray[] = [
-                'author' => $comment['authorDisplayName'],
-                'text' => $comment['textDisplay'],
-                'publishedAt' => $this->formatCommentDate($comment['publishedAt']),
-            ];
-        }
-        dump($comments, $commentArray);
+        $results = $this->getComments($link, null);
 
         return new JsonResponse([
             'video' => $youtubeVideo->getItems()[0],
             'channel' => $channel,
-            'comments' => $commentArray,
-            'nextPageToken' => $nextPageToken,
+            'comments' => $results['comments'],
+            'nextPageToken' => $results['nextPageToken'],
         ]);
     }
 
@@ -155,26 +144,11 @@ final class VideoController extends AbstractController
         $link = $data['link'];
         $nextPageToken = $data['nextPageToken'];
 
-        $comments = [];
-        $commentArray = [];
-
-        $list = $this->getVideoComments($link, $nextPageToken);
-        $comments = array_merge($comments, $list->getItems());
-        $nextPageToken = $list->getNextPageToken();
-
-        foreach ($comments as $item) {
-            $comment = $item['snippet']['topLevelComment']['snippet'];
-            $commentArray[] = [
-                'author' => $comment['authorDisplayName'],
-                'text' => $comment['textDisplay'],
-                'publishedAt' => $this->formatCommentDate($comment['publishedAt']),
-            ];
-        }
-        dump($comments, $commentArray);
+        $results = $this->getComments($link, $nextPageToken);
 
         return new JsonResponse([
-            'comments' => $commentArray,
-            'nextPageToken' => $nextPageToken,
+            'comments' => $results['comments'],
+            'nextPageToken' => $results['nextPageToken'],
         ]);
     }
 
@@ -326,20 +300,86 @@ final class VideoController extends AbstractController
         }
     }
 
-    private function getVideoComments(string $videoId, $nextPageToken): ?CommentThreadListResponse
+    private function getComments(string $link, ?string $nextPageToken): array
+    {
+        $commentArray = [];
+        $now = $this->dateService->getNowImmutable($this->getUser()->getTimeZone() ?? 'Europe/Paris');
+
+        $list = $this->getVideoComments($link, $this->maxResults, $nextPageToken);
+        $comments = $list->getItems();
+        $nextPageToken = $list->getNextPageToken();
+
+        foreach ($comments as $item) {
+            $snippet = $item['snippet'];
+            $comment = $snippet['topLevelComment']['snippet'];
+            $channelThumbnail = $this->getChannelThumbnail($comment, $now);
+            $replies = $item['replies']['comments'] ?? [];
+            $repliesArray = [];
+            foreach ($replies as $reply) {
+                $replyComment = $reply['snippet'];
+                $replyChannelThumbnail = $this->getChannelThumbnail($replyComment, $now);
+                $repliesArray[] = [
+                    'author' => $replyComment['authorDisplayName'],
+                    'authorProfileImageUrl' => $replyChannelThumbnail,
+                    'text' => $replyComment['textDisplay'],
+                    'publishedAt' => $this->formatCommentDate($replyComment['publishedAt']),
+                ];
+            }
+            $commentArray[] = [
+                'author' => $comment['authorDisplayName'],
+                'authorProfileImageUrl' => $channelThumbnail,
+                'text' => $comment['textDisplay'],
+                'publishedAt' => $this->formatCommentDate($comment['publishedAt']),
+                'replies' => $repliesArray,
+            ];
+        }
+        //dump($comments, $commentArray);
+        return [
+            'comments' => $commentArray,
+            'nextPageToken' => $nextPageToken,
+        ];
+    }
+    private function getVideoComments(string $videoId, int $maxResults, ?string $nextPageToken): ?CommentThreadListResponse
     {
         if ($nextPageToken) {
             try {
-                return $this->service_YouTube->commentThreads->listCommentThreads('snippet', ['videoId' => $videoId, 'textFormat' => 'plainText', 'maxResults' => 50, 'pageToken' => $nextPageToken]);
+                return $this->service_YouTube->commentThreads->listCommentThreads('snippet,replies', ['videoId' => $videoId, 'textFormat' => 'plainText', 'maxResults' => $maxResults, 'pageToken' => $nextPageToken]);
             } catch (\Google\Service\Exception) {
                 return null;
             }
         }
         try {
-            return $this->service_YouTube->commentThreads->listCommentThreads('snippet', ['videoId' => $videoId, 'textFormat' => 'plainText', 'maxResults' => 50]);
+            return $this->service_YouTube->commentThreads->listCommentThreads('snippet,replies', ['videoId' => $videoId, 'textFormat' => 'plainText', 'maxResults' => $maxResults]);
         } catch (\Google\Service\Exception) {
             return null;
         }
+    }
+
+    private function getChannelThumbnail(CommentSnippet $snippet, DateTimeImmutable $now): ?string
+    {
+        $channelId = $snippet->getAuthorChannelId()->getValue();
+
+        $channel = $this->channelRepository->findOneBy(['youTubeId' => $channelId]);
+        if ($channel) {
+            return $channel->getThumbnail();
+        }
+
+        $basename = '/' . $channelId;
+        $thumbnail = $snippet->getAuthorProfileImageUrl();
+        $this->imageService->saveImage2($thumbnail, '/videos/channels/thumbnails' . $basename);
+
+        $title = $snippet->getAuthorDisplayName();
+        $customUrl = $snippet->getAuthorChannelUrl();
+        if ($customUrl) {
+            $customUrl = str_replace('http://www.youtube.com/', '', $customUrl);
+            $customUrl = str_replace('https://www.youtube.com/', '', $customUrl);
+            $customUrl = str_replace('https://youtube.com/', '', $customUrl);
+            $customUrl = str_replace('youtube.com/', '', $customUrl);
+        }
+
+        $channel = new VideoChannel($channelId, $title, $customUrl, $basename, $now);
+        $this->channelRepository->save($channel, true);
+        return $basename;
     }
 
     private function iso8601ToSeconds($input): int
@@ -407,8 +447,6 @@ final class VideoController extends AbstractController
 
     public function formatCommentDate(string $date): string
     {
-        // "2025-05-14T15:12:29Z" → "Publiée le 14 mai 2025 à 15:12"
-        // "2025-05-21T15:12:29Z" → "Publiée hier à 15:12"
         $publishedAt = $this->dateService->formatDateRelativeShort($date, 'Europe/Paris', 'fr');
 
         if (is_numeric($publishedAt[0])) {

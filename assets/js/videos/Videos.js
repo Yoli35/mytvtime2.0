@@ -1,11 +1,15 @@
+import {ToolTips} from "ToolTips";
+
 export class Videos {
 
     /**
      * @typedef Comment
      * @type {Object}
      * @property {string} author
+     * @property {string} authorProfileImageUrl
      * @property {string} publishedAt
      * @property {string} text
+     * @property {Array<Comment>} replies
      */
 
     constructor() {
@@ -17,6 +21,7 @@ export class Videos {
         this.texts = globs['texts'];
         this.commentInfos = {comments: [], nextPageToken: null};
         this.svgs = document.querySelector('#svgs');
+        this.tooltips = new ToolTips();
         this.init = this.init.bind(this);
     }
 
@@ -37,9 +42,8 @@ export class Videos {
                 return response.json();
             })
             .then(data => {
-                /*console.log('Video details:', data);*/
                 const infos = this.getVideoInfos(data);
-                /*console.log('Video details:', infos);*/
+                console.log('Video details:', infos);
 
                 const videoInfosDiv = document.querySelector('.video-infos');
                 const headerDiv = document.createElement('div');
@@ -210,14 +214,23 @@ export class Videos {
         const commentsContentDiv = document.querySelector('.comments-content');
         const comments = this.commentInfos.comments;
 
-        comments.forEach((comment, index) => {
+        comments.forEach((comment) => {
             const commentDiv = document.createElement('div');
             commentDiv.classList.add('comment');
             const commentInfosDiv = document.createElement('div');
             commentInfosDiv.classList.add('comment-infos');
+            const thumbnailDiv = document.createElement('div');
+            thumbnailDiv.classList.add('author-thumbnail');
+            thumbnailDiv.setAttribute('data-title', comment.author);
+            const img = document.createElement('img');
+            img.src = "/videos/channels/thumbnails/" + comment.authorProfileImageUrl;
+            img.alt = comment.author;
+            thumbnailDiv.appendChild(img);
+            this.tooltips.initElement(thumbnailDiv);
+            commentInfosDiv.appendChild(thumbnailDiv);
             const authorNameDiv = document.createElement('div');
             authorNameDiv.classList.add('author-name');
-            authorNameDiv.innerText = "#" + index + " - " + comment.author;
+            authorNameDiv.innerText = comment.author;
             commentInfosDiv.appendChild(authorNameDiv);
             const publishedAtDiv = document.createElement('div');
             publishedAtDiv.classList.add('published-at');
@@ -229,6 +242,42 @@ export class Videos {
             commentText.innerText = comment.text;
             commentDiv.appendChild(commentText);
 
+            const replies = comment.replies;
+            if (replies.length > 0) {
+                const repliesDiv = document.createElement('div');
+                repliesDiv.classList.add('replies');
+                replies.forEach((reply) => {
+                    const replyDiv = document.createElement('div');
+                    replyDiv.classList.add('reply');
+                    const replyInfosDiv = document.createElement('div');
+                    replyInfosDiv.classList.add('comment-infos');
+                    const replyThumbnailDiv = document.createElement('div');
+                    replyThumbnailDiv.classList.add('author-thumbnail');
+                    replyThumbnailDiv.setAttribute('data-title', reply.author);
+                    const replyImg = document.createElement('img');
+                    replyImg.src = "/videos/channels/thumbnails/" + reply.authorProfileImageUrl;
+                    replyImg.alt = reply.author;
+                    replyThumbnailDiv.appendChild(replyImg);
+                    this.tooltips.initElement(replyThumbnailDiv);
+                    replyInfosDiv.appendChild(replyThumbnailDiv);
+                    const replyAuthorNameDiv = document.createElement('div');
+                    replyAuthorNameDiv.classList.add('author-name');
+                    replyAuthorNameDiv.innerText = reply.author;
+                    replyInfosDiv.appendChild(replyAuthorNameDiv);
+                    const replyPublishedAtDiv = document.createElement('div');
+                    replyPublishedAtDiv.classList.add('published-at');
+                    replyPublishedAtDiv.innerText = this.texts['replied'] + " " + this.publishedAt;
+                    replyInfosDiv.appendChild(replyPublishedAtDiv);
+                    replyDiv.appendChild(replyInfosDiv);
+                    const replyText = document.createElement('div');
+                    replyText.classList.add('comment-text');
+                    replyText.innerText = this.texts['replied'] + " " + comment.text;
+                    replyDiv.appendChild(replyText);
+
+                    repliesDiv.appendChild(replyDiv);
+                });
+                commentDiv.appendChild(repliesDiv);
+            }
             commentsContentDiv.appendChild(commentDiv);
         });
     }

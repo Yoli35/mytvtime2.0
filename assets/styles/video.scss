@@ -1,4 +1,4 @@
-.videos {
+.videos-page {
     margin-block-start: 3rem;
     margin-block-end: 1rem;
 
@@ -392,7 +392,7 @@
                     flex-direction: column;
                     padding: 1rem;
 
-                    .comment {
+                    .comment, .reply {
                         align-items: flex-start;
                         display: flex;
                         flex-direction: column;
@@ -400,12 +400,30 @@
                         padding: 1rem;
                         width: 100%;
 
+                        .replies {
+                            align-items: flex-start;
+                            background-color: var(--orange-0);
+                            display: flex;
+                            flex-direction: column;
+                            font-size: 1rem;
+                            margin-block-start: 1rem;
+                            margin-inline-start: 2rem;
+                            padding: .25rem;
+                            width: calc(100% - 2rem);
+                        }
+
                         &:first-child {
-                            border-radius: .25rem .25rem 0 0;
+                            border-top-left-radius: .25rem;
+                            border-top-right-radius: .25rem;
+                            -moz-border-radius-topleft:  .25rem;
+                            -moz-border-radius-topright: .25rem;
                         }
 
                         &:last-child {
-                            border-radius: 0 0 .25rem .25rem;
+                            border-bottom-left-radius: .25rem;
+                            border-bottom-right-radius: .25rem;
+                            -moz-border-radius-bottomleft:  .25rem;
+                            -moz-border-radius-bottomright: .25rem;
                         }
 
                         &:nth-child(odd) {
@@ -420,6 +438,15 @@
                             align-items: center;
                             display: flex;
                             gap: 1rem;
+
+                            .author-thumbnail {
+                                img {
+                                    aspect-ratio: 1;
+                                    border-radius: 50%;
+                                    height: 2rem;
+                                    width: 2rem;
+                                }
+                            }
 
                             .author-name {
                                 color: var(--orange-100);

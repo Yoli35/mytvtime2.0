@@ -185,6 +185,10 @@
             {% if route in ['app_people_show'] %}
                 <div class="debug">{{ people.id }}</div>
             {% endif %}
+
+            {% if route in ['app_video_show'] %}
+                <div class="debug">{{ video.id }} / {{ video.link }}</div>
+            {% endif %}
         {% endif %}
 
         {% set p = '' %}
