@@ -15,6 +15,7 @@ use DateInterval;
 use DateTimeImmutable;
 use Google\Exception;
 use Google\Service\YouTube\ChannelListResponse;
+use Google\Service\YouTube\CommentThreadListResponse;
 use Google\Service\YouTube\VideoListResponse;
 use Google_Client;
 use Google_Service_YouTube;
@@ -45,7 +46,8 @@ final class VideoController extends AbstractController
     {
         $client = new Google_Client();
         $client->setApplicationName('mytvtime');
-        $client->setScopes(['https://www.googleapis.com/auth/youtube.readonly',]);
+//        $client->setScopes(['https://www.googleapis.com/auth/youtube.readonly',]);
+        $client->setScopes(['https://www.googleapis.com/auth/youtube.force-ssl',]);
         $client->setAuthConfig('../config/google/mytvtime-349019-001b2f815d02.json');
         $client->setAccessType('offline');
 
@@ -93,9 +95,7 @@ final class VideoController extends AbstractController
         if (!$video) {
             throw $this->createNotFoundException('Video not found');
         }
-
         $this->formatDates($userVideo);
-
 
         return $this->render('video/show.html.twig', [
             'userVideo' => $userVideo,
@@ -121,9 +121,60 @@ final class VideoController extends AbstractController
 //            $channel = $this->checkChannel($channelId);
 //        }
 
+        // Get comments
+        $comments = [];
+        $commentArray = [];
+        $nextPageToken = null;
+
+        $list = $this->getVideoComments($video->getLink(), $nextPageToken);
+        $comments = array_merge($comments, $list->getItems());
+        $nextPageToken = $list->getNextPageToken();
+
+        foreach ($comments as $item) {
+            $comment = $item['snippet']['topLevelComment']['snippet'];
+            $commentArray[] = [
+                'author' => $comment['authorDisplayName'],
+                'text' => $comment['textDisplay'],
+                'publishedAt' => $this->formatCommentDate($comment['publishedAt']),
+            ];
+        }
+        dump($comments, $commentArray);
+
         return new JsonResponse([
             'video' => $youtubeVideo->getItems()[0],
             'channel' => $channel,
+            'comments' => $commentArray,
+            'commentNextPageToken' => $nextPageToken,
+        ]);
+    }
+
+    #[Route('/comments', name: 'comments', methods: ['POST'])]
+    public function comments(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $link = $data['link'];
+        $nextPageToken = $data['nextPageToken'];
+
+        $comments = [];
+        $commentArray = [];
+
+        $list = $this->getVideoComments($link, $nextPageToken);
+        $comments = array_merge($comments, $list->getItems());
+        $nextPageToken = $list->getNextPageToken();
+
+        foreach ($comments as $item) {
+            $comment = $item['snippet']['topLevelComment']['snippet'];
+            $commentArray[] = [
+                'author' => $comment['authorDisplayName'],
+                'text' => $comment['textDisplay'],
+                'publishedAt' => $this->formatCommentDate($comment['publishedAt']),
+            ];
+        }
+        dump($comments, $commentArray);
+
+        return new JsonResponse([
+            'comments' => $commentArray,
+            'nextPageToken' => $nextPageToken,
         ]);
     }
 
@@ -275,6 +326,22 @@ final class VideoController extends AbstractController
         }
     }
 
+    private function getVideoComments(string $videoId, $nextPageToken): ?CommentThreadListResponse
+    {
+        if ($nextPageToken) {
+            try {
+                return $this->service_YouTube->commentThreads->listCommentThreads('snippet', ['videoId' => $videoId, 'textFormat' => 'plainText', 'maxResults' => 50, 'pageToken' => $nextPageToken]);
+            } catch (\Google\Service\Exception) {
+                return null;
+            }
+        }
+        try {
+            return $this->service_YouTube->commentThreads->listCommentThreads('snippet', ['videoId' => $videoId, 'textFormat' => 'plainText', 'maxResults' => 50]);
+        } catch (\Google\Service\Exception) {
+            return null;
+        }
+    }
+
     private function iso8601ToSeconds($input): int
     {
         try {
@@ -336,5 +403,20 @@ final class VideoController extends AbstractController
 
         $userVideo->setPublishedAtString($publishedAt);
         $userVideo->setAddedAtString($addedAt);
+    }
+
+    public function formatCommentDate(string $date): string
+    {
+        // "2025-05-14T15:12:29Z" → "Publiée le 14 mai 2025 à 15:12"
+        // "2025-05-21T15:12:29Z" → "Publiée hier à 15:12"
+        $publishedAt = $this->dateService->formatDateRelativeShort($date, 'Europe/Paris', 'fr');
+
+        if (is_numeric($publishedAt[0])) {
+            $publishedAt = $this->translator->trans("Published at") . ' ' . $publishedAt;
+        } else {
+            $publishedAt = $this->translator->trans("Published") . ' ' . $publishedAt;
+        }
+        $publishedAt .= ' ' . $this->translator->trans("at") . ' ' . substr($date, 11, 5);
+        return $publishedAt;
     }
 }

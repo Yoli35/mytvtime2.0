@@ -20,6 +20,7 @@
     <div id="global-data" style="display: none">
         {
             "app_video_details": "{{ path('app_video_details', {id: video.id}) }}",
+            "app_video_comments": "{{ path('app_video_comments') }}",
             "published_at": "{{ userVideo.publishedAtString }}",
             "added_at": "{{ userVideo.addedAtString }}",
             "texts": {
@@ -27,7 +28,11 @@
                 "likes": "{{ 'likes'|trans }}",
                 "views": "{{ 'views'|trans }}",
                 "published": "{{ 'Published at'|trans }}",
-                "added": "{{ 'Added at'|trans }}"
+                "added": "{{ 'Added at'|trans }}",
+                "no_comments": "{{ 'No comments'|trans }}",
+                "Comments": "{{ 'Comments'|trans }}",
+                "display_more": "{{ 'Display more'|trans }}",
+                "display_less": "{{ 'Display less'|trans }}"
             }
         }
     </div>

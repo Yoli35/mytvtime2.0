@@ -1,8 +1,17 @@
 export class Videos {
 
+    /**
+     * @typedef Comment
+     * @type {Object}
+     * @property {string} author
+     * @property {string} publishedAt
+     * @property {string} text
+     */
+
     constructor() {
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         this.app_video_details = globs['app_video_details'];
+        this.app_video_comments = globs['app_video_comments'];
         this.publishedAt = globs['published_at'];
         this.addedAt = globs['added_at'];
         this.texts = globs['texts'];
@@ -86,14 +95,135 @@ export class Videos {
                 // content → Description
                 const descriptionDiv = document.createElement('div');
                 descriptionDiv.classList.add('description');
-                const descriptionText = document.createElement('p');
-                descriptionText.innerText = infos.snippet.description;
+                const descriptionText = document.createElement('div');
+                descriptionText.classList.add('description-text');
+                const description = infos.snippet.description;
+                // Replace all the links in the description with a clickable link
+                const regex = /https?:\/\/\S+/g;
+                const newDescription = description.replace(regex, (url) => {
+                    return `<a href="${url}" target="_blank">${url}</a>`;
+                });
+                // Replace aa mailto: in the description with a clickable link
+                const mailRegex = /mailto:\S+/g;
+                const newMailDescription = newDescription.replace(mailRegex, (url) => {
+                    return `<a href="${url}" target="_blank">${url}</a>`;
+                });
+                // Replace \n with <br>
+                descriptionText.innerHTML = newMailDescription.replace(/\n/g, '<br>')
                 descriptionDiv.appendChild(descriptionText);
                 contentDiv.appendChild(descriptionDiv);
+                // if div.description-text is too long (height > 10rem), add a "display more" button
+                if (descriptionText.offsetHeight > 10 * parseFloat(getComputedStyle(descriptionText).fontSize)) {
+                    const displayMoreDiv = document.createElement('div');
+                    displayMoreDiv.classList.add('display-more');
+                    displayMoreDiv.innerText = this.texts['display_more'];
+                    displayMoreDiv.addEventListener('click', () => {
+                        descriptionDiv.classList.toggle('expanded');
+                        if (descriptionDiv.classList.contains('expanded')) {
+                            displayMoreDiv.innerText = this.texts['display_less'];
+                        } else {
+                            displayMoreDiv.innerText = this.texts['display_more'];
+                        }
+                    });
+                    descriptionDiv.appendChild(displayMoreDiv);
+                }
+
+                // content → Tags
+                const tags = infos.snippet.tags;
+                if (tags) {
+                    const tagsDiv = document.createElement('div');
+                    tagsDiv.classList.add('tags');
+                    tags.forEach(tag => {
+                        const tagDiv = document.createElement('div');
+                        tagDiv.classList.add('tag');
+                        tagDiv.innerText = tag;
+                        tagsDiv.appendChild(tagDiv);
+                    });
+                    contentDiv.appendChild(tagsDiv);
+                }
+
+                // content → Comments
+                const comments = infos.comments;
+                if (comments) {
+                    const commentsDiv = document.createElement('div');
+                    commentsDiv.classList.add('comments');
+                    const commentsTitleDiv = document.createElement('div');
+                    commentsTitleDiv.classList.add('comments-title');
+                    commentsTitleDiv.innerText = this.texts['Comments'];
+                    commentsDiv.appendChild(commentsTitleDiv);
+                    const commentsContentDiv = document.createElement('div');
+                    commentsContentDiv.classList.add('comments-content');
+                    commentsDiv.appendChild(commentsContentDiv);
+                    contentDiv.appendChild(commentsDiv);
+                    this.displayComments(comments);
+                }
+
+                // If infos.commentNextPageToken is not null and the bottom of the page is reached, load more comments
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            this.getNextComments(infos, data, observer, entry);
+                        }
+                    });
+                });
+                const target = document.querySelector('.comment:last-child');
+                observer.observe(target);
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
             });
+    }
+
+    getNextComments(infos, data, observer, entry) {
+        if (infos.commentNextPageToken) {
+            fetch(this.app_video_comments, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    link: data.video.id,
+                    nextPageToken: infos.commentNextPageToken
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    this.displayComments(data.comments);
+                    observer.unobserve(entry.target);
+                    const target = document.querySelector('.comment:last-child');
+                    observer.observe(target);
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        }
+    }
+
+    displayComments(comments) {
+        const commentsContentDiv = document.querySelector('.comments-content');
+
+        comments.forEach((comment, index) => {
+            const commentDiv = document.createElement('div');
+            commentDiv.classList.add('comment');
+            const commentInfosDiv = document.createElement('div');
+            commentInfosDiv.classList.add('comment-infos');
+            const authorNameDiv = document.createElement('div');
+            authorNameDiv.classList.add('author-name');
+            authorNameDiv.innerText = "#" + index + " - " + comment.author;
+            commentInfosDiv.appendChild(authorNameDiv);
+            const publishedAtDiv = document.createElement('div');
+            publishedAtDiv.classList.add('published-at');
+            publishedAtDiv.innerText = comment.publishedAt;
+            commentInfosDiv.appendChild(publishedAtDiv);
+            commentDiv.appendChild(commentInfosDiv);
+            const commentText = document.createElement('div');
+            commentText.classList.add('comment-text');
+            commentText.innerText = comment.text;
+            commentDiv.appendChild(commentText);
+
+            commentsContentDiv.appendChild(commentDiv);
+        });
     }
 
     getVideoInfos(data) {
@@ -103,6 +233,8 @@ export class Videos {
             snippet: video.snippet,
             statistics: video.statistics,
             channel: channel,
+            comments: data.comments,
+            commentNextPageToken: data.commentNextPageToken,
         };
     }
 
@@ -120,76 +252,4 @@ export class Videos {
         div.appendChild(textDiv);
         return div;
     }
-    /*
-    [Log] Video details: (Videos-esQ8Q7H.js, line 25)
-    {
-        video: {
-            "contentDetails": {
-                "caption": "false",
-                "contentRating": {acbRating: null, agcomRating: null, anatelRating: null, bbfcRating: null, bfvcRating: null, …},
-                "definition": "hd",
-                "dimension": "2d",
-                "duration": "PT1H34M32S",
-                "hasCustomThumbnail": null,
-                "licensedContent": true,
-                "projection": "rectangular"
-            }
-            "etag": "RSpRPMPU_MlnzzL5hWUnBbQm2GU",
-            "id": "YNhvj5aqNmc",
-            "kind": "youtube#video",
-            "snippet": {
-                "categoryId": "28",
-                "channelId": "UCAbFIrKZCYdKucQYnhxWnrA",
-                "channelTitle": "LIMIT",
-                "defaultAudioLanguage": "fr",
-                "defaultLanguage": null,
-                "description": "➙ Cette chaîne vit aussi et surtout grâce à vos dons ! https://linktr.ee/limit.media↵↵Dans cette vidéo de LIMIT, nous abordons la questio…",
-                "liveBroadcastContent": "none",
-                "localized": {
-                    "description": "➙ Cette chaîne vit aussi et surtout grâce à vos dons ! https://linktr.ee/limit.media↵↵Dans cette vidéo de LIMIT, nous abordons la questio…",
-                    "title": "L'EAU : LA BOMBE À RETARDEMENT - Charlène Descollonges | LIMIT #partie2"
-                },
-                "publishedAt": "2025-04-27T16:01:44Z",
-                "tags": [
-                    "0": "LIMIT",
-                    "1": "Actu",
-                    "2": "Jancovici",
-                    "3": "Tarmac",
-                    "4": "Booska P",
-                    "5": "Brut",
-                    "6": "Le Media",
-                    "7": "Thinkerview",
-                    "8": "Elucid",
-                    "9": "Blast",
-                    "10": "Environnement",
-                    "11": "Climat",
-                    "12": "Ecologie",
-                    "13": "Rap",
-                    "14": "Finance",
-                    "15": "Podcast",
-                    "16": "thinkerview",
-                    "17": "Histoire",
-                    "18": "EAU",
-                    "19": "Pluie",
-                    "20": "Contaminée"
-                ],
-                "thumbnails": {
-                    "default": {height: 90, url: "https://i.ytimg.com/vi/YNhvj5aqNmc/default.jpg", width: 120},
-                    "high": {height: 360, url: "https://i.ytimg.com/vi/YNhvj5aqNmc/hqdefault.jpg", width: 480},
-                    "maxres": {height: 720, url: "https://i.ytimg.com/vi/YNhvj5aqNmc/maxresdefault.jpg", width: 1280},
-                    "medium": {height: 180, url: "https://i.ytimg.com/vi/YNhvj5aqNmc/mqdefault.jpg", width: 320},
-                    "standard": {height: 480, url: "https://i.ytimg.com/vi/YNhvj5aqNmc/sddefault.jpg", width: 640}
-                },
-                "title": "L'EAU : LA BOMBE À RETARDEMENT - Charlène Descollonges | LIMIT #partie2"
-            },
-            "statistics": {
-                "commentCount": "639",
-                "dislikeCount": null,
-                "favoriteCount": "0",
-                "likeCount": "2188",
-                "viewCount": "68997"
-            }
-        }
-    }
-*/
 }
