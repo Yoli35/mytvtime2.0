@@ -144,7 +144,7 @@ final class VideoController extends AbstractController
             'video' => $youtubeVideo->getItems()[0],
             'channel' => $channel,
             'comments' => $commentArray,
-            'commentNextPageToken' => $nextPageToken,
+            'nextPageToken' => $nextPageToken,
         ]);
     }
 

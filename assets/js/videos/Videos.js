@@ -15,6 +15,7 @@ export class Videos {
         this.publishedAt = globs['published_at'];
         this.addedAt = globs['added_at'];
         this.texts = globs['texts'];
+        this.commentInfos = {comments: [], nextPageToken: null};
         this.svgs = document.querySelector('#svgs');
         this.init = this.init.bind(this);
     }
@@ -36,9 +37,9 @@ export class Videos {
                 return response.json();
             })
             .then(data => {
-                console.log('Video details:', data);
+                /*console.log('Video details:', data);*/
                 const infos = this.getVideoInfos(data);
-                console.log('Video details:', infos);
+                /*console.log('Video details:', infos);*/
 
                 const videoInfosDiv = document.querySelector('.video-infos');
                 const headerDiv = document.createElement('div');
@@ -143,6 +144,9 @@ export class Videos {
                 }
 
                 // content → Comments
+                this.commentInfos.comments = infos.comments;
+                this.commentInfos.nextPageToken = infos.nextPageToken;
+
                 const comments = infos.comments;
                 if (comments) {
                     const commentsDiv = document.createElement('div');
@@ -155,10 +159,10 @@ export class Videos {
                     commentsContentDiv.classList.add('comments-content');
                     commentsDiv.appendChild(commentsContentDiv);
                     contentDiv.appendChild(commentsDiv);
-                    this.displayComments(comments);
+                    this.displayComments();
                 }
 
-                // If infos.commentNextPageToken is not null and the bottom of the page is reached, load more comments
+                // If infos.nextPageToken is not null and the bottom of the page is reached, load more comments
                 const observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
@@ -175,7 +179,7 @@ export class Videos {
     }
 
     getNextComments(infos, data, observer, entry) {
-        if (infos.commentNextPageToken) {
+        if (this.commentInfos.nextPageToken) {
             fetch(this.app_video_comments, {
                 method: 'POST',
                 headers: {
@@ -184,12 +188,14 @@ export class Videos {
                 },
                 body: JSON.stringify({
                     link: data.video.id,
-                    nextPageToken: infos.commentNextPageToken
+                    nextPageToken: this.commentInfos.nextPageToken,
                 })
             })
                 .then(response => response.json())
                 .then(data => {
-                    this.displayComments(data.comments);
+                    this.commentInfos.comments = data.comments;
+                    this.commentInfos.nextPageToken = data.nextPageToken;
+                    this.displayComments();
                     observer.unobserve(entry.target);
                     const target = document.querySelector('.comment:last-child');
                     observer.observe(target);
@@ -200,8 +206,9 @@ export class Videos {
         }
     }
 
-    displayComments(comments) {
+    displayComments() {
         const commentsContentDiv = document.querySelector('.comments-content');
+        const comments = this.commentInfos.comments;
 
         comments.forEach((comment, index) => {
             const commentDiv = document.createElement('div');
@@ -234,7 +241,7 @@ export class Videos {
             statistics: video.statistics,
             channel: channel,
             comments: data.comments,
-            commentNextPageToken: data.commentNextPageToken,
+            nextPageToken: data.nextPageToken,
         };
     }
 
