@@ -18,6 +18,20 @@
         margin-inline: auto;
         width: 100%;
 
+        &:has(.form-col) {
+            flex-direction: row;
+
+            .form-row {
+                flex-direction: column;
+
+                .form-field {
+                    &:has(select) {
+                        max-width: unset;
+                    }
+                }
+            }
+        }
+
         .form-row {
             display: flex;
             flex-direction: row;
@@ -193,12 +207,12 @@
 
                     .form-keywords {
                         background-color: var(--ardoise-80);
-                        border: 1px solid var(--ardoise-50);
                         border-radius: .25em;
+                        border: 1px solid var(--ardoise-50);
                         display: none;
                         flex-direction: row;
-                        gap: .25rem;
                         flex-wrap: wrap;
+                        gap: .25rem;
                         padding: .25rem;
                         width: 100%;
 
@@ -256,6 +270,13 @@
                 justify-content: flex-end;
             }
         }
+
+        .form-col {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+        }
     }
 
 }
@@ -295,6 +316,7 @@
                 height: 10rem;
             }
         }
+
         .preview-banner-file {
 
             img {

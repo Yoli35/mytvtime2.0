@@ -11,180 +11,202 @@
     <div class="container-fluid">
         {% include '_blocks/_menu.html.twig' %}
         <div class="series-search">
-            <h1>{{ 'Search'|trans }}</h1>
             {{ form_start(form, {'attr': {'class': 'form'}}) }}
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="{{ form.language.vars.id }}">
-                        {{ form.language.vars.label|trans }}
-                        {{ form_widget(form.language) }}
-                        {{ form_errors(form.language) }}
-                    </label>
+            <div class="form-col">
+                <h1>{{ 'Search'|trans }}</h1>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.language.vars.id }}">
+                            {{ form.language.vars.label|trans }}
+                            {{ form_widget(form.language) }}
+                            {{ form_errors(form.language) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.timezone.vars.id }}">
+                            {{ form.timezone.vars.label|trans }}
+                            {{ form_widget(form.timezone) }}
+                            {{ form_errors(form.timezone) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.watchRegion.vars.id }}">
+                            {{ form.watchRegion.vars.label|trans }}
+                            {{ form_widget(form.watchRegion) }}
+                            {{ form_errors(form.watchRegion) }}
+                        </label>
+                    </div>
                 </div>
-                <div class="form-field">
-                    <label for="{{ form.timezone.vars.id }}">
-                        {{ form.timezone.vars.label|trans }}
-                        {{ form_widget(form.timezone) }}
-                        {{ form_errors(form.timezone) }}
-                    </label>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.firstAirDateYear.vars.id }}">
+                            {{ form.firstAirDateYear.vars.label|trans }}
+                            {{ form_widget(form.firstAirDateYear) }}
+                            {{ form_errors(form.firstAirDateYear) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.firstAirDateGTE.vars.id }}">
+                            {{ form.firstAirDateGTE.vars.label|trans }}
+                            {{ form_widget(form.firstAirDateGTE) }}
+                            {{ form_errors(form.firstAirDateGTE) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.firstAirDateLTE.vars.id }}">
+                            {{ form.firstAirDateLTE.vars.label|trans }}
+                            {{ form_widget(form.firstAirDateLTE) }}
+                            {{ form_errors(form.firstAirDateLTE) }}
+                        </label>
+                    </div>
                 </div>
-                <div class="form-field">
-                    <label for="{{ form.watchRegion.vars.id }}">
-                        {{ form.watchRegion.vars.label|trans }}
-                        {{ form_widget(form.watchRegion) }}
-                        {{ form_errors(form.watchRegion) }}
-                    </label>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.withOriginCountry.vars.id }}">
+                            {{ form.withOriginCountry.vars.label|trans }}
+                            {{ form_widget(form.withOriginCountry) }}
+                            {{ form_errors(form.withOriginCountry) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.withOriginalLanguage.vars.id }}">
+                            {{ form.withOriginalLanguage.vars.label|trans }}
+                            {{ form_widget(form.withOriginalLanguage) }}
+                            {{ form_errors(form.withOriginalLanguage) }}
+                        </label>
+                    </div>
                 </div>
-            </div>
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="{{ form.firstAirDateYear.vars.id }}">
-                        {{ form.firstAirDateYear.vars.label|trans }}
-                        {{ form_widget(form.firstAirDateYear) }}
-                        {{ form_errors(form.firstAirDateYear) }}
-                    </label>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.withWatchMonetizationTypes.vars.id }}">
+                            {{ form.withWatchMonetizationTypes.vars.label|trans }}
+                            {{ form_widget(form.withWatchMonetizationTypes) }}
+                            {{ form_errors(form.withWatchMonetizationTypes) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.withWatchProviders.vars.id }}">
+                            {{ form.withWatchProviders.vars.label|trans }}
+                            {{ form_widget(form.withWatchProviders) }}
+                            {{ form_errors(form.withWatchProviders) }}
+                        </label>
+                    </div>
                 </div>
-                <div class="form-field">
-                    <label for="{{ form.firstAirDateGTE.vars.id }}">
-                        {{ form.firstAirDateGTE.vars.label|trans }}
-                        {{ form_widget(form.firstAirDateGTE) }}
-                        {{ form_errors(form.firstAirDateGTE) }}
-                    </label>
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.firstAirDateLTE.vars.id }}">
-                        {{ form.firstAirDateLTE.vars.label|trans }}
-                        {{ form_widget(form.firstAirDateLTE) }}
-                        {{ form_errors(form.firstAirDateLTE) }}
-                    </label>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="{{ form.withOriginCountry.vars.id }}">
-                        {{ form.withOriginCountry.vars.label|trans }}
-                        {{ form_widget(form.withOriginCountry) }}
-                        {{ form_errors(form.withOriginCountry) }}
-                    </label>
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.withOriginalLanguage.vars.id }}">
-                        {{ form.withOriginalLanguage.vars.label|trans }}
-                        {{ form_widget(form.withOriginalLanguage) }}
-                        {{ form_errors(form.withOriginalLanguage) }}
-                    </label>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="{{ form.withWatchMonetizationTypes.vars.id }}">
-                        {{ form.withWatchMonetizationTypes.vars.label|trans }}
-                        {{ form_widget(form.withWatchMonetizationTypes) }}
-                        {{ form_errors(form.withWatchMonetizationTypes) }}
-                    </label>
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.withWatchProviders.vars.id }}">
-                        {{ form.withWatchProviders.vars.label|trans }}
-                        {{ form_widget(form.withWatchProviders) }}
-                        {{ form_errors(form.withWatchProviders) }}
-                    </label>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-field full-width">
-                    <label for="{{ form.withKeywords.vars.id }}">
-                        {{ form.withKeywords.vars.label|trans }}
-                        <div class="input-group">
-                            <input type="search" class="keyword-input" placeholder="{{ 'Start tapping to search'|trans }}">
-                            <div class="and-or">
-                                <div class="and{% if form.keywordSeparator.vars.value==',' %} active{% endif %}" data-value="," data-title="{{ 'All keywords'|trans }}">{{ 'And'|trans }}</div>
-                                <div class="or{% if form.keywordSeparator.vars.value=='|' %} active{% endif %}" data-value="|" data-title="{{ 'Any keywords'|trans }}">{{ 'Or'|trans }}</div>
+                <div class="form-row">
+                    <div class="form-field full-width">
+                        <label for="{{ form.withKeywords.vars.id }}">
+                            {{ form.withKeywords.vars.label|trans }}
+                            <div class="input-group">
+                                <input type="search" class="keyword-input" placeholder="{{ 'Start tapping to search'|trans }}">
+                                <div class="and-or">
+                                    <div class="and{% if form.keywordSeparator.vars.value==',' %} active{% endif %}" data-value="," data-title="{{ 'All keywords'|trans }}">{{ 'And'|trans }}</div>
+                                    <div class="or{% if form.keywordSeparator.vars.value=='|' %} active{% endif %}" data-value="|" data-title="{{ 'Any keywords'|trans }}">{{ 'Or'|trans }}</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="keyword-list" id="keywords-list">
-                            {% for label, value in form.vars.value.keywords %}
-                                <div data-value="{{ value }}" class="keyword-item d-none" data-label="{{ label }}" data-title="{{ label|trans([], 'keywords') }}">{{ label }}</div>
-                            {% endfor %}
-                        </div>
-                        <div class="form-keywords"></div>
-                    </label>
-                    <input type="hidden" id="{{ form.withKeywords.vars.id }}" name="{{ field_name(form.withKeywords) }}" value="{{ form.withKeywords.vars.value }}"/>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="{{ form.withRuntimeGTE.vars.id }}">
-                        {{ form.withRuntimeGTE.vars.label|trans }}
-                        {{ form_widget(form.withRuntimeGTE) }}
-                        {{ form_errors(form.withRuntimeGTE) }}
-                    </label>
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.withRuntimeLTE.vars.id }}">
-                        {{ form.withRuntimeLTE.vars.label|trans }}
-                        {{ form_widget(form.withRuntimeLTE) }}
-                        {{ form_errors(form.withRuntimeLTE) }}
-                    </label>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="{{ form.withStatus.vars.id }}">
-                        {{ form.withStatus.vars.label|trans }}
-                        {{ form_widget(form.withStatus) }}
-                        {{ form_errors(form.withStatus) }}
-                    </label>
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.withType.vars.id }}">
-                        {{ form.withType.vars.label|trans }}
-                        {{ form_widget(form.withType) }}
-                        {{ form_errors(form.withType) }}
-                    </label>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="{{ form.sortBy.vars.id }}">
-                        {{ form.sortBy.vars.label|trans }}
-                        {{ form_widget(form.sortBy) }}
-                        {{ form_errors(form.sortBy) }}
-                    </label>
-                </div>
-            </div>
-            <div class="form-row">
-                <button type="submit">{{ 'Send'|trans }}</button>
-            </div>
-            <div class="series-search-result">
-                <div class="header">
-                    {% if results.total_results > 0 %}
-                        <h4>{{ 'Search results'|trans }}</h4>
-                        <span>{{ results.total_results }} {{ 'results'|trans }}</span>
-                        <span>{{ 'Page'|trans }} {{ results.page }}/{{ results.total_pages }}</span>
-                        {% if results.total_pages > 1 %}
-                            <div class="pages">
-                                {% for page in 1..results.total_pages %}
-                                    {% if page == form.page.vars.value %}
-                                        <div class="btn current-page">{{ page }}</div>
-                                    {% else %}
-                                        <button type="submit" name="{{ field_name(form.page) }}" value="{{ page }}" data-title="{{ 'Go to page'|trans }} {{ page }}" class="btn btn-primary">{{ page }}</button>
-                                    {% endif %}
+                            <div class="keyword-list" id="keywords-list">
+                                {% for label, value in form.vars.value.keywords %}
+                                    <div data-value="{{ value }}" class="keyword-item d-none" data-label="{{ label }}" data-title="{{ label|trans([], 'keywords') }}">{{ label }}</div>
                                 {% endfor %}
                             </div>
-                        {% endif %}
-                    {% else %}
-                        {% if results.total_results != -1 %}
-                            <h4>{{ 'No results'|trans }}</h4>
-                        {% endif %}
-                    {% endif %}
+                            <div class="form-keywords"></div>
+                        </label>
+                        <input type="hidden" id="{{ form.withKeywords.vars.id }}" name="{{ field_name(form.withKeywords) }}" value="{{ form.withKeywords.vars.value }}"/>
+                    </div>
                 </div>
-                <div class="wrapper">
-{#                    <div class="content">#}
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.withRuntimeGTE.vars.id }}">
+                            {{ form.withRuntimeGTE.vars.label|trans }}
+                            {{ form_widget(form.withRuntimeGTE) }}
+                            {{ form_errors(form.withRuntimeGTE) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.withRuntimeLTE.vars.id }}">
+                            {{ form.withRuntimeLTE.vars.label|trans }}
+                            {{ form_widget(form.withRuntimeLTE) }}
+                            {{ form_errors(form.withRuntimeLTE) }}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.withStatus.vars.id }}">
+                            {{ form.withStatus.vars.label|trans }}
+                            {{ form_widget(form.withStatus) }}
+                            {{ form_errors(form.withStatus) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.withType.vars.id }}">
+                            {{ form.withType.vars.label|trans }}
+                            {{ form_widget(form.withType) }}
+                            {{ form_errors(form.withType) }}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.sortBy.vars.id }}">
+                            {{ form.sortBy.vars.label|trans }}
+                            {{ form_widget(form.sortBy) }}
+                            {{ form_errors(form.sortBy) }}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <button type="submit">{{ 'Send'|trans }}</button>
+                </div>
+            </div>
+            <div class="form-col">
+                <div class="series-search-result">
+                    <div class="header">
+                        {% if results.total_results > 0 %}
+                            <div class="results">
+                                <h4>
+                                    <span>{{ results.total_results }} {{ 'results'|trans }}</span>
+                                    <span>{{ 'Page'|trans }} {{ results.page }}/{{ results.total_pages }}</span>
+                                </h4>
+                            </div>
+                            {% if results.total_pages > 1 %}
+                                <div class="pages">
+                                    {% for page in 1..results.total_pages %}
+                                        {% if page == form.page.vars.value %}
+                                            <div class="btn current-page">{{ page }}</div>
+                                        {% else %}
+                                            <button type="submit" name="{{ field_name(form.page) }}" value="{{ page }}" data-title="{{ 'Go to page'|trans }} {{ page }}" class="btn btn-primary">{{ page }}</button>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            {% if results.total_results != -1 %}
+                                <h4>{{ 'No results'|trans }}</h4>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="wrapper">
+                        {#                    <div class="content"> #}
                         {% for series in seriesList %}
                             {{ include('_blocks/series/_card.html.twig', {target: '_blank', dataTitle: series.name}) }}
                         {% endfor %}
-{#                    </div>#}
+                        {#                    </div> #}
+                    </div>
+                    <div class="footer">
+                        {% if results.total_results > 0 %}
+                            {% if results.total_pages > 1 %}
+                                <div class="pages">
+                                    {% for page in 1..results.total_pages %}
+                                        {% if page == form.page.vars.value %}
+                                            <div class="btn current-page">{{ page }}</div>
+                                        {% else %}
+                                            <button type="submit" name="{{ field_name(form.page) }}" value="{{ page }}" data-title="{{ 'Go to page'|trans }} {{ page }}" class="btn btn-primary">{{ page }}</button>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             {{ form_end(form) }}
@@ -225,7 +247,7 @@
             keywordList.forEach(function (item) {
                 if (hiddenInputValue.includes(item.dataset.value)) {
                     const keyword = document.createElement('div');
-                    const close =document.createElement('div');
+                    const close = document.createElement('div');
                     keyword.classList.add('keyword');
                     keyword.dataset.value = item.dataset.value;
                     keyword.innerHTML = item.dataset.label;
@@ -262,7 +284,7 @@
                     const value = e.target.dataset.value;
                     const label = e.target.dataset.label;
                     const keyword = document.createElement('div');
-                    const close =document.createElement('div');
+                    const close = document.createElement('div');
                     keyword.classList.add('keyword');
                     keyword.dataset.value = value;
                     keyword.innerHTML = label;
