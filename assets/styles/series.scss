@@ -3821,6 +3821,7 @@ h2 {
 
 /* Rechercher une série */
 .series-search {
+    margin-block-end: 1rem;
     margin-block-start: 3rem;
     width: 100%;
 
@@ -3831,6 +3832,18 @@ h2 {
 
             h1 {
                 margin-block: 0;
+            }
+
+            .sticky {
+                background-color: var(--orange-20);
+                border-radius: .5rem;
+                display: flex;
+                flex-direction: column;
+                gap: .25rem;
+                padding: 1rem;
+                position: sticky;
+                top: 0;
+                z-index: 1;
             }
         }
 

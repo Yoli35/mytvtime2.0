@@ -13,219 +13,221 @@
         <div class="series-search">
             {{ form_start(form, {'attr': {'class': 'form'}}) }}
             <div class="form-col">
-                <h1>{{ 'Search'|trans }}</h1>
-                <div class="form-row{% if displaySettings.data.place %} dismissed{% endif %}">
-                    <div class="form-row-name">
-                        {{ 'Viewer place'|trans }}
-                        <div class="toggler">
-                            {{ ux_icon('mdi:ellipsis-vertical') }}
-                            <div class="toggler-menu" data-menu="place">
-                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.place %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
-                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-field">
-                        <label for="{{ form.language.vars.id }}">
-                            {{ form.language.vars.label|trans }}
-                            {{ form_widget(form.language) }}
-                            {{ form_errors(form.language) }}
-                        </label>
-                    </div>
-                    <div class="form-field">
-                        <label for="{{ form.timezone.vars.id }}">
-                            {{ form.timezone.vars.label|trans }}
-                            {{ form_widget(form.timezone) }}
-                            {{ form_errors(form.timezone) }}
-                        </label>
-                    </div>
-                    <div class="form-field">
-                        <label for="{{ form.watchRegion.vars.id }}">
-                            {{ form.watchRegion.vars.label|trans }}
-                            {{ form_widget(form.watchRegion) }}
-                            {{ form_errors(form.watchRegion) }}
-                        </label>
-                    </div>
-                </div>
-                <div class="form-row{% if displaySettings.data.dates %} dismissed{% endif %}">
-                    <div class="form-row-name">
-                        {{ 'Dates'|trans }}
-                        <div class="toggler">
-                            {{ ux_icon('mdi:ellipsis-vertical') }}
-                            <div class="toggler-menu" data-menu="dates">
-                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.dates %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
-                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-field">
-                        <label for="{{ form.firstAirDateYear.vars.id }}">
-                            {{ form.firstAirDateYear.vars.label|trans }}
-                            {{ form_widget(form.firstAirDateYear) }}
-                            {{ form_errors(form.firstAirDateYear) }}
-                        </label>
-                    </div>
-                    <div class="form-field">
-                        <label for="{{ form.firstAirDateGTE.vars.id }}">
-                            {{ form.firstAirDateGTE.vars.label|trans }}
-                            {{ form_widget(form.firstAirDateGTE) }}
-                            {{ form_errors(form.firstAirDateGTE) }}
-                        </label>
-                    </div>
-                    <div class="form-field">
-                        <label for="{{ form.firstAirDateLTE.vars.id }}">
-                            {{ form.firstAirDateLTE.vars.label|trans }}
-                            {{ form_widget(form.firstAirDateLTE) }}
-                            {{ form_errors(form.firstAirDateLTE) }}
-                        </label>
-                    </div>
-                </div>
-                <div class="form-row{% if displaySettings.data.origin %} dismissed{% endif %}">
-                    <div class="form-row-name">
-                        {{ 'Origin'|trans }}
-                        <div class="toggler">
-                            {{ ux_icon('mdi:ellipsis-vertical') }}
-                            <div class="toggler-menu" data-menu="origin">
-                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.origin %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
-                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-field">
-                        <label for="{{ form.withOriginCountry.vars.id }}">
-                            {{ form.withOriginCountry.vars.label|trans }}
-                            {{ form_widget(form.withOriginCountry) }}
-                            {{ form_errors(form.withOriginCountry) }}
-                        </label>
-                    </div>
-                    <div class="form-field">
-                        <label for="{{ form.withOriginalLanguage.vars.id }}">
-                            {{ form.withOriginalLanguage.vars.label|trans }}
-                            {{ form_widget(form.withOriginalLanguage) }}
-                            {{ form_errors(form.withOriginalLanguage) }}
-                        </label>
-                    </div>
-                </div>
-                <div class="form-row{% if displaySettings.data.provider %} dismissed{% endif %}">
-                    <div class="form-row-name">
-                        {{ 'Provider'|trans }}
-                        <div class="toggler">
-                            {{ ux_icon('mdi:ellipsis-vertical') }}
-                            <div class="toggler-menu" data-menu="provider">
-                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.provider %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
-                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-field">
-                        <label for="{{ form.withWatchMonetizationTypes.vars.id }}">
-                            {{ form.withWatchMonetizationTypes.vars.label|trans }}
-                            {{ form_widget(form.withWatchMonetizationTypes) }}
-                            {{ form_errors(form.withWatchMonetizationTypes) }}
-                        </label>
-                    </div>
-                    <div class="form-field">
-                        <label for="{{ form.withWatchProviders.vars.id }}">
-                            {{ form.withWatchProviders.vars.label|trans }}
-                            {{ form_widget(form.withWatchProviders) }}
-                            {{ form_errors(form.withWatchProviders) }}
-                        </label>
-                    </div>
-                </div>
-                <div class="form-row{% if displaySettings.data.keywords %} dismissed{% endif %}">
-                    <div class="form-row-name">
-                        {{ 'Keywords'|trans }}
-                        <div class="toggler">
-                            {{ ux_icon('mdi:ellipsis-vertical') }}
-                            <div class="toggler-menu" data-menu="keywords">
-                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.keywords %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
-                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-field full-width">
-                        <label for="{{ form.withKeywords.vars.id }}">
-                            {{ 'Refine your search'|trans }}
-                            <div class="input-group">
-                                <input type="search" class="keyword-input" placeholder="{{ 'Start tapping to search'|trans }}">
-                                <div class="and-or">
-                                    <div class="and{% if form.keywordSeparator.vars.value==',' %} active{% endif %}" data-value="," data-title="{{ 'All keywords'|trans }}">{{ 'And'|trans }}</div>
-                                    <div class="or{% if form.keywordSeparator.vars.value=='|' %} active{% endif %}" data-value="|" data-title="{{ 'Any keywords'|trans }}">{{ 'Or'|trans }}</div>
+                <div class="sticky">
+                    <h1>{{ 'Search'|trans }}</h1>
+                    <div class="form-row{% if displaySettings.data.place %} dismissed{% endif %}">
+                        <div class="form-row-name">
+                            {{ 'Viewer place'|trans }}
+                            <div class="toggler">
+                                {{ ux_icon('mdi:ellipsis-vertical') }}
+                                <div class="toggler-menu" data-menu="place">
+                                    <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.place %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                    <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
                                 </div>
                             </div>
-                            <div class="keyword-list" id="keywords-list">
-                                {% for label, value in form.vars.value.keywords %}
-                                    <div data-value="{{ value }}" class="keyword-item d-none" data-label="{{ label }}" data-title="{{ label|trans([], 'keywords') }}">{{ label }}</div>
-                                {% endfor %}
-                            </div>
-                            <div class="form-keywords"></div>
-                        </label>
-                        <input type="hidden" id="{{ form.withKeywords.vars.id }}" name="{{ field_name(form.withKeywords) }}" value="{{ form.withKeywords.vars.value }}"/>
-                    </div>
-                </div>
-                <div class="form-row{% if displaySettings.data.runtime %} dismissed{% endif %}">
-                    <div class="form-row-name">
-                        {{ 'Runtime'|trans }}
-                        <div class="toggler">
-                            {{ ux_icon('mdi:ellipsis-vertical') }}
-                            <div class="toggler-menu" data-menu="runtime">
-                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.runtime %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
-                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
-                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.language.vars.id }}">
+                                {{ form.language.vars.label|trans }}
+                                {{ form_widget(form.language) }}
+                                {{ form_errors(form.language) }}
+                            </label>
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.timezone.vars.id }}">
+                                {{ form.timezone.vars.label|trans }}
+                                {{ form_widget(form.timezone) }}
+                                {{ form_errors(form.timezone) }}
+                            </label>
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.watchRegion.vars.id }}">
+                                {{ form.watchRegion.vars.label|trans }}
+                                {{ form_widget(form.watchRegion) }}
+                                {{ form_errors(form.watchRegion) }}
+                            </label>
                         </div>
                     </div>
-                    <div class="form-field">
-                        <label for="{{ form.withRuntimeGTE.vars.id }}">
-                            {{ form.withRuntimeGTE.vars.label|trans }}
-                            {{ form_widget(form.withRuntimeGTE) }}
-                            {{ form_errors(form.withRuntimeGTE) }}
-                        </label>
-                    </div>
-                    <div class="form-field">
-                        <label for="{{ form.withRuntimeLTE.vars.id }}">
-                            {{ form.withRuntimeLTE.vars.label|trans }}
-                            {{ form_widget(form.withRuntimeLTE) }}
-                            {{ form_errors(form.withRuntimeLTE) }}
-                        </label>
-                    </div>
-                </div>
-                <div class="form-row{% if displaySettings.data.status %} dismissed{% endif %}">
-                    <div class="form-row-name">
-                        {{ 'Status and type'|trans }}
-                        <div class="toggler">
-                            {{ ux_icon('mdi:ellipsis-vertical') }}
-                            <div class="toggler-menu" data-menu="status">
-                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.status %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
-                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
+                    <div class="form-row{% if displaySettings.data.dates %} dismissed{% endif %}">
+                        <div class="form-row-name">
+                            {{ 'Dates'|trans }}
+                            <div class="toggler">
+                                {{ ux_icon('mdi:ellipsis-vertical') }}
+                                <div class="toggler-menu" data-menu="dates">
+                                    <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.dates %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                    <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
+                                </div>
                             </div>
                         </div>
+                        <div class="form-field">
+                            <label for="{{ form.firstAirDateYear.vars.id }}">
+                                {{ form.firstAirDateYear.vars.label|trans }}
+                                {{ form_widget(form.firstAirDateYear) }}
+                                {{ form_errors(form.firstAirDateYear) }}
+                            </label>
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.firstAirDateGTE.vars.id }}">
+                                {{ form.firstAirDateGTE.vars.label|trans }}
+                                {{ form_widget(form.firstAirDateGTE) }}
+                                {{ form_errors(form.firstAirDateGTE) }}
+                            </label>
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.firstAirDateLTE.vars.id }}">
+                                {{ form.firstAirDateLTE.vars.label|trans }}
+                                {{ form_widget(form.firstAirDateLTE) }}
+                                {{ form_errors(form.firstAirDateLTE) }}
+                            </label>
+                        </div>
                     </div>
-                    <div class="form-field">
-                        <label for="{{ form.withStatus.vars.id }}">
-                            {{ form.withStatus.vars.label|trans }}
-                            {{ form_widget(form.withStatus) }}
-                            {{ form_errors(form.withStatus) }}
-                        </label>
+                    <div class="form-row{% if displaySettings.data.origin %} dismissed{% endif %}">
+                        <div class="form-row-name">
+                            {{ 'Origin'|trans }}
+                            <div class="toggler">
+                                {{ ux_icon('mdi:ellipsis-vertical') }}
+                                <div class="toggler-menu" data-menu="origin">
+                                    <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.origin %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                    <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.withOriginCountry.vars.id }}">
+                                {{ form.withOriginCountry.vars.label|trans }}
+                                {{ form_widget(form.withOriginCountry) }}
+                                {{ form_errors(form.withOriginCountry) }}
+                            </label>
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.withOriginalLanguage.vars.id }}">
+                                {{ form.withOriginalLanguage.vars.label|trans }}
+                                {{ form_widget(form.withOriginalLanguage) }}
+                                {{ form_errors(form.withOriginalLanguage) }}
+                            </label>
+                        </div>
                     </div>
-                    <div class="form-field">
-                        <label for="{{ form.withType.vars.id }}">
-                            {{ form.withType.vars.label|trans }}
-                            {{ form_widget(form.withType) }}
-                            {{ form_errors(form.withType) }}
-                        </label>
+                    <div class="form-row{% if displaySettings.data.provider %} dismissed{% endif %}">
+                        <div class="form-row-name">
+                            {{ 'Provider'|trans }}
+                            <div class="toggler">
+                                {{ ux_icon('mdi:ellipsis-vertical') }}
+                                <div class="toggler-menu" data-menu="provider">
+                                    <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.provider %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                    <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.withWatchMonetizationTypes.vars.id }}">
+                                {{ form.withWatchMonetizationTypes.vars.label|trans }}
+                                {{ form_widget(form.withWatchMonetizationTypes) }}
+                                {{ form_errors(form.withWatchMonetizationTypes) }}
+                            </label>
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.withWatchProviders.vars.id }}">
+                                {{ form.withWatchProviders.vars.label|trans }}
+                                {{ form_widget(form.withWatchProviders) }}
+                                {{ form_errors(form.withWatchProviders) }}
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-field">
-                        <label for="{{ form.sortBy.vars.id }}">
-                            {{ form.sortBy.vars.label|trans }}
-                            {{ form_widget(form.sortBy) }}
-                            {{ form_errors(form.sortBy) }}
-                        </label>
+                    <div class="form-row{% if displaySettings.data.keywords %} dismissed{% endif %}">
+                        <div class="form-row-name">
+                            {{ 'Keywords'|trans }}
+                            <div class="toggler">
+                                {{ ux_icon('mdi:ellipsis-vertical') }}
+                                <div class="toggler-menu" data-menu="keywords">
+                                    <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.keywords %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                    <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-field full-width">
+                            <label for="{{ form.withKeywords.vars.id }}">
+                                {{ 'Refine your search'|trans }}
+                                <div class="input-group">
+                                    <input type="search" class="keyword-input" placeholder="{{ 'Start tapping to search'|trans }}">
+                                    <div class="and-or">
+                                        <div class="and{% if form.keywordSeparator.vars.value==',' %} active{% endif %}" data-value="," data-title="{{ 'All keywords'|trans }}">{{ 'And'|trans }}</div>
+                                        <div class="or{% if form.keywordSeparator.vars.value=='|' %} active{% endif %}" data-value="|" data-title="{{ 'Any keywords'|trans }}">{{ 'Or'|trans }}</div>
+                                    </div>
+                                </div>
+                                <div class="keyword-list" id="keywords-list">
+                                    {% for label, value in form.vars.value.keywords %}
+                                        <div data-value="{{ value }}" class="keyword-item d-none" data-label="{{ label }}" data-title="{{ label|trans([], 'keywords') }}">{{ label }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="form-keywords"></div>
+                            </label>
+                            <input type="hidden" id="{{ form.withKeywords.vars.id }}" name="{{ field_name(form.withKeywords) }}" value="{{ form.withKeywords.vars.value }}"/>
+                        </div>
                     </div>
-                </div>
-                <div class="form-row">
-                    <button type="submit">{{ 'Send'|trans }}</button>
+                    <div class="form-row{% if displaySettings.data.runtime %} dismissed{% endif %}">
+                        <div class="form-row-name">
+                            {{ 'Runtime'|trans }}
+                            <div class="toggler">
+                                {{ ux_icon('mdi:ellipsis-vertical') }}
+                                <div class="toggler-menu" data-menu="runtime">
+                                    <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.runtime %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                    <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.withRuntimeGTE.vars.id }}">
+                                {{ form.withRuntimeGTE.vars.label|trans }}
+                                {{ form_widget(form.withRuntimeGTE) }}
+                                {{ form_errors(form.withRuntimeGTE) }}
+                            </label>
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.withRuntimeLTE.vars.id }}">
+                                {{ form.withRuntimeLTE.vars.label|trans }}
+                                {{ form_widget(form.withRuntimeLTE) }}
+                                {{ form_errors(form.withRuntimeLTE) }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-row{% if displaySettings.data.status %} dismissed{% endif %}">
+                        <div class="form-row-name">
+                            {{ 'Status and type'|trans }}
+                            <div class="toggler">
+                                {{ ux_icon('mdi:ellipsis-vertical') }}
+                                <div class="toggler-menu" data-menu="status">
+                                    <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.status %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                    <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.withStatus.vars.id }}">
+                                {{ form.withStatus.vars.label|trans }}
+                                {{ form_widget(form.withStatus) }}
+                                {{ form_errors(form.withStatus) }}
+                            </label>
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.withType.vars.id }}">
+                                {{ form.withType.vars.label|trans }}
+                                {{ form_widget(form.withType) }}
+                                {{ form_errors(form.withType) }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="{{ form.sortBy.vars.id }}">
+                                {{ form.sortBy.vars.label|trans }}
+                                {{ form_widget(form.sortBy) }}
+                                {{ form_errors(form.sortBy) }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <button type="submit">{{ 'Send'|trans }}</button>
+                    </div>
                 </div>
             </div>
             <div class="form-col">
