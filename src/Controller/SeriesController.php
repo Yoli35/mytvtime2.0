@@ -675,6 +675,7 @@ class SeriesController extends AbstractController
         $slugger = new AsciiSlugger();
         $watchProviders = $this->getWatchProviders($user?->getCountry() ?? 'FR');
         $keywords = $this->getKeywords();
+        $userSeriesIds = array_column($this->userSeriesRepository->userSeriesTMDBIds($user), 'id');
 
         $seriesSearch = new SeriesAdvancedSearchDTO($user?->getPreferredLanguage() ?? $request->getLocale(), $user?->getCountry() ?? 'FR', $user?->getTimezone() ?? 'Europe/Paris', 1);
         $seriesSearch->setWatchProviders($watchProviders['select']);
@@ -725,12 +726,12 @@ class SeriesController extends AbstractController
             }
             $series = $this->getSearchResult($searchResult, $slugger);
         }
-//        dump($series);
 
         return $this->render('series/search-advanced.html.twig', [
             'form' => $form->createView(),
             'displaySettings' => ['id' => $advancedDisplaySettings->getId(), 'data' => $displaySettings],
             'seriesList' => $series,
+            'userSeriesIds' => $userSeriesIds,
             'results' => [
                 'total_results' => $searchResult['total_results'] ?? -1,
                 'total_pages' => $searchResult['total_pages'] ?? 0,
