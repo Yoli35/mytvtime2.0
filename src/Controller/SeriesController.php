@@ -1835,7 +1835,7 @@ class SeriesController extends AbstractController
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
 
-        $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $userEpisodeId]);
+        $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $userEpisodeId], ['watchAt' => 'DESC']);
         if ($userEpisode) {
             if ($userEpisode->getPreviousOccurrence()) {
                 // on met à jour la "user" séries avec l'épisode précédemment vu

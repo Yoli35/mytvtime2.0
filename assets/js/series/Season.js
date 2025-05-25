@@ -988,7 +988,7 @@ export class Season {
         const seasonNumber = episode.getAttribute('data-s-number');
         const lastEpisode = episode.getAttribute('data-last-episode');
         let views = parseInt(episode.getAttribute('data-views'));
-        fetch('/' + gThis.lang + '/series/episode/remove/', {
+        fetch('/' + gThis.lang + '/series/episode/remove', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
