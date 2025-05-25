@@ -3833,6 +3833,60 @@ h2 {
                 margin-block: 0;
             }
         }
+
+        .form-row.dismissed {
+            .form-field {
+                display: none;
+            }
+        }
+
+        .form-row-name {
+            align-items: center;
+            border-bottom: 2px solid var(--orange-30-alpha-75);
+            display: flex;
+
+            .toggler {
+                align-items: center;
+                border-radius: .25rem;
+                display: flex;
+                height: 1.5rem;
+                justify-content: center;
+                margin-inline-start: auto;
+                position: relative;
+                width: 1.5rem;
+
+                &:hover {
+                    background-color: var(--orange-50);
+                    color: var(--orange-90);
+
+                    .toggler-menu {
+                        display: flex;
+                    }
+                }
+
+                .toggler-menu {
+                    background-color: var(--orange-30);
+                    border-radius: .25rem;
+                    color: var(--orange-70);
+                    display: none;
+                    flex-direction: column;
+                    overflow: hidden;
+                    position: absolute;
+                    right: 0;
+                    top: 1.5rem;
+                    z-index: 1;
+
+                    .toggler-menu-item {
+                        padding-inline: .5rem;
+
+                        &:hover {
+                            background-color: var(--orange-50);
+                            color: var(--orange-90);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     .series-search-result {

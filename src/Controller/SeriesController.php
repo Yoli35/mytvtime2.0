@@ -680,6 +680,13 @@ class SeriesController extends AbstractController
         $seriesSearch->setWatchProviders($watchProviders['select']);
         $seriesSearch->setKeywords($keywords);
 
+        $advancedDisplaySettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'advanced search display']);
+        if (!$advancedDisplaySettings) {
+            $advancedDisplaySettings = new Settings($user, 'advanced search display', ['place' => true, 'dates' => true, 'origin' => false, 'provider' => true, 'keywords' => true, 'runtime' => true, 'status' => true]);
+            $this->settingsRepository->save($advancedDisplaySettings, true);
+        }
+        $displaySettings = $advancedDisplaySettings->getData();
+
         $advancedSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'advanced search']);
         if ($advancedSettings) {
             $settings = $advancedSettings->getData();
@@ -722,6 +729,7 @@ class SeriesController extends AbstractController
 
         return $this->render('series/search-advanced.html.twig', [
             'form' => $form->createView(),
+            'displaySettings' => ['id' => $advancedDisplaySettings->getId(), 'data' => $displaySettings],
             'seriesList' => $series,
             'results' => [
                 'total_results' => $searchResult['total_results'] ?? -1,
@@ -729,6 +737,26 @@ class SeriesController extends AbstractController
                 'page' => $searchResult['page'] ?? 0,
             ],
         ]);
+    }
+
+    #[Route('/advanced/search/settings', name: 'advanced_search_display_settings', methods: ['POST'])]
+    public function advancedSearchDisplaySettings(Request $request): JsonResponse
+    {
+        if ($request->isMethod('POST')) {
+            $payload = $request->getPayload()->all();
+            $settingsId = $payload['id'];
+            $settingsData = $payload['data'];
+            foreach ($settingsData as $key => $value) {
+                $settingsData[$key] = (bool)$value;
+            }
+            $displaySettings = $this->settingsRepository->find($settingsId);
+            if (!$displaySettings) {
+                return new JsonResponse(['ok' => false, 'message' => 'Settings not found'], 404);
+            }
+            $displaySettings->setData($settingsData);
+            $this->settingsRepository->save($displaySettings, true);
+        }
+        return new JsonResponse(['ok' => true]);
     }
 
     #[Route('/tmdb/{id}-{slug}', name: 'tmdb', requirements: ['id' => Requirement::DIGITS])]
