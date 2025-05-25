@@ -3826,7 +3826,6 @@ h2 {
 
     .form {
         .form-col:first-child {
-            justify-content: center;
             max-width: 33% !important;
             width: 33%;
 
@@ -3834,8 +3833,6 @@ h2 {
                 margin-block: 0;
             }
         }
-
-
     }
 
     .series-search-result {
@@ -3846,7 +3843,6 @@ h2 {
         gap: 1rem;
         font-weight: 300;
         justify-content: flex-start;
-        margin-top: 2rem;
         text-align: center;
 
         .header, .footer {
