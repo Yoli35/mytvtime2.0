@@ -9,7 +9,7 @@
                 <li>
                     <label for="also_known_as_{{ loop.index }}">
                         <input type="radio"
-                               {% if preferredName and name == preferredName %}checked{% endif %}
+                               {% if preferredName and name|trim == preferredName %}checked{% endif %}
                                id="also_known_as_{{ loop.index }}"
                                name="also_known_as" value="{{ name }}"
                         >
