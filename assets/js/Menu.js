@@ -139,10 +139,10 @@ export class Menu {
 
         const navbar = document.querySelector(".navbar");
         const navbarItems = navbar.querySelectorAll(".navbar-item");
-        const burger = navbar.querySelector(".burger");
-        const avatar = navbar.querySelector(".avatar");
-        const mainMenu = navbar.querySelector(".menu.main");
-        const userMenu = navbar.querySelector(".menu.user");
+        // const burger = navbar.querySelector(".burger");
+        // const avatar = navbar.querySelector(".avatar");
+        // const mainMenu = navbar.querySelector(".menu.main");
+        // const userMenu = navbar.querySelector(".menu.user");
         const eotdMenuItems = document.querySelectorAll("a[id^='eotd-menu-item-']");
         const pinnedMenuItems = document.querySelectorAll("a[id^='pinned-menu-item-']");
         const seriesInProgress = document.querySelector("a[id^='sip-menu-item-']");
@@ -309,7 +309,7 @@ export class Menu {
                                 titleDiv.innerHTML = result.title + (result.release_date ? ' (' + result.release_date.slice(0, 4) + ')' : '');
                                 a.appendChild(titleDiv);
                                 // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
-                                a.addEventListener("auxclick", (e) => {
+                                a.addEventListener("auxclick", () => {
                                     const menuDiv = a.closest(".menu");
                                     const navbarItem = a.closest(".navbar-item");
                                     const resultsDiv = a.closest(".search-results");
@@ -376,16 +376,7 @@ export class Menu {
                                 titleDiv.classList.add("title");
                                 titleDiv.innerHTML = result.name;
                                 a.appendChild(titleDiv);
-                                // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
-                                a.addEventListener("auxclick", (e) => {
-                                    const menuDiv = a.closest(".menu");
-                                    const navbarItem = a.closest(".navbar-item");
-                                    const resultsDiv = a.closest(".search-results");
-                                    resultsDiv.classList.remove("showing-something");
-                                    ul.remove();
-                                    tvSearch.value = '';
-                                    gThis.closeMenu(navbarItem, menuDiv);
-                                });
+                                gThis.addAuxClickListener(a);
                                 li.appendChild(a);
                                 ul.appendChild(li);
                             });
@@ -444,16 +435,7 @@ export class Menu {
                                 titleDiv.classList.add("title");
                                 titleDiv.innerHTML = result.display_name;
                                 a.appendChild(titleDiv);
-                                // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
-                                a.addEventListener("auxclick", (e) => {
-                                    const menuDiv = a.closest(".menu");
-                                    const navbarItem = a.closest(".navbar-item");
-                                    const resultsDiv = a.closest(".search-results");
-                                    resultsDiv.classList.remove("showing-something");
-                                    ul.remove();
-                                    tvSearch.value = '';
-                                    gThis.closeMenu(navbarItem, menuDiv);
-                                });
+                                gThis.addAuxClickListener(a);
                                 li.appendChild(a);
                                 ul.appendChild(li);
                             });
@@ -513,7 +495,7 @@ export class Menu {
                                 titleDiv.innerHTML = result.name;
                                 a.appendChild(titleDiv);
                                 // Si le lien est ouvert dans un autre onglet, il faut supprimer le menu
-                                a.addEventListener("auxclick", (e) => {
+                                a.addEventListener("auxclick", () => {
                                     const menuDiv = a.closest(".menu");
                                     const navbarItem = a.closest(".navbar-item");
                                     const resultsDiv = a.closest(".search-results");
@@ -546,6 +528,21 @@ export class Menu {
                 historyOption.addEventListener("change", this.reloadHistory);
             });
         }
+    }
+
+    addAuxClickListener(a) {
+        // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
+        a.addEventListener("auxclick", () => {
+            const menuDiv = a.closest(".menu");
+            const navbarItem = a.closest(".navbar-item");
+            const resultsDiv = a.closest(".search-results");
+            const ul = resultsDiv.querySelector("ul");
+            const input = resultsDiv.closest(".menu-item").querySelector("input");
+            resultsDiv.classList.remove("showing-something");
+            ul.remove();
+            input.value = '';
+            gThis.closeMenu(navbarItem, menuDiv);
+        });
     }
 
     openMenu(button, menu) {
@@ -740,7 +737,7 @@ export class Menu {
                     li.querySelector("a").click();
                     return;
                 }
-                const multiSearchMenuResultType = (type === 'multi') ? li?.getAttribute("data-type") : null;
+                //const multiSearchMenuResultType = (type === 'multi') ? li?.getAttribute("data-type") : null;
 
                 if (!li) {
                     if (type === 'tv') {
@@ -962,7 +959,7 @@ export class Menu {
     }
 
     reloadHistory(e) {
-        e.stopPropagation();
+        /*e.stopPropagation();*/
 
         const historyList = document.querySelector("#history-list");
         const historyOptions = historyList.querySelector("#history-options").querySelectorAll("input");
