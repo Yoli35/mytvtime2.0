@@ -92,16 +92,23 @@ final class VideoController extends AbstractController
     #[Route('/show/{id}', name: 'show')]
     public function show(UserVideo $userVideo): Response
     {
+        $user = $this->getUser();
         $video = $userVideo->getVideo();
 
         if (!$video) {
             throw $this->createNotFoundException('Video not found');
         }
+
+        $previousVideo = $this->videoRepository->getPreviousVideo($video, $user);
+        $nextVideo = $this->videoRepository->getNextVideo($video, $user);
+
         $this->formatDates($userVideo);
 
         return $this->render('video/show.html.twig', [
             'userVideo' => $userVideo,
             'video' => $video,
+            'previousVideo' => $previousVideo,
+            'nextVideo' => $nextVideo,
         ]);
     }
 
@@ -117,14 +124,8 @@ final class VideoController extends AbstractController
         $youtubeVideo = $this->getYouTubeVideo($video->getLink());
 
         $channel = $video->getChannel()->toArray();
-//        dump($channel);
-//        if (!$channel) {
-//            $channelId = $youtubeVideo->getItems()[0]['snippet']['channelId'];
-//            $channel = $this->checkChannel($channelId);
-//        }
 
         // Get comments
-        $now = $this->dateService->getNowImmutable($this->getUser()->getTimeZone() ?? 'Europe/Paris');
         $link = $video->getLink();
 
         $results = $this->getComments($link, null);
@@ -371,10 +372,7 @@ final class VideoController extends AbstractController
         $title = $snippet->getAuthorDisplayName();
         $customUrl = $snippet->getAuthorChannelUrl();
         if ($customUrl) {
-            $customUrl = str_replace('http://www.youtube.com/', '', $customUrl);
-            $customUrl = str_replace('https://www.youtube.com/', '', $customUrl);
-            $customUrl = str_replace('https://youtube.com/', '', $customUrl);
-            $customUrl = str_replace('youtube.com/', '', $customUrl);
+            $customUrl = preg_replace('/^https?:\/\/(www\.)?youtube\.com\//', '', $customUrl);
         }
 
         $channel = new VideoChannel($channelId, $title, $customUrl, $basename, $now);

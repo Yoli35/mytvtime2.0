@@ -13,7 +13,33 @@
         <div class="video">
             <iframe src="https://www.youtube.com/embed/{{ video.link }}" title="{{ video.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
-        <h1>{{ video.title }}</h1>
+        <div class="title">
+            <h1>{{ video.title }}</h1>
+            <div class="prev-next-videos">
+                <div>
+                    {% if previousVideo %}
+                        <h4 class="youtube-red">{{ 'Previous video'|trans }}</h4>
+                        <div class="prev-video">
+                            <a href="{{ path('app_video_show', {id: previousVideo.user_video_id}) }}">
+                                <img src="/videos/thumbnails{{ previousVideo.thumbnail }}" alt="{{ previousVideo.title }}">
+                                <div class="title">{{ previousVideo.title }}</div>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div>
+                    {% if nextVideo %}
+                        <h4 class="youtube-red">{{ 'Next video'|trans }}</h4>
+                        <div class="next-video">
+                            <a href="{{ path('app_video_show', {id: nextVideo.user_video_id}) }}">
+                                <img src="/videos/thumbnails{{ nextVideo.thumbnail }}" alt="{{ nextVideo.title }}e">
+                                <div class="title">{{ nextVideo.title }}</div>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
         <div class="video-infos"></div>
         {% include '_blocks/_footer.html.twig' %}
     </div>
