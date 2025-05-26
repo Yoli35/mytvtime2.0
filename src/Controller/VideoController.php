@@ -60,7 +60,7 @@ final class VideoController extends AbstractController
     public function index(Request $request): Response
     {
         $user = $this->getUser();
-        $now = $this->dateService->getNowImmutable($user->getTimezone(), true);
+        $now = $this->dateService->getNowImmutable($user->getTimezone() ?? 'Europe/Paris');
         $newLink = $request->query->get('link');
         if ($newLink) {
             $link = $this->parseLink($newLink);
@@ -178,7 +178,7 @@ final class VideoController extends AbstractController
         }
         $userVideo = $this->userVideoRepository->findOneBy(['user' => $this->getUser(), 'video' => $video]);
         if (!$userVideo) {
-            $userVideo = new UserVideo($this->getUser(), $video);
+            $userVideo = new UserVideo($this->getUser(), $video, $now);
             $this->userVideoRepository->save($userVideo, true);
         } else {
             $this->addFlash('error', 'You already added this video: "' . $link . '"<br> Please provide a different YouTube link.');
@@ -276,7 +276,7 @@ final class VideoController extends AbstractController
             }
 
             if ($channel == null) {
-                $channel = new VideoChannel($item['id'], $snippet['title'], $snippet['customUrl'], $thumbnailUrl, $now);
+                $channel = new VideoChannel($item['id'], $snippet['title'], $snippet['customUrl'], $basename, $now);
             } else {
                 $channel->setYouTubeId($item['id']);
                 $channel->setTitle($snippet['title']);

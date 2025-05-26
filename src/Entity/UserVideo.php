@@ -33,12 +33,12 @@ class UserVideo
 
     private ?string $addedAtString = null;
 
-    public function __construct(User $user, Video $video)
+    public function __construct(User $user, Video $video, DateTimeImmutable $now)
     {
         $this->user = $user;
         $this->video = $video;
-        $this->createdAt = new DateTimeImmutable();
-        $this->UpdatedAt = new DateTimeImmutable();
+        $this->createdAt = $now;
+        $this->UpdatedAt = $now;
     }
 
     public function getId(): ?int

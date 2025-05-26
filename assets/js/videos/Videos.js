@@ -266,12 +266,12 @@ export class Videos {
                     replyInfosDiv.appendChild(replyAuthorNameDiv);
                     const replyPublishedAtDiv = document.createElement('div');
                     replyPublishedAtDiv.classList.add('published-at');
-                    replyPublishedAtDiv.innerText = this.texts['replied'] + " " + this.publishedAt;
+                    replyPublishedAtDiv.innerText = reply.publishedAt;
                     replyInfosDiv.appendChild(replyPublishedAtDiv);
                     replyDiv.appendChild(replyInfosDiv);
                     const replyText = document.createElement('div');
                     replyText.classList.add('comment-text');
-                    replyText.innerText = this.texts['replied'] + " " + comment.text;
+                    replyText.innerText = reply.text;
                     replyDiv.appendChild(replyText);
 
                     repliesDiv.appendChild(replyDiv);
