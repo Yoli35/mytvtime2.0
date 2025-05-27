@@ -175,7 +175,7 @@ class PeopleController extends AbstractController
 
         $people['preferredName'] = $this->peopleUserPreferredNameRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
 
-        if (key_exists('birthday', $people)) {
+        if (key_exists('birthday', $people) && $people['birthday']) {
             $date = $this->dateService->newDate($people['birthday'], "Europe/Paris");
             if (key_exists('deathday', $people) && $people['deathday']) {
                 $now = $this->dateService->newDate($people['deathday'], "Europe/Paris");
