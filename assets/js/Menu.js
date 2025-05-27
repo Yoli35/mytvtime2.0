@@ -131,13 +131,17 @@ export class Menu {
     }
 
     init() {
+        const navbar = document.querySelector(".navbar");
+        if (!navbar) {
+            console.log("Navbar not found");
+            return;
+        }
         this.reloadOnDayChange();
         this.getTMDBConfig();
         this.initOptions();
 
         this.tooltips = new ToolTips();
 
-        const navbar = document.querySelector(".navbar");
         const navbarItems = navbar.querySelectorAll(".navbar-item");
         // const burger = navbar.querySelector(".burger");
         // const avatar = navbar.querySelector(".avatar");

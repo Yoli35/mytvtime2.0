@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Tv Time → Oups!{% endblock %}
+
+{% block body %}
+{#    {{ include('_blocks/_menu.html.twig') }}#}
+    <div class="container-fluid error">
+
+        <div class="error-page">
+            <h1>{{ 'Oops!'|trans }}</h1>
+            <p>{{ 'An error occurred while processing your request.'|trans }}</p>
+            <p>{{ 'Please try again later or contact support if the issue persists.'|trans }}</p>
+            <a href="{{ path('app_home') }}" class="btn btn-primary">{{ 'Go to Home'|trans }}</a>
+            <p>{{ 'Or you will be redirect to the last page'|trans }} <a href="{{ history.link }}">{{ history.title }}</a> {{ 'in'|trans }} <span id="countdown">60</span> <span id="sec">{{ 'secondes'|trans }}</span>.</p>
+            <div class="countdown">
+                <div>
+                    <div class="countdown-number">60</div>
+                </div>
+            </div>
+        </div>
+        <script>
+            let countdown = 60;
+            /** * Countdown timer to redirect to the last page
+             * @type {HTMLElement}
+             */
+            const countdownElement = document.getElementById('countdown');
+            const countdownDiv = document.querySelector('.countdown');
+            const countdownNumberElement = document.querySelector('.countdown-number');
+            const secElement = document.getElementById('sec');
+            const oneSecondeText = "{{ 'second'|trans }}";
+
+            countdownElement.style.width = '2rem'
+            const interval = setInterval(() => {
+                countdown--;
+                countdownElement.textContent = countdown.toString();
+                countdownNumberElement.textContent = countdown.toString();
+
+                const angle = countdown * 6; // 60 seconds * 6 degrees per second
+                countdownDiv.style.background = `conic-gradient(var(--orange-50) 0deg, var(--orange-50) ${angle}deg, var(--green-50) ${angle}deg, var(--green-50) 360deg)`;
+                if (countdown === 1) {
+                    secElement.textContent = oneSecondeText;
+                }
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    window.location.href = "{{ history.link }}";
+                }
+            }, 1000);
+        </script>
+
+    </div>
+    {% include '_blocks/_footer.html.twig' %}
+{% endblock %}

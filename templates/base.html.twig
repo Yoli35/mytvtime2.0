@@ -30,6 +30,6 @@
 <div class="to-top{% if app.environment is same as 'dev' %} dev{% endif %}">{{ ux_icon('fa6-solid:arrow-up-long') }}</div>
 </body>
 </html>
-{% if app.user %}
+{% if app.user and route is not null %}
     {{ logHistory(app.user, block('title'), path(route, route_params)) }}
 {% endif %}

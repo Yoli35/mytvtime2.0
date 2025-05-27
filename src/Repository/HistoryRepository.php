@@ -31,4 +31,22 @@ class HistoryRepository extends ServiceEntityRepository
     {
         return $this->findOneBy(['user' => $user], ['date' => 'DESC']);
     }
+
+    public function getLastVisitedBeforeError(User $user): ?History
+    {
+        // SELECT *
+        //FROM `history` h
+        //WHERE h.`link` != '/error'
+        //ORDER BY h.`id` DESC
+        //LIMIT 1
+        return $this->createQueryBuilder('h')
+            ->where('h.user = :user')
+            ->andWhere('h.link != :errorLink')
+            ->setParameter('user', $user)
+            ->setParameter('errorLink', '/error')
+            ->orderBy('h.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
