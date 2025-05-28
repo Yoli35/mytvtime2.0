@@ -465,6 +465,28 @@ class UserSeriesRepository extends ServiceEntityRepository
 
         return $this->getAll($sql);
     }
+
+    public function getUserSeriesProgress(UserSeries $userSeries): ?float
+    {
+        $userSeriesId = $userSeries->getId();
+        $sql = "SELECT
+                    (
+                     SELECT COUNT(*)
+                        FROM `user_episode` ue
+                        WHERE ue.`user_series_id`=$userSeriesId AND ue.`season_number`>0 AND ue.previous_occurrence_id IS NULL
+                     ) as episodeCount,
+                    (
+                     SELECT COUNT(*)
+                        FROM `user_episode` ue
+                        WHERE ue.`user_series_id`=$userSeriesId AND ue.`season_number`>0 AND ue.`watch_at` IS NOT NULL AND ue.previous_occurrence_id IS NULL
+                     ) as episodeWatchedCount";
+
+        $result = $this->getAll($sql);
+        $result = $result[0] ?? null;
+        dump($result);
+
+        return $result ? $result['episodeWatchedCount'] / $result['episodeCount'] * 100 : null;
+    }
     public function getAll($sql): array
     {
         try {

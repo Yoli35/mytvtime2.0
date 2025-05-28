@@ -615,6 +615,24 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $result ? $result['episodeWatchedCount'] / $result['episodeCount'] * 100 : null;
     }
 
+    public function getViewedEpisodes(UserSeries $userSeries, int $seasonNumber): int
+    {
+        $userSeriesId = $userSeries->getId();
+        $sql = "
+                SELECT COUNT(*)
+                FROM `user_episode` ue
+                WHERE ue.`user_series_id`=$userSeriesId
+                  AND ue.`season_number`=$seasonNumber
+                  AND ue.watch_at IS NOT NULL
+                  AND ue.previous_occurrence_id IS NULL";
+
+        $result = $this->getOne($sql);
+        //$result = $result[0] ?? 0;
+        dump($result);
+
+        return $result;
+    }
+
     public function getAll($sql): array
     {
         try {
