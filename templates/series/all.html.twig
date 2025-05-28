@@ -116,7 +116,6 @@
         <aside>
             {{ include('_blocks/_pagination.html.twig', {index: 2, current_page: filters.page, total_pages: pages}) }}
         </aside>
-        {% include('_blocks/_footer.html.twig') %}
     </div>
     <div id="svgs" style="display: none">
         <div id="arrow-down">{{ ux_icon('mdi:arrow-down') }}</div>
@@ -124,6 +123,7 @@
         <div id="chevron-collapse">{{ ux_icon('ion:chevron-collapse') }}</div>
         <div id="chevron-expand">{{ ux_icon('ion:chevron-expand') }}</div>
     </div>
+    {% include('_blocks/_footer.html.twig') %}
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}

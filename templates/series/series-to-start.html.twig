@@ -27,7 +27,6 @@
                 </div>
             </div>
         {% endif %}
-        {% include('_blocks/_footer.html.twig') %}
         <div id="global-data" class="hidden">
             {
             "tmdbIds": {{ tmdbIds|json_encode|raw }},
@@ -37,6 +36,7 @@
         <div id="svgs" style="display: none">
             <div id="svg-xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
         </div>
+        {% include('_blocks/_footer.html.twig') %}
     </div>
 {% endblock %}
 {% block javascripts %}

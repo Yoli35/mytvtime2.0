@@ -3,7 +3,8 @@
 {% block title %}My Tv Time → Oups!{% endblock %}
 
 {% block body %}
-{#    {{ include('_blocks/_menu.html.twig') }}#}
+    {% set url = history.link ?? path('app_home') %}
+    {#    {{ include('_blocks/_menu.html.twig') }} #}
     <div class="container-fluid error">
 
         <div class="error-page">
@@ -11,7 +12,11 @@
             <p>{{ 'An error occurred while processing your request.'|trans }}</p>
             <p>{{ 'Please try again later or contact support if the issue persists.'|trans }}</p>
             <a href="{{ path('app_home') }}" class="btn btn-primary">{{ 'Go to Home'|trans }}</a>
-            <p>{{ 'Or you will be redirect to the last page'|trans }} <a href="{{ history.link }}">{{ history.title }}</a> {{ 'in'|trans }} <span id="countdown">60</span> <span id="sec">{{ 'secondes'|trans }}</span>.</p>
+            {% if history %}
+                <p>{{ 'Or you will be redirect to the last page'|trans }} <a href="{{ url }}">{{ history.title }}</a> {{ 'in'|trans }} <span id="countdown">60</span> <span id="sec">{{ 'secondes'|trans }}</span>.</p>
+            {% else %}
+                <p>{{ 'in'|trans|capitalize }} <span id="countdown">60</span> <span id="sec">{{ 'secondes'|trans }}</span>.</p>
+            {% endif %}
             <div class="countdown">
                 <div>
                     <div class="countdown-number">60</div>
@@ -42,7 +47,7 @@
                 }
                 if (countdown <= 0) {
                     clearInterval(interval);
-                    window.location.href = "{{ history.link }}";
+                    window.location.href = "{{ url }}";
                 }
             }, 1000);
         </script>

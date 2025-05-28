@@ -323,8 +323,8 @@
                 {% endfor %}
             </div>
         </div>
-        {% include('_blocks/_footer.html.twig') %}
     </div>
+    {% include('_blocks/_footer.html.twig') %}
     <div id="globs-map" style="display: none">{# {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }} #}
         {
         "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},

@@ -3,8 +3,8 @@
 {% block title %}my Tv Time → {{ 'Register'|trans }}{% endblock %}
 
 {% block body %}
+    {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid">
-        {% include('_blocks/_menu.html.twig') %}
         {% for flash_error in app.flashes('verify_email_error') %}
             <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
         {% endfor %}
@@ -65,8 +65,8 @@
             </div>
             {{ form_end(registrationForm) }}
         </div>
-        {% include('_blocks/_footer.html.twig') %}
     </div>
+    {% include('_blocks/_footer.html.twig') %}
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}

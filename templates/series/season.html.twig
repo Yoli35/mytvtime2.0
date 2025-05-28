@@ -414,7 +414,6 @@
                 {% endif %}
             </div>
         </div>
-        {% include '_blocks/_footer.html.twig' %}
     </div>
     {#     Retirez-vous cet épisode ou le regardez-vous de nouveau ? #}
     <dialog id="review-dialog">
@@ -483,6 +482,7 @@
         {{ ux_icon('fa6-solid:xmark', {id: 'cancel', height: '18px', width: '18px'}) }}
         <div class="svg" id="svg-xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
     </div>
+    {% include '_blocks/_footer.html.twig' %}
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}

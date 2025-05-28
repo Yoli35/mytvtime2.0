@@ -19,7 +19,8 @@ final class ErrorController extends AbstractController
     #[Route('/error', name: 'app_error')]
     public function show(Request $request): Response
     {
-        $lastVisited = $this->historyRepository->getLastVisitedBeforeError($this->getUser());
+        $user = $this->getUser();
+        $lastVisited = $user ? $this->historyRepository->getLastVisitedBeforeError($user) : null;
         dump([
             'request' => $request,
             'lastVisited' => $lastVisited,

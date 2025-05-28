@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
 {% endblock %}
 {% block body %}
+    {% include '_blocks/_menu.html.twig' %}
     <div class="container-fluid">
-        {% include '_blocks/_menu.html.twig' %}
         <div class="series-search">
             {{ form_start(form, {'attr': {'class': 'form'}}) }}
             <div class="form-col">
@@ -299,8 +299,8 @@
             </div>
             {{ form_end(form) }}
         </div>
-        {% include '_blocks/_footer.html.twig' %}
     </div>
+    {% include '_blocks/_footer.html.twig' %}
     <div id="global-data" style="display: none">
         {
         "displaySettings": {

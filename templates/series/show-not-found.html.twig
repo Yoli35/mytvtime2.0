@@ -503,7 +503,6 @@
                 </div>
             </div>
         </div>
-        {% include '_blocks/_footer.html.twig' %}
     </div>
     <dialog class="add-backdrop-dialog">
         {{ form_start(addBackdropForm) }}
@@ -540,5 +539,6 @@
         <div class="svg" id="pen">{{ ux_icon('fa6-solid:pen') }}</div>
         <div class="svg" id="trash">{{ ux_icon('fa6-solid:trash') }}</div>
     </div>
+    {% include '_blocks/_footer.html.twig' %}
 {% endblock %}
 

@@ -793,7 +793,6 @@
                 {% endif %}
             </div>
         </div>
-        {% include '_blocks/_footer.html.twig' %}
     </div>
     {% if tv.keywords.results|length %}
         {{ include('_blocks/forms/_keyword-translation.html.twig') }}
@@ -832,5 +831,6 @@
         <div class="svg" id="pen">{{ ux_icon('fa6-solid:pen') }}</div>
         <div class="svg" id="trash">{{ ux_icon('fa6-solid:trash') }}</div>
     </div>
+    {% include '_blocks/_footer.html.twig' %}
 {% endblock %}
 

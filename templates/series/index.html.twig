@@ -161,7 +161,6 @@
                 </div>
             </div>
         </div>
-        {% include('_blocks/_footer.html.twig') %}
         <div id="global-data" class="hidden">
             {
             "tmdbIds": {{ tmdbIds|json_encode|raw }},
@@ -172,4 +171,5 @@
             <div id="svg-xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
         </div>
     </div>
+    {% include('_blocks/_footer.html.twig') %}
 {% endblock %}

@@ -81,8 +81,8 @@
             {{ include('_blocks/_pagination.html.twig', {index: 2, current_page: filters.page, total_pages: pages}) }}
         </aside>
 
-        {% include('_blocks/_footer.html.twig') %}
-    </div>
+        </div>
+    {% include('_blocks/_footer.html.twig') %}
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}

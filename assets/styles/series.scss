@@ -30,7 +30,7 @@ h2 {
 }
 
 .series-index {
-    margin-block-start: 3rem;
+    margin-block-start: 4rem;
 
     h2 {
         align-items: center;
@@ -175,6 +175,8 @@ h2 {
 }
 
 .series-to-start, .series-by-country {
+    margin-block-start: 1rem;
+
     h2 {
         align-items: center;
         display: flex;
@@ -413,7 +415,7 @@ h2 {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    margin-block-start: 3rem;
+    margin-block-start: 4rem;
     width: 100%;
 
     h3 {
@@ -1829,6 +1831,7 @@ h2 {
 
                 .content {
                     flex-wrap: wrap;
+                    width: round(down, 100%, 20.25rem);
 
                     .card {
                         height: 36rem;
@@ -3341,6 +3344,8 @@ h2 {
 }
 
 .all-my-series {
+    margin-block-start: 4rem;
+
     main {
         .wrapper {
             display: flex;

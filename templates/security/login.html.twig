@@ -1,39 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}my Tv Time → {{'Connect'|trans}}{% endblock %}
+{% block title %}my Tv Time → {{ 'Connect'|trans }}{% endblock %}
 
 {% block body %}
-<div class="container-fluid">
     {% include('_blocks/_menu.html.twig') %}
-    <div class="login">
-        <form action="{{ path('app_login') }}" method="post">
-            {% if error %}
-                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-            {% endif %}
+    <div class="container-fluid">
+        <div class="login">
+            <form action="{{ path('app_login') }}" method="post">
+                {% if error %}
+                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
 
-            <div class="header">{{ 'Connect'|trans }}</div>
-            <div class="body">
-                <label for="username">{{ 'Username'|trans }}
-                    <input type="text" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="username" required autofocus>
-                </label>
-                <label for="password">{{ 'Password'|trans }}
-                    <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
-                </label>
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-                {# See https://symfony.com/doc/current/security/remember_me.html #}
-                <div class="remember-me">
-                    <label>
-                        <input type="checkbox" switch name="_remember_me"><span>{{ 'Remember me'|trans }}</span>
+                <div class="header">{{ 'Connect'|trans }}</div>
+                <div class="body">
+                    <label for="username">{{ 'Username'|trans }}
+                        <input type="text" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="username" required autofocus>
                     </label>
+                    <label for="password">{{ 'Password'|trans }}
+                        <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
+                    </label>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    {# See https://symfony.com/doc/current/security/remember_me.html #}
+                    <div class="remember-me">
+                        <label>
+                            <input type="checkbox" switch name="_remember_me"><span>{{ 'Remember me'|trans }}</span>
+                        </label>
+                    </div>
                 </div>
-            </div>
-            <div class="footer">
-                <button type="button"><a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a></button>
-                <button type="button"><a href="{{ path('app_register') }}">{{ 'Register'|trans }}</a></button>
-                <button type="submit">{{ 'Sign in'|trans }}</button>
-            </div>
-        </form>
+                <div class="footer">
+                    <button type="button"><a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a></button>
+                    <button type="button"><a href="{{ path('app_register') }}">{{ 'Register'|trans }}</a></button>
+                    <button type="submit">{{ 'Sign in'|trans }}</button>
+                </div>
+            </form>
+        </div>
     </div>
     {% include('_blocks/_footer.html.twig') %}
-</div>
 {% endblock %}

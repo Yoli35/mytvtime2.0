@@ -10,68 +10,70 @@
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-    <div class="container-fluid people-index filter-page">
-        <aside>
-            {{ include('_blocks/_pagination.html.twig', {index: 1, current_page: people.page, total_pages: people.total_pages}) }}
-        </aside>
-        <main>
-            <div class="person-list">
-                {% for p in people.results %}
-                    <div class="person-card">
-                        <a href="{{ path('app_people_show', {id: p.id, slug: p.slug}) }}">
-                        <div class="profile">
-                                {% if p.profile_path %}
-                                    <img src="{{ p.profile_path }}" alt="{{ p.name }}">
-                                {% else %}
-                                    {{ 'No profile'|trans }}
-                                {% endif %}
-                        </div>
-                        </a>
-                        <div class="infos">
-                            <h4>{{ p.name }}</h4>
-                        </div>
-                        <div class="known-for">
-                            <h5>{{ 'Known for'|trans }}</h5>
-                            <div class="wrapper">
-                                {% for m in p.known_for %}
-                                    {% if m.media_type == 'movie' %}
-                                        <div class="poster" data-title="{{ m.title }}">
-                                            <a href="{{ path('app_movie_tmdb', {id: m.id}) }}">
-                                                {% if m.poster_path %}
-                                                    <img src="{{ m.poster_path }}" alt="{{ m.title }}">
-                                                {% else %}
-                                                    {{ 'No poster'|trans }}
-                                                {% endif %}
-                                            </a>
-                                            <div class="media-type">
-                                                {{ ux_icon('mdi:filmstrip-box') }}
-                                            </div>
-                                        </div>
+    <div class="container-fluid">
+        <div class="people-index">
+            <aside>
+                {{ include('_blocks/_pagination.html.twig', {index: 1, current_page: people.page, total_pages: people.total_pages}) }}
+            </aside>
+            <main>
+                <div class="person-list">
+                    {% for p in people.results %}
+                        <div class="person-card">
+                            <a href="{{ path('app_people_show', {id: p.id, slug: p.slug}) }}">
+                                <div class="profile">
+                                    {% if p.profile_path %}
+                                        <img src="{{ p.profile_path }}" alt="{{ p.name }}">
+                                    {% else %}
+                                        {{ 'No profile'|trans }}
                                     {% endif %}
-                                    {% if m.media_type == 'tv' %}
-                                        <div class="poster" data-title="{{ m.name }}">
-                                            <a href="{{ path('app_series_tmdb', {id: m.id, slug: m.slug}) }}">
-                                                {% if m.poster_path %}
-                                                    <img src="{{ m.poster_path }}" alt="{{ m.name }}">
-                                                {% else %}
-                                                    {{ 'No poster'|trans }}
-                                                {% endif %}
-                                            </a>
-                                            <div class="media-type">
-                                                {{ ux_icon('fa6-solid:tv', {height: '24px', width: '24px'}) }}
+                                </div>
+                            </a>
+                            <div class="infos">
+                                <h4>{{ p.name }}</h4>
+                            </div>
+                            <div class="known-for">
+                                <h5>{{ 'Known for'|trans }}</h5>
+                                <div class="wrapper">
+                                    {% for m in p.known_for %}
+                                        {% if m.media_type == 'movie' %}
+                                            <div class="poster" data-title="{{ m.title }}">
+                                                <a href="{{ path('app_movie_tmdb', {id: m.id}) }}">
+                                                    {% if m.poster_path %}
+                                                        <img src="{{ m.poster_path }}" alt="{{ m.title }}">
+                                                    {% else %}
+                                                        {{ 'No poster'|trans }}
+                                                    {% endif %}
+                                                </a>
+                                                <div class="media-type">
+                                                    {{ ux_icon('mdi:filmstrip-box') }}
+                                                </div>
                                             </div>
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
+                                        {% endif %}
+                                        {% if m.media_type == 'tv' %}
+                                            <div class="poster" data-title="{{ m.name }}">
+                                                <a href="{{ path('app_series_tmdb', {id: m.id, slug: m.slug}) }}">
+                                                    {% if m.poster_path %}
+                                                        <img src="{{ m.poster_path }}" alt="{{ m.name }}">
+                                                    {% else %}
+                                                        {{ 'No poster'|trans }}
+                                                    {% endif %}
+                                                </a>
+                                                <div class="media-type">
+                                                    {{ ux_icon('fa6-solid:tv', {height: '24px', width: '24px'}) }}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
-            </div>
-        </main>
-        <aside>
-            {{ include('_blocks/_pagination.html.twig', {index: 2, current_page: people.page, total_pages: people.total_pages}) }}
-        </aside>
-        {% include('_blocks/_footer.html.twig') %}
+                    {% endfor %}
+                </div>
+            </main>
+            <aside>
+                {{ include('_blocks/_pagination.html.twig', {index: 2, current_page: people.page, total_pages: people.total_pages}) }}
+            </aside>
+        </div>
     </div>
+    {% include('_blocks/_footer.html.twig') %}
 {% endblock %}

@@ -114,7 +114,6 @@
                 </div>
             </div>
         </div>
-        {% include('_blocks/_footer.html.twig') %}
     </div>
     <div id="globs-map" style="display: none">{# {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }} #}
         {
@@ -122,66 +121,5 @@
         "bounds": {{ bounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
-    {# <script src="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.js"></script>
-    <script src="/map/index.js"></script>
-    <script>
-        const L = window.L;
-        const globsData = document.querySelector('#globs-map');
-        console.log(globsData);
-        const data = JSON.parse(globsData.textContent);
-        const locations = data.locations;
-        const center = [data.latitude, data.longitude];
-        const latLngs = locations.map(location => [location.latitude, location.longitude]);
-        let map;
-
-        mapboxgl.accessToken = 'pk.eyJ1IjoiaWJveTQ0IiwiYSI6ImNtNTZqcXo4ZjAxYzIyaXM3cWZ5dnNheWkifQ.yY-zdieRm3Dhlrj3vYh9hg';
-        map = new mapboxgl.Map({
-            container: 'map',
-            style: 'mapbox://styles/mapbox/outdoors-v12',
-            projection: 'globe',
-            zoom: 2.5,
-            center: center
-        });
-        map.addControl(new mapboxgl.NavigationControl());
-        map.addControl(new mapboxgl.GeolocateControl({
-            positionOptions: {
-                enableHighAccuracy: true
-            },
-            trackUserLocation: true,
-            showUserHeading: true
-        }));
-        map.on('style.load', () => {
-            map.setFog({
-                "range": [0.8, 1.2],
-                "color": "#E0861F",
-                "horizon-blend": 0.125,
-                "high-color": "#112a67",
-                "space-color": "#000000",
-                "star-intensity": 0.15
-            }); // Set the default atmosphere style
-        });
-        map.on('click', (e) => {
-            console.log(`A click event has occurred at ${e.lngLat}`);
-            // Copier les coordonnées (e.lnglat) dans le presse-papiers sous la forme "lat, lng"
-            navigator.clipboard.writeText(`${e.lngLat.lat}, ${e.lngLat.lng}`);
-        });
-
-        mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js');
-        const language = new MapboxLanguage();
-        map.on('style.load', () => {
-            map.setStyle(language.setLanguage(map.getStyle(), '{{ app.locale }}'));
-        });
-
-        locations.forEach(location => {
-            let marker = new mapboxgl.Marker({color: "#B46B18FF"})
-                .setLngLat([location.longitude, location.latitude])
-                .setPopup(new mapboxgl.Popup().setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
-                .addTo(map);
-            let markerIcon = marker.getElement();
-            markerIcon.setAttribute('data-tmdb-id', location.tmdb_id);
-            // markerIcon.setAttribute('data-country', location.country);
-            markerIcon.setAttribute('data-latitude', location.latitude);
-            markerIcon.setAttribute('data-longitude', location.longitude);
-        });
-    </script> #}
+    {% include('_blocks/_footer.html.twig') %}
 {% endblock %}

@@ -20,6 +20,9 @@ class MovieSearchType extends AbstractType
                 'required' => true,
             ])
             ->add('releaseDateYear', NumberType::class, [
+                'attr' => [
+                    'placeholder' => '2015',
+                ],
                 'label' => 'Release date year',
                 'required' => false,
                 'empty_data' => '',

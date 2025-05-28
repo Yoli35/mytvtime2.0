@@ -2483,7 +2483,7 @@ class SeriesController extends AbstractController
     public function fetchSearchMulti(Request $request): Response
     {
         $user = $this->getUser();
-        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+        $locale = $user?->getPreferredLanguage() ?? $request->getLocale();
         $data = json_decode($request->getContent(), true);
         $query = $data['query'];
 
