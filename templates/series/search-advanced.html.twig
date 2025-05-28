@@ -98,6 +98,21 @@
                                 {{ form_widget(form.withOriginCountry) }}
                                 {{ form_errors(form.withOriginCountry) }}
                             </label>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const originCountry = document.querySelector('#{{ form.withOriginCountry.vars.id }}');
+                                    const options = originCountry.querySelectorAll('option');
+                                    options.forEach(function (option) {
+                                        if (option.value) {
+                                            option.textContent = getFlagEmoji(option.value) + ' ' + option.textContent;
+                                        }
+                                    });
+                                    function getFlagEmoji(countryCode) {
+                                        const codePoints = countryCode.toUpperCase().split("").map((char) => 127397 + char.charCodeAt(0));
+                                        return String.fromCodePoint(...codePoints);
+                                    }
+                                });
+                            </script>
                         </div>
                         <div class="form-field">
                             <label for="{{ form.withOriginalLanguage.vars.id }}">
