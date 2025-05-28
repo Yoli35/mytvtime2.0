@@ -8,10 +8,12 @@
             {% endif %}
         </div>
         <div class="infos">
-            <div class="name{% if ids is defined and movie.id in ids %} added{% endif %}">{{ movie.title }}</div>
-            {% if movie.release_date is defined and movie.release_date is not null %}
-                <div class="date">{{ movie.release_date|format('Y')|capitalize }}</div>
-            {% endif %}
+            <div class="name{% if ids is defined and movie.id in ids %} added{% endif %}">
+                {{ movie.title }}
+                {% if movie.release_date is defined and movie.release_date|length %}
+                    &nbsp;({{ movie.release_date|date('Y') }})
+                {% endif %}
+            </div>
         </div>
     </a>
 </div>

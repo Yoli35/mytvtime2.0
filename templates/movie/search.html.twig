@@ -32,7 +32,6 @@
             <div class="form-row">
                 <button type="submit">{{ 'Send'|trans }}</button>
             </div>
-            {{ form_end(form) }}
             <div class="series-search-result">
                 <div class="header">
                     {% if results.total_results > 0 %}
@@ -42,7 +41,7 @@
                         {% if results.total_pages > 1 %}
                             <div class="pages">
                                 {% for page in 1..results.total_pages %}
-                                    {% if page == form.page.vars.value %}
+                                    {% if page == results.page %}
                                         <div class="btn current-page">{{ page }}</div>
                                     {% else %}
                                         <button type="submit" name="{{ field_name(form.page) }}" value="{{ page }}" data-title="{{ 'Go to page'|trans }} {{ page }}" class="btn btn-primary">{{ page }}</button>
@@ -57,14 +56,31 @@
                     {% endif %}
                 </div>
                 <div class="wrapper">
-                    {#                    <div class="content">#}
                     {% for movie in movieList %}
                         {{ include('_blocks/movie/_card-tmdb.html.twig') }}
                     {% endfor %}
-                    {#                    </div>#}
+                </div>
+                <div class="footer">
+                    {% if results.total_results > 0 %}
+                        <h4>{{ 'Search results'|trans }}</h4>
+                        <span>{{ results.total_results }} {{ 'results'|trans }}</span>
+                        <span>{{ 'Page'|trans }} {{ results.page }}/{{ results.total_pages }}</span>
+                        {% if results.total_pages > 1 %}
+                            <div class="pages">
+                                {% for page in 1..results.total_pages %}
+                                    {% if page == results.page %}
+                                        <div class="btn current-page">{{ page }}</div>
+                                    {% else %}
+                                        <button type="submit" name="{{ field_name(form.page) }}" value="{{ page }}" data-title="{{ 'Go to page'|trans }} {{ page }}" class="btn btn-primary">{{ page }}</button>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
+            {{ form_end(form) }}
         </div>
-        {% include '_blocks/_footer.html.twig' %}
     </div>
+    {% include '_blocks/_footer.html.twig' %}
 {% endblock %}

@@ -9,6 +9,7 @@
                 {{ ux_icon('fa6-solid:film', {height: "18px", width: "18px"}) }}
                 <div class="menu movies">
                     <div class="menu-item"><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'My movies'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_movie_search') }}" class="desktop">{{ 'Search'|trans }}</a></div>
                     <div class="menu-item">
                         <label for="movie-search">
                             <input type="search" id="movie-search" data-type="movie" class="search" spellcheck="false">

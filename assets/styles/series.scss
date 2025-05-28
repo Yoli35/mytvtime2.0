@@ -3821,11 +3821,20 @@ h2 {
 
 /* Rechercher une série */
 .series-search {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     margin-block-end: 1rem;
     margin-block-start: 3rem;
+    min-height: calc(100dvh - 8rem);
     width: 100%;
 
     .form {
+        margin-block-end: unset;
+        margin-block-start: unset;
+        min-width: 32rem;
+        width: unset;
+
         .form-col:first-child {
             max-width: 33% !important;
             width: 33%;
@@ -3915,9 +3924,8 @@ h2 {
         .header, .footer {
             align-items: center;
             display: flex;
-            flex-direction: column;
             gap: 1rem;
-            justify-content: flex-start;
+            justify-content: center;
             padding-block: 0;
             padding-inline: 0;
             width: 100%;

@@ -154,11 +154,13 @@ class MovieController extends AbstractController
             $simpleSeriesSearch->setQuery($request->get('q'));
         } else {
             // on récupère le contenu du formulaire (POST parameters).
-            $formContent = $request->get('movie_search');
+            $formContent = $request->get('movie_search', ['query'=>'', 'releaseDateYear' => null, 'language' => $request->getLocale(), 'page' => 1]);
 //            dump($formContent);
             $simpleSeriesSearch = new MovieSearchDTO($formContent['language'], $formContent['page']);
             $simpleSeriesSearch->setQuery($formContent['query']);
-            $simpleSeriesSearch->setReleaseDateYear($formContent['releaseDateYear']);
+            $releaseYear = $formContent['releaseDateYear'] ? intval($formContent['releaseDateYear']) : null;
+            $releaseYear = !$releaseYear ? null : $releaseYear;
+            $simpleSeriesSearch->setReleaseDateYear($releaseYear);
         }
 
         $simpleForm = $this->createForm(MovieSearchType::class, $simpleSeriesSearch);
@@ -897,7 +899,7 @@ class MovieController extends AbstractController
                 'tmdb' => true,
                 'id' => $movie['id'],
                 'title' => $movie['title'],
-                'releaseDate' => $movie['release_date'],
+                'release_date' => $movie['release_date'],
                 'poster_path' => $movie['poster_path'],
             ];
         }, $searchResult['results'] ?? []);
