@@ -10,31 +10,41 @@
         </div>
         <div class="infos">
             <h2>{{ series.name }}{% if series.first_air_date %} ({{ series.first_air_date|date("Y") }}){% endif %}</h2>
-            <div class="infos__details">
-                <div class="infos__details__title">{{ 'Title'|trans }}</div>
-                <div class="infos__details__value">{{ series.original_name }}</div>
-            </div>
-            <div class="infos__details">
-                <div class="infos__details__title">{{ 'Synopsis'|trans }}</div>
-                <div class="infos__details__value">{{ series.overview }}</div>
-            </div>
-            <div class="infos__details">
-                <div class="infos__details__title">{{ 'First air date'|trans }}</div>
-                <div class="infos__details__value">{{ series.first_air_date|date('d/m/Y') }}</div>
-            </div>
-            <div class="infos__details">
-                <div class="infos__details__title">{{ 'Last air date'|trans }}</div>
-                <div class="infos__details__value">{{ series.last_air_date|date('d/m/Y') }}</div>
-            </div>
-            <div class="infos__details">
-                <div class="infos__details__title">{{ 'Creator'|trans }}</div>
-                <div class="infos__details__value">
-                    {% for creator in series.created_by %}
-                        {{ creator.name }}
-                        {% if loop.index < loop.last %}, {% endif %}
-                    {% endfor %}
+            {% if series.name != series.original_name %}
+                <div class="infos__details">
+                    <div class="infos__details__title">{{ 'Original title'|trans }}</div>
+                    <div class="infos__details__value">{{ series.original_name }}</div>
                 </div>
-            </div>
+            {% endif %}
+            {% if series.overview %}
+                <div class="infos__details">
+                    <div class="infos__details__title">{{ 'Synopsis'|trans }}</div>
+                    <div class="infos__details__value">{{ series.overview }}</div>
+                </div>
+            {% endif %}
+            {% if series.first_air_date %}
+                <div class="infos__details">
+                    <div class="infos__details__title">{{ 'First air date'|trans }}</div>
+                    <div class="infos__details__value">{{ series.first_air_date|date('d/m/Y') }}</div>
+                </div>
+            {% endif %}
+            {% if series.last_air_date %}
+                <div class="infos__details">
+                    <div class="infos__details__title">{{ 'Last air date'|trans }}</div>
+                    <div class="infos__details__value">{{ series.last_air_date|date('d/m/Y') }}</div>
+                </div>
+            {% endif %}
+            {% if series.created_by|length %}
+                <div class="infos__details">
+                    <div class="infos__details__title">{{ 'Creator'|trans }}</div>
+                    <div class="infos__details__value">
+                        {% for creator in series.created_by %}
+                            {{ creator.name }}
+                            {% if loop.index < loop.last %}, {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
         </div>
         <div class="backdrop">
             {% if series.backdrop_path %}
@@ -45,5 +55,5 @@
     <div class="admin__series__details__actions">
         <button>{{ 'Add this series'|trans }}</button>
     </div>
-{#    {{ dump(series) }}#}
+    {#    {{ dump(series) }} #}
 </section>
