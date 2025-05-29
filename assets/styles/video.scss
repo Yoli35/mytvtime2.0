@@ -209,10 +209,6 @@
     }
 }
 
-.youtube-red {
-    color: #FF0000;
-}
-
 .video-page {
     margin-block-start: 4rem;
 
@@ -233,8 +229,56 @@
         display: flex;
         gap: 1rem;
 
-        h1 {
+        .h1-categories {
+            align-items: flex-start;
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
             width: 50%;
+
+            h1 {
+                text-wrap: balance;
+            }
+
+            .select-categories {
+                background-color: var(--orange-40);
+                border-radius: .25rem;
+                padding: 1rem;
+            }
+
+            .categories {
+                border-radius: .25rem;
+                border: 2px dashed var(--orange-50);
+                display: flex;
+                flex-wrap: wrap;
+                gap: .5rem;
+                padding: .5rem;
+
+                .category {
+                    background-color: var(--orange-40);
+                    border-radius: .25rem;
+                    color: var(--orange-100);
+                    font-size: 1rem;
+                    font-weight: 400;
+                    padding: .25rem 1.5rem .25rem .5rem;
+                    position: relative;
+
+                    .delete-category {
+                        align-items: center;
+                        background-color: var(--grey-75-alpha-40);
+                        border-radius: .125rem;
+                        color: var(--orange-100);
+                        cursor: pointer;
+                        display: flex;
+                        height: .75rem;
+                        justify-content: center;
+                        position: absolute;
+                        right: .125rem;
+                        top: .125rem;
+                        width: .75rem;
+                    }
+                }
+            }
         }
 
         .prev-next-videos {
@@ -460,14 +504,14 @@
                         &:first-child {
                             border-top-left-radius: .25rem;
                             border-top-right-radius: .25rem;
-                            -moz-border-radius-topleft:  .25rem;
+                            -moz-border-radius-topleft: .25rem;
                             -moz-border-radius-topright: .25rem;
                         }
 
                         &:last-child {
                             border-bottom-left-radius: .25rem;
                             border-bottom-right-radius: .25rem;
-                            -moz-border-radius-bottomleft:  .25rem;
+                            -moz-border-radius-bottomleft: .25rem;
                             -moz-border-radius-bottomright: .25rem;
                         }
 
@@ -514,4 +558,14 @@
             }
         }
     }
+}
+
+.videos-page, .video-page {
+    label:has(select)::after {
+        top: 32%;
+    }
+}
+
+.youtube-red {
+    color: #FF0000;
 }

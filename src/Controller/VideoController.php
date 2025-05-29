@@ -7,6 +7,7 @@ use App\Entity\UserVideo;
 use App\Entity\Video;
 use App\Entity\VideoChannel;
 use App\Repository\UserVideoRepository;
+use App\Repository\VideoCategoryRepository;
 use App\Repository\VideoChannelRepository;
 use App\Repository\VideoRepository;
 use App\Service\DateService;
@@ -38,12 +39,13 @@ final class VideoController extends AbstractController
      * @throws Exception
      */
     public function __construct(
-        private readonly DateService            $dateService,
-        private readonly ImageService           $imageService,
-        private readonly TranslatorInterface    $translator,
-        private readonly VideoChannelRepository $channelRepository,
-        private readonly VideoRepository        $videoRepository,
-        private readonly UserVideoRepository    $userVideoRepository,
+        private readonly DateService             $dateService,
+        private readonly ImageService            $imageService,
+        private readonly TranslatorInterface     $translator,
+        private readonly VideoCategoryRepository $categoryRepository,
+        private readonly VideoChannelRepository  $channelRepository,
+        private readonly VideoRepository         $videoRepository,
+        private readonly UserVideoRepository     $userVideoRepository,
     )
     {
         $client = new Google_Client();
@@ -82,9 +84,11 @@ final class VideoController extends AbstractController
         usort($userVideos, function (UserVideo $a, UserVideo $b) {
             return $b->getVideo()->getPublishedAt() <=> $a->getVideo()->getPublishedAt();
         });
+        $categories = $this->categoryRepository->findAll();
 
         return $this->render('video/index.html.twig', [
             'videos' => $userVideos,
+            'categories' => $categories,
             'now' => $now,
         ]);
     }
@@ -99,6 +103,7 @@ final class VideoController extends AbstractController
             throw $this->createNotFoundException('Video not found');
         }
 
+        $categories = $this->categoryRepository->findAll();
         $previousVideo = $this->videoRepository->getPreviousVideo($video, $user);
         $nextVideo = $this->videoRepository->getNextVideo($video, $user);
 
@@ -107,6 +112,7 @@ final class VideoController extends AbstractController
         return $this->render('video/show.html.twig', [
             'userVideo' => $userVideo,
             'video' => $video,
+            'categories' => $categories,
             'previousVideo' => $previousVideo,
             'nextVideo' => $nextVideo,
         ]);
@@ -153,11 +159,86 @@ final class VideoController extends AbstractController
         ]);
     }
 
-    private function parseLink(string $link): ?string
+    #[Route('/category/add', name: 'category_add', methods: ['POST'])]
+    public function addCategoryToVideo(Request $request): JsonResponse
     {
+        $data = json_decode($request->getContent(), true);
+        $categoryId = $data['categoryId'] ?? null;
+        $videoId = $data['videoId'] ?? null;
+        dump(['categoryId' => $categoryId, 'videoId' => $videoId]);
+
+        if (!$categoryId || !$videoId) {
+            return new JsonResponse(['error' => 'Category & video IDs are required'], Response::HTTP_BAD_REQUEST);
+        }
+        $video = $this->videoRepository->find($videoId);
+        if (!$video) {
+            return new JsonResponse(['error' => 'Video not found'], Response::HTTP_NOT_FOUND);
+        }
+        $category = $this->categoryRepository->find($categoryId);
+        if (!$category) {
+            return new JsonResponse(['error' => 'Category not found'], Response::HTTP_NOT_FOUND);
+        }
+        $video->addCategory($category);
+        $this->videoRepository->save($video, true);
+
+        return new JsonResponse([
+            'message' => 'Category added successfully',
+            'id' => $category->getId(),
+            'name' => $this->translator->trans($category->getName()),
+            'color' => $category->getColor(),
+        ]);
+    }
+
+    #[Route('/category/delete', name: 'category_delete', methods: ['POST'])]
+    public function removeCategoryFromVideo(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $categoryId = $data['categoryId'] ?? null;
+        $videoId = $data['videoId'] ?? null;
+
+        if (!$categoryId || !$videoId) {
+            return new JsonResponse(['error' => 'Category & video IDs are required'], Response::HTTP_BAD_REQUEST);
+        }
+        $video = $this->videoRepository->find($videoId);
+        if (!$video) {
+            return new JsonResponse(['error' => 'Video not found'], Response::HTTP_NOT_FOUND);
+        }
+        $category = $this->categoryRepository->find($categoryId);
+        if (!$category) {
+            return new JsonResponse(['error' => 'Category not found'], Response::HTTP_NOT_FOUND);
+        }
+        $video->removeCategory($category);
+        $this->videoRepository->save($video, true);
+
+        return new JsonResponse(['message' => 'Category removed successfully', 'id' => $category->getId()]);
+    }
+
+    private function parseLink(string $userLink): ?string
+    {
+        // Check if the link is a valid YouTube URL and extract the video ID
         $pattern = '/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/';
-        preg_match($pattern, $link, $matches);
-        return $matches[1] ?? null;
+        preg_match($pattern, $userLink, $matches);
+        if (key_exists(1, $matches) && strlen($matches[1]) === 11) {
+            dump([
+                'test' => 'YouTube video link',
+                'link' => $userLink,
+                'pattern' => $pattern,
+                'matches' => $matches
+            ]);
+            $videoLink = $matches[1];
+        } else {
+            // And another pattern for YouTube short links: https://youtube.com/shorts/VsMVTAOY9h4?si=NLj0Ztc-WtneY5yG
+            $pattern = '/https?:\/\/(?:www\.)?youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/';
+            preg_match($pattern, $userLink, $matches);
+            $videoLink = $matches[1] ?? null;
+            dump([
+                'test' => 'YouTube short link',
+                'link' => $userLink,
+                'pattern' => $pattern,
+                'matches' => $matches
+            ]);
+        }
+        return $videoLink;
     }
 
     private function getYouTubeVideo(string $videoId): ?VideoListResponse
@@ -340,6 +421,7 @@ final class VideoController extends AbstractController
             'nextPageToken' => $nextPageToken,
         ];
     }
+
     private function getVideoComments(string $videoId, int $maxResults, ?string $nextPageToken): ?CommentThreadListResponse
     {
         if ($nextPageToken) {

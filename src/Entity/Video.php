@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\VideoRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: VideoRepository::class)]
@@ -37,10 +39,17 @@ class Video
 
     private ?string $durationString = null;
 
+    /**
+     * @var Collection<int, VideoCategory>
+     */
+    #[ORM\ManyToMany(targetEntity: VideoCategory::class, inversedBy: 'videos')]
+    private Collection $categories;
+
     public function __construct(string $title, string $link)
     {
         $this->title = $title;
         $this->link = $link;
+        $this->categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -140,5 +149,29 @@ class Video
     public function setDurationString(?string $durationString): void
     {
         $this->durationString = $durationString;
+    }
+
+    /**
+     * @return Collection<int, VideoCategory>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(VideoCategory $category): static
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(VideoCategory $category): static
+    {
+        $this->categories->removeElement($category);
+
+        return $this;
     }
 }

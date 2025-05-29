@@ -16,6 +16,8 @@ export class Videos {
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         this.app_video_details = globs['app_video_details'];
         this.app_video_comments = globs['app_video_comments'];
+        this.app_video_category_add = globs['app_video_category_add'];
+        this.app_video_category_delete = globs['app_video_category_delete'];
         this.publishedAt = globs['published_at'];
         this.addedAt = globs['added_at'];
         this.texts = globs['texts'];
@@ -27,7 +29,141 @@ export class Videos {
 
     init() {
         console.log('Videos.js init', this.app_video_details);
+        this.initCategories();
+        this.getComments();
+    }
 
+    initCategories() {
+        const videosPage = document.querySelector('.videos-page');
+        const videoPage = document.querySelector('.video-page');
+        const categorySelect = document.querySelector('select[id="categories"]');
+
+        if (categorySelect) {
+            if (videoPage) {
+                const videoId = videoPage.getAttribute('data-id');
+                const deleteDivs = document.querySelectorAll('.delete-category');
+                deleteDivs.forEach((deleteDiv) => {
+                    deleteDiv.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        const categoryDiv = deleteDiv.closest('.category');
+                        const categoryId = categoryDiv.getAttribute('data-id');
+                        this.deleteCategory(videoId, categoryId, categoryDiv);
+                    });
+                });
+                categorySelect.addEventListener('change', (event) => {
+                    const selectedCategory = event.target.value;
+                    this.addCategory(videoId, selectedCategory);
+                });
+            }
+            if (videosPage) {
+                console.log('Videos page detected, initializing categories select');
+            }
+        }
+    }
+
+    addCategory(videoId, categoryId) {
+        if (categoryId === 'all') {
+            return; // Do not proceed if "All" is selected
+        }
+        fetch(this.app_video_category_add, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                videoId: videoId,
+                categoryId: categoryId
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Category added:', data);
+                let categoriesDiv = document.querySelector('.categories');
+                if (!categoriesDiv) {
+                    categoriesDiv = document.createElement('div');
+                    categoriesDiv.classList.add('categories');
+                    const h1CategoriesDiv = document.querySelector('.h1-categories');
+                    h1CategoriesDiv.appendChild(categoriesDiv);
+                }
+                const categoryDiv = document.createElement('div');
+                categoryDiv.classList.add('category');
+                categoryDiv.setAttribute('data-id', data['id']);
+                categoryDiv.setAttribute('style', 'background-color: ' + data['color']);
+                categoryDiv.innerText = data['name'];
+                const deleteDiv = document.createElement('div');
+                deleteDiv.classList.add('delete-category');
+                const deleteIcon = this.svgs.querySelector('#delete').querySelector('svg').cloneNode(true);
+                deleteDiv.appendChild(deleteIcon);
+                deleteDiv.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    this.deleteCategory(videoId, data['id'], categoryDiv);
+                });
+                categoryDiv.appendChild(deleteDiv);
+                categoriesDiv.appendChild(categoryDiv);
+                // disable the select option that was just added
+                const categorySelect = document.querySelector('select[id="categories"]');
+                if (categorySelect) {
+                    const option = categorySelect.querySelector(`option[value="${categoryId}"]`);
+                    if (option) {
+                        option.disabled = true;
+                    }
+                    const optionAll = categorySelect.querySelector('option[value="all"]');
+                    if (optionAll) {
+                        optionAll.selected = true; // Select "All" option after deletion
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+
+    deleteCategory(videoId, categoryId, categoryDiv) {
+        fetch(this.app_video_category_delete, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                videoId: videoId,
+                categoryId: categoryId
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Category deleted:', data);
+                categoryDiv.remove();
+                // enable the select option that was just deleted
+                const categorySelect = document.querySelector('select[id="categories"]');
+                if (categorySelect) {
+                    const option = categorySelect.querySelector(`option[value="${categoryId}"]`);
+                    if (option) {
+                        option.disabled = false;
+                    }
+                    const optionAll = categorySelect.querySelector('option[value="all"]');
+                    if (optionAll) {
+                        optionAll.selected = true; // Select "All" option after deletion
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+
+    getComments() {
         fetch(this.app_video_details, {
             method: 'POST',
             headers: {

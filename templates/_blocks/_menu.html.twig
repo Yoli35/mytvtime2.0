@@ -391,7 +391,7 @@
                     {% endfor %}
                     {% set inProgress = inProgressSeries(app.user, app.user.preferredLanguage??'fr') %}
                     {% if inProgress.ok %}
-                        <div class="separation">{{ 'Series in progress'|trans }} - {% if inProgress.nextEpisode %}{{ 'Next episode'|trans }}{% else %}{{ 'That\'s all!'|trans }}{% endif %}</div>
+                        <div class="separation">{{ 'Series in progress'|trans }} - {% if inProgress.nextEpisode %}{{ 'Next episode'|trans }}{% else %}🎉 {{ 'That\'s all!'|trans }} 🎉{% endif %}</div>
                         <div class="a-preview">
                             <a href="{{ path('app_series_season', {id: inProgress.id, slug: inProgress.name|slug, seasonNumber: inProgress.seasonNumber}) }}"
                                id="sip-menu-item-{{ inProgress.id }}"

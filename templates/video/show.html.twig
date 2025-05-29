@@ -9,12 +9,36 @@
 
 {% block body %}
     {{ include('_blocks/_menu.html.twig') }}
-    <div class="container-fluid video-page">
+    <div class="container-fluid video-page" data-id="{{ video.id }}">
         <div class="video">
             <iframe src="https://www.youtube.com/embed/{{ video.link }}" title="{{ video.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
         <div class="title">
-            <h1>{{ video.title }}</h1>
+            <div class="h1-categories">
+                <h1>{{ video.title }}</h1>
+                <div class="select-categories">
+                    <label for="categories">{{ 'Categories'|trans }}
+                        <select id="categories" name="categories">
+                            <option value="all">{{ 'All categories'|trans }}</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}"{% if category in video.categories %} disabled{% endif %}>{{ category.name|trans }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                </div>
+                {% if video.categories|length %}
+                    <div class="categories">
+                        {% for category in video.categories %}
+                            <div class="category" data-id="{{ category.id }}" style="background-color: {{ category.color }}">
+                                {{ category.name|trans }}
+                                <div class="delete-category">
+                                    {{ ux_icon('mdi:close', {height: '12px', width: '12px'}) }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
             <div class="prev-next-videos">
                 <div>
                     {% if previousVideo %}
@@ -46,6 +70,8 @@
         {
             "app_video_details": "{{ path('app_video_details', {id: video.id}) }}",
             "app_video_comments": "{{ path('app_video_comments') }}",
+            "app_video_category_add": "{{ path('app_video_category_add') }}",
+            "app_video_category_delete": "{{ path('app_video_category_delete') }}",
             "published_at": "{{ userVideo.publishedAtString }}",
             "added_at": "{{ userVideo.addedAtString }}",
             "texts": {
@@ -65,6 +91,7 @@
         <div id="comment">{{ ux_icon('mdi:comment-processing')|raw }}</div>
         <div id="like">{{ ux_icon('mdi:like')|raw }}</div>
         <div id="view">{{ ux_icon('mdi:eye')|raw }}</div>
+        <div id="delete">{{ ux_icon('mdi:close', {height: '12px', width: '12px'}) }}</div>
     </div>
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}

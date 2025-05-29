@@ -80,10 +80,17 @@ body {
         max-width: 100%;
     }
 
-    input, textarea, select, button {
-        font: inherit;
+    label, input, textarea, select, button {
+        font-family: inherit;
         font-size: 1rem;
+        font-weight: 300;
         margin: 0;
+    }
+
+    select {
+        option {
+            font-family: inherit;
+        }
     }
 
     button {
