@@ -53,6 +53,15 @@ class UserVideoRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function getUserVideosTotalDuration(int $userId): int
+    {
+        $sql = "SELECT SUM(v.`duration`) as total_duration
+                FROM `video` v
+                    INNER JOIN `user_video` uv ON uv.`video_id` = v.`id`
+                WHERE uv.`user_id` = $userId";
+        return (int) $this->getOne($sql);
+    }
+
     public function getAll($sql): array
     {
         try {
