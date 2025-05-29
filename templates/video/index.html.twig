@@ -10,8 +10,6 @@
 {% block body %}
     {{ include('_blocks/_menu.html.twig') }}
     <div class="container-fluid videos-page">
-        {#        <pre>{{ dump(videos) }}</pre> #}
-        {#        <pre>{{ dump(now) }}</pre> #}
         <h1>{{ 'My videos'|trans }}</h1>
         <div class="video-tools">
             <form>
@@ -30,20 +28,18 @@
             </form>
         </div>
         <div class="video-wrapper">
-            {% for userVideo in videos %}
-                {% set video = userVideo.video %}
-                {% set channel = video.channel %}
+            {% for userVideo in dbUserVideos %}
                 <div class="video">
                     <div class="thumbnail">
-                        <a href="{{ path('app_video_show', {'id': userVideo.id}) }}">
-                            <img src="/videos/thumbnails{{ video.thumbnail }}" alt="{{ video.title }}">
+                        <a href="{{ path('app_video_show', {'id': userVideo.user_video_id}) }}">
+                            <img src="/videos/thumbnails{{ userVideo.thumbnail }}" alt="{{ userVideo.title }}">
                         </a>
-                        <div class="duration">{{ video.durationString }}</div>
+                        <div class="duration">{{ userVideo.duration }}</div>
                     </div>
-                    {% set categories = video.categories %}
+                    {% set categories = userVideo.categories ?? [] %}
                     {% set bgStyle = '' %}
                     {% if categories|length %}
-                        {% set bgStyle = 'background: linear-gradient(135deg, ' %}
+                        {% set bgStyle = 'background: linear-gradient(90deg, ' %}
                         {% for category in categories %}
                             {% set bgStyle = bgStyle ~ category.color %}
                             {% if not loop.last %}{% set bgStyle = bgStyle ~ ', ' %}{% endif %}
@@ -53,19 +49,17 @@
                     <div class="infos" style="{{ bgStyle|raw }}">
                         <div class="channel">
                             <div class="thumbnail">
-                                <img src="/videos/channels/thumbnails{{ channel.thumbnail }}" alt="{{ channel.title }}">
+                                <img src="/videos/channels/thumbnails{{ userVideo.channel_thumbnail }}" alt="{{ userVideo.channel_title }}">
                             </div>
                             <div class="title">
-                                {{ channel.title }}
+                                {{ userVideo.channel_title }}
                             </div>
                         </div>
                         <div class="content">
-                            <div class="title">{{ video.title }}</div>
+                            <div class="title">{{ userVideo.title }}</div>
                             <div class="at">
-{#                                <div class="published-at">{{ 'Published at'|trans }} {{ video.publishedAt|format_date('relative_short')|capitalize }} {{ 'at'|trans }} {{ video.publishedAt|format_time('short') }}</div>#}
-{#                                <div class="added-at">{{ 'Added at'|trans }} {{ userVideo.createdAt|format_date('relative_short')|capitalize }} {{ 'at'|trans }} {{ userVideo.createdAt|format_time('short') }}</div>#}
-                                <div class="published-at">{{ userVideo.publishedAtString }}</div>
-                                <div class="added-at">{{ userVideo.addedAtString }}</div>
+                                <div class="published-at">{{ userVideo.published_at }}</div>
+                                <div class="added-at">{{ userVideo.added_at }}</div>
                             </div>
                         </div>
                     </div>

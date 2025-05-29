@@ -66,7 +66,6 @@ final class VideoController extends AbstractController
         $newLink = $request->query->get('link');
         if ($newLink) {
             $link = $this->parseLink($newLink);
-//            dump(['link' => $link, 'newLink' => $newLink]);
             if ($link) {
                 $this->addVideo($link, $now);
             } else {
@@ -74,20 +73,28 @@ final class VideoController extends AbstractController
             }
         }
 
-        $userVideos = $this->userVideoRepository->findBy(['user' => $user], ['createdAt' => 'DESC']);
-
-        foreach ($userVideos as $userVideo) {
-            $this->checkVideo($userVideo->getVideo(), $now);
-            $this->formatDates($userVideo);
+        $dbUserVideos = $this->userVideoRepository->getUserVideosWithVideos($user->getId());
+        $dbVideoCategories = $this->userVideoRepository->getVideoCategories($user->getId());
+        $dbVideos = [];
+        foreach ($dbUserVideos as $dbUserVideo) {
+            $formattedDates = $this->dbFormatDates($dbUserVideo);
+            $dbUserVideo['published_at'] = $formattedDates['published_at'];
+            $dbUserVideo['added_at'] = $formattedDates['added_at'];
+            $dbUserVideo['duration'] = $this->formatDuration($dbUserVideo['duration']);
+            $dbVideos[$dbUserVideo['id']] = $dbUserVideo;
         }
-// trier les "user videos" par date de publication de la video
-        usort($userVideos, function (UserVideo $a, UserVideo $b) {
-            return $b->getVideo()->getPublishedAt() <=> $a->getVideo()->getPublishedAt();
-        });
+        $dbUserVideos = $dbVideos;
+        foreach ($dbVideoCategories as $dbVideoCategory) {
+            if (!key_exists('categories', $dbUserVideos[$dbVideoCategory['video_id']])) {
+                $dbUserVideos[$dbVideoCategory['video_id']]['categories'] = [];
+            }
+            $dbUserVideos[$dbVideoCategory['video_id']]['categories'][] = $dbVideoCategory;
+        }
+
         $categories = $this->categoryRepository->findAll();
 
         return $this->render('video/index.html.twig', [
-            'videos' => $userVideos,
+            'dbUserVideos' => $dbUserVideos,
             'categories' => $categories,
             'now' => $now,
         ]);
@@ -523,6 +530,34 @@ final class VideoController extends AbstractController
 
         $userVideo->setPublishedAtString($publishedAt);
         $userVideo->setAddedAtString($addedAt);
+    }
+
+    public function dbFormatDates(array $dbVideo): array
+    {
+        $publishedDate = $dbVideo['published_at'];
+        $addedDate = $dbVideo['added_at'];
+
+        $publishedAt = $this->dateService->formatDateRelativeShort($publishedDate, 'Europe/Paris', 'fr');
+        $addedAt = $this->dateService->formatDateRelativeShort($addedDate, 'Europe/Paris', 'fr');
+
+        if (is_numeric($publishedAt[0])) {
+            $publishedAt = $this->translator->trans("Published at") . ' ' . $publishedAt;
+        } else {
+            $publishedAt = $this->translator->trans("Published") . ' ' . $publishedAt;
+        }
+        if (is_numeric($addedAt[0])) {
+            $addedAt = $this->translator->trans("Added at") . ' ' . $addedAt;
+        } else {
+            $addedAt = $this->translator->trans("Added") . ' ' . $addedAt;
+        }
+
+        $publishedAt .= ' ' . $this->translator->trans("at") . ' ' . substr($publishedDate, 11, 5);
+        $addedAt .= ' ' . $this->translator->trans("at") . ' ' . substr($addedDate, 11, 5);
+
+        return [
+            'published_at' => $publishedAt,
+            'added_at' => $addedAt,
+        ];
     }
 
     public function formatCommentDate(string $date): string
