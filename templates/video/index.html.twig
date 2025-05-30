@@ -16,11 +16,19 @@
             <form>
                 <label for="categories">{{ 'Categories'|trans }}
                     <select id="categories" name="categories">
-                        <option value="all">{{ 'All categories'|trans }}</option>
+                        <option value="0">{{ 'All categories'|trans }}</option>
                         {% for category in categories %}
-                            <option value="{{ category.id }}">{{ category.name|trans }}</option>
+                            <option value="{{ category.id }}"{% if category.id==categoryId %} selected{% endif %}>{{ category.name|trans }}</option>
                         {% endfor %}
                     </select>
+                    <script>
+                        document.getElementById('categories').addEventListener('change', function () {
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('page', "1"); // Reset to first page
+                            url.searchParams.set('category', this.value);
+                            window.location.href = url.toString();
+                        });
+                    </script>
                 </label>
                 <label for="link"><span>{{ 'Add a video'|trans }}</span>
                     <input type="text" id="link" name="link" placeholder="{{ 'Link'|trans }}" value="">

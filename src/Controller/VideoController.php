@@ -21,6 +21,7 @@ use Google\Service\YouTube\CommentThreadListResponse;
 use Google\Service\YouTube\VideoListResponse;
 use Google_Client;
 use Google_Service_YouTube;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,6 +64,10 @@ final class VideoController extends AbstractController
     {
         $user = $this->getUser();
         $now = $this->dateService->getNowImmutable($user->getTimezone() ?? 'Europe/Paris');
+        $page = $request->query->getInt('page', 1);
+        $limit = 10;
+        $categoryId = $request->query->getInt('category');
+
         $newLink = $request->query->get('link');
         if ($newLink) {
             $link = $this->parseLink($newLink);
@@ -71,12 +76,15 @@ final class VideoController extends AbstractController
             } else {
                 $this->addFlash('error', 'Invalid YouTube link: "' . $newLink . '"<br> Please provide a valid YouTube link.');
             }
+            $page = 1; // Reset to first page after adding a new video
+            $categoryId = 0; // Reset category filter
         }
 
-        $page = $request->query->getInt('page', 1);
-        $dbUserVideos = $this->userVideoRepository->getUserVideosWithVideos($user->getId(), $page, 10);
+        $dbUserVideos = $this->userVideoRepository->getUserVideosWithVideos($user->getId(), $categoryId, $page, $limit);
+
         $ids = array_map(fn($dbUserVideo) => $dbUserVideo['id'], $dbUserVideos);
-        $dbVideoCategories = $this->userVideoRepository->getVideoCategories($ids, $page, 10);
+        $dbVideoCategories = $this->userVideoRepository->getVideoCategories($ids);
+
         $dbVideos = [];
         foreach ($dbUserVideos as $dbUserVideo) {
             $formattedDates = $this->dbFormatDates($dbUserVideo);
@@ -96,6 +104,11 @@ final class VideoController extends AbstractController
         $totalDuration = $this->userVideoRepository->getUserVideosTotalDuration($user->getId());
         $totalDurationString = $this->getSeconds2human($this->userVideoRepository->count(['user' => $user]), $totalDuration);
 
+        if (!$categoryId) {
+            $count = $this->userVideoRepository->count(['user' => $user]);
+        } else {
+            $count = $this->userVideoRepository->countVideoByCategory($user->getId(), $categoryId);
+        }
         $categories = $this->categoryRepository->findAll();
 
         return $this->render('video/index.html.twig', [
@@ -103,7 +116,8 @@ final class VideoController extends AbstractController
             'categories' => $categories,
             'totalDuration' => $totalDurationString,
             'now' => $now,
-            'pagination' => $this->pagination($page, $this->userVideoRepository->count(['user' => $user]), 10),
+            'categoryId' => $categoryId,
+            'pagination' => $this->pagination($page, $categoryId, $count, $limit),
         ]);
     }
 
@@ -600,7 +614,7 @@ final class VideoController extends AbstractController
         return $runtimeString;
     }
 
-    private function pagination(int $page, int $totalResults, int $maxResults): string
+    private function pagination(int $page, int $categoryId, int $totalResults, int $maxResults): string
     {
         $totalPages = ceil($totalResults / $maxResults);
         $previousPage = $page > 1 ? $page - 1 : null;
@@ -608,20 +622,20 @@ final class VideoController extends AbstractController
 
         // Return html code for pagination with previous page, current page, next page and total pages
         if ($totalPages <= 1) {
-            return "";
+            return '<div class="pagination"><span class="total-pages">' . ($totalResults == 1 ? $this->translator->trans("One video") : $this->translator->trans("count videos", ["count" => $totalResults])) . '</span></div>';
         }
         if ($page < 1 || $page > $totalPages) {
-            throw new \InvalidArgumentException('Page number out of range');
+            throw new InvalidArgumentException('Page number out of range');
         }
-        $html = "<div class='pagination'>";
+        $html = '<div class="pagination">';
         if ($previousPage) {
-            $html .= '<a href="?page=' . $previousPage . '"><button class="page">' . $this->translator->trans("Previous page") . '</button></a> ';
+            $html .= '<a href="?page=' . $previousPage . ($categoryId ? '&category=' . $categoryId : '') . '"><button class="page">' . $this->translator->trans("Previous page") . '</button></a> ';
         }
         $html .= '<button class="page active">' . $page . '</button> ';
         if ($nextPage) {
-            $html .= '<a href="?page=' . $nextPage . '"><button class="page">' . $this->translator->trans("Next page") . '</button></a> ';
+            $html .= '<a href="?page=' . $nextPage . ($categoryId ? '&category=' . $categoryId : '') . '"><button class="page">' . $this->translator->trans("Next page") . '</button></a> ';
         }
-        $html .= '<span class="total-pages">' . $this->translator->trans("count pages", ["count" => $totalPages]) . '</span>';
+        $html .= '<span class="total-pages">' . $this->translator->trans("count videos", ["count" => $totalResults]) .' / '. $this->translator->trans("count pages", ["count" => $totalPages]) . '</span>';
         $html .= '</div>';
 
         return $html;
