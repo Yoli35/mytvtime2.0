@@ -323,7 +323,6 @@ final class VideoController extends AbstractController
         if ($thumbnailUrl) {
             $url = pathinfo($thumbnailUrl);
             $basename = '/' . $video->getLink() . '-' . $url['basename'];
-//            dump(['type' => 'video', 'basename' => $basename, 'dirname' => $thumbnailUrl]);
             $this->imageService->saveImage2($thumbnailUrl, '/videos/thumbnails/' . $basename);
         } else {
             $basename = null;
@@ -366,7 +365,6 @@ final class VideoController extends AbstractController
             }
             if ($thumbnailUrl) {
                 $basename = '/' . $channelId;
-//                dump(['type' => 'channel', 'basename' => $basename, 'dirname' => $thumbnailUrl]);
                 $this->imageService->saveImage2($thumbnailUrl, '/videos/channels/thumbnails' . $basename);
             } else {
                 $basename = null;
@@ -430,7 +428,6 @@ final class VideoController extends AbstractController
                 'replies' => $repliesArray,
             ];
         }
-        //dump($comments, $commentArray);
         return [
             'comments' => $commentArray,
             'nextPageToken' => $nextPageToken,
@@ -508,8 +505,6 @@ final class VideoController extends AbstractController
             $s = "0" . $s;
         }
         $duration .= $s;
-
-        //dump(['durationInSecond' => $durationInSecond, 'h' => $h, 'm' => $m, 's' => $s, 'duration' => $duration]);
 
         return $duration;
     }
@@ -607,7 +602,6 @@ final class VideoController extends AbstractController
             $runtimeString .= $diff->i ? ($diff->i . ' ' . ($diff->i > 1 ? $this->translator->trans('minutes') : $this->translator->trans('minute')) . ($diff->s ? ', ' : '')) : '';
             $runtimeString .= $diff->s ? ($diff->s . ' ' . ($diff->s > 1 ? $this->translator->trans('seconds') : $this->translator->trans('second'))) : '';
 
-//            dump($runtimeString);
         } else {
             $runtimeString = "";
         }
