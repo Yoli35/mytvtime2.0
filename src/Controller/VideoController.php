@@ -58,7 +58,7 @@ final class VideoController extends AbstractController
         $this->service_YouTube = new Google_Service_YouTube($client);
     }
 
-    #[Route('/', name: 'index')]
+    #[Route('/list', name: 'index')]
     public function index(Request $request): Response
     {
         $user = $this->getUser();
@@ -73,8 +73,10 @@ final class VideoController extends AbstractController
             }
         }
 
-        $dbUserVideos = $this->userVideoRepository->getUserVideosWithVideos($user->getId());
-        $dbVideoCategories = $this->userVideoRepository->getVideoCategories($user->getId());
+        $page = $request->query->getInt('page', 1);
+        $dbUserVideos = $this->userVideoRepository->getUserVideosWithVideos($user->getId(), $page, 10);
+        $ids = array_map(fn($dbUserVideo) => $dbUserVideo['id'], $dbUserVideos);
+        $dbVideoCategories = $this->userVideoRepository->getVideoCategories($ids, $page, 10);
         $dbVideos = [];
         foreach ($dbUserVideos as $dbUserVideo) {
             $formattedDates = $this->dbFormatDates($dbUserVideo);
@@ -101,6 +103,7 @@ final class VideoController extends AbstractController
             'categories' => $categories,
             'totalDuration' => $totalDurationString,
             'now' => $now,
+            'pagination' => $this->pagination($page, $this->userVideoRepository->count(['user' => $user]), 10),
         ]);
     }
 
@@ -176,7 +179,6 @@ final class VideoController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $categoryId = $data['categoryId'] ?? null;
         $videoId = $data['videoId'] ?? null;
-        dump(['categoryId' => $categoryId, 'videoId' => $videoId]);
 
         if (!$categoryId || !$videoId) {
             return new JsonResponse(['error' => 'Category & video IDs are required'], Response::HTTP_BAD_REQUEST);
@@ -230,24 +232,12 @@ final class VideoController extends AbstractController
         $pattern = '/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/';
         preg_match($pattern, $userLink, $matches);
         if (key_exists(1, $matches) && strlen($matches[1]) === 11) {
-            dump([
-                'test' => 'YouTube video link',
-                'link' => $userLink,
-                'pattern' => $pattern,
-                'matches' => $matches
-            ]);
             $videoLink = $matches[1];
         } else {
             // And another pattern for YouTube short links: https://youtube.com/shorts/VsMVTAOY9h4?si=NLj0Ztc-WtneY5yG
             $pattern = '/https?:\/\/(?:www\.)?youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/';
             preg_match($pattern, $userLink, $matches);
             $videoLink = $matches[1] ?? null;
-            dump([
-                'test' => 'YouTube short link',
-                'link' => $userLink,
-                'pattern' => $pattern,
-                'matches' => $matches
-            ]);
         }
         return $videoLink;
     }
@@ -608,5 +598,32 @@ final class VideoController extends AbstractController
             $runtimeString = "";
         }
         return $runtimeString;
+    }
+
+    private function pagination(int $page, int $totalResults, int $maxResults): string
+    {
+        $totalPages = ceil($totalResults / $maxResults);
+        $previousPage = $page > 1 ? $page - 1 : null;
+        $nextPage = $page < $totalPages ? $page + 1 : null;
+
+        // Return html code for pagination with previous page, current page, next page and total pages
+        if ($totalPages <= 1) {
+            return "";
+        }
+        if ($page < 1 || $page > $totalPages) {
+            throw new \InvalidArgumentException('Page number out of range');
+        }
+        $html = "<div class='pagination'>";
+        if ($previousPage) {
+            $html .= '<a href="?page=' . $previousPage . '"><button class="page">' . $this->translator->trans("Previous page") . '</button></a> ';
+        }
+        $html .= '<button class="page active">' . $page . '</button> ';
+        if ($nextPage) {
+            $html .= '<a href="?page=' . $nextPage . '"><button class="page">' . $this->translator->trans("Next page") . '</button></a> ';
+        }
+        $html .= '<span class="total-pages">' . $this->translator->trans("count pages", ["count" => $totalPages]) . '</span>';
+        $html .= '</div>';
+
+        return $html;
     }
 }

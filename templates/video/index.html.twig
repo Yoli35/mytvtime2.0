@@ -28,6 +28,7 @@
                 <button type="submit" id="add-video">{{ 'Add'|trans }}</button>
             </form>
         </div>
+        {{ pagination|raw }}
         <div class="video-wrapper">
             {% for userVideo in dbUserVideos %}
                 <div class="video">
@@ -71,6 +72,7 @@
                 </div>
             {% endfor %}
         </div>
+        {{ pagination|raw }}
     </div>
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}

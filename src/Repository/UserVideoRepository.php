@@ -26,8 +26,9 @@ class UserVideoRepository extends ServiceEntityRepository
         }
     }
 
-    public function getUserVideosWithVideos(int $userId):array
+    public function getUserVideosWithVideos(int $userId, int $page, int $limit):array
     {
+        $offset = ($page - 1) * $limit;
         $sql = "SELECT uv.`id` as user_video_id, uv.`created_at` as added_at,
 	                   v.*,
 	                   vc.`thumbnail` as channel_thumbnail, vc.`title` as channel_title, vc.`custom_url` as channel_custom_url
@@ -35,21 +36,19 @@ class UserVideoRepository extends ServiceEntityRepository
                     INNER JOIN `video` v ON v.`id` = uv.`video_id`
                     LEFT JOIN `video_channel` vc ON vc.`id`=v.`channel_id`
                 WHERE uv.`user_id` = $userId
-                ORDER BY v.`published_at` DESC";
+                ORDER BY v.`published_at` DESC
+                LIMIT $offset, $limit";
         return $this->getAll($sql);
     }
 
-    public function getVideoCategories(int $userId): array
+    public function getVideoCategories(array $ids, int $page, int $limit): array
     {
+        $offset = ($page - 1) * $limit;
+        $idsPlaceholder = implode(',', array_map('intval', $ids));
         $sql = "SELECT vvc.`video_id` as `video_id`, vc.*
                 FROM `video_video_category` vvc
                     LEFT JOIN `video_category` vc ON vvc.`video_category_id`=vc.`id`
-                WHERE vvc.`video_id` IN (
-                                            SELECT v.id as id
-                                            FROM `video` v
-                                                INNER JOIN `user_video` uv ON uv.`user_id` = 1
-                                            WHERE v.`id` = uv.`video_id`
-                                        )";
+                WHERE vvc.`video_id` IN ($idsPlaceholder)";
         return $this->getAll($sql);
     }
 

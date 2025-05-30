@@ -1,5 +1,4 @@
 .videos-page {
-    margin-block-end: 1rem;
     margin-block-start: 4rem;
 
     .video-tools {
@@ -46,10 +45,38 @@
         }
     }
 
+    .pagination {
+        align-items: center;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-block-end: 1rem;
+
+        .page {
+            background-color: var(--orange-30-alpha-75);
+            border-radius: .25rem;
+            color: var(--orange-100);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 400;
+            padding: .5rem 1rem;
+
+            &.active {
+                background-color: var(--orange-50);
+                color: var(--orange-10);
+            }
+
+            &:hover {
+                background-color: var(--orange-40);
+            }
+        }
+    }
+
     .video-wrapper {
         display: flex;
         flex-wrap: wrap;
         gap: 1rem;
+        margin-block-end: 1rem;
         margin-inline: auto;
         width: round(down, 100%, 33rem);
 
