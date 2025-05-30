@@ -626,11 +626,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                   AND ue.watch_at IS NOT NULL
                   AND ue.previous_occurrence_id IS NULL";
 
-        $result = $this->getOne($sql);
-        //$result = $result[0] ?? 0;
-        dump($result);
-
-        return $result;
+        return $this->getOne($sql);
     }
 
     public function getAll($sql): array

@@ -1,8 +1,13 @@
  1- .env: APP_ENV: prod
- 2- > echo 'composer prod'; composer install --no-dev --optimize-autoloader;
- 3- > echo 'cache clear'; APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear;
- 4- > echo 'compile assets'; cons asset-map:compile
- 5- Compress
+ 2- > paste this in your local terminal:
+
+     echo '' > var/logs/dev.log;
+     rm -R var/cache/dev;
+     echo 'composer prod'; composer install --no-dev --optimize-autoloader;
+     echo 'cache clear'; APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear;
+     echo 'compile assets'; cons asset-map:compile
+
+ 3- Compress
         [bin]
 		composer.json
 		composer.lock
@@ -16,11 +21,11 @@
 		translations
 		var
 		vendor > Archives.zip
- 6- copy Archives.zip to server
- 7- export db
- 8- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/"
- 9- if 7, delete all tables, then import db
-10- on server, move
+4- copy Archives.zip to server
+5- export db
+6- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/"
+8- if 5, delete all tables, then import db
+9- on server, move
         [bin]
 		config
 		public
@@ -34,11 +39,15 @@
 		importmap.php
 		package.json
 		symfony.lock > temp
-11- > unzip Archive.zip;
-12- > rm Archive.zip;
-13- > echo 'Removing macos files';      rm -R __MACOSX;
-14- > echo 'Removing .DS_Store files';  find ./ -depth -name ".DS_Store" -exec rm {} \;
-15- > echo 'Removing file in ./temp';   cd temp;
-16- > rm -R *;
-17- > cd ..;echo 'Think to reconnect the domain to the folder "/public"'
-18- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/public"
+10- > unzip Archive.zip;
+11- paste this in your remote terminal:
+
+    rm Archive.zip;
+    echo 'Removing macos files';      rm -R __MACOSX;
+    echo 'Removing .DS_Store files';  find ./ -depth -name ".DS_Store" -exec rm {} \;
+    echo 'Removing file in ./temp';   cd temp;
+    rm -R *;
+    cd ..;
+    echo 'Think to reconnect the domain to the folder "/public"'
+
+12- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/public"

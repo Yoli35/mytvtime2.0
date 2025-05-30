@@ -483,7 +483,6 @@ class UserSeriesRepository extends ServiceEntityRepository
 
         $result = $this->getAll($sql);
         $result = $result[0] ?? null;
-        dump($result);
 
         return $result ? $result['episodeWatchedCount'] / $result['episodeCount'] * 100 : null;
     }
