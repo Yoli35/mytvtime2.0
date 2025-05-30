@@ -289,7 +289,6 @@
                         </div>
                         <div class="series-location-content">
                             {% for loc in l.locations %}
-                                {#                    {{ dump(loc) }} #}
                                 <div class="series-location" data-tmdb-id="{{ key }}">
                                     <div class="series-location-image" data-title="{{ loc.location }}" data-position="0">
                                         <img src="/images/map{{ loc.still_path }}" alt="{{ loc.location ?? 'No title entry!!' }}">

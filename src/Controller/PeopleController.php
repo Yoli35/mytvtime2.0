@@ -68,9 +68,6 @@ class PeopleController extends AbstractController
             return $person;
         }, $people['results']);
 
-//        dump([
-//            'people' => $people,
-//        ]);
         return $this->render('people/index.html.twig', [
             'people' => $people,
         ]);
@@ -133,11 +130,6 @@ class PeopleController extends AbstractController
             return $b['rating'] <=> $a['rating'];
         });
 
-//        dump([
-//            'starPeople' => $dbStarPeopleArr,
-//            'starPeopleFinalArr' => $dbStarPeopleFinalArr,
-//            'starPeopleCount' => $starPeopleCount,
-//        ]);
         return $this->render('people/star.html.twig', [
             'people' => $dbStarPeopleFinalArr,
             'peopleCount' => $starPeopleCount,
@@ -169,7 +161,6 @@ class PeopleController extends AbstractController
         $credits = $people['combined_credits'];
 
         $peopleUserRating = $this->peopleUserRatingRepository->getPeopleUserRating($user->getId(), $id);
-//        dump($peopleUserRating);
         $people['userRating'] = $peopleUserRating['rating'] ?? 0;
         $people['avgRating'] = $peopleUserRating['avg_rating'] ?? 0;
 

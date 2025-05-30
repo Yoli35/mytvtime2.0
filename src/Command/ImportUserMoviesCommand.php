@@ -86,11 +86,7 @@ class ImportUserMoviesCommand extends Command
                 $io->writeln($movieArr['title']);
 
                 $tmdbMovie = json_decode($this->tmdbService->getMovie($movieArr['id'], $language), true);
-//                dump([
-//                    'id' => $movieArr['id'],
-//                    'title' => $movieArr['title'],
-//                    'tmdbMovie' => $tmdbMovie,
-//                ]);
+
                 $movieCollection = null;
                 if (key_exists('belongs_to_collection', $tmdbMovie)) {
                     $collection = $tmdbMovie['belongs_to_collection'];

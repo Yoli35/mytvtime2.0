@@ -21,10 +21,6 @@ final class ErrorController extends AbstractController
     {
         $user = $this->getUser();
         $lastVisited = $user ? $this->historyRepository->getLastVisitedBeforeError($user) : null;
-        /*dump([
-            'request' => $request,
-            'lastVisited' => $lastVisited,
-        ]);*/
 
         return $this->render('error/index.html.twig', [
             'history' => $lastVisited,

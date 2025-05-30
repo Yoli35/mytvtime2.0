@@ -49,7 +49,6 @@ class EpisodeStillRepository extends ServiceEntityRepository
         try {
             return $this->em->getConnection()->fetchAllAssociative($sql);
         } catch (Exception $e) {
-//            dump($e->getMessage());
             return [];
         }
     }

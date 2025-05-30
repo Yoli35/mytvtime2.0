@@ -192,14 +192,7 @@ class ImageService extends AbstractController
                     $sourceHeight = $sourceWidth / $destRatio;
                     $sourceY = ($info[1] - $sourceHeight) / 2;
                 }
-//                dump([
-//                    'destRatio' => $destRatio,
-//                    'sourceRation' => $sourceRation,
-//                    'sourceWidth' => $sourceWidth,
-//                    'sourceHeight' => $sourceHeight,
-//                    'sourceX' => $sourceX,
-//                    'sourceY' => $sourceY,
-//                ]);
+
                 $newImage = imagecreatetruecolor($width, $height);
                 // On ajoute un fond noir pour les images dont l'aspect ratio est différent de 16 / 9 (1920 / 1080).
                 if ($sourceX || $sourceY) {
@@ -275,12 +268,10 @@ class ImageService extends AbstractController
                     fclose($file);
 
                     return true;
-                } catch (Exception /*$e*/) {
-                    /*dump(['exception' => $e, 'message' => $e->getMessage()]);*/
+                } catch (Exception) {
                     return false;
                 }
             } else {
-//                dump(['message' => 'URL is not valid']);
                 return false;
             }
         }

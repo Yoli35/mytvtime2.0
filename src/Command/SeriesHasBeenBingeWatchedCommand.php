@@ -121,7 +121,7 @@ class SeriesHasBeenBingeWatchedCommand extends Command
             $episodeCount++;
         }
         $tvSeason = $this->getTvSeason($tv, $previousSeasonNumber);
-//        dump($tv, $tvSeason, $episodeCount, $previousSeasonNumber, $otherSeriesEpisodes);
+
         $theoreticalEpisodeCount = $tvSeason['episode_count'] ??0;
 
         if ($episodeCount == $theoreticalEpisodeCount) {

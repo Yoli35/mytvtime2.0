@@ -67,7 +67,6 @@ readonly class SeriesExtensionRuntime implements RuntimeExtensionInterface
             return $item;
         }, $this->userEpisodeRepository->seriesHistoryForTwig($user, $user->getPreferredLanguage() ?? 'fr', $listType, $page, $count));
 
-//        dump(['settings' => $data, 'history' => $history]);
         if (count($history) && $data['last'] !== $history[0]['episodeId']) {
             $data['last'] = $history[0]['episodeId'];
             $settings->setData($data);

@@ -39,7 +39,7 @@ class ContactController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Send mail
-            $mail = (new TemplatedEmail())
+            $mail = new TemplatedEmail()
                 ->from($data->getEmail())
                 ->to('contact@mytvtime.fr')
                 ->subject($this->translator->trans('Contact form') . ' - ' . $data->getSubject())
@@ -50,8 +50,7 @@ class ContactController extends AbstractController
                 ->locale($user?->getPreferredLanguage() ?? $request->getLocale());
             try {
                 $this->mailer->send($mail);
-            } catch (TransportExceptionInterface $e) {
-//                dump($e);
+            } catch (TransportExceptionInterface) {
                 $this->addFlash('error', $this->translator->trans('An error occurred, please try again later'));
             }
             $this->addFlash('success', $this->translator->trans('Your message has been sent'));

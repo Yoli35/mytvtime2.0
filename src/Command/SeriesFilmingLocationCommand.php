@@ -83,7 +83,6 @@ class SeriesFilmingLocationCommand extends Command
             }
 
             foreach ($filmingLocations as $filmingLocation) {
-//                dump($filmingLocation);
                 if ($filmingLocation['created_at']) {
                     continue;
                 }

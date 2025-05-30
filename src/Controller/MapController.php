@@ -32,7 +32,6 @@ class MapController extends AbstractController
         $settings = $this->settingsRepository->findOneBy(['name' => 'mapbox']);
 
         $locations = $this->getAllFilmingLocations('title');
-        //dump($locations);
 
         $fl = [];
         $countries = [];
@@ -85,17 +84,6 @@ class MapController extends AbstractController
             }
         }
 
-//        dump([
-//            'fl' => $fl,
-//            'countryLatLngs' => $countryLatLngs,
-//            'countryLocationIds' => $countryLocationIds,
-//            'countries' => $countries,
-//            'countryBoundingBoxes' => $bb,
-//            'filmingLocations' => $locations['filmingLocations'],
-//            'filmingLocationCount' => $locations['filmingLocationCount'],
-//            'filmingLocationImagesCount' => $locations['filmingLocationImageCount'],
-//        ]);
-
         return $this->render('map/index.html.twig', [
             'fl' => $fl,
             'countries' => $countries,
@@ -132,14 +120,6 @@ class MapController extends AbstractController
         $perPage = $data->getPerPage();
 
         $locations = $this->getAllFilmingLocations($type, $page, $perPage);
-
-//        dump([
-//            'locations' => $locations['filmingLocations'],
-//            'filmingLocationCount' => $locations['filmingLocationCount'],
-//            'filmingLocationImageCount' => $locations['filmingLocationImageCount'],
-//            'seriesCount' => $this->filmingLocationRepository->seriesCount(),
-//            'bounds' => $locations['bounds'],
-//        ]);
 
         return $this->render('map/last-creations.html.twig', [
             'form' => $form->createView(),

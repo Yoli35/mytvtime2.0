@@ -127,14 +127,6 @@ class MovieController extends AbstractController
             'ASC' => 'Ascending',
         ];
 
-//        dump([
-//            'userMovies' => $userMovies,
-//            'userMovieCount' => $userMovieCount,
-//            'pages' => ceil($userMovieCount / $filters['perPage']),
-//            'filterMeanings' => $filterMeanings,
-//            'filterBoxOpen' => $filterBoxOpen,
-//            'filters' => $filters,
-//        ]);
         return $this->render('movie/index.html.twig', [
             'userMovies' => $userMovies,
             'userMovieCount' => $userMovieCount,
@@ -155,7 +147,6 @@ class MovieController extends AbstractController
         } else {
             // on récupère le contenu du formulaire (POST parameters).
             $formContent = $request->get('movie_search', ['query'=>'', 'releaseDateYear' => null, 'language' => $request->getLocale(), 'page' => 1]);
-//            dump($formContent);
             $simpleSeriesSearch = new MovieSearchDTO($formContent['language'], $formContent['page']);
             $simpleSeriesSearch->setQuery($formContent['query']);
             $releaseYear = $formContent['releaseDateYear'] ? intval($formContent['releaseDateYear']) : null;
@@ -245,12 +236,6 @@ class MovieController extends AbstractController
         $this->getLocalizedOverviews($movie, $dbMovie);
         $this->getSources($movie);
         $movie['missing_translations'] = $this->keywordService->keywordsTranslation($movie['keywords']['keywords'], $request->getLocale());
-//        dump([
-//            'language' => $language,
-//            'tmdbId' => $tmdbId,
-//            'movie' => $movie,
-//            'userMovie' => $userMovie,
-//        ]);
 
         $translations = [
             'Localized overviews' => $this->translator->trans('Localized overviews'),
@@ -265,13 +250,6 @@ class MovieController extends AbstractController
         ];
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
 
-//        dump([
-//                'language' => $language,
-//            'movie' => $movie,
-//            'userMovie' => $userMovie,
-//                'providers' => $providers,
-//                'translations' => $translations,
-//        ]);
         return $this->render('movie/show.html.twig', [
             'userMovie' => $userMovie,
             'movie' => $movie,
@@ -309,10 +287,6 @@ class MovieController extends AbstractController
         $this->getReleaseDates($movie);
         $this->getRecommandations($movie);
 
-//        dump([
-//            'language' => $language,
-//            'movie' => $movie,
-//        ]);
         return $this->render('movie/tmdb.html.twig', [
             'movie' => $movie,
             'providers' => [],
@@ -362,7 +336,6 @@ class MovieController extends AbstractController
         $userMovie = new UserMovie($user, $movie, $now);
         $this->userMovieRepository->save($userMovie, true);
 
-//        dump(['userMovie' => $userMovie]);
         return $this->redirectToRoute('app_movie_show', ['id' => $userMovie->getId()]);
     }
 
@@ -414,14 +387,6 @@ class MovieController extends AbstractController
         $paginations[0] = $this->getPagination(1, $filters['page'], $totalPages, 'app_movie_index', $request->getLocale());
         $paginations[1] = $this->getPagination(2, $filters['page'], $totalPages, 'app_movie_index', $request->getLocale());
 
-//        dump([
-//            'userMovies' => $userMovies,
-//            'userMovieCount' => $userMovieCount,
-//            'total_pages' => $totalPages,
-//            'filters' => $filters,
-//            'paginations' => $paginations,
-//        ]);
-
         return $this->json([
             'ok' => true,
             'body' => [
@@ -471,11 +436,7 @@ class MovieController extends AbstractController
         $title = $data['title'];
         $providerId = $data['provider'];
         if ($providerId == "") $providerId = null;
-//        dump([
-//            'url' => $url,
-//            'title' => $title,
-//            'provider' => $providerId,
-//        ]);
+
         $movie = $userMovie->getMovie();
 
         $watchLink = new MovieDirectLink($url, $title, $movie, $providerId);
@@ -543,7 +504,6 @@ class MovieController extends AbstractController
     {
         $movie = $userMovie->getMovie();
         $data = json_decode($request->getContent(), true);
-//        dump($data);
         $overviewId = $data['overviewId'] ?? "";
         $overviewId = $overviewId == "" ? null : intval($overviewId);
         $overviewType = $data['type'];
@@ -587,11 +547,10 @@ class MovieController extends AbstractController
     }
 
     #[Route('/add/infos/{id}', name: 'add_infos', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function addInfos(): Response
+    public function addInfos(Request $request, Movie $movie): Response
     {
-//        $data = json_decode($request->getContent(), true);
+        $data = json_decode($request->getContent(), true);
 
-//        dump($movie, $data);
         // "production_companies": [
         //    {
         //      "id": 14,
@@ -602,6 +561,8 @@ class MovieController extends AbstractController
 
         return $this->json([
             'ok' => true,
+            'title' => $movie->getTitle(),
+            'name' => $data['name'] ?? null,
         ]);
     }
 

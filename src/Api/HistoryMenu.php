@@ -32,7 +32,6 @@ class HistoryMenu extends AbstractController
         $user = $this->getUser();
 
         $data = json_decode($request->getContent(), true);
-//        dump($data);
 
         $type = $data['type'] ? 'episode' : 'series';
         $count = intval($data['count']);
@@ -60,7 +59,7 @@ class HistoryMenu extends AbstractController
                 }
             }         return $item;
         }, $this->userEpisodeRepository->seriesHistoryForTwig($user, $user->getPreferredLanguage() ?? 'fr', $type, $page, $count));
-//        dump($history);
+
         return $this->json([
             'ok' => true,
             'list' => $history,

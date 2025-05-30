@@ -146,12 +146,9 @@ class AdminController extends AbstractController
                 'error' => $this->translator->trans("admin.series.append.invalid_request"),
                 'status' => 400,
             ]);
-        }/* elseif ($extra==='changes') {
-            $results = ['param' => $param];
-        }*/ else {
+        } else {
             $results = json_decode($this->tmdbService->getSeriesExtras($seriesId, $extra, $param), true);
         }
-//        dump($results);
 
         return $this->render('_blocks/admin/_series-append-results.html.twig', [
                 'extra' => $extra,
@@ -362,10 +359,7 @@ class AdminController extends AbstractController
     public function adminMovieAppend(Request $request): Response
     {
         $data = $request->request->all();
-        // append_to_response => "translations"
-        // csrf_token => "..."
-        // id => "1720"
-        // route => "admin_movie_edit"
+
         $movieId = $data['id'];
         $extra = $data['append_to_response'];
         $page = $data['page'] ?? null;
@@ -373,7 +367,6 @@ class AdminController extends AbstractController
         $language = $data['language'] ?? null;
 
         $results = json_decode($this->tmdbService->getMovieExtras($movieId, $extra, $page, $include_image_language, $language), true);
-//        dump($results);
 
         return $this->render('_blocks/admin/_movie-append-results.html.twig', [
                 'extra' => $extra,

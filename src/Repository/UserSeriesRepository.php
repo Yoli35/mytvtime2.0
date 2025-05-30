@@ -296,7 +296,6 @@ class UserSeriesRepository extends ServiceEntityRepository
                     AND nue.`season_number`>0
                 ORDER BY $sort $order
                 LIMIT $perPage OFFSET $offset";
-//        dump($sql);
         return $this->getAll($sql);
     }
 
@@ -326,7 +325,6 @@ class UserSeriesRepository extends ServiceEntityRepository
                 WHERE us.`user_id`=$userId
                     AND IF(sbd.`date`, DATE(sbd.`date`)<=NOW(), nue.`air_date`<=NOW())
                     AND nue.`season_number`>0";
-//        dump($sql);
         return $this->getOne($sql);
     }
 

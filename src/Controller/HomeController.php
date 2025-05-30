@@ -108,7 +108,6 @@ class HomeController extends AbstractController
             $dayCount = 0;
             $historySeries = [];
         }
-//        dump(['Episodes to watch' => $episodesToWatch,]);
 
         /*
          * Watch providers
@@ -156,19 +155,6 @@ class HomeController extends AbstractController
         } else {
             $videos = [];
         }
-//        dump($movieVideos);
-
-//        dump([
-//            'historySeries' => $historySeries,
-//            'filterString' => $filterString,
-//            'seriesSelection' => $seriesSelection,
-//            'lastAddedSeries' => $lastAddedSeries,
-//            'userSeries' => $userSeries,
-//            'movieSelection' => $movieSelection,
-//            'episodesOfTheDay' => $episodesOfTheDay,
-//            'historyEpisode' => $historyEpisode,
-//            'filteredSeries' => $filteredSeries,
-//        ]);
 
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
@@ -306,7 +292,6 @@ class HomeController extends AbstractController
         $root = $this->getParameter('kernel.project_dir') . '/public';
         if ($media === 'movie') {
             $mediaSelection = json_decode($this->tmdbService->getFilterMovie($filterString . '&append_to_response=watch/providers'), true)['results'];
-//            $id = 'userMovie'
             $name = 'title';
             $date = 'release_date';
         } else {
@@ -314,7 +299,6 @@ class HomeController extends AbstractController
             $name = 'name';
             $date = 'first_air_date';
         }
-//        dump(['mediaSelection' => $mediaSelection]);
 
         return array_map(function ($tv) use ($slugger, $root, $media, $name, $date, $country, $timezone, $preferredLanguage) {
 
@@ -330,7 +314,6 @@ class HomeController extends AbstractController
             } else {
                 $tv['poster_path'] = null;
             }
-//            $tv['poster_path'] = $tv['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $tv['poster_path'] : null;
             $tv['slug'] = strtolower($slugger->slug($tv[$media === 'tv' ? 'name' : 'title']));
             $tv['watch_providers'] = [];
 
