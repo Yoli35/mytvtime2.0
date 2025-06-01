@@ -58,6 +58,9 @@ class SeriesNetworkCommand extends Command
 
         $count = 0;
         $networkCount = 0;
+        $networkUpdatedCount = 0;
+        $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
+        $lastMonth = $now->modify('-1 month');
         foreach ($allSeries as $series) {
 
             $this->io->writeln(sprintf('Series (%d): %s', $series->getId(), $series->getName()));
@@ -72,28 +75,66 @@ class SeriesNetworkCommand extends Command
                 continue;
             }
 
+            $seriesNetworks = $series->getNetworks()->toArray();
             foreach ($tv['networks'] as $network) {
                 $networkId = $network['id'];
-                $dbNetwork = $this->entityManager->getRepository(Network::class)->findOneBy(['networkId' => $networkId]);
+                $dbNetwork = $this->networkRepository->findOneBy(['networkId' => $networkId]);
                 if (!$dbNetwork) {
                     $this->io->write('    New network: ' . $network['name']);
                     $dbNetwork = new Network(
                         $network['logo_path'],
                         $network['name'],
                         $networkId,
-                        $network['origin_country']
+                        $network['origin_country'],
+                        $now
                     );
                     $this->networkRepository->save($dbNetwork);
-                    $this->io->writeln(' added (' . $dbNetwork->getId() . ')');
+                    $this->io->writeln(' added (' . $dbNetwork->getId() . ' / ' . $dbNetwork->getNetworkId() . ')');
                     $networkCount++;
+                    if ($networkCount % 10 == 0)
+                    {
+                        $this->entityManager->flush();
+                    }
                 } else {
-                    $this->io->writeln('    Network already exists: ' . $network['name'] . ' (' . $dbNetwork->getId() . ')');
+                    $this->io->writeln('    Network already exists: ' . $network['name'] . ' (' . $dbNetwork->getId() . ' / ' . $dbNetwork->getNetworkId() . ')');
+                    $updated = false;
+                    if (!$dbNetwork->getUpdatedAt() || $dbNetwork->getUpdatedAt() < $lastMonth) {
+                        $dbNetwork->setUpdatedAt($now);
+
+                        if ($dbNetwork->getName() !== $network['name']) {
+                            $this->io->writeln('    🟠 Update network name from ' . $dbNetwork->getName() . ' to ' . $network['name']);
+                            $dbNetwork->setName($network['name']);
+                            $updated = true;
+                        }
+                        if ($dbNetwork->getLogoPath() !== $network['logo_path']) {
+                            $this->io->writeln('    🟠 Update network logo from ' . $dbNetwork->getLogoPath() . ' to ' . $network['logo_path']);
+                            $dbNetwork->setLogoPath($network['logo_path']);
+                            $updated = true;
+                        }
+                        if ($dbNetwork->getOriginCountry() !== $network['origin_country']) {
+                            $this->io->writeln('    🟠 Update network origin country from ' . $dbNetwork->getOriginCountry() . ' to ' . $network['origin_country']);
+                            $dbNetwork->setOriginCountry($network['origin_country']);
+                            $updated = true;
+                        }
+                        if ($updated) {
+                            $this->networkRepository->save($dbNetwork);
+                            $networkUpdatedCount++;
+                        }
+                        if ($networkUpdatedCount % 10 == 0)
+                        {
+                            $this->entityManager->flush();
+                        }
+                    }
                 }
-                if (!$this->isInNetworkSeries($dbNetwork, $series)) {
+                if (!$this->isInNetworkSeries($dbNetwork, $seriesNetworks)) {
                     $this->io->writeln('    Add network to series');
                     $series->addNetwork($dbNetwork);
                     $this->seriesRepository->save($series);
                     $count++;
+                    if ($count % 10 == 0)
+                    {
+                        $this->entityManager->flush();
+                    }
                 }
             }
         }
@@ -104,15 +145,9 @@ class SeriesNetworkCommand extends Command
         return Command::SUCCESS;
     }
 
-    public function isInNetworkSeries(Network $network, Series $series): bool
+    public function isInNetworkSeries(Network $network, array $seriesNetworks): bool
     {
-        $seriesNetworks = $series->getNetworks();
-        foreach ($seriesNetworks as $seriesNetwork) {
-            if ($seriesNetwork->getId() === $network->getId()) {
-                return true;
-            }
-        }
-        return false;
+        return array_any($seriesNetworks, fn($seriesNetwork) => $seriesNetwork->getId() === $network->getId());
     }
 
     public function commandStart(): void

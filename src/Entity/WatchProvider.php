@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\WatchProviderRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: WatchProviderRepository::class)]
@@ -28,13 +29,21 @@ class WatchProvider
     #[ORM\Column]
     private ?int $providerId;
 
-    public function __construct($providerId, $providerName, $logoPath, $displayPriority, $displayPriorities)
+    #[ORM\Column(nullable: true)]
+    private ?bool $removed;
+
+    #[ORM\Column(nullable: true)]
+    private ?DateTimeImmutable $updatedAt = null;
+
+    public function __construct(int $providerId, string $providerName, ?string $logoPath, int $displayPriority, array $displayPriorities, DateTimeImmutable $updatedAt, bool $removed)
     {
         $this->providerId = $providerId;
         $this->providerName = $providerName;
         $this->logoPath = $logoPath;
         $this->displayPriority = $displayPriority;
         $this->displayPriorities = $displayPriorities;
+        $this->updatedAt = $updatedAt;
+        $this->removed = $removed;
     }
 
     public function getId(): ?int
@@ -98,6 +107,30 @@ class WatchProvider
     public function setProviderId(int $providerId): static
     {
         $this->providerId = $providerId;
+
+        return $this;
+    }
+
+    public function isRemoved(): ?bool
+    {
+        return $this->removed;
+    }
+
+    public function setRemoved(?bool $removed): static
+    {
+        $this->removed = $removed;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

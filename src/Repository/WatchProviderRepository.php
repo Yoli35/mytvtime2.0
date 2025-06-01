@@ -44,10 +44,7 @@ class WatchProviderRepository extends ServiceEntityRepository
         }
         $sql .= "ORDER BY name";
 
-        return $this->registry->getManager()
-            ->getConnection()->prepare($sql)
-            ->executeQuery()
-            ->fetchAllAssociative();
+        return $this->getAll($sql);
     }
 
     public function getWatchProviderList($country): array
@@ -57,13 +54,10 @@ class WatchProviderRepository extends ServiceEntityRepository
             . "WHERE wp.`display_priorities` LIKE '%$country%' "
             . "ORDER BY wp.`provider_name` ";
 
-        return $this->registry->getManager()
-            ->getConnection()->prepare($sql)
-            ->executeQuery()
-            ->fetchAllAssociative();
+        return $this->getAll($sql);
     }
 
-    public function adminProviders(string $locale, int $page, string $sort, string $order, int $perPage = 20):array
+    public function adminProviders(string $locale, int $page, string $sort, string $order, int $perPage = 20): array
     {
         $offset = ($page - 1) * $perPage;
         $sql = "SELECT *
@@ -71,21 +65,41 @@ class WatchProviderRepository extends ServiceEntityRepository
                 ORDER BY $sort $order
                 LIMIT $perPage OFFSET $offset";
 
+        return $this->getAll($sql);
+    }
+
+    public function adminProviderById(int $id): ?array
+    {
+        $sql = "SELECT *
+                FROM watch_provider wp
+                WHERE wp.id=$id";
+
+        return $this->getOne($sql);
+    }
+
+    public function providerIds(): array
+    {
+        $sql = "SELECT wp.provider_id as id
+                FROM watch_provider wp";
+
+        return $this->getAll($sql);
+    }
+
+    private function getAll(string $sql): array
+    {
         return $this->registry->getManager()
             ->getConnection()->prepare($sql)
             ->executeQuery()
             ->fetchAllAssociative();
     }
 
-    public function adminProviderById(int $id)
+    private function getOne(string $sql): ?array
     {
-        $sql = "SELECT *
-                FROM watch_provider wp
-                WHERE wp.id=$id";
-
-        return $this->registry->getManager()
+        $result = $this->registry->getManager()
             ->getConnection()->prepare($sql)
             ->executeQuery()
             ->fetchAssociative();
+
+        return $result ?: null;
     }
 }
