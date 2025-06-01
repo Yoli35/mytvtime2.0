@@ -3,24 +3,21 @@
 namespace App\Command;
 
 use App\Entity\Network;
-use App\Entity\Series;
 use App\Repository\NetworkRepository;
 use App\Repository\SeriesRepository;
 use App\Service\DateService;
 use App\Service\TMDBService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:series:network',
     description: 'Update series network infos for all series or a specific one',
 )]
-class SeriesNetworkCommand extends Command
+class SeriesNetworkCommand
 {
     private SymfonyStyle $io;
     private float $t0;
@@ -33,20 +30,11 @@ class SeriesNetworkCommand extends Command
         private readonly TMDBService            $tmdbService,
     )
     {
-        parent::__construct();
     }
 
-    protected function configure(): void
+    public function __invoke(SymfonyStyle $io, #[Option(shortcut: 's')] ?int $seriesId = null): int
     {
-        $this
-            ->addOption('series', 's', InputOption::VALUE_REQUIRED, 'Series ID');
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $this->io = new SymfonyStyle($input, $output);
-
-        $seriesId = $input->getOption('series');
+        $this->io = $io;
 
         if (!$seriesId) {
             $allSeries = $this->seriesRepository->findAll();

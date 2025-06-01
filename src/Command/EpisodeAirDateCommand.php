@@ -18,17 +18,15 @@ use App\Service\DateService;
 use App\Service\TMDBService;
 use DateTimeImmutable;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:episode:air-date',
     description: 'Update user episode air date for all user series or a specific one',
 )]
-class EpisodeAirDateCommand extends Command
+class EpisodeAirDateCommand
 {
     private SymfonyStyle $io;
     private float $t0;
@@ -49,28 +47,17 @@ class EpisodeAirDateCommand extends Command
         private readonly TMDBService                       $tmdbService,
     )
     {
-        parent::__construct();
     }
 
-    protected function configure(): void
-    {
-        $this
-            ->addOption('series', 's', InputOption::VALUE_REQUIRED, 'User series ID')
-            ->addOption('list', 'l', InputOption::VALUE_NONE, 'List all updates')
-            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Check every series');
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(SymfonyStyle $io, #[Option(shortcut: 's')] ?int $seriesId = null, #[Option(shortcut: 'l')] bool $list = false, #[Option(shortcut: 'f')] bool $force = false): int
     {
         $endedSeriesStatus = ['Ended', 'Canceled'];
-        $this->io = new SymfonyStyle($input, $output);
 
-        $seriesId = $input->getOption('series');
-        $this->list = $input->getOption('list');
+        $this->io = $io;
+        $this->list = $list;
 
         if (!$seriesId) {
             $allUserSeries = $this->userSeriesRepository->findAll();
-            $force = $input->getOption('force');
         } else {
             $allUserSeries = $this->userSeriesRepository->findBy(['id' => $seriesId]);
             $force = true;

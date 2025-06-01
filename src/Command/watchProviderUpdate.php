@@ -8,15 +8,13 @@ use App\Service\DateService;
 use App\Service\TMDBService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:watch-provider:update',
     description: 'Update Tv provider for series',
 )]
-class watchProviderUpdate extends Command
+class watchProviderUpdate
 {
     private SymfonyStyle $io;
     private float $t0;
@@ -27,16 +25,11 @@ class watchProviderUpdate extends Command
         private readonly WatchProviderRepository $watchProviderRepository,
     )
     {
-        parent::__construct();
     }
 
-    protected function configure(): void
+    public function __invoke(SymfonyStyle $io): int
     {
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $this->io = new SymfonyStyle($input, $output);
+        $this->io = $io;
 
         $tvProviders = json_decode($this->tmdbService->getTvWatchProviderList(), true);
         $tvProviderIds = array_column($tvProviders['results'], 'provider_id');
