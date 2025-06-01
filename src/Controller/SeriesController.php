@@ -3577,8 +3577,9 @@ class SeriesController extends AbstractController
 
     public function networks(array $tv): array
     {
-        return array_map(function ($network) {
-            $network['logo_path'] = $network['logo_path'] ? $this->imageConfiguration->getCompleteUrl($network['logo_path'], 'logo_sizes', 2) : null; // w92
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 5);
+        return array_map(function ($network) use ($logoUrl) {
+            $network['logo_path'] = $network['logo_path'] ? $logoUrl . $network['logo_path'] : null; // w92
             return $network;
         }, $tv['networks']);
     }

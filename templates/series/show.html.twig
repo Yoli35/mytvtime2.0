@@ -565,7 +565,7 @@
                                 <div class="networks">
                                     {% for network in tv.networks %}
                                         <div class="network-detail">
-                                            <div class="frame">
+                                            <div class="frame" data-title="{{ network.name }} ({{ network.id }})">
                                                 {% if network.logo_path %}
                                                     <img src="{{ network.logo_path }}" alt="{{ network.name }}" loading="lazy">
                                                 {% else %}
@@ -576,6 +576,17 @@
                                     {% endfor %}
                                 </div>
                             </div>
+                            <script>
+                                // get image dimensions to set the aspect ratio
+                                const networkDetails = document.querySelectorAll('.network-detail .frame img');
+                                networkDetails.forEach(img => {
+                                    img.addEventListener('load', function () {
+                                        const width = img.naturalWidth;
+                                        const height = img.naturalHeight;
+                                        img.closest('.frame').setAttribute('style', 'aspect-ratio: ' + width + ' / ' + height);
+                                    });
+                                });
+                            </script>
                         {% endif %}
                         {% if tv.keywords.results|length %}
                             <div class="fact keyword-block">
@@ -594,7 +605,6 @@
                 </div>
                 <script>
                     const toggleVisibilityDivs = document.querySelectorAll('.toggle-visibility');
-
                     toggleVisibilityDivs.forEach(toggleVisibility => {
                         const contentInfosDiv = toggleVisibility.closest('.content-infos');
                         toggleVisibility.addEventListener('click', function (e) {
