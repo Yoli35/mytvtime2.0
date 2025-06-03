@@ -842,7 +842,7 @@ export class Menu {
                 gThis.profileUrl = data.profileUrl;
             })
             .catch((error) => {
-                console.error('Error:', error);
+                console.error({error});
             });
     }
 
