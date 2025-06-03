@@ -253,7 +253,7 @@ class UserSeriesRepository extends ServiceEntityRepository
             default => 's.`first_air_date`',
         };
         if ($network !== 'all') {
-            $innerJoin = " INNER JOIN series_network sn ON sn.`network_id` = $network AND sn.`series_id` = s.`id` ";
+            $innerJoin = " INNER JOIN series_network sn ON sn.`network_id` = $network AND sn.`series_id` = us.`series_id` ";
         } else {
             $innerJoin = '';
         }
@@ -307,7 +307,7 @@ class UserSeriesRepository extends ServiceEntityRepository
     {
         $network = $filters['network'];
         if ($network !== 'all') {
-            $innerJoin = " INNER JOIN series_network sn ON sn.`network_id` = $network AND sn.`series_id` = s.`id` ";
+            $innerJoin = " INNER JOIN series_network sn ON sn.`network_id` = $network AND sn.`series_id` = us.`series_id` ";
         } else {
             $innerJoin = '';
         }
@@ -325,7 +325,8 @@ class UserSeriesRepository extends ServiceEntityRepository
                 WHERE us.`user_id`=$userId
                     AND IF(sbd.`date`, DATE(sbd.`date`)<=NOW(), nue.`air_date`<=NOW())
                     AND nue.`season_number`>0";
-        return $this->getOne($sql);
+        $count = $this->getOne($sql);
+        return $count ?: 0;
     }
 
     public function searchSeries(User $user, mixed $query, string $locale): array
