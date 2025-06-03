@@ -1,176 +1,46 @@
-{#<div class="admin__series__edit">#}
-{#    <div class="admin__series__edit__title">#}
-{#        {{ movie.title }}{% if movieLocalizedNames|length %} - <span>{{ movieLocalizedNames.0.name }}</span>{% endif %}#}
-{#        <div class="admin__series__edit__title__id">#}
-{#            {{ ux_icon('iconoir:db') }}#}
-{#            {{ movie.id }}#}
-{#            <div class="series__db">#}
-{#                {% for key, value in movie %}#}
-{#                    <div class="series__db__property">#}
-{#                        <div class="series__db__property_key">{{ key }}</div>#}
-{#                        <div class="series__db__property_value">#}
-{#                            {% if key == 'tmdb_id' %}#}
-{#                                <a href="https://www.themoviedb.org/movie/{{ value }}" target="_blank" class="admin__series__edit__title__tmdb__id__link">#}
-{#                                    {{ value }}#}
-{#                                </a>#}
-{#                            {% elseif key == 'origin_country' %}#}
-{#                                {% for c in movie.origin_country %}#}
-{#                                    <div class="admin__series__edit__title__origin_country" data-title="{{ c|country_name }}">#}
-{#                                        {{ getEmojiFlag(c) }}#}
-{#                                    </div>#}
-{#                                {% endfor %}#}
-{#                            {% else %}#}
-{#                                {{ value }}#}
-{#                            {% endif %}#}
-{#                        </div>#}
-{#                    </div>#}
-{#                {% endfor %}#}
-{#            </div>#}
-{#        </div>#}
-{#        <div class="admin__series__edit__title__tmdb__id">#}
-{#            <img src="/images/the-movie-database.png" alt="TMDB" class="admin__series__edit__title__tmdb__id__logo">#}
-{#            <a href="https://www.themoviedb.org/movie/{{ movie.tmdb_id }}" target="_blank" class="admin__series__edit__title__tmdb__id__link">#}
-{#                {{ movie.tmdb_id }}#}
-{#            </a>#}
-{#            <div class="series__tmdb">#}
-{#                {% for key, value in tmdbMovie %}#}
-{#                    <div class="series__tmdb__property">#}
-{#                        <div class="series__tmdb__property_key">{{ key }}</div>#}
-{#                        {% if value is iterable %}#}
-{#                            <div class="series__tmdb__property_value__iterable">#}
-{#                                {% for item_key, item_value in value %}#}
-{#                                    <div class="series__tmdb__property_value__item">#}
-{#                                        <div class="series__tmdb__property_key">{{ item_key }}</div>#}
-{#                                        {% if item_value is iterable %}#}
-{#                                            <div class="series__tmdb__property_value__iterable">#}
-{#                                                {% for sub_item_key, sub_item_value in item_value %}#}
-{#                                                    <div class="series__tmdb__property_value__item">#}
-{#                                                        <div class="series__tmdb__property_key">{{ sub_item_key }}</div>#}
-{#                                                        {% if sub_item_key == 'origin_country' and sub_item_value|length %}#}
-{#                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key ~ ': ' ~ sub_item_value|country_name }}">#}
-{#                                                                {{ getEmojiFlag(sub_item_value) }}#}
-{#                                                            </div>#}
-{#                                                        {% elseif sub_item_key == 'iso_3166_1' and sub_item_value|length %}#}
-{#                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key ~ ': ' ~ sub_item_value }}">#}
-{#                                                                {{ getEmojiFlag(sub_item_value) }}#}
-{#                                                            </div>#}
-{#                                                        {% elseif sub_item_key == 'logo_path' and sub_item_value|length %}#}
-{#                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key }}">#}
-{#                                                                <img src="https://image.tmdb.org/t/p/w500{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__image__logo">#}
-{#                                                            </div>#}
-{#                                                        {% elseif sub_item_key == 'still_path' and sub_item_value|length %}#}
-{#                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key }}">#}
-{#                                                                <img src="https://image.tmdb.org/t/p/w300{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__image__still">#}
-{#                                                            </div>#}
-{#                                                        {% elseif sub_item_key == 'poster_path' and sub_item_value|length %}#}
-{#                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key }}">#}
-{#                                                                <img src="https://image.tmdb.org/t/p/w780{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__image__poster">#}
-{#                                                            </div>#}
-{#                                                        {% elseif sub_item_key == 'profile_path' and sub_item_value|length %}#}
-{#                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key }}">#}
-{#                                                                <img src="https://image.tmdb.org/t/p/h632{{ sub_item_value }}" alt="{{ sub_item_key }}" class="admin__image__profile">#}
-{#                                                            </div>#}
-{#                                                        {% else %}#}
-{#                                                            <div class="series__tmdb__property_value__item" data-title="{{ sub_item_key ~ ': ' ~ sub_item_value }}">#}
-{#                                                                "{{ sub_item_value }}"#}
-{#                                                            </div>#}
-{#                                                        {% endif %}#}
-{#                                                    </div>#}
-{#                                                {% endfor %}#}
-{#                                            </div>#}
-{#                                        {% elseif item_key == 'profile_path' and item_value|length %}#}
-{#                                            <div class="series__tmdb__property_value__item" data-title="{{ key }}">#}
-{#                                                <img src="https://image.tmdb.org/t/p/h632{{ item_value }}" alt="{{ item_key }}" class="admin__image__profile">#}
-{#                                            </div>#}
-{#                                        {% elseif item_key == 'still_path' and item_value|length %}#}
-{#                                            <div class="series__tmdb__property_value__item" data-title="{{ item_key }}">#}
-{#                                                <img src="https://image.tmdb.org/t/p/w300{{ item_value }}" alt="{{ item_key }}" class="admin__image__still">#}
-{#                                            </div>#}
-{#                                        {% elseif key == 'origin_country' %}#}
-{#                                            <div class="series__tmdb__property_value__item" data-title="{{ item_value|country_name }}">#}
-{#                                                {{ getEmojiFlag(item_value) }}#}
-{#                                            </div>#}
-{#                                        {% else %}#}
-{#                                            <div class="series__tmdb__property_value__item" data-title="{{ item_key ~ ': ' ~ item_value }}">#}
-{#                                                "{{ item_value }}"#}
-{#                                            </div>#}
-{#                                        {% endif %}#}
-{#                                    </div>#}
-{#                                {% endfor %}#}
-{#                            </div>#}
-{#                        {% elseif key == 'backdrop_path' and value|length %}#}
-{#                            <div class="series__tmdb__property_value" data-title="{{ key }}">#}
-{#                                <img src="https://image.tmdb.org/t/p/w1280{{ value }}" alt="{{ key }}" class="admin__image__backdrop">#}
-{#                            </div>#}
-{#                        {% elseif key == 'poster_path' and value|length %}#}
-{#                            <div class="series__tmdb__property_value" data-title="{{ key }}">#}
-{#                                <img src="https://image.tmdb.org/t/p/w780{{ value }}" alt="{{ key }}" class="admin__image__poster">#}
-{#                            </div>#}
-{#                        {% else %}#}
-{#                            <div class="series__tmdb__property_value">#}
-{#                                "{{ value }}"#}
-{#                            </div>#}
-{#                        {% endif %}#}
-{#                    </div>#}
-{#                {% endfor %}#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{#    <div class="admin__localized__names">#}
-{#        <h3>{{ 'Localized Names'|trans }}</h3>#}
-{#        <div class="admin__columns">#}
-{#            <div class="admin__lang">{{ 'Language'|trans }}</div>#}
-{#            <div class="admin__field_name">{{ 'Name'|trans }}</div>#}
-{#        </div>#}
-{#        {% for localizedName in movieLocalizedNames %}#}
-{#            <div class="admin__row">#}
-{#                <div class="admin__lang">#}
-{#                    {{ localizedName.locale|upper }}#}
-{#                </div>#}
-{#                <div class="admin__field">#}
-{#                    <label for="localized_name_{{ loop.index }}">#}
-{#                        <input id="localized_name_{{ loop.index }}" name="localized_name_{{ loop.index }}" value="{{ localizedName.name }}">#}
-{#                    </label>#}
-{#                </div>#}
-{#            </div>#}
-{#        {% endfor %}#}
-{#    </div>#}
-{#    <div class="admin__localized__overviews">#}
-{#        <h3>{{ 'Localized Overviews'|trans }}</h3>#}
-{#        <div class="admin__columns">#}
-{#            <div class="admin__lang">{{ 'Language'|trans }}</div>#}
-{#            <div class="admin__field_name">{{ 'Overview'|trans }}</div>#}
-{#        </div>#}
-{#        {% for localizedOverview in movieLocalizedOverviews %}#}
-{#            <div class="admin__row">#}
-{#                <div class="admin__lang">#}
-{#                    <div>{{ localizedOverview.locale|upper }}</div>#}
-{#                </div>#}
-{#                <div class="admin__field">#}
-{#                    <label for="localized_overview_{{ loop.index }}">#}
-{#                        <textarea id="localized_overview_{{ loop.index }}" name="localized_overview_{{ loop.index }}">{{ localizedOverview.overview }}</textarea>#}
-{#                    </label>#}
-{#                </div>#}
-{#            </div>#}
-{#        {% endfor %}#}
-{#    </div>#}
-{#    <div class="admin__additional__overviews">#}
-{#        <h3>{{ 'Additional Overviews'|trans }}</h3>#}
-{#        <div class="admin__columns">#}
-{#            <div class="admin__lang">{{ 'Language'|trans }}</div>#}
-{#            <div class="admin__field_name">{{ 'Overview'|trans }}</div>#}
-{#        </div>#}
-{#        {% for additionalOverview in movieAdditionalOverviews %}#}
-{#            <div class="admin__row">#}
-{#                <div class="admin__lang">#}
-{#                    <div>{{ additionalOverview.locale|upper }}</div>#}
-{#                </div>#}
-{#                <div class="admin__field">#}
-{#                    <label for="additional_overview_{{ loop.index }}">#}
-{#                        <textarea id="additional_overview_{{ loop.index }}" name="additional_overview_{{ loop.index }}">{{ additionalOverview.overview }}</textarea>#}
-{#                    </label>#}
-{#                </div>#}
-{#            </div>#}
-{#        {% endfor %}#}
-{#    </div>#}
-{#</div>#}
+<section class="admin__provider__details">
+
+    <div class="db">
+        <div class="source">Database</div>
+        <div class="details">
+            <div class="logo">
+                {% if provider.logo_path %}
+                    <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}{{ 'logo'|trans }}">
+                {% else %}
+                    {{ 'No logo'|trans }}
+                {% endif %}
+            </div>
+            <div class="infos">
+                <h2>{{ provider.provider_name }} - {{ provider.provider_id }}</h2>
+                <div class="display-priorities">
+                    {% for dp, v in provider.display_priorities %}
+                        <div class="display-priority" data-title="{{ dp|country_name }}">{{ getEmojiFlag(dp) }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if tvProvider %}
+        <div class="tmdb">
+            <div class="source">The Movie Database</div>
+            <div class="details">
+                <div class="logo">
+                    {% if tvProvider.logo_path %}
+                        <img src="{{ tvProvider.logo_path }}" alt="{{ tvProvider.provider_name }}{{ 'logo'|trans }}">
+                    {% else %}
+                        {{ 'No logo'|trans }}
+                    {% endif %}
+                </div>
+                <div class="infos">
+                    <h2>{{ tvProvider.provider_name }} - {{ tvProvider.provider_id }}</h2>
+                    <div class="display-priorities">
+                        {% for dp in tvProvider.display_priorities|keys|sort %}
+                            <div class="display-priority" data-title="{{ dp|country_name }}">{{ getEmojiFlag(dp) }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    {% endif %}
+</section>
