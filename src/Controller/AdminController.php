@@ -509,10 +509,23 @@ class AdminController extends AbstractController
             throw $this->createNotFoundException('Provider not found');
         }
 
-        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 5); // w500
         $provider['custom_provider'] = str_starts_with($provider['logo_path'], '+');
         $provider['logo_path'] = $this->seriesController->getProviderLogoFullPath($provider['logo_path'], $logoUrl);
         $provider['display_priorities'] = json_decode($provider['display_priorities'], true);
+
+        $tvProviderList = json_decode(
+            $this->tmdbService->getTvWatchProviderList($request->getLocale()),
+            true
+        );
+        $tvProvider = array_find($tvProviderList['results'], function ($p) use ($provider) {
+            return $p['provider_id'] === $provider['provider_id'];
+        });
+        dump($tvProvider);
+        if ($tvProvider) {
+            $tvProvider['logo_path'] = $this->seriesController->getProviderLogoFullPath($tvProvider['logo_path'], $logoUrl);
+            dump($tvProvider);
+        }
 
         $providersLink = $this->generateAdminUrl($this->generateUrl('admin_providers'), [
             'l' => $limit,
@@ -524,6 +537,7 @@ class AdminController extends AbstractController
         return $this->render('admin/index.html.twig', [
             'providersLink' => $providersLink,
             'provider' => $provider,
+            'tvProvider' => $tvProvider,
             'logoUrl' => $logoUrl,
         ]);
     }

@@ -36,7 +36,6 @@ use App\Repository\FilmingLocationRepository;
 use App\Repository\KeywordRepository;
 use App\Repository\NetworkRepository;
 use App\Repository\PeopleUserPreferredNameRepository;
-use App\Repository\ProviderRepository;
 use App\Repository\SeriesAdditionalOverviewRepository;
 use App\Repository\SeriesBroadcastDateRepository;
 use App\Repository\SeriesBroadcastScheduleRepository;
@@ -99,7 +98,6 @@ class SeriesController extends AbstractController
         private readonly MonologLogger                      $logger,
         private readonly NetworkRepository                  $networkRepository,
         private readonly PeopleUserPreferredNameRepository  $peopleUserPreferredNameRepository,
-        private readonly ProviderRepository                 $providerRepository,
         private readonly SeriesAdditionalOverviewRepository $seriesAdditionalOverviewRepository,
         private readonly SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
         private readonly SeriesBroadcastScheduleRepository  $seriesBroadcastScheduleRepository,
@@ -2946,8 +2944,8 @@ class SeriesController extends AbstractController
 
             $providerId = $schedule->getProviderId();
             if ($providerId) {
-                $provider = $this->providerRepository->findOneBy(['providerId' => $providerId]);
-                $providerName = $provider->getName();
+                $provider = $this->watchProviderRepository->findOneBy(['providerId' => $providerId]);
+                $providerName = $provider->getProviderName();
                 $providerLogo = $this->getProviderLogoFullPath($provider->getLogoPath(), $logoUrl);
             } else {
                 $providerName = null;

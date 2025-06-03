@@ -2,7 +2,7 @@
 
 namespace App\Api;
 
-use App\Repository\ProviderRepository;
+use App\Repository\WatchProviderRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class Providers extends AbstractController
 {
     public function __construct(
-        private readonly ProviderRepository $providerRepository,
+        private readonly WatchProviderRepository $providerRepository,
     )
     {
         // Inject dependencies if needed

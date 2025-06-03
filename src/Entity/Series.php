@@ -94,6 +94,12 @@ class Series
     #[ORM\ManyToMany(targetEntity: Network::class)]
     private Collection $networks;
 
+    /**
+     * @var Collection<int, WatchProvider>
+     */
+    #[ORM\ManyToMany(targetEntity: WatchProvider::class)]
+    private Collection $watchProviders;
+
     #[ORM\Column(nullable: true)]
     private ?array $originCountry = null;
 
@@ -121,6 +127,7 @@ class Series
         $this->seriesWatchLinks = new ArrayCollection();
         $this->updates = [];
         $this->seriesVideos = new ArrayCollection();
+        $this->watchProviders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -661,6 +668,30 @@ class Series
                 $seriesVideo->setSeries(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, WatchProvider>
+     */
+    public function getWatchProviders(): Collection
+    {
+        return $this->watchProviders;
+    }
+
+    public function addWatchProvider(WatchProvider $watchProvider): static
+    {
+        if (!$this->watchProviders->contains($watchProvider)) {
+            $this->watchProviders->add($watchProvider);
+        }
+
+        return $this;
+    }
+
+    public function removeWatchProvider(WatchProvider $watchProvider): static
+    {
+        $this->watchProviders->removeElement($watchProvider);
 
         return $this;
     }

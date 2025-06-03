@@ -61,7 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: UserSeries::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $series;
 
-    #[ORM\ManyToMany(targetEntity: Provider::class)]
+    #[ORM\ManyToMany(targetEntity: WatchProvider::class)]
     private Collection $providers;
 
     #[ORM\OneToMany(targetEntity: UserEpisode::class, mappedBy: 'user', orphanRemoval: true)]
@@ -367,7 +367,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->providers;
     }
 
-    public function addProvider(Provider $provider): static
+    public function addProvider(WatchProvider $provider): static
     {
         if (!$this->providers->contains($provider)) {
             $this->providers->add($provider);
@@ -376,7 +376,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeProvider(Provider $provider): static
+    public function removeProvider(WatchProvider $provider): static
     {
         $this->providers->removeElement($provider);
 

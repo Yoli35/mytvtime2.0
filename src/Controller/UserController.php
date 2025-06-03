@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\NetworkRepository;
-use App\Repository\ProviderRepository;
 use App\Repository\UserEpisodeNotificationRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
@@ -32,7 +31,6 @@ class UserController extends AbstractController
         private readonly ImageConfiguration                $imageConfiguration,
         private readonly ImageService                      $imageService,
         private readonly NetworkRepository                 $networkRepository,
-        private readonly ProviderRepository                $providerRepository,
         private readonly TranslatorInterface               $translator,
         private readonly WatchProviderRepository           $watchProviderRepository,
     )
@@ -118,7 +116,7 @@ class UserController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        $provider = $this->providerRepository->findOneBy(['providerId' => $id]);
+        $provider = $this->watchProviderRepository->findOneBy(['providerId' => $id]);
 
         if ($provider) {
             if ($user->getProviders()->contains($provider)) {

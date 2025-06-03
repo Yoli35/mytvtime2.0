@@ -35,6 +35,13 @@ class WatchProviderRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
     }
 
+    public function getAllProviders(): array
+    {
+        $sql = "SELECT * FROM `watch_provider` ORDER BY `provider_name`";
+
+        return $this->getAll($sql);
+    }
+
     public function getWatchProviders($country = null): array
     {
         $sql = "SELECT wp.`provider_id` as id, wp.`provider_name` as name "
