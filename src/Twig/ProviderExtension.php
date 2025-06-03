@@ -2,19 +2,11 @@
 
 namespace App\Twig;
 
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
-class ProviderExtension extends AbstractExtension
+class ProviderExtension
 {
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction('providerLogo', [$this, 'providerLogo'], ['is_safe' => ['html']]),
-            new TwigFunction('providerName', [$this, 'providerName'], ['is_safe' => ['html']]),
-        ];
-    }
-
+    #[AsTwigFunction('providerLogo')]
     function providerLogo(array $providers, int $providerId): string
     {
         $provider = array_filter($providers, function ($provider) use ($providerId) {
@@ -24,6 +16,7 @@ class ProviderExtension extends AbstractExtension
         return "<img src='{$provider['logoPath']}' alt='{$provider['name']}' title='{$provider['name']}' />";
     }
 
+    #[AsTwigFunction('providerName')]
     function providerName(array $providers, int $providerId): string
     {
         $provider = array_filter($providers, function ($provider) use ($providerId) {

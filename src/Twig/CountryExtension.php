@@ -2,20 +2,13 @@
 
 namespace App\Twig;
 
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
-class CountryExtension extends AbstractExtension
+class CountryExtension
 {
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction('getEmojiFlag', [$this, 'getEmojiFlag'], ['is_safe' => ['html']]),
-        ];
-    }
-
     // From Smaine Milianni : https://smaine-milianni.medium.com/emoji-flag-in-the-symfony-countrytype-f794f39e6ac9
-    function getEmojiFlag(string $countryCode): string
+    #[AsTwigFunction('getEmojiFlag')]
+    public function getEmojiFlag(string $countryCode): string
     {
         if ($countryCode === 'all') {
             return '🌍'; // ← Réponse donnée pas Copilot
