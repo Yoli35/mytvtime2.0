@@ -76,6 +76,7 @@ export class Season {
          * @property {string} rating
          * @property {string} now
          * @property {string} add
+         * @property {string} markAsWatched
          * @property {string} Television
          * @property {string} Mobile
          * @property {string} Tablet
@@ -987,6 +988,7 @@ export class Season {
         const episodeNumber = episode.getAttribute('data-e-number');
         const seasonNumber = episode.getAttribute('data-s-number');
         const lastEpisode = episode.getAttribute('data-last-episode');
+        const seriesId = episode.getAttribute('data-series-id');
         let views = parseInt(episode.getAttribute('data-views'));
         fetch('/' + gThis.lang + '/series/episode/remove', {
             method: 'POST',
@@ -1039,11 +1041,13 @@ export class Season {
                 newEpisode.classList.add('add-this-episode');
                 newEpisode.setAttribute('data-id', episodeId);
                 newEpisode.setAttribute('data-show-id', sId);
+                newEpisode.setAttribute('data-series-id', seriesId);
+                newEpisode.setAttribute('data-ue-id', ueId);
                 newEpisode.setAttribute('data-e-number', episodeNumber);
                 newEpisode.setAttribute('data-s-number', seasonNumber);
                 newEpisode.setAttribute('data-last-episode', lastEpisode);
                 newEpisode.setAttribute('data-views', '0');
-                newEpisode.setAttribute('data-title', gThis.text.add);
+                newEpisode.setAttribute('data-title', gThis.text.markAsWatched);
                 newEpisode.appendChild(gThis.getSvg('plus'));
                 newEpisode.addEventListener('click', gThis.addEpisode);
                 episode.parentElement.appendChild(newEpisode);
