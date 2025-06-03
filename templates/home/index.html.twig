@@ -196,7 +196,7 @@
             <div class="series-group">
                 <div class="header">
                     <div class="logo">
-                        {{ providerLogo(watchProviders, provider) }}
+                        {{ providerLogo(watchProviders, provider)|raw }}
                     </div>
                     <h2>{{ providerName(watchProviders, provider) }}</h2>
                     <label for="watch-providers">{# Filtrer par plateforme de streaming #}
