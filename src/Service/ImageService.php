@@ -4,6 +4,7 @@ namespace App\Service;
 
 use DateTimeImmutable;
 use Exception;
+use GdImage;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -106,8 +107,10 @@ class ImageService extends AbstractController
         $imageMapPath = $kernelProjectDir . '/public/images/map/';
         $imageTempPath = $kernelProjectDir . '/public/images/temp/';
 
+        $filename = $file->getClientOriginalName();
+        $isGoogleMapsImage = str_contains($filename, 'maps');
         $extension = $file->guessExtension();
-        $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . $n;
+        $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . ($isGoogleMapsImage ? 'maps-' : '') . $n;
         $tempName = $imageTempPath . $basename . '.' . $extension;
         $destination = $imageMapPath . $basename . '.webp';
 
@@ -153,9 +156,10 @@ class ImageService extends AbstractController
         return $image;
     }
 
-    public static function webpImage(string $sourcePath, string $destPath, int $quality = 100, int $width = 1920, int $height = 1080, bool $removeOld = true): ?string
+    public function webpImage(string $sourcePath, string $destPath, int $quality = 100, int $width = 1920, int $height = 1080, bool $removeOld = true): ?string
     {
         $destination = $destPath;
+        $kernelProjectDir = $this->getParameter('kernel.project_dir');
 
         $info = getimagesize($sourcePath);
         if ($info === false) {
@@ -211,9 +215,13 @@ class ImageService extends AbstractController
                     imagedestroy($image);
                     return null;
                 }
+                // If the filename ($destPath) contains "maps", add "Google Maps" on the image
+                $this->markAsGoogleMaps($destPath, $kernelProjectDir, $newImage, $width, $height);
+                // Convert to WebP
                 $successfullyConverted = imagewebp($newImage, $destination, $quality);
                 imagedestroy($newImage);
             } else {
+                $this->markAsGoogleMaps($destPath, $kernelProjectDir, $image, $width, $height);
                 $successfullyConverted = imagewebp($image, $destination, $quality);
             }
         } else {
@@ -224,6 +232,39 @@ class ImageService extends AbstractController
         if ($successfullyConverted && $removeOld) unlink($sourcePath);
 
         return $destination;
+    }
+
+    private function markAsGoogleMaps(string $destPath, string $kernelProjectDir, GdImage $newImage, int $width, int $height): void
+    {
+        // If the filename ($destPath) contains "maps", add "Google Maps" on the image with a dark background
+        if (str_contains($destPath, 'maps')) {
+            $font = $kernelProjectDir . '/public/fonts/google-sans/ProductSans-Regular.ttf';
+            $text = 'Google Maps';
+            $fontSize = 40;
+            $radius = 8;
+            $textColor = imagecolorallocate($newImage, 240, 240, 240);
+            $bbox = imagettfbbox($fontSize, 0, $font, $text);
+            $textWidth = $bbox[2] - $bbox[0];
+            $textHeight = $bbox[1] - $bbox[7];
+            // Draw a dark rectangle behind the text
+            $rectangleColor = imagecolorallocate($newImage, 10, 10, 10); // semi-transparent black
+            //imagefilledrectangle($newImage, $width - $textWidth - 30, $height - $textHeight - 30, $width - 10, $height - 10, $rectangleColor);
+            $this->ImageRoundFilledRectangle($newImage, $width - $textWidth - 60, $height - $textHeight - 30, $width - 20, $height - 10, $radius, $rectangleColor);
+            // Add the text
+            imagettftext($newImage, $fontSize, 0, $width - $textWidth - 40, $height - 30, $textColor, $font, $text);
+        }
+    }
+
+    private function ImageRoundFilledRectangle(GdImage &$im, int $x1, int $y1, int $x2, int $y2, int $radius, int $color): void
+    {
+// draw rectangle without corners
+        imagefilledrectangle($im, $x1+$radius, $y1, $x2-$radius, $y2, $color);
+        imagefilledrectangle($im, $x1, $y1+$radius, $x2, $y2-$radius, $color);
+// draw circled corners
+        imagefilledellipse($im, $x1+$radius, $y1+$radius, $radius*2, $radius*2, $color);
+        imagefilledellipse($im, $x2-$radius, $y1+$radius, $radius*2, $radius*2, $color);
+        imagefilledellipse($im, $x1+$radius, $y2-$radius, $radius*2, $radius*2, $color);
+        imagefilledellipse($im, $x2-$radius, $y2-$radius, $radius*2, $radius*2, $color);
     }
 
     public function saveImage($type, $imagePath, $imageUrl, $localPath = "/series/"): bool
