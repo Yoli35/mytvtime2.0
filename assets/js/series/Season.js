@@ -1282,6 +1282,7 @@ export class Season {
             return;
         }
         e.preventDefault();
+        const seriesNameSpan = document.querySelector('span.localized-name-span') || document.querySelector('span.name-span');
         const seriesId = targetStillDiv.getAttribute('data-series-id');
         const seasonId = targetStillDiv.getAttribute('data-season-id');
         const episodeId = targetStillDiv.getAttribute('data-episode-id');
@@ -1292,6 +1293,7 @@ export class Season {
                 // Save the image in %kernel.dir%/public/series/stills/season-xx/episode-xx.jpg
                 const formData = new FormData();
                 formData.append('file', clipboardItem, fileName);/*+ clipboardItem.type.split('/')[1]*/
+                formData.append('name', seriesNameSpan ? seriesNameSpan.textContent : 'Unknown Series');
                 const response = await fetch('/' + gThis.lang + '/series/episode/still/' + episodeId, {
                     method: 'POST',
                     body: formData

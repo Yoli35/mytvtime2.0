@@ -53,7 +53,7 @@ class ImageService extends AbstractController
                 // Ensure we have a valid image data string
                 if ($decodedBlob !== false && file_put_contents($tempName, $decodedBlob)) {
                     // Convert to WebP format
-                    $webp = $this->webpImage($tempName, $destination, 90);
+                    $webp = $this->webpImage($title, $tempName, $destination, 90);
 
                     if ($webp) {
                         return '/' . $basename . '.webp';
@@ -88,7 +88,7 @@ class ImageService extends AbstractController
 
         $copied = $this->saveImageFromUrl($url, $tempName, true);
         if ($copied) {
-            $webp = $this->webpImage($tempName, $destination);
+            $webp = $this->webpImage($title, $tempName, $destination);
             if ($webp) {
                 $image = '/' . $basename . '.webp';
             } else {
@@ -116,7 +116,7 @@ class ImageService extends AbstractController
 
         try {
             $file->move($imageTempPath, $basename . '.' . $extension);
-            $webp = $this->webpImage($tempName, $destination);
+            $webp = $this->webpImage($title, $tempName, $destination);
             if ($webp) {
                 $image = '/' . $basename . '.webp';
             } else {
@@ -143,7 +143,7 @@ class ImageService extends AbstractController
 
         try {
             $file->move($imageTempPath, $basename . '.' . $extension);
-            $webp = $this->webpImage($tempName, $destination, 90, -1); // width: -1 → no resize
+            $webp = $this->webpImage("", $tempName, $destination, 90, -1); // width: -1 → no resize
             if ($webp) {
                 $image = $basename . '.webp';
             } else {
@@ -156,7 +156,7 @@ class ImageService extends AbstractController
         return $image;
     }
 
-    public function webpImage(string $sourcePath, string $destPath, int $quality = 100, int $width = 1920, int $height = 1080, bool $removeOld = true): ?string
+    public function webpImage(string $title, string $sourcePath, string $destPath, int $quality = 100, int $width = 1920, int $height = 1080, bool $removeOld = true): ?string
     {
         $destination = $destPath;
         $kernelProjectDir = $this->getParameter('kernel.project_dir');
@@ -217,14 +217,18 @@ class ImageService extends AbstractController
                 }
                 // If the filename ($destPath) contains "maps", add "Google Maps" on the image
                 $this->markAsGoogleMaps($destPath, $kernelProjectDir, $newImage, $width, $height);
+                $this->addTitle($title, $destPath, $kernelProjectDir, $newImage, $width, $height);
                 // Convert to WebP
                 $successfullyConverted = imagewebp($newImage, $destination, $quality);
                 imagedestroy($newImage);
             } else {
                 $this->markAsGoogleMaps($destPath, $kernelProjectDir, $image, $width, $height);
+                $this->addTitle($title, $destPath, $kernelProjectDir, $image, $width, $height);
                 $successfullyConverted = imagewebp($image, $destination, $quality);
             }
         } else {
+            $this->markAsGoogleMaps($destPath, $kernelProjectDir, $image, $width, $height);
+            $this->addTitle($title, $destPath, $kernelProjectDir, $image, $width, $height);
             $successfullyConverted = imagewebp($image, $destination, $quality);
         }
         imagedestroy($image);
@@ -255,16 +259,36 @@ class ImageService extends AbstractController
         }
     }
 
+    private function addTitle(string $title, string $destPath, string $kernelProjectDir, GdImage $newImage, int $width, int $height): void
+    {
+        if ($title === "") {
+            return; // No title to add
+        }
+        $font = $kernelProjectDir . '/public/fonts/google-sans/ProductSans-Regular.ttf';
+        $fontSize = 40;
+        $radius = 8;
+        $textColor = imagecolorallocate($newImage, 240, 240, 240); // #f0f0f0
+        $bbox = imagettfbbox($fontSize, 0, $font, $title);
+        $textWidth = $bbox[2] - $bbox[0];
+        $textHeight = $bbox[1] - $bbox[7];
+        // Draw a dark rectangle behind the text
+        $rectangleColor = imagecolorallocate($newImage, 76, 32, 4); // semi-transparent black
+        //imagefilledrectangle($newImage, $width - $textWidth - 30, $height - $textHeight - 30, $width - 10, $height - 10, $rectangleColor);
+        $this->ImageRoundFilledRectangle($newImage, 20, $height - $textHeight - 40, $textWidth + 60, $height - 10, $radius, $rectangleColor);
+        // Add the text
+        imagettftext($newImage, $fontSize, 0, 40, $height - 30, $textColor, $font, $title);
+    }
+
     private function ImageRoundFilledRectangle(GdImage &$im, int $x1, int $y1, int $x2, int $y2, int $radius, int $color): void
     {
 // draw rectangle without corners
-        imagefilledrectangle($im, $x1+$radius, $y1, $x2-$radius, $y2, $color);
-        imagefilledrectangle($im, $x1, $y1+$radius, $x2, $y2-$radius, $color);
+        imagefilledrectangle($im, $x1 + $radius, $y1, $x2 - $radius, $y2, $color);
+        imagefilledrectangle($im, $x1, $y1 + $radius, $x2, $y2 - $radius, $color);
 // draw circled corners
-        imagefilledellipse($im, $x1+$radius, $y1+$radius, $radius*2, $radius*2, $color);
-        imagefilledellipse($im, $x2-$radius, $y1+$radius, $radius*2, $radius*2, $color);
-        imagefilledellipse($im, $x1+$radius, $y2-$radius, $radius*2, $radius*2, $color);
-        imagefilledellipse($im, $x2-$radius, $y2-$radius, $radius*2, $radius*2, $color);
+        imagefilledellipse($im, $x1 + $radius, $y1 + $radius, $radius * 2, $radius * 2, $color);
+        imagefilledellipse($im, $x2 - $radius, $y1 + $radius, $radius * 2, $radius * 2, $color);
+        imagefilledellipse($im, $x1 + $radius, $y2 - $radius, $radius * 2, $radius * 2, $color);
+        imagefilledellipse($im, $x2 - $radius, $y2 - $radius, $radius * 2, $radius * 2, $color);
     }
 
     public function saveImage($type, $imagePath, $imageUrl, $localPath = "/series/"): bool
