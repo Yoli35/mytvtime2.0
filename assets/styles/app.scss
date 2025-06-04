@@ -2047,7 +2047,7 @@ dialog {
             width: 100%;
 
             img {
-                border: 1rem solid var(--ardoise-20);
+                border-radius: 1rem;
                 max-height: 100%;
                 max-width: calc(100vw - 4rem);
                 object-fit: cover;
