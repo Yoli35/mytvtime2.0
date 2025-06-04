@@ -565,7 +565,7 @@
                                 <div class="networks">
                                     {% for network in tv.networks %}
                                         <div class="network-detail">
-                                            <div class="frame" data-title="{{ network.name }} ({{ network.id }})">
+                                            <div class="frame" data-title="{{ network.name }} ({{ network.id }})" data-title-bg="grey">
                                                 {% if network.logo_path %}
                                                     <img src="{{ network.logo_path }}" alt="{{ network.name }}" loading="lazy">
                                                 {% else %}
@@ -583,7 +583,7 @@
                                     img.addEventListener('load', function () {
                                         const width = img.naturalWidth;
                                         const height = img.naturalHeight;
-                                        img.closest('.frame').setAttribute('style', 'aspect-ratio: ' + width + ' / ' + height);
+                                        img.setAttribute('style', 'aspect-ratio: ' + width + ' / ' + height);
                                     });
                                 });
                             </script>
