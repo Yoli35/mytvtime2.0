@@ -2018,6 +2018,8 @@ class SeriesController extends AbstractController
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('file');
         $seriesName = $request->get('name');
+        $seasonNumber = $request->get('seasonNumber');
+        $episodeNumber = $request->get('episodeNumber');
         $basename = $uploadedFile->getClientOriginalName();
         $projectDir = $this->getParameter('kernel.project_dir');
         $imageTempPath = $projectDir . '/public/images/temp/';
@@ -2041,7 +2043,7 @@ class SeriesController extends AbstractController
         $copy = false;
 
         try {
-            $webp = $this->imageService->webpImage($seriesName, $tempName, $stillPath, 90, -1);
+            $webp = $this->imageService->webpImage($seriesName . ' - ' . sprintf("S%02dE%02d", $seasonNumber, $episodeNumber), $tempName, $stillPath, 90, -1);
             if ($webp) {
                 if ($copyCount) $basename .= '-' . $copyCount;
                 $imagePath = '/' . $basename . '.webp';

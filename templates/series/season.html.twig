@@ -210,7 +210,7 @@
                             {% set ues = episode.user_episodes %}
                             {% set air_date = episode.air_date %}
                             {% if air_date and air_date <= now %}
-                                <div class="episode" id="episode-{{ episode.episode_number }}" data-ue-id="{{ ue.id }}">
+                                <div class="episode" id="episode-{{ season.season_number }}-{{ episode.episode_number }}" data-ue-id="{{ ue.id }}">
                                     <div class="still" data-series-id="{{ series.tmdbId }}" data-season-id="{{ season.id }}" data-episode-id="{{ episode.id }}">
                                         {% if episode.still_path %}
                                             <img src="{{ episode.still_path }}" alt="{{ episode.name }}">

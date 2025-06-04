@@ -1286,6 +1286,9 @@ export class Season {
         const seriesId = targetStillDiv.getAttribute('data-series-id');
         const seasonId = targetStillDiv.getAttribute('data-season-id');
         const episodeId = targetStillDiv.getAttribute('data-episode-id');
+        const episodeDivId = targetStillDiv.closest('.episode').getAttribute('id');
+        const seasonNumber = episodeDivId.split('-')[1];
+        const episodeNumber = episodeDivId.split('-')[2];
         const fileName = seriesId + '-' + seasonId + '-' + episodeId;
 
         for (const clipboardItem of e.clipboardData.files) {
@@ -1294,6 +1297,8 @@ export class Season {
                 const formData = new FormData();
                 formData.append('file', clipboardItem, fileName);/*+ clipboardItem.type.split('/')[1]*/
                 formData.append('name', seriesNameSpan ? seriesNameSpan.textContent : 'Unknown Series');
+                formData.append('seasonNumber', seasonNumber);
+                formData.append('episodeNumber', episodeNumber);
                 const response = await fetch('/' + gThis.lang + '/series/episode/still/' + episodeId, {
                     method: 'POST',
                     body: formData
