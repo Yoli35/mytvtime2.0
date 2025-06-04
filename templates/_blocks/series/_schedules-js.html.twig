@@ -41,14 +41,19 @@
         const frequency = form.querySelector(frequencySelector).value;
         const providerSelector = 'select[name="provider-' + id + '"]';
         const provider = form.querySelector(providerSelector).value;
-        const daysSelector = 'input[name="days-' + id + '"]';
-        const days = form.querySelectorAll(daysSelector);
+        const scheduledDays = form.querySelectorAll(".scheduled-day");
         const dayArr = [];
-        days.forEach(day => {
-            if (day.checked) {
-                dayArr.push(day.value);
+        scheduledDays.forEach(day => {
+            const checkbox = day.querySelector('input[type="checkbox"]');
+            const input = day.querySelector('input[type="number"]');
+            if (checkbox.checked) {
+                dayArr.push({
+                    day: checkbox.value,
+                    count: input.value
+                });
             }
         });
+
         const data = {
             id: id,
             country: country,

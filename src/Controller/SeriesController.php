@@ -64,6 +64,7 @@ use DeepL\DeepLException;
 use Deepl\TextResult;
 use Psr\Log\LoggerInterface as MonologLogger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ErrorHandler\Error\OutOfMemoryError;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -1197,6 +1198,7 @@ class SeriesController extends AbstractController
     public function schedulesSave(Request $request): JsonResponse
     {
         $inputBag = $request->getPayload();
+
         $id = $inputBag->get('id');
         $country = $inputBag->get('country');
         $seasonNumber = $inputBag->get('seasonNumber');
@@ -1210,9 +1212,12 @@ class SeriesController extends AbstractController
         $frequency = $inputBag->get('frequency');
         $provider = $inputBag->get('provider');
         $seriesId = $inputBag->get('seriesId');
-        $dayArr = array_map(function ($d) {
-            return intval($d);
-        }, (array)$inputBag->filter('days', [], FILTER_DEFAULT, ['flags' => FILTER_REQUIRE_ARRAY]));
+        $all = $inputBag->all();
+        $daysArr = $all['days'] ?? [['day' => 0, 'count' => 0], ['day' => 1, 'count' => 0], ['day' => 2, 'count' => 0], ['day' => 3, 'count' => 0], ['day' => 4, 'count' => 0], ['day' => 5, 'count' => 0], ['day' => 6, 'count' => 0]];
+        $dayArr = array_fill(0, 7, 0);
+        foreach ($daysArr as $arr) {
+            $dayArr[intval($arr['day'])] = intval($arr['count']);
+        }
 
         $hour = (int)substr($time, 0, 2);
         $minute = (int)substr($time, 3, 2);
@@ -2012,6 +2017,7 @@ class SeriesController extends AbstractController
     {
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('file');
+        $seriesName = $request->get('name');
         $basename = $uploadedFile->getClientOriginalName();
         $projectDir = $this->getParameter('kernel.project_dir');
         $imageTempPath = $projectDir . '/public/images/temp/';
@@ -2035,7 +2041,7 @@ class SeriesController extends AbstractController
         $copy = false;
 
         try {
-            $webp = $this->imageService->webpImage($tempName, $stillPath, 90, -1);
+            $webp = $this->imageService->webpImage($seriesName, $tempName, $stillPath, 90, -1);
             if ($webp) {
                 if ($copyCount) $basename .= '-' . $copyCount;
                 $imagePath = '/' . $basename . '.webp';
@@ -3048,10 +3054,38 @@ class SeriesController extends AbstractController
                     $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
                 }
                 break;
-            case 2: // Daily
-                for ($i = $firstEpisode; $i <= $lastEpisode; $i++) {
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
-                    $date = $this->dateModify($date, '+1 day');
+            case 2: //
+                $n = array_reduce($daysOfWeek, function ($carry, $day) {
+                    return $carry + $day;
+                }, 0);
+                if ($n) {
+                    // day of week of first air date
+                    $firstAirDayOfWeek = intval($firstAirDate->format('w'));
+                    $weekNumber = 0;
+                    $episodeIndex = $firstEpisode;
+                    /*$this->addFlash('success',
+                        'date: ' . $firstAirDate->format('Y-m-d')
+                        . ' firstAirDayOfWeek: ' . $firstAirDayOfWeek
+                        . ' daysOfWeek: ' . implode(',', $daysOfWeek),
+                    );*/
+                    while ($episodeIndex <= $lastEpisode) {
+                        /*$this->addFlash('success', 'weekNumber: ' . $weekNumber);*/
+                        for ($i = 0; $i < 7 && $episodeIndex <= $lastEpisode; $i++) {
+                            for ($j = 0; $j < $daysOfWeek[$i] && $episodeIndex <= $lastEpisode; $j++) {
+                                $date = $this->dateModify($firstAirDate, '+' . (($i - $firstAirDayOfWeek + 7) % 7) . ' days');
+                                $date = $this->dateModify($date, "+$weekNumber week");
+                                $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $episodeIndex), 'episodeNumber' => $episodeIndex, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $episodeIndex), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $episodeIndex), 'future' => $now < $date];
+                                $episodeIndex++;
+                                /*$this->addFlash('success', 'episode index: ' . $episodeIndex);*/
+                            }
+                        }
+                        $weekNumber++;
+                    }
+                } else {
+                    for ($i = $firstEpisode; $i <= $lastEpisode; $i++) {
+                        $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
+                        $date = $this->dateModify($date, '+1 day');
+                    }
                 }
                 break;
             case 3: // Weekly, one at a time
