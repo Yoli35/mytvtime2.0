@@ -1,4 +1,22 @@
 <script>
+    const scheduledDayDivs = document.querySelectorAll('.scheduled-day');
+    scheduledDayDivs.forEach(div => {
+        const checkbox = div.querySelector('input[type="checkbox"]');
+        const input = div.querySelector('input[type="number"]');
+        if (checkbox && input) {
+            checkbox.addEventListener('change', () => {
+                if (checkbox.checked) {
+                    input.removeAttribute('disabled');
+                    if (input.value === '' || input.value === "0") {
+                        input.value = 1; // Set default value if empty
+                    }
+                } else {
+                    input.setAttribute('disabled', 'disabled');
+                }
+            });
+        }
+    });
+
     function SaveSchedule(id) {
         const form = document.getElementById('schedule-form-' + id);
         const countrySelector = 'input[name="country-' + id + '"]';

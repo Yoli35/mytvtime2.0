@@ -1363,6 +1363,14 @@ h2 {
                     &.full {
                         width: 100%;
                     }
+
+                    .scheduled-day {
+                        align-items: center;
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: space-between;
+                        width: 12rem;
+                    }
                 }
 
                 > div {
@@ -1666,17 +1674,15 @@ h2 {
                                 background-color: var(--ardoise-10);
                                 border-radius: .25rem;
                                 display: flex;
-                                height: 3rem;
                                 padding: .5rem;
-                                width: auto;
 
                                 &:hover {
                                     background-color: var(--ardoise-50);
                                 }
 
                                 img {
-                                    height: 100%;
-                                    width: 100%;
+                                    height: 3rem;
+                                    width: auto;
                                 }
                             }
                         }

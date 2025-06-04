@@ -992,6 +992,7 @@ class SeriesController extends AbstractController
         $providers = $this->getWatchProviders($country);
 
         $schedules = $this->seriesSchedulesV2($user, $series, $tv);
+
         $emptySchedule = $this->emptySchedule();
         $alternateSchedules = array_map(function ($s) use ($tv, $userEpisodes) {
             // Ajouter la "user" séries pour les épisodes vus
@@ -2880,12 +2881,14 @@ class SeriesController extends AbstractController
                 'ko' => ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
             ];
             $daysOfWeek = $schedule->getDaysOfWeek();
-            $scheduleDayOfWeek = array_map(fn($day) => $dayOfWeekArr[$locale][$day], $daysOfWeek);
-            $scheduleDayOfWeek = ucfirst(implode(', ', $scheduleDayOfWeek));
-            $dayArr = array_fill(0, 7, false);
-            foreach ($daysOfWeek as $day) {
-                $dayArr[$day] = true;
+            $scheduleDayOfWeek = [];
+            foreach ($daysOfWeek as $key => $day) {
+                if ($day) {
+                    $scheduleDayOfWeek[] = $dayOfWeekArr[$locale][$key];
+                }
             }
+            $scheduleDayOfWeek = ucfirst(implode(', ', $scheduleDayOfWeek));
+            $dayArr = $daysOfWeek;
 
             $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
 
@@ -3215,7 +3218,7 @@ class SeriesController extends AbstractController
     public function emptySchedule(): array
     {
         $now = $this->now();
-        $dayArrEmpty = array_fill(0, 7, false);
+        $dayArrEmpty = array_fill(0, 7, 0);
         return [
             'id' => 0,
             'seasonNumber' => 1,
