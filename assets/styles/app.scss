@@ -1,4 +1,4 @@
-@import "variables";
+@use "variables";
 
 *, *::before, *::after {
     box-sizing: border-box;
@@ -2292,7 +2292,7 @@ dialog {
     }
 
     .body {
-        @include flex-row();
+        /*@include flex-row();*/
         background-color: var(--ardoise-90);
         border-radius: .25em;
         color: var(--ardoise-10);
