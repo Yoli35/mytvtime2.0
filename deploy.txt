@@ -42,7 +42,8 @@
 10- > unzip Archive.zip;
 11- paste this in your remote terminal:
 
-    rm Archive.zip;
+    clear;
+    rm Archive.zip; echo 'Archives.zip file removed';
     echo 'Removing macos files';      rm -R __MACOSX;
     echo 'Removing .DS_Store files';  find ./ -depth -name ".DS_Store" -exec rm {} \;
     echo 'Removing file in ./temp';   cd temp;
