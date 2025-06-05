@@ -11,7 +11,7 @@
         flex-direction: column;
         gap: 1rem;
         padding: 1rem;
-        width: 15rem;
+        width: 20rem;
 
         .admin__menu_header {
             align-items: center;
@@ -337,9 +337,14 @@
                 width: 10rem;
             }
 
-            .user__movie, .user__series, .user__providers, .user__episodes {
+            .user__movie, .user__series, .user__providers, .user__networks {
                 text-align: right;
                 width: 5rem;
+            }
+
+            .user__episodes {
+                text-align: right;
+                width: 7rem;
             }
 
             .user__role {
@@ -1341,24 +1346,31 @@
             white-space: nowrap;
 
             .filming_locations__still {
+                flex-shrink: 0;
                 width: 12rem;
             }
 
-            .filming_locations__id, .filming_locations__tmdb_id {
-                text-align: right;
-                width: 4rem;
-            }
+            .list__item__header {
+                border: 2px solid transparent;
+                display: flex;
+                gap: 1rem;
 
-            .filming_locations__title, .filming_locations__location {
-                width: 10rem;
-            }
+                .filming_locations__id, .filming_locations__tmdb_id {
+                    text-align: right;
+                    width: 4rem;
+                }
 
-            .filming_locations__origin_country {
-                width: 5rem;
-            }
+                .filming_locations__title, .filming_locations__location {
+                    width: 10rem;
+                }
 
-            .filming_locations__dates {
-                width: 9rem;
+                .filming_locations__origin_country {
+                    width: 5rem;
+                }
+
+                .filming_locations__dates {
+                    width: 9rem;
+                }
             }
         }
 
@@ -1387,9 +1399,15 @@
 
                 .filming_locations__still {
                     aspect-ratio: 16 / 9;
-                    border: 2px solid transparent;
-                    border-radius: .25rem;
+                    height: auto;
                     width: 12rem;
+
+                    img {
+                        border: 2px solid transparent;
+                        border-radius: .25rem;
+                        height: 100%;
+                        width: 100%;
+                    }
 
                     &:has(svg) {
                         align-items: center;
@@ -1424,6 +1442,7 @@
                         font-size: 3rem;
                         gap: .25rem;
                         justify-content: center;
+                        line-height: 1.1em;
                         overflow-x: auto;
                         width: 5rem;
                     }
@@ -1566,6 +1585,26 @@
 
         .dim {
             margin-inline-start: auto;
+        }
+    }
+}
+
+@media (width < 1024px) {
+    .admin {
+        .admin__filming_locations {
+            .list__header {
+                .filming_locations__still {
+                    width: 6rem;
+                }
+            }
+
+            .list__content {
+                .list__item {
+                    .filming_locations__still {
+                        width: 6rem;
+                    }
+                }
+            }
         }
     }
 }

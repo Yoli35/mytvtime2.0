@@ -8,146 +8,146 @@
 
     <div class="list__header">
         <div class="filming_locations__still"></div>
-        {% if sort == 'id' %}
-            {% if order == 'desc' %}
-                <a class="filming_locations__id" href="{{ path('admin_filming_locations', {s: 'id', o: 'asc', l: limit}) }}">
-                    {{ 'Id'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down') }}
-                </a>
+        <div class="list__item__header">
+            {% if sort == 'id' %}
+                {% if order == 'desc' %}
+                    <a class="filming_locations__id" href="{{ path('admin_filming_locations', {s: 'id', o: 'asc', l: limit}) }}">
+                        {{ 'Id'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="filming_locations__id" href="{{ path('admin_filming_locations', {s: 'id', o: 'desc', l: limit}) }}">
+                        {{ 'Id'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
             {% else %}
                 <a class="filming_locations__id" href="{{ path('admin_filming_locations', {s: 'id', o: 'desc', l: limit}) }}">
                     {{ 'Id'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
-        {% else %}
-            <a class="filming_locations__id" href="{{ path('admin_filming_locations', {s: 'id', o: 'desc', l: limit}) }}">
-                {{ 'Id'|trans }}
-            </a>
-        {% endif %}
 
-        {% if sort == 'tmdb_id' %}
-            {% if order == 'desc' %}
-                <a class="filming_locations__tmdb_id" href="{{ path('admin_filming_locations', {s: 'tmdb_id', o: 'asc', l: limit}) }}">
-                    {{ 'TMDB Id'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down') }}
-                </a>
+            {% if sort == 'tmdb_id' %}
+                {% if order == 'desc' %}
+                    <a class="filming_locations__tmdb_id" href="{{ path('admin_filming_locations', {s: 'tmdb_id', o: 'asc', l: limit}) }}">
+                        {{ 'TMDB Id'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="filming_locations__tmdb_id" href="{{ path('admin_filming_locations', {s: 'tmdb_id', o: 'desc', l: limit}) }}">
+                        {{ 'TMDB Id'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
             {% else %}
                 <a class="filming_locations__tmdb_id" href="{{ path('admin_filming_locations', {s: 'tmdb_id', o: 'desc', l: limit}) }}">
                     {{ 'TMDB Id'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
-        {% else %}
-            <a class="filming_locations__tmdb_id" href="{{ path('admin_filming_locations', {s: 'tmdb_id', o: 'desc', l: limit}) }}">
-                {{ 'TMDB Id'|trans }}
-            </a>
-        {% endif %}
 
-        {% if sort == 'title' %}
-            {% if order == 'desc' %}
-                <a class="filming_locations__title" href="{{ path('admin_filming_locations', {s: 'title', o: 'asc', l: limit}) }}">
-                    {{ 'Title'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down') }}
-                </a>
+            {% if sort == 'title' %}
+                {% if order == 'desc' %}
+                    <a class="filming_locations__title" href="{{ path('admin_filming_locations', {s: 'title', o: 'asc', l: limit}) }}">
+                        {{ 'Title'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="filming_locations__title" href="{{ path('admin_filming_locations', {s: 'title', o: 'desc', l: limit}) }}">
+                        {{ 'Title'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
             {% else %}
                 <a class="filming_locations__title" href="{{ path('admin_filming_locations', {s: 'title', o: 'desc', l: limit}) }}">
                     {{ 'Title'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
-        {% else %}
-            <a class="filming_locations__title" href="{{ path('admin_filming_locations', {s: 'title', o: 'desc', l: limit}) }}">
-                {{ 'Title'|trans }}
-            </a>
-        {% endif %}
 
-        {% if sort == 'location' %}
-            {% if order == 'desc' %}
-                <a class="filming_locations__location" href="{{ path('admin_filming_locations', {s: 'location', o: 'asc', l: limit}) }}">
-                    {{ 'Location'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down') }}
-                </a>
+            {% if sort == 'location' %}
+                {% if order == 'desc' %}
+                    <a class="filming_locations__location" href="{{ path('admin_filming_locations', {s: 'location', o: 'asc', l: limit}) }}">
+                        {{ 'Location'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="filming_locations__location" href="{{ path('admin_filming_locations', {s: 'location', o: 'desc', l: limit}) }}">
+                        {{ 'Location'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
             {% else %}
                 <a class="filming_locations__location" href="{{ path('admin_filming_locations', {s: 'location', o: 'desc', l: limit}) }}">
                     {{ 'Location'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
-        {% else %}
-            <a class="filming_locations__location" href="{{ path('admin_filming_locations', {s: 'location', o: 'desc', l: limit}) }}">
-                {{ 'Location'|trans }}
-            </a>
-        {% endif %}
 
-        {% if sort == 'origin_country' %}
-            {% if order == 'desc' %}
-                <a class="filming_locations__origin_country" href="{{ path('admin_filming_locations', {s: 'origin_country', o: 'asc', l: limit}) }}">
-                    {{ 'Country'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down') }}
-                </a>
+            {% if sort == 'origin_country' %}
+                {% if order == 'desc' %}
+                    <a class="filming_locations__origin_country" href="{{ path('admin_filming_locations', {s: 'origin_country', o: 'asc', l: limit}) }}">
+                        {{ 'Country'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="filming_locations__origin_country" href="{{ path('admin_filming_locations', {s: 'origin_country', o: 'desc', l: limit}) }}">
+                        {{ 'Country'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
             {% else %}
                 <a class="filming_locations__origin_country" href="{{ path('admin_filming_locations', {s: 'origin_country', o: 'desc', l: limit}) }}">
                     {{ 'Country'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up') }}
                 </a>
             {% endif %}
-        {% else %}
-            <a class="filming_locations__origin_country" href="{{ path('admin_filming_locations', {s: 'origin_country', o: 'desc', l: limit}) }}">
-                {{ 'Country'|trans }}
-            </a>
-        {% endif %}
 
-        {% if sort == 'created_at' %}
-            {% if order == 'desc' %}
-                <a class="filming_locations__dates" href="{{ path('admin_filming_locations', {s: 'created_at', o: 'asc', l: limit}) }}">
-                    {{ 'Date added'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down') }}
-                </a>
+            {% if sort == 'created_at' %}
+                {% if order == 'desc' %}
+                    <a class="filming_locations__dates" href="{{ path('admin_filming_locations', {s: 'created_at', o: 'asc', l: limit}) }}">
+                        {{ 'Date added'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="filming_locations__dates" href="{{ path('admin_filming_locations', {s: 'created_at', o: 'desc', l: limit}) }}">
+                        {{ 'Date added'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
             {% else %}
                 <a class="filming_locations__dates" href="{{ path('admin_filming_locations', {s: 'created_at', o: 'desc', l: limit}) }}">
-                    {{ 'Date added'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up') }}
+                    {{ 'Date added' |trans }}
                 </a>
             {% endif %}
-        {% else %}
-            <a class="filming_locations__dates" href="{{ path('admin_filming_locations', {s: 'created_at', o: 'desc', l: limit}) }}">
-                {{ 'Date added' |trans }}
-            </a>
-        {% endif %}
 
-        {% if sort == 'updated_at' %}
-            {% if order == 'desc' %}
-                <a class="filming_locations__dates" href="{{ path('admin_filming_locations', {s: 'updated_at', o: 'asc', l: limit}) }}">
-                    {{ 'Date updated'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-down') }}
-                </a>
+            {% if sort == 'updated_at' %}
+                {% if order == 'desc' %}
+                    <a class="filming_locations__dates" href="{{ path('admin_filming_locations', {s: 'updated_at', o: 'asc', l: limit}) }}">
+                        {{ 'Update_'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="filming_locations__dates" href="{{ path('admin_filming_locations', {s: 'updated_at', o: 'desc', l: limit}) }}">
+                        {{ 'Update_'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
             {% else %}
                 <a class="filming_locations__dates" href="{{ path('admin_filming_locations', {s: 'updated_at', o: 'desc', l: limit}) }}">
-                    {{ 'Date updated'|trans }}
-                    {{ ux_icon('iconoir:nav-arrow-up') }}
+                    {{ 'Update_' |trans }}
                 </a>
             {% endif %}
-        {% else %}
-            <a class="filming_locations__dates" href="{{ path('admin_filming_locations', {s: 'updated_at', o: 'desc', l: limit}) }}">
-                {{ 'Date updated' |trans }}
-            </a>
-        {% endif %}
+        </div>
 
     </div>
     <div class="list__content">
         {% for fl in locations %}
             <div class="list__item">
                 <a href="{{ path('admin_filming_location_edit', {id: fl.id}) }}?p={{ page }}&s={{ sort }}&o={{ order }}&l={{ limit }}">
-                    {% if fl.still_path %}
-                        <div data-title="{{ fl.location }} - {{ 'See the filming location description'|trans }}">
+                    <div class="filming_locations__still" data-title="{{ fl.location }} - {{ 'See the filming location description'|trans }}">
+                        {% if fl.still_path %}
                             <img src="/images/map{{ fl.still_path }}" class="filming_locations__still" alt="{{ fl.location }}">
-                        </div>
-                    {% else %}
-                        <div class="filming_locations__still" data-title="{{ fl.location }} - {{ 'See the filming location description'|trans }}">
+                        {% else %}
                             {{ ux_icon('fa6-solid:photo-film') }}
-                        </div>
-                    {% endif %}
+                        {% endif %}
+                    </div>
                 </a>
                 <a class="item" href="{{ path('admin_filming_location_edit', {id: fl.id}) }}?p={{ page }}&s={{ sort }}&o={{ order }}&l={{ limit }}">
                     <div class="filming_locations__id">{{ fl.id }}</div>
@@ -160,7 +160,7 @@
                         {% endfor %}
                     </div>
                     <div class="filming_locations__dates">{{ fl.created_at }}</div>
-                    <div class="filming_locations__dates">{{ fl.updated_at }}</div>
+                    <div class="filming_locations__dates">{% if fl.created_at != fl.updated_at %}{{ fl.updated_at }}{% endif %}</div>
                 </a>
             </div>
         {% endfor %}
