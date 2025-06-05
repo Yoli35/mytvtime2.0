@@ -85,9 +85,10 @@
             </div>
 
             {{ include('_blocks/map/_thumbnails.html.twig', {styles: settings.data.styles}) }}
-
+            <div class="series-location-selected" style="display: none">{{ selectedFilmingLocation }}</div>
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
+                    const selectedFilmingLocation = parseInt(document.querySelector('.series-location-selected').textContent) || 0;
                     const flSeriesMapSelect = document.getElementById('fl-series-map-select');
                     const flCountryMapSelect = document.getElementById('fl-country-map-select');
                     const flCountryBbSelect = document.getElementById('fl-country-bb-select');
@@ -109,17 +110,22 @@
                         toCountry.addEventListener('click', zoomToSeriesCountry);
                         toMarkers.addEventListener('click', zoomToSeriesLocations);
                     });
+
+                    if (selectedFilmingLocation > 0) {
+                        flSeriesMapSelect.value = selectedFilmingLocation;
+                        gotoLocation(selectedFilmingLocation);
+                    }
                 });
 
-                function gotoLocation(e) {
+                function gotoLocation(selectedValue) {
                     /*const select = document.getElementById('fl-series-map-select');
                     const id = select.options[select.selectedIndex].value;
                     const locationH4 = document.querySelector(`h4[data-tmdb-id="${id}"]`);
                     locationH4.scrollIntoView({behavior: 'instant', block: 'center'});*/
                     const map = document.getElementById('map');
                     const allSeriesLocations = document.querySelector('.all-series-locations');
-                    const select = e.currentTarget;
-                    const value = select.options[select.selectedIndex].value;
+                    const select = document.getElementById('fl-series-map-select');
+                    const value = selectedValue || select.options[select.selectedIndex].value;
                     let country;
                     if (value !== "") {
                         const markerToHide = map.querySelectorAll(`.mapboxgl-marker:not([data-tmdb-id="${value}"])`);

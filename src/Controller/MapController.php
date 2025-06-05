@@ -29,6 +29,8 @@ class MapController extends AbstractController
     #[Route('/index', name: 'index')]
     public function index(Request $request): Response
     {
+        $selectedFilmingLocation = $request->get('fl', 0);
+
         $settings = $this->settingsRepository->findOneBy(['name' => 'mapbox']);
 
         $locations = $this->getAllFilmingLocations('title');
@@ -86,6 +88,7 @@ class MapController extends AbstractController
 
         return $this->render('map/index.html.twig', [
             'fl' => $fl,
+            'selectedFilmingLocation' => $selectedFilmingLocation,
             'countries' => $countries,
             'countryLatLngs' => $countryLatLngs,
             'countryLocationIds' => $countryLocationIds,
