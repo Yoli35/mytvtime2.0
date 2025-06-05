@@ -228,12 +228,14 @@ export class Season {
             editEpisodeInfosDialog.querySelector('.frame').scrollTo(0, submitRow.offsetTop);
         });
 
+        const quickEpisodesDiv = document.querySelector('.quick-episodes');
+        const seasonNumber = quickEpisodesDiv.getAttribute('data-season-number');
         const quickEpisodeLinks = document.querySelectorAll('.quick-episode');
         quickEpisodeLinks.forEach(episode => {
             episode.addEventListener('click', e => {
                 e.preventDefault();
                 const episodeNumber = e.currentTarget.getAttribute('data-number');
-                const selector = '#episode-' + episodeNumber;
+                const selector = '#episode-' + seasonNumber + '-' + episodeNumber;
                 const target = document.querySelector(selector);
                 target.scrollIntoView({behavior: 'smooth'});
             });
