@@ -54,17 +54,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult();
     }
 
-    public function usersQB(): array
-    {
-        return $this->createQueryBuilder('u')
-            ->select('u.id', 'u.avatar', 'u.email', 'u.username', 'COUNT(u.providers)')
-            ->addSelect('(SELECT COUNT(us) FROM App\Entity\UserSeries us WHERE us.user=u) as seriesCount')
-            ->addSelect('(SELECT COUNT(ue) FROM App\Entity\UserEpisode ue WHERE ue.user=u) as episodeCount')
-            ->orderBy('u.id')
-            ->getQuery()
-            ->getArrayResult();
-    }
-
     public function users(): array
     {
         $sql = "SELECT u.id       as id,
@@ -74,8 +63,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                        u.roles    as roles,
                        (SELECT COUNT(*) FROM user_movie um WHERE um.user_id=u.id)    as movieCount,
                        (SELECT COUNT(*) FROM user_series us WHERE us.user_id=u.id)   as seriesCount,
-                       (SELECT COUNT(*) FROM user_provider up WHERE up.user_id=u.id) as providerCount,
-                       (SELECT COUNT(*) FROM user_episode ue WHERE ue.user_id=u.id)  as episodeCount
+                       (SELECT COUNT(*) FROM user_watch_provider up WHERE up.user_id=u.id) as providerCount,
+                       (SELECT COUNT(*) FROM user_network un WHERE un.user_id=u.id) as networkCount,
+                       (SELECT COUNT(*) FROM user_episode ue WHERE ue.user_id=u.id)  as episodeCount,
+                       (SELECT COUNT(*) FROM user_episode ue WHERE ue.user_id=u.id AND ue.watch_at IS NOT NULL)  as watchedEpisodeCount
                 FROM user u
                 ORDER BY u.id";
 

@@ -7,8 +7,9 @@
         <div class="user__email">{{ 'Email'|trans }}</div>
         <div class="user__movie">{{ 'Movie'|trans }}</div>
         <div class="user__series">{{ 'Series'|trans }}</div>
-        <div class="user__providers">{{ 'Providers'|trans }}</div>
         <div class="user__episodes">{{ 'Episodes'|trans }}</div>
+        <div class="user__providers">{{ 'Providers'|trans }}</div>
+        <div class="user__networks">{{ 'Networks'|trans }}</div>
         <div class="user__role">User</div>
         <div class="user__role">Admin</div>
         <div class="user__role">Switch</div>
@@ -27,8 +28,9 @@
             <div class="user__email">{{ u.email }}</div>
             <div class="user__movie">{{ u.movieCount }}</div>
             <div class="user__series">{{ u.seriesCount }}</div>
+            <div class="user__episodes">{{ u.watchedEpisodeCount }} / {{ u.episodeCount }}</div>
             <div class="user__providers">{{ u.providerCount }}</div>
-            <div class="user__episodes">{{ u.episodeCount }}</div>
+            <div class="user__networks">{{ u.networkCount }}</div>
             <div class="user__role">{% if 'USER' in u.roles %}{{ ux_icon('fa6-solid:check') }}{% endif %}</div>
             <div class="user__role">{% if 'ADMIN' in u.roles %}{{ ux_icon('fa6-solid:check') }}{% endif %}</div>
             <div class="user__role">{% if 'SWITCH' in u.roles %}{{ ux_icon('fa6-solid:check') }}{% endif %}</div>
