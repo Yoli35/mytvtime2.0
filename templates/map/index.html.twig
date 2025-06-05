@@ -56,7 +56,7 @@
                     </label>
                     <label for="fl-country-bb-select">{{ 'Countries'|trans }}
                         <select id="fl-country-bb-select">
-                            <option value="">{{ 'All countries'|trans }}</option>
+                            <option value="all">{{ 'All countries'|trans }}</option>
                             {% for c in countryBoundingBoxes %}
                                 <option value="{{ c.code }}"
                                         data-lat1="{{ c.lat1 }}" data-lng1="{{ c.lng1 }}"
@@ -117,6 +117,7 @@
                     }
                 });
 
+                /** @param {Event|number} selectedValue */
                 function gotoLocation(selectedValue) {
                     /*const select = document.getElementById('fl-series-map-select');
                     const id = select.options[select.selectedIndex].value;
@@ -125,9 +126,9 @@
                     const map = document.getElementById('map');
                     const allSeriesLocations = document.querySelector('.all-series-locations');
                     const select = document.getElementById('fl-series-map-select');
-                    const value = selectedValue || select.options[select.selectedIndex].value;
+                    const value = typeof selectedValue == "number" ? selectedValue : select.options[select.selectedIndex].value;
                     let country;
-                    if (value !== "") {
+                    if (value !== "all") {
                         const markerToHide = map.querySelectorAll(`.mapboxgl-marker:not([data-tmdb-id="${value}"])`);
                         markerToHide.forEach(marker => {
                             marker.style.display = 'none';
