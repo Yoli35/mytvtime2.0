@@ -64,7 +64,7 @@ class WatchProviderRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function adminProviders(string $locale, int $page, string $sort, string $order, int $perPage = 20): array
+    public function adminProviders(int $page, string $sort, string $order, int $perPage = 20): array
     {
         $offset = ($page - 1) * $perPage;
         $sql = "SELECT *
