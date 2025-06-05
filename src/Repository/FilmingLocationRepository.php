@@ -77,6 +77,18 @@ class FilmingLocationRepository extends ServiceEntityRepository
         return count($this->getAll($sql));
     }
 
+    public function adminLocations(int $page, string $sort, string $order, int $limit): array
+    {
+        $offset = ($page - 1) * $limit;
+        $sql = "SELECT fl.`id`, fl.`tmdb_id`, fl.`title`, fl.`location`, fl.`origin_country`, fl.`created_at`, fl.`updated_at`, fli.path as still_path
+                FROM filming_location fl
+                    LEFT JOIN filming_location_image fli ON fl.`still_id` = fli.`id`
+                WHERE fl.is_series = 1
+                ORDER BY $sort $order LIMIT $limit OFFSET $offset";
+
+        return $this->getAll($sql);
+    }
+
     public function getAll($sql): array
     {
         try {

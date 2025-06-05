@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\FilmingLocationRepository;
 use App\Repository\MovieRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\UserRepository;
@@ -25,15 +26,16 @@ class AdminController extends AbstractController
 {
 
     public function __construct(
-        private readonly DateService             $dateService,
-        private readonly ImageConfiguration      $imageConfiguration,
-        private readonly MovieRepository         $movieRepository,
-        private readonly SeriesController        $seriesController,
-        private readonly SeriesRepository        $seriesRepository,
-        private readonly UserRepository          $userRepository,
-        private readonly TMDBService             $tmdbService,
-        private readonly TranslatorInterface     $translator,
-        private readonly WatchProviderRepository $watchProviderRepository
+        private readonly DateService               $dateService,
+        private readonly FilmingLocationRepository $filmingLocationRepository,
+        private readonly ImageConfiguration        $imageConfiguration,
+        private readonly MovieRepository           $movieRepository,
+        private readonly SeriesController          $seriesController,
+        private readonly SeriesRepository          $seriesRepository,
+        private readonly UserRepository            $userRepository,
+        private readonly TMDBService               $tmdbService,
+        private readonly TranslatorInterface       $translator,
+        private readonly WatchProviderRepository   $watchProviderRepository
     )
     {
     }
@@ -468,7 +470,7 @@ class AdminController extends AbstractController
         $page = $request->query->getInt('p', 1);
         $limit = $request->query->getInt('l', 25);
 
-        $providers = $this->watchProviderRepository->adminProviders($request->getLocale(), $page, $sort, $order, $limit);
+        $providers = $this->watchProviderRepository->adminProviders($page, $sort, $order, $limit);
         $providerCount = $this->watchProviderRepository->count();
         $pageCount = ceil($providerCount / $limit);
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
@@ -521,10 +523,8 @@ class AdminController extends AbstractController
         $tvProvider = array_find($tvProviderList['results'], function ($p) use ($provider) {
             return $p['provider_id'] === $provider['provider_id'];
         });
-        dump($tvProvider);
         if ($tvProvider) {
             $tvProvider['logo_path'] = $this->seriesController->getProviderLogoFullPath($tvProvider['logo_path'], $logoUrl);
-            dump($tvProvider);
         }
 
         $providersLink = $this->generateAdminUrl($this->generateUrl('admin_providers'), [
@@ -539,6 +539,91 @@ class AdminController extends AbstractController
             'provider' => $provider,
             'tvProvider' => $tvProvider,
             'logoUrl' => $logoUrl,
+        ]);
+    }
+
+    #[Route('/filming/locations', name: 'filming_locations')]
+    public function adminFilmingLocations(Request $request): Response
+    {
+        $sort = $request->query->get('s', 'id');
+        $order = $request->query->get('o', 'desc');
+        $page = $request->query->getInt('p', 1);
+        $limit = $request->query->getInt('l', 25);
+
+        // Implement the logic to fetch filming locations from the database or an API.
+        // For now, we will return an empty array as a placeholder.
+        $locations = $this->filmingLocationRepository->adminLocations($page, $sort, $order, $limit);
+        $locationCount = $this->filmingLocationRepository->count(['isSeries' => true]);
+        $pageCount = ceil($locationCount / $limit);
+
+        $locations = array_map(function ($l) {
+            $l['created_at'] = $this->dateService->formatDateRelativeShort($l['created_at'], 'Europe/Paris', 'fr') . " " .$this->translator->trans('at') . " " . substr($l['created_at'], 11, 5);
+            if (!is_numeric($l['created_at'][0])) $l['created_at'] = ucfirst($l['created_at']);
+            $l['updated_at'] = $this->dateService->formatDateRelativeShort($l['updated_at'], 'Europe/Paris', 'fr') . " " .$this->translator->trans('at') . " " . substr($l['updated_at'], 11, 5);
+            if (!is_numeric($l['updated_at'][0])) $l['updated_at'] = ucfirst($l['updated_at']);
+            $l['origin_country'] = json_decode($l['origin_country'], true);
+            return $l;
+        }, $locations);
+
+        $pagination = $this->generateLinks($pageCount, $page, $this->generateUrl('admin_filming_locations'), [
+            's' => $sort,
+            'o' => $order,
+            'l' => $limit,
+        ]);
+
+        return $this->render('admin/index.html.twig', [
+            'locations' => $locations,
+            'locationCount' => $locationCount,
+            'pagination' => $pagination,
+            'page' => $page,
+            'limit' => $limit,
+            'pageCount' => $pageCount,
+            'sort' => $sort,
+            'order' => $order,
+        ]);
+    }
+
+    #[Route('/filming/location/{id}', name: 'filming_location_edit')]
+    public function adminFilmingLocationEdit(Request $request, int $id): Response
+    {
+        $sort = $request->query->get('s', 'id');
+        $order = $request->query->get('o', 'desc');
+        $page = $request->query->getInt('p', 1);
+        $limit = $request->query->getInt('l', 20);
+
+        $location = $this->filmingLocationRepository->getOne("SELECT fl.*, fli.path as still_path FROM filming_location fl LEFT JOIN filming_location_image fli on fl.id = fli.filming_location_id WHERE fl.id = $id");
+        if (!$location) {
+            throw $this->createNotFoundException('Filming location not found');
+        }
+        $location['origin_country'] = json_decode($location['origin_country'], true);
+        $location['created_at'] = $this->dateService->formatDateRelativeShort($location['created_at'], 'Europe/Paris', 'fr') . " " . $this->translator->trans('at') . " " . substr($location['created_at'], 11, 5);
+        if (!is_numeric($location['created_at'][0])) {
+            $location['created_at'] = ucfirst($location['created_at']);
+        }
+        $location['updated_at'] = $this->dateService->formatDateRelativeShort($location['updated_at'], 'Europe/Paris', 'fr') . " " . $this->translator->trans('at') . " " . substr($location['updated_at'], 11, 5);
+        if (!is_numeric($location['updated_at'][0])) {
+            $location['updated_at'] = ucfirst($location['updated_at']);
+        }
+
+        $locationImages = $this->filmingLocationRepository->locationImages([$id]);
+        $location['images'] = array_map(function ($img) {
+            return [
+                'id' => $img['id'],
+                'path' => $img['path'],
+            ];
+        }, $locationImages);
+
+        $filmingLocationsLink = $this->generateAdminUrl($this->generateUrl('admin_filming_locations'), [
+            'l' => $limit,
+            'o' => $order,
+            'p' => $page,
+            's' => $sort,
+        ]);
+
+        return $this->render('admin/index.html.twig', [
+            'filmingLocationsLink' => $filmingLocationsLink,
+            'location' => $location,
+            'images' => $location['images'],
         ]);
     }
 

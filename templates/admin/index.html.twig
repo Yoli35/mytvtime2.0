@@ -52,6 +52,21 @@
                             </div>
                         </a>
                     {% endif %}
+                    {% if filmingLocationsLink is defined %}
+                        <a href="{{ filmingLocationsLink|raw }}"{% if route starts with 'admin_filming_location' %} class="active"{% endif %}>
+                            <div>{{ ux_icon('fa6-solid:photo-film', {height: "18px", width: "18px"}) }}</div>
+                            <div class="large">
+                                {{ 'Providers'|trans }}
+                            </div>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('admin_filming_locations') }}"{% if route starts with 'admin_filming_location' %} class="active"{% endif %}>
+                            <div>{{ ux_icon('fa6-solid:photo-film', {height: "18px", width: "18px"}) }}</div>
+                            <div class="large">
+                                {{ 'Providers'|trans }}
+                            </div>
+                        </a>
+                    {% endif %}
                     {% if providersLink is defined %}
                         <a href="{{ providersLink|raw }}"{% if route starts with 'admin_provider' %} class="active"{% endif %}>
                             <div>{{ ux_icon('healthicons:provider-fst-outline', {height: "18px", width: "18px"}) }}</div>
@@ -111,6 +126,12 @@
                 {% endif %}
                 {% if route == 'admin_movie_edit' %}
                     {% include('_blocks/admin/_movie-edit.html.twig') %}
+                {% endif %}
+                {% if route == 'admin_filming_locations' %}
+                    {% include('_blocks/admin/_filming-locations.html.twig') %}
+                {% endif %}
+                {% if route == 'admin_filming_location_edit' %}
+                    {% include('_blocks/admin/_filming-location-edit.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_providers' %}
                     {% include('_blocks/admin/_providers.html.twig') %}

@@ -1,0 +1,33 @@
+<section class="admin__tools">
+    <h1>{{ 'Edit filming location'|trans }} "{{ location.title }}" - "{{ location.location }}"</h1>
+</section>
+<section class="admin__filming_location_details">
+    <div class="filming_location__still">
+        {% if location.still_path %}
+            <img src="/images/map{{ asset(location.still_path) }}" alt="{{ location.title }}">
+        {% else %}
+            <img src="{{ asset('/images/placeholder.png') }}" alt="{{ 'No image'|trans }}">
+        {% endif %}
+    </div>
+    <div class="filming_location__details">
+        <div class="filming_location__id">{{ 'Id'|trans }}: <a href="{{ path("app_map_index", {'fl': location.tmdb_id}) }}" target="_blank">{{ location.id }}</a></div>
+        <div class="filming_location__id">{{ 'TMDB Id'|trans }}: <a href="{{ path("app_series_tmdb", {id: location.tmdb_id, slug: location.title|slug}) }}" target="_blank">{{ location.tmdb_id }}</a></div>
+        <div class="filming_location__title">{{ 'Title'|trans }}: {{ location.title }}</div>
+        <div class="filming_location__location">{{ 'Location'|trans }}: {{ location.location }}</div>
+        <div class="filming_location__description">{{ 'Description'|trans }}: {{ location.description }}</div>
+        <div class="filming_location_coordinates">{{ 'Coordinates'|trans }}: {{ location.latitude }}, {{ location.longitude }}</div>
+        <div class="filming_location__dates">{{ 'Creation'|trans }}: {{ location.created_at }}</div>
+        <div class="filming_location__dates">{{ 'Update_'|trans }}: {{ location.updated_at }}</div>
+    </div>
+    <div class="filming_location_images">
+        <h2>{{ 'Images'|trans }}</h2>
+        <div class="filming_location__images">
+            {% for image in location.images %}
+                <div class="filming_location__image">
+                    <img src="/images/map{{ image.path }}" alt="{{ 'image'|trans }} #{{ loop.index }}">
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
