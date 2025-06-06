@@ -72,8 +72,8 @@
             "app_video_comments": "{{ path('app_video_comments') }}",
             "app_video_category_add": "{{ path('app_video_category_add') }}",
             "app_video_category_delete": "{{ path('app_video_category_delete') }}",
-            "published_at": "{{ userVideo.publishedAtString }}",
-            "added_at": "{{ userVideo.addedAtString }}",
+            "published_at": "{{ userVideo ? userVideo.publishedAtString : publishedAt }}",
+            "added_at": "{{ userVideo ? userVideo.addedAtString : null }}",
             "texts": {
                 "comments": "{{ 'comments'|trans }}",
                 "likes": "{{ 'likes'|trans }}",

@@ -7,6 +7,7 @@ use App\Repository\FilmingLocationRepository;
 use App\Repository\MovieRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\UserRepository;
+use App\Repository\VideoCategoryRepository;
 use App\Repository\VideoRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
@@ -27,6 +28,7 @@ class AdminController extends AbstractController
 {
 
     public function __construct(
+        private readonly VideoCategoryRepository   $categoryRepository,
         private readonly DateService               $dateService,
         private readonly FilmingLocationRepository $filmingLocationRepository,
         private readonly ImageConfiguration        $imageConfiguration,
@@ -54,8 +56,8 @@ class AdminController extends AbstractController
     {
         list($sort, $order, $page, $limit) = $this->getParameters($request);
 
-        $users = $this->userRepository->users($page, $limit, $sort, $order);
-        $userCount = $this->userRepository->count($users);
+        $users = $this->userRepository->adminUsers($page, $limit, $sort, $order);
+        $userCount = $this->userRepository->count();
         $pageCount = ceil($userCount / $limit);
 
         $paginationLinks = $this->generateLinks($pageCount, $page, $this->generateUrl('admin_series'), [
@@ -342,7 +344,7 @@ class AdminController extends AbstractController
             return $m;
         }, $movies);
 
-        $pagination = $this->generateLinks($this->movieRepository->count(), $page, $this->generateUrl('admin_movies'), [
+        $pagination = $this->generateLinks($pageCount, $page, $this->generateUrl('admin_movies'), [
             's' => $sort,
             'o' => $order,
             'l' => $limit,
@@ -656,29 +658,27 @@ class AdminController extends AbstractController
     #[Route('/video/{id}', name: 'video_edit')]
     public function videoEdit(Request $request, int $id): Response
     {
-        list($sort, $order, $page, $limit) = $this->getParameters($request);
-
-        $video = $this->videoRepository->adminVideo($id);
+        $video = $this->videoRepository->find($id);
         if (!$video) {
-            throw $this->createNotFoundException('Filming location not found');
+            throw $this->createNotFoundException('Video not found');
         }
-        $date = $video['published_at'];
-        $date = $this->dateService->formatDateRelativeShort($date, 'UTC', 'fr') . " " . $this->translator->trans('at') . " " . substr($date, 11, 5);
-        if (!is_numeric($date[0])) {
-            $date = ucfirst($date);
+        $categories = $this->categoryRepository->findAll();
+
+        $publishedDate = $video->getPublishedAt();
+        $publishedAt = $this->dateService->formatDateRelativeShort($publishedDate->format('Y-m-d H:i:s'), 'Europe/Paris', 'fr');
+        if (is_numeric($publishedAt[0])) {
+            $publishedAt = $this->translator->trans("Published at") . ' ' . $publishedAt;
+        } else {
+            $publishedAt = $this->translator->trans("Published") . ' ' . $publishedAt;
         }
-        $video['published_at'] = $date;
 
-        $videosLink = $this->generateAdminUrl($this->generateUrl('admin_videos'), [
-            'l' => $limit,
-            'o' => $order,
-            'p' => $page,
-            's' => $sort,
-        ]);
-
-        return $this->render('admin/index.html.twig', [
+        return $this->render('video/show.html.twig', [
+            'userVideo' => null,
             'video' => $video,
-            'videosLink' => $videosLink,
+            'publishedAt' => $publishedAt,
+            'categories' => $categories,
+            'previousVideo' => null,
+            'nextVideo' => null,
         ]);
     }
 
@@ -688,7 +688,7 @@ class AdminController extends AbstractController
             $request->query->get('s', 'id'),
             $request->query->get('o', 'desc'),
             $request->query->getInt('p', 1),
-            $request->query->getInt('l', 10),
+            $request->query->getInt('l', 20),
         ];
     }
 
@@ -731,7 +731,7 @@ class AdminController extends AbstractController
         }
 
         // Add the last page link
-        if ($totalPages > 1) {
+        if ($totalPages > 4) {
             $activeClass = ($totalPages === $currentPage) ? ' active' : '';
             $paginationHtml .= $this->generateLink($totalPages, (string)$totalPages, $route, $queryParams, $activeClass);
         }

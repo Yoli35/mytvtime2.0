@@ -54,7 +54,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult();
     }
 
-    public function users(int $page, int $limit, string $sort, string $order): array
+    public function adminUsers(int $page, int $limit, string $sort, string $order): array
     {
         $offset = ($page - 1) * $limit;
 
