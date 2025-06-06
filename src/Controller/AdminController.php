@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\MovieRepository;
+use App\Repository\PointOfInterestRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\UserRepository;
 use App\Repository\VideoCategoryRepository;
@@ -33,6 +34,7 @@ class AdminController extends AbstractController
         private readonly FilmingLocationRepository $filmingLocationRepository,
         private readonly ImageConfiguration        $imageConfiguration,
         private readonly MovieRepository           $movieRepository,
+        private readonly PointOfInterestRepository $pointOfInterestRepository,
         private readonly SeriesController          $seriesController,
         private readonly SeriesRepository          $seriesRepository,
         private readonly UserRepository            $userRepository,
@@ -614,6 +616,81 @@ class AdminController extends AbstractController
             'filmingLocationsLink' => $filmingLocationsLink,
             'location' => $location,
             'images' => $location['images'],
+        ]);
+    }
+
+    #[Route('/points-of-interest', name: 'points_of_interest')]
+    public function adminPointOfInterests(Request $request): Response
+    {
+        list($sort, $order, $page, $limit) = $this->getParameters($request);
+
+        // Implement the logic to fetch filming locations from the database or an API.
+        // For now, we will return an empty array as a placeholder.
+        $pois = $this->pointOfInterestRepository->adminPointsOfInterest($page, $sort, $order, $limit);
+        dump($pois);
+        $poiCount = $this->pointOfInterestRepository->count();
+        $pageCount = ceil($poiCount / $limit);
+
+        $pois = array_map(function ($poi) {
+            $poi['created_at'] = $this->dateService->formatDateRelativeMedium($poi['created_at'], 'UTC', 'fr') . " " . $this->translator->trans('at') . " " . substr($poi['created_at'], 11, 5);
+            if (!is_numeric($poi['created_at'][0])) $poi['created_at'] = ucfirst($poi['created_at']);
+            $poi['updated_at'] = $this->dateService->formatDateRelativeMedium($poi['updated_at'], 'UTC', 'fr') . " " . $this->translator->trans('at') . " " . substr($poi['updated_at'], 11, 5);
+            if (!is_numeric($poi['updated_at'][0])) $poi['updated_at'] = ucfirst($poi['updated_at']);
+            return $poi;
+        }, $pois);
+
+        $pagination = $this->generateLinks($pageCount, $page, $this->generateUrl('admin_points_of_interest'), [
+            's' => $sort,
+            'o' => $order,
+            'l' => $limit,
+        ]);
+
+        return $this->render('admin/index.html.twig', [
+            'pois' => $pois,
+            'poiCount' => $poiCount,
+            'pagination' => $pagination,
+            'page' => $page,
+            'limit' => $limit,
+            'pageCount' => $pageCount,
+            'sort' => $sort,
+            'order' => $order,
+        ]);
+    }
+
+    #[Route('/point-of-interest/{id}', name: 'point_of_interest_edit')]
+    public function adminPointOfInterestEdit(Request $request, int $id): Response
+    {
+        list($sort, $order, $page, $limit) = $this->getParameters($request);
+
+        $poi = $this->pointOfInterestRepository->adminPointOfInterest($id);
+        if (!$poi) {
+            throw $this->createNotFoundException('Point of Interest not found');
+        }
+        $poi['created_at'] = $this->dateService->formatDateRelativeShort($poi['created_at'], 'Europe/Paris', 'fr') . " " . $this->translator->trans('at') . " " . substr($poi['created_at'], 11, 5);
+        if (!is_numeric($poi['created_at'][0])) {
+            $poi['created_at'] = ucfirst($poi['created_at']);
+        }
+        $poi['updated_at'] = $this->dateService->formatDateRelativeShort($poi['updated_at'], 'Europe/Paris', 'fr') . " " . $this->translator->trans('at') . " " . substr($poi['updated_at'], 11, 5);
+        if (!is_numeric($poi['updated_at'][0])) {
+            $poi['updated_at'] = ucfirst($poi['updated_at']);
+        }
+        $poiImages = $this->pointOfInterestRepository->adminPointOfInterestImages($id);
+        $poi['images'] = array_map(function ($img) {
+            return [
+                'id' => $img['id'],
+                'path' => $img['path'],
+            ];
+        }, $poiImages);
+        $poiLink = $this->generateAdminUrl($this->generateUrl('admin_points_of_interest'), [
+            'l' => $limit,
+            'o' => $order,
+            'p' => $page,
+            's' => $sort,
+        ]);
+        return $this->render('admin/index.html.twig', [
+            'poiLink' => $poiLink,
+            'poi' => $poi,
+            'images' => $poi['images'],
         ]);
     }
 

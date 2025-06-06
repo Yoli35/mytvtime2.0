@@ -19,6 +19,9 @@ return [
     'AdminMovieEdit' => [
         'path' => './assets/js/admin/AdminMovieEdit.js',
     ],
+    'AdminPointsOfInterest' => [
+        'path' => './assets/js/admin/AdminPointsOfInterest.js',
+    ],
     'AverageColor' => [
         'path' => './assets/js/images/AverageColor.js',
     ],

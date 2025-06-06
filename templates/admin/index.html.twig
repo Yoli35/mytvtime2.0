@@ -67,6 +67,21 @@
                             </div>
                         </a>
                     {% endif %}
+                    {% if poiLink is defined %}
+                        <a href="{{ poiLink|raw }}"{% if route starts with 'admin_point' %} class="active"{% endif %}>
+                            <div>{{ ux_icon('gis:globe-poi') }}</div>
+                            <div class="large">
+                                {{ 'Points of interest'|trans }}
+                            </div>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('admin_points_of_interest') }}"{% if route starts with 'admin_point' %} class="active"{% endif %}>
+                            <div>{{ ux_icon('gis:globe-poi') }}</div>
+                            <div class="large">
+                                {{ 'Points of interest'|trans }}
+                            </div>
+                        </a>
+                    {% endif %}
                     {% if videosLink is defined %}
                         <a href="{{ videosLink|raw }}"{% if route starts with 'admin_video' %} class="active"{% endif %}>
                             <div>{{ ux_icon('mdi:youtube-tv', {height: "18px", width: "18px"}) }}</div>
@@ -147,6 +162,12 @@
                 {% endif %}
                 {% if route == 'admin_filming_location_edit' %}
                     {% include('_blocks/admin/_filming-location-edit.html.twig') %}
+                {% endif %}
+                {% if route == 'admin_points_of_interest' %}
+                    {% include('_blocks/admin/_points_of_interest.html.twig') %}
+                {% endif %}
+                {% if route == 'admin_point_of_interest_edit' %}
+                    {% include('_blocks/admin/_point_of_interest-edit.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_videos' %}
                     {% include('_blocks/admin/_videos.html.twig') %}

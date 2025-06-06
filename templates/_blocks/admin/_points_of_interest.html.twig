@@ -1,0 +1,148 @@
+<section class="admin__tools">
+    <div class="admin__result">
+        {{ poiCount }} {{ 'Points of interest'|trans }}
+    </div>
+</section>
+<section class="admin__points_of_interest">
+    {{ pagination|raw }}
+
+    <div class="list__header">
+        <div class="points_of_interest__still"></div>
+        <div class="list__item__header">
+            {% if sort == 'id' %}
+                {% if order == 'desc' %}
+                    <a class="points_of_interest__id" href="{{ path('admin_points_of_interest', {s: 'id', o: 'asc', l: limit}) }}">
+                        {{ 'Id'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="points_of_interest__id" href="{{ path('admin_points_of_interest', {s: 'id', o: 'desc', l: limit}) }}">
+                        {{ 'Id'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
+            {% else %}
+                <a class="points_of_interest__id" href="{{ path('admin_points_of_interest', {s: 'id', o: 'desc', l: limit}) }}">
+                    {{ 'Id'|trans }}
+                </a>
+            {% endif %}
+
+            {% if sort == 'name' %}
+                {% if order == 'desc' %}
+                    <a class="points_of_interest__name" href="{{ path('admin_points_of_interest', {s: 'name', o: 'asc', l: limit}) }}">
+                        {{ 'Name'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="points_of_interest__name" href="{{ path('admin_points_of_interest', {s: 'name', o: 'desc', l: limit}) }}">
+                        {{ 'Name'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
+            {% else %}
+                <a class="points_of_interest__name" href="{{ path('admin_points_of_interest', {s: 'name', o: 'desc', l: limit}) }}">
+                    {{ 'Title'|trans }}
+                </a>
+            {% endif %}
+
+            {% if sort == 'city' %}
+                {% if order == 'desc' %}
+                    <a class="points_of_interest__city" href="{{ path('admin_points_of_interest', {s: 'city', o: 'asc', l: limit}) }}">
+                        {{ 'City'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="points_of_interest__city" href="{{ path('admin_points_of_interest', {s: 'city', o: 'desc', l: limit}) }}">
+                        {{ 'City'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
+            {% else %}
+                <a class="points_of_interest__city" href="{{ path('admin_points_of_interest', {s: 'city', o: 'desc', l: limit}) }}">
+                    {{ 'Location'|trans }}
+                </a>
+            {% endif %}
+
+            {% if sort == 'origin_country' %}
+                {% if order == 'desc' %}
+                    <a class="points_of_interest__country" href="{{ path('admin_points_of_interest', {s: 'origin_country', o: 'asc', l: limit}) }}">
+                        {{ 'Country'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="points_of_interest__country" href="{{ path('admin_points_of_interest', {s: 'origin_country', o: 'desc', l: limit}) }}">
+                        {{ 'Country'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
+            {% else %}
+                <a class="points_of_interest__country" href="{{ path('admin_points_of_interest', {s: 'origin_country', o: 'desc', l: limit}) }}">
+                    {{ 'Country'|trans }}
+                </a>
+            {% endif %}
+
+            {% if sort == 'created_at' %}
+                {% if order == 'desc' %}
+                    <a class="points_of_interest__dates" href="{{ path('admin_points_of_interest', {s: 'created_at', o: 'asc', l: limit}) }}">
+                        {{ 'Date added'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="points_of_interest__dates" href="{{ path('admin_points_of_interest', {s: 'created_at', o: 'desc', l: limit}) }}">
+                        {{ 'Date added'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
+            {% else %}
+                <a class="points_of_interest__dates" href="{{ path('admin_points_of_interest', {s: 'created_at', o: 'desc', l: limit}) }}">
+                    {{ 'Date added' |trans }}
+                </a>
+            {% endif %}
+
+            {% if sort == 'updated_at' %}
+                {% if order == 'desc' %}
+                    <a class="points_of_interest__dates" href="{{ path('admin_points_of_interest', {s: 'updated_at', o: 'asc', l: limit}) }}">
+                        {{ 'Update_'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="points_of_interest__dates" href="{{ path('admin_points_of_interest', {s: 'updated_at', o: 'desc', l: limit}) }}">
+                        {{ 'Update_'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
+            {% else %}
+                <a class="points_of_interest__dates" href="{{ path('admin_points_of_interest', {s: 'updated_at', o: 'desc', l: limit}) }}">
+                    {{ 'Update_' |trans }}
+                </a>
+            {% endif %}
+        </div>
+
+    </div>
+    <div class="list__content">
+        {% for p in pois %}
+            <div class="list__item">
+                <a href="{{ path('admin_point_of_interest_edit', {id: p.id}) }}?p={{ page }}&s={{ sort }}&o={{ order }}&l={{ limit }}">
+                    <div class="point_of_interest__still" data-title="{{ p.name }} - {{ p.city }} - {{ 'See the point of interest description'|trans }}">
+                        {% if p.still_path %}
+                            <img src="/images/poi{{ p.still_path }}" class="points_of_interest__still" alt="{{ p.name }} - {{ p.city }}" />
+                        {% else %}
+                            {{ ux_icon('fa6-solid:photo-film') }}
+                        {% endif %}
+                    </div>
+                </a>
+                <a class="item" href="{{ path('admin_point_of_interest_edit', {id: p.id}) }}?p={{ page }}&s={{ sort }}&o={{ order }}&l={{ limit }}">
+                    <div class="point_of_interest__id">{{ p.id }}</div>
+                    <div class="point_of_interest__name">{{ p.name }}</div>
+                    <div class="point_of_interest__city">{{ p.city }}</div>
+                    <div class="point_of_interest__country">
+                        {{ p.origin_country|country_name }} <span>{{ getEmojiFlag(p.origin_country) }}</span>
+                    </div>
+                    <div class="point_of_interest__dates">{{ p.created_at }}</div>
+                    <div class="point_of_interest__dates">{% if p.created_at != p.updated_at %}{{ p.updated_at }}{% endif %}</div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+    {{ pagination|raw }}
+</section>

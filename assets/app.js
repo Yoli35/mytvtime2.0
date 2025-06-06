@@ -1,6 +1,7 @@
 import './bootstrap.js';
 
 import {AdminMovieEdit} from "AdminMovieEdit";
+import {AdminPointsOfInterest} from "AdminPointsOfInterest";
 import {AverageColor} from 'AverageColor';
 import {DayCountHistory} from 'DayCountHistory';
 import {FlashMessage} from 'FlashMessage';
@@ -133,8 +134,12 @@ window.addEventListener("DOMContentLoaded", () => {
     const admin = document.querySelector(".admin");
     const adminMovieEditDiv = admin?.querySelector(".admin__movie__edit");
     const adminSeriesEditDiv = admin?.querySelector(".admin__series__edit");
+    const adminPointsOfInterest = admin?.querySelector(".admin__points_of_interest");
     if (adminMovieEditDiv || adminSeriesEditDiv) {
         new AdminMovieEdit();
+    }
+    if (adminPointsOfInterest) {
+        new AdminPointsOfInterest();
     }
 
 // Home page
