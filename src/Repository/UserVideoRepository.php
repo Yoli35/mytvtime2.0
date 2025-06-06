@@ -42,8 +42,7 @@ class UserVideoRepository extends ServiceEntityRepository
                     $innerJoin
                     LEFT JOIN `video_channel` vc ON vc.`id`=v.`channel_id`
                 WHERE uv.`user_id` = $userId
-                ORDER BY v.`published_at` DESC
-                LIMIT $offset, $limit";
+                ORDER BY v.`published_at` DESC LIMIT $limit OFFSET $offset";
         return $this->getAll($sql);
     }
 
