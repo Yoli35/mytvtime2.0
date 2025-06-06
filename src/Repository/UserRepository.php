@@ -54,8 +54,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult();
     }
 
-    public function users(): array
+    public function users(int $page, int $limit, string $sort, string $order): array
     {
+        $offset = ($page - 1) * $limit;
+
+        $validSorts = ['id', 'username', 'email', 'roles', 'movieCount', 'seriesCount', 'providerCount', 'networkCount', 'episodeCount', 'watchedEpisodeCount'];
+        $validOrders = ['ASC', 'DESC'];
+        if (!in_array($sort, $validSorts, true)) {
+            $sort = 'id';
+        }
+        if (!in_array(strtoupper($order), $validOrders, true)) {
+            $order = 'ASC';
+        }
+
         $sql = "SELECT u.id       as id,
                        u.avatar   as avatar,
                        u.email    as email,
@@ -68,7 +79,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                        (SELECT COUNT(*) FROM user_episode ue WHERE ue.user_id=u.id)  as episodeCount,
                        (SELECT COUNT(*) FROM user_episode ue WHERE ue.user_id=u.id AND ue.watch_at IS NOT NULL)  as watchedEpisodeCount
                 FROM user u
-                ORDER BY u.id";
+                ORDER BY $sort $order LIMIT $limit OFFSET $offset";
 
         return $this->getAll($sql);
     }

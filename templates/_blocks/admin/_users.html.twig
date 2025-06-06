@@ -1,5 +1,8 @@
 <h2>{{ 'Users'|trans }}</h2>
 <div class="admin__users">
+
+    {{ pagination|raw }}
+
     <div class="user">
         <div class="user__avatar"></div>
         <div class="user__id">#</div>
@@ -36,4 +39,7 @@
             <div class="user__role">{% if 'SWITCH' in u.roles %}{{ ux_icon('fa6-solid:check') }}{% endif %}</div>
         </div>
     {% endfor %}
+
+    {{ pagination|raw }}
+
 </div>
