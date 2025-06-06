@@ -141,7 +141,7 @@
         {% for fl in locations %}
             <div class="list__item">
                 <a href="{{ path('admin_filming_location_edit', {id: fl.id}) }}?p={{ page }}&s={{ sort }}&o={{ order }}&l={{ limit }}">
-                    <div class="filming_locations__still" data-title="{{ fl.location }} - {{ 'See the filming location description'|trans }}">
+                    <div class="filming_location__still" data-title="{{ fl.location }} - {{ 'See the filming location description'|trans }}">
                         {% if fl.still_path %}
                             <img src="/images/map{{ fl.still_path }}" class="filming_locations__still" alt="{{ fl.location }}">
                         {% else %}
@@ -150,17 +150,17 @@
                     </div>
                 </a>
                 <a class="item" href="{{ path('admin_filming_location_edit', {id: fl.id}) }}?p={{ page }}&s={{ sort }}&o={{ order }}&l={{ limit }}">
-                    <div class="filming_locations__id">{{ fl.id }}</div>
-                    <div class="filming_locations__tmdb_id">{{ fl.tmdb_id }}</div>
-                    <div class="filming_locations__title">{{ fl.title }}</div>
-                    <div class="filming_locations__location">{{ fl.location }}</div>
-                    <div class="filming_locations__origin_country">
+                    <div class="filming_location__id">{{ fl.id }}</div>
+                    <div class="filming_location__tmdb_id">{{ fl.tmdb_id }}</div>
+                    <div class="filming_location__title">{{ fl.title }}</div>
+                    <div class="filming_location__location">{{ fl.location }}</div>
+                    <div class="filming_location__origin_country">
                         {% for c in fl.origin_country %}
-                            <div class="filming_locations__country" data-title="{{ c|country_name }}">{{ getEmojiFlag(c) }}</div>
+                            <div class="filming_location__country" data-title="{{ c|country_name }}">{{ getEmojiFlag(c) }}</div>
                         {% endfor %}
                     </div>
-                    <div class="filming_locations__dates">{{ fl.created_at }}</div>
-                    <div class="filming_locations__dates">{% if fl.created_at != fl.updated_at %}{{ fl.updated_at }}{% endif %}</div>
+                    <div class="filming_location__dates">{{ fl.created_at }}</div>
+                    <div class="filming_location__dates">{% if fl.created_at != fl.updated_at %}{{ fl.updated_at }}{% endif %}</div>
                 </a>
             </div>
         {% endfor %}

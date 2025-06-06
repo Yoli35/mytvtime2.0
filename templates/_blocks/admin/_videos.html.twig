@@ -136,7 +136,7 @@
         {% for v in videos %}
             <div class="list__item">
                 <a href="{{ path('admin_video_edit', {id: v.id}) }}" target="_blank">
-                    <div class="videos__thumbnail" data-title="{{ v.title }} - {{ 'Go to video page'|trans }}">
+                    <div class="video__thumbnail" data-title="{{ v.title }} - {{ 'Go to video page'|trans }}">
                         {% if v.thumbnail %}
                             <img src="/videos/thumbnails{{ v.thumbnail }}" alt="{{ v.title }}">
                         {% else %}
