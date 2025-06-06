@@ -1337,7 +1337,6 @@
     }
 
     .admin__filming_locations {
-
         .list__header {
             display: flex;
             gap: 1rem;
@@ -1542,6 +1541,152 @@
                 }
             }
 
+        }
+    }
+
+    .admin__videos {
+
+        .list__header {
+            display: flex;
+            gap: 1rem;
+            margin-inline: auto;
+            white-space: nowrap;
+
+            .videos__thumbnail {
+                flex-shrink: 0;
+                width: 8rem;
+            }
+
+            .list__item__header {
+                border: 2px solid transparent;
+                display: flex;
+                gap: 1rem;
+
+                .videos__id {
+                    width: 4rem;
+                }
+
+                .videos__link {
+                    width: 8rem;
+                }
+
+                .videos__title, .videos__channel_title {
+                    width: 10rem;
+                }
+
+                .videos__duration {
+                    width: 5rem;
+                }
+
+                .videos__dates {
+                    width: 9rem;
+                }
+            }
+        }
+
+        .list__content {
+            display: flex;
+            flex-direction: column;
+            gap: .25rem;
+            margin-inline: auto;
+
+            .list__item {
+                align-items: stretch;
+                border: 2px solid transparent;
+                display: flex;
+                gap: 1rem;
+
+                &:hover {
+                    > a:first-child, > a:last-child {
+                        img {
+                            border-color: var(--orange-50);
+                        }
+                    }
+
+                    .item {
+                        border-color: var(--orange-50);
+                    }
+                }
+
+                .videos__thumbnail {
+                    aspect-ratio: 4 / 3;
+                    height: auto;
+                    width: 8rem;
+
+                    img {
+                        border: 2px solid transparent;
+                        border-radius: .25rem;
+                        height: 100%;
+                        width: 100%;
+                    }
+                }
+
+                a:has(.videos__channel_thumbnail) {
+                    margin-block: auto;
+                }
+
+                .videos__channel_thumbnail {
+                    aspect-ratio: 1;
+                    height: auto;
+                    width: 3rem;
+
+                    img {
+                        border: 2px solid transparent;
+                        border-radius: 50%;
+                        height: 100%;
+                        width: 100%;
+                    }
+                }
+
+                .item {
+                    align-items: center;
+                    border: 2px solid transparent;
+                    border-radius: .25rem;
+                    cursor: pointer;
+                    display: flex;
+                    font-size: .875rem;
+                    gap: 1rem;
+                    white-space: nowrap;
+
+                    .video__id {
+                        text-align: right;
+                        width: 4rem;
+                    }
+
+                    .video__link {
+                        width: 8rem;
+                    }
+
+                    .video__title, .video__channel_title {
+                        overflow-x: auto;
+                        width: 10rem;
+                    }
+
+                    .video__duration {
+                        width: 5rem;
+                    }
+
+                    .video__dates {
+                        width: 9rem;
+                    }
+
+                    &:nth-child(odd) {
+                        background-color: var(--ardoise-80-alpha-50);
+
+                        &:hover {
+                            background-color: var(--ardoise-60-alpha-50);
+                        }
+                    }
+
+                    &:nth-child(even) {
+                        background-color: var(--ardoise-90-alpha-50);
+
+                        &:hover {
+                            background-color: var(--ardoise-70-alpha-50);
+                        }
+                    }
+                }
+            }
         }
     }
 

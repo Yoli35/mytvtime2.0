@@ -67,6 +67,21 @@
                             </div>
                         </a>
                     {% endif %}
+                    {% if videosLink is defined %}
+                        <a href="{{ videosLink|raw }}"{% if route starts with 'admin_video' %} class="active"{% endif %}>
+                            <div>{{ ux_icon('mdi:youtube-tv', {height: "18px", width: "18px"}) }}</div>
+                            <div class="large">
+                                {{ 'Videos'|trans }}
+                            </div>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('admin_videos') }}"{% if route starts with 'admin_video' %} class="active"{% endif %}>
+                            <div>{{ ux_icon('mdi:youtube-tv', {height: "18px", width: "18px"}) }}</div>
+                            <div class="large">
+                                {{ 'Videos'|trans }}
+                            </div>
+                        </a>
+                    {% endif %}
                     {% if providersLink is defined %}
                         <a href="{{ providersLink|raw }}"{% if route starts with 'admin_provider' %} class="active"{% endif %}>
                             <div>{{ ux_icon('healthicons:provider-fst-outline', {height: "18px", width: "18px"}) }}</div>
@@ -132,6 +147,12 @@
                 {% endif %}
                 {% if route == 'admin_filming_location_edit' %}
                     {% include('_blocks/admin/_filming-location-edit.html.twig') %}
+                {% endif %}
+                {% if route == 'admin_videos' %}
+                    {% include('_blocks/admin/_videos.html.twig') %}
+                {% endif %}
+                {% if route == 'admin_video_edit' %}
+                    {% include('_blocks/admin/_video-edit.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_providers' %}
                     {% include('_blocks/admin/_providers.html.twig') %}

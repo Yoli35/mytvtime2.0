@@ -1,0 +1,171 @@
+<section class="admin__tools">
+    <div class="admin__result">
+        {{ videoCount }} {{ 'videos'|trans }}
+    </div>
+</section>
+<section class="admin__videos">
+
+    {{ pagination|raw }}
+
+    <div class="list__header">
+        <div class="videos__thumbnail"></div>
+        <div class="list__item__header">
+            {% if sort == 'id' %}
+                {% if order == 'desc' %}
+                    <a class="videos__id" href="{{ path('admin_videos', {s: 'id', o: 'asc', l: limit}) }}">
+                        {{ 'Id'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="videos__id" href="{{ path('admin_videos', {s: 'id', o: 'desc', l: limit}) }}">
+                        {{ 'Id'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
+            {% else %}
+                <a class="videos__id" href="{{ path('admin_videos', {s: 'id', o: 'desc', l: limit}) }}">
+                    {{ 'Id'|trans }}
+                </a>
+            {% endif %}
+            {% if sort == 'link' %}
+                {% if order == 'desc' %}
+                    <a class="videos__link" href="{{ path('admin_videos', {s: 'link', o: 'asc', l: limit}) }}">
+                        {{ 'Video Id'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="videos__link" href="{{ path('admin_videos', {s: 'link', o: 'desc', l: limit}) }}">
+                        {{ 'Video Id'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
+            {% else %}
+                <a class="videos__link" href="{{ path('admin_videos', {s: 'link', o: 'desc', l: limit}) }}">
+                    {{ 'Video Id'|trans }}
+                </a>
+            {% endif %}
+            {% if sort == 'title' %}
+                {% if order == 'desc' %}
+                    <a class="videos__title" href="{{ path('admin_videos', {s: 'title', o: 'asc', l: limit}) }}">
+                        {{ 'Title'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="videos__title" href="{{ path('admin_videos', {s: 'title', o: 'desc', l: limit}) }}">
+                        {{ 'Title'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
+            {% else %}
+                <a class="videos__title" href="{{ path('admin_videos', {s: 'title', o: 'desc', l: limit}) }}">
+                    {{ 'Title'|trans }}
+                </a>
+            {% endif %}
+            {% if sort == 'duration' %}
+                {% if order == 'desc' %}
+                    <a class="videos__duration" href="{{ path('admin_videos', {s: 'duration', o: 'asc', l: limit}) }}">
+                        {{ 'Duration'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="videos__duration" href="{{ path('admin_videos', {s: 'duration', o: 'desc', l: limit}) }}">
+                        {{ 'Duration'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
+            {% else %}
+                <a class="videos__duration" href="{{ path('admin_videos', {s: 'duration', o: 'desc', l: limit}) }}">
+                    {{ 'Duration'|trans }}
+                </a>
+            {% endif %}
+            {% if sort == 'published_at' %}
+                {% if order == 'desc' %}
+                    <a class="videos__dates" href="{{ path('admin_videos', {s: 'published_at', o: 'asc', l: limit}) }}">
+                        {{ 'Published at'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="videos__dates" href="{{ path('admin_videos', {s: 'published_at', o: 'desc', l: limit}) }}">
+                        {{ 'Published at'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
+            {% else %}
+                <a class="videos__dates" href="{{ path('admin_videos', {s: 'published_at', o: 'desc', l: limit}) }}">
+                    {{ 'Published at' |trans }}
+                </a>
+            {% endif %}
+            {% if sort == 'updated_at' %}
+                {% if order == 'desc' %}
+                    <a class="videos__dates" href="{{ path('admin_videos', {s: 'updated_at', o: 'asc', l: limit}) }}">
+                        {{ 'Update_'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="videos__dates" href="{{ path('admin_videos', {s: 'updated_at', o: 'desc', l: limit}) }}">
+                        {{ 'Update_'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
+            {% else %}
+                <a class="videos__dates" href="{{ path('admin_videos', {s: 'updated_at', o: 'desc', l: limit}) }}">
+                    {{ 'Update_' |trans }}
+                </a>
+            {% endif %}
+            {% if sort == 'channel_title' %}
+                {% if order == 'desc' %}
+                    <a class="videos__title" href="{{ path('admin_videos', {s: 'channel_title', o: 'asc', l: limit}) }}">
+                        {{ 'Channel'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                    </a>
+                {% else %}
+                    <a class="videos__title" href="{{ path('admin_videos', {s: 'channel_title', o: 'desc', l: limit}) }}">
+                        {{ 'Channel'|trans }}
+                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                    </a>
+                {% endif %}
+            {% else %}
+                <a class="videos__title" href="{{ path('admin_videos', {s: 'channel_title', o: 'desc', l: limit}) }}">
+                    {{ 'Channel'|trans }}
+                </a>
+            {% endif %}
+        </div>
+        <div class="videos__channel_thumbnail"></div>
+    </div>
+    <div class="list__content">
+        {% for v in videos %}
+            <div class="list__item">
+                <a href="{{ path('app_video_show', {id: v.id}) }}" target="_blank">
+                    <div class="videos__thumbnail" data-title="{{ v.title }} - {{ 'Go to video page'|trans }}">
+                        {% if v.thumbnail %}
+                            <img src="/videos/thumbnails{{ v.thumbnail }}" alt="{{ v.title }}">
+                        {% else %}
+                            {{ ux_icon('fa6-solid:photo-film') }}
+                        {% endif %}
+                    </div>
+                </a>
+                <a class="item" href="{{ path('admin_video_edit', {id: v.id}) }}?p={{ page }}&s={{ sort }}&o={{ order }}&l={{ limit }}">
+                    <div class="video__id">{{ v.id }}</div>
+                    <div class="video__link">{{ v.link }}</div>
+                    <div class="video__title">{{ v.title }}</div>
+                    <div class="video__duration">{{ v.duration }}</div>
+                    <div class="video__dates">{{ v.published_at }}</div>
+                    <div class="video__dates">{{ v.updated_at }}</div>
+                    <div class="video__channel_title">{{ v.channel_title }}</div>
+                </a>
+                <a href="https://www.youtube.com/{{ v.channel_custom_url }}" target="_blank" rel="noopener">
+                    <div class="videos__channel_thumbnail">
+                        {% if v.channel_thumbnail %}
+                            <img src="/videos/channels/thumbnails{{ v.channel_thumbnail }}" alt="{{ v.channel_title }}">
+                        {% else %}
+                            <div class="initial">{{ v.channel_title|first }}</div>
+                        {% endif %}
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+
+    {{ pagination|raw }}
+
+</section>

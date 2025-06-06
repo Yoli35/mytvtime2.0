@@ -58,6 +58,28 @@ class VideoRepository extends ServiceEntityRepository
         return $this->getOne($sql);
     }
 
+    public function adminVideos(int $page, string $sort, string $order, int $limit): array
+    {
+        $offset = ($page - 1) * $limit;
+        $sql = "SELECT v.*, vc.title as channel_title, vc.custom_url as channel_custom_url, vc.thumbnail as channel_thumbnail
+                FROM video v
+                    LEFT JOIN video_channel vc ON vc.id = v.channel_id
+                ORDER BY v.$sort $order
+                LIMIT $limit OFFSET $offset";
+
+        return $this->getAll($sql);
+    }
+
+    public function adminVideo(int $id): array|false
+    {
+        $sql = "SELECT v.*, vc.title as channel_title, vc.custom_url as channel_custom_url, vc.thumbnail as channel_thumbnail
+                FROM video v
+                    LEFT JOIN video_channel vc ON vc.id = v.channel_id
+                WHERE v.id = $id";
+
+        return $this->getOne($sql);
+    }
+
     public function getAll($sql): array
     {
         try {

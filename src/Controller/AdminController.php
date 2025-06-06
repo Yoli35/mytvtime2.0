@@ -7,6 +7,7 @@ use App\Repository\FilmingLocationRepository;
 use App\Repository\MovieRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\UserRepository;
+use App\Repository\VideoRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
@@ -35,6 +36,8 @@ class AdminController extends AbstractController
         private readonly UserRepository            $userRepository,
         private readonly TMDBService               $tmdbService,
         private readonly TranslatorInterface       $translator,
+        private readonly VideoController           $videoController,
+        private readonly VideoRepository           $videoRepository,
         private readonly WatchProviderRepository   $watchProviderRepository
     )
     {
@@ -43,28 +46,34 @@ class AdminController extends AbstractController
     #[Route('/', name: 'index')]
     public function index(): Response
     {
-        $users = $this->userRepository->users();
-        return $this->render('admin/index.html.twig', [
-            'users' => $users,
-        ]);
+        return $this->redirectToRoute('admin_users');
     }
 
     #[Route('/users', name: 'users')]
-    public function adminUsers(): Response
+    public function adminUsers(Request $request): Response
     {
-        $users = $this->userRepository->users();
+        list($sort, $order, $page, $limit) = $this->getParameters($request);
+
+        $users = $this->userRepository->users($page, $limit, $sort, $order);
+        $userCount = $this->userRepository->count($users);
+        $pageCount = ceil($userCount / $limit);
+
+        $paginationLinks = $this->generateLinks($pageCount, $page, $this->generateUrl('admin_series'), [
+            's' => $sort,
+            'o' => $order,
+            'l' => $limit,
+        ]);
+
         return $this->render('admin/index.html.twig', [
             'users' => $users,
+            'pagination' => $paginationLinks,
         ]);
     }
 
     #[Route('/series', name: 'series')]
     public function adminSeries(Request $request): Response
     {
-        $sort = $request->query->get('s', 'id');
-        $order = $request->query->get('o', 'desc');
-        $page = $request->query->getInt('p', 1);
-        $limit = $request->query->getInt('l', 25);
+        list($sort, $order, $page, $limit) = $this->getParameters($request);
 
         $series = $this->seriesRepository->adminSeries($request->getLocale(), $page, $sort, $order, $limit);
         $seriesCount = $this->seriesRepository->count();
@@ -169,10 +178,7 @@ class AdminController extends AbstractController
     #[Route('/series/{id}', name: 'series_edit')]
     public function adminSeriesEdit(Request $request, int $id): Response
     {
-        $sort = $request->query->get('s', 'id');
-        $order = $request->query->get('o', 'desc');
-        $page = $request->query->getInt('p', 1);
-        $limit = $request->query->getInt('l', 20);
+        list($sort, $order, $page, $limit) = $this->getParameters($request);
 
         $series = $this->seriesRepository->adminSeriesById($id);
         if (!$series) {
@@ -320,10 +326,7 @@ class AdminController extends AbstractController
     #[Route('/movies', name: 'movies')]
     public function adminMovies(Request $request): Response
     {
-        $sort = $request->query->get('s', 'id');
-        $order = $request->query->get('o', 'desc');
-        $page = $request->query->getInt('p', 1);
-        $limit = $request->query->getInt('l', 25);
+        list($sort, $order, $page, $limit) = $this->getParameters($request);
 
         $movies = $this->movieRepository->adminMovies($request->getLocale(), $page, $sort, $order, $limit);
         $movieCount = $this->movieRepository->count();
@@ -387,10 +390,7 @@ class AdminController extends AbstractController
     #[Route('/movie/{id}', name: 'movie_edit')]
     public function adminMovieEdit(Request $request, int $id): Response
     {
-        $sort = $request->query->get('s', 'id');
-        $order = $request->query->get('o', 'desc');
-        $page = $request->query->getInt('p', 1);
-        $limit = $request->query->getInt('l', 20);
+        list($sort, $order, $page, $limit) = $this->getParameters($request);
 
         $movie = $this->movieRepository->adminMovieById($id);
         if (!$movie) {
@@ -465,10 +465,7 @@ class AdminController extends AbstractController
     #[Route('/providers', name: 'providers')]
     public function adminProviders(Request $request): Response
     {
-        $sort = $request->query->get('s', 'id');
-        $order = $request->query->get('o', 'desc');
-        $page = $request->query->getInt('p', 1);
-        $limit = $request->query->getInt('l', 25);
+        list($sort, $order, $page, $limit) = $this->getParameters($request);
 
         $providers = $this->watchProviderRepository->adminProviders($page, $sort, $order, $limit);
         $providerCount = $this->watchProviderRepository->count();
@@ -501,10 +498,7 @@ class AdminController extends AbstractController
     #[Route('/provider/{id}', name: 'provider_edit')]
     public function adminProviderEdit(Request $request, int $id): Response
     {
-        $sort = $request->query->get('s', 'id');
-        $order = $request->query->get('o', 'desc');
-        $page = $request->query->getInt('p', 1);
-        $limit = $request->query->getInt('l', 20);
+        list($sort, $order, $page, $limit) = $this->getParameters($request);
 
         $provider = $this->watchProviderRepository->adminProviderById($id);
         if (!$provider) {
@@ -545,10 +539,7 @@ class AdminController extends AbstractController
     #[Route('/filming/locations', name: 'filming_locations')]
     public function adminFilmingLocations(Request $request): Response
     {
-        $sort = $request->query->get('s', 'id');
-        $order = $request->query->get('o', 'desc');
-        $page = $request->query->getInt('p', 1);
-        $limit = $request->query->getInt('l', 25);
+        list($sort, $order, $page, $limit) = $this->getParameters($request);
 
         // Implement the logic to fetch filming locations from the database or an API.
         // For now, we will return an empty array as a placeholder.
@@ -557,9 +548,9 @@ class AdminController extends AbstractController
         $pageCount = ceil($locationCount / $limit);
 
         $locations = array_map(function ($l) {
-            $l['created_at'] = $this->dateService->formatDateRelativeShort($l['created_at'], 'Europe/Paris', 'fr') . " " .$this->translator->trans('at') . " " . substr($l['created_at'], 11, 5);
+            $l['created_at'] = $this->dateService->formatDateRelativeMedium($l['created_at'], 'UTC', 'fr') . " " . $this->translator->trans('at') . " " . substr($l['created_at'], 11, 5);
             if (!is_numeric($l['created_at'][0])) $l['created_at'] = ucfirst($l['created_at']);
-            $l['updated_at'] = $this->dateService->formatDateRelativeShort($l['updated_at'], 'Europe/Paris', 'fr') . " " .$this->translator->trans('at') . " " . substr($l['updated_at'], 11, 5);
+            $l['updated_at'] = $this->dateService->formatDateRelativeMedium($l['updated_at'], 'UTC', 'fr') . " " . $this->translator->trans('at') . " " . substr($l['updated_at'], 11, 5);
             if (!is_numeric($l['updated_at'][0])) $l['updated_at'] = ucfirst($l['updated_at']);
             $l['origin_country'] = json_decode($l['origin_country'], true);
             return $l;
@@ -586,10 +577,7 @@ class AdminController extends AbstractController
     #[Route('/filming/location/{id}', name: 'filming_location_edit')]
     public function adminFilmingLocationEdit(Request $request, int $id): Response
     {
-        $sort = $request->query->get('s', 'id');
-        $order = $request->query->get('o', 'desc');
-        $page = $request->query->getInt('p', 1);
-        $limit = $request->query->getInt('l', 20);
+        list($sort, $order, $page, $limit) = $this->getParameters($request);
 
         $location = $this->filmingLocationRepository->getOne("SELECT fl.*, fli.path as still_path FROM filming_location fl LEFT JOIN filming_location_image fli on fl.id = fli.filming_location_id WHERE fl.id = $id");
         if (!$location) {
@@ -625,6 +613,83 @@ class AdminController extends AbstractController
             'location' => $location,
             'images' => $location['images'],
         ]);
+    }
+
+    #[Route('/videos', name: 'videos')]
+    public function videos(Request $request): Response
+    {
+        list($sort, $order, $page, $limit) = $this->getParameters($request);
+
+        // Implement the logic to fetch filming locations from the database or an API.
+        // For now, we will return an empty array as a placeholder.
+        $videos = $this->videoRepository->adminVideos($page, $sort, $order, $limit);
+        $videoCount = $this->videoRepository->count();
+        $pageCount = ceil($videoCount / $limit);
+
+        $videos = array_map(function ($v) {
+            $v['published_at'] = $this->dateService->formatDateRelativeMedium($v['published_at'], 'UTC', 'fr') . " " . $this->translator->trans('at') . " " . substr($v['published_at'], 11, 5);
+            if (!is_numeric($v['published_at'][0])) $l['created_at'] = ucfirst($v['published_at']);
+            $v['updated_at'] = $this->dateService->formatDateRelativeMedium($v['updated_at'], 'UTC', 'fr') . " " . $this->translator->trans('at') . " " . substr($v['updated_at'], 11, 5);
+            if (!is_numeric($v['updated_at'][0])) $l['created_at'] = ucfirst($v['updated_at']);
+            $v['duration'] = $this->videoController->formatDuration($v['duration']);
+            return $v;
+        }, $videos);
+
+        $pagination = $this->generateLinks($pageCount, $page, $this->generateUrl('admin_videos'), [
+            's' => $sort,
+            'o' => $order,
+            'l' => $limit,
+        ]);
+
+        return $this->render('admin/index.html.twig', [
+            'videos' => $videos,
+            'videoCount' => $videoCount,
+            'pagination' => $pagination,
+            'page' => $page,
+            'limit' => $limit,
+            'pageCount' => $pageCount,
+            'sort' => $sort,
+            'order' => $order,
+        ]);
+    }
+
+    #[Route('/video/{id}', name: 'video_edit')]
+    public function videoEdit(Request $request, int $id): Response
+    {
+        list($sort, $order, $page, $limit) = $this->getParameters($request);
+
+        $video = $this->videoRepository->adminVideo($id);
+        if (!$video) {
+            throw $this->createNotFoundException('Filming location not found');
+        }
+        $date = $video['published_at'];
+        $date = $this->dateService->formatDateRelativeShort($date, 'UTC', 'fr') . " " . $this->translator->trans('at') . " " . substr($date, 11, 5);
+        if (!is_numeric($date[0])) {
+            $date = ucfirst($date);
+        }
+        $video['published_at'] = $date;
+
+        $videosLink = $this->generateAdminUrl($this->generateUrl('admin_videos'), [
+            'l' => $limit,
+            'o' => $order,
+            'p' => $page,
+            's' => $sort,
+        ]);
+
+        return $this->render('admin/index.html.twig', [
+            'video' => $video,
+            'videosLink' => $videosLink,
+        ]);
+    }
+
+    private function getParameters(Request $request): array
+    {
+        return [
+            $request->query->get('s', 'id'),
+            $request->query->get('o', 'desc'),
+            $request->query->getInt('p', 1),
+            $request->query->getInt('l', 10),
+        ];
     }
 
     public function generateLinks(int $totalPages, int $currentPage, string $route, array $queryParams = []): string
