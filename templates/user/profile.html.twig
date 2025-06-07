@@ -4,12 +4,13 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
 {% endblock %}
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-    <div class="container-fluid">
-        <div class="user-profile">
+    <div class="container-fluid user-profile-container"> {# ← light #}
+        <div class="user-profile glowing-border left">
             {{ form_start(form, {'attr': {'class': 'form'}}) }}
             <div class="form-row">
                 <h1>{{ 'Profile'|trans }}</h1>
@@ -55,6 +56,7 @@
             <div class="form-row">
                 <div class="form-field">
                     <label for="{{ form.avatarFile.vars.id }}" class="">{{ form.avatarFile.vars.label|trans }}
+                        <div class="dropzone">{{ 'Drop your file here or click to upload'|trans }}</div>
                         {{ form_widget(form.avatarFile) }}
                     </label>
                     <div class="preview-avatar-file">
@@ -70,6 +72,7 @@
             <div class="form-row">
                 <div class="form-field">
                     <label for="{{ form.bannerFile.vars.id }}" class="">{{ form.bannerFile.vars.label|trans }}
+                        <div class="dropzone">{{ 'Drop your file here or click to upload'|trans }}</div>
                         {{ form_widget(form.bannerFile) }}
                     </label>
                     <div class="preview-banner-file">
@@ -87,10 +90,57 @@
             </div>
             {{ form_end(form) }}
         </div>
+        <div class="translation-settings glowing-border right">
+            <h2>{{ 'Translation Settings'|trans }}</h2>
+            <p>{{ 'You can change the translations of the application here.'|trans }}</p>
+            <div id="languages" class="languages">
+                <div class="targeted-languages">
+                    <h3>{{ 'Targeted Languages'|trans }}</h3>
+                    <label for="targetedLanguageSelect">
+                        <select id="targetedLanguageSelect" name="targetedLanguageSelect" class="form-control">
+                            {{ languageSelectHTML|raw }}
+                        </select>
+                    </label>
+                    <ul id="targeted-language-list" class="language-list">
+                        {#{% for lang in translationSettings.targeted_languages %}
+                            <li data-id="{{ lang }}" class="language-item">
+                                {{ lang|language_name|capitalize }}
+                                {{ ux_icon('solar:trash-bin-minimalistic-outline', {id: "delete-" ~ lang, class: "delete-language"}) }}
+                                {{ ux_icon('solar:hamburger-menu-outline', {id: "drag-" ~ lang, class: "drag-language"}) }}
+                            </li>
+                        {% endfor %}#}
+                    </ul>
+                </div>
+                <div class="preferred-languages">
+                    <h3>{{ 'Preferred Languages'|trans }}</h3>
+                    <label for="preferredLanguageSelect">
+                        <select id="preferredLanguageSelect" name="preferredLanguageSelect" class="form-control">
+                            {{ languageSelectHTML|raw }}
+                        </select>
+                    </label>
+                    <ul id="preferred-language-list" class="language-list">
+                        {#{% for lang in translationSettings.preferred_languages %}
+                            <li data-id="{{ lang }}" class="language-item">
+                                {{ lang|language_name|capitalize }}
+                                {{ ux_icon('solar:trash-bin-minimalistic-outline', {id: "delete-" ~ lang, class: "delete-language"}) }}
+                                {{ ux_icon('solar:hamburger-menu-outline', {id: "drag-" ~ lang, class: "drag-language"}) }}
+                            </li>
+                        {% endfor %}#}
+                    </ul>
+                </div>
+            </div>
+        </div>
         <div id="globs" style="display: none">
             {
-            "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+            "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "targetedLanguages": {{ translationSettings.targeted_languages|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "preferredLanguages": {{ translationSettings.preferred_languages|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "languages": {{ languages|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
             }
+        </div>
+        <div id="svgs" style="display: none">
+            {{ ux_icon('solar:hamburger-menu-outline', {id: "burger"}) }}
+            {{ ux_icon('solar:trash-bin-minimalistic-outline', {id: "trash"}) }}
         </div>
     </div>
     {% include('_blocks/_footer.html.twig') %}

@@ -102,7 +102,27 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $this->getAll($sql);
     }
 
-    public function getAll($sql): array
+    public function getSeriesLanguages(string $locale): array
+    {
+        $sql = "SELECT `original_language`
+                FROM series
+                WHERE `original_language` IS NOT NULL
+                GROUP BY `original_language`";
+
+        return $this->getAll($sql);
+    }
+
+    public    function getMoviesLanguages(string $locale): array
+    {
+        $sql = "SELECT `original_language`
+                FROM movie
+                GROUP BY `original_language`";
+
+        return $this->getAll($sql);
+    }
+
+    public
+    function getAll($sql): array
     {
         try {
             return $this->em->getConnection()->fetchAllAssociative($sql);

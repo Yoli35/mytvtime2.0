@@ -103,6 +103,9 @@ class Series
     #[ORM\Column(nullable: true)]
     private ?array $originCountry = null;
 
+    #[ORM\Column(length: 2, nullable: true)]
+    private ?string $originalLanguage = null;
+
     #[ORM\Column(nullable: true)]
     private ?int $numberOfEpisode = null;
 
@@ -692,6 +695,18 @@ class Series
     public function removeWatchProvider(WatchProvider $watchProvider): static
     {
         $this->watchProviders->removeElement($watchProvider);
+
+        return $this;
+    }
+
+    public function getOriginalLanguage(): ?string
+    {
+        return $this->originalLanguage;
+    }
+
+    public function setOriginalLanguage(?string $originalLanguage): static
+    {
+        $this->originalLanguage = $originalLanguage;
 
         return $this;
     }

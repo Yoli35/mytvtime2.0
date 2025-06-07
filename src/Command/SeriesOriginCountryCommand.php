@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'app:series:origin-country',
+    name: 'app:series:origin:country',
     description: 'Update series origin country infos for all series or a specific one',
 )]
 class SeriesOriginCountryCommand extends Command

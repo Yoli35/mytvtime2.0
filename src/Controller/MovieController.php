@@ -194,10 +194,15 @@ class MovieController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $locale = $request->getLocale();
-        $language = ($user->getPreferredLanguage() ?? $locale) . '-' . ($user->getCountry() ?? ($locale === 'fr' ? 'FR' : 'US'));
+        $language = "en-US";//($user->getPreferredLanguage() ?? $locale) . '-' . ($user->getCountry() ?? ($locale === 'fr' ? 'FR' : 'US'));
 
         $tmdbId = $userMovie->getMovie()->getTmdbId();
         $dbMovie = $userMovie->getMovie();
+        // test
+//        $dbMovie->setTagline("Implantation réussie du superpouvoir");
+//        $dbMovie->setTitle("Hi-Five");
+//        $dbMovie->setOverview("Cinq personnes choisies au hasard acquièrent des capacités spéciales de façon inattendue, après une transplantation d'organe ! Ils forment une équipe et se font appeler les \"HI-FIVE\" !");
+//        $this->movieRepository->save($dbMovie, true);
         $movie = json_decode($this->tmdbService->getMovie($tmdbId, $language, ['videos,images,credits,recommendations,keywords,watch/providers,release_dates']), true);
         if (!$movie) {
             $movie = $this->createMovieFromDBMovie($dbMovie);

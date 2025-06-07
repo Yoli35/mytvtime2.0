@@ -5,18 +5,22 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\NetworkRepository;
+use App\Repository\SettingsRepository;
 use App\Repository\UserEpisodeNotificationRepository;
+use App\Repository\UserRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Extra\Intl\IntlExtension;
 
 
 /** @method User|null getUser() */
@@ -25,13 +29,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class UserController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface            $entityManager,
-        private readonly UserEpisodeNotificationRepository $userEpisodeNotificationRepository,
         private readonly DateService                       $dateService,
+        private readonly EntityManagerInterface            $entityManager,
         private readonly ImageConfiguration                $imageConfiguration,
         private readonly ImageService                      $imageService,
         private readonly NetworkRepository                 $networkRepository,
+        private readonly SettingsRepository                $settingsRepository,
         private readonly TranslatorInterface               $translator,
+        private readonly UserEpisodeNotificationRepository $userEpisodeNotificationRepository,
+        private readonly UserRepository                    $userRepository,
         private readonly WatchProviderRepository           $watchProviderRepository,
     )
     {
@@ -63,6 +69,16 @@ class UserController extends AbstractController
 
             return $this->redirectToRoute('app_home');
         }
+        $translationSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'translations']);
+        $translationSettings = $translationSettings ? $translationSettings->getData() : [];
+        $languages = (new IntlExtension)->getLanguageNames('fr');
+        foreach ($languages as $code => $name) {
+            if (str_starts_with($code, 'x-') || str_starts_with($code, 'und-')) {
+                unset($languages[$code]); // Remove private use and undetermined languages
+            }
+            $languages[$code] = ucfirst($name); // Capitalize language names
+        }
+        $languageSelectHTML = $this->createHTMLLanguageSelect($request->getLocale() ?? 'fr');
 
         $translations = [
             'Not a valid file type. Update your selection' => $this->translator->trans('Not a valid file type. Update your selection'),
@@ -71,6 +87,9 @@ class UserController extends AbstractController
         return $this->render('user/profile.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
+            'translationSettings' => $translationSettings,
+            'languageSelectHTML' => $languageSelectHTML,
+            'languages' => $languages,
             'translations' => $translations,
         ]);
     }
@@ -174,7 +193,56 @@ class UserController extends AbstractController
         return $this->json(['ok' => true]);
     }
 
+    #[Route('/language-settings', name: 'language_settings', methods: ['POST'])]
+    public function languageSettings(Request $request): JsonResponse
+    { // https://localhost:8000/fr/user/language-settings/
+        if ($request->isMethod('POST')) {
+            // action: delete, add
+            // languageType: targeted, preferred
+            // languageId: fr,en,..
+
+            $payload = $request->getPayload()->all();
+            $action = $payload['action'] ?? null;
+            $languageType = $payload['languageType'] . '_languages' ?? null;
+            $languageId = $payload['languageId'] ?? null;
+
+            $languageSettings = $this->settingsRepository->findOneBy(['name' => 'translations']);
+
+            if ($languageSettings) {
+                $data = $languageSettings->getData();
+                if ($action === 'delete') {
+                    if (isset($data[$languageType]) && in_array($languageId, $data[$languageType], true)) {
+                        $data[$languageType] = array_diff($data[$languageType], [$languageId]);
+                        $languageSettings->setData($data);
+                        $this->settingsRepository->save($languageSettings, true);
+                    }
+                } elseif ($action === 'add') {
+                    if (!isset($data[$languageType])) {
+                        $data[$languageType] = [];
+                    }
+                    if (!in_array($languageId, $data[$languageType], true)) {
+                        $data[$languageType][] = $languageId;
+                        $languageSettings->setData($data);
+                        $this->settingsRepository->save($languageSettings, true);
+                    }
+                }
+            }
+
+            return new JsonResponse([
+                'ok' => true,
+                'body' => [
+                    'action' => $action,
+                    'languageType' => $languageType,
+                    'message' => $action === 'delete' ? ('Language removed from ' . $languageType) : ('Language added to ' . $languageType),
+                ]
+            ]);
+        } else {
+            return new JsonResponse(['ok' => false, 'message' => 'Invalid request method'], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
     public function getProviders($user): array
+
     {
         $country = $user->getCountry() ?? 'FR';
 
@@ -215,5 +283,45 @@ class UserController extends AbstractController
             return $this->imageConfiguration->getCompleteUrl($path, 'logo_sizes', 2);
         }
         return '/images/providers' . substr($path, 1);
+    }
+
+    private function createHTMLLanguageSelect(string $locale): string
+    {
+        $languages = (new IntlExtension)->getLanguageNames($locale);
+        $seriesLanguages = $this->userRepository->getSeriesLanguages($locale);
+        $moviesLanguages = $this->userRepository->getMoviesLanguages($locale);
+        $codes = array_merge($seriesLanguages, $moviesLanguages);
+        $codes = array_unique(array_map(function ($lang) {
+            return $lang['original_language'];
+        }, $codes));
+        $preferredLanguages = [];
+        foreach ($codes as $code) {
+            if (str_starts_with($code, 'x-')) {
+                continue; // Skip private use languages
+            }
+            if (str_starts_with($code, 'und-')) {
+                continue; // Skip undetermined languages
+            }
+            $preferredLanguages[$code] = $languages[$code] ?? $code;
+        }
+        uasort($preferredLanguages, function ($a, $b) {
+            return $a <=> $b;
+        });
+
+        $html = '<option value="" selected disabled></option>';
+        foreach ($preferredLanguages as $code => $name) {
+            $name = ucfirst($name);
+            $html .= "<option value=\"$code\">$name</option>";
+        }
+        $html .= '<hl/>';
+        foreach ($languages as $code => $name) {
+            if (key_exists($code, $preferredLanguages)) {
+                continue; // Skip languages already in preferred languages
+            }
+            $name = ucfirst($name);
+            $html .= "<option value=\"$code\">$name</option>";
+        }
+        $html .= '';
+        return $html;
     }
 }

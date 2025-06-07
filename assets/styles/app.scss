@@ -27,6 +27,7 @@ html {
         }
     }
 
+    &:has(.container-fluid.light),
     &:has(body.light) {
         @for $i from 0 through 100 {
             --value-#{$i}: #{$i};
