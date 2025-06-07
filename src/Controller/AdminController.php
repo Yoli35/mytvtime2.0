@@ -690,7 +690,7 @@ class AdminController extends AbstractController
         return $this->render('admin/index.html.twig', [
             'poiLink' => $poiLink,
             'poi' => $poi,
-            'images' => $poi['images'],
+            'images' => $poiImages,
         ]);
     }
 

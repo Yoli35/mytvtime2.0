@@ -42,7 +42,7 @@ class PointOfInterestRepository extends ServiceEntityRepository
 
     public function adminPointOfInterestImages(int $id): array
     {
-        $sql = "SELECT i.id, i.path, i.created_at, i.updated_at
+        $sql = "SELECT i.id, i.path, i.created_at, i.caption
                 FROM point_of_interest_image i
                 WHERE i.point_of_interest_id = $id";
 
