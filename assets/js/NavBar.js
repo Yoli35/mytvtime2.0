@@ -1,9 +1,10 @@
 let gThis;
+
 export class NavBar {
     constructor() {
         gThis = this;
         this.root = document.documentElement;
-        this.debugDiv = null;
+        // this.debugDiv = null;
         this.navBarColor = this.navBarColor.bind(this);
         this.setOpacity = this.setOpacity.bind(this);
         this.mapScroll = this.mapScroll.bind(this);
@@ -13,7 +14,9 @@ export class NavBar {
     }
 
     init() {
-        const body = document.querySelector("body");
+        // const navbar = document.querySelector(".navbar");
+        // const navBarBounds = navbar.getBoundingClientRect();
+        // const body = document.querySelector("body");
         // this.debugDiv = document.createElement("div");
         // this.debugDiv.classList.add("debug");
         // body.appendChild(this.debugDiv);
@@ -21,6 +24,16 @@ export class NavBar {
         this.setOpacity();
         window.addEventListener("scroll", this.setOpacity);
         window.addEventListener("resize", this.setOpacity);
+        /*window.addEventListener("mousemove", (e) => {
+            const distance = e.clientY - (navBarBounds.top + navBarBounds.height);
+            // Si distance > 200 → opacity = 0
+            if (distance > 200) {
+                this.root.style.setProperty("--navbar-opacity", "0");
+            } else {
+                const opacity = 1 - distance / 200;
+                this.root.style.setProperty("--navbar-opacity", opacity.toString());
+            }
+        });*/
     }
 
     navBarColor(hsl) {
@@ -62,7 +75,7 @@ export class NavBar {
 
         let scroll = 1;
         if (amount > start && amount < end) {
-            scroll = 1 - .9 *  Math.pow((amount - start) / interval, 3);
+            scroll = 1 - .9 * Math.pow((amount - start) / interval, 3);
         } else if (amount >= end) {
             scroll = .1;
         }
