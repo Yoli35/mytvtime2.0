@@ -2551,11 +2551,14 @@ h2 {
                 position: relative;
                 transition: width 0.3s ease-in-out;
 
+                &:has(img) {
+                    background-color: black;
+                }
 
                 img {
                     border-radius: .375rem;
                     height: 100%;
-                    object-fit: cover;
+                    object-fit: contain;
                     width: 100%;
                 }
 
@@ -3991,7 +3994,8 @@ h2 {
             gap: .25rem;
             justify-content: flex-start;
             margin-inline: auto;
-            /*max-width: 61rem;*/ /* 61rem = 5 cards + gap */
+            /*max-width: 61rem;*/
+            /* 61rem = 5 cards + gap */
             padding-block: 1rem;
             width: round(down, 100%, 12.25rem);
 
