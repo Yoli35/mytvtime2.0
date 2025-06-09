@@ -168,6 +168,7 @@ class ImageService extends AbstractController
         $isAlpha = false;
         $sourceWidth = $info[0];
         $sourceHeight = $info[1];
+//        $sourceRation = $sourceWidth / $sourceHeight;
 
         if ($info['mime'] == 'image/jpeg')
             $image = imagecreatefromjpeg($sourcePath);
@@ -227,8 +228,8 @@ class ImageService extends AbstractController
                 $successfullyConverted = imagewebp($image, $destination, $quality);
             }
         } else {
-            $this->markAsGoogleMaps($destPath, $kernelProjectDir, $image, $width, $height);
-            $this->addTitle($title, $destPath, $kernelProjectDir, $image, $width, $height);
+            $this->markAsGoogleMaps($destPath, $kernelProjectDir, $image, $sourceWidth, $sourceHeight);
+            $this->addTitle($title, $destPath, $kernelProjectDir, $image, $sourceWidth, $sourceHeight);
             $successfullyConverted = imagewebp($image, $destination, $quality);
         }
         imagedestroy($image);
