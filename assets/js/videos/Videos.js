@@ -440,7 +440,7 @@ export class Videos {
         div.appendChild(iconDiv);
         const textDiv = document.createElement('div');
         textDiv.classList.add('text');
-        textDiv.innerText = value + " " + text;
+        textDiv.innerHTML = value + " <span>" + text + "</span>";
         div.appendChild(textDiv);
         return div;
     }
