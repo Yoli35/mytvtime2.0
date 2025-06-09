@@ -1296,6 +1296,13 @@ export class Season {
         for (const clipboardItem of e.clipboardData.files) {
             if (clipboardItem.type.startsWith('image/')) {
                 // Save the image in %kernel.dir%/public/series/stills/season-xx/episode-xx.jpg
+                console.log('Saving still for episode ' + episodeId + ' with file name: ' + fileName);
+                console.log(clipboardItem);
+                // Create a FormData object to send the image
+                if (clipboardItem.size > 5000000) { // 5MB
+                    alert("Image size exceeds 5MB. Please use a smaller image.");
+                    return;
+                }
                 const formData = new FormData();
                 formData.append('file', clipboardItem, fileName);/*+ clipboardItem.type.split('/')[1]*/
                 formData.append('name', seriesNameSpan ? seriesNameSpan.textContent : 'Unknown Series');
@@ -1305,18 +1312,20 @@ export class Season {
                     method: 'POST',
                     body: formData
                 });
-                console.log(response.json());
+                const data = await response.json();
+                console.log(data);
                 if (response.ok) {
                     const isEditing = targetStillDiv.getAttribute('data-editing');
+                    const url = "/series/stills" + data['image'];
                     let still;
                     still = targetStillDiv.querySelector('img');
                     if (still) {
-                        still.src = URL.createObjectURL(clipboardItem);
+                        still.src = url;
                     } else {
                         const noPoster = targetStillDiv.querySelector('.no-poster');
                         noPoster?.remove();
                         still = document.createElement('img');
-                        still.src = URL.createObjectURL(clipboardItem);
+                        still.src = url;
                         targetStillDiv.appendChild(still);
                     }
                     if (isEditing) {
@@ -1327,12 +1336,12 @@ export class Season {
                         if (episodeStill) {
                             const still = episodeStill.querySelector('img');
                             if (still) {
-                                still.src = URL.createObjectURL(clipboardItem);
+                                still.src = url;
                             } else {
                                 const noPoster = episodeStill.querySelector('.no-poster');
                                 noPoster?.remove();
                                 const still = document.createElement('img');
-                                still.src = URL.createObjectURL(clipboardItem);
+                                still.src = url;
                                 episodeStill.appendChild(still);
                             }
                         }
