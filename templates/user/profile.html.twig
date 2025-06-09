@@ -10,7 +10,16 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid user-profile-container"> {# ← light #}
+        <div class="toggle-theme">{{ ux_icon('tabler:sun-moon') }}</div>
         <div class="user-profile glowing-border left">
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const toggleTheme = document.querySelector('.toggle-theme');
+                    toggleTheme.addEventListener('click', function () {
+                        document.querySelector(".container-fluid.user-profile-container").classList.toggle('light');
+                    });
+                });
+            </script>
             {{ form_start(form, {'attr': {'class': 'form'}}) }}
             <div class="form-row">
                 <h1>{{ 'Profile'|trans }}</h1>

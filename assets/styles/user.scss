@@ -1,6 +1,37 @@
 
 .container-fluid.user-profile-container {
     padding-inline: 0;
+
+    .toggle-theme {
+        position: fixed;
+        right: 2rem;
+        top: 5rem;
+        z-index: 1000;
+        align-items: center;
+        background-color: var(--ardoise-80-alpha-50);
+        border-radius: 50%;
+        color: var(--ardoise-10);
+        cursor: pointer;
+        display: flex;
+        height: 3rem;
+        justify-content: center;
+        width: 3rem;
+
+        svg {
+            height: 1.5rem;
+            width: 1.5rem;
+        }
+
+        &.dark {
+            background-color: var(--ardoise-80-alpha-50);
+            color: var(--ardoise-10);
+        }
+
+        &.light {
+            background-color: var(--ardoise-10);
+            color: var(--ardoise-80-alpha-50);
+        }
+    }
 }
 
 .user-actions {
@@ -553,7 +584,7 @@
                         align-items: center;
                         background-color: transparent;
                         border-radius: .25rem;
-                        color: var(--orange-10);
+                        color: var(--green-40);
                         cursor: pointer;
                         display: flex;
                         height: 1.75rem;
