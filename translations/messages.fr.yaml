@@ -94,13 +94,20 @@ series: série
 seriess: séries
 
 Days of the week: Jours de la semaine
+Sunday: Dimanche
 Monday: Lundi
 Tuesday: Mardi
 Wednesday: Mercredi
 Thursday: Jeudi
 Friday: Vendredi
 Saturday: Samedi
-Sunday: Dimanche
+sunday: dimanche
+monday: lundi
+tuesday: mardi
+wednesday: mercredi
+thursday: jeudi
+friday: vendredi
+saturday: samedi
 
 # All my series
 Additional Overviews: Aperçus supplémentaires
@@ -402,6 +409,10 @@ x stars: x étoiles
 Add a backdrop: Ajouter un arrière-plan
 Add all available backdrops from TMDB: Ajouter tous les arrière-plans disponibles de TMDB
 Add all available backdrops: Ajouter tous les arrière-plans disponibles
+The first day of the week must be in the selected days of the week.: Le premier jour de la semaine doit être dans les jours de la semaine sélectionnés.
+Selected days of the week → %days%': Jours de la semaine sélectionnés → %days%'
+First day of the week → %day%': Premier jour de la semaine → %day%'
+No selected days of week.: Aucun jour de semaine sélectionné.
 
 #Schedule form
 Override the Movie Database schedule: Remplacer l'horaire de The Movie Database

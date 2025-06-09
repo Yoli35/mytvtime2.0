@@ -2020,6 +2020,7 @@ class SeriesController extends AbstractController
         $seriesName = $request->get('name');
         $seasonNumber = $request->get('seasonNumber');
         $episodeNumber = $request->get('episodeNumber');
+
         $basename = $uploadedFile->getClientOriginalName();
         $projectDir = $this->getParameter('kernel.project_dir');
         $imageTempPath = $projectDir . '/public/images/temp/';
@@ -2065,6 +2066,7 @@ class SeriesController extends AbstractController
 
         return $this->json([
             'ok' => $copy,
+            'image' => $imagePath,
         ]);
     }
 
@@ -3154,39 +3156,49 @@ class SeriesController extends AbstractController
                 }
                 break;
             case 10:
-                // dayOfWeek: 0: dimanche, 1: lundi, 2: mardi, 3: mercredi, 4: jeudi, 5: vendredi, 6: samedi
-                // First episode of the week: dayOfWeek[0]
-                // Second episode of the week: dayOfWeek[1]
-                // Third ...
-                // Le jour de la semaine du premier épisode de la semaine et le jour de la semaine de la date de premiere diffusion doivent correspondre
-                // Si ce n'est pas le cas, on décale la date de première diffusion
-                $selectedDayCount = count($daysOfWeek);
-                $firstDayOfWeek = $date->format('w');
-                if (!in_array($firstDayOfWeek, $daysOfWeek)) {
+                $selectedDayCount = array_reduce($daysOfWeek, function ($carry, $day) {;
+                    return $carry + $day;
+                }, 0);
+                if (!$selectedDayCount) {
+                    // No selected days of week
+                    $this->addFlash('error', $this->translator->trans('No selected days of week.'));
                     return $errorArr;
                 }
-                // First date: 2024/11/28 -> 4 (thursday)
-                // Airing days 3 (wednesday), 4 (thursday)
-                // First airing day: 2024/11/28 (thursday)
-                // Second airing day: 2024/12/04 (wednesday)
-                // Third airing day: 2024/12/05 (thursday)
-                // Fourth airing day: 2024/12/11 (wednesday)
-                // ...
-                // DaysOfWeek: 3, 4
-                if ($selectedDayCount > 1 && $selectedDayCount < 4) {
-                    if ($firstDayOfWeek == $daysOfWeek[$selectedDayCount - 1]) {
-                        $last = array_pop($daysOfWeek);
-                        array_unshift($daysOfWeek, $last);
+                $firstDayOfWeek = intval($date->format('w'));
+
+                if (!$daysOfWeek[$firstDayOfWeek]) {
+                   // dump('First day of week not in selected days of week', $firstDayOfWeek, $daysOfWeek);
+                    $dayStrings = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                    $selectedDaysString = '';
+                    foreach ($daysOfWeek as $key => $day) {
+                        if ($day) {
+                            $selectedDaysString .= $this->translator->trans($dayStrings[$key]) . ', ';
+                        }
+                    }
+                    $selectedDaysString = rtrim($selectedDaysString, ', ');
+                    $firstDayString = $this->translator->trans($dayStrings[$firstDayOfWeek]);
+                    $this->addFlash('error', $this->translator->trans('The first day of the week must be in the selected days of the week.')
+                        . '<br>' . $this->translator->trans('Selected days of the week → %days%', ['%days%' => $selectedDaysString])
+                        . '<br>' . $this->translator->trans('First day of the week → %day%', ['%day%' => $firstDayString]));
+                    return $errorArr;
+                }
+                // First  day of week: 5
+                // DaysOfWeek: [1,0,0,0,0,1,1], [1,1,0,0,0,1,1], [1,1,1,0,0,0,1], [1,1,1,1,0,0,0]
+                $dayIndexArr = array_keys($daysOfWeek, 1);
+                // → dayIndexARr: [0,5,6], [0,1,5,6], [0,1,2,6], [0,1,2,3]
+                for ($i=0;$i<$selectedDayCount;$i++) {
+                    if ($dayIndexArr[$i] < $firstDayOfWeek) {
+                        $dayIndexArr[$i] += 7;
                     }
                 }
-                if ($selectedDayCount > 3) {
-                    return $errorArr;
-                }
-                // DaysOfWeek: 4, 3
+                // → dayIndexARr: [7,5,6], [7,1,5,6], [7,1,2,6], [7,1,2,3]
+                sort($dayIndexArr);
+                // → dayIndexARr: [5,6,7], [1,5,6,7], [1,2,6,7], [1,2,3,7]
+
                 for ($i = $firstEpisode, $k = 1; $i <= $lastEpisode; $i += $selectedDayCount, $k++) {
                     $j = $i;
                     $firstDateOfWeek = $date;
-                    foreach ($daysOfWeek as $day) {
+                    foreach ($dayIndexArr as $day) {
                         if ($j <= $lastEpisode) {
                             $d = $day - $firstDayOfWeek;
                             if ($d < 0) $d += 7;
