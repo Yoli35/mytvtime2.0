@@ -113,23 +113,25 @@
                         </a>
                     {% endif %}
                 </div>
-                <div class="dim"></div>
-                <script>
-                    const dimDiv = document.querySelector('.dim');
-                    // Get the dimensions of the window when the  window is resized
-                    window.addEventListener('resize', function () {
+                {% if app.environment == 'dev' %}
+                    <div class="dim"></div>
+                    <script>
+                        const dimDiv = document.querySelector('.dim');
+                        // Get the dimensions of the window when the  window is resized
+                        window.addEventListener('resize', function () {
+                            const dim = {
+                                width: window.innerWidth,
+                                height: window.innerHeight
+                            };
+                            dimDiv.innerHTML = dim.width + 'px<span class="large">&nbsp;x&nbsp;</span> ' + dim.height + 'px';
+                        });
                         const dim = {
                             width: window.innerWidth,
                             height: window.innerHeight
                         };
                         dimDiv.innerHTML = dim.width + 'px<span class="large">&nbsp;x&nbsp;</span> ' + dim.height + 'px';
-                    });
-                    const dim = {
-                        width: window.innerWidth,
-                        height: window.innerHeight
-                    };
-                    dimDiv.innerHTML = dim.width + 'px<span class="large">&nbsp;x&nbsp;</span> ' + dim.height + 'px';
-                </script>
+                    </script>
+                {% endif %}
             </aside>
             <main>
                 {% if route starts with 'admin_series' %}
