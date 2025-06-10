@@ -16,6 +16,7 @@ export class Map {
         const data = JSON.parse(globsData.textContent);
         this.locations = data.locations;
         this.bounds = data.bounds;
+        this.pointsOfInterest = data.pointsOfInterest;
         // this.latLngs = locations.map(location => [location.latitude, location.longitude]);
         this.locale = document.querySelector('html').getAttribute('lang');
         this.map = null;
@@ -91,6 +92,18 @@ export class Map {
                 // markerIcon.setAttribute('data-country', location.country);
                 markerIcon.setAttribute('data-latitude', location.latitude);
                 markerIcon.setAttribute('data-longitude', location.longitude);
+            });
+
+            this.pointsOfInterest.forEach((point, index) => {
+                let marker = new mapboxgl.Marker({color: "#196c00"})
+                    .setLngLat([point.longitude, point.latitude])
+                    .setPopup(new mapboxgl.Popup().setHTML('<div class="leaflet-popup-content-title">' + point.name + '</div><div class="leaflet-popup-content-description">' + point.address + '</div><div class="leaflet-popup-content-image"><img src="/images/poi' + point['still_path'] + '" alt="' + point['name'] + '" style="height: auto; width: 100%"></div>'))
+                    .addTo(this.map);
+                let markerIcon = marker.getElement();
+                markerIcon.setAttribute('data-id', point.id);
+                markerIcon.setAttribute('data-latitude', point.latitude);
+                markerIcon.setAttribute('data-longitude', point.longitude);
+                markerIcon.setAttribute('data-index', index);
             });
         }
 

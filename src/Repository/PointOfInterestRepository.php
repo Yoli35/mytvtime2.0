@@ -18,6 +18,15 @@ class PointOfInterestRepository extends ServiceEntityRepository
         parent::__construct($registry, PointOfInterest::class);
     }
 
+    public function allPointsOfInterest(): array
+    {
+        $sql = "SELECT p.*, i.path as still_path
+                FROM point_of_interest p
+                    LEFT JOIN point_of_interest_image i ON i.id = p.still_id";
+
+        return $this->getAll($sql);
+    }
+
     public function adminPointsOfInterest(int $page, string $sort, string $order, int $limit):array
     {
         $offset = ($page - 1) * $limit;

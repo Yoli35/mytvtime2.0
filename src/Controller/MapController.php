@@ -7,6 +7,8 @@ use App\Form\MapType;
 use App\Repository\CountryRepository;
 use App\Repository\FilmingLocationImageRepository;
 use App\Repository\FilmingLocationRepository;
+use App\Repository\PointOfInterestImageRepository;
+use App\Repository\PointOfInterestRepository;
 use App\Repository\SettingsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,9 +20,11 @@ use Symfony\Component\Routing\Attribute\Route;
 class MapController extends AbstractController
 {
     public function __construct(
-        private readonly FilmingLocationRepository      $filmingLocationRepository,
-        private readonly FilmingLocationImageRepository $filmingLocationImageRepository,
         private readonly CountryRepository              $countryRepository,
+        private readonly FilmingLocationImageRepository $filmingLocationImageRepository,
+        private readonly FilmingLocationRepository      $filmingLocationRepository,
+        private readonly PointOfInterestImageRepository $pointOfInterestImageRepository,
+        private readonly PointOfInterestRepository      $pointOfInterestRepository,
         private readonly SettingsRepository             $settingsRepository,
     )
     {
@@ -123,12 +127,14 @@ class MapController extends AbstractController
         $perPage = $data->getPerPage();
 
         $locations = $this->getAllFilmingLocations($type, $page, $perPage);
+        $pois = $this->getALlPointsOfInterest();
 
         return $this->render('map/last-creations.html.twig', [
             'form' => $form->createView(),
             'locations' => $locations['filmingLocations'],
             'filmingLocationCount' => $locations['filmingLocationCount'],
             'filmingLocationImageCount' => $locations['filmingLocationImageCount'],
+            'pois' => $pois,
             'seriesCount' => $this->filmingLocationRepository->seriesCount(),
             'bounds' => $locations['bounds'],
             'type' => $type,
@@ -166,4 +172,25 @@ class MapController extends AbstractController
             'bounds' => $bounds,
         ];
     }
+
+    public function getALlPointsOfInterest(): array
+    {
+        $pointsOfInterest = $this->pointOfInterestRepository->allPointsOfInterest();
+        $pointOfInterestIds = array_column($pointsOfInterest, 'id');
+        $pointOfInterestImages = $this->pointOfInterestImageRepository->poiImages($pointOfInterestIds);
+
+        $poiImages = [];
+        foreach ($pointOfInterestImages as $image) {
+            $poiImages[$image['point_of_interest_id']][] = $image;
+        }
+        foreach ($pointsOfInterest as &$poi) {
+            $poi['poiImages'] = $poiImages[$poi['id']] ?? [];
+        }
+        return [
+            'list' => $pointsOfInterest,
+            'count' => $this->pointOfInterestRepository->count(),
+            'imageCount' => $this->pointOfInterestImageRepository->count(),
+        ];
+    }
 }
+
