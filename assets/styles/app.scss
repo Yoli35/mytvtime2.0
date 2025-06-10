@@ -1336,7 +1336,7 @@ label:has(input[type="text"]) {
     }
 }
 
-@media (width >= 1920px) {
+/*@media (width >= 1920px) {
     body {
         align-items: flex-start;
 
@@ -1369,7 +1369,7 @@ label:has(input[type="text"]) {
             right: 41rem;
         }
     }
-}
+}*/
 
 section:has(.pages) {
     display: flex;
