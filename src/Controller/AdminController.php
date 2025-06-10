@@ -2,11 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\PointOfInterest;
 use App\Entity\User;
+use App\Form\PointOfInterestForm;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\MovieRepository;
+use App\Repository\PointOfInterestImageRepository;
 use App\Repository\PointOfInterestRepository;
 use App\Repository\SeriesRepository;
+use App\Repository\SettingsRepository;
 use App\Repository\UserRepository;
 use App\Repository\VideoCategoryRepository;
 use App\Repository\VideoRepository;
@@ -15,6 +19,8 @@ use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Intl\Countries;
 use Symfony\Component\Intl\Languages as Languages;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,20 +35,23 @@ class AdminController extends AbstractController
 {
 
     public function __construct(
-        private readonly VideoCategoryRepository   $categoryRepository,
-        private readonly DateService               $dateService,
-        private readonly FilmingLocationRepository $filmingLocationRepository,
-        private readonly ImageConfiguration        $imageConfiguration,
-        private readonly MovieRepository           $movieRepository,
-        private readonly PointOfInterestRepository $pointOfInterestRepository,
-        private readonly SeriesController          $seriesController,
-        private readonly SeriesRepository          $seriesRepository,
-        private readonly UserRepository            $userRepository,
-        private readonly TMDBService               $tmdbService,
-        private readonly TranslatorInterface       $translator,
-        private readonly VideoController           $videoController,
-        private readonly VideoRepository           $videoRepository,
-        private readonly WatchProviderRepository   $watchProviderRepository
+        private readonly VideoCategoryRepository        $categoryRepository,
+        private readonly DateService                    $dateService,
+        private readonly FilmingLocationRepository      $filmingLocationRepository,
+        private readonly ImageConfiguration             $imageConfiguration,
+        private readonly MapController                  $mapController,
+        private readonly MovieRepository                $movieRepository,
+        private readonly PointOfInterestImageRepository $pointOfInterestImageRepository,
+        private readonly PointOfInterestRepository      $pointOfInterestRepository,
+        private readonly SeriesController               $seriesController,
+        private readonly SettingsRepository             $settingsRepository,
+        private readonly SeriesRepository               $seriesRepository,
+        private readonly UserRepository                 $userRepository,
+        private readonly TMDBService                    $tmdbService,
+        private readonly TranslatorInterface            $translator,
+        private readonly VideoController                $videoController,
+        private readonly VideoRepository                $videoRepository,
+        private readonly WatchProviderRepository        $watchProviderRepository
     )
     {
     }
@@ -631,13 +640,32 @@ class AdminController extends AbstractController
         $poiCount = $this->pointOfInterestRepository->count();
         $pageCount = ceil($poiCount / $limit);
 
-        $pois = array_map(function ($poi) {
+        $pointOfInterestImages = $this->pointOfInterestImageRepository->poiImages(array_column($pois, 'id'));
+
+        $poiImages = [];
+        foreach ($pointOfInterestImages as $image) {
+            $poiImages[$image['point_of_interest_id']][] = $image;
+        }
+
+        // Bounding box → center
+        if (count($pois) == 1) {
+            $loc = $pois[0];
+            $bounds = [[$loc['longitude'] + .1, $loc['latitude'] + .1], [$loc['longitude'] - .1, $loc['latitude'] - .1]];
+        } else {
+            $minLat = min(array_column($pois, 'latitude'));
+            $maxLat = max(array_column($pois, 'latitude'));
+            $minLng = min(array_column($pois, 'longitude'));
+            $maxLng = max(array_column($pois, 'longitude'));
+            $bounds = [[$maxLng + .1, $maxLat + .1], [$minLng - .1, $minLat - .1]];
+        }
+        foreach ($pois as &$poi) {
             $poi['created_at'] = $this->dateService->formatDateRelativeMedium($poi['created_at'], 'UTC', 'fr') . " " . $this->translator->trans('at') . " " . substr($poi['created_at'], 11, 5);
             if (!is_numeric($poi['created_at'][0])) $poi['created_at'] = ucfirst($poi['created_at']);
             $poi['updated_at'] = $this->dateService->formatDateRelativeMedium($poi['updated_at'], 'UTC', 'fr') . " " . $this->translator->trans('at') . " " . substr($poi['updated_at'], 11, 5);
             if (!is_numeric($poi['updated_at'][0])) $poi['updated_at'] = ucfirst($poi['updated_at']);
-            return $poi;
-        }, $pois);
+            $poi['images'] = $poiImages[$poi['id']] ?? [];
+        }
+        dump($pois);
 
         $pagination = $this->generateLinks($pageCount, $page, $this->generateUrl('admin_points_of_interest'), [
             's' => $sort,
@@ -645,9 +673,43 @@ class AdminController extends AbstractController
             'l' => $limit,
         ]);
 
+//        $form = $this->createForm(PointOfInterestForm::class, null, [
+//            'action' => $this->generateUrl('admin_points_of_interest'),
+//            'method' => 'POST',
+//        ]);
+        $data = [
+            'hiddenFields' => [
+                ['item' => 'hidden', 'name' => 'crud-type', 'value' => 'create'],
+                ['item' => 'hidden', 'name' => 'crud-id', 'value' => 0],
+            ],
+            'rows' => [
+                [
+                    ['item' => 'field', 'name' => 'name', 'label' => 'Name', 'type' => 'text', 'required' => true],
+                    ['item' => 'field', 'name' => 'city', 'label' => 'City', 'type' => 'text', 'required' => true],
+                ],
+                [
+                    ['item' => 'field', 'name' => 'address', 'label' => 'Address', 'type' => 'text', 'required' => true],
+                    ['item' => 'select', 'name' => 'country', 'label' => 'Country', 'options' => Countries::getNames(), 'placeholder' => 'Select a country', 'required' => true],
+                ],
+                [
+                    ['item' => 'field', 'name' => 'description', 'label' => 'Description', 'type' => 'textarea', 'required' => false],
+                ],
+            ],
+        ];
+        $addLocationForm = $this->render('_blocks/forms/_add-location-form.html.twig', $data);
+        $now = $this->dateService->getNowImmutable("Europe/Paris");
+        $emptyPoi = new PointOfInterest('New point of interest', '', '', '', '', 0, 0, $now);
+        dump($data, $addLocationForm, $emptyPoi);
+
         return $this->render('admin/index.html.twig', [
-            'pois' => $pois,
-            'poiCount' => $poiCount,
+            'pois' => [
+                'list' => $pois,
+                'count' => $poiCount,
+                'bounds' => $bounds,
+                'emptyPoi' => $emptyPoi,
+            ],
+            'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
+            'addLocationForm' => $addLocationForm,
             'pagination' => $pagination,
             'page' => $page,
             'limit' => $limit,
@@ -657,7 +719,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/point-of-interest/{id}', name: 'point_of_interest_edit')]
+    #[Route('/point-of-interest/edit/{id}', name: 'point_of_interest_edit')]
     public function adminPointOfInterestEdit(Request $request, int $id): Response
     {
         list($sort, $order, $page, $limit) = $this->getParameters($request);
@@ -692,6 +754,19 @@ class AdminController extends AbstractController
             'poi' => $poi,
             'images' => $poiImages,
         ]);
+    }
+
+    #[Route('/point-of-interest/add', name: 'point_of_interest_add', methods: ['POST'])]
+    public function adminPointOfInterestAdd(Request $request): JsonResponse
+    {
+        $inputBag = $request->getPayload()->all();
+        $files = $request->files->all();
+        dump($inputBag, $files);
+
+        return new JsonResponse([
+            'status' => 'success',
+            'message' => $this->translator->trans('point_of_interest.add_success'),
+            ]);
     }
 
     #[Route('/videos', name: 'videos')]

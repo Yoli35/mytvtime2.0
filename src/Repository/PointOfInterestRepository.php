@@ -30,7 +30,7 @@ class PointOfInterestRepository extends ServiceEntityRepository
     public function adminPointsOfInterest(int $page, string $sort, string $order, int $limit):array
     {
         $offset = ($page - 1) * $limit;
-        $sql = "SELECT p.id, p.name, p.city, p.origin_country, p.created_at, p.updated_at, i.path as still_path
+        $sql = "SELECT p.id, p.name, p.city, p.origin_country, p.latitude, p.longitude, p.created_at, p.updated_at, i.path as still_path
                 FROM point_of_interest p
                     LEFT JOIN point_of_interest_image i ON i.id = p.still_id
                 ORDER BY $sort $order LIMIT $limit OFFSET $offset";

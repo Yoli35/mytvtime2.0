@@ -1,0 +1,6 @@
+<div class="form-field">
+    <label for="{{ input.name }}">{{ input.label|trans }}
+        <input type="{{ input.type }}" name="{{ input.name }}" id="{{ input.name }}" {{ input.required ? 'required' : '' }}>
+        <span class="error"></span>
+    </label>
+</div>

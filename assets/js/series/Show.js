@@ -999,6 +999,15 @@ export class Show {
 
         /******************************************************************************
          * Filming location form                                                      *
+         * When call location.js:                                                     *
+         *     → new Location(data, fieldList);                                       *
+         *     → data: div#globs                                                      *
+         *     → fieldList: [                                                         *
+         *                   "series-id", "tmdb-id", "crud-type", "crud-id","title",  *
+         *                   "episode-number", "season-number",                       *
+         *                   "location", "description",                               *
+         *                   "latitude", "longitude",                                 *
+         *                  ]                                                         *
          ******************************************************************************/
         const seriesMap = document.querySelector('#map');
         const addLocationButton = document.querySelector('.add-location-button');

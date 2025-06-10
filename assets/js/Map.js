@@ -14,9 +14,9 @@ export class Map {
         const globsData = document.querySelector('#globs-map');
         console.log(globsData);
         const data = JSON.parse(globsData.textContent);
-        this.locations = data.locations;
+        this.locations = data.locations  || [];
         this.bounds = data.bounds;
-        this.pointsOfInterest = data.pointsOfInterest;
+        this.pointsOfInterest = data.pointsOfInterest || [];
         // this.latLngs = locations.map(location => [location.latitude, location.longitude]);
         this.locale = document.querySelector('html').getAttribute('lang');
         this.map = null;

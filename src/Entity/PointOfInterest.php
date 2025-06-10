@@ -53,10 +53,12 @@ class PointOfInterest
     #[ORM\OneToMany(targetEntity: PointOfInterestImage::class, mappedBy: 'pointOfInterest', orphanRemoval: true)]
     private Collection $pointOfInterestImages;
 
-    public function __construct(string $name, string $address, ?string $description, float $latitude, float $longitude, string $originCountry, DateTimeImmutable $now)
+    public function __construct(string $name, string $address, ?string $city, string $originCountry, ?string $description, float $latitude, float $longitude, DateTimeImmutable $now)
     {
         $this->name = $name;
         $this->address = $address;
+        $this->city = $city;
+        $this->originCountry = $originCountry;
         $this->description = $description;
         $this->latitude = $latitude;
         $this->longitude = $longitude;

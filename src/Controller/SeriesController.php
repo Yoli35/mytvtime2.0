@@ -64,7 +64,6 @@ use DeepL\DeepLException;
 use Deepl\TextResult;
 use Psr\Log\LoggerInterface as MonologLogger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\ErrorHandler\Error\OutOfMemoryError;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -76,8 +75,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use const FILTER_DEFAULT;
-use const FILTER_REQUIRE_ARRAY;
 
 /** @method User|null getUser() */
 #[Route('/{_locale}/series', name: 'app_series_', requirements: ['_locale' => 'fr|en|ko'])]
@@ -96,6 +93,7 @@ class SeriesController extends AbstractController
         private readonly ImageService                       $imageService,
         private readonly KeywordRepository                  $keywordRepository,
         private readonly KeywordService                     $keywordService,
+        private readonly MapController                      $mapController,
         private readonly MonologLogger                      $logger,
         private readonly NetworkRepository                  $networkRepository,
         private readonly PeopleUserPreferredNameRepository  $peopleUserPreferredNameRepository,
@@ -1072,7 +1070,7 @@ class SeriesController extends AbstractController
             'Not a valid file type. Update your selection' => $this->translator->trans('Not a valid file type. Update your selection'),
         ];
 
-        $filmingLocationsWithBounds = $this->getFilmingLocations($series->getTmdbId());
+        $filmingLocationsWithBounds = $this->getFilmingLocations($series);
 
         $tvKeywords = $tv['keywords']['results'] ?? [];
         $tvExternalIds = $tv['external_ids'] ?? [];
@@ -1090,8 +1088,39 @@ class SeriesController extends AbstractController
         }
 
         if ($tv) {
+            $addLocationForm = $this->render('_blocks/forms/_add-location-form.html.twig', [
+                // name="series-id" id="series-id" value="{{ series.id }}"
+                //name="tmdb-id" id="tmdb-id" value="{{ tv.id }}"
+                //name="crud-type" id="crud-type" value="create"
+                //name="crud-id" id="crud-id" value="0"
+                'hiddenFields' => [
+                    ['item' => 'hidden', 'name' => 'series-id', 'value' => $series->getId()],
+                    ['item' => 'hidden', 'name' => 'tmdb-id', 'value' => $tv['id']],
+                    ['item' => 'hidden', 'name' => 'crud-type', 'value' => 'create'],
+                    ['item' => 'hidden', 'name' => 'crud-id', 'value' => 0],
+                ],
+                'rows' => [
+                    [
+                        ['item' => 'field', 'name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true],
+                    ],
+                    [
+                        ['item' => 'field', 'name' => 'location', 'label' => 'Location', 'type' => 'text', 'required' => false],
+                        [
+                            'item' => 'row',
+                            'fields' => [
+                                ['item' => 'field', 'name' => 'season-number', 'label' => 'Season number', 'type' => 'text', 'required' => false],
+                                ['item' => 'field', 'name' => 'episode-number', 'label' => 'Episode number', 'type' => 'text', 'required' => false],
+                            ]
+                        ],
+                    ],
+                    [
+                        ['item' => 'field', 'name' => 'description', 'label' => 'Description', 'type' => 'textarea', 'required' => false],
+                    ]
+                ],
+            ]);
             $twig = "series/show.html.twig";
         } else {
+            $addLocationForm = "";
             $twig = "series/show-not-found.html.twig";
         }
         return $this->render($twig, [
@@ -1103,7 +1132,10 @@ class SeriesController extends AbstractController
             'userSeries' => $userSeries,
             'providers' => $providers,
             'locations' => $filmingLocationsWithBounds['filmingLocations'],
+            'pois' => $this->mapController->getALlPointsOfInterest(),
             'locationsBounds' => $filmingLocationsWithBounds['bounds'],
+            'emptyLocation' => $filmingLocationsWithBounds['emptyLocation'],
+            'addLocationForm' => $addLocationForm,
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
             'externals' => $this->getExternals($series, $tvKeywords, $tvExternalIds, $request->getLocale()),
             'translations' => $translations,
@@ -3156,7 +3188,8 @@ class SeriesController extends AbstractController
                 }
                 break;
             case 10:
-                $selectedDayCount = array_reduce($daysOfWeek, function ($carry, $day) {;
+                $selectedDayCount = array_reduce($daysOfWeek, function ($carry, $day) {
+                    ;
                     return $carry + $day;
                 }, 0);
                 if (!$selectedDayCount) {
@@ -3167,7 +3200,7 @@ class SeriesController extends AbstractController
                 $firstDayOfWeek = intval($date->format('w'));
 
                 if (!$daysOfWeek[$firstDayOfWeek]) {
-                   // dump('First day of week not in selected days of week', $firstDayOfWeek, $daysOfWeek);
+                    // dump('First day of week not in selected days of week', $firstDayOfWeek, $daysOfWeek);
                     $dayStrings = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
                     $selectedDaysString = '';
                     foreach ($daysOfWeek as $key => $day) {
@@ -3186,7 +3219,7 @@ class SeriesController extends AbstractController
                 // DaysOfWeek: [1,0,0,0,0,1,1], [1,1,0,0,0,1,1], [1,1,1,0,0,0,1], [1,1,1,1,0,0,0]
                 $dayIndexArr = array_keys($daysOfWeek, 1);
                 // → dayIndexARr: [0,5,6], [0,1,5,6], [0,1,2,6], [0,1,2,3]
-                for ($i=0;$i<$selectedDayCount;$i++) {
+                for ($i = 0; $i < $selectedDayCount; $i++) {
                     if ($dayIndexArr[$i] < $firstDayOfWeek) {
                         $dayIndexArr[$i] += 7;
                     }
@@ -3447,8 +3480,9 @@ class SeriesController extends AbstractController
         return null;
     }
 
-    public function getFilmingLocations(int $tmdbId): array
+    public function getFilmingLocations(Series $series): array
     {
+        $tmdbId = $series->getTmdbId();
         $filmingLocations = $this->filmingLocationRepository->locations($tmdbId);
         if (count($filmingLocations) == 0) {
             return ['filmingLocations' => [],
@@ -3475,9 +3509,14 @@ class SeriesController extends AbstractController
             $maxLng = max(array_column($filmingLocations, 'longitude'));
             $bounds = [[$maxLng + .1, $maxLat + .1], [$minLng - .1, $minLat - .1]];
         }
+        $uuid = $data['uuid'] = Uuid::v4()->toString();
+        $now = $this->now();
+        $emptyLocation = new FilmingLocation($uuid, $tmdbId, "", "", "", 0, 0, 0, 0, $now, true);
+        $emptyLocation->setOriginCountry($series->getOriginCountry());
 
         return [
             'filmingLocations' => $filmingLocations,
+            'emptyLocation' => $emptyLocation,
             'bounds' => $bounds
         ];
     }

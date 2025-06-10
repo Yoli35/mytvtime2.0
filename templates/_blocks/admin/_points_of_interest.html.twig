@@ -1,6 +1,61 @@
 <section class="admin__tools">
     <div class="admin__result">
-        {{ poiCount }} {{ 'Points of interest'|trans }}
+        {{ pois.count }} {{ (pois.count > 1 ? 'points of interest':'point of interest')|trans }}
+    </div>
+</section>
+<section>
+    <div id="series-map-title">
+        <div class="title">{{ 'Points of interrest'|trans }}</div>
+        <div class="add-location-button" data-title="{{ 'Add a new point of interest'|trans }}">
+            {{ ux_icon('fa6-solid:plus') }}
+        </div>
+    </div>
+    <div class="series-map">
+        {% if pois|length %}
+            {% set loc = pois.list|first %}
+            <div id="map" class="map-controller"></div>
+            <div class="series-map-list">
+                {{ include('_blocks/map/_thumbnails.html.twig', {styles: mapSettings.data.styles}) }}
+            </div>
+            <div class="temp-locations">
+                <div class="locations">
+                    <ul>
+                        {% for location in pois.list %}
+                            <li class="location-item" data-loc-id="{{ location.id }}">
+                                <div class="image db">
+                                    <img src="/images/poi{{ location.still_path }}" alt="{{ location.name }}">
+                                    {% if location.images|length-1 %}
+                                        <div class="count">
+                                            {{ location.images|length }}
+                                        </div>
+                                        <div class="arrow left">{{ ux_icon('fa6-solid:arrow-left') }}</div>
+                                        <div class="arrow right">{{ ux_icon('fa6-solid:arrow-right') }}</div>
+                                        <div class="list">
+                                            {#                                                    <img src="{{ location.image }}" alt="{{ location.location ~ ' - ' ~ 'image'|trans ~ ' #1' }}"> #}
+                                            {% for i in location.images %}
+                                                <img src="/images/poi{{ i.path }}" alt="{{ location.name ~ ' - ' ~ 'image'|trans ~ ' #' ~ (loop.index + 1) }}">
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="edit" data-loc-id="{{ location.id }}">{{ ux_icon('fa6-solid:pen') }}</div>
+                                </div>
+                                <div class="location poi" data-loc-id="{{ location.id }}">
+                                    <div>{{ location.name }}</div>
+                                    <div>
+                                        {% if location.city %}
+                                            <span class="city">{{ location.city }}</span>
+                                        {% endif %}
+                                        {% if location.origin_country %}
+                                            <span class="country">{{ location.origin_country|country_name }} {{ getEmojiFlag(location.origin_country) }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
     </div>
 </section>
 <section class="admin__points_of_interest">
@@ -120,12 +175,12 @@
 
     </div>
     <div class="list__content">
-        {% for p in pois %}
+        {% for p in pois.list %}
             <div class="list__item">
                 <a href="{{ path('admin_point_of_interest_edit', {id: p.id}) }}?p={{ page }}&s={{ sort }}&o={{ order }}&l={{ limit }}">
                     <div class="point_of_interest__still" data-title="{{ p.name }} - {{ p.city }} - {{ 'See the point of interest description'|trans }}">
                         {% if p.still_path %}
-                            <img src="/images/poi{{ p.still_path }}" class="points_of_interest__still" alt="{{ p.name }} - {{ p.city }}" />
+                            <img src="/images/poi{{ p.still_path }}" class="points_of_interest__still" alt="{{ p.name }} - {{ p.city }}"/>
                         {% else %}
                             {{ ux_icon('fa6-solid:photo-film') }}
                         {% endif %}
@@ -146,3 +201,21 @@
     </div>
     {{ pagination|raw }}
 </section>
+
+{{ addLocationForm|raw }}
+
+<div id="globs-map" style="display: none">
+    {
+        "bounds": {{ pois.bounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "pointsOfInterest": {{ pois.list|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "mapSettings": {{ mapSettings.data|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "emptyLocation": {{ pois.emptyPoi|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "imagePath": "/images/poi",
+        "translations": {
+            "Add": "{{ 'Add'|trans }}",
+            "Not a valid file type. Update your selection": "{{ 'Not a valid file type. Update your selection'|trans }}",
+            "This field is required": "{{ 'This field is required'|trans }}",
+            "Update": "{{ 'Update'|trans }}"
+        }
+    }
+</div>

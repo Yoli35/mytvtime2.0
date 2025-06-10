@@ -4349,6 +4349,10 @@ h2 {
                     text-align: center;
                     text-wrap: balance;
                     width: 15rem;
+
+                    &.poi {
+                        flex-direction: column;
+                    }
                 }
             }
         }
@@ -4827,11 +4831,23 @@ dialog, .side-panel {
             }
 
             label {
+                align-items: initial;
                 display: flex;
                 flex-direction: column;
                 font-size: 1rem;
                 font-weight: 300;
+                gap: 0;
                 width: 100%;
+
+                input[type="text"],
+                input[type="number"],
+                input[type="url"] {
+                    padding-block: .25rem;
+                }
+
+                select {
+                    border: 2px solid var(--orange-50);
+                }
 
                 &:has(input[type="file"]) {
                     background-color: var(--ardoise-80);

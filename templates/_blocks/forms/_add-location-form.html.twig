@@ -1,48 +1,75 @@
 <div class="side-panel add-location-dialog">
     <div class="frame">
         <form action="" id="add-location-form" enctype="multipart/form-data">
-            <input type="hidden" name="series-id" id="series-id" value="{{ series.id }}">
-            <input type="hidden" name="tmdb-id" id="tmdb-id" value="{{ tv.id }}">
-            <input type="hidden" name="crud-type" id="crud-type" value="create">{# create (new) | update (edit) | delete (remove) #}
-            <input type="hidden" name="crud-id" id="crud-id" value="0">{# id of updated location #}
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="title">{{ 'Title'|trans }}
-                        <input type="text" name="title" id="title" required>
-                        <span class="error"></span>
-                    </label>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="location">{{ 'Location'|trans }}
-                        <input type="text" name="location" id="location" required>
-                        <span class="error"></span>
-                    </label>
-                </div>
+            {# <input type="hidden" name="series-id" id="series-id" value="{{ series.id }}"> #}
+            {# <input type="hidden" name="tmdb-id" id="tmdb-id" value="{{ tv.id }}"> #}
+            {# <input type="hidden" name="crud-type" id="crud-type" value="create"> #}{# create (new) | update (edit) | delete (remove) #}
+            {# <input type="hidden" name="crud-id" id="crud-id" value="0"> #}{# id of updated location #}
+            {#            <div class="form-row"> #}
+            {#                <div class="form-field"> #}
+            {#                    <label for="title">{{ 'Title'|trans }} #}
+            {#                        <input type="text" name="title" id="title" required> #}
+            {#                        <span class="error"></span> #}
+            {#                    </label> #}
+            {#                </div> #}
+            {#            </div> #}
+            {#            <div class="form-row"> #}
+            {#                <div class="form-field"> #}
+            {#                    <label for="location">{{ 'Location'|trans }} #}
+            {#                        <input type="text" name="location" id="location" required> #}
+            {#                        <span class="error"></span> #}
+            {#                    </label> #}
+            {#                </div> #}
+            {#                <div class="form-row"> #}
+            {#                    <div class="form-field"> #}
+            {#                        <label for="season-number">{{ 'Season number'|trans }} #}
+            {#                            <input type="text" name="season-number" id="season-number" required> #}
+            {#                            <span class="error"></span> #}
+            {#                        </label> #}
+            {#                    </div> #}
+            {#                    <div class="form-field"> #}
+            {#                        <label for="episode-number">{{ 'Episode number'|trans }} #}
+            {#                            <input type="text" name="episode-number" id="episode-number" required> #}
+            {#                            <span class="error"></span> #}
+            {#                        </label> #}
+            {#                    </div> #}
+            {#                </div> #}
+            {#            </div> #}
+            {#            <div class="form-row"> #}
+            {#                <div class="form-field"> #}
+            {#                    <label for="description">{{ 'Description'|trans }} #}
+            {#                        <input type="text" name="description" id="description" required> #}
+            {#                        <span class="error"></span> #}
+            {#                    </label> #}
+            {#                </div> #}
+            {#            </div> #}
+            {% for h in hiddenFields %}
+                <input type="hidden" name="{{ h.name }}" id="{{ h.name }}" value="{{ h.value }}">
+            {% endfor %}
+            {% for row in rows %}
                 <div class="form-row">
-                    <div class="form-field">
-                        <label for="season-number">{{ 'Season number'|trans }}
-                            <input type="text" name="season-number" id="season-number" required>
-                            <span class="error"></span>
-                        </label>
-                    </div>
-                    <div class="form-field">
-                        <label for="episode-number">{{ 'Episode number'|trans }}
-                            <input type="text" name="episode-number" id="episode-number" required>
-                            <span class="error"></span>
-                        </label>
-                    </div>
+                    {% for rowItem in row %}
+                        {% if rowItem.item == 'field' %}
+                            {{ include('_blocks/forms/_location-input.html.twig', { input: rowItem }) }}
+                        {% endif %}
+                        {% if rowItem.item == 'select' %}
+                            {{ include('_blocks/forms/_location-select.html.twig', { select: rowItem }) }}
+                        {% endif %}
+                        {% if rowItem.item == 'row' %}
+                            <div class="form-row">
+                                {% for field in rowItem.fields %}
+                                    {% if field.item == 'field' %}
+                                        {{ include('_blocks/forms/_location-input.html.twig', { input: field }) }}
+                                    {% endif %}
+                                    {% if field.item == 'select' %}
+                                        {{ include('_blocks/forms/_location-select.html.twig', { select: field }) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
-            </div>
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="description">{{ 'Description'|trans }}
-                        <input type="text" name="description" id="description" required>
-                        <span class="error"></span>
-                    </label>
-                </div>
-            </div>
+            {% endfor %}
             <div class="form-row">
                 <div class="form-field">
                     <label for="google-map-url">{{ 'Paste Google maps url here to obtain latitude and longitude'|trans }}

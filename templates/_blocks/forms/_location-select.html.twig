@@ -1,0 +1,15 @@
+<div class="form-field">
+    <div class="form-field">
+        <label for="{{ select.name }}">{{ select.label|trans }}
+            <select name="{{ select.name }}" id="{{ select.name }}" {{ select.required ? 'required' : '' }}>
+                {% if select.placeholder %}
+                    <option value="" disabled selected>{{ select.placeholder|trans }}</option>
+                {% endif %}
+                {% for value, label in select.options %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+            <span class="error"></span>
+        </label>
+    </div>
+</div>

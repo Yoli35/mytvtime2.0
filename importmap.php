@@ -43,6 +43,9 @@ return [
     'Keyword' => [
         'path' => './assets/js/Keyword.js',
     ],
+    'Location' => [
+        'path' => './assets/js/images/Location.js',
+    ],
     'Map' => [
         'path' => './assets/js/Map.js',
     ],
