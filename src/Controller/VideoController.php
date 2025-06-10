@@ -593,14 +593,14 @@ final class VideoController extends AbstractController
             $diff = $now->diff($past);
             // diff string with years, months, days, hours, minutes, seconds
             $runtimeString = $this->translator->trans('Time spent watching these count videos', ['count' => $count]) . " : ";
-            $runtimeString .= $secondesStr . ' ' . $this->translator->trans('seconds or') . " ";
-            $runtimeString .= $diff->days ? $diff->days . ' ' . ($diff->days > 1 ? $this->translator->trans('days') : $this->translator->trans('day')) . ($diff->y + $diff->m + $diff->d + $diff->h + $diff->i + $diff->s ? (', ' . $this->translator->trans('or') . ' ') : '') : '';
-            $runtimeString .= $diff->y ? ($diff->y . ' ' . ($diff->y > 1 ? $this->translator->trans('years') : $this->translator->trans('year')) . ($diff->m + $diff->d + $diff->h + $diff->i + $diff->s ? ', ' : '')) : '';
-            $runtimeString .= $diff->m ? ($diff->m . ' ' . ($diff->m > 1 ? $this->translator->trans('months') : $this->translator->trans('month')) . ($diff->d + $diff->h + $diff->i + $diff->s ? ', ' : '')) : '';
-            $runtimeString .= $diff->d ? ($diff->d . ' ' . ($diff->d > 1 ? $this->translator->trans('days') : $this->translator->trans('day')) . ($diff->h + $diff->i + $diff->s ? ', ' : '')) : '';
-            $runtimeString .= $diff->h ? ($diff->h . ' ' . ($diff->h > 1 ? $this->translator->trans('hours') : $this->translator->trans('hour')) . ($diff->i + $diff->s ? ', ' : '')) : '';
-            $runtimeString .= $diff->i ? ($diff->i . ' ' . ($diff->i > 1 ? $this->translator->trans('minutes') : $this->translator->trans('minute')) . ($diff->s ? ', ' : '')) : '';
-            $runtimeString .= $diff->s ? ($diff->s . ' ' . ($diff->s > 1 ? $this->translator->trans('seconds') : $this->translator->trans('second'))) : '';
+            $runtimeString .= $secondesStr . '&nbsp;' . $this->translator->trans('seconds or') . " ";
+            $runtimeString .= $diff->days ? $diff->days . '&nbsp;' . ($diff->days > 1 ? $this->translator->trans('days') : $this->translator->trans('day')) . ($diff->y + $diff->m + $diff->d + $diff->h + $diff->i + $diff->s ? (', ' . $this->translator->trans('or') . ' ') : '') : '';
+            $runtimeString .= $diff->y ? ($diff->y . '&nbsp;' . ($diff->y > 1 ? $this->translator->trans('years') : $this->translator->trans('year')) . ($diff->m + $diff->d + $diff->h + $diff->i + $diff->s ? ', ' : '')) : '';
+            $runtimeString .= $diff->m ? ($diff->m . '&nbsp;' . ($diff->m > 1 ? $this->translator->trans('months') : $this->translator->trans('month')) . ($diff->d + $diff->h + $diff->i + $diff->s ? ', ' : '')) : '';
+            $runtimeString .= $diff->d ? ($diff->d . '&nbsp;' . ($diff->d > 1 ? $this->translator->trans('days') : $this->translator->trans('day')) . ($diff->h + $diff->i + $diff->s ? ', ' : '')) : '';
+            $runtimeString .= $diff->h ? ($diff->h . '&nbsp;' . ($diff->h > 1 ? $this->translator->trans('hours') : $this->translator->trans('hour')) . ($diff->i + $diff->s ? ', ' : '')) : '';
+            $runtimeString .= $diff->i ? ($diff->i . '&nbsp;' . ($diff->i > 1 ? $this->translator->trans('minutes') : $this->translator->trans('minute')) . ($diff->s ? ', ' : '')) : '';
+            $runtimeString .= $diff->s ? ($diff->s . '&nbsp;' . ($diff->s > 1 ? $this->translator->trans('seconds') : $this->translator->trans('second'))) : '';
 
         } else {
             $runtimeString = "";
