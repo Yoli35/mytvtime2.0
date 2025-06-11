@@ -1101,20 +1101,20 @@ class SeriesController extends AbstractController
                 ],
                 'rows' => [
                     [
-                        ['item' => 'field', 'name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true],
+                        ['item' => 'input', 'name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true],
                     ],
                     [
-                        ['item' => 'field', 'name' => 'location', 'label' => 'Location', 'type' => 'text', 'required' => false],
+                        ['item' => 'input', 'name' => 'location', 'label' => 'Location', 'type' => 'text', 'required' => false],
                         [
                             'item' => 'row',
                             'fields' => [
-                                ['item' => 'field', 'name' => 'season-number', 'label' => 'Season number', 'type' => 'text', 'required' => false],
-                                ['item' => 'field', 'name' => 'episode-number', 'label' => 'Episode number', 'type' => 'text', 'required' => false],
+                                ['item' => 'input', 'name' => 'season-number', 'label' => 'Season number', 'type' => 'text', 'required' => false],
+                                ['item' => 'input', 'name' => 'episode-number', 'label' => 'Episode number', 'type' => 'text', 'required' => false],
                             ]
                         ],
                     ],
                     [
-                        ['item' => 'field', 'name' => 'description', 'label' => 'Description', 'type' => 'textarea', 'required' => false],
+                        ['item' => 'textarea', 'name' => 'description', 'label' => 'Description', 'rows' => '5', 'required' => false],
                     ]
                 ],
             ]);

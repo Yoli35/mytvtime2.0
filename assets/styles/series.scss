@@ -4773,14 +4773,15 @@ dialog {
     -webkit-backdrop-filter: blur(8px);
     background-color: var(--ardoise-80-alpha-50);
     border-radius: .5rem 0 0 .5rem;
-    max-height: calc(100vh - 16rem);
+    max-height: calc(100vh - 18rem);
     opacity: 0;
     position: fixed;
     right: 0;
-    top: 8rem;
+    top: 14rem;
     transform: translateX(100%);
     transition: transform 1s var(--side-panel-easing), opacity 0.3s ease-in-out;
     width: 80%;
+    z-index: 10;
 
     &.open {
         opacity: 1;
@@ -4949,6 +4950,10 @@ dialog, .side-panel {
                 padding-inline: .5rem;
             }
 
+            textarea {
+                resize: vertical;
+            }
+
             input[type="url"].dragover {
                 border-color: var(--green-50);
                 cursor: copy;
@@ -4963,16 +4968,22 @@ dialog, .side-panel {
                 cursor: pointer;
                 padding: .25rem .5rem;
             }*/
+        }
+
+        .submit-row {
+            gap: 1rem;
+            justify-content: flex-end;
 
             button {
                 background-color: var(--orange-50);
-                border: 2px solid var(--orange-90);
+                /*border: 2px solid var(--orange-90);*/
                 border-radius: .25rem;
                 color: var(--orange-90);
                 cursor: pointer;
-                font-size: 1rem;
-                font-weight: 300;
-                padding-inline: .5rem;
+                font-size: 1.25rem;
+                line-height: 1.1em;
+                padding-block: .5rem;
+                padding-inline: 1.5rem;
             }
         }
     }

@@ -689,15 +689,15 @@ class AdminController extends AbstractController
             ],
             'rows' => [
                 [
-                    ['item' => 'field', 'name' => 'name', 'label' => 'Name', 'type' => 'text', 'required' => true],
-                    ['item' => 'field', 'name' => 'city', 'label' => 'City', 'type' => 'text', 'required' => true],
+                    ['item' => 'input', 'name' => 'name', 'label' => 'Name', 'type' => 'text', 'required' => true],
+                    ['item' => 'input', 'name' => 'city', 'label' => 'City', 'type' => 'text', 'required' => true],
                 ],
                 [
-                    ['item' => 'field', 'name' => 'address', 'label' => 'Address', 'type' => 'text', 'required' => true],
+                    ['item' => 'input', 'name' => 'address', 'label' => 'Address', 'type' => 'text', 'required' => true],
                     ['item' => 'select', 'name' => 'country', 'label' => 'Country', 'options' => Countries::getNames(), 'placeholder' => 'Select a country', 'required' => true],
                 ],
                 [
-                    ['item' => 'field', 'name' => 'description', 'label' => 'Description', 'type' => 'textarea', 'required' => false],
+                    ['item' => 'textarea', 'name' => 'description', 'label' => 'Description', 'rows' => '5', 'required' => false],
                 ],
             ],
         ];
@@ -841,13 +841,13 @@ class AdminController extends AbstractController
          * Images ajoutées avec Url (https://website/some-pisture.png)                          *
          * ou par glisser-déposer ("blob:https://website/71698467-714e-4b2e-b6b3-a285619ea272") *
          ****************************************************************************************/
-        foreach ($images as $name => $imageUrl) {
+        foreach ($images as $fieldName => $imageUrl) {
             if (str_starts_with($imageUrl, '~/')) {
                 $image = str_replace('~/', '/', $imageUrl);
             } else {
                 if (str_starts_with('blob:', $imageUrl)) {
 //                    $this->blobs[$name . '-blob'] = $data[$name . '-blob'];
-                    $image = $this->imageService->blobToWebp2($inputBag[$name . '-blob'], $name, $city, $n, '/public/images/poi/');
+                    $image = $this->imageService->blobToWebp2($inputBag[$fieldName . '-blob'], $name, $city, $n, '/public/images/poi/');
                 } else {
                     $image = $this->imageService->urlToWebp($imageUrl, $name, $city, $n, '/public/images/poi/');
                 }

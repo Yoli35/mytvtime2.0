@@ -315,6 +315,10 @@ export class Location {
             if (fieldSelect) {
                 formData.append(field, fieldSelect.value);
             }
+            const fieldTextarea = form.querySelector('textarea[name="' + field + '"]');
+            if (fieldTextarea) {
+                formData.append(field, fieldTextarea.value);
+            }
         });
 
         const imageUrlInputs = form.querySelectorAll('input[name*="image-url"]');
@@ -330,7 +334,8 @@ export class Location {
                 formData.append(input.name + '-blob', file);
             }
         });
-        formData.append(imageFileInput.name, imageFileInput.files[0]);
+        if (imageFileInput.files.length)
+            formData.append(imageFileInput.name, imageFileInput.files[0]);
         Array.from(imageFilesInput.files).forEach(function (file, index) {
             formData.append('additional-image-' + index, file);
         });

@@ -78,7 +78,7 @@ class ImageService extends AbstractController
     {
         $kernelProjectDir = $this->getParameter('kernel.project_dir');
         $slugger = new AsciiSlugger();
-        $imageMapPath = $kernelProjectDir . '/public/images/map/';
+        $imageMapPath = $kernelProjectDir . $path;
         $imageTempPath = $kernelProjectDir . '/public/images/temp/';
 
         $extension = pathinfo($url, PATHINFO_EXTENSION);

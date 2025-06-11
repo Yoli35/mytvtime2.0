@@ -1,11 +1,11 @@
 <div class="form-field">
     <div class="form-field">
-        <label for="{{ select.name }}">{{ select.label|trans }}
-            <select name="{{ select.name }}" id="{{ select.name }}" {{ select.required ? 'required' : '' }}>
-                {% if select.placeholder %}
-                    <option value="" disabled selected>{{ select.placeholder|trans }}</option>
+        <label for="{{ field.name }}">{{ field.label|trans }}
+            <select name="{{ field.name }}" id="{{ field.name }}" {{ field.required ? 'required' : '' }}>
+                {% if field.placeholder %}
+                    <option value="" disabled selected>{{ field.placeholder|trans }}</option>
                 {% endif %}
-                {% for value, label in select.options %}
+                {% for value, label in field.options %}
                     <option value="{{ value }}">{{ label }}</option>
                 {% endfor %}
             </select>
