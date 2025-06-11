@@ -4,7 +4,7 @@ let gThis = null;
 
 export class Location {
 
-    constructor(data, fieldList, mpaDiv) {
+    constructor(data, fieldList, mapDiv) {
         gThis = this;
         this.mapDiv = mapDiv;
         this.map = null;
@@ -59,8 +59,8 @@ export class Location {
             addLocationDialog.querySelector('.frame').scrollTo(0, submitRow.offsetTop);
         });
 
-        if (mapDiv) {
-            const mapViewValue = JSON.parse(mapDiv.getAttribute('data-symfony--ux-leaflet-map--map-view-value'));
+        if (this.mapDiv) {
+            const mapViewValue = JSON.parse(this.mapDiv.getAttribute('data-symfony--ux-leaflet-map--map-view-value'));
             console.log({mapViewValue});
 
             const locationsDiv = document.querySelector('.temp-locations');
