@@ -3484,8 +3484,11 @@ class SeriesController extends AbstractController
     {
         $tmdbId = $series->getTmdbId();
         $filmingLocations = $this->filmingLocationRepository->locations($tmdbId);
+        $emptyLocation = $this->newLocation($series);
         if (count($filmingLocations) == 0) {
-            return ['filmingLocations' => [],
+            return [
+                'filmingLocations' => [],
+                'emptyLocation' => $emptyLocation,
                 'bounds' => []
             ];
         }
@@ -3509,16 +3512,22 @@ class SeriesController extends AbstractController
             $maxLng = max(array_column($filmingLocations, 'longitude'));
             $bounds = [[$maxLng + .1, $maxLat + .1], [$minLng - .1, $minLat - .1]];
         }
-        $uuid = $data['uuid'] = Uuid::v4()->toString();
-        $now = $this->now();
-        $emptyLocation = new FilmingLocation($uuid, $tmdbId, "", "", "", 0, 0, 0, 0, $now, true);
-        $emptyLocation->setOriginCountry($series->getOriginCountry());
 
         return [
             'filmingLocations' => $filmingLocations,
             'emptyLocation' => $emptyLocation,
             'bounds' => $bounds
         ];
+    }
+
+    private function newLocation(Series $series): array
+    {
+        $uuid = Uuid::v4()->toString();
+        $now = $this->now();
+        $tmdbId = $series->getTmdbId();
+        $emptyLocation = new FilmingLocation($uuid, $tmdbId, "", "", "", 0, 0, 0, 0, $now, true);
+        $emptyLocation->setOriginCountry($series->getOriginCountry());
+        return $emptyLocation->toArray();
     }
 
     public function now(): DateTimeImmutable

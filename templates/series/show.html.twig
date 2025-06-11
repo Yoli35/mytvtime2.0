@@ -814,7 +814,8 @@
         "bounds": {{ locationsBounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "pointsOfInterest": {{ pois.list|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "emptyLocation": {{ emptyLocation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "imagePath": "/images/map",
+        "locationImagePath": "/images/map",
+        "poiImagePath": "/images/poi"
         }
     </div>
     <div id="globs" style="display: none">{# |replace({'\'': '\\\'', '"': '\\"'}}) #}

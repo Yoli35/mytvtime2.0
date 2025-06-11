@@ -67,31 +67,52 @@ class FilmingLocation
 
     public function __construct(string $uuid, int $tmdbId, string $title, string $location, string $description, float $latitude, float $longitude, int $seasonNumber, int $episodeNumber, DateTimeImmutable $now, bool $isSeries = false)
     {
-        $this->uuid = $uuid;
-        $this->tmdbId = $tmdbId;
-        $this->title = $title;
-        $this->location = $location;
-        $this->description = $description;
-        $this->latitude = $latitude;
-        $this->longitude = $longitude;
-        $this->isSeries = $isSeries;
-        $this->seasonNumber = $seasonNumber;
-        $this->episodeNumber = $episodeNumber;
         $this->createdAt = $now;
-        $this->updatedAt = $now;
+        $this->description = $description;
+        $this->episodeNumber = $episodeNumber;
         $this->filmingLocationImages = new ArrayCollection();
+        $this->isSeries = $isSeries;
+        $this->latitude = $latitude;
+        $this->location = $location;
+        $this->longitude = $longitude;
+        $this->seasonNumber = $seasonNumber;
+        $this->title = $title;
+        $this->tmdbId = $tmdbId;
+        $this->updatedAt = $now;
+        $this->uuid = $uuid;
     }
 
     public function update(string $title, string $location, string $description, float $latitude, float $longitude, int $seasonNumber, int $episodeNumber, DateTimeImmutable $updateAt): void
     {
-        $this->title = $title;
-        $this->location = $location;
         $this->description = $description;
+        $this->episodeNumber = $episodeNumber;
         $this->latitude = $latitude;
+        $this->location = $location;
         $this->longitude = $longitude;
         $this->seasonNumber = $seasonNumber;
-        $this->episodeNumber = $episodeNumber;
+        $this->title = $title;
         $this->updatedAt = $updateAt;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'created_at' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
+            'description' => $this->getDescription(),
+            'episode_number' => $this->getEpisodeNumber(),
+            'filming_location_images' => [],
+            'id' => $this->getId(),
+            'is_series' => $this->isSeries(),
+            'latitude' => $this->getLatitude(),
+            'location' => $this->getLocation(),
+            'longitude' => $this->getLongitude(),
+            'origin_country' => $this->getOriginCountry(),
+            'season_number' => $this->getSeasonNumber(),
+            'title' => $this->getTitle(),
+            'tmdb_id' => $this->getTmdbId(),
+            'updated_at' => $this->getUpdatedAt()?->format('Y-m-d H:i:s'),
+            'uuid' => $this->getUuid(),
+        ];
     }
 
     public function getId(): ?int
