@@ -4077,6 +4077,27 @@ h2 {
         justify-content: center;
         width: 2rem;
     }
+
+    .toggle-cooperative-gestures {
+        align-items: center;
+        background-color: var(--orange-50);
+        border-radius: .25rem;
+        color: var(--orange-90);
+        cursor: pointer;
+        display: flex;
+        font-size: 1rem;
+        font-weight: 300;
+        gap: .25rem;
+        height: 2rem;
+        justify-content: center;
+        margin-inline-start: auto;
+        width: 4rem;
+
+        &.active {
+            background-color: var(--green-50);
+            color: var(--green-10);
+        }
+    }
 }
 
 .series-map {
@@ -4168,24 +4189,32 @@ h2 {
         }
 
         .mapboxgl-popup-content {
-            background: var(--orange-40);
             border-radius: 8px;
             box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
             padding: unset;
             width: 20rem;
 
             .leaflet-popup-content-title {
+                background: var(--orange-40);
                 font-size: 1.25rem;
                 font-weight: 300;
                 line-height: 1.25em;
                 padding: .5rem;
+
+                &.poi {
+                    background-color: var(--green-50);
+                }
             }
 
             .leaflet-popup-content-description {
-                background-color: var(--orange-30);
+                background-color: var(--orange-70);
                 font-size: 1rem;
                 font-weight: 300;
                 padding: .5rem;
+
+                &.poi {
+                    background-color: var(--green-70);
+                }
             }
 
             .leaflet-popup-content-image {
