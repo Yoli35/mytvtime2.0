@@ -18,6 +18,13 @@ class PointOfInterestImageRepository extends ServiceEntityRepository
         parent::__construct($registry, PointOfInterestImage::class);
     }
 
+    public function save(PointOfInterestImage $poiImage, bool $flush = false): void
+    {
+        $this->em->persist($poiImage);
+        if ($flush) {
+            $this->em->flush();
+        }
+    }
 
     public function poiImages(array $pointOfInterestIds): array
     {

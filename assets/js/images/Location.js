@@ -311,6 +311,10 @@ export class Location {
             if (fieldInput) {
                 formData.append(field, fieldInput.value);
             }
+            const fieldSelect = form.querySelector('select[name="' + field + '"]');
+            if (fieldSelect) {
+                formData.append(field, fieldSelect.value);
+            }
         });
         // const seriesIdInput = form.querySelector('input[name="series-id"]');
         // const tmdbIdInput = form.querySelector('input[name="tmdb-id"]');
@@ -376,9 +380,6 @@ export class Location {
         const submitButton = addLocationForm.querySelector('button[type="submit"]');
 
         inputs.forEach(function (input) {
-            // if (input.getAttribute('type') !== 'hidden') {
-            //     input.value = '';
-            // }
             const name = input.getAttribute('name');
             input.value = location[name] || '';
         });

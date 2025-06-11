@@ -18,6 +18,14 @@ class PointOfInterestRepository extends ServiceEntityRepository
         parent::__construct($registry, PointOfInterest::class);
     }
 
+    public function save(PointOfInterest $poi, bool $flush = false): void
+    {
+        $this->em->persist($poi);
+        if ($flush) {
+            $this->em->flush();
+        }
+    }
+
     public function allPointsOfInterest(): array
     {
         $sql = "SELECT p.*, i.path as still_path

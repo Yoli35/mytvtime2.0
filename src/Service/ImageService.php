@@ -21,7 +21,7 @@ class ImageService extends AbstractController
     {
     }
 
-    public function blobToWebp2(string $blob, string $title, string $location, int $n): ?string
+    public function blobToWebp2(string $blob, string $title, string $location, int $n, string $path = '/public/images/map/'): ?string
     {
         $kernelProjectDir = $this->getParameter('kernel.project_dir');
         try {
@@ -53,7 +53,7 @@ class ImageService extends AbstractController
                 // Ensure we have a valid image data string
                 if ($decodedBlob !== false && file_put_contents($tempName, $decodedBlob)) {
                     // Convert to WebP format
-                    $webp = $this->webpImage($title, $tempName, $destination, 90);
+                    $webp = $this->webpImage($title . (str_contains('poi', $path) ? ' - ' . $location : ''), $tempName, $destination, 90);
 
                     if ($webp) {
                         return '/' . $basename . '.webp';
@@ -74,7 +74,7 @@ class ImageService extends AbstractController
         }
     }
 
-    public function urlToWebp(string $url, string $title, string $location, int $n): ?string
+    public function urlToWebp(string $url, string $title, string $location, int $n, string $path = '/public/images/map/'): ?string
     {
         $kernelProjectDir = $this->getParameter('kernel.project_dir');
         $slugger = new AsciiSlugger();
@@ -88,7 +88,7 @@ class ImageService extends AbstractController
 
         $copied = $this->saveImageFromUrl($url, $tempName, true);
         if ($copied) {
-            $webp = $this->webpImage($title, $tempName, $destination);
+            $webp = $this->webpImage($title . (str_contains('poi', $path) ? ' - ' . $location : ''), $tempName, $destination);
             if ($webp) {
                 $image = '/' . $basename . '.webp';
             } else {
@@ -100,11 +100,11 @@ class ImageService extends AbstractController
         return $image;
     }
 
-    public function fileToWebp(UploadedFile $file, string $title, string $location, int $n): ?string
+    public function fileToWebp(UploadedFile $file, string $title, string $location, int $n, string $path = '/public/images/map/'): ?string
     {
         $kernelProjectDir = $this->getParameter('kernel.project_dir');
         $slugger = new AsciiSlugger();
-        $imageMapPath = $kernelProjectDir . '/public/images/map/';
+        $imageMapPath = $kernelProjectDir . $path;
         $imageTempPath = $kernelProjectDir . '/public/images/temp/';
 
         $filename = $file->getClientOriginalName();
@@ -116,7 +116,7 @@ class ImageService extends AbstractController
 
         try {
             $file->move($imageTempPath, $basename . '.' . $extension);
-            $webp = $this->webpImage($title, $tempName, $destination);
+            $webp = $this->webpImage($title . (str_contains('poi', $path) ? ' - ' . $location : ''), $tempName, $destination);
             if ($webp) {
                 $image = '/' . $basename . '.webp';
             } else {

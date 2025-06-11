@@ -55,16 +55,28 @@ class PointOfInterest
 
     public function __construct(string $name, string $address, ?string $city, string $originCountry, ?string $description, float $latitude, float $longitude, DateTimeImmutable $now)
     {
-        $this->name = $name;
         $this->address = $address;
         $this->city = $city;
-        $this->originCountry = $originCountry;
+        $this->createdAt = $now;
         $this->description = $description;
         $this->latitude = $latitude;
         $this->longitude = $longitude;
+        $this->name = $name;
         $this->originCountry = $originCountry;
         $this->pointOfInterestImages = new ArrayCollection();
+        $this->updatedAt = $now;
+    }
+
+    public function update(string $name, string $address, ?string $city, string $originCountry, ?string $description, float $latitude, float $longitude, DateTimeImmutable $now): void
+    {
+        $this->address = $address;
+        $this->city = $city;
         $this->createdAt = $now;
+        $this->description = $description;
+        $this->latitude = $latitude;
+        $this->longitude = $longitude;
+        $this->name = $name;
+        $this->originCountry = $originCountry;
         $this->updatedAt = $now;
     }
 

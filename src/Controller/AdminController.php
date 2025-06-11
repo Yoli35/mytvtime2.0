@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\PointOfInterest;
+use App\Entity\PointOfInterestImage;
 use App\Entity\User;
 use App\Form\PointOfInterestForm;
 use App\Repository\FilmingLocationRepository;
@@ -17,8 +18,10 @@ use App\Repository\VideoRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
+use App\Service\ImageService;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Intl\Languages as Languages;
@@ -26,6 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @method User|null getUser() */
@@ -39,6 +43,7 @@ class AdminController extends AbstractController
         private readonly DateService                    $dateService,
         private readonly FilmingLocationRepository      $filmingLocationRepository,
         private readonly ImageConfiguration             $imageConfiguration,
+        private readonly ImageService                   $imageService,
         private readonly MapController                  $mapController,
         private readonly MovieRepository                $movieRepository,
         private readonly PointOfInterestImageRepository $pointOfInterestImageRepository,
@@ -763,10 +768,129 @@ class AdminController extends AbstractController
         $files = $request->files->all();
         dump($inputBag, $files);
 
+        $messages = [];
+
+        if (empty($inputBag) && empty($files)) {
+            return new JsonResponse([
+                'status' => 'success',
+                'message' => $this->translator->trans('point_of_interest.no_data'),
+            ]);
+        }
+
+        $imageFiles = [];
+        foreach ($files as $key => $file) {
+            if ($file instanceof UploadedFile) {
+                // Est-ce qu'il s'agit d'une image ?
+                $mimeType = $file->getMimeType();
+                if (str_starts_with($mimeType, 'image')) {
+                    $imageFiles[$key] = $file;
+                }
+            }
+        }
+
+        $inputBag = array_filter($inputBag, fn($key) => $key != "google-map-url", ARRAY_FILTER_USE_KEY);
+
+        $crudType = $inputBag['crud-type'];
+        $new = $crudType === 'create';
+        $crudId = $inputBag['crud-id'];
+        $now = $this->dateService->getNowImmutable("Europe/Paris", true);
+
+        if (!$new)
+            $poi = $this->pointOfInterestRepository->findOneBy(['id' => $crudId]);
+        else
+            $poi = null;
+
+        $inputBag['latitude'] = str_replace(',', '.', $inputBag['latitude']);
+        $inputBag['longitude'] = str_replace(',', '.', $inputBag['longitude']);
+
+        $address = $inputBag['address'] ?? '';
+        $city = $inputBag['city'] ?? '';
+        $description = $inputBag['description'] ?? '';
+        $latitude = $inputBag['latitude'] = floatval($inputBag['latitude']);
+        $longitude = $inputBag['longitude'] = floatval($inputBag['longitude']);
+        $name = $inputBag['name'];
+        $originCountry = $inputBag['country'] ?? 'FR';
+
+        if ($crudType === 'create') {// Toutes les images
+            $images = array_filter($inputBag, fn($key) => str_contains($key, 'image-url'), ARRAY_FILTER_USE_KEY);
+        } else { // Images supplémentaires (voyez le '-' dans le nom de la clé)
+            $images = array_filter($inputBag, fn($key) => str_contains($key, 'image-url-'), ARRAY_FILTER_USE_KEY);
+        }
+        $images = array_filter($images, fn($image) => $image != '' and $image != "undefined");
+// TODO: Vérifier le code suivant
+        $firstImageIndex = 1;
+        if ($poi) {
+            // Récupérer les images existantes et les compter
+            $existingAdditionalImages = $this->pointOfInterestImageRepository->findBy(['pointOfInterest' => $poi]);
+            $firstImageIndex += count($existingAdditionalImages);
+        }
+// Fin du code à vérifier
+
+        if (!$poi) {
+            $poi = new PointOfInterest($name, $address, $city, $originCountry, $description, $latitude, $longitude, $now);
+        } else {
+            $poi->update($name, $address, $city, $originCountry, $description, $latitude, $longitude, $now);
+        }
+        $this->pointOfInterestRepository->save($poi, true);
+
+        $n = $firstImageIndex;
+        /****************************************************************************************
+         * En mode dev, on peut ajouter des FilmingLocationImage sans passer par le             *
+         * téléversement : "~/some picture.webp"                                                *
+         * SINON :                                                                              *
+         * Images ajoutées avec Url (https://website/some-pisture.png)                          *
+         * ou par glisser-déposer ("blob:https://website/71698467-714e-4b2e-b6b3-a285619ea272") *
+         ****************************************************************************************/
+        foreach ($images as $name => $imageUrl) {
+            if (str_starts_with($imageUrl, '~/')) {
+                $image = str_replace('~/', '/', $imageUrl);
+            } else {
+                if (str_starts_with('blob:', $imageUrl)) {
+//                    $this->blobs[$name . '-blob'] = $data[$name . '-blob'];
+                    $image = $this->imageService->blobToWebp2($inputBag[$name . '-blob'], $name, $city, $n, '/public/images/poi/');
+                } else {
+                    $image = $this->imageService->urlToWebp($imageUrl, $name, $city, $n, '/public/images/poi/');
+                }
+            }
+            if ($image) {
+                $poiImage = new PointOfInterestImage($poi, $image, "", $now);
+                $this->pointOfInterestImageRepository->save($poiImage, true);
+
+                if ($crudType === 'create' && $n == 1) {
+                    $poi->setStill($poiImage);
+                    $this->pointOfInterestRepository->save($poi, true);
+                }
+                $n++;
+            }
+        }
+
+        /******************************************************************************
+         * Images ajoutées depuis des fichiers locaux (type : UploadedFile)           *
+         ******************************************************************************/
+        foreach ($imageFiles as $key => $file) {
+            $image = $this->imageService->fileToWebp($file, $name, $city, $n, '/public/images/poi/');
+            if ($image) {
+                $poiImage = new PointOfInterestImage($poi, $image, "", $now);
+                $this->pointOfInterestImageRepository->save($poiImage, true);
+
+                if ($key === 'image-file') { // la vignette
+                    $poi->setStill($poiImage);
+                    $this->pointOfInterestRepository->save($poi, true);
+                }
+                $n++;
+            }
+        }
+
+        $messages[0] = $this->translator->trans('point_of_interest.add_success');
+        if ($n > $firstImageIndex) {
+            $addedImageCount = $n - $firstImageIndex;
+            $messages[] = $addedImageCount . $addedImageCount > 1 ? ' images ajoutées' : ' image ajoutée';
+        }
+
         return new JsonResponse([
             'status' => 'success',
-            'message' => $this->translator->trans('point_of_interest.add_success'),
-            ]);
+            'messages' => $messages,
+        ]);
     }
 
     #[Route('/videos', name: 'videos')]

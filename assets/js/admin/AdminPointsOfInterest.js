@@ -12,7 +12,7 @@ export class AdminPointsOfInterest {
         console.log('Data for points of interest:', data);
         const mapDiv = document.querySelector('.map-controller');
         if (mapDiv) {
-            new Location(data, ['name', 'address', 'city', 'country', 'description', 'latitude', 'longitude', 'created_at'], mapDiv);
+            new Location(data, ['crud-type', 'crud-id', 'name', 'address', 'city', 'country', 'description', 'latitude', 'longitude', 'created_at'], mapDiv);
         }
     }
 }
