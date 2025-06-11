@@ -4769,10 +4769,11 @@ dialog {
 }
 
 .side-panel {
+    --border-width: 3px;
     backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    background-color: var(--ardoise-80-alpha-50);
-    border-radius: .5rem 0 0 .5rem;
+    -webkit-backdrop-filter: blur(16px);
+    background: hsl(from var(--green-80) h s l / 0.45);
+    border-radius: .75rem 0 0 .75rem;
     max-height: calc(100vh - 18rem);
     opacity: 0;
     position: fixed;
@@ -4782,6 +4783,26 @@ dialog {
     transition: transform 1s var(--side-panel-easing), opacity 0.3s ease-in-out;
     width: 80%;
     z-index: 10;
+
+   /* background:
+            radial-gradient(circle at 50% 250%, var(--green-80), var(--green-70)) padding-box,
+            linear-gradient(90deg, var(--orange-50), var(--orange-30)) border-box;
+    border: transparent 8px solid;*/
+    border-right-width: 0;
+
+    &::before {
+        background: linear-gradient(90deg, var(--orange-50), var(--orange-30)) border-box;
+        border: var(--border-width) solid transparent;
+        border-right-width: 0;
+        border-radius: inherit;
+        content: "";
+        inset: 0;
+        mask: linear-gradient(black) border-box,
+              linear-gradient(black) padding-box;
+        mask-composite: subtract;
+        position: absolute;
+        z-index: -1;
+    }
 
     &.open {
         opacity: 1;
@@ -4941,7 +4962,8 @@ dialog, .side-panel {
             }
 
             input, textarea {
-                background-color: var(--ardoise-80);
+                /*background-color: var(--ardoise-80);*/
+                background: hsl(from var(--green-80) h s l / 0.45);
                 border: 2px solid var(--orange-50);
                 border-radius: .25rem;
                 color: var(--ardoise-10);
@@ -4951,6 +4973,7 @@ dialog, .side-panel {
             }
 
             textarea {
+                background: hsl(from var(--green-80) h s l / 0.45);
                 resize: vertical;
             }
 
@@ -4975,7 +4998,7 @@ dialog, .side-panel {
             justify-content: flex-end;
 
             button {
-                background-color: var(--orange-50);
+                background-color: var(--orange-30);
                 /*border: 2px solid var(--orange-90);*/
                 border-radius: .25rem;
                 color: var(--orange-90);
@@ -4984,6 +5007,11 @@ dialog, .side-panel {
                 line-height: 1.1em;
                 padding-block: .5rem;
                 padding-inline: 1.5rem;
+
+                &:hover {
+                    background-color: var(--orange-50);
+                    color: var(--ardoise-10);
+                }
             }
         }
     }
