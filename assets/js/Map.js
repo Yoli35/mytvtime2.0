@@ -32,13 +32,14 @@ export class Map {
             this.map = new mapboxgl.Map({
                 container: 'map',
                 style: 'mapbox://styles/mapbox/outdoors-v12',
-                cooperativeGestures: true,
+                /*cooperativeGestures: true,*/
                 projection: 'globe',
                 bounds: this.bounds,
                 fitBoundsOptions: {
                     padding: 15
                 }
             });
+            console.log('Map initialized', this.map);
             this.map.on('style.load', () => {
                 gThis.map.setFog({
                     "range": [0.8, 1.2],
@@ -97,7 +98,7 @@ export class Map {
             this.pointsOfInterest.forEach((point, index) => {
                 let marker = new mapboxgl.Marker({color: "#196c00"})
                     .setLngLat([point.longitude, point.latitude])
-                    .setPopup(new mapboxgl.Popup().setHTML('<div class="leaflet-popup-content-title">' + point.name + '</div><div class="leaflet-popup-content-description">' + point.address + '</div><div class="leaflet-popup-content-image"><img src="/images/poi' + point['still_path'] + '" alt="' + point['name'] + '" style="height: auto; width: 100%"></div>'))
+                    .setPopup(new mapboxgl.Popup().setHTML('<div class="leaflet-popup-content-title poi">' + point.name + '</div><div class="leaflet-popup-content-description poi">' + point.address + '</div><div class="leaflet-popup-content-image"><img src="/images/poi' + point['still_path'] + '" alt="' + point['name'] + '" style="height: auto; width: 100%"></div>'))
                     .addTo(this.map);
                 let markerIcon = marker.getElement();
                 markerIcon.setAttribute('data-id', point.id);
@@ -156,6 +157,18 @@ export class Map {
                 image.querySelector('img').setAttribute('src', imageSrc);
             });
         });
+
+        const toggleCooperativeGesturesButton = document.querySelector('.toggle-cooperative-gestures');
+        if (toggleCooperativeGesturesButton) {
+            toggleCooperativeGesturesButton.addEventListener('click', () => {
+                const state = gThis.toggleCooperativeGestures();
+                if (state) {
+                    toggleCooperativeGesturesButton.classList.add('active');
+                } else {
+                    toggleCooperativeGesturesButton.classList.remove('active');
+                }
+            });
+        }
     }
 
     getPosition(e) {
@@ -190,5 +203,13 @@ export class Map {
         thumbnail.classList.add('selected');
         const style = thumbnail.getAttribute('data-style');
         gThis.map.setStyle(style);
+    }
+
+    toggleCooperativeGestures() {
+        if (this.map) {
+            this.map._cooperativeGestures = !this.map._cooperativeGestures;
+            return this.map._cooperativeGestures;
+        }
+        return false;
     }
 }
