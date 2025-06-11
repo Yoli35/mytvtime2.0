@@ -8,11 +8,10 @@ export class AdminPointsOfInterest {
     init() {
         console.log('AdminPointsOfInterest initialized');
         const jsonGlobsObject = JSON.parse(document.querySelector('div#globs-map').textContent);
-        const data = jsonGlobsObject.data || {};
-        console.log('Data for points of interest:', data);
+        console.log('Data for points of interest:', jsonGlobsObject);
         const mapDiv = document.querySelector('.map-controller');
         if (mapDiv) {
-            new Location(data, ['crud-type', 'crud-id', 'name', 'address', 'city', 'country', 'description', 'latitude', 'longitude', 'created_at'], mapDiv);
+            new Location(jsonGlobsObject, ['crud-type', 'crud-id', 'name', 'address', 'city', 'country', 'description', 'latitude', 'longitude', 'created_at'], mapDiv);
         }
     }
 }

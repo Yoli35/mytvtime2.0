@@ -316,33 +316,10 @@ export class Location {
                 formData.append(field, fieldSelect.value);
             }
         });
-        // const seriesIdInput = form.querySelector('input[name="series-id"]');
-        // const tmdbIdInput = form.querySelector('input[name="tmdb-id"]');
-        // const crudTypeInput = form.querySelector('input[name="crud-type"]');
-        // const crudIdInput = form.querySelector('input[name="crud-id"]');
-        // const titleInput = form.querySelector('input[name="title"]');
-        // const episodeNumberInput = form.querySelector('input[name="episode-number"]');
-        // const seasonNumberInput = form.querySelector('input[name="season-number"]');
-        // const locationInput = form.querySelector('input[name="location"]');
-        // const descriptionInput = form.querySelector('input[name="description"]');
-        // const latitudeInput = form.querySelector('input[name="latitude"]');
-        // const longitudeInput = form.querySelector('input[name="longitude"]');
 
         const imageUrlInputs = form.querySelectorAll('input[name*="image-url"]');
         const imageFileInput = form.querySelector('input[name="image-file"]');
         const imageFilesInput = form.querySelector('input[name*="image-files"]');
-
-        // formData.append("series-id", seriesIdInput.value);
-        // formData.append("tmdb-id", tmdbIdInput.value);
-        // formData.append("crud-type", crudTypeInput.value);
-        // formData.append("crud-id", crudIdInput.value);
-        // formData.append("title", titleInput.value);
-        // formData.append("episode-number", episodeNumberInput.value);
-        // formData.append("season-number", seasonNumberInput.value);
-        // formData.append("location", locationInput.value);
-        // formData.append("description", descriptionInput.value);
-        // formData.append("latitude", latitudeInput.value);
-        // formData.append("longitude", longitudeInput.value);
 
         imageUrlInputs.forEach(function (input) {
             formData.append(input.name, input.value);
