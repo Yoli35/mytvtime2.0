@@ -102,6 +102,9 @@ export class Show {
 
         this.filmingLocations = jsonGlobsObject.locations;
         console.log({filmingLocations: this.filmingLocations});
+        const jsonGlobsMap = JSON.parse(document.querySelector('div#globs-map').textContent);
+        this.fieldList = jsonGlobsMap.fieldList;
+        console.log({fieldList: this.fieldList});
 
         const previousSeries = document.querySelector('.previous-series');
         const nextSeries = document.querySelector('.next-series');
@@ -1157,7 +1160,7 @@ export class Show {
                 });
             }
             if (!emptyInput) {
-                const formData = gThis.getFormData(addLocationForm);
+                const formData = gThis.getFormData(addLocationForm, gThis.fieldList);
                 fetch('/' + lang + '/series/location/add/' + seriesId,
                     {
                         method: 'POST',
@@ -1410,34 +1413,38 @@ export class Show {
         });
     }
 
-    getFormData(form) {
-        const seriesIdInput = form.querySelector('input[name="series-id"]');
-        const tmdbIdInput = form.querySelector('input[name="tmdb-id"]');
-        const crudTypeInput = form.querySelector('input[name="crud-type"]');
-        const crudIdInput = form.querySelector('input[name="crud-id"]');
-        const titleInput = form.querySelector('input[name="title"]');
-        const episodeNumberInput = form.querySelector('input[name="episode-number"]');
-        const seasonNumberInput = form.querySelector('input[name="season-number"]');
-        const locationInput = form.querySelector('input[name="location"]');
-        const descriptionInput = form.querySelector('input[name="description"]');
+    getFormData(form, list) {
+        // const seriesIdInput = form.querySelector('input[name="series-id"]');
+        // const tmdbIdInput = form.querySelector('input[name="tmdb-id"]');
+        // const crudTypeInput = form.querySelector('input[name="crud-type"]');
+        // const crudIdInput = form.querySelector('input[name="crud-id"]');
+        // const titleInput = form.querySelector('input[name="title"]');
+        // const episodeNumberInput = form.querySelector('input[name="episode-number"]');
+        // const seasonNumberInput = form.querySelector('input[name="season-number"]');
+        // const locationInput = form.querySelector('input[name="location"]');
+        // const descriptionInput = form.querySelector('input[name="description"]');
         const imageUrlInputs = form.querySelectorAll('input[name*="image-url"]');
         const imageFileInput = form.querySelector('input[name="image-file"]');
         const imageFilesInput = form.querySelector('input[name*="image-files"]');
-        const latitudeInput = form.querySelector('input[name="latitude"]');
-        const longitudeInput = form.querySelector('input[name="longitude"]');
+        // const latitudeInput = form.querySelector('input[name="latitude"]');
+        // const longitudeInput = form.querySelector('input[name="longitude"]');
 
         const formData = new FormData();
-        formData.append("series-id", seriesIdInput.value);
-        formData.append("tmdb-id", tmdbIdInput.value);
-        formData.append("crud-type", crudTypeInput.value);
-        formData.append("crud-id", crudIdInput.value);
-        formData.append("title", titleInput.value);
-        formData.append("episode-number", episodeNumberInput.value);
-        formData.append("season-number", seasonNumberInput.value);
-        formData.append("location", locationInput.value);
-        formData.append("description", descriptionInput.value);
-        formData.append("latitude", latitudeInput.value);
-        formData.append("longitude", longitudeInput.value);
+        list.forEach(function (field) {
+            const fieldInput = form.querySelector('input[name="' + field + '"]');
+            if (fieldInput) {
+                formData.append(field, fieldInput.value);
+            }
+            const fieldSelect = form.querySelector('select[name="' + field + '"]');
+            if (fieldSelect) {
+                formData.append(field, fieldSelect.value);
+            }
+            const fieldTextarea = form.querySelector('textarea[name="' + field + '"]');
+            if (fieldTextarea) {
+                formData.append(field, fieldTextarea.value);
+            }
+        });
+
         imageUrlInputs.forEach(function (input) {
             formData.append(input.name, input.value);
             if (input.value.includes('blob:')) {
@@ -1447,7 +1454,8 @@ export class Show {
                 formData.append(input.name + '-blob', file);
             }
         });
-        formData.append(imageFileInput.name, imageFileInput.files[0]);
+        if (imageFileInput.files.length)
+            formData.append(imageFileInput.name, imageFileInput.files[0]);
         Array.from(imageFilesInput.files).forEach(function (file, index) {
             formData.append('additional-image-' + index, file);
         });
@@ -1465,7 +1473,7 @@ export class Show {
         const episodeNumberInput = addLocationForm.querySelector('input[name="episode-number"]');
         const seasonNumberInput = addLocationForm.querySelector('input[name="season-number"]');
         const locationInput = addLocationForm.querySelector('input[name="location"]');
-        const descriptionInput = addLocationForm.querySelector('input[name="description"]');
+        const descriptionTextarea = addLocationForm.querySelector('textarea[name="description"]');
         const latitudeInput = addLocationForm.querySelector('input[name="latitude"]');
         const longitudeInput = addLocationForm.querySelector('input[name="longitude"]');
         const locationImages = addLocationForm.querySelector(".location-images");
@@ -1492,7 +1500,7 @@ export class Show {
             locationInput.value = location.location;
             latitudeInput.value = location.latitude;
             longitudeInput.value = location.longitude;
-            descriptionInput.value = location.description;
+            descriptionTextarea.value = location.description;
 
             locationImages.style.display = 'flex';
             const stillDiv = locationImages.querySelector('.still');
