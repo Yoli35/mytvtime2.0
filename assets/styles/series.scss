@@ -4773,7 +4773,7 @@ dialog {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(16px);
     background: hsl(from var(--green-80) h s l / 0.45);
-    border-radius: .75rem 0 0 .75rem;
+    border-radius: 2rem 0 0 2rem;
     max-height: calc(100vh - 18rem);
     opacity: 0;
     position: fixed;

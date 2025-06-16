@@ -281,8 +281,9 @@
 .delete-overview-form,
 .keyword-translation-form {
     background-color: var(--ardoise-80-alpha-90);
-    border-radius: 0.5rem;
+    border-radius: 0.5rem 0 0 0.5rem;
     border: 2px solid var(--orange-50);
+    border-right-width: 0;
     display: none;
     left: 0;
     opacity: 0;
@@ -605,6 +606,66 @@
                     .delete-language {
                         margin-inline-start: auto;
                     }
+                }
+            }
+        }
+    }
+}
+
+.site-updates {
+    padding-block-start: 3rem;
+    width: 100%;
+
+    .glowing-border {
+        margin-block: 1rem;
+    }
+
+    .updates-title {
+        height: 16rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: .25rem;
+
+        li {
+            align-items: center;
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+
+            span {
+                align-items: center;
+                border-radius: 50%;
+                color: var(--ardoise-10);
+                display: flex;
+                height: 1.5rem;
+                justify-content: center;
+                width: 1.5rem;
+
+                &.fix {
+                    background-color: var(--green-50);
+                }
+
+                &.feature {
+                    background-color: var(--ardoise-50);
+                }
+
+                &.improvement {
+                    background-color: var(--orange-50);
+                }
+
+                &.css {
+                    background-color: var(--yellow-50);
+                }
+
+                &.wip {
+                    background-color: var(--purple-50);
                 }
             }
         }
