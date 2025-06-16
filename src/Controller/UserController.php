@@ -170,6 +170,13 @@ class UserController extends AbstractController
         return $this->json(['status' => 'error']);
     }
 
+    #[Route('/updates', name: 'updates')]
+    public function updates(): Response
+    {
+        return $this->render('user/updates.html.twig', [
+        ]);
+    }
+
     #[Route('/is-connected', name: 'is_connected')]
     public function isStillConnected(): Response
     {
