@@ -280,6 +280,8 @@
                         <div class="separation">{{ 'Admin'|trans }}</div>
                         <a href="{{ path('admin_index') }}">{{ 'Dashboard'|trans }}</a>
                     {% endif %}
+                    <div class="separation">{{ 'Admin'|trans }}</div>
+                    <a href="{{ path('app_user_updates') }}">{{ 'Updates'|trans }}</a>
                 {% else %}
                     <a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a>
                     <a href="{{ path('app_register') }}">{{ 'Register'|trans }}</a>
