@@ -168,7 +168,7 @@
                         {{ 'Update_'|trans }}
                         {{ ux_icon('iconoir:nav-arrow-up') }}
                     </a>
-                {% endif %}
+                {% endif %}s
             {% else %}
                 <a class="points_of_interest__dates" href="{{ path('admin_points_of_interest', {s: 'updated_at', o: 'desc', l: limit}) }}">
                     {{ 'Update_' |trans }}
@@ -191,7 +191,14 @@
                 </a>
                 <a class="item" href="{{ path('admin_point_of_interest_edit', {id: p.id}) }}?p={{ page }}&s={{ sort }}&o={{ order }}&l={{ limit }}">
                     <div class="point_of_interest__id">{{ p.id }}</div>
-                    <div class="point_of_interest__name">{{ p.name }}</div>
+                    <div class="point_of_interest__name">
+                        {{ p.name }}
+                        {% for c in p.categories %}
+                            <div class="point_of_interest__category" data-title="{{ c.category_name }}">
+                                {{ ux_icon(c.category_icon) }}
+                            </div>
+                        {% endfor %}
+                    </div>
                     <div class="point_of_interest__city">{{ p.city }}</div>
                     <div class="point_of_interest__country">
                         {{ p.origin_country|country_name }} <span>{{ getEmojiFlag(p.origin_country) }}</span>
@@ -209,16 +216,16 @@
 
 <div id="globs-map" style="display: none">
     {
-        "bounds": {{ pois.bounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "pointsOfInterest": {{ pois.list|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "mapSettings": {{ mapSettings.data|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "emptyLocation": {{ pois.emptyPoi|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "imagePath": "/images/poi",
-        "translations": {
-            "Add": "{{ 'Add'|trans }}",
-            "Not a valid file type. Update your selection": "{{ 'Not a valid file type. Update your selection'|trans }}",
-            "This field is required": "{{ 'This field is required'|trans }}",
-            "Update": "{{ 'Update'|trans }}"
-        }
+    "bounds": {{ pois.bounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+    "pointsOfInterest": {{ pois.list|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+    "mapSettings": {{ mapSettings.data|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+    "emptyLocation": {{ pois.emptyPoi|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+    "imagePath": "/images/poi",
+    "translations": {
+    "Add": "{{ 'Add'|trans }}",
+    "Not a valid file type. Update your selection": "{{ 'Not a valid file type. Update your selection'|trans }}",
+    "This field is required": "{{ 'This field is required'|trans }}",
+    "Update": "{{ 'Update'|trans }}"
+    }
     }
 </div>

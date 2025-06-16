@@ -53,6 +53,12 @@ class PointOfInterest
     #[ORM\OneToMany(targetEntity: PointOfInterestImage::class, mappedBy: 'pointOfInterest', orphanRemoval: true)]
     private Collection $pointOfInterestImages;
 
+    /**
+     * @var Collection<int, PointOfInterestCategory>
+     */
+    #[ORM\ManyToMany(targetEntity: PointOfInterestCategory::class, inversedBy: 'pointOfInterests')]
+    private Collection $category;
+
     public function __construct(string $name, string $address, ?string $city, string $originCountry, ?string $description, float $latitude, float $longitude, DateTimeImmutable $now)
     {
         $this->address = $address;
@@ -65,6 +71,7 @@ class PointOfInterest
         $this->originCountry = $originCountry;
         $this->pointOfInterestImages = new ArrayCollection();
         $this->updatedAt = $now;
+        $this->category = new ArrayCollection();
     }
 
     public function update(string $name, string $address, ?string $city, string $originCountry, ?string $description, float $latitude, float $longitude, DateTimeImmutable $now): void
@@ -231,6 +238,30 @@ class PointOfInterest
     public function setCity(?string $city): static
     {
         $this->city = $city;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PointOfInterestCategory>
+     */
+    public function getCategory(): Collection
+    {
+        return $this->category;
+    }
+
+    public function addCategory(PointOfInterestCategory $category): static
+    {
+        if (!$this->category->contains($category)) {
+            $this->category->add($category);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(PointOfInterestCategory $category): static
+    {
+        $this->category->removeElement($category);
 
         return $this;
     }

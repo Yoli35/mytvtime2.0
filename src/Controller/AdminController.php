@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\PointOfInterestForm;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\MovieRepository;
+use App\Repository\PointOfInterestCategoryRepository;
 use App\Repository\PointOfInterestImageRepository;
 use App\Repository\PointOfInterestRepository;
 use App\Repository\SeriesRepository;
@@ -39,24 +40,25 @@ class AdminController extends AbstractController
 {
 
     public function __construct(
-        private readonly VideoCategoryRepository        $categoryRepository,
-        private readonly DateService                    $dateService,
-        private readonly FilmingLocationRepository      $filmingLocationRepository,
-        private readonly ImageConfiguration             $imageConfiguration,
-        private readonly ImageService                   $imageService,
-        private readonly MapController                  $mapController,
-        private readonly MovieRepository                $movieRepository,
-        private readonly PointOfInterestImageRepository $pointOfInterestImageRepository,
-        private readonly PointOfInterestRepository      $pointOfInterestRepository,
-        private readonly SeriesController               $seriesController,
-        private readonly SettingsRepository             $settingsRepository,
-        private readonly SeriesRepository               $seriesRepository,
-        private readonly UserRepository                 $userRepository,
-        private readonly TMDBService                    $tmdbService,
-        private readonly TranslatorInterface            $translator,
-        private readonly VideoController                $videoController,
-        private readonly VideoRepository                $videoRepository,
-        private readonly WatchProviderRepository        $watchProviderRepository
+        private readonly VideoCategoryRepository           $categoryRepository,
+        private readonly DateService                       $dateService,
+        private readonly FilmingLocationRepository         $filmingLocationRepository,
+        private readonly ImageConfiguration                $imageConfiguration,
+        private readonly ImageService                      $imageService,
+        private readonly MapController                     $mapController,
+        private readonly MovieRepository                   $movieRepository,
+        private readonly PointOfInterestCategoryRepository $pointOfInterestCategoryRepository,
+        private readonly PointOfInterestImageRepository    $pointOfInterestImageRepository,
+        private readonly PointOfInterestRepository         $pointOfInterestRepository,
+        private readonly SeriesController                  $seriesController,
+        private readonly SettingsRepository                $settingsRepository,
+        private readonly SeriesRepository                  $seriesRepository,
+        private readonly UserRepository                    $userRepository,
+        private readonly TMDBService                       $tmdbService,
+        private readonly TranslatorInterface               $translator,
+        private readonly VideoController                   $videoController,
+        private readonly VideoRepository                   $videoRepository,
+        private readonly WatchProviderRepository           $watchProviderRepository
     )
     {
     }
@@ -641,15 +643,19 @@ class AdminController extends AbstractController
         // Implement the logic to fetch filming locations from the database or an API.
         // For now, we will return an empty array as a placeholder.
         $pois = $this->pointOfInterestRepository->adminPointsOfInterest($page, $sort, $order, $limit);
-        dump($pois);
+
         $poiCount = $this->pointOfInterestRepository->count();
         $pageCount = ceil($poiCount / $limit);
 
         $pointOfInterestImages = $this->pointOfInterestImageRepository->poiImages(array_column($pois, 'id'));
-
+        $pointOfInterestCategories = $this->pointOfInterestCategoryRepository->poiCategories(array_column($pois, 'id'));
         $poiImages = [];
         foreach ($pointOfInterestImages as $image) {
             $poiImages[$image['point_of_interest_id']][] = $image;
+        }
+        $poiCategories = [];
+        foreach ($pointOfInterestCategories as $category) {
+            $poiCategories[$category['point_of_interest_id']][] = $category;
         }
 
         // Bounding box → center
@@ -669,8 +675,8 @@ class AdminController extends AbstractController
             $poi['updated_at'] = $this->dateService->formatDateRelativeMedium($poi['updated_at'], 'UTC', 'fr') . " " . $this->translator->trans('at') . " " . substr($poi['updated_at'], 11, 5);
             if (!is_numeric($poi['updated_at'][0])) $poi['updated_at'] = ucfirst($poi['updated_at']);
             $poi['images'] = $poiImages[$poi['id']] ?? [];
+            $poi['categories'] = $poiCategories[$poi['id']] ?? [];
         }
-        dump($pois);
 
         $pagination = $this->generateLinks($pageCount, $page, $this->generateUrl('admin_points_of_interest'), [
             's' => $sort,
@@ -704,7 +710,7 @@ class AdminController extends AbstractController
         $addLocationForm = $this->render('_blocks/forms/_add-location-form.html.twig', $data);
         $now = $this->dateService->getNowImmutable("Europe/Paris");
         $emptyPoi = new PointOfInterest('New point of interest', '', '', '', '', 0, 0, $now);
-        dump($data, $addLocationForm, $emptyPoi);
+//        dump($data, $addLocationForm, $emptyPoi);
 
         return $this->render('admin/index.html.twig', [
             'pois' => [
@@ -766,7 +772,7 @@ class AdminController extends AbstractController
     {
         $inputBag = $request->getPayload()->all();
         $files = $request->files->all();
-        dump($inputBag, $files);
+//        dump($inputBag, $files);
 
         $messages = [];
 
