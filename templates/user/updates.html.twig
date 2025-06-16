@@ -1,0 +1,153 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Profile'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid user-profile-container"> {# ← light #}
+        <div class="site-updates">
+            <div class="toggle-theme">{{ ux_icon('tabler:sun-moon') }}</div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const toggleTheme = document.querySelector('.toggle-theme');
+                    toggleTheme.addEventListener('click', function () {
+                        document.querySelector(".container-fluid").classList.toggle('light');
+                    });
+                });
+            </script>
+            <div class="user-profile glowing-border left">
+                <div class="updates-title">
+                    <h1>Mises à jour / {{ 'Updates'|trans(domain = 'messages', locale = 'ko') }}</h1>
+                    <h4>myTvTime 2.0 : 18/09/2024</h4>
+                </div>
+            </div>
+            <div class="user-profile glowing-border right">
+                <h2>17ᵉ mise à jour : 10/06/2025</h2>
+                <ul>
+                    <li><span class="fix">{{ ux_icon('mdi:auto-fix') }}</span>→ Season page: quick episode links fixed</li>
+                    <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ Admin: videos added<span class="wip">{{ ux_icon('tabler:progress') }}</span></li>
+                    <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ Admin: points of interest added<span class="wip">{{ ux_icon('tabler:progress') }}</span></li>
+                    <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ User profile page: translation settings<span class="wip">{{ ux_icon('tabler:progress') }}</span></li>
+                    <li><span class="improvement">{{ ux_icon('mi:arrow-right-up') }}</span>→ Season page: paste an episode thumbnail → displays the actual image file (was the pasted image)</li>
+                    <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ User Profile page: theme toggler</li>
+                    <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ Episode schedules: "Selected days" frequency</li>
+                    <li><span class="improvement">{{ ux_icon('mi:arrow-right-up') }}</span>→ Videos page: better display on small devices</li>
+                    <li><span class="css">{{ ux_icon('flowbite:css-solid') }}</span>→ css corrections here and there...</li>
+                </ul>
+            </div>
+            <div class="user-profile glowing-border left">
+                16ᵉ mise à jour : 05/06/2025<br>
+                <ul>
+                    <li>→ Series crew css (no image profile)</li>
+                    <li>→ Network & provider update command</li>
+                    <li>→ Series network logos display fixed</li>
+                    <li>→ Commands: Invokable Commands and Input Attributes - new in 7.3</li>
+                    <li>→ Provider table removed</li>
+                    <li>→ Mark / unmark episode as watched fixed</li>
+                    <li>→ Twig Extension Attributes - new 7.3</li>
+                    <li>→ Filming location images: Google Maps markup added</li>
+                    <li>→ Filming location images: series name markup added</li>
+                    <li>→ Series episode schedules: days of week → episode count by days of week</li>
+                    <li>→ sass deprecation: @import → @use</li>
+                    <li>→ Episode still: marked with "series name - SxxExx"</li>
+                    <li>→ Admin: filming locations added</li>
+                    <li>→ Map: ?fl=123 → goes directly to the location with series id=123</li>
+                </ul>
+            </div>
+            <div class="user-profile glowing-border right">
+                15ᵉ mise à jour : 29/05/2025<br>
+                <ul>
+                    <li>→ Videos: sql optimizations, time to watch YT, pagination, categories</li>
+                    <li>→ Symfony 7.3</li>
+                    <li>→ Layout: footer outside the container</li>
+                    <li>→ Movie search page (Menu movie)</li>
+                    <li>→ Advanced search: country menu with flags</li>
+                    <li>→ Video page: previous & next video</li>
+                    <li>→ Error page</li>
+                    <li>→ Advanced search: landscape orientation on iPad</li>
+                </ul>
+            </div>
+            <div class="user-profile glowing-border left">
+                14ᵉ mise à jour : 25/05/2025<br>
+                <ul>
+                    <li>→ Advanced search: user series highlighted</li>
+                    <li>→ People: responsiveness</li>
+                    <li>→ Advanced search: filters display settings</li>
+                    <li>→ Season page: cancel episode marked as viewed</li>
+                    <li>→ The Movie Database: people names may need to be trim</li>
+                </ul>
+            </div>
+            <div class="user-profile glowing-border right">
+                13ᵉ mise à jour : 23/05/2025<br>
+                <ul>
+                    <li>→ New video section (YouTube)</li>
+                    <li>→ Series advanced search: new layout</li>
+                    <li>→ Horizontal episode layout on xxl screen</li>
+                    <li>→ Menu series history: new layout</li>
+                    <li>→ New admin sections: series, movies, providers</li>
+                    <li>→ Permanent main menu when window width >= 1920px</li>
+                    <li>→ Season page: provider, device and vote can be canceled</li>
+                    <li>→ Starred people: new layout (grid)</li>
+                    <li>→ Series schedule "selected days" bug fixed</li>
+                    <li>→ Series advanced search: persistent search settings</li>
+                    <li>→ Season: first episode provider from watch links</li>
+                    <li>→ Series advanced search: language, timezone & country added</li>
+                    <li>→ Symfony UX (2.18.* → 2.* - 2.25.2)</li>
+                    <li>→ And many more ...</li>
+                </ul>
+            </div>
+            <div class="user-profile glowing-border right">
+                12ᵉ mise à jour : 11/05/2025<br>
+                11ᵉ mise à jour : 08/05/2025<br>
+                10ᵉ mise à jour : 23/04/2025<br>
+                9ᵉ mise à jour : 19/04/2025<br>
+                8ᵉ mise à jour : 18/04/2025<br>
+                7ᵉ mise à jour : 16/04/2025<br>
+                6ᵉ mise à jour : 09/04/2025<br>
+                5ᵉ mise à jour : 08/04/2025<br>
+                4ᵉ mise à jour : 07/04/2025<br>
+                3ᵉ mise à jour : 05/04/2025<br>
+                2ᵉ mise à jour : 04/04/2025<br>
+                1ᵉ mise à jour : 25/09/2024<br>
+            </div>
+            <div class="user-profile glowing-border left">
+                Ouverture : 27/10/2022<br>
+                <div class="list">
+                    27ᵉ mise à jour : 11/06/2024<br>
+                    26ᵉ mise à jour : 25/01/2024<br>
+                    25ᵉ mise à jour : 18/12/2023<br>
+                    24ᵉ mise à jour : 25/10/2023<br>
+                    23ᵉ mise à jour : 13/10/2023<br>
+                    22ᵉ mise à jour : 11/10/2023<br>
+                    21ᵉ mise à jour : 04/10/2023<br>
+                    20ᵉ mise à jour : 28/06/2023<br>
+                    19ᵉ mise à jour : 15/05/2023<br>
+                    18ᵉ mise à jour : 27/04/2023<br>
+                    17ᵉ mise à jour : 16/03/2023<br>
+                    16ᵉ mise à jour : 12/03/2023<br>
+                    15ᵉ mise à jour : 19/02/2023<br>
+                    14ᵉ mise à jour : 10/02/2023<br>
+                    13ᵉ mise à jour : 23/01/2023<br>
+                    12ᵉ mise à jour : 12/01/2023<br>
+                    11ᵉ mise à jour : 7/01/2023<br>
+                    10ᵉ mise à jour : 6/01/2023<br>
+                    9ᵉ mise à jour : 6/01/2023<br>
+                    8ᵉ mise à jour : 4/01/2023<br>
+                    7ᵉ mise à jour : 31/12/2022<br>
+                    6ᵉ mise à jour : 19/12/2022<br>
+                    5ᵉ mise à jour : 14/12/2022<br>
+                    4ᵉ mise à jour : 8/12/2022<br>
+                    3ᵉ mise à jour : 6/12/2022<br>
+                    2ᵉ mise à jour : 22/11/2022<br>
+                    1ᵉ mise à jour : 29/10/2022<br>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
