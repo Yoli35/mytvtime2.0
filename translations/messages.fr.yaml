@@ -544,6 +544,7 @@ items: éléments
 movie: film
 old: ans
 tv: série télévisée
+job.Actor's Assistant.he: Assistant d'acteur
 job.Adaptation.he: Adaptation
 job.Animation.she: Animatrice
 job.Assistant Director.he: Assistant réalisateur
@@ -1264,6 +1265,8 @@ Artificial Intelligence: Intelligence artificielle
 Agriculture: Agriculture
 Animal documentary: Documentaire animalier
 Pest: Nuisible / Ravageur
+Listen: Écouter
+It's important: C'est important
 Time spent watching these count videos: Temps passé à regarder ces count vidéos
 seconds or: secondes ou
 count pages: count pages
