@@ -109,8 +109,9 @@ class ImageService extends AbstractController
 
         $filename = $file->getClientOriginalName();
         $isGoogleMapsImage = str_contains($filename, 'maps');
+        $isAppleMapsImage = str_contains($filename, 'apple');
         $extension = $file->guessExtension();
-        $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . ($isGoogleMapsImage ? 'maps-' : '') . $n;
+        $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . ($isGoogleMapsImage ? 'maps-' : '') . ($isAppleMapsImage ? 'apple-' : '') . $n;
         $tempName = $imageTempPath . $basename . '.' . $extension;
         $destination = $imageMapPath . $basename . '.webp';
 
@@ -158,7 +159,6 @@ class ImageService extends AbstractController
 
     public function webpImage(string $title, string $sourcePath, string $destPath, int $quality = 100, int $width = 1920, int $height = 1080, bool $removeOld = true): ?string
     {
-        $destination = $destPath;
         $kernelProjectDir = $this->getParameter('kernel.project_dir');
 
         $info = getimagesize($sourcePath);
@@ -217,26 +217,43 @@ class ImageService extends AbstractController
                     return null;
                 }
                 // If the filename ($destPath) contains "maps", add "Google Maps" on the image
-                $this->markAsGoogleMaps($destPath, $kernelProjectDir, $newImage, $width, $height);
-                $this->addTitle($title, $destPath, $kernelProjectDir, $newImage, $width, $height);
+//                $this->markAsGoogleMaps($destPath, $kernelProjectDir, $newImage, $width, $height);
+//                $this->addTitle($title, $destPath, $kernelProjectDir, $newImage, $width, $height);
                 // Convert to WebP
-                $successfullyConverted = imagewebp($newImage, $destination, $quality);
-                imagedestroy($newImage);
+//                $successfullyConverted = imagewebp($newImage, $destPath, $quality);
+//                imagedestroy($newImage);
+                $successfullyConverted = $this->composeImage($newImage, $title, $destPath, $width, $height, $quality);
             } else {
-                $this->markAsGoogleMaps($destPath, $kernelProjectDir, $image, $width, $height);
-                $this->addTitle($title, $destPath, $kernelProjectDir, $image, $width, $height);
-                $successfullyConverted = imagewebp($image, $destination, $quality);
+//                $this->markAsGoogleMaps($destPath, $kernelProjectDir, $image, $width, $height);
+//                $this->addTitle($title, $destPath, $kernelProjectDir, $image, $width, $height);
+//                $successfullyConverted = imagewebp($image, $destPath, $quality);
+                $successfullyConverted = $this->composeImage($image, $title, $destPath, $width, $height, $quality);
             }
         } else {
-            $this->markAsGoogleMaps($destPath, $kernelProjectDir, $image, $sourceWidth, $sourceHeight);
-            $this->addTitle($title, $destPath, $kernelProjectDir, $image, $sourceWidth, $sourceHeight);
-            $successfullyConverted = imagewebp($image, $destination, $quality);
+//            $this->markAsGoogleMaps($destPath, $kernelProjectDir, $image, $sourceWidth, $sourceHeight);
+//            $this->addTitle($title, $destPath, $kernelProjectDir, $image, $sourceWidth, $sourceHeight);
+//            $successfullyConverted = imagewebp($image, $destPath, $quality);
+            $successfullyConverted = $this->composeImage($image, $title, $destPath, $sourceWidth, $sourceHeight, $quality);
         }
         imagedestroy($image);
 
         if ($successfullyConverted && $removeOld) unlink($sourcePath);
 
-        return $destination;
+        return $destPath;
+    }
+
+    private function composeImage(GdImage $gdImage, string $title, string $destPath, int $width, int $height, int $quality): bool
+    {
+        $kernelProjectDir = $this->getProjectDir();
+        // If the filename ($destPath) contains "maps", add "Google Maps" on the image with a dark background
+        $this->markAsGoogleMaps($destPath, $kernelProjectDir, $gdImage, $width, $height);
+        // If the filename ($destPath) contains "apple", add "Apple Maps" on the image with a dark background
+        $this->markAsAppleMaps($destPath, $kernelProjectDir, $gdImage, $width, $height);
+        // If the title is not empty, add it on the image with a dark background
+        $this->addTitle($title, $destPath, $kernelProjectDir, $gdImage, $width, $height);
+        $successfullyConverted = imagewebp($gdImage, $destPath, $quality);
+        imagedestroy($gdImage);
+        return $successfullyConverted;
     }
 
     private function markAsGoogleMaps(string $destPath, string $kernelProjectDir, GdImage $newImage, int $width, int $height): void
@@ -256,6 +273,24 @@ class ImageService extends AbstractController
             //imagefilledrectangle($newImage, $width - $textWidth - 30, $height - $textHeight - 30, $width - 10, $height - 10, $rectangleColor);
             $this->ImageRoundFilledRectangle($newImage, $width - $textWidth - 60, $height - $textHeight - 30, $width - 20, $height - 10, $radius, $rectangleColor);
             // Add the text
+            imagettftext($newImage, $fontSize, 0, $width - $textWidth - 40, $height - 30, $textColor, $font, $text);
+        }
+    }
+
+    private function markAsAppleMaps(string $destPath, string $kernelProjectDir, GdImage $newImage, int $width, int $height): void
+    {
+        if (str_contains($destPath, 'apple')) {
+            $font = $kernelProjectDir . '/public/fonts/google-sans/ProductSans-Regular.ttf';
+            $text = 'Apple Maps';
+            $fontSize = 40;
+            $radius = 8;
+            $textColor = imagecolorallocate($newImage, 240, 240, 240);
+            $bbox = imagettfbbox($fontSize, 0, $font, $text);
+            $textWidth = $bbox[2] - $bbox[0];
+            $textHeight = $bbox[1] - $bbox[7];
+
+            $rectangleColor = imagecolorallocate($newImage, 10, 10, 10); // semi-transparent black
+            $this->ImageRoundFilledRectangle($newImage, $width - $textWidth - 60, $height - $textHeight - 30, $width - 20, $height - 10, $radius, $rectangleColor);
             imagettftext($newImage, $fontSize, 0, $width - $textWidth - 40, $height - 30, $textColor, $font, $text);
         }
     }
