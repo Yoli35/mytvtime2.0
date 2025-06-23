@@ -24,20 +24,6 @@ $fa-font-path: "../webfonts";
 
     --error: hsl(0, 50%, 50%);
 
-    @media (prefers-color-scheme: light) {
-        @for $i from 0 through 100 {
-            --value-#{$i}: #{$i};
-            --percent-#{$i}: calc(calc(#{$i} / 100) * 100%);
-        }
-    }
-
-    @media (prefers-color-scheme: dark) {
-        @for $i from 0 through 100 {
-            --value-#{$i}: #{100 - $i};
-            --percent-#{$i}: calc(calc(calc(100 - #{$i}) / 100) * 100%);
-        }
-    }
-
     --bg-gradient: linear-gradient(
                     45deg,
                     hsl(212deg var(--saturation) var(--percent-74)) 0%,
@@ -234,6 +220,20 @@ $fa-font-path: "../webfonts";
     --vote-8: hsl(27deg 40% 49%);
     --vote-9: hsl(15deg 37% 49%);
     --vote-10: hsl(0deg 30% 48%);
+
+    @media (prefers-color-scheme: light) {
+        @for $i from 0 through 100 {
+            --value-#{$i}: #{$i};
+            --percent-#{$i}: calc(calc(#{$i} / 100) * 100%);
+        }
+    }
+
+    @media (prefers-color-scheme: dark) {
+        @for $i from 0 through 100 {
+            --value-#{$i}: #{100 - $i};
+            --percent-#{$i}: calc(calc(calc(100 - #{$i}) / 100) * 100%);
+        }
+    }
 }
 
 @mixin flex-row($align: center, $justify: center) {
