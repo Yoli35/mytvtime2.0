@@ -13,7 +13,7 @@
         <div class="series-search">
             <h1>{{ title|trans }}</h1>
             {{ form_start(form, {'action': path(action), 'attr': {'class': 'form'}}) }}
-            <div class="form-row">
+            <div class="form-row center">
                 <div class="form-field">
                     <label for="{{ form.query.vars.id }}">
                         {{ form.query.vars.label|trans }}
@@ -28,8 +28,6 @@
                         {{ form_errors(form.firstAirDateYear) }}
                     </label>
                 </div>
-            </div>
-            <div class="form-row">
                 <button type="submit">{{ 'Send'|trans }}</button>
             </div>
             <div class="series-search-result">

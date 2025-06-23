@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}my Tv Time → {{ 'Profile'|trans }}{% endblock %}
+{% block title %}my Tv Time → {{ 'Updates'|trans }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
@@ -20,13 +20,26 @@
                     });
                 });
             </script>
-            <div class="user-profile glowing-border left">
+            <div class="site-update glowing-border left">
                 <div class="updates-title">
                     <h1>Mises à jour / {{ 'Updates'|trans(domain = 'messages', locale = 'ko') }}</h1>
                     <h4>myTvTime 2.0 : 18/09/2024</h4>
                 </div>
             </div>
-            <div class="user-profile glowing-border right">
+            <div class="site-update glowing-border right">
+                <h2>18ᵉ mise à jour : 16/06/2025</h2>
+                <ul>
+                    <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ Site updates pages</li>
+                    <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ Series schedules: first week: selected days, then one weekly</li>
+                    <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ Points of interest: categories (buildings, towers, monuments,...)</li>
+                    <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ Videos: categories (environment, climate change, politics,...)</li>
+                    <li><span class="improvement">{{ ux_icon('mi:arrow-right-up') }}</span>→ Unified location form (filming locations & poi)</li>
+                    <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ Map: cooperative gestures option</li>
+                    <li><span class="improvement">{{ ux_icon('mi:arrow-right-up') }}</span>→ Admin poi: add poi form</li>
+                    <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ Map - last adds: points of interest displayed</li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border left">
                 <h2>17ᵉ mise à jour : 10/06/2025</h2>
                 <ul>
                     <li><span class="fix">{{ ux_icon('mdi:auto-fix') }}</span>→ Season page: quick episode links fixed</li>
@@ -40,7 +53,7 @@
                     <li><span class="css">{{ ux_icon('flowbite:css-solid') }}</span>→ css corrections here and there...</li>
                 </ul>
             </div>
-            <div class="user-profile glowing-border left">
+            <div class="site-update glowing-border right">
                 16ᵉ mise à jour : 05/06/2025<br>
                 <ul>
                     <li>→ Series crew css (no image profile)</li>
@@ -59,7 +72,7 @@
                     <li>→ Map: ?fl=123 → goes directly to the location with series id=123</li>
                 </ul>
             </div>
-            <div class="user-profile glowing-border right">
+            <div class="site-update glowing-border left">
                 15ᵉ mise à jour : 29/05/2025<br>
                 <ul>
                     <li>→ Videos: sql optimizations, time to watch YT, pagination, categories</li>
@@ -72,7 +85,7 @@
                     <li>→ Advanced search: landscape orientation on iPad</li>
                 </ul>
             </div>
-            <div class="user-profile glowing-border left">
+            <div class="site-update glowing-border right">
                 14ᵉ mise à jour : 25/05/2025<br>
                 <ul>
                     <li>→ Advanced search: user series highlighted</li>
@@ -82,7 +95,7 @@
                     <li>→ The Movie Database: people names may need to be trim</li>
                 </ul>
             </div>
-            <div class="user-profile glowing-border right">
+            <div class="site-update glowing-border left">
                 13ᵉ mise à jour : 23/05/2025<br>
                 <ul>
                     <li>→ New video section (YouTube)</li>
@@ -101,7 +114,7 @@
                     <li>→ And many more ...</li>
                 </ul>
             </div>
-            <div class="user-profile glowing-border right">
+            <div class="site-update glowing-border right">
                 12ᵉ mise à jour : 11/05/2025<br>
                 11ᵉ mise à jour : 08/05/2025<br>
                 10ᵉ mise à jour : 23/04/2025<br>
@@ -115,7 +128,7 @@
                 2ᵉ mise à jour : 04/04/2025<br>
                 1ᵉ mise à jour : 25/09/2024<br>
             </div>
-            <div class="user-profile glowing-border left">
+            <div class="site-update glowing-border left">
                 Ouverture : 27/10/2022<br>
                 <div class="list">
                     27ᵉ mise à jour : 11/06/2024<br>

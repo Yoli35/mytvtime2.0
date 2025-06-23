@@ -616,8 +616,9 @@
     padding-block-start: 3rem;
     width: 100%;
 
-    .glowing-border {
+    .site-update.glowing-border {
         margin-block: 1rem;
+        width: min(70rem, 90%);
     }
 
     .updates-title {
@@ -638,6 +639,7 @@
             display: flex;
             gap: 1rem;
             list-style: none;
+            margin-inline-start: 1rem;
 
             span {
                 align-items: center;

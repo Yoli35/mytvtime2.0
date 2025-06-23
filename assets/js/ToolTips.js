@@ -1,10 +1,13 @@
-export class ToolTips {
+let gThis;
 
+export class ToolTips {
     tooltipsElement = null;
     bodyElement = null;
     tailElement = null;
 
     constructor(element = null, className = null) {
+        gThis = this;
+
         let tooltipsDiv = document.querySelector(".tool-tips");
         if (!tooltipsDiv) {
             tooltipsDiv = this.createTooltips();
@@ -67,7 +70,7 @@ export class ToolTips {
     show(evt) {
         evt.preventDefault();
         evt.stopPropagation();
-        const tooltips = this.tooltipsElement;
+        const tooltips = gThis.tooltipsElement;
         if (tooltips.classList.contains("show")) {
             return;
         }
@@ -105,8 +108,9 @@ export class ToolTips {
             displayAbove = true;
             maxHeight = window.innerHeight - fromTopViewport - 64;
         }
+        gThis.move(evt);
 
-        const width = body.offsetWidth;
+        /*const width = body.offsetWidth;
         const height = body.offsetHeight - 48;
         let style;
         if (displayAbove) {
@@ -116,7 +120,7 @@ export class ToolTips {
             style = "translate: " + (evt.pageX - (width / 2)) + "px " + (evt.pageY + 8) + "px; max-height: " + maxHeight + "px;";
             tail.setAttribute("style", "translate: 0 -" + (height + 8) + "px; background-color: " + tooltips.getAttribute("bg") + ";");
         }
-        tooltips.setAttribute("style", style);
+        tooltips.setAttribute("style", style);*/
 
         tooltips.classList.add("show");
         // console.log("show - " + text);
@@ -124,7 +128,7 @@ export class ToolTips {
     }
 
     hide() {
-        const tooltips = document.querySelector(".tool-tips");/*this.tooltipsElement;*/
+        const tooltips = gThis.tooltipsElement;/*document.querySelector(".tool-tips");*/
         if (!tooltips) {
             return;
         }
@@ -138,7 +142,7 @@ export class ToolTips {
     move(evt) {
         evt.preventDefault();
         evt.stopPropagation();
-        const tooltips = this.tooltipsElement;
+        const tooltips = gThis.tooltipsElement;
         const tail = this.tailElement;
         const body = this.bodyElement;
         const bg = "background-color: " + tooltips.getAttribute("bg") + ";";
