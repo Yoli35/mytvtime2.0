@@ -29,6 +29,11 @@ export class FlashMessage {
             const closeDiv = flashMessageDiv.querySelector('.closure-countdown, .close');
             closeDiv.click();
         });
+        // Add vanishing class to flashMessagesDiv (currentTarget) after 200ms
+        setTimeout(() => {
+            e.currentTarget.classList.remove('vanishing');
+        }, 200);
+        // Wait a bit to allow the clicks to be processed
         setTimeout(() => {
             e.currentTarget.addEventListener('click', this.closeAll);
         }, 1500);
