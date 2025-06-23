@@ -1064,6 +1064,7 @@ class SeriesController extends AbstractController
             'available' => $this->translator->trans('available'),
             'day' => $this->translator->trans('day'),
             'days' => $this->translator->trans('days'),
+            "and" => $this->translator->trans('and'),
             'since' => $this->translator->trans('since'),
             'Season completed' => $this->translator->trans('Season completed'),
             'Up to date' => $this->translator->trans('Up to date'),
@@ -1219,6 +1220,16 @@ class SeriesController extends AbstractController
     #[Route('/remove/{id}', name: 'remove', requirements: ['id' => Requirement::DIGITS])]
     public function removeUserSeries(UserSeries $userSeries): Response
     {
+        $userSeries->setLastUserEpisode(null);
+        $userSeries->setNextUserEpisode(null);
+        $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries]);
+        foreach ($userEpisodes as $userEpisode) {
+            $userEpisode->setPreviousOccurrence(null);
+        }
+        foreach ($userEpisodes as $userEpisode) {
+            $this->userEpisodeRepository->remove($userEpisode);
+        }
+        $this->userEpisodeRepository->flush();
         $this->userSeriesRepository->remove($userSeries);
 
         return $this->json([
@@ -1761,21 +1772,15 @@ class SeriesController extends AbstractController
     public function touchUserEpisode(Request $request, UserEpisode $userEpisode): Response
     {
         $data = json_decode($request->getContent(), true);
-//        $showId = $data['showId'];
+
         if (key_exists('date', $data) && $data['date']) {
             $now = $this->date($data['date']);
         } else {
             $now = $this->now();
         }
-        $seasonNumber = $userEpisode->getEpisodeNumber();// $data['seasonNumber'];
-        $episodeNumber = $userEpisode->getSeasonNumber();// $data['episodeNumber'];
-
-//        $user = $this->getUser();
-//        $country = $user->getCountry() ?? 'FR';
-//        $series = $this->seriesRepository->findOneBy(['tmdbId' => $showId]);
+        $seasonNumber = $userEpisode->getEpisodeNumber();
+        $episodeNumber = $userEpisode->getSeasonNumber();
         $userSeries = $userEpisode->getUserSeries();
-//        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-//        $userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $id]);
 
         $userEpisode->setWatchAt($now);
 
