@@ -214,14 +214,19 @@ export class Show {
                 const h = /*(d === 1 ? 24 : 0) +*/ Math.floor((distanceAbs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const m = Math.floor((distanceAbs % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((distanceAbs % (1000 * 60)) / 1000);
-                const days = d ? (" " + d + " " + translations[d > 1 ? 'days' : 'day']) : "";
+                const days = d ? (" " + d + " " + translations[d > 1 ? 'days' : 'day'] + " " + translations['and'] + " ") : "";
                 const hours = (h < 10 ? "0" : "") + h + ":";
                 const minutes = (m < 10 ? "0" : "") + m + ":";
                 const secondes = (s < 10 ? "0" : "") + s;
                 const elapsedTime = '<code>' + hours + minutes + secondes + '</code>';
 
-                const airDay = new Date(targetTS).getTime();
-                const currentDay = new Date().getTime();
+                const airDate = new Date(targetTS);
+                const currentDate = new Date();
+
+                const airDay = airDate.getTime();
+                const currentDay = currentDate.getTime();
+                const airDayOfMonth = airDate.getDate();
+                const currentDayOfMonth = currentDate.getDate();
 
                 // Si la date est dépassée de moins d'une heure, on arrête le compte à rebours
                 if (distance < 0) {
@@ -238,23 +243,32 @@ export class Show {
                             span1.innerHTML = span1Value + ', ' + translations["available"];
                         }
                     }
-                    span2.innerHTML = translations["since"] + " " + (d ? (days + ",<br>") : "") + elapsedTime;
+                    span2.innerHTML = translations["since"] + " " + (d ? (days + "<br>") : "") + elapsedTime;
                 } else {
                     let dayPart; // today, tomorrow, after tomorrow, x days
                     let day = Math.floor((airDay - currentDay) / (1000 * 3600 * 24));
                     if (day === 0) {
-                        dayPart = translations["Today"];
+                        if (airDayOfMonth === currentDayOfMonth) {
+                            dayPart = translations["Today"] + "<br>";
+                        } else {
+                            dayPart = translations["Tomorrow"] + "<br>";
+                        }
+                    } else if (day === 1) {
+                        if (currentDayOfMonth - airDayOfMonth === 1) {
+                            dayPart = translations["Tomorrow"];
+                        } else {
+                            dayPart = translations["After tomorrow"] + "<br>";
+                        }
+                    } else if (day === 2) {
+                        if (currentDayOfMonth - airDayOfMonth === 2) {
+                            dayPart = translations["After tomorrow"] + "<br>";
+                        } else {
+                            dayPart = "";/*d + " " + translations['days'];*/
+                        }
+                    } else {
+                        dayPart = "";/*d + " " + translations['days'];*/
                     }
-                    if (day === 1) {
-                        dayPart = translations["Tomorrow"];
-                    }
-                    if (day === 2) {
-                        dayPart = translations["After tomorrow"];
-                    }
-                    if (day > 2) {
-                        dayPart = d + " " + translations['days'];
-                    }
-                    span2.innerHTML = dayPart + "<br>" + elapsedTime;
+                    span2.innerHTML = dayPart + (d ? (days + "<br>") : "") + elapsedTime;
                 }
             }, 1000);
         });
@@ -1398,12 +1412,11 @@ export class Show {
         });
 
         /******************************************************************************
-         + Add a youTube video to the series                                          *
+         + Add a YouTube video to the series                                          *
          ******************************************************************************/
         const addVideoButton = document.querySelector('.add-video');
         const addVideoDialog = document.querySelector('.add-video-dialog');
         const addVideoCancelButton = addVideoDialog.querySelector('button[name="cancel"]');
-        const addVideoAddButton = addVideoDialog.querySelector('button[name="add"]');
 
         addVideoButton.addEventListener('click', () => {
             addVideoDialog.showModal();
