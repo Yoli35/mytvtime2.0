@@ -199,9 +199,11 @@ export class PeopleShow {
         const id = preferredNameForm.querySelector("input[name=id]").value;
         const formData = new FormData(preferredNameForm);
         const preferredName = formData.get("also_known_as");
+        const newName = formData.get("new_name");
         const data = {
             "id": id,
-            "name": preferredName
+            "name": preferredName,
+            "new": newName
         };
         fetch(gThis.globs.app_people_preferred_name,
             {

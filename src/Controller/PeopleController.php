@@ -77,7 +77,7 @@ class PeopleController extends AbstractController
     public function star(Request $request): Response
     {
         $user = $this->getUser();
-        $now = $this->dateService->getNowImmutable( "Europe/Paris", true);
+        $now = $this->dateService->getNowImmutable("Europe/Paris", true);
         $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
         $profilUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
         /********************************************************************************
@@ -296,8 +296,11 @@ class PeopleController extends AbstractController
 
         $id = $data['id'];
         $name = trim($data['name']);
+        $newName = trim($data['new']) ?? false;
+        $name = $newName ?: $name;
+        dump(['id' => $id, 'name' => $name, 'newName' => $newName]);
 
-        $peopleUserPreferredName = $this->peopleUserPreferredNameRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
+            $peopleUserPreferredName = $this->peopleUserPreferredNameRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
         if (!$peopleUserPreferredName) {
             $peopleUserPreferredName = new PeopleUserPreferredName($user, $id, $name);
         } else {
@@ -359,8 +362,8 @@ class PeopleController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $query = $data['query'];
-            $searchString = "&query=$query&include_adult=false&page=1";
-            $people = json_decode($this->tmdbService->searchPerson($searchString), true);
+        $searchString = "&query=$query&include_adult=false&page=1";
+        $people = json_decode($this->tmdbService->searchPerson($searchString), true);
 
         return $this->json([
             'ok' => true,

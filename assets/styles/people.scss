@@ -385,56 +385,98 @@
                     padding-left: 0;
                 }
 
-                form {
-                    display: flex;
-                    flex-direction: column;
-                    gap: .5rem;
+                .preferred-name-infos {
 
-                    ul {
-                        align-items: flex-start;
+                    form {
                         display: flex;
                         flex-direction: column;
-                        gap: .25rem;
-                        justify-content: center;
-                        list-style-type: none;
-                        margin-block-start: 0;
-                        padding-left: 0;
+                        gap: .5rem;
 
-                        li {
-                            background-color: var(--ardoise-90-alpha-10);
-                            border-radius: .5rem;
-                            color: var(--ardoise-20);
-                            font-weight: 100;
-                            overflow-x: auto;
-                            padding: .125rem .5rem;
-                            text-wrap: nowrap;
+                        ul {
+                            align-items: flex-start;
+                            display: flex;
+                            flex-direction: column;
+                            gap: .25rem;
+                            justify-content: center;
+                            list-style-type: none;
+                            margin-block-start: 0;
+                            padding-left: 0;
 
-                            /*label {
-                                cursor: pointer;
-                            }*/
+                            li {
+                                background-color: var(--ardoise-90-alpha-10);
+                                border-radius: .5rem;
+                                color: var(--ardoise-20);
+                                font-weight: 100;
+                                overflow-x: auto;
+                                padding: .125rem .5rem;
+                                text-wrap: nowrap;
 
-                            &:has(input[checked]) {
-                                background-color: var(--orange-50);
-                                color: var(--orange-90);
-                                font-weight: 300;
+                                /*label {
+                                    cursor: pointer;
+                                }*/
+
+                                &:has(input[checked]) {
+                                    background-color: var(--orange-50);
+                                    color: var(--orange-90);
+                                    font-weight: 300;
+                                }
+                            }
+                        }
+
+                        .none {
+                            background-color: var(--green-70);
+                            border-radius: .375rem;
+                            color: var(--green-30);
+                            font-weight: 300;
+                            /* margin-block-end: .5rem; */
+                        }
+
+                        label {
+                            align-items: center;
+                            display: flex;
+                            gap: .5rem;
+                            justify-content: flex-start;
+
+                            input[type="text"] {
+                                background-color: var(--ardoise-90-alpha-10);
+                                border: 1px solid var(--ardoise-40-alpha-50);
+                                border-radius: .375rem;
+                                color: var(--ardoise-20);
+                                /* font-size: .875rem; */
+                                padding: .25rem .5rem;
+                                width: 100%;
+
+                                &::placeholder {
+                                    color: var(--ardoise-40-alpha-50);
+                                }
+                            }
+
+                            input[type=checkbox] {
+                                /*display: none;*/
                             }
                         }
                     }
 
                     button {
                         background-color: var(--orange-50);
-                        border-radius: .5rem;
+                        border-radius: .375rem;
                         border: none;
                         color: var(--orange-90);
                         cursor: pointer;
                         font-weight: 300;
                         margin-inline: auto;
-                        padding: .125rem .5rem;
+                        padding: .25rem .5rem;
 
                         &:hover {
                             background-color: var(--orange-40);
                             color: var(--orange-90);
                             font-weight: 300;
+                        }
+
+                        &:disabled {
+                            background-color: var(--orange-30);
+                            color: var(--orange-40);
+                            cursor: not-allowed;
                         }
                     }
                 }

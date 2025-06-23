@@ -4,20 +4,44 @@
         <input type="hidden" name="id" value="{{ people.id }}">
         <input type="hidden" name="name" value="{{ preferredName }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token('people_preferred_name') }}">
-        <ul>
-            {% for name in people.also_known_as %}
-                <li>
-                    <label for="also_known_as_{{ loop.index }}">
-                        <input type="radio"
-                               {% if preferredName and name|trim == preferredName %}checked{% endif %}
-                               id="also_known_as_{{ loop.index }}"
-                               name="also_known_as" value="{{ name }}"
-                        >
-                        {{ name }}
-                    </label>
-                </li>
-            {% endfor %}
-        </ul>
-        <button type="submit">{{ 'Set as preferred name'|trans }}</button>
+        {% if people.also_known_as|length %}
+            <ul>
+                {% for name in people.also_known_as %}
+                    <li>
+                        <label for="also_known_as_{{ loop.index }}">
+                            <input type="radio"
+                                   {% if preferredName and name|trim == preferredName %}checked{% endif %}
+                                   id="also_known_as_{{ loop.index }}"
+                                   name="also_known_as" value="{{ name }}"
+                            >
+                            {{ name }}
+                        </label>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="none">{{ 'No proposals'|trans }}</div>
+        {% endif %}
+        <label for="new_name">
+            <input type="text" name="new_name" placeholder="{{ 'Add a new name'|trans }}" value="{{ preferredName }}">
+        </label>
+        <button type="submit" disabled>{{ 'Set as preferred name'|trans }}</button>
+        <script>
+            const form = document.querySelector('.preferred-name');
+            form.querySelector('button').disabled = !form.querySelector('input[type="radio"]:checked') && !form.querySelector('input[name="new_name"]').value.trim();
+            form.querySelector('input[type="radio"]')?.addEventListener('change', function () {
+                form.querySelector('button').disabled = !this.checked && !form.querySelector('input[name="new_name"]').value.trim();
+            });
+            form.querySelector('input[name="new_name"]').addEventListener('input', function () {
+                // Disable radios if a new name is entered
+                const radios = form.querySelectorAll('input[type="radio"]');
+                if (radios.length) {
+                    radios.forEach(radio => {
+                        radio.disabled = this.value.trim() !== '';
+                    });
+                }
+                form.querySelector('button').disabled = !this.value.trim() && !form.querySelector('input[type="radio"]:checked');
+            });
+        </script>
     </form>
 </div>
