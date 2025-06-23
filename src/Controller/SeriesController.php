@@ -1133,7 +1133,7 @@ class SeriesController extends AbstractController
             'userSeries' => $userSeries,
             'providers' => $providers,
             'locations' => $filmingLocationsWithBounds['filmingLocations'],
-            'pois' => $this->mapController->getALlPointsOfInterest(),
+            'pois' => count($filmingLocationsWithBounds['filmingLocations']) ? $this->mapController->getALlPointsOfInterest() : ["list" => []],
             'locationsBounds' => $filmingLocationsWithBounds['bounds'],
             'emptyLocation' => $filmingLocationsWithBounds['emptyLocation'],
             'addLocationForm' => $addLocationForm,
@@ -3194,34 +3194,11 @@ class SeriesController extends AbstractController
                 }
                 break;
             case 10:
-                /*$selectedDayCount = array_reduce($daysOfWeek, function ($carry, $day) {
-                    return $carry + $day;
-                }, 0);
-                if (!$selectedDayCount) {
-                    // No selected days of week
-                    $this->addFlash('error', $this->translator->trans('No selected days of week.'));
-                    return $errorArr;
-                }
-                $firstDayOfWeek = intval($date->format('w'));
-
-                if (!$daysOfWeek[$firstDayOfWeek]) {
-                    // dump('First day of week not in selected days of week', $firstDayOfWeek, $daysOfWeek);
-                    $dayStrings = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-                    $selectedDaysString = '';
-                    foreach ($daysOfWeek as $key => $day) {
-                        if ($day) {
-                            $selectedDaysString .= $this->translator->trans($dayStrings[$key]) . ', ';
-                        }
-                    }
-                    $selectedDaysString = rtrim($selectedDaysString, ', ');
-                    $firstDayString = $this->translator->trans($dayStrings[$firstDayOfWeek]);
-                    $this->addFlash('error', $this->translator->trans('The first day of the week must be in the selected days of the week.')
-                        . '<br>' . $this->translator->trans('Selected days of the week → %days%', ['%days%' => $selectedDaysString])
-                        . '<br>' . $this->translator->trans('First day of the week → %day%', ['%day%' => $firstDayString]));
-                    return $errorArr;
-                }*/
                 $firstDayOfWeek = intval($date->format('w'));
                 $selectedDayCount = array_reduce($daysOfWeek, function ($carry, $day) {
+                    return $carry + ($day > 0);
+                }, 0);
+                $selectedEpisodeCount = array_reduce($daysOfWeek, function ($carry, $day) {
                     return $carry + $day;
                 }, 0);
                 if (!$this->isValidDaysOfWeek($daysOfWeek, $selectedDayCount, $firstDayOfWeek, $date)) {
@@ -3241,7 +3218,7 @@ class SeriesController extends AbstractController
                 // → dayIndexArr: [5,6,7], [1,5,6,7], [1,2,6,7], [1,2,3,7]*/
                 $dayIndexArr = $this->daysOfWeekToDayIndexArr($daysOfWeek, $selectedDayCount, $firstDayOfWeek);
 
-                for ($i = $firstEpisode, $k = 1; $i <= $lastEpisode; $i += $selectedDayCount, $k++) {
+                for ($i = $firstEpisode, $k = 1; $i <= $lastEpisode; $i += $selectedEpisodeCount, $k++) {
                     $j = $i;
                     $firstDateOfWeek = $date;
                     foreach ($dayIndexArr as $day) {
@@ -3249,8 +3226,14 @@ class SeriesController extends AbstractController
                             $d = $day - $firstDayOfWeek;
                             if ($d < 0) $d += 7;
                             if ($d) $date = $this->dateModify($firstDateOfWeek, '+' . $d . ' day');
-                            $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $j), 'episodeNumber' => $j, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $j), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $j), 'future' => $now < $date];
-                            $j++;
+                            for ($jj = 0; $jj < $daysOfWeek[$day]; $jj++) { // $jj → number of episodes on this day
+                                if ($j <= $lastEpisode) {
+                                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $j), 'episodeNumber' => $j, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $j), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $j), 'future' => $now < $date];
+                                    $j++;
+                                }
+                            }
+//                            $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $j), 'episodeNumber' => $j, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $j), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $j), 'future' => $now < $date];
+//                            $j++;
                         }
                     }
 //                    $date = $firstAirDate->modify('+' . $k . ' week');
@@ -3260,7 +3243,7 @@ class SeriesController extends AbstractController
             case 12: // Selected days, then weekly, one at a time
                 $firstDayOfWeek = intval($date->format('w'));
                 $selectedDayCount = array_reduce($daysOfWeek, function ($carry, $day) {
-                    return $carry + $day;
+                    return $carry + ($day > 0);
                 }, 0);
                 if (!$this->isValidDaysOfWeek($daysOfWeek, $selectedDayCount, $firstDayOfWeek, $date)) {
                     return $errorArr;
@@ -3271,8 +3254,12 @@ class SeriesController extends AbstractController
                     $d = $day - $firstDayOfWeek;
                     if ($d < 0) $d += 7;
                     if ($d) $date = $this->dateModify($date, '+' . $d . ' day');
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $j), 'episodeNumber' => $j, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $j), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $j), 'future' => $now < $date];
-                    $j++;
+                    for ($jj = 0; $jj < $daysOfWeek[$day]; $jj++) { // number of episodes on this day
+                        if ($j <= $lastEpisode) {
+                            $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $j), 'episodeNumber' => $j, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $j), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $j), 'future' => $now < $date];
+                            $j++;
+                        }
+                    }
                 }
                 $secondAirDate = $this->dateModify($firstAirDate, '+' . ($dayIndexArr[$selectedDayCount - 1] - $dayIndexArr[0]) . ' day');
                 for ($i = $selectedDayCount + 1; $i <= $lastEpisode; $i++) { // $i → episode number
@@ -3293,7 +3280,6 @@ class SeriesController extends AbstractController
         }
 
         if (!$daysOfWeek[$firstDayOfWeek]) {
-            // dump('First day of week not in selected days of week', $firstDayOfWeek, $daysOfWeek);
             $dayStrings = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
             $selectedDaysString = '';
             foreach ($daysOfWeek as $key => $day) {
@@ -3312,7 +3298,8 @@ class SeriesController extends AbstractController
     }
 
     private function daysOfWeekToDayIndexArr(array $daysOfWeek, int $selectedDayCount, int $firstDayOfWeek): array
-    {// First  day of week: 5
+    {
+        // First  day of week: 5
         // DaysOfWeek: [1,0,0,0,0,1,1], [1,1,0,0,0,1,1], [1,1,1,0,0,0,1], [1,1,1,1,0,0,0]
         $dayIndexArr = [];
         foreach ($daysOfWeek as $key => $day) {
