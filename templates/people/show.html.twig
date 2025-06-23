@@ -69,11 +69,9 @@
                                 </div>
                             </div>
                         {% endif %}
-                        {% if people.also_known_as|length %}
-                            <div class="info">
-                                {{ include ('_blocks/people/_preferred-name.html.twig', {people: people, preferredName: preferredName}) }}
-                            </div>
-                        {% endif %}
+                        <div class="info">
+                            {{ include ('_blocks/people/_preferred-name.html.twig', {people: people, preferredName: preferredName}) }}
+                        </div>
                     </div>
                     {% if people.images|length %}
                         {% if people.images.profiles|length %}
