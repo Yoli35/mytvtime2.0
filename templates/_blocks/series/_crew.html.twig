@@ -13,9 +13,11 @@
             {% else %}
                 <div class="name">{{ people.name }}</div>
             {% endif %}
-            {% for job in people.jobs %}
-                <div class="job">{{ job }}</div>
-            {% endfor %}
+            <div class="jobs">
+                {% for job in people.jobs %}
+                    <div class="job">{{ job }}</div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </a>

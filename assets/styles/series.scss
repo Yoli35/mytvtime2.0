@@ -1030,9 +1030,9 @@ h2 {
 
             .video {
                 aspect-ratio: 16/9;
-                mask: linear-gradient(transparent 6%, hsla(0, 100%, 100%, 1) 10%, hsla(0, 100%, 100%, 1) 90%, transparent 92%);
+                /*mask: linear-gradient(transparent 6%, hsla(0, 100%, 100%, 1) 10%, hsla(0, 100%, 100%, 1) 90%, transparent 92%);
                 margin-block: -3rem;
-                position: relative;
+                position: relative;*/
                 width: 100%;
 
                 iframe {
@@ -3340,13 +3340,20 @@ h2 {
                 overflow: unset;
                 padding: .25rem;
 
-                .job {
-                    background-color: var(--ardoise-100-alpha-20);
-                    border-radius: .25rem;
-                    max-width: 100%;
+                .jobs {
+                    display: flex;
+                    gap: .25rem;
                     overflow-x: auto;
-                    padding: .125rem;
-                    text-wrap: nowrap;
+                    max-width: 100%;
+                    padding-block: .25rem;
+
+                    .job {
+                        background-color: var(--orange-30);
+                        border-radius: .25rem;
+                        flex-shrink: 0;
+                        padding: .125rem .5rem;
+                        text-wrap: nowrap;
+                    }
                 }
             }
         }
@@ -3682,7 +3689,7 @@ h2 {
 
     .add-this {
         bottom: 0;
-        border-radius: 0;
+        border-radius: 0 0 1rem 1rem;
         left: 0;
         right: 0;
     }
@@ -3766,7 +3773,7 @@ h2 {
 @media (max-width: 800px) {
     .add-this {
         bottom: 4rem;
-        border-radius: 0;
+        border-radius: 0 0 1rem 1rem;
         left: 0;
         right: 0;
     }
@@ -3869,6 +3876,12 @@ h2 {
                 top: 0;
                 z-index: 1;
             }
+        }
+
+        .form-row.center {
+            align-items: center;
+            flex-wrap: wrap;
+            margin-inline: auto;
         }
 
         .form-row.dismissed {
