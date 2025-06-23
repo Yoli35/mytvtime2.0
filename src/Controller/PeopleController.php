@@ -298,7 +298,6 @@ class PeopleController extends AbstractController
         $name = trim($data['name']);
         $newName = trim($data['new']) ?? false;
         $name = $newName ?: $name;
-        dump(['id' => $id, 'name' => $name, 'newName' => $newName]);
 
             $peopleUserPreferredName = $this->peopleUserPreferredNameRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
         if (!$peopleUserPreferredName) {
