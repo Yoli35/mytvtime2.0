@@ -980,9 +980,12 @@ h2 {
     }
 
     .videos {
+        background-color: var(--ardoise-100-alpha-20);
+        border-radius: .5rem;
         display: flex;
         flex-direction: column;
         gap: .5rem;
+        padding: .5rem 1rem;
         width: 100%;
 
         .video-tools {
@@ -995,6 +998,7 @@ h2 {
             h2 {
                 background-color: transparent;
                 margin-inline-end: auto;
+                padding: 0;
             }
 
             .video-tool {
@@ -1009,9 +1013,9 @@ h2 {
                 justify-content: center;
                 width: 2rem;
 
-                &:last-of-type {
+                /*&:last-of-type {
                     margin-inline-end: 1rem;
-                }
+                }*/
             }
         }
 
@@ -1065,7 +1069,7 @@ h2 {
 
     .schedules {
         align-items: stretch;
-        /*border: 2px dashed var(--orange-50);*/
+        background-color: var(--ardoise-100-alpha-20);
         border-radius: .5rem;
         display: flex;
         flex-direction: column;
@@ -1073,10 +1077,12 @@ h2 {
         font-weight: 300;
         gap: .25rem;
         justify-content: center;
+        padding: .5rem 1rem;
 
         h2 {
             background-color: transparent;
             display: flex;
+            padding: 0;
 
             .new-schedule {
                 align-items: center;
@@ -1468,15 +1474,19 @@ h2 {
     }
 
     .externals {
+        background-color: var(--ardoise-100-alpha-20);
+        border-radius: .5rem;
         display: flex;
         flex-direction: column;
         gap: .25rem;
+        padding: .5rem 1rem;
 
         h2 {
             align-items: center;
             background-color: transparent;
             display: flex;
             gap: .5rem;
+            padding: 0;
 
             label {
                 align-items: center;
@@ -1529,6 +1539,16 @@ h2 {
         }
     }
 
+    .user-actions {
+        background-color: var(--ardoise-100-alpha-20);
+        border-radius: .5rem;
+        padding: .5rem 1rem;
+
+        h2 {
+            padding: 0;
+        }
+    }
+
     .content {
         display: flex;
         gap: 1rem;
@@ -1569,21 +1589,39 @@ h2 {
         }
 
         .content-infos {
+            background-color: var(--ardoise-100-alpha-20);
+            border-radius: .5rem;
+            padding: .5rem 1rem;
             position: relative;
 
+            h2 {
+                background-color: transparent;
+                padding: 0;
+                position: sticky;
+                left: 0;
+            }
+
+            .watch {
+                display: flex;
+                flex-direction: column;
+                gap: .5rem;
+            }
+
             .providers {
+                display: flex;
+                gap: .5rem;
                 overflow-x: auto;
 
-                h3 {
-                    position: sticky;
-                    left: 0;
+                h2 {
+                    width: 8rem;
+                    flex-shrink: 0;
                 }
 
                 .wrapper {
                     display: flex;
                     flex-wrap: nowrap;
                     gap: 1rem;
-                    margin-inline: auto;
+                    /*margin-inline: auto;*/
                     width: fit-content;
 
                     .provider {
@@ -1733,7 +1771,7 @@ h2 {
                 justify-content: center;
                 position: absolute;
                 right: 1rem;
-                top: 0;
+                top: .5rem;
                 width: 2rem;
 
                 /*.hidden {
