@@ -1,9 +1,9 @@
 {% set links = watchLinks|filter(link => link.seasonNumber==seasonNumber or link.seasonNumber == -1) %}
 
 {% if links|length %}
-    <div class="user-actions">
+    <div class="user-actions{% if hidden %} d-none{% endif %}">
         <div class="wrapper">
-            <div class="watch-links{% if hidden %} hidden{% endif %}">
+            <div class="watch-links">
                 <div class="label">{{ 'Watch links'|trans }}</div>
                 {% for link in links %}
                     {% set linkSeasonNumber = link.seasonNumber ?? -1 %}

@@ -619,7 +619,7 @@ export class Season {
 
                 substituteNameDiv?.classList.add('watched');
 
-                episodeWatchLinks?.classList.add('hidden');
+                episodeWatchLinks?.closest('.user-actions').classList.add('d-none');
 
                 finaleDivs.forEach(f => {
                     f.classList.add('watched');
@@ -1037,7 +1037,7 @@ export class Season {
                 substituteNameDiv?.classList.add('watched');
 
                 const episodeWatchLinks = episode.closest('.episode').querySelector('.watch-links');
-                episodeWatchLinks?.classList.remove('hidden');
+                episodeWatchLinks?.closest('.user-actions').classList.remove('d-none');
 
                 const newEpisode = document.createElement('div');
                 newEpisode.classList.add('add-this-episode');
