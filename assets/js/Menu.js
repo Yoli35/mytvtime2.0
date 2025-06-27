@@ -122,11 +122,11 @@ export class Menu {
         this.posterUrl = null;
         this.profileUrl = null;
         this.svgs = {
-            "fa6-solid:tv": "<svg viewBox=\"0 0 640 512\" fill=\"currentColor\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M64 64v288h512V64zM0 64C0 28.7 28.7 0 64 0h512c35.3 0 64 28.7 64 64v288c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64zm128 384h384c17.7 0 32 14.3 32 32s-14.3 32-32 32H128c-17.7 0-32-14.3-32-32s14.3-32 32-32\"></path></svg>",
-            "fa6-solid:mobile-screen-button": "<svg viewBox=\"0 0 384 512\" fill=\"currentColor\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M16 64C16 28.7 44.7 0 80 0h224c35.3 0 64 28.7 64 64v384c0 35.3-28.7 64-64 64H80c-35.3 0-64-28.7-64-64zm208 384a32 32 0 1 0-64 0a32 32 0 1 0 64 0m80-384H80v320h224z\"></path></svg>",
-            "fa6-solid:tablet-screen-button": "<svg viewBox=\"0 0 448 512\" fill=\"currentColor\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M0 64C0 28.7 28.7 0 64 0h320c35.3 0 64 28.7 64 64v384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64zm256 384a32 32 0 1 0-64 0a32 32 0 1 0 64 0M384 64H64v320h320z\"></path></svg>",
-            "fa6-solid:laptop": "<svg viewBox=\"0 0 640 512\" fill=\"currentColor\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M128 32c-35.3 0-64 28.7-64 64v256h64V96h384v256h64V96c0-35.3-28.7-64-64-64zM19.2 384C8.6 384 0 392.6 0 403.2C0 445.6 34.4 480 76.8 480h486.4c42.4 0 76.8-34.4 76.8-76.8c0-10.6-8.6-19.2-19.2-19.2z\"></path></svg>",
-            "fa6-solid:desktop": "<svg viewBox=\"0 0 576 512\" fill=\"currentColor\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M64 0C28.7 0 0 28.7 0 64v288c0 35.3 28.7 64 64 64h176l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32h256c17.7 0 32-14.3 32-32s-14.3-32-32-32h-69.3L336 416h176c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64zm448 64v224H64V64z\"></path></svg>"
+            "fa6-solid:tv": "<svg viewBox=\"0 0 640 512\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M64 64v288h512V64zM0 64C0 28.7 28.7 0 64 0h512c35.3 0 64 28.7 64 64v288c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64zm128 384h384c17.7 0 32 14.3 32 32s-14.3 32-32 32H128c-17.7 0-32-14.3-32-32s14.3-32 32-32\"></path></svg>",
+            "fa6-solid:mobile-screen-button": "<svg viewBox=\"0 0 384 512\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M16 64C16 28.7 44.7 0 80 0h224c35.3 0 64 28.7 64 64v384c0 35.3-28.7 64-64 64H80c-35.3 0-64-28.7-64-64zm208 384a32 32 0 1 0-64 0a32 32 0 1 0 64 0m80-384H80v320h224z\"></path></svg>",
+            "fa6-solid:tablet-screen-button": "<svg viewBox=\"0 0 448 512\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M0 64C0 28.7 28.7 0 64 0h320c35.3 0 64 28.7 64 64v384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64zm256 384a32 32 0 1 0-64 0a32 32 0 1 0 64 0M384 64H64v320h320z\"></path></svg>",
+            "fa6-solid:laptop": "<svg viewBox=\"0 0 640 512\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M128 32c-35.3 0-64 28.7-64 64v256h64V96h384v256h64V96c0-35.3-28.7-64-64-64zM19.2 384C8.6 384 0 392.6 0 403.2C0 445.6 34.4 480 76.8 480h486.4c42.4 0 76.8-34.4 76.8-76.8c0-10.6-8.6-19.2-19.2-19.2z\"></path></svg>",
+            "fa6-solid:desktop": "<svg viewBox=\"0 0 576 512\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M64 0C28.7 0 0 28.7 0 64v288c0 35.3 28.7 64 64 64h176l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32h256c17.7 0 32-14.3 32-32s-14.3-32-32-32h-69.3L336 416h176c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64zm448 64v224H64V64z\"></path></svg>"
         }
     }
 
@@ -174,6 +174,19 @@ export class Menu {
             });
             menus.forEach((menu) => {
                 if (!menu.parentElement.contains(e.target)) {
+                    this.closeMenu(menu.closest(".navbar-item"), menu);
+                }
+            });
+        });
+        document.addEventListener("auxclick", (e) => {
+            searchResults.forEach((searchResult) => {
+                if (searchResult.parentElement.contains(e.target)) {
+                    searchResult.innerHTML = '';
+                    searchResult.classList.remove("showing-something");
+                }
+            });
+            menus.forEach((menu) => {
+                if (menu.parentElement.contains(e.target)) {
                     this.closeMenu(menu.closest(".navbar-item"), menu);
                 }
             });
@@ -682,7 +695,7 @@ export class Menu {
                     a.href = url;
                     a.target = "_blank";
                     const li = document.createElement("li");
-                    li.setAttribute("data-id", result['id']);
+                    li.setAttribute("data-id", result['id'].toString());
                     li.setAttribute("data-slug", gThis.toSlug(result[resultNames[type]]));
                     li.setAttribute("data-type", type);
                     li.setAttribute('data-title', result[resultNames[type]]);
