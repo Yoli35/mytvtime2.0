@@ -4924,6 +4924,12 @@ dialog, .side-panel {
             gap: .25rem;
             width: 100%;
 
+            &.dashed {
+                border: 2px dashed var(--green-40);
+                border-radius: .5rem;
+                padding: .25rem;
+            }
+
             /*&:has(+ .form-field) {
                 width: 50%;
             }*/

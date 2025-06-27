@@ -1137,7 +1137,7 @@ class SeriesController extends AbstractController
             'locationsBounds' => $filmingLocationsWithBounds['bounds'],
             'emptyLocation' => $filmingLocationsWithBounds['emptyLocation'],
             'addLocationForm' => $addLocationForm,
-            'fieldList' => ['series-id', 'tmdb-id', 'crud-type', 'crud-id', 'title', 'location', 'season-number', 'episode-number', 'description', 'latitude', 'longitude'],
+            'fieldList' => ['series-id', 'tmdb-id', 'crud-type', 'crud-id', 'title', 'location', 'season-number', 'episode-number', 'description', 'latitude', 'longitude', 'radius'],
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
             'externals' => $this->getExternals($series, $tvKeywords, $tvExternalIds, $request->getLocale()),
             'translations' => $translations,
@@ -2325,10 +2325,12 @@ class SeriesController extends AbstractController
         $description = $data['description'];
         $data['latitude'] = str_replace(',', '.', $data['latitude']);
         $data['longitude'] = str_replace(',', '.', $data['longitude']);
+        $data['radius'] = str_replace(',', '.', $data['radius']);
         $episodeNumber = intval($data['episode-number']);
         $seasonNumber = intval($data['season-number']);
         $latitude = $data['latitude'] = floatval($data['latitude']);
         $longitude = $data['longitude'] = floatval($data['longitude']);
+        $radius = $data['radius'] = floatval($data['radius']);
 
         if ($crudType === 'create') {// Toutes les images
             $images = array_filter($data, fn($key) => str_contains($key, 'image-url'), ARRAY_FILTER_USE_KEY);
@@ -2348,10 +2350,10 @@ class SeriesController extends AbstractController
         if (!$filmingLocation) {
             $uuid = $data['uuid'] = Uuid::v4()->toString();
             $tmdbId = $data['tmdb-id'];
-            $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $location, $description, $latitude, $longitude, $seasonNumber, $episodeNumber, $now, true);
+            $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $location, $description, $latitude, $longitude, $radius, $seasonNumber, $episodeNumber, $now, true);
             $filmingLocation->setOriginCountry($series->getOriginCountry());
         } else {
-            $filmingLocation->update($title, $location, $description, $latitude, $longitude, $seasonNumber, $episodeNumber, $now);
+            $filmingLocation->update($title, $location, $description, $latitude, $longitude, $radius, $seasonNumber, $episodeNumber, $now);
         }
         $this->filmingLocationRepository->save($filmingLocation, true);
 
@@ -3571,7 +3573,7 @@ class SeriesController extends AbstractController
         $uuid = Uuid::v4()->toString();
         $now = $this->now();
         $tmdbId = $series->getTmdbId();
-        $emptyLocation = new FilmingLocation($uuid, $tmdbId, "", "", "", 0, 0, 0, 0, $now, true);
+        $emptyLocation = new FilmingLocation($uuid, $tmdbId, "", "", "", 0, 0, null, 0, 0, $now, true);
         $emptyLocation->setOriginCountry($series->getOriginCountry());
         return $emptyLocation->toArray();
     }

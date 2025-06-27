@@ -65,7 +65,10 @@ class FilmingLocation
     #[ORM\Column(nullable: true)]
     private ?int $seasonNumber = null;
 
-    public function __construct(string $uuid, int $tmdbId, string $title, string $location, string $description, float $latitude, float $longitude, int $seasonNumber, int $episodeNumber, DateTimeImmutable $now, bool $isSeries = false)
+    #[ORM\Column(nullable: true)]
+    private ?float $radius = null;
+
+    public function __construct(string $uuid, int $tmdbId, string $title, string $location, string $description, float $latitude, float $longitude, ?float $radius, int $seasonNumber, int $episodeNumber, DateTimeImmutable $now, bool $isSeries = false)
     {
         $this->createdAt = $now;
         $this->description = $description;
@@ -75,6 +78,7 @@ class FilmingLocation
         $this->latitude = $latitude;
         $this->location = $location;
         $this->longitude = $longitude;
+        $this->radius = $radius;
         $this->seasonNumber = $seasonNumber;
         $this->title = $title;
         $this->tmdbId = $tmdbId;
@@ -82,13 +86,14 @@ class FilmingLocation
         $this->uuid = $uuid;
     }
 
-    public function update(string $title, string $location, string $description, float $latitude, float $longitude, int $seasonNumber, int $episodeNumber, DateTimeImmutable $updateAt): void
+    public function update(string $title, string $location, string $description, float $latitude, float $longitude, ?float $radius, int $seasonNumber, int $episodeNumber, DateTimeImmutable $updateAt): void
     {
         $this->description = $description;
         $this->episodeNumber = $episodeNumber;
         $this->latitude = $latitude;
         $this->location = $location;
         $this->longitude = $longitude;
+        $this->radius = $radius;
         $this->seasonNumber = $seasonNumber;
         $this->title = $title;
         $this->updatedAt = $updateAt;
@@ -312,6 +317,18 @@ class FilmingLocation
     public function setSeasonNumber(?int $seasonNumber): static
     {
         $this->seasonNumber = $seasonNumber;
+
+        return $this;
+    }
+
+    public function getRadius(): ?float
+    {
+        return $this->radius;
+    }
+
+    public function setRadius(?float $radius): static
+    {
+        $this->radius = $radius;
 
         return $this;
     }

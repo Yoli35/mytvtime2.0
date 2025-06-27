@@ -1042,7 +1042,7 @@ export class Show {
         console.log({imageInputs});
         // Dev test
         const locationInput = addLocationForm.querySelector('input[name="location"]');
-        locationInput.addEventListener('input', function () {
+        /*locationInput.addEventListener('input', function () {
             const location = this.value;
             if (location.length === 4 && location === 'test') {
                 const descriptionInput = addLocationForm.querySelector('input[name="description"]');
@@ -1052,7 +1052,7 @@ export class Show {
                 const longitudeInput = addLocationForm.querySelector('input[name="longitude"]');
                 longitudeInput.value = 2.3522;
             }
-        });
+        });*/
 
         // Lorsque le panneau devient trop haut la div "submit-row" disparait.
         // Si la div "submit-row" est hors du cadre, la div "scroll-down-to-submit" apparaît.
@@ -1164,7 +1164,7 @@ export class Show {
                             input.nextElementSibling.textContent = '';
                         }
                     } else {
-                        if (!input.value) {
+                        if (input.required && !input.value) {
                             input.nextElementSibling.textContent = translations['This field is required'];
                             emptyInput = true;
                         } else {
@@ -1489,6 +1489,7 @@ export class Show {
         const descriptionTextarea = addLocationForm.querySelector('textarea[name="description"]');
         const latitudeInput = addLocationForm.querySelector('input[name="latitude"]');
         const longitudeInput = addLocationForm.querySelector('input[name="longitude"]');
+        const radiusInput = addLocationForm.querySelector('input[name="radius"]');
         const locationImages = addLocationForm.querySelector(".location-images");
         const additionalImagesDiv = addLocationForm.querySelector('.additional-images');
         const submitButton = addLocationForm.querySelector('button[type="submit"]');
@@ -1513,6 +1514,7 @@ export class Show {
             locationInput.value = location.location;
             latitudeInput.value = location.latitude;
             longitudeInput.value = location.longitude;
+            radiusInput.value = location.radius;
             descriptionTextarea.value = location.description;
 
             locationImages.style.display = 'flex';

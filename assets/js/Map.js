@@ -20,6 +20,7 @@ export class Map {
         // this.latLngs = locations.map(location => [location.latitude, location.longitude]);
         this.locale = document.querySelector('html').getAttribute('lang');
         this.map = null;
+        this.circles = [];
         this.init();
     }
 
@@ -93,7 +94,43 @@ export class Map {
                 // markerIcon.setAttribute('data-country', location.country);
                 markerIcon.setAttribute('data-latitude', location.latitude);
                 markerIcon.setAttribute('data-longitude', location.longitude);
+
+                if (location.radius) {
+                    this.circles.push(this.createCircle([location.longitude, location.latitude], location.radius / 1000));
+                }
             });
+            console.log({circles: this.circles});
+            if (this.circles.length) {
+                this.map.on('style.load', () => {
+                    this.map.addSource('circles', {
+                        type: 'geojson',
+                        data: {
+                            type: 'FeatureCollection',
+                            features: this.circles
+                        }
+                    });
+
+                    this.map.addLayer({
+                        id: 'circle-layer',
+                        type: 'fill',
+                        source: 'circles',
+                        paint: {
+                            'fill-color': '#875012',
+                            'fill-opacity': 0.25,
+                            'fill-outline-color': '#E0861F'
+                        }
+                    });
+                    this.map.addLayer({
+                        id: 'circle-outline-layer',
+                        type: 'line',
+                        source: 'circles',
+                        paint: {
+                            'line-color': '#E0861F',
+                            'line-width': 4
+                        }
+                    });
+                });
+            }
 
             this.pointsOfInterest.forEach((point, index) => {
                 let marker = new mapboxgl.Marker({color: "#196c00"})
@@ -211,5 +248,28 @@ export class Map {
             return this.map._cooperativeGestures;
         }
         return false;
+    }
+
+    createCircle(center, radiusInKm) {
+        const points = 64; // Nombre de points pour lisser le cercle
+        const coords = [];
+        const distanceX = radiusInKm / (111.32 * Math.cos(center[1] * Math.PI / 180));
+        const distanceY = radiusInKm / 110.574;
+
+        for (let i = 0; i < points; i++) {
+            const angle = (i * 360) / points;
+            const x = center[0] + distanceX * Math.cos(angle * Math.PI / 180);
+            const y = center[1] + distanceY * Math.sin(angle * Math.PI / 180);
+            coords.push([x, y]);
+        }
+        coords.push(coords[0]); // Fermer le polygone
+
+        return {
+            type: 'Feature',
+            geometry: {
+                type: 'Polygon',
+                coordinates: [coords]
+            }
+        };
     }
 }
