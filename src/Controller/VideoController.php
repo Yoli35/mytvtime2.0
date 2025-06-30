@@ -131,7 +131,7 @@ final class VideoController extends AbstractController
             throw $this->createNotFoundException('Video not found');
         }
 
-        $categories = $this->categoryRepository->findAll();
+        $categories = $this->categoryRepository->findBy([], ['name' => 'ASC']);
         $previousVideo = $this->videoRepository->getPreviousVideo($video, $user);
         $nextVideo = $this->videoRepository->getNextVideo($video, $user);
 
