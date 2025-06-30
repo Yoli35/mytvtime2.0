@@ -921,6 +921,7 @@ label:has(input[type="text"]) {
     }
 
     .avatar {
+        background-color: var(--orange-50);
         border-radius: 50%;
         flex-shrink: 0;
         z-index: 11;
