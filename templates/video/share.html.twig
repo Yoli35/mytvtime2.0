@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Share'|trans }} → {{ video.title }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/video.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {{ include('_blocks/_menu.html.twig') }}
+    <div class="container-fluid video-page" data-id="{{ video.id }}">
+        <div class="video">
+            <iframe src="https://www.youtube.com/embed/{{ video.link }}" title="{{ video.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="title">
+            <div class="h1-categories">
+                <h1>{{ video.title }}</h1>
+                {% if video.categories|length %}
+                    <div class="categories">
+                        {% for category in video.categories %}
+                            <div class="category" data-id="{{ category.id }}" style="background-color: {{ category.color }}">
+                                {{ category.name|trans }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="video-infos"></div>
+    </div>
+    <div id="global-data" style="display: none">
+        {
+            "app_video_details": "{{ path('app_video_details', {id: video.id}) }}",
+            "app_video_comments": "{{ path('app_video_comments') }}",
+            "app_video_category_add": "{{ path('app_video_category_add') }}",
+            "app_video_category_delete": "{{ path('app_video_category_delete') }}",
+            "published_at": "{{ publishedAt }}",
+            "added_at": "{{ null }}",
+            "texts": {
+                "comments": "{{ 'comments'|trans }}",
+                "likes": "{{ 'likes'|trans }}",
+                "views": "{{ 'views'|trans }}",
+                "published": "{{ 'Published at'|trans }}",
+                "added": "{{ 'Added at'|trans }}",
+                "no_comments": "{{ 'No comments'|trans }}",
+                "Comments": "{{ 'Comments'|trans }}",
+                "display_more": "{{ 'Display more'|trans }}",
+                "display_less": "{{ 'Display less'|trans }}"
+            }
+        }
+    </div>
+    <div id="svgs" style="display: none">
+        <div id="comment">{{ ux_icon('mdi:comment-processing')|raw }}</div>
+        <div id="like">{{ ux_icon('mdi:like')|raw }}</div>
+        <div id="view">{{ ux_icon('mdi:eye')|raw }}</div>
+        <div id="delete">{{ ux_icon('mdi:close', {height: '12px', width: '12px'}) }}</div>
+    </div>
+    {% include '_blocks/_footer.html.twig' %}
+{% endblock %}

@@ -146,6 +146,23 @@ final class VideoController extends AbstractController
         ]);
     }
 
+    #[Route('/share/{id}', name: 'share')]
+    public function share(Request $request, ?Video $video): Response
+    {
+        if (!$video) {
+            $user = $this->getUser();
+            $this->addFlash('error', 'Video not found');
+            return $this->redirectToRoute('app_home', ['_locale' => $request->getLocale()]);
+        }
+        $publishedDate = $this->sharedVideoFormatDate($video);
+
+        return $this->render('video/share.html.twig', [
+            'video' => $video,
+            'publishedAt' => $publishedDate,
+
+        ]);
+    }
+
     #[Route('/details/{id}', name: 'details', methods: ['POST'])]
     public function details(Request $request, ?Video $video): JsonResponse
     {
@@ -398,7 +415,7 @@ final class VideoController extends AbstractController
     private function getComments(string $link, ?string $nextPageToken): array
     {
         $commentArray = [];
-        $now = $this->dateService->getNowImmutable($this->getUser()->getTimeZone() ?? 'Europe/Paris');
+        $now = $this->dateService->getNowImmutable($this->getUser()?->getTimeZone() ?? 'Europe/Paris');
 
         $list = $this->getVideoComments($link, $this->maxResults, $nextPageToken);
         $comments = $list->getItems();
@@ -561,6 +578,23 @@ final class VideoController extends AbstractController
             'published_at' => $publishedAt,
             'added_at' => $addedAt,
         ];
+    }
+
+    public function sharedVideoFormatDate(Video $video): string
+    {
+        $publishedDate = $video->getPublishedAt()->format('Y-m-d H:i:s');
+
+        $publishedAt = $this->dateService->formatDateRelativeShort($publishedDate, 'Europe/Paris', 'fr');
+
+        if (is_numeric($publishedAt[0])) {
+            $publishedAt = $this->translator->trans("Published at") . ' ' . $publishedAt;
+        } else {
+            $publishedAt = $this->translator->trans("Published") . ' ' . $publishedAt;
+        }
+
+        $publishedAt .= ' ' . $this->translator->trans("at") . ' ' . substr($publishedDate, 11, 5);
+
+        return $publishedAt;
     }
 
     public function formatCommentDate(string $date): string
