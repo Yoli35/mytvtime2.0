@@ -116,7 +116,7 @@ export class Map {
                         source: 'circles',
                         paint: {
                             'fill-color': '#875012',
-                            'fill-opacity': 0.25,
+                            'fill-opacity': 0.125,
                             'fill-outline-color': '#E0861F'
                         }
                     });
