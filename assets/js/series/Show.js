@@ -41,7 +41,10 @@ export class Show {
      * @property {string} description
      * @property {number} latitude
      * @property {number} longitude
+     * @property {number} radius
      * @property {number} still_id
+     * @property {string} source_name
+     * @property {string} source_url
      * @property {string} uuid
      * @property {string} still_path
      * @property {Array.<FilmingLocationImage>} filmingLocationImages
@@ -1041,7 +1044,7 @@ export class Show {
         const scrollDownToSubmitButton = scrollDownToSubmitDiv.querySelector('button');
         console.log({imageInputs});
         // Dev test
-        const locationInput = addLocationForm.querySelector('input[name="location"]');
+        /*const locationInput = addLocationForm.querySelector('input[name="location"]');*/
         /*locationInput.addEventListener('input', function () {
             const location = this.value;
             if (location.length === 4 && location === 'test') {
@@ -1490,6 +1493,8 @@ export class Show {
         const latitudeInput = addLocationForm.querySelector('input[name="latitude"]');
         const longitudeInput = addLocationForm.querySelector('input[name="longitude"]');
         const radiusInput = addLocationForm.querySelector('input[name="radius"]');
+        const sourceNameInput = addLocationForm.querySelector('input[name="source-name"]');
+        const sourceUrlInput = addLocationForm.querySelector('input[name="source-url"]');
         const locationImages = addLocationForm.querySelector(".location-images");
         const additionalImagesDiv = addLocationForm.querySelector('.additional-images');
         const submitButton = addLocationForm.querySelector('button[type="submit"]');
@@ -1516,6 +1521,8 @@ export class Show {
             longitudeInput.value = location.longitude;
             radiusInput.value = location.radius;
             descriptionTextarea.value = location.description;
+            sourceNameInput.value = location.source_name;
+            sourceUrlInput.value = location.source_url;
 
             locationImages.style.display = 'flex';
             const stillDiv = locationImages.querySelector('.still');

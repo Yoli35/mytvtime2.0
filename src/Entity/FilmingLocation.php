@@ -68,7 +68,13 @@ class FilmingLocation
     #[ORM\Column(nullable: true)]
     private ?float $radius = null;
 
-    public function __construct(string $uuid, int $tmdbId, string $title, string $location, string $description, float $latitude, float $longitude, ?float $radius, int $seasonNumber, int $episodeNumber, DateTimeImmutable $now, bool $isSeries = false)
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $sourceName = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $sourceUrl = null;
+
+    public function __construct(string $uuid, int $tmdbId, string $title, string $location, string $description, float $latitude, float $longitude, ?float $radius, int $seasonNumber, int $episodeNumber, ?string $sourceName, ?string $sourceUrl, DateTimeImmutable $now, bool $isSeries = false)
     {
         $this->createdAt = $now;
         $this->description = $description;
@@ -80,13 +86,15 @@ class FilmingLocation
         $this->longitude = $longitude;
         $this->radius = $radius;
         $this->seasonNumber = $seasonNumber;
+        $this->sourceName = $sourceName;
+        $this->sourceUrl = $sourceUrl;
         $this->title = $title;
         $this->tmdbId = $tmdbId;
         $this->updatedAt = $now;
         $this->uuid = $uuid;
     }
 
-    public function update(string $title, string $location, string $description, float $latitude, float $longitude, ?float $radius, int $seasonNumber, int $episodeNumber, DateTimeImmutable $updateAt): void
+    public function update(string $title, string $location, string $description, float $latitude, float $longitude, ?float $radius, int $seasonNumber, int $episodeNumber, ?string $sourceName, ?string $sourceUrl, DateTimeImmutable $updateAt): void
     {
         $this->description = $description;
         $this->episodeNumber = $episodeNumber;
@@ -95,6 +103,8 @@ class FilmingLocation
         $this->longitude = $longitude;
         $this->radius = $radius;
         $this->seasonNumber = $seasonNumber;
+        $this->sourceName = $sourceName;
+        $this->sourceUrl = $sourceUrl;
         $this->title = $title;
         $this->updatedAt = $updateAt;
     }
@@ -329,6 +339,30 @@ class FilmingLocation
     public function setRadius(?float $radius): static
     {
         $this->radius = $radius;
+
+        return $this;
+    }
+
+    public function getSourceName(): ?string
+    {
+        return $this->sourceName;
+    }
+
+    public function setSourceName(?string $sourceName): static
+    {
+        $this->sourceName = $sourceName;
+
+        return $this;
+    }
+
+    public function getSourceUrl(): ?string
+    {
+        return $this->sourceUrl;
+    }
+
+    public function setSourceUrl(?string $sourceUrl): static
+    {
+        $this->sourceUrl = $sourceUrl;
 
         return $this;
     }

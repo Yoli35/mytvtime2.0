@@ -4930,6 +4930,14 @@ dialog, .side-panel {
                 padding: .25rem;
             }
 
+            &.flex-1 {
+                flex: 1;
+            }
+
+            &.flex-2 {
+                flex: 2;
+            }
+
             /*&:has(+ .form-field) {
                 width: 50%;
             }*/

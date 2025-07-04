@@ -1090,10 +1090,6 @@ class SeriesController extends AbstractController
 
         if ($tv) {
             $addLocationForm = $this->render('_blocks/forms/_add-location-form.html.twig', [
-                // name="series-id" id="series-id" value="{{ series.id }}"
-                //name="tmdb-id" id="tmdb-id" value="{{ tv.id }}"
-                //name="crud-type" id="crud-type" value="create"
-                //name="crud-id" id="crud-id" value="0"
                 'hiddenFields' => [
                     ['item' => 'hidden', 'name' => 'series-id', 'value' => $series->getId()],
                     ['item' => 'hidden', 'name' => 'tmdb-id', 'value' => $tv['id']],
@@ -1116,6 +1112,10 @@ class SeriesController extends AbstractController
                     ],
                     [
                         ['item' => 'textarea', 'name' => 'description', 'label' => 'Description', 'rows' => '5', 'required' => false],
+                    ],
+                    [
+                        ['item' => 'input', 'name' => 'source-name', 'label' => 'Source', 'type' => 'text', 'class' => 'flex-1', 'required' => false],
+                        ['item' => 'input', 'name' => 'source-url', 'label' => 'Url', 'type' => 'text', 'class' => 'flex-2', 'required' => false],
                     ]
                 ],
             ]);
@@ -1137,7 +1137,7 @@ class SeriesController extends AbstractController
             'locationsBounds' => $filmingLocationsWithBounds['bounds'],
             'emptyLocation' => $filmingLocationsWithBounds['emptyLocation'],
             'addLocationForm' => $addLocationForm,
-            'fieldList' => ['series-id', 'tmdb-id', 'crud-type', 'crud-id', 'title', 'location', 'season-number', 'episode-number', 'description', 'latitude', 'longitude', 'radius'],
+            'fieldList' => ['series-id', 'tmdb-id', 'crud-type', 'crud-id', 'title', 'location', 'season-number', 'episode-number', 'description', 'latitude', 'longitude', 'radius', "source-name", "source-url"],
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
             'externals' => $this->getExternals($series, $tvKeywords, $tvExternalIds, $request->getLocale()),
             'translations' => $translations,
@@ -1802,7 +1802,7 @@ class SeriesController extends AbstractController
             $userSeries->setLastSeason($seasonNumber);
             $this->userSeriesRepository->save($userSeries, true);
         }
-        $svg = '<svg viewBox="0 0 576 512" fill="currentColor" height="18px" width="18px" aria-hidden="true"><path fill="currentColor" d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32M144 256a144 144 0 1 1 288 0a144 144 0 1 1-288 0m144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3"></path></svg>';
+        $svg = '<svg viewBox="0 0 576 512" height="18px" width="18px" aria-hidden="true"><path fill="currentColor" d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32M144 256a144 144 0 1 1 288 0a144 144 0 1 1-288 0m144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3"></path></svg>';
         $viewedAt = $this->translator->trans('Today') . ', ' . $now->format('H:i');
 
         $watchedAtBlock = $this->renderView('_blocks/series/_watched-at.html.twig', [
@@ -2276,6 +2276,7 @@ class SeriesController extends AbstractController
         $messages = [];
 
         $data = $request->request->all();
+        dump($data);
         $files = $request->files->all();
         if (empty($data) && empty($files)) {
             return $this->json([
@@ -2331,6 +2332,8 @@ class SeriesController extends AbstractController
         $latitude = $data['latitude'] = floatval($data['latitude']);
         $longitude = $data['longitude'] = floatval($data['longitude']);
         $radius = $data['radius'] = floatval($data['radius']);
+        $sourceName = $data['source-name'] ?? '';
+        $sourceUrl = $data['source-url'] ?? '';
 
         if ($crudType === 'create') {// Toutes les images
             $images = array_filter($data, fn($key) => str_contains($key, 'image-url'), ARRAY_FILTER_USE_KEY);
@@ -2350,10 +2353,10 @@ class SeriesController extends AbstractController
         if (!$filmingLocation) {
             $uuid = $data['uuid'] = Uuid::v4()->toString();
             $tmdbId = $data['tmdb-id'];
-            $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $location, $description, $latitude, $longitude, $radius, $seasonNumber, $episodeNumber, $now, true);
+            $filmingLocation = new FilmingLocation($uuid, $tmdbId, $title, $location, $description, $latitude, $longitude, $radius, $seasonNumber, $episodeNumber, $sourceName, $sourceUrl, $now, true);
             $filmingLocation->setOriginCountry($series->getOriginCountry());
         } else {
-            $filmingLocation->update($title, $location, $description, $latitude, $longitude, $radius, $seasonNumber, $episodeNumber, $now);
+            $filmingLocation->update($title, $location, $description, $latitude, $longitude, $radius, $seasonNumber, $episodeNumber, $sourceName, $sourceUrl, $now);
         }
         $this->filmingLocationRepository->save($filmingLocation, true);
 
@@ -3573,7 +3576,7 @@ class SeriesController extends AbstractController
         $uuid = Uuid::v4()->toString();
         $now = $this->now();
         $tmdbId = $series->getTmdbId();
-        $emptyLocation = new FilmingLocation($uuid, $tmdbId, "", "", "", 0, 0, null, 0, 0, $now, true);
+        $emptyLocation = new FilmingLocation($uuid, $tmdbId, "", "", "", 0, 0, null, 0, 0, "", "", $now, true);
         $emptyLocation->setOriginCountry($series->getOriginCountry());
         return $emptyLocation->toArray();
     }
