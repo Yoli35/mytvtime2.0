@@ -4808,8 +4808,27 @@ h2 {
                             text-wrap: balance;
                         }
 
-                        .google-maps {
+                        .show-location {
+                            display: flex;
                             flex-shrink: 0;
+                            gap: .5rem;
+
+                            a, .target-map {
+                                align-items: center;
+                                background-color: var(--orange-50);
+                                border-radius: .25rem;
+                                color: var(--ardoise-10);
+                                display: flex;
+                                font-size: 1rem;
+                                font-weight: 300;
+                                height: 3rem;
+                                justify-content: center;
+                                width: 3rem;
+                            }
+
+                            .target-map {
+                                cursor: pointer;
+                            }
                         }
                     }
 

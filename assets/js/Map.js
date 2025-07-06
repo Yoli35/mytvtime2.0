@@ -14,7 +14,8 @@ export class Map {
         const globsData = document.querySelector('#globs-map');
         console.log(globsData);
         const data = JSON.parse(globsData.textContent);
-        this.locations = data.locations  || [];
+        this.locations = data.locations || [];
+        console.log(this.locations);
         this.bounds = data.bounds;
         this.pointsOfInterest = data.pointsOfInterest || [];
         // this.latLngs = locations.map(location => [location.latitude, location.longitude]);
@@ -90,6 +91,7 @@ export class Map {
                     .setPopup(new mapboxgl.Popup().setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
                     .addTo(this.map);
                 let markerIcon = marker.getElement();
+                markerIcon.setAttribute('data-target-id', location.id);
                 markerIcon.setAttribute('data-tmdb-id', location.tmdb_id);
                 // markerIcon.setAttribute('data-country', location.country);
                 markerIcon.setAttribute('data-latitude', location.latitude);
@@ -180,6 +182,22 @@ export class Map {
         thumbnails.forEach(thumbnail => {
             thumbnail.addEventListener('click', this.setMapStyle);
         });
+
+        const targetMapDivs = document.querySelectorAll('.target-map');
+        targetMapDivs.forEach(targetMapDiv => {
+            targetMapDiv.addEventListener('click', (event) => {
+                event.preventDefault();
+                const locId = targetMapDiv.getAttribute('data-loc-id');
+                const lat = targetMapDiv.getAttribute('data-lat');
+                const lng = targetMapDiv.getAttribute('data-lng');
+                // Center map to location (lat, lng)
+                this.map.flyTo({center: [lng, lat], duration: 3000, zoom: 15, curve: 2,/* speed: 0.2,*/ easing: (n) => n});
+                const markerElement = document.querySelector('div[data-target-id="' + locId + '"]');
+                if (markerElement) {
+                    markerElement.click();
+                }
+            });
+        })
 
         const seriesLocationImages = document.querySelectorAll('.series-location-image');
         seriesLocationImages.forEach(image => {
