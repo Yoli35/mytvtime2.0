@@ -2603,8 +2603,24 @@ h2 {
                     border: 2px solid var(--orange-50);
                 }
 
+                .user-episode {
+                    gap: .5rem;
+                    justify-content: flex-start;
+                    width: 3.25rem;
+                }
+
+                .add-this-episode, .remove-this-episode,
+                .select-provider, .select-device, .select-vote,
                 .back-to-top, .back-to-series {
+                    height: 2rem;
                     opacity: 1;
+                    overflow: visible;
+                    width: 2rem;
+                }
+
+                .select-vote {
+                    font-size: 1.25rem;
+                    margin-block: unset;
                 }
             }
 
@@ -3117,6 +3133,7 @@ h2 {
 }
 
 .user-episode {
+    align-items: center;
     background-color: var(--ardoise-100-alpha-20);
     border: 2px solid transparent;
     border-radius: 0.5rem;
@@ -3124,11 +3141,12 @@ h2 {
     flex-direction: column;
     font-size: 1.25rem;
     font-weight: 400;
-    gap: 0.5rem;
+    gap: 0;
     height: var(--episode-height);
-    justify-content: flex-start;
+    justify-content: center;
     padding: 0.5rem;
-    width: 3.25rem;
+    transition: gap .3s ease-in-out, width .3s ease-in-out;
+    width: 4.25rem;
 
     .add-this-episode, .remove-this-episode,
     .select-provider, .select-device, .select-vote,
@@ -3139,15 +3157,27 @@ h2 {
         cursor: pointer;
         display: flex;
         font-weight: 500;
-        height: 2rem;
         justify-content: center;
         line-height: 1em;
-        width: 2rem;
+        overflow: hidden;
+        transition: height .3s ease-in-out, width 0.3s ease-in-out;
     }
 
+    .add-this-episode, .remove-this-episode,
+    .select-provider, .select-device,
     .back-to-top, .back-to-series {
+        height: 0;
         opacity: 0;
         transition: opacity 0.3s ease-in-out;
+        width: 0;
+    }
+
+    .select-vote {
+        font-size: 2rem;
+        margin-block: auto;
+        height: 100%;
+        transition: font-size 0.3s ease-in-out;
+        width: 3rem;
     }
 
     .add-this-episode, .back-to-top, .back-to-series {
