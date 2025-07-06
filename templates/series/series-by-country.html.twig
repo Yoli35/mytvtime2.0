@@ -11,8 +11,9 @@
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid series-by-country">
         {% if seriesByCountry|length %}
-            <h2>
-                {{ 'Series by country'|trans }} - {{ country|country_name }} ({{ seriesByCountry|length }})
+            <header>
+                {% set seriesCount = seriesByCountry|length %}
+                <h2>{{ seriesCount }} {{ (seriesCount > 1 ? 'seriess':'series')|trans }}</h2>
                 <div class="legends">
                     <div class="legend to-start" data-title="{{ 'To start'|trans }}">{{ ux_icon('ion:battery-dead') }}</div>
                     <div class="legend in-progress" data-title="{{ 'In progress'|trans }}">{{ ux_icon('ion:battery-half') }}</div>
@@ -29,12 +30,12 @@
                 <label for="filter-by-name">
                     <input type="search" id="filter-by-name" placeholder="{{ 'Search'|trans }}">
                 </label>
-            </h2>
+            </header>
             <div class="series-group user">
                 <div class="wrapper">
                     <div class="content center">
                         {% for series in seriesByCountry %}
-                            {{ include('_blocks/series/_cardByCountry.html.twig') }}
+                            {{ include('_blocks/series/_card-by-country.html.twig') }}
                         {% endfor %}
                     </div>
                 </div>

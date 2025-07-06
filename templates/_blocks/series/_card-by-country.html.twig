@@ -40,7 +40,7 @@
             {% endif %}
         </div>
         <div class="name by-country{% if upToDate %} up-to-date{% endif %}{% if toStart %} to-start{% endif %}">
-            {{ series.name }}
+            {{ series.name|raw }}
         </div>
     </a>
 </div>
