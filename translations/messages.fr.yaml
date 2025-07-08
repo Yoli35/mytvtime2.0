@@ -1213,6 +1213,7 @@ Add a shooting location: Ajouter un lieu de tournage
 All countries: Tous les pays
 All series: Tous les séries
 Arrow keys: Touches fléchées
+Center the map on this location: Centrer la carte sur cet emplacement
 Click the map to copy the latitude and longitude to the clipboard: Cliquez sur la carte pour copier la latitude et la longitude dans le presse-papiers
 Countries: Pays
 Decrease the pitch by 10 degrees: Diminuer la hauteur de 10 degrés
@@ -1250,40 +1251,41 @@ Points of interest: Points d'intérêt
 #Videos
 Added at: Ajoutée le
 Added: Ajoutée
+Agriculture: Agriculture
+All categories: Toutes les catégories
+Animal documentary: Documentaire animalier
+Artificial Intelligence: Intelligence artificielle
+Capitalism: Capitalisme
+Categories: Catégories
+Climate change: Changement climatique
 Comments: Commentaires
+Demography: Démographie
 Display less: Afficher moins
 Display more: Afficher plus
+Economics: Économie
+Environment: Environnement
+Failed to copy video link: Échec de la copie du lien de la vidéo
+It's important: C'est important
 Link: Lien ou identifiant YouTube
+Listen: Écouter
 My videos: Mes vidéos
 No comments: Aucun commentaire
+One video: Une vidéo
+Pest: Nuisible / Ravageur
+Politics: Politique
 Published at: Publiée le
 Published: Publiée
+Share this video: Partager cette vidéo
+The Sound of Silence: The Sound of Silence
+Time spent watching these count videos: Temps passé à regarder ces count vidéos
+Video link copied to clipboard: Lien de la vidéo copié dans le presse-papiers
 at: à
 comments: commentaires
-likes: j'aime
-views: vues
-Categories: Catégories
-All categories: Toutes les catégories
-Environment: Environnement
-Climate change: Changement climatique
-Politics: Politique
-Economics: Économie
-Artificial Intelligence: Intelligence artificielle
-Agriculture: Agriculture
-Animal documentary: Documentaire animalier
-Pest: Nuisible / Ravageur
-Listen: Écouter
-It's important: C'est important
-Time spent watching these count videos: Temps passé à regarder ces count vidéos
-seconds or: secondes ou
 count pages: count pages
 count videos: count vidéos
-One video: Une vidéo
-Capitalism: Capitalisme
-The Sound of Silence: The Sound of Silence
-Share this video: Partager cette vidéo
-Video link copied to clipboard: Lien de la vidéo copié dans le presse-papiers
-Failed to copy video link: Échec de la copie du lien de la vidéo
+likes: j'aime
+seconds or: secondes ou
+views: vues
 
 # Error page
 Oops!: Oups!
