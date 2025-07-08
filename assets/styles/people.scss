@@ -356,6 +356,7 @@
             flex-direction: column;
             justify-content: flex-start;
             padding: 1rem;
+            width: 100%;
 
             h4 {
                 color: var(--ardoise-20);
@@ -364,6 +365,7 @@
             .info {
                 color: var(--ardoise-20);
                 margin-bottom: .5rem;
+                width: 100%;
 
                 div {
                     font-weight: 100;
@@ -386,11 +388,13 @@
                 }
 
                 .preferred-name-infos {
+                    width: 100%;
 
                     form {
                         display: flex;
                         flex-direction: column;
                         gap: .5rem;
+                        width: 100%;
 
                         ul {
                             align-items: flex-start;
@@ -401,19 +405,23 @@
                             list-style-type: none;
                             margin-block-start: 0;
                             padding-left: 0;
+                            width: 100%;
 
                             li {
                                 background-color: var(--ardoise-90-alpha-10);
                                 border-radius: .5rem;
                                 color: var(--ardoise-20);
                                 font-weight: 100;
-                                overflow-x: auto;
                                 padding: .125rem .5rem;
                                 text-wrap: nowrap;
+                                width: 100%;
 
-                                /*label {
-                                    cursor: pointer;
-                                }*/
+                                label {
+                                    span {
+                                        max-width: 100%;
+                                        overflow-x: auto;
+                                    }
+                                }
 
                                 &:has(input[checked]) {
                                     background-color: var(--orange-50);
