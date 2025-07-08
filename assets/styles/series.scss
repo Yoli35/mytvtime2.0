@@ -2619,6 +2619,7 @@ h2 {
                 }
 
                 .select-vote {
+                    display: flex;
                     font-size: 1.25rem;
                     margin-block: unset;
                 }
@@ -3178,6 +3179,10 @@ h2 {
         height: 100%;
         transition: font-size 0.3s ease-in-out;
         width: 3rem;
+
+        &:has(svg) {
+            display: none;
+        }
     }
 
     .add-this-episode, .back-to-top, .back-to-series {
