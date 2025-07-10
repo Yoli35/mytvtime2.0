@@ -201,8 +201,8 @@
 
             {# <h3>{{ 'Episodes'|trans }}</h3> #}
             <div class="content column">
-                    <div class="episodes">
-                        <div class="episode-wrapper">
+                <div class="episodes">
+                    <div class="episode-wrapper">
                         {% set episodeCount = season.episodes|length %}
                         {% set seasonCount = series.numberOfSeason %}
                         {% for episode in season.episodes %}
@@ -256,8 +256,15 @@
                                         </div>
                                         {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (ue.watch_at != null)}) }}
                                         {{ include('_blocks/series/_episode-air-date.html.twig', {episode: episode, ue: ue, ues: episode.user_episodes}) }}
-                                        {% if episode.runtime %}
-                                            <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
+                                        {% if episode.runtime or episode.vote_average %}
+                                            <div class="episode-stats">
+                                                {% if episode.runtime %}
+                                                    <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
+                                                {% endif %}
+                                                {% if episode.vote_average %}
+                                                    <div class="vote-average">{{ episode.vote_average }} / 10 - {{ episode.vote_count }} {{ (episode.vote_count > 1 ? 'votes':'vote')|trans }}</div>
+                                                {% endif %}
+                                            </div>
                                         {% endif %}
                                         <div class="episode-overview" data-id="{{ episode.id }}">
                                             {% if episode.overview %}
@@ -371,6 +378,25 @@
                         {% endfor %}
                     </div>
                 </div>
+
+                {% set epCount = season.episodes|length %}
+                {% set gapCount = epCount - 1 %}
+                {% set voteWidth = "calc(calc(100% - calc(" ~ gapCount ~ " * .5rem)) / " ~ epCount ~ ")" %}
+                <div class="vote-graph">
+                    {% for ep in season.episodes %}
+                        {% set ue = ep.user_episode %}
+                        <div class="vote" data-ep-id="{{ ue.id }}" style="width: {{ voteWidth }}; height: {{ ep.vote_average }}rem">
+                            {% if ue.watch_at_db %}
+                                <div class="user-vote" style=" height: {{ ue.vote }}rem">
+                                    {{ ue.vote }}
+                                </div>
+                            {% else %}
+                                <div class="dashed-vote"></div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
                 {% if season.credits.cast|length %}
                     <h3>{{ 'Cast'|trans }}</h3>
                     <div class="cast-and-name">

@@ -2983,6 +2983,15 @@ h2 {
                     }
                 }
 
+                .episode-stats {
+                    display: flex;
+                    gap: 1rem;
+
+                    .runtime, .vote-average {
+
+                    }
+                }
+
                 .air-date {
                     align-items: center;
                     display: flex;
@@ -3274,6 +3283,52 @@ h2 {
     .select-device {
         .list {
             max-width: 14rem;
+        }
+    }
+}
+
+.vote-graph {
+    align-items: flex-end;
+    background-color: var(--ardoise-100-alpha-20);
+    border-radius: .25rem;
+    display: flex;
+    gap: .5rem;
+    height: 12rem;
+    justify-content: flex-start;
+    padding: 1rem;
+    width: 100%;
+
+    .vote {
+        background-color: var(--orange-50-alpha-50);
+        border-radius: .25rem;
+        border: 2px solid var(--orange-50);
+        margin-inline-start: 1rem;
+        position: relative;
+
+        .user-vote, .dashed-vote {
+            align-items: flex-end;
+            background-color: var(--green-40);
+            border-radius: .25rem;
+            border: 2px solid var(--green-60);
+            bottom: -2px;
+            color: var(--green-60);
+            display: flex;
+            font-size: 1.25rem;
+            font-weight: 500;
+            justify-content: center;
+            left: -1rem;
+            padding-block-end: 1rem;
+            position: absolute;
+            transition: height 0.3s ease-in-out;
+            width: calc(100% + 4px);
+            z-index: 1;
+        }
+
+        .dashed-vote {
+            background-color: var(--green-40-alpha-50);
+            border-radius: .25rem;
+            border: 1px dashed var(--grey-30);
+            height: 10rem;
         }
     }
 }

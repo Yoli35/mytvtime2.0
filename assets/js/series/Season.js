@@ -1269,6 +1269,13 @@ export class Season {
                         gThis.toolTips.init(selectVoteDiv);
                     } else {
                         selectVoteDiv.innerHTML = voteValue;
+
+                        const voteGraphDiv = document.querySelector('.vote-graph');
+                        const voteDiv = voteGraphDiv.querySelector('.vote[data-ep-id="' + episodeId + '"]');
+                        const div = voteDiv.querySelector('div');
+                        div.classList.remove('dashed-vote');
+                        div.classList.add('user-vote');
+                        div.style.height = (voteValue * 16) + 'px';
                     }
                 }
             }
