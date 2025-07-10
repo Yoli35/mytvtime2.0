@@ -1463,8 +1463,8 @@ class SeriesController extends AbstractController
         $tvKeywords = json_decode($this->tmdbService->getTvKeywords($series->getTmdbId()), true);
         $tvExternalIds = json_decode($this->tmdbService->getTvExternalIds($series->getTmdbId()), true);
 
-        if (!$series->getNumberOfEpisode()) {
-            $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
+        $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
+        if ($series->getNumberOfEpisode() != $tv['number_of_episodes']) {
             $series->setNumberOfEpisode($tv['number_of_episodes']);
             $series->setNumberOfSeason($tv['number_of_seasons']);
             $this->seriesRepository->save($series, true);
