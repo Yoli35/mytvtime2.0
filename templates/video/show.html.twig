@@ -35,7 +35,7 @@
                             const shareButton = document.querySelector('.share-video');
                             shareButton.addEventListener('click', function (event) {
                                 event.preventDefault();
-                                const url = "{{ path('app_video_share', {id: video.id}) }}";
+                                const url = "{{ url('app_video_share', parameters = {id: video.id}, schemeRelative = false) }}";
                                 navigator.clipboard.writeText(url).then(function () {
                                     alert('{{ 'Video link copied to clipboard'|trans }}');
                                 }, function () {
