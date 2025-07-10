@@ -1276,6 +1276,7 @@ export class Season {
                         div.classList.remove('dashed-vote');
                         div.classList.add('user-vote');
                         div.style.height = (voteValue * 16) + 'px';
+                        div.innerText = voteValue;
                     }
                 }
             }
