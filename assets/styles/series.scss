@@ -3300,8 +3300,10 @@ h2 {
 
     .vote {
         background-color: var(--orange-50-alpha-50);
+        border-color: var(--orange-50);
         border-radius: .25rem;
-        border: 2px solid var(--orange-50);
+        border-style: solid;
+        border-width: 2px;
         margin-inline-start: 1rem;
         position: relative;
 

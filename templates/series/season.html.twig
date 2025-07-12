@@ -385,8 +385,8 @@
                 <div class="vote-graph">
                     {% for ep in season.episodes %}
                         {% set ue = ep.user_episode %}
-                        <div class="vote" data-ep-id="{{ ue.id }}" style="width: {{ voteWidth }}; height: {{ ep.vote_average }}rem">
-                            {% if ue.watch_at_db %}
+                        <div class="vote" data-ep-id="{{ ue.id }}" style="width: {{ voteWidth }}; height: {{ ep.vote_average }}rem; border-width: {{ ep.vote_average > 0 ? '2px':'0' }};">
+                            {% if ue.watch_at_db and ue.vote is not null %}
                                 <div class="user-vote" style=" height: {{ ue.vote }}rem">
                                     {{ ue.vote }}
                                 </div>
