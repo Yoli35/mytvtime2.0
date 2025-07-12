@@ -672,6 +672,7 @@ export class Season {
                             providerDiv.innerHTML = '<img src="' + gThis.providers.logos[providerId] + '" alt="' + gThis.providers.names[providerId] + '">';
                             providerDiv.setAttribute('data-title', gThis.providers.names[providerId]);
                             providerDiv.addEventListener('click', () => {
+                                gThis.saveProvider(ueId, providerId);
                                 const deviceDiv = userEpisode.querySelector('.select-device');
                                 userEpisode.insertBefore(providerDiv, deviceDiv);
                                 const providerDivs = form.querySelectorAll('.select-provider');
