@@ -185,7 +185,7 @@ class ImageService extends AbstractController
             imagesavealpha($image, true);
         }
         if ($width > 0) {
-            if ($sourceWidth != $width || $sourceHeight != $height) {
+            if ($sourceWidth > $width || $sourceHeight > $height) {
                 $destRatio = $width / $height;
                 $sourceRation = $sourceWidth / $sourceHeight;
                 $sourceX = 0;

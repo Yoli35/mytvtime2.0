@@ -2087,7 +2087,7 @@ class SeriesController extends AbstractController
         $copy = false;
 
         try {
-            $webp = $this->imageService->webpImage($seriesName . ' - ' . sprintf("S%02dE%02d", $seasonNumber, $episodeNumber), $tempName, $stillPath, 90, -1);
+            $webp = $this->imageService->webpImage($seriesName . ' - ' . sprintf("S%02dE%02d", $seasonNumber, $episodeNumber), $tempName, $stillPath, 90);
             if ($webp) {
                 if ($copyCount) $basename .= '-' . $copyCount;
                 $imagePath = '/' . $basename . '.webp';
