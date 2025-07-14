@@ -293,9 +293,9 @@
                                             <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
                                                 <div class="watch-link">
                                                     {% if link.providerId %}
-                                                        <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}" data-title="{{ link.name ?? providers.names[link.providerId] }}">
+                                                        <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}" data-title="{{ link.title ?? providers.names[link.providerId] }}">
                                                     {% else %}
-                                                        <span>{{ link.name }}</span>
+                                                        <span>{{ link.title }}</span>
                                                     {% endif %}
                                                 </div>
                                             </a>
