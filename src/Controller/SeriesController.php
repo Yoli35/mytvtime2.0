@@ -2281,7 +2281,6 @@ class SeriesController extends AbstractController
         $messages = [];
 
         $data = $request->request->all();
-        dump($data);
         $files = $request->files->all();
         if (empty($data) && empty($files)) {
             return $this->json([
