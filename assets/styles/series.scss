@@ -3787,7 +3787,7 @@ h2 {
             }
         }
 
-        .content {
+        .content:has(.left) {
             flex-direction: column;
 
             .left {
