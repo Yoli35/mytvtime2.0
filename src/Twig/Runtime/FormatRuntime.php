@@ -17,7 +17,7 @@ readonly class FormatRuntime implements RuntimeExtensionInterface
     public function time(int $minutes): string
     {
         if ($minutes < 60) {
-            return $this->translator->trans('minutes', ['%minutes%' => $minutes]);
+            return $this->translator->trans('%minutes% minutes', ['%minutes%' => $minutes]);
         }
 
         $hours = floor($minutes / 60);
