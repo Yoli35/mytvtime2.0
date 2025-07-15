@@ -238,7 +238,7 @@ class PeopleController extends AbstractController
         }
         krsort($castDates);
         $credits['cast'] = array_merge($castNoDates, $castDates);
-        $knownFor = $this->getKnownFor($castDates);
+        $knownFor = $this->getKnownFor($credits['cast']);
 
         $crewDates = [];
         $noDate = 0;
@@ -299,7 +299,7 @@ class PeopleController extends AbstractController
         $newName = trim($data['new']) ?? false;
         $name = $newName ?: $name;
 
-            $peopleUserPreferredName = $this->peopleUserPreferredNameRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
+        $peopleUserPreferredName = $this->peopleUserPreferredNameRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
         if (!$peopleUserPreferredName) {
             $peopleUserPreferredName = new PeopleUserPreferredName($user, $id, $name);
         } else {
@@ -540,16 +540,24 @@ class PeopleController extends AbstractController
     {
         $knownFor = [];
         $slugger = new AsciiSlugger();
+        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+        $now = $this->dateService->getNowImmutable("Europe/Paris", true);
 
-        foreach ($dates as $date) {
+        foreach ($dates as $date => $media) {
             $item = [];
-            if ($date['title'] && $date['poster_path']) {
-                $item['id'] = $date['id'];
-                $item['slug'] = $slugger->slug($date['title'])->lower()->toString();
-                $item['media_type'] = $date['media_type'];
-                $item['title'] = $date['title'];
-                $item['poster_path'] = $this->imageConfiguration->getCompleteUrl($date['poster_path'], 'poster_sizes', 5);
-                $knownFor[$date['release_date']] = $item;
+            // si la clé est numérique, on la transforme en date "aaaa-mm-dd" ($now + clé * 1 mois)
+            if (is_numeric($date)) {
+                $offset = 1 + $date;
+                $date = $now->modify("+$offset month")->format('Y-m-d');
+            }
+            if ($media['title'] && $media['poster_path']) {
+                $item['id'] = $media['id'];
+                $item['slug'] = $slugger->slug($media['title'])->lower()->toString();
+                $item['media_type'] = $media['media_type'];
+                $item['title'] = $media['title'];
+                $item['poster_path'] = $posterUrl . $media['poster_path'];
+                $item['added'] = $media['user_added'] ?? false;
+                $knownFor[$date] = $item;
             }
         }
 

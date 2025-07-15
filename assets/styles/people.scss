@@ -82,7 +82,7 @@
 
                         .poster {
                             aspect-ratio: 78 / 117;
-                            border-radius: .5rem;
+                            border-radius: .75rem;
                             height: 18rem;
                             max-width: 12rem;
                             position: relative;
@@ -548,13 +548,18 @@
                     .poster {
                         //@include flex-col(stretch, center);
                         align-items: stretch;
+                        border-radius: .75rem;
+                        border: .25rem solid transparent;
                         display: flex;
                         flex-direction: column;
                         flex-shrink: 0;
+                        height: 14.5rem;
                         justify-content: center;
-                        border-radius: .5rem;
-                        height: 14rem;
-                        width: 8rem;
+                        width: 8.5rem;
+
+                        &.added {
+                            border-color: var(--green-30);
+                        }
 
                         a {
                             align-items: stretch;
