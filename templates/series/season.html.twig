@@ -330,7 +330,7 @@
                                                  data-title="{{ ue.watch_at|format_datetime('relative_short', 'short')|capitalize }}">
                                                 {{ ux_icon('fa6-solid:eye') }}
                                             </div>
-                                            <div class="select-provider" data-ue-id="{{ ue.id }}" data-title="{{ (ue.provider_id ?'Choose a provider':ue.provider_name)|trans }}">
+                                            <div class="select-provider" data-ue-id="{{ ue.id }}" data-title="{{ ue.provider_id ? ue.provider_name : 'Choose a provider'|trans }}">
                                                 {% if ue.provider_id %}
                                                     <img src="{{ ue.provider_logo_path }}" alt="{{ ue.provider_name }}">
                                                 {% else %}
