@@ -3303,7 +3303,7 @@ h2 {
     background-color: var(--ardoise-100-alpha-20);
     border-radius: .25rem;
     display: flex;
-    gap: .5rem;
+    gap: 1rem;
     height: 14rem;
     justify-content: flex-start;
     padding: 1rem;
@@ -3313,6 +3313,7 @@ h2 {
         align-items: center;
         display: flex;
         flex-direction: column;
+        flex-grow: 1;
         gap: .5rem;
 
         .vote {
@@ -3333,11 +3334,11 @@ h2 {
                 font-size: 1.25rem;
                 font-weight: 500;
                 justify-content: center;
-                left: .5rem;
+                left: 5%;
                 padding-block-end: 1rem;
                 position: absolute;
                 transition: height 0.3s ease-in-out;
-                width: calc(100% - 1rem);
+                width: 90%;
                 z-index: 1;
             }
 
