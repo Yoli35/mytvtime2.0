@@ -3666,10 +3666,11 @@ class SeriesController extends AbstractController
         if (!$tv) {
             return ['cast' => [], 'crew' => [], 'guest_stars' => []];
         }
-        $castIds = array_column($tv['credits']['cast'], 'id');
-        $castIds = array_merge($castIds, array_column($tv['credits']['guest_stars'] ?? [], 'id'));
-        $castIds = array_unique($castIds);
-        $arr = $this->peopleUserPreferredNameRepository->getPreferredNames($castIds);
+        $peopleIds = array_column($tv['credits']['cast'], 'id');
+        $peopleIds = array_merge($peopleIds, array_column($tv['credits']['guest_stars'] ?? [], 'id'));
+        $peopleIds = array_merge($peopleIds, array_column($tv['credits']['crew'] ?? [], 'id'));
+        $peopleIds = array_unique($peopleIds);
+        $arr = $this->peopleUserPreferredNameRepository->getPreferredNames($peopleIds);
         $preferredNames = [];
         foreach ($arr as $name) {
             $preferredNames[$name['tmdb_id']] = $name['name'];
