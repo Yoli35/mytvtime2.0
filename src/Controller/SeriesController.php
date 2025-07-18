@@ -2975,7 +2975,10 @@ class SeriesController extends AbstractController
             if ($userNextEpisode) {
                 if ($multiPart) {
                     if ($userNextEpisode['episode_number'] >= $firstEpisode && $userNextEpisode['episode_number'] <= $lastEpisode) {
-                        $targetTS = $userNextEpisode['date']->getTimestamp();
+                        if ($userNextEpisode['date'])
+                            $targetTS = $userNextEpisode['date']->getTimestamp();
+                        else
+                            $userNextEpisode = null;
                     } else {
                         $userNextEpisode = null;
                     }
