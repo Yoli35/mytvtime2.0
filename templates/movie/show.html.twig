@@ -121,19 +121,6 @@
                         <div class="movie-details">
                             <div class="two-parts">
                                 <div class="left">
-                                    {% if movie.providers|length %}
-                                        <div class="providers">
-                                            <div class="label">{{ 'Providers'|trans }}</div>
-                                            <div class="content">
-                                                {% for provider in movie.providers %}
-                                                    <div class="provider">
-                                                        <div class="logo"><img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}"></div>
-                                                        <div class="name">{{ provider.provider_name }}</div>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    {% endif %}
                                     {% if movie.genres|length %}
                                         <div class="genres">
                                             <div class="label">{{ 'Genres'|trans }}</div>
@@ -180,48 +167,25 @@
                                     </div>
                                 </div>
                                 <div class="right">
-                                    {% if movie['watch/providers'] %}
-                                        {% if movie['watch/providers'].flatrate|length %}
-                                            <h3>{{ 'Where to watch'|trans }}</h3>
-                                            <div class="providers">
-                                                <div class="wrapper">
-                                                    {% for provider in movie['watch/providers'].flatrate %}
-                                                        <div class="provider" data-title="{{ provider.provider_name }}">
-                                                            <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
-                                                            <div>{{ provider.provider_name }}</div>
-                                                        </div>
-                                                    {% endfor %}
+                                    {% if movie.providers %}
+                                        {% set list = movie.providers.rent_buy_difference ? ['flatrate', 'buy', 'rent'] : ['flatrate', 'buy']%}
+                                        {% for type in list %}
+                                            {% if movie.providers[type]|length %}
+                                                <h3>{{ ('Where to ' ~ type)|trans }}</h3>
+                                                <div class="providers">
+                                                    <div class="wrapper">
+                                                        {% for provider in movie.providers[type] %}
+                                                            <div class="provider" data-title="{{ provider.provider_name }}">
+                                                                <div class="logo">
+                                                                    <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                                                </div>
+                                                                <div class="name">{{ provider.provider_name }}</div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        {% endif %}
-
-                                        {% if movie['watch/providers'].rent|length %}
-                                            <h3>{{ 'Where to rent'|trans }}</h3>
-                                            <div class="providers">
-                                                <div class="wrapper">
-                                                    {% for provider in movie['watch/providers'].rent %}
-                                                        <div class="provider" data-title="{{ provider.provider_name }}">
-                                                            <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
-                                                            <div>{{ provider.provider_name }}</div>
-                                                        </div>
-                                                    {% endfor %}
-                                                </div>
-                                            </div>
-                                        {% endif %}
-
-                                        {% if movie['watch/providers'].buy|length %}
-                                            <h3>{{ 'Where to buy'|trans }}</h3>
-                                            <div class="providers">
-                                                <div class="wrapper">
-                                                    {% for provider in movie['watch/providers'].buy %}
-                                                        <div class="provider" data-title="{{ provider.provider_name }}">
-                                                            <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
-                                                            <div>{{ provider.provider_name }}</div>
-                                                        </div>
-                                                    {% endfor %}
-                                                </div>
-                                            </div>
-                                        {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
                                     {% endif %}
                                     {#                                    {% if movie.production_companies|length %} #}
                                     <div class="production-companies">

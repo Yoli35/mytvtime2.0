@@ -146,7 +146,7 @@ class MovieController extends AbstractController
             $simpleSeriesSearch->setQuery($request->get('q'));
         } else {
             // on récupère le contenu du formulaire (POST parameters).
-            $formContent = $request->get('movie_search', ['query'=>'', 'releaseDateYear' => null, 'language' => $request->getLocale(), 'page' => 1]);
+            $formContent = $request->get('movie_search', ['query' => '', 'releaseDateYear' => null, 'language' => $request->getLocale(), 'page' => 1]);
             $simpleSeriesSearch = new MovieSearchDTO($formContent['language'], $formContent['page']);
             $simpleSeriesSearch->setQuery($formContent['query']);
             $releaseYear = $formContent['releaseDateYear'] ? intval($formContent['releaseDateYear']) : null;
@@ -195,6 +195,7 @@ class MovieController extends AbstractController
         $user = $this->getUser();
         $locale = $request->getLocale();
         $language = "en-US";//($user->getPreferredLanguage() ?? $locale) . '-' . ($user->getCountry() ?? ($locale === 'fr' ? 'FR' : 'US'));
+        $country = $user->getCountry() ?? 'FR';
 
         $tmdbId = $userMovie->getMovie()->getTmdbId();
         $dbMovie = $userMovie->getMovie();
@@ -227,7 +228,7 @@ class MovieController extends AbstractController
 
         $this->getBelongToCollection($movie);
         $this->getCredits($movie);
-        $this->getProviders($movie);
+        $this->getProviders($movie, $country);
         $this->getProductionCompanies($movie);
         $this->getReleaseDates($movie);
         $this->getRecommandations($movie);
@@ -275,6 +276,7 @@ class MovieController extends AbstractController
         }
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $language = $locale === 'fr' ? 'fr-FR' : 'en-US';
+        $country = $user->getCountry() ?? 'FR';
         $movie = json_decode($this->tmdbService->getMovie($id, $language, ['videos,images,credits,recommendations,watch/providers,release_dates']), true);
 
         $this->imageService->saveImage("posters", $movie['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
@@ -284,7 +286,7 @@ class MovieController extends AbstractController
             $this->imageService->saveImage("backdrops", $movie['belongs_to_collection']['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3), '/movies/');
         }
         $this->getCredits($movie);
-        $this->getProviders($movie);
+        $this->getProviders($movie, $country);
         $this->getReleaseDates($movie);
         $this->getRecommandations($movie);
 
@@ -662,18 +664,46 @@ class MovieController extends AbstractController
         }
     }
 
-    public function getProviders(array &$movie): void
+    public function getProviders(array &$movie, string $country): void
     {
-        $providers = array_filter($movie['watch/providers']['results'], function ($key) {
-            return $key === 'FR';
-        }, ARRAY_FILTER_USE_KEY);
+        $providers = $movie['watch/providers']['results'][$country] ?? [];
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
-        $providers = array_map(function ($p) use ($logoUrl) {
-            $p['logo_path'] = $p['logo_path'] ? $logoUrl . $p['logo_path'] : null;
-            return $p;
-        }, $providers['FR']['flatrate'] ?? []);
+
+        if (key_exists('flatrate', $providers)) {
+            $flatrate = array_map(function ($p) use ($logoUrl) {
+                $p['logo_path'] = $p['logo_path'] ? $logoUrl . $p['logo_path'] : null;
+                return $p;
+            }, $providers['flatrate'] ?? []);
+            $movie['providers']['flatrate'] = $flatrate;
+        } else {
+            $movie['providers']['flatrate'] = [];
+        }
+
+        if (key_exists('buy', $providers)) {
+            $buy = array_map(function ($p) use ($logoUrl) {
+                $p['logo_path'] = $p['logo_path'] ? $logoUrl . $p['logo_path'] : null;
+                return $p;
+            }, $providers['buy'] ?? []);
+            $movie['providers']['buy'] = $buy;
+        } else {
+            $movie['providers']['buy'] = [];
+        }
+        $buyIds = array_column($movie['providers']['buy'], 'provider_id');
+
+        if (key_exists('rent', $providers)) {
+            $rent = array_map(function ($p) use ($logoUrl) {
+                $p['logo_path'] = $p['logo_path'] ? $logoUrl . $p['logo_path'] : null;
+                return $p;
+            }, $providers['rent'] ?? []);
+            $movie['providers']['rent'] = $rent;
+        } else {
+            $movie['providers']['rent'] = [];
+        }
+        $rentIds = array_column($movie['providers']['rent'], 'provider_id');
+
+        $movie['providers']['rent_buy_difference'] = count(array_diff($rentIds, $buyIds)) > 0;
+
         $movie['watch/providers'] = null;
-        $movie['providers'] = $providers;
     }
 
     public function getProductionCompanies(array &$movie): void

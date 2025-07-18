@@ -46,18 +46,25 @@
                 <section>
                     <div class="details">
                         <div class="movie-details">
-                            {% if movie.providers|length %}
-                                <div class="providers">
-                                    <div class="label">{{ 'Providers'|trans }}</div>
-                                    <div class="content">
-                                        {% for provider in movie.providers %}
-                                            <div class="provider">
-                                                <div class="logo"><img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}"></div>
-                                                <div class="name">{{ provider.provider_name }}</div>
+                            {% if movie.providers %}
+                                {% set list = movie.providers.rent_buy_difference ? ['flatrate', 'buy', 'rent'] : ['flatrate', 'buy']%}
+                                {% for type in list %}
+                                    {% if movie.providers[type]|length %}
+                                        <h3>{{ (type == 'flatrate' or (type == 'buy' and movie.providers.rent_buy_difference) ? ('Where to ' ~ type) : 'Where to buy or rent')|trans }}</h3>
+                                        <div class="providers">
+                                            <div class="wrapper">
+                                                {% for provider in movie.providers[type] %}
+                                                    <div class="provider" data-title="{{ provider.provider_name }}">
+                                                        <div class="logo">
+                                                            <img src="{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                                                        </div>
+                                                        <div class="name">{{ provider.provider_name }}</div>
+                                                    </div>
+                                                {% endfor %}
                                             </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
                             {% endif %}
                             <div class="genres">
                                 <div class="label">{{ 'Genres'|trans }}</div>
