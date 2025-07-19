@@ -36,6 +36,7 @@ use App\Repository\FilmingLocationRepository;
 use App\Repository\KeywordRepository;
 use App\Repository\NetworkRepository;
 use App\Repository\PeopleUserPreferredNameRepository;
+use App\Repository\SeasonLocalizedOverviewRepository;
 use App\Repository\SeriesAdditionalOverviewRepository;
 use App\Repository\SeriesBroadcastDateRepository;
 use App\Repository\SeriesBroadcastScheduleRepository;
@@ -97,6 +98,7 @@ class SeriesController extends AbstractController
         private readonly MonologLogger                      $logger,
         private readonly NetworkRepository                  $networkRepository,
         private readonly PeopleUserPreferredNameRepository  $peopleUserPreferredNameRepository,
+        private readonly SeasonLocalizedOverviewRepository  $seasonLocalizedOverviewRepository,
         private readonly SeriesAdditionalOverviewRepository $seriesAdditionalOverviewRepository,
         private readonly SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
         private readonly SeriesBroadcastScheduleRepository  $seriesBroadcastScheduleRepository,
@@ -1434,13 +1436,14 @@ class SeriesController extends AbstractController
         $season['watch/providers'] = $this->watchProviders($season, $country);
         if ($season['overview'] == "") {
             $season['overview'] = $series->getOverview();
-            $season['series_overview'] = true;
+            $season['is_series_overview'] = true;
         } else {
-            $season['series_overview'] = false;
+            $season['is_series_overview'] = false;
         }
-        $season['localized_name'] = $series->getLocalizedName($request->getLocale());
-        $season['localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
-        $season['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
+        $season['season_localized_overview'] = $this->seasonLocalizedOverviewRepository->getSeasonLocalizedOverview($series->getId(), $seasonNumber, $request->getLocale());
+        $season['series_localized_name'] = $series->getLocalizedName($request->getLocale());
+        $season['series_localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
+        $season['series_additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
 
         $providers = $this->getWatchProviders($country);
         $devices = $this->deviceRepository->deviceArray();
@@ -1469,6 +1472,8 @@ class SeriesController extends AbstractController
             $series->setNumberOfSeason($tv['number_of_seasons']);
             $this->seriesRepository->save($series, true);
         }
+
+        dump($season);
 
         return $this->render('series/season.html.twig', [
             'series' => $series,

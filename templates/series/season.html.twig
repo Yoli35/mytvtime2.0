@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}my Tv Time → {{ 'Series'|trans }} → {{ season.localized_name.name ?? series.name }} → {{ 'season'|trans }} {{ season.season_number }}{% endblock %}
+{% block title %}my Tv Time → {{ 'Series'|trans }} → {{ season.series_localized_name.name ?? series.name }} → {{ 'season'|trans }} {{ season.season_number }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
@@ -16,7 +16,7 @@
         body.style.backgroundAttachment = "fixed";
         body.style.backgroundImage = "url(" + bd + ")";
     </script>
-    {{ include('_blocks/_menu.html.twig', {seriesName: season.localized_name ? season.localized_name.name:series.name, seriesLink: path('app_series_show', {id: series.id, slug: season.localized_name.slug ?? series.slug}) }) }}
+    {{ include('_blocks/_menu.html.twig', {seriesName: season.series_localized_name ? season.series_localized_name.name:series.name, seriesLink: path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }) }}
     <div class="container-fluid backgroundImageOverlay">
         <div id="series-season" class="series-show">
             <div class="header">
@@ -24,8 +24,8 @@
                     {% if season.poster_path %}
                         <img src="/series/posters{{ season.poster_path }}" alt="{{ series.name }} {{ season.season_number }}"
                              data-id="{{ series.id }}"
-                             data-name="{{ season.localized_name ? season.localized_name.name:series.name }}"
-                             data-slug="{{ season.localized_name ? season.localized_name.slug:series.slug }}">
+                             data-name="{{ season.series_localized_name ? season.series_localized_name.name:series.name }}"
+                             data-slug="{{ season.series_localized_name ? season.series_localized_name.slug:series.slug }}">
                     {% else %}
                         <div>{{ 'No poster'|trans }}</div>
                     {% endif %}
@@ -40,24 +40,35 @@
                 <div class="infos">
                     <div class="name">
                         <h1>
-                            {% if season.localized_name %}
-                                <span class="localized-name-span">{{ season.localized_name.name }}</span><br>
+                            {% if season.series_localized_name %}
+                                <span class="localized-name-span">{{ season.series_localized_name.name }}</span><br>
                             {% endif %}
                             <span class="name-span">{{ series.name }} ({{ series.firstAirDate|date("Y") }})</span>
                         </h1>
                     </div>
                     <h2>{{ season.name }}{% if season.season_number > 1 %} ({{ season.air_date|date("Y") }}){% endif %}</h2>
-                    {% if season.overview %}
-                        <div class="series-overview">{{ season.overview }}</div>
-                    {% else %}
-                        {% if season['series_overview'] %}
-                            <h4 class="localized-h4">{{ 'Overview for the series'|trans }}</h4>
-                        {% endif %}
+                    {% if season.season_localized_overview|length %}
+                        <div class="season-overview">
+                            <div class="header">{{ 'Season localized overview'|trans }} ({{ season.season_localized_overview.locale|upper }})</div>
+                            <div class="content">{{ season.season_localized_overview.overview|nl2br }}</div>
+                        </div>
                     {% endif %}
-                    {% if season.localized_overviews|length %}
+                    {% if season.overview %}
+                        <div class="season-overview">
+                            <div class="header">
+                                {% if season.is_series_overview %}
+                                    {{ 'Overview for the series'|trans }}
+                                {% else %}
+                                    {{ 'Overview for the season'|trans }}
+                                {% endif %}
+                            </div>
+                            <div class="content">{{ season.overview|nl2br }}</div>
+                        </div>
+                    {% endif %}
+                    {% if season.series_localized_overviews|length %}
                         <div class="localized overviews">
                             <h4 class="localized-h4">{{ 'Localized overviews for the series'|trans }}</h4>
-                            {% for overview in season.localized_overviews %}
+                            {% for overview in season.series_localized_overviews %}
                                 <div class="localized overview" data-id="{{ overview.id }}">
                                     <div class="content" data-overview="{{ overview.overview }}">
                                         {{ overview.overview|nl2br }}
@@ -75,10 +86,10 @@
                             {% endif %}
                         {% endif %} #}
                     {% endif %}
-                    {% if season.additional_overviews|length %}
+                    {% if season.series_additional_overviews|length %}
                         <div class="additional overviews">
                             <h4 class="additional-h4">{{ 'Additional overviews for the series'|trans }}</h4>
-                            {% for overview in season.additional_overviews %}
+                            {% for overview in season.series_additional_overviews %}
                                 <div class="additional overview" data-id="{{ overview.id }}" data-source-id="{{ overview.source.id }}">
                                     <div class="content" data-overview="{{ overview.overview }}">
                                         {{ overview.overview|nl2br }}
@@ -102,7 +113,7 @@
                     {% endif %}
                 </div>
                 <div class="series-back">
-                    <a href="{{ path('app_series_show', {id: series.id, slug: season.localized_name.slug ?? series.slug}) }}">
+                    <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
                         {% if series.posterPath %}
                             <div class="poster-back">
                                 <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }} {{ season.season_number }}">
@@ -367,8 +378,8 @@
                                         <div class="back-to-top" data-title="{{ 'Back to top'|trans }}">
                                             {{ ux_icon('fa6-solid:arrow-up-long') }}
                                         </div>
-                                        <a href="{{ path('app_series_show', {id: series.id, slug: season.localized_name.slug ?? series.slug}) }}">
-                                            <div class="back-to-series" data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.localized_name %}{{ season.localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»">
+                                        <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
+                                            <div class="back-to-series" data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.series_localized_name %}{{ season.series_localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»">
                                                 {{ ux_icon('fa6-solid:arrow-left-long') }}
                                             </div>
                                         </a>
@@ -410,8 +421,8 @@
                             </div>
                         </div>
                         <div class="series-name">
-                            {% if season.localized_name %}
-                                <span class="localized-name-span">{{ season.localized_name.name }} ({{ series.firstAirDate|date("Y") }})</span>
+                            {% if season.series_localized_name %}
+                                <span class="localized-name-span">{{ season.series_localized_name.name }} ({{ series.firstAirDate|date("Y") }})</span>
                             {% else %}
                                 <span class="name-span">{{ series.name }} ({{ series.firstAirDate|date("Y") }})</span>
                             {% endif %}
