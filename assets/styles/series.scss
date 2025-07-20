@@ -2817,6 +2817,7 @@ h2 {
                 padding-inline: 1rem;
                 position: relative;
                 scroll-behavior: smooth;
+                transition: width .3s ease-in-out;
                 width: 100%;
 
                 /*.user-actions {
@@ -3952,9 +3953,12 @@ h2 {
 
     .episodes {
         .episode-wrapper {
+            gap: 1.5rem;
+
             .episode {
                 flex-wrap: wrap;
                 height: unset;
+                padding-inline: 0;
 
                 .still {
                     border: 2px solid var(--orange-40-alpha-50);
@@ -3968,11 +3972,17 @@ h2 {
 
                 .infos {
                     border: 2px solid var(--orange-40-alpha-50);
-                    width: calc(100% - 3.75rem) !important;
+                    width: calc(100% - 4.75rem) !important;
                 }
 
                 .user-episode {
                     border: 2px solid var(--orange-40-alpha-50);
+                }
+
+                &:hover {
+                    .infos {
+                        width: calc(100% - 3.75rem) !important;
+                    }
                 }
             }
         }
