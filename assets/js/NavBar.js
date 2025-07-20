@@ -37,7 +37,7 @@ export class NavBar {
     }
 
     navBarColor(hsl) {
-
+        this.adjustThemeColorMeta(hsl);
         this.root.style.setProperty("--navbar-bg", "hsl(" + hsl.h + ", " + hsl.s + "%, 38%)");
         this.root.style.setProperty("--navbar-border", "hsl(" + hsl.h + ", " + hsl.s + "%, 60%)");
         this.root.style.setProperty("--navbar-bg-50", "hsla(" + hsl.h + ", " + hsl.s + "%, 28%, .5)");
@@ -53,6 +53,31 @@ export class NavBar {
                 link.classList.add("dark");
             });
             footer?.classList.add("dark");
+        }
+    }
+
+    adjustThemeColorMeta(hsl) {
+        const hexColor = this.hslToHex(hsl);
+        this.updateThemeColor(hexColor);
+    }
+
+    hslToHex(hsl) {
+        const h = hsl.h;
+        const s = hsl.s / 100;
+        const l = .38;//hsl.l / 100;
+
+        const k = n => (n + h / 30) % 12;
+        const a = s * Math.min(l, 1 - l);
+        const f = n => Math.round(255 * (l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1))));
+
+        const toHex = x => x.toString(16).padStart(2, '0');
+        return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`;
+    }
+
+    updateThemeColor(hexColor) {
+        const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        if (metaThemeColor) {
+            metaThemeColor.setAttribute('content', hexColor);
         }
     }
 
