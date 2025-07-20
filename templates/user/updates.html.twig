@@ -26,6 +26,109 @@
                     <h4>myTvTime 2.0 : 18/09/2024</h4>
                 </div>
             </div>
+            <div class="site-update glowing-border left">
+                <h2>21ᵉ mise à jour : 20/07/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">→ Update theme color meta tag on navbar color change</div>
+                        <div class="details">Added methods to convert HSL to hex and update the theme-color meta tag when the navbar color changes, ensuring browser UI matches the selected navbar color.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor add location form rendering in SeriesController</div>
+                        <div class="details">Changed the controller to pass form data as an array instead of rendered HTML to the template. Updated the template to include the form using the data array, improving separation of concerns and maintainability. Also, the cooperative gestures toggle is now only shown when locations exist.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor season overview layout and styles</div>
+                        <div class="details">Updated the structure and styling of season overview sections in both SCSS and Twig templates. Introduced new 'body' containers, improved the display of localized and additional overviews, and enhanced tool visibility and layout for source and locale indicators. Also commented out the scroll-timeline JavaScript import.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Improve episode list layout and hover effect</div>
+                        <div class="details">Added transition to width for smoother resizing, adjusted gap and padding for episode wrappers, and modified .infos width on hover for better UI responsiveness on screen less than 1024px wide.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add season localized overview support</div>
+                        <div class="details">Introduces retrieval and display of season-specific localized overviews in the SeriesController and template. Updates styling for overview sections and translation keys. Refactors variable names for clarity and consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor movie provider display and logic</div>
+                        <div class="details">Updated provider handling in MovieController to support dynamic country selection and separate flatrate, buy, and rent providers. Improved provider display in movie templates for better clarity and layout, and added new French translations for provider types.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Update vote graph layout and conditional rendering</div>
+                        <div class="details">Adjusted the vote graph styles for improved spacing and responsiveness in series.scss. Refactored season.html.twig to render the vote graph only if episodes have user votes, and simplified the width calculation for episode votes.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor episode vote graph layout and styles</div>
+                        <div class="details">Updated the vote graph in season.html.twig to wrap each vote in an 'episode-vote' container and display the episode number. Refactored and improved related SCSS for better structure, alignment, and visual clarity of vote bars and episode numbers.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Include crew in preferred names lookup</div>
+                        <div class="details">Added crew member IDs to the list of people for preferred name resolution in the SeriesController. This ensures that preferred names are retrieved for cast, guest stars, and crew.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Enhance 'known for' display and styling for people</div>
+                        <div class="details">Improves the logic for generating the 'known for' list in PeopleController, including correct handling of user-added media and poster URLs. Updates the SCSS to visually highlight user-added posters and adjusts poster sizing and border radius. The Twig template now adds a CSS class for user-added items, enabling the new styling.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Update provider selection UI and tooltip logic</div>
+                        <div class="details">Adjusted SCSS to unify styles for .select-provider and .select-vote, ensuring consistent display and sizing. Updated the season.html.twig template to show the provider name as the tooltip when a provider is selected, and 'Choose a provider' otherwise.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border right">
+                <h2>20ᵉ mise à jour : 14/07/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">→ Series page: Scope .content styles to elements with .left child</div>
+                        <div class="details">Updated the selector from .content to .content:has(.left) to ensure flex-direction: column only applies when a .left child is present. This prevents unintended styling of .content elements without a .left child.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Season page: Add episode vote graph and stats to season view</div>
+                        <div class="details">Introduces a visual vote graph for episodes in the season view, displaying user and average votes. Also adds a new episode-stats section to show runtime and vote averages, with corresponding style updates and JavaScript logic to update the graph dynamically.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Season page: Update series.scss for vote select and button visibility</div>
+                        <div class="details">Set .select-vote to use flex display for improved layout. Hide .vote-button when it contains an SVG by adding a :has(svg) selector.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ People page: Improve preferred name form layout and styling</div>
+                        <div class="details">Set width: 100% on several elements in the preferred name form for better alignment and responsiveness. Wrapped name in a span in the Twig template to allow for improved styling and text overflow handling.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Map: Last additions: Add map centering feature for locations in UI</div>
+                        <div class="details">Introduces a new UI control allowing users to center the map on a specific location from the last creations list. Updates Map.js to handle clicks on the new control, fly to the selected location, and open its marker popup. Styles and markup are updated to support the new feature.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Improve series by country display and localization</div>
+                        <div class="details">Refactors series-by-country UI to use a header element, updates styles for better visual grouping, and enhances the display of localized series names. Adjusts repository and controller logic to separate and render localized names, and updates template includes and variable handling for consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add source fields to filming location forms and entity</div>
+                        <div class="details">Introduces 'source-name' and 'source-url' fields to the filming location form, updates the FilmingLocation entity and its constructor to store these values, and ensures they are handled throughout the SeriesController. Also adds related styling classes and updates the form field rendering to support custom classes.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Video page: Add video sharing feature with UI and translations</div>
+                        <div class="details">Introduces a share button on the video page, allowing users to copy the video link to the clipboard. Adds a new share route and controller method, a dedicated share template, related styles, and French and Korean translations for share-related messages.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Handle auxclick events and fix SVGs in Menu.js</div>
+                        <div class="details">Added an event listener for 'auxclick' to close menus and clear search results when a middle mouse button is used. Also removed redundant fill="currentColor" attributes from SVG icon strings and ensured data-id is set as a string.</div>
+                    </li>
+                    <li>→ Filming locations: radius added to coordinates</li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border left">
+                <h2>19ᵉ mise à jour : 23/06/2025</h2>
+                <ul>
+                    <li>→ Image service: code factoring & Apple Maps mark up</li>
+                    <li>→ People preferred name: new input field</li>
+                    <li>→ Episode schedules: remaining / elapsed time</li>
+                    <li>→ Sass: nested declarations have to placed after</li>
+                    <li>→ Remove user series</li>
+                    <li>→ Series crew with multiple jobs</li>
+                    <li>→ Schedules: number of episodes by selected day taken in count</li>
+                </ul>
+            </div>
             <div class="site-update glowing-border right">
                 <h2>18ᵉ mise à jour : 16/06/2025</h2>
                 <ul>
