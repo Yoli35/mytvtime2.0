@@ -1,13 +1,13 @@
  1- .env: APP_ENV: prod
  2- > paste this in your local terminal:
 
-     clear;
-     cons app:ep:ai;
-     echo '' > var/log/dev.log;
-     rm -R var/cache/dev;
-     echo 'composer prod'; composer install --no-dev --optimize-autoloader;
-     echo 'cache clear'; APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear;
-     echo 'compile assets'; cons asset-map:compile
+clear;
+cons app:ep:ai;
+echo '' > var/log/dev.log;
+rm -R var/cache/dev;
+echo 'composer prod'; composer install --no-dev --optimize-autoloader;
+echo 'cache clear'; APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear;
+echo 'compile assets'; cons asset-map:compile
 
  3- Compress
         [bin]
@@ -44,13 +44,13 @@
 10- > unzip Archive.zip;
 11- paste this in your remote terminal:
 
-    clear;
-    rm Archive.zip; echo 'Archives.zip file removed';
-    echo 'Removing macos files';      rm -R __MACOSX;
-    echo 'Removing .DS_Store files';  find ./ -depth -name ".DS_Store" -exec rm {} \;
-    echo 'Removing file in ./temp';   cd temp;
-    rm -R *;
-    cd ..;
-    echo 'Think to reconnect the domain to the folder "/public"'
+clear;
+rm Archive.zip; echo 'Archives.zip file removed';
+echo 'Removing macos files';      rm -R __MACOSX;
+echo 'Removing .DS_Store files';  find ./ -depth -name ".DS_Store" -exec rm {} \;
+echo 'Removing file in ./temp';   cd temp;
+rm -R *;
+cd ..;
+echo 'Think to reconnect the domain to the folder "/public"'
 
 12- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/public"
