@@ -175,7 +175,7 @@ h2 {
 }
 
 .series-to-start, .series-by-country {
-    margin-block-start: 1rem;
+    margin-block-start: 4rem;
 
     header {
         align-items: center;
@@ -184,7 +184,7 @@ h2 {
         color: var(--orange-90);
         display: flex;
         gap: 1rem;
-        margin-block-start: 3rem;
+        /*margin-block-start: 3rem;*/
         padding: .5rem 1rem;
 
         label {
