@@ -62,22 +62,22 @@
                                     {{ 'Overview for the season'|trans }}
                                 {% endif %}
                             </div>
-                            <div class="content">{{ season.overview|nl2br }}</div>
+                            <div class="body">{{ season.overview|nl2br }}</div>
                         </div>
                     {% endif %}
                     {% if season.series_localized_overviews|length %}
-                        <div class="localized overviews">
-                            <h4 class="localized-h4">{{ 'Localized overviews for the series'|trans }}</h4>
-                            {% for overview in season.series_localized_overviews %}
-                                <div class="localized overview" data-id="{{ overview.id }}">
-                                    <div class="content" data-overview="{{ overview.overview }}">
+                        <div class="season-overview">
+                            <div class="header">{{ 'Localized overviews for the series'|trans }}</div>
+                            <div class="body">
+                                {% for overview in season.series_localized_overviews %}
+                                    <div class="content" data-overview="{{ overview.overview }}" data-id="{{ overview.id }}">
                                         {{ overview.overview|nl2br }}
+                                        <div class="tools">
+                                            <div class="locale">{{ overview.locale|upper }}</div>
+                                        </div>
                                     </div>
-                                    <div class="tools">
-                                        <div class="locale">{{ overview.locale|upper }}</div>
-                                    </div>
-                                </div>
-                            {% endfor %}
+                                {% endfor %}
+                            </div>
                         </div>
                         {# {% else %}
                         {% if season.deepl %}
@@ -87,23 +87,23 @@
                         {% endif %} #}
                     {% endif %}
                     {% if season.series_additional_overviews|length %}
-                        <div class="additional overviews">
-                            <h4 class="additional-h4">{{ 'Additional overviews for the series'|trans }}</h4>
-                            {% for overview in season.series_additional_overviews %}
-                                <div class="additional overview" data-id="{{ overview.id }}" data-source-id="{{ overview.source.id }}">
-                                    <div class="content" data-overview="{{ overview.overview }}">
+                        <div class="season-overview">
+                            <div class="header">{{ 'Additional overviews for the series'|trans }}</div>
+                            <div class="body">
+                                {% for overview in season.series_additional_overviews %}
+                                    <div class="content" data-overview="{{ overview.overview }}" data-id="{{ overview.id }}" data-source-id="{{ overview.source.id }}">
                                         {{ overview.overview|nl2br }}
-                                    </div>
-                                    <div class="tools">
-                                        <div class="source">
-                                            <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
-                                                <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
-                                            </a>
+                                        <div class="tools">
+                                            <div class="source">
+                                                <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
+                                                    <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
+                                                </a>
+                                            </div>
+                                            <div class="locale">{{ overview.locale|upper }}</div>
                                         </div>
-                                        <div class="locale">{{ overview.locale|upper }}</div>
                                     </div>
-                                </div>
-                            {% endfor %}
+                                {% endfor %}
+                            </div>
                         </div>
                     {% endif %}
                     {% if series.backdropPath %}
@@ -477,36 +477,36 @@
 
     <div id="globs" style="display: none">
         {
-        "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "text": {
-        "provider": "{{ 'Choose a provider'|trans }}",
-        "device": "{{ 'Choose a device'|trans }}",
-        "rating": "{{ 'Give a rating'|trans }}",
-        "now": "{{ 'Now'|trans }}",
-        "Today": "{{ 'Today'|trans }}",
-        "add": "{{ 'Add'|trans }}",
-        "markAsWatched": "{{ 'Mark this episode as seen'|trans }}",
-        "Television": "{{ 'Television'|trans }}",
-        "Mobile": "{{ 'Mobile'|trans }}",
-        "Tablet": "{{ 'Tablet'|trans }}",
-        "Laptop": "{{ 'Laptop'|trans }}",
-        "Desktop": "{{ 'Desktop'|trans }}",
-        "Search": "{{ 'Search'|trans }}",
-        "days": "{{ 'days'|trans }}",
-        "hours": "{{ 'hours'|trans }}",
-        "minutes": "{{ 'minutes'|trans }}",
-        "seconds": "{{ 'seconds'|trans }}",
-        "day": "{{ 'day'|trans }}",
-        "hour": "{{ 'hour'|trans }}",
-        "minute": "{{ 'minute'|trans }}",
-        "second": "{{ 'second'|trans }}",
-        "copied": "{{ 'The link has been copied to your clipboard'|trans }}",
-        "additional": "{{ 'No overview'|trans }}",
-        "click": "{{ 'Click here to add an image'|trans }}",
-        "paste": "{{ 'Paste your image here (green)'|trans }}"
-        }
+            "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "text": {
+                "provider": "{{ 'Choose a provider'|trans }}",
+                "device": "{{ 'Choose a device'|trans }}",
+                "rating": "{{ 'Give a rating'|trans }}",
+                "now": "{{ 'Now'|trans }}",
+                "Today": "{{ 'Today'|trans }}",
+                "add": "{{ 'Add'|trans }}",
+                "markAsWatched": "{{ 'Mark this episode as seen'|trans }}",
+                "Television": "{{ 'Television'|trans }}",
+                "Mobile": "{{ 'Mobile'|trans }}",
+                "Tablet": "{{ 'Tablet'|trans }}",
+                "Laptop": "{{ 'Laptop'|trans }}",
+                "Desktop": "{{ 'Desktop'|trans }}",
+                "Search": "{{ 'Search'|trans }}",
+                "days": "{{ 'days'|trans }}",
+                "hours": "{{ 'hours'|trans }}",
+                "minutes": "{{ 'minutes'|trans }}",
+                "seconds": "{{ 'seconds'|trans }}",
+                "day": "{{ 'day'|trans }}",
+                "hour": "{{ 'hour'|trans }}",
+                "minute": "{{ 'minute'|trans }}",
+                "second": "{{ 'second'|trans }}",
+                "copied": "{{ 'The link has been copied to your clipboard'|trans }}",
+                "additional": "{{ 'No overview'|trans }}",
+                "click": "{{ 'Click here to add an image'|trans }}",
+                "paste": "{{ 'Paste your image here (green)'|trans }}"
+            }
         }
     </div>
     <div class="svgs" style="display: none">
@@ -524,7 +524,7 @@
     </div>
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}
-{% block javascripts %}
-    {{ parent() }}
-    <script src="https://flackr.github.io/scroll-timeline/dist/scroll-timeline.js"></script>
-{% endblock %}
+{#{% block javascripts %}#}
+{#    {{ parent() }}#}
+{#    <script src="https://flackr.github.io/scroll-timeline/dist/scroll-timeline.js"></script>#}
+{#{% endblock %}#}
