@@ -127,6 +127,9 @@ export class Season {
          ******************************************************************************/
         this.setProgress();
 
+        // Test
+        console.log(this.getLightnessFromHex('#7f7f7f'));
+
         const watchLinks = document.querySelectorAll('.watch-link');
         watchLinks.forEach(function (watchLink) {
             const tools = watchLink.querySelector('.watch-link-tools');
@@ -1424,5 +1427,15 @@ export class Season {
             return true;
         }
         return false;
+    }
+
+    getLightnessFromHex(hex) {
+        hex = hex.replace(/^#/, '');
+        const r = parseInt(hex.slice(0, 2), 16);
+        const g = parseInt(hex.slice(2, 4), 16);
+        const b = parseInt(hex.slice(4, 6), 16);
+        // Luminance formula (perceived brightness)
+        const brightness = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+        return +(brightness * 100).toFixed(2);
     }
 }
