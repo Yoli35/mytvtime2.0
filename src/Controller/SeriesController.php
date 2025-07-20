@@ -1096,7 +1096,7 @@ class SeriesController extends AbstractController
         }
 
         if ($tv) {
-            $addLocationForm = $this->render('_blocks/forms/_add-location-form.html.twig', [
+            $addLocationFormData = [
                 'hiddenFields' => [
                     ['item' => 'hidden', 'name' => 'series-id', 'value' => $series->getId()],
                     ['item' => 'hidden', 'name' => 'tmdb-id', 'value' => $tv['id']],
@@ -1125,7 +1125,7 @@ class SeriesController extends AbstractController
                         ['item' => 'input', 'name' => 'source-url', 'label' => 'Url', 'type' => 'text', 'class' => 'flex-2', 'required' => false],
                     ]
                 ],
-            ]);
+            ];
             $twig = "series/show.html.twig";
         } else {
             $addLocationForm = "";
@@ -1143,7 +1143,7 @@ class SeriesController extends AbstractController
             'pois' => count($filmingLocationsWithBounds['filmingLocations']) ? $this->mapController->getALlPointsOfInterest() : ["list" => []],
             'locationsBounds' => $filmingLocationsWithBounds['bounds'],
             'emptyLocation' => $filmingLocationsWithBounds['emptyLocation'],
-            'addLocationForm' => $addLocationForm,
+            'addLocationFormData' => $addLocationFormData,
             'fieldList' => ['series-id', 'tmdb-id', 'crud-type', 'crud-id', 'title', 'location', 'season-number', 'episode-number', 'description', 'latitude', 'longitude', 'radius', "source-name", "source-url"],
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
             'externals' => $this->getExternals($series, $tvKeywords, $tvExternalIds, $request->getLocale()),

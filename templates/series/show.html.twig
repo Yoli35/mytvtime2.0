@@ -728,9 +728,11 @@
                     <div class="add-location-button" data-title="{{ 'Add a shooting location'|trans }}">
                         {{ ux_icon('fa6-solid:plus') }}
                     </div>
-                    <div class="toggle-cooperative-gestures">
-                        {{ ux_icon('iconoir:key-command') }} / {{ ux_icon('iconoir:mac-control-key') }}
-                    </div>
+                    {% if locations|length %}
+                        <div class="toggle-cooperative-gestures">
+                            {{ ux_icon('iconoir:key-command') }} / {{ ux_icon('iconoir:mac-control-key') }}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="series-map">
                     {% if locations|length %}
@@ -812,7 +814,7 @@
     {% if tv.keywords.results|length %}
         {{ include('_blocks/forms/_keyword-translation.html.twig') }}
     {% endif %}
-    {{ addLocationForm|raw }}
+    {{ include('_blocks/forms/_add-location-form.html.twig', addLocationFormData) }}
 
     <div id="globs-map" style="display: none">
         {
