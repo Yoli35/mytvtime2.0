@@ -160,9 +160,35 @@
             <label for="multi-search">
                 <input type="search" id="multi-search" data-type="multi" class="search" spellcheck="false">
                 <span class="magnifying-glass">
-                {{ ux_icon('fa6-solid:magnifying-glass', {height: '16px', width:'16px'}) }}
-            </span>
+                    {{ ux_icon('fa6-solid:magnifying-glass', {height: '16px', width:'16px'}) }}
+                </span>
             </label>
+            <div class="search-options">
+                <div class="row">
+                    <label for="multi-search-movie" class="search-option">
+                        <input type="checkbox" id="multi-search-movie" checked switch>
+                        {{ 'Movies'|trans }}
+                    </label>
+                    <label for="multi-search-series" class="search-option">
+                        <input type="checkbox" id="multi-search-series" checked switch>
+                        {{ 'Series'|trans }}
+                    </label>
+                    {# <label for="multi-search-video" class="search-option">
+                    <input type="checkbox" id="multi-search-video" checked switch>
+                    {{ ux_icon('mdi:youtube-tv', {height: "16px", width: "16px"}) }} {{ 'Videos'|trans }}
+                </label> #}
+                    <label for="multi-search-people" class="search-option">
+                        <input type="checkbox" id="multi-search-people" checked switch>
+                        {{ 'People'|trans }}
+                    </label>
+                </div>
+                <div class="row">
+                    <label for="open-in-new-window" class="search-option">
+                        <input type="checkbox" id="open-in-new-window" checked switch>
+                        {{ 'Open in new tab'|trans }}
+                    </label>
+                </div>
+            </div>
             <div class="search-results __multi"></div>
         </div>
     {% endif %}

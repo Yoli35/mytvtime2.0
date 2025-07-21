@@ -739,7 +739,7 @@ label:has(input[type="text"]) {
         margin-inline: auto;
         position: relative;
 
-        label {
+        > label {
             align-items: center;
             display: flex;
             gap: .5rem;
@@ -804,9 +804,53 @@ label:has(input[type="text"]) {
             transition: left 300ms ease-in-out;
         }
 
-        &:has(input:not(:focus)) {
+        &:has(input[type="search"]:not(:focus)) {
+            .search-options {
+                padding-inline: 0;
+                width: 0;
+            }
             .search-results {
                 left: -10rem
+            }
+        }
+
+        &:has(input[type="search"]:focus) {
+            .search-results {
+                left: 0
+            }
+        }
+
+        .search-options {
+            backdrop-filter: blur(8px);
+            background-color: var(--navbar-bg-75);
+            border-radius: .25rem;
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            left: 0;
+            overflow: hidden;
+            padding-block: .5rem;
+            padding-inline: 1rem;
+            position: absolute;
+            transition: width 300ms ease-in-out;
+
+            .row {
+                display: flex;
+                gap: 1rem;
+
+                label {
+                    align-items: center;
+                    display: flex;
+                    gap: .5rem;
+                    justify-content: flex-start;
+                }
+            }
+        }
+
+        &:has(.search-results.showing-something) {
+            .search-options {
+                padding-inline: 1rem;
+                width: 0;
             }
         }
     }
