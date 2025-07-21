@@ -156,6 +156,7 @@ export class Menu {
         const tvSearchDb = navbar.querySelector("#tv-search-db");
         const personSearch = navbar.querySelector("#person-search");
         const multiSearch = navbar.querySelector("#multi-search");
+        const multiSearchOptions = navbar.querySelector(".search-options");
 
         const historyNavbarItem = navbar.querySelector("#history-menu");
 
@@ -165,18 +166,24 @@ export class Menu {
         /*console.log({menus});*/
 
         document.addEventListener("click", (e) => {
-            searchResults.forEach((searchResult) => {
-                if (searchResult.querySelector("ul") && !searchResult.parentElement.contains(e.target)) {
-                    searchResult.innerHTML = '';
-                    searchResult.classList.remove("showing-something");
-                    e.preventDefault();
-                }
-            });
-            menus.forEach((menu) => {
-                if (!menu.parentElement.contains(e.target)) {
-                    this.closeMenu(menu.closest(".navbar-item"), menu);
-                }
-            });
+            const target = e.target;
+            console.log(target);
+            if (target !== multiSearchOptions && !multiSearchOptions.contains(target)) {
+                searchResults.forEach((searchResult) => {
+                    if (searchResult.querySelector("ul") && !searchResult.parentElement.contains(e.target)) {
+                        searchResult.innerHTML = '';
+                        searchResult.classList.remove("showing-something");
+                        e.preventDefault();
+                    }
+                });
+                menus.forEach((menu) => {
+                    if (!menu.parentElement.contains(e.target)) {
+                        this.closeMenu(menu.closest(".navbar-item"), menu);
+                    }
+                });
+            } else {
+                multiSearch.focus();
+            }
         });
         document.addEventListener("auxclick", (e) => {
             searchResults.forEach((searchResult) => {
