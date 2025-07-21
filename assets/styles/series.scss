@@ -2459,6 +2459,7 @@ h2 {
             padding: .25rem;
             transition: all 0.3s linear;
             width: 2rem;
+            will-change: border, border-radius, transform, z-index;
 
             &.watched {
                 background-color: var(--user-episode-actions);
@@ -2551,7 +2552,7 @@ h2 {
             text-wrap: pretty;
 
             .content {
-                background-color: var(--ardoise-70-alpha-50);
+                background-color: var(--ardoise-90-alpha-20);
                 border-radius: .5rem;
                 margin-block-end: unset;
                 padding: .5rem;
