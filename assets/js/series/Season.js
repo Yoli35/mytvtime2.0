@@ -1277,10 +1277,28 @@ export class Season {
                         const voteGraphDiv = document.querySelector('.vote-graph');
                         const voteDiv = voteGraphDiv.querySelector('.vote[data-ep-id="' + episodeId + '"]');
                         const div = voteDiv.querySelector('div');
+                        const episodeVoteDiv = voteDiv.closest('.episode-vote');
                         div.classList.remove('dashed-vote');
                         div.classList.add('user-vote');
                         div.style.height = (voteValue * 16) + 'px';
                         div.innerText = voteValue;
+                        episodeVoteDiv.setAttribute('data-vote', voteValue);
+
+                        const voteAverageDiv = voteGraphDiv.querySelector('.vote-average');
+                        const voteDivs = voteGraphDiv.querySelectorAll('.episode-vote');
+                        let sum = 0, count = 0;
+                        voteDivs.forEach((element) => {
+                            const vote = 1 * element.getAttribute('data-vote');
+                            if (vote) {
+                                sum += vote;
+                                count++;
+                            }
+                        });
+                        if (count) {
+                            voteAverageDiv.innerHTML = (sum / count).toFixed(1) + " / 10";
+                        } else {
+                            voteAverageDiv.innerHTML = gThis.text['No votes'];
+                        }
                     }
                 }
             }

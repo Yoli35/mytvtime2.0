@@ -390,25 +390,34 @@
                     </div>
                 </div>
 
-                {% if season.episodes|filter(e => e.user_episode.watch_at) %}
-                    <div class="vote-graph">
-                        {% for ep in season.episodes %}
-                            {% set ue = ep.user_episode %}
-                            <div class="episode-vote">
-                                <div class="vote" data-ep-id="{{ ue.id }}" style="height: {{ ep.vote_average }}rem; border-width: {{ ep.vote_average > 0 ? '2px':'0' }};">
-                                    {% if ue.watch_at_db and ue.vote is not null %}
-                                        <div class="user-vote" style=" height: {{ ue.vote }}rem">
-                                            {{ ue.vote }}
-                                        </div>
-                                    {% else %}
-                                        <div class="dashed-vote"></div>
-                                    {% endif %}
-                                </div>
-                                <div class="episode-number">{{ 'S%02dE%02d'|format(ep.season_number, ep.episode_number) }}</div>
+                <div class="vote-graph">
+                    {% set sum = 0 %}
+                    {% set count = 0 %}
+                    {% for ep in season.episodes %}
+                        {% set ue = ep.user_episode %}
+                        <div class="episode-vote"{% if ue.vote %} data-vote="{{ ue.vote }}"{% endif %} data-ep-id="{{ ep.id }}" data-episode-number="{{ ep.episode_number }}" data-season-number="{{ ep.season_number }}">
+                            <div class="vote" data-ep-id="{{ ue.id }}" style="height: {{ ep.vote_average }}rem; border-width: {{ ep.vote_average > 0 ? '2px':'0' }};">
+                                {% if ue.watch_at_db and ue.vote is not null %}
+                                    <div class="user-vote" style=" height: {{ ue.vote }}rem">
+                                        {{ ue.vote }}
+                                    </div>
+                                    {% set sum = sum + ue.vote %}
+                                    {% set count = count + 1 %}
+                                {% else %}
+                                    <div class="dashed-vote"></div>
+                                {% endif %}
                             </div>
-                        {% endfor %}
+                            <div class="episode-number">{{ 'S%02dE%02d'|format(ep.season_number, ep.episode_number) }}</div>
+                        </div>
+                    {% endfor %}
+                    <div class="vote-average">
+                        {% if count > 0 %}
+                            {{ (sum / count)|round(1) }} / 10
+                        {% else %}
+                            {{ 'No votes'|trans }}
+                        {% endif %}
                     </div>
-                {% endif %}
+                </div>
 
                 {% if season.credits.cast|length %}
                     <h3>{{ 'Cast'|trans }}</h3>
@@ -505,7 +514,8 @@
                 "copied": "{{ 'The link has been copied to your clipboard'|trans }}",
                 "additional": "{{ 'No overview'|trans }}",
                 "click": "{{ 'Click here to add an image'|trans }}",
-                "paste": "{{ 'Paste your image here (green)'|trans }}"
+                "paste": "{{ 'Paste your image here (green)'|trans }}",
+                "No votes": "{{ 'No votes'|trans }}"
             }
         }
     </div>
@@ -524,7 +534,7 @@
     </div>
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}
-{#{% block javascripts %}#}
-{#    {{ parent() }}#}
-{#    <script src="https://flackr.github.io/scroll-timeline/dist/scroll-timeline.js"></script>#}
-{#{% endblock %}#}
+{# {% block javascripts %} #}
+{#    {{ parent() }} #}
+{#    <script src="https://flackr.github.io/scroll-timeline/dist/scroll-timeline.js"></script> #}
+{# {% endblock %} #}
