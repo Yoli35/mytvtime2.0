@@ -3379,67 +3379,80 @@ h2 {
 }
 
 .vote-graph {
-    align-items: flex-end;
-    background-color: var(--ardoise-100-alpha-20);
-    border-radius: .25rem;
     display: flex;
+    flex-flow: row-reverse;
     gap: 1rem;
-    height: 14rem;
-    justify-content: flex-start;
-    overflow-x: auto;
-    padding: 1rem;
-    width: 100%;
 
-    .episode-vote {
-        align-items: center;
+    .episode-votes {
+        align-items: flex-end;
+        background-color: var(--ardoise-100-alpha-20);
+        border-radius: .25rem;
         display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        gap: .5rem;
+        gap: 1rem;
+        height: 14rem;
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding: 1rem;
+        width: 100%;
 
-        .vote {
-            background-color: var(--orange-50-alpha-50);
-            border-color: var(--orange-50);
-            border-radius: .25rem;
-            border-style: solid;
-            border-width: 2px;
-            position: relative;
-            width: 100%;
+        .episode-vote {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            gap: .5rem;
 
-            .user-vote, .dashed-vote {
-                align-items: flex-end;
+            .vote {
+                background-color: var(--orange-50-alpha-50);
+                border-color: var(--orange-50);
                 border-radius: .25rem;
-                bottom: -2px;
-                color: var(--green-20);
-                display: flex;
-                font-size: 1.25rem;
-                font-weight: 500;
-                justify-content: center;
-                left: 5%;
-                padding-block-end: 1rem;
-                position: absolute;
-                transition: height 0.3s ease-in-out;
-                width: 90%;
-                z-index: 1;
-            }
+                border-style: solid;
+                border-width: 2px;
+                position: relative;
+                width: 100%;
 
-            .user-vote {
-                background-color: var(--green-80-alpha-50);
-                border: 2px solid var(--green-20);
-            }
+                .user-vote, .dashed-vote {
+                    align-items: flex-end;
+                    border-radius: .25rem;
+                    bottom: -2px;
+                    color: var(--green-20);
+                    display: flex;
+                    font-size: 1.25rem;
+                    font-weight: 500;
+                    justify-content: center;
+                    left: 5%;
+                    padding-block-end: 1rem;
+                    position: absolute;
+                    transition: height 0.3s ease-in-out;
+                    width: 90%;
+                    z-index: 1;
+                }
 
-            .dashed-vote {
-                background-color: var(--green-40-alpha-50);
-                border: 1px dashed var(--grey-30);
-                height: 10rem;
+                .user-vote {
+                    background-color: var(--green-80-alpha-50);
+                    border: 2px solid var(--green-20);
+                }
+
+                .dashed-vote {
+                    background-color: var(--green-40-alpha-50);
+                    border: 1px dashed var(--grey-30);
+                    height: 10rem;
+                }
             }
         }
     }
 
     .vote-average {
+        background-color: var(--orange-50);
+        border-radius: .5rem;
+        flex-shrink: 0;
         font-size: 2rem;
+        font-weight: 600;
         line-height: 1.25em;
         margin-block: auto;
+        padding: 2rem;
+        text-align: center;
+        text-wrap: nowrap;
     }
 }
 
