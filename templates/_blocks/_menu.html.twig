@@ -104,7 +104,7 @@
                                     </div>
                                     <div class="name">{{ h.name }}</div>
                                     <div class="number{% if h.progress==100 %} ended{% endif %}">{{ 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) }}</div>
-                                    <div class="date">{{ h.lastWatchAt|format_datetime('relative_medium', 'short') }}</div>
+                                    <div class="date">{{ h.lastWatchAt|format_datetime('relative_short', 'short') }}</div>
                                     <div class="vote{% if history.vote == 0 %} hidden{% endif %}">{% if h.vote %}{{ h.vote }}{% endif %}</div>
                                     <div class="device{% if history.device == 0 %} hidden{% endif %}">{% if h.deviceSvg %}{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}{% endif %}</div>
                                     <div class="provider{% if history.provider == 0 %} hidden{% endif %}">{% if h.providerLogoPath %}<img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}">{% endif %}</div>
@@ -163,33 +163,35 @@
                     {{ ux_icon('fa6-solid:magnifying-glass', {height: '16px', width:'16px'}) }}
                 </span>
             </label>
-            <div class="search-options">
-                <div class="row">
-                    <label for="multi-search-movie" class="search-option">
-                        <input type="checkbox" id="multi-search-movie" checked switch>
-                        {{ 'Movies'|trans }}
-                    </label>
-                    <label for="multi-search-series" class="search-option">
-                        <input type="checkbox" id="multi-search-series" checked switch>
-                        {{ 'Series'|trans }}
-                    </label>
-                    {# <label for="multi-search-video" class="search-option">
+            <div class="search-results __multi">
+                <div class="search-options">
+                    <div class="row">
+                        <label for="multi-search-movie" class="search-option">
+                            <input type="checkbox" id="multi-search-movie" checked switch>
+                            {{ 'Movies'|trans }}
+                        </label>
+                        <label for="multi-search-series" class="search-option">
+                            <input type="checkbox" id="multi-search-series" checked switch>
+                            {{ 'Series'|trans }}
+                        </label>
+                        {# <label for="multi-search-video" class="search-option">
                     <input type="checkbox" id="multi-search-video" checked switch>
                     {{ ux_icon('mdi:youtube-tv', {height: "16px", width: "16px"}) }} {{ 'Videos'|trans }}
                 </label> #}
-                    <label for="multi-search-people" class="search-option">
-                        <input type="checkbox" id="multi-search-people" checked switch>
-                        {{ 'People'|trans }}
-                    </label>
+                        <label for="multi-search-people" class="search-option">
+                            <input type="checkbox" id="multi-search-people" checked switch>
+                            {{ 'People'|trans }}
+                        </label>
+                    </div>
+                    <div class="row">
+                        <label for="open-in-new-window" class="search-option">
+                            <input type="checkbox" id="open-in-new-window" checked switch>
+                            {{ 'Open in new tab'|trans }}
+                        </label>
+                    </div>
                 </div>
-                <div class="row">
-                    <label for="open-in-new-window" class="search-option">
-                        <input type="checkbox" id="open-in-new-window" checked switch>
-                        {{ 'Open in new tab'|trans }}
-                    </label>
-                </div>
+                <ul></ul>
             </div>
-            <div class="search-results __multi"></div>
         </div>
     {% endif %}
 

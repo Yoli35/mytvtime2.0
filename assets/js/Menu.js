@@ -159,6 +159,7 @@ export class Menu {
         const multiSearchOptions = navbar.querySelector(".search-options");
 
         const historyNavbarItem = navbar.querySelector("#history-menu");
+        this.adjustHistoryList();
 
         const searchResults = navbar.querySelectorAll(".search-results");
         /*console.log({searchResults});*/
@@ -170,10 +171,16 @@ export class Menu {
             console.log(target);
             if (target !== multiSearchOptions && !multiSearchOptions.contains(target)) {
                 searchResults.forEach((searchResult) => {
-                    if (searchResult.querySelector("ul") && !searchResult.parentElement.contains(e.target)) {
-                        searchResult.innerHTML = '';
+                    const ul =searchResult.querySelector("ul");
+                    if (ul && !searchResult.parentElement.contains(e.target)) {
+                        if (searchResult.contains(multiSearchOptions)) {
+                            const lis = ul.querySelectorAll('li');
+                            lis.forEach((li) => { li.remove(); });
+                        } else {
+                            ul.remove();
+                        }
                         searchResult.classList.remove("showing-something");
-                        e.preventDefault();
+                        // e.preventDefault();
                     }
                 });
                 menus.forEach((menu) => {
@@ -622,9 +629,11 @@ export class Menu {
         const searchInput = e.target;
         const value = searchInput.value;
         const searchResults = searchInput.parentElement.parentElement.querySelector(".search-results");
+        const ul = searchResults.querySelector('ul');//document.createElement("ul");
+        const lis = ul.querySelectorAll('li');
         if (value.length < 3) {
             if (searchResults.innerHTML.length) {
-                searchResults.innerHTML = '';
+                lis.forEach(item => { item.remove(); }); //searchResults.innerHTML = '';
                 searchResults.classList.remove("showing-something");
             }
             return;
@@ -681,8 +690,8 @@ export class Menu {
             .then(res => res.json())
             .then(json => {
                 console.log(json);
-                searchResults.innerHTML = '';
-                const ul = document.createElement("ul");
+                const lis = ul.querySelectorAll('li');
+                lis.forEach(item => { item.remove(); }); //searchResults.innerHTML = '';
                 ul.setAttribute("data-type", searchType);
 
                 if (json.results.length) {
@@ -989,7 +998,8 @@ export class Menu {
         const historyOptions = historyList.querySelector("#history-options").querySelectorAll("input");
         const historyOption = e.currentTarget;
         const optionId = historyOption.id.split('-')[2];
-        const historyListItems = historyList.querySelector("ul");
+        const ul = historyList.querySelector("ul");
+        const lis = ul.querySelectorAll("li");
         const options = {'type': false, 'page': 1, 'count': 20, 'vote': false, 'device': false, 'provider': false};
 
         historyOptions.forEach(option => {
@@ -1003,7 +1013,7 @@ export class Menu {
         /*console.log({options});*/
 
         if (optionId === 'vote' || optionId === 'device' || optionId === 'provider') {
-            historyListItems.forEach((item) => {
+            lis.forEach((item) => {
                 if (historyOption.checked) {
                     item.querySelector('.' + optionId)?.classList.remove('hidden');
                 } else {
@@ -1036,7 +1046,7 @@ export class Menu {
         })
             .then(response => response.json())
             .then(data => {
-                historyListItems.innerHTML = '';
+                lis.forEach((item) => { item.remove();})
                 /** @type {HistoryItem} */
                 data.list.forEach((item) => {
                     const li = document.createElement("li");
@@ -1095,12 +1105,24 @@ export class Menu {
                     a.appendChild(provider);
 
                     li.appendChild(a);
-                    historyList.appendChild(li);
+                    ul.appendChild(li);
                 });
+                gThis.adjustHistoryList();
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
+    }
+
+    adjustHistoryList() {
+        const historyList = document.querySelector("#history-list");
+        const historyListRect = historyList.getBoundingClientRect();
+        const bodyRect = document.body.getBoundingClientRect();
+        /*console.log(historyListRect);
+        console.log(bodyRect);*/
+        if (historyListRect.right > bodyRect.width) {
+            historyList.style.left =  (bodyRect.width - historyListRect.right) + "px";
+        }
     }
 
     checkLog() {

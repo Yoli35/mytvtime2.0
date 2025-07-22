@@ -822,17 +822,18 @@ label:has(input[type="text"]) {
 
         .search-options {
             backdrop-filter: blur(8px);
-            background-color: var(--navbar-bg-75);
+            background-color: var(--green-60);
             border-radius: .25rem;
             display: flex;
             flex-direction: column;
             gap: .5rem;
-            left: 0;
+            /*left: 0;*/
             overflow: hidden;
             padding-block: .5rem;
             padding-inline: 1rem;
-            position: absolute;
-            transition: width 300ms ease-in-out;
+            /*position: absolute;
+            transition: width 300ms ease-in-out;*/
+            width: 100%;
 
             .row {
                 display: flex;
@@ -847,12 +848,12 @@ label:has(input[type="text"]) {
             }
         }
 
-        &:has(.search-results.showing-something) {
+        /*&:has(.search-results.showing-something) {
             .search-options {
                 padding-inline: 1rem;
                 width: 0;
             }
-        }
+        }*/
     }
 
     .debug {
