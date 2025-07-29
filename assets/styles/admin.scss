@@ -549,10 +549,21 @@
     .admin__series__updates {
         display: flex;
         flex-direction: column;
-        gap:.25rem;
+        gap: .25rem;
         margin-inline: auto;
-        max-height: 50rem;
+        max-height: calc(100dvh - 20rem);
         overflow-y: auto;
+
+        &:has(.admin__series__updates__line:hover),
+        &:has(.admin__series__updates__details:hover) {
+            .admin__series__updates__line {
+                background-color: var(--ardoise-60-alpha-50);
+            }
+
+            .admin__series__updates__details {
+                background-color: var(--ardoise-70-alpha-50);
+            }
+        }
 
         .admin__series__updates__line {
             display: flex;
@@ -567,22 +578,37 @@
                 padding: .25rem 1rem;
             }
 
-            .checked, .not-checked {
+            .ended, .updated, .passed, .no-changes, .not-found{
                 align-items: center;
-                border-radius: 50%;
-                color: var(--ardoise-10);
+                border-radius: 5rem;
+                color: var(--ardoise-90);
                 display: flex;
+                font-weight: bold;
                 height: 1.5rem;
                 justify-content: center;
-                width: 1.5rem;
+                width: 8rem;
             }
 
-            .checked {
+            .ended {
+                background-color: var(--yellow-50);
+                color: var(--ardoise-10);
+            }
+
+            .updated {
                 background-color: var(--green-50);
             }
 
-            .not-checked {
+            .passed {
                 background-color: var(--orange-50);
+            }
+
+            .no-changes {
+                background-color: var(--purple-50);
+                color: var(--ardoise-10);
+            }
+
+            .not-found {
+                background-color: var(--red-50);
             }
 
             .id {
@@ -591,18 +617,62 @@
             }
 
             .name, .localized-name {
+                font-weight: bold;
                 overflow-x: auto;
                 text-wrap: nowrap;
                 width: 20rem;
             }
 
             .localized-name {
-                color: var(--orange-50);
+                color: var(--orange-70);
             }
 
             .date {
                 text-align: right;
-                width: 10rem;
+                width: 12rem;
+            }
+        }
+
+        .admin__series__updates__details {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+
+            .admin__series__updates__detail {
+                display: flex;
+                gap: 1rem;
+
+                .admin__update__arrow {
+                    margin-block: auto;
+                }
+
+                .admin__update__field, .admin__update__before, .admin__update__after {
+                    border-radius: .25rem;
+                    border: 2px solid transparent;
+                }
+
+                .admin__update__before, .admin__update__after {
+                    &:has(> img) {
+                        border-color: var(--orange-50);
+                        border-radius: .5rem;
+                        padding: .125rem;
+
+                        img {
+                            border-radius: .375rem;
+                            height: 10rem;
+                            width: auto;
+                        }
+
+                        &.poster {
+                            aspect-ratio: 78/117;
+                        }
+
+                        &.backdrop {
+                            aspect-ratio: 16/9;
+                        }
+                    }
+                }
             }
         }
     }
