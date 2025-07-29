@@ -98,6 +98,13 @@ class SeriesDirectLink extends AbstractController
 
     private function getProvider($providerId): array
     {
+        if ($providerId === null) {
+            return [
+                'id' => -1,
+                'name' => null,
+                'logoPath' => null,
+            ];
+        }
         $provider = $this->watchProviderRepository->findOneBy(['providerId' => $providerId]);
 
         return [
