@@ -146,6 +146,9 @@
                 {% if route == 'admin_series' %}
                     {% include('_blocks/admin/_series.html.twig') %}
                 {% endif %}
+                {% if route == 'admin_series_check_updates' %}
+                    {% include('_blocks/admin/_series-updates.html.twig') %}
+                {% endif %}
                 {% if route == 'admin_series_edit' %}
                     {% include('_blocks/admin/_series-edit.html.twig') %}
                 {% endif %}

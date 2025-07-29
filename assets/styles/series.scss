@@ -3382,6 +3382,8 @@ h2 {
     display: flex;
     flex-flow: row-reverse;
     gap: 1rem;
+    margin-inline: auto;
+    width: fit-content;
 
     .episode-votes {
         align-items: flex-end;
@@ -3408,6 +3410,7 @@ h2 {
                 border-radius: .25rem;
                 border-style: solid;
                 border-width: 2px;
+                max-width: 4rem;
                 position: relative;
                 width: 100%;
 
@@ -3443,7 +3446,8 @@ h2 {
     }
 
     .vote-average {
-        background-color: var(--orange-50);
+        background-color: var(--green-80-alpha-50);
+        border: 2px solid var(--green-20);
         border-radius: .5rem;
         flex-shrink: 0;
         font-size: 2rem;

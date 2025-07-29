@@ -444,6 +444,7 @@
     }
 
     .admin__tools {
+        align-items: center;
         background-color: var(--ardoise-80-alpha-50);
         border-radius: .25rem;
         display: flex;
@@ -481,11 +482,11 @@
                     padding: .125rem 1rem;
 
                     &.id {
-                        width: 12rem;
+                        width: 8rem;
                     }
 
                     &.name {
-                        width: 20rem;
+                        width: 16rem;
                     }
                 }
             }
@@ -508,9 +509,101 @@
             }
         }
 
+        .admin__button {
+            align-items: center;
+            background-color: var(--orange-40-alpha-50);
+            border-radius: .25rem;
+            border: 2px solid var(--orange-50);
+            color: var(--ardoise-10);
+            cursor: pointer;
+            display: flex;
+            height: 2rem;
+            justify-content: center;
+            padding-inline: .5rem;
+
+            &:hover {
+                background-color: var(--orange-30);
+            }
+        }
+
+        .admin__wip {
+            align-items: center;
+            background-color: var(--add-this);
+            border-radius: .25rem;
+            color: var(--orange-10);
+            cursor: pointer;
+            display: flex;
+            font-size: 1.5rem;
+            font-weight: bold;
+            height: 2rem;
+            justify-content: center;
+            padding-inline: 1rem;
+        }
+
         .admin__result {
             font-size: 2rem;
             line-height: 1.25em;
+        }
+    }
+
+    .admin__series__updates {
+        display: flex;
+        flex-direction: column;
+        gap:.25rem;
+        margin-inline: auto;
+        max-height: 50rem;
+        overflow-y: auto;
+
+        .admin__series__updates__line {
+            display: flex;
+            font-size: 1rem;
+            gap: 1rem;
+
+            .header, .footer {
+                background-color: var(--ardoise-80-alpha-50);
+                border-radius: .25rem;
+                display: flex;
+                font-weight: bold;
+                padding: .25rem 1rem;
+            }
+
+            .checked, .not-checked {
+                align-items: center;
+                border-radius: 50%;
+                color: var(--ardoise-10);
+                display: flex;
+                height: 1.5rem;
+                justify-content: center;
+                width: 1.5rem;
+            }
+
+            .checked {
+                background-color: var(--green-50);
+            }
+
+            .not-checked {
+                background-color: var(--orange-50);
+            }
+
+            .id {
+                text-align: right;
+                width: 5rem;
+            }
+
+            .name, .localized-name {
+                overflow-x: auto;
+                text-wrap: nowrap;
+                width: 20rem;
+            }
+
+            .localized-name {
+                color: var(--orange-50);
+            }
+
+            .date {
+                text-align: right;
+                width: 10rem;
+            }
         }
     }
 
@@ -1360,22 +1453,22 @@
             }
 
             .list__item__header {
-                    .filming_locations__id, .filming_locations__tmdb_id {
-                        text-align: right;
-                        width: 4rem;
-                    }
+                .filming_locations__id, .filming_locations__tmdb_id {
+                    text-align: right;
+                    width: 4rem;
+                }
 
-                    .filming_locations__title, .filming_locations__location {
-                        width: 10rem;
-                    }
+                .filming_locations__title, .filming_locations__location {
+                    width: 10rem;
+                }
 
-                    .filming_locations__origin_country {
-                        width: 5rem;
-                    }
+                .filming_locations__origin_country {
+                    width: 5rem;
+                }
 
-                    .filming_locations__dates {
-                        width: 9rem;
-                    }
+                .filming_locations__dates {
+                    width: 9rem;
+                }
             }
         }
 
@@ -1402,29 +1495,29 @@
                 }
 
                 .item {
-                        .filming_location__id, .filming_location__tmdb_id {
-                            text-align: right;
-                            width: 4rem;
-                        }
+                    .filming_location__id, .filming_location__tmdb_id {
+                        text-align: right;
+                        width: 4rem;
+                    }
 
-                        .filming_location__title, .filming_location__location {
-                            overflow-x: auto;
-                            width: 10rem;
-                        }
+                    .filming_location__title, .filming_location__location {
+                        overflow-x: auto;
+                        width: 10rem;
+                    }
 
-                        .filming_location__country {
-                            display: flex;
-                            font-size: 3rem;
-                            gap: .25rem;
-                            justify-content: center;
-                            line-height: 1.1em;
-                            overflow-x: auto;
-                            width: 5rem;
-                        }
+                    .filming_location__country {
+                        display: flex;
+                        font-size: 3rem;
+                        gap: .25rem;
+                        justify-content: center;
+                        line-height: 1.1em;
+                        overflow-x: auto;
+                        width: 5rem;
+                    }
 
-                        .filming_location__dates {
-                            width: 9rem;
-                        }
+                    .filming_location__dates {
+                        width: 9rem;
+                    }
                 }
             }
         }
@@ -1513,25 +1606,25 @@
             }
 
             .list__item__header {
-                    .videos__id {
-                        width: 4rem;
-                    }
+                .videos__id {
+                    width: 4rem;
+                }
 
-                    .videos__link {
-                        width: 8rem;
-                    }
+                .videos__link {
+                    width: 8rem;
+                }
 
-                    .videos__title, .videos__channel_title {
-                        width: 10rem;
-                    }
+                .videos__title, .videos__channel_title {
+                    width: 10rem;
+                }
 
-                    .videos__duration {
-                        width: 5rem;
-                    }
+                .videos__duration {
+                    width: 5rem;
+                }
 
-                    .videos__dates {
-                        width: 9rem;
-                    }
+                .videos__dates {
+                    width: 9rem;
+                }
             }
         }
 
@@ -1568,27 +1661,27 @@
                 }
 
                 .item {
-                        .video__id {
-                            text-align: right;
-                            width: 4rem;
-                        }
+                    .video__id {
+                        text-align: right;
+                        width: 4rem;
+                    }
 
-                        .video__link {
-                            width: 8rem;
-                        }
+                    .video__link {
+                        width: 8rem;
+                    }
 
-                        .video__title, .video__channel_title {
-                            overflow-x: auto;
-                            width: 10rem;
-                        }
+                    .video__title, .video__channel_title {
+                        overflow-x: auto;
+                        width: 10rem;
+                    }
 
-                        .video__duration {
-                            width: 5rem;
-                        }
+                    .video__duration {
+                        width: 5rem;
+                    }
 
-                        .video__dates {
-                            width: 9rem;
-                        }
+                    .video__dates {
+                        width: 9rem;
+                    }
                 }
             }
         }
@@ -1604,25 +1697,25 @@
             }
 
             .list__item__header {
-                    .points_of_interest__id {
-                        width: 4rem;
-                    }
+                .points_of_interest__id {
+                    width: 4rem;
+                }
 
-                    .points_of_interest__name {
-                        width: 15rem;
-                    }
+                .points_of_interest__name {
+                    width: 15rem;
+                }
 
-                    .points_of_interest__city {
-                        width: 8rem;
-                    }
+                .points_of_interest__city {
+                    width: 8rem;
+                }
 
-                    .points_of_interest__country {
-                        width: 10rem;
-                    }
+                .points_of_interest__country {
+                    width: 10rem;
+                }
 
-                    .points_of_interest__dates {
-                        width: 9rem;
-                    }
+                .points_of_interest__dates {
+                    width: 9rem;
+                }
             }
         }
 
@@ -1642,50 +1735,50 @@
                 }
 
                 .item {
-                        .point_of_interest__id {
-                            text-align: right;
-                            width: 4rem;
+                    .point_of_interest__id {
+                        text-align: right;
+                        width: 4rem;
+                    }
+
+                    .point_of_interest__name {
+                        align-items: center;
+                        display: flex;
+                        gap: .25rem;
+                        overflow-x: auto;
+                        width: 15rem;
+
+                        .point_of_interest__category {
+                            background-color: var(--orange-50);
+                            border-radius: .25rem;
+                            color: var(--ardoise-10);
+                            font-size: 1rem;
+                            font-weight: bold;
+                            padding: .25rem .5rem;
                         }
+                    }
 
-                        .point_of_interest__name {
-                            align-items: center;
-                            display: flex;
-                            gap: .25rem;
-                            overflow-x: auto;
-                            width: 15rem;
+                    .point_of_interest__city {
+                        overflow-x: auto;
+                        width: 8rem;
+                    }
 
-                            .point_of_interest__category {
-                                background-color: var(--orange-50);
-                                border-radius: .25rem;
-                                color: var(--ardoise-10);
-                                font-size: 1rem;
-                                font-weight: bold;
-                                padding: .25rem .5rem;
-                            }
+                    .point_of_interest__country {
+                        align-items: center;
+                        display: flex;
+                        gap: 1rem;
+                        justify-content: space-between;
+                        overflow-x: auto;
+                        width: 10rem;
+
+                        span {
+                            font-size: 3rem;
+                            line-height: 1.1em;
                         }
+                    }
 
-                        .point_of_interest__city {
-                            overflow-x: auto;
-                            width: 8rem;
-                        }
-
-                        .point_of_interest__country {
-                            align-items: center;
-                            display: flex;
-                            gap: 1rem;
-                            justify-content: space-between;
-                            overflow-x: auto;
-                            width: 10rem;
-
-                            span {
-                                font-size: 3rem;
-                                line-height: 1.1em;
-                            }
-                        }
-
-                        .point_of_interest__dates {
-                            width: 9rem;
-                        }
+                    .point_of_interest__dates {
+                        width: 9rem;
+                    }
                 }
             }
         }

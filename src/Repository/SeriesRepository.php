@@ -143,6 +143,14 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function getSeriesIdsForUpdates(): array
+    {
+        $sql = "SELECT s.id, s.tmdb_id
+                FROM series s";
+
+        return $this->getAll($sql);
+    }
+
     public function adminSeriesTmdbId(): array
     {
         $sql = "SELECT s.tmdb_id

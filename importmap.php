@@ -22,6 +22,9 @@ return [
     'AdminPointsOfInterest' => [
         'path' => './assets/js/admin/AdminPointsOfInterest.js',
     ],
+    'AdminSeriesUpdates' => [
+        'path' => './assets/js/admin/AdminSeriesUpdates.js',
+    ],
     'AverageColor' => [
         'path' => './assets/js/images/AverageColor.js',
     ],

@@ -40,7 +40,6 @@ class AdminController extends AbstractController
 {
 
     public function __construct(
-        private readonly VideoCategoryRepository           $categoryRepository,
         private readonly DateService                       $dateService,
         private readonly FilmingLocationRepository         $filmingLocationRepository,
         private readonly ImageConfiguration                $imageConfiguration,
@@ -51,11 +50,12 @@ class AdminController extends AbstractController
         private readonly PointOfInterestImageRepository    $pointOfInterestImageRepository,
         private readonly PointOfInterestRepository         $pointOfInterestRepository,
         private readonly SeriesController                  $seriesController,
-        private readonly SettingsRepository                $settingsRepository,
         private readonly SeriesRepository                  $seriesRepository,
-        private readonly UserRepository                    $userRepository,
+        private readonly SettingsRepository                $settingsRepository,
         private readonly TMDBService                       $tmdbService,
         private readonly TranslatorInterface               $translator,
+        private readonly UserRepository                    $userRepository,
+        private readonly VideoCategoryRepository           $categoryRepository,
         private readonly VideoController                   $videoController,
         private readonly VideoRepository                   $videoRepository,
         private readonly WatchProviderRepository           $watchProviderRepository
@@ -340,6 +340,16 @@ class AdminController extends AbstractController
             'pagination' => $pagination,
             'posterUrl' => $this->imageConfiguration->getUrl('poster_sizes', 3),
             'backdropUrl' => $this->imageConfiguration->getUrl('backdrop_sizes', 3),
+        ]);
+    }
+
+    #[Route('/series/check/updates', name: 'series_check_updates')]
+    public function adminSeriesCheckUpdates(Request $request): Response
+    {
+        $idsForUpdates = $this->seriesRepository->getSeriesIdsForUpdates();
+
+        return $this->render('admin/index.html.twig', [
+            'ids' => $idsForUpdates,
         ]);
     }
 
@@ -970,7 +980,7 @@ class AdminController extends AbstractController
             $request->query->get('s', 'id'),
             $request->query->get('o', 'desc'),
             $request->query->getInt('p', 1),
-            $request->query->getInt('l', 20),
+            $request->query->getInt('l', 25) // Default limit is 25,
         ];
     }
 
