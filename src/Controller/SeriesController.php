@@ -1422,9 +1422,10 @@ class SeriesController extends AbstractController
         }
         if ($season['poster_path']) {
             if (!$this->inImages($season['poster_path'], $seriesImages)) {
-                $seriesImage = new SeriesImage($series, "poster", $season['poster_path']);
+                $this->addSeriesImage($series, $season['poster_path'], 'poster', $this->imageConfiguration->getUrl('poster_sizes', 5));
+                /*$seriesImage = new SeriesImage($series, "poster", $season['poster_path']);
                 $this->seriesImageRepository->save($seriesImage, true);
-                $this->imageService->saveImage("posters", $season['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+                $this->imageService->saveImage("posters", $season['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));*/
             }
         } else {
             $season['poster_path'] = $series->getPosterPath();
@@ -2689,41 +2690,44 @@ class SeriesController extends AbstractController
         }
 
         if (!$this->inImages($tv['poster_path'], $seriesImages)) {
-            $seriesImage = new SeriesImage($series, "poster", $tv['poster_path']);
+            $this->addSeriesImage($series, $tv['poster_path'], "poster", $this->imageConfiguration->getUrl("poster_sizes", $sizes["posters"]));
+            /*$seriesImage = new SeriesImage($series, "poster", $tv['poster_path']);
             $this->seriesImageRepository->save($seriesImage, true);
-            $series->addUpdate($this->translator->trans('Poster added'));
+            $series->addUpdate($this->translator->trans('Poster added'));*/
         }
         if (!$this->inImages($tv['backdrop_path'], $seriesImages)) {
-            $seriesImage = new SeriesImage($series, "backdrop", $tv['backdrop_path']);
+            $this->addSeriesImage($series, $tv['backdrop_path'], "backdrop", $this->imageConfiguration->getUrl("backdrop_sizes", $sizes["backdrops"]));
+            /*$seriesImage = new SeriesImage($series, "backdrop", $tv['backdrop_path']);
             $this->seriesImageRepository->save($seriesImage, true);
-            $series->addUpdate($this->translator->trans('Backdrop added'));
+            $series->addUpdate($this->translator->trans('Backdrop added'));*/
         }
 
         foreach (['backdrops', 'logos', 'posters'] as $type) {
             $dbType = substr($type, 0, -1);
             $imageConfigType = $dbType . '_sizes';
-//            $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]);
+            $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]);
             foreach ($tv['images'][$type] as $img) {
                 if (!$this->inImages($img['file_path'], $seriesImages)) {
-                    $seriesImage = new SeriesImage($series, $dbType, $img['file_path']);
+                    $this->addSeriesImage($series, $img['file_path'], $dbType, $url);
+                    /*$seriesImage = new SeriesImage($series, $dbType, $img['file_path']);
                     $this->seriesImageRepository->save($seriesImage, true);
-                    $series->addUpdate($this->translator->trans(ucfirst($dbType) . ' added'));
+                    $series->addUpdate($this->translator->trans(ucfirst($dbType) . ' added'));*/
                 }
             }
             $tv['images'][$type] = array_map(function ($image) use ($type, $sizes, $imageConfigType) {
-                $this->imageService->saveImage($type, $image['file_path'], $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]));
+//                $this->imageService->saveImage($type, $image['file_path'], $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]));
                 return '/series/' . $type . $image['file_path'];
             }, $tv['images'][$type]);
         }
 
         if ($tv['poster_path'] != $series->getPosterPath()) {
             $series->setPosterPath($tv['poster_path']);
-            $this->imageService->saveImage("posters", $series->getPosterPath(), $this->imageConfiguration->getUrl('poster_sizes', 5));
+//            $this->imageService->saveImage("posters", $series->getPosterPath(), $this->imageConfiguration->getUrl('poster_sizes', 5));
             $series->addUpdate($this->translator->trans('Poster updated'));
         }
         if ($tv['backdrop_path'] != $series->getBackdropPath()) {
             $series->setBackdropPath($tv['backdrop_path']);
-            $this->imageService->saveImage("backdrops", $series->getBackdropPath(), $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+//            $this->imageService->saveImage("backdrops", $series->getBackdropPath(), $this->imageConfiguration->getUrl('backdrop_sizes', 3));
             $series->addUpdate($this->translator->trans('Backdrop updated'));
         }
         $this->seriesRepository->save($series, true);
@@ -3434,6 +3438,14 @@ class SeriesController extends AbstractController
     {
         if (!$image) return true;
         return array_any($images, fn($img) => $img->getimagePath() == $image);
+    }
+
+    public function addSeriesImage(Series $series, string $imagePath, string $imageType, string $imageUrl): void
+    {
+        $seriesImage = new SeriesImage($series, $imageType, $imagePath);
+        $this->seriesImageRepository->save($seriesImage, true);
+        $this->imageService->saveImage($imageType."s", $imagePath, $imageUrl);
+        $series->addUpdate($this->translator->trans(ucfirst($imageType) . ' added'));
     }
 
     public function addSeries($id, $date): array
