@@ -26,7 +26,7 @@ class SeriesUpdates extends AbstractController
     }
 
     #[Route('/batch/update', name: 'update_series', methods: ['POST'])]
-    public function recentSeries(Request $request): JsonResponse
+    public function seriesBatchUpdate(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $ids = $data['ids'] ?? [];
@@ -36,7 +36,7 @@ class SeriesUpdates extends AbstractController
 
         foreach ($ids as $item) {
             $now = $this->dateService->getNowImmutable('UTC');
-            dump($now->format('Y-m-d H:i:s'));
+
             $updates = [];
             $series = $this->seriesRepository->find($item['id']);
             if ($series) {
@@ -86,7 +86,6 @@ class SeriesUpdates extends AbstractController
                 $firstAirDate = $tvFR['first_air_date'] ?? $tvUS['first_air_date'] ?? null;
                 $dbFirstAirDate = $series->getFirstAirDate()?->format("Y-m-d");
                 if ($firstAirDate && $dbFirstAirDate !== $firstAirDate) {
-                    dump(['tmdb' => $firstAirDate, 'db' => $dbFirstAirDate]);
                     $updates[] = ['field' => 'first_air_date', 'label' => 'First air date', 'valueBefore' => $series->getFirstAirDate() ? $series->getFirstAirDate()->format('Y-m-d') : 'No date', 'valueAfter' => $firstAirDate];
                     $series->setFirstAirDate($this->dateService->newDateImmutable($firstAirDate, 'Europe/Paris', true));
                 }
@@ -168,8 +167,6 @@ class SeriesUpdates extends AbstractController
         return new JsonResponse([
             'status' => 'success',
             'results' => $results,
-            'posterUrl' => $this->imageConfiguration->getUrl('poster_sizes', 5),
-            'backdropUrl' => $this->imageConfiguration->getUrl('backdrop_sizes', 3),
         ]);
     }
 }

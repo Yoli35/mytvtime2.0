@@ -350,6 +350,16 @@ class AdminController extends AbstractController
 
         return $this->render('admin/index.html.twig', [
             'ids' => $idsForUpdates,
+            'urls' => [
+                'posterUrl' => [
+                    'low' => $this->imageConfiguration->getUrl('poster_sizes', 2),
+                    'high' => $this->imageConfiguration->getUrl('poster_sizes', 5),
+                ],
+                'backdropUrl' => [
+                    'low' => $this->imageConfiguration->getUrl('backdrop_sizes', 0),
+                    'high' => $this->imageConfiguration->getUrl('backdrop_sizes', 2),
+                ],
+            ],
         ]);
     }
 

@@ -18,6 +18,7 @@ export class AdminSeriesUpdates {
         const globs = document.querySelector("#globs");
         this.globs = JSON.parse(globs.textContent);
         this.ids = this.globs['ids'];
+        this.urls = this.globs['urls'];
         this.api_series_update_series = this.globs['api_series_update_series'];
         const svgs = document.querySelector("#svgs");
         this.rightArrow = svgs.querySelector("#right-arrow");
@@ -25,12 +26,14 @@ export class AdminSeriesUpdates {
     }
 
     init() {
-        /*console.log(gThis.ids);*/
         const updatesButton = document.querySelector("#admin-series-updates");
 
         updatesButton.addEventListener("click", () => {
-            gThis.newLine([{'className': 'header', 'label': 'Starting updates...'}]);
-            gThis.newLine([]);
+            const updateDiv1 = gThis.newUpdateDiv("updates header");
+            gThis.newLine([{'className': 'header', 'label': 'Starting updates...'}], updateDiv1);
+            /*const updateDiv2 = gThis.newUpdateDiv("updates after header");
+            gThis.newLine([], updateDiv2);*/
+            updatesButton.setAttribute("disabled", "");
 
             gThis.startIndex = 0;
             gThis.startDate = new Date();
@@ -54,23 +57,27 @@ export class AdminSeriesUpdates {
             const data = await response.json();
             /*console.log({data});*/
             if (data.status === 'success') {
-                gThis.posterUrl = data['posterUrl'];
-                gThis.backdropUrl = data['backdropUrl'];
                 data['results'].forEach(item => {
+                    const updateDiv = gThis.newUpdateDiv(item.id);
                     gThis.newLine([
-                        {'className': gThis.kebabCase(item['check']), 'label': item['check']},
-                        {'className': 'id', 'label': item['id']},
-                        {'className': 'name', 'label': item['name']},
-                        {'className': 'localized-name', 'label': item['localizedName']},
-                        {'className': 'date', 'label': item['lastUpdate']}
-                    ]);
-                    gThis.displayUpdates(item['updates']);
+                            {'className': gThis.kebabCase(item['check']), 'label': item['check']},
+                            {'className': 'id', 'label': item['id']},
+                            {'className': 'name', 'label': item['name']},
+                            {'className': 'localized-name', 'label': item['localizedName']},
+                            {'className': 'date', 'label': item['lastUpdate']}
+                        ],
+                        updateDiv);
+                    gThis.displayUpdates(item['updates'], updateDiv);
                 });
                 if (data['results'].length + gThis.startIndex >= count) {
-                    gThis.newLine([]);
+                    /*const updateDiv1 = gThis.newUpdateDiv("updates before footer");
+                    gThis.newLine([], updateDiv1);*/
                     gThis.endDate = new Date();
                     const elapsed = (gThis.endDate.getTime() - gThis.startDate.getTime()) / 1000;
-                    gThis.newLine([{'className': 'footer', 'label': 'Updates completed in ' + elapsed +  ' seconds.'}]);
+                    const updateDiv2 = gThis.newUpdateDiv("updates footer");
+                    gThis.newLine([{'className': 'footer', 'label': 'Updates completed in ' + elapsed + ' seconds.'}], updateDiv2);
+                    const updatesButton = document.querySelector("#admin-series-updates");
+                    updatesButton.removeAttribute("disabled");
                 } else {
                     gThis.startIndex += limit;
                     gThis.updates();
@@ -79,8 +86,16 @@ export class AdminSeriesUpdates {
         });
     }
 
-    newLine(arr) {
+    newUpdateDiv(id) {
         const updatesDiv = document.querySelector(".admin__series__updates");
+        const updateDiv = document.createElement('div');
+        updateDiv.id = id;
+        updateDiv.classList.add('admin__series__update');
+        updatesDiv.appendChild(updateDiv);
+        return updateDiv;
+    }
+
+    newLine(arr, div) {
         const lineDiv = document.createElement("div");
         lineDiv.classList.add("admin__series__updates__line");
         arr.forEach(item => {
@@ -89,25 +104,16 @@ export class AdminSeriesUpdates {
             itemDiv.appendChild(document.createTextNode(item.label));
             lineDiv.appendChild(itemDiv);
         })
-        updatesDiv.appendChild(lineDiv);
-        lineDiv.scrollIntoView({ behavior: 'instant', block: 'end' });
+        div.appendChild(lineDiv);
+        div.scrollIntoView({behavior: 'instant', block: 'end'});
     }
 
-    displayUpdates(updates) {
-        // items :
-        //      ['field' => 'name', 'before' => $series->getName(), 'after' => $name];
-        //      ['field' => 'overview', 'before' => $series->getOverview(), 'after' => $overview];
-        //      ['field' => 'backdrop_path', 'before' => $series->getBackdropPath(), 'after' => $backdropPath];
-        //      ['field' => 'poster_path', 'before' => $series->getPosterPath(), 'after' => $posterPath];
-        //      ['field' => 'status', 'before' => $series->getStatus(), 'after' => $status];
-        //      ['field' => 'number of seasons', 'before' => $series->getNumberOfSeason(), 'after' => $seasonNUmber];
-        //      ['field' => 'number of episodes', 'before' => $series->getNumberOfEpisode(), 'after' => $episodeNumber];
+    displayUpdates(updates, div) {
         if (updates.length === 0) {
             return;
         }
-        const posterUrl = gThis.posterUrl;
-        const backdropUrl = gThis.backdropUrl;
-        const updatesDiv = document.querySelector(".admin__series__updates");
+        const posterUrls = gThis.urls['posterUrl'];
+        const backdropUrls = gThis.urls['backdropUrl'];
         const detailsDiv = document.createElement('div');
         detailsDiv.classList.add("admin__series__updates__details");
 
@@ -146,7 +152,9 @@ export class AdminSeriesUpdates {
                     beforeDiv.classList.add("poster");
                     if (posterPath) {
                         const img = document.createElement("img");
-                        img.src = posterUrl + posterPath;
+                        img.alt = "poster";
+                        img.src = posterUrls['low'] + posterPath;
+                        img.srcset = posterUrls['low'] + posterPath + " 185w, " + posterUrls['high'] + posterPath + " 700w";
                         beforeDiv.appendChild(img);
                     } else {
                         beforeDiv.innerText = 'No poster';
@@ -156,7 +164,9 @@ export class AdminSeriesUpdates {
                     afterDiv.classList.add("poster");
                     if (posterPath) {
                         const img = document.createElement("img");
-                        img.src = posterUrl + posterPath;
+                        img.alt = "poster";
+                        img.src = posterUrls['low'] + posterPath;
+                        img.srcset = posterUrls['low'] + posterPath + " 185w, " + posterUrls['high'] + posterPath + " 700w";
                         afterDiv.appendChild(img);
                     } else {
                         afterDiv.innerText = 'No poster';
@@ -169,7 +179,9 @@ export class AdminSeriesUpdates {
                     beforeDiv.classList.add("backdrop");
                     if (backdropPath) {
                         const img = document.createElement("img");
-                        img.src = backdropUrl + backdropPath;
+                        img.alt = "backdrop";
+                        img.src = backdropUrls['low'] + backdropPath;
+                        img.srcset = backdropUrls['low'] + backdropPath + " 300w, " + backdropUrls['high'] + backdropPath + " 1200w";
                         beforeDiv.appendChild(img);
                     } else {
                         beforeDiv.innerText = 'No poster';
@@ -179,7 +191,9 @@ export class AdminSeriesUpdates {
                     afterDiv.classList.add("backdrop");
                     if (backdropPath) {
                         const img = document.createElement("img");
-                        img.src = backdropUrl + backdropPath;
+                        img.alt = "backdrop";
+                        img.src = backdropUrls['low'] + backdropPath;
+                        img.srcset = backdropUrls['low'] + backdropPath + " 300w, " + backdropUrls['high'] + backdropPath + " 1200w";
                         afterDiv.appendChild(img);
                     } else {
                         afterDiv.innerText = 'No backdrop';
@@ -193,7 +207,8 @@ export class AdminSeriesUpdates {
             detailsDiv.appendChild(detailDiv);
         });
 
-        updatesDiv.appendChild(detailsDiv);
+        div.appendChild(detailsDiv);
+        div.scrollIntoView({behavior: 'instant', block: 'end'});
     }
 
     kebabCase(string) {
