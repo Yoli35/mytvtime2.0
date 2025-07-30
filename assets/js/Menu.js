@@ -171,11 +171,13 @@ export class Menu {
             console.log(target);
             if (target !== multiSearchOptions && !multiSearchOptions.contains(target)) {
                 searchResults.forEach((searchResult) => {
-                    const ul =searchResult.querySelector("ul");
+                    const ul = searchResult.querySelector("ul");
                     if (ul && !searchResult.parentElement.contains(e.target)) {
                         if (searchResult.contains(multiSearchOptions)) {
                             const lis = ul.querySelectorAll('li');
-                            lis.forEach((li) => { li.remove(); });
+                            lis.forEach((li) => {
+                                li.remove();
+                            });
                         } else {
                             ul.remove();
                         }
@@ -633,7 +635,9 @@ export class Menu {
         const lis = ul.querySelectorAll('li');
         if (value.length < 3) {
             if (searchResults.innerHTML.length) {
-                lis.forEach(item => { item.remove(); }); //searchResults.innerHTML = '';
+                lis.forEach(item => {
+                    item.remove();
+                }); //searchResults.innerHTML = '';
                 searchResults.classList.remove("showing-something");
             }
             return;
@@ -691,7 +695,9 @@ export class Menu {
             .then(json => {
                 console.log(json);
                 const lis = ul.querySelectorAll('li');
-                lis.forEach(item => { item.remove(); }); //searchResults.innerHTML = '';
+                lis.forEach(item => {
+                    item.remove();
+                }); //searchResults.innerHTML = '';
                 ul.setAttribute("data-type", searchType);
 
                 if (json.results.length) {
@@ -924,13 +930,25 @@ export class Menu {
 
     setTheme(e) {
         const theme = e.currentTarget.getAttribute("data-theme");
-        document.body.classList.remove("dark", "light");
-        if (theme !== 'auto') document.body.classList.add(theme);
+
+        if (!document.startViewTransition) {
+            gThis.updateTheme(theme);
+        } else {
+            document.startViewTransition(() => {
+                gThis.updateTheme(theme);
+            });
+        }
+
         localStorage.setItem("mytvtime_2_theme", theme);
         this.checkTheme(theme);
         // Créer un événement "theme-change" pour que les autres modules puissent l'écouter
         const event = new Event("theme-changed");
         document.dispatchEvent(event);
+    }
+
+    updateTheme(theme) {
+        document.body.classList.remove("dark", "light");
+        if (theme !== 'auto') document.body.classList.add(theme);
     }
 
     checkTheme(theme) {
@@ -1046,7 +1064,9 @@ export class Menu {
         })
             .then(response => response.json())
             .then(data => {
-                lis.forEach((item) => { item.remove();})
+                lis.forEach((item) => {
+                    item.remove();
+                })
                 /** @type {HistoryItem} */
                 data.list.forEach((item) => {
                     const li = document.createElement("li");
@@ -1121,7 +1141,7 @@ export class Menu {
         /*console.log(historyListRect);
         console.log(bodyRect);*/
         if (historyListRect.right > bodyRect.width) {
-            historyList.style.left =  (bodyRect.width - historyListRect.right) + "px";
+            historyList.style.left = (bodyRect.width - historyListRect.right) + "px";
         }
     }
 
