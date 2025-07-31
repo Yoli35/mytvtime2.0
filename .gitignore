@@ -34,7 +34,7 @@
 /assets/vendor/
 ###< symfony/asset-mapper ###
 
-
+Archives.zip
 /.gitignore
 /.php-version
 composer.lock

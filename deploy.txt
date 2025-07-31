@@ -23,6 +23,9 @@ echo 'compile assets'; cons asset-map:compile
 		translations
 		var
 		vendor > Archives.zip
+
+zip -r Archives.zip bin composer.json composer.lock config importmap.php package.json public src symfony.lock templates translations var vendor;
+
 4- copy Archives.zip to server
 5- export db
 6- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/"

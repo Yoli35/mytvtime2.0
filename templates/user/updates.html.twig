@@ -26,6 +26,66 @@
                     <h4>myTvTime 2.0 : 18/09/2024</h4>
                 </div>
             </div>
+            <div class="site-update glowing-border right">
+                <h2>22ᵉ mise à jour : 31/07/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">→ Add scroll-to-top/bottom controls to series updates</div>
+                        <div class="details">Introduces 'go-to-top' and 'go-to-bottom' buttons for easier navigation in the admin series updates section. Refactors markup and styles to support these controls and updates the JS logic to handle scrolling. Also adds a 'since' field to update details for improved context on previous updates.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add view transition animations and refactor theme switching</div>
+                        <div class="details">Introduces view transition animations in app.scss for smoother theme changes. Refactors Menu.js to use the View Transition API when available for theme switching, moving theme update logic to a new updateTheme method. Also improves code style and consistency in list item removal.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor series updates UI and image handling</div>
+                        <div class="details">Improves the admin series updates interface by grouping update lines and details into separate divs for each series, and disables the update button during processing. Image URLs for posters and backdrops are now passed as low/high resolution pairs, and srcset attributes are used for responsive images. Removes unused debug output and updates API/Controller to provide new image URL structure.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Enhance admin series updates with detailed change display</div>
+                        <div class="details">Added detailed update display for series fields in the admin panel, including visual comparison for images and improved status handling. Updated backend to return field-level changes, image URLs, and more granular update statuses. Improved frontend and styles to support new update details and visual feedback.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor image addition logic in SeriesController</div>
+                        <div class="details">Introduced addSeriesImage() to encapsulate image creation, saving, and update logic. Replaced repeated code blocks with calls to this new method for posters, backdrops, and other image types, improving maintainability and reducing duplication.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Handle null providerId in getProvider method</div>
+                        <div class="details">Adds a check for null providerId in the getProvider method, returning a default provider array when providerId is not set. This prevents potential errors when providerId is missing.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add admin series updates check feature</div>
+                        <div class="details">Introduces a new admin tool for checking series updates, including a new JS module, controller route, repository method, and UI components. Updates styles and translations to support the new feature and integrates it into the admin interface.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor vote graph layout and structure</div>
+                        <div class="details">Reorganized the vote graph in both SCSS and Twig to wrap episode votes in a new .episode-votes container, updated flex direction to row-reverse, and improved styling for vote-average. This enhances the visual structure and maintainability of the vote graph component.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add average vote display for season episodes</div>
+                        <div class="details">Introduces a vote average section in the season view, showing the mean user vote for episodes. Updates JavaScript to recalculate and display the average dynamically, adds related styles, and provides translation for 'No votes'.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Multi search: introduce search options WIP</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Prevent closing multi-search options on click</div>
+                        <div class="details">Updated the click event handler to avoid closing the multi-search options dropdown when it is clicked. This improves user experience by allowing interaction with the multi-search options without unintentionally closing the menu.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Improve update list layout and add change details</div>
+                        <div class="details">Enhanced the user update list styles to better handle items with change details, including new gap and alignment rules for .change and .details elements. Updated the updates.html.twig template to display detailed descriptions for each change in the update list, improving clarity and user experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add opacity and transition to custom stills panel</div>
+                        <div class="details">Sets default opacity and transition for the custom stills panel and ensures the .custom-stills element is fully opaque. Improves visual feedback and animation when toggling panel visibility.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Replace h2 with header in series templates</div>
+                        <div class="details">Updated series-in-a-while, series-to-start, and up-coming-series templates to use instead of for section headers containing search input. Adjusted related SCSS for spacing to improve layout consistency.</div>
+                    </li>
+                </ul>
+            </div>
             <div class="site-update glowing-border left">
                 <h2>21ᵉ mise à jour : 20/07/2025</h2>
                 <ul>
