@@ -10,6 +10,8 @@ export class AdminSeriesUpdates {
      * @property {string} label
      * @property {string|null} valueBefore
      * @property {string|null} valueAfter
+     * @property {string|null} previous
+     * @property {string|null} since
      */
 
     constructor() {
@@ -27,6 +29,8 @@ export class AdminSeriesUpdates {
 
     init() {
         const updatesButton = document.querySelector("#admin-series-updates");
+        const goToTopButton = document.querySelector('.go-to-top');
+        const goToBottomButton = document.querySelector('.go-to-bottom');
 
         updatesButton.addEventListener("click", () => {
             const updateDiv1 = gThis.newUpdateDiv("updates header");
@@ -39,6 +43,18 @@ export class AdminSeriesUpdates {
             gThis.startDate = new Date();
             gThis.updates();
         });
+
+        goToBottomButton.addEventListener("click", () => {
+            const updatesWrapperDiv = document.querySelector(".admin__series__updates__wrapper");
+            const lastChild = updatesWrapperDiv.lastChild;
+            lastChild.scrollIntoView({behavior: 'smooth', block: 'end'});
+        });
+
+        goToTopButton.addEventListener("click", () => {
+            const updatesWrapperDiv = document.querySelector(".admin__series__updates__wrapper");
+            const firstChild = updatesWrapperDiv.firstChild;
+            firstChild.scrollIntoView({behavior: 'smooth', block: 'start'});
+        })
     }
 
     updates() {
@@ -87,11 +103,11 @@ export class AdminSeriesUpdates {
     }
 
     newUpdateDiv(id) {
-        const updatesDiv = document.querySelector(".admin__series__updates");
+        const updatesWrapperDiv = document.querySelector(".admin__series__updates__wrapper");
         const updateDiv = document.createElement('div');
         updateDiv.id = id;
         updateDiv.classList.add('admin__series__update');
-        updatesDiv.appendChild(updateDiv);
+        updatesWrapperDiv.appendChild(updateDiv);
         return updateDiv;
     }
 
@@ -134,7 +150,12 @@ export class AdminSeriesUpdates {
             const afterDiv = document.createElement("div");
             afterDiv.classList.add("admin__update__after");
             afterDiv.classList.add(className);
-            switch (item['field']) {
+            switch (item.field) {
+                case 'since':
+                    fieldDiv.innerText = item.label;
+                    beforeDiv.innerText = item.previous;
+                    afterDiv.innerText = item.since;
+                    break;
                 case 'first_air_date':
                 case 'name':
                 case 'overview':

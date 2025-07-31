@@ -4,7 +4,6 @@ namespace App\Api;
 
 use App\Repository\SeriesRepository;
 use App\Service\DateService;
-use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,12 +16,10 @@ class SeriesUpdates extends AbstractController
 {
     public function __construct(
         private readonly DateService        $dateService,
-        private readonly ImageConfiguration $imageConfiguration,
         private readonly SeriesRepository   $seriesRepository,
         private readonly TMDBService        $tmdbService,
     )
     {
-        // Inject dependencies if needed
     }
 
     #[Route('/batch/update', name: 'update_series', methods: ['POST'])]
@@ -139,6 +136,27 @@ class SeriesUpdates extends AbstractController
 
                 if (count($updates)) {
                     $checkStatus = 'Updated';
+                    $a = $diff->format('%a');
+                    if ($a == 0) {
+                        // If less than 1 day, show hours, minutes, seconds, which will never appends
+                        // because:
+                        //     if ($diff->days < 1) { // More than 1 day since last update
+                        //         $checkStatus = 'Passed';
+                        //     }
+                        $diffString = $diff->format("%H:%I:%S") . ' ago';
+                    } elseif ($a == 1) {
+                        $diffString = '1 day ago';
+                    } else {
+                        $diffString = $a . ' days ago';
+                    }
+                    $since = [
+                        'field' => 'since',
+                        'label' => 'Previous update',
+                        'previous' => $lastUpdate->format('Y-m-d H:i:s'),
+                        'since' => $diffString
+                    ];
+                    // Add the 'since' update to the beginning of the updates array
+                    array_unshift($updates, $since);
                 } else {
                     $checkStatus = 'No changes';
                 }
@@ -149,7 +167,7 @@ class SeriesUpdates extends AbstractController
                     'name' => $name,
                     'localizedName' => $series->getLocalizedName('fr')?->getName() ?? '',
                     'updates' => $updates,
-                    'lastUpdate' => ucfirst($this->dateService->formatDateRelativeLong($lastUpdate->format('Y-m-d H:i:s'), "Europe/Paris", "fr") . '(' . $diff->days . ' days ago)'),
+                    'lastUpdate' => ucfirst($this->dateService->formatDateRelativeLong($lastUpdate->format('Y-m-d H:i:s'), "Europe/Paris", "fr")/* . '(' . $diff->days . ' days ago)'*/),
                 ];
             } else {
 
