@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'My albums'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/album.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {{ include('_blocks/_menu.html.twig') }}
+    <div class="container-fluid albums-page">
+        <h1>{{ 'My albums'|trans }}</h1>
+        <div class="album-tools">
+            <form>
+                <div class="form-group">
+                    <label for="new-album"><span>{{ 'Create a new album'|trans }}</span>
+                        <input type="text" id="new-album" name="new-album" placeholder="{{ 'New album name'|trans }}" value="">
+                    </label>
+                    <button type="submit" id="create-album">{{ 'Create'|trans }}</button>
+                </div>
+            </form>
+        </div>
+        {{ pagination|raw }}
+        <div class="album-wrapper">
+            {% for album in albums %}
+                <div class="album">
+                    <div class="thumbnail">
+                        <a href="{{ path('app_album_show', {'id': userAlbum.id}) }}">
+                            <img src="/albums/thumbnails{{ album.photos.0.image_path }}" alt="{{ album.name }}">
+                        </a>
+                    </div>
+                    <div class="infos">
+                        <div class="content">
+                            <div class="title">{{ userAlbum.title }}</div>
+                            <div class="at">
+                                <div class="created-at">{{ album.created_at }}</div>
+                                <div class="updated-at">{{ album.updated_at }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="no-album">
+                    <p>{{ 'No album'|trans }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        {{ pagination|raw }}
+    </div>
+    {% include '_blocks/_footer.html.twig' %}
+{% endblock %}

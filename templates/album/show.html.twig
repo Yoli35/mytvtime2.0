@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'My albums'|trans }} → {{ album.name }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/album.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {{ include('_blocks/_menu.html.twig') }}
+    <div class="container-fluid album-page" data-id="{{ album.id }}">
+        <div class="title">
+            <div class="h1-categories">
+                <h1>{{ album.name }}</h1>
+            </div>
+            <div class="prev-next-albums">
+                <div>
+                    {% if previousAlbum %}
+                        <h4 class="youtube-red">{{ 'Previous album'|trans }}</h4>
+                        <div class="prev-album">
+                            <a href="{{ path('app_album_show', {id: previousAlbum.id}) }}">
+                                <img src="/albums/photos{{ previouAlbum.photos.0.image_path }}" alt="{{ previousVideo.name }}">
+                                <div class="name">{{ previousVideo.name }}</div>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div>
+                    {% if nextAlbum %}
+                        <h4 class="youtube-red">{{ 'Next album'|trans }}</h4>
+                        <div class="next-album">
+                            <a href="{{ path('app_album_show', {id: nextVideo.user_video_id}) }}">
+                                <img src="/albums/photos{{ nextVideo.photos.0.image_path }}" alt="{{ nextVideo.name }}e">
+                                <div class="name">{{ nextVideo.name }}</div>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="album-infos"></div>
+    </div>
+    <div id="global-data" style="display: none">
+        {
+            "texts": {
+
+            }
+        }
+    </div>
+    <div id="svgs" style="display: none">
+        <div id="comment">{{ ux_icon('mdi:comment-processing')|raw }}</div>
+    </div>
+    {% include '_blocks/_footer.html.twig' %}
+{% endblock %}

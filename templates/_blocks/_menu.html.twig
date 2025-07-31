@@ -65,6 +65,19 @@
                 </div>
             </div>
             <div class="navbar-item">
+                {{ ux_icon('mdi:image-album', {height: "18px", width: "18px"}) }}
+                <div class="menu albums">
+                    <div class="menu-item"><a href="{{ path('app_album_index') }}" class="desktop">{{ 'My albums'|trans }}</a></div>
+                    <div class="menu-item">
+                        <label for="album-search">
+                            <input type="search" id="album-search" data-type="album" class="search" spellcheck="false">
+                            {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                        </label>
+                        <div class="search-results __album"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="navbar-item">
                 {{ ux_icon('fa6-regular:user', {height: "18px", width: "18px"}) }}
                 <div class="menu people">
                     <div class="menu-item"><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></div>
