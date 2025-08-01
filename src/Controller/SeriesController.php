@@ -1128,7 +1128,7 @@ class SeriesController extends AbstractController
             ];
             $twig = "series/show.html.twig";
         } else {
-            $addLocationForm = "";
+            $addLocationFormData = "";
             $twig = "series/show-not-found.html.twig";
         }
         return $this->render($twig, [
