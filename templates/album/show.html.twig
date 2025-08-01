@@ -39,13 +39,37 @@
                 </div>
             </div>
         </div>
-        <div class="album-infos"></div>
+        <div class="album-photos">
+            {% if album.photos is empty %}
+                <div class="no-photo">{{ 'No photos in this album'|trans }}</div>
+            {% endif %}
+            {% for photo in album.photos %}
+                <div class="album-photo">
+                    <img
+                            src="/albums/1080p{{ photo.imagePath }}"
+                            alt="{{ photo.caption }}"
+                            loading="lazy"
+                            srcset="/albums/576p{{ photo.imagePath }} 576w, /albums/720p{{ photo.imagePath }} 720w, /albums/1080p{{ photo.imagePath }} 1080w"
+                    >
+                    {#<div class="album-photo-infos">
+                        <div class="name">{{ photo.caption }}</div>
+                        <div class="dates">
+                            <div class="date" data-title="{{ 'Date'|trans }}">{{ ux_icon('mdi:date-range') }} {{ photo.date|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
+                            <div class="created-at" data-title="{{ 'Created at'|trans }}">{{ ux_icon('mdi:update') }} {{ photo.createdAt|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
+                            <div class="updated-at" data-title="{{ 'Updated at'|trans }}">{{ ux_icon('mdi:create-new-folder') }} {{ photo.updatedAt|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
+                        </div>
+                    </div>#}
+                </div>
+            {% else %}
+                <div class="no-photo">{{ 'No photos in this album'|trans }}</div>
+            {% endfor %}
+        </div>
     </div>
     <div id="global-data" style="display: none">
         {
-            "texts": {
+        "texts": {
 
-            }
+        }
         }
     </div>
     <div id="svgs" style="display: none">

@@ -26,16 +26,20 @@
             {% for album in albums %}
                 <div class="album">
                     <div class="thumbnail">
-                        <a href="{{ path('app_album_show', {'id': userAlbum.id}) }}">
-                            <img src="/albums/thumbnails{{ album.photos.0.image_path }}" alt="{{ album.name }}">
+                        <a href="{{ path('app_album_show', {'id': album.id}) }}">
+                            <img
+                                    src="/albums/576p{{ album.photos.0.imagePath }}"
+                                    alt="{{ album.name }}"
+                                    srcset="/albums/576p{{ album.photos.0.imagePath }} 576w, /albums/720p{{ album.photos.0.imagePath }} 720w, /albums/1080p{{ album.photos.0.imagePath }} 1080w"
+                            >
                         </a>
                     </div>
                     <div class="infos">
                         <div class="content">
-                            <div class="title">{{ userAlbum.title }}</div>
+                            <div class="title">{{ album.name }}</div>
                             <div class="at">
-                                <div class="created-at">{{ album.created_at }}</div>
-                                <div class="updated-at">{{ album.updated_at }}</div>
+                                <div class="created-at" data-title="{{ 'Created at'|trans }}">{{ ux_icon('mdi:update') }} {{ album.createdAt|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
+                                <div class="updated-at" data-title="{{ 'Updated at'|trans }}">{{ ux_icon('mdi:create-new-folder') }} {{ album.updatedAt|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
                             </div>
                         </div>
                     </div>
