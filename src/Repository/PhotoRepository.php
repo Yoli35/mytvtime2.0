@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\Album;
 use App\Entity\Photo;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
@@ -19,9 +18,9 @@ class PhotoRepository extends ServiceEntityRepository
         parent::__construct($registry, Photo::class);
     }
 
-    public function save(Album $album, bool $flush = false): void
+    public function save(Photo $photo, bool $flush = false): void
     {
-        $this->em->persist($album);
+        $this->em->persist($photo);
 
         if ($flush) {
             $this->em->flush();

@@ -38,6 +38,8 @@ class Album
     #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'album', orphanRemoval: true)]
     private Collection $photos;
 
+    private array $dateRange;
+
     public function __construct()
     {
         $this->photos = new ArrayCollection();
@@ -136,5 +138,15 @@ class Album
         }
 
         return $this;
+    }
+
+    public function getDateRange(): array
+    {
+        return $this->dateRange;
+    }
+
+    public function setDateRange(array $dateRange): void
+    {
+        $this->dateRange = $dateRange;
     }
 }

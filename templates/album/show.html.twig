@@ -5,6 +5,8 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/album.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.css">
 {% endblock %}
 
 {% block body %}
@@ -44,10 +46,11 @@
                 <div class="no-photo">{{ 'No photos in this album'|trans }}</div>
             {% endif %}
             {% for photo in album.photos %}
-                <div class="album-photo">
+                <div class="album-photo" {#data-title="{{ photo.caption }}"#}>
                     <img
                             src="/albums/1080p{{ photo.imagePath }}"
                             alt="{{ photo.caption }}"
+                            data-title="{{ photo.caption }} {{ photo.date|format_datetime('relative_short', 'short', locale: 'fr') }}"
                             loading="lazy"
                             srcset="/albums/576p{{ photo.imagePath }} 576w, /albums/720p{{ photo.imagePath }} 720w, /albums/1080p{{ photo.imagePath }} 1080w"
                     >
@@ -64,16 +67,42 @@
                 <div class="no-photo">{{ 'No photos in this album'|trans }}</div>
             {% endfor %}
         </div>
+        <div class="series-map">
+            <div id="map" class="map-controller"></div>
+            <div class="series-map-list">
+                {{ include('_blocks/map/_thumbnails.html.twig', {styles: mapSettings.data.styles}) }}
+            </div>
+        </div>
     </div>
-    <div id="global-data" style="display: none">
+    {{ include('_blocks/forms/_add-location-form.html.twig', addPhotoFormData) }}
+    <div id="globs-map" style="display: none">
         {
-        "texts": {
-
+            "photos": {{ albumArray.photos|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "bounds": {{ albumArray.bounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "emptyPhoto": {{ emptyPhoto|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "fieldList": {{ fieldList|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "photo_original": "/albums/photos/original",
+            "photo_576p": "/albums/photos/576p",
+            "photo_720p": "/albums/photos/720p",
+            "photo_1080p": "/albums/photos/1080p"
         }
+    </div>
+    <div id="globs" style="display: none">
+        {
+            "album": {{ albumArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "texts": {
+
+            }
         }
     </div>
     <div id="svgs" style="display: none">
-        <div id="comment">{{ ux_icon('mdi:comment-processing')|raw }}</div>
+        <div class="svg" id="arrow-down">{{ ux_icon('fa6-solid:arrow-down') }}</div>
+        <div class="svg" id="arrow-up">{{ ux_icon('fa6-solid:arrow-up') }}</div>
+        <div class="svg" id="arrow-left">{{ ux_icon('fa6-solid:arrow-left') }}</div>
+        <div class="svg" id="arrow-right">{{ ux_icon('fa6-solid:arrow-right') }}</div>
+        <div class="svg" id="xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
+        <div class="svg" id="pen">{{ ux_icon('fa6-solid:pen') }}</div>
+        <div class="svg" id="trash">{{ ux_icon('fa6-solid:trash') }}</div>
     </div>
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}

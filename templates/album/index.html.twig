@@ -36,7 +36,8 @@
                     </div>
                     <div class="infos">
                         <div class="content">
-                            <div class="title">{{ album.name }}</div>
+                            <div class="name">{{ album.name }}</div>
+                            <div class="range">{{ album.dateRange.min|format_datetime('relative_short', 'short', locale: 'fr')|capitalize }} {{ ux_icon('mdi:arrow-right-thin') }} {{ album.dateRange.max|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
                             <div class="at">
                                 <div class="created-at" data-title="{{ 'Created at'|trans }}">{{ ux_icon('mdi:update') }} {{ album.createdAt|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
                                 <div class="updated-at" data-title="{{ 'Updated at'|trans }}">{{ ux_icon('mdi:create-new-folder') }} {{ album.updatedAt|format_datetime('relative_short', 'short', locale: 'fr') }}</div>

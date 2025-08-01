@@ -1,3 +1,8 @@
+.container-fluid.album-page {
+    height: calc(100dvh - 4rem);
+    overflow-y: auto;
+}
+
 .albums-page {
     @property --glow-deg {
         syntax: "<angle>";
@@ -189,7 +194,7 @@
                     flex-direction: column;
                     gap: .25rem;
 
-                    .title {
+                    .name {
                         color: var(--orange-100);
                         display: flex;
                         font-size: 1.5rem;
@@ -198,23 +203,24 @@
                         overflow-y: auto;
                     }
 
+                    .range {
+                        align-items: center;
+                        color: var(--orange-80);
+                        display: flex;
+                        font-size: 1rem;
+                        font-weight: 400;
+                        gap: .5rem;
+                    }
+
                     .at {
                         display: flex;
-                        gap: 1rem;
-
-                        .date {
-                            align-items: center;
-                            color: var(--orange-80);
-                            display: flex;
-                            font-size: 1rem;
-                            font-weight: 400;
-                            gap: .5rem;
-                        }
+                        gap: .5rem;
 
                         .created-at, .updated-at {
                             align-items: center;
                             color: var(--orange-100);
                             display: flex;
+                            flex-shrink: 0;
                             font-size: .75rem;
                             font-weight: 400;
                             gap: .5rem;
@@ -392,11 +398,14 @@
     }
 
     .album-photos {
+        border-bottom: 2px solid var(--orange-50);
         display: flex;
         flex-wrap: wrap;
         gap: .5rem;
         margin-block: 1rem;
         margin-inline: auto;
+        max-height: 50%;
+        overflow-y: auto;
         padding: .5rem;
         width: calc(round(down, 100%, 32%) - 1.5rem);
 

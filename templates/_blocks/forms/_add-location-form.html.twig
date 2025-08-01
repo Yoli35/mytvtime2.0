@@ -10,11 +10,11 @@
                         {% if itemLevel1.item == 'row' %}
                             <div class="form-row">
                                 {% for itemLevel2 in itemLevel1.fields %}
-                                        {{ include('_blocks/forms/_location-' ~ itemLevel2.item ~ '.html.twig', { field: itemLevel2 }) }}
+                                    {{ include('_blocks/forms/_location-' ~ itemLevel2.item ~ '.html.twig', { field: itemLevel2 }) }}
                                 {% endfor %}
                             </div>
-                            {% else %}
-                                {{ include('_blocks/forms/_location-' ~ itemLevel1.item ~ '.html.twig', { field: itemLevel1 }) }}
+                        {% else %}
+                            {{ include('_blocks/forms/_location-' ~ itemLevel1.item ~ '.html.twig', { field: itemLevel1 }) }}
                         {% endif %}
                     {% endfor %}
                 </div>
@@ -39,12 +39,14 @@
                         <span class="error"></span>
                     </label>
                 </div>
-                <div class="form-field">
-                    <label for="radius" data-title="{{ 'Zone radius'|trans }}">{{ 'Radius'|trans }}
-                        <input type="number" name="radius" id="radius" step="100">
-                        <span class="error"></span>
-                    </label>
-                </div>
+                {% if 'radius' in fieldList %}
+                    <div class="form-field">
+                        <label for="radius" data-title="{{ 'Zone radius'|trans }}">{{ 'Radius'|trans }}
+                            <input type="number" name="radius" id="radius" step="100">
+                            <span class="error"></span>
+                        </label>
+                    </div>
+                {% endif %}
             </div>
             <div class="form-row">
                 <div class="form-column">
@@ -150,8 +152,8 @@
                 </div>
             </div>
             <div class="form-row submit-row">
-                    <button type="button">{{ 'Cancel'|trans }}</button>
-                    <button type="submit">{{ 'Add'|trans }}</button>
+                <button type="button">{{ 'Cancel'|trans }}</button>
+                <button type="submit">{{ 'Add'|trans }}</button>
             </div>
         </form>
         <div class="scroll-down-to-submit">

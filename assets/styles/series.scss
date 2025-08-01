@@ -4531,6 +4531,9 @@ h2 {
             .leaflet-popup-content-image {
                 img {
                     border-radius: 0 0 .5rem .5rem;
+                    height: 12rem;
+                    object-fit: cover;
+                    width: 24rem;
                 }
             }
 

@@ -25,6 +25,9 @@ return [
     'AdminSeriesUpdates' => [
         'path' => './assets/js/admin/AdminSeriesUpdates.js',
     ],
+    'AlbumShow' => [
+        'path' => './assets/js/album/AlbumShow.js',
+    ],
     'AverageColor' => [
         'path' => './assets/js/images/AverageColor.js',
     ],

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\PhotoRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PhotoRepository::class)]
@@ -28,19 +29,57 @@ class Photo
     private ?string $image_path = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $updatedAt = null;
+    private ?DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $date = null;
+    private ?DateTimeImmutable $date = null;
 
     #[ORM\Column(nullable: true)]
     private ?float $latitude = null;
 
     #[ORM\Column(nullable: true)]
     private ?float $longitude = null;
+
+    public function __construct(
+        ?User              $user = null,
+        ?Album             $album = null,
+        ?string            $caption = null,
+        string             $image_path = '',
+        ?DateTimeImmutable $createdAt = null,
+        ?DateTimeImmutable $updatedAt = null,
+        ?DateTimeImmutable $date = null,
+        ?float             $latitude = null,
+        ?float             $longitude = null
+    ) {
+        $this->user = $user;
+        $this->album = $album;
+        $this->caption = $caption;
+        $this->image_path = $image_path;
+        $this->createdAt = $createdAt ?? new DateTimeImmutable();
+        $this->updatedAt = $updatedAt ?? new DateTimeImmutable();
+        $this->date = $date ?? new DateTimeImmutable();
+        $this->latitude = $latitude;
+        $this->longitude = $longitude;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'user_id' => $this->getUser()->getId(),
+            'album_id' => $this->getAlbum()->getId(),
+            'caption' => $this->getCaption(),
+            'image_path' => $this->getImagePath(),
+            'created_at_string' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
+            'updated_at_string' => $this->getUpdatedAt()->format('Y-m-d H:i:s'),
+            'date_string' => $this->getDate()->format('Y-m-d H:i:s'),
+            'latitude' => $this->getLatitude(),
+            'longitude' => $this->getLongitude(),
+        ];
+    }
 
     public function getId(): ?int
     {
@@ -95,36 +134,36 @@ class Photo
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    public function setUpdatedAt(DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
 
         return $this;
     }
 
-    public function getDate(): ?\DateTimeImmutable
+    public function getDate(): ?DateTimeImmutable
     {
         return $this->date;
     }
 
-    public function setDate(\DateTimeImmutable $date): static
+    public function setDate(DateTimeImmutable $date): static
     {
         $this->date = $date;
 

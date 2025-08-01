@@ -3,6 +3,7 @@ import './bootstrap.js';
 import {AdminMovieEdit} from "AdminMovieEdit";
 import {AdminPointsOfInterest} from "AdminPointsOfInterest";
 import {AdminSeriesUpdates} from "AdminSeriesUpdates";
+import {AlbumShow} from "AlbumShow";
 import {AverageColor} from 'AverageColor';
 import {DayCountHistory} from 'DayCountHistory';
 import {FlashMessage} from 'FlashMessage';
@@ -227,6 +228,11 @@ window.addEventListener("DOMContentLoaded", () => {
     const userSeriesShow = document.querySelector(".user-series-show");
     if (userSeriesShow) {
         new Show();
+    }
+
+    const userAlbumShow = document.querySelector(".album-page");
+    if (userAlbumShow) {
+        new AlbumShow();
     }
 
     const movieShow = document.querySelector(".movie-show");
