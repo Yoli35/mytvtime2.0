@@ -1,6 +1,9 @@
 <section class="admin__tools">
-    {#<div class="admin__wip">{{ 'Work in progress'|trans }}</div>#}
+    {# <div class="admin__wip">{{ 'Work in progress'|trans }}</div> #}
     <div class="admin__button" id="admin-series-updates">{{ 'Check for updates'|trans }}</div>
+    {% if lastUpdateString %}
+        <div id="progress-infos">{{ 'Last update'|trans }} {{ lastUpdateString }} ({{ lastDurationString }})</div>
+    {% endif %}
 </section>
 <section class="admin__series__updates">
     <div class="admin__series__updates__wrapper"></div>
@@ -11,6 +14,7 @@
 <div id="globs" style="display: none;">
     {
         "ids": {{ ids|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "units": {{ units|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "urls": {{ urls|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "api_series_update_series": "{{ path('api_series_update_series') }}"
     }

@@ -141,4 +141,20 @@ class DateService
         }
         return false;
     }
+
+    public function getDurationString(int $duration, array $units): string
+    {
+        if ($duration < 60) {
+            return sprintf('%d %s', $duration, $units[$duration < 2 ? 'second' : 'seconds']);
+        } elseif ($duration < 3600) {
+            $minutes = floor($duration / 60);
+            $seconds = $duration % 60;
+            return sprintf('%d %s %d %s', $minutes, $units[$minutes < 2 ? 'minute' : 'minutes'], $seconds, $units[$seconds < 2 ? 'second' : 'seconds']);
+        } else {
+            $hours = floor($duration / 3600);
+            $minutes = floor(($duration % 3600) / 60);
+            $seconds = $duration % 60;
+            return sprintf('%d %s %d %s %d %s', $hours, $units[$hours < 2 ? 'hour' : 'hours'], $minutes, $units[$minutes < 2 ? 'minute' : 'minutes'], $seconds, $units[$seconds < 2 ? 'second' : 'seconds']);
+        }
+    }
 }

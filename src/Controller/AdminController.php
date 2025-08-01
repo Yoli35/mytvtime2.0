@@ -346,10 +346,33 @@ class AdminController extends AbstractController
     #[Route('/series/check/updates', name: 'series_check_updates')]
     public function adminSeriesCheckUpdates(Request $request): Response
     {
+        $units = [
+            'second' => $this->translator->trans('second'),
+            'seconds' => $this->translator->trans('seconds'),
+            'minute' => $this->translator->trans('minute'),
+            'minutes' => $this->translator->trans('minutes'),
+            'hour' => $this->translator->trans('hour'),
+            'hours' => $this->translator->trans('hours'),
+        ];
         $idsForUpdates = $this->seriesRepository->getSeriesIdsForUpdates();
+        $settings = $this->settingsRepository->findOneBy(['name' => 'series updates']);
+
+        if ($settings && $settings->getData()) {
+            $data = $settings->getData();
+            $lastUpdate = $this->dateService->newDateFromTimestamp(($data['end date']/1000) ?? 0, "UTC")->format("Y-m-d H:i:s");
+            $lastUpdateString = $this->dateService->formatDateRelativeLong($lastUpdate, "Europe/Paris", $request->getLocale());
+            $lastDuration = ($data['end date'] - $data['start date']) / 1000;
+            $lastDurationString = $this->dateService->getDurationString($lastDuration, $units);
+        } else {
+            $lastUpdateString = null;
+            $lastDurationString = null;
+        }
 
         return $this->render('admin/index.html.twig', [
             'ids' => $idsForUpdates,
+            'lastUpdateString' => $lastUpdateString,
+            'lastDurationString' => $lastDurationString,
+            'units' => $units,
             'urls' => [
                 'posterUrl' => [
                     'low' => $this->imageConfiguration->getUrl('poster_sizes', 2),

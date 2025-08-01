@@ -21,6 +21,7 @@ export class AdminSeriesUpdates {
         this.globs = JSON.parse(globs.textContent);
         this.ids = this.globs['ids'];
         this.urls = this.globs['urls'];
+        this.units = this.globs['units'];
         this.api_series_update_series = this.globs['api_series_update_series'];
         const svgs = document.querySelector("#svgs");
         this.rightArrow = svgs.querySelector("#right-arrow");
@@ -61,8 +62,14 @@ export class AdminSeriesUpdates {
         const count = gThis.ids.length;
         const limit = 5;
         let arr = gThis.ids.slice(gThis.startIndex, gThis.startIndex + limit);
+        let blockStart = 100 * gThis.startIndex / count;
+        let blockEnd = 100 * (gThis.startIndex + limit) / count;
+        if (blockEnd > 100) blockEnd = 100;
         const data = {
-            ids: arr
+            ids: arr,
+            units: gThis.units,
+            blockStart: blockStart,
+            blockEnd: blockEnd
         };
         fetch(gThis.api_series_update_series,
             {
@@ -84,6 +91,7 @@ export class AdminSeriesUpdates {
                         ],
                         updateDiv);
                     gThis.displayUpdates(item['updates'], updateDiv);
+                    gThis.displayInfos(data['progressInfos']);
                 });
                 if (data['results'].length + gThis.startIndex >= count) {
                     /*const updateDiv1 = gThis.newUpdateDiv("updates before footer");
@@ -230,6 +238,12 @@ export class AdminSeriesUpdates {
 
         div.appendChild(detailsDiv);
         div.scrollIntoView({behavior: 'instant', block: 'end'});
+    }
+
+    displayInfos(infos)
+    {
+        const infosDiv = document.getElementById('progress-infos');
+        infosDiv.innerText = infos['progress'] + '%, ' + infos['endDate'] + ' (' + infos['duration'] + ')';
     }
 
     kebabCase(string) {

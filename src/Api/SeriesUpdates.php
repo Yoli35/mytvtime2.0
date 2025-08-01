@@ -2,9 +2,12 @@
 
 namespace App\Api;
 
+use App\Entity\Settings;
 use App\Repository\SeriesRepository;
+use App\Repository\SettingsRepository;
 use App\Service\DateService;
 use App\Service\TMDBService;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +20,7 @@ class SeriesUpdates extends AbstractController
     public function __construct(
         private readonly DateService        $dateService,
         private readonly SeriesRepository   $seriesRepository,
+        private readonly SettingsRepository $settingsRepository,
         private readonly TMDBService        $tmdbService,
     )
     {
@@ -26,7 +30,16 @@ class SeriesUpdates extends AbstractController
     public function seriesBatchUpdate(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $ids = $data['ids'] ?? [];
+        $ids = $data['ids'];
+        $units = $data['units'];
+        $blockStart = intval($data['blockStart']);
+        $blockEnd = intval($data['blockEnd']);
+
+        $progress = !$blockStart ? 0 : $blockEnd;
+        if (!$progress) {
+            $data = $this->getDates($progress);
+        }
+
         $results = [];
         $endedSeriesStatus = ['Ended', 'Canceled'];
         $slugger = new AsciiSlugger();
@@ -182,9 +195,43 @@ class SeriesUpdates extends AbstractController
             }
         }
 
+        if ($progress) {
+            $data = $this->getDates($progress);
+        }
+
+        $lastUpdate = $this->dateService->newDateFromTimestamp(($data['end date']/1000) ?? 0, "UTC")->format("Y-m-d H:i:s");
+        $lastUpdateString = $this->dateService->formatDateRelativeLong($lastUpdate, "Europe/Paris", $request->getLocale());
+        $lastDuration = ($data['end date'] - $data['start date']) / 1000;
+        $lastDurationString = $this->dateService->getDurationString($lastDuration, $units);
+
         return new JsonResponse([
             'status' => 'success',
             'results' => $results,
+            'progressInfos' => [
+                'progress' => $progress,
+                'endDate' => $lastUpdateString,
+                'duration' => $lastDurationString,
+            ]
         ]);
+    }
+
+    private function getDates(int $progress): array
+    {
+        $settings = $this->settingsRepository->findOneBy(['name' => 'series updates']);
+        if (!$settings) {
+            $settings = new Settings(null, 'series updates', ['start date' => null, 'end date' => null]);
+        }
+
+        $date = new DateTimeImmutable();
+        $milli = (int) $date->format('Uv');
+
+        if ($progress == 0) {
+            $settings->setData(['start date' => $milli, 'end date' => null]);
+        } else {
+            $settings->setData(['start date' => $settings->getData()['start date'], 'end date' => $milli]);
+        }
+        $this->settingsRepository->save($settings, true);
+
+        return $settings->getData();
     }
 }

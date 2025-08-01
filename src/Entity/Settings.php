@@ -14,16 +14,16 @@ class Settings
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'settings')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $user;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    private ?string $name;
 
     #[ORM\Column]
-    private array $data = [];
+    private array $data;
 
-    public function __construct(User $user, string $name, array $data)
+    public function __construct(?User $user, string $name, array $data)
     {
         $this->user = $user;
         $this->name = $name;
