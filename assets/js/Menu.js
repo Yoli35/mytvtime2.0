@@ -168,8 +168,8 @@ export class Menu {
 
         document.addEventListener("click", (e) => {
             const target = e.target;
-            console.log(target);
-            if (target !== multiSearchOptions && !multiSearchOptions.contains(target)) {
+            /*console.log(target);*/
+            if (!multiSearchOptions || (target !== multiSearchOptions && !multiSearchOptions.contains(target))) {
                 searchResults.forEach((searchResult) => {
                     const ul = searchResult.querySelector("ul");
                     if (ul && !searchResult.parentElement.contains(e.target)) {
@@ -191,7 +191,7 @@ export class Menu {
                     }
                 });
             } else {
-                multiSearch.focus();
+                multiSearch?.focus();
             }
         });
         document.addEventListener("auxclick", (e) => {
@@ -1136,6 +1136,9 @@ export class Menu {
 
     adjustHistoryList() {
         const historyList = document.querySelector("#history-list");
+        if (!historyList) {
+            return;
+        }
         const historyListRect = historyList.getBoundingClientRect();
         const bodyRect = document.body.getBoundingClientRect();
         /*console.log(historyListRect);
