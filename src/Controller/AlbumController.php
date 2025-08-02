@@ -43,7 +43,6 @@ final class AlbumController extends AbstractController
             ];
             $album->setDateRange($range);
         }
-        dump($albums);
 
         return $this->render('album/index.html.twig', [
             'albums' => $albums,
