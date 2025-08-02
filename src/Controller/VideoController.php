@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @method User|null getUser() */
@@ -59,6 +60,7 @@ final class VideoController extends AbstractController
         $this->service_YouTube = new Google_Service_YouTube($client);
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/list', name: 'index')]
     public function index(Request $request): Response
     {
@@ -121,6 +123,7 @@ final class VideoController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/show/{id}', name: 'show')]
     public function show(UserVideo $userVideo): Response
     {
