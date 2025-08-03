@@ -601,11 +601,16 @@
 
         .admin__series__updates__wrapper,
         .admin__series__updates__summary {
-            border: 2px dashed var(--orange-50);
+            border-radius: 1rem;
             display: flex;
             flex-direction: column;
             gap: .25rem;
+            padding: .5rem;
             width: 100%;
+
+            &:has(.admin__series__update) {
+                border: 2px solid var(--orange-50);
+            }
 
             .admin__series__update {
                 display: flex;

@@ -1,0 +1,46 @@
+<div class="side-panel modify-album-dialog">
+    <div class="frame">
+        <form action="" id="add-location-form" enctype="multipart/form-data">
+            {% for h in hiddenFields %}
+                <input type="hidden" name="{{ h.name }}" id="{{ h.name }}" value="{{ h.value }}">
+            {% endfor %}
+            {% for row in rows %}
+                <div class="form-row">
+                    {% for itemLevel1 in row %}
+                        {% if itemLevel1.item == 'row' %}
+                            <div class="form-row">
+                                {% for itemLevel2 in itemLevel1.fields %}
+                                    {{ include('_blocks/forms/_location-' ~ itemLevel2.item ~ '.html.twig', { field: itemLevel2 }) }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ include('_blocks/forms/_location-' ~ itemLevel1.item ~ '.html.twig', { field: itemLevel1 }) }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <div class="form-row">
+                <div class="form-column">
+                    <div class="form-field">
+                        {{ 'Local files'|trans }} ({{ 'Thumbnail, additional images'|trans }})
+                    </div>
+                    <div class="form-field">
+                        <label for="image-files" class="">{{ 'Drop your additional images files here'|trans }}
+                            <input type="file" name="image-files" id="image-files" multiple>
+                        </label>
+                        <div class="preview-image-files">
+                            <p>{{ 'No additional images currently selected for upload'|trans }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row submit-row">
+                <button type="button">{{ 'Cancel'|trans }}</button>
+                <button type="submit">{{ 'Modify'|trans }}</button>
+            </div>
+        </form>
+        <div class="scroll-down-to-submit">
+            <button>{{ 'Scroll down to submit'|trans }}</button>
+        </div>
+    </div>
+</div>

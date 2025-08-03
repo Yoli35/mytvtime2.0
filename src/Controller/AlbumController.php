@@ -9,9 +9,13 @@ use App\Repository\AlbumRepository;
 use App\Repository\PhotoRepository;
 use App\Repository\SettingsRepository;
 use App\Service\DateService;
+use App\Service\ImageService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 /** @method User|null getUser() */
 #[Route('/{_locale}/album', name: 'app_album_', requirements: ['_locale' => 'en|fr|ko'])]
@@ -20,6 +24,7 @@ final class AlbumController extends AbstractController
     public function __construct(
         private readonly AlbumRepository    $albumRepository,
         private readonly DateService        $dateService,
+        private readonly ImageService       $imageService,
         private readonly PhotoRepository    $photoRepository,
         private readonly SettingsRepository $settingsRepository,
     )
@@ -54,18 +59,17 @@ final class AlbumController extends AbstractController
     public function show(Album $album): Response
     {
 
-        $addPhotoFormData = [
+        $editAlbumFormData = [
             'hiddenFields' => [
-                ['item' => 'hidden', 'name' => 'album-id', 'value' => $album->getId()],
-                ['item' => 'hidden', 'name' => 'crud-type', 'value' => 'create'],
-                ['item' => 'hidden', 'name' => 'crud-id', 'value' => 0],
+                ['item' => 'hidden', 'name' => 'crud-type', 'value' => 'edit'],
+                ['item' => 'hidden', 'name' => 'crud-id', 'value' => $album->getId()],
             ],
             'rows' => [
                 [
-                    ['item' => 'input', 'name' => 'caption', 'label' => 'Caption', 'type' => 'text', 'required' => true],
+                    ['item' => 'input', 'name' => 'name', 'label' => 'Name', 'type' => 'text', 'value' => $album->getName(), 'required' => true],
                 ],
                 [
-                    ['item' => 'input', 'name' => 'date', 'label' => 'Date', 'type' => 'datetime-local', 'required' => true],
+                    ['item' => 'textarea', 'name' => 'description', 'label' => 'Description', 'value' => $album->getDescription(), 'required' => false],
                 ],
             ],
         ];
@@ -74,11 +78,94 @@ final class AlbumController extends AbstractController
             'albumArray' => $this->toArray($album),
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
             'emptyPhoto' => $this->newPhoto($album),
-            'addPhotoFormData' => $addPhotoFormData,
+            'addPhotoFormData' => $editAlbumFormData,
             'fieldList' => ['album-id', 'crud-type', 'crud-id', 'caption', 'date', 'latitude', 'longitude'],
             'previousAlbum' => null,
             'nextAlbum' => null,
             'dbUserAlbums' => [],
+        ]);
+    }
+
+    #[Route('/modify/{id}', name: 'add_location', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function modify(Request $request, Album $album): Response
+    {
+        $messages = [];
+
+        $data = $request->request->all();
+        dump($data);
+        if (empty($data)) {
+            $messages[] = 'Aucune donnée reçue';
+            return $this->json([
+                'ok' => false,
+                'messages' => $messages,
+            ]);
+        }
+        $name = $data['name'];
+        $description = $data['description'];
+        $album->update($name, $description);
+        $this->albumRepository->save($album, true);
+
+        $files = $request->files->all();
+        if (empty($files)) {
+            $messages[] = 'Album mis à jour, aucune photo ajoutée';
+            return $this->json([
+                'ok' => false,
+                'messages' => $messages,
+            ]);
+        }
+
+        $imageFiles = [];
+        foreach ($files as $key => $file) {
+            if ($file instanceof UploadedFile) {
+                // Est-ce qu'il s'agit d'une image ?
+                $mimeType = $file->getMimeType();
+                if (str_starts_with($mimeType, 'image')) {
+                    $imageFiles[$key] = $file;
+                }
+            }
+        }
+        dump($imageFiles);
+
+        $now = $this->dateService->getNowImmutable('UTC');
+
+
+        /******************************************************************************
+         * Images ajoutées depuis des fichiers locaux (type : UploadedFile)           *
+         ******************************************************************************/
+        $n = 0;
+        foreach ($imageFiles as $file) {
+            $result = $this->imageService->photoToWebp($file);
+            if ($result) {
+                $imagePath = $result['path']; // original image path
+                $isHighRes = $result['1080p'];
+                $isMediumRes = $result['720p'];
+                $isLowRes = $result['576p'];
+                if ($imagePath && $isHighRes && $isMediumRes && $isLowRes) {
+                    $photo = new Photo(
+                        user: $this->getUser(),
+                        album: $album,
+                        caption: '',
+                        image_path: $imagePath,
+                        createdAt: $now,
+                        updatedAt: $now,
+                        date: $now,
+                        latitude: null,
+                        longitude: null
+                    );
+                    $this->photoRepository->save($photo, true);
+                    $n++;
+                } else {
+                    $messages[] = 'Erreur lors de l\'ajout de la photo : ' . $file->getClientOriginalName();
+                }
+            }
+        }
+        if ($n) {
+            $messages[] = $n . ($n > 1 ? ' photos ajoutées' : ' photo ajoutée');
+        }
+
+        return $this->json([
+            'ok' => true,
+            'messages' => $messages,
         ]);
     }
 

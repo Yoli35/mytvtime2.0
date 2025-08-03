@@ -45,6 +45,15 @@ class Album
         $this->photos = new ArrayCollection();
     }
 
+    public function update(string $name, ?string $description): static
+    {
+        $this->name = $name;
+        $this->description = $description;
+        $this->updatedAt = new \DateTimeImmutable();
+
+        return $this;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

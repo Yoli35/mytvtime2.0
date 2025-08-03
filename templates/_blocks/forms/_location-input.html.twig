@@ -1,6 +1,11 @@
 <div class="form-field{% if field.class is defined %} {{ field.class }}{% endif %}">
     <label for="{{ field.name }}">{{ field.label|trans }}
-        <input type="{{ field.type }}" name="{{ field.name }}" id="{{ field.name }}" {{ field.required ? 'required' : '' }}>
+        <input
+                type="{{ field.type }}"
+                name="{{ field.name }}"
+                id="{{ field.name }}"
+                value="{{ field.value|default('') }}"
+                {{ field.required ? 'required' : '' }}>
         <span class="error"></span>
     </label>
 </div>

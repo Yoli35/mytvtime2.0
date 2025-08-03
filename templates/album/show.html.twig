@@ -4,17 +4,20 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('styles/album.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/album.scss') }}">
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.css">
 {% endblock %}
 
 {% block body %}
     {{ include('_blocks/_menu.html.twig') }}
     <div class="container-fluid album-page" data-id="{{ album.id }}">
-        <div class="title">
-            <div class="h1-categories">
+        <div class="header">
+            <div class="h1-tools">
                 <h1>{{ album.name }}</h1>
+                <div class="tools">
+                    <div class="add-photos-button">{{ 'Modify album'|trans }}</div>
+                </div>
             </div>
             <div class="prev-next-albums">
                 <div>
@@ -42,9 +45,6 @@
             </div>
         </div>
         <div class="album-photos">
-            {% if album.photos is empty %}
-                <div class="no-photo">{{ 'No photos in this album'|trans }}</div>
-            {% endif %}
             {% for photo in album.photos %}
                 <div class="album-photo" {#data-title="{{ photo.caption }}"#}>
                     <img
@@ -74,9 +74,10 @@
             </div>
         </div>
     </div>
-    {{ include('_blocks/forms/_add-location-form.html.twig', addPhotoFormData) }}
+    {{ include('_blocks/forms/_modify-album-form.html.twig', addPhotoFormData) }}
     <div id="globs-map" style="display: none">
         {
+            "albumName": "{{ album.name|e('js') }}",
             "photos": {{ albumArray.photos|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "bounds": {{ albumArray.bounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "emptyPhoto": {{ emptyPhoto|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
@@ -103,6 +104,8 @@
         <div class="svg" id="xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
         <div class="svg" id="pen">{{ ux_icon('fa6-solid:pen') }}</div>
         <div class="svg" id="trash">{{ ux_icon('fa6-solid:trash') }}</div>
+        // Pour les messages Flash
+        <div id="svg-xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
     </div>
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}

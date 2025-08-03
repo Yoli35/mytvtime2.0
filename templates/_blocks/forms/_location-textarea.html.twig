@@ -1,6 +1,10 @@
 <div class="form-field">
     <label for="{{ field.name }}">{{ field.label|trans }}
-        <textarea name="{{ field.name }}" id="{{ field.name }}"{% if field.rows is defined %} rows="{{ field.rows }}"{% endif%} {{ field.required ? 'required' : '' }}></textarea>
+        <textarea
+                name="{{ field.name }}"
+                id="{{ field.name }}"
+                {% if field.rows is defined %}rows="{{ field.rows }}"{% endif%}
+                {{ field.required ? 'required' : '' }}>{{ field.value|default('') }}</textarea>
         <span class="error"></span>
     </label>
 </div>

@@ -130,6 +130,159 @@ class ImageService extends AbstractController
         return $image;
     }
 
+    public function photoToWebp(UploadedFile $file, string $path = '/public/albums/'): array|null
+    {
+        $kernelProjectDir = $this->getParameter('kernel.project_dir');
+
+        $photoPath = $kernelProjectDir . $path;
+        $imageTempPath = $kernelProjectDir . '/public/images/temp/';
+
+        $filename = $file->getClientOriginalName();
+        $extension = $file->guessExtension();
+        $basename = pathinfo($filename, PATHINFO_FILENAME);
+        $tempName = $imageTempPath . $basename . '.' . $extension;
+        dump($filename, $extension, $basename, $tempName);
+
+        $originalPath = $photoPath . 'original/';
+        $highResPath = $photoPath . '1080p/';
+        $mediumResPath = $photoPath . '720p/';
+        $lowResPath = $photoPath . '576p/';
+        $this->checkForPaths([
+            $photoPath,
+            $imageTempPath,
+            $originalPath,
+            $highResPath,
+            $mediumResPath,
+            $lowResPath
+        ]);
+
+
+        if ($extension === 'webp') {
+            try {
+                $file->move($originalPath, $filename);
+                $imagePath = $filename; // If the file is already a WebP image, we can use it directly
+            } catch (FileException $e) {
+                $this->logger?->error('Error in photoToWebp: ' . $e->getMessage());
+                $imagePath = null;
+            }
+        } else {
+            try {
+                $file->move($imageTempPath, $filename);
+                $webp = $this->webpImage("", $tempName, $originalPath . $basename . '.webp', 90, -1); // width: -1 → no resize
+                // If the image is successfully converted to WebP, set the image path
+                // If the image is not successfully converted to WebP, set the image path to null
+                if ($webp) {
+                    $imagePath = $basename . '.webp';
+                } else {
+                    $imagePath = null;
+                }
+            } catch (FileException $e) {
+                $this->logger?->error('Error in fileToWebp: ' . $e->getMessage());
+                $imagePath = null;
+            }
+        }
+
+        // If the image is successfully converted to WebP, resize it to 1920x1080 (destination path: /1080p/)
+        if ($imagePath) {
+            $image1080p = $this->resizeWebpImage(
+                $originalPath . $imagePath,
+                $highResPath . $imagePath,
+                1920
+            );
+        } else {
+            $image1080p = null;
+        }
+        // If the image is successfully resized to 1920x1080, resize it to 1280x720 (destination path: /720p/)
+        if ($image1080p) {
+            $image720p = $this->resizeWebpImage(
+                $highResPath . $imagePath,
+                $mediumResPath . $imagePath,
+                1280
+            );
+        } else {
+            $image720p = null;
+        }
+        // If the image is successfully resized to 1280x720, resize it to 1024x576 (destination path: /576p/)
+        if ($image720p) {
+            $image576p = $this->resizeWebpImage(
+                $mediumResPath . $imagePath,
+                $lowResPath . $imagePath,
+                1024
+            );
+        } else {
+            $image576p = null;
+        }
+
+        return [
+            'path' => '/' . $imagePath,
+            '1080p' => $image1080p,
+            '720p' => $image720p,
+            '576p' => $image576p,
+        ];
+    }
+
+    private function checkForPaths(array $paths): void
+    {
+        foreach ($paths as $path) {
+            $this->checkForPath($path);
+        }
+    }
+
+    private function checkForPath(string $path): void
+    {
+        if (!file_exists($path)) {
+            try {
+                mkdir($path, 0755, true);
+            } catch (Exception $e) {
+                $this->logger?->error('Error creating directory: ' . $e->getMessage());
+            }
+        }
+    }
+
+    private function resizeWebpImage(string $sourcePath, string $destPath, int $newWidth): ?string
+    {
+        $info = getimagesize($sourcePath);
+        if ($info === false) {
+            return null;
+        }
+        $sourceWidth = $info[0];
+        $sourceHeight = $info[1];
+        $sourceRation = $sourceWidth / $sourceHeight;
+
+        if ($info['mime'] == 'image/webp') {
+            $image = imagecreatefromwebp($sourcePath);
+        } else {
+            return null; // Only WebP images are supported
+        }
+
+        imagepalettetotruecolor($image);
+        imagealphablending($image, true);
+        imagesavealpha($image, true);
+
+        if ($sourceRation < 1) {
+            $newHeight = $newWidth;
+            $newWidth = (int)($newWidth * $sourceRation);
+        } else if ($sourceRation > 1) {
+            $newHeight = (int)($newWidth / $sourceRation);
+        } else {
+            $newHeight = $newWidth; // Square image
+        }
+
+        // Resample the original image into the new image
+        $newImage = imagecreatetruecolor($newWidth, $newHeight);
+        imagecopyresampled($newImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $sourceWidth, $sourceHeight);
+        $successfullyConverted = imagewebp($newImage, $destPath, 90);
+
+        imagedestroy($newImage);
+        imagedestroy($image);
+
+        if ($successfullyConverted) {
+            return $destPath;
+        } else {
+            return null;
+        }
+    }
+
     public function userFiles2Webp(UploadedFile $file, string $type, string $username): ?string
     {
         $kernelProjectDir = $this->getParameter('kernel.project_dir');
@@ -159,8 +312,6 @@ class ImageService extends AbstractController
 
     public function webpImage(string $title, string $sourcePath, string $destPath, int $quality = 100, int $width = 1920, int $height = 1080, bool $removeOld = true): ?string
     {
-        $kernelProjectDir = $this->getParameter('kernel.project_dir');
-
         $info = getimagesize($sourcePath);
         if ($info === false) {
             return null;
@@ -216,23 +367,11 @@ class ImageService extends AbstractController
                     imagedestroy($image);
                     return null;
                 }
-                // If the filename ($destPath) contains "maps", add "Google Maps" on the image
-//                $this->markAsGoogleMaps($destPath, $kernelProjectDir, $newImage, $width, $height);
-//                $this->addTitle($title, $destPath, $kernelProjectDir, $newImage, $width, $height);
-                // Convert to WebP
-//                $successfullyConverted = imagewebp($newImage, $destPath, $quality);
-//                imagedestroy($newImage);
                 $successfullyConverted = $this->composeImage($newImage, $title, $destPath, $width, $height, $quality);
             } else {
-//                $this->markAsGoogleMaps($destPath, $kernelProjectDir, $image, $width, $height);
-//                $this->addTitle($title, $destPath, $kernelProjectDir, $image, $width, $height);
-//                $successfullyConverted = imagewebp($image, $destPath, $quality);
                 $successfullyConverted = $this->composeImage($image, $title, $destPath, $width, $height, $quality);
             }
         } else {
-//            $this->markAsGoogleMaps($destPath, $kernelProjectDir, $image, $sourceWidth, $sourceHeight);
-//            $this->addTitle($title, $destPath, $kernelProjectDir, $image, $sourceWidth, $sourceHeight);
-//            $successfullyConverted = imagewebp($image, $destPath, $quality);
             $successfullyConverted = $this->composeImage($image, $title, $destPath, $sourceWidth, $sourceHeight, $quality);
         }
         imagedestroy($image);
@@ -250,7 +389,7 @@ class ImageService extends AbstractController
         // If the filename ($destPath) contains "apple", add "Apple Maps" on the image with a dark background
         $this->markAsAppleMaps($destPath, $kernelProjectDir, $gdImage, $width, $height);
         // If the title is not empty, add it on the image with a dark background
-        $this->addTitle($title, $destPath, $kernelProjectDir, $gdImage, $width, $height);
+        $this->addTitle($title, $kernelProjectDir, $gdImage, $height);
         $successfullyConverted = imagewebp($gdImage, $destPath, $quality);
         imagedestroy($gdImage);
         return $successfullyConverted;
@@ -295,7 +434,7 @@ class ImageService extends AbstractController
         }
     }
 
-    private function addTitle(string $title, string $destPath, string $kernelProjectDir, GdImage $newImage, int $width, int $height): void
+    private function addTitle(string $title, string $kernelProjectDir, GdImage $newImage, int $height): void
     {
         if ($title === "") {
             return; // No title to add
@@ -315,7 +454,7 @@ class ImageService extends AbstractController
         imagettftext($newImage, $fontSize, 0, 40, $height - 30, $textColor, $font, $title);
     }
 
-    private function ImageRoundFilledRectangle(GdImage &$im, int $x1, int $y1, int $x2, int $y2, int $radius, int $color): void
+    private function ImageRoundFilledRectangle(GdImage $im, int $x1, int $y1, int $x2, int $y2, int $radius, int $color): void
     {
 // draw rectangle without corners
         imagefilledrectangle($im, $x1 + $radius, $y1, $x2 - $radius, $y2, $color);
