@@ -81,16 +81,20 @@ export class AdminSeriesUpdates {
             /*console.log({data});*/
             if (data.status === 'success') {
                 data['results'].forEach(item => {
+                    const hasUpdates = item['updates'].length > 0;
                     const updateDiv = gThis.newUpdateDiv(item.id);
-                    gThis.newLine([
+                    const  displayedLine = gThis.newLine([
                             {'className': gThis.kebabCase(item['check']), 'label': item['check']},
                             {'className': 'id', 'label': item['id']},
                             {'className': 'name', 'label': item['name']},
                             {'className': 'localized-name', 'label': item['localizedName']},
                             {'className': 'date', 'label': item['lastUpdate']}
                         ],
-                        updateDiv);
-                    gThis.displayUpdates(item['updates'], updateDiv);
+                        updateDiv, hasUpdates);
+                    if (hasUpdates) {
+                        const displayedUpdates = gThis.displayUpdates(item['updates'], updateDiv);
+                        gThis.summariseUpdates(item.id, displayedLine, displayedUpdates);
+                    }
                     gThis.displayInfos(data['progressInfos']);
                 });
                 if (data['results'].length + gThis.startIndex >= count) {
@@ -119,7 +123,16 @@ export class AdminSeriesUpdates {
         return updateDiv;
     }
 
-    newLine(arr, div) {
+    newSummaryDiv(id) {
+        const summaryWrapperDiv = document.querySelector(".admin__series__updates__summary");
+        const summaryDiv = document.createElement('div');
+        summaryDiv.id = "summary-" + id;
+        summaryDiv.classList.add('admin__series__update', 'row');
+        summaryWrapperDiv.appendChild(summaryDiv);
+        return summaryDiv;
+    }
+
+    newLine(arr, div, hasUpdates = false) {
         const lineDiv = document.createElement("div");
         lineDiv.classList.add("admin__series__updates__line");
         arr.forEach(item => {
@@ -130,12 +143,11 @@ export class AdminSeriesUpdates {
         })
         div.appendChild(lineDiv);
         div.scrollIntoView({behavior: 'instant', block: 'end'});
+
+        return hasUpdates ? lineDiv.cloneNode(true) : null;
     }
 
     displayUpdates(updates, div) {
-        if (updates.length === 0) {
-            return;
-        }
         const posterUrls = gThis.urls['posterUrl'];
         const backdropUrls = gThis.urls['backdropUrl'];
         const detailsDiv = document.createElement('div');
@@ -238,6 +250,20 @@ export class AdminSeriesUpdates {
 
         div.appendChild(detailsDiv);
         div.scrollIntoView({behavior: 'instant', block: 'end'});
+
+        return detailsDiv.cloneNode(true);
+    }
+
+    summariseUpdates(id, lineDiv, updateDiv) {
+        const updatesSummary = document.querySelector('.admin__series__updates__summary');
+        const summaryDiv = gThis.newSummaryDiv(id);
+        lineDiv.firstChild.remove();
+        lineDiv.querySelector('.date').remove();
+        summaryDiv.appendChild(lineDiv);
+        updateDiv.firstChild.remove();
+        summaryDiv.appendChild(updateDiv);
+        updatesSummary.appendChild(summaryDiv);
+        summaryDiv.scrollIntoView({behavior: 'instant', block: 'end'});
     }
 
     displayInfos(infos)
