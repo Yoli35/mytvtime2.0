@@ -98,16 +98,13 @@
             "photos": {{ albumArray.photos|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "bounds": {{ albumArray.bounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "emptyPhoto": {{ emptyPhoto|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "fieldList": {{ fieldList|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "photo_original": "/albums/photos/original",
-            "photo_576p": "/albums/photos/576p",
-            "photo_720p": "/albums/photos/720p",
-            "photo_1080p": "/albums/photos/1080p"
+            "fieldList": {{ fieldList|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
     <div id="globs" style="display: none">
         {
             "album": {{ albumArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "srcsetPaths": {{ srcsetPaths|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "texts": {
 
             }

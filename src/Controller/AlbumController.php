@@ -34,10 +34,18 @@ final class AlbumController extends AbstractController
     }
 
     #[Route('/', name: 'index')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $user = $this->getUser();
         $albums = $this->albumRepository->findBy(['user' => $user,], ['createdAt' => 'DESC']);
+
+        $newAlbumName = $request->query->get('new-album');
+        if (strlen($newAlbumName) > 0) {
+            $now = $this->dateService->getNowImmutable('UTC');
+            $album = new Album($user, $newAlbumName, $now);
+            $this->albumRepository->save($album, true);
+            return $this->redirectToRoute('app_album_show', ['id' => $album->getId()]);
+        }
 
         foreach ($albums as $album) {
             $photos = $this->photoRepository->findBy(['album' => $album], ['createdAt' => 'ASC']);
@@ -88,7 +96,7 @@ final class AlbumController extends AbstractController
             'fieldList' => ['album-id', 'crud-type', 'crud-id', 'caption', 'date', 'latitude', 'longitude'],
             'previousAlbum' => null,
             'nextAlbum' => null,
-            'dbUserAlbums' => [],
+            'srcsetPaths' => ['lowRes' => '/albums/576p', 'mediumRes' => '/albums/720p', 'highRes' => '/albums/1080p', 'original' => '/albums/original'],
         ]);
     }
 
@@ -147,7 +155,6 @@ final class AlbumController extends AbstractController
                 }
             }
         }
-        dump($imageFiles);
 
         $now = $this->dateService->getNowImmutable('UTC');
 
@@ -156,6 +163,7 @@ final class AlbumController extends AbstractController
          * Images ajoutées depuis des fichiers locaux (type : UploadedFile)           *
          ******************************************************************************/
         $n = 0;
+        $imagePaths = [];
         foreach ($imageFiles as $file) {
             $result = $this->imageService->photoToWebp($file);
             if ($result) {
@@ -176,6 +184,10 @@ final class AlbumController extends AbstractController
                         longitude: null
                     );
                     $this->photoRepository->save($photo, true);
+                    $album->setUpdatedAt($now);
+                    $this->albumRepository->save($album, true);
+                    $imagePaths[] = $imagePath;
+                    $messages[] = 'Photo ajoutée : ' . $file->getClientOriginalName();
                     $n++;
                 } else {
                     $messages[] = 'Erreur lors de l\'ajout de la photo : ' . $file->getClientOriginalName();
@@ -189,6 +201,7 @@ final class AlbumController extends AbstractController
         return $this->json([
             'ok' => true,
             'messages' => $messages,
+            'image_paths' => $imagePaths,
         ]);
     }
 
@@ -232,10 +245,10 @@ final class AlbumController extends AbstractController
             $array['bounds'] = $bounds;
             return $array;
         }
-        $minLat = min(array_column($photos, 'latitude'));
-        $maxLat = max(array_column($photos, 'latitude'));
-        $minLng = min(array_column($photos, 'longitude'));
-        $maxLng = max(array_column($photos, 'longitude'));
+        $minLat = min(array_column($photosWithLocation, 'latitude'));
+        $maxLat = max(array_column($photosWithLocation, 'latitude'));
+        $minLng = min(array_column($photosWithLocation, 'longitude'));
+        $maxLng = max(array_column($photosWithLocation, 'longitude'));
         $bounds = [[$maxLng + .01, $maxLat + .01], [$minLng - .01, $minLat - .01]];
         $array['bounds'] = $bounds;
 

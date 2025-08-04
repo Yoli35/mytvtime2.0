@@ -36,6 +36,7 @@ export class AlbumShow {
      * @type {Object}
      * @property {Album} album
      * @property {Array.<string>} texts
+     * @property {Array.<string>} srcsetPaths
      */
 
     constructor() {
@@ -43,10 +44,12 @@ export class AlbumShow {
         this.lang = document.querySelector('html').getAttribute('lang');
         this.toolTips = new ToolTips();
         this.flashMessage = new FlashMessage();
+        this.diaporama = new Diaporama();
         /** @var {Globs} */
         const globs = JSON.parse(document.querySelector('div#globs').textContent);
         this.album = globs.album;
         this.texts = globs.texts;
+        this.srcsetPaths = globs.srcsetPaths;
         this.fileTypes = [
             "image/jpeg",
             "image/png",
@@ -61,10 +64,9 @@ export class AlbumShow {
         /******************************************************************************
          * Diaporama for photos                                 *
          ******************************************************************************/
-        const diaporama = new Diaporama();
         const photoWrapper = document.querySelector('.album-photos');
         const photos = photoWrapper.querySelectorAll('img');
-        diaporama.start(photos);
+        this.diaporama.start(photos);
 
         /******************************************************************************
          * mapbox gl                                                                  *
@@ -191,7 +193,28 @@ export class AlbumShow {
                 if (response.ok) {
                     data['messages'].forEach(msg => {
                         gThis.flashMessage.add('success', msg);
-                    })
+                    });
+                    const imagePaths = data['image_paths'];
+                    if (imagePaths.length) {
+                        const noPhotoDiv = document.querySelector('.no-photo');
+                        noPhotoDiv?.remove();
+                        const albumPhotosDiv = document.querySelector('.album-photos');
+                        imagePaths.forEach(imagePath => {
+                            const albumPhotoDiv = document.createElement('div');
+                            albumPhotoDiv.classList.add('album-photo');
+                            const img = document.createElement('img');
+                            img.src = gThis.srcsetPaths['highRes'] + imagePath;
+                            img.alt = imagePath;
+                            img.loading = "lazy";
+                            img.srcset = gThis.srcsetPaths['lowRes'] + imagePath + ' 576w,'
+                                        + gThis.srcsetPaths['mediumRes'] + imagePath + ' 720w,'
+                                        + gThis.srcsetPaths['highRes'] + imagePath + ' 1080w,'
+                                        + gThis.srcsetPaths['original'] + imagePath + ' 1600w';
+                            albumPhotoDiv.appendChild(img);
+                            gThis.diaporama.start(albumPhotoDiv.querySelectorAll('img'));
+                            albumPhotosDiv.appendChild(albumPhotoDiv);
+                        });
+                    }
                 } else {
                     gThis.flashMessage.add('error', data.message);
                 }

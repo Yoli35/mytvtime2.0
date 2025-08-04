@@ -149,15 +149,17 @@ export class Map {
             });
 
             this.photos.forEach((photo, index) => {
-                let marker = new mapboxgl.Marker({color: "#196c00"})
-                    .setLngLat([photo.longitude, photo.latitude])
-                    .setPopup(new mapboxgl.Popup().setHTML('<div class="leaflet-popup-content-title photo">' + this.albumName + '</div><div class="leaflet-popup-content-description poi">' + photo.caption + '</div><div class="leaflet-popup-content-image"><img src="/albums/576p' + photo.image_path + '" alt="' + photo.caption + '"></div>'))
-                    .addTo(this.map);
-                let markerIcon = marker.getElement();
-                markerIcon.setAttribute('data-id', photo.id);
-                markerIcon.setAttribute('data-latitude', photo.latitude);
-                markerIcon.setAttribute('data-longitude', photo.longitude);
-                markerIcon.setAttribute('data-index', index);
+                if (photo.latitude && photo.longitude) {
+                    let marker = new mapboxgl.Marker({color: "#196c00"})
+                        .setLngLat([photo.longitude, photo.latitude])
+                        .setPopup(new mapboxgl.Popup().setHTML('<div class="leaflet-popup-content-title photo">' + this.albumName + '</div><div class="leaflet-popup-content-description poi">' + photo.caption + '</div><div class="leaflet-popup-content-image"><img src="/albums/576p' + photo.image_path + '" alt="' + photo.caption + '"></div>'))
+                        .addTo(this.map);
+                    let markerIcon = marker.getElement();
+                    markerIcon.setAttribute('data-id', photo.id);
+                    markerIcon.setAttribute('data-latitude', photo.latitude);
+                    markerIcon.setAttribute('data-longitude', photo.longitude);
+                    markerIcon.setAttribute('data-index', index);
+                }
             });
         }
 
