@@ -43,6 +43,20 @@ class Country
         $this->lng2 = $lng2;
     }
 
+    public function getBounds(): array
+    {
+        return [
+            [
+                $this->lat2,
+                $this->lng2,
+            ],
+            [
+                $this->lat1,
+                $this->lng1,
+            ],
+        ];
+    }
+
     public function getId(): ?int
     {
         return $this->id;

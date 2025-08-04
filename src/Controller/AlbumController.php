@@ -6,6 +6,7 @@ use App\Entity\Album;
 use App\Entity\Photo;
 use App\Entity\User;
 use App\Repository\AlbumRepository;
+use App\Repository\CountryRepository;
 use App\Repository\PhotoRepository;
 use App\Repository\SettingsRepository;
 use App\Service\DateService;
@@ -23,6 +24,7 @@ final class AlbumController extends AbstractController
 {
     public function __construct(
         private readonly AlbumRepository    $albumRepository,
+        private readonly CountryRepository  $countryRepository,
         private readonly DateService        $dateService,
         private readonly ImageService       $imageService,
         private readonly PhotoRepository    $photoRepository,
@@ -42,6 +44,10 @@ final class AlbumController extends AbstractController
             $dates = array_map(function ($photo) {
                 return $photo->getDate()->format('Y-m-d H:i:s');
             }, $photos);
+            if (count($dates) === 0) {
+                continue; // Skip albums with no photos
+            }
+            // Set the date range for the album
             $range = [
                 'min' => min($dates),
                 'max' => max($dates),
@@ -86,13 +92,12 @@ final class AlbumController extends AbstractController
         ]);
     }
 
-    #[Route('/modify/{id}', name: 'add_location', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    #[Route('/modify/{id}', name: 'modify', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function modify(Request $request, Album $album): Response
     {
         $messages = [];
 
         $data = $request->request->all();
-        dump($data);
         if (empty($data)) {
             $messages[] = 'Aucune donnée reçue';
             return $this->json([
@@ -100,10 +105,28 @@ final class AlbumController extends AbstractController
                 'messages' => $messages,
             ]);
         }
+
         $name = $data['name'];
         $description = $data['description'];
-        $album->update($name, $description);
-        $this->albumRepository->save($album, true);
+
+        if ($name != $album->getName() || $description !== $album->getDescription()) {
+            $album->update($name, $description);
+            $this->albumRepository->save($album, true);
+            $messages[] = 'Album modifié';
+        } else {
+            $messages[] = 'Aucune modification apportée à l\'album';
+        }
+
+        return $this->json([
+            'ok' => true,
+            'messages' => $messages,
+        ]);
+    }
+
+    #[Route('/add/{id}', name: 'add_photos', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function add(Request $request, Album $album): Response
+    {
+        $messages = [];
 
         $files = $request->files->all();
         if (empty($files)) {
@@ -199,6 +222,16 @@ final class AlbumController extends AbstractController
             $array['photos'][] = $arr;
         }
         $photos = $array['photos'];
+        $photosWithLocation = array_filter($photos, function ($photo) {
+            return $photo['latitude'] !== null && $photo['longitude'] !== null;
+        });
+        if (count($photosWithLocation) === 0) {
+            $countryCode = $this->getUser()->getCountry() ?? 'FR';
+            $countryBounds = $this->countryRepository->findOneBy(['code' => $countryCode]);
+            $bounds = $countryBounds ? $countryBounds->getBounds() : [[2.5, 49.5], [1.5, 48.5]];
+            $array['bounds'] = $bounds;
+            return $array;
+        }
         $minLat = min(array_column($photos, 'latitude'));
         $maxLat = max(array_column($photos, 'latitude'));
         $minLng = min(array_column($photos, 'longitude'));

@@ -45,7 +45,6 @@ export class AlbumShow {
         this.flashMessage = new FlashMessage();
         /** @var {Globs} */
         const globs = JSON.parse(document.querySelector('div#globs').textContent);
-        const svgs = document.querySelector('div#svgs');
         this.album = globs.album;
         this.texts = globs.texts;
         this.fileTypes = [
@@ -143,7 +142,18 @@ export class AlbumShow {
                 errorSpan.innerText = '';
             }
 
+            modifyAlbumCancel.setAttribute('disabled', '');
+            modifyAlbumSubmit.setAttribute('disabled', '');
+
+            const summaryDiv = document.createElement('div');
+            summaryDiv.classList.add('album-summary');
+            modifyAlbumForm.appendChild(summaryDiv);
+
             const formData = gThis.getFormData(modifyAlbumForm);
+            const formFiles = gThis.getFormFiles(modifyAlbumForm);
+            gThis.fileCount = formFiles.length;
+
+            summaryDiv.innerText = 'Saving album infos…'
             fetch('/' + gThis.lang + '/album/modify/' + gThis.album.id,
                 {
                     method: 'POST',
@@ -155,13 +165,47 @@ export class AlbumShow {
                 if (response.ok) {
                     data['messages'].forEach(msg => {
                         gThis.flashMessage.add('success', msg);
+                        gThis.fetchFile(formFiles, summaryDiv);
                     })
                 } else {
                     gThis.flashMessage.add('error', data.message);
                 }
-                gThis.closeAlbumPanel();
             });
         });
+    }
+
+    fetchFile(formFiles, summaryDiv) {
+        const count = formFiles.length;
+        if (count) {
+            const formFile = formFiles.shift();
+            const filename = formFile.name;
+            summaryDiv.innerText = 'Saving ' + filename + ' file' + ' - ' + (gThis.fileCount - count) + ' / ' + gThis.fileCount;
+            fetch('/' + gThis.lang + '/album/add/' + gThis.album.id,
+                {
+                    method: 'POST',
+                    body: formFile
+                }
+            ).then(async function (response) {
+                const data = await response.json();
+                console.log({data});
+                if (response.ok) {
+                    data['messages'].forEach(msg => {
+                        gThis.flashMessage.add('success', msg);
+                    })
+                } else {
+                    gThis.flashMessage.add('error', data.message);
+                }
+                gThis.fetchFile(formFiles, summaryDiv);
+            });
+        } else {
+            const modifyAlbumDialog = document.querySelector('.side-panel.modify-album-dialog');
+            const modifyAlbumCancel = modifyAlbumDialog.querySelector('button[type="button"]');
+            const modifyAlbumSubmit = modifyAlbumDialog.querySelector('button[type="submit"]');
+            modifyAlbumCancel.removeAttribute('disabled');
+            modifyAlbumSubmit.removeAttribute('disabled');
+            summaryDiv.remove();
+            gThis.closeAlbumPanel();
+        }
     }
 
     getForm() {
@@ -199,7 +243,7 @@ export class AlbumShow {
                 listItem.appendChild(div);
                 listItem.appendChild(image);
             } else {
-                div.innerHTML = `${file.name}<span class="error">${translations['Not a valid file type. Update your selection']}.</span>`;
+                div.innerHTML = `${file.name} <span class="error">'Not a valid file type. Update your selection'</span>`;
                 listItem.appendChild(div);
             }
             list.appendChild(listItem);
@@ -225,18 +269,31 @@ export class AlbumShow {
         const crudIdInput = form.querySelector('input[name="crud-id"]');
         const nameInput = form.querySelector('input[name="name"]');
         const descriptionTextarea = form.querySelector('textarea[name="description"]');
-        const imageFilesInput = form.querySelector('input[name*="image-files"]');
 
         const formData = new FormData();
         formData.append('crud-type', crudTypeInput.value);
         formData.append('crud-id', crudIdInput.value);
         formData.append('name', nameInput.value);
         formData.append('description', descriptionTextarea.value);
-        Array.from(imageFilesInput.files).forEach(function (file, index) {
-            formData.append('additional-image-' + index, file);
-        });
 
         return formData;
+    }
+
+    getFormFiles(form) {
+        const imageFilesInput = form.querySelector('input[name*="image-files"]');
+
+        if (imageFilesInput.files.length === 0) {
+            return [];
+        }
+
+        const formDataArr = [];
+        Array.from(imageFilesInput.files).forEach(function (file, index) {
+            const formData = new FormData();
+            formData.append('additional-image-' + index, file);
+            formDataArr.push(formData);
+        });
+
+        return formDataArr;
     }
 
     openAlbumPanel(dialog) {
