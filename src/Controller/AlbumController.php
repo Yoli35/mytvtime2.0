@@ -236,7 +236,7 @@ final class AlbumController extends AbstractController
         $maxLat = max(array_column($photos, 'latitude'));
         $minLng = min(array_column($photos, 'longitude'));
         $maxLng = max(array_column($photos, 'longitude'));
-        $bounds = [[$maxLng + .1, $maxLat + .1], [$minLng - .1, $minLat - .1]];
+        $bounds = [[$maxLng + .01, $maxLat + .01], [$minLng - .01, $minLat - .01]];
         $array['bounds'] = $bounds;
 
         return $array;
