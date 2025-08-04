@@ -37,6 +37,9 @@ export class Diaporama {
         const srcArray = Array.from(images, image => {
             return image.getAttribute("src")
         });
+        const srcsetArray = Array.from(images, image => {
+            return image.getAttribute("srcset")
+        });
         const svgs = document.querySelector("#svgs");
         const xmark = svgs.querySelector("#xmark").querySelector("svg").cloneNode(true);
         const arrowLeft = svgs.querySelector("#arrow-left").querySelector("svg").cloneNode(true);
@@ -45,6 +48,7 @@ export class Diaporama {
         gThis.diaporamaIndex = 0;
         gThis.diaporamaCount = count;
         gThis.diaporamaSrc = srcArray;
+        gThis.diaporamaSrcset = srcsetArray;
 
         const dialog = document.createElement("dialog");
         dialog.classList.add("diaporama");
@@ -130,6 +134,11 @@ export class Diaporama {
         gThis.thumbnailActivate(gThis.diaporamaIndex);
         const img = document.querySelector(".back-diapo").querySelector(".image").querySelector("img");
         img.setAttribute("src", gThis.diaporamaSrc[gThis.diaporamaIndex]);
+        if (gThis.diaporamaSrcset[gThis.diaporamaIndex].length) {
+            img.setAttribute("srcset", gThis.diaporamaSrcset[gThis.diaporamaIndex]);
+        } else {
+            img.removeAttribute("srcset");
+        }
     }
 
     /*initShortcutsHelp(back, count) {
@@ -197,6 +206,11 @@ export class Diaporama {
         gThis.thumbnailActivate(gThis.diaporamaIndex);
         const img = document.querySelector(".back-diapo").querySelector(".image").querySelector("img");
         img.setAttribute("src", gThis.diaporamaSrc[gThis.diaporamaIndex]);
+        if (gThis.diaporamaSrcset[gThis.diaporamaIndex].length) {
+            img.setAttribute("srcset", gThis.diaporamaSrcset[gThis.diaporamaIndex]);
+        } else {
+            img.removeAttribute("srcset");
+        }
     }
 
     gotoImage(e) {
@@ -205,6 +219,11 @@ export class Diaporama {
         gThis.thumbnailActivate(gThis.diaporamaIndex);
         const img = document.querySelector(".back-diapo").querySelector(".image").querySelector("img");
         img.setAttribute("src", gThis.diaporamaSrc[gThis.diaporamaIndex]);
+        if (gThis.diaporamaSrcset[gThis.diaporamaIndex].length) {
+            img.setAttribute("srcset", gThis.diaporamaSrcset[gThis.diaporamaIndex]);
+        } else {
+            img.removeAttribute("srcset");
+        }
     }
 
     thumbnailDeactivate(index) {

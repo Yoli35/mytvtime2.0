@@ -53,7 +53,7 @@
                             alt="{{ photo.caption }}"
                             data-title="{{ photo.caption }} {{ photo.date|format_datetime('relative_short', 'short', locale: 'fr') }}"
                             loading="lazy"
-                            srcset="/albums/576p{{ photo.imagePath }} 576w, /albums/720p{{ photo.imagePath }} 720w, /albums/1080p{{ photo.imagePath }} 1080w"
+                            srcset="/albums/576p{{ photo.imagePath }} 576w, /albums/720p{{ photo.imagePath }} 720w, /albums/1080p{{ photo.imagePath }} 1080w, /albums/original{{ photo.imagePath }} 1920w"
                     >
                     {#<div class="album-photo-infos">
                         <div class="name">{{ photo.caption }}</div>

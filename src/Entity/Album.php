@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\AlbumRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -40,8 +41,12 @@ class Album
 
     private array $dateRange;
 
-    public function __construct()
+    public function __construct(User $user, string $name, DateTimeImmutable $createdAt)
     {
+        $this->user = $user;
+        $this->name = $name;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $createdAt;
         $this->photos = new ArrayCollection();
     }
 
