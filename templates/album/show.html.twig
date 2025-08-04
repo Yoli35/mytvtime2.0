@@ -70,9 +70,25 @@
         </div>
         <div class="series-map">
             <div id="map" class="map-controller"></div>
+            <div class="series-map-list-toggler">
+                <span>{{ ux_icon('mdi:earth') }}</span>
+                <span class="hidden">{{ ux_icon('mdi:arrow-right') }}</span>
+            </div>
             <div class="series-map-list">
                 {{ include('_blocks/map/_thumbnails.html.twig', {styles: mapSettings.data.styles}) }}
             </div>
+            <script>
+                const toggler = document.querySelector('.series-map-list-toggler');
+                const mapList = document.querySelector('.series-map-list');
+                const spans = toggler.querySelectorAll('span');
+                toggler.addEventListener('click', () => {
+                    mapList.classList.toggle('active');
+                    toggler.classList.toggle('active');
+                    spans.forEach(span => {
+                        span.classList.toggle('hidden');
+                    });
+                });
+            </script>
         </div>
     </div>
     {{ include('_blocks/forms/_modify-album-form.html.twig', addPhotoFormData) }}

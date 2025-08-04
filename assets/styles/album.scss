@@ -479,8 +479,62 @@
     }
 
     .series-map {
+        position: relative;
+
         .map-controller {
             height: 30dvh;
+        }
+
+        .series-map-list-toggler {
+            align-items: center;
+            background-color: var(--orange-50);
+            border-radius: 50%;
+            bottom: 2rem;
+            cursor: pointer;
+            display: flex;
+            height: 3rem;
+            justify-content: center;
+            right: 1rem;
+            position: absolute;
+            transition: bottom 0.3s ease-in-out;
+            width: 3rem;
+            z-index: 10;
+
+            &.active {
+                bottom: 7rem;
+            }
+
+            svg {
+                height: 2rem;
+                width: 2rem;
+            }
+        }
+
+        .series-map-list {
+            position: absolute;
+            bottom: 0;
+            right: -100%;
+            transition: left 0.3s ease-in-out;
+            z-index: 3;
+
+            &.active {
+                right: 1rem;
+            }
+
+            .thumbnails {
+                margin: 0;
+                padding-block: 1rem;
+
+                .thumbnail {
+                    .name {
+                        display: none;
+                    }
+
+                    img {
+                        width: 5rem;
+                    }
+                }
+            }
         }
     }
 
