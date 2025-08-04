@@ -348,6 +348,19 @@
                 display: flex;
                 gap: 1rem;
 
+                .photo-albums-button {
+                    background-color: var(--green-50);
+                    border-radius: .25rem;
+                    align-items: center;
+                    cursor: pointer;
+                    display: flex;
+                    padding-inline: 1rem;
+
+                    &:hover {
+                        background-color: var(--green-60);
+                    }
+                }
+
                 .add-photos-button {
                     background-color: var(--orange-50);
                     border: none;
@@ -462,6 +475,12 @@
                     }
                 }
             }
+        }
+    }
+
+    .series-map {
+        .map-controller {
+            height: 30dvh;
         }
     }
 
