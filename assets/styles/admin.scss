@@ -738,13 +738,13 @@
 
                                 &.poster {
                                     img {
-                                        aspect-ratio: 78/117;
+                                        aspect-ratio: 78 / 117;
                                     }
                                 }
 
                                 &.backdrop {
                                     img {
-                                        aspect-ratio: 16/9;
+                                        aspect-ratio: 16 / 9;
                                     }
                                 }
                             }
@@ -758,9 +758,39 @@
             height: calc(100vh - 40rem);
             overflow-y: auto;
         }
+
         .admin__series__updates__summary {
             height: 20rem;
             overflow-y: auto;
+
+            .admin__series__update.row {
+                .admin__series__updates__line {
+                    .name, .localized-name {
+                        width: 15rem;
+                    }
+                }
+
+                .admin__series__updates__details {
+                    padding: .25rem;
+
+                    .admin__series__updates__detail {
+                        margin-block-end: .5rem;
+                        overflow-x: auto;
+                        width: 100%;
+
+                        .admin__update__field {
+                            flex-shrink: 0;
+                            overflow-x: auto;
+                        }
+
+                        .admin__update__before, .admin__update__after {
+                            flex-shrink: 0;
+                            overflow-x: auto;
+                            text-wrap: nowrap;
+                        }
+                    }
+                }
+            }
         }
     }
 
