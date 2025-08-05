@@ -25,12 +25,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class AlbumController extends AbstractController
 {
     public function __construct(
-        private readonly AlbumRepository    $albumRepository,
-        private readonly CountryRepository  $countryRepository,
-        private readonly DateService        $dateService,
-        private readonly ImageService       $imageService,
-        private readonly PhotoRepository    $photoRepository,
-        private readonly SettingsRepository $settingsRepository,
+        private readonly AlbumRepository     $albumRepository,
+        private readonly CountryRepository   $countryRepository,
+        private readonly DateService         $dateService,
+        private readonly ImageService        $imageService,
+        private readonly PhotoRepository     $photoRepository,
+        private readonly SettingsRepository  $settingsRepository,
         private readonly TranslatorInterface $translator
     )
     {
@@ -63,7 +63,7 @@ final class AlbumController extends AbstractController
                 'min' => min($dates),
                 'max' => max($dates),
             ];
-            $album->dateRange = $range;
+            $album->setDateRange($range);
         }
         $this->dateRangeString($albums);
 
@@ -82,7 +82,7 @@ final class AlbumController extends AbstractController
         $previousAlbum = $previous ? $this->albumRepository->findOneBy(['id' => $previous['id']]) : null;
 
         $user = $this->getUser();
-        $settings = $this->settingsRepository->findOneBy(['user'=>$user, 'name' => 'album']);
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'album']);
         if (!$settings) {
             $settings = new Settings($user, 'album', ['layout' => 'grid', 'photosPerPage' => 20]);
             $this->settingsRepository->save($settings, true);
@@ -176,6 +176,58 @@ final class AlbumController extends AbstractController
         return $this->json([
             'ok' => true,
             'messages' => $messages,
+        ]);
+    }
+
+    #[Route('/photo/edit', name: 'modify', methods: ['POST'])]
+    public function edit(Request $request): Response
+    {
+        $messages = [];
+
+        $data = $request->request->all();
+        if (empty($data)) {
+            $messages[] = 'Aucune donnée reçue';
+            return $this->json([
+                'ok' => false,
+                'messages' => $messages,
+            ]);
+        }
+
+        $photo = $this->photoRepository->findOneBy(['id' => $data['photo-id']]);
+        if (!$photo) {
+            $messages[] = 'Photo non trouvée';
+            return $this->json([
+                'ok' => false,
+                'messages' => $messages,
+            ]);
+        }
+        $caption = $data['caption'] ?? '';
+        $date = $data['date'] ?? null;
+        $latitude = $data['latitude'] ?? null;
+        $longitude = $data['longitude'] ?? null;
+        if ($date) {
+            $date = $this->dateService->newDateImmutable($date, 'UTC');
+        } else {
+            $date = $photo->getDate();
+        }
+        $photo->setCaption($caption);
+        $photo->setDate($date);
+        $photo->setLatitude($latitude);
+        $photo->setLongitude($longitude);
+        $photo->setUpdatedAt($this->dateService->getNowImmutable('UTC'));
+        $this->photoRepository->save($photo, true);
+
+        $dateString = ucfirst($this->dateService->formatDateRelativeLong($data['date'], 'UTC', $request->getLocale()));
+        $data['date_string'] = $dateString;
+        $data['image_path'] = $photo->getImagePath();
+        $data['id'] = $photo->getId();
+
+        $messages[] = 'Photo modifiée : ' . $photo->getImagePath();
+
+        return $this->json([
+            'ok' => true,
+            'messages' => $messages,
+            'photo' => $data
         ]);
     }
 
@@ -305,41 +357,41 @@ final class AlbumController extends AbstractController
 
     private function dateRangeString($albums): void
     {
+        /** @var Album $album */
         foreach ($albums as $album) {
-            $dateRange = $album->dateRange ?? null;
+            $dateRange = $album->getDateRange() ?? null;
             if (empty($dateRange)) {
                 $string = $this->translator->trans('No date range');
-                $album->dateRangeString = $string;
+                $album->setDateRangeString($string);
                 continue;
             }
-            if ($dateRange) {
-                $minDate = $this->dateService->newDateImmutable($dateRange['min'], 'UTC'); //new \DateTimeImmutable($dateRange['min']);
-                $maxDate = $this->dateService->newDateImmutable($dateRange['max'], 'UTC'); //new \DateTimeImmutable($dateRange['max']);
-                $maxYear = $maxDate->format('Y');
-                $minYear = $minDate->format('Y');
-                $minMouth = $minDate->format('m');
-                $maxMonth = $maxDate->format('m');
-                $minDay = $minDate->format('d');
-                $maxDay = $maxDate->format('d');
-                $F1 = strtolower($this->translator->trans($minDate->format('F')));
-                $F2 = strtolower($this->translator->trans($maxDate->format('F')));
-                if ($minYear === $maxYear) {
-                    if ($minMouth === $maxMonth) {
-                        if ($minDay === $maxDay) {
-                            $string = $minDate->format('j \F1 Y');
-                        } else {
-                            $string = $minDate->format('j') . ' - ' . $maxDate->format('j \F1 Y');
-                        }
+
+            $minDate = $this->dateService->newDateImmutable($dateRange['min'], 'UTC'); //new \DateTimeImmutable($dateRange['min']);
+            $maxDate = $this->dateService->newDateImmutable($dateRange['max'], 'UTC'); //new \DateTimeImmutable($dateRange['max']);
+            $maxYear = $maxDate->format('Y');
+            $minYear = $minDate->format('Y');
+            $minMouth = $minDate->format('m');
+            $maxMonth = $maxDate->format('m');
+            $minDay = $minDate->format('d');
+            $maxDay = $maxDate->format('d');
+            $F1 = strtolower($this->translator->trans($minDate->format('F')));
+            $F2 = strtolower($this->translator->trans($maxDate->format('F')));
+            if ($minYear === $maxYear) {
+                if ($minMouth === $maxMonth) {
+                    if ($minDay === $maxDay) {
+                        $string = $minDate->format('j \F1 Y');
                     } else {
-                        $string = $minDate->format('j \F1') . ' - ' . $maxDate->format('j \F2 Y');
+                        $string = $minDate->format('j') . ' - ' . $maxDate->format('j \F1 Y');
                     }
                 } else {
-                    $string = $minDate->format('j \F1 Y') . ' - ' . $maxDate->format('j \F2 Y');
+                    $string = $minDate->format('j \F1') . ' - ' . $maxDate->format('j \F2 Y');
                 }
-                $string = str_replace('F1', $F1, $string);
-                $string = str_replace('F2', $F2, $string);
-                $album->dateRangeString = $string;
+            } else {
+                $string = $minDate->format('j \F1 Y') . ' - ' . $maxDate->format('j \F2 Y');
             }
+            $string = str_replace('F1', $F1, $string);
+            $string = str_replace('F2', $F2, $string);
+            $album->setDateRangeString($string);
         }
     }
 

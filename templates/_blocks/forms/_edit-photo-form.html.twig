@@ -1,35 +1,51 @@
-<div class="form-row">
-    <div class="form-field">
-        <label for="caption">{{ 'Caption'|trans }}
-            <input type="text" name="caption" id="caption" required>
-            <span class="error"></span>
-        </label>
-    </div>
-    <div class="form-field">
-        <label for="date">{{ 'Date'|trans }}
-            <input type="datetime-local" name="date" id="date" required>
-            <span class="error"></span>
-        </label>
+<div class="side-panel edit-photo-dialog">
+    <div class="frame">
+        <div class="photo-thumbnail">
+            <img src="" alt="{{ 'Photo thumbnail'|trans }}" id="photo-thumbnail">
+        </div>
+        <form action="" id="add-location-form" enctype="multipart/form-data">
+            <input type="hidden" name="album-id" id="album-id" value="">
+            <input type="hidden" name="photo-id" id="photo-id" value="">
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="caption">{{ 'Caption'|trans }}
+                        <input type="text" name="caption" id="caption" required>
+                        <span class="error"></span>
+                    </label>
+                </div>
+                <div class="form-field">
+                    <label for="date">{{ 'Date'|trans }}
+                        <input type="datetime-local" name="date" id="date" required>
+                        <span class="error"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="paste-coords-here">{{ 'Paste Google maps url here to obtain latitude and longitude'|trans }}
+                        <input type="text" name="paste-coords-here" id="paste-coords-here">
+                    </label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="latitude">{{ 'Latitude'|trans }}
+                        <input type="number" name="latitude" id="latitude" step="0.0000001">
+                        <span class="error"></span>
+                    </label>
+                </div>
+                <div class="form-field">
+                    <label for="longitude">{{ 'Longitude'|trans }}
+                        <input type="number" name="longitude" id="longitude" step="0.0000001">
+                        <span class="error"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-row submit-row">
+                <button type="button">{{ 'Cancel'|trans }}</button>
+                <button type="submit">{{ 'Modify'|trans }}</button>
+            </div>
+        </form>
     </div>
 </div>
-<div class="form-row">
-    <div class="form-field">
-        <label for="google-map-url">{{ 'Paste Google maps url here to obtain latitude and longitude'|trans }}
-            <input type="text" name="google-map-url" id="google-map-url">
-        </label>
-    </div>
-</div>
-<div class="form-row">
-    <div class="form-field">
-        <label for="latitude">{{ 'Latitude'|trans }}
-            <input type="number" name="latitude" id="latitude" step="0.0000001" required>
-            <span class="error"></span>
-        </label>
-    </div>
-    <div class="form-field">
-        <label for="longitude">{{ 'Longitude'|trans }}
-            <input type="number" name="longitude" id="longitude" step="0.0000001" required>
-            <span class="error"></span>
-        </label>
-    </div>
-</div>
+

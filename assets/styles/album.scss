@@ -501,7 +501,7 @@
             &:hover {
                 border-color: var(--orange-100);
 
-                .edit {
+                .edit-photo-button {
                     opacity: 1;
                 }
             }
@@ -547,7 +547,7 @@
                 }
             }
 
-            .edit {
+            .edit-photo-button {
                 align-items: center;
                 background-color: var(--orange-50);
                 border-radius: 50%;
@@ -631,7 +631,8 @@
         }
     }
 
-    .modify-album-dialog {
+    .modify-album-dialog,
+    .edit-photo-dialog {
         .form-row {
             flex-grow: 1;
         }
@@ -657,6 +658,22 @@
             text-align: center;
             text-wrap: balance;
             width: 100%;
+        }
+    }
+
+    .edit-photo-dialog {
+        .frame {
+            .photo-thumbnail {
+                height: 20rem;
+                width: 20rem;
+
+                img {
+                    aspect-ratio: 1 / 1;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    width: 100%;
+                }
+            }
         }
     }
 }

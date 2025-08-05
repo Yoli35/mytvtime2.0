@@ -102,7 +102,7 @@
         </div>
         <div class="album-photos {{ settings.layout }}">
             {% for photo in album.photos %}
-                <div class="album-photo" {# data-title="{{ photo.caption }}" #}>
+                <div class="album-photo" data-id="{{ photo.id }}">
                     <img
                             src="/albums/1080p{{ photo.imagePath }}"
                             alt="{{ photo.caption }}"
@@ -113,12 +113,12 @@
                     <div class="album-photo-infos">
                         <div class="name">{{ photo.caption }}</div>
                         <div class="dates">
-                            <div class="date" data-title="{{ 'Date'|trans }}">{{ ux_icon('mdi:date-range') }} {{ photo.date|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
-                            <div class="created-at" data-title="{{ 'Created at'|trans }}">{{ ux_icon('mdi:update') }} {{ photo.createdAt|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
-                            <div class="updated-at" data-title="{{ 'Updated at'|trans }}">{{ ux_icon('mdi:create-new-folder') }} {{ photo.updatedAt|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
+                            <div class="date" data-title="{{ 'Date'|trans }}">{{ ux_icon('mdi:date-range') }} <span>{{ photo.date|format_datetime('relative_short', 'short', locale: 'fr')|capitalize }}</span></div>
+                            <div class="created-at" data-title="{{ 'Created at'|trans }}">{{ ux_icon('mdi:update') }} {{ photo.createdAt|format_datetime('relative_short', 'short', locale: 'fr')|capitalize }}</div>
+                            <div class="updated-at" data-title="{{ 'Updated at'|trans }}">{{ ux_icon('mdi:create-new-folder') }} {{ photo.updatedAt|format_datetime('relative_short', 'short', locale: 'fr')|capitalize }}</div>
                         </div>
                     </div>
-                    <div class="edit" data-id="{{ photo.id }}">{{ ux_icon('mdi:image-edit') }}</div>
+                    <div class="edit-photo-button" data-id="{{ photo.id }}">{{ ux_icon('mdi:image-edit') }}</div>
                 </div>
             {% else %}
                 <div class="no-photo">{{ 'No photos in this album'|trans }}</div>
@@ -146,9 +146,9 @@
                 });
             </script>
         </div>
+        {{ include('_blocks/forms/_modify-album-form.html.twig', addPhotoFormData) }}
+        {{ include('_blocks/forms/_edit-photo-form.html.twig', addPhotoFormData) }}
     </div>
-    {{ include('_blocks/forms/_modify-album-form.html.twig', addPhotoFormData) }}
-    {{ include('_blocks/forms/_edit-photo-form.html.twig', addPhotoFormData) }}
     <div id="globs-map" style="display: none">
         {
         "albumName": "{{ album.name|e('js') }}",

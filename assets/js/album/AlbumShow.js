@@ -79,13 +79,19 @@ export class AlbumShow {
         /******************************************************************************
          * Album form                                                                 *
          ******************************************************************************/
+        this.initAlbumForm();
+
+        /******************************************************************************
+         * Photo form                                                                 *
+         ******************************************************************************/
+        this.initPhotoForm();
+    }
+
+    initAlbumForm() {
         const addPhotosButton = document.querySelector('.add-photos-button');
         const modifyAlbumDialog = document.querySelector('.side-panel.modify-album-dialog');
         const modifyAlbumForm = modifyAlbumDialog.querySelector('form');
         const nameInput = document.querySelector('input[name="name"]');
-        /*const inputGoogleMapsUrl = modifyAlbumForm.querySelector('input[name="google-map-url"]');
-        const inputLatitude = modifyAlbumForm.querySelector('input[name="latitude"]');
-        const inputLongitude = modifyAlbumForm.querySelector('input[name="longitude"]');*/
         const modifyAlbumCancel = modifyAlbumDialog.querySelector('button[type="button"]');
         const modifyAlbumSubmit = modifyAlbumDialog.querySelector('button[type="submit"]');
         const submitRow = modifyAlbumForm.querySelector('.form-row.submit-row');
@@ -94,7 +100,7 @@ export class AlbumShow {
 
         const observer = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
-                console.log(entry)
+                /*console.log(entry)*/
                 if (entry.isIntersecting) {
                     scrollDownToSubmitDiv.style.display = 'none';
                 } else {
@@ -104,27 +110,12 @@ export class AlbumShow {
         });
         observer.observe(submitRow);
         scrollDownToSubmitButton.addEventListener('click', function () {
-            // addLocationDialog > frame > form > submit-row
-            // frame overflow-y: auto;
-            // faire apparaitre la div "submit-row" dans le cadre
             modifyAlbumDialog.querySelector('.frame').scrollTo(0, submitRow.offsetTop);
         });
 
         addPhotosButton.addEventListener('click', function () {
             gThis.openAlbumPanel(modifyAlbumDialog);
         });
-        /*inputGoogleMapsUrl.addEventListener('paste', function (e) {
-            const url = e.clipboardData.getData('text');
-            const isGoogleMapsUrl = url.match(/https:\/\/www.google.com\/maps\//);
-            let urlParts;
-            if (isGoogleMapsUrl) {
-                urlParts = url.split('@')[1].split(',');
-            } else { // 48.8566,2.3522
-                urlParts = url.split(',');
-            }
-            inputLatitude.value = parseFloat(urlParts[0].trim());
-            inputLongitude.value = parseFloat(urlParts[1].trim());
-        });*/
 
         // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file
         const imageFiles = modifyAlbumForm.querySelector('input[name="image-files"]');
@@ -151,8 +142,8 @@ export class AlbumShow {
             summaryDiv.classList.add('album-summary');
             modifyAlbumForm.appendChild(summaryDiv);
 
-            const formData = gThis.getFormData(modifyAlbumForm);
-            const formFiles = gThis.getFormFiles(modifyAlbumForm);
+            const formData = gThis.getAlbumFormData(modifyAlbumForm);
+            const formFiles = gThis.getAlbumFormFiles(modifyAlbumForm);
             gThis.fileCount = formFiles.length;
 
             summaryDiv.innerText = 'Saving album infos…'
@@ -163,12 +154,104 @@ export class AlbumShow {
                 }
             ).then(async function (response) {
                 const data = await response.json();
-                console.log({data});
+                /*console.log({data});*/
                 if (response.ok) {
                     data['messages'].forEach(msg => {
                         gThis.flashMessage.add('success', msg);
                         gThis.fetchFile(formFiles, summaryDiv);
                     })
+                } else {
+                    gThis.flashMessage.add('error', data.message);
+                }
+            });
+        });
+    }
+
+    initPhotoForm() {
+        const editPhotoButtons = document.querySelectorAll('.edit-photo-button');
+        const editPhotoDialog = document.querySelector('.side-panel.edit-photo-dialog');
+        const editPhotoForm = editPhotoDialog.querySelector('form');
+        const photoThumbnail = editPhotoDialog.querySelector('img');
+        const albumIdInput = document.querySelector('input[name="album-id"]');
+        const photoIdInput = document.querySelector('input[name="photo-id"]');
+        const captionInput = document.querySelector('input[name="caption"]');
+        const dateInput = document.querySelector('input[name="date"]');
+        const coordsInput = editPhotoForm.querySelector('input[name="paste-coords-here"]');
+        const latitudeInput = editPhotoForm.querySelector('input[name="latitude"]');
+        const longitudeInput = editPhotoForm.querySelector('input[name="longitude"]');
+        const editPhotoCancel = editPhotoForm.querySelector('button[type="button"]');
+        const editPhotoSubmit = editPhotoForm.querySelector('button[type="submit"]');
+
+        editPhotoButtons.forEach((btn) => {
+            const id = parseInt(btn.getAttribute('data-id'));
+            const photo = gThis.album.photos.find(photo => photo.id === id);
+            btn.addEventListener('click', function () {
+                photoThumbnail.src = "/albums/576p" + photo['image_path'];
+                albumIdInput.value = photo['album_id'];
+                photoIdInput.value = id;
+                captionInput.value = photo['caption'];
+                dateInput.value = photo['date_string'];
+                coordsInput.value = '';
+                latitudeInput.value = photo['latitude'];
+                longitudeInput.value = photo['longitude'];
+                coordsInput.addEventListener('paste', function (e) {
+                    const url = e.clipboardData.getData('text');
+                    const isGoogleMapsUrl = url.match(/https:\/\/www.google.com\/maps\//);
+                    let urlParts;
+                    if (isGoogleMapsUrl) {
+                        urlParts = url.split('@')[1].split(',');
+                    } else { // 48.8566,2.3522
+                        urlParts = url.split(',');
+                    }
+                    latitudeInput.value = parseFloat(urlParts[0].trim());
+                    longitudeInput.value = parseFloat(urlParts[1].trim());
+                });
+                gThis.openPhotoPanel(editPhotoDialog);
+            });
+        });
+
+        editPhotoCancel.addEventListener('click', function () {
+            gThis.closePhotoPanel();
+        });
+        editPhotoSubmit.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const requiredFields = editPhotoForm.querySelectorAll('input[required]');
+            requiredFields.forEach((field) => {
+                const errorSpan = field.parentElement.querySelector('span');
+                if (field.value === '') {
+                    errorSpan.innerText = 'This field is required';
+                    return;
+                } else {
+                    errorSpan.innerText = '';
+                }
+            });
+            editPhotoCancel.setAttribute('disabled', '');
+            editPhotoSubmit.setAttribute('disabled', '');
+
+            const formData = gThis.getPhotoFormData(editPhotoForm);
+
+            fetch('/' + gThis.lang + '/album/photo/edit',
+                {
+                    method: 'POST',
+                    body: formData
+                }
+            ).then(async function (response) {
+                const data = await response.json();
+                if (response.ok) {
+                    /*console.log({data});*/
+                    const photo = data['photo'];
+                    const id = parseInt(photo['photo-id']);
+                    editPhotoCancel.removeAttribute('disabled');
+                    editPhotoSubmit.removeAttribute('disabled');
+                    const albumPhotoDiv = document.querySelector(".album-photo[data-id='" + id + "']");
+                    const nameDiv = albumPhotoDiv.querySelector('.name');
+                    nameDiv.innerText = photo.caption;
+                    const dateDiv = albumPhotoDiv.querySelector('.date');
+                    const dateSpan = dateDiv.parentElement.querySelector('span');
+                    dateSpan.innerText = photo['date_string'];
+                    gThis.map.addMarker(photo);
+                    gThis.closePhotoPanel();
                 } else {
                     gThis.flashMessage.add('error', data.message);
                 }
@@ -189,7 +272,7 @@ export class AlbumShow {
                 }
             ).then(async function (response) {
                 const data = await response.json();
-                console.log({data});
+              /*  console.log({data});*/
                 if (response.ok) {
                     data['messages'].forEach(msg => {
                         gThis.flashMessage.add('success', msg);
@@ -207,9 +290,9 @@ export class AlbumShow {
                             img.alt = imagePath;
                             img.loading = "lazy";
                             img.srcset = gThis.srcsetPaths['lowRes'] + imagePath + ' 576w,'
-                                        + gThis.srcsetPaths['mediumRes'] + imagePath + ' 720w,'
-                                        + gThis.srcsetPaths['highRes'] + imagePath + ' 1080w,'
-                                        + gThis.srcsetPaths['original'] + imagePath + ' 1600w';
+                                + gThis.srcsetPaths['mediumRes'] + imagePath + ' 720w,'
+                                + gThis.srcsetPaths['highRes'] + imagePath + ' 1080w,'
+                                + gThis.srcsetPaths['original'] + imagePath + ' 1600w';
                             albumPhotoDiv.appendChild(img);
                             gThis.diaporama.start(albumPhotoDiv.querySelectorAll('img'));
                             albumPhotosDiv.appendChild(albumPhotoDiv);
@@ -287,7 +370,26 @@ export class AlbumShow {
         }
     }
 
-    getFormData(form) {
+    getPhotoFormData(form) {
+        const albumIdInput = form.querySelector('input[name="album-id"]');
+        const photoIdInput = form.querySelector('input[name="photo-id"]');
+        const captionInput = form.querySelector('input[name="caption"]');
+        const dateInput = form.querySelector('input[name="date"]');
+        const latitudeInput = form.querySelector('input[name="latitude"]');
+        const longitudeInput = form.querySelector('input[name="longitude"]');
+
+        const formData = new FormData();
+        formData.append('album-id', albumIdInput.value);
+        formData.append('photo-id', photoIdInput.value);
+        formData.append('caption', captionInput.value);
+        formData.append('date', dateInput.value);
+        formData.append('latitude', latitudeInput.value);
+        formData.append('longitude', longitudeInput.value);
+
+        return formData;
+    }
+
+    getAlbumFormData(form) {
         const crudTypeInput = form.querySelector('input[name="crud-type"]');
         const crudIdInput = form.querySelector('input[name="crud-id"]');
         const nameInput = form.querySelector('input[name="name"]');
@@ -302,7 +404,7 @@ export class AlbumShow {
         return formData;
     }
 
-    getFormFiles(form) {
+    getAlbumFormFiles(form) {
         const imageFilesInput = form.querySelector('input[name*="image-files"]');
 
         if (imageFilesInput.files.length === 0) {
@@ -331,5 +433,19 @@ export class AlbumShow {
     closeAlbumPanel() {
         const modifyDialogDialog = document.querySelector('.side-panel.modify-album-dialog');
         modifyDialogDialog.classList.remove('open');
+    }
+
+    openPhotoPanel(dialog) {
+        const form = dialog.querySelector('form');
+        const captionInput = form.querySelector('input[name="caption"]');
+
+        dialog.classList.add('open');
+        captionInput.focus();
+        captionInput.select();
+    }
+
+    closePhotoPanel() {
+        const dialog = document.querySelector('.side-panel.edit-photo-dialog');
+        dialog.classList.remove('open');
     }
 }
