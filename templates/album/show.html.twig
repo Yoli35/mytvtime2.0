@@ -14,40 +14,95 @@
     <div class="container-fluid album-page" data-id="{{ album.id }}">
         <div class="header">
             <div class="h1-tools">
-                <h1>{{ album.name }}</h1>
+                <h1>{{ album.name }} ({{ album.photos|length }})</h1>
                 <div class="tools">
                     <div class="photo-albums-button"><a href="{{ path('app_album_index') }}">{{ 'My albums'|trans }}</a></div>
                     <div class="add-photos-button">{{ 'Modify album'|trans }}</div>
+                    <div class="layout-buttons">
+                        <button class="layout-grid{% if settings.layout == 'grid' %} active{% endif %}">{{ ux_icon('mdi:view-grid') }}</button>
+                        <button class="layout-list{% if settings.layout == 'list' %} active{% endif %}">{{ ux_icon('mdi:format-list-bulleted-square') }}</button>
+                    </div>
+                    <script>
+                        window.addEventListener("DOMContentLoaded", () => {
+                            const albumPhotosDiv = document.querySelector('.album-photos');
+                            const layoutButtons = document.querySelectorAll('.layout-buttons button');
+
+                            layoutButtons.forEach(button => {
+                                button.addEventListener('click', () => {
+                                    layoutButtons.forEach(btn => btn.classList.remove('active'));
+                                    button.classList.add('active');
+                                });
+                            });
+                            document.querySelector('.layout-grid').addEventListener('click', () => {
+                                albumPhotosDiv.classList.remove('list');
+                                albumPhotosDiv.classList.add('grid');
+                                save('{{ album.id }}', 'grid');
+                            });
+                            document.querySelector('.layout-list').addEventListener('click', () => {
+                                albumPhotosDiv.classList.remove('grid');
+                                albumPhotosDiv.classList.add('list');
+                                save('{{ album.id }}', 'list');
+                            });
+
+                            function save(id, layout) {
+                                const lang = '{{ app.request.locale }}';
+                                const settings = {
+                                    layout: layout,
+                                    photosPerPage: {{ settings.photosPerPage }},
+                                };
+                                fetch('/' + lang + '/album/settings/' + id, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-Token': '{{ csrf_token('settings') }}'
+                                    },
+                                    body: JSON.stringify(settings)
+                                })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error('Network response was not ok');
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        console.log('Settings updated:', data);
+                                    })
+                                    .catch(error => {
+                                        console.error('There was a problem with the fetch operation:', error);
+                                    });
+                            }
+                        });
+                    </script>
                 </div>
             </div>
             <div class="prev-next-albums">
-                <div>
-                    {% if previousAlbum %}
-                        <h4 class="youtube-red">{{ 'Previous album'|trans }}</h4>
-                        <div class="prev-album">
-                            <a href="{{ path('app_album_show', {id: previousAlbum.id}) }}">
-                                <img src="/albums/photos{{ previouAlbum.photos.0.image_path }}" alt="{{ previousVideo.name }}">
-                                <div class="name">{{ previousVideo.name }}</div>
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
-                <div>
-                    {% if nextAlbum %}
-                        <h4 class="youtube-red">{{ 'Next album'|trans }}</h4>
-                        <div class="next-album">
-                            <a href="{{ path('app_album_show', {id: nextVideo.user_video_id}) }}">
-                                <img src="/albums/photos{{ nextVideo.photos.0.image_path }}" alt="{{ nextVideo.name }}e">
-                                <div class="name">{{ nextVideo.name }}</div>
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
+                {% if previousAlbum %}
+                    <div class="prev-album" data-title="{{ 'Previous album'|trans }}">
+                        <a href="{{ path('app_album_show', {id: previousAlbum.id}) }}">
+                            {% set c = previousAlbum.photos|length %}
+                            {% set photo = previousAlbum.photos[random(c-1)] %}
+                            <img src="/albums/576p{{ photo.imagePath }}" alt="{{ previousAlbum.name }}">
+                            <div class="chevron">{{ ux_icon('mdi:chevron-left') }}</div>
+                            <div class="name">{{ previousAlbum.name }}</div>
+                        </a>
+                    </div>
+                {% endif %}
+                {% if nextAlbum %}
+                    <div class="next-album" data-title="{{ 'Next album'|trans }}">
+                        <a href="{{ path('app_album_show', {id: nextAlbum.id}) }}">
+                            {% set c = nextAlbum.photos|length %}
+                            {% set photo = nextAlbum.photos[random(c-1)] %}
+                            <img src="/albums/576p{{ photo.imagePath }}" alt="{{ nextAlbum.name }}e">
+                            <div class="name">{{ nextAlbum.name }}</div>
+                            <div class="chevron">{{ ux_icon('mdi:chevron-right') }}</div>
+                        </a>
+                    </div>
+                {% endif %}
             </div>
         </div>
-        <div class="album-photos">
+        <div class="album-photos {{ settings.layout }}">
             {% for photo in album.photos %}
-                <div class="album-photo" {#data-title="{{ photo.caption }}"#}>
+                <div class="album-photo" {# data-title="{{ photo.caption }}" #}>
                     <img
                             src="/albums/1080p{{ photo.imagePath }}"
                             alt="{{ photo.caption }}"
@@ -55,14 +110,15 @@
                             loading="lazy"
                             srcset="/albums/576p{{ photo.imagePath }} 576w, /albums/720p{{ photo.imagePath }} 720w, /albums/1080p{{ photo.imagePath }} 1080w, /albums/original{{ photo.imagePath }} 1920w"
                     >
-                    {#<div class="album-photo-infos">
+                    <div class="album-photo-infos">
                         <div class="name">{{ photo.caption }}</div>
                         <div class="dates">
                             <div class="date" data-title="{{ 'Date'|trans }}">{{ ux_icon('mdi:date-range') }} {{ photo.date|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
                             <div class="created-at" data-title="{{ 'Created at'|trans }}">{{ ux_icon('mdi:update') }} {{ photo.createdAt|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
                             <div class="updated-at" data-title="{{ 'Updated at'|trans }}">{{ ux_icon('mdi:create-new-folder') }} {{ photo.updatedAt|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
                         </div>
-                    </div>#}
+                    </div>
+                    <div class="edit" data-id="{{ photo.id }}">{{ ux_icon('mdi:image-edit') }}</div>
                 </div>
             {% else %}
                 <div class="no-photo">{{ 'No photos in this album'|trans }}</div>
@@ -92,22 +148,23 @@
         </div>
     </div>
     {{ include('_blocks/forms/_modify-album-form.html.twig', addPhotoFormData) }}
+    {{ include('_blocks/forms/_edit-photo-form.html.twig', addPhotoFormData) }}
     <div id="globs-map" style="display: none">
         {
-            "albumName": "{{ album.name|e('js') }}",
-            "photos": {{ albumArray.photos|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "bounds": {{ albumArray.bounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "emptyPhoto": {{ emptyPhoto|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "fieldList": {{ fieldList|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        "albumName": "{{ album.name|e('js') }}",
+        "photos": {{ albumArray.photos|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "bounds": {{ albumArray.bounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "emptyPhoto": {{ emptyPhoto|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "fieldList": {{ photoFieldList|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
     <div id="globs" style="display: none">
         {
-            "album": {{ albumArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "srcsetPaths": {{ srcsetPaths|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "texts": {
+        "album": {{ albumArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "srcsetPaths": {{ srcsetPaths|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "texts": {
 
-            }
+        }
         }
     </div>
     <div id="svgs" style="display: none">

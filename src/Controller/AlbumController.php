@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Album;
 use App\Entity\Photo;
+use App\Entity\Settings;
 use App\Entity\User;
 use App\Repository\AlbumRepository;
 use App\Repository\CountryRepository;
@@ -75,6 +76,17 @@ final class AlbumController extends AbstractController
     #[Route('/show/{id}', name: 'show', requirements: ['id' => '\d+'])]
     public function show(Album $album): Response
     {
+        $next = $this->albumRepository->getNextAlbumId($album);
+        $nextAlbum = $next ? $this->albumRepository->findOneBy(['id' => $next['id']]) : null;
+        $previous = $this->albumRepository->getPreviousAlbumId($album);
+        $previousAlbum = $previous ? $this->albumRepository->findOneBy(['id' => $previous['id']]) : null;
+
+        $user = $this->getUser();
+        $settings = $this->settingsRepository->findOneBy(['user'=>$user, 'name' => 'album']);
+        if (!$settings) {
+            $settings = new Settings($user, 'album', ['layout' => 'grid', 'photosPerPage' => 20]);
+            $this->settingsRepository->save($settings, true);
+        }
 
         $editAlbumFormData = [
             'hiddenFields' => [
@@ -90,16 +102,49 @@ final class AlbumController extends AbstractController
                 ],
             ],
         ];
+
         return $this->render('album/show.html.twig', [
             'album' => $album,
             'albumArray' => $this->toArray($album),
+            'settings' => $settings->getData(),
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
             'emptyPhoto' => $this->newPhoto($album),
             'addPhotoFormData' => $editAlbumFormData,
-            'fieldList' => ['album-id', 'crud-type', 'crud-id', 'caption', 'date', 'latitude', 'longitude'],
-            'previousAlbum' => null,
-            'nextAlbum' => null,
+            'photoFieldList' => ['album-id', 'photo-id', 'caption', 'date', 'latitude', 'longitude'],
+            'previousAlbum' => $previousAlbum,
+            'nextAlbum' => $nextAlbum,
             'srcsetPaths' => ['lowRes' => '/albums/576p', 'mediumRes' => '/albums/720p', 'highRes' => '/albums/1080p', 'original' => '/albums/original'],
+        ]);
+    }
+
+    #[Route('/settings/{id}', name: 'settings', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function settings(Request $request, Album $album): Response
+    {
+        // {
+        //     "layout": "list",
+        //     "photosPerPage": 20
+        // }
+        $data = json_decode($request->getContent(), true);
+        dump($data);
+        $settings = $this->settingsRepository->findOneBy(['user' => $album->getUser(), 'name' => 'album']);
+
+        $layout = $data['layout'] ?? 'grid';
+        $photosPerPage = $data['photosPerPage'] ?? 20;
+        if (!$settings) {
+            $settings = new Settings($album->getUser(), 'album', ['layout' => $layout, 'photosPerPage' => $photosPerPage]);
+        } else {
+            $settings->setData(['layout' => $layout, 'photosPerPage' => $photosPerPage]);
+        }
+        $this->settingsRepository->save($settings, true);
+
+        $messages = ['Settings updated successfully.'];
+        return $this->json([
+            'ok' => true,
+            'messages' => $messages,
+            'settings' => [
+                'layout' => $settings->getData()['layout'],
+                'photosPerPage' => $settings->getData()['photosPerPage'],
+            ],
         ]);
     }
 

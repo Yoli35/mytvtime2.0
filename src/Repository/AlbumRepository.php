@@ -27,6 +27,36 @@ class AlbumRepository extends ServiceEntityRepository
         }
     }
 
+    public function getNextAlbumId(Album $album): array|false
+    {
+        $userId = $album->getUser()->getId();
+        $albumId = $album->getId();
+        $publishedAt = $album->getCreatedAt()->format('Y-m-d H:i:s');
+
+        $sql = "SELECT a.id
+                FROM album a
+                WHERE a.created_at <= '$publishedAt' AND a.id != $albumId AND a.user_id = $userId
+                ORDER BY a.created_at DESC
+                LIMIT 1";
+
+        return $this->getOne($sql);
+    }
+
+    public function getPreviousAlbumId(Album $album): array|false
+    {
+        $userId = $album->getUser()->getId();
+        $albumId = $album->getId();
+        $publishedAt = $album->getCreatedAt()->format('Y-m-d H:i:s');
+
+        $sql = "SELECT a.id
+                FROM album a
+                WHERE a.created_at >= '$publishedAt' AND a.id != $albumId AND a.user_id = $userId
+                ORDER BY a.created_at
+                LIMIT 1";
+
+        return $this->getOne($sql);
+    }
+
     public function getAll($sql): array
     {
         try {
