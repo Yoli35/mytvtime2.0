@@ -48,6 +48,7 @@
                                 <div class="created-at" data-title="{{ 'Created at'|trans }}">{{ ux_icon('mdi:update') }} {{ album.createdAt|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
                                 <div class="updated-at" data-title="{{ 'Updated at'|trans }}">{{ ux_icon('mdi:create-new-folder') }} {{ album.updatedAt|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
                             </div>
+                            <div class="range">{{ album.dateRangeString }}</div>
                         </div>
                     </div>
                 </div>

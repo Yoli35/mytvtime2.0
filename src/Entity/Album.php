@@ -39,7 +39,22 @@ class Album
     #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'album', orphanRemoval: true)]
     private Collection $photos;
 
-    private array $dateRange;
+    public array $dateRange {
+        get {
+            return $this->dateRange;
+        }
+        set {
+            $this->dateRange = $value;
+        }
+    }
+    public string $dateRangeString {
+        get {
+            return $this->dateRangeString;
+        }
+        set {
+            $this->dateRangeString = $value;
+        }
+    }
 
     public function __construct(User $user, string $name, DateTimeImmutable $createdAt)
     {
@@ -154,13 +169,4 @@ class Album
         return $this;
     }
 
-    public function getDateRange(): array
-    {
-        return $this->dateRange;
-    }
-
-    public function setDateRange(array $dateRange): void
-    {
-        $this->dateRange = $dateRange;
-    }
 }

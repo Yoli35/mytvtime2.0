@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @method User|null getUser() */
 #[Route('/{_locale}/album', name: 'app_album_', requirements: ['_locale' => 'en|fr|ko'])]
@@ -29,6 +30,7 @@ final class AlbumController extends AbstractController
         private readonly ImageService       $imageService,
         private readonly PhotoRepository    $photoRepository,
         private readonly SettingsRepository $settingsRepository,
+        private readonly TranslatorInterface $translator
     )
     {
     }
@@ -60,8 +62,9 @@ final class AlbumController extends AbstractController
                 'min' => min($dates),
                 'max' => max($dates),
             ];
-            $album->setDateRange($range);
+            $album->dateRange = $range;
         }
+        $this->dateRangeString($albums);
 
         return $this->render('album/index.html.twig', [
             'albums' => $albums,
@@ -253,6 +256,46 @@ final class AlbumController extends AbstractController
         $array['bounds'] = $bounds;
 
         return $array;
+    }
+
+    private function dateRangeString($albums): void
+    {
+        foreach ($albums as $album) {
+            $dateRange = $album->dateRange ?? null;
+            if (empty($dateRange)) {
+                $string = $this->translator->trans('No date range');
+                $album->dateRangeString = $string;
+                continue;
+            }
+            if ($dateRange) {
+                $minDate = $this->dateService->newDateImmutable($dateRange['min'], 'UTC'); //new \DateTimeImmutable($dateRange['min']);
+                $maxDate = $this->dateService->newDateImmutable($dateRange['max'], 'UTC'); //new \DateTimeImmutable($dateRange['max']);
+                $maxYear = $maxDate->format('Y');
+                $minYear = $minDate->format('Y');
+                $minMouth = $minDate->format('m');
+                $maxMonth = $maxDate->format('m');
+                $minDay = $minDate->format('d');
+                $maxDay = $maxDate->format('d');
+                $F1 = strtolower($this->translator->trans($minDate->format('F')));
+                $F2 = strtolower($this->translator->trans($maxDate->format('F')));
+                if ($minYear === $maxYear) {
+                    if ($minMouth === $maxMonth) {
+                        if ($minDay === $maxDay) {
+                            $string = $minDate->format('j \F1 Y');
+                        } else {
+                            $string = $minDate->format('j') . ' - ' . $maxDate->format('j \F1 Y');
+                        }
+                    } else {
+                        $string = $minDate->format('j \F1') . ' - ' . $maxDate->format('j \F2 Y');
+                    }
+                } else {
+                    $string = $minDate->format('j \F1 Y') . ' - ' . $maxDate->format('j \F2 Y');
+                }
+                $string = str_replace('F1', $F1, $string);
+                $string = str_replace('F2', $F2, $string);
+                $album->dateRangeString = $string;
+            }
+        }
     }
 
     private function newPhoto(Album $album): array
