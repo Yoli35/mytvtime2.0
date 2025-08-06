@@ -765,6 +765,8 @@
 
             .admin__series__update.row {
                 .admin__series__updates__line {
+                    width: 100%;
+
                     .name, .localized-name {
                         width: 15rem;
                     }
@@ -772,6 +774,7 @@
 
                 .admin__series__updates__details {
                     padding: .25rem;
+                    width: 100%;
 
                     .admin__series__updates__detail {
                         margin-block-end: .5rem;
