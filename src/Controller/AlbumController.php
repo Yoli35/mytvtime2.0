@@ -125,7 +125,7 @@ final class AlbumController extends AbstractController
         //     "photosPerPage": 20
         // }
         $data = json_decode($request->getContent(), true);
-        dump($data);
+//        dump($data);
         $settings = $this->settingsRepository->findOneBy(['user' => $album->getUser(), 'name' => 'album']);
 
         $layout = $data['layout'] ?? 'grid';

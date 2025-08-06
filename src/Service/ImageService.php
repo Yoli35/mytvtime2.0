@@ -141,7 +141,7 @@ class ImageService extends AbstractController
         $extension = $file->guessExtension();
         $basename = pathinfo($filename, PATHINFO_FILENAME);
         $tempName = $imageTempPath . $basename . '.' . $extension;
-        dump($filename, $extension, $basename, $tempName);
+//        dump($filename, $extension, $basename, $tempName);
 
         $originalPath = $photoPath . 'original/';
         $highResPath = $photoPath . '1080p/';
