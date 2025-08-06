@@ -533,6 +533,7 @@ label:has(input[type="text"]) {
 
                         .name {
                             flex-grow: 1;
+                            max-width: 55%;
                             overflow: hidden;
                             text-overflow: ellipsis;
                             white-space: nowrap;
@@ -600,6 +601,10 @@ label:has(input[type="text"]) {
                         .name {
                             flex-grow: 1;
                             font-weight: 300;
+                            max-width: calc(100% - 7rem);
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
                         }
 
                         .time {
@@ -1366,7 +1371,7 @@ label:has(input[type="text"]) {
 
 @media (width <= 56rem) { /* 896px */
     .navbar {
-        padding-inline: .25rem 1rem;
+        padding-inline: .125rem 1rem;
 
         .debug {
             position: absolute;
@@ -1377,13 +1382,98 @@ label:has(input[type="text"]) {
         .navbar-items-toggler {
             background-color: var(--orange-50);
             display: flex;
+
+            &.open {
+                background-color: var(--green-50);
+
+                svg {
+                    color: var(--orange-90);
+                }
+            }
         }
 
         .navbar-items.left {
             display: none;
         }
 
-        .navbar-item {
+        .navbar-items.left.open {
+            align-items: flex-start;
+            background-color: var(--navbar-bg);
+            display: flex;
+            flex-direction: column;
+            height: calc(100dvh - 6rem);
+            justify-content: flex-start;
+            overflow-y: auto;
+            padding-block: .5rem;
+            padding-inline: 1rem;
+            position: absolute;
+            top: 3rem;
+            width: 100%;
+
+            > a {
+                justify-content: flex-start;
+                padding-inline: 0.25rem;
+                width: 100%;
+
+                svg {
+                    height: 1.5rem;
+                    width: 1.5rem;
+                }
+            }
+
+            .navbar-item {
+                align-items: flex-start;
+                flex-direction: column;
+                height: unset;
+                justify-content: flex-start;
+                position: unset;
+                width: 100%;
+
+                &:hover {
+                    background-color: transparent;
+                }
+
+                .menu {
+                    border-top: 2px solid var(--navbar-bg-75);
+                    box-shadow: none;
+                    display: flex;
+                    left: unset;
+                    opacity: 1;
+                    margin-block-start: 0.5rem;
+                    position: unset;
+                    top: unset;
+                    transform: translateY(0);
+                    width: 100%;
+
+                    .menu-item > label,
+                    .separation {
+                        display: none;
+                    }
+
+                    &.history, &.log {
+                        max-height: min(30rem, 50dvh);
+                    }
+
+                    &.history {
+                        label:has(#history-option-device),
+                        label:has(#history-option-vote) {
+                            display: none;
+                        }
+
+                        .number, .date {
+                            margin-inline-start: unset;
+                        }
+
+                        .vote, .device {
+                            display: none;
+                        }
+
+                        .provider {
+                            margin-inline-start: auto;
+                        }
+                    }
+                }
+            }
         }
 
         .multi-search {
@@ -1447,6 +1537,45 @@ label:has(input[type="text"]) {
             height: 2rem;
             margin-inline-start: .25rem;
             width: 2rem;
+        }
+
+        .navbar-items.left.open {
+
+            .navbar-item {
+                .menu {
+                    ul {
+                        li {
+                            padding-inline: 0;
+
+                            .menu-item {
+                                padding-inline: 0;
+                            }
+                        }
+                    }
+
+                    &.history {
+                        label:has(input[type="number"]) {
+                            flex-direction: column;
+                        }
+
+                        label:has(#history-option-provider) {
+                            display: none;
+                        }
+
+                        .name {
+                            max-width: calc(100% - 4rem);
+                        }
+
+                        .number {
+                            margin-inline-start: auto;
+                        }
+
+                        .date, .provider {
+                            display: none;
+                        }
+                    }
+                }
+            }
         }
     }
 }
