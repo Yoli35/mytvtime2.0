@@ -4145,11 +4145,12 @@ h2 {
     flex-direction: column;
     justify-content: center;
     margin-block-end: 1rem;
-    margin-block-start: 3rem;
+    margin-block-start: 4rem;
     min-height: calc(100dvh - 8rem);
     width: 100%;
 
     .form {
+        gap: 0;
         margin-block-end: unset;
         margin-block-start: unset;
         min-width: 32rem;
@@ -4163,6 +4164,24 @@ h2 {
                 margin-block: 0;
             }
 
+            .hide-search {
+                cursor: pointer;
+                height: 1rem;
+                position: absolute;
+                right: .5rem;
+                top: .5rem;
+                width: 1rem;
+
+                svg {
+                    height: 1rem;
+                    width: 1rem;
+                }
+            }
+
+            .magnify {
+                display: none;
+            }
+
             .sticky {
                 background-color: var(--orange-20);
                 border-radius: .5rem;
@@ -4173,6 +4192,48 @@ h2 {
                 position: sticky;
                 top: 0;
                 z-index: 1;
+            }
+
+            &.folded {
+                border-radius: 50%;
+                height: 3rem;
+                overflow: hidden;
+                padding: 0;
+                position: absolute;
+                top: 5rem;
+                width: 3rem;
+
+                h1, .hide-search, .form-row {
+                    display: none;
+                }
+
+                .sticky {
+                    background-color: transparent;
+                    border-radius: 50%;
+                    padding: 0;
+                }
+
+                .magnify {
+                    align-items: center;
+                    background-color: var(--orange-50);
+                    border-radius: 50%;
+                    color: var(--orange-90);
+                    cursor: pointer;
+                    display: flex;
+                    height: 3rem;
+                    justify-content: center;
+                    width: 3rem;
+
+                    &:hover {
+                        background-color: var(--orange-40);
+                        color: var(--ardoise-10);
+                    }
+
+                    svg {
+                        height: 2rem;
+                        width: 2rem;
+                    }
+                }
             }
         }
 
@@ -4262,7 +4323,7 @@ h2 {
                 color: var(--ardoise-10);
                 display: flex;
                 flex-wrap: wrap;
-                font-size: 1.5rem;
+                font-size: 1.125rem;
                 font-weight: 100;
                 gap: 1rem;
                 line-height: 1.25rem;

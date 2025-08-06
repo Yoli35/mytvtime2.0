@@ -12,9 +12,23 @@
     <div class="container-fluid">
         <div class="series-search">
             {{ form_start(form, {'attr': {'class': 'form'}}) }}
-            <div class="form-col">
+            <div class="form-col folded">
                 <div class="sticky">
                     <h1>{{ 'Search'|trans }}</h1>
+                    <div class="hide-search">{{ ux_icon('mdi:close') }}</div>
+                    <div class="magnify">{{ ux_icon('mdi:magnify') }}</div>
+                    <script>
+                        const seriesSearchDiv = document.querySelector('.series-search');
+                        const hideSearchDiv = seriesSearchDiv.querySelector('.hide-search');
+                        const magnifyDiv = seriesSearchDiv.querySelector('.magnify');
+                        const formCol = seriesSearchDiv.querySelector('.form-col:first-child');
+                        hideSearchDiv.addEventListener('click', function () {
+                            formCol.classList.add('folded');
+                        });
+                        magnifyDiv.addEventListener('click', function () {
+                            formCol.classList.remove('folded');
+                        });
+                    </script>
                     <div class="form-row{% if displaySettings.data.place %} dismissed{% endif %}">
                         <div class="form-row-name">
                             {{ 'Viewer place'|trans }}
