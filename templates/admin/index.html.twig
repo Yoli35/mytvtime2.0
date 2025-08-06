@@ -115,7 +115,7 @@
                         </a>
                     {% endif %}
                 </div>
-                {% if app.environment == 'dev' %}
+                {% if app.user.id == 1 or app.environment == 'dev' %}
                     <div class="dim"></div>
                     <script>
                         const dimDiv = document.querySelector('.dim');
