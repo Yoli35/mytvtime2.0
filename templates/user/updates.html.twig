@@ -27,6 +27,89 @@
                 </div>
             </div>
             <div class="site-update glowing-border right">
+                <h2>24ᵉ mise à jour : 06/08/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">→ Add collapsible advanced search UI</div>
+                        <div class="details">Introduces a folded state for the advanced search form, allowing users to collapse and expand the search interface using magnify and close icons. Updates related SCSS for styling the new UI states and adjusts font size for improved readability.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Improve admin series updates summary styling</div>
+                        <div class="details">Adjusted aspect-ratio spacing for poster and backdrop images. Enhanced layout and overflow handling for series updates summary, including detail fields and name widths for better readability and usability.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add photo editing dialog and backend support</div>
+                        <div class="details">Introduces a new side panel dialog for editing photo metadata (caption, date, coordinates) in albums, with corresponding JavaScript logic for form handling and UI updates. Adds a backend endpoint in AlbumController for processing photo edits and updates the Album entity to use proper getters/setters for date range properties. Refactors CSS and template structure to support the new dialog and improves maintainability by extracting form logic into dedicated methods.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add album layout switcher and prev/next navigation</div>
+                        <div class="details">Introduces grid/list layout switching for album photos with user settings persistence, and adds previous/next album navigation with improved styling. Updates AlbumController, AlbumRepository, and templates to support these features, and enhances translations and SCSS for the new UI elements.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add localized date range string to albums</div>
+                        <div class="details">Introduces a dateRangeString property to the Album entity, generated and localized in AlbumController using TranslatorInterface. Updates the album index template to display the formatted date range for each album.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Enhance diaporama with srcset support and UI improvements</div>
+                        <div class="details">Added srcset handling in the Diaporama JavaScript to support responsive images. Updated SCSS for better diaporama layout, including full viewport sizing and improved thumbnail visibility on hover. Modified Album entity constructor for explicit initialization. Extended photo srcset in album template to include original image size.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Improve album photo upload and display handling</div>
+                        <div class="details">Added support for dynamic photo addition with responsive srcset paths after upload, and improved handling of photos without geolocation in the map. Updated AlbumController to return image paths on upload and pass srcset paths to the frontend. Adjusted album page and photo grid styles for better layout and scrolling.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add map style toggler and thumbnail list to album view</div>
+                        <div class="details">Introduces a floating toggler button to show or hide the map style thumbnail list in the album view. Updates styles for positioning and transitions, adds a script for toggling the list, and enhances thumbnail markup with a data-title attribute.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add 'My albums' button to album page</div>
+                        <div class="details">Introduced a new 'My albums' button in the album page tools section and added corresponding styles in album.scss. Also adjusted map controller height in the series-map section.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Improve album editing and photo upload UX</div>
+                        <div class="details">Refactored album modification to separate info and photo uploads, providing user feedback during the process. Added a summary UI for upload progress, improved error handling, and updated backend routes and logic to support these changes. Enhanced album thumbnail and date range display in the template, and added fallback bounds for albums without geolocated photos.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add album modification form and backend support</div>
+                        <div class="details">Introduces a new form and UI for modifying album details and uploading additional photos. Updates AlbumController, Album entity, and ImageService to handle album updates and image processing. Refactors frontend JS and SCSS for the new modify-album dialog, and updates translations and templates accordingly.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add summary section for series updates in admin</div>
+                        <div class="details">Introduces a summary display for series updates in the admin interface. Updates JavaScript logic to generate and append summary rows for items with updates, adds corresponding summary container in the Twig template, and adjusts styles to support the new layout and scrolling behavior.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add ROLE_USER access control to video routes</div>
+                        <div class="details">Applied the IsGranted('ROLE_USER') attribute to the index and show actions in VideoController to restrict access to authenticated users.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add null checks for menu elements and improve safety</div>
+                        <div class="details">Fixes a bug that prevented you from logging in.</div>
+                        <div class="details">Added checks to ensure elements like multiSearchOptions and historyList exist before accessing their properties or methods. This prevents potential runtime errors when these elements are not present in the DOM.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border left">
+                <h2>23ᵉ mise à jour : 01/08/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">→ Add album show page with map and photo enhancements</div>
+                        <div class="details">Implemented AlbumShow.js for album display logic, including diaporama and map integration. Updated AlbumController to provide album and photo data as arrays, and added date range calculation for albums. Enhanced Map.js to display photo markers. Updated album and series styles for improved layout and map popups. Modified templates to support new album show features, including map, photo previews, and form improvements. Fixed repository save methods and added array conversion methods to Photo and Album entities.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor album and photo display, add photo metadata</div>
+                        <div class="details">Updated AlbumController to fetch user albums and their photos, and refactored album and photo display in templates for improved layout and metadata presentation. Added date, latitude, and longitude fields to Photo entity with corresponding getters/setters. Updated translations for new metadata labels.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add progress info to series updates in admin</div>
+                        <div class="details">Displays progress, last update date, and duration for series updates in the admin panel. Updates backend to track update start/end times and calculate duration, with translation support for time units. Improves user feedback during batch update operations.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add album and photo entities with basic album UI</div>
+                        <div class="details">Introduces Album and Photo entities, their repositories, and relations to User. Adds AlbumController with index and show actions, and new Twig templates for album listing and details. Updates styles and menu to support albums, and adds French translations for album-related UI.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border right">
                 <h2>22ᵉ mise à jour : 31/07/2025</h2>
                 <ul>
                     <li>
