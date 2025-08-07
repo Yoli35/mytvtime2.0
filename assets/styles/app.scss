@@ -373,6 +373,8 @@ label:has(input[type="text"]) {
     transition: opacity .250ms ease-in-out;
     z-index: 500;
 
+    &:has(.navbar-items-toggler.open),
+    &:has(.search-results.showing-something),
     &:has(.menu.open) {
         --navbar-opacity: 1;
         color: var(--navbar-color-hover);
@@ -863,11 +865,11 @@ label:has(input[type="text"]) {
             }
         }
 
-        &:has(input[type="search"]:focus) {
+        /*&:has(input[type="search"]:focus) {
             .search-results {
                 left: 0
             }
-        }
+        }*/
 
         .search-options {
             backdrop-filter: blur(8px);
@@ -1399,10 +1401,11 @@ label:has(input[type="text"]) {
         .navbar-items.left.open {
             align-items: flex-start;
             background-color: var(--navbar-bg);
+            border-radius: .5rem;
             display: flex;
             flex-direction: column;
-            height: calc(100dvh - 6rem);
             justify-content: flex-start;
+            max-height: calc(100dvh - 7rem);
             overflow-y: auto;
             padding-block: .5rem;
             padding-inline: 1rem;
