@@ -32,11 +32,21 @@ export class AlbumShow {
      */
 
     /**
+     * @typedef SrcsetPaths
+     * @type {Object}
+     * @property {string} lowRes
+     * @property {string} mediumRes
+     * @property {string} highRes
+     * @property {string} original
+     */
+
+    /**
      * @typedef Globs
      * @type {Object}
      * @property {Album} album
+     * @property {Array.<string>} imagePaths
      * @property {Array.<string>} texts
-     * @property {Array.<string>} srcsetPaths
+     * @property {SrcsetPaths} srcsetPaths
      */
 
     constructor() {
@@ -48,6 +58,7 @@ export class AlbumShow {
         /** @var {Globs} */
         const globs = JSON.parse(document.querySelector('div#globs').textContent);
         this.album = globs.album;
+        this.imagePaths = globs.imagePaths;
         this.texts = globs.texts;
         this.srcsetPaths = globs.srcsetPaths;
         this.fileTypes = [
@@ -85,6 +96,11 @@ export class AlbumShow {
          * Photo form                                                                 *
          ******************************************************************************/
         this.initPhotoForm();
+
+        /******************************************************************************
+         * Background animation                                                       *
+         ******************************************************************************/
+        this.initAnimation();
     }
 
     initAlbumForm() {
@@ -217,15 +233,18 @@ export class AlbumShow {
             event.preventDefault();
 
             const requiredFields = editPhotoForm.querySelectorAll('input[required]');
+            let itsOk = true;
             requiredFields.forEach((field) => {
                 const errorSpan = field.parentElement.querySelector('span');
                 if (field.value === '') {
                     errorSpan.innerText = 'This field is required';
-                    return;
+                    itsOk = false;
                 } else {
                     errorSpan.innerText = '';
                 }
             });
+            if (!itsOk) return;
+
             editPhotoCancel.setAttribute('disabled', '');
             editPhotoSubmit.setAttribute('disabled', '');
 
@@ -272,7 +291,7 @@ export class AlbumShow {
                 }
             ).then(async function (response) {
                 const data = await response.json();
-              /*  console.log({data});*/
+                /*  console.log({data});*/
                 if (response.ok) {
                     data['messages'].forEach(msg => {
                         gThis.flashMessage.add('success', msg);
@@ -447,5 +466,29 @@ export class AlbumShow {
     closePhotoPanel() {
         const dialog = document.querySelector('.side-panel.edit-photo-dialog');
         dialog.classList.remove('open');
+    }
+
+    initAnimation() {
+        const albumPhotosDiv = document.querySelector('.album-photos');
+        if (albumPhotosDiv.classList.contains('list')) {
+            return;
+        }
+        gThis.effect({div: albumPhotosDiv});
+        gThis.interval = setInterval(gThis.effect, 4000, {div: albumPhotosDiv});
+    }
+
+    effect(arg) {
+        const albumPhotosDiv = arg.div;
+        const paths = gThis.imagePaths;
+        const srcsetPaths = gThis.srcsetPaths
+        const highRes = srcsetPaths.original;
+        const path = paths[Math.floor(Math.random() * (paths.length - 1))];
+        const img = new window.Image();
+        img.onload = function () {
+            albumPhotosDiv.classList.remove('play');
+            albumPhotosDiv.style = `background-image:linear-gradient(to bottom, transparent 40%, black 60%), url('${highRes}${path}');`;
+            albumPhotosDiv.classList.add('play');
+        };
+        img.src = highRes + path;
     }
 }

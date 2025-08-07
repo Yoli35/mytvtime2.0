@@ -102,7 +102,7 @@
         </div>
         <div class="album-photos {{ settings.layout }}">
             {% for photo in album.photos %}
-                <div class="album-photo" data-id="{{ photo.id }}">
+                <div class="album-photo{% if settings.layout == 'grid' and loop.index % 12 in [1, 8] %} grid-span-2{% endif %}" data-id="{{ photo.id }}">
                     <img
                             src="/albums/1080p{{ photo.imagePath }}"
                             alt="{{ photo.caption }}"
@@ -161,6 +161,7 @@
     <div id="globs" style="display: none">
         {
         "album": {{ albumArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "imagePaths": {{ imagePaths|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "srcsetPaths": {{ srcsetPaths|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "texts": {
 

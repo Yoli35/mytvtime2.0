@@ -102,10 +102,15 @@ final class AlbumController extends AbstractController
                 ],
             ],
         ];
+        $albumArr = $this->toArray($album);
+        $imagePaths = array_map(function ($photo) {
+            return $photo['image_path'];
+        }, $albumArr['photos']);
 
         return $this->render('album/show.html.twig', [
             'album' => $album,
-            'albumArray' => $this->toArray($album),
+            'albumArray' => $albumArr,
+            'imagePaths' => $imagePaths,
             'settings' => $settings->getData(),
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
             'emptyPhoto' => $this->newPhoto($album),

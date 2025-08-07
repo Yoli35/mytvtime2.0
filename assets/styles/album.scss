@@ -325,6 +325,21 @@
     }
 }
 
+@property --album-cover-size {
+    syntax: "<percentage>";
+    inherits: true;
+    initial-value: 182%;
+}
+
+@keyframes effect-beck {
+    from {
+        --album-cover-size: 182%;
+    }
+    to {
+        --album-cover-size: 178%;
+    }
+}
+
 .album-page {
     height: calc(100dvh - 6rem) !important;
     overflow-y: auto;
@@ -383,11 +398,16 @@
                     margin-inline-start: auto;
 
                     button {
+                        align-items: center;
                         background-color: var(--orange-50);
                         border: none;
                         color: var(--orange-100);
                         cursor: pointer;
-                        padding: .25rem 1rem;
+                        display: flex;
+                        height: 2rem;
+                        justify-content: center;
+                        padding: 0;
+                        width: 2rem;
 
                         &:first-child {
                             border-radius: .25rem 0 0 .25rem;
@@ -468,18 +488,44 @@
         padding: .5rem;
 
         &.grid {
-            flex-direction: row;
-            flex-wrap: wrap;
-            width: calc(round(down, 100%, 32%) - 1.5rem);
+            background-image:
+                    linear-gradient(to bottom, transparent 40%, black 60%),
+                    url('/albums/1080p/IMG_3266.webp');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: var(--album-cover-size);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: 1fr;
+            gap: .25rem;
+            margin-inline: auto;
+            padding-block-start: 40rem;
+            width: 100%;
 
             .album-photo {
-                aspect-ratio: 1 / 1;
-                width: 32.75%;
+                width: 100%;
 
                 .album-photo-infos {
                     display: none;
                 }
+
+                &.grid-col-span-2 {
+                    grid-column: span 2;
+                }
+
+                &.grid-row-span-2 {
+                    grid-row: span 2;
+                }
+
+                &.grid-span-2 {
+                    grid-column: span 2;
+                    grid-row: span 2;
+                }
             }
+        }
+
+        &.play {
+            animation: effect-beck 4s ease-out infinite;
         }
 
         &.list {
