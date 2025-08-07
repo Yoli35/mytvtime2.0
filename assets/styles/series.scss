@@ -4475,8 +4475,8 @@ h2 {
 .series-map {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
     justify-content: flex-end;
+    overflow: hidden;
 
     &:has(h1) {
         margin-block-start: 4rem;
