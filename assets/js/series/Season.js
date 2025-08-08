@@ -324,6 +324,41 @@ export class Season {
             });
         });
 
+        const whatToWatchNextDiv = document.querySelector('.what-to-watch-next');
+        const whatToWatchNextButton = whatToWatchNextDiv.querySelector('.next-button');
+        whatToWatchNextButton.addEventListener('click', e => {
+            whatToWatchNextButton.classList.add('disabled');
+            // fetch api ("/api/series/what/next") to get series cards stored in blocks in response and create a container div, if needed, to append these cards
+            fetch("/api/series/what/next",
+                {
+                    'method': 'GET',
+                    'headers': {
+                        'Content-Type': 'application/json'
+                    }
+                })
+            .then(res => res.json())
+            .then(data => {
+                const blocks = data['blocks'];
+                let containerDiv = whatToWatchNextDiv.querySelector('.series-to-watch');
+                let wrapperDiv;
+                if (!containerDiv) {
+                    containerDiv = document.createElement('div');
+                    containerDiv.classList.add('series-to-watch');
+                    wrapperDiv = document.createElement('div');
+                    wrapperDiv.classList.add('wrapper');
+                    containerDiv.appendChild(wrapperDiv);
+                    whatToWatchNextDiv.appendChild(containerDiv);
+                } else {
+                    wrapperDiv = containerDiv.querySelector('.wrapper')
+                    wrapperDiv.innerHTML = '';
+                }
+                blocks.forEach((block, i) => {
+                    wrapperDiv.insertAdjacentHTML('beforeend', block);
+                });
+                whatToWatchNextButton.classList.remove('disabled');
+            });
+        });
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 const list = document.querySelector('.list');
