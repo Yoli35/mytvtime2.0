@@ -15,6 +15,7 @@ Automatic: Automatique
 Average episode runtime: Durée moyenne d'un épisode
 Choose a username: Choisissez un nom d'utilisateur
 Click here to add an image: Clique ici pour ajouter une image
+Close menu: Fermer le menu
 Coming soon: Bientôt
 Confirm password: Confirmez le mot de passe
 Connect: Se connecter
@@ -35,8 +36,8 @@ Guest: Invité
 Hide preview: Masquer l'aperçu
 Home: Accueil
 I agree to the terms and conditions: J'accepte les termes et conditions
-In production: En production
 In The Movie Database: Sur The Movie Database
+In production: En production
 Korean: Coréen
 Last 14 days: Derniers 14 jours
 Last 24 hours: Dernières 24 heures
@@ -52,6 +53,7 @@ New episode date: Nouvelle date d'épisode
 New episode: Nouvel épisode
 New series date: Nouvelle date de série
 No backdrop: Pas de bannière
+Open menu: Ouvrir le menu
 Options: Options
 Password: Mot de passe
 Paste your image here (green): Colle ton image ici (vert)
@@ -65,6 +67,7 @@ Register: S'inscrire
 Remember me: Se souvenir de moi
 Remove from pinned series: Retirer des séries épinglées
 Search among your series: Rechercher parmi vos séries
+Series by country: Séries par pays
 Series history: Dernières séries regardées
 Series.by country: Par pays
 Series.in progress: En cours de lecture
@@ -72,7 +75,6 @@ Series.not seen in a while: Non vues depuis un moment
 Series.to start: À commencer
 Series.up coming series: À venir
 Series.week: Épisodes de la semaine
-Series by country: Séries par pays
 Show preview: Afficher l'aperçu
 Sign in: Se connecter
 Similar series: Séries similaires
@@ -1259,13 +1261,14 @@ Radius: Rayon
 # Points of interest
 Points of interest: Points d'intérêt
 
-#Videos
+# Videos
 Added at: Ajoutée le
 Added: Ajoutée
 Agriculture: Agriculture
 All categories: Toutes les catégories
 Animal documentary: Documentaire animalier
 Artificial Intelligence: Intelligence artificielle
+Aurélien Barrau: Aurélien Barrau
 Capitalism: Capitalisme
 Categories: Catégories
 Climate change: Changement climatique
@@ -1292,6 +1295,7 @@ The Sound of Silence: The Sound of Silence
 Time spent watching these count videos: Temps passé à regarder ces count vidéos
 Video link copied to clipboard: Lien de la vidéo copié dans le presse-papiers
 at: à
+or: ou
 comments: commentaires
 count pages: count pages
 count videos: count vidéos
