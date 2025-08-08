@@ -909,15 +909,16 @@ class SeriesController extends AbstractController
         $this->checkSlug($series, $slug, $locale);
         // Get with fr-FR language to get the localized name
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), [
-            "images",
-            "videos",
+            "changes",
             "credits",
-            "watch/providers",
-            "keywords",
             "external_ids",
+            "images",
+            "keywords",
             "lists",
             "similar",
             "translations",
+            "videos",
+            "watch/providers",
         ]), true);
         if ($tv) {
             if (!$tv['lists']['total_results']) {
@@ -1423,9 +1424,6 @@ class SeriesController extends AbstractController
         if ($season['poster_path']) {
             if (!$this->inImages($season['poster_path'], $seriesImages)) {
                 $this->addSeriesImage($series, $season['poster_path'], 'poster', $this->imageConfiguration->getUrl('poster_sizes', 5));
-                /*$seriesImage = new SeriesImage($series, "poster", $season['poster_path']);
-                $this->seriesImageRepository->save($seriesImage, true);
-                $this->imageService->saveImage("posters", $season['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));*/
             }
         } else {
             $season['poster_path'] = $series->getPosterPath();
@@ -1468,7 +1466,13 @@ class SeriesController extends AbstractController
         $tvExternalIds = json_decode($this->tmdbService->getTvExternalIds($series->getTmdbId()), true);
 
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
-        if ($series->getNumberOfEpisode() != $tv['number_of_episodes']) {
+        if ($series->getNumberOfEpisode() != $tv['number_of_episodes'] || $series->getNumberOfSeason() != $tv['number_of_seasons']) {
+            $this->addFlash('info', 'The number of episodes has changed, the series has been updated.');
+            if ($series->getNumberOfEpisode() != $tv['number_of_episodes'])
+                $series->setUpdates(['Number of episodes changed from ' . $series->getNumberOfEpisode() . ' to ' . $tv['number_of_episodes']]);
+            if ($series->getNumberOfSeason() != $tv['number_of_seasons'])
+                $series->setUpdates(['Number of seasons changed from ' . $series->getNumberOfSeason() . ' to ' . $tv['number_of_seasons']]);
+
             $series->setNumberOfEpisode($tv['number_of_episodes']);
             $series->setNumberOfSeason($tv['number_of_seasons']);
             $this->seriesRepository->save($series, true);
@@ -1478,6 +1482,7 @@ class SeriesController extends AbstractController
             'series' => $series,
             'userSeries' => $userSeries,
             'season' => $season,
+            'changes' => $this->getChanges($season['id']),
             'now' => $this->now()->format('Y-m-d H:i O'),
             'episodeDiv' => [
                 'height' => $episodeDivSize,
@@ -1487,6 +1492,27 @@ class SeriesController extends AbstractController
             'devices' => $devices,
             'externals' => $this->getExternals($series, $tvKeywords['results'] ?? [], $tvExternalIds, $request->getLocale()),
         ]);
+    }
+
+    function getChanges(int $seasonId): array
+    {
+        $now = $this->now();
+        $startDate = $now->modify('-14 day')->format('Y-m-d');
+        $endDate = $now->format('Y-m-d');
+        $results = json_decode($this->tmdbService->getTvSeasonChanges($seasonId, $endDate, $startDate), true);
+
+        if (!isset($results['changes'])) {
+            return [];
+        }
+        $changes = $results['changes'];
+        $changes['keys'] = array_column($changes, 'key');
+        /*dump([
+            'season id' => $seasonId,
+            'start date' => $startDate,
+            'end date' => $endDate,
+            'changes' => $results['changes'],
+        ]);*/
+        return $results['changes'];
     }
 
     #[Route('/localized/name/add/{id}', name: 'add_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
@@ -3444,7 +3470,7 @@ class SeriesController extends AbstractController
     {
         $seriesImage = new SeriesImage($series, $imageType, $imagePath);
         $this->seriesImageRepository->save($seriesImage, true);
-        $this->imageService->saveImage($imageType."s", $imagePath, $imageUrl);
+        $this->imageService->saveImage($imageType . "s", $imagePath, $imageUrl);
         $series->addUpdate($this->translator->trans(ucfirst($imageType) . ' added'));
     }
 

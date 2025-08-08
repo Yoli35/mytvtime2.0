@@ -54,23 +54,6 @@ class TMDBService
         }
     }
 
-    /*public function trending($mediaType, $timeWindow, $locale): ?string
-    {
-        try {
-            $response = $this->client->request(
-                'GET',
-                'https://api.themoviedb.org/3/trending/' . $mediaType . '/' . $timeWindow . '?api_key=' . $this->api_key . '&language=' . $locale,
-            );
-            try {
-                return $response->getContent();
-            } catch (Throwable) {
-                return "";
-            }
-        } catch (Throwable) {
-            return "";
-        }
-    }*/
-
     public function searchMulti($page, $query, $locale): ?string
     {
         try {
@@ -316,40 +299,6 @@ class TMDBService
         }
     }
 
-    /*public function searchPerson(string $name, string $locale): ?string
-    {
-        try {
-            $response = $this->client->request(
-                'GET',
-                'https://api.themoviedb.org/3/search/person?api_key=' . $this->api_key . '&language=' . $locale . '&query=' . $name . '&include_adult=false',
-            );
-            try {
-                return $response->getContent();
-            } catch (Throwable) {
-                return "";
-            }
-        } catch (Throwable) {
-            return "";
-        }
-    }*/
-
-    /*public function getLatest($locale): ?string
-    {
-        try {
-            $response = $this->client->request(
-                'GET',
-                'https://api.themoviedb.org/3/tv/latest?api_key=' . $this->api_key . '&language=' . $locale,
-            );
-            try {
-                return $response->getContent();
-            } catch (Throwable) {
-                return "";
-            }
-        } catch (Throwable) {
-            return "";
-        }
-    }*/
-
     public function getSeries(string $kind, int $page, string $locale, ?string $timezone = null): ?string
     {
         try {
@@ -385,6 +334,25 @@ class TMDBService
             }
         } catch (Throwable) {
             return "";
+        }
+    }
+
+    public function getTvSeasonChanges(int $seasonId, string $endDate, string $startDate): ?string
+    {
+        $request = "https://api.themoviedb.org/3/tv/season/$seasonId/changes?end_date=$endDate&page=1&start_date=$startDate";
+        try {
+            $response = $this->client->request(
+                'GET',
+                $request,
+                ['auth_bearer' => $this->getBearer()]
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable $e) {
+                return json_encode(['error' => 'Response error: ' . $e->getMessage() . ' - code: ' . $e->getCode()]);
+            }
+        } catch (Throwable $e) {
+            return json_encode(['error' => 'Request error: ' . $e->getMessage() . ' - code: ' . $e->getCode()]);
         }
     }
 

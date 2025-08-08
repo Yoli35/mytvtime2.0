@@ -1507,6 +1507,85 @@ h2 {
         }
     }
 
+    .season-changes {
+        background-color: var(--ardoise-100-alpha-20);
+        border-radius: .5rem;
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+        padding: 1rem;
+
+        .changes {
+            display: flex;
+            flex-direction: column;
+            gap: .25rem;
+
+            .change {
+                .key {
+                    align-items: center;
+                    background-color: var(--green-50);
+                    border-radius: .25rem;
+                    cursor: pointer;
+                    display: flex;
+                    padding: .25rem .5rem;
+
+                    .toggler {
+                        margin-inline-end: .25rem;
+                        margin-inline-start: auto;
+
+                        svg{
+                            height: 1.5rem;
+                            width: 1.5rem;
+                        }
+                    }
+                }
+
+                .items {
+                    display: flex;
+                    flex-direction: column;
+                    gap: .5rem;
+                    overflow: hidden;
+                    transition: height 1s ease-in-out;
+
+                    &.folded {
+                        height: 0;
+                    }
+
+                    .item {
+                        border-radius: .25rem;
+                        display: flex;
+                        flex-direction: column;
+                        gap: .25rem;
+                        padding: 1rem;
+
+                        &:nth-child(odd) {
+                            background-color: var(--ardoise-80-alpha-50);
+                        }
+
+                        &:nth-child(2n) {
+                            background-color: var(--ardoise-100-alpha-20);
+                        }
+
+                        .item-data {}
+
+                        .sub-item, .item-iterable {
+                            align-items: center;
+                            display: flex;
+                            gap: 1rem;
+
+                            svg {
+                                flex-shrink: 0;
+                            }
+                        }
+                    }
+
+                    .value {
+                    }
+                }
+            }
+        }
+    }
+
     .externals {
         background-color: var(--ardoise-100-alpha-20);
         border-radius: .5rem;

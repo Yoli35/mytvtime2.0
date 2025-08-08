@@ -1,0 +1,60 @@
+{% if app.environment == 'dev' and changes|length %}
+    <div class="season-changes">
+        <h2>{{ 'Changes'|trans }}</h2>
+        <div class="changes">
+            {% for change in changes %}
+                <div class="change">
+                    <div class="key">
+                        {{ change.key }}
+                        <div class="toggler">{{ ux_icon('mdi:arrow-down') }}</div>
+                    </div>
+                    <div class="items folded">
+                        {% for item in change.items %}
+                            <div class="item">
+                                {% for itemKey, itemValue in item %}
+                                    <div class="item-iterable">
+                                        <div class="item-{{ itemKey }}">{{ itemKey }}</div>
+                                        {{ ux_icon('mdi:arrow-right') }}
+                                        {% if itemValue is iterable %}
+                                            <div class="item-data-iterable">
+                                                {% for subKey, subValue in itemValue %}
+                                                    <div class="item-iterable">
+                                                        <div class="item-{{ subKey }}">{{ subKey }}</div>
+                                                        {{ ux_icon('mdi:arrow-right') }}
+                                                        {% if subValue is iterable %}
+                                                            <div class="item-data-iterable">
+                                                                {% for k, v in subValue %}
+                                                                    <div class="item-iterable">
+                                                                        <div class="item-{{ k }}">{{ k }}</div>
+                                                                        {{ ux_icon('mdi:arrow-right') }}
+                                                                        <div class="item-data">{{ v }}</div>
+                                                                    </div>
+                                                                {% endfor %}
+                                                            </div>
+                                                        {% else %}
+                                                            <div class="item-data">{{ subValue }}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            <div class="item-data">{{ itemValue }}</div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+        document.querySelectorAll('.season-changes .change .key').forEach(function (keyElement) {
+            keyElement.addEventListener('click', function () {
+                const items = this.nextElementSibling;
+                items.classList.toggle('folded');
+            });
+        });
+    </script>
+{% endif %}
