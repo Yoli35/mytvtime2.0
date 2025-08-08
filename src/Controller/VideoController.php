@@ -111,7 +111,23 @@ final class VideoController extends AbstractController
         } else {
             $count = $this->userVideoRepository->countVideoByCategory($user->getId(), $categoryId);
         }
-        $categories = $this->categoryRepository->findAll();
+        $categories = array_map(function ($cat) {
+            return [
+                'id' => $cat->getId(),
+                'name' => $this->translator->trans($cat->getName()),
+                'color' => $cat->getColor(),
+            ];
+        }, $this->categoryRepository->findAll());
+        usort($categories, function ($a, $b) {
+            // Remplacer les accents pour une comparaison correcte
+            $a['name'] = preg_replace('/[ÉÈÊË]/u', 'E', $a['name']);
+            $b['name'] = preg_replace('/[ÉÈÊË]/u', 'E', $b['name']);
+            $a['name'] = preg_replace('/[éèêë]/u', 'e', $a['name']);
+            $b['name'] = preg_replace('/[éèêë]/u', 'e', $b['name']);
+            dump($a['name'], $b['name']);
+            // Comparer les noms des catégories
+            return strcmp($a['name'], $b['name']);
+        });
 
         return $this->render('video/index.html.twig', [
             'dbUserVideos' => $dbUserVideos,
@@ -666,7 +682,7 @@ final class VideoController extends AbstractController
         if ($nextPage) {
             $html .= '<a href="?page=' . $nextPage . ($categoryId ? '&category=' . $categoryId : '') . '"><button class="page">' . $this->translator->trans("Next page") . '</button></a> ';
         }
-        $html .= '<span class="total-pages">' . $this->translator->trans("count videos", ["count" => $totalResults]) .' / '. $this->translator->trans("count pages", ["count" => $totalPages]) . '</span>';
+        $html .= '<span class="total-pages">' . $this->translator->trans("count videos", ["count" => $totalResults]) . ' / ' . $this->translator->trans("count pages", ["count" => $totalPages]) . '</span>';
         $html .= '</div>';
 
         return $html;

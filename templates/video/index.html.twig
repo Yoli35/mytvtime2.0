@@ -19,7 +19,7 @@
                         <select id="categories" name="categories">
                             <option value="0">{{ 'All categories'|trans }}</option>
                             {% for category in categories %}
-                                <option value="{{ category.id }}"{% if category.id==categoryId %} selected{% endif %}>{{ category.name|trans }}</option>
+                                <option value="{{ category.id }}"{% if category.id==categoryId %} selected{% endif %}>{{ category.name }}</option>
                             {% endfor %}
                         </select>
                         <script>
