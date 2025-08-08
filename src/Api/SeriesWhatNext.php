@@ -23,7 +23,7 @@ class SeriesWhatNext extends AbstractController
     public function whatNext(Request $request): JsonResponse
     {
         $user = $this->getUser();
-        $filters = ['page' => 1, 'perPage' => 20, 'sort' => 'episodeAirDate', 'order' => 'DESC', 'network' => 'all'];
+        $filters = ['page' => 1, 'perPage' => 20, 'sort' => 'finalAirDate', 'order' => 'DESC', 'network' => 'all'];
         $localisation = ['language' => 'fr_FR', 'country' => 'FR', 'timezone' => 'Europe/Paris', 'locale' => 'fr'];
         $userSeries = $this->userSeriesRepository->getAllSeries(
             $user,

@@ -250,6 +250,7 @@ class UserSeriesRepository extends ServiceEntityRepository
             'episodeAirDate' => 'lue.`air_date`',
             'name' => 's.`name`',
             'addedAt' => 'us.`added_at`',
+            'finalAirDate' => 'IF(sbd.id IS NULL, nue.`air_date`, sbd.`date`)',
             default => 's.`first_air_date`',
         };
         if ($network !== 'all') {
