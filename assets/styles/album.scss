@@ -123,7 +123,7 @@
         gap: 1rem;
         margin-block-end: 1rem;
         margin-inline: auto;
-        width: calc(round(down, 100%, 33rem) - 1rem);
+        width: calc(round(down, 100%, 21rem) - 1rem);
 
         &:has(.new-album) {
             justify-content: center;
@@ -328,15 +328,18 @@
 @property --album-cover-size {
     syntax: "<percentage>";
     inherits: true;
-    initial-value: 182%;
+    initial-value: 200%;
 }
 
 @keyframes effect-beck {
-    from {
-        --album-cover-size: 182%;
+    0% {
+        --album-cover-size: 200%;
     }
-    to {
+    50% {
         --album-cover-size: 178%;
+    }
+    100% {
+        --album-cover-size: 200%;
     }
 }
 
@@ -835,6 +838,10 @@
                     }
                 }
             }
+        }
+
+        .album-photos.grid {
+            padding-block-start: 20rem;
         }
 
         .side-panel.edit-photo-dialog {

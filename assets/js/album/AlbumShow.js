@@ -61,6 +61,7 @@ export class AlbumShow {
         this.imagePaths = globs.imagePaths;
         this.texts = globs.texts;
         this.srcsetPaths = globs.srcsetPaths;
+        this.interval = null;
         this.fileTypes = [
             "image/jpeg",
             "image/png",
@@ -479,6 +480,16 @@ export class AlbumShow {
 
     effect(arg) {
         const albumPhotosDiv = arg.div;
+
+        if (albumPhotosDiv.classList.contains('list')) {
+            if (gThis.interval) {
+                clearInterval(gThis.interval);
+                albumPhotosDiv.classList.remove('play');
+                albumPhotosDiv.removeAttribute('style');
+                gThis.interval = null;
+                return;
+            }
+        }
         const paths = gThis.imagePaths;
         const srcsetPaths = gThis.srcsetPaths
         const highRes = srcsetPaths.original;
