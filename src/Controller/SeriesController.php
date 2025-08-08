@@ -1494,27 +1494,6 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    function getChanges(int $seasonId): array
-    {
-        $now = $this->now();
-        $startDate = $now->modify('-14 day')->format('Y-m-d');
-        $endDate = $now->format('Y-m-d');
-        $results = json_decode($this->tmdbService->getTvSeasonChanges($seasonId, $endDate, $startDate), true);
-
-        if (!isset($results['changes'])) {
-            return [];
-        }
-        $changes = $results['changes'];
-        $changes['keys'] = array_column($changes, 'key');
-        /*dump([
-            'season id' => $seasonId,
-            'start date' => $startDate,
-            'end date' => $endDate,
-            'changes' => $results['changes'],
-        ]);*/
-        return $results['changes'];
-    }
-
     #[Route('/localized/name/add/{id}', name: 'add_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addLocalizedName(Request $request, int $id): Response
     {
@@ -2579,6 +2558,27 @@ class SeriesController extends AbstractController
             'dbSeriesCount' => $dbSeriesCount,
             'tmdbCalls' => $tmdbCalls,
         ]);
+    }
+
+    public function getChanges(int $seasonId): array
+    {
+        $now = $this->now();
+        $startDate = $now->modify('-14 day')->format('Y-m-d');
+        $endDate = $now->format('Y-m-d');
+        $results = json_decode($this->tmdbService->getTvSeasonChanges($seasonId, $endDate, $startDate), true);
+
+        if (!isset($results['changes'])) {
+            return [];
+        }
+        $changes = $results['changes'];
+        $changes['keys'] = array_column($changes, 'key');
+        /*dump([
+            'season id' => $seasonId,
+            'start date' => $startDate,
+            'end date' => $endDate,
+            'changes' => $results['changes'],
+        ]);*/
+        return $results['changes'];
     }
 
     public function addVideo(SeriesVideo $video): bool
