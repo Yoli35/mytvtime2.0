@@ -423,7 +423,7 @@
                 </div>
 
                 <div class="what-to-watch-next">
-                    <div class="next-button">{{ 'What to watch next?'|trans }}</div>
+                    <div class="next-button" data-id="{{ series.tmdbId }}" data-language="{{ language }}">{{ 'What to watch next?'|trans }}</div>
                 </div>
 
                 {% if season.credits.cast|length %}

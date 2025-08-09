@@ -282,12 +282,12 @@ class TMDBService
         }
     }
 
-    public function getTvSimilar(int $tvId): ?string
+    public function getTvSimilar(int $tvId, string $language = 'en-US'): ?string
     {
         try {
             $response = $this->client->request(
                 'GET',
-                'https://api.themoviedb.org/3/tv/' . $tvId . '/similar?api_key=' . $this->api_key,
+                'https://api.themoviedb.org/3/tv/' . $tvId . '/similar?language=' . $language . '&api_key=' . $this->api_key,
             );
             try {
                 return $response->getContent();

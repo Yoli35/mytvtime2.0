@@ -328,13 +328,20 @@ export class Season {
         const whatToWatchNextButton = whatToWatchNextDiv.querySelector('.next-button');
         whatToWatchNextButton.addEventListener('click', e => {
             whatToWatchNextButton.classList.add('disabled');
-            // fetch api ("/api/series/what/next") to get series cards stored in blocks in response and create a container div, if needed, to append these cards
-            fetch("/api/series/what/next",
+            const id = whatToWatchNextButton.getAttribute('data-id');
+            const language = whatToWatchNextButton.getAttribute('data-language');
+
+            fetch("/api/series/what/next?id=" + id + "&language=" + language,
                 {
                     'method': 'GET',
                     'headers': {
-                        'Content-Type': 'application/json'
-                    }
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }/*,
+                    body: JSON.stringify({
+                        id: id,
+                        language: language,
+                    })*/
                 })
             .then(res => res.json())
             .then(data => {

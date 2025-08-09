@@ -3541,6 +3541,10 @@ h2 {
 }
 
 .what-to-watch-next {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
     .next-button {
         align-items: center;
         background-color: var(--green-50);

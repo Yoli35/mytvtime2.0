@@ -1482,6 +1482,7 @@ class SeriesController extends AbstractController
             'series' => $series,
             'userSeries' => $userSeries,
             'season' => $season,
+            'language' => $locale . '-' . $country,
             'changes' => $this->getChanges($season['id']),
             'now' => $this->now()->format('Y-m-d H:i O'),
             'episodeDiv' => [
