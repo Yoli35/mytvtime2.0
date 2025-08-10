@@ -6,6 +6,8 @@ use App\Entity\Settings;
 use App\Repository\SeriesRepository;
 use App\Repository\SettingsRepository;
 use App\Service\DateService;
+use App\Service\ImageConfiguration;
+use App\Service\ImageService;
 use App\Service\TMDBService;
 use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,6 +21,8 @@ class SeriesUpdates extends AbstractController
 {
     public function __construct(
         private readonly DateService        $dateService,
+        private readonly ImageConfiguration $imageConfiguration,
+        private readonly ImageService       $imageService,
         private readonly SeriesRepository   $seriesRepository,
         private readonly SettingsRepository $settingsRepository,
         private readonly TMDBService        $tmdbService,
@@ -34,6 +38,9 @@ class SeriesUpdates extends AbstractController
         $units = $data['units'];
         $blockStart = intval($data['blockStart']);
         $blockEnd = intval($data['blockEnd']);
+
+        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+        $backdropUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
 
         $progress = !$blockStart ? 0 : $blockEnd;
         if (!$progress) {
@@ -115,12 +122,14 @@ class SeriesUpdates extends AbstractController
 
                 $backdropPath = $tvFR['backdrop_path'] ?? $tvUS['backdrop_path'] ?? null;
                 if ($backdropPath && $series->getBackdropPath() !== $backdropPath) {
+                    $this->imageService->saveImage("backdrops", $backdropPath, $backdropUrl);
                     $updates[] = ['field' => 'backdrop_path', 'label' => 'Backdrop', 'valueBefore' => $series->getBackdropPath(), 'valueAfter' => $backdropPath];
                     $series->setBackdropPath($backdropPath);
                 }
 
                 $posterPath = $tvFR['poster_path'] ?? $tvUS['poster_path'] ?? null;
                 if ($posterPath && $series->getPosterPath() !== $posterPath) {
+                    $this->imageService->saveImage("posters", $posterPath, $posterUrl);
                     $updates[] = ['field' => 'poster_path', 'label' => 'Poster', 'valueBefore' => $series->getPosterPath(), 'valueAfter' => $posterPath];
                     $series->setPosterPath($posterPath);
                 }
