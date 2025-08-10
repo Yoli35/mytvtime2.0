@@ -29,15 +29,18 @@ export class Map {
 
     init() {
         console.log('Map init');
+        console.log(`Mapbox GL JS v${mapboxgl.version}`);
         mapboxgl.accessToken = 'pk.eyJ1IjoiaWJveTQ0IiwiYSI6ImNtNTZqcXo4ZjAxYzIyaXM3cWZ5dnNheWkifQ.yY-zdieRm3Dhlrj3vYh9hg';
         mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js');
 
         const initializeMap = () => {
             this.map = new mapboxgl.Map({
                 container: 'map',
-                style: 'mapbox://styles/mapbox/outdoors-v12',
+                /*style: 'mapbox://styles/mapbox/outdoors-v12',*/
                 /*cooperativeGestures: true,*/
                 projection: 'globe',
+                pitch: 45,
+                bearing: 0,
                 bounds: this.bounds,
                 fitBoundsOptions: {
                     padding: 15
@@ -54,7 +57,9 @@ export class Map {
                     "star-intensity": 0.15
                 });
 
-                gThis.map.addSource('mapbox-dem', {
+                gThis.map.setConfigProperty('basemap', 'show3dObjects', true);
+
+                /*gThis.map.addSource('mapbox-dem', {
                     'type': 'raster-dem',
                     'url': 'mapbox://mapbox.terrain-rgb'
                 });
@@ -62,10 +67,10 @@ export class Map {
                 gThis.map.setTerrain({
                     'source': 'mapbox-dem',
                     'exaggeration': 1.5
-                });
+                });*/
             });
             this.map.on('click', (e) => {
-                navigator.clipboard.writeText(`${e.lngLat.lat}, ${e.lngLat.lng}`).then(r => console.log(`A click event has occurred /*at ${e.lngLat}*/`));
+                navigator.clipboard.writeText(`${e.lngLat.lat}, ${e.lngLat.lng}`).then(r => console.log(`A click event has occurred /*at ${e.lngLat}*/ ${r}`));
             });
 
             const language = new MapboxLanguage();

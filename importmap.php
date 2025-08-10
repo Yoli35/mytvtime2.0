@@ -94,27 +94,27 @@ return [
     'Videos' => [
         'path' => './assets/js/videos/Videos.js',
     ],
-    '@hotwired/stimulus' => [
-        'version' => '3.2.2',
-    ],
     '@symfony/stimulus-bundle' => [
         'path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js',
     ],
+    '@hotwired/stimulus' => [
+        'version' => '3.2.2',
+    ],
     '@hotwired/turbo' => [
-        'version' => '7.3.0',
+        'version' => '8.0.13',
     ],
     'mapbox-gl' => [
-        'version' => '3.10.0',
+        'version' => '3.14.0',
     ],
     'mapbox-gl/dist/mapbox-gl.min.css' => [
-        'version' => '3.10.0',
+        'version' => '3.14.0',
         'type' => 'css',
     ],
     '@mapbox/mapbox-gl-language' => [
         'version' => '1.0.1',
     ],
     '@mapbox/mapbox-gl-geocoder' => [
-        'version' => '5.0.3',
+        'version' => '5.1.0',
     ],
     'suggestions' => [
         'version' => '1.7.1',
@@ -131,14 +131,11 @@ return [
     '@mapbox/mapbox-sdk/services/geocoding' => [
         'version' => '0.16.1',
     ],
-    'nanoid' => [
-        'version' => '3.3.7',
-    ],
     'subtag' => [
         'version' => '0.5.0',
     ],
     '@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.min.css' => [
-        'version' => '5.0.3',
+        'version' => '5.1.0',
         'type' => 'css',
     ],
     'fuzzy' => [
@@ -148,15 +145,18 @@ return [
         'version' => '0.2.0',
     ],
     'eventemitter3' => [
-        'version' => '3.1.2',
+        'version' => '5.0.1',
     ],
     '@mapbox/fusspot' => [
-        'version' => '0.4.0',
+        'version' => '0.8.1',
     ],
     'base-64' => [
-        'version' => '0.1.0',
+        'version' => '1.0.0',
     ],
     'is-plain-obj' => [
-        'version' => '1.1.0',
+        'version' => '4.1.0',
+    ],
+    'nanoid' => [
+        'version' => '3.3.11',
     ],
 ];
