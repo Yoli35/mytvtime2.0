@@ -125,6 +125,7 @@
                     locationH4.scrollIntoView({behavior: 'instant', block: 'center'});*/
                     const map = document.getElementById('map');
                     const allSeriesLocations = document.querySelector('.all-series-locations');
+                    /** @type {HTMLSelectElement} */
                     const select = document.getElementById('fl-series-map-select');
                     const value = typeof selectedValue == "number" ? selectedValue : select.options[select.selectedIndex].value;
                     let country;
@@ -208,6 +209,7 @@
                 }
 
                 function zoomToLocation() {
+                    /** @type {HTMLSelectElement} */
                     const select = document.getElementById('fl-country-map-select');
                     const country = select.options[select.selectedIndex].value;
                     const leafletMarkerIcons = document.querySelectorAll('.leaflet-marker-icon');
@@ -243,6 +245,7 @@
                 }
 
                 function zoomToCountry() {
+                    /** @type {HTMLSelectElement} */
                     const select = document.getElementById('fl-country-bb-select');
                     const country = select.options[select.selectedIndex];
                     if (country.value === "") {
@@ -349,6 +352,14 @@
         <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.1.0/mapbox-gl-geocoder.min.js"></script>
     {% endif %}
     <script>
+        /** @typedef LogItem
+         * @type {Object}
+         *  @property {Array} locations
+         *  @property {Array} countryLatLngs
+         *  @property {Array} countryLocationIds
+         *  @property {number} latitude
+         *  @property {number} longitude
+         */
         const L = window.L;
         const globsData = document.querySelector('#globs-map');
         console.log(globsData);
@@ -422,6 +433,7 @@
         });
 
         // TODO: Add a handler to modify the map and canvas height
+        /** * @type {HTMLDivElement} */
         const mapDiv = document.getElementById('map');
         const mapboxglControlContainerDiv = mapDiv.querySelector('.mapboxgl-control-container');
         const handleDiv = document.createElement('div');
@@ -438,6 +450,8 @@
             });
 
             function moveHandler(e) {
+                /** * @type {HTMLDivElement} */
+                const mapDiv = document.getElementById('map');
                 const diff = e.clientY - startY;
                 mapDiv.style.height = startHeight + diff + 'px';
                 // and the canvas
