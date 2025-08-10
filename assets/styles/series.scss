@@ -1533,9 +1533,20 @@ h2 {
                         margin-inline-end: .25rem;
                         margin-inline-start: auto;
 
-                        svg{
+                        svg {
                             height: 1.5rem;
+                            transition: transform 0.3s ease-in-out;
                             width: 1.5rem;
+                        }
+                    }
+                }
+
+                &:not(:has(.items.folded)) {
+                    .key {
+                        .toggler {
+                            svg {
+                                transform: rotate(180deg);
+                            }
                         }
                     }
                 }
@@ -1566,7 +1577,8 @@ h2 {
                             background-color: var(--ardoise-100-alpha-20);
                         }
 
-                        .item-data {}
+                        .item-data {
+                        }
 
                         .sub-item, .item-iterable {
                             align-items: center;
