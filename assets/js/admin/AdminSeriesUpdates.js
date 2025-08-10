@@ -187,6 +187,11 @@ export class AdminSeriesUpdates {
                     beforeDiv.innerText = item.valueBefore;
                     afterDiv.innerText = item.valueAfter;
                     break;
+                case 'new_episodes':
+                    fieldDiv.innerText = item.label;
+                    beforeDiv.innerHTML = item.valueBefore;
+                    afterDiv.innerText = item.valueAfter;
+                    break;
                 case 'poster_path':
                     fieldDiv.innerText = item.label;
                     let posterPath = item.valueBefore

@@ -786,6 +786,36 @@
                             overflow-x: auto;
                         }
 
+                        .admin__update__field.new-episodes {
+                            .user {
+                                display: flex;
+                                gap: .5rem;
+
+                                .avatar {
+                                    img {
+                                        aspect-ratio: 1/1;
+                                        border-radius: 50%;
+                                        border: 2px solid var(--orange-50);
+                                        height: 1.75rem;
+                                        width: 1.75rem;
+                                    }
+                                }
+
+                                .name {
+                                    width: 10rem;
+                                }
+
+                                .badge {
+                                    background-color: var(--orange-50);
+                                    border-radius: .25rem;
+                                    color: var(--ardoise-10);
+                                    font-size: .75rem;
+                                    font-weight: bold;
+                                    padding: .125rem .5rem;
+                                }
+                            }
+                        }
+
                         .admin__update__before, .admin__update__after {
                             flex-shrink: 0;
                             overflow-x: auto;

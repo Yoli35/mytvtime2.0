@@ -3,8 +3,12 @@
 namespace App\Api;
 
 use App\Entity\Settings;
+use App\Entity\UserEpisode;
+use App\Entity\UserSeries;
 use App\Repository\SeriesRepository;
 use App\Repository\SettingsRepository;
+use App\Repository\UserEpisodeRepository;
+use App\Repository\UserSeriesRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
@@ -20,12 +24,14 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 class SeriesUpdates extends AbstractController
 {
     public function __construct(
-        private readonly DateService        $dateService,
-        private readonly ImageConfiguration $imageConfiguration,
-        private readonly ImageService       $imageService,
-        private readonly SeriesRepository   $seriesRepository,
-        private readonly SettingsRepository $settingsRepository,
-        private readonly TMDBService        $tmdbService,
+        private readonly DateService           $dateService,
+        private readonly ImageConfiguration    $imageConfiguration,
+        private readonly ImageService          $imageService,
+        private readonly SeriesRepository      $seriesRepository,
+        private readonly SettingsRepository    $settingsRepository,
+        private readonly TMDBService           $tmdbService,
+        private readonly UserEpisodeRepository $userEpisodeRepository,
+        private readonly UserSeriesRepository  $userSeriesRepository,
     )
     {
     }
@@ -154,6 +160,47 @@ class SeriesUpdates extends AbstractController
 
                 $series->setUpdatedAt($now);
                 $this->seriesRepository->save($series, true);
+
+                $userSeries = $this->userSeriesRepository->findBy(['series' => $series]);
+                foreach ($userSeries as $us) {
+                    $seriesNewEpisodeCount = 0;
+                    $userEpisodes = $us->getUserEpisodes();
+                    if (count($userEpisodes) == $episodeNumber) {
+                        continue;
+                    }
+                    foreach ($tvUS['seasons'] as $season) {
+                        $seasonNumber = $season['season_number'] ?? null;
+                        if ($seasonNumber === null) {
+                            continue;
+                        }
+                        foreach ($season['episodes'] as $episode) {
+                            $episodeNumber = $episode['episode_number'] ?? null;
+                            if ($episodeNumber === null) {
+                                continue;
+                            }
+                            // Check if the episode already exists for the user
+                            $existingEpisode = $userEpisodes->filter(function ($ue) use ($seasonNumber, $episodeNumber) {
+                                return $ue->getSeasonNumber() === $seasonNumber && $ue->getEpisodeNumber() === $episodeNumber;
+                            })->first();
+
+                            if (!$existingEpisode) {
+                                // Create a new UserEpisode
+                                $userEpisode = new UserEpisode($us, $episode['id'], $seasonNumber, $episodeNumber, null);
+                                $this->userEpisodeRepository->save($userEpisode);
+                                $seriesNewEpisodeCount++;
+                            }
+                        }
+                    }
+                    if ($seriesNewEpisodeCount > 0) {
+                        $updates[] = [
+                            'field' => 'new_episodes',
+                            'label' => 'New episodes for user ' . $this->userToHTML($us),
+                            'valueBefore' => $episodeNumber,
+                            'valueAfter' => $episodeNumber + $seriesNewEpisodeCount
+                        ];
+                    }
+                }
+
                 $lastUpdate = $now;
 
                 if (count($updates)) {
@@ -208,7 +255,7 @@ class SeriesUpdates extends AbstractController
             $data = $this->getDates($progress);
         }
 
-        $lastUpdate = $this->dateService->newDateFromTimestamp(($data['end date']/1000) ?? 0, "UTC")->format("Y-m-d H:i:s");
+        $lastUpdate = $this->dateService->newDateFromTimestamp(($data['end date'] / 1000) ?? 0, "UTC")->format("Y-m-d H:i:s");
         $lastUpdateString = $this->dateService->formatDateRelativeLong($lastUpdate, "Europe/Paris", $request->getLocale());
         $lastDuration = ($data['end date'] - $data['start date']) / 1000;
         $lastDurationString = $this->dateService->getDurationString($lastDuration, $units);
@@ -232,7 +279,7 @@ class SeriesUpdates extends AbstractController
         }
 
         $date = new DateTimeImmutable();
-        $milli = (int) $date->format('Uv');
+        $milli = (int)$date->format('Uv');
 
         if ($progress == 0) {
             $settings->setData(['start date' => $milli, 'end date' => null]);
@@ -242,5 +289,14 @@ class SeriesUpdates extends AbstractController
         $this->settingsRepository->save($settings, true);
 
         return $settings->getData();
+    }
+
+    private function userToHTML(UserSeries $us): string
+    {
+        $user = $us->getUser();
+        $username = htmlspecialchars($user->getUsername() ?: 'Unknown User');
+        $userId = $user->getId() ?: 0;
+        $avatar = '/images/users/avatars/' . $user->getAvatar() ?: 'default.png';
+        return '<div class="user"><div class="avatar"><img src="'.$avatar.'" alt="'.$username.'"></div><div class="name">' . $username . '</div><div class="badge" title="User ID: ' . $userId . '"></div></div>';
     }
 }
