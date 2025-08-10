@@ -1,5 +1,6 @@
 import {ToolTips} from "ToolTips";
 
+let gThis = null;
 export class Videos {
 
     /**
@@ -13,6 +14,7 @@ export class Videos {
      */
 
     constructor() {
+        gThis = this;
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         this.app_video_details = globs['app_video_details'];
         this.app_video_comments = globs['app_video_comments'];
@@ -23,6 +25,7 @@ export class Videos {
         this.texts = globs['texts'];
         this.commentInfos = {comments: [], nextPageToken: null};
         this.svgs = document.querySelector('#svgs');
+        this.videoCategories = [];
         this.tooltips = new ToolTips();
         this.init = this.init.bind(this);
     }
@@ -43,13 +46,15 @@ export class Videos {
                 const videoId = videoPage.getAttribute('data-id');
                 const deleteDivs = document.querySelectorAll('.delete-category');
                 deleteDivs.forEach((deleteDiv) => {
+                    const categoryDiv = deleteDiv.closest('.category');
+                    const categoryId = categoryDiv.getAttribute('data-id');
                     deleteDiv.addEventListener('click', (event) => {
                         event.preventDefault();
-                        const categoryDiv = deleteDiv.closest('.category');
-                        const categoryId = categoryDiv.getAttribute('data-id');
                         this.deleteCategory(videoId, categoryId, categoryDiv);
                     });
+                    this.videoCategories.push(parseInt(categoryId));
                 });
+                this.updateSelect();
                 categorySelect.addEventListener('change', (event) => {
                     const selectedCategory = event.target.value;
                     this.addCategory(videoId, selectedCategory);
@@ -84,6 +89,7 @@ export class Videos {
             })
             .then(data => {
                 console.log('Category added:', data);
+                gThis.videoCategories.push(parseInt(categoryId));
                 let categoriesDiv = document.querySelector('.categories');
                 if (!categoriesDiv) {
                     categoriesDiv = document.createElement('div');
@@ -107,7 +113,8 @@ export class Videos {
                 categoryDiv.appendChild(deleteDiv);
                 categoriesDiv.appendChild(categoryDiv);
                 // disable the select option that was just added
-                const categorySelect = document.querySelector('select[id="categories"]');
+                gThis.updateSelect();
+                /*const categorySelect = document.querySelector('select[id="categories"]');
                 if (categorySelect) {
                     const option = categorySelect.querySelector(`option[value="${categoryId}"]`);
                     if (option) {
@@ -117,7 +124,7 @@ export class Videos {
                     if (optionAll) {
                         optionAll.selected = true; // Select "All" option after deletion
                     }
-                }
+                }*/
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
@@ -145,8 +152,12 @@ export class Videos {
             .then(data => {
                 console.log('Category deleted:', data);
                 categoryDiv.remove();
+                const deletedId = parseInt(categoryId);
+                gThis.videoCategories = gThis.videoCategories.filter(id => id !== deletedId);
+                gThis.updateSelect();
+
                 // enable the select option that was just deleted
-                const categorySelect = document.querySelector('select[id="categories"]');
+                /*const categorySelect = document.querySelector('select[id="categories"]');
                 if (categorySelect) {
                     const option = categorySelect.querySelector(`option[value="${categoryId}"]`);
                     if (option) {
@@ -156,11 +167,32 @@ export class Videos {
                     if (optionAll) {
                         optionAll.selected = true; // Select "All" option after deletion
                     }
-                }
+                }*/
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
             });
+    }
+
+    updateSelect() {
+        const categorySelect = document.querySelector('select[id="categories"]');
+        const videoCats = gThis.videoCategories;
+        if (categorySelect) {
+            const options = categorySelect.querySelectorAll('option');
+            console.log(options);
+            console.log(videoCats);
+            options.forEach(option => {
+                option.disabled = videoCats.includes(parseInt(option.value));
+            });
+            /*const option = categorySelect.querySelector(`option[value="${categoryId}"]`);
+            if (option) {
+                option.disabled = false;
+            }
+            const optionAll = categorySelect.querySelector('option[value="all"]');
+            if (optionAll) {
+                optionAll.selected = true; // Select "All" option after deletion
+            }*/
+        }
     }
 
     getComments() {

@@ -323,12 +323,12 @@
                     padding: 1rem;
                 }
 
-                .share-video {
+                .back-to-videos, .back-to-video-category, .share-video {
                     align-items: center;
-                    background-color: #f00;
                     border-radius: .25rem;
                     cursor: pointer;
                     display: flex;
+                    gap: 0;
                     height: 4rem;
                     justify-content: center;
                     width: 4rem;
@@ -338,6 +338,18 @@
                         height: 2rem;
                         width: 2rem;
                     }
+                }
+
+                .back-to-videos {
+                    background-color: var(--green-50);
+                }
+
+                .back-to-video-category {
+                    background-color: var(--orange-50);
+                }
+
+                .share-video {
+                    background-color: #f00;
                 }
             }
 

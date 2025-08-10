@@ -111,23 +111,7 @@ final class VideoController extends AbstractController
         } else {
             $count = $this->userVideoRepository->countVideoByCategory($user->getId(), $categoryId);
         }
-        $categories = array_map(function ($cat) {
-            return [
-                'id' => $cat->getId(),
-                'name' => $this->translator->trans($cat->getName()),
-                'color' => $cat->getColor(),
-            ];
-        }, $this->categoryRepository->findAll());
-        usort($categories, function ($a, $b) {
-            // Remplacer les accents pour une comparaison correcte
-            $a['name'] = preg_replace('/[ÉÈÊË]/u', 'E', $a['name']);
-            $b['name'] = preg_replace('/[ÉÈÊË]/u', 'E', $b['name']);
-            $a['name'] = preg_replace('/[éèêë]/u', 'e', $a['name']);
-            $b['name'] = preg_replace('/[éèêë]/u', 'e', $b['name']);
-            dump($a['name'], $b['name']);
-            // Comparer les noms des catégories
-            return strcmp($a['name'], $b['name']);
-        });
+        $categories = $this->getCategories();
 
         return $this->render('video/index.html.twig', [
             'dbUserVideos' => $dbUserVideos,
@@ -135,22 +119,25 @@ final class VideoController extends AbstractController
             'totalDuration' => $totalDurationString,
             'now' => $now,
             'categoryId' => $categoryId,
+            'page' => $page,
             'pagination' => $this->pagination($page, $categoryId, $count, $limit),
         ]);
     }
 
     #[IsGranted('ROLE_USER')]
     #[Route('/show/{id}', name: 'show')]
-    public function show(UserVideo $userVideo): Response
+    public function show(Request $request, UserVideo $userVideo): Response
     {
         $user = $this->getUser();
         $video = $userVideo->getVideo();
+        $page = $request->query->getInt('page', 1);
+        $categoryId = $request->query->getInt('category');
 
         if (!$video) {
             throw $this->createNotFoundException('Video not found');
         }
 
-        $categories = $this->categoryRepository->findBy([], ['name' => 'ASC']);
+        $categories = $this->getCategories();
         $previousVideo = $this->videoRepository->getPreviousVideo($video, $user);
         $nextVideo = $this->videoRepository->getNextVideo($video, $user);
 
@@ -159,7 +146,9 @@ final class VideoController extends AbstractController
         return $this->render('video/show.html.twig', [
             'userVideo' => $userVideo,
             'video' => $video,
+            'page' => $page,
             'categories' => $categories,
+            'categoryId' => $categoryId,
             'previousVideo' => $previousVideo,
             'nextVideo' => $nextVideo,
         ]);
@@ -274,6 +263,30 @@ final class VideoController extends AbstractController
         $this->videoRepository->save($video, true);
 
         return new JsonResponse(['message' => 'Category removed successfully', 'id' => $category->getId()]);
+    }
+
+    private function getCategories() :array
+    {
+        $categories = array_map(function ($cat) {
+            return [
+                'id' => $cat->getId(),
+                'name' => $this->translator->trans($cat->getName()),
+                'color' => $cat->getColor(),
+            ];
+        }, $this->categoryRepository->findAll());
+
+        usort($categories, function ($a, $b) {
+            // Remplacer les accents pour une comparaison correcte
+            $a['name'] = preg_replace('/[ÉÈÊË]/u', 'E', $a['name']);
+            $b['name'] = preg_replace('/[ÉÈÊË]/u', 'E', $b['name']);
+            $a['name'] = preg_replace('/[éèêë]/u', 'e', $a['name']);
+            $b['name'] = preg_replace('/[éèêë]/u', 'e', $b['name']);
+            dump($a['name'], $b['name']);
+            // Comparer les noms des catégories
+            return strcmp($a['name'], $b['name']);
+        });
+
+        return $categories;
     }
 
     private function parseLink(string $userLink): ?string
