@@ -41,6 +41,7 @@ class SeriesUpdates extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $ids = $data['ids'];
+        $force = $data['force'] ?? false;
         $units = $data['units'];
         $blockStart = intval($data['blockStart']);
         $blockEnd = intval($data['blockEnd']);
@@ -62,104 +63,123 @@ class SeriesUpdates extends AbstractController
 
             $updates = [];
             $series = $this->seriesRepository->find($item['id']);
-            if ($series) {
-                $name = $series->getName() ?: 'Unknown Series';
-                $lastUpdate = $series->getUpdatedAt();
-                $checkStatus = 'Checking';
-                $diff = $now->diff($lastUpdate);
+            if (!$series) {
+                $results[] = [
+                    'check' => 'Not found',
+                    'id' => $item['id'],
+                    'name' => 'Unknown in database',
+                    'localizedName' => '',
+                    'updates' => [],
+                    'lastUpdate' => ucfirst($this->dateService->formatDateRelativeLong($now->format('Y-m-d H:i:s'), "Europe/Paris", "fr")),
+                ];
+                continue;
+            }
+            $name = $series->getName() ?: 'Unknown Series';
+            $lastUpdate = $series->getUpdatedAt();
+            $checkStatus = 'Checking';
+            $diff = $now->diff($lastUpdate);
 
-                if ($diff->days < 1) { // More than 1 day since last update
-                    $checkStatus = 'Passed';
+            if ($diff->days < 1 && !$force) { // More than 1 day since last update
+                $checkStatus = 'Passed';
+            }
+            if ($series->getStatus() && in_array($series->getStatus(), $endedSeriesStatus)) {
+                $checkStatus = 'Ended';
+            }
+
+            if ($checkStatus !== 'Checking') {
+                $results[] = [
+                    'check' => $checkStatus,
+                    'id' => $series->getId(),
+                    'name' => $name,
+                    'localizedName' => $series->getLocalizedName('fr')?->getName() ?? '',
+                    'updates' => [],
+                    'lastUpdate' => ucfirst($this->dateService->formatDateRelativeLong($lastUpdate->format('Y-m-d H:i:s'), "Europe/Paris", "fr")),
+                ];
+                continue;
+            }
+
+            $tvFR = json_decode($this->tmdbService->getTv($item['tmdb_id'], 'fr-FR'), true);
+            $tvUS = json_decode($this->tmdbService->getTv($item['tmdb_id'], 'en-US'), true);
+
+            if (!$tvFR || !$tvUS) {
+                $checkStatus = 'Not Found';
+                $name .= ' - Series not found on TMDB (' . $item['tmdb_id'] . ')';
+                $this->addFlash('error', 'Series not found on TMDB: ' . $name);
+
+                $results[] = [
+                    'check' => $checkStatus,
+                    'id' => $item['id'],
+                    'name' => $name,
+                    'localizedName' => '',
+                    'updates' => [],
+                    'lastUpdate' => ucfirst($this->dateService->formatDateRelativeLong($lastUpdate->format('Y-m-d H:i:s'), "Europe/Paris", "fr")),
+                ];
+                continue;
+            }
+
+            $firstAirDate = $tvFR['first_air_date'] ?? $tvUS['first_air_date'] ?? null;
+            $dbFirstAirDate = $series->getFirstAirDate()?->format("Y-m-d");
+            if ($firstAirDate && $dbFirstAirDate !== $firstAirDate) {
+                $updates[] = ['field' => 'first_air_date', 'label' => 'First air date', 'valueBefore' => $series->getFirstAirDate() ? $series->getFirstAirDate()->format('Y-m-d') : 'No date', 'valueAfter' => $firstAirDate];
+                $series->setFirstAirDate($this->dateService->newDateImmutable($firstAirDate, 'Europe/Paris', true));
+            }
+
+            $name = $tvFR['name'] ?? $tvUS['name'] ?? null;
+            if ($name && $series->getName() !== $name) {
+                $updates[] = ['field' => 'name', 'label' => 'Name', 'valueBefore' => $series->getName(), 'valueAfter' => $name];
+                $series->setName($name);
+                $series->setSlug($slugger->slug($name)->lower()->toString());
+            }
+
+            $overview = $tvFR['overview'] ?? $tvUS['overview'] ?? null;
+            if ($overview && !$series->getOverview()) {
+                $updates[] = ['field' => 'overview', 'label' => 'Overview', 'valueBefore' => $series->getOverview(), 'valueAfter' => $overview];
+                $series->setOverview($overview);
+            }
+
+            $backdropPath = $tvFR['backdrop_path'] ?? $tvUS['backdrop_path'] ?? null;
+            if ($backdropPath && $series->getBackdropPath() !== $backdropPath) {
+                $this->imageService->saveImage("backdrops", $backdropPath, $backdropUrl);
+                $updates[] = ['field' => 'backdrop_path', 'label' => 'Backdrop', 'valueBefore' => $series->getBackdropPath(), 'valueAfter' => $backdropPath];
+                $series->setBackdropPath($backdropPath);
+            }
+
+            $posterPath = $tvFR['poster_path'] ?? $tvUS['poster_path'] ?? null;
+            if ($posterPath && $series->getPosterPath() !== $posterPath) {
+                $this->imageService->saveImage("posters", $posterPath, $posterUrl);
+                $updates[] = ['field' => 'poster_path', 'label' => 'Poster', 'valueBefore' => $series->getPosterPath(), 'valueAfter' => $posterPath];
+                $series->setPosterPath($posterPath);
+            }
+
+            $status = $tvFR['status'] ?? $tvUS['status'] ?? null;
+            if ($status && $series->getStatus() !== $status) {
+                $updates[] = ['field' => 'status', 'label' => 'Status', 'valueBefore' => $series->getStatus(), 'valueAfter' => $status];
+                $series->setStatus($status);
+            }
+
+            $checkForUserEpisodes = false;
+            $seasonNUmber = $tvFR['number_of_seasons'] ?? $tvUS['number_of_seasons'] ?? null;
+            if ($seasonNUmber && $series->getNumberOfSeason() !== $seasonNUmber) {
+                $updates[] = ['field' => 'number_of_seasons', 'label' => 'Number of seasons', 'valueBefore' => $series->getNumberOfSeason(), 'valueAfter' => $seasonNUmber];
+                $series->setNumberOfSeason($seasonNUmber);
+                $checkForUserEpisodes = true;
+            }
+
+            $episodeNumber = $tvFR['number_of_episodes'] ?? $tvUS['number_of_episodes'] ?? null;
+            if ($episodeNumber && $series->getNumberOfEpisode() !== $episodeNumber) {
+                $updates[] = ['field' => 'number_of_episodes', 'label' => 'Number of episodes', 'valueBefore' => $series->getNumberOfEpisode(), 'valueAfter' => $episodeNumber];
+                $series->setNumberOfEpisode($episodeNumber);
+                $checkForUserEpisodes = true;
+            }
+
+            $series->setUpdatedAt($now);
+            $this->seriesRepository->save($series, true);
+
+            if ($checkForUserEpisodes) {
+                $seasonsUS = [];
+                foreach ($tvUS['seasons'] as $season) {
+                    $seasonsUS[$season['season_number']] = json_decode($this->tmdbService->getTvSeason($item['tmdb_id'], $season['season_number'], 'en-US'), true);
                 }
-                if ($series->getStatus() && in_array($series->getStatus(), $endedSeriesStatus)) {
-                    $checkStatus = 'Ended';
-                }
-
-                if ($checkStatus !== 'Checking') {
-                    $results[] = [
-                        'check' => $checkStatus,
-                        'id' => $series->getId(),
-                        'name' => $name,
-                        'localizedName' => $series->getLocalizedName('fr')?->getName() ?? '',
-                        'updates' => [],
-                        'lastUpdate' => ucfirst($this->dateService->formatDateRelativeLong($lastUpdate->format('Y-m-d H:i:s'), "Europe/Paris", "fr")),
-                    ];
-                    continue;
-                }
-
-                $tvFR = json_decode($this->tmdbService->getTv($item['tmdb_id'], 'fr-FR'), true);
-                $tvUS = json_decode($this->tmdbService->getTv($item['tmdb_id'], 'en-US'), true);
-
-                if (!$tvFR || !$tvUS) {
-                    $checkStatus = 'Not Found';
-                    $name .= ' - Series not found on TMDB (' . $item['tmdb_id'] . ')';
-                    $this->addFlash('error', 'Series not found on TMDB: ' . $name);
-
-                    $results[] = [
-                        'check' => $checkStatus,
-                        'id' => $item['id'],
-                        'name' => $name,
-                        'localizedName' => '',
-                        'updates' => [],
-                        'lastUpdate' => ucfirst($this->dateService->formatDateRelativeLong($lastUpdate->format('Y-m-d H:i:s'), "Europe/Paris", "fr")),
-                    ];
-                    continue;
-                }
-
-                $firstAirDate = $tvFR['first_air_date'] ?? $tvUS['first_air_date'] ?? null;
-                $dbFirstAirDate = $series->getFirstAirDate()?->format("Y-m-d");
-                if ($firstAirDate && $dbFirstAirDate !== $firstAirDate) {
-                    $updates[] = ['field' => 'first_air_date', 'label' => 'First air date', 'valueBefore' => $series->getFirstAirDate() ? $series->getFirstAirDate()->format('Y-m-d') : 'No date', 'valueAfter' => $firstAirDate];
-                    $series->setFirstAirDate($this->dateService->newDateImmutable($firstAirDate, 'Europe/Paris', true));
-                }
-
-                $name = $tvFR['name'] ?? $tvUS['name'] ?? null;
-                if ($name && $series->getName() !== $name) {
-                    $updates[] = ['field' => 'name', 'label' => 'Name', 'valueBefore' => $series->getName(), 'valueAfter' => $name];
-                    $series->setName($name);
-                    $series->setSlug($slugger->slug($name)->lower()->toString());
-                }
-
-                $overview = $tvFR['overview'] ?? $tvUS['overview'] ?? null;
-                if ($overview && !$series->getOverview()) {
-                    $updates[] = ['field' => 'overview', 'label' => 'Overview', 'valueBefore' => $series->getOverview(), 'valueAfter' => $overview];
-                    $series->setOverview($overview);
-                }
-
-                $backdropPath = $tvFR['backdrop_path'] ?? $tvUS['backdrop_path'] ?? null;
-                if ($backdropPath && $series->getBackdropPath() !== $backdropPath) {
-                    $this->imageService->saveImage("backdrops", $backdropPath, $backdropUrl);
-                    $updates[] = ['field' => 'backdrop_path', 'label' => 'Backdrop', 'valueBefore' => $series->getBackdropPath(), 'valueAfter' => $backdropPath];
-                    $series->setBackdropPath($backdropPath);
-                }
-
-                $posterPath = $tvFR['poster_path'] ?? $tvUS['poster_path'] ?? null;
-                if ($posterPath && $series->getPosterPath() !== $posterPath) {
-                    $this->imageService->saveImage("posters", $posterPath, $posterUrl);
-                    $updates[] = ['field' => 'poster_path', 'label' => 'Poster', 'valueBefore' => $series->getPosterPath(), 'valueAfter' => $posterPath];
-                    $series->setPosterPath($posterPath);
-                }
-
-                $status = $tvFR['status'] ?? $tvUS['status'] ?? null;
-                if ($status && $series->getStatus() !== $status) {
-                    $updates[] = ['field' => 'status', 'label' => 'Status', 'valueBefore' => $series->getStatus(), 'valueAfter' => $status];
-                    $series->setStatus($status);
-                }
-
-                $seasonNUmber = $tvFR['number_of_seasons'] ?? $tvUS['number_of_seasons'] ?? null;
-                if ($seasonNUmber && $series->getNumberOfSeason() !== $seasonNUmber) {
-                    $updates[] = ['field' => 'number_of_seasons', 'label' => 'Number of seasons', 'valueBefore' => $series->getNumberOfSeason(), 'valueAfter' => $seasonNUmber];
-                    $series->setNumberOfSeason($seasonNUmber);
-                }
-
-                $episodeNumber = $tvFR['number_of_episodes'] ?? $tvUS['number_of_episodes'] ?? null;
-                if ($episodeNumber && $series->getNumberOfEpisode() !== $episodeNumber) {
-                    $updates[] = ['field' => 'number_of_episodes', 'label' => 'Number of episodes', 'valueBefore' => $series->getNumberOfEpisode(), 'valueAfter' => $episodeNumber];
-                    $series->setNumberOfEpisode($episodeNumber);
-                }
-
-                $series->setUpdatedAt($now);
-                $this->seriesRepository->save($series, true);
 
                 $userSeries = $this->userSeriesRepository->findBy(['series' => $series]);
                 foreach ($userSeries as $us) {
@@ -168,7 +188,7 @@ class SeriesUpdates extends AbstractController
                     if (count($userEpisodes) == $episodeNumber) {
                         continue;
                     }
-                    foreach ($tvUS['seasons'] as $season) {
+                    foreach ($seasonsUS as $season) {
                         $seasonNumber = $season['season_number'] ?? null;
                         if ($seasonNumber === null) {
                             continue;
@@ -194,61 +214,46 @@ class SeriesUpdates extends AbstractController
                     if ($seriesNewEpisodeCount > 0) {
                         $updates[] = [
                             'field' => 'new_episodes',
-                            'label' => 'New episodes for user ' . $this->userToHTML($us),
+                            'label' => $seriesNewEpisodeCount . 'new episodes for user ' . $this->userToHTML($us),
                             'valueBefore' => $episodeNumber,
                             'valueAfter' => $episodeNumber + $seriesNewEpisodeCount
                         ];
                     }
                 }
-
-                $lastUpdate = $now;
-
-                if (count($updates)) {
-                    $checkStatus = 'Updated';
-                    $a = $diff->format('%a');
-                    if ($a == 0) {
-                        // If less than 1 day, show hours, minutes, seconds, which will never appends
-                        // because:
-                        //     if ($diff->days < 1) { // More than 1 day since last update
-                        //         $checkStatus = 'Passed';
-                        //     }
-                        $diffString = $diff->format("%H:%I:%S") . ' ago';
-                    } elseif ($a == 1) {
-                        $diffString = '1 day ago';
-                    } else {
-                        $diffString = $a . ' days ago';
-                    }
-                    $since = [
-                        'field' => 'since',
-                        'label' => 'Previous update',
-                        'previous' => $lastUpdate->format('Y-m-d H:i:s'),
-                        'since' => $diffString
-                    ];
-                    // Add the 'since' update to the beginning of the updates array
-                    array_unshift($updates, $since);
-                } else {
-                    $checkStatus = 'No changes';
-                }
-
-                $results[] = [
-                    'check' => $checkStatus,
-                    'id' => $series->getId(),
-                    'name' => $name,
-                    'localizedName' => $series->getLocalizedName('fr')?->getName() ?? '',
-                    'updates' => $updates,
-                    'lastUpdate' => ucfirst($this->dateService->formatDateRelativeLong($lastUpdate->format('Y-m-d H:i:s'), "Europe/Paris", "fr")/* . '(' . $diff->days . ' days ago)'*/),
-                ];
-            } else {
-
-                $results[] = [
-                    'check' => 'Not found',
-                    'id' => $item['id'],
-                    'name' => 'Unknown in database',
-                    'localizedName' => '',
-                    'updates' => [],
-                    'lastUpdate' => ucfirst($this->dateService->formatDateRelativeLong($now->format('Y-m-d H:i:s'), "Europe/Paris", "fr")),
-                ];
             }
+
+            $lastUpdate = $now;
+
+            if (count($updates)) {
+                $checkStatus = 'Updated';
+                $a = $diff->format('%a');
+                if ($a == 0) {
+                    $diffString = $diff->format("%H:%I:%S") . ' ago';
+                } elseif ($a == 1) {
+                    $diffString = '1 day ago';
+                } else {
+                    $diffString = $a . ' days ago';
+                }
+                $since = [
+                    'field' => 'since',
+                    'label' => 'Previous update',
+                    'previous' => $lastUpdate->format('Y-m-d H:i:s'),
+                    'since' => $diffString
+                ];
+                // Add the 'since' update to the beginning of the updates array
+                array_unshift($updates, $since);
+            } else {
+                $checkStatus = 'No changes';
+            }
+
+            $results[] = [
+                'check' => $checkStatus,
+                'id' => $series->getId(),
+                'name' => $name,
+                'localizedName' => $series->getLocalizedName('fr')?->getName() ?? '',
+                'updates' => $updates,
+                'lastUpdate' => ucfirst($this->dateService->formatDateRelativeLong($lastUpdate->format('Y-m-d H:i:s'), "Europe/Paris", "fr")/* . '(' . $diff->days . ' days ago)'*/),
+            ];
         }
 
         if ($progress) {
@@ -297,6 +302,6 @@ class SeriesUpdates extends AbstractController
         $username = htmlspecialchars($user->getUsername() ?: 'Unknown User');
         $userId = $user->getId() ?: 0;
         $avatar = '/images/users/avatars/' . $user->getAvatar() ?: 'default.png';
-        return '<div class="user"><div class="avatar"><img src="'.$avatar.'" alt="'.$username.'"></div><div class="name">' . $username . '</div><div class="badge" title="User ID: ' . $userId . '"></div></div>';
+        return '<div class="user"><div class="avatar"><img src="' . $avatar . '" alt="' . $username . '"></div><div class="name">' . $username . '</div><div class="badge" data-title="User ID: ' . $userId . '">' . $userId . '</div></div>';
     }
 }

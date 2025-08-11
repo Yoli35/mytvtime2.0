@@ -30,6 +30,7 @@ export class AdminSeriesUpdates {
 
     init() {
         const updatesButton = document.querySelector("#admin-series-updates");
+        const forceUpdateSwitch = document.querySelector("#admin-series-force-update");
         const goToTopButton = document.querySelector('.go-to-top');
         const goToBottomButton = document.querySelector('.go-to-bottom');
 
@@ -40,6 +41,7 @@ export class AdminSeriesUpdates {
             gThis.newLine([], updateDiv2);*/
             updatesButton.setAttribute("disabled", "");
 
+            gThis.forceUpdate = forceUpdateSwitch.checked;
             gThis.startIndex = 0;
             gThis.startDate = new Date();
             gThis.updates();
@@ -67,6 +69,7 @@ export class AdminSeriesUpdates {
         if (blockEnd > 100) blockEnd = 100;
         const data = {
             ids: arr,
+            force: gThis.forceUpdate,
             units: gThis.units,
             blockStart: blockStart,
             blockEnd: blockEnd
@@ -188,8 +191,8 @@ export class AdminSeriesUpdates {
                     afterDiv.innerText = item.valueAfter;
                     break;
                 case 'new_episodes':
-                    fieldDiv.innerText = item.label;
-                    beforeDiv.innerHTML = item.valueBefore;
+                    fieldDiv.innerHTML = item.label;
+                    beforeDiv.innerText = item.valueBefore;
                     afterDiv.innerText = item.valueAfter;
                     break;
                 case 'poster_path':

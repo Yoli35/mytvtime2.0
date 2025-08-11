@@ -517,6 +517,8 @@
             color: var(--ardoise-10);
             cursor: pointer;
             display: flex;
+            font-size: 1rem;
+            font-weight: bold;
             height: 2rem;
             justify-content: center;
             padding-inline: .5rem;
@@ -531,6 +533,14 @@
             border-color: var(--ardoise-90-alpha-50);
             color: var(--ardoise-30);
             cursor: not-allowed;
+        }
+
+        .admin__label {
+            align-items: center;
+            display: flex;
+            font-size: 1rem;
+            font-weight: bold;
+            gap: .5rem;
         }
 
         .admin__wip {
@@ -723,6 +733,36 @@
                             border-color: var(--orange-70);
                             margin-block-end: auto;
                             padding-inline: .5rem;
+                        }
+
+                        .admin__update__field.new-episodes {
+                            .user {
+                                display: flex;
+                                gap: .5rem;
+
+                                .avatar {
+                                    img {
+                                        aspect-ratio: 1/1;
+                                        border-radius: 50%;
+                                        border: 2px solid var(--orange-50);
+                                        height: 1.75rem;
+                                        width: 1.75rem;
+                                    }
+                                }
+
+                                .name {
+                                    width: 10rem;
+                                }
+
+                                .badge {
+                                    background-color: var(--orange-50);
+                                    border-radius: .25rem;
+                                    color: var(--ardoise-10);
+                                    font-size: .75rem;
+                                    font-weight: bold;
+                                    padding: .125rem .5rem;
+                                }
+                            }
                         }
 
                         .admin__update__before, .admin__update__after {
