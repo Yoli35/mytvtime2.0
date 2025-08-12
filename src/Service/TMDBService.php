@@ -413,6 +413,25 @@ class TMDBService
         }
     }
 
+    public function getNetworkDetails(int $networkId): ?string
+    {
+        $request = "https://api.themoviedb.org/3/network/$networkId";
+        try {
+            $response = $this->client->request(
+                'GET',
+                $request,
+                ['auth_bearer' => $this->getBearer()]
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable $e) {
+                return json_encode(['error' => 'Response error: ' . $e->getMessage() . ' - code: ' . $e->getCode()]);
+            }
+        } catch (Throwable $e) {
+            return json_encode(['error' => 'Request error: ' . $e->getMessage() . ' - code: ' . $e->getCode()]);
+        }
+    }
+
     /* public function getTvEpisodeCredits(int $tvId, int $seasonNumber, int $episodeNumber, string $locale): ?string
     {
         $request = 'https://api.themoviedb.org/3/tv/' . $tvId . '/season/' . $seasonNumber . '/episode/' . $episodeNumber . '/credits?api_key=' . $this->api_key . '&language=' . $locale;

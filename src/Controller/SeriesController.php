@@ -3776,8 +3776,38 @@ class SeriesController extends AbstractController
     public function networks(array $tv): array
     {
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 5);
-        return array_map(function ($network) use ($logoUrl) {
+        $ids = array_column($tv['networks'], 'id');
+        $dbNetworks = $this->networkRepository->findBy(['networkId' => $ids]);
+        $now = $this->now();
+        /*$updated = false;*/
+        foreach ($dbNetworks as $network) {
+            $diff = $network->getUpdatedAt()->diff($now);
+            if ($diff->days > 30) {
+                $tmdbNetwork = json_decode($this->tmdbService->getNetworkDetails($network->getNetworkId()), true);
+                $network->setHeadquarters($tmdbNetwork['headquarters'] ?? null);
+                $network->setHomepage($tmdbNetwork['homepage'] ?? null);
+                $network->setLogoPath($tmdbNetwork['logo_path'] ?? null);
+                $network->setName($tmdbNetwork['name'] ?? null);
+                $network->setOriginCountry($tmdbNetwork['origin_country'] ?? null);
+                $network->setUpdatedAt($now);
+                $this->networkRepository->save($network);
+                /*$updated = true;*/
+            }
+        }
+       /* if ($updated) {
+            $this->networkRepository->flush();
+        }*/
+
+        return array_map(function ($network) use ($logoUrl, $dbNetworks) {
             $network['logo_path'] = $network['logo_path'] ? $logoUrl . $network['logo_path'] : null; // w92
+            $dbNetwork = array_values(array_filter($dbNetworks, fn($n) => $n->getNetworkId() == $network['id']))[0] ?? null;
+            if ($dbNetwork) {
+                $network['headquarters'] = $dbNetwork->getHeadquarters();
+                $network['homepage'] = $dbNetwork->getHomepage();
+            } else {
+                $network['headquarters'] = null;
+                $network['homepage'] = null;
+            }
             return $network;
         }, $tv['networks']);
     }

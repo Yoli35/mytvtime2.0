@@ -571,13 +571,18 @@
                                 <div class="networks">
                                     {% for network in tv.networks %}
                                         <div class="network-detail">
-                                            <div class="frame" data-title="{{ network.name }} ({{ network.id }})" data-title-bg="grey">
+                                            <div class="frame" data-title="{{ network.name }}{% if network.headquarters %} - {{ network.headquarters }}{% endif %} ({{ network.id }})" data-title-bg="grey">
                                                 {% if network.logo_path %}
                                                     <img src="{{ network.logo_path }}" alt="{{ network.name }}" loading="lazy">
                                                 {% else %}
                                                     {{ network.name }}
                                                 {% endif %}
                                             </div>
+                                            {% if network.homepage %}
+                                                <a href="{{ network.homepage }}" target="_blank" rel="noopener noreferrer" class="network-name">
+                                                    <div class="link">{{ ux_icon('mdi:external-link') }}</div>
+                                                </a>
+                                            {% endif %}
                                         </div>
                                     {% endfor %}
                                 </div>
