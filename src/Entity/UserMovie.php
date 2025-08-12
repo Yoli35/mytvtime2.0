@@ -40,7 +40,7 @@ class UserMovie
     private array $viewArray = [];
 
     #[ORM\Column(nullable: true)]
-    private ?bool $viewed = null;
+    private ?int $viewed = null;
 
     public function __construct(User $user, Movie $movie, DateTimeImmutable $createdAT, bool $favorite = false, int $rating = 0)
     {
@@ -144,19 +144,12 @@ class UserMovie
         return $this;
     }
 
-    public function addUser(User $user): void
-    {
-        if (!$this->user->contains($user)) {
-            $this->user[] = $user;
-        }
-    }
-
-    public function isViewed(): ?bool
+    public function getViewed(): ?int
     {
         return $this->viewed;
     }
 
-    public function setViewed(?bool $viewed): static
+    public function setViewed(?int $viewed): static
     {
         $this->viewed = $viewed;
 

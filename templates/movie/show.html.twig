@@ -304,13 +304,14 @@
                                             </div>
                                         </form>
                                     </div>
-                                    <div class="viewed-at{% if userMovie.lastViewedAt %} viewed{% endif %}">
+                                    <div class="viewed-at" data-viewed="{{ userMovie.viewed }}">
+                                        <div class="mark-as-viewed{% if userMovie.lastViewedAt %} viewed{% endif %}">{{ ux_icon('fa6-solid:eye') }}</div>
                                         {% if userMovie.lastViewedAt %}
-                                            {{ ux_icon('fa6-solid:eye') }}
-                                            {{ userMovie.lastViewedAt|format_datetime('relative_full', 'short')|capitalize }}
-                                        {% else %}
-                                            {{ ux_icon('fa6-solid:eye', {height: '18px', width: '18px', 'data-title': 'Mark as viewed'|trans}) }}
+                                            <div class="view-date"> {{ userMovie.lastViewedAt|format_datetime('relative_full', 'short')|capitalize }}</div>
                                         {% endif %}
+                                        {% for viewDate in userMovie.viewArray %}
+                                            <div class="view-date"> {{ viewDate|format_datetime('relative_full', 'short')|capitalize }}</div>
+                                        {% endfor %}
                                     </div>
                                     <div class="rating">
                                         <div class="rating-stars">

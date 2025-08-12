@@ -164,21 +164,45 @@
 
         .viewed-at {
             align-items: center;
-            background-color: var(--orange-50);
-            border-radius: .25rem;
-            color: var(--ardoise-10);
-            cursor: pointer;
             display: flex;
-            font-size: 1rem;
-            font-weight: 300;
-            gap: .5rem;
+            gap: 1rem;
             justify-content: center;
             margin-inline-end: auto;
-            padding: .5rem;
 
-            &.viewed {
-                background-color: var(--green-50);
+            .mark-as-viewed {
+                align-items: center;
+                background-color: var(--orange-50);
+                border-radius: .25rem;
                 color: var(--ardoise-10);
+                cursor: pointer;
+                display: flex;
+                height: 2rem;
+                justify-content: center;
+                width: 2rem;
+
+                &:hover {
+                    background-color: var(--orange-60);
+                }
+
+                &.viewed {
+                    background-color: var(--green-50);
+                    color: var(--ardoise-10);
+
+                    &:hover {
+                        background-color: var(--green-60);
+                    }
+                }
+            }
+
+            .view-date {
+                align-items: center;
+                background-color: var(--green-50);
+                border-radius: .25rem;
+                display: flex;
+                font-size: 1rem;
+                font-weight: 300;
+                height: 2rem;
+                padding-inline: .5rem;
             }
         }
 

@@ -251,7 +251,7 @@ class MovieController extends AbstractController
             'This field is required' => $this->translator->trans('This field is required'),
         ];
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
-
+        dump($userMovie);
         return $this->render('movie/show.html.twig', [
             'userMovie' => $userMovie,
             'movie' => $movie,
@@ -462,18 +462,19 @@ class MovieController extends AbstractController
         if ($viewed) {
             $viewArray = $userMovie->getViewArray();
             $lastViewedAt = $userMovie->getLastViewedAt();
-            $viewArray[] = $lastViewedAt;
+            $viewArray[] = $lastViewedAt->format("Y-m-d H:i:s");
+            $viewArray = array_unique($viewArray);
             $userMovie->setViewArray($viewArray);
-        } else {
-            $userMovie->setLastViewedAt($now);
         }
+        $userMovie->setViewed($viewed + 1);
+        $userMovie->setLastViewedAt($now);
         $this->userMovieRepository->save($userMovie, true);
 
         return $this->json([
             'ok' => true,
             'body' => [
                 'viewed' => $viewed,
-                'lastViewedAt' => $this->dateService->formatDateRelativeLong($now->format("Y-m-d H:i:s"), 'UTC', $userMovie->getUser()->getPreferredLanguage() ?? 'fr')
+                'lastViewedAt' => ucfirst($this->dateService->formatDateRelativeLong($now->format("Y-m-d H:i:s"), 'UTC', $userMovie->getUser()->getPreferredLanguage() ?? 'fr'))
             ],
         ]);
     }

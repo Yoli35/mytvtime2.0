@@ -216,7 +216,7 @@ export class Movie {
         const viewedAtDiv = userActions.querySelector('.viewed-at');
 
         viewedAtDiv.addEventListener('click', function () {
-            const viewed = this.classList.contains('viewed');
+            const viewed = viewedAtDiv.getAttribute('data-viewed');
             fetch('/' + gThis.lang + '/movie/viewed/' + gThis.userMovieId,
                 {
                     method: 'POST',
@@ -231,8 +231,11 @@ export class Movie {
                     if (!data.body.viewed) {
                         viewedAtDiv.classList.add('viewed');
                     }
+                    const viewDateDiv = document.createElement('div');
+                    viewDateDiv.classList.add('view-date');
                     const textNode = document.createTextNode(' ' + data.body.lastViewedAt);
-                    viewedAtDiv.appendChild(textNode);
+                    viewDateDiv.appendChild(textNode);
+                    viewedAtDiv.appendChild(viewDateDiv);
                 });
         });
 
