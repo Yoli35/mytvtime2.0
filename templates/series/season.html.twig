@@ -5,6 +5,7 @@
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css">
 {% endblock %}
 {% block body %}
     <script>
@@ -426,6 +427,12 @@
                     <div class="next-button" data-id="{{ series.tmdbId }}" data-language="{{ language }}">{{ 'What to watch next?'|trans }}</div>
                 </div>
 
+                {% if filmingLocation %}
+                    <div class="get-filming-locations">
+                        <div class="get-filming-locations-button" data-id="{{ series.tmdbId }}">{{ 'Where was "%name%" filmed?'|trans({'%name%': season.series_localized_name.name?:series.name}) }}</div>
+                    </div>
+                {% endif %}
+
                 {% if season.credits.cast|length %}
                     <h3>{{ 'Cast'|trans }}</h3>
                     <div class="cast-and-name">
@@ -522,7 +529,8 @@
                 "additional": "{{ 'No overview'|trans }}",
                 "click": "{{ 'Click here to add an image'|trans }}",
                 "paste": "{{ 'Paste your image here (green)'|trans }}",
-                "No votes": "{{ 'No votes'|trans }}"
+                "No votes": "{{ 'No votes'|trans }}",
+                "loading": "{{ 'Loading filming locations…'|trans }}"
             }
         }
     </div>

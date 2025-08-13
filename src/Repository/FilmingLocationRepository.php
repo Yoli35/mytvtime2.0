@@ -58,6 +58,16 @@ class FilmingLocationRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function location(?int $tmdbId): array|false
+    {
+        $sql = "SELECT fl.*, fli.path as still_path
+                FROM filming_location fl
+                    LEFT JOIN filming_location_image fli ON fl.`still_id` = fli.`id`
+                WHERE tmdb_id = $tmdbId";
+
+        return $this->getOne($sql);
+    }
+
     public function locationImages(array $filmingLocationIds): array
     {
         $filmingLocationIds = implode(',', $filmingLocationIds);
@@ -98,7 +108,7 @@ class FilmingLocationRepository extends ServiceEntityRepository
         }
     }
 
-    public function getOne($sql): array
+    public function getOne($sql): array|false
     {
         try {
             return $this->em->getConnection()->fetchAssociative($sql);

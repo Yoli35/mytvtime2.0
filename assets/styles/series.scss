@@ -3767,6 +3767,38 @@ h2 {
     }
 }
 
+.get-filming-locations {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .get-filming-locations-button {
+        align-items: center;
+        background-color: var(--orange-50);
+        border-radius: .25rem;
+        color: var(--ardoise-10);
+        cursor: pointer;
+        display: flex;
+        font-size: 2.5rem;
+        font-weight: 300;
+        height: 4.5rem;
+        justify-content: center;
+        margin-inline: auto;
+        padding-inline: 3rem;
+        width: fit-content;
+
+        &.disabled {
+            background-color: var(--ardoise-80-alpha-50);
+            color: var(--ardoise-10-alpha-50);
+            cursor: not-allowed;
+        }
+
+        &:hover {
+            background-color: var(--orange-40);
+        }
+    }
+}
+
 #review-dialog {
     border: 2px solid var(--orange-50);
     border-radius: .5rem;

@@ -1478,10 +1478,13 @@ class SeriesController extends AbstractController
             $this->seriesRepository->save($series, true);
         }
 
+        $filmingLocation = $this->filmingLocationRepository->location($series->getTmdbId());
+
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'userSeries' => $userSeries,
             'season' => $season,
+            'filmingLocation' => $filmingLocation,
             'language' => $locale . '-' . $country,
             'changes' => $this->getChanges($season['id']),
             'now' => $this->now()->format('Y-m-d H:i O'),
@@ -3820,9 +3823,9 @@ class SeriesController extends AbstractController
                 /*$updated = true;*/
             }
         }
-       /* if ($updated) {
-            $this->networkRepository->flush();
-        }*/
+        /* if ($updated) {
+             $this->networkRepository->flush();
+         }*/
 
         return array_map(function ($network) use ($logoUrl, $dbNetworks) {
             $network['logo_path'] = $network['logo_path'] ? $logoUrl . $network['logo_path'] : null; // w92

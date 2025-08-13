@@ -1,4 +1,5 @@
 import {FlashMessage} from "FlashMessage";
+import {Map} from "Map";
 import {ToolTips} from 'ToolTips';
 
 let gThis;
@@ -92,6 +93,7 @@ export class Season {
          * @property {string} minute
          * @property {string} second
          * @property {string} additional
+         * @property {string} loading
          */
         /**
          * @typedef Globs
@@ -326,7 +328,7 @@ export class Season {
 
         const whatToWatchNextDiv = document.querySelector('.what-to-watch-next');
         const whatToWatchNextButton = whatToWatchNextDiv.querySelector('.next-button');
-        whatToWatchNextButton.addEventListener('click', e => {
+        whatToWatchNextButton.addEventListener('click', () => {
             whatToWatchNextButton.classList.add('disabled');
             const id = whatToWatchNextButton.getAttribute('data-id');
             const language = whatToWatchNextButton.getAttribute('data-language');
@@ -337,11 +339,7 @@ export class Season {
                     'headers': {
                         'Content-Type': 'application/json',
                         'X-Requested-With': 'XMLHttpRequest'
-                    }/*,
-                    body: JSON.stringify({
-                        id: id,
-                        language: language,
-                    })*/
+                    }
                 })
             .then(res => res.json())
             .then(data => {
@@ -359,11 +357,74 @@ export class Season {
                     wrapperDiv = containerDiv.querySelector('.wrapper')
                     wrapperDiv.innerHTML = '';
                 }
-                blocks.forEach((block, i) => {
+                blocks.forEach((block) => {
                     wrapperDiv.insertAdjacentHTML('beforeend', block);
                 });
                 whatToWatchNextButton.classList.remove('disabled');
             });
+        });
+
+        const getFilmingLocationsDiv = document.querySelector('.get-filming-locations');
+        const getFilmingLocationsButton = document.querySelector('.get-filming-locations-button');
+        getFilmingLocationsButton.addEventListener('click', () => {
+            getFilmingLocationsButton.innerHTML = gThis.text['loading'];
+            getFilmingLocationsButton.classList.add('disabled');
+            const id = getFilmingLocationsButton.getAttribute('data-id');
+            fetch('/api/series/get/filming/locations/' + id,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                const body = document.querySelector('body');
+                const svgsDiv = document.querySelector('.svgs');
+                // 1- create this:
+                // <div id="globs-map" style="display: none">
+                //     {
+                //     "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+                //     "bounds": {{ locationsBounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+                //     "pointsOfInterest": {{ pois.list|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+                //     "emptyLocation": {{ emptyLocation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+                //     "fieldList": {{ fieldList|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+                //     "locationImagePath": "/images/map",
+                //     "poiImagePath": "/images/poi"
+                //     }
+                // </div>
+                // 2- insert it before svgsDiv
+                // 3- append these divs in getFilmingLocationsDiv
+                // <div class="series-map">
+                //     <div id="map" class="map-controller"></div>
+                // </div
+                // 4- remove getFilmingLocationsButton
+                // 5- init map
+                const globsMapDiv = document.createElement('div');
+                globsMapDiv.setAttribute('id', 'globs-map');
+                globsMapDiv.style.display = 'none';
+                globsMapDiv.innerText = '{';
+                globsMapDiv.innerText += '"locations": ' + JSON.stringify(data["locations"]) + ', ';
+                globsMapDiv.innerText += '"bounds": ' + JSON.stringify(data["locationsBounds"]) + ', ';
+                globsMapDiv.innerText += '"pointsOfInterest": ' + JSON.stringify(data["pois"]["list"]) + ', ';
+                globsMapDiv.innerText += '"emptyLocation": ' + JSON.stringify(data["emptyLocation"]) + ', ';
+                globsMapDiv.innerText += '"fieldList": ' + JSON.stringify(data["fieldList"]) + ', ';
+                globsMapDiv.innerText += '"locationImagePath": "' + data["locationImagePath"] + '", ';
+                globsMapDiv.innerText += '"poiImagePath": "' + data["poiImagePath"] + '"';
+                globsMapDiv.innerText += '}';
+                body.insertBefore(globsMapDiv, svgsDiv);
+                const seriesMapDiv = document.createElement('div');
+                seriesMapDiv.classList.add('series-map');
+                const mapDiv = document.createElement('div');
+                mapDiv.setAttribute('id', 'map');
+                mapDiv.classList.add('map-controller');
+                seriesMapDiv.appendChild(mapDiv);
+                getFilmingLocationsDiv.appendChild(seriesMapDiv);
+                getFilmingLocationsButton.remove();
+                gThis.map = new Map();
+            })
         });
 
         document.addEventListener('keydown', (e) => {
