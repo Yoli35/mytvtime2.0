@@ -453,9 +453,11 @@ h2 {
     width: 100%;
 
     h3 {
+        align-items: center;
         display: flex;
         font-size: 1.5rem;
         font-weight: 100;
+        gap: 1rem;
         line-height: 1.25em;
         margin-block: 1rem .5rem;
 
@@ -2149,10 +2151,19 @@ h2 {
 
         h2 {
             font-size: 1.5rem;
-            font-weight: 100;
+            font-weight: 300;
             line-height: 1.25em;
             margin-block: 0;
             width: 100%;
+        }
+
+        h3 {
+            margin-block: 0;
+
+            svg {
+                height: 1.5rem;
+                width: 1.5rem;
+            }
         }
 
         button {
@@ -2169,9 +2180,47 @@ h2 {
                 border: 2px solid var(--orange-60);
             }
         }
+
+        .progress-bar {
+            align-items: center;
+            background-color: var(--ardoise-100-alpha-20);
+            border-radius: .25rem;
+            display: none;
+            gap: .5rem;
+            height: 2.5rem;
+            justify-content: flex-start;
+            padding-inline: .5rem;
+            position: relative;
+            width: 100%;
+
+            &:has(.progress) {
+                display: flex;
+            }
+
+            .progress {
+                background-color: var(--orange-50);
+                border-radius: .25rem;
+                height: 2rem;
+                width: 0;
+                transition: width 0.3s ease-in-out;
+            }
+
+            span {
+                color: var(--orange-90);
+                font-size: 1rem;
+                font-weight: 300;
+                position: absolute;
+                right: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
     }
 
     .dialog-body {
+        max-height: 50vh;
+        overflow-y: auto;
+
         .all-images {
             display: flex;
             flex-wrap: wrap;

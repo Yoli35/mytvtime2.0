@@ -86,6 +86,7 @@ export class Show {
 
     constructor() {
         gThis = this;
+        this.lang = document.documentElement.lang;
         this.toolTips = new ToolTips();
         this.flashMessage = new FlashMessage();
         this.init();
@@ -1327,6 +1328,7 @@ export class Show {
          ******************************************************************************/
         const addAllBackdropsButton = document.querySelector('.add-all-backdrops');
         const addAllBackdropsDialog = document.querySelector('.add-all-backdrops-dialog');
+        const h3 = addAllBackdropsDialog.querySelector('h3');
         const addAllBackdropsCancelButton = addAllBackdropsDialog.querySelector('button[name="cancel"]');
         const addAllBackdropsAddButton = addAllBackdropsDialog.querySelector('button[name="add"]');
         const tmdbId = addAllBackdropsButton.dataset.seriesId;
@@ -1369,11 +1371,12 @@ export class Show {
                             const imgElement = document.createElement('img');
                             imgElement.src = posterUrl + poster['file_path'];
                             imgElement.alt = `Poster #${index + 1} - ${addBackdropSeriesName}`;
-                            posterElement.setAttribute('data-title', `Poster #${index + 1} - ${addBackdropSeriesName}`);
+                            posterElement.setAttribute('title', `Poster #${index + 1} - ${addBackdropSeriesName}`);
                             posterElement.appendChild(imgElement);
                             wrapper.appendChild(posterElement);
                         });
-                        gThis.toolTips.init(wrapper);
+                        h3.querySelector('.poster-count').innerText = addAllPosters.length;
+                        h3.querySelector('.backdrop-count').innerText = addAllBackdrops.length;
                         addAllBackdropsDialog.showModal();
                     }
                 });
@@ -1385,26 +1388,7 @@ export class Show {
             addAllBackdropsDialog.close();
         });
         addAllBackdropsAddButton.addEventListener('click', () => {
-            const data = {
-                seriesId: tmdbId,
-                backdrops: addAllBackdrops,
-                posters: addAllPosters
-            };
-            fetch('/' + lang + '/series/backdrops/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify(data)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        addAllBackdropsDialog.close();
-                        window.location.reload();
-                    }
-                });
+            gThis.fetchSeriesImages(addAllBackdropsDialog, tmdbId, addAllBackdrops, addAllPosters);
         });
 
         addBackdropButton.addEventListener('click', () => {
@@ -1427,6 +1411,83 @@ export class Show {
         addVideoCancelButton.addEventListener('click', () => {
             addVideoDialog.close();
         });
+    }
+
+    fetchSeriesImages(dialog, tmdbId, backdrops, posters) {
+        if (backdrops.length + posters.length < 20) {
+            const data = {
+                seriesId: tmdbId,
+                method: 'all',
+                backdrops: backdrops,
+                posters: posters
+            };
+            fetch('/' + gThis.lang + '/series/backdrops/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        dialog.close();
+                        window.location.reload();
+                    }
+                });
+        } else {
+            const progressBarDiv = dialog.querySelector('.progress-bar');
+            const progressDiv = document.createElement('div');
+            const progressSpan = document.createElement('span');
+            progressDiv.classList.add('progress');
+            progressBarDiv.appendChild(progressDiv);
+            progressDiv.appendChild(progressSpan);
+            const images = [];
+            backdrops.forEach(backdrop => {
+                images.push({type: 'backdrop', image: backdrop});
+            });
+            posters.forEach(poster => {
+                images.push({type: 'poster', image: poster});
+            });
+            gThis.totalFetches = images.length;
+            gThis.fetchSeriesImage(tmdbId, dialog, images, progressDiv, progressSpan);
+
+        }
+    }
+
+    fetchSeriesImage(tmdbId, dialog, images, progressDiv, progressSpan) {
+        if (!images.length) {
+            dialog.close();
+            window.location.reload();
+            return
+        }
+        const item = images.shift();
+        const image = item.image;
+        const type = item.type;
+        const data = {
+            seriesId: tmdbId,
+            method: 'image',
+            image: image,
+            type: type
+        };
+        fetch('/' + gThis.lang + '/series/backdrops/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const progress = 100 * (gThis.totalFetches - images.length) / gThis.totalFetches;
+                    progressDiv.style.width = progress + '%';
+                    progressSpan.innerText = Math.ceil(progress) + '%';
+                    gThis.fetchSeriesImage(tmdbId, dialog, images, progressDiv, progressSpan);
+                }
+            });
     }
 
     getFormData(form, list) {

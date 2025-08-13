@@ -2244,37 +2244,63 @@ class SeriesController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $tmdbId = $data['seriesId'];
+        $method = $data['method'] ?? 'all';
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $tmdbId]);
         $images = $series->getSeriesImages()->toArray();
 
-        $backdrops = $data['backdrops'];
-        $posters = $data['posters'];
+        if ($method === 'all') {
+            $backdrops = $data['backdrops'];
+            $posters = $data['posters'];
 
-        $backdropUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
-        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+            $backdropUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
+            $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
 
-        $addedBackdropCount = 0;
-        $addedPosterCount = 0;
+            $addedBackdropCount = 0;
+            $addedPosterCount = 0;
 
-        foreach ($backdrops as $backdrop) {
-            if (!$this->inImages($backdrop['file_path'], $images)) {
-                $seriesImage = new SeriesImage($series, "backdrop", $backdrop['file_path']);
-                $this->seriesImageRepository->save($seriesImage);
-                $this->imageService->saveImage("backdrops", $backdrop['file_path'], $backdropUrl);
-                $addedBackdropCount++;
+            foreach ($backdrops as $backdrop) {
+                if (!$this->inImages($backdrop['file_path'], $images)) {
+                    $seriesImage = new SeriesImage($series, "backdrop", $backdrop['file_path']);
+                    $this->seriesImageRepository->save($seriesImage);
+                    $this->imageService->saveImage("backdrops", $backdrop['file_path'], $backdropUrl);
+                    $addedBackdropCount++;
+                }
             }
-        }
-        foreach ($posters as $poster) {
-            if (!$this->inImages($poster['file_path'], $images)) {
-                $seriesImage = new SeriesImage($series, "poster", $poster['file_path']);
-                $this->seriesImageRepository->save($seriesImage);
-                $this->imageService->saveImage("posters", $poster['file_path'], $posterUrl);
-                $addedPosterCount++;
+            foreach ($posters as $poster) {
+                if (!$this->inImages($poster['file_path'], $images)) {
+                    $seriesImage = new SeriesImage($series, "poster", $poster['file_path']);
+                    $this->seriesImageRepository->save($seriesImage);
+                    $this->imageService->saveImage("posters", $poster['file_path'], $posterUrl);
+                    $addedPosterCount++;
+                }
             }
-        }
 
-        if ($addedBackdropCount + $addedPosterCount > 0) {
-            $this->seriesImageRepository->flush();
+            if ($addedBackdropCount + $addedPosterCount > 0) {
+                $this->seriesImageRepository->flush();
+            }
+        } else {
+            $image = $data['image'];
+            $type = $data['type']; // "backdrop" or "poster"
+            $imagePath = $image['file_path'];
+            if (!$this->inImages($imagePath, $images)) {
+                $seriesImage = new SeriesImage($series, $type, $imagePath);
+                $this->seriesImageRepository->save($seriesImage);
+                if ($type === 'backdrop') {
+                    $this->imageService->saveImage("backdrops", $imagePath, $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+                    $addedBackdropCount = 1;
+                    $addedPosterCount = 0;
+                } else {
+                    $this->imageService->saveImage("posters", $imagePath, $this->imageConfiguration->getUrl('poster_sizes', 5));
+                    $addedPosterCount = 1;
+                    $addedBackdropCount = 0;
+                }
+            } else {
+                return $this->json([
+                    'ok' => false,
+                    'success' => true,
+                    'message' => 'Image already exists',
+                ]);
+            }
         }
 
         return $this->json([

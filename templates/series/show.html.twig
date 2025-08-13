@@ -194,9 +194,19 @@
                     <dialog id="add-all-backdrops-dialog" class="add-all-backdrops-dialog">
                         <div class="dialog-content">
                             <div class="dialog-header">
-                                <h2>{{ 'Add all available backdrops'|trans }}</h2>
+                                <h2>{{ 'Add all available images'|trans }}</h2>
                                 <button name="cancel">{{ 'Cancel'|trans }}</button>
                                 <button name="add">{{ 'Add'|trans }}</button>
+                            </div>
+                            <div class="dialog-header">
+                                <h3>
+                                    {{ 'Poster count'|trans }} {{ ux_icon('mdi:arrow-right') }} <span class="poster-count"></span>
+                                    {{ ux_icon('mdi:minus') }}
+                                    {{ 'Backrop count'|trans }} {{ ux_icon('mdi:arrow-right') }}<span class="backdrop-count"></span>
+                                </h3>
+                            </div>
+                            <div class="dialog-header">
+                                <div class="progress-bar"></div>
                             </div>
                             <div class="dialog-body">
                                 <div class="all-images">
