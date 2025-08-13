@@ -1,3 +1,4 @@
+.container-fluid.albums-page,
 .container-fluid.album-page {
     height: calc(100dvh - 4rem);
     overflow-y: auto;
@@ -114,12 +115,12 @@
     }
 
     .album-wrapper {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: .25rem;
         margin-block-end: 1rem;
-        margin-inline: auto;
-        width: calc(round(down, 100%, 21rem) - 1rem);
+        /*margin-inline: auto;*/
+        width: 100%;
 
         &:has(.new-album) {
             justify-content: center;
@@ -155,14 +156,20 @@
         }
 
         .album {
+            aspect-ratio: 1 / 1;
             border: 2px solid transparent;
             border-radius: .625rem;
             display: flex;
             flex-direction: column;
-            width: 20rem;
+            position: relative;
+            width: 100%;
 
             &:hover {
                 border-color: var(--orange-100);
+
+                .infos {
+                    opacity: 1;
+                }
             }
 
             .thumbnail {
@@ -177,7 +184,7 @@
 
                     img {
                         aspect-ratio: 1 / 1;
-                        border-radius: .5rem .5rem 0 0;
+                        border-radius: .5rem;
                         object-fit: cover;
                         width: 100%;
                     }
@@ -187,11 +194,16 @@
             .infos {
                 background-color: var(--orange-30-alpha-75);
                 border-radius: 0 0 .5rem .5rem;
+                bottom: 0;
                 display: flex;
                 flex-direction: column;
                 gap: .5rem;
-                height: 9rem;
+                /*height: 9rem;*/
+                opacity: 0;
                 padding: .5rem;
+                position: absolute;
+                transition: opacity 0.3s ease-in-out;
+                width: 100%;
 
                 .content {
                     display: flex;
@@ -236,10 +248,14 @@
     }
 }
 
-/*@media (width <= 64rem) {
+@media (width <= 72rem) {
     .albums-page {
+
+        .album-wrapper {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
     }
-}*/
+}
 
 @media (width <= 48rem) {
     .albums-page {
@@ -253,6 +269,10 @@
                     }
                 }
             }
+        }
+
+        .album-wrapper {
+            grid-template-columns: 1fr 1fr;
         }
     }
 }
@@ -281,10 +301,9 @@
         }
 
         .album-wrapper {
-            gap: .25rem;
-            width: 100%;
+            grid-template-columns: 1fr;
 
-            .album {
+            /*.album {
                 width: 100%;
 
                 .thumbnail {
@@ -316,7 +335,7 @@
                         }
                     }
                 }
-            }
+            }*/
         }
     }
 }
