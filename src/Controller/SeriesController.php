@@ -2284,7 +2284,7 @@ class SeriesController extends AbstractController
             $imagePath = $image['file_path'];
             if (!$this->inImages($imagePath, $images)) {
                 $seriesImage = new SeriesImage($series, $type, $imagePath);
-                $this->seriesImageRepository->save($seriesImage);
+                $this->seriesImageRepository->save($seriesImage, true);
                 if ($type === 'backdrop') {
                     $this->imageService->saveImage("backdrops", $imagePath, $this->imageConfiguration->getUrl('backdrop_sizes', 3));
                     $addedBackdropCount = 1;
