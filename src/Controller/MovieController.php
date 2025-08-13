@@ -251,7 +251,7 @@ class MovieController extends AbstractController
             'This field is required' => $this->translator->trans('This field is required'),
         ];
         $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
-        dump($userMovie);
+
         return $this->render('movie/show.html.twig', [
             'userMovie' => $userMovie,
             'movie' => $movie,
