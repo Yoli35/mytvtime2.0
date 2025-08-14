@@ -202,7 +202,7 @@
                                 <h3>
                                     {{ 'Poster count'|trans }} {{ ux_icon('mdi:arrow-right') }} <span class="poster-count"></span>
                                     {{ ux_icon('mdi:minus') }}
-                                    {{ 'Backrop count'|trans }} {{ ux_icon('mdi:arrow-right') }}<span class="backdrop-count"></span>
+                                    {{ 'Backdrop count'|trans }} {{ ux_icon('mdi:arrow-right') }}<span class="backdrop-count"></span>
                                 </h3>
                             </div>
                             <div class="dialog-header">
@@ -707,6 +707,11 @@
                                             {% else %}
                                                 {{ viewedEpisodes }} {{ 'episodes seen'|trans }}
                                             {% endif %}
+                                        </div>
+                                        <div class="user-votes">
+                                            <div class="show-user-votes">{{ ux_icon('mdi:bar-chart') }}</div>
+                                            {% set uvs = series.userVotes[season.season_number] %}
+                                            {{ include('_blocks/series/_votes.html.twig', {type: 'entity', season_number: season.season_number, ues: uvs.ues, vas: uvs.avs}) }}
                                         </div>
                                     </div>
                                 </div>

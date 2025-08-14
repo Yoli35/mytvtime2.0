@@ -1,0 +1,32 @@
+<div class="vote-graph">
+    {% set sum = 0 %}
+    {% set count = 0 %}
+    <div class="episode-votes">
+        {% for ue in ues %}
+            {% set epId = type == 'array' ? ue.episode_id : ue.episodeId %}
+            {% set epN = type == 'array' ? ue.episode_number : ue.episodeNumber %}
+            {% set epW = type == 'array' ? ue.watch_at_db : ue.watchAt %}
+            <div class="episode-vote"{% if ue.vote %} data-vote="{{ ue.vote }}"{% endif %} data-ep-id="{{ epId }}" data-episode-number="{{ epN }}" data-season-number="{{ season_number }}">
+                <div class="vote" data-ep-id="{{ ue.id }}" style="height: {{ vas[loop.index0] }}rem; border-width: {{ vas[loop.index0] > 0 ? '2px':'0' }};">
+                    {% if epW and ue.vote is not null %}
+                        <div class="user-vote" style=" height: {{ ue.vote }}rem">
+                            {{ ue.vote }}
+                        </div>
+                        {% set sum = sum + ue.vote %}
+                        {% set count = count + 1 %}
+                    {% else %}
+                        <div class="dashed-vote"></div>
+                    {% endif %}
+                </div>
+                <div class="episode-number">{{ 'S%02dE%02d'|format(season_number, epN) }}</div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="vote-average">
+        {% if count > 0 %}
+            {{ (sum / count)|round(1) }} / 10
+        {% else %}
+            {{ 'No votes'|trans }}
+        {% endif %}
+    </div>
+</div>

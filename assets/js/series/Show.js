@@ -1011,6 +1011,17 @@ export class Show {
         new Keyword('series');
 
         /******************************************************************************
+         * User votes on season divs                                                  *
+         ******************************************************************************/
+        const showUserVotesDivs = document.querySelectorAll('.show-user-votes');
+        showUserVotesDivs.forEach(div => {
+            div.addEventListener('click', e => {
+                e.preventDefault();
+                div.parentElement.classList.toggle('show');
+            });
+        });
+
+        /******************************************************************************
          * mapbox gl                                                                  *
          ******************************************************************************/
         const mapDiv = document.querySelector('.map-controller');

@@ -2403,6 +2403,12 @@ h2 {
 
         &:hover {
             border: 2px solid var(--orange-50);
+
+            .infos {
+                .user-votes .show-user-votes {
+                    opacity: 1;
+                }
+            }
         }
 
         .poster {
@@ -2481,6 +2487,7 @@ h2 {
             overflow-y: auto;
             padding-block: 1rem;
             padding-inline: 1rem;
+            position: relative;
             width: 100%;
 
             .season__overview {
@@ -2501,6 +2508,44 @@ h2 {
                 .watched {
                     display: flex;
                     gap: .5rem;
+                }
+            }
+
+            .user-votes {
+                max-width: calc(100% - 4rem);
+                position: absolute;
+                right: 0;
+                transform: translateX(100%);
+                transition: transform 300ms ease-in-out;
+
+                &.show {
+                    transform: translateX(0);
+
+                    .show-user-votes {
+                        background-color: var(--orange-50);
+                    }
+                }
+
+                .show-user-votes {
+                    align-items: center;
+                    background-color: var(--ardoise-100-alpha-20);
+                    border-radius: .25rem;
+                    color: var(--ardoise-10);
+                    cursor: pointer;
+                    display: flex;
+                    height: 2rem;
+                    justify-content: center;
+                    left: -3rem;
+                    opacity: 0;
+                    padding-inline: .5rem;
+                    position: absolute;
+                    transition: background-color 0.3s linear, opacity 0.3s linear, transform 0.3s ease-in-out;
+                    width: 2rem;
+
+                    &:hover {
+                        background-color: var(--orange-50);
+                        transform: scale(1.25);
+                    }
                 }
             }
         }

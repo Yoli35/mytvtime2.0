@@ -906,6 +906,13 @@ class SeriesController extends AbstractController
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
 
+        $userVotes = [];
+        foreach ($userEpisodes as $ue) {
+            $userVotes[$ue->getSeasonNumber()]['ues'][] = $ue;
+            $userVotes[$ue->getSeasonNumber()]['avs'][] = 0;
+        }
+        dump($userVotes);
+
         $this->checkSlug($series, $slug, $locale);
         // Get with fr-FR language to get the localized name
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), [
@@ -943,6 +950,13 @@ class SeriesController extends AbstractController
             $this->imageService->saveImage("posters", $tv['poster_path'], $posterUrl);
             $this->imageService->saveImage("backdrops", $tv['backdrop_path'], $backdropUrl);
             $series = $this->updateSeries($series, $tv);
+
+            foreach ($tv['seasons'] as $season) {
+                if (key_exists('vote_average', $season)) {
+                    $userVotes[$season['season_number']]['avs'] = array_fill(0, $season['episode_count'], $season['vote_average']);
+                }
+            }
+            dump($userVotes);
 
             $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
             $tv['credits'] = $this->castAndCrew($tv);
@@ -1019,6 +1033,7 @@ class SeriesController extends AbstractController
         }
 
         $seriesArr = $series->toArray();
+        $seriesArr['userVotes'] = $userVotes;
         $seriesArr['schedules'] = $schedules;
         $seriesArr['emptySchedule'] = $emptySchedule;
         $seriesArr['alternateSchedules'] = $alternateSchedules;
