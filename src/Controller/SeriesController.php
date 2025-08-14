@@ -1439,10 +1439,6 @@ class SeriesController extends AbstractController
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $this->checkSlug($series, $slug, $locale);
 
-        $userSeries->setViewedEpisodes($this->userEpisodeRepository->getViewedEpisodes($userSeries, $seasonNumber));
-        $userSeries->setProgress($this->userSeriesRepository->getUserSeriesProgress($userSeries));
-        $this->userSeriesRepository->save($userSeries, true);
-
         $seriesImages = $series->getSeriesImages()->toArray();
 
         $episodeSizeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'episode_div_size_' . $userSeries->getId()]);
