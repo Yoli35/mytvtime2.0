@@ -708,10 +708,72 @@
                                                 {{ viewedEpisodes }} {{ 'episodes seen'|trans }}
                                             {% endif %}
                                         </div>
-                                        <div class="user-votes">
-                                            <div class="show-user-votes">{{ ux_icon('mdi:bar-chart') }}</div>
-                                            {% set uvs = series.userVotes[season.season_number] %}
-                                            {{ include('_blocks/series/_votes.html.twig', {type: 'entity', season_number: season.season_number, ues: uvs.ues, vas: uvs.avs}) }}
+                                        {% if series.userVotes|length %}
+                                            <div class="user-votes">
+                                                <div class="show-tab">{{ ux_icon('mdi:bar-chart') }}</div>
+                                                {% set uvs = series.userVotes[season.season_number] %}
+                                                {{ include('_blocks/series/_votes.html.twig', {type: 'entity', season_number: season.season_number, ues: uvs.ues, vas: uvs.avs}) }}
+                                            </div>
+                                        {% endif %}
+                                        <div class="last-episode">
+                                            <div class="show-tab">{{ ux_icon('mdi:page-previous-outline') }}</div>
+                                            <div class="episode-tab">
+                                                {% if tv.last_episode_to_air and tv.last_episode_to_air.season_number == season.season_number %}
+                                                    {% set ep = tv.last_episode_to_air %}
+                                                    {% set epDate = date(ep.air_date) %}
+                                                    <div class="still">
+                                                        {% if ep.still_path %}
+                                                            <img src="{{ ep.still_path }}" alt="{{ ep.name }}" loading="lazy">
+                                                        {% else %}
+                                                            <div class="no-still">{{ 'No still'|trans }}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="infos">
+                                                        <div class="name">{{ 'S%02dE%02d'|format(ep.season_number, ep.episode_number) }}</div>
+                                                        <div class="name">{{ ep.name }}</div>
+                                                        {% if ep.runtime %}
+                                                            <div class="runtime">{{ ep.runtime }} {{ 'minutes'|trans }}</div>
+                                                        {% endif %}
+                                                        {% if epDate %}
+                                                            <div class="air-date">{{ epDate|format_date('relative_long')|capitalize }}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                {% else %}
+                                                    <div class="infos">
+                                                        {{ 'Nothing to show here'|trans }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="next-episode">
+                                            <div class="show-tab">{{ ux_icon('mdi:page-next-outline') }}</div>
+                                            <div class="episode-tab">
+                                                {% if tv.next_episode_to_air and tv.next_episode_to_air.season_number == season.season_number %}
+                                                    {% set ep = tv.next_episode_to_air %}
+                                                    {% set epDate = date(ep.air_date) %}
+                                                    <div class="still">
+                                                        {% if ep.still_path %}
+                                                            <img src="{{ ep.still_path }}" alt="{{ ep.name }}" loading="lazy">
+                                                        {% else %}
+                                                            <div class="no-still">{{ 'No still'|trans }}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="infos">
+                                                        <div class="name">{{ 'S%02dE%02d'|format(ep.season_number, ep.episode_number) }}</div>
+                                                        <div class="name">{{ ep.name }}</div>
+                                                        {% if ep.runtime %}
+                                                            <div class="runtime">{{ ep.runtime }} {{ 'minutes'|trans }}</div>
+                                                        {% endif %}
+                                                        {% if epDate %}
+                                                            <div class="air-date">{{ epDate|format_date('relative_long')|capitalize }}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                {% else %}
+                                                    <div class="infos">
+                                                        {{ 'Nothing to show here'|trans }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

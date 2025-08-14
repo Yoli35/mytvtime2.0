@@ -1013,11 +1013,25 @@ export class Show {
         /******************************************************************************
          * User votes on season divs                                                  *
          ******************************************************************************/
-        const showUserVotesDivs = document.querySelectorAll('.show-user-votes');
-        showUserVotesDivs.forEach(div => {
+        const showUserTabs = document.querySelectorAll('.show-tab');
+        showUserTabs.forEach(div => {
             div.addEventListener('click', e => {
                 e.preventDefault();
-                div.parentElement.classList.toggle('show');
+                const currentTab = e.currentTarget;
+                const parent = currentTab.parentElement;
+                if (parent.classList.contains('show')) {
+                    showUserTabs.forEach(tab => {
+                        tab.classList.remove('d-none');
+                    });
+                    parent.classList.remove('show');
+                } else {
+                    showUserTabs.forEach(tab => {
+                        tab.parentElement.classList.remove('show');
+                        tab.classList.add('d-none');
+                    });
+                    parent.classList.add('show');
+                    currentTab.classList.remove('d-none');
+                }
             });
         });
 

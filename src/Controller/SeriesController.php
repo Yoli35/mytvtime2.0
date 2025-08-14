@@ -903,15 +903,11 @@ class SeriesController extends AbstractController
             $data = $addVideoForm->getData();
             $this->addVideo($data);
         }
+
+
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
-
         $userVotes = [];
-        foreach ($userEpisodes as $ue) {
-            $userVotes[$ue->getSeasonNumber()]['ues'][] = $ue;
-            $userVotes[$ue->getSeasonNumber()]['avs'][] = 0;
-        }
-        dump($userVotes);
 
         $this->checkSlug($series, $slug, $locale);
         // Get with fr-FR language to get the localized name
@@ -928,6 +924,15 @@ class SeriesController extends AbstractController
             "watch/providers",
         ]), true);
         if ($tv) {
+            $newUserEpisodeCount = $this->checkSeasons($userSeries, $tv);
+            if ($newUserEpisodeCount) {
+                $series->addUpdate($newUserEpisodeCount . ' ' . $this->translator->trans('new episodes have been added to the series'));
+                $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+            }
+            foreach ($userEpisodes as $ue) {
+                $userVotes[$ue->getSeasonNumber()]['ues'][] = $ue;
+                $userVotes[$ue->getSeasonNumber()]['avs'][] = 0;
+            }
             if (!$tv['lists']['total_results']) {
                 // Get with en-US language to get the lists
                 $tvLists = json_decode($this->tmdbService->getTvLists($series->getTmdbId()), true);
@@ -956,7 +961,6 @@ class SeriesController extends AbstractController
                     $userVotes[$season['season_number']]['avs'] = array_fill(0, $season['episode_count'], $season['vote_average']);
                 }
             }
-            dump($userVotes);
 
             $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
             $tv['credits'] = $this->castAndCrew($tv);
@@ -979,6 +983,30 @@ class SeriesController extends AbstractController
                     $tv['localized_name'] = $newLocalizedName;
                     $this->addFlash('success', 'The series name “' . $newLocalizedName->getName() . '” has been added to the database.');
                 }
+            }
+            if ($tv['last_episode_to_air']) {
+                $nextEpisode = $tv['last_episode_to_air'];
+
+                $nextEpisode['still_path'] = $nextEpisode['still_path'] ? $this->imageConfiguration->getUrl('still_sizes', 2) . $nextEpisode['still_path'] : null;
+                $nextEpisode['url'] = $this->generateUrl('app_series_season', [
+                        'id' => $series->getId(),
+                        'slug' => $series->getSlug(),
+                        'seasonNumber' => $nextEpisode['season_number'],
+                    ]) . "#episode-" . $nextEpisode['season_number'] . '-' . $nextEpisode['episode_number'];
+
+                $tv['last_episode_to_air'] = $nextEpisode;
+            }
+            if ($tv['next_episode_to_air']) {
+                $nextEpisode = $tv['next_episode_to_air'];
+
+                $nextEpisode['still_path'] = $nextEpisode['still_path'] ? $this->imageConfiguration->getUrl('still_sizes', 2) . $nextEpisode['still_path'] : null;
+                $nextEpisode['url'] = $this->generateUrl('app_series_season', [
+                        'id' => $series->getId(),
+                        'slug' => $series->getSlug(),
+                        'seasonNumber' => $nextEpisode['season_number'],
+                    ]) . "#episode-" . $nextEpisode['season_number'] . '-' . $nextEpisode['episode_number'];
+
+                $tv['next_episode_to_air'] = $nextEpisode;
             }
             $c = count($tv['episode_run_time']);
             $tv['average_episode_run_time'] = $c ? array_reduce($tv['episode_run_time'], function ($carry, $item) {
@@ -3568,25 +3596,37 @@ class SeriesController extends AbstractController
         return $userSeries;
     }
 
-    public function addSeasonToUser(User $user, UserSeries $userSeries, array $season): void
+    public function checkSeasons(UserSeries $userSeries, array $tv): int
+    {
+        $user = $userSeries->getUser();
+        $newEpisodeCount = 0;
+        foreach ($tv['seasons'] as $season) {
+            $newEpisodeCount += $this->addSeasonToUser($user, $userSeries, $season);
+        }
+        return $newEpisodeCount;
+    }
+
+    public function addSeasonToUser(User $user, UserSeries $userSeries, array $season): int
     {
         $series = $userSeries->getSeries();
         $language = $user->getPreferredLanguage() ?? "fr" . "-" . $user->getCountry() ?? "FR";
         $tvSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $season['season_number'], $language), true);
+        $newEpisodeCount = 0;
         if ($tvSeason) {
             $episodeCount = count($tvSeason['episodes']);
             $seasonNumber = $tvSeason['season_number'];
             foreach ($tvSeason['episodes'] as $episode) {
-                $this->addEpisodeToUser($user, $userSeries, $episode, $seasonNumber, $episodeCount);
+                $newEpisodeCount += $this->addEpisodeToUser($user, $userSeries, $episode, $seasonNumber, $episodeCount);
             }
         }
+        return $newEpisodeCount;
     }
 
-    public function addEpisodeToUser(User $user, UserSeries $userSeries, array $episode, int $seasonNumber, int $episodeCount): void
+    public function addEpisodeToUser(User $user, UserSeries $userSeries, array $episode, int $seasonNumber, int $episodeCount): int
     {
         $userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
         if ($userEpisode) {
-            return;
+            return 0;
         }
         $userEpisode = new UserEpisode($userSeries, $episode['id'], $seasonNumber, $episode['episode_number'], null);
         $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris', true) : null;
@@ -3596,6 +3636,7 @@ class SeriesController extends AbstractController
         } else {
             $this->userEpisodeRepository->save($userEpisode);
         }
+        return 1;
     }
 
     public function getEpisodeHistory(User $user, int $dayCount, string $locale): array
