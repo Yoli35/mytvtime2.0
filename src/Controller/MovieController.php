@@ -455,7 +455,7 @@ class MovieController extends AbstractController
     public function addViewedDate(Request $request, UserMovie $userMovie): Response
     {
         $data = json_decode($request->getContent(), true);
-        $viewed = $data['viewed'];
+        $viewed = intval($data['viewed']);
 
         $now = $this->dateService->getNowImmutable($userMovie->getUser()->getTimezone() ?? 'Europe/Paris');
 
