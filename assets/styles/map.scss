@@ -1,0 +1,236 @@
+
+.map-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    margin-block-end: 1rem;
+    position: relative;
+
+    .map-controller {
+        --map-height-album: 30vh;
+        --map-height-all: 60vh;
+        --map-height-series: 50vh;
+
+        border: 2px solid var(--ardoise-50);
+        border-radius: .5rem;
+        height: 50vh;
+        overflow: hidden;
+
+        &.album {
+            height: var(--map-height-album);
+        }
+
+        &.all {
+            height: var(--map-height-all);
+        }
+
+        &.series {
+            height: var(--map-height-series);
+        }
+
+        .leaflet-popup-content-wrapper {
+            background-color: var(--orange-40-alpha-50);
+            overflow: hidden;
+
+            .leaflet-popup-content {
+                margin: 0;
+                width: 24rem;
+
+                .leaflet-popup-content-title {
+                    background-color: var(--orange-50);
+                    border-radius: .25rem .25rem 0 0;
+                    color: var(--ardoise-10);
+                    font-size: 1.5rem;
+                    font-weight: 300;
+                    padding-block: .25rem;
+                    padding-inline: 1rem;
+                    text-align: center;
+                }
+
+                .leaflet-popup-content-description {
+                    background-color: var(--ardoise-100-alpha-50);
+                    border-radius: 0 0 .25rem .25rem;
+                    color: var(--ardoise-10);
+                    font-size: 1rem;
+                    font-weight: 100;
+                    padding-block: .5rem;
+                    padding-inline: 1rem;
+                    text-align: center;
+                    text-wrap: balance;
+                }
+
+                .leaflet-popup-content-image {
+                    img {
+                        border-radius: 0 0 .25rem .25rem;
+                        height: 12rem;
+                        object-fit: cover;
+                        width: 24rem;
+                    }
+                }
+            }
+        }
+
+        .mapboxgl-popup-content {
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+            padding: unset;
+            width: 20rem;
+
+            .leaflet-popup-content-title {
+                background: var(--orange-40);
+                font-size: 1.25rem;
+                font-weight: 300;
+                line-height: 1.25em;
+                padding: .5rem;
+
+                &.poi {
+                    background-color: var(--green-50);
+                }
+            }
+
+            .leaflet-popup-content-description {
+                background-color: var(--orange-70);
+                font-size: 1rem;
+                font-weight: 300;
+                padding: .5rem;
+
+                &.poi {
+                    background-color: var(--green-70);
+                }
+            }
+
+            .leaflet-popup-content-image {
+                img {
+                    border-radius: 0 0 .5rem .5rem;
+                    height: 12rem;
+                    object-fit: cover;
+                    width: 24rem;
+                }
+            }
+
+            .mapboxgl-popup-close-button {
+                right: .5rem;
+            }
+        }
+
+        .height-handle {
+            background-color: var(--orange-50);
+            border-radius: .25rem;
+            bottom: 0;
+            cursor: grab;
+            height: 2rem;
+            left: 50%;
+            opacity: 0;
+            position: absolute;
+            transform: translate(-50%, 50%);
+            transition: opacity 0.3s ease-in-out;
+            width: 4rem;
+            z-index: 1000;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+
+    .map-style-list-toggler {
+        align-items: center;
+        background-color: var(--orange-50);
+        border-radius: 50%;
+        bottom: 2rem;
+        cursor: pointer;
+        display: flex;
+        height: 3rem;
+        justify-content: center;
+        right: 1rem;
+        position: absolute;
+        transition: bottom 0.3s ease-in-out;
+        width: 3rem;
+        z-index: 10;
+
+        &.active {
+            bottom: 7rem;
+        }
+
+        svg {
+            height: 2rem;
+            width: 2rem;
+        }
+    }
+
+    .map-style-list {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        transform: translateX(120%);
+        transition: transfrom 0.5s ease-in-out;
+        z-index: 3;
+
+        &.active {
+            transform: translateX(0);
+        }
+
+        .thumbnails {
+            display: flex;
+            gap: 1rem;
+            margin: 0;
+            max-width: 100%;
+            overflow-x: auto;
+            padding-block: 1rem;
+
+            .thumbnail {
+                display: flex;
+                flex-direction: column;
+                gap: .5rem;
+
+                .name {
+                    align-items: center;
+                    display: none;
+                    font-weight: 300;
+                    height: 2.5rem;
+                    justify-content: center;
+                    line-height: 1.25;
+                    text-wrap: balance;
+                    text-align: center;
+                }
+
+                img {
+                    aspect-ratio: 1;
+                    border-radius: 50%;
+                    border: 4px solid var(--green-50);
+                    object-fit: cover;
+                    width: 5rem;
+                }
+
+                &.selected {
+                    img {
+                        border-color: var(--orange-50);
+                        box-shadow: 0 0 1rem .375rem var(--orange-50);
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (width <= 36rem) {
+    .map-container {
+        .map-style-list {
+            .thumbnails {
+                gap: 0;
+            }
+        }
+    }
+}
+
+@media (orientation: landscape) {
+    .map-container {
+        .map-controller {
+            height: 80vh;
+            margin-inline: auto;
+            width: 80vw;
+        }
+    }
+}

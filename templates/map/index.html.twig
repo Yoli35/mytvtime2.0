@@ -5,6 +5,7 @@
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/filter.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/map.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
     {% if leaflet %}
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
@@ -32,7 +33,8 @@
                     <div data-title="{{ filmingLocationImageCount }} {{ 'images'|trans }}">{{ filmingLocationImageCount }} {{ ux_icon('fa:picture-o', {height: '32px', width: '32px'}) }}</div>
                 </div>
             </div>
-            <div id="map" class="map-controller all"></div>
+{#            <div id="map" class="map-controller all"></div>#}
+            {{ include('_blocks/map/_map-container.html.twig', {type: 'all', styleSettings: settings.data.styles}) }}
         </div>
 
         <div class="series-map-list center">
@@ -84,7 +86,7 @@
                 </div>
             </div>
 
-            {{ include('_blocks/map/_thumbnails.html.twig', {styles: settings.data.styles}) }}
+{#            {{ include('_blocks/map/_thumbnails.html.twig', {styles: settings.data.styles}) }}#}
             <div class="series-location-selected" style="display: none">{{ selectedFilmingLocation }}</div>
             <script>
                 document.addEventListener('DOMContentLoaded', function () {

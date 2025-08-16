@@ -397,7 +397,7 @@ export class Season {
                 // </div>
                 // 2- insert it before svgsDiv
                 // 3- append these divs in getFilmingLocationsDiv
-                // <div class="series-map">
+                // <div class="map-container">
                 //     <div id="map" class="map-controller"></div>
                 // </div
                 // 4- remove getFilmingLocationsButton
@@ -416,7 +416,7 @@ export class Season {
                 globsMapDiv.innerText += '}';
                 body.insertBefore(globsMapDiv, svgsDiv);
                 const seriesMapDiv = document.createElement('div');
-                seriesMapDiv.classList.add('series-map');
+                seriesMapDiv.classList.add('map-container');
                 const mapDiv = document.createElement('div');
                 mapDiv.setAttribute('id', 'map');
                 mapDiv.classList.add('map-controller');

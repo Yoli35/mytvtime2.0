@@ -1,0 +1,8 @@
+<div class="map-container">
+    <div id="map" class="map-controller {{ type }}"></div>
+    <div class="map-style-list-toggler">
+        <span>{{ ux_icon('mdi:earth') }}</span>
+        <span class="hidden">{{ ux_icon('mdi:arrow-right') }}</span>
+    </div>
+    {{ include('_blocks/map/_thumbnails.html.twig', {styles: styleSettings}) }}
+</div>

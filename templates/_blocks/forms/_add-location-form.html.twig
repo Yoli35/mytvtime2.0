@@ -39,7 +39,7 @@
                         <span class="error"></span>
                     </label>
                 </div>
-                {% if 'radius' in fieldList %}
+                {% if fieldList is defined and 'radius' in fieldList %}
                     <div class="form-field">
                         <label for="radius" data-title="{{ 'Zone radius'|trans }}">{{ 'Radius'|trans }}
                             <input type="number" name="radius" id="radius" step="100">

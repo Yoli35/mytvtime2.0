@@ -4905,7 +4905,7 @@ h2 {
 }
 
 .content {
-    &:has(.series-map) {
+    &:has(.map-container) {
         flex-direction: column;
     }
 }
@@ -5246,16 +5246,6 @@ h2 {
     }
 }
 
-@media (orientation: landscape) {
-    .series-map {
-        .map-controller {
-            height: 80vh;
-            margin-inline: auto;
-            width: 80vw;
-        }
-    }
-}
-
 .series-map-list {
     display: flex;
     flex-wrap: wrap;
@@ -5386,48 +5376,6 @@ h2 {
             border-right: 6px solid var(--ardoise-20);
             border-top: 6px solid transparent;
             top: 20%;
-        }
-    }
-
-    .thumbnails {
-        display: flex;
-        gap: 1rem;
-        margin-block-end: 2rem;
-        margin-inline: auto;
-        max-width: 100%;
-        overflow-x: auto;
-        padding-block-end: 1rem;
-
-        .thumbnail {
-            display: flex;
-            flex-direction: column;
-            gap: .5rem;
-
-            .name {
-                align-items: center;
-                display: flex;
-                font-weight: 300;
-                height: 2.5rem;
-                justify-content: center;
-                line-height: 1.25;
-                text-wrap: balance;
-                text-align: center;
-            }
-
-            img {
-                aspect-ratio: 1;
-                border-radius: 50%;
-                border: 4px solid var(--green-50);
-                object-fit: cover;
-                width: 8rem;
-            }
-
-            &.selected {
-                img {
-                    border-color: var(--orange-50);
-                    box-shadow: 0 0 1rem .375rem var(--orange-50);
-                }
-            }
         }
     }
 
