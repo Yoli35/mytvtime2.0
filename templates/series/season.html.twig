@@ -401,7 +401,7 @@
 
                 {% if filmingLocation %}
                     <div class="get-filming-locations">
-                        <div class="get-filming-locations-button" data-id="{{ series.tmdbId }}">{{ 'Where was "%name%" filmed?'|trans({'%name%': season.series_localized_name.name?:series.name}) }}</div>
+                        <div class="get-filming-locations-button" data-id="{{ series.tmdbId }}">{{ 'Where was "%name%" filmed?'|trans({'%name%': season.series_localized_name.name??series.name}) }}</div>
                     </div>
                 {% endif %}
 
