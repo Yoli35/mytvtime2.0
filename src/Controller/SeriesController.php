@@ -924,7 +924,7 @@ class SeriesController extends AbstractController
             "watch/providers",
         ]), true);
         if ($tv) {
-            $newUserEpisodeCount = $this->checkSeasons($userSeries, $tv);
+            $newUserEpisodeCount = $this->checkSeasons($userSeries, $userEpisodes, $tv);
             if ($newUserEpisodeCount) {
                 $series->addUpdate($newUserEpisodeCount . ' ' . $this->translator->trans('new episodes have been added to the series'));
                 $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
@@ -3587,22 +3587,22 @@ class SeriesController extends AbstractController
         }
 
         foreach ($tv['seasons'] as $season) {
-            $this->addSeasonToUser($user, $userSeries, $season);
+            $this->addSeasonToUser($user, $userSeries, $season, []);
         }
         return $userSeries;
     }
 
-    public function checkSeasons(UserSeries $userSeries, array $tv): int
+    public function checkSeasons(UserSeries $userSeries, array $userEpisodes, array $tv): int
     {
         $user = $userSeries->getUser();
         $newEpisodeCount = 0;
         foreach ($tv['seasons'] as $season) {
-            $newEpisodeCount += $this->addSeasonToUser($user, $userSeries, $season);
+            $newEpisodeCount += $this->addSeasonToUser($user, $userSeries, $season, $userEpisodes);
         }
         return $newEpisodeCount;
     }
 
-    public function addSeasonToUser(User $user, UserSeries $userSeries, array $season): int
+    public function addSeasonToUser(User $user, UserSeries $userSeries, array $season, array $userEpisodes): int
     {
         $series = $userSeries->getSeries();
         $language = $user->getPreferredLanguage() ?? "fr" . "-" . $user->getCountry() ?? "FR";
@@ -3612,7 +3612,16 @@ class SeriesController extends AbstractController
             $episodeCount = count($tvSeason['episodes']);
             $seasonNumber = $tvSeason['season_number'];
             foreach ($tvSeason['episodes'] as $episode) {
+                $dbUserEpisode = array_find($userEpisodes, fn($e) => $e->getEpisodeId() == $episode['id'] && $e->getSeasonNumber() == $seasonNumber);
+                if ($dbUserEpisode) {
+                    // Episode already exists in user's series
+                    continue;
+                }
                 $newEpisodeCount += $this->addEpisodeToUser($user, $userSeries, $episode, $seasonNumber, $episodeCount);
+            }
+
+            if ($newEpisodeCount) {
+                $this->userEpisodeRepository->flush();
             }
         }
         return $newEpisodeCount;
@@ -3620,18 +3629,14 @@ class SeriesController extends AbstractController
 
     public function addEpisodeToUser(User $user, UserSeries $userSeries, array $episode, int $seasonNumber, int $episodeCount): int
     {
-        $userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
+        /*$userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
         if ($userEpisode) {
             return 0;
-        }
+        }*/
         $userEpisode = new UserEpisode($userSeries, $episode['id'], $seasonNumber, $episode['episode_number'], null);
         $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris', true) : null;
         $userEpisode->setAirDate($airDate);
-        if ($episode['episode_number'] == $episodeCount) {
-            $this->userEpisodeRepository->save($userEpisode, true);
-        } else {
             $this->userEpisodeRepository->save($userEpisode);
-        }
         return 1;
     }
 
