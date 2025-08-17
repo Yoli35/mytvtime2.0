@@ -4905,7 +4905,7 @@ h2 {
 }
 
 .content {
-    &:has(.map-container) {
+    &:has(.series-map) {
         flex-direction: column;
     }
 }
