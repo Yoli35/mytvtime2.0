@@ -46,6 +46,7 @@ export class AlbumShow {
      * @property {Album} album
      * @property {Array.<string>} imagePaths
      * @property {Array.<string>} texts
+     * @property {Array.<string>} settings
      * @property {SrcsetPaths} srcsetPaths
      */
 
@@ -61,6 +62,7 @@ export class AlbumShow {
         this.imagePaths = globs.imagePaths;
         this.texts = globs.texts;
         this.srcsetPaths = globs.srcsetPaths;
+        this.settings = globs.settings;
         this.interval = null;
         this.fileTypes = [
             "image/jpeg",
@@ -102,6 +104,60 @@ export class AlbumShow {
          * Background animation                                                       *
          ******************************************************************************/
         this.initAnimation();
+
+        /******************************************************************************
+         * Layout buttons                                                             *
+         ******************************************************************************/
+        const albumPhotosDiv = document.querySelector('.album-photos');
+        const layoutButtons = document.querySelectorAll('.layout-buttons button');
+
+        layoutButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                layoutButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+            });
+        });
+        document.querySelector('.layout-grid').addEventListener('click', () => {
+            albumPhotosDiv.classList.remove('list');
+            albumPhotosDiv.classList.add('grid');
+            gThis.initAnimation();
+            gThis.saveLayout(gThis.album.id, 'grid');
+        });
+        document.querySelector('.layout-list').addEventListener('click', () => {
+            albumPhotosDiv.classList.remove('grid');
+            albumPhotosDiv.classList.add('list');
+            gThis.stopAnimation();
+            gThis.saveLayout(gThis.album.id, 'list');
+        });
+
+    }
+
+    saveLayout(id, layout) {
+        const lang = document.querySelector('html').getAttribute('lang');
+        const settings = {
+            layout: layout,
+            photosPerPage: gThis.settings.photosPerPage,
+        };
+        fetch('/' + lang + '/album/settings/' + id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': gThis.settings.token
+            },
+            body: JSON.stringify(settings)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Settings updated:', data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
     }
 
     initAlbumForm() {
@@ -361,7 +417,7 @@ export class AlbumShow {
             const listItem = document.createElement("li");
             const div = document.createElement("div");
             if (gThis.validFileType(file)) {
-                div.textContent = `${file.name}, ${gThis.returnFileSize(file.size)}`;
+                div.textContent = file.name + ' ' + gThis.returnFileSize(file.size);
                 const image = document.createElement("img");
                 image.src = URL.createObjectURL(file);
                 image.alt = image.title = file.name;
@@ -369,7 +425,7 @@ export class AlbumShow {
                 listItem.appendChild(div);
                 listItem.appendChild(image);
             } else {
-                div.innerHTML = `${file.name} <span class="error">'Not a valid file type. Update your selection'</span>`;
+                div.innerHTML = file.name + ' <span class="error">Not a valid file type. Update your selection</span>';
                 listItem.appendChild(div);
             }
             list.appendChild(listItem);
@@ -382,11 +438,11 @@ export class AlbumShow {
 
     returnFileSize(number) {
         if (number < 1e3) {
-            return `${number} bytes`;
+            return number + " bytes";
         } else if (number >= 1e3 && number < 1e6) {
-            return `${(number / 1e3).toFixed(1)} KB`;
+            return (number / 1e3).toFixed(1) + " KB";
         } else {
-            return `${(number / 1e6).toFixed(1)} MB`;
+            return (number / 1e6).toFixed(1) + " MB";
         }
     }
 
@@ -471,35 +527,36 @@ export class AlbumShow {
 
     initAnimation() {
         const albumPhotosDiv = document.querySelector('.album-photos');
+        const imgElement = albumPhotosDiv.querySelector(".background").querySelector('img');
+        gThis.pathArr = gThis.imagePaths.slice();
         if (albumPhotosDiv.classList.contains('list')) {
             return;
         }
-        gThis.effect({div: albumPhotosDiv});
-        gThis.interval = setInterval(gThis.effect, 4000, {div: albumPhotosDiv});
+        gThis.effect({img: imgElement, path: gThis.srcsetPaths.original});
+        gThis.interval = setInterval(gThis.effect, 4000, {img: imgElement, path: gThis.srcsetPaths.original});
+    }
+
+    stopAnimation() {
+        if (gThis.interval) {
+            const albumPhotosDiv = document.querySelector('.album-photos');
+            clearInterval(gThis.interval);
+            albumPhotosDiv.classList.remove('play');
+            albumPhotosDiv.removeAttribute('style');
+            gThis.interval = null;
+        }
     }
 
     effect(arg) {
-        const albumPhotosDiv = arg.div;
+        const imgElement = arg.img;
+        const path = arg.path
 
-        if (albumPhotosDiv.classList.contains('list')) {
-            if (gThis.interval) {
-                clearInterval(gThis.interval);
-                albumPhotosDiv.classList.remove('play');
-                albumPhotosDiv.removeAttribute('style');
-                gThis.interval = null;
-                return;
-            }
+        const arrLength = gThis.pathArr.length;
+        const imageIndex = Math.floor(Math.random() * (arrLength - 1));
+        const imageFilename = gThis.pathArr[imageIndex];
+        gThis.pathArr.splice(imageIndex, 1);
+        if (gThis.pathArr.length === 0) {
+            gThis.pathArr = gThis.imagePaths.slice();
         }
-        const paths = gThis.imagePaths;
-        const srcsetPaths = gThis.srcsetPaths
-        const highRes = srcsetPaths.original;
-        const path = paths[Math.floor(Math.random() * (paths.length - 1))];
-        const img = new window.Image();
-        img.onload = function () {
-            albumPhotosDiv.classList.remove('play');
-            albumPhotosDiv.style = `background-image:linear-gradient(to bottom, transparent 40%, black 60%), url('${highRes}${path}');`;
-            albumPhotosDiv.classList.add('play');
-        };
-        img.src = highRes + path;
+        imgElement.src = path + imageFilename;
     }
 }

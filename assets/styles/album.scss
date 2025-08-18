@@ -309,7 +309,7 @@
 @property --album-cover-size {
     syntax: "<percentage>";
     inherits: true;
-    initial-value: 200%;
+    initial-value: 178%;
 }
 
 @keyframes effect-beck {
@@ -325,11 +325,12 @@
 }
 
 .album-page {
+    gap: 1rem;
     height: calc(100vh - 6rem) !important;
     overflow-y: auto;
     margin-block-start: 4rem;
 
-    .header {
+    header {
         align-items: center;
         display: flex;
         gap: 1rem;
@@ -460,30 +461,77 @@
         }
     }
 
+    main {
+        height: calc(100vh - 10rem);
+        overflow-y: auto;
+
+        .map-container {
+            flex-direction: unset;
+            justify-content: unset;
+            margin-block-end: unset;
+
+            .map-controller.album {
+                width: 100%;
+            }
+        }
+    }
+
     .album-photos {
         border-bottom: 2px solid var(--orange-50);
         display: flex;
         flex-direction: column;
         gap: .5rem;
-        margin-block: 1rem;
         margin-inline: auto;
         height: calc(70vh - 16rem);
         overflow-y: auto;
         padding: .5rem;
 
         &.grid {
-            background-image: linear-gradient(to bottom, transparent 40%, black 60%),
+            /*background-image: linear-gradient(to bottom, transparent 40%, black 60%),
             url('/albums/1080p/IMG_3266.webp');
             background-position: center;
             background-repeat: no-repeat;
-            background-size: var(--album-cover-size);
+            background-size: var(--album-cover-size);*/
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-auto-rows: 1fr;
             gap: .25rem;
             margin-inline: auto;
-            padding-block-start: 40rem;
+            padding-block-start: min(30vh, 30vw);
+            position: relative;
             width: 100%;
+
+            .background {
+                height: min(50vh, 50vw);
+                position: absolute;
+                top: 0;
+                width: 100%;
+
+                img {
+                    height: 100%;
+                    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+                    mask-size: cover;
+                    object-fit: cover;
+                    width: 100%;
+                }
+            }
+
+            .protection {
+                height: min(50vh, 50vw);
+                position: absolute;
+                top: 0;
+                width: 100%;
+
+                .name {
+                    bottom: min(25vh, 25vw);
+                    font-size: min(5vh, 5vw);
+                    font-weight: 300;
+                    left: 2rem;
+                    line-height: 1.1em;
+                    padding-inline: 2rem;
+                    position: absolute;
+                }
+            }
 
             .album-photo {
                 width: 100%;
@@ -513,6 +561,10 @@
 
         &.list {
             width: 100%;
+
+            .background, .protection {
+                display: none;
+            }
 
             .album-photo {
                 height: 8rem;
@@ -648,6 +700,31 @@
     }
 }
 
+@media (orientation: landscape) {
+    .album-page {
+        main {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+
+            .album-photos {
+                flex: 1;
+                height: 100%;
+                overflow-y: auto;
+            }
+
+            .map-container {
+                flex: 1;
+
+                .map-controller.album {
+                    height: 100%;
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
 @media (width <= 75rem) {
     .album-page {
         .album-infos {
@@ -655,6 +732,16 @@
                 align-items: flex-start;
                 flex-direction: column;
                 gap: .5rem;
+            }
+        }
+    }
+}
+
+@media (width <= 50rem) {
+    .album-page {
+        .album-photos {
+            &.grid {
+                padding-block-start: 0;
             }
         }
     }
