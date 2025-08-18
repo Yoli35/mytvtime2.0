@@ -4373,7 +4373,7 @@ h2 {
     }
 }*/
 
-@media (max-width: 1024px) {
+@media (width <= 64rem) {
     .series-show {
         .header, .schedules {
             padding: 0;
@@ -4547,7 +4547,24 @@ h2 {
     }
 }
 
-@media (max-width: 800px) {
+@media (width <= 50rem) {
+    .series-show {
+        margin-block-start: 2rem;
+
+        .header {
+            .poster {
+                border-radius: 0;
+                width: 100% !important;
+
+                img {
+                    border-radius: 0;
+                    height: auto;
+                    width: 100%;
+                }
+            }
+        }
+    }
+
     .add-this {
         bottom: 4rem;
         border-radius: 0 0 1rem 1rem;
