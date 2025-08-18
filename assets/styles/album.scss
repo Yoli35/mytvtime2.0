@@ -326,7 +326,7 @@
 
 .album-page {
     gap: 1rem;
-    height: calc(100vh - 6rem) !important;
+    height: calc(100vh - 8rem) !important;
     overflow-y: auto;
     margin-block-start: 4rem;
 
@@ -377,14 +377,12 @@
                     }
                 }
 
-                .layout-buttons {
+                .layout-buttons, .layout-switcher {
                     border-radius: .25rem;
                     display: flex;
-                    margin-inline-start: auto;
 
                     button {
                         align-items: center;
-                        background-color: var(--orange-50);
                         border: none;
                         color: var(--orange-100);
                         cursor: pointer;
@@ -401,15 +399,33 @@
                         &:last-child {
                             border-radius: 0 .25rem .25rem 0;
                         }
+                    }
+                }
+
+                .layout-buttons {
+                    button {
+                        background-color: var(--green-50);
+
+                        &:hover {
+                            background-color: var(--green-40);
+                        }
+                    }
+                }
+
+                .layout-switcher {
+                    margin-inline-start: auto;
+
+                    button {
+                        background-color: var(--orange-50);
 
                         &:hover {
                             background-color: var(--orange-60);
                         }
-                    }
 
-                    .active {
-                        background-color: var(--orange-100);
-                        color: var(--orange-10);
+                        &.active {
+                            background-color: var(--orange-100);
+                            color: var(--orange-10);
+                        }
                     }
                 }
             }
@@ -462,7 +478,7 @@
     }
 
     main {
-        height: calc(100vh - 10rem);
+        height: calc(100vh - 11rem);
         overflow-y: auto;
 
         .map-container {
@@ -482,16 +498,11 @@
         flex-direction: column;
         gap: .5rem;
         margin-inline: auto;
-        height: calc(70vh - 16rem);
+        height: calc(calc(100vh - var(--map-height-album)) - 11rem);
         overflow-y: auto;
         padding: .5rem;
 
         &.grid {
-            /*background-image: linear-gradient(to bottom, transparent 40%, black 60%),
-            url('/albums/1080p/IMG_3266.webp');
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: var(--album-cover-size);*/
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-auto-rows: 1fr;
@@ -737,11 +748,62 @@
     }
 }
 
+@media (width >= 60rem) {
+    .album-page {
+        header {
+            .h1-tools {
+                align-items: center;
+                flex-direction: row;
+                gap: .5rem;
+                width: 50%;
+
+                h1 {
+                    width: 100%;
+                }
+
+                .tools {
+                    flex-direction: column;
+                    gap: .25rem;
+                    width: unset;
+                }
+            }
+        }
+    }
+}
+
 @media (width <= 50rem) {
     .album-page {
-        .album-photos {
-            &.grid {
-                padding-block-start: 0;
+        height: calc(100vh - 6rem) !important;
+        margin-block-start: 2rem;
+
+        header {
+            h1 {
+                font-size: min(5vh, 5vw);
+            }
+        }
+
+        main {
+            .album-photos.grid {
+                gap: 0;
+                padding: 0;
+
+                .background, .protection {
+                    display: none;
+                }
+
+                .album-photo {
+                    border-radius: 0;
+
+                    img {
+                        border-radius: 0;
+                    }
+                }
+            }
+
+            .map-container {
+                .map-controller {
+                    border-radius: 0;
+                }
             }
         }
     }
@@ -839,7 +901,6 @@
         }
 
         .album-photos.grid {
-            padding-block-start: 20rem;
         }
 
         .side-panel.edit-photo-dialog {
