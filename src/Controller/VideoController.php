@@ -281,7 +281,6 @@ final class VideoController extends AbstractController
             $b['name'] = preg_replace('/[ÉÈÊË]/u', 'E', $b['name']);
             $a['name'] = preg_replace('/[éèêë]/u', 'e', $a['name']);
             $b['name'] = preg_replace('/[éèêë]/u', 'e', $b['name']);
-            dump($a['name'], $b['name']);
             // Comparer les noms des catégories
             return strcmp($a['name'], $b['name']);
         });
