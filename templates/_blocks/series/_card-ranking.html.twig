@@ -9,8 +9,9 @@
                     <div>{{ 'No poster'|trans }}</div>
                 {% endif %}
             {% endif %}
+            <div class="average-vote-index">{{ loop.index }}</div>
+            <div class="average-vote">{{ '%.02f'|format(series.average_vote) }}</div>
             <div class="series-infos">
-                <div class="average-vote">{{ loop.index }} - {{ series.average_vote }}</div>
                 <div class="air-date" data-title="{{ 'Episode air date'|trans }}">
                     {% if series.final_air_date %}
                         {{ series.final_air_date|format_date('relative_full')|capitalize }}
