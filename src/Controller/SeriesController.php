@@ -355,6 +355,30 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[Route('/ranking/vote', name: 'ranking_by_vote')]
+    public function rankingByVote(Request $request): Response
+    {
+        $user = $this->getUser();
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+
+        $arr = $this->userSeriesRepository->rankingByVote($user, $locale, 1, -1);
+        $series = array_filter($arr, function ($s) {
+            return $s['average_vote'] > 0;
+        });
+
+        $series = array_map(function ($s) {
+            $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            return $s;
+        }, $series);
+
+        $tmdbIds = array_column($series, 'tmdb_id');
+
+        return $this->render('series/ranking-by-vote.html.twig', [
+            'seriesList' => $series,
+            'tmdbIds' => $tmdbIds,
+        ]);
+    }
+
     #[IsGranted('ROLE_USER')]
     #[Route('/by/country/{country}', name: 'by_country', requirements: ['country' => '[A-Z]{2}'])]
     public function seriesByCountry(Request $request, string $country): Response
@@ -906,7 +930,7 @@ class SeriesController extends AbstractController
 
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+        $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
         $userVotes = [];
 
         $this->checkSlug($series, $slug, $locale);
@@ -927,7 +951,7 @@ class SeriesController extends AbstractController
             $newUserEpisodeCount = $this->checkSeasons($userSeries, $userEpisodes, $tv);
             if ($newUserEpisodeCount) {
                 $series->addUpdate($newUserEpisodeCount . ' ' . $this->translator->trans('new episodes have been added to the series'));
-                $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+                $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
             }
             foreach ($userEpisodes as $ue) {
                 $userVotes[$ue->getSeasonNumber()]['ues'][] = $ue;

@@ -140,7 +140,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function seriesToStart(User $user, string $locale, string $order,  int $page, int $perPage): array
+    public function seriesToStart(User $user, string $locale, string $order, int $page, int $perPage): array
     {
         $userId = $user->getId();
         $offset = ($page - 1) * $perPage;
@@ -196,6 +196,36 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function rankingByVote(User $user, string $locale, int $page, int $perPage): array
+    {
+        $userId = $user->getId();
+        $offset = ($page - 1) * $perPage;
+        $sql = "SELECT 
+                       s.id                                                                      as id,
+                       s.tmdb_id                                                                 as tmdb_id,
+                       IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
+                       IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
+                       s.`poster_path`                                                           as poster_path,
+                       s.`first_air_date`                                                        as final_air_date,
+                       (SELECT AVG(IF(ue.`vote`, ue.`vote`, 0))
+                                FROM `user_episode` ue
+                                WHERE ue.`user_series_id`=us.`id`
+                                  AND ue.`vote` > 0
+                                  AND ue.`previous_occurrence_id` IS NULL)                       as average_vote,
+                       (SELECT COUNT(*)
+                               FROM `user_episode` ue
+                           WHERE ue.`user_series_id`=us.`id`
+                             AND ue.`vote`>0
+                             AND ue.`previous_occurrence_id` IS NULL)                            as episode_count
+                FROM `user_series` us
+                    INNER JOIN `series` s ON us.`series_id`=s.`id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale'
+                WHERE us.`user_id`=$userId
+                ORDER BY average_vote DESC ";
+        if ($perPage > 0) $sql .= "LIMIT $perPage OFFSET $offset";
+        return $this->getAll($sql);
+    }
+
     public function seriesToStartCount(User $user, string $locale): int
     {
         $userId = $user->getId();
@@ -235,7 +265,7 @@ class UserSeriesRepository extends ServiceEntityRepository
     }
 
     public function getAllSeries(
-        User $user,
+        User  $user,
         array $localisation,
         array $filters): array
     {
@@ -302,7 +332,7 @@ class UserSeriesRepository extends ServiceEntityRepository
 
 
     public function countAllSeries(
-        User $user,
+        User  $user,
         array $localisation,
         array $filters): int
     {
@@ -490,6 +520,7 @@ class UserSeriesRepository extends ServiceEntityRepository
 
         return $result ? $result['episodeWatchedCount'] / $result['episodeCount'] * 100 : null;
     }
+
     public function getAll($sql): array
     {
         try {
