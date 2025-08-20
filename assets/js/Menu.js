@@ -162,14 +162,20 @@ export class Menu {
         this.adjustHistoryList();
 
         const searchResults = navbar.querySelectorAll(".search-results");
-        /*console.log({searchResults});*/
+        console.log({searchResults});
+        const multiSearchResults = navbar.querySelector(".search-results.__multi");
+        console.log({multiSearchResults});
         const menus = navbar.querySelectorAll(".menu");
         /*console.log({menus});*/
 
         document.addEventListener("click", (e) => {
             const target = e.target;
             /*console.log(target);*/
-            if (!multiSearchOptions || (target !== multiSearchOptions && !multiSearchOptions.contains(target))) {
+            if (target === multiSearchResults || multiSearchResults.contains(target)) {
+                if (multiSearchOptions.contains(target)) {
+                    multiSearch.focus();
+                }
+            } else {
                 searchResults.forEach((searchResult) => {
                     const ul = searchResult.querySelector("ul");
                     if (ul && !searchResult.parentElement.contains(e.target)) {
@@ -190,8 +196,6 @@ export class Menu {
                         this.closeMenu(menu.closest(".navbar-item"), menu);
                     }
                 });
-            } else {
-                multiSearch?.focus();
             }
         });
         document.addEventListener("auxclick", (e) => {
@@ -742,11 +746,14 @@ export class Menu {
                         const menuDiv = e.currentTarget.closest(".multi-search");
                         const multiSearchInput = menuDiv.querySelector("input");
                         const resultsDiv = menuDiv.querySelector(".search-results");
-                        resultsDiv.innerHTML = '';
+                        const ul = menuDiv.querySelectorAll("li");
+                        ul.forEach(item => {
+                            item.remove();
+                        });
                         resultsDiv.classList.remove("showing-something");
                         multiSearchInput.value = '';
-
                         gThis.tooltips.hide();
+                        window.location.href = url;
                     });
                     li.appendChild(a);
                     ul.appendChild(li);
