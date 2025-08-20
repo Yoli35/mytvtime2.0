@@ -24,7 +24,7 @@ echo 'compile assets'; cons asset-map:compile
 		var
 		vendor > Archives.zip
 
-zip -r Archives.zip bin composer.json composer.lock config importmap.php package.json public src symfony.lock templates translations var vendor;
+zip -rn .png:.webp:.jpg:.jpeg:.mp4 Archives.zip bin composer.json composer.lock config importmap.php package.json public src symfony.lock templates translations var vendor;
 
 4- copy Archives.zip to server
 5- export db
