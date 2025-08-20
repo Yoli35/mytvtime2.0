@@ -27,11 +27,119 @@
                 </div>
             </div>
             <div class="site-update glowing-border right">
+                <h2>26ᵉ mise à jour : 20/08/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">→ Add series ranking by vote feature</div>
+                        <div class="details">Introduces a new page to display user's series ranked by average episode vote. Adds a new controller action, repository method, menu entry, translations, and related templates and styles for the ranking view.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Fixes a bug related to episode voting on the series page</div>
+                        <div class="details">Episode views are represented by a record in the ‘user_episode’ table. For an episode, there are as many records as there are views. Voting is only present on the first view record. Bug fixing: eliminate extra view records.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border left">
+                <h2>25ᵉ mise à jour : 18/08/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">→ Update media queries to use container query syntax</div>
+                        <div class="details">Replaced max-width media queries with container query syntax (width <= 64rem and width <= 50rem) in series.scss. Also adjusted .series-show and .header styles for improved responsiveness on smaller screens.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Update responsive styles for movie pages</div>
+                        <div class="details">Commented out the media query for widths above 576px and added a new media query for widths up to 50rem. The new styles adjust layout, poster sizing, and border radius for improved responsiveness on smaller screens.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor album page layout and improve responsiveness</div>
+                        <div class="details">Reorganized the album page structure in show.html.twig for better separation of controls and improved accessibility. Updated SCSS styles for .album-page, layout buttons, and responsive breakpoints to enhance mobile and desktop experiences. Moved map height CSS variables to :root in map.scss for consistency. Adjusted layout controls to use icon buttons and improved their styling and grouping.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Improve edit button visibility on episode hover</div>
+                        <div class="details">Changed the .edit button to use opacity transitions instead of display toggling for smoother appearance on hover. Updated hover logic to show the edit button only when not editing, and removed commented-out legacy code.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor album view with animated background and layout logic</div>
+                        <div class="details">Moved album layout switching and settings persistence from inline Twig script to AlbumShow.js, centralizing logic and improving maintainability. Added animated background image for grid layout, updated SCSS for new layout structure and responsive design, and restructured the album page HTML to use semantic elements and support the new background/protection overlays. Minor string formatting improvements and animation logic refactor in AlbumShow.js.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor user episode addition to prevent duplicates</div>
+                        <div class="details">Updated the logic in addSeasonToUser and related methods to check for existing user episodes before adding new ones, preventing duplicate entries. Modified method signatures to pass userEpisodes where needed and improved episode addition efficiency by batching database flushes.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor map UI into reusable map-container component</div>
+                        <div class="details">Introduced a new map.scss stylesheet and a reusable _map-container.html.twig partial to unify and modernize the map UI across album, series, and map pages. Updated all relevant templates to use the new component, removed redundant map-related styles from album.scss and series.scss, and improved toggler and thumbnail logic. This change centralizes map styling and markup, making future maintenance and enhancements easier.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Set navbar opacity to always be 1</div>
+                        <div class="details">Replaces dynamic opacity calculation with a constant value of 1 for the navbar. This change disables scroll-based opacity adjustments, likely for improved visibility or debugging.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add next/last episode tabs to series season view</div>
+                        <div class="details">Enhanced the series season view with new tabs for last and next episodes, including episode details and images. Updated JavaScript and SCSS for tab behavior and styling. Controller now provides episode data and handles new episodes for user tracking. Added relevant translations for new UI elements.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add user vote graphs to series seasons</div>
+                        <div class="details">Introduces a reusable Twig partial for displaying user vote graphs per season and integrates it into the series show and season views. Updates JavaScript and SCSS to support interactive display of user votes, and extends the SeriesController to provide user vote data to templates.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor album grid layout and improve album card UI</div>
+                        <div class="details">Switched album listing from flex to CSS grid for better responsiveness and control. Adjusted album card styles: added aspect ratio, made info overlay appear on hover with smooth transition, and updated border radius. Improved responsive breakpoints for different screen sizes.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add filming locations map feature for series on season page</div>
+                        <div class="details">Introduces a new API endpoint and frontend integration to display filming locations for a series. Adds a button to the season page that fetches and displays a map with filming locations using data from the backend. Updates styles and translations to support the new feature.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add progress bar for bulk image addition in series</div>
+                        <div class="details">Enhanced the 'Add all available images' dialog for series to display poster and backdrop counts and a progress bar when adding many images. Updated the JavaScript to handle bulk image uploads with progress feedback, adjusted the controller to support per-image addition, improved dialog layout and styles, and updated French translations for new UI elements.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Refactor movie viewed status and display view dates</div>
+                        <div class="details">Changed UserMovie 'viewed' property from boolean to integer to track view count. Updated MovieController to store formatted view dates and ensure uniqueness. Modified frontend and styles to display multiple view dates and improved UI for marking as viewed.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Enhance network details with homepage and headquarters</div>
+                        <div class="details">Adds fetching and display of network headquarters and homepage from TMDB, updates SeriesController to refresh network data if older than 30 days, and improves UI to show external link icon for network homepage in series details.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add force update option to series admin panel</div>
+                        <div class="details">Introduces a 'Force update' checkbox to the admin series updates UI, allowing updates to bypass the usual time check. Updates the backend to handle the force flag, improves user episode update logic, and enhances styling for new episodes and user badges. Also adds French translation for 'Force update'.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add user-specific new episode tracking in series updates</div>
+                        <div class="details">Introduces logic to track and display new episode count added for each user in series updates. Updates the admin JS and SCSS to handle and style the new 'new_episodes' field, and adds a helper to render user info in HTML for update logs.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add image saving for series poster and backdrop updates</div>
+                        <div class="details">Integrates ImageConfiguration and ImageService to save updated poster and backdrop images when their paths change during series updates. Ensures images are stored using the correct URLs and sizes.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add navigation and improve video category handling</div>
+                        <div class="details">Introduces 'Back to my videos' and 'Back to my videos by category' navigation buttons on the video show page, with corresponding styles and translations. Refactors category sorting logic into a private method in VideoController and ensures category/page context is preserved in navigation. Enhances JS to manage video category selection and option disabling more robustly.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Update Mapbox GL JS and related dependencies to v3.14.0</div>
+                        <div class="details">Upgraded Mapbox GL JS and Mapbox GL Geocoder to v3.14.0 and v5.1.0 respectively across JS, PHP importmap, and Twig templates. Adjusted map initialization to support new features (pitch, bearing, show3dObjects) and improved SCSS selectors for pagination. Updated other JS and PHP dependencies to latest versions for compatibility.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Enhance 'What to Watch Next' with TMDB similar series</div>
+                        <div class="details">The 'What to Watch Next' feature now fetches similar series from TMDB if fewer than 20 recommendations are available, using the current series' TMDB ID and language. Frontend and backend were updated to pass and handle these parameters, and the UI was improved for better display. TMDBService now supports language selection for similar series queries.</div>
+                    </li>
+                    <li>
+                        <div class="change">→ Add 'What to watch next' feature for series</div>
+                        <div class="details">Introduces a new 'What to watch next?' button on the season page, allowing users to fetch and display recommended series cards via a new API endpoint. Includes supporting backend controller, frontend JS logic, styles, and translation updates.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border right">
                 <h2>24ᵉ mise à jour : 06/08/2025</h2>
                 <ul>
                     <li>
                         <div class="change">→ Refactor movie details layout and improve responsiveness</div>
-                        <div class="details">Reworked the movie details section by replacing the 'two-parts' wrapper with separate 'left' and 'right' columns for better structure and maintainability. Updated SCSS to improve responsive behavior, especially for mobile and tablet breakpoints, and adjusted HTML templates to match the new layout. This enhances readability and flexibility for future UI changes.</div>
+                        <div class="details">Reworked the movie details section by replacing the 'two-parts' wrapper with separate 'left' and 'right' columns for better structure and maintainability. Updated SCSS to improve responsive behavior, especially for mobile and tablet breakpoints, and adjusted HTML templates to match the new layout. This enhances
+                            readability and flexibility for future UI changes.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Improve mobile navbar menu UX and styling</div>
@@ -51,7 +159,9 @@
                     </li>
                     <li>
                         <div class="change">→ Add photo editing dialog and backend support</div>
-                        <div class="details">Introduces a new side panel dialog for editing photo metadata (caption, date, coordinates) in albums, with corresponding JavaScript logic for form handling and UI updates. Adds a backend endpoint in AlbumController for processing photo edits and updates the Album entity to use proper getters/setters for date range properties. Refactors CSS and template structure to support the new dialog and improves maintainability by extracting form logic into dedicated methods.</div>
+                        <div class="details">Introduces a new side panel dialog for editing photo metadata (caption, date, coordinates) in albums, with corresponding JavaScript logic for form handling and UI updates. Adds a backend endpoint in AlbumController for processing photo edits and updates the Album entity to use proper getters/setters for date range
+                            properties. Refactors CSS and template structure to support the new dialog and improves maintainability by extracting form logic into dedicated methods.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Add album layout switcher and prev/next navigation</div>
@@ -63,11 +173,15 @@
                     </li>
                     <li>
                         <div class="change">→ Enhance diaporama with srcset support and UI improvements</div>
-                        <div class="details">Added srcset handling in the Diaporama JavaScript to support responsive images. Updated SCSS for better diaporama layout, including full viewport sizing and improved thumbnail visibility on hover. Modified Album entity constructor for explicit initialization. Extended photo srcset in album template to include original image size.</div>
+                        <div class="details">Added srcset handling in the Diaporama JavaScript to support responsive images. Updated SCSS for better diaporama layout, including full viewport sizing and improved thumbnail visibility on hover. Modified Album entity constructor for explicit initialization. Extended photo srcset in album template to include
+                            original image size.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Improve album photo upload and display handling</div>
-                        <div class="details">Added support for dynamic photo addition with responsive srcset paths after upload, and improved handling of photos without geolocation in the map. Updated AlbumController to return image paths on upload and pass srcset paths to the frontend. Adjusted album page and photo grid styles for better layout and scrolling.</div>
+                        <div class="details">Added support for dynamic photo addition with responsive srcset paths after upload, and improved handling of photos without geolocation in the map. Updated AlbumController to return image paths on upload and pass srcset paths to the frontend. Adjusted album page and photo grid styles for better layout and
+                            scrolling.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Add map style toggler and thumbnail list to album view</div>
@@ -79,7 +193,9 @@
                     </li>
                     <li>
                         <div class="change">→ Improve album editing and photo upload UX</div>
-                        <div class="details">Refactored album modification to separate info and photo uploads, providing user feedback during the process. Added a summary UI for upload progress, improved error handling, and updated backend routes and logic to support these changes. Enhanced album thumbnail and date range display in the template, and added fallback bounds for albums without geolocated photos.</div>
+                        <div class="details">Refactored album modification to separate info and photo uploads, providing user feedback during the process. Added a summary UI for upload progress, improved error handling, and updated backend routes and logic to support these changes. Enhanced album thumbnail and date range display in the template, and added
+                            fallback bounds for albums without geolocated photos.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Add album modification form and backend support</div>
@@ -105,7 +221,9 @@
                 <ul>
                     <li>
                         <div class="change">→ Add album show page with map and photo enhancements</div>
-                        <div class="details">Implemented AlbumShow.js for album display logic, including diaporama and map integration. Updated AlbumController to provide album and photo data as arrays, and added date range calculation for albums. Enhanced Map.js to display photo markers. Updated album and series styles for improved layout and map popups. Modified templates to support new album show features, including map, photo previews, and form improvements. Fixed repository save methods and added array conversion methods to Photo and Album entities.</div>
+                        <div class="details">Implemented AlbumShow.js for album display logic, including diaporama and map integration. Updated AlbumController to provide album and photo data as arrays, and added date range calculation for albums. Enhanced Map.js to display photo markers. Updated album and series styles for improved layout and map popups.
+                            Modified templates to support new album show features, including map, photo previews, and form improvements. Fixed repository save methods and added array conversion methods to Photo and Album entities.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Refactor album and photo display, add photo metadata</div>
@@ -134,11 +252,14 @@
                     </li>
                     <li>
                         <div class="change">→ Refactor series updates UI and image handling</div>
-                        <div class="details">Improves the admin series updates interface by grouping update lines and details into separate divs for each series, and disables the update button during processing. Image URLs for posters and backdrops are now passed as low/high resolution pairs, and srcset attributes are used for responsive images. Removes unused debug output and updates API/Controller to provide new image URL structure.</div>
+                        <div class="details">Improves the admin series updates interface by grouping update lines and details into separate divs for each series, and disables the update button during processing. Image URLs for posters and backdrops are now passed as low/high resolution pairs, and srcset attributes are used for responsive images. Removes
+                            unused debug output and updates API/Controller to provide new image URL structure.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Enhance admin series updates with detailed change display</div>
-                        <div class="details">Added detailed update display for series fields in the admin panel, including visual comparison for images and improved status handling. Updated backend to return field-level changes, image URLs, and more granular update statuses. Improved frontend and styles to support new update details and visual feedback.</div>
+                        <div class="details">Added detailed update display for series fields in the admin panel, including visual comparison for images and improved status handling. Updated backend to return field-level changes, image URLs, and more granular update statuses. Improved frontend and styles to support new update details and visual feedback.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Refactor image addition logic in SeriesController</div>
@@ -194,7 +315,9 @@
                     </li>
                     <li>
                         <div class="change">→ Refactor season overview layout and styles</div>
-                        <div class="details">Updated the structure and styling of season overview sections in both SCSS and Twig templates. Introduced new 'body' containers, improved the display of localized and additional overviews, and enhanced tool visibility and layout for source and locale indicators. Also commented out the scroll-timeline JavaScript import.</div>
+                        <div class="details">Updated the structure and styling of season overview sections in both SCSS and Twig templates. Introduced new 'body' containers, improved the display of localized and additional overviews, and enhanced tool visibility and layout for source and locale indicators. Also commented out the scroll-timeline JavaScript
+                            import.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Improve episode list layout and hover effect</div>
@@ -222,7 +345,9 @@
                     </li>
                     <li>
                         <div class="change">→ Enhance 'known for' display and styling for people</div>
-                        <div class="details">Improves the logic for generating the 'known for' list in PeopleController, including correct handling of user-added media and poster URLs. Updates the SCSS to visually highlight user-added posters and adjusts poster sizing and border radius. The Twig template now adds a CSS class for user-added items, enabling the new styling.</div>
+                        <div class="details">Improves the logic for generating the 'known for' list in PeopleController, including correct handling of user-added media and poster URLs. Updates the SCSS to visually highlight user-added posters and adjusts poster sizing and border radius. The Twig template now adds a CSS class for user-added items, enabling
+                            the new styling.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Update provider selection UI and tooltip logic</div>
@@ -259,7 +384,9 @@
                     </li>
                     <li>
                         <div class="change">→ Add source fields to filming location forms and entity</div>
-                        <div class="details">Introduces 'source-name' and 'source-url' fields to the filming location form, updates the FilmingLocation entity and its constructor to store these values, and ensures they are handled throughout the SeriesController. Also adds related styling classes and updates the form field rendering to support custom classes.</div>
+                        <div class="details">Introduces 'source-name' and 'source-url' fields to the filming location form, updates the FilmingLocation entity and its constructor to store these values, and ensures they are handled throughout the SeriesController. Also adds related styling classes and updates the form field rendering to support custom
+                            classes.
+                        </div>
                     </li>
                     <li>
                         <div class="change">→ Video page: Add video sharing feature with UI and translations</div>
