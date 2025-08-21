@@ -53,7 +53,8 @@ class FilmingLocationRepository extends ServiceEntityRepository
         $sql = "SELECT fl.*, fli.path as still_path
                 FROM filming_location fl
                     LEFT JOIN filming_location_image fli ON fl.`still_id` = fli.`id`
-                WHERE tmdb_id = $tmdbId";
+                WHERE tmdb_id = $tmdbId
+                ORDER BY fl.season_number, fl.episode_number";
 
         return $this->getAll($sql);
     }
