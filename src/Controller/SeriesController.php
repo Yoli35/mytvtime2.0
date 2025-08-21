@@ -9,6 +9,7 @@ use App\Entity\EpisodeStill;
 use App\Entity\EpisodeSubstituteName;
 use App\Entity\FilmingLocation;
 use App\Entity\FilmingLocationImage;
+use App\Entity\Network;
 use App\Entity\Series;
 use App\Entity\SeriesAdditionalOverview;
 use App\Entity\SeriesBroadcastDate;
@@ -3888,27 +3889,37 @@ class SeriesController extends AbstractController
     {
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 5);
         $ids = array_column($tv['networks'], 'id');
-        $dbNetworks = $this->networkRepository->findBy(['networkId' => $ids]);
+
         $now = $this->now();
-        /*$updated = false;*/
-        foreach ($dbNetworks as $network) {
-            $diff = $network->getUpdatedAt()->diff($now);
-            if ($diff->days > 30) {
-                $tmdbNetwork = json_decode($this->tmdbService->getNetworkDetails($network->getNetworkId()), true);
+
+        foreach ($ids as $id) {
+            $network = $this->networkRepository->findOneBy(['networkId' => $id]);
+            if (!$network) {
+                $tmdbNetwork = json_decode($this->tmdbService->getNetworkDetails($id), true);
+
+                $network = new Network($tmdbNetwork['logo_path'], $tmdbNetwork['name'], $id, $tmdbNetwork['origin_country'], $now);
                 $network->setHeadquarters($tmdbNetwork['headquarters'] ?? null);
                 $network->setHomepage($tmdbNetwork['homepage'] ?? null);
-                $network->setLogoPath($tmdbNetwork['logo_path'] ?? null);
-                $network->setName($tmdbNetwork['name'] ?? null);
-                $network->setOriginCountry($tmdbNetwork['origin_country'] ?? null);
-                $network->setUpdatedAt($now);
                 $this->networkRepository->save($network);
-                /*$updated = true;*/
+                $this->addFlash('success', $this->translator->trans('network.added') . ' → ' . $network->getName());
+            } else {
+                $diff = $network->getUpdatedAt()->diff($now);
+                if ($diff->days > 30) {
+                    $tmdbNetwork = json_decode($this->tmdbService->getNetworkDetails($network->getNetworkId()), true);
+
+                    $network->setHeadquarters($tmdbNetwork['headquarters'] ?? null);
+                    $network->setHomepage($tmdbNetwork['homepage'] ?? null);
+                    $network->setLogoPath($tmdbNetwork['logo_path'] ?? null);
+                    $network->setName($tmdbNetwork['name'] ?? null);
+                    $network->setOriginCountry($tmdbNetwork['origin_country'] ?? null);
+                    $network->setUpdatedAt($now);
+                    $this->networkRepository->save($network);
+                    $this->addFlash('success', $this->translator->trans('network.updated') . ' → ' . $network->getName());
+                }
             }
         }
-        /* if ($updated) {
-             $this->networkRepository->flush();
-         }*/
 
+        $dbNetworks = $this->networkRepository->findBy(['networkId' => $ids]);
         return array_map(function ($network) use ($logoUrl, $dbNetworks) {
             $network['logo_path'] = $network['logo_path'] ? $logoUrl . $network['logo_path'] : null; // w92
             $dbNetwork = array_values(array_filter($dbNetworks, fn($n) => $n->getNetworkId() == $network['id']))[0] ?? null;
@@ -3923,7 +3934,8 @@ class SeriesController extends AbstractController
         }, $tv['networks']);
     }
 
-    public function getSeason(array $seasons, int $seasonNumber): array
+    public
+    function getSeason(array $seasons, int $seasonNumber): array
     {
         foreach ($seasons as $season) {
             if ($season['season_number'] == $seasonNumber) {
@@ -3933,7 +3945,8 @@ class SeriesController extends AbstractController
         return [];
     }
 
-    public function getSeasonEpisodeCount(array $seasons, int $seasonNumber): int
+    public
+    function getSeasonEpisodeCount(array $seasons, int $seasonNumber): int
     {
         foreach ($seasons as $season) {
             if ($season['season_number'] == $seasonNumber) {
@@ -3943,7 +3956,8 @@ class SeriesController extends AbstractController
         return 0;
     }
 
-    public function seasonsPosterPath(array $seasons): array
+    public
+    function seasonsPosterPath(array $seasons): array
     {
         $slugger = new AsciiSlugger();
         $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
@@ -3954,7 +3968,8 @@ class SeriesController extends AbstractController
         }, $seasons);
     }
 
-    public function seasonEpisodes(array $season, UserSeries $userSeries): array
+    public
+    function seasonEpisodes(array $season, UserSeries $userSeries): array
     {
         $user = $userSeries->getUser();
         $series = $userSeries->getSeries();
@@ -3997,7 +4012,7 @@ class SeriesController extends AbstractController
                     $this->addFlash('success',
                         $this->translator->trans('Episode air date updated')
                         . ' (' . sprintf('S%02dE%02d', $season['season_number'], $episode['episode_number'])
-                        . ' → ' .$airDate->format('Y-m-d') . ')');
+                        . ' → ' . $airDate->format('Y-m-d') . ')');
                 }
             }
 
@@ -4085,7 +4100,8 @@ class SeriesController extends AbstractController
         return $seasonEpisodes;
     }
 
-    public function getUserEpisode(array $userEpisodes, int $episodeNumber): ?array
+    public
+    function getUserEpisode(array $userEpisodes, int $episodeNumber): ?array
     {
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
         foreach ($userEpisodes as $userEpisode) {
@@ -4110,7 +4126,8 @@ class SeriesController extends AbstractController
         return null;
     }
 
-    public function getUserEpisodes(array $userEpisodes, int $episodeNumber): array
+    public
+    function getUserEpisodes(array $userEpisodes, int $episodeNumber): array
     {
         $episodes = array_values(array_filter($userEpisodes, function ($userEpisode) use ($episodeNumber) {
             return $userEpisode['episode_number'] == $episodeNumber;
@@ -4216,7 +4233,8 @@ class SeriesController extends AbstractController
 //        return $overview;
 //    }
 
-    public function watchProviders($tv, $country): array
+    public
+    function watchProviders($tv, $country): array
     {
         $watchProviders = [];
         if (isset($tv['watch/providers']['results'][$country])) {
@@ -4256,7 +4274,8 @@ class SeriesController extends AbstractController
         ];
     }
 
-    public function getWatchProviders($watchRegion): array
+    public
+    function getWatchProviders($watchRegion): array
     {
         // May be unavailable - when Youtube was added for example
         // TODO: make a command to regularly update db
@@ -4294,7 +4313,8 @@ class SeriesController extends AbstractController
         ];
     }
 
-    public function getProviderLogoFullPath(?string $path, string $tmdbUrl): ?string
+    public
+    function getProviderLogoFullPath(?string $path, string $tmdbUrl): ?string
     {
         if (!$path) return null;
         if (str_starts_with($path, '/')) {
@@ -4303,7 +4323,8 @@ class SeriesController extends AbstractController
         return '/images/providers' . substr($path, 1);
     }
 
-    public function getKeywords(): array
+    public
+    function getKeywords(): array
     {
         $keywords = $this->keywordRepository->findby([], ['name' => 'ASC']);
 
@@ -4314,7 +4335,8 @@ class SeriesController extends AbstractController
         return $keywordArray;
     }
 
-    public function getSearchString(?User $user, SeriesAdvancedSearchDTO $data): string
+    public
+    function getSearchString(?User $user, SeriesAdvancedSearchDTO $data): string
     {
         // App\DTO\SeriesAdvancedSearchDTO {#811 ▼
         //  *-language: "fr"
@@ -4380,7 +4402,8 @@ class SeriesController extends AbstractController
         return $searchString;
     }
 
-    public function getSearchResult($searchResult, $slugger): array
+    public
+    function getSearchResult($searchResult, $slugger): array
     {
         return array_map(function ($tv) use ($slugger) {
             $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
@@ -4410,7 +4433,8 @@ class SeriesController extends AbstractController
         }, $searchResult['results'] ?? []);
     }
 
-    public function getOneResult($tv, $slugger): Response
+    public
+    function getOneResult($tv, $slugger): Response
     {
         return $this->redirectToRoute('app_series_tmdb', [
             'id' => $tv['id'],
@@ -4418,7 +4442,8 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    public function getProjectDir(): string
+    public
+    function getProjectDir(): string
     {
         return $this->getParameter('kernel.project_dir');
     }
