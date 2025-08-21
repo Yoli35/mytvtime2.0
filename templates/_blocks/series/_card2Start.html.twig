@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card" data-first-air-date="{{ series.final_air_date|date('Y-m-d') }}" data-added-at="{{ series.added_at|date('Y-m-d') }}">
     {% set url = path('app_series_show', {'id': series.id, 'slug': series.slug }) %}
     <a href="{{ url }}">
         <div class="poster">

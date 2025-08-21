@@ -140,13 +140,13 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function seriesToStart(User $user, string $locale, string $order, int $page, int $perPage): array
+    public function seriesToStart(User $user, string $locale, string $sort, string $order, int $page, int $perPage): array
     {
         $userId = $user->getId();
         $offset = ($page - 1) * $perPage;
-        match ($order) {
-            'addedAt' => $order = 'us.`added_at`',
-            default => $order = 's.`first_air_date`'
+        match ($sort) {
+            'addedAt' => $sort = 'us.`added_at`',
+            default => $sort = 's.`first_air_date`'
         };
         $sql = "SELECT s.id                                                                      as id,
                        s.tmdb_id                                                                 as tmdb_id,
@@ -154,6 +154,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                        IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
                        s.`poster_path`                                                           as poster_path,
                        s.`first_air_date`                                                        as final_air_date,
+                       us.`added_at`                                                             as added_at,
                        swl.`name`	                                                             as link_name,
                        wp.`logo_path`                                                            as provider_logo_path,
                        wp.`provider_name`                                                        as provider_name,
@@ -166,7 +167,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                 LEFT JOIN `series_watch_link` swl ON swl.`series_id`=s.id
                 LEFT JOIN `watch_provider` wp ON wp.`provider_id`=swl.`provider_id`
                 WHERE s.`first_air_date` <= NOW() AND us.user_id=$userId
-                ORDER BY $order DESC ";
+                ORDER BY $sort $order ";
         if ($perPage > 0) $sql .= "LIMIT $perPage OFFSET $offset";
 
         return $this->getAll($sql);

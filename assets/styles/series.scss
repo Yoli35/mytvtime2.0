@@ -187,6 +187,10 @@ h2 {
         /*margin-block-start: 3rem;*/
         padding: .5rem 1rem;
 
+        .infos {
+            flex: 0 0 fit-content;
+        }
+
         label {
             align-items: center;
             display: flex;
@@ -245,6 +249,52 @@ h2 {
             transform: rotate(45deg);
             width: 6px;
             z-index: 2;
+        }
+
+        .radio-group {
+            align-items: center;
+            display: flex;
+            justify-content: flex-start;
+            flex: 0 0 fit-content;
+
+            span {
+                color: var(--orange-90);
+                font-size: 1rem;
+                font-weight: 300;
+                margin-inline-end: .5rem;
+            }
+
+            input[type="radio"] {
+                display: none;
+            }
+
+            label {
+                background-color: var(--orange-30);
+                color: var(--orange-90);
+                font-size: 1rem;
+                font-weight: 300;
+                padding-block: .25rem;
+
+                &:has(input[type="radio"]:checked) {
+                    background-color: var(--green-50);
+                    color: var(--green-10);
+                }
+
+                &:first-of-type {
+                    border-radius: 5rem 0 0 5rem;
+                    padding-inline: 1rem .25rem;
+                }
+
+                &:last-of-type {
+                    border-radius: 0 5rem 5rem 0;
+                    padding-inline: .25rem 1rem;
+                }
+
+                svg {
+                    height: 1.5rem;
+                    width: 1.5rem;
+                }
+            }
         }
 
         .legends {

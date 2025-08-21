@@ -285,6 +285,16 @@ class SeriesController extends AbstractController
     {
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+        $sort = $request->get('sort', 'firstAirDate');
+        $sort = match ($sort) {
+            'addedAt' => 'addedAt',
+            default => 'firstAirDate',
+        };
+        $order = $request->get('order', 'DESC');
+        $order = match ($order) {
+            'ASC' => 'ASC',
+            default => 'DESC',
+        };
 
         $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 3);
@@ -292,7 +302,7 @@ class SeriesController extends AbstractController
             $this->imageService->saveImage("posters", $s['poster_path'], $posterUrl);
             $s['provider_logo_path'] = $this->getProviderLogoFullPath($s['provider_logo_path'], $logoUrl);
             return $s;
-        }, $this->userSeriesRepository->seriesToStart($user, $locale, 'firstAirDate', 1, -1));
+        }, $this->userSeriesRepository->seriesToStart($user, $locale, $sort, $order, 1, -1));
         $tmdbIds = array_column($seriesToStart, 'tmdb_id');
 
         $series = [];

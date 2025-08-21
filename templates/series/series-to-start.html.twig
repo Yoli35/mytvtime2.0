@@ -12,10 +12,27 @@
     <div class="container-fluid series-to-start">
         {% if seriesToStart|length %}
             <header>
-                {{ 'Series to start'|trans }} ({{ seriesToStart|length }})
+                <div class="infos">{{ 'Series to start'|trans }} ({{ seriesToStart|length }})</div>
                 <label for="filter-by-name">
                     <input type="search" id="filter-by-name" placeholder="{{ 'Search'|trans }}">
                 </label>
+                <div class="radio-group">
+                    <span>{{ 'Sort by'|trans }}</span>
+                    <label for="sort-by-first-air-date">{{ 'First air date'|trans }}
+                        <input type="radio" name="sort-by" id="sort-by-first-air-date" value="first_air_date" checked>
+                    </label>
+                    <label for="sort-by-added-at">{{ 'Date added'|trans }}
+                        <input type="radio" name="sort-by" id="sort-by-added-at" value="added_at">
+                    </label>
+                </div>
+                <div class="radio-group">
+                    <label for="order-desc" data-title="{{ 'Newer first'|trans }}">{{ ux_icon('mdi:arrow-down') }}
+                        <input type="radio" name="order-by" id="order-desc" value="DESC" checked>
+                    </label>
+                    <label for="order-asc" data-title="{{ 'Older first'|trans }}">{{ ux_icon('mdi:arrow-up') }}
+                        <input type="radio" name="order-by" id="order-asc" value="ASC">
+                    </label>
+                </div>
             </header>
             <div class="series-group user">
                 <div class="wrapper">
@@ -52,6 +69,38 @@
             setTimeout(() => {
                 filterSeries({target: filterByName});
             }, 1000);
+
+            const sortBy = document.querySelectorAll('input[name="sort-by"]');
+            sortBy.forEach((input) => {
+                input.addEventListener('change', sortSeries);
+            });
+            const orderBy = document.querySelectorAll('input[name="order-by"]');
+            orderBy.forEach((input) => {
+                input.addEventListener('change', sortSeries);
+            });
+            sortSeries();
+        }
+
+        function sortSeries() {
+            const series = document.querySelectorAll('.series-group.user .content .card');
+            const sortBy = document.querySelector('input[name="sort-by"]:checked').value;
+            const orderBy = document.querySelector('input[name="order-by"]:checked').value;
+            const sortedSeries = Array.from(series).sort((a, b) => {
+                let aValue, bValue;
+                if (sortBy === 'first_air_date') {
+                    aValue = new Date(a.dataset.firstAirDate);
+                    bValue = new Date(b.dataset.firstAirDate);
+                } else {
+                    aValue = new Date(a.dataset.addedAt);
+                    bValue = new Date(b.dataset.addedAt);
+                }
+                return orderBy === 'DESC' ? bValue - aValue : aValue - bValue;
+            });
+            const content = document.querySelector('.series-group.user .content');
+            content.innerHTML = '';
+            sortedSeries.forEach((s) => {
+                content.appendChild(s);
+            });
         }
 
         function filterSeries(e) {
