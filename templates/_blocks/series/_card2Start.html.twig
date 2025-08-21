@@ -19,7 +19,10 @@
                         </div>
                     </div>
                 {% endif %}
-                <div class="air-date" data-title="{{ 'Episode air date'|trans }}">{{ series.final_air_date|format_date('relative_full')|capitalize }}</div>
+                <div class="dates">
+                    <div class="air-date" data-title="{{ 'First air date'|trans }}">{{ ux_icon('mdi:date-range') }}{{ series.final_air_date|format_date('relative_short')|capitalize }}</div>
+                    <div class="add-date" data-title="{{ 'Added on'|trans }}">{{ ux_icon('mdi:plus') }}{{ series.added_at|format_date('relative_short')|capitalize }}</div>
+                </div>
             </div>
         </div>
         <div class="name">
