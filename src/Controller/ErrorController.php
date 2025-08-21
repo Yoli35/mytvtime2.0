@@ -26,12 +26,6 @@ final class ErrorController extends AbstractController
             $code = $exception->getCode();
             $file = $exception->getFile();
             $line = $exception->getLine();
-            dump([
-                'message' => $message,
-                'code' => $code,
-                'file' => $file,
-                'line' => $line,
-            ]);
         } else {
             $message = 'An unknown error occurred.';
             $code = 500;
