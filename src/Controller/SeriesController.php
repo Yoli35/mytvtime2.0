@@ -3661,7 +3661,7 @@ class SeriesController extends AbstractController
         $userEpisode = new UserEpisode($userSeries, $episode['id'], $seasonNumber, $episode['episode_number'], null);
         $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris', true) : null;
         $userEpisode->setAirDate($airDate);
-            $this->userEpisodeRepository->save($userEpisode);
+        $this->userEpisodeRepository->save($userEpisode);
         return 1;
     }
 
@@ -3986,6 +3986,19 @@ class SeriesController extends AbstractController
             }
             if (!$userEpisode['custom_date'] && !$next_episode_to_air && !$episode['air_date']) {
                 continue;
+            }
+            if (!$userEpisode['air_date'] && $episode['air_date']) {
+                $ue = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
+                if ($ue) {
+                    $airDate = $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris');
+                    $ue->setAirDate($airDate);
+                    $this->userEpisodeRepository->save($ue, true);
+                    $userEpisode['air_date'] = $airDate;
+                    $this->addFlash('success',
+                        $this->translator->trans('Episode air date updated')
+                        . ' (' . sprintf('S%02dE%02d', $season['season_number'], $episode['episode_number'])
+                        . ' → ' .$airDate->format('Y-m-d') . ')');
+                }
             }
 
             $userEpisodeList = $this->getUserEpisodes($userEpisodes, $episode['episode_number']);
