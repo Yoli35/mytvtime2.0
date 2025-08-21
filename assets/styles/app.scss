@@ -2585,4 +2585,11 @@ dialog {
             }
         }
     }
+
+    .exception {
+        background-color: var(--red-50);
+        border-radius: .25rem;
+        font-family: monospace;
+        padding: 2rem;
+    }
 }

@@ -22,6 +22,13 @@
                     <div class="countdown-number">60</div>
                 </div>
             </div>
+            <div class="exception">
+                <div class="exception__message">Message: {{ message }}</div>
+                <div class="exception__code">Code: {{ code }}</div>
+                {% if file|length %}
+                    <div class="exception__file">File: {{ file }}, line {{ line }}.</div>
+                {% endif %}
+            </div>
         </div>
         <script>
             let countdown = 60;

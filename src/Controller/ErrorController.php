@@ -19,11 +19,34 @@ final class ErrorController extends AbstractController
     #[Route('/error', name: 'app_error')]
     public function show(Request $request): Response
     {
+        $attributes = $request->attributes->all();
+        $exception = $attributes['exception'] ?? null;
+        if ($exception) {
+            $message = $exception->getMessage();
+            $code = $exception->getCode();
+            $file = $exception->getFile();
+            $line = $exception->getLine();
+            dump([
+                'message' => $message,
+                'code' => $code,
+                'file' => $file,
+                'line' => $line,
+            ]);
+        } else {
+            $message = 'An unknown error occurred.';
+            $code = 500;
+            $file = '';
+            $line = '';
+        }
         $user = $this->getUser();
         $lastVisited = $user ? $this->historyRepository->getLastVisitedBeforeError($user) : null;
 
         return $this->render('error/index.html.twig', [
             'history' => $lastVisited,
+            'message' => $message,
+            'code' => $code,
+            'file' => $file,
+            'line' => $line,
         ]);
     }
 }
