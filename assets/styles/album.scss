@@ -334,9 +334,74 @@
     margin-block-start: 4rem;
     overflow-y: auto;
     padding-inline: 0;
+    position: relative;
+
+    .protection {
+        inset: 0;
+        position: absolute;
+        top: 5rem;
+
+        .name {
+            font-size: min(5vh, 5vw);
+            font-weight: 300;
+            left: 2rem;
+            line-height: 1.1em;
+            padding-inline: 2rem;
+            position: absolute;
+            top: 30vh;/*min(30vh, 30vw);*/
+        }
+
+        .layers {
+            height: 50vh;/*min(50vh, 50vw);*/
+            left: 0;
+            position: sticky;
+            top: -25vh;/*min(-25vh, -25vw);*/
+            width: 100%;
+
+            .backgrounds {
+                height: 100%;
+                position: relative;
+                width: 100%;
+
+                .background-1, .background-2 {
+                    inset: 0;
+                    position: absolute;
+
+                    img {
+                        height: 100%;
+                        /*mask-image: linear-gradient(to bottom, black 60%, transparent 100%);*/
+                        mask-size: cover;
+                        object-fit: cover;
+                        width: 100%;
+                    }
+                }
+
+                .background-1 {
+                    z-index: -1;
+                }
+
+                .background-2 {
+                    img {
+                        display: none;
+                        transition: opacity 1s ease-in-out;
+                        opacity: 0;
+
+                        &.displayed {
+                            display: block;
+                        }
+
+                        &.visible {
+                            opacity: 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     header {
         align-items: center;
+        background-color: var(--orange-20);
         display: flex;
         gap: 1rem;
 
@@ -348,7 +413,10 @@
             width: 50%;
 
             h1 {
-                text-wrap: balance;
+                overflow-x: auto;
+                padding-inline: 1rem;
+                text-wrap: nowrap;
+                width: 100%;
             }
 
             .tools {
@@ -483,7 +551,7 @@
     }
 
     main {
-        height: calc(100vh - 11rem);
+        height: calc(100vh - 13rem);
         overflow-y: auto;
 
         .map-container {
@@ -492,13 +560,14 @@
             margin-block-end: unset;
 
             .map-controller.album {
+                border-radius: 0;
                 width: 100%;
             }
         }
     }
 
     .album-photos {
-        border-bottom: 2px solid var(--orange-50);
+        /*border-bottom: 2px solid var(--orange-50);*/
         display: flex;
         flex-direction: column;
         gap: .5rem;
@@ -511,45 +580,12 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-auto-rows: 1fr;
-            gap: .25rem;
+            gap: 0;
             margin-inline: auto;
-            padding-block-start: min(30vh, 30vw);
+            padding-block-start: 40vh;/*min(40vh, 40vw);*/
             padding-inline: 0;
             position: relative;
             width: 100%;
-
-            .protection {
-                height: 100%;
-                position: absolute;
-                top: 0;
-                width: 100%;
-
-                .name {
-                    font-size: min(5vh, 5vw);
-                    font-weight: 300;
-                    left: 2rem;
-                    line-height: 1.1em;
-                    padding-inline: 2rem;
-                    position: absolute;
-                    top: min(20vh, 20vw);
-                }
-
-                .background {
-                    height: min(50vh, 50vw);
-                    left: 0;
-                    position: sticky;
-                    top: min(-25vh, -25vw);
-                    width: 100%;
-
-                    img {
-                        height: 100%;
-                        mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
-                        mask-size: cover;
-                        object-fit: cover;
-                        width: 100%;
-                    }
-                }
-            }
 
             .album-photo {
                 border: none;
@@ -733,10 +769,14 @@
 
 @media (orientation: landscape) {
     .album-page {
+        .protection {
+            right: 50%;
+        }
+
         main {
             display: flex;
             flex-direction: row;
-            gap: 1rem;
+            gap: 0;
 
             .album-photos {
                 flex: 1;
@@ -798,18 +838,18 @@
 
         header {
             h1 {
-                font-size: min(5vh, 5vw);
+                font-size: 1.25rem;
             }
         }
 
         main {
             .album-photos.grid {
-                gap: 0;
+                /*gap: 0;
                 padding: 0;
 
                 .background, .protection {
                     display: none;
-                }
+                }*/
 
                 .album-photo {
                     border-radius: 0;

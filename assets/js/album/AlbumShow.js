@@ -60,6 +60,7 @@ export class AlbumShow {
         const globs = JSON.parse(document.querySelector('div#globs').textContent);
         this.album = globs.album;
         this.imagePaths = globs.imagePaths;
+        console.log(gThis.imagePaths);
         this.texts = globs.texts;
         this.srcsetPaths = globs.srcsetPaths;
         this.settings = globs.settings;
@@ -527,13 +528,14 @@ export class AlbumShow {
 
     initAnimation() {
         const albumPhotosDiv = document.querySelector('.album-photos');
-        const imgElement = albumPhotosDiv.querySelector(".background").querySelector('img');
+        const imgElement1 = document.querySelector(".background-1").querySelector('img');
+        const imgElement2 = document.querySelector(".background-2").querySelector('img');
         gThis.pathArr = gThis.imagePaths.slice();
         if (albumPhotosDiv.classList.contains('list')) {
             return;
         }
-        gThis.effect({img: imgElement, path: gThis.srcsetPaths.original});
-        gThis.interval = setInterval(gThis.effect, 4000, {img: imgElement, path: gThis.srcsetPaths.original});
+        gThis.effect({img1: imgElement1, img2: imgElement2, path: gThis.srcsetPaths.original});
+        gThis.interval = setInterval(gThis.effect, 4000, {img1: imgElement1, img2: imgElement2, path: gThis.srcsetPaths.original});
     }
 
     stopAnimation() {
@@ -547,7 +549,8 @@ export class AlbumShow {
     }
 
     effect(arg) {
-        const imgElement = arg.img;
+        const imgElement1 = arg.img1;
+        const imgElement2 = arg.img2;
         const path = arg.path
 
         const arrLength = gThis.pathArr.length;
@@ -557,6 +560,17 @@ export class AlbumShow {
         if (gThis.pathArr.length === 0) {
             gThis.pathArr = gThis.imagePaths.slice();
         }
-        imgElement.src = path + imageFilename;
+        imgElement2.src = path + imageFilename;
+        setTimeout(() => {
+            imgElement2.classList.add('displayed');
+            setTimeout(() => {
+                imgElement2.classList.add('visible');
+                setTimeout(() => {
+                    imgElement1.src = imgElement2.src;
+                    imgElement2.classList.remove('displayed');
+                    imgElement2.classList.remove('visible');
+                }, 1000);
+            }, 0);
+        }, 2950);
     }
 }

@@ -14,6 +14,19 @@
     {{ include('_blocks/_menu.html.twig') }}
     <div class="container-fluid">
         <div class="album-page" data-id="{{ album.id }}">
+            <div class="protection">
+                <div class="layers">
+                    <div class="backgrounds">
+                        <div class="background-1">
+                            <img src="/albums/original{{ album.photos.0.imagePath }}" alt="{{ album.name }}" loading="lazy">
+                        </div>
+                        <div class="background-2">
+                            <img src="/albums/original{{ album.photos.0.imagePath }}" alt="{{ album.name }}" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+                <div class="name">{{ album.name }}</div>
+            </div>
             <header>
                 <div class="h1-tools">
                     <h1>{{ album.name }} ({{ album.photos|length }})</h1>
@@ -55,12 +68,6 @@
             </header>
             <main>
                 <div class="album-photos {{ settings.layout }}">
-                    <div class="protection">
-                        <div class="background">
-                            <img src="/albums/original{{ album.photos.0.imagePath }}" alt="{{ album.name }}" loading="lazy">
-                        </div>
-                        <div class="name">{{ album.name }}</div>
-                    </div>
                     {% for photo in album.photos %}
                         <div class="album-photo{% if loop.index % 12 in [1, 8] %} grid-span-2{% endif %}" data-id="{{ photo.id }}">
                             <img
