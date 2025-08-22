@@ -109,6 +109,10 @@ export class AlbumShow {
         /******************************************************************************
          * Layout buttons                                                             *
          ******************************************************************************/
+        this.initLayoutButtons();
+    }
+
+    initLayoutButtons() {
         const albumPhotosDiv = document.querySelector('.album-photos');
         const layoutButtons = document.querySelectorAll('.layout-buttons button');
 
@@ -130,7 +134,6 @@ export class AlbumShow {
             gThis.stopAnimation();
             gThis.saveLayout(gThis.album.id, 'list');
         });
-
     }
 
     saveLayout(id, layout) {

@@ -336,10 +336,17 @@
     padding-inline: 0;
     position: relative;
 
+    &:has(.album-photos.list) {
+        .protection {
+            opacity: 0;
+        }
+    }
+
     .protection {
         inset: 0;
         position: absolute;
         top: 5rem;
+        transition: opacity 0.3s ease-in-out;
 
         .name {
             font-size: min(5vh, 5vw);
@@ -348,14 +355,14 @@
             line-height: 1.1em;
             padding-inline: 2rem;
             position: absolute;
-            top: 30vh;/*min(30vh, 30vw);*/
+            top: 30vh; /*min(30vh, 30vw);*/
         }
 
         .layers {
-            height: 50vh;/*min(50vh, 50vw);*/
+            height: 50vh; /*min(50vh, 50vw);*/
             left: 0;
             position: sticky;
-            top: -25vh;/*min(-25vh, -25vw);*/
+            top: -25vh; /*min(-25vh, -25vw);*/
             width: 100%;
 
             .backgrounds {
@@ -582,7 +589,7 @@
             grid-auto-rows: 1fr;
             gap: 0;
             margin-inline: auto;
-            padding-block-start: 40vh;/*min(40vh, 40vw);*/
+            padding-block-start: 40vh; /*min(40vh, 40vw);*/
             padding-inline: 0;
             position: relative;
             width: 100%;
