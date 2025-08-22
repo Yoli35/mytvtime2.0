@@ -1,5 +1,5 @@
 import mapboxgl from 'mapbox-gl';
-import MapboxLanguage from '@mapbox/mapbox-gl-language';
+// import MapboxLanguage from '@mapbox/mapbox-gl-language';
 // import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 
 // import 'mapbox-gl/dist/mapbox-gl.css';
@@ -73,10 +73,10 @@ export class Map {
                 navigator.clipboard.writeText(`${e.lngLat.lat}, ${e.lngLat.lng}`).then(r => console.log(`A click event has occurred /*at ${e.lngLat}*/ ${r}`));
             });
 
-            const language = new MapboxLanguage();
+            /*const language = new MapboxLanguage();
             this.map.on('style.load', () => {
                 gThis.map.setStyle(language.setLanguage(gThis.map.getStyle(), this.locale));
-            });
+            });*/
             /*this.map.addControl(new MapboxGeocoder({
                     accessToken: mapboxgl.accessToken,
                     mapboxgl: mapboxgl
