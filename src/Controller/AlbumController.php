@@ -12,6 +12,7 @@ use App\Repository\PhotoRepository;
 use App\Repository\SettingsRepository;
 use App\Service\DateService;
 use App\Service\ImageService;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -184,7 +185,7 @@ final class AlbumController extends AbstractController
         ]);
     }
 
-    #[Route('/photo/edit', name: 'modify', methods: ['POST'])]
+    #[Route('/photo/edit', name: 'photo_edit', methods: ['POST'])]
     public function edit(Request $request): Response
     {
         $messages = [];
@@ -252,23 +253,24 @@ final class AlbumController extends AbstractController
 
         $imageFiles = [];
         foreach ($files as $key => $file) {
-            if ($file instanceof UploadedFile) {
+            if ($file instanceof UploadedFile && $file->getError() === UPLOAD_ERR_OK) {
                 // Est-ce qu'il s'agit d'une image ?
                 $mimeType = $file->getMimeType();
                 if (str_starts_with($mimeType, 'image')) {
                     $imageFiles[$key] = $file;
                 }
+            } else {
+                $messages[] = 'Erreur lors de l\'upload du fichier : ' . ($file instanceof UploadedFile ? $file->getClientOriginalName() : 'Fichier inconnu');
             }
         }
 
         $now = $this->dateService->getNowImmutable('UTC');
 
-
         /******************************************************************************
          * Images ajoutées depuis des fichiers locaux (type : UploadedFile)           *
          ******************************************************************************/
         $n = 0;
-        $imagePaths = [];
+        $results = [];
         foreach ($imageFiles as $file) {
             $result = $this->imageService->photoToWebp($file);
             if ($result) {
@@ -277,6 +279,7 @@ final class AlbumController extends AbstractController
                 $isMediumRes = $result['720p'];
                 $isLowRes = $result['576p'];
                 if ($imagePath && $isHighRes && $isMediumRes && $isLowRes) {
+                    $exif = $result['exif'];
                     $photo = new Photo(
                         user: $this->getUser(),
                         album: $album,
@@ -284,14 +287,24 @@ final class AlbumController extends AbstractController
                         image_path: $imagePath,
                         createdAt: $now,
                         updatedAt: $now,
-                        date: $now,
-                        latitude: null,
-                        longitude: null
+                        date: $exif['date'] ?? $now,
+                        latitude: $exif['latitude'] ?? null,
+                        longitude: $exif['longitude'] ?? null
                     );
                     $this->photoRepository->save($photo, true);
                     $album->setUpdatedAt($now);
                     $this->albumRepository->save($album, true);
-                    $imagePaths[] = $imagePath;
+                    $result['image_path'] = $imagePath;
+                    $result['id'] = $photo->getId();
+                    $result['created_at'] = $photo->getCreatedAt()->format('Y-m-d H:i:s');
+                    $result['created_at_string'] = ucfirst($this->dateService->formatDateRelativeLong($result['created_at'], 'UTC', $request->getLocale()));
+                    $result['updated_at'] = $photo->getUpdatedAt()->format('Y-m-d H:i:s');
+                    $result['updated_at_string'] = ucfirst($this->dateService->formatDateRelativeLong($result['updated_at'], 'UTC', $request->getLocale()));
+                    $result['date'] = $photo->getDate()->format('Y-m-d H:i:s');
+                    $result['date_string'] = ucfirst($this->dateService->formatDateRelativeLong($result['date'], 'UTC', $request->getLocale()));
+                    $result['latitude'] = $photo->getLatitude();
+                    $result['longitude'] = $photo->getLongitude();
+                    $results[] = $result;
                     $messages[] = 'Photo ajoutée : ' . $file->getClientOriginalName();
                     $n++;
                 } else {
@@ -299,14 +312,15 @@ final class AlbumController extends AbstractController
                 }
             }
         }
-        if ($n) {
-            $messages[] = $n . ($n > 1 ? ' photos ajoutées' : ' photo ajoutée');
+        if ($n > 1) {
+            $messages[] = $n . ' photos ajoutées';
         }
 
         return $this->json([
             'ok' => true,
             'messages' => $messages,
-            'image_paths' => $imagePaths,
+            'results' => $results,
+
         ]);
     }
 

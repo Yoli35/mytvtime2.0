@@ -599,6 +599,7 @@
                 border-radius: 0;
                 outline: min(.5vh, .5vw) solid transparent;
                 outline-offset: max(-.5vh, -.5vw);
+                padding-block-start: 0;
                 transition: outline-color 0.3s ease-in-out;
                 width: 100%;
 
@@ -644,6 +645,26 @@
                 height: 8rem;
                 width: 100%;
             }
+        }
+
+        &:not(:has(.album-photo)), .empty-space {
+            align-items: center;
+            aspect-ratio: 1 / 1;
+            background-color: var(--green-70);
+            display: flex;
+            justify-content: center;
+            padding-block-start: 0;
+
+            svg {
+                height: 20rem;
+                width: 20rem;
+                color: var(--orange-50);
+                cursor: pointer;
+            }
+        }
+
+        .empty-space {
+            aspect-ratio: unset;
         }
 
         .album-photo {

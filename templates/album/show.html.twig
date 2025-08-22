@@ -14,19 +14,21 @@
     {{ include('_blocks/_menu.html.twig') }}
     <div class="container-fluid">
         <div class="album-page" data-id="{{ album.id }}">
-            <div class="protection">
-                <div class="layers">
-                    <div class="backgrounds">
-                        <div class="background-1">
-                            <img src="/albums/original{{ album.photos.0.imagePath }}" alt="{{ album.name }}" loading="lazy">
-                        </div>
-                        <div class="background-2">
-                            <img src="/albums/original{{ album.photos.0.imagePath }}" alt="{{ album.name }}" loading="lazy">
+            {% if album.photos|length %}
+                <div class="protection">
+                    <div class="layers">
+                        <div class="backgrounds">
+                            <div class="background-1">
+                                <img src="/albums/original{{ album.photos.0.imagePath }}" alt="{{ album.name }}" loading="lazy">
+                            </div>
+                            <div class="background-2">
+                                <img src="/albums/original{{ album.photos.0.imagePath }}" alt="{{ album.name }}" loading="lazy">
+                            </div>
                         </div>
                     </div>
+                    <div class="name">{{ album.name }}</div>
                 </div>
-                <div class="name">{{ album.name }}</div>
-            </div>
+            {% endif %}
             <header>
                 <div class="h1-tools">
                     <h1>{{ album.name }} ({{ album.photos|length }})</h1>
@@ -88,8 +90,15 @@
                             <div class="edit-photo-button" data-id="{{ photo.id }}">{{ ux_icon('mdi:image-edit') }}</div>
                         </div>
                     {% else %}
-                        <div class="no-photo">{{ 'No photos in this album'|trans }}</div>
+                        <div id="add-photos">{{ ux_icon('mdi:plus') }}</div>
                     {% endfor %}
+                    {% set count = album.photos|length %}
+                    {% if count %}
+                        {% set emptySpace = 3 - (count % 3) %}
+                        {% if emptySpace %}
+                            <div id="add-photos" class="empty-space" style="grid-column: span {{ emptySpace }};">{{ ux_icon('mdi:plus') }}</div>
+                        {% endif %}
+                    {% endif %}
                 </div>
                 {{ include('_blocks/map/_map-container.html.twig', {type: 'album', styleSettings: mapSettings.data.styles}) }}
             </main>
@@ -130,6 +139,9 @@
         <div class="svg" id="xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
         <div class="svg" id="pen">{{ ux_icon('fa6-solid:pen') }}</div>
         <div class="svg" id="trash">{{ ux_icon('fa6-solid:trash') }}</div>
+        <div class="svg" id="svg-date">{{ ux_icon('mdi:date-range') }}</div>
+        <div class="svg" id="svg-create">{{ ux_icon('mdi:update') }}</div>
+        <div class="svg" id="svg-update">{{ ux_icon('mdi:create-new-folder') }}</div>
         // Pour les messages Flash
         <div id="svg-xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
     </div>

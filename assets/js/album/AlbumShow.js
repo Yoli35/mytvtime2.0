@@ -64,6 +64,11 @@ export class AlbumShow {
         this.texts = globs.texts;
         this.srcsetPaths = globs.srcsetPaths;
         this.settings = globs.settings;
+        this.svgs = {date: null, update: null, create: null};
+        this.svgs.date = document.querySelector('#svgs #svg-date svg');
+        this.svgs.update = document.querySelector('#svgs #svg-update svg');
+        this.svgs.create = document.querySelector('#svgs #svg-create svg');
+        console.log(this.svgs);
         this.interval = null;
         this.fileTypes = [
             "image/jpeg",
@@ -81,7 +86,9 @@ export class AlbumShow {
          ******************************************************************************/
         const photoWrapper = document.querySelector('.album-photos');
         const photos = photoWrapper.querySelectorAll('img');
-        this.diaporama.start(photos);
+        if (photos && photos.length) {
+            this.diaporama.start(photos);
+        }
 
         /******************************************************************************
          * mapbox gl                                                                  *
@@ -165,7 +172,7 @@ export class AlbumShow {
     }
 
     initAlbumForm() {
-        const addPhotosButton = document.querySelector('.add-photos-button');
+        const addPhotosButton = document.querySelector('#add-photos') || document.querySelector('.add-photos-button');
         const modifyAlbumDialog = document.querySelector('.side-panel.modify-album-dialog');
         const modifyAlbumForm = modifyAlbumDialog.querySelector('form');
         const nameInput = document.querySelector('input[name="name"]');
@@ -354,18 +361,20 @@ export class AlbumShow {
                 const data = await response.json();
                 /*  console.log({data});*/
                 if (response.ok) {
+                    const results = data['results'];
                     data['messages'].forEach(msg => {
                         gThis.flashMessage.add('success', msg);
                     });
-                    const imagePaths = data['image_paths'];
-                    if (imagePaths.length) {
-                        const noPhotoDiv = document.querySelector('.no-photo');
-                        noPhotoDiv?.remove();
+                    if (results.length) {
+                        const addPhotosDiv = document.querySelector('#add-photos');
                         const albumPhotosDiv = document.querySelector('.album-photos');
-                        imagePaths.forEach(imagePath => {
+                        results.forEach(result => {
                             const albumPhotoDiv = document.createElement('div');
                             albumPhotoDiv.classList.add('album-photo');
+                            albumPhotoDiv.setAttribute('data-id', result.id);
                             const img = document.createElement('img');
+                            const imagePath = result['image_path'];
+                            img.setAttribute('data-title', result['date_string']);
                             img.src = gThis.srcsetPaths['highRes'] + imagePath;
                             img.alt = imagePath;
                             img.loading = "lazy";
@@ -375,7 +384,34 @@ export class AlbumShow {
                                 + gThis.srcsetPaths['original'] + imagePath + ' 1600w';
                             albumPhotoDiv.appendChild(img);
                             gThis.diaporama.start(albumPhotoDiv.querySelectorAll('img'));
-                            albumPhotosDiv.appendChild(albumPhotoDiv);
+                            const albumPhotoInfos = document.createElement('div');
+                            albumPhotoInfos.classList.add('album-photo-infos');
+                            const nameDiv = document.createElement('div');
+                            nameDiv.classList.add('name');
+                            albumPhotoInfos.appendChild(nameDiv);
+
+                            const datesDiv = document.createElement('div');
+                            datesDiv.classList.add('dates');
+                            const dateDiv = document.createElement('div');
+                            dateDiv.classList.add('date');
+                            dateDiv.innerText = result['date_string'];
+                            datesDiv.appendChild(dateDiv);
+                            const createdAtDiv = document.createElement('div');
+                            createdAtDiv.classList.add('created-at');
+                            createdAtDiv.innerText = result['created_at_string'];
+                            datesDiv.appendChild(createdAtDiv);
+                            const updatedAtDiv = document.createElement('div');
+                            updatedAtDiv.classList.add('dates')
+                            updatedAtDiv.innerText = result['updated_at_string'];
+                            datesDiv.appendChild(updatedAtDiv);
+                            albumPhotoInfos.appendChild(datesDiv);
+
+                            albumPhotoDiv.appendChild(albumPhotoInfos);
+                            albumPhotosDiv.insertBefore(albumPhotoDiv, addPhotosDiv);
+                            // TODO: modifier le span de addPhotoDiv en fonction du nombre de photo
+                            const count = albumPhotosDiv.querySelectorAll(".album-photo").length;
+                            const emptySpace = 3 - (count % 3);
+                            addPhotosDiv.setAttribute('style', count === 1 ? '' : 'aspect-ratio: unset; grid-column: span ' + emptySpace);
                         });
                     }
                 } else {
@@ -535,6 +571,9 @@ export class AlbumShow {
         const imgElement2 = document.querySelector(".background-2").querySelector('img');
         gThis.pathArr = gThis.imagePaths.slice();
         if (albumPhotosDiv.classList.contains('list')) {
+            return;
+        }
+        if (!gThis.imagePaths.length) {
             return;
         }
         gThis.effect({img1: imgElement1, img2: imgElement2, path: gThis.srcsetPaths.original});

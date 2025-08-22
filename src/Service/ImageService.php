@@ -17,6 +17,7 @@ class ImageService extends AbstractController
 
     public function __construct(
         private readonly LoggerInterface $logger,
+        private readonly DateService     $dateService,
     )
     {
     }
@@ -156,6 +157,8 @@ class ImageService extends AbstractController
             $lowResPath
         ]);
 
+        // Extract EXIF data
+        $exif = $this->exifInfos($file->getPathname());
 
         if ($extension === 'webp') {
             try {
@@ -218,6 +221,7 @@ class ImageService extends AbstractController
             '1080p' => $image1080p,
             '720p' => $image720p,
             '576p' => $image576p,
+            'exif' => $exif
         ];
     }
 
@@ -379,6 +383,62 @@ class ImageService extends AbstractController
         if ($successfullyConverted && $removeOld) unlink($sourcePath);
 
         return $destPath;
+    }
+
+    private function exifInfos(string $filename): array
+    {
+        $exif = exif_read_data($filename);
+        dump($exif);
+
+        $latitude = null;
+        $longitude = null;
+        if (isset($exif['GPSLatitudeRef'], $exif['GPSLatitude'], $exif['GPSLongitudeRef'], $exif['GPSLongitude'])) {
+            $latRef = $exif['GPSLatitudeRef'];
+            $latArray = $exif['GPSLatitude'];
+            $lngRef = $exif['GPSLongitudeRef'];
+            $lngArray = $exif['GPSLongitude'];
+            if (is_array($latArray) && is_array($lngArray) && count($latArray) === 3 && count($lngArray) === 3) {
+                $latDegrees = explode('/', $latArray[0]);
+                $latMinutes = explode('/', $latArray[1]);
+                $latSeconds = explode('/', $latArray[2]);
+                $lngDegrees = explode('/', $lngArray[0]);
+                $lngMinutes = explode('/', $lngArray[1]);
+                $lngSeconds = explode('/', $lngArray[2]);
+                if (count($latDegrees) === 2 && count($latMinutes) === 2 && count($latSeconds) === 2 &&
+                    count($lngDegrees) === 2 && count($lngMinutes) === 2 && count($lngSeconds) === 2) {
+                    $latDeg = $latDegrees[0] / $latDegrees[1];
+                    $latMin = $latMinutes[0] / $latMinutes[1];
+                    $latSec = $latSeconds[0] / $latSeconds[1];
+                    $lngDeg = $lngDegrees[0] / $lngDegrees[1];
+                    $lngMin = $lngMinutes[0] / $lngMinutes[1];
+                    $lngSec = $lngSeconds[0] / $lngSeconds[1];
+                    $latitude = $latDeg + ($latMin / 60) + ($latSec / 3600);
+                    $longitude = $lngDeg + ($lngMin / 60) + ($lngSec / 3600);
+                    // limiter à 6 décimales
+                    $latitude = round($latitude, 6);
+                    $longitude = round($longitude, 6);
+                    // Appliquer le signe négatif pour les coordonnées sud et ouest
+                    if ($latRef === 'S') {
+                        $latitude = -$latitude;
+                    }
+                    if ($lngRef === 'W') {
+                        $longitude = -$longitude;
+                    }
+                }
+            }
+        }
+        if (isset($exif['DateTimeOriginal'])) {
+            $dateString = str_replace(':', '-', substr($exif['DateTimeOriginal'], 0, 10)) . substr($exif['DateTimeOriginal'], 10);
+            $date = $this->dateService->newDateImmutable($dateString, 'UTC');
+        } else {
+            $date = new DateTimeImmutable();
+        }
+
+        return [
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'date' => $date
+        ];
     }
 
     private function composeImage(GdImage $gdImage, string $title, string $destPath, int $width, int $height, int $quality): bool
