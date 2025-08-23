@@ -28,10 +28,10 @@ class Album
     private ?string $description = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $updatedAt = null;
+    private ?DateTimeImmutable $updatedAt = null;
 
     /**
      * @var Collection<int, Photo>
@@ -39,23 +39,31 @@ class Album
     #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'album', orphanRemoval: true)]
     private Collection $photos;
 
+    private string $date;
     private array $dateRange;
     private string $dateRangeString;
 
-    public function __construct(User $user, string $name, DateTimeImmutable $createdAt)
+    public function __construct(User $user, string $name, ?DateTimeImmutable $createdAt)
     {
         $this->user = $user;
         $this->name = $name;
         $this->createdAt = $createdAt;
         $this->updatedAt = $createdAt;
         $this->photos = new ArrayCollection();
+        $this->date = '';
+        $this->dateRange = [];
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 
     public function update(string $name, ?string $description): static
     {
         $this->name = $name;
         $this->description = $description;
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
 
         return $this;
     }
@@ -101,24 +109,24 @@ class Album
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    public function setUpdatedAt(DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
 
@@ -173,6 +181,16 @@ class Album
     public function setDateRangeString(string $dateRangeString): void
     {
         $this->dateRangeString = $dateRangeString;
+    }
+
+    public function getDate(): string
+    {
+        return $this->date;
+    }
+
+    public function setDate(string $date): void
+    {
+        $this->date = $date;
     }
 
 }

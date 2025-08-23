@@ -27,6 +27,16 @@ class PhotoRepository extends ServiceEntityRepository
         }
     }
 
+    public function photoIdsByDate(int $userId, string $date): array
+    {
+        $sql = "SELECT *
+                FROM `photo` p
+                WHERE p.`user_id`=$userId AND DATE(p.`date`)='$date'
+                ORDER BY p.`created_at` DESC";
+
+        return $this->getAll($sql);
+    }
+
     public function getAll($sql): array
     {
         try {

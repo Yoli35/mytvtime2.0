@@ -158,7 +158,7 @@ class ImageService extends AbstractController
         ]);
 
         // Extract EXIF data
-        $exif = $this->exifInfos($file->getPathname());
+        $exif = @$this->exifInfos($file->getPathname());
 
         if ($extension === 'webp') {
             try {

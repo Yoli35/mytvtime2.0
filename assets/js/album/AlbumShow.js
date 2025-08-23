@@ -172,7 +172,8 @@ export class AlbumShow {
     }
 
     initAlbumForm() {
-        const addPhotosButton = document.querySelector('#add-photos') || document.querySelector('.add-photos-button');
+        const addPhotos = document.querySelector('#add-photos');
+        const addPhotosButton = document.querySelector('.add-photos-button');
         const modifyAlbumDialog = document.querySelector('.side-panel.modify-album-dialog');
         const modifyAlbumForm = modifyAlbumDialog.querySelector('form');
         const nameInput = document.querySelector('input[name="name"]');
@@ -197,6 +198,9 @@ export class AlbumShow {
             modifyAlbumDialog.querySelector('.frame').scrollTo(0, submitRow.offsetTop);
         });
 
+        addPhotos.addEventListener('click', function () {
+            gThis.openAlbumPanel(modifyAlbumDialog);
+        });
         addPhotosButton.addEventListener('click', function () {
             gThis.openAlbumPanel(modifyAlbumDialog);
         });
@@ -411,7 +415,7 @@ export class AlbumShow {
                             // TODO: modifier le span de addPhotoDiv en fonction du nombre de photo
                             const count = albumPhotosDiv.querySelectorAll(".album-photo").length;
                             const emptySpace = 3 - (count % 3);
-                            addPhotosDiv.setAttribute('style', count === 1 ? '' : 'aspect-ratio: unset; grid-column: span ' + emptySpace);
+                            addPhotosDiv.setAttribute('style', count === 1 ? '' : 'aspect-ratio: ' + emptySpace + ' / 1; grid-column: span ' + emptySpace + ';');
                         });
                     }
                 } else {
