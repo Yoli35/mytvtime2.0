@@ -370,7 +370,6 @@ export class AlbumShow {
                         gThis.flashMessage.add('success', msg);
                     });
                     if (results.length) {
-                        const addPhotosDiv = document.querySelector('#add-photos');
                         const albumPhotosDiv = document.querySelector('.album-photos');
                         results.forEach(result => {
                             const albumPhotoDiv = document.createElement('div');
@@ -411,11 +410,22 @@ export class AlbumShow {
                             albumPhotoInfos.appendChild(datesDiv);
 
                             albumPhotoDiv.appendChild(albumPhotoInfos);
-                            albumPhotosDiv.insertBefore(albumPhotoDiv, addPhotosDiv);
+                            const firstAlbumPhotoDiv = albumPhotosDiv.querySelector('.album-photo');
+                            if (firstAlbumPhotoDiv) {
+                                albumPhotosDiv.insertBefore(albumPhotoDiv, firstAlbumPhotoDiv);
+                            } else {
+                                albumPhotosDiv.appendChild(albumPhotoDiv);
+                            }
                             // TODO: modifier le span de addPhotoDiv en fonction du nombre de photo
-                            const count = albumPhotosDiv.querySelectorAll(".album-photo").length;
-                            const emptySpace = 3 - (count % 3);
-                            addPhotosDiv.setAttribute('style', count === 1 ? '' : 'aspect-ratio: ' + emptySpace + ' / 1; grid-column: span ' + emptySpace + ';');
+                            const allPhotoDivs = albumPhotosDiv.querySelectorAll(".album-photo");
+                            allPhotoDivs.forEach((photoDiv, index) => {
+                                const modulo = index % 27;
+                                if (modulo === 0 || modulo === 10 || modulo === 20) {
+                                    photoDiv.classList.add('grid-span-2');
+                                } else {
+                                    photoDiv.classList.remove('grid-span-2');
+                                }
+                            });
                         });
                     }
                 } else {

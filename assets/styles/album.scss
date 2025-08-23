@@ -306,24 +306,6 @@
     }
 }
 
-@property --album-cover-size {
-    syntax: "<percentage>";
-    inherits: true;
-    initial-value: 178%;
-}
-
-@keyframes effect-beck {
-    0% {
-        --album-cover-size: 200%;
-    }
-    50% {
-        --album-cover-size: 178%;
-    }
-    100% {
-        --album-cover-size: 200%;
-    }
-}
-
 .container-fluid:has(.album-page) {
     padding-inline: 0;
 }
@@ -543,6 +525,18 @@
                         object-fit: cover;
                     }
 
+                    .no-photo {
+                        align-items: center;
+                        aspect-ratio: 1 / 1;
+                        background-color: var(--green-50);
+                        border-radius: .25rem 0 0 .25rem;
+                        color: var(--ardoise-10);
+                        display: flex;
+                        font-size: 1.5rem;
+                        height: 5rem;
+                        justify-content: center;
+                    }
+
                     .name {
                         font-weight: 400;
                         padding: .25rem;
@@ -560,6 +554,27 @@
     main {
         height: calc(100vh - 13rem);
         overflow-y: auto;
+        position: relative;
+
+        #add-photos {
+            align-items: center;
+            aspect-ratio: 1 / 1;
+            background-color: var(--green-70);
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+            position: absolute;
+            top: 1vh;
+            right: 1vh;
+            z-index: 5;
+
+            svg {
+                height: 10rem;
+                width: 10rem;
+                color: var(--orange-50);
+                cursor: pointer;
+            }
+        }
 
         .map-container {
             flex-direction: unset;
@@ -585,13 +600,12 @@
 
         &.grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             grid-auto-rows: 1fr;
-            gap: 0;
+            gap: .25rem;
             margin-inline: auto;
             padding-block-start: 40vh; /*min(40vh, 40vw);*/
             padding-inline: 0;
-            position: relative;
             width: 100%;
 
             .album-photo {
@@ -600,11 +614,28 @@
                 outline: min(.5vh, .5vw) solid transparent;
                 outline-offset: max(-.5vh, -.5vw);
                 padding-block-start: 0;
+                position: relative;
                 transition: outline-color 0.3s ease-in-out;
                 width: 100%;
 
                 img {
                     border-radius: 0;
+                }
+
+                .number-badge {
+                    align-items: center;
+                    background-color: var(--orange-50);
+                    border-radius: 50%;
+                    color: var(--orange-90);
+                    display: flex;
+                    font-size: 2rem;
+                    font-weight: 600;
+                    height: 3rem;
+                    justify-content: center;
+                    position: absolute;
+                    right: .5rem;
+                    top: 4rem;
+                    width: 3rem;
                 }
 
                 &:hover {
@@ -617,10 +648,18 @@
 
                 &.grid-col-span-2 {
                     grid-column: span 2;
+
+                    img {
+                        aspect-ratio: 2 / 1;
+                    }
                 }
 
                 &.grid-row-span-2 {
                     grid-row: span 2;
+
+                    img {
+                        aspect-ratio: 1 / 2;
+                    }
                 }
 
                 &.grid-span-2 {
@@ -628,10 +667,6 @@
                     grid-row: span 2;
                 }
             }
-        }
-
-        &.play {
-            animation: effect-beck 4s ease-out infinite;
         }
 
         &.list {
@@ -647,20 +682,13 @@
             }
         }
 
-        &:not(:has(.album-photo)), .empty-space {
+        &:not(:has(.album-photo)) {
             align-items: center;
             aspect-ratio: 1 / 1;
-            background-color: var(--green-70);
+            /*background-color: var(--green-70);*/
             display: flex;
             justify-content: center;
             padding-block-start: 0;
-
-            svg {
-                height: 20rem;
-                width: 20rem;
-                color: var(--orange-50);
-                cursor: pointer;
-            }
         }
 
         .empty-space {
@@ -688,6 +716,10 @@
                 border-radius: .5rem;
                 height: 100%;
                 object-fit: cover;
+            }
+
+            .number-badge {
+                display: none;
             }
 
             .album-photo-infos {

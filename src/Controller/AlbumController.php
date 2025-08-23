@@ -108,10 +108,36 @@ final class AlbumController extends AbstractController
             return $photo['image_path'];
         }, $albumArr['photos']);
 
+        $cellClasses = [];
+        $cellCount = count($imagePaths);
+        $emptyCellCount = 4 - ($cellCount % 4);
+        $previousCellIsSpan2 = false;
+        for ($i = 0, $index = 0; $i < $cellCount; $i++) {
+            if (in_array($i % 27, [0, 10, 20])) {
+                $cellClasses[] = "grid-span-2";
+                $index += 4;
+                continue;
+            }
+            /*if (!$emptyCellCount || $previousCellIsSpan2) {
+                $previousCellIsSpan2 = false;
+                $cellClasses[] = "";
+                continue;
+            }
+            if (in_array($i % 12, [3, 4, 9,10])) {
+                $cellClasses[] = "grid-col-span-2";
+                $emptyCellCount--;
+                $previousCellIsSpan2 = true;
+                continue;
+            }*/
+            $cellClasses[] = "";
+        }
+        dump(['cellCount' => $cellCount, 'emptyCellCount' => $emptyCellCount, 'cellClasses' => $cellClasses]);
+
         return $this->render('album/show.html.twig', [
             'album' => $album,
             'albumArray' => $albumArr,
             'imagePaths' => $imagePaths,
+            'cellClasses' => $cellClasses,
             'settings' => $this->getAlbumsSettings($this->getUser()),
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
             'emptyPhoto' => $this->newPhoto($album),
@@ -369,6 +395,12 @@ final class AlbumController extends AbstractController
             $messages[] = $n . ' photos ajoutées';
         }
 
+        dump([
+            'ok' => true,
+            'messages' => $messages,
+            'results' => $results,
+
+        ]);
         return $this->json([
             'ok' => true,
             'messages' => $messages,

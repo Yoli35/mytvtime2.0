@@ -48,8 +48,12 @@
                         <div class="prev-album" data-title="{{ 'Previous album'|trans }}">
                             <a href="{{ path('app_album_show', {id: previousAlbum.id}) }}">
                                 {% set c = previousAlbum.photos|length %}
-                                {% set photo = previousAlbum.photos[random(c-1)] %}
-                                <img src="/albums/576p{{ photo.imagePath }}" alt="{{ previousAlbum.name }}">
+                                {% if c > 0 %}
+                                    {% set photo = previousAlbum.photos[random(c-1)] %}
+                                    <img src="/albums/576p{{ photo.imagePath }}" alt="{{ previousAlbum.name }}">
+                                {% else %}
+                                    <div class="no-photo">{{ previousAlbum.name|first }}</div>
+                                {% endif %}
                                 <div class="chevron">{{ ux_icon('mdi:chevron-left') }}</div>
                                 <div class="name">{{ previousAlbum.name }}</div>
                             </a>
@@ -59,8 +63,12 @@
                         <div class="next-album" data-title="{{ 'Next album'|trans }}">
                             <a href="{{ path('app_album_show', {id: nextAlbum.id}) }}">
                                 {% set c = nextAlbum.photos|length %}
-                                {% set photo = nextAlbum.photos[random(c-1)] %}
-                                <img src="/albums/576p{{ photo.imagePath }}" alt="{{ nextAlbum.name }}e">
+                                {% if c > 0 %}
+                                    {% set photo = nextAlbum.photos[random(c-1)] %}
+                                    <img src="/albums/576p{{ photo.imagePath }}" alt="{{ nextAlbum.name }}e">
+                                {% else %}
+                                    <div class="no-photo">{{ nextAlbum.name|first }}</div>
+                                {% endif %}
                                 <div class="name">{{ nextAlbum.name }}</div>
                                 <div class="chevron">{{ ux_icon('mdi:chevron-right') }}</div>
                             </a>
@@ -69,9 +77,14 @@
                 </div>
             </header>
             <main>
+                {% if album.id > 0 %}
+                    <div id="add-photos" data-title="{{ 'Add photos'|trans }}">
+                        {{ ux_icon('mdi:plus') }}
+                    </div>
+                {% endif %}
                 <div class="album-photos {{ settings.layout }}">
                     {% for photo in albumArray.photos %}
-                        <div class="album-photo{% if loop.index % 12 in [1, 8] %} grid-span-2{% endif %}" data-id="{{ photo.id }}">
+                        <div class="album-photo {{ cellClasses[loop.index0] }}" data-id="{{ photo.id }}">
                             <img
                                     src="/albums/1080p{{ photo.image_path }}"
                                     alt="{{ photo.caption }}"
@@ -79,6 +92,7 @@
                                     loading="lazy"
                                     srcset="/albums/576p{{ photo.image_path }} 576w, /albums/720p{{ photo.image_path }} 720w, /albums/1080p{{ photo.image_path }} 1080w, /albums/original{{ photo.image_path }} 1920w"
                             >
+                            <div class="number-badge">{{ loop.index }}</div>
                             <div class="album-photo-infos">
                                 <div class="name">{{ photo.caption }}</div>
                                 <div class="dates">
@@ -89,20 +103,9 @@
                             </div>
                             <div class="edit-photo-button" data-id="{{ photo.id }}">{{ ux_icon('mdi:image-edit') }}</div>
                         </div>
-                    {% else %}
-                        <div id="add-photos">{{ ux_icon('mdi:plus') }}</div>
+                    {#{% else %}
+                        <div id="add-photos">{{ ux_icon('mdi:plus') }}</div>#}
                     {% endfor %}
-                    {% set count = albumArray.photos|length %}
-                    {% if count %}
-                        {% set emptySpace = count > 3 ? (3 - (count % 3)) : 0 %}
-                        {% if emptySpace %}
-                            <div class="empty-space" style="aspect-ratio: {{ emptySpace }} / 1; grid-column: span {{ emptySpace }};">
-                                {% if album.id > 0 %}
-                                    {{ ux_icon('mdi:plus', {id: 'add-photos'}) }}
-                                {% endif %}
-                            </div>
-                        {% endif %}
-                    {% endif %}
                 </div>
                 {{ include('_blocks/map/_map-container.html.twig', {type: 'album', styleSettings: mapSettings.data.styles}) }}
             </main>
