@@ -58,8 +58,9 @@ final class AlbumController extends AbstractController
             $dates = array_map(function ($photo) {
                 return $photo->getDate()->format('Y-m-d H:i:s');
             }, $photos);
-            dump(['album' => $album, 'dates' => $dates]);
+            /*dump(['album' => $album, 'dates' => $dates]);*/
             if (count($dates) === 0) {
+                $album->setDateRange([]);
                 continue; // Skip albums with no photos
             }
             // Set the date range for the album
@@ -72,7 +73,7 @@ final class AlbumController extends AbstractController
         $albums = array_merge($albums, $this->albumsByDays());
         $this->dateRangeString($albums);
 
-        dump($this->albumsByDays());
+//        dump($this->albumsByDays());
 
         return $this->render('album/index.html.twig', [
             'albums' => $albums,
@@ -110,10 +111,11 @@ final class AlbumController extends AbstractController
 
         $cellClasses = [];
         $cellCount = count($imagePaths);
+        $lastGridSpan2Pos = $cellCount - 5;
         $emptyCellCount = 4 - ($cellCount % 4);
         $previousCellIsSpan2 = false;
         for ($i = 0, $index = 0; $i < $cellCount; $i++) {
-            if (in_array($i % 27, [0, 10, 20])) {
+            if ($i < $lastGridSpan2Pos && in_array($i % 27, [0, 10, 20])) {
                 $cellClasses[] = "grid-span-2";
                 $index += 4;
                 continue;
@@ -130,8 +132,19 @@ final class AlbumController extends AbstractController
                 continue;
             }*/
             $cellClasses[] = "";
+            $index++;
         }
-        dump(['cellCount' => $cellCount, 'emptyCellCount' => $emptyCellCount, 'cellClasses' => $cellClasses]);
+        $emptyCellCount = $index %4;
+        if ($emptyCellCount == 1) {
+            $cellClasses[$cellCount - 1] = "grid-col-span-2";
+        }
+        if ($emptyCellCount == 2) {
+            $cellClasses[$cellCount - 1] = "grid-col-span-3";
+        }
+        if ($emptyCellCount == 3) {
+            $cellClasses[$cellCount - 1] = "grid-span-4";
+        }
+//        dump(['cellCount' => $cellCount, 'index' => $index, 'emptyCellCount' => $emptyCellCount, 'cellClasses' => $cellClasses]);
 
         return $this->render('album/show.html.twig', [
             'album' => $album,
@@ -395,12 +408,12 @@ final class AlbumController extends AbstractController
             $messages[] = $n . ' photos ajoutées';
         }
 
-        dump([
-            'ok' => true,
-            'messages' => $messages,
-            'results' => $results,
-
-        ]);
+//        dump([
+//            'ok' => true,
+//            'messages' => $messages,
+//            'results' => $results,
+//
+//        ]);
         return $this->json([
             'ok' => true,
             'messages' => $messages,
@@ -420,7 +433,7 @@ final class AlbumController extends AbstractController
                 $day = $photo->getDate()->format('Y-m-d');
                 if (!array_key_exists($day, $albums)) {
                     $name = ucfirst($this->dateService->formatDateRelativeMedium($day, 'UTC', $this->getUser()->getPreferredLanguage() ?? 'en'));
-                    dump(['day' => $day, 'name' => $name]);
+                    /*dump(['day' => $day, 'name' => $name]);*/
                     $albums[$day] = new Album($user, $name, null);
                     $albums[$day]->setDate($day);
                     $albums[$day]->setDateRange([
@@ -524,6 +537,7 @@ final class AlbumController extends AbstractController
     {
         /** @var Album $album */
         foreach ($albums as $album) {
+//            dump($album);
             $dateRange = $album->getDateRange() ?? null;
             if (empty($dateRange)) {
                 $string = $this->translator->trans('No date range');

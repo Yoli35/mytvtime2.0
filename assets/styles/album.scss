@@ -560,6 +560,7 @@
             align-items: center;
             aspect-ratio: 1 / 1;
             background-color: var(--green-70);
+            border-radius: .5rem;
             display: flex;
             justify-content: center;
             padding: 1rem;
@@ -569,8 +570,8 @@
             z-index: 5;
 
             svg {
-                height: 10rem;
-                width: 10rem;
+                height: clamp(1rem, 12vw, 10rem);
+                width: clamp(1rem, 12vw, 10rem);
                 color: var(--orange-50);
                 cursor: pointer;
             }
@@ -610,7 +611,8 @@
 
             .album-photo {
                 border: none;
-                border-radius: 0;
+                border-radius: .25rem;
+                cursor: pointer;
                 outline: min(.5vh, .5vw) solid transparent;
                 outline-offset: max(-.5vh, -.5vw);
                 padding-block-start: 0;
@@ -619,7 +621,7 @@
                 width: 100%;
 
                 img {
-                    border-radius: 0;
+                    border-radius: .25rem;
                 }
 
                 .number-badge {
@@ -654,6 +656,14 @@
                     }
                 }
 
+                &.grid-col-span-3 {
+                    grid-column: span 3;
+
+                    img {
+                        aspect-ratio: 3 / 1;
+                    }
+                }
+
                 &.grid-row-span-2 {
                     grid-row: span 2;
 
@@ -665,6 +675,16 @@
                 &.grid-span-2 {
                     grid-column: span 2;
                     grid-row: span 2;
+                }
+
+                &.grid-span-3 {
+                    grid-column: span 3;
+                    grid-row: span 3;
+                }
+
+                &.grid-span-4 {
+                    grid-column: span 4;
+                    grid-row: span 4;
                 }
             }
         }

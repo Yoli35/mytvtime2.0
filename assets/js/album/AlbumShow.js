@@ -580,9 +580,6 @@ export class AlbumShow {
     }
 
     initAnimation() {
-        const albumPhotosDiv = document.querySelector('.album-photos');
-        const imgElement1 = document.querySelector(".background-1").querySelector('img');
-        const imgElement2 = document.querySelector(".background-2").querySelector('img');
         gThis.pathArr = gThis.imagePaths.slice();
         if (albumPhotosDiv.classList.contains('list')) {
             return;
@@ -590,6 +587,9 @@ export class AlbumShow {
         if (!gThis.imagePaths.length) {
             return;
         }
+        const albumPhotosDiv = document.querySelector('.album-photos');
+        const imgElement1 = document.querySelector(".background-1").querySelector('img');
+        const imgElement2 = document.querySelector(".background-2").querySelector('img');
         gThis.effect({img1: imgElement1, img2: imgElement2, path: gThis.srcsetPaths.original});
         gThis.interval = setInterval(gThis.effect, 4000, {img1: imgElement1, img2: imgElement2, path: gThis.srcsetPaths.original});
     }

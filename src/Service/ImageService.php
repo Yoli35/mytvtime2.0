@@ -388,7 +388,7 @@ class ImageService extends AbstractController
     private function exifInfos(string $filename): array
     {
         $exif = exif_read_data($filename);
-        dump($exif);
+//        dump($exif);
 
         $latitude = null;
         $longitude = null;
