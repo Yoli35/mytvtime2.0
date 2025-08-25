@@ -5074,14 +5074,20 @@ h2 {
         border-radius: .25rem;
         color: var(--ardoise-10);
         display: flex;
+        margin-block-end: 1rem;
         padding-block: .25rem;
         padding-inline: 1rem;
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 300;
+        }
 
         .numbers {
             align-items: center;
             display: flex;
             gap: 1rem;
-            font-size: 2rem;
+            font-size: 1.5rem;
             margin-inline-start: auto;
 
             > div {
@@ -5362,7 +5368,7 @@ h2 {
     .map-tools {
         display: flex;
         gap: 1rem;
-        margin-block: 2rem;
+        /*margin-block: 2rem;*/
         position: relative;
         width: 100%;
 
@@ -5502,7 +5508,7 @@ h2 {
                 display: flex;
                 font-size: 1.25rem;
                 font-weight: 300;
-                margin-block: 2rem 1rem;
+                margin-block-start: 1rem;
                 padding: .25rem 1rem;
                 width: 100%;
 
