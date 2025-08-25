@@ -4,10 +4,10 @@
 <nav class="navbar">
     <div class="navbar-items-toggler">{{ ux_icon('mdi:menu') }}</div>
     <div class="navbar-items left">
-        <a href="{{ path('app_home') }}" accesskey="<">{{ ux_icon('material-symbols:home') }}</a>
+        <a href="{{ path('app_home') }}" accesskey="<">{{ ux_icon('mdi:home') }}</a>
         {% if app.user %}
             <div class="navbar-item">
-                {{ ux_icon('fa6-solid:film', {height: "18px", width: "18px"}) }}
+                {{ ux_icon('mdi:filmstrip-box') }}
                 <div class="menu movies">
                     <div class="menu-item"><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'My movies'|trans }}</a></div>
                     <div class="menu-item"><a href="{{ path('app_movie_search') }}" class="desktop">{{ 'Search'|trans }}</a></div>
@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div class="navbar-item">
-                {{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}
+                {{ ux_icon('mdi:tv') }}
                 <div class="menu series">
                     {% set country=getUserCountrySettings(app.user) %}
                     <div class="menu-item"><a href="{{ path('app_series_index') }}" class="desktop">{{ 'Series.week'|trans }}</a></div>
@@ -54,7 +54,7 @@
                 </div>
             </div>
             <div class="navbar-item">
-                {{ ux_icon('mdi:youtube-tv', {height: "18px", width: "18px"}) }}
+                {{ ux_icon('mdi:youtube-tv') }}
                 <div class="menu videos">
                     <div class="menu-item"><a href="{{ path('app_video_index') }}" class="desktop">{{ 'My videos'|trans }}</a></div>
                     <div class="menu-item">
@@ -67,7 +67,7 @@
                 </div>
             </div>
             <div class="navbar-item">
-                {{ ux_icon('mdi:image-album', {height: "18px", width: "18px"}) }}
+                {{ ux_icon('mdi:image-album') }}
                 <div class="menu albums">
                     <div class="menu-item"><a href="{{ path('app_album_index') }}" class="desktop">{{ 'My albums'|trans }}</a></div>
                     <div class="menu-item">
@@ -80,7 +80,7 @@
                 </div>
             </div>
             <div class="navbar-item">
-                {{ ux_icon('fa6-regular:user', {height: "18px", width: "18px"}) }}
+                {{ ux_icon('mdi:user-outline') }}
                 <div class="menu people">
                     <div class="menu-item"><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></div>
                     <div class="menu-item"><a href="{{ path('app_people_star') }}" class="desktop">{{ 'Star people'|trans }}</a></div>
@@ -94,7 +94,7 @@
                 </div>
             </div>
             <div class="navbar-item" id="history-menu">
-                {{ ux_icon('ic:outline-view-day', {height: "18px", width: "18px"}) }}
+                {{ ux_icon('mdi:clipboard-text-history') }}
                 {#            {{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }} #}
                 {% set history = seriesHistory(app.user) %}
                 <div class="menu history" id="history-list" data-last="{{ history.last }}">
@@ -132,7 +132,7 @@
                 </div>
             </div>
             <div class="navbar-item">
-                {{ ux_icon('mdi:history', {height: "18px", width: "18px"}) }}
+                {{ ux_icon('mdi:history') }}
                 {% set history = getHistory(app.user) %}
                 {% set historyCount = getHistoryCount(app.user) %}
                 <div class="menu log" id="log-list" data-last="{{ history.0.id }}">
@@ -160,14 +160,14 @@
                 </div>
             </div>
             <div class="navbar-item">
-                {{ ux_icon('ion:map-outline', {height: "18px", width: "18px"}) }}
+                {{ ux_icon('mdi:map-outline') }}
                 <div class="menu map">
                     <div class="menu-item"><a href="{{ path('app_map_index') }}" class="desktop">{{ 'Shooting locations'|trans }}</a></div>
                     <div class="menu-item"><a href="{{ path('app_map_last_locations', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></div>
                 </div>
             </div>
         {% endif %}
-        <a href="{{ path('app_contact_form') }}" class="desktop">{{ ux_icon('ion:mail', {height: "18px", width: "18px"}) }}</a>
+        <a href="{{ path('app_contact_form') }}" class="desktop">{{ ux_icon('mdi:email') }}</a>
     </div>
     <script>
         const navbarItemsToggler = document.querySelector('.navbar-items-toggler');
