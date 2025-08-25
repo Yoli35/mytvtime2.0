@@ -109,48 +109,11 @@ final class AlbumController extends AbstractController
             return $photo['image_path'];
         }, $albumArr['photos']);
 
-        $cellClasses = [];
-        $cellCount = count($imagePaths);
-        $lastGridSpan2Pos = $cellCount - 5;
-        $emptyCellCount = 4 - ($cellCount % 4);
-        $previousCellIsSpan2 = false;
-        for ($i = 0, $index = 0; $i < $cellCount; $i++) {
-            if ($i < $lastGridSpan2Pos && in_array($i % 27, [0, 10, 20])) {
-                $cellClasses[] = "grid-span-2";
-                $index += 4;
-                continue;
-            }
-            /*if (!$emptyCellCount || $previousCellIsSpan2) {
-                $previousCellIsSpan2 = false;
-                $cellClasses[] = "";
-                continue;
-            }
-            if (in_array($i % 12, [3, 4, 9,10])) {
-                $cellClasses[] = "grid-col-span-2";
-                $emptyCellCount--;
-                $previousCellIsSpan2 = true;
-                continue;
-            }*/
-            $cellClasses[] = "";
-            $index++;
-        }
-        $emptyCellCount = $index %4;
-        if ($emptyCellCount == 1) {
-            $cellClasses[$cellCount - 1] = "grid-col-span-2";
-        }
-        if ($emptyCellCount == 2) {
-            $cellClasses[$cellCount - 1] = "grid-col-span-3";
-        }
-        if ($emptyCellCount == 3) {
-            $cellClasses[$cellCount - 1] = "grid-span-4";
-        }
-//        dump(['cellCount' => $cellCount, 'index' => $index, 'emptyCellCount' => $emptyCellCount, 'cellClasses' => $cellClasses]);
-
         return $this->render('album/show.html.twig', [
             'album' => $album,
             'albumArray' => $albumArr,
             'imagePaths' => $imagePaths,
-            'cellClasses' => $cellClasses,
+            'cellClasses' => $this->getCellClasses(count($imagePaths)),
             'settings' => $this->getAlbumsSettings($this->getUser()),
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
             'emptyPhoto' => $this->newPhoto($album),
@@ -166,17 +129,6 @@ final class AlbumController extends AbstractController
     public function date(string $date): Response
     {
         $name = ucfirst($this->dateService->formatDateRelativeMedium($date, 'UTC', $this->getUser()->getPreferredLanguage() ?? 'en'));
-//        $album = new Album($this->getUser(), $name, null);
-//        $album->setDate($date);
-//        $ids = $this->photoRepository->photoIdsByDate($this->getUser()->getId(), $date);
-//        $photos = $this->photoRepository->findBy(['id' => $ids], ['date' => 'DESC']);
-//        foreach ($photos as $photo) {
-//            $album->addPhoto($photo);
-//        }
-//        $album->setDateRange([
-//            'min' => $date,
-//            'max' => $date,
-//        ]);
         $album = [
             'id' => -1,
             'name' => $name,
@@ -193,6 +145,7 @@ final class AlbumController extends AbstractController
             'album' => $album,
             'albumArray' => $albumArr,
             'imagePaths' => $imagePaths,
+            'cellClasses' => $this->getCellClasses(count($imagePaths)),
             'settings' => $this->getAlbumsSettings($this->getUser()),
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
             'emptyPhoto' => null,
@@ -202,16 +155,6 @@ final class AlbumController extends AbstractController
             'nextAlbum' => null,
             'srcsetPaths' => ['lowRes' => '/albums/576p', 'mediumRes' => '/albums/720p', 'highRes' => '/albums/1080p', 'original' => '/albums/original'],
         ]);
-    }
-
-    private function getAlbumsSettings(User $user): array
-    {
-        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'album']);
-        if (!$settings) {
-            $settings = new Settings($user, 'album', ['layout' => 'grid', 'photosPerPage' => 20]);
-            $this->settingsRepository->save($settings, true);
-        }
-        return $settings->getData();
     }
 
     #[Route('/settings/{id}', name: 'settings', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
@@ -420,6 +363,44 @@ final class AlbumController extends AbstractController
             'results' => $results,
 
         ]);
+    }
+
+    private function getAlbumsSettings(User $user): array
+    {
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'album']);
+        if (!$settings) {
+            $settings = new Settings($user, 'album', ['layout' => 'grid', 'photosPerPage' => 20]);
+            $this->settingsRepository->save($settings, true);
+        }
+        return $settings->getData();
+    }
+
+    private function getCellClasses($cellCount): array
+    {
+        $cellClasses = [];
+        $lastGridSpan2Pos = $cellCount - 5;
+        for ($i = 0, $index = 0; $i < $cellCount; $i++) {
+            if ($i < $lastGridSpan2Pos && in_array($i % 27, [0, 10, 20])) {
+                $cellClasses[] = "grid-span-2";
+                $index += 4;
+                continue;
+            }
+
+            $cellClasses[] = "";
+            $index++;
+        }
+        $emptyCellCount = 4 - $index % 4;
+        if ($emptyCellCount == 1) {
+            $cellClasses[$cellCount - 1] = "grid-col-span-2";
+        }
+        if ($emptyCellCount == 2) {
+            $cellClasses[$cellCount - 1] = "grid-col-span-3";
+        }
+        if ($emptyCellCount == 3) {
+            $cellClasses[$cellCount - 1] = "grid-span-4";
+        }
+        dump(['cellCount' => $cellCount, 'index' => $index, 'emptyCellCount' => $emptyCellCount, 'cellClasses' => $cellClasses]);
+        return $cellClasses;
     }
 
     private function albumsByDays(): array

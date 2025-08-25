@@ -602,7 +602,7 @@
         &.grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            grid-auto-rows: 1fr;
+            /*grid-auto-rows: 1fr;*/
             gap: .25rem;
             margin-inline: auto;
             padding-block-start: 40vh; /*min(40vh, 40vw);*/

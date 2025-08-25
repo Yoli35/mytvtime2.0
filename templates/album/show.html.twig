@@ -35,7 +35,9 @@
                     <div class="tools">
                         <div class="layout-buttons">
                             <button class="photo-albums-button" data-title="{{ 'My albums'|trans }}"><a href="{{ path('app_album_index') }}">{{ ux_icon('mdi:image-album') }}</a></button>
-                            <button class="add-photos-button" data-title="{{ 'Modify album'|trans }}">{{ ux_icon('mdi:edit') }}</button>
+                            {% if album.id > 0 %}
+                                <button class="add-photos-button" data-title="{{ 'Modify album'|trans }}">{{ ux_icon('mdi:edit') }}</button>
+                            {% endif %}
                         </div>
                         <div class="layout-switcher">
                             <button class="layout-grid{% if settings.layout == 'grid' %} active{% endif %}">{{ ux_icon('mdi:view-grid') }}</button>
@@ -103,8 +105,8 @@
                             </div>
                             <div class="edit-photo-button" data-id="{{ photo.id }}">{{ ux_icon('mdi:image-edit') }}</div>
                         </div>
-                    {#{% else %}
-                        <div id="add-photos">{{ ux_icon('mdi:plus') }}</div>#}
+                        {# {% else %}
+                        <div id="add-photos">{{ ux_icon('mdi:plus') }}</div> #}
                     {% endfor %}
                 </div>
                 {{ include('_blocks/map/_map-container.html.twig', {type: 'album', styleSettings: mapSettings.data.styles}) }}

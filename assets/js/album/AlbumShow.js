@@ -175,84 +175,90 @@ export class AlbumShow {
         const addPhotos = document.querySelector('#add-photos');
         const addPhotosButton = document.querySelector('.add-photos-button');
         const modifyAlbumDialog = document.querySelector('.side-panel.modify-album-dialog');
-        const modifyAlbumForm = modifyAlbumDialog.querySelector('form');
+        const modifyAlbumForm = modifyAlbumDialog?.querySelector('form');
         const nameInput = document.querySelector('input[name="name"]');
-        const modifyAlbumCancel = modifyAlbumDialog.querySelector('button[type="button"]');
-        const modifyAlbumSubmit = modifyAlbumDialog.querySelector('button[type="submit"]');
-        const submitRow = modifyAlbumForm.querySelector('.form-row.submit-row');
-        const scrollDownToSubmitDiv = modifyAlbumDialog.querySelector('.scroll-down-to-submit');
-        const scrollDownToSubmitButton = scrollDownToSubmitDiv.querySelector('button');
+        const modifyAlbumCancel = modifyAlbumDialog?.querySelector('button[type="button"]');
+        const modifyAlbumSubmit = modifyAlbumDialog?.querySelector('button[type="submit"]');
+        const submitRow = modifyAlbumForm?.querySelector('.form-row.submit-row');
+        const scrollDownToSubmitDiv = modifyAlbumDialog?.querySelector('.scroll-down-to-submit');
+        const scrollDownToSubmitButton = scrollDownToSubmitDiv?.querySelector('button');
 
-        const observer = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) {
-                /*console.log(entry)*/
-                if (entry.isIntersecting) {
-                    scrollDownToSubmitDiv.style.display = 'none';
-                } else {
-                    scrollDownToSubmitDiv.style.display = 'flex';
-                }
+        if (modifyAlbumForm) {
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    /*console.log(entry)*/
+                    if (entry.isIntersecting) {
+                        scrollDownToSubmitDiv.style.display = 'none';
+                    } else {
+                        scrollDownToSubmitDiv.style.display = 'flex';
+                    }
+                });
             });
-        });
-        observer.observe(submitRow);
-        scrollDownToSubmitButton.addEventListener('click', function () {
-            modifyAlbumDialog.querySelector('.frame').scrollTo(0, submitRow.offsetTop);
-        });
-
-        addPhotos.addEventListener('click', function () {
-            gThis.openAlbumPanel(modifyAlbumDialog);
-        });
-        addPhotosButton.addEventListener('click', function () {
-            gThis.openAlbumPanel(modifyAlbumDialog);
-        });
-
-        // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file
-        const imageFiles = modifyAlbumForm.querySelector('input[name="image-files"]');
-        imageFiles.addEventListener("change", gThis.updateImageDisplay);
-
-        modifyAlbumCancel.addEventListener('click', function () {
-            gThis.closeAlbumPanel();
-        });
-        modifyAlbumSubmit.addEventListener('click', function (event) {
-            event.preventDefault();
-
-            const errorSpan = nameInput.parentElement.querySelector('span');
-            if (nameInput.value === '') {
-                errorSpan.innerText = 'This field is required';
-                return;
-            } else {
-                errorSpan.innerText = '';
-            }
-
-            modifyAlbumCancel.setAttribute('disabled', '');
-            modifyAlbumSubmit.setAttribute('disabled', '');
-
-            const summaryDiv = document.createElement('div');
-            summaryDiv.classList.add('album-summary');
-            modifyAlbumForm.appendChild(summaryDiv);
-
-            const formData = gThis.getAlbumFormData(modifyAlbumForm);
-            const formFiles = gThis.getAlbumFormFiles(modifyAlbumForm);
-            gThis.fileCount = formFiles.length;
-
-            summaryDiv.innerText = 'Saving album infos…'
-            fetch('/' + gThis.lang + '/album/modify/' + gThis.album.id,
-                {
-                    method: 'POST',
-                    body: formData
-                }
-            ).then(async function (response) {
-                const data = await response.json();
-                /*console.log({data});*/
-                if (response.ok) {
-                    data['messages'].forEach(msg => {
-                        gThis.flashMessage.add('success', msg);
-                        gThis.fetchFile(formFiles, summaryDiv);
-                    })
-                } else {
-                    gThis.flashMessage.add('error', data.message);
-                }
+            observer.observe(submitRow);
+            scrollDownToSubmitButton.addEventListener('click', function () {
+                modifyAlbumDialog.querySelector('.frame').scrollTo(0, submitRow.offsetTop);
             });
-        });
+        }
+
+        if (addPhotos) {
+            addPhotos.addEventListener('click', function () {
+                gThis.openAlbumPanel(modifyAlbumDialog);
+            });
+            addPhotosButton.addEventListener('click', function () {
+                gThis.openAlbumPanel(modifyAlbumDialog);
+            });
+        }
+
+        if (modifyAlbumForm) {
+            // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file
+            const imageFiles = modifyAlbumForm.querySelector('input[name="image-files"]');
+            imageFiles.addEventListener("change", gThis.updateImageDisplay);
+
+            modifyAlbumCancel.addEventListener('click', function () {
+                gThis.closeAlbumPanel();
+            });
+            modifyAlbumSubmit.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const errorSpan = nameInput.parentElement.querySelector('span');
+                if (nameInput.value === '') {
+                    errorSpan.innerText = 'This field is required';
+                    return;
+                } else {
+                    errorSpan.innerText = '';
+                }
+
+                modifyAlbumCancel.setAttribute('disabled', '');
+                modifyAlbumSubmit.setAttribute('disabled', '');
+
+                const summaryDiv = document.createElement('div');
+                summaryDiv.classList.add('album-summary');
+                modifyAlbumForm.appendChild(summaryDiv);
+
+                const formData = gThis.getAlbumFormData(modifyAlbumForm);
+                const formFiles = gThis.getAlbumFormFiles(modifyAlbumForm);
+                gThis.fileCount = formFiles.length;
+
+                summaryDiv.innerText = 'Saving album infos…'
+                fetch('/' + gThis.lang + '/album/modify/' + gThis.album.id,
+                    {
+                        method: 'POST',
+                        body: formData
+                    }
+                ).then(async function (response) {
+                    const data = await response.json();
+                    /*console.log({data});*/
+                    if (response.ok) {
+                        data['messages'].forEach(msg => {
+                            gThis.flashMessage.add('success', msg);
+                            gThis.fetchFile(formFiles, summaryDiv);
+                        })
+                    } else {
+                        gThis.flashMessage.add('error', data.message);
+                    }
+                });
+            });
+        }
     }
 
     initPhotoForm() {
@@ -580,14 +586,14 @@ export class AlbumShow {
     }
 
     initAnimation() {
-        gThis.pathArr = gThis.imagePaths.slice();
-        if (albumPhotosDiv.classList.contains('list')) {
-            return;
-        }
         if (!gThis.imagePaths.length) {
             return;
         }
         const albumPhotosDiv = document.querySelector('.album-photos');
+        gThis.pathArr = gThis.imagePaths.slice();
+        if (albumPhotosDiv.classList.contains('list')) {
+            return;
+        }
         const imgElement1 = document.querySelector(".background-1").querySelector('img');
         const imgElement2 = document.querySelector(".background-2").querySelector('img');
         gThis.effect({img1: imgElement1, img2: imgElement2, path: gThis.srcsetPaths.original});
