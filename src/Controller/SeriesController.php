@@ -242,12 +242,13 @@ class SeriesController extends AbstractController
             }
         }
 
-        $order = 'firstAirDate'; // TODO: ajouter un menu pour choisir l'ordre (firstAirDate, lastWatched, addedAt, ...)
+        $sort = 'firstAirDate'; // TODO: ajouter un menu pour choisir l'ordre (firstAirDate, lastWatched, addedAt, ...)
+        $order = 'DESC';
         $seriesToStart = array_map(function ($s) use ($posterUrl, $logoUrl) {
             $this->imageService->saveImage("posters", $s['poster_path'], $posterUrl);
             $s['provider_logo_path'] = $this->getProviderLogoFullPath($s['provider_logo_path'], $logoUrl);
             return $s;
-        }, $this->userSeriesRepository->seriesToStart($user, $locale, $order, 1, 20));
+        }, $this->userSeriesRepository->seriesToStart($user, $locale, $sort, $order, 1, 20));
         $seriesToStartCount = $this->userSeriesRepository->seriesToStartCount($user, $locale);
         $series = [];
         // Plusieurs résultats pour une même série, à cause de différents liens de streaming (link_name, provider_logo_path, "provider_name)
