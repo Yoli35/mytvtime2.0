@@ -406,14 +406,21 @@ final class AlbumController extends AbstractController
     private function albumsByDays(): array
     {
         $user = $this->getUser();
+        $now = $this->dateService->getNowImmutable('UTC');
         $photos = $this->photoRepository->findBy(['user' => $this->getUser()], ['date' => 'DESC']);
         if ($photos) {
             $albums = [];
             /** @var Photo $photo */
             foreach ($photos as $photo) {
-                $day = $photo->getDate()->format('Y-m-d');
+                $date = $photo->getDate();
+                $day = $date->format('Y-m-d');
                 if (!array_key_exists($day, $albums)) {
-                    $name = ucfirst($this->dateService->formatDateRelativeMedium($day, 'UTC', $this->getUser()->getPreferredLanguage() ?? 'en'));
+                    $diff = $now->diff($date);
+                    if ($diff->days > 1 && $diff->days < 7) {
+                        $name = $this->translator->trans($date->format('l'));
+                    } else {
+                        $name = ucfirst($this->dateService->formatDateRelativeMedium($day, 'UTC', $this->getUser()->getPreferredLanguage() ?? 'en'));
+                    }
                     /*dump(['day' => $day, 'name' => $name]);*/
                     $albums[$day] = new Album($user, $name, null);
                     $albums[$day]->setDate($day);
