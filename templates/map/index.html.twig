@@ -17,10 +17,10 @@
 {% endblock %}
 
 {% block shift %}{{ ux_icon('mdi:apple-keyboard-shift') }}{% endblock %}
-{% block arrowUp %}{{ ux_icon('gg:arrow-up-r') }}{% endblock %}
-{% block arrowDown %}{{ ux_icon('gg:arrow-down-r') }}{% endblock %}
-{% block arrowRight %}{{ ux_icon('gg:arrow-right-r') }}{% endblock %}
-{% block arrowLeft %}{{ ux_icon('gg:arrow-left-r') }}{% endblock %}
+{% block arrowUp %}{{ ux_icon('mdi:arrow-up') }}{% endblock %}
+{% block arrowDown %}{{ ux_icon('mdi:arrow-down') }}{% endblock %}
+{% block arrowRight %}{{ ux_icon('mdi:arrow-right') }}{% endblock %}
+{% block arrowLeft %}{{ ux_icon('mdi:arrow-left') }}{% endblock %}
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
@@ -29,8 +29,8 @@
             <div class="series-map-header">
                 <h1>{{ 'Shooting locations for %d series'|trans|format(seriesCount) }}</h1>
                 <div class="numbers">
-                    <div data-title="{{ filmingLocationCount }} {{ 'locations'|trans }}">{{ filmingLocationCount }} {{ ux_icon('fa6-solid:map-location-dot', {height: '24px', width: '24px'}) }}</div>
-                    <div data-title="{{ filmingLocationImageCount }} {{ 'images'|trans }}">{{ filmingLocationImageCount }} {{ ux_icon('fa:picture-o', {height: '24px', width: '24px'}) }}</div>
+                    <div data-title="{{ filmingLocationCount }} {{ 'locations'|trans }}">{{ filmingLocationCount }} {{ ux_icon('mdi:map-marker', {height: '24px', width: '24px'}) }}</div>
+                    <div data-title="{{ filmingLocationImageCount }} {{ 'images'|trans }}">{{ filmingLocationImageCount }} {{ ux_icon('mdi:image-multiple', {height: '24px', width: '24px'}) }}</div>
                 </div>
             </div>
 {#            <div id="map" class="map-controller all"></div>#}

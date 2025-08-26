@@ -41,7 +41,7 @@
                         </h1>
                         <div class="movie-tools">
                             <div class="movie-tools-click">
-                                {{ ux_icon('fa6-solid:ellipsis-vertical') }}
+                                {{ ux_icon('mdi:ellipsis-vertical') }}
                             </div>
                             <div class="movie-tools-menu">
                                 <div id="localized-name">{{ 'Suggest a localized name'|trans }}</div>
@@ -67,10 +67,10 @@
                                     <div class="tools">
                                         <div class="locale">{{ overview.locale|upper }}</div>
                                         <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
-                                            {{ ux_icon('fa6-solid:pen') }}
+                                            {{ ux_icon('mdi:pencil') }}
                                         </div>
                                         <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
-                                            {{ ux_icon('fa6-solid:trash') }}
+                                            {{ ux_icon('mdi:trash') }}
                                         </div>
                                     </div>
                                 </div>
@@ -103,10 +103,10 @@
                                             <div class="locale">{{ overview.locale|upper }}</div>
                                         {% endif %}
                                         <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
-                                            {{ ux_icon('fa6-solid:pen') }}
+                                            {{ ux_icon('mdi:pencil') }}
                                         </div>
                                         <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
-                                            {{ ux_icon('fa6-solid:trash') }}
+                                            {{ ux_icon('mdi:trash') }}
                                         </div>
                                     </div>
                                 </div>
@@ -201,7 +201,7 @@
                                         {% endfor %}
                                     </div>
                                     <div class="add">
-                                        {{ ux_icon('fa6-solid:plus') }}
+                                        {{ ux_icon('mdi:plus') }}
                                     </div>
                                 </div>
                                 {#                                    {% endif %} #}
@@ -263,7 +263,7 @@
                                             </a>
                                         {% endfor %}
                                         <div class="add-watch-link" data-title="{{ 'Add a watch link'|trans }}">
-                                            {{ ux_icon('fa6-solid:plus') }}
+                                            {{ ux_icon('mdi:plus') }}
                                         </div>
                                     </div>
                                     <div class="watch-link-form">
@@ -305,7 +305,7 @@
                                         </form>
                                     </div>
                                     <div class="viewed-at" data-viewed="{{ userMovie.viewed }}">
-                                        <div class="mark-as-viewed{% if userMovie.lastViewedAt %} viewed{% endif %}">{{ ux_icon('fa6-solid:eye') }}</div>
+                                        <div class="mark-as-viewed{% if userMovie.lastViewedAt %} viewed{% endif %}">{{ ux_icon('mdi:eye') }}</div>
                                         {% if userMovie.lastViewedAt %}
                                             <div class="view-date"> {{ userMovie.lastViewedAt|format_datetime('relative_full', 'short')|capitalize }}</div>
                                         {% endif %}
@@ -317,19 +317,19 @@
                                         <div class="rating-stars">
                                             <div class="stars" data-trans-rating="Cancel rating|{{ 'Cancel rating'|trans }}" data-trans-star="star|{{ 'star'|trans }}" data-trans-stars="stars|{{ 'stars'|trans }}">
                                                 <div class="star {{ userMovie.rating >= 1 ? "active" }}" data-value="1" data-title="{{ (userMovie.rating >= 1 ? "Cancel rating":"x star")|trans({'x': 1}) }}">
-                                                    {{ ux_icon('fa6-solid:star') }}
+                                                    {{ ux_icon('mdi:star') }}
                                                 </div>
                                                 <div class="star {{ userMovie.rating >= 2 ? "active" }}" data-value="2" data-title="{{ (userMovie.rating >= 2 ? "Cancel rating":"x stars")|trans({'x': 2}) }}">
-                                                    {{ ux_icon('fa6-solid:star') }}
+                                                    {{ ux_icon('mdi:star') }}
                                                 </div>
                                                 <div class="star {{ userMovie.rating >= 3 ? "active" }}" data-value="3" data-title="{{ (userMovie.rating >= 3 ? "Cancel rating":"x stars")|trans({'x': 3}) }}">
-                                                    {{ ux_icon('fa6-solid:star') }}
+                                                    {{ ux_icon('mdi:star') }}
                                                 </div>
                                                 <div class="star {{ userMovie.rating >= 4 ? "active" }}" data-value="4" data-title="{{ (userMovie.rating >= 4 ? "Cancel rating":"x stars")|trans({'x': 4}) }}">
-                                                    {{ ux_icon('fa6-solid:star') }}
+                                                    {{ ux_icon('mdi:star') }}
                                                 </div>
                                                 <div class="star {{ userMovie.rating >= 5 ? "active" }}" data-value="5" data-title="{{ (userMovie.rating >= 5 ? "Cancel rating":"x stars")|trans({'x': 5}) }}">
-                                                    {{ ux_icon('fa6-solid:star') }}
+                                                    {{ ux_icon('mdi:star') }}
                                                 </div>
                                             </div>
                                         </div>
@@ -339,10 +339,10 @@
                                         {#                                    {{ ux_icon('fa6-solid:paperclip') }} #}
                                         {#                                </div> #}
                                         <div class="action toggle-favorite-movie{% if userMovie.favorite %} favorite{% endif %}" data-title="{{ (userMovie.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
-                                            {{ ux_icon('fa6-solid:heart') }}
+                                            {{ ux_icon('mdi:heart') }}
                                         </div>
                                         <div class="action remove-this-movie" data-title="{{ 'Remove this series from your watchlist'|trans }}">
-                                            {{ ux_icon('fa6-solid:trash') }}
+                                            {{ ux_icon('mdi:trash') }}
                                         </div>
                                     </div>
                                 </div>

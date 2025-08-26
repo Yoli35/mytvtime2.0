@@ -122,11 +122,11 @@ export class Menu {
         this.posterUrl = null;
         this.profileUrl = null;
         this.svgs = {
-            "fa6-solid:tv": "<svg viewBox=\"0 0 640 512\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M64 64v288h512V64zM0 64C0 28.7 28.7 0 64 0h512c35.3 0 64 28.7 64 64v288c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64zm128 384h384c17.7 0 32 14.3 32 32s-14.3 32-32 32H128c-17.7 0-32-14.3-32-32s14.3-32 32-32\"></path></svg>",
-            "fa6-solid:mobile-screen-button": "<svg viewBox=\"0 0 384 512\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M16 64C16 28.7 44.7 0 80 0h224c35.3 0 64 28.7 64 64v384c0 35.3-28.7 64-64 64H80c-35.3 0-64-28.7-64-64zm208 384a32 32 0 1 0-64 0a32 32 0 1 0 64 0m80-384H80v320h224z\"></path></svg>",
-            "fa6-solid:tablet-screen-button": "<svg viewBox=\"0 0 448 512\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M0 64C0 28.7 28.7 0 64 0h320c35.3 0 64 28.7 64 64v384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64zm256 384a32 32 0 1 0-64 0a32 32 0 1 0 64 0M384 64H64v320h320z\"></path></svg>",
-            "fa6-solid:laptop": "<svg viewBox=\"0 0 640 512\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M128 32c-35.3 0-64 28.7-64 64v256h64V96h384v256h64V96c0-35.3-28.7-64-64-64zM19.2 384C8.6 384 0 392.6 0 403.2C0 445.6 34.4 480 76.8 480h486.4c42.4 0 76.8-34.4 76.8-76.8c0-10.6-8.6-19.2-19.2-19.2z\"></path></svg>",
-            "fa6-solid:desktop": "<svg viewBox=\"0 0 576 512\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M64 0C28.7 0 0 28.7 0 64v288c0 35.3 28.7 64 64 64h176l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32h256c17.7 0 32-14.3 32-32s-14.3-32-32-32h-69.3L336 416h176c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64zm448 64v224H64V64z\"></path></svg>"
+            "mdi:tv": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M21 17H3V5h18m0-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5v2h8v-2h5a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2\"/></svg>",
+            "mdi:mobile-phone": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M17 19H7V5h10m0-4H7c-1.11 0-2 .89-2 2v18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2\"/></svg>",
+            "mdi:tablet": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M19 18H5V6h14m2-2H3c-1.11 0-2 .89-2 2v12a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2\"/></svg>",
+            "mdi:laptop": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z\"/></svg>",
+            "mdi:desktop": "<svg viewBox=\"0 0 576 512\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M64 0C28.7 0 0 28.7 0 64v288c0 35.3 28.7 64 64 64h176l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32h256c17.7 0 32-14.3 32-32s-14.3-32-32-32h-69.3L336 416h176c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64zm448 64v224H64V64z\"></path></svg>"
         }
     }
 

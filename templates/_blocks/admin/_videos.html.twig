@@ -14,12 +14,12 @@
                 {% if order == 'desc' %}
                     <a class="videos__id" href="{{ path('admin_videos', {s: 'id', o: 'asc', l: limit}) }}">
                         {{ 'Id'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                        {{ ux_icon('mdi:arrow-down') }}
                     </a>
                 {% else %}
                     <a class="videos__id" href="{{ path('admin_videos', {s: 'id', o: 'desc', l: limit}) }}">
                         {{ 'Id'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                        {{ ux_icon('mdi:arrow-up') }}
                     </a>
                 {% endif %}
             {% else %}
@@ -31,12 +31,12 @@
                 {% if order == 'desc' %}
                     <a class="videos__link" href="{{ path('admin_videos', {s: 'link', o: 'asc', l: limit}) }}">
                         {{ 'Video Id'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                        {{ ux_icon('mdi:arrow-down') }}
                     </a>
                 {% else %}
                     <a class="videos__link" href="{{ path('admin_videos', {s: 'link', o: 'desc', l: limit}) }}">
                         {{ 'Video Id'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                        {{ ux_icon('mdi:arrow-up') }}
                     </a>
                 {% endif %}
             {% else %}
@@ -48,12 +48,12 @@
                 {% if order == 'desc' %}
                     <a class="videos__title" href="{{ path('admin_videos', {s: 'title', o: 'asc', l: limit}) }}">
                         {{ 'Title'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                        {{ ux_icon('mdi:arrow-down') }}
                     </a>
                 {% else %}
                     <a class="videos__title" href="{{ path('admin_videos', {s: 'title', o: 'desc', l: limit}) }}">
                         {{ 'Title'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                        {{ ux_icon('mdi:arrow-up') }}
                     </a>
                 {% endif %}
             {% else %}
@@ -65,12 +65,12 @@
                 {% if order == 'desc' %}
                     <a class="videos__duration" href="{{ path('admin_videos', {s: 'duration', o: 'asc', l: limit}) }}">
                         {{ 'Duration'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                        {{ ux_icon('mdi:arrow-down') }}
                     </a>
                 {% else %}
                     <a class="videos__duration" href="{{ path('admin_videos', {s: 'duration', o: 'desc', l: limit}) }}">
                         {{ 'Duration'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                        {{ ux_icon('mdi:arrow-up') }}
                     </a>
                 {% endif %}
             {% else %}
@@ -82,12 +82,12 @@
                 {% if order == 'desc' %}
                     <a class="videos__dates" href="{{ path('admin_videos', {s: 'published_at', o: 'asc', l: limit}) }}">
                         {{ 'Published at'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                        {{ ux_icon('mdi:arrow-down') }}
                     </a>
                 {% else %}
                     <a class="videos__dates" href="{{ path('admin_videos', {s: 'published_at', o: 'desc', l: limit}) }}">
                         {{ 'Published at'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                        {{ ux_icon('mdi:arrow-up') }}
                     </a>
                 {% endif %}
             {% else %}
@@ -99,12 +99,12 @@
                 {% if order == 'desc' %}
                     <a class="videos__dates" href="{{ path('admin_videos', {s: 'updated_at', o: 'asc', l: limit}) }}">
                         {{ 'Update_'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                        {{ ux_icon('mdi:arrow-down') }}
                     </a>
                 {% else %}
                     <a class="videos__dates" href="{{ path('admin_videos', {s: 'updated_at', o: 'desc', l: limit}) }}">
                         {{ 'Update_'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                        {{ ux_icon('mdi:arrow-up') }}
                     </a>
                 {% endif %}
             {% else %}
@@ -116,12 +116,12 @@
                 {% if order == 'desc' %}
                     <a class="videos__title" href="{{ path('admin_videos', {s: 'channel_title', o: 'asc', l: limit}) }}">
                         {{ 'Channel'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                        {{ ux_icon('mdi:arrow-down') }}
                     </a>
                 {% else %}
                     <a class="videos__title" href="{{ path('admin_videos', {s: 'channel_title', o: 'desc', l: limit}) }}">
                         {{ 'Channel'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                        {{ ux_icon('mdi:arrow-up') }}
                     </a>
                 {% endif %}
             {% else %}
@@ -140,7 +140,7 @@
                         {% if v.thumbnail %}
                             <img src="/videos/thumbnails{{ v.thumbnail }}" alt="{{ v.title }}">
                         {% else %}
-                            {{ ux_icon('fa6-solid:photo-film') }}
+                            {{ ux_icon('mdi:image-off') }}
                         {% endif %}
                     </div>
                 </a>

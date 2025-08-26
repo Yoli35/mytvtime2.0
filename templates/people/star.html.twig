@@ -40,11 +40,11 @@
                                                 {% for i in 1..10 %}
                                                     {% if i <= p.rating %}
                                                         <div class="rating-star">
-                                                            {{ ux_icon('fa6-solid:star', {height: '24px', width: '24px'}) }}
+                                                            {{ ux_icon('mdi:star', {height: '24px', width: '24px'}) }}
                                                         </div>
                                                     {% else %}
                                                         <div class="rating-star">
-                                                            {{ ux_icon('fa6-regular:star', {height: '24px', width: '24px'}) }}
+                                                            {{ ux_icon('mdi:star-outline', {height: '24px', width: '24px'}) }}
                                                         </div>
                                                     {% endif %}
                                                 {% endfor %}
@@ -56,18 +56,18 @@
                                     {% if p.homepage %}
                                         <div class="info">
                                             <a href="{{ p.homepage }}" target="_blank">
-                                                {{ ux_icon('fa6-solid:link', {height: '24px', width: '24px'}) }}
+                                                {{ ux_icon('mdi:link-variant', {height: '24px', width: '24px'}) }}
                                                 {{ 'Homepage'|trans }}
                                             </a>
                                         </div>
                                     {% endif %}
                                     <div class="info">
-                                        {{ ux_icon('icon-park-solid:birthday-cake') }}
+                                        {{ ux_icon('mdi:birthday-cake-outline') }}
                                         {{ p.birthday|format_date('medium') }} ({{ p.age }} {{ 'old'|trans }})
                                     </div>
                                     {% if p.place_of_birth %}
                                         <div class="info">
-                                            {{ ux_icon('fa6-solid:earth-africa') }}
+                                            {{ ux_icon('mdi:earth') }}
                                             {{ p.place_of_birth }}
                                         </div>
                                     {% endif %}

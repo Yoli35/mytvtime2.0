@@ -122,7 +122,7 @@
                             </div>
                         {% endif %}
                         <div class="series-back-link">
-                            {{ ux_icon('fa6-solid:arrow-left') }}
+                            {{ ux_icon('mdi:arrow-left') }}
                             <span>{{ 'Back to series'|trans }}</span>
                         </div>
                     </a>
@@ -138,30 +138,30 @@
 
                 <div class="sizes" data-user-series-id="{{ userSeries.id }}">
                     <div class="size-item{% if episodeDiv.height == '15rem' %} active{% endif %}" data-size="15rem" data-type="size">
-                        {{ ux_icon('fa:list-ul') }}
+                        {{ ux_icon('mdi:size-s') }}
                     </div>
                     <div class="size-item{% if episodeDiv.height == '20rem' %} active{% endif %}" data-size="20rem" data-type="size">
-                        {{ ux_icon('fa:th-list') }}
+                        {{ ux_icon('mdi:size-m') }}
                     </div>
                     <div class="size-item{% if episodeDiv.height == '25rem' %} active{% endif %}" data-size="25rem" data-type="size">
-                        {{ ux_icon('el:th-list') }}
+                        {{ ux_icon('mdi:size-l') }}
                     </div>
                 </div>
 
                 <div class="aspect-ratios" data-user-series-id="{{ userSeries.id }}">
                     <div class="ar-item{% if episodeDiv.aspectRatio == '16 / 9' %} active{% endif %}" data-ar="16 / 9" data-type="aspect-ratio">
-                        {{ ux_icon('ion:tablet-landscape-outline') }}
+                        {{ ux_icon('mdi:crop-landscape') }}
                     </div>
                     <div class="ar-item{% if episodeDiv.aspectRatio == '1 / 1' %} active{% endif %}" data-ar="1 / 1" data-type="aspect-ratio">
-                        {{ ux_icon('ion:square-outline') }}
+                        {{ ux_icon('mdi:crop-square') }}
                     </div>
                     <div class="ar-item{% if episodeDiv.aspectRatio == '9 / 16' %} active{% endif %}" data-ar="9 / 16" data-type="aspect-ratio">
-                        {{ ux_icon('ion:tablet-portrait-outline') }}
+                        {{ ux_icon('mdi:crop-portrait') }}
                     </div>
                 </div>
 
                 <div class="edit-episode-infos" data-title="{{ 'Edit all episodes name and overview'|trans }}">
-                    {{ ux_icon('basil:edit-alt-outline', {height: '24px', width: '24px'}) }}
+                    {{ ux_icon('mdi:edit-box-outline', {height: '24px', width: '24px'}) }}
                 </div>
 
                 {% set episodeCount = season.episodes|length %}
@@ -265,7 +265,7 @@
                                                  data-id="{{ episode.id }}"
                                                  data-type="name"
                                             >
-                                                {{ ux_icon('fa6-solid:pen') }}
+                                                {{ ux_icon('mdi:pencil') }}
                                             </div>
                                         </div>
                                         {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (ue.watch_at != null)}) }}
@@ -299,7 +299,7 @@
                                                  data-id="{{ episode.id }}"
                                                  data-type="overview"
                                             >
-                                                {{ ux_icon("fa6-solid:pen") }}
+                                                {{ ux_icon("mdi:pencil") }}
                                             </div>
                                         </div>
                                         {% if episode.guest_stars %}
@@ -342,20 +342,20 @@
                                                  data-e-number="{{ episode.episode_number }}"
                                                  data-views="{{ episode.user_episodes|length }}"
                                                  data-title="{{ ue.watch_at|format_datetime('relative_short', 'short')|capitalize }}">
-                                                {{ ux_icon('fa6-solid:eye') }}
+                                                {{ ux_icon('mdi:eye') }}
                                             </div>
                                             <div class="select-provider" data-ue-id="{{ ue.id }}" data-title="{{ ue.provider_id ? ue.provider_name : 'Choose a provider'|trans }}">
                                                 {% if ue.provider_id %}
                                                     <img src="{{ ue.provider_logo_path }}" alt="{{ ue.provider_name }}">
                                                 {% else %}
-                                                    {{ ux_icon('fa6-solid:plus') }}
+                                                    {{ ux_icon('mdi:plus') }}
                                                 {% endif %}
                                             </div>
                                             <div class="select-device" data-ue-id="{{ ue.id }}" data-title="{{ 'Choose a device'|trans }}">
                                                 {% if ue.device_id %}
                                                     {{ ux_icon(ue.device_svg) }}
                                                 {% else %}
-                                                    {{ ux_icon('fa6-solid:plus') }}
+                                                    {{ ux_icon('mdi:plus') }}
                                                 {% endif %}
                                             </div>
                                             <div class="select-vote" data-ue-id="{{ ue.id }}" data-title="{{ 'Give a rating'|trans }}">
@@ -364,7 +364,7 @@
                                                 {#                                        {% else %} #}
                                                 {#                                            {{ ux_icon('fa6-solid:plus') }} #}
                                                 {#                                        {% endif %} #}
-                                                {{ ue.vote ?? ux_icon('fa6-solid:plus') }}
+                                                {{ ue.vote ?? ux_icon('mdi:plus') }}
                                             </div>
                                         {% else %}
                                             <div class="add-this-episode" data-id="{{ episode.id }}"
@@ -375,15 +375,15 @@
                                                  data-s-number="{{ episode.season_number }}"
                                                  data-e-number="{{ episode.episode_number }}"
                                                  data-title="{{ 'Mark this episode as seen'|trans }}">
-                                                {{ ux_icon('fa6-solid:plus') }}
+                                                {{ ux_icon('mdi:plus') }}
                                             </div>
                                         {% endif %}
                                         <div class="back-to-top" data-title="{{ 'Back to top'|trans }}">
-                                            {{ ux_icon('fa6-solid:arrow-up-long') }}
+                                            {{ ux_icon('mdi:arrow-up') }}
                                         </div>
                                         <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
                                             <div class="back-to-series" data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.series_localized_name %}{{ season.series_localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»">
-                                                {{ ux_icon('fa6-solid:arrow-left-long') }}
+                                                {{ ux_icon('mdi:arrow-left') }}
                                             </div>
                                         </a>
                                     </div>
@@ -510,14 +510,14 @@
         {% for d in devices %}
             {{ ux_icon(d.svg, {id: 'device-'~d.id, height: '18px', width: '18px'}) }}
         {% endfor %}
-        {{ ux_icon('fa6-solid:plus', {id: 'plus', height: '18px', width: '18px'}) }}
-        {{ ux_icon('fa6-solid:eye', {id: 'eye', height: '18px', width: '18px'}) }}
-        {{ ux_icon('fa6-solid:arrow-up-long', {id: 'up', height: '18px', width: '18px'}) }}
-        {{ ux_icon('fa6-solid:arrow-left-long', {id: 'left', height: '18px', width: '18px'}) }}
-        {{ ux_icon('mingcute:save-line', {id: 'save', height: '18px', width: '18px'}) }}
-        {{ ux_icon('mingcute:delete-2-line', {id: 'delete', height: '18px', width: '18px'}) }}
-        {{ ux_icon('fa6-solid:xmark', {id: 'cancel', height: '18px', width: '18px'}) }}
-        <div class="svg" id="svg-xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
+        {{ ux_icon('mdi:plus', {id: 'plus', height: '18px', width: '18px'}) }}
+        {{ ux_icon('mdi:eye', {id: 'eye', height: '18px', width: '18px'}) }}
+        {{ ux_icon('mdi:arrow-up', {id: 'up', height: '18px', width: '18px'}) }}
+        {{ ux_icon('mdi:arrow-left', {id: 'left', height: '18px', width: '18px'}) }}
+        {{ ux_icon('mdi:checkbox-outline', {id: 'save', height: '18px', width: '18px'}) }}
+        {{ ux_icon('mdi:trash', {id: 'delete', height: '18px', width: '18px'}) }}
+        {{ ux_icon('mdi:close', {id: 'cancel', height: '18px', width: '18px'}) }}
+        <div class="svg" id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
     </div>
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}

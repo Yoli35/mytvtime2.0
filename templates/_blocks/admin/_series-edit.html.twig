@@ -2,7 +2,7 @@
     <div class="admin__series__edit__title">
         {{ series.name }}{% if seriesLocalizedNames|length %} - <span>{{ seriesLocalizedNames.0.name }}</span>{% endif %}
         <div class="admin__series__edit__title__id">
-            {{ ux_icon('iconoir:db') }}
+            {{ ux_icon('mdi:database-outline') }}
             {{ series.id }}
             <div class="series__db">
                 {% for key, value in series %}

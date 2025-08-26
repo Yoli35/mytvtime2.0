@@ -2,7 +2,7 @@
     <div class="admin__movie__edit__title">
         {{ movie.title }}{% if movieLocalizedNames|length %} - <span>{{ movieLocalizedNames.0.name }}</span>{% endif %}
         <div class="admin__movie__edit__title__id">
-            {{ ux_icon('iconoir:db') }}
+            {{ ux_icon('mdi:database-outline') }}
             {{ movie.id }}
             <div class="movie__db">
                 {% for key, value in movie %}

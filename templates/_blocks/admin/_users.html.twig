@@ -23,7 +23,7 @@
                 <img src="/images/users/avatars/{{ u.avatar }}" class="user__avatar" alt="{{ u.username }}">
             {% else %}
                 <div class="user__avatar">
-                    {{ ux_icon('fa6-solid:user') }}
+                    {{ ux_icon('mdi:user-outline') }}
                 </div>
             {% endif %}
             <div class="user__id">{{ u.id }}</div>
@@ -34,9 +34,9 @@
             <div class="user__episodes">{{ u.watchedEpisodeCount }} / {{ u.episodeCount }}</div>
             <div class="user__providers">{{ u.providerCount }}</div>
             <div class="user__networks">{{ u.networkCount }}</div>
-            <div class="user__role">{% if 'USER' in u.roles %}{{ ux_icon('fa6-solid:check') }}{% endif %}</div>
-            <div class="user__role">{% if 'ADMIN' in u.roles %}{{ ux_icon('fa6-solid:check') }}{% endif %}</div>
-            <div class="user__role">{% if 'SWITCH' in u.roles %}{{ ux_icon('fa6-solid:check') }}{% endif %}</div>
+            <div class="user__role">{% if 'USER' in u.roles %}{{ ux_icon('mdi:check') }}{% endif %}</div>
+            <div class="user__role">{% if 'ADMIN' in u.roles %}{{ ux_icon('mdi:check') }}{% endif %}</div>
+            <div class="user__role">{% if 'SWITCH' in u.roles %}{{ ux_icon('mdi:check') }}{% endif %}</div>
         </div>
     {% endfor %}
 

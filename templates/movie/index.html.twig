@@ -18,14 +18,14 @@
                 <header>
                     <div class="title">{{ 'Filters'|trans }}</div>
                     <div class="filter-values">
-                        <div id="sort-value" class="filter-value" data-title="{{ 'Sort'|trans }} / {{ 'Order'|trans }}">{{ ux_icon('material-symbols:settings-outline') }}&nbsp;<span>{{ filterMeanings[filters.sort]|trans }} / {{ filterMeanings[filters.order]|trans }}</span></div>
-                        <div id="per-value" class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">{{ ux_icon('ion:apps-sharp') }}&nbsp;<span>{{ filters.perPage }}</span></div>
+                        <div id="sort-value" class="filter-value" data-title="{{ 'Sort'|trans }} / {{ 'Order'|trans }}">{{ ux_icon('mdi:settings-outline') }}&nbsp;<span>{{ filterMeanings[filters.sort]|trans }} / {{ filterMeanings[filters.order]|trans }}</span></div>
+                        <div id="per-value" class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">{{ ux_icon('mdi:dots-grid') }}&nbsp;<span>{{ filters.perPage }}</span></div>
                     </div>
                     <div class="collapse" data-for="filters" data-title="{{ 'Show / hide filter options'|trans }}">
                         {% if filterBoxOpen %}
-                            {{ ux_icon('ion:chevron-collapse') }}
+                            {{ ux_icon('mdi:chevron-down') }}
                         {% else %}
-                            {{ ux_icon('ion:chevron-expand') }}
+                            {{ ux_icon('mdi:chevron-up') }}
                         {% endif %}
                     </div>
                 </header>

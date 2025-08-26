@@ -9,7 +9,7 @@ Mandatory variables:
     <h2>
         {{ 'Schedules'|trans }}
         <div class="new-schedule" onclick="ToggleScheduleForm(0)">
-            {{ ux_icon('fa6-solid:plus', {height: "18px", width: "18px"}) }}
+            {{ ux_icon('mdi:plus', {height: "18px", width: "18px"}) }}
         </div>
     </h2>
     {{ include('_blocks/series/_schedules-form.html.twig', {schedule: series.emptySchedule, country: user.country ?? 'FR'}) }}
@@ -20,7 +20,7 @@ Mandatory variables:
                     <div class="schedule">
                         {% set country = user.country ?? 'FR' %}
                         <div class="next-episode" onclick="ToggleScheduleForm({{ schedule.id }})">
-                            <div class="type">{{ ux_icon('fa6-regular:clock', {height: "18px", width: "18px"}) }}</div>
+                            <div class="type">{{ ux_icon('mdi:clock-outline', {height: "18px", width: "18px"}) }}</div>
                             <div class="season">
                                 {{ 'Season'|trans }} {{ schedule.seasonNumber }}
                                 {% if schedule.multiPart %}
@@ -51,7 +51,7 @@ Mandatory variables:
                         {#                        {% set tvne = schedule.tvNextEpisode %} #}
                         {% if ule %}
                             <div class="episode user">
-                                <div class="type">{{ ux_icon('fa6-solid:user', {height: "18px", width: "18px"}) }}</div>
+                                <div class="type">{{ ux_icon('mdi:user-outline', {height: "18px", width: "18px"}) }}</div>
                                 <div class="episode-info">{{ 'Last episode watched'|trans }}</div>
                                 <div class="episode-number">{{ "S%02dE%02d"|format(ule.season_number, ule.episode_number) }}</div>
                                 <div class="episode-air-date" data-title="{{ 'Episode air date'|trans }}">{{ ule.air_date|format_date("relative_short")|capitalize }}</div>
@@ -60,7 +60,7 @@ Mandatory variables:
                         {% endif %}
                         {% if une %}
                             <div class="episode user">
-                                <div class="type">{{ ux_icon('fa6-solid:user', {height: "18px", width: "18px"}) }}</div>
+                                <div class="type">{{ ux_icon('mdi:user-outline', {height: "18px", width: "18px"}) }}</div>
                                 <div class="episode-info">{{ 'Next episode to watch'|trans }}</div>
                                 <div class="episode-number">{{ "S%02dE%02d"|format(une.season_number, une.episode_number) }}</div>
                                 <div class="episode-air-date" data-title="{{ 'Episode air date'|trans }}">{{ une.air_date|format_date("relative_short")|capitalize }}</div>
@@ -69,7 +69,7 @@ Mandatory variables:
                             {% if schedule.multiple %}
                                 {% set ulne = schedule.userLastNextEpisode %}
                                 <div class="episode user last-of-group">
-                                    <div class="type">{{ ux_icon('fa6-solid:user', {height: "18px", width: "18px"}) }}</div>
+                                    <div class="type">{{ ux_icon('mdi:user-outline', {height: "18px", width: "18px"}) }}</div>
                                     <div class="episode-info">{{ 'Last to watch'|trans }}</div>
                                     <div class="episode-number">{{ "S%02dE%02d"|format(ulne.season_number, ulne.episode_number) }}</div>
                                     <div class="episode-air-date" data-title="{{ 'Episode air date'|trans }}">{{ ulne.air_date|format_date("relative_short")|capitalize }}</div>
@@ -79,7 +79,7 @@ Mandatory variables:
                         {% endif %}
                         {#     {% if tvle %}
                             <div class="episode tv">
-                                <div class="type">{{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}</div>
+                                <div class="type">{{ ux_icon('mdi:tv', {height: "18px", width: "18px"}) }}</div>
                                 <div class="episode-info">{{ 'Last episode to air'|trans }}</div>
                                 <div class="episode-number">{{ "S%02dE%02d"|format(tvle.season_number, tvle.episode_number) }}</div>
                                 <div class="episode-name">{{ tvle.name }}</div>
@@ -88,7 +88,7 @@ Mandatory variables:
                         {% endif %}
                         {% if tvne %}
                             <div class="episode tv">
-                                <div class="type">{{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}</div>
+                                <div class="type">{{ ux_icon('mdi:tv', {height: "18px", width: "18px"}) }}</div>
                                 <div class="episode-info">{{ 'Next episode to air'|trans }}</div>
                                 <div class="episode-number">{{ "S%02dE%02d"|format(tvne.season_number, tvne.episode_number) }}</div>
                                 <div class="episode-name">{{ tvne.name }}</div>
@@ -97,7 +97,7 @@ Mandatory variables:
                             {% if schedule.multiple %}
                                 {% set ulne = schedule.userLastNextEpisode %}
                                 <div class="episode tv last-of-group">
-                                    <div class="type">{{ ux_icon('fa6-solid:tv', {height: "18px", width: "18px"}) }}</div>
+                                    <div class="type">{{ ux_icon('mdi:tv', {height: "18px", width: "18px"}) }}</div>
                                     <div class="episode-info">{{ 'Last to air'|trans }}</div>
                                     <div class="episode-number">{{ "S%02dE%02d"|format(ulne.season_number, ulne.episode_number) }}</div>
                                     <div class="episode-name">{{ 'Episode'|trans ~ ' ' ~ ulne.episode_number }}</div>

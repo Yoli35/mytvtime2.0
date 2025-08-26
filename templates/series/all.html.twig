@@ -18,23 +18,23 @@
                     <div class="title">{{ 'Filters'|trans }}</div>
                     <div class="filter-values">
                         <div class="filter-value" data-title="{{ 'Sort'|trans }} / {{ 'Order'|trans }}">
-                            {{ ux_icon('material-symbols:settings-outline') }}&nbsp;
+                            {{ ux_icon('mdi:settings') }}&nbsp;
                             {{ filterMeanings[filters.sort]|trans }}&nbsp;
                             {% if filters.order == 'DESC' %}
-                                {{ ux_icon('fa6-solid:arrow-down') }}
+                                {{ ux_icon('mdi:arrow-down') }}
                             {% else %}
-                                {{ ux_icon('fa6-solid:arrow-up') }}
+                                {{ ux_icon('mdi:arrow-up') }}
                             {% endif %}
                         </div>
                         <div class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">
-                            {{ ux_icon('ion:apps-sharp') }}&nbsp;{{ filters.perPage }}
+                            {{ ux_icon('mdi:dots-grid') }}&nbsp;{{ filters.perPage }}
                         </div>
                     </div>
                     <div class="collapse" data-title="{{ 'Show / hide filter options'|trans }}">
                         {% if filterBoxOpen %}
-                            {{ ux_icon('ion:chevron-collapse') }}
+                            {{ ux_icon('mdi:chevron-down') }}
                         {% else %}
-                            {{ ux_icon('ion:chevron-expand') }}
+                            {{ ux_icon('mdi:chevron-up') }}
                         {% endif %}
                     </div>
                 </header>
@@ -120,8 +120,8 @@
     <div id="svgs" style="display: none">
         <div id="arrow-down">{{ ux_icon('mdi:arrow-down') }}</div>
         <div id="arrow-up">{{ ux_icon('mdi:arrow-up') }}</div>
-        <div id="chevron-collapse">{{ ux_icon('ion:chevron-collapse') }}</div>
-        <div id="chevron-expand">{{ ux_icon('ion:chevron-expand') }}</div>
+        <div id="chevron-collapse">{{ ux_icon('mdi:chevron-down') }}</div>
+        <div id="chevron-expand">{{ ux_icon('mdi:chevron-up') }}</div>
     </div>
     {% include('_blocks/_footer.html.twig') %}
 {% endblock %}

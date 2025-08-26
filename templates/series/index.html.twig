@@ -50,7 +50,7 @@
                                             {% if series|length == 2 %}
                                                 <div class="episode-arrow">&</div>
                                             {% else %}
-                                                <div class="episode-arrow"> {{ ux_icon('fa6-solid:arrow-right', {height: '32px', width: '32px'}) }}</div>
+                                                <div class="episode-arrow"> {{ ux_icon('mdi:arrow-right', {height: '32px', width: '32px'}) }}</div>
                                             {% endif %}
                                         {% endif %}
                                     {% endfor %}
@@ -115,7 +115,7 @@
                                             {% if series|length == 2 %}
                                                 <div class="episode-arrow">&</div>
                                             {% else %}
-                                                <div class="episode-arrow"> {{ ux_icon('fa6-solid:arrow-right', {height: '32px', width: '32px'}) }}</div>
+                                                <div class="episode-arrow"> {{ ux_icon('mdi:arrow-right', {height: '32px', width: '32px'}) }}</div>
                                             {% endif %}
                                         {% endif %}
                                     {% endfor %}
@@ -168,7 +168,7 @@
             }
         </div>
         <div id="svgs" style="display: none">
-            <div id="svg-xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
+            <div id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
         </div>
     </div>
     {% include('_blocks/_footer.html.twig') %}

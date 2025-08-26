@@ -7,10 +7,10 @@
     <div id="series-map-title">
         <div class="title">{{ 'Points of interrest'|trans }}</div>
         <div class="add-location-button" data-title="{{ 'Add a new point of interest'|trans }}">
-            {{ ux_icon('fa6-solid:plus') }}
+            {{ ux_icon('mdi:plus') }}
         </div>
         <div class="toggle-cooperative-gestures">
-            {{ ux_icon('iconoir:key-command') }} / {{ ux_icon('iconoir:mac-control-key') }}
+            {{{ ux_icon('mdi:apple-keyboard-command') }} / {{ ux_icon('mdi:apple-keyboard-control') }}
         </div>
     </div>
     <div class="series-map">
@@ -28,8 +28,8 @@
                                         <div class="count">
                                             {{ location.images|length }}
                                         </div>
-                                        <div class="arrow left">{{ ux_icon('fa6-solid:arrow-left') }}</div>
-                                        <div class="arrow right">{{ ux_icon('fa6-solid:arrow-right') }}</div>
+                                        <div class="arrow left">{{ ux_icon('mdi:arrow-left') }}</div>
+                                        <div class="arrow right">{{ ux_icon('mdi:arrow-right') }}</div>
                                         <div class="list">
                                             {#                                                    <img src="{{ location.image }}" alt="{{ location.location ~ ' - ' ~ 'image'|trans ~ ' #1' }}"> #}
                                             {% for i in location.images %}
@@ -37,7 +37,7 @@
                                             {% endfor %}
                                         </div>
                                     {% endif %}
-                                    <div class="edit" data-loc-id="{{ location.id }}">{{ ux_icon('fa6-solid:pen') }}</div>
+                                    <div class="edit" data-loc-id="{{ location.id }}">{{ ux_icon('mdi:pencil') }}</div>
                                 </div>
                                 <div class="location poi" data-loc-id="{{ location.id }}">
                                     <div>{{ location.name }}</div>
@@ -68,12 +68,12 @@
                 {% if order == 'desc' %}
                     <a class="points_of_interest__id" href="{{ path('admin_points_of_interest', {s: 'id', o: 'asc', l: limit}) }}">
                         {{ 'Id'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                        {{ ux_icon('mdi:arrow-down') }}
                     </a>
                 {% else %}
                     <a class="points_of_interest__id" href="{{ path('admin_points_of_interest', {s: 'id', o: 'desc', l: limit}) }}">
                         {{ 'Id'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                        {{ ux_icon('mdi:arrow-up') }}
                     </a>
                 {% endif %}
             {% else %}
@@ -86,12 +86,12 @@
                 {% if order == 'desc' %}
                     <a class="points_of_interest__name" href="{{ path('admin_points_of_interest', {s: 'name', o: 'asc', l: limit}) }}">
                         {{ 'Name'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                        {{ ux_icon('mdi:arrow-down') }}
                     </a>
                 {% else %}
                     <a class="points_of_interest__name" href="{{ path('admin_points_of_interest', {s: 'name', o: 'desc', l: limit}) }}">
                         {{ 'Name'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                        {{ ux_icon('mdi:arrow-up') }}
                     </a>
                 {% endif %}
             {% else %}
@@ -104,12 +104,12 @@
                 {% if order == 'desc' %}
                     <a class="points_of_interest__city" href="{{ path('admin_points_of_interest', {s: 'city', o: 'asc', l: limit}) }}">
                         {{ 'City'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                        {{ ux_icon('mdi:arrow-down') }}
                     </a>
                 {% else %}
                     <a class="points_of_interest__city" href="{{ path('admin_points_of_interest', {s: 'city', o: 'desc', l: limit}) }}">
                         {{ 'City'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                        {{ ux_icon('mdi:arrow-up') }}
                     </a>
                 {% endif %}
             {% else %}
@@ -122,12 +122,12 @@
                 {% if order == 'desc' %}
                     <a class="points_of_interest__country" href="{{ path('admin_points_of_interest', {s: 'origin_country', o: 'asc', l: limit}) }}">
                         {{ 'Country'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                        {{ ux_icon('mdi:arrow-down') }}
                     </a>
                 {% else %}
                     <a class="points_of_interest__country" href="{{ path('admin_points_of_interest', {s: 'origin_country', o: 'desc', l: limit}) }}">
                         {{ 'Country'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                        {{ ux_icon('mdi:arrow-up') }}
                     </a>
                 {% endif %}
             {% else %}
@@ -140,12 +140,12 @@
                 {% if order == 'desc' %}
                     <a class="points_of_interest__dates" href="{{ path('admin_points_of_interest', {s: 'created_at', o: 'asc', l: limit}) }}">
                         {{ 'Date added'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                        {{ ux_icon('mdi:arrow-down') }}
                     </a>
                 {% else %}
                     <a class="points_of_interest__dates" href="{{ path('admin_points_of_interest', {s: 'created_at', o: 'desc', l: limit}) }}">
                         {{ 'Date added'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                        {{ ux_icon('mdi:arrow-up') }}
                     </a>
                 {% endif %}
             {% else %}
@@ -158,12 +158,12 @@
                 {% if order == 'desc' %}
                     <a class="points_of_interest__dates" href="{{ path('admin_points_of_interest', {s: 'updated_at', o: 'asc', l: limit}) }}">
                         {{ 'Update_'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-down') }}
+                        {{ ux_icon('mdi:arrow-down') }}
                     </a>
                 {% else %}
                     <a class="points_of_interest__dates" href="{{ path('admin_points_of_interest', {s: 'updated_at', o: 'desc', l: limit}) }}">
                         {{ 'Update_'|trans }}
-                        {{ ux_icon('iconoir:nav-arrow-up') }}
+                        {{ ux_icon('mdi:arrow-up') }}
                     </a>
                 {% endif %}s
             {% else %}
@@ -182,7 +182,7 @@
                         {% if p.still_path %}
                             <img src="/images/poi{{ p.still_path }}" class="points_of_interest__still" alt="{{ p.name }} - {{ p.city }}"/>
                         {% else %}
-                            {{ ux_icon('fa6-solid:photo-film') }}
+                            {{ ux_icon('mdi:image-off') }}
                         {% endif %}
                     </div>
                 </a>

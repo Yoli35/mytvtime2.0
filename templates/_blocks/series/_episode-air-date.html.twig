@@ -1,7 +1,7 @@
 {% if episode.air_date %}
     <div class="air-date">
         <div class="airing">
-            {{ ux_icon('fa6-solid:tower-broadcast') }}
+            {{ ux_icon('mdi:broadcast') }}
             {% if ue.custom_date %}
                 {{ ue.custom_date|format_datetime('relative_full', 'short', timezone: "Europe/Paris")|capitalize }}
             {% elseif ue.air_at %}

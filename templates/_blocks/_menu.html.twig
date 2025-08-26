@@ -14,7 +14,7 @@
                     <div class="menu-item">
                         <label for="movie-search">
                             <input type="search" id="movie-search" data-type="movie" class="search" spellcheck="false">
-                            {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                         </label>
                         <div class="search-results __movie"></div>
                     </div>
@@ -34,14 +34,14 @@
                     <div class="menu-item">
                         <label for="tv-search">
                             <input type="search" id="tv-search" data-type="tv" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}">
-                            {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                         </label>
                         <div class="search-results __series"></div>
                     </div>
                     <div class="menu-item">
                         <label for="tv-search-db">
                             <input type="search" id="tv-search-db" data-type="db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}">
-                            {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                         </label>
                         <div class="search-results __db_series"></div>
                     </div>
@@ -60,7 +60,7 @@
                     <div class="menu-item">
                         <label for="video-search">
                             <input type="search" id="video-search" data-type="video" class="search" spellcheck="false">
-                            {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                         </label>
                         <div class="search-results __video"></div>
                     </div>
@@ -73,7 +73,7 @@
                     <div class="menu-item">
                         <label for="album-search">
                             <input type="search" id="album-search" data-type="album" class="search" spellcheck="false">
-                            {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                         </label>
                         <div class="search-results __album"></div>
                     </div>
@@ -87,7 +87,7 @@
                     <div class="menu-item">
                         <label for="person-search">
                             <input type="search" id="person-search" data-type="person" class="search" spellcheck="false">
-                            {{ ux_icon('fa6-solid:magnifying-glass', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
+                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                         </label>
                         <div class="search-results __people"></div>
                     </div>
@@ -190,7 +190,7 @@
             <label for="multi-search">
                 <input type="search" id="multi-search" data-type="multi" class="search" spellcheck="false">
                 <span class="magnifying-glass">
-                    {{ ux_icon('fa6-solid:magnifying-glass', {height: '16px', width:'16px'}) }}
+                    {{ ux_icon('mdi:search', {height: '16px', width:'16px'}) }}
                 </span>
             </label>
             <div class="search-results __multi">
@@ -265,7 +265,7 @@
                 {% set notifications = listEpisodeNotifications(app.user) %}
                 {% set newCount = countNewEpisodeNotifications(app.user) %}
                 <div class="navbar-item notifications">
-                    <em>{{ ux_icon('fa6-solid:bell') }}</em>
+                    <em>{{ ux_icon('mdi:bell') }}</em>
                     {% if newCount %}
                         <span>{{ newCount }}</span>
                     {% endif %}
@@ -293,14 +293,14 @@
         {% endif %}
         {#        {% set users = getUsers() %} #}
         {#        <div class="navbar-item"> #}
-        {#            {{ ux_icon('fa6-solid:user') }} #}
+        {#            {{ ux_icon('mdi:user-outline') }} #}
         {#            <div class="menu users"> #}
         {#                <label for="user-select"> #}
         {#                    <select id="user-select" class="user-select"> #}
         {#                        <button> #}
         {#                            <!-- Prendra le contenu HTML de l'option choisie --> #}
         {#                            <selectedcontent></selectedcontent> #}
-        {#                            {{ ux_icon('iconoir:nav-arrow-down') }} #}
+        {#                            {{ ux_icon('mdi:arrow-down') }} #}
         {#                        </button> #}
         {#                        {% for u in users %} #}
         {#                            <option value="{{ loop.index}}"{% if app.user and app.user.id == u.id %} selected{% endif %}> #}
@@ -326,7 +326,7 @@
                     {% endif %}
                 {% else %}
                     <div class="svg">
-                        {{ ux_icon('material-symbols:login', {height: '24px', width: '24px'}) }}
+                        {{ ux_icon('mdi', {height: '24px', width: '24px'}) }}
                     </div>
                 {% endif %}
             </div>
@@ -425,7 +425,7 @@
                                         <div>
                                             {{ eotd.display }}
                                             {% if eotd.customDate %}
-                                                {{ ux_icon('fa6-solid:calendar-check', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
+                                                {{ ux_icon('mdi:calendar', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
                                             {% endif %}
                                         </div>
                                         {% if eotd.type == 'series' %}
@@ -477,7 +477,7 @@
                     {% if seriesName is defined %}
                         <div class="separation">{{ 'Back to the series page'|trans }}</div>
                         <a href="{{ seriesLink }}">
-                            <em>{{ ux_icon('fa6-solid:arrow-left-long') }}</em>&nbsp;{{ seriesName }}
+                            <em>{{ ux_icon('mdi:arrow-left') }}</em>&nbsp;{{ seriesName }}
                         </a>
                     {% endif %}
 

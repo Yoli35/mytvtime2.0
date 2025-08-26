@@ -10,7 +10,7 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid user-profile-container"> {# ← light #}
-        <div class="toggle-theme">{{ ux_icon('tabler:sun-moon') }}</div>
+        <div class="toggle-theme">{{ ux_icon('mdi:sun-moon-stars') }}</div>
         <div class="user-profile glowing-border left">
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
@@ -148,8 +148,8 @@
             }
         </div>
         <div id="svgs" style="display: none">
-            {{ ux_icon('solar:hamburger-menu-outline', {id: "burger"}) }}
-            {{ ux_icon('solar:trash-bin-minimalistic-outline', {id: "trash"}) }}
+            {{ ux_icon('mdi:hamburger-menu', {id: "burger"}) }}
+            {{ ux_icon('mdi:trash', {id: "trash"}) }}
         </div>
     </div>
     {% include('_blocks/_footer.html.twig') %}

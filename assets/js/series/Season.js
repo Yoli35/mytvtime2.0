@@ -1253,11 +1253,6 @@ export class Season {
     }
 
     getDeviceName(id) {
-        /* {id: 1, name: "Television", logo_path: "/device-tv.png", svg: "fa6-solid:tv"}
-           {id: 2, name: "Mobile", logo_path: "/device-mobile.png", svg: "fa6-solid:mobile-screen-button"}
-           {id: 3, name: "Tablet", logo_path: "/device-tablet.png", svg: "fa6-solid:tablet-screen-button"}
-           {id: 4, name: "Laptop", logo_path: "/device-laptop.png", svg: "fa6-solid:laptop"}
-           {id: 5, name: "Desktop", logo_path: "/device-desktop.png", svg: "fa6-solid:desktop"} */
         const devices = gThis.devices;
         for (const device of devices) {
             if (device['id'] === id) {

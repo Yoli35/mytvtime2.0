@@ -14,11 +14,11 @@
             <header>
                 {% set seriesCount = seriesByCountry|length %}
                 <h2>{{ seriesCount }} {{ (seriesCount > 1 ? 'seriess':'series')|trans }}</h2>
-                <div class="legends">
-                    <div class="legend to-start" data-title="{{ 'To start'|trans }}">{{ ux_icon('ion:battery-dead') }}</div>
-                    <div class="legend in-progress" data-title="{{ 'In progress'|trans }}">{{ ux_icon('ion:battery-half') }}</div>
-                    <div class="legend up-to-date" data-title="{{ 'Up to date'|trans }}">{{ ux_icon('ion:battery-full') }}</div>
-                </div>
+                {#<div class="legends">
+                    <div class="legend to-start" data-title="{{ 'To start'|trans }}">{{ ux_icon('mdi:battery-outline') }}</div>
+                    <div class="legend in-progress" data-title="{{ 'In progress'|trans }}">{{ ux_icon('mdi:battery-50') }}</div>
+                    <div class="legend up-to-date" data-title="{{ 'Up to date'|trans }}">{{ ux_icon('mdi:battery') }}</div>
+                </div>#}
                 <label for="filter-by-country">
                     <select id="filter-by-country">
                         <option value="">{{ 'All'|trans }}</option>
@@ -48,7 +48,7 @@
             }
         </div>
         <div id="svgs" style="display: none">
-            <div id="svg-xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
+            <div id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
         </div>
     </div>
     {% include('_blocks/_footer.html.twig') %}

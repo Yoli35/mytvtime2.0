@@ -56,10 +56,10 @@
                                 <div class="home-page">
                                     {{ 'Homepage'|trans }}
                                     <a href="{{ people.homepage }}" target="_blank">
-                                        {{ ux_icon('fa6-solid:link', {height: '16px', width: '16px', 'data-title': 'Homepage'|trans ~ ' → ' ~ people.homepage}) }}
+                                        {{ ux_icon('mdi:link-variant', {height: '16px', width: '16px', 'data-title': 'Homepage'|trans ~ ' → ' ~ people.homepage}) }}
                                     </a>
                                     <span class="copy">
-                                        {{ ux_icon('fa6-solid:copy', {height: '16px', width: '16px', 'data-title': 'Copy to clipboard'|trans}) }}
+                                        {{ ux_icon('mdi:content-paste', {height: '16px', width: '16px', 'data-title': 'Copy to clipboard'|trans}) }}
                                     </span>
                                     <script>
                                         document.querySelector('.home-page .copy').addEventListener('click', function () {
@@ -139,7 +139,7 @@
                                                 <div class="year">{{ date|length == 10 ? (date|slice(0,4)) : "—" }}</div>
                                             {% endif %}
                                             <div class="info" data-id="{{ prod.id }}" data-title="{{ prod.title }}" data-type="{{ prod.media_type }}" data-poster="{{ prod.poster_path }}">
-                                                {{ ux_icon('fa6-solid:circle-info') }}
+                                                {{ ux_icon('mdi:information-outline') }}
                                             </div>
                                             {% if prod.media_type == "movie" %}
                                                 {% set url = "" %}
@@ -153,10 +153,10 @@
                                             <a href="{{ url }}">
                                                 <div class="title">
                                                     {% if prod.media_type == 'movie' %}
-                                                        {{ ux_icon('fa6-solid:film', {height: '16px', width: '16px', 'data-title': 'Movie'|trans}) }}
+                                                        {{ ux_icon('mdi:filmstrip-box', {height: '16px', width: '16px', 'data-title': 'Movie'|trans}) }}
                                                     {% endif %}
                                                     {% if prod.media_type == 'tv' %}
-                                                        {{ ux_icon('fa6-solid:tv', {height: '16px', width: '16px', 'data-title': 'Series'|trans}) }}
+                                                        {{ ux_icon('mdi:tv', {height: '16px', width: '16px', 'data-title': 'Series'|trans}) }}
                                                     {% endif %}
                                                     {{ prod.title }}
                                                     {% if prod.localized_title %}
@@ -174,33 +174,45 @@
                                             <div class="extras">
                                                 {% if prod.favorite %}
                                                     <div class="favorite">
-                                                        {{ ux_icon('fa6-solid:heart') }}
+                                                        {{ ux_icon('mdi:heart') }}
                                                     </div>
                                                 {% endif %}
                                                 {% if prod.rating %}
                                                     <div class="rating">
                                                         {% for i in 1..prod.rating %}
-                                                            {{ ux_icon('fa6-solid:star') }}
+                                                            {{ ux_icon('mdi:star') }}
                                                         {% endfor %}
                                                         {% if prod.rating < 5 %}
                                                             {% for i in (prod.rating+1)..5 %}
-                                                                {{ ux_icon('fa6-regular:star') }}
+                                                                {{ ux_icon('mdi:star-outline') }}
                                                             {% endfor %}
                                                         {% endif %}
                                                     </div>
                                                 {% endif %}
                                                 {% if prod.user_added %}
                                                     <div class="progress">
-                                                        {% set icon = 'fa6-solid:battery-empty' %}
+                                                        {% set icon = 'mdi:battery-outline' %}
                                                         {% if prod.progress==100 %}
-                                                            {% set icon = 'fa6-solid:battery-full' %}
+                                                            {% set icon = 'mdi:battery' %}
                                                         {% else %}
-                                                            {% if prod.progress > 0 and prod.progress <= 35 %}
-                                                                {% set icon = 'fa6-solid:battery-quarter' %}
-                                                            {% elseif prod.progress > 36 and prod.progress <= 64 %}
-                                                                {% set icon = 'fa6-solid:battery-half' %}
-                                                            {% elseif prod.progress > 65 and prod.progress <= 99 %}
-                                                                {% set icon = 'fa6-solid:battery-three-quarters' %}
+                                                            {% if prod.progress > 0 and prod.progress <= 15 %}
+                                                                {% set icon = 'mdi:battery-10' %}
+                                                            {% elseif prod.progress > 15 and prod.progress <= 25 %}
+                                                                {% set icon = 'mdi:battery-20' %}
+                                                            {% elseif prod.progress > 25 and prod.progress <= 35 %}
+                                                                {% set icon = 'mdi:battery-30' %}
+                                                            {% elseif prod.progress > 35 and prod.progress <= 45 %}
+                                                                {% set icon = 'mdi:battery-40' %}
+                                                            {% elseif prod.progress > 45 and prod.progress <= 55 %}
+                                                                {% set icon = 'mdi:battery-50' %}
+                                                            {% elseif prod.progress > 55 and prod.progress <= 65 %}
+                                                                {% set icon = 'mdi:battery-60' %}
+                                                            {% elseif prod.progress > 65 and prod.progress <= 75 %}
+                                                                {% set icon = 'mdi:battery-70' %}
+                                                            {% elseif prod.progress > 75 and prod.progress <= 85 %}
+                                                                {% set icon = 'mdi:battery-80' %}
+                                                            {% elseif prod.progress > 86 and prod.progress <= 95 %}
+                                                                {% set icon = 'mdi:battery-90' %}
                                                             {% endif %}
                                                         {% endif %}
                                                         {{ ux_icon(icon, {height: '24px', width: '24px'}) }}
@@ -234,7 +246,7 @@
                                                     <div class="year">{{ date|length == 10 ? (date|slice(0,4)) : "—" }}</div>
                                                 {% endif %}
                                                 <div class="info" data-id="{{ sub_prod.id }}" data-title="{{ sub_prod.title }}" data-type="{{ sub_prod.media_type }}" data-poster="{{ sub_prod.poster_path }}">
-                                                    {{ ux_icon('fa6-solid:circle-info') }}
+                                                    {{ ux_icon('mdi:information-outline') }}
                                                 </div>
                                                 {% if sub_prod.media_type == "movie" %}
                                                     {% set url = path('app_movie_tmdb', {id: sub_prod.id}) %}
@@ -245,10 +257,10 @@
                                                 <a href="{{ url }}">
                                                     <div class="title">
                                                         {% if sub_prod.media_type == 'movie' %}
-                                                            {{ ux_icon('fa6-solid:film', {height: '16px', width: '16px', 'data-title': 'Movie'|trans}) }}
+                                                            {{ ux_icon('mdi:filmstrip-box', {height: '16px', width: '16px', 'data-title': 'Movie'|trans}) }}
                                                         {% endif %}
                                                         {% if sub_prod.media_type == 'tv' %}
-                                                            {{ ux_icon('fa6-solid:tv', {height: '16px', width: '16px', 'data-title': 'Series'|trans}) }}
+                                                            {{ ux_icon('mdi:tv', {height: '16px', width: '16px', 'data-title': 'Series'|trans}) }}
                                                         {% endif %}
                                                         {{ sub_prod.title }}
                                                     </div>
@@ -284,7 +296,7 @@
                     </div>
                 </div>
                 <div class="close">
-                    {{ ux_icon('fa6-solid:xmark') }}
+                    {{ ux_icon('mdi:close') }}
                 </div>
             </div>
         </div>
@@ -299,11 +311,11 @@
         }
     </div>
     <div id="svgs" style="display: none">
-        <div class="svg" id="arrow-left">{{ ux_icon('fa6-solid:arrow-left') }}</div>
-        <div class="svg" id="arrow-right">{{ ux_icon('fa6-solid:arrow-right') }}</div>
-        <div class="svg" id="xmark">{{ ux_icon('fa6-solid:xmark') }}</div>
-        <div class="svg" id="solid-star">{{ ux_icon('fa6-solid:star') }}</div>
-        <div class="svg" id="regular-star">{{ ux_icon('fa6-regular:star') }}</div>
+        <div class="svg" id="arrow-left">{{ ux_icon('mdi:arrow-left') }}</div>
+        <div class="svg" id="arrow-right">{{ ux_icon('mdi:arrow-right') }}</div>
+        <div class="svg" id="xmark">{{ ux_icon('mdi:close') }}</div>
+        <div class="svg" id="solid-star">{{ ux_icon('mdi:star') }}</div>
+        <div class="svg" id="regular-star">{{ ux_icon('mdi:star-outline') }}</div>
     </div>
     {{ include ('_blocks/_footer.html.twig') }}
 {% endblock %}
