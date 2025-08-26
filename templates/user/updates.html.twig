@@ -20,21 +20,108 @@
                     });
                 });
             </script>
-            <div class="site-update glowing-border left">
+            <div class="site-update glowing-border right">
                 <div class="updates-title">
-                    <h1>Mises à jour / {{ 'Updates'|trans(domain = 'messages', locale = 'ko') }}</h1>
+                    <h1>Mises à jour / Updates / {{ 'Updates'|trans(domain = 'messages', locale = 'ko') }}</h1>
                     <h4>myTvTime 2.0 : 18/09/2024</h4>
                 </div>
+            </div>
+            <div class="site-update glowing-border left">
+                <h2>29ᵉ mise à jour : 25/08/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }} → Add sorting order to seriesToStart query</div>
+                        <div class="details">Introduces a separate 'order' variable set to 'DESC' and updates the call to seriesToStart to accept both sort field and order. This prepares the code for future enhancements, such as allowing users to choose the sorting order.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }} → Refine map header styles and icon sizes</div>
+                        <div class="details">Adjusted the series map header styles for improved layout and readability, including font sizes and spacing. Reduced the icon sizes in the numbers section from 32px to 24px for better visual balance.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-css3') }} → Update menu icons to use mdi icon set</div>
+                        <div class="details">Replaced various icon references in the navigation menu with their corresponding Material Design Icons (mdi) equivalents. This change standardizes the icon set used in the menu for a more consistent appearance.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }} → Leaflet popup description background color corrected</div>
+                        <div class="details"></div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }} → Refactor album grid cell class logic and UI checks</div>
+                        <div class="details">Moved the album grid cell class calculation to a dedicated getCellClasses() method in AlbumController for better maintainability and reuse. Updated AlbumShow.js to add null checks for DOM elements and event listeners, improving robustness. The album edit button in the template is now only shown for albums with a valid ID. Minor CSS adjustment to grid row sizing.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border right">
+                <h2>28ᵉ mise à jour : 24/08/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }} → Improve album grid layout and photo styling</div>
+                        <div class="details">Enhanced the album grid by adding new CSS classes for various grid spans and adjusted the logic in AlbumController to better handle cell class assignment for different photo counts. Updated photo and SVG styling for better appearance and responsiveness. Also removed or commented out debug dump statements in AlbumController and ImageService for cleaner logs.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }} → Refactor album photo grid and add photo button UI</div>
+                        <div class="details">Updated the album photo grid to use a 4-column layout with improved grid spanning logic for photos, both in the backend (cellClasses) and frontend (JS and Twig). The add photo button is now positioned absolutely and always visible for albums, and a number badge is shown on each photo. Improved handling for albums with no photos, and removed unused/obsolete CSS and logic.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }}→ Add daily photo albums and improve album handling</div>
+                        <div class="details">Introduces support for grouping photos by day as virtual albums, adds a new route and controller logic for date-based albums, and updates templates to handle both standard and date-based albums. Refactors album and photo array conversion, improves album form and photo addition UI, and fixes minor issues with date handling and EXIF extraction. Also updates translations and album entity to support new features.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }}→ Add EXIF extraction and display photo metadata in album</div>
+                        <div class="details">This update extracts EXIF data (date, latitude, longitude) from uploaded photos and stores them in the database. The frontend now displays photo metadata (date, created/updated at) in the album view, and the UI for adding photos and empty album states has been improved. Various code and style adjustments were made to support these features.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }}→ Refactor album background animation and layout</div>
+                        <div class="details">Replaces the single background image with a dual-layer background for smoother transitions in the album view. Updates AlbumShow.js to handle two background images and animate transitions. Refactors related SCSS for new background structure and improves layout responsiveness. Updates the album show template to use the new background markup.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Order filming locations by season and episode</div>
+                        <div class="details">Added ORDER BY clause to SQL query in FilmingLocationRepository to sort results by season_number and episode_number. This ensures that filming locations are returned in chronological order.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add sorting options to 'series to start' page</div>
+                        <div class="details">Introduces UI controls and backend support for sorting the 'series to start' list by first air date or date added, in ascending or descending order. Updates styles, controller, repository, and templates to handle sorting, and adds relevant translation strings.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border left">
+                <h2>27ᵉ mise à jour : 21/08/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }} → Improve network handling and add French translations</div>
+                        <div class="details">Refactored network processing in SeriesController to add or update networks as needed, with flash messages for added or updated networks. Added French translations for network addition and update notifications.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bug-outline') }} → Display detailed exception info on error page</div>
+                        <div class="details">Enhanced the error page to show exception message, code, and file/line details if available. Updated ErrorController to extract exception data from the request and pass it to the template. Added styling for exception details in app.scss.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }} → Update air date for user episodes if missing</div>
+                        <div class="details">Adds logic to set and save the air date for user episodes when it is missing but available from the episode data.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:search') }} → Refactor multi-search click handling and result clearing</div>
+                        <div class="details">Improves event handling for multi-search results by refining click logic and focusing behavior. Also updates result clearing to remove individual list items instead of resetting innerHTML, and adds navigation on result selection.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }} → Improve series card ranking display and vote formatting</div>
+                        <div class="details">Refactors the series card ranking UI by moving the ranking index and average vote to overlay badges on the poster, with updated styles for better visibility. The average vote is now rounded to two decimal places in the controller for consistent formatting.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }} → Refactor album page layout and background structure</div>
+                        <div class="details">Updated album.scss and show.html.twig to improve the album page layout. Moved the background image markup inside the .protection div, adjusted padding and height calculations, and enhanced photo hover effects for better UI consistency.</div>
+                    </li>
+                </ul>
             </div>
             <div class="site-update glowing-border right">
                 <h2>26ᵉ mise à jour : 20/08/2025</h2>
                 <ul>
                     <li>
-                        <div class="change">→ Add series ranking by vote feature</div>
+                        <div class="change">{{ ux_icon('mdi:tv') }} → Add series ranking by vote feature</div>
                         <div class="details">Introduces a new page to display user's series ranked by average episode vote. Adds a new controller action, repository method, menu entry, translations, and related templates and styles for the ranking view.</div>
                     </li>
                     <li>
-                        <div class="change">→ Fixes a bug related to episode voting on the series page</div>
+                        <div class="change">{{ ux_icon('mdi:tv') }} → Fixes a bug related to episode voting on the series page</div>
                         <div class="details">Episode views are represented by a record in the ‘user_episode’ table. For an episode, there are as many records as there are views. Voting is only present on the first view record. Bug fixing: eliminate extra view records.</div>
                     </li>
                 </ul>
@@ -43,23 +130,23 @@
                 <h2>25ᵉ mise à jour : 18/08/2025</h2>
                 <ul>
                     <li>
-                        <div class="change">→ Update media queries to use container query syntax</div>
+                        <div class="change">{{ ux_icon('mdi:language-css3') }} → Update media queries to use container query syntax</div>
                         <div class="details">Replaced max-width media queries with container query syntax (width <= 64rem and width <= 50rem) in series.scss. Also adjusted .series-show and .header styles for improved responsiveness on smaller screens.</div>
                     </li>
                     <li>
-                        <div class="change">→ Update responsive styles for movie pages</div>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }} → Update responsive styles for movie pages</div>
                         <div class="details">Commented out the media query for widths above 576px and added a new media query for widths up to 50rem. The new styles adjust layout, poster sizing, and border radius for improved responsiveness on smaller screens.</div>
                     </li>
                     <li>
-                        <div class="change">→ Refactor album page layout and improve responsiveness</div>
+                        <div class="change">{{ ux_icon('mdi:image-album') }} → Refactor album page layout and improve responsiveness</div>
                         <div class="details">Reorganized the album page structure in show.html.twig for better separation of controls and improved accessibility. Updated SCSS styles for .album-page, layout buttons, and responsive breakpoints to enhance mobile and desktop experiences. Moved map height CSS variables to :root in map.scss for consistency. Adjusted layout controls to use icon buttons and improved their styling and grouping.</div>
                     </li>
                     <li>
-                        <div class="change">→ Improve edit button visibility on episode hover</div>
+                        <div class="change">{{ ux_icon('mdi:tv') }} → Improve edit button visibility on episode hover</div>
                         <div class="details">Changed the .edit button to use opacity transitions instead of display toggling for smoother appearance on hover. Updated hover logic to show the edit button only when not editing, and removed commented-out legacy code.</div>
                     </li>
                     <li>
-                        <div class="change">→ Refactor album view with animated background and layout logic</div>
+                        <div class="change">{{ ux_icon('mdi:image-album') }} → Refactor album view with animated background and layout logic</div>
                         <div class="details">Moved album layout switching and settings persistence from inline Twig script to AlbumShow.js, centralizing logic and improving maintainability. Added animated background image for grid layout, updated SCSS for new layout structure and responsive design, and restructured the album page HTML to use semantic elements and support the new background/protection overlays. Minor string formatting improvements and animation logic refactor in AlbumShow.js.</div>
                     </li>
                     <li>
