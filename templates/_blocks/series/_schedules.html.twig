@@ -111,27 +111,29 @@ Mandatory variables:
             {% endfor %}
         </div>
     {% endif %}
-    {% if series.alternateSchedules|reduce((carry, as) => carry + as.airDays|length) %}
+    {% if series.alternateSchedules|reduce((carry, as) => carry + as.override) and series.alternateSchedules|reduce((carry, as) => carry + as.airDays|length) %}
         <h2>{{ 'Alternate schedules'|trans }}</h2>
         <div class="wrapper">
             <div class="schedule-block">
                 {% for as in series.alternateSchedules %}
-                    <h3> {{ 'Season'|trans }} {{ as.seasonNumber }}{% if as.multiPart %} {{ 'Part'|trans }} {{ as.seasonPart }}{% endif %} - {{ as.airDays|length }} {{ 'episodes'|trans }}</h3>
-                    <div class="alternate-schedule">
-                        {% for airDay in as.airDays %}
-                            <a href="{{ airDay.url }}">
-                                <div class="air-day{% if airDay.watched %} watched{% endif %}{% if airDay.future %} future{% endif %}">
-                                    <div class="air-day-episode">{{ airDay.episode }}</div>
-                                    <div class="air-day-date">
-                                        <div class="day-of-week">{{ airDay.date|date("l")|trans }}</div>
-                                        <div class="day">{{ airDay.date|date("j") }}</div>
-                                        <div class="month">{{ airDay.date|date("F")|trans }}</div>
-                                        <div class="year">{{ airDay.date|date("Y") }}</div>
+                    {% if as.override %}
+                        <h3> {{ 'Season'|trans }} {{ as.seasonNumber }}{% if as.multiPart %} {{ 'Part'|trans }} {{ as.seasonPart }}{% endif %} - {{ as.airDays|length }} {{ 'episodes'|trans }}</h3>
+                        <div class="alternate-schedule">
+                            {% for airDay in as.airDays %}
+                                <a href="{{ airDay.url }}">
+                                    <div class="air-day{% if airDay.watched %} watched{% endif %}{% if airDay.future %} future{% endif %}">
+                                        <div class="air-day-episode">{{ airDay.episode }}</div>
+                                        <div class="air-day-date">
+                                            <div class="day-of-week">{{ airDay.date|date("l")|trans }}</div>
+                                            <div class="day">{{ airDay.date|date("j") }}</div>
+                                            <div class="month">{{ airDay.date|date("F")|trans }}</div>
+                                            <div class="year">{{ airDay.date|date("Y") }}</div>
+                                        </div>
                                     </div>
-                                </div>
-                            </a>
-                        {% endfor %}
-                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>

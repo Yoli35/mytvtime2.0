@@ -1096,6 +1096,7 @@ class SeriesController extends AbstractController
                 return $day;
             }, $s['airDays']);
         }
+        dump($alternateSchedules);
 
         $seriesArr = $series->toArray();
         $seriesArr['userVotes'] = $userVotes;
@@ -3189,9 +3190,10 @@ class SeriesController extends AbstractController
 
     public function getAlternateSchedule(SeriesBroadcastSchedule $schedule, ?array $tv, array $userEpisodes): array
     {
-        $errorArr = ['seasonNumber' => 0, 'multiPart' => false, 'seasonPart' => 0, 'airDays' => []];
+        $errorArr = ['override'=> false, 'seasonNumber' => 0, 'multiPart' => false, 'seasonPart' => 0, 'airDays' => []];
         $now = $this->now();
         $seasonNumber = $schedule->getSeasonNumber();
+        $override = $schedule->isOverride();
         $multiPart = $schedule->isMultiPart();
         $seasonPart = $schedule->getSeasonPart();
 
@@ -3205,7 +3207,7 @@ class SeriesController extends AbstractController
                 $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $episodeNumber), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $episodeNumber), 'future' => $now < $date];
                 $episodeNumber++;
             }
-            return ['seasonNumber' => $seasonNumber, 'multiPart' => false, 'seasonPart' => 0, 'airDays' => $dayArr];
+            return ['override'=> false, 'seasonNumber' => $seasonNumber, 'multiPart' => false, 'seasonPart' => 0, 'airDays' => $dayArr];
         }
         /*if (!$seasonNumber) {
             return $errorArr;
@@ -3419,7 +3421,7 @@ class SeriesController extends AbstractController
                 }
                 break;
         }
-        return ['seasonNumber' => $seasonNumber, 'multiPart' => $multiPart, 'seasonPart' => $seasonPart, 'airDays' => $dayArr];
+        return ['override'=> $override, 'seasonNumber' => $seasonNumber, 'multiPart' => $multiPart, 'seasonPart' => $seasonPart, 'airDays' => $dayArr];
     }
 
     private function isValidDaysOfWeek(array $daysOfWeek, int $selectedDayCount, int $firstDayOfWeek, DateTimeImmutable $date): bool
