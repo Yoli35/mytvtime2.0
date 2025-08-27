@@ -152,8 +152,8 @@ export class Season {
             });
         });
 
-        const sizesDiv = document.querySelector('.sizes');
-        const arsDiv = document.querySelector('.aspect-ratios');
+        const sizesDiv = document.querySelector('.user-actions:has(.size-item)');
+        const arsDiv = document.querySelector('.user-actions:has(.ar-item)');
         const userSeriesId = sizesDiv.getAttribute('data-user-series-id');
         const sizesItemDivs = sizesDiv.querySelectorAll('.size-item');
         const arsItemDivs = arsDiv.querySelectorAll('.ar-item');
@@ -366,7 +366,7 @@ export class Season {
 
         const getFilmingLocationsDiv = document.querySelector('.get-filming-locations');
         const getFilmingLocationsButton = document.querySelector('.get-filming-locations-button');
-        getFilmingLocationsButton.addEventListener('click', () => {
+        getFilmingLocationsButton?.addEventListener('click', () => {
             getFilmingLocationsButton.innerHTML = gThis.text['loading'];
             getFilmingLocationsButton.classList.add('disabled');
             const id = getFilmingLocationsButton.getAttribute('data-id');

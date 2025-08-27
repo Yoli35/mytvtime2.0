@@ -2754,12 +2754,9 @@ h2 {
         width: 100%;
     }
 
-    .sizes {
-        background-color: var(--ardoise-100-alpha-20);
-        /*border: 2px dashed var(--orange-50);*/
+    .user-actions {
         border-radius: .5rem;
-        display: flex;
-        gap: .5rem;
+        flex-direction: row;
         padding: .5rem;
 
         .size-item {
@@ -2782,15 +2779,6 @@ h2 {
                 background-color: var(--orange-50);
             }
         }
-    }
-
-    .aspect-ratios {
-        background-color: var(--ardoise-100-alpha-20);
-        /*border: 2px dashed var(--orange-50);*/
-        border-radius: .5rem;
-        display: flex;
-        gap: .5rem;
-        padding: .5rem;
 
         .ar-item {
             align-items: center;
@@ -2812,23 +2800,27 @@ h2 {
                 background-color: var(--orange-50);
             }
         }
-    }
 
-    .edit-episode-infos {
-        align-items: center;
-        background-color: var(--ardoise-100-alpha-20);
-        border-radius: .25rem;
-        color: var(--ardoise-10);
-        cursor: pointer;
-        display: flex;
-        height: 2rem;
-        justify-content: center;
-        padding: .5rem;
-        transition: background-color 0.3s linear;
-        width: 2rem;
+        .edit-episode-infos {
+            align-items: center;
+            background-color: var(--ardoise-100-alpha-20);
+            border-radius: .25rem;
+            color: var(--ardoise-10);
+            cursor: pointer;
+            display: flex;
+            height: 2rem;
+            justify-content: center;
+            padding: .5rem;
+            transition: background-color 0.3s linear;
+            width: 2rem;
 
-        &:hover {
-            background-color: var(--orange-50);
+            &:hover {
+                background-color: var(--orange-50);
+            }
+        }
+
+        svg {
+            transform: scale(1.75);
         }
     }
 
@@ -5171,7 +5163,7 @@ h2 {
             }
 
             .leaflet-popup-content-description {
-                background-color: var(--orange-70);
+                background-color: var(--orange-30);
                 font-size: 1rem;
                 font-weight: 300;
                 padding: .5rem;

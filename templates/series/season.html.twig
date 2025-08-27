@@ -136,7 +136,7 @@
                 {#                <h2>{{ 'Season stuff'|trans }}</h2> #}
                 {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: false}) }}
 
-                <div class="sizes" data-user-series-id="{{ userSeries.id }}">
+                <div class="user-actions" data-user-series-id="{{ userSeries.id }}">
                     <div class="size-item{% if episodeDiv.height == '15rem' %} active{% endif %}" data-size="15rem" data-type="size">
                         {{ ux_icon('mdi:size-s') }}
                     </div>
@@ -148,7 +148,7 @@
                     </div>
                 </div>
 
-                <div class="aspect-ratios" data-user-series-id="{{ userSeries.id }}">
+                <div class="user-actions" data-user-series-id="{{ userSeries.id }}">
                     <div class="ar-item{% if episodeDiv.aspectRatio == '16 / 9' %} active{% endif %}" data-ar="16 / 9" data-type="aspect-ratio">
                         {{ ux_icon('mdi:crop-landscape') }}
                     </div>
@@ -160,8 +160,10 @@
                     </div>
                 </div>
 
-                <div class="edit-episode-infos" data-title="{{ 'Edit all episodes name and overview'|trans }}">
-                    {{ ux_icon('mdi:edit-box-outline', {height: '24px', width: '24px'}) }}
+                <div class="user-actions">
+                    <div class="edit-episode-infos" data-title="{{ 'Edit all episodes name and overview'|trans }}">
+                        {{ ux_icon('mdi:edit-box-outline') }}
+                    </div>
                 </div>
 
                 {% set episodeCount = season.episodes|length %}
