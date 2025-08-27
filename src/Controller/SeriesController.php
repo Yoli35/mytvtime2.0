@@ -3920,6 +3920,9 @@ class SeriesController extends AbstractController
                 if ($diff->days > 30) {
                     $tmdbNetwork = json_decode($this->tmdbService->getNetworkDetails($network->getNetworkId()), true);
 
+                    if (!$tmdbNetwork) {
+                        continue;
+                    }
                     $network->setHeadquarters($tmdbNetwork['headquarters'] ?? null);
                     $network->setHomepage($tmdbNetwork['homepage'] ?? null);
                     $network->setLogoPath($tmdbNetwork['logo_path'] ?? null);
