@@ -163,7 +163,7 @@
                 {{ ux_icon('mdi:map-outline') }}
                 <div class="menu map">
                     <div class="menu-item"><a href="{{ path('app_map_index') }}" class="desktop">{{ 'Shooting locations'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_map_last_locations', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_map_last', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></div>
                 </div>
             </div>
         {% endif %}
