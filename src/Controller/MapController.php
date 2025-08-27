@@ -107,8 +107,8 @@ class MapController extends AbstractController
         ]);
     }
 
-    #[Route('/last-locations', name: 'last_locations')]
-    public function lastLocations(Request $request): Response
+    #[Route('/last', name: 'last')]
+    public function last(Request $request): Response
     {
         $type = $request->get('type', 'creation');
         $settings = $this->settingsRepository->findOneBy(['name' => 'mapbox']);
@@ -129,7 +129,7 @@ class MapController extends AbstractController
         $locations = $this->getAllFilmingLocations($type, $page, $perPage);
         $pois = $this->getALlPointsOfInterest();
 
-        return $this->render('map/last-creations.html.twig', [
+        return $this->render('map/last.html.twig', [
             'form' => $form->createView(),
             'locations' => $locations['filmingLocations'],
             'filmingLocationCount' => $locations['filmingLocationCount'],
