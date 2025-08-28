@@ -18,7 +18,13 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            outline: min(.5vh, .5vw) solid transparent;
+            outline-offset: max(-.5vh, -.5vw);
             width: 100%;
+
+            &:hover {
+                outline-color: var(--orange-50);
+            }
 
             .poster {
                 aspect-ratio: 78 / 117;

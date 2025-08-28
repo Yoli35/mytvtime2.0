@@ -1,6 +1,6 @@
-<div class="card">
-    <a href="{{ path('app_movie_show', {'id': movie.userMovieId}) }}">
-{#    <a href="{{ path('app_movie_show', {'id': movie.id, 'slug': movie.slug }) }}">#}
+<a href="{{ path('app_movie_show', {'id': movie.userMovieId}) }}">
+    <div class="card">
+        {#    <a href="{{ path('app_movie_show', {'id': movie.id, 'slug': movie.slug }) }}"> #}
         <div class="poster">
             {% if movie.posterPath %}
                 <img src="/movies/posters/{{ movie.posterPath }}" alt="{{ movie.title }}">
@@ -20,5 +20,5 @@
             <div class="name">{{ movie.title }}</div>
             <div class="date">{{ movie.releaseDate|format_date('relative_medium')|capitalize }}        </div>
         </div>
-    </a>
-</div>
+    </div>
+</a>
