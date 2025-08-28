@@ -399,7 +399,7 @@ final class AlbumController extends AbstractController
         if ($emptyCellCount == 3) {
             $cellClasses[$cellCount - 1] = "grid-span-4";
         }
-        dump(['cellCount' => $cellCount, 'index' => $index, 'emptyCellCount' => $emptyCellCount, 'cellClasses' => $cellClasses]);
+//        dump(['cellCount' => $cellCount, 'index' => $index, 'emptyCellCount' => $emptyCellCount, 'cellClasses' => $cellClasses]);
         return $cellClasses;
     }
 

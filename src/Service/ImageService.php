@@ -142,7 +142,6 @@ class ImageService extends AbstractController
         $extension = $file->guessExtension();
         $basename = pathinfo($filename, PATHINFO_FILENAME);
         $tempName = $imageTempPath . $basename . '.' . $extension;
-//        dump($filename, $extension, $basename, $tempName);
 
         $originalPath = $photoPath . 'original/';
         $highResPath = $photoPath . '1080p/';
@@ -162,7 +161,7 @@ class ImageService extends AbstractController
 
         if ($extension === 'webp') {
             try {
-                $file->move($originalPath, $filename);
+                $file->move($originalPath, $basename . '.' . $extension);
                 $imagePath = $filename; // If the file is already a WebP image, we can use it directly
             } catch (FileException $e) {
                 $this->logger?->error('Error in photoToWebp: ' . $e->getMessage());
@@ -170,7 +169,7 @@ class ImageService extends AbstractController
             }
         } else {
             try {
-                $file->move($imageTempPath, $filename);
+                $file->move($imageTempPath, $basename . '.' . $extension);
                 $webp = $this->webpImage("", $tempName, $originalPath . $basename . '.webp', 90, -1); // width: -1 → no resize
                 // If the image is successfully converted to WebP, set the image path
                 // If the image is not successfully converted to WebP, set the image path to null
