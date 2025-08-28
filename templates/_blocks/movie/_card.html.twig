@@ -13,12 +13,12 @@
                 </div>
             {% endif %}
             {% if movie.lastViewedAt %}
-                <div class="viewed">{{ ux_icon('mdi:eye-outline') }}&nbsp;{{ movie.lastViewedAt|format_date('full')|capitalize }}</div>
+                <div class="viewed">{{ ux_icon('mdi:eye-outline') }}&nbsp;{{ movie.lastViewedAt|format_date('relative_medium')|capitalize }}</div>
             {% endif %}
         </div>
         <div class="infos">
             <div class="name">{{ movie.title }}</div>
-            <div class="date">{{ movie.releaseDate|format_date('relative_full')|capitalize }}        </div>
+            <div class="date">{{ movie.releaseDate|format_date('relative_medium')|capitalize }}        </div>
         </div>
     </a>
 </div>

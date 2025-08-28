@@ -2,16 +2,13 @@
 .movie-index {
     main {
         .wrapper {
-            align-items: center;
             background-color: var(--ardoise-100-alpha-20);
             border-radius: .5rem;
-            display: flex;
+            display: grid;
             flex-wrap: wrap;
             gap: 1rem;
-            justify-content: center;
-            margin-inline: auto;
-            padding: 1rem 0;
-            width: round(down, min(100%, 90rem), 16rem);
+            grid-template-columns: repeat(5, 1fr);
+            width: 100%;
         }
 
         .card {
@@ -20,14 +17,13 @@
             border-radius: .5rem;
             display: flex;
             flex-direction: column;
-            height: 28rem;
             justify-content: center;
-            width: 15rem;
+            width: 100%;
 
             .poster {
-                height: 22rem;
+                aspect-ratio: 78 / 117;
                 position: relative;
-                width: 15rem;
+                width: 100%;
 
                 img {
                     border-radius: .5rem .5rem 0 0;
@@ -77,21 +73,20 @@
                 border-radius: 0 0 .5rem .5rem;
                 display: flex;
                 flex-direction: column;
-                height: 6rem;
+                font-size: clamp(1rem, 1.5vw, 2rem);
+                font-weight: 100;
+                height: clamp(3.75rem, 9.375vw, 7.5rem);
                 justify-content: center;
+                line-height: 1.25em;
                 width: 100%;
 
                 .name {
                     color: var(--orange-50);
-                    font-size: 1rem;
-                    font-weight: 100;
                     text-align: center;
                 }
 
                 .date {
                     color: var(--ardoise-10);
-                    font-size: 1rem;
-                    font-weight: 100;
                 }
             }
         }
@@ -1066,7 +1061,28 @@
     }
 }
 
-@media (width <= 50rem) {
+@media (width <= 52rem) {
+    .movie-index {
+        main {
+            .wrapper {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .card {
+                .poster {
+                    img {
+                        border-radius: 0;
+                    }
+
+                    .infos {
+                        font-size: 1.25rem;
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+
     .movie-show {
         margin-block-start: 2rem;
         padding-block-start: 0;
@@ -1085,50 +1101,23 @@
             }
         }
     }
-
-    .movie-index {
-        main {
-            .wrapper {
-                gap: 0;
-                width: round(down, min(100%, 90rem), 15rem);
-            }
-
-            .card {
-                .poster {
-                    img {
-                        border-radius: 0;
-                    }
-                }
-            }
-        }
-    }
 }
 
 @media (width <= 576px) {
     .movie-index {
-        .wrapper {
-            padding: 0;
-            scroll-snap-type: y mandatory;
+        main {
+            .wrapper {
+                grid-template-columns: repeat(1, 1fr);
+                padding: 0;
+                scroll-snap-type: y mandatory;
 
-            .card {
-                height: unset;
-                scroll-snap-align: start;
-                width: 95vw;
+                .card {
+                    height: 100vh;
+                    scroll-snap-align: start;
 
-                .poster {
-                    aspect-ratio: 77 / 114;
-                    height: unset;
-                    width: 95vw;
-
-                    img {
-                        aspect-ratio: 77 / 114;
-                        object-fit: cover;
-                        width: 100%;
+                    .infos {
+                        font-size: 1.5rem;
                     }
-                }
-
-                .infos {
-                    width: 100%;
                 }
             }
         }

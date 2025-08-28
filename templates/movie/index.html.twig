@@ -12,7 +12,7 @@
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid movie-index filter-page">
 
-        <h1>{{ 'My movies'|trans }}</h1>
+        <h1>{{ 'My movies'|trans }} (<span id="movie-count">{{ userMovieCount }}</span>)</h1>
         <aside>
             <article>
                 <header>
@@ -67,9 +67,6 @@
         </aside>
         <main>
             <article>
-                <header>
-                    <div class="title">{{ 'My movies'|trans }} (<span id="movie-count">{{ userMovieCount }}</span>)</div>
-                </header>
                 <div class="wrapper">
                     {% for movie in userMovies %}
                         {{ include('_blocks/movie/_card.html.twig') }}
