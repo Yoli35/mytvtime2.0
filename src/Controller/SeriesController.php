@@ -1096,7 +1096,7 @@ class SeriesController extends AbstractController
                 return $day;
             }, $s['airDays']);
         }
-        dump($alternateSchedules);
+//        dump($alternateSchedules);
 
         $seriesArr = $series->toArray();
         $seriesArr['userVotes'] = $userVotes;
