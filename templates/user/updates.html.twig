@@ -20,11 +20,56 @@
                     });
                 });
             </script>
-            <div class="site-update glowing-border right">
+            <div class="site-update glowing-border left">
                 <div class="updates-title">
                     <h1>Mises à jour / Updates / {{ 'Updates'|trans(domain = 'messages', locale = 'ko') }}</h1>
                     <h4>myTvTime 2.0 : 18/09/2024</h4>
                 </div>
+            </div>
+            <div class="site-update glowing-border right">
+                <h2>30ᵉ mise à jour : 28/08/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }} → Refactor image file handling and remove debug dumps</div>
+                        <div class="details">Commented out debug dump statements in AlbumController and ImageService. Updated ImageService to consistently use the basename with extension when moving uploaded files, improving file naming consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }} → Refactor movie card to make entire card clickable</div>
+                        <div class="details">Moved the anchor tag to wrap the entire movie card, making the whole card clickable instead of just a part of it. Added a hover outline effect to the card for better visual feedback.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }} → Improve movie page layout and update date formats</div>
+                        <div class="details">Refactored movie index layout to use CSS grid for better responsiveness and adjusted breakpoints from 50rem to 52rem across multiple SCSS files. Updated movie card date displays to use 'relative_medium' format for improved readability. Also added movie count to the main page heading and made minor style enhancements for filter buttons and responsive design.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }} → Attempt to resolve an error that does not occur in development mode</div>
+                        <div class="details">Show an error flash message when a network is not found in SeriesController, including the network name and ID. Added the corresponding French translation for 'network.not_found' in messages.fr.yaml.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }} → Rename last locations route and template</div>
+                        <div class="details">Renamed the route and controller method from 'last-locations' to 'last', and updated the template from 'last-creations.html.twig' to 'last.html.twig'. Also fixed a typo in the icon name from 'image-mutiple' to 'image-multiple' in the template.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }} → Refactor user action controls and update styles</div>
+                        <div class="details">Consolidated 'sizes', 'aspect-ratios', and 'edit-episode-infos' into a unified 'user-actions' class in both HTML and JS selectors. Updated SCSS to style the new structure, removed redundant classes, and improved selector specificity. Also added a null check for the filming locations button event listener.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bug-outline') }} → The killer death bug who kills… javascript!</div>
+                        <div class="details">It's like desactivate javascript</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }} → Add override flag to alternate schedule handling</div>
+                        <div class="details">Introduces an 'override' property to alternate schedule arrays in SeriesController and updates the Twig template to display alternate schedules only when the override flag is set. This change improves the accuracy of alternate schedule presentation and ensures only relevant schedules are shown.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:emoticon-cow') }} → Switch all icons to Material Design Icons (mdi)</div>
+                        <div class="details">Replaced all FontAwesome, Iconoir, and other icon references with Material Design Icons (mdi) equivalents across JavaScript and Twig template files. This unifies the icon set used throughout the application for consistency and easier maintenance.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }} → Improve album naming for recent days</div>
+                        <div class="details">Album names for photos taken within the last week now use the day of the week instead of a relative date format. This enhances clarity for users viewing recent albums.</div>
+                    </li>
+                </ul>
             </div>
             <div class="site-update glowing-border left">
                 <h2>29ᵉ mise à jour : 25/08/2025</h2>
@@ -522,7 +567,7 @@
                     <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ User Profile page: theme toggler</li>
                     <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ Episode schedules: "Selected days" frequency</li>
                     <li><span class="improvement">{{ ux_icon('mdi:arrow-top-right') }}</span>→ Videos page: better display on small devices</li>
-                    <li><span class="css">{{ ux_icon('mdi:language-css3-solid') }}</span>→ css corrections here and there...</li>
+                    <li><span class="css">{{ ux_icon('mdi:language-css3') }}</span>→ css corrections here and there...</li>
                 </ul>
             </div>
             <div class="site-update glowing-border right">
