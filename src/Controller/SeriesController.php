@@ -3921,6 +3921,7 @@ class SeriesController extends AbstractController
                     $tmdbNetwork = json_decode($this->tmdbService->getNetworkDetails($network->getNetworkId()), true);
 
                     if (!$tmdbNetwork) {
+                        $this->addFlash('error', $this->translator->trans('network.not_found') . ' → ' . $network->getName() . ' (ID: ' . $network->getNetworkId() . ')');
                         continue;
                     }
                     $network->setHeadquarters($tmdbNetwork['headquarters'] ?? null);
