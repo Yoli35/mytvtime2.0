@@ -70,7 +70,7 @@ final class AlbumController extends AbstractController
             ];
             $album->setDateRange($range);
         }
-        $albums = array_merge($albums, $this->albumsByDays());
+//        $albums = array_merge($albums, $this->albumsByDays());
         $this->dateRangeString($albums);
 
 //        dump($this->albumsByDays());
@@ -331,6 +331,7 @@ final class AlbumController extends AbstractController
                     $r = [];
                     $r['image_path'] = $imagePath;
                     $r['id'] = $photo->getId();
+                    $r['caption'] = null;
                     $r['created_at'] = $photo->getCreatedAt()->format('Y-m-d H:i:s');
                     $r['created_at_string'] = ucfirst($this->dateService->formatDateRelativeLong($r['created_at'], 'UTC', $request->getLocale()));
                     $r['updated_at'] = $photo->getUpdatedAt()->format('Y-m-d H:i:s');

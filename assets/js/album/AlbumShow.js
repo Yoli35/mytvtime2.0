@@ -347,7 +347,7 @@ export class AlbumShow {
                     const dateDiv = albumPhotoDiv.querySelector('.date');
                     const dateSpan = dateDiv.parentElement.querySelector('span');
                     dateSpan.innerText = photo['date_string'];
-                    gThis.map.addMarker(photo);
+                    gThis.map.addPhotoMarker(photo);
                     gThis.closePhotoPanel();
                 } else {
                     gThis.flashMessage.add('error', data.message);
@@ -378,6 +378,7 @@ export class AlbumShow {
                     if (results.length) {
                         const albumPhotosDiv = document.querySelector('.album-photos');
                         results.forEach(result => {
+                            gThis.map.addPhotoMarker(result);
                             const albumPhotoDiv = document.createElement('div');
                             albumPhotoDiv.classList.add('album-photo');
                             albumPhotoDiv.setAttribute('data-id', result.id);
