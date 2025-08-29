@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/map.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/translations.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css">
 {% endblock %}
@@ -41,33 +42,24 @@
                     {% endif %}
                 </div>
                 <div class="infos">
-                    <div class="backdrop">
-                        {% if tv.backdrop_path %}
+                    {% if tv.backdrop_path %}
+                        <div class="backdrop">
                             <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
-                        {% endif %}
-                    </div>
+                        </div>
+                    {% endif %}
                     <div class="name">
                         <h1>
                             {% if tv.localized_name %}
-                                <span class="localized-name-span">{{ tv.localized_name.name }}</span><br>
+                                <span class="localization-span">{{ tv.localized_name.name }}</span><br>
                             {% elseif tv.original_language != app.locale and tv.name == tv.original_name and tv.translations %}
-                                <span class="localized-name-span">{{ tv.translations.data.name }}</span><br>
+                                <span class="localization-span">{{ tv.translations.data.name }}</span><br>
                             {% endif %}
                             <span class="name-span">{{ series.name }}</span>
                             {% if series.firstAirDate %}
                                 <span title="{{ series.firstAirDate|date("d/m/Y") }}">({{ series.firstAirDate|date("Y") }})</span>
                             {% endif %}
                         </h1>
-                        <div class="series-tools">
-                            <div class="series-tools-click">
-                                {{ ux_icon('mdi:ellipsis-vertical') }}
-                            </div>
-                            <div class="series-tools-menu">
-                                <div id="localized-name">{{ 'Suggest a localized name'|trans }}</div>
-                                <div id="localized-overview">{{ 'Add a localized overview'|trans }}</div>
-                                <div id="additional-overview">{{ 'Add an additional overview'|trans }}</div>
-                            </div>
-                        </div>
+                        {{  include('_blocks/translations/_tools.html.twig') }}
                     </div>
                     {{ include('_blocks/forms/_delete-overview.html.twig') }}
                     {{ include('_blocks/forms/_localized-name.html.twig', {media: tv}) }}
@@ -820,10 +812,10 @@
                     {% if locations|length %}
                         {% set loc = locations|first %}
                         {{ include('_blocks/map/_map-container.html.twig', {type: 'series', styleSettings: mapSettings.data.styles}) }}
-                        {#<div id="map" class="map-controller"></div>
+                        {# <div id="map" class="map-controller"></div>
                         <div class="series-map-list">
                             {{ include('_blocks/map/_thumbnails.html.twig', {styles: mapSettings.data.styles}) }}
-                        </div>#}
+                        </div> #}
                         <div class="temp-locations">
                             <div class="locations">
                                 <ul>

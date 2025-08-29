@@ -43,7 +43,7 @@
                     <div class="name">
                         <h1>
                             {% if season.series_localized_name %}
-                                <span class="localized-name-span">{{ season.series_localized_name.name }}</span><br>
+                                <span class="localization-span">{{ season.series_localized_name.name }}</span><br>
                             {% endif %}
                             <span class="name-span">{{ series.name }} ({{ series.firstAirDate|date("Y") }})</span>
                         </h1>
@@ -419,7 +419,7 @@
                         </div>
                         <div class="series-name">
                             {% if season.series_localized_name %}
-                                <span class="localized-name-span">{{ season.series_localized_name.name }} ({{ series.firstAirDate|date("Y") }})</span>
+                                <span class="localization-span">{{ season.series_localized_name.name }} ({{ series.firstAirDate|date("Y") }})</span>
                             {% else %}
                                 <span class="name-span">{{ series.name }} ({{ series.firstAirDate|date("Y") }})</span>
                             {% endif %}

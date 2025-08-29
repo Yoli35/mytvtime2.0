@@ -22,6 +22,7 @@ import {ProviderSelect} from 'ProviderSelect';
 import {Season} from 'Season';
 import {Show} from 'Show';
 import {ToolTips} from 'ToolTips';
+import {TranslationsForms} from "TranslationsForms";
 import {Videos} from 'Videos';
 
 // new ResizeObserver(entries => {

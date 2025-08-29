@@ -30,9 +30,9 @@
                     <div class="name">
                         <h1>
                             {% if localizedName %}
-                                <span class="localized-name-span">{{ localizedName.name }}</span><br>
+                                <span class="localization-span">{{ localizedName.name }}</span><br>
                             {% elseif tv.original_language != app.locale and tv.name == tv.original_name and tv.translations %}
-                                <span class="localized-name-span">{{ tv.translations.data.name }}</span><br>
+                                <span class="localization-span">{{ tv.translations.data.name }}</span><br>
                             {% endif %}
                             {{ tv.name }}
                             {% if tv.first_air_date %}

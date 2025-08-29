@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Movie;
 use App\Entity\MovieCollection;
 use App\Entity\MovieImage;
+use App\Entity\User;
 use App\Repository\MovieCollectionRepository;
 use App\Repository\MovieImageRepository;
 
@@ -24,6 +25,75 @@ class MovieService
     {
         $this->root = $this->imageService->getProjectDir() . '/public';
         $this->sizes = ['backdrop' => 3, 'logo' => 5, 'poster' => 5];
+    }
+
+    public function getTranslations(array $tv, User $user): ?array
+    {
+        // "translations": [
+        //      {
+        //        "iso_3166_1": "US",
+        //        "iso_639_1": "en",
+        //        "name": "English",
+        //        "english_name": "English",
+        //        "data": {
+        //          "homepage": "",
+        //          "overview": "A boy who gets frustrated in love meets another boy who loses all of his memories and they find some ways to start a new life together.",
+        //          "runtime": 104,
+        //          "tagline": "He will make your night The Night.",
+        //          "title": "Red Wine in the Dark Night"
+        //        }
+        //      },
+        //      [...]
+        //      {
+        //        "iso_3166_1": "FR",
+        //        "iso_639_1": "fr",
+        //        "name": "Français",
+        //        "english_name": "French",
+        //        "data": {
+        //          "homepage": "",
+        //          "overview": "Wine, un jeune homme au physique angélique, rencontre par hasard un garçon de son âge qui se révèle totalement amnésique. Un lien particulier se noue entre eux lorsque Wine s'aperçoit de la nature de l'inconnu : ce dernier est une créature de la nuit, assoiffée de sang et mise au supplice par le manque. Wine finit par le laisser assouvir sa soif sur lui, franchissant du même coup le point de non retour. Autour d'eux gravitent Tee, l'ex petit ami de Wine qui peine à accepter son homosexualité et Boy, un homme d'affaires épris de Wine depuis longtemps qui espère toujours le conquérir.  Entre les trois hommes, Wine est bientôt la cible de nombreux désirs, dont les plus inquiétants ne viennent pas nécessairement du vampire...",
+        //          "runtime": 0,
+        //          "tagline": "",
+        //          "title": "Red Wine in the Dark Night"
+        //        }
+        //      },
+        $country = $user->getCountry() ?? 'FR'; // user iso_3166_1
+        $locale = $user->getPreferredLanguage() ?? 'fr'; // user iso_639_1
+        $translations = $tv['translations']['translations'];
+        $translation = null;
+
+        foreach ($translations as $t) {
+            if ($t['iso_3166_1'] == $country && $t['iso_639_1'] == $locale) {
+                $translation = $t;
+                break;
+            }
+        }
+        if ($translation == null) {
+            foreach ($translations as $t) {
+                if ($t['iso_3166_1'] == $country) {
+                    $translation = $t;
+                    break;
+                }
+            }
+        }
+        if ($translation == null) {
+            foreach ($translations as $t) {
+                if ($t['iso_639_1'] == $locale) {
+                    $translation = $t;
+                    break;
+                }
+            }
+        }
+        // get en-Us if null
+        if ($translation == null) {
+            foreach ($translations as $t) {
+                if ($t['iso_3166_1'] == 'US' && $t['iso_639_1'] == 'en') {
+                    $translation = $t;
+                    break;
+                }
+            }
+        }
+        return $translation;
     }
 
     public function checkMovieImage(string $title, array $tmdbMovie, Movie $movie, string $imageType, bool $isCommand = false): bool

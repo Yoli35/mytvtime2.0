@@ -200,7 +200,16 @@ class MovieController extends AbstractController
         $tmdbId = $userMovie->getMovie()->getTmdbId();
         $dbMovie = $userMovie->getMovie();
 
-        $movie = json_decode($this->tmdbService->getMovie($tmdbId, $language, ['videos,images,credits,recommendations,keywords,watch/providers,release_dates']), true);
+        $movie = json_decode($this->tmdbService->getMovie($tmdbId, $language, [
+            "credits",
+            "images",
+            "keywords",
+            "recommendations",
+            "release_dates",
+            "translations",
+            "videos",
+            "watch/providers",
+        ]), true);
         if (!$movie) {
             $movie = $this->createMovieFromDBMovie($dbMovie);
             //TODO: if movie not found on tmdb, ask for removal
@@ -212,6 +221,9 @@ class MovieController extends AbstractController
                 $this->imageService->saveImage("posters", $movie['belongs_to_collection']['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
                 $this->imageService->saveImage("backdrops", $movie['belongs_to_collection']['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3), '/movies/');
             }
+            dump($movie['translations']);
+            $movie['translations'] = $this->movieService->getTranslations($movie, $user);
+            dump($movie['translations']);
             $updated = $this->movieService->checkMovieImage('', $movie, $dbMovie, 'backdrop');
             $updated = $this->movieService->checkMovieImage('', $movie, $dbMovie, 'poster') || $updated;
 
@@ -479,7 +491,7 @@ class MovieController extends AbstractController
         ]);
     }
 
-    #[Route('/add/localized/name/{id}', name: 'add_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    #[Route('/localized/name/add/{id}', name: 'add_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addLocalizedName(Request $request, UserMovie $userMovie): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -502,14 +514,35 @@ class MovieController extends AbstractController
         ]);
     }
 
+    #[Route('/localized/name/delete/{id}', name: 'delete_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function deleteLocalizedName(Request $request, Movie $movie): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $locale = $data['locale'];
+//        $movie = $this->movieRepository->findOneBy(['id' => $id]);
+
+        $localizedName = $movie->getMovieLocalizedName($locale);
+        if ($localizedName) {
+            $movie->removeMovieLocalizedName($localizedName);
+            $this->movieRepository->save($movie, true);
+            $this->movieLocalizedNameRepository->remove($localizedName);
+        }
+
+        return $this->json([
+            'ok' => true,
+        ]);
+    }
+
 //    #[IsGranted('ROLE_USER')]
-    #[Route('/add/edit/overview/{id}', name: 'add_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    #[Route('/overview/add/edit/{id}', name: 'add_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addOverview(Request $request, UserMovie $userMovie): Response
     {
         $movie = $userMovie->getMovie();
         $data = json_decode($request->getContent(), true);
+        dump($data);
+        // overviewId: -1 (new) or id (edit)
         $overviewId = $data['overviewId'] ?? "";
-        $overviewId = $overviewId == "" ? null : intval($overviewId);
+        $overviewId = $overviewId == "-1" ? null : intval($overviewId);
         $overviewType = $data['type'];
         $overview = $data['overview'];
         $locale = $data['locale'];
@@ -550,7 +583,7 @@ class MovieController extends AbstractController
         ]);
     }
 
-    #[Route('/add/infos/{id}', name: 'add_infos', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    #[Route('/infos/add/{id}', name: 'add_infos', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addInfos(Request $request, Movie $movie): Response
     {
         $data = json_decode($request->getContent(), true);

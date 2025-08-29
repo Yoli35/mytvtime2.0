@@ -1,0 +1,393 @@
+import {ToolTips} from "ToolTips";
+
+let gThis;
+
+export class TranslationsForms {
+    constructor(id, type, translations) {
+        gThis = this;
+        this.toolTips = new ToolTips();
+        this.init(id, type, translations);
+    }
+
+    init(id, mediaType, translations) {
+        const lang = document.documentElement.lang;
+        const localizationToolsButton = document.querySelector('.localization-tools-button');
+        const localizationToolsMenu = document.querySelector('.localization-tools-menu');
+        localizationToolsButton.addEventListener('click', function () {
+            localizationToolsMenu.classList.toggle('active');
+        });
+
+        const localizedName = document.querySelector('#localized-name');
+        const localizedOverview = document.querySelector('#localized-overview');
+        const additionalOverview = document.querySelector('#additional-overview');
+        const overviews = document.querySelectorAll('.overview');
+        const localizedNameForm = document.querySelector('.localized-name-form');
+        const overviewForm = document.querySelector('.overview-form');
+        const deleteOverviewForm = document.querySelector('.delete-overview-form');
+        const lnForm = document.querySelector('#localized-name-form');
+        const lnCancel = lnForm.querySelector('button[type="button"]');
+        const lnDelete = lnForm.querySelector('button[value="delete"]');
+        const lnAdd = lnForm.querySelector('button[value="add"]');
+        const ovForm = document.querySelector('#overview-form');
+        const ovCancel = ovForm.querySelector('button[type="button"]');
+        const ovAdd = ovForm.querySelector('button[value="add"]');
+        const deleteOvForm = document.querySelector('#delete-overview-form');
+        const deleteOvCancel = deleteOvForm.querySelector('button[type="button"]');
+        const deleteOvDelete = deleteOvForm.querySelector('button[value="delete"]');
+
+        localizedName.addEventListener('click', function () {
+            localizationToolsMenu.classList.toggle('active');
+            gThis.displayForm(localizedNameForm);
+        });
+        lnCancel.addEventListener('click', function () {
+            localizedNameForm.classList.remove('active');
+            setTimeout(function () {
+                localizedNameForm.classList.remove('display');
+            }, 300);
+        });
+        lnDelete?.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            fetch('/' + lang + '/' + mediaType + '/localized/name/delete/' + id,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({locale: lang})
+                }
+            ).then(function (response) {
+                if (response.ok) {
+                    gThis.hideForm(localizedNameForm);
+                    const localizedNameSpan = document.querySelector('.localization-span');
+                    const brJustAfterSpan = document.querySelector('.localization-span + br');
+                    localizedNameSpan.remove();
+                    brJustAfterSpan.remove();
+                }
+            });
+        });
+        lnAdd.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const name = lnForm.querySelector('#name');
+            const errors = lnForm.querySelectorAll('.error');
+            errors.forEach(function (error) {
+                error.textContent = '';
+            });
+            if (!name.value) {
+                name.nextElementSibling.textContent = translations['This field is required'];
+            } else {
+                fetch('/' + lang + '/' + mediaType + '/localized/name/add/' + id,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({name: name.value})
+                    }
+                ).then(function (response) {
+                    if (response.ok) {
+                        gThis.hideForm(localizedNameForm);
+                        const localizedNameSpan = document.querySelector('.localization-span');
+                        if (localizedNameSpan) {
+                            localizedNameSpan.textContent = name.value;
+                        } else {
+                            const h1 = document.querySelector('h1');
+                            const nameSpan = document.querySelector('.name-span');
+                            const localizedNameSpan = document.createElement('span');
+                            const brJustAfterSpan = document.createElement('br');
+                            localizedNameSpan.classList.add('localization-span');
+                            localizedNameSpan.textContent = name.value;
+                            h1.insertBefore(localizedNameSpan, nameSpan);
+                            h1.insertBefore(brJustAfterSpan, nameSpan);
+                        }
+                    }
+                });
+            }
+        });
+
+        localizedOverview.addEventListener('click', function () {
+            const firstRow = ovForm.querySelector('.form-row:first-child');
+            const hiddenInputTool = ovForm.querySelector('#tool');
+            hiddenInputTool.setAttribute('data-type', 'localized');
+            hiddenInputTool.setAttribute('data-crud', 'add');
+            hiddenInputTool.setAttribute('data-overview-id', "-1");
+            firstRow.classList.add('hide');
+            const submitButton = ovForm.querySelector('button[type="submit"]');
+            submitButton.textContent = translations['Add'];
+            const overviewField = ovForm.querySelector('#overview-field');
+            overviewField.value = '';
+            localizationToolsMenu.classList.toggle('active');
+            gThis.displayForm(overviewForm);
+        });
+        additionalOverview.addEventListener('click', function () {
+            const firstRow = ovForm.querySelector('.form-row:first-child');
+            const hiddenInputTool = ovForm.querySelector('#tool');
+            hiddenInputTool.setAttribute('data-type', 'additional');
+            hiddenInputTool.setAttribute('data-crud', 'add');
+            hiddenInputTool.setAttribute('data-overview-id', "-1");
+            firstRow.classList.remove('hide');
+            const submitButton = ovForm.querySelector('button[type="submit"]');
+            submitButton.textContent = translations['Add'];
+            const overviewField = ovForm.querySelector('#overview-field');
+            overviewField.value = '';
+            localizationToolsMenu.classList.toggle('active');
+            gThis.displayForm(overviewForm);
+        });
+        ovCancel.addEventListener('click', function () {
+            gThis.hideForm(overviewForm);
+        });
+
+        /* Tools for every added overview */
+        if (overviews) {
+            overviews.forEach(function (overview) {
+                const type = overview.classList.contains('localized') ? 'localized' : 'additional';
+                const tools = overview.querySelector('.tools');
+                const edit = tools.querySelector('.edit');
+                const del = tools.querySelector('.delete');
+                edit.addEventListener('click', function () {
+                    const id = this.getAttribute('data-id');
+                    const content = overview.querySelector('.content').getAttribute('data-overview');
+                    const form = document.querySelector('.overview-form');
+                    const hiddenInputTool = form.querySelector('#tool');
+                    const overviewField = form.querySelector('#overview-field');
+                    hiddenInputTool.value = id;
+                    hiddenInputTool.setAttribute('data-type', type);
+                    hiddenInputTool.setAttribute('data-crud', 'edit');
+                    hiddenInputTool.setAttribute('data-overview-id', id);
+                    overviewField.value = content.trim();
+                    const firstRow = form.querySelector('.form-row:first-child');
+                    if (type === 'localized') {
+                        firstRow.classList.add('hide');
+                    } else {
+                        firstRow.classList.remove('hide');
+                        const select = form.querySelector('#overview-source');
+                        const sourceId = overview.getAttribute('data-source-id');
+                        if (sourceId) {
+                            select.value = sourceId;
+                        }
+                    }
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    submitButton.textContent = translations['Edit'];
+                    gThis.displayForm(overviewForm);
+                });
+                del.addEventListener('click', function () {
+                    const id = this.getAttribute('data-id');
+                    const overviewType = deleteOverviewForm.querySelector('#overview-type');
+                    const overviewId = deleteOverviewForm.querySelector('#overview-id');
+                    overviewType.value = type;
+                    overviewId.value = id;
+                    gThis.displayForm(deleteOverviewForm);
+                });
+            });
+        }
+
+        deleteOvCancel.addEventListener('click', function () {
+            gThis.hideForm(deleteOverviewForm);
+        });
+        ovAdd.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const source = ovForm.querySelector('#overview-source');
+            const sourceError = source.closest('label').querySelector('.error');
+            const overviewField = ovForm.querySelector('#overview-field');
+            const overviewError = overviewField.closest('label').querySelector('.error');
+            const hiddenInputTool = ovForm.querySelector('#tool');
+            const errors = ovForm.querySelectorAll('.error');
+            errors.forEach(function (error) {
+                error.textContent = '';
+            });
+            const type = hiddenInputTool.getAttribute('data-type');
+            const overviewId = parseInt(hiddenInputTool.getAttribute('data-overview-id'));
+            const crud = hiddenInputTool.getAttribute('data-crud');
+            const additional = type === 'additional';
+            if (additional && !source.value) {
+                sourceError.textContent = gThis.translations['This field is required'];
+            }
+            if (!overviewField.value) {
+                overviewError.textContent = gThis.translations['This field is required'];
+            }
+            let data = {
+                overviewId: overviewId,
+                source: source.value,
+                overview: overviewField.value,
+                type: type,
+                crud: crud,
+                locale: lang
+            };
+
+            fetch('/' + lang + '/' + mediaType + '/overview/add/edit/' + id, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(function (response) {
+                if (response.ok) {
+                    gThis.hideForm(overviewForm);
+
+                    if (crud === 'edit') {
+                        const overviewDiv = document.querySelector('.' + type + '.overview[data-id="' + overviewId + '"]');
+                        const contentDiv = overviewDiv.querySelector('.content');
+                        const newContentText = overviewField.value;
+                        contentDiv.setAttribute('data-overview', newContentText);
+                        // replace \n by <br>
+                        //contentDiv.innerHTML = newContentText.replace(/\n/g, '<br>');
+                        contentDiv.textContent = newContentText;
+
+                        /*const toolsDiv = overviewDiv.querySelector('.tools');
+                        const sourceDiv = toolsDiv.querySelector('.source');
+                        if (source.value) {
+                            if (sourceDiv) {
+                                const sourceA = sourceDiv.querySelector('a');
+                                sourceA.href = source.value;
+                                sourceA.setAttribute('data-title', source.value);
+                                sourceA.textContent = source.value;
+                            } else {
+                                const sourceDiv = document.createElement('div');
+                                sourceDiv.classList.add('source');
+                                const sourceA = document.createElement('a');
+                                sourceA.href = source.value;
+                                sourceA.setAttribute('data-title', source.value);
+                                sourceA.target = '_blank';
+                                sourceA.rel = 'noopener noreferrer';
+                                sourceA.textContent = source.value;
+                                sourceDiv.appendChild(sourceA);
+                                toolsDiv.insertBefore(sourceDiv, toolsDiv.firstChild);
+                            }
+                        } else {
+                            if (sourceDiv) {
+                                sourceDiv.remove();
+                            }
+                        }*/
+                        return;
+                    }
+
+                    // crud: add
+                    const infos = document.querySelector('.infos');
+                    let h4 = infos.querySelector('.' + type + '-h4'), overviewsDiv;
+                    if (!h4) {
+                        h4 = document.createElement('h4');
+                        h4.classList.add(type + '-h4');
+                        h4.textContent = type === 'localized' ? translations['Localized overviews'] : translations['Additional overviews'];
+                        infos.appendChild(h4);
+
+                        overviewsDiv = document.createElement('div');
+                        overviewsDiv.classList.add(type);
+                        overviewsDiv.classList.add('overviews');
+                        infos.appendChild(overviewsDiv);
+                    }
+                    overviewsDiv = infos.querySelector('.' + type + '.overviews');
+
+                    const newId = response.id;
+                    /** @type {Source} */
+                    const sourceRecord = response.source;
+
+                    const overviewDiv = document.createElement('div');
+                    overviewDiv.classList.add(type);
+                    overviewDiv.classList.add('overview');
+                    const contentDiv = document.createElement('div');
+                    contentDiv.classList.add('content');
+                    contentDiv.setAttribute('data-overview', overviewField.value);
+                    contentDiv.innerHTML = overviewField.value.replace(/\n/g, '<br>');
+                    overviewDiv.appendChild(contentDiv);
+
+                    const toolsDiv = document.createElement('div');
+                    toolsDiv.classList.add('tools');
+                    if (sourceRecord) {
+                        const sourceDiv = document.createElement('div');
+                        sourceDiv.classList.add('source');
+                        if (sourceRecord.path) {
+                            const sourceA = document.createElement('a');
+                            sourceA.href = sourceRecord.path;
+                            sourceA.setAttribute('data-title', sourceRecord.name);
+                            sourceA.target = '_blank';
+                            sourceA.rel = 'noopener noreferrer';
+                            sourceDiv.appendChild(sourceA);
+                            if (sourceRecord.logoPath) {
+                                const sourceImg = document.createElement('img');
+                                sourceImg.src = sourceRecord.logoPath;
+                                sourceImg.alt = sourceRecord.name;
+                                sourceA.appendChild(sourceImg);
+                            } else {
+                                sourceA.textContent = sourceRecord.name;
+                            }
+                        } else {
+                            sourceDiv.textContent = sourceRecord.name;
+                        }
+                        toolsDiv.appendChild(sourceDiv);
+                    }
+                    const localeDiv = document.createElement('div');
+                    localeDiv.classList.add('locale');
+                    localeDiv.textContent = lang.toUpperCase();
+                    toolsDiv.appendChild(localeDiv);
+
+                    const editDiv = document.createElement('div');
+                    editDiv.classList.add('edit');
+                    editDiv.setAttribute('data-id', newId);
+                    editDiv.setAttribute('data-title', translations['Edit']);
+                    const editI = document.createElement('i');
+                    editI.classList.add('fas');
+                    editI.classList.add('fa-pen');
+                    editDiv.appendChild(editI);
+                    toolsDiv.appendChild(editDiv);
+
+                    const deleteDiv = document.createElement('div');
+                    deleteDiv.classList.add('delete');
+                    deleteDiv.setAttribute('data-id', newId);
+                    deleteDiv.setAttribute('data-title', translations['Delete']);
+                    const deleteI = document.createElement('i');
+                    deleteI.classList.add('fas');
+                    deleteI.classList.add('fa-trash');
+                    deleteDiv.appendChild(deleteI);
+                    toolsDiv.appendChild(deleteDiv);
+
+                    overviewDiv.appendChild(toolsDiv);
+
+                    overviewsDiv.appendChild(overviewDiv);
+                    gThis.toolTips.init(overviewDiv);
+
+                    overviewField.value = '';
+                }
+            });
+        });
+        deleteOvDelete.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const overviewType = deleteOverviewForm.querySelector('#overview-type').value;
+            const overviewId = deleteOverviewForm.querySelector('#overview-id').value;
+            fetch('/' + lang + '/' + type + '/overview/delete/' + overviewId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({overviewType: overviewType})
+            }).then(function (response) {
+                if (response.ok) {
+                    gThis.hideForm(deleteOverviewForm);
+                    const overviewDiv = document.querySelector('.' + overviewType + '.overview[data-id="' + overviewId + '"]');
+                    overviewDiv.remove();
+                    const localizedOverviewDivs = document.querySelectorAll('.' + overviewType + '.overview');
+                    if (localizedOverviewDivs.length === 0) {
+                        document.querySelector('.' + overviewType + '-h4').remove();
+                        document.querySelector('.' + overviewType + '.overviews').remove();
+                    }
+                }
+            });
+        });
+    }
+
+    displayForm(form) {
+        form.classList.add('display');
+        setTimeout(function () {
+            form.classList.add('active');
+        }, 0);
+    }
+
+    hideForm(form) {
+        form.classList.remove('active');
+        setTimeout(function () {
+            form.classList.remove('display');
+        }, 300);
+    }
+}

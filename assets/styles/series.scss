@@ -680,6 +680,22 @@ h2 {
                 color: #030303; /*var(--ardoise-90);*/
             }
 
+            .backdrop {
+                height: 100%;
+                inset: 0;
+                opacity: .25;
+                position: absolute;
+                width: 100%;
+                z-index: -1;
+
+                img {
+                    border-radius: .5rem;
+                    height: 100%;
+                    object-fit: cover;
+                    width: 100%;
+                }
+            }
+
             .name {
                 align-items: flex-start;
                 display: flex;
@@ -694,65 +710,8 @@ h2 {
                     margin-block: 0;
                     text-align: left;
 
-                    .localized-name-span {
+                    .localization-span {
                         color: var(--orange-70);
-                    }
-                }
-
-                .series-tools {
-                    cursor: pointer;
-                    display: flex;
-                    justify-content: center;
-                    margin-inline-start: auto;
-                    position: relative;
-
-                    .series-tools-click {
-                        align-items: center;
-                        aspect-ratio: 1;
-                        background-color: var(--ardoise-100-alpha-20);
-                        border-radius: .25rem;
-                        color: var(--ardoise-10);
-                        cursor: pointer;
-                        display: flex;
-                        justify-content: center;
-                        width: 2rem;
-                    }
-
-                    &:hover .series-tools-menu {
-                        display: block;
-                    }
-                }
-
-                .series-tools-menu {
-                    border-radius: .25rem;
-                    display: none;
-                    overflow: hidden;
-                    position: absolute;
-                    right: 0;
-                    top: 2rem;
-                    z-index: 1;
-
-                    &.active {
-                        display: block;
-                    }
-
-                    > div {
-                        align-items: center;
-                        background-color: var(--grey-85);
-                        color: var(--ardoise-10);
-                        cursor: pointer;
-                        display: flex;
-                        font-size: 1rem;
-                        font-weight: 300;
-                        gap: .5rem;
-                        justify-content: flex-start;
-                        padding-block: .5rem;
-                        padding-inline: 1rem;
-                        white-space: nowrap;
-
-                        &:hover {
-                            background-color: var(--orange-50);
-                        }
                     }
                 }
             }
@@ -902,22 +861,6 @@ h2 {
                     padding-block: .25rem;
                     padding-inline: .75rem;
                 }
-            }
-        }
-
-        .backdrop {
-            height: 100%;
-            inset: 0;
-            opacity: .25;
-            position: absolute;
-            width: 100%;
-            z-index: -1;
-
-            img {
-                border-radius: .5rem;
-                height: 100%;
-                object-fit: cover;
-                width: 100%;
             }
         }
 
@@ -3033,7 +2976,7 @@ h2 {
                 padding-inline: .5rem;
             }
 
-            .localized-name-span {
+            .localization-span {
                 color: var(--orange-70);
             }
 

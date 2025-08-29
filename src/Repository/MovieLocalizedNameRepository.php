@@ -24,4 +24,10 @@ class MovieLocalizedNameRepository extends ServiceEntityRepository
             $this->em->flush();
         }
     }
+
+    public function remove($localizedName): void
+    {
+        $this->em->remove($localizedName);
+        $this->em->flush();
+    }
 }

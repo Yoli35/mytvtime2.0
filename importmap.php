@@ -85,6 +85,9 @@ return [
     'ToolTips' => [
         'path' => './assets/js/ToolTips.js',
     ],
+    'TranslationsForms' => [
+        'path' => './assets/js/translations/TranslationsForms.js',
+    ],
     'Season' => [
         'path' => './assets/js/series/Season.js',
     ],

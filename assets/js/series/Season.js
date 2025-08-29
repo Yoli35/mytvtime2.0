@@ -1412,7 +1412,7 @@ export class Season {
             return;
         }
         e.preventDefault();
-        const seriesNameSpan = document.querySelector('span.localized-name-span') || document.querySelector('span.name-span');
+        const seriesNameSpan = document.querySelector('span.localization-span') || document.querySelector('span.name-span');
         const seriesId = targetStillDiv.getAttribute('data-series-id');
         const seasonId = targetStillDiv.getAttribute('data-season-id');
         const episodeId = targetStillDiv.getAttribute('data-episode-id');

@@ -46,23 +46,13 @@
                     <div class="name">
                         <h1>
                             {% if tv.localized_name %}
-                                <span class="localized-name-span">{{ tv.localized_name.name }}</span>
+                                <span class="localization-span">{{ tv.localized_name.name }}</span>
                             {% endif %}
                             <span class="name-span">{{ series.name }}</span>
                             {% if series.firstAirDate %}
                                 <span title="{{ series.firstAirDate|date("d/m/Y") }}">({{ series.firstAirDate|date("Y") }})</span>
                             {% endif %}
                         </h1>
-                        <div class="series-tools">
-                            <div class="series-tools-click">
-                                {{ ux_icon('mdi:ellipsis-vertical') }}
-                            </div>
-                            <div class="series-tools-menu">
-                                <div id="localized-name">{{ 'Suggest a localized name'|trans }}</div>
-                                <div id="localized-overview">{{ 'Add a localized overview'|trans }}</div>
-                                <div id="additional-overview">{{ 'Add an additional overview'|trans }}</div>
-                            </div>
-                        </div>
                     </div>
                     {{ include('_blocks/forms/_delete-overview.html.twig') }}
                     {{ include('_blocks/forms/_localized-name.html.twig', {media: tv}) }}

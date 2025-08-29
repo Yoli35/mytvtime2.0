@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/movie.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/translations.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
 {% endblock %}
 
@@ -24,7 +25,11 @@
         <div class="movie-show">
             <header>
                 <div class="poster">
-                    <img src="/movies/posters{{ movie.poster_path }}" alt="{{ movie.title }} {{ 'poster'|trans }}">
+                    {% if movie.poster_path %}
+                        <img src="/movies/posters{{ movie.poster_path }}" alt="{{ movie.title }} {{ 'poster'|trans }}">
+                    {% else %}
+                        <div>{{ 'No poster'|trans }}</div>
+                    {% endif %}
                 </div>
                 <div class="infos">
                     {% if movie.backdrop_path %}
@@ -35,20 +40,16 @@
                     <div class="title">
                         <h1>
                             {% if movie.localized_name %}
-                                <span>{{ movie.localized_name.name }}</span>
+                                <span class="localization-span">{{ movie.localized_name.name }}</span><br>
+                            {% elseif movie.original_language != app.locale and movie.title == movie.original_title and movie.translations %}
+                                <span class="localization-span">{{ tv.translations.data.title }}</span><br>
                             {% endif %}
-                            {{ movie.title }}{% if movie.original_title and movie.original_title != movie.title %}<br><span>{{ movie.original_title }}</span>{% endif %} ({{ movie.release_date|date("Y") }})
+                            <span class="name-span">{{ movie.title }}</span>
+                            {% if movie.release_date %}
+                                <span title="{{ movie.release_date|date("d/m/Y") }}">({{ movie.release_date|date("Y") }})</span>
+                            {% endif %}
                         </h1>
-                        <div class="movie-tools">
-                            <div class="movie-tools-click">
-                                {{ ux_icon('mdi:ellipsis-vertical') }}
-                            </div>
-                            <div class="movie-tools-menu">
-                                <div id="localized-name">{{ 'Suggest a localized name'|trans }}</div>
-                                <div id="localized-overview">{{ 'Add a localized overview'|trans }}</div>
-                                <div id="additional-overview">{{ 'Add an additional overview'|trans }}</div>
-                            </div>
-                        </div>
+                        {{  include('_blocks/translations/_tools.html.twig') }}
                     </div>
                     {{ include('_blocks/forms/_delete-overview.html.twig') }}
                     {{ include('_blocks/forms/_localized-name.html.twig', {media: movie}) }}
@@ -61,7 +62,7 @@
                         <div class="localized overviews">
                             {% for overview in movie.localized_overviews %}
                                 <div class="localized overview" data-id="{{ overview.id }}">
-                                    <div class="content">
+                                    <div class="content" data-overview="{{ overview.overview }}">
                                         {{ overview.overview|nl2br }}
                                     </div>
                                     <div class="tools">
@@ -82,7 +83,7 @@
                         <div class="additional overviews">
                             {% for overview in movie.additional_overviews %}
                                 <div class="additional overview" data-id="{{ overview.id }}">
-                                    <div class="content">
+                                    <div class="content" data-overview="{{ overview.overview }}">
                                         {{ overview.overview|nl2br }}
                                     </div>
                                     <div class="tools">

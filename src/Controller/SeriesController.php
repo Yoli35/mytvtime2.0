@@ -1626,7 +1626,7 @@ class SeriesController extends AbstractController
         $serie = $this->seriesRepository->findOneBy(['id' => $id]);
         $data = json_decode($request->getContent(), true);
         $overviewId = $data['overviewId'];
-        $overviewId = $overviewId == "" ? null : intval($overviewId);
+        $overviewId = $overviewId == "-1" ? null : intval($overviewId);
         $overviewType = $data['type'];
         $overview = $data['overview'];
         $locale = $data['locale'];
