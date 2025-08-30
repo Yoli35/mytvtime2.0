@@ -42,7 +42,7 @@
                             {% if movie.localized_name %}
                                 <span class="localization-span">{{ movie.localized_name.name }}</span><br>
                             {% elseif movie.original_language != app.locale and movie.title == movie.original_title and movie.translations %}
-                                <span class="localization-span">{{ tv.translations.data.title }}</span><br>
+                                <span class="localization-span">{{ movie.translations.data.title }}</span><br>
                             {% endif %}
                             <span class="name-span">{{ movie.title }}</span>
                             {% if movie.release_date %}
