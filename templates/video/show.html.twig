@@ -28,11 +28,11 @@
                         </label>
                     </div>
                     <a href="{{ path('app_video_index', {page: page}) }}" class="back-to-videos" data-title="{{ 'Back to my videos'|trans }}">
-                        {{ ux_icon('mdi:arrow-back') }}{{ ux_icon('mdi:youtube-tv') }}
+                        {#{{ ux_icon('mdi:arrow-back') }}#}{{ ux_icon('mdi:youtube-tv') }}
                     </a>
                     {% if categoryId %}
                         <a href="{{ path('app_video_index', {category: categoryId, page: page}) }}" class="back-to-video-category" data-title="{{ 'Back to my videos by category'|trans }}">
-                            {{ ux_icon('mdi:arrow-back') }}{{ ux_icon('mdi:category') }}
+                            {#{{ ux_icon('mdi:arrow-back') }}#}{{ ux_icon('mdi:category') }}
                         </a>
                     {% endif %}
                     <div class="share-video" data-title="{{ 'Share this video'|trans }}">
