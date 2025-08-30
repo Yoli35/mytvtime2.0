@@ -170,7 +170,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const importMap = document.querySelector(".import-map");
     if (importMap) {
         console.log("Import map");
-        new Map();
+        new Map({cooperativeGesturesOption: false});
     }
 
 // Series & season page
@@ -265,7 +265,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     const seriesMap = document.querySelector(".series-map");
-    if (seriesMap) {
+    if (seriesMap && !seriesShow) {
         navBar.navBarColor({h: 32, s: 76, l: 30});
     }
 

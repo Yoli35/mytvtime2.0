@@ -386,13 +386,13 @@ export class Season {
                 // 1- create this:
                 // <div id="globs-map" style="display: none">
                 //     {
-                //     "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-                //     "bounds": {{ locationsBounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-                //     "pointsOfInterest": {{ pois.list|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-                //     "emptyLocation": {{ emptyLocation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-                //     "fieldList": {{ fieldList|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-                //     "locationImagePath": "/images/map",
-                //     "poiImagePath": "/images/poi"
+                //         "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+                //         "bounds": {{ locationsBounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+                //         "pointsOfInterest": {{ pois.list|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+                //         "emptyLocation": {{ emptyLocation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+                //         "fieldList": {{ fieldList|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+                //         "locationImagePath": "/images/map",
+                //         "poiImagePath": "/images/poi"
                 //     }
                 // </div>
                 // 2- insert it before svgsDiv
@@ -423,7 +423,7 @@ export class Season {
                 seriesMapDiv.appendChild(mapDiv);
                 getFilmingLocationsDiv.appendChild(seriesMapDiv);
                 getFilmingLocationsButton.remove();
-                gThis.map = new Map();
+                gThis.map = new Map({cooperativeGesturesOption: true});
             })
         });
 

@@ -8,7 +8,7 @@ import mapboxgl from 'mapbox-gl';
 let gThis = null;
 
 export class Map {
-    constructor() {
+    constructor(options) {
         console.log('Map starting');
         gThis = this;
         const globsData = document.querySelector('#globs-map');
@@ -24,10 +24,10 @@ export class Map {
         this.locale = document.querySelector('html').getAttribute('lang');
         this.map = null;
         this.circles = [];
-        this.init();
+        this.init(options);
     }
 
-    init() {
+    init(options) {
         console.log('Map init');
         console.log(`Mapbox GL JS v${mapboxgl.version}`);
         mapboxgl.accessToken = 'pk.eyJ1IjoiaWJveTQ0IiwiYSI6ImNtNTZqcXo4ZjAxYzIyaXM3cWZ5dnNheWkifQ.yY-zdieRm3Dhlrj3vYh9hg';
@@ -37,7 +37,7 @@ export class Map {
             this.map = new mapboxgl.Map({
                 container: 'map',
                 /*style: 'mapbox://styles/mapbox/outdoors-v12',*/
-                /*cooperativeGestures: true,*/
+                cooperativeGestures: options.cooperativeGesturesOption,
                 projection: 'globe',
                 pitch: 45,
                 bearing: 0,

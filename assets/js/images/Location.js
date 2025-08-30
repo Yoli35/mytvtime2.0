@@ -25,7 +25,7 @@ export class Location {
         /******************************************************************************
          * mapbox gl                                                                  *
          ******************************************************************************/
-        if (this.mapDiv) this.map = new Map();
+        if (this.mapDiv) this.map = new Map({cooperativeGesturesOption: false});
 
         /******************************************************************************
          * Filming location / point of interest form                                                      *
