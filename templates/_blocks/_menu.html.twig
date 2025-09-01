@@ -336,12 +336,13 @@
                     <a href="{{ path('app_user_providers') }}">{{ 'My providers'|trans }}</a>
                     <a href="{{ path('app_user_networks') }}">{{ 'My networks'|trans }}</a>
                     <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a>
+                    <div class="separation">{{ 'Admin'|trans }}</div>
                     {% if 'ROLE_ADMIN' in app.user.roles %}
-                        <div class="separation">{{ 'Admin'|trans }}</div>
                         <a href="{{ path('admin_index') }}">{{ 'Dashboard'|trans }}</a>
                     {% endif %}
-                    <div class="separation">{{ 'Admin'|trans }}</div>
                     <a href="{{ path('app_user_updates') }}">{{ 'Updates'|trans }}</a>
+                    <div class="separation">{{ 'Any questions or comments?'|trans }}</div>
+                    <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
                 {% else %}
                     <a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a>
                     <a href="{{ path('app_register') }}">{{ 'Register'|trans }}</a>
@@ -380,9 +381,9 @@
                 </div>
             </div>
             <div class="menu main">
-                <a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a>
+{#                <a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a>#}
                 {% if app.user %}
-                    <a href="{{ path('app_movie_index') }}">{{ 'My movies'|trans }}</a>
+{#                    <a href="{{ path('app_movie_index') }}">{{ 'My movies'|trans }}</a>#}
                     <div class="separation">{{ 'Series'|trans }}</div>
                     <a href="{{ path('app_series_index') }}">{{ 'Series.week'|trans }}</a>
                     <a href="{{ path('app_series_all') }}">{{ 'Series.in progress'|trans }}</a>
@@ -392,8 +393,6 @@
                     <a href="{{ path('app_series_ranking_by_vote') }}">{{ 'Series.by ranking vote'|trans }}</a>
                     <a href="{{ path('app_people_index') }}">{{ 'People'|trans }}</a>
                     <a href="{{ path('app_map_index') }}">{{ 'Shooting locations'|trans }}</a>
-                    <div class="separation">{{ 'Any questions or comments?'|trans }}</div>
-                    <a href="{{ path('app_contact_form') }}">{{ 'Contact'|trans }}</a>
                 {% endif %}
                 {% if app.user %}
                     {% set relativeDayStrings = {
