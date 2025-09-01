@@ -20,11 +20,44 @@
                     });
                 });
             </script>
-            <div class="site-update glowing-border left">
+            <div class="site-update glowing-border right">
                 <div class="updates-title">
                     <h1>Mises à jour / Updates / {{ 'Updates'|trans(domain = 'messages', locale = 'ko') }}</h1>
                     <h4>myTvTime 2.0 : 18/09/2024</h4>
                 </div>
+            </div>
+            <div class="site-update glowing-border left">
+                <h2>31ᵉ mise à jour : 01/09/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:administrator') }} → Improve new episodes label and admin styles</div>
+                        <div class="details">Updated the label for new episodes in SeriesUpdates.php to correctly pluralize 'episode' based on count. Enhanced the admin.scss styles for the new-episodes field by adding flex layout, centering, and spacing, and commented out fixed width for user names.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}→ Update menu layout and reorganize admin/contact links</div>
+                        <div class="details">Moved the 'Admin' section separator above the admin dashboard link and added a new separator and contact link for questions or comments. Also commented out the 'Home' and 'My movies' links in the main menu and removed duplicate contact section.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }} → Improve network handling in SeriesController</div>
+                        <div class="details">Refactored network processing to iterate over $tv['networks'] instead of $ids, improved variable naming for clarity, and added error handling for missing TMDB network details. Also updated logic to ensure network updates and flash messages are more robust and informative.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:youtube-tv') }} → Update video grid layout and adjust back icons</div>
+                        <div class="details">Refactored the video grid from flex to CSS grid for improved responsiveness, adjusting column counts for different screen sizes. Also commented out the 'arrow-back' icons in the video show template to simplify the back button appearance.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }} {{ ux_icon('mdi:map-outline') }} → Add cooperativeGesturesOption to Map initialization</div>
+                        <div class="details">Refactored Map class to accept a cooperativeGesturesOption parameter, allowing control over the map's gesture behavior. Updated all Map instantiations to pass the appropriate option based on context. Also fixed a minor indentation issue in a comment block in Season.js.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }} {{ ux_icon('mdi:map-outline') }} → Refactor photo marker method and handle missing captions</div>
+                        <div class="details">Renamed addMarker to addPhotoMarker in Map.js and updated all references for clarity. Improved marker popup HTML to conditionally display the photo caption only if present. In AlbumController.php, set the photo caption to null when not available to prevent undefined values.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }} {{ ux_icon('mdi:tv') }} → Refactor translation tools to shared TranslationsForms module</div>
+                        <div class="details">Extracted and unified translation-related UI logic for movies and series into a new TranslationsForms JavaScript module. Updated Movie.js and Show.js to use this shared component, simplifying their code. Updated styles to use new .localization-* classes and moved translation tool styles to a dedicated translations.scss file. Adjusted markup and selectors for consistency, and updated importmap.php to register the new module.</div>
+                    </li>
+                </ul>
             </div>
             <div class="site-update glowing-border right">
                 <h2>30ᵉ mise à jour : 28/08/2025</h2>
