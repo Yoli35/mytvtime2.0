@@ -84,30 +84,34 @@
                         {{ ux_icon('mdi:plus') }}
                     </div>
                 {% endif %}
-                <div class="album-photos {{ settings.layout }}">
-                    {% for photo in albumArray.photos %}
-                        <div class="album-photo {{ cellClasses[loop.index0] }}" data-id="{{ photo.id }}">
-                            <img
-                                    src="/albums/1080p{{ photo.image_path }}"
-                                    alt="{{ photo.caption }}"
-                                    data-title="{{ photo.caption }} {{ photo.date|format_datetime('relative_short', 'short', locale: 'fr') }}"
-                                    loading="lazy"
-                                    srcset="/albums/576p{{ photo.image_path }} 576w, /albums/720p{{ photo.image_path }} 720w, /albums/1080p{{ photo.image_path }} 1080w, /albums/original{{ photo.image_path }} 1920w"
-                            >
-                            <div class="number-badge">{{ loop.index }}</div>
-                            <div class="album-photo-infos">
-                                <div class="name">{{ photo.caption }}</div>
-                                <div class="dates">
-                                    <div class="date" data-title="{{ 'Date'|trans }}">{{ ux_icon('mdi:date-range') }} <span>{{ photo.date|format_datetime('relative_short', 'short', locale: 'fr')|capitalize }}</span></div>
-                                    <div class="created-at" data-title="{{ 'Created at'|trans }}">{{ ux_icon('mdi:update') }} {{ photo.createdAt|format_datetime('relative_short', 'short', locale: 'fr')|capitalize }}</div>
-                                    <div class="updated-at" data-title="{{ 'Updated at'|trans }}">{{ ux_icon('mdi:create-new-folder') }} {{ photo.updatedAt|format_datetime('relative_short', 'short', locale: 'fr')|capitalize }}</div>
+                <div class="album-container">
+                    <div class="bg-header"></div>
+                    <div class="album-photos {{ settings.layout }}">
+                        <div class="bg"></div>
+                        {% for photo in albumArray.photos %}
+                            <div class="album-photo {{ cellClasses[loop.index0] }}" data-id="{{ photo.id }}">
+                                <img
+                                        src="/albums/1080p{{ photo.image_path }}"
+                                        alt="{{ photo.caption }}"
+                                        data-title="{{ photo.caption }} {{ photo.date|format_datetime('relative_short', 'short', locale: 'fr') }}"
+                                        loading="lazy"
+                                        srcset="/albums/576p{{ photo.image_path }} 576w, /albums/720p{{ photo.image_path }} 720w, /albums/1080p{{ photo.image_path }} 1080w, /albums/original{{ photo.image_path }} 1920w"
+                                >
+                                {# <div class="number-badge">{{ loop.index }}</div> #}
+                                <div class="album-photo-infos">
+                                    <div class="name">{{ photo.caption }}</div>
+                                    <div class="dates">
+                                        <div class="date" data-title="{{ 'Date'|trans }}">{{ ux_icon('mdi:date-range') }} <span>{{ photo.date|format_datetime('relative_short', 'short', locale: 'fr')|capitalize }}</span></div>
+                                        <div class="created-at" data-title="{{ 'Created at'|trans }}">{{ ux_icon('mdi:update') }} {{ photo.createdAt|format_datetime('relative_short', 'short', locale: 'fr')|capitalize }}</div>
+                                        <div class="updated-at" data-title="{{ 'Updated at'|trans }}">{{ ux_icon('mdi:create-new-folder') }} {{ photo.updatedAt|format_datetime('relative_short', 'short', locale: 'fr')|capitalize }}</div>
+                                    </div>
                                 </div>
+                                <div class="edit-photo-button" data-id="{{ photo.id }}">{{ ux_icon('mdi:image-edit') }}</div>
                             </div>
-                            <div class="edit-photo-button" data-id="{{ photo.id }}">{{ ux_icon('mdi:image-edit') }}</div>
-                        </div>
-                        {# {% else %}
+                            {# {% else %}
                         <div id="add-photos">{{ ux_icon('mdi:plus') }}</div> #}
-                    {% endfor %}
+                        {% endfor %}
+                    </div>
                 </div>
                 {{ include('_blocks/map/_map-container.html.twig', {type: 'album', styleSettings: mapSettings.data.styles}) }}
             </main>
