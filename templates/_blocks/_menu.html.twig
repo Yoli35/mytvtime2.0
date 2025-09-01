@@ -54,29 +54,10 @@
                 </div>
             </div>
             <div class="navbar-item">
-                {{ ux_icon('mdi:youtube-tv') }}
+                {{ ux_icon('mdi:perm-media') }}
                 <div class="menu videos">
                     <div class="menu-item"><a href="{{ path('app_video_index') }}" class="desktop">{{ 'My videos'|trans }}</a></div>
-                    <div class="menu-item">
-                        <label for="video-search">
-                            <input type="search" id="video-search" data-type="video" class="search" spellcheck="false">
-                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                        </label>
-                        <div class="search-results __video"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="navbar-item">
-                {{ ux_icon('mdi:image-album') }}
-                <div class="menu albums">
                     <div class="menu-item"><a href="{{ path('app_album_index') }}" class="desktop">{{ 'My albums'|trans }}</a></div>
-                    <div class="menu-item">
-                        <label for="album-search">
-                            <input type="search" id="album-search" data-type="album" class="search" spellcheck="false">
-                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                        </label>
-                        <div class="search-results __album"></div>
-                    </div>
                 </div>
             </div>
             <div class="navbar-item">
