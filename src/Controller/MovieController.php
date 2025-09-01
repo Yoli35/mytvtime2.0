@@ -221,9 +221,7 @@ class MovieController extends AbstractController
                 $this->imageService->saveImage("posters", $movie['belongs_to_collection']['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
                 $this->imageService->saveImage("backdrops", $movie['belongs_to_collection']['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3), '/movies/');
             }
-            dump($movie['translations']);
             $movie['translations'] = $this->movieService->getTranslations($movie, $user);
-            dump($movie['translations']);
             $updated = $this->movieService->checkMovieImage('', $movie, $dbMovie, 'backdrop');
             $updated = $this->movieService->checkMovieImage('', $movie, $dbMovie, 'poster') || $updated;
 
@@ -539,7 +537,6 @@ class MovieController extends AbstractController
     {
         $movie = $userMovie->getMovie();
         $data = json_decode($request->getContent(), true);
-        dump($data);
         // overviewId: -1 (new) or id (edit)
         $overviewId = $data['overviewId'] ?? "";
         $overviewId = $overviewId == "-1" ? null : intval($overviewId);
