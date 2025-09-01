@@ -22,7 +22,7 @@
                             <select id="categories" name="categories">
                                 <option value="all">{{ 'All categories'|trans }}</option>
                                 {% for category in categories %}
-                                    <option value="{{ category.id }}"{% if category in video.categories %} disabled{% endif %}>{{ category.name|trans }}</option>
+                                    <option value="{{ category.id }}"{% if category in video.categories %} disabled{% endif %}>{{ category.name }}</option>
                                 {% endfor %}
                             </select>
                         </label>
