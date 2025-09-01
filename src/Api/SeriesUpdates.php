@@ -214,7 +214,7 @@ class SeriesUpdates extends AbstractController
                     if ($seriesNewEpisodeCount > 0) {
                         $updates[] = [
                             'field' => 'new_episodes',
-                            'label' => $seriesNewEpisodeCount . 'new episodes for user ' . $this->userToHTML($us),
+                            'label' => $seriesNewEpisodeCount . ' new episode' . ($seriesNewEpisodeCount > 1 ? 's' : '') . ' for user ' . $this->userToHTML($us),
                             'valueBefore' => $episodeNumber,
                             'valueAfter' => $episodeNumber + $seriesNewEpisodeCount
                         ];

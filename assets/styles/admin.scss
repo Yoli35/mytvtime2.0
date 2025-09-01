@@ -736,6 +736,10 @@
                         }
 
                         .admin__update__field.new-episodes {
+                            align-items: center;
+                            display: flex;
+                            gap: 1rem;
+
                             .user {
                                 display: flex;
                                 gap: .5rem;
@@ -751,7 +755,7 @@
                                 }
 
                                 .name {
-                                    width: 10rem;
+                                    /*width: 10rem;*/
                                 }
 
                                 .badge {
@@ -827,6 +831,10 @@
                         }
 
                         .admin__update__field.new-episodes {
+                            align-items: center;
+                            display: flex;
+                            gap: 1rem;
+
                             .user {
                                 display: flex;
                                 gap: .5rem;
@@ -842,7 +850,7 @@
                                 }
 
                                 .name {
-                                    width: 10rem;
+                                    /*width: 10rem;*/
                                 }
 
                                 .badge {
