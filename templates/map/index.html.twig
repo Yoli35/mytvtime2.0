@@ -425,7 +425,7 @@
         locations.forEach(location => {
             let marker = new mapboxgl.Marker({color: "#B46B18FF"})
                 .setLngLat([location.longitude, location.latitude])
-                .setPopup(new mapboxgl.Popup().setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
+                .setPopup(new mapboxgl.Popup().setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
                 .addTo(map);
             let markerIcon = marker.getElement();
             markerIcon.setAttribute('data-tmdb-id', location.tmdb_id);

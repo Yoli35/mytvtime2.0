@@ -76,10 +76,11 @@
             border-radius: 8px;
             box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
             padding: unset;
-            width: 20rem;
+            width: 24rem;
 
             .leaflet-popup-content-title {
                 background: var(--orange-40);
+                border-radius: .25rem .25rem 0 0;
                 font-size: 1.25rem;
                 font-weight: 300;
                 line-height: 1.25em;

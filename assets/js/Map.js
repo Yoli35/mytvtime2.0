@@ -95,7 +95,7 @@ export class Map {
             this.locations.forEach(location => {
                 let marker = new mapboxgl.Marker({color: "#B46B18FF"})
                     .setLngLat([location.longitude, location.latitude])
-                    .setPopup(new mapboxgl.Popup().setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
+                    .setPopup(new mapboxgl.Popup().setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
                     .addTo(this.map);
                 let markerIcon = marker.getElement();
                 markerIcon.setAttribute('data-target-id', location.id);
@@ -144,7 +144,7 @@ export class Map {
             this.pointsOfInterest.forEach((point, index) => {
                 let marker = new mapboxgl.Marker({color: "#196c00"})
                     .setLngLat([point.longitude, point.latitude])
-                    .setPopup(new mapboxgl.Popup().setHTML('<div class="leaflet-popup-content-title poi">' + point.name + '</div><div class="leaflet-popup-content-description poi">' + point.address + '</div><div class="leaflet-popup-content-image"><img src="/images/poi' + point['still_path'] + '" alt="' + point['name'] + '" style="height: auto; width: 100%"></div>'))
+                    .setPopup(new mapboxgl.Popup().setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title poi">' + point.name + '</div><div class="leaflet-popup-content-description poi">' + point.address + '</div><div class="leaflet-popup-content-image"><img src="/images/poi' + point['still_path'] + '" alt="' + point['name'] + '" style="height: auto; width: 100%"></div>'))
                     .addTo(this.map);
                 let markerIcon = marker.getElement();
                 markerIcon.setAttribute('data-id', point.id);
@@ -241,7 +241,7 @@ export class Map {
         if (photo.latitude && photo.longitude) {
             let marker = new mapboxgl.Marker({color: "#196c00"})
                 .setLngLat([photo.longitude, photo.latitude])
-                .setPopup(new mapboxgl.Popup().setHTML('<div class="leaflet-popup-content-title photo">' + this.albumName + '</div>' + (photo.caption ? '<div class="leaflet-popup-content-description poi">' + photo.caption + '</div>' : '') + '<div class="leaflet-popup-content-image"><img src="/albums/576p' + photo.image_path + '" alt="' + photo.caption + '"></div>'))
+                .setPopup(new mapboxgl.Popup().setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title photo">' + this.albumName + '</div>' + (photo.caption ? '<div class="leaflet-popup-content-description poi">' + photo.caption + '</div>' : '') + '<div class="leaflet-popup-content-image"><img src="/albums/576p' + photo.image_path + '" alt="' + photo.caption + '"></div>'))
                 .addTo(this.map);
             let markerIcon = marker.getElement();
             markerIcon.setAttribute('data-id', photo.id);
