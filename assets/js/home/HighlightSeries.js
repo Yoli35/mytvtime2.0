@@ -3,9 +3,11 @@ import {NavBar} from "NavBar";
 import {ToolTips} from "ToolTips";
 
 /**
- *  @typedef Globs
+ * @typedef Globs
  * @type {Object}
  * @property {Array} highlightedSeries
+ * @property {Array} watchProviders
+ * @property {Array} app_home_load_provider_series
  * @property {String} app_series_tmdb
  */
 

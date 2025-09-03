@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
+/** @method User|null getUser() */
+#[Route('/home', name: 'app_home_')]
 class HomeController extends AbstractController
 {
     public function __construct(
@@ -32,16 +34,15 @@ class HomeController extends AbstractController
     {
     }
 
-    #[Route('/', name: 'app_home_without_locale')]
+    #[Route('/', name: 'without_locale')]
     public function indexWithoutLocale(Request $request): Response
     {
         return $this->redirectToRoute('app_home', ['_locale' => $request->getLocale()]);
     }
 
-    #[Route('/{_locale}/', name: 'app_home', requirements: ['_locale' => 'fr|en|ko'])]
+    #[Route('/{_locale}/', name: 'index', requirements: ['_locale' => 'fr|en|ko'])]
     public function index(Request $request): Response
     {
-        /* @var User $user */
         $user = $this->getUser();
         $language = $user?->getPreferredLanguage() ?? "fr" . "-" . $user?->getCountry() ?? "FR";
         $country = $user?->getCountry() ?? "FR";
@@ -121,17 +122,17 @@ class HomeController extends AbstractController
         if (count($watchProviders) === 0) {
             $watchProviders = $this->watchProviderRepository->getWatchProviderList($country);
         }
-        $watchProviders = array_map(function ($watchProvider) {
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
+        $watchProviders = array_map(function ($watchProvider) use ($logoUrl) {
+            $watchProvider['logoPath'] = $this->getProviderLogoFullPath($watchProvider['logo_path'], $logoUrl);
             $watchProvider['id'] = $watchProvider['provider_id'];
             $watchProvider['name'] = $watchProvider['provider_name'];
-            $watchProvider['logoPath'] = $watchProvider['logo_path'] ? $this->imageConfiguration->getCompleteUrl($watchProvider['logo_path'], 'logo_sizes', 2) : null;
             return $watchProvider;
         }, $watchProviders);
 
         $slugger = new AsciiSlugger();
-        $filterString = "&page=1&sort_by=first_air_date.desc&with_watch_providers=" . $provider . "&with_watch_monetization_types=flatrate&language=fr&timezone=Europe/Paris&watch_region=FR&include_adult=false";
-        $filteredSeries = $this->getSelection('tv', $filterString, $slugger);
 
+        $filteredSeries = $this->getProviderSeries($provider, $slugger, $country, $timezone, $language);
         $seriesSelection = $this->getSeriesSelection($slugger, $country, $timezone, $language, true);
         $movieSelection = $this->getMovieSelection($slugger, $country, $timezone, $language, true);
 
@@ -174,10 +175,9 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/load-new-series', name: 'app_home_load_new_series')]
+    #[Route('/load-new-series', name: 'load_new_series')]
     public function loadNewSeries(): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
         $country = $user?->getCountry() ?? "FR";
         $timezone = $user?->getTimezone() ?? "Europe/Paris";
@@ -195,6 +195,32 @@ class HomeController extends AbstractController
         return $this->json([
             'status' => 'success',
             'series' => $seriesSelection,
+        ]);
+    }
+
+    #[Route('/load-provider-series', name: 'load_provider_series', methods: ['POST'])]
+    public function loadProviderSeries(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $user = $this->getUser();
+        $country = $user?->getCountry() ?? "FR";
+        $timezone = $user?->getTimezone() ?? "Europe/Paris";
+        $language = $user?->getPreferredLanguage() ?? "fr";
+        $provider = $data['provider'] ?? 8;
+
+        if (!is_numeric($provider)) {
+            return $this->json([
+                'status' => 'error',
+                'message' => 'Invalid provider',
+            ]);
+        }
+        $seriesSelection = $this->getProviderSeries($provider, new AsciiSlugger(), $country, $timezone, $language);
+
+        return $this->json([
+            'status' => 'success',
+            'wrapperContent' => $this->render('_blocks/home/_provider-series.html.twig', [
+                'filteredSeries' => $seriesSelection,
+            ])->getContent(),
         ]);
     }
 
@@ -285,6 +311,13 @@ class HomeController extends AbstractController
         return array_values(array_filter($seriesSelection, function ($tv) {
             return $tv['poster_path'];
         }));
+    }
+
+
+    public function getProviderSeries(int $providerId, AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $preferredLanguage = 'fr'): array
+    {
+        $filterString = "&page=1&sort_by=first_air_date.desc&with_watch_providers=" . $providerId . "&with_watch_monetization_types=flatrate&language=fr&timezone=Europe/Paris&watch_region=FR&include_adult=false";
+        return $this->getSelection('tv', $filterString, $slugger, $country, $timezone, $preferredLanguage);
     }
 
     public function getSelection(string $media, string $filterString, AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $preferredLanguage = 'fr'): array

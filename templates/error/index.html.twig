@@ -3,7 +3,7 @@
 {% block title %}My Tv Time → Oups!{% endblock %}
 
 {% block body %}
-    {% set url = history.link ?? path('app_home') %}
+    {% set url = history.link ?? path('app_home_index') %}
     {#    {{ include('_blocks/_menu.html.twig') }} #}
     <div class="container-fluid error">
 
@@ -11,7 +11,7 @@
             <h1>{{ 'Oops!'|trans }}</h1>
             <p>{{ 'An error occurred while processing your request.'|trans }}</p>
             <p>{{ 'Please try again later or contact support if the issue persists.'|trans }}</p>
-            <a href="{{ path('app_home') }}" class="btn btn-primary">{{ 'Go to Home'|trans }}</a>
+            <a href="{{ path('app_home_index') }}" class="btn btn-primary">{{ 'Go to Home'|trans }}</a>
             {% if history %}
                 <p>{{ 'Or you will be redirect to the last page'|trans }} <a href="{{ url }}">{{ history.title }}</a> {{ 'in'|trans }} <span id="countdown">60</span> <span id="sec">{{ 'secondes'|trans }}</span>.</p>
             {% else %}

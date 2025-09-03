@@ -207,19 +207,19 @@
                         </select>
                     </label>
                 </div>
-                <div class="wrapper">
+                <div class="wrapper" id="provider-series">
                     <div class="content">
-                        {% for s in filteredSeries %}
-                            {{ include('_blocks/series/_card.html.twig', { series: s }) }}
-                        {% endfor %}
+                        {{ include('_blocks/home/_provider-series.html.twig') }}
                     </div>
                 </div>
             </div>
         </div>
         <div id="global-data" class="hidden">
             {
-            "highlightedSeries": {{ highlightedSeries|json_encode|raw }},
-            "app_series_tmdb": "{{ path('app_series_tmdb', {'id': 0, 'slug':"a"})|slice(0, -3) }}"
+                "highlightedSeries": {{ highlightedSeries|json_encode|raw }},
+                "watchProviders": {{ watchProviders|json_encode|raw }},
+                "app_series_tmdb": "{{ path('app_series_tmdb', {'id': 0, 'slug':"a"})|slice(0, -3) }}",
+                "app_home_load_provider_series": "{{ path('app_home_load_provider_series') }}"
             }
         </div>
     </div>

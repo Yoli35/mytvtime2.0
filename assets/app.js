@@ -156,7 +156,7 @@ window.addEventListener("DOMContentLoaded", () => {
         const highlightSeries = new HighlightSeries();
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         dayCountHistory.init();
-        providerSelect.init();
+        providerSelect.init(globs);
         highlightSeries.init(globs);
 
     }

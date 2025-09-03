@@ -4,7 +4,7 @@
 <nav class="navbar">
     <div class="navbar-items-toggler">{{ ux_icon('mdi:menu') }}</div>
     <div class="navbar-items left">
-        <a href="{{ path('app_home') }}" accesskey="<">{{ ux_icon('mdi:home') }}</a>
+        <a href="{{ path('app_home_index') }}" accesskey="<">{{ ux_icon('mdi:home') }}</a>
         {% if app.user %}
             <div class="navbar-item">
                 {{ ux_icon('mdi:filmstrip-box') }}
@@ -362,7 +362,7 @@
                 </div>
             </div>
             <div class="menu main">
-{#                <a href="{{ path('app_home') }}">{{ 'Home'|trans }}</a>#}
+{#                <a href="{{ path('app_home_index') }}">{{ 'Home'|trans }}</a>#}
                 {% if app.user %}
 {#                    <a href="{{ path('app_movie_index') }}">{{ 'My movies'|trans }}</a>#}
                     <div class="separation">{{ 'Series'|trans }}</div>
