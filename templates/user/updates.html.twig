@@ -20,11 +20,32 @@
                     });
                 });
             </script>
-            <div class="site-update glowing-border right">
+            <div class="site-update glowing-border left">
                 <div class="updates-title">
                     <h1>Mises à jour / Updates / {{ 'Updates'|trans(domain = 'messages', locale = 'ko') }}</h1>
                     <h4>myTvTime 2.0 : 18/09/2024</h4>
                 </div>
+            </div>
+            <div class="site-update glowing-border right">
+                <h2>32ᵉ mise à jour : 03/09/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }} → Increase map popup width and improve styling</div>
+                        <div class="details">Set the maximum width of map popups to 24rem in both JavaScript and template code for better content display. Updated SCSS to match the new width and added border radius to popup titles for improved appearance.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:home') }} → Add dynamic provider series loading on home page</div>
+                        <div class="details">Implemented AJAX-based loading of series by provider on the home page. Added a new endpoint and controller method for fetching provider-specific series, updated JavaScript to handle provider selection and update the UI dynamically, and refactored Twig templates to support the new functionality. Also standardized route and path names for home page references across templates.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }} → Simplify menu by merging videos and albums sections</div>
+                        <div class="details">Combined the videos and albums menu items into a single section with a unified icon. Removed individual search inputs and search result containers for both videos and albums to streamline the navigation menu.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }} → Refactor album photo layout and container structure</div>
+                        <div class="details">Reorganized the album photo section by introducing an 'album-container' wrapper and moving background elements for improved layout control. Updated SCSS to support the new structure, enhance grid/list switching, and adjust background overlays. The number badge is now commented out in the template, and the edit button remains. These changes improve maintainability and visual consistency for album photo displays.</div>
+                    </li>
+                </ul>
             </div>
             <div class="site-update glowing-border left">
                 <h2>31ᵉ mise à jour : 01/09/2025</h2>
