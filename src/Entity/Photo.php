@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\PhotoRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PhotoRepository::class)]
@@ -18,9 +20,8 @@ class Photo
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'photos')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Album $album = null;
+    #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'photos')]
+    private Collection $albums;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $caption = null;
@@ -55,7 +56,8 @@ class Photo
         ?float             $longitude = null
     ) {
         $this->user = $user;
-        $this->album = $album;
+        $this->albums = new ArrayCollection();
+        $album?->addPhoto($this);
         $this->caption = $caption;
         $this->image_path = $image_path;
         $this->createdAt = $createdAt ?? new DateTimeImmutable();
@@ -65,12 +67,17 @@ class Photo
         $this->longitude = $longitude;
     }
 
+    public function __toString(): string
+    {
+        return $this->image_path;
+    }
+
     public function toArray(): array
     {
         return [
             'id' => $this->getId(),
             'user_id' => $this->getUser()->getId(),
-            'album_id' => $this->getAlbum()->getId(),
+            /*'album_id' => $this->getAlbum()->getId(),*/
             'caption' => $this->getCaption(),
             'image_path' => $this->getImagePath(),
             'created_at_string' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
@@ -122,14 +129,24 @@ class Photo
         return $this;
     }
 
-    public function getAlbum(): ?Album
+    /** @return Collection<int, Album> */
+    public function getAlbums(): Collection
     {
-        return $this->album;
+        return $this->albums;
     }
 
-    public function setAlbum(?Album $album): static
+    public function addAlbum(Album $album): static
     {
-        $this->album = $album;
+        if (!$this->albums->contains($album)) {
+            $this->albums->add($album);
+        }
+
+        return $this;
+    }
+
+    public function removeAlbum(Album $album): static
+    {
+        $this->albums->removeElement($album);
 
         return $this;
     }

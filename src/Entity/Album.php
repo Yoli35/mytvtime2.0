@@ -18,8 +18,11 @@ class Album
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'albums')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $userCreated = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -36,16 +39,17 @@ class Album
     /**
      * @var Collection<int, Photo>
      */
-    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'album', orphanRemoval: true)]
+    #[ORM\ManyToMany(targetEntity: Photo::class, mappedBy: 'albums', cascade: ['persist'])]
     private Collection $photos;
 
-    private string $date;
-    private array $dateRange;
-    private string $dateRangeString;
+    private string $date = '';
+    private array $dateRange = [];
+    private string $dateRangeString = '';
 
-    public function __construct(User $user, string $name, ?DateTimeImmutable $createdAt)
+    public function __construct(?User $user, bool $userCreated, string $name, ?DateTimeImmutable $createdAt)
     {
         $this->user = $user;
+        $this->userCreated = $userCreated;
         $this->name = $name;
         $this->createdAt = $createdAt;
         $this->updatedAt = $createdAt;
@@ -145,7 +149,7 @@ class Album
     {
         if (!$this->photos->contains($photo)) {
             $this->photos->add($photo);
-            $photo->setAlbum($this);
+            $photo->addAlbum($this);
         }
 
         return $this;
@@ -154,10 +158,7 @@ class Album
     public function removePhoto(Photo $photo): static
     {
         if ($this->photos->removeElement($photo)) {
-            // set the owning side to null (unless already changed)
-            if ($photo->getAlbum() === $this) {
-                $photo->setAlbum(null);
-            }
+            $photo->removeAlbum($this);
         }
 
         return $this;
@@ -191,6 +192,18 @@ class Album
     public function setDate(string $date): void
     {
         $this->date = $date;
+    }
+
+    public function isUserCreated(): ?bool
+    {
+        return $this->userCreated;
+    }
+
+    public function setUserCreated(?bool $userCreated): static
+    {
+        $this->userCreated = $userCreated;
+
+        return $this;
     }
 
 }

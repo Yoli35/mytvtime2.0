@@ -27,6 +27,11 @@ class AlbumRepository extends ServiceEntityRepository
         }
     }
 
+    public function flush(): void
+    {
+        $this->em->flush();
+    }
+
     public function getNextAlbumId(Album $album): array|false
     {
         $userId = $album->getUser()->getId();

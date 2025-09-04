@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\DTO\PhotoDTO;
 use App\Entity\Album;
 use App\Entity\Photo;
 use App\Entity\Settings;
@@ -13,8 +12,6 @@ use App\Repository\PhotoRepository;
 use App\Repository\SettingsRepository;
 use App\Service\DateService;
 use App\Service\ImageService;
-use DateTimeImmutable;
-use phpDocumentor\Reflection\Types\Array_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,18 +40,18 @@ final class AlbumController extends AbstractController
     public function index(Request $request): Response
     {
         $user = $this->getUser();
-        $albums = $this->albumRepository->findBy(['user' => $user,], ['createdAt' => 'DESC']);
+        $albums = $this->albumRepository->findBy(['user' => $user, 'userCreated' => true], ['createdAt' => 'DESC']);
 
         $newAlbumName = $request->query->get('new-album');
         if (strlen($newAlbumName) > 0) {
             $now = $this->dateService->getNowImmutable('UTC');
-            $album = new Album($user, $newAlbumName, $now);
+            $album = new Album($user, true, $newAlbumName, $now);
             $this->albumRepository->save($album, true);
             return $this->redirectToRoute('app_album_show', ['id' => $album->getId()]);
         }
 
         foreach ($albums as $album) {
-            $photos = $this->photoRepository->findBy(['album' => $album], ['createdAt' => 'ASC']);
+            $photos = $this->photoRepository->findBy(['albums' => $album], ['createdAt' => 'ASC']);
             $dates = array_map(function ($photo) {
                 return $photo->getDate()->format('Y-m-d H:i:s');
             }, $photos);
@@ -70,10 +67,10 @@ final class AlbumController extends AbstractController
             ];
             $album->setDateRange($range);
         }
-//        $albums = array_merge($albums, $this->albumsByDays());
+        $albumsByDays = $this->albumsByDays();
+        dump($albumsByDays);
+        $albums = array_merge($albums, $albumsByDays);
         $this->dateRangeString($albums);
-
-//        dump($this->albumsByDays());
 
         return $this->render('album/index.html.twig', [
             'albums' => $albums,
@@ -84,9 +81,10 @@ final class AlbumController extends AbstractController
     #[Route('/show/{id}', name: 'show', requirements: ['id' => '\d+'])]
     public function show(Album $album): Response
     {
-        $next = $this->albumRepository->getNextAlbumId($album);
+        $userCreated = $album->isUserCreated();
+        $next = $userCreated ? $this->albumRepository->getNextAlbumId($album) : false;
         $nextAlbum = $next ? $this->albumRepository->findOneBy(['id' => $next['id']]) : null;
-        $previous = $this->albumRepository->getPreviousAlbumId($album);
+        $previous = $userCreated ? $this->albumRepository->getPreviousAlbumId($album) : false;
         $previousAlbum = $previous ? $this->albumRepository->findOneBy(['id' => $previous['id']]) : null;
 
         $editAlbumFormData = [
@@ -103,7 +101,7 @@ final class AlbumController extends AbstractController
                 ],
             ],
         ];
-        $album->setDate('');
+//        $album->setDate('');
         $albumArr = $this->toArray($album);
         $imagePaths = array_map(function ($photo) {
             return $photo['image_path'];
@@ -125,7 +123,7 @@ final class AlbumController extends AbstractController
         ]);
     }
 
-    #[Route('/date/{date}', name: 'date', requirements: ['date' => '\d{4}-\d{2}-\d{2}'])]
+    /*#[Route('/date/{date}', name: 'date', requirements: ['date' => '\d{4}-\d{2}-\d{2}'])]
     public function date(string $date): Response
     {
         $name = ucfirst($this->dateService->formatDateRelativeMedium($date, 'UTC', $this->getUser()->getPreferredLanguage() ?? 'en'));
@@ -155,7 +153,7 @@ final class AlbumController extends AbstractController
             'nextAlbum' => null,
             'srcsetPaths' => ['lowRes' => '/albums/576p', 'mediumRes' => '/albums/720p', 'highRes' => '/albums/1080p', 'original' => '/albums/original'],
         ]);
-    }
+    }*/
 
     #[Route('/settings/{id}', name: 'settings', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function settings(Request $request, Album $album): Response
@@ -408,30 +406,36 @@ final class AlbumController extends AbstractController
     {
         $user = $this->getUser();
         $now = $this->dateService->getNowImmutable('UTC');
-        $photos = $this->photoRepository->findBy(['user' => $this->getUser()], ['date' => 'DESC']);
+        $photos = $this->photoRepository->findBy(['user' => $user], ['date' => 'DESC']);
         if ($photos) {
-            $albums = [];
+            $albums = $this->albumRepository->findBy(['userCreated' => false], ['createdAt' => 'DESC']);
             /** @var Photo $photo */
             foreach ($photos as $photo) {
                 $date = $photo->getDate();
                 $day = $date->format('Y-m-d');
-                if (!array_key_exists($day, $albums)) {
-                    $diff = $now->diff($date);
-                    if ($diff->days > 1 && $diff->days < 7) {
-                        $name = $this->translator->trans($date->format('l'));
-                    } else {
-                        $name = ucfirst($this->dateService->formatDateRelativeMedium($day, 'UTC', $this->getUser()->getPreferredLanguage() ?? 'en'));
-                    }
-                    /*dump(['day' => $day, 'name' => $name]);*/
-                    $albums[$day] = new Album($user, $name, null);
-                    $albums[$day]->setDate($day);
-                    $albums[$day]->setDateRange([
-                        'min' => $day,
-                        'max' => $day,
-                    ]);
+                $album = $albums ? array_find($albums, function ($a) use ($day) {
+                    return $a->getName() === $day;
+                }) : null;
+                $diff = $now->diff($date);
+                if ($diff->days > 1 && $diff->days < 7) {
+                    $name = $this->translator->trans($date->format('l'));
+                } else {
+                    $name = ucfirst($this->dateService->formatDateRelativeMedium($day, 'UTC', $this->getUser()->getPreferredLanguage() ?? 'en'));
                 }
-                $albums[$day]->addPhoto($photo);
+                if (!$album) {
+                    $album = new Album($user, false, $day, $now);
+                    $this->albumRepository->save($album, true);
+                    $albums[] = $album;
+                }
+                // Set the date range for the album
+                $album->setDateRange([
+                    'min' => $day,
+                    'max' => $day,
+                ]);
+                $album->setDescription($name);
+                $album->addPhoto($photo);
             }
+            $this->albumRepository->flush();
             return array_values($albums);
         }
         return [];
@@ -440,55 +444,43 @@ final class AlbumController extends AbstractController
     private function newPhoto(Album $album): array
     {
         $now = $this->dateService->getNowImmutable('UTC');
-        $emptyPhoto = new Photo(
-            user: $this->getUser(),
-            album: $album,
-            caption: '',
-            image_path: '',
-            createdAt: $now,
-            updatedAt: $now,
-            date: $now,
-            latitude: null,
-            longitude: null
-        );
-        return $emptyPhoto->toArray();
+        return [
+            'id' => null,
+            'user_id' => $album->getUser()->getId(),
+            'album_id' => $album->getId(),
+            'caption' => '',
+            'image_path' => '',
+            'created_at_string' => $now->format('Y-m-d H:i:s'),
+            'updated_at_string' => $now->format('Y-m-d H:i:s'),
+            'date_string' => $now->format('Y-m-d H:i:s'),
+            'latitude' => null,
+            'longitude' => null,
+        ];
     }
 
-    private function toArray(Album|array $album): array
+    private function toArray(Album $album): array
     {
+        dump($album);
+        $array = [
+            'id' => $album->getId(),
+            'user_id' => $album->getUser()->getId(),
+            'user_created' => $album->isUserCreated(),
+            'name' => !$album->getName(),
+            'description' => $album->getDescription(),
+            'date' => $album->getDate(),
+            'created_at_string' => $album->getCreatedAt()->format('Y-m-d H:i:s'),
+            'updated_at_string' => $album->getUpdatedAt()->format('Y-m-d H:i:s'),
+            'photos' => [],
+        ];
 
-        if ($album instanceof Album) {
-            $photos = $this->photoRepository->findBy(['album' => $album], ['date' => 'DESC']);
-            $array = [
-                'id' => $album->getId(),
-                'user_id' => $album->getUser()->getId(),
-                'name' => !$album->getName(),
-                'description' => $album->getDescription(),
-                'date' => $album->getDate(),
-                'created_at_string' => $album->getCreatedAt()->format('Y-m-d H:i:s'),
-                'updated_at_string' => $album->getUpdatedAt()->format('Y-m-d H:i:s'),
-                'photos' => [],
-            ];
-        } else {
-            $ids = $this->photoRepository->photoIdsByDate($this->getUser()->getId(), $album['date']);
-            $photos = $this->photoRepository->findBy(['id' => array_column($ids, 'id')], ['date' => 'DESC']);
-            $array = [
-                'id' => null,
-                'user_id' => $this->getUser()->getId(),
-                'name' => $album['name'] ?? '',
-                'description' => '',
-                'date' => $album['date'] ?? '',
-                'created_at_string' => null,
-                'updated_at_string' => null,
-                'photos' => [],
-            ];
-        }
-
+        $photos = $album->getPhotos()->toArray();
+        dump($photos);
+        /** @var Photo $photo */
         foreach ($photos as $photo) {
             $arr = [
                 'id' => $photo->getId(),
                 'user_id' => $photo->getUser()->getId(),
-                'album_id' => $photo->getAlbum()->getId(),
+                'album_id' => $album->getId(),
                 'caption' => $photo->getCaption(),
                 'image_path' => $photo->getImagePath(),
                 'createdAt' => $photo->getCreatedAt()->format('Y-m-d H:i:s'),

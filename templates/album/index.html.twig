@@ -26,40 +26,31 @@
             {% for album in albums %}
                 <div class="album">
                     <div class="thumbnail">
-                        {% if album.id %}
-                            <a href="{{ path('app_album_show', {'id': album.id}) }}">
-                                {% if album.photos|length %}
-                                    <img
-                                            src="/albums/576p{{ album.photos.0.imagePath }}"
-                                            alt="{{ album.name }}"
-                                            srcset="/albums/576p{{ album.photos.0.imagePath }} 576w, /albums/720p{{ album.photos.0.imagePath }} 720w, /albums/1080p{{ album.photos.0.imagePath }} 1080w"
-                                    >
-                                {% else %}
-                                    <div>{{ 'No photo'|trans }}</div>
-                                {% endif %}
-                            </a>
-                        {% else %}
-                            <a href="{{ path('app_album_date', {'date': album.date}) }}">
-                                {% if album.photos|length %}
-                                    <img
-                                            src="/albums/576p{{ album.photos.0.imagePath }}"
-                                            alt="{{ album.name }}"
-                                            srcset="/albums/576p{{ album.photos.0.imagePath }} 576w, /albums/720p{{ album.photos.0.imagePath }} 720w, /albums/1080p{{ album.photos.0.imagePath }} 1080w"
-                                    >
-                                {% else %}
-                                    <div>{{ 'No photo'|trans }}</div>
-                                {% endif %}
-                            </a>
-                        {% endif %}
+                        <a href="{{ path('app_album_show', {'id': album.id}) }}">
+                            {% if album.photos|length %}
+                                <img
+                                        src="/albums/576p{{ album.photos.0.imagePath }}"
+                                        alt="{{ album.name }}"
+                                        srcset="/albums/576p{{ album.photos.0.imagePath }} 576w, /albums/720p{{ album.photos.0.imagePath }} 720w, /albums/1080p{{ album.photos.0.imagePath }} 1080w"
+                                >
+                            {% else %}
+                                <div>{{ 'No photo'|trans }}</div>
+                            {% endif %}
+                        </a>
                     </div>
                     <div class="infos">
                         <div class="content">
-                            <div class="name">{{ album.name }}</div>
-                            <div class="range">{{ album.dateRangeString }}</div>
+                            <div class="name">{{ album.userCreated ? album.name : album.description }}</div>
+                            <div class="count">{{ album.photos|length }} {{ 'photos'|trans }}</div>
+                            {% if album.userCreated %}
+                                <div class="range">{{ album.dateRangeString }}</div>
+                            {% endif %}
                             {% if album.createdAt %}
                                 <div class="at">
                                     <div class="created-at" data-title="{{ 'Created at'|trans }}">{{ ux_icon('mdi:create-new-folder') }} {{ album.createdAt|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
-                                    <div class="updated-at" data-title="{{ 'Updated at'|trans }}">{{ ux_icon('mdi:update') }} {{ album.updatedAt|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
+                                    {% if album.userCreated %}
+                                        <div class="updated-at" data-title="{{ 'Updated at'|trans }}">{{ ux_icon('mdi:update') }} {{ album.updatedAt|format_datetime('relative_short', 'short', locale: 'fr') }}</div>
+                                    {% endif %}
                                 </div>
                             {% endif %}
                         </div>
