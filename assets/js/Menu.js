@@ -597,7 +597,7 @@ export class Menu {
             method: 'POST',
             headers: {
                 accept: 'application/json'
-            }@,
+            },
             body: JSON.stringify({query: 'init'})
         })
             .then(response => response.json())
