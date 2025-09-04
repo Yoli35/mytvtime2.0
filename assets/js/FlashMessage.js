@@ -23,7 +23,8 @@ export class FlashMessage {
     }
 
     closeAll(e) {
-        e.currentTarget.removeEventListener('click', this.closeAll);
+        const flashMessagesDiv = document.querySelector('.flash-messages');
+        flashMessagesDiv.removeEventListener('click', this.closeAll);
         const flashMessageDivs = document.querySelectorAll('.flash-message');
         flashMessageDivs.forEach((flashMessageDiv) => {
             const closeDiv = flashMessageDiv.querySelector('.closure-countdown, .close');
@@ -31,11 +32,11 @@ export class FlashMessage {
         });
         // Add vanishing class to flashMessagesDiv (currentTarget) after 200ms
         setTimeout(() => {
-            e.currentTarget.classList.remove('vanishing');
+            flashMessagesDiv.classList.remove('vanishing');
         }, 200);
         // Wait a bit to allow the clicks to be processed
         setTimeout(() => {
-            e.currentTarget.addEventListener('click', this.closeAll);
+            flashMessagesDiv.addEventListener('click', this.closeAll);
         }, 1500);
     }
 
