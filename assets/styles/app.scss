@@ -403,7 +403,7 @@ label:has(input[type="text"]) {
         gap: .5rem;
 
         &.right {
-            margin-inline-start: auto;
+            margin-inline-start: 0;
         }
     }
 
@@ -462,7 +462,7 @@ label:has(input[type="text"]) {
             .menu-item {
                 border-radius: 0.25rem;
                 color: var(--navbar-color-hover);
-                padding-inline: 1rem;
+                /*padding-inline: 1rem;*/
 
                 &:hover {
                     background-color: var(--orange-50);
@@ -503,9 +503,11 @@ label:has(input[type="text"]) {
                 }
 
                 a {
-                    /*display: block;*/
-                    padding-block: .125rem;
+                    height: 100%;
+                    padding-block-start: 0.125rem;
+                    padding-inline: 1rem;
                     text-decoration: none;
+                    width: 100%;
 
                     &.history {
                         align-items: center;
@@ -649,6 +651,8 @@ label:has(input[type="text"]) {
                 }
 
                 label:has(input[type="search"]) {
+                    display: block;
+                    padding: .25rem;
                     position: relative;
 
                     input {
@@ -656,14 +660,15 @@ label:has(input[type="text"]) {
                         background-color: var(--ardoise-80);
                         border: 1px solid var(--ardoise-50);
                         border-radius: 999px;
-                        margin-block: .5rem;
-                        padding-inline: .5rem 2rem;
+                        /*margin-block: .5rem;*/
+                        padding-block: .25rem;
+                        padding-inline: 0.5rem 2.25rem;
                     }
 
                     .magnifying-glass {
                         position: absolute;
                         right: .75rem;
-                        top: 0;
+                        top: .5rem;
                     }
                 }
 
@@ -791,7 +796,7 @@ label:has(input[type="text"]) {
     }
 
     .multi-search {
-        margin-inline: auto;
+        margin-inline: auto 1rem;
         position: relative;
 
         > label {
@@ -816,16 +821,6 @@ label:has(input[type="text"]) {
                 &::-webkit-textfield-decoration-container {
                     display: none;
                 }
-
-                &:focus {
-                    background-color: var(--orange-30);
-                    padding-inline: 1rem 3rem;
-                    width: 20rem;
-
-                    &::-webkit-textfield-decoration-container {
-                        display: flex;
-                    }
-                }
             }
 
             .magnifying-glass {
@@ -849,6 +844,18 @@ label:has(input[type="text"]) {
             }
         }
 
+        &.active {
+            input {
+                background-color: var(--orange-30);
+                padding-inline: 1rem 3rem;
+                width: 20rem;
+
+                &::-webkit-textfield-decoration-container {
+                    display: flex;
+                }
+            }
+        }
+
         .search-results {
             background-color: var(--navbar-bg);
             border-radius: .25rem;
@@ -859,11 +866,11 @@ label:has(input[type="text"]) {
             transition: left 300ms ease-in-out;
         }
 
-        &:has(input[type="search"]:not(:focus)) {
+        /*&:has(input[type="search"]:not(:focus)) {
             .search-options, .search-results {
                 display: none;
             }
-        }
+        }*/
 
         /*&:has(input[type="search"]:focus) {
             .search-results {
@@ -871,7 +878,7 @@ label:has(input[type="text"]) {
             }
         }*/
 
-        .search-options {
+        /*.search-options {
             backdrop-filter: blur(8px);
             background-color: var(--green-60);
             border-radius: .25rem;
@@ -894,7 +901,7 @@ label:has(input[type="text"]) {
                     justify-content: flex-start;
                 }
             }
-        }
+        }*/
 
         /*&:has(.search-results.showing-something) {
             .search-options {
@@ -1203,6 +1210,11 @@ label:has(input[type="text"]) {
         overflow-x: auto;
         overflow-y: auto;
     }
+
+    svg {
+        height: 1.5rem;
+        width: 1.5rem;
+    }
 }
 
 .menu.main, .menu.user {
@@ -1222,7 +1234,7 @@ label:has(input[type="text"]) {
         width: 100%;
 
         &:hover {
-            background-color: var(--orange-50);
+            background-color: var(--orange-50) !important;
             color: var(--orange-90);
 
             &.active {

@@ -128,6 +128,36 @@ export class Menu {
             "mdi:laptop": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z\"/></svg>",
             "mdi:desktop": "<svg viewBox=\"0 0 576 512\" height=\"18px\" width=\"18px\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M64 0C28.7 0 0 28.7 0 64v288c0 35.3 28.7 64 64 64h176l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32h256c17.7 0 32-14.3 32-32s-14.3-32-32-32h-69.3L336 416h176c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64zm448 64v224H64V64z\"></path></svg>"
         }
+
+        this.apiEndPoints = {
+            "movie": "/" + gThis.lang + "/movie/fetch/search",
+            "dbtv": "/" + gThis.lang + "/series/fetch/search/tv",
+            "tv": "/" + gThis.lang + "/series/fetch/search/tmdb",
+            "people": "/" + gThis.lang + "/people/fetch/search",
+            "multi": "/" + gThis.lang + "/series/fetch/search/multi"
+        }
+        this.resultNames = {
+            'movie': 'title',
+            'collection': 'title',
+            'tv': 'name',
+            'dbtv': 'display_name',
+            'people': 'name'
+        }
+        this.hRefs = {
+            'movie': 'movie/tmdb/',
+            'collection': 'movie/collection/',
+            'tv': 'series/tmdb/',
+            'dbtv': 'series/show/',
+            'people': 'people/show/',
+            'multi': 'search/all?q='
+        };
+        this.resultPaths = {
+            'movie': 'poster_path',
+            'collection': 'poster_path',
+            'tv': 'poster_path',
+            'dbtv': 'poster_path',
+            'people': 'profile_path'
+        };
     }
 
     init() {
@@ -143,10 +173,6 @@ export class Menu {
         this.tooltips = new ToolTips();
 
         const navbarItems = navbar.querySelectorAll(".navbar-item");
-        // const burger = navbar.querySelector(".burger");
-        // const avatar = navbar.querySelector(".avatar");
-        // const mainMenu = navbar.querySelector(".menu.main");
-        // const userMenu = navbar.querySelector(".menu.user");
         const eotdMenuItems = document.querySelectorAll("a[id^='eotd-menu-item-']");
         const pinnedMenuItems = document.querySelectorAll("a[id^='pinned-menu-item-']");
         const seriesInProgress = document.querySelector("a[id^='sip-menu-item-']");
@@ -156,57 +182,34 @@ export class Menu {
         const tvSearchDb = navbar.querySelector("#tv-search-db");
         const personSearch = navbar.querySelector("#person-search");
         const multiSearch = navbar.querySelector("#multi-search");
-        const multiSearchOptions = navbar.querySelector(".search-options");
-
+        const multiSearchDiv = navbar.querySelector(".multi-search");
         const historyNavbarItem = navbar.querySelector("#history-menu");
         this.adjustHistoryList();
 
         const searchResults = navbar.querySelectorAll(".search-results");
-        console.log({searchResults});
         const multiSearchResults = navbar.querySelector(".search-results.__multi");
-        console.log({multiSearchResults});
+        const multiSearchUlTag = multiSearchResults.querySelector("ul");
         const menus = navbar.querySelectorAll(".menu");
-        /*console.log({menus});*/
 
         document.addEventListener("click", (e) => {
             const target = e.target;
-            /*console.log(target);*/
-            if (target === multiSearchResults || multiSearchResults.contains(target)) {
-                if (multiSearchOptions.contains(target)) {
-                    multiSearch.focus();
-                }
-            } else {
-                searchResults.forEach((searchResult) => {
-                    const ul = searchResult.querySelector("ul");
-                    if (ul && !searchResult.parentElement.contains(e.target)) {
-                        if (searchResult.contains(multiSearchOptions)) {
-                            const lis = ul.querySelectorAll('li');
-                            lis.forEach((li) => {
-                                li.remove();
-                            });
-                        } else {
-                            ul.remove();
-                        }
-                        searchResult.classList.remove("showing-something");
-                        // e.preventDefault();
-                    }
-                });
-                menus.forEach((menu) => {
-                    if (!menu.parentElement.contains(e.target)) {
-                        this.closeMenu(menu.closest(".navbar-item"), menu);
-                    }
-                });
-            }
-        });
-        document.addEventListener("auxclick", (e) => {
+
             searchResults.forEach((searchResult) => {
-                if (searchResult.parentElement.contains(e.target)) {
-                    searchResult.innerHTML = '';
+                const ul = searchResult.querySelector("ul");
+                if (ul && !searchResult.parentElement.contains(target)) {
+                    if (searchResult.contains(multiSearchUlTag)) {
+                        multiSearch.classList.remove("active");
+                    }
+                    const lis = ul.querySelectorAll("li");
+                    lis.forEach(item => {
+                        item.remove();
+                    });
                     searchResult.classList.remove("showing-something");
+                    // e.preventDefault();
                 }
             });
             menus.forEach((menu) => {
-                if (menu.parentElement.contains(e.target)) {
+                if (!menu.parentElement.contains(e.target)) {
                     this.closeMenu(menu.closest(".navbar-item"), menu);
                 }
             });
@@ -299,261 +302,22 @@ export class Menu {
         });
 
         if (movieSearch) {
-            movieSearch.addEventListener("input", (e) => {
-                const searchResults = movieSearch.closest(".menu-item").querySelector(".search-results");
-                const value = e.target.value;
-                console.log({e});
-                if (value.length > 2) {
-                    const url = `/${gThis.lang}/movie/fetch/search/movies`;
-                    const options = {
-                        method: 'POST',
-                        headers: {
-                            accept: 'application/json'
-                        },
-                        body: JSON.stringify({query: value})
-                    };
-
-                    fetch(url, options)
-                        .then(res => res.json())
-                        /** @type {SearchResults} */
-                        .then(json => {
-                            console.log(json);
-                            searchResults.innerHTML = '';
-                            const ul = document.createElement("ul");
-                            ul.setAttribute("data-type", "movie");
-                            if (json.results.length) {
-                                searchResults.classList.add("showing-something");
-                            }
-                            /** @type {Movie} */
-                            json.results.forEach((result) => {
-                                const a = document.createElement("a");
-                                a.href = '/' + gThis.lang + '/movie/tmdb/' + result.id;
-                                const li = document.createElement("li");
-                                li.setAttribute("data-id", result.id);
-                                const posterDiv = document.createElement("div");
-                                posterDiv.classList.add("poster");
-                                if (result.poster_path) {
-                                    const img = document.createElement("img");
-                                    img.src = result.poster_path ? gThis.posterUrl + result.poster_path : '/assets/img/no-poster.png';
-                                    img.alt = result.title;
-                                    posterDiv.appendChild(img);
-                                } else {
-                                    posterDiv.innerHTML = 'No poster';
-                                }
-                                a.appendChild(posterDiv);
-                                const titleDiv = document.createElement("div");
-                                titleDiv.classList.add("title");
-                                titleDiv.innerHTML = result.title + (result.release_date ? ' (' + result.release_date.slice(0, 4) + ')' : '');
-                                a.appendChild(titleDiv);
-                                // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
-                                a.addEventListener("auxclick", () => {
-                                    const menuDiv = a.closest(".menu");
-                                    const navbarItem = a.closest(".navbar-item");
-                                    const resultsDiv = a.closest(".search-results");
-                                    resultsDiv.classList.remove("showing-something");
-                                    ul.remove();
-                                    movieSearch.value = '';
-                                    gThis.closeMenu(navbarItem, menuDiv);
-                                });
-                                li.appendChild(a);
-                                ul.appendChild(li);
-                            });
-                            searchResults.appendChild(ul);
-                        })
-                        .catch(err => console.error('error:' + err));
-                } else {
-                    movieSearch.closest(".menu-item").querySelector(".search-results").innerHTML = '';
-                    searchResults.classList.remove("showing-something");
-                }
-            });
+            movieSearch.addEventListener("input", gThis.searchFetch);
             movieSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
-            tvSearch.addEventListener("input", (e) => {
-                const searchResults = tvSearch.closest(".menu-item").querySelector(".search-results");
-                const value = e.target.value;
-                if (value.length > 2) {
-                    const url = `/${gThis.lang}/series/fetch/search/series`;
-                    const options = {
-                        method: 'POST',
-                        headers: {
-                            accept: 'application/json'
-                        },
-                        body: JSON.stringify({query: value})
-                    };
-
-                    fetch(url, options)
-                        .then(res => res.json())
-                        .then(json => {
-                            console.log(json);
-                            searchResults.innerHTML = '';
-                            const ul = document.createElement("ul");
-                            ul.setAttribute("data-type", "tv");
-                            if (json.results.length) {
-                                searchResults.classList.add("showing-something");
-                            }
-                            json.results.forEach((result) => {
-                                const a = document.createElement("a");
-                                const slug = gThis.toSlug(result.name);
-                                a.href = '/' + gThis.lang + '/series/tmdb/' + result.id + '-' + slug;
-                                const li = document.createElement("li");
-                                li.setAttribute("data-id", result.id);
-                                li.setAttribute("data-slug", slug);
-                                const posterDiv = document.createElement("div");
-                                posterDiv.classList.add("poster");
-                                if (result.poster_path) {
-                                    const img = document.createElement("img");
-                                    img.src = gThis.posterUrl + result.poster_path;
-                                    img.alt = result.title;
-                                    posterDiv.appendChild(img);
-                                } else {
-                                    posterDiv.innerHTML = 'No poster';
-                                }
-                                a.appendChild(posterDiv);
-                                const titleDiv = document.createElement("div");
-                                titleDiv.classList.add("title");
-                                titleDiv.innerHTML = result.name;
-                                a.appendChild(titleDiv);
-                                gThis.addAuxClickListener(a);
-                                li.appendChild(a);
-                                ul.appendChild(li);
-                            });
-                            searchResults.appendChild(ul);
-                        })
-                        .catch(err => console.error('error:' + err));
-                } else {
-                    tvSearch.closest(".menu-item").querySelector(".search-results").innerHTML = '';
-                    searchResults.classList.remove("showing-something");
-                }
-            });
+            tvSearch.addEventListener("input", gThis.searchFetch);
             tvSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
-            tvSearchDb.addEventListener("input", (e) => {
-                const searchResults = tvSearchDb.closest(".menu-item").querySelector(".search-results");
-                const value = e.target.value;
-                if (value.length > 2) {
-                    const url = `/${gThis.lang}/series/fetch/search/db/tv`;
-                    const options = {
-                        method: 'POST',
-                        headers: {
-                            accept: 'application/json'
-                        },
-                        body: JSON.stringify({query: value})
-                    };
-                    console.log({url, options});
-
-                    fetch(url, options)
-                        .then(res => res.json())
-                        .then(json => {
-                            searchResults.innerHTML = '';
-                            const ul = document.createElement("ul");
-                            ul.setAttribute("data-type", "dbtv");
-                            if (json.results.length) {
-                                searchResults.classList.add("showing-something");
-                            }
-                            /** @type {DbSeries} */
-                            json.results.forEach((result) => {
-                                const a = document.createElement("a");
-                                a.href = '/' + gThis.lang + '/series/show/' + result.series_id + '-' + result.display_slug;
-                                const li = document.createElement("li");
-                                li.setAttribute("data-id", result.series_id);
-                                li.setAttribute("data-slug", result.display_slug);
-                                const posterDiv = document.createElement("div");
-                                posterDiv.classList.add("poster");
-                                if (result.poster_path) {
-                                    const img = document.createElement("img");
-                                    img.src = '/series/posters' + result.poster_path;
-                                    img.alt = result.display_name;
-                                    posterDiv.appendChild(img);
-                                } else {
-                                    posterDiv.innerHTML = 'No poster';
-                                }
-                                a.appendChild(posterDiv);
-                                const titleDiv = document.createElement("div");
-                                titleDiv.classList.add("title");
-                                titleDiv.innerHTML = result.display_name;
-                                a.appendChild(titleDiv);
-                                gThis.addAuxClickListener(a);
-                                li.appendChild(a);
-                                ul.appendChild(li);
-                            });
-                            searchResults.appendChild(ul);
-                        })
-                        .catch(err => console.error('error:' + err));
-                } else {
-                    tvSearchDb.closest(".menu-item").querySelector(".search-results").innerHTML = '';
-                    searchResults.classList.remove("showing-something");
-                }
-            });
+            tvSearchDb.addEventListener("input", gThis.searchFetch);
             tvSearchDb.addEventListener("keydown", gThis.searchMenuNavigate);
 
-            personSearch.addEventListener("input", (e) => {
-                const searchResults = personSearch.closest(".menu-item").querySelector(".search-results");
-                const value = e.target.value;
-                if (value.length > 2) {
-                    const url = `/${gThis.lang}/people/fetch/search/person`;
-                    const options = {
-                        method: 'POST',
-                        headers: {
-                            accept: 'application/json'
-                        },
-                        body: JSON.stringify({query: value})
-                    };
-
-                    fetch(url, options)
-                        .then(res => res.json())
-                        .then(json => {
-                            console.log(json);
-                            searchResults.innerHTML = '';
-                            const ul = document.createElement("ul");
-                            ul.setAttribute("data-type", "person");
-                            if (json.results.length) {
-                                searchResults.classList.add("showing-something");
-                            }
-                            /** @var {Person} */
-                            json.results.forEach((result) => {
-                                const a = document.createElement("a");
-                                a.href = '/' + gThis.lang + '/people/show/' + result.id + '-' + gThis.toSlug(result.name);
-                                const li = document.createElement("li");
-                                li.setAttribute("data-id", result.id);
-                                li.setAttribute("data-slug", gThis.toSlug(result.name));
-                                const posterDiv = document.createElement("div");
-                                posterDiv.classList.add("poster");
-                                if (result.profile_path) {
-                                    const img = document.createElement("img");
-                                    img.src = gThis.profileUrl + result.profile_path;
-                                    img.alt = result.name;
-                                    posterDiv.appendChild(img);
-                                } else {
-                                    posterDiv.innerHTML = 'No poster';
-                                }
-                                a.appendChild(posterDiv);
-                                const titleDiv = document.createElement("div");
-                                titleDiv.classList.add("title");
-                                titleDiv.innerHTML = result.name;
-                                a.appendChild(titleDiv);
-                                // Si le lien est ouvert dans un autre onglet, il faut supprimer le menu
-                                a.addEventListener("auxclick", () => {
-                                    const menuDiv = a.closest(".menu");
-                                    const navbarItem = a.closest(".navbar-item");
-                                    const resultsDiv = a.closest(".search-results");
-                                    resultsDiv.classList.remove("showing-something");
-                                    ul.remove();
-                                    personSearch.value = '';
-                                    gThis.closeMenu(navbarItem, menuDiv);
-                                });
-                                li.appendChild(a);
-                                ul.appendChild(li);
-                            });
-                            searchResults.appendChild(ul);
-                        })
-                        .catch(err => console.error('error:' + err));
-                } else {
-                    personSearch.closest(".menu-item").querySelector(".search-results").innerHTML = '';
-                    searchResults.classList.remove("showing-something");
-                }
-            });
+            personSearch.addEventListener("input", gThis.searchFetch);
             personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
+            multiSearchDiv.addEventListener("click", () => {
+                multiSearchDiv.classList.add("active");
+                multiSearch.focus();
+            });
             multiSearch.addEventListener("input", gThis.searchFetch);
             multiSearch.addEventListener("keydown", gThis.searchMenuNavigate);
         }
@@ -568,17 +332,28 @@ export class Menu {
     }
 
     addAuxClickListener(a) {
-        // Si le lien est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
+        // Si le lien DEPUIS UN MENU est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
         a.addEventListener("auxclick", () => {
-            const menuDiv = a.closest(".menu");
-            const navbarItem = a.closest(".navbar-item");
-            const resultsDiv = a.closest(".search-results");
-            const ul = resultsDiv.querySelector("ul");
-            const input = resultsDiv.closest(".menu-item").querySelector("input");
-            resultsDiv.classList.remove("showing-something");
-            ul.remove();
-            input.value = '';
-            gThis.closeMenu(navbarItem, menuDiv);
+            const menuItemDiv = a.closest(".menu-item") || a.closest(".multi-search");
+            if (menuItemDiv) {
+                const inputElement = menuItemDiv.querySelector("input");
+                const resultsDiv = menuItemDiv.querySelector(".search-results");
+                const ul = menuItemDiv.querySelectorAll("li");
+                ul.forEach(item => {
+                    item.remove();
+                });
+                resultsDiv.classList.remove("showing-something");
+                inputElement.value = '';
+                gThis.tooltips.hide();
+
+                if (!resultsDiv.classList.contains("__multi")) {
+                    const menuDiv = menuItemDiv.closest(".menu");
+                    const navbarItem = menuItemDiv.closest(".navbar-item");
+                    gThis.closeMenu(navbarItem, menuDiv);
+                } else {
+                    resultsDiv.classList.remove("active");
+                }
+            }
         });
     }
 
@@ -636,7 +411,7 @@ export class Menu {
         const value = searchInput.value;
         const searchResults = searchInput.parentElement.parentElement.querySelector(".search-results");
         const ul = searchResults.querySelector('ul');//document.createElement("ul");
-        const lis = ul.querySelectorAll('li');
+        const lis = ul?.querySelectorAll('li');
         if (value.length < 3) {
             if (searchResults.innerHTML.length) {
                 lis.forEach(item => {
@@ -646,47 +421,11 @@ export class Menu {
             }
             return;
         }
-        const searchType = searchInput.getAttribute("data-type");
-        const tvdbAPI = `/${gThis.lang}/series/fetch/search/db/tv`;
-        const multiAPI = `/${gThis.lang}/series/fetch/search/multi`;
-        const baseHref = `/${gThis.lang}/`;
-        const resultNames = {
-            'movie': 'title',
-            'collection': 'title',
-            'tv': 'name',
-            'dbtv': 'display_name',
-            'person': 'name'
-        }
-        const hRefs = {
-            'movie': 'movie/tmdb/',
-            'collection': 'movie/collection/',
-            'tv': 'series/tmdb/',
-            'dbtv': 'series/show/',
-            'person': 'people/show/',
-            'multi': 'search/all?q='
-        };
-        const imagePaths = {
-            'movie': gThis.posterUrl,
-            'collection': gThis.posterUrl,
-            'tv': gThis.posterUrl,
-            'dbtv': '/series/posters',
-            'person': gThis.profileUrl
-        };
-        const resultPaths = {
-            'movie': 'poster_path',
-            'collection': 'poster_path',
-            'tv': 'poster_path',
-            'dbtv': 'poster_path',
-            'person': 'profile_path'
-        };
+        const searchType = ul.getAttribute("data-type");
+        const baseHref = "/" + gThis.lang + "/";
 
-        let url, options;
-        if (searchType === 'tvdb') {
-            url = tvdbAPI;
-        } else {
-            url = multiAPI;
-        }
-        options = {
+        const url = gThis.apiEndPoints[searchType];
+        const options = {
             method: 'POST',
             headers: {
                 accept: 'application/json'
@@ -697,12 +436,11 @@ export class Menu {
         fetch(url, options)
             .then(res => res.json())
             .then(json => {
-                console.log(json);
+                // console.log(json);
                 const lis = ul.querySelectorAll('li');
                 lis.forEach(item => {
                     item.remove();
-                }); //searchResults.innerHTML = '';
-                ul.setAttribute("data-type", searchType);
+                });
 
                 if (json.results.length) {
                     searchResults.classList.add("showing-something");
@@ -716,23 +454,19 @@ export class Menu {
                         //return; // On ne veut pas de collection
                     }
                     const a = document.createElement("a");
-                    let url = baseHref + hRefs[type] + result['id'];
-                    if (type !== 'movie' && type !== 'collection') url += '-' + gThis.toSlug(result[resultNames[type]]);
+                    let url = baseHref + gThis.hRefs[type] + result['id'];
+                    if (type !== 'movie' && type !== 'collection') url += '-' + gThis.toSlug(result[gThis.resultNames[type]]);
                     a.href = url;
-                    a.target = "_blank";
                     const li = document.createElement("li");
-                    li.setAttribute("data-id", result['id'].toString());
-                    li.setAttribute("data-slug", gThis.toSlug(result[resultNames[type]]));
-                    li.setAttribute("data-type", type);
-                    li.setAttribute('data-title', result[resultNames[type]]);
+                    li.setAttribute('data-title', result[gThis.resultNames[type]]);
                     if (!index) li.classList.add("active");
                     const posterDiv = document.createElement("div");
                     posterDiv.classList.add("poster");
-                    const imageResult = resultPaths[type];
+                    const imageResult = gThis.resultPaths[type];
                     if (result[imageResult]) {
                         const img = document.createElement("img");
-                        img.src = imagePaths[type] + result[imageResult];
-                        img.alt = result[resultNames[type]];
+                        img.src = gThis.imagePaths[type] + result[imageResult];
+                        img.alt = result[gThis.resultNames[type]];
                         posterDiv.appendChild(img);
                     } else {
                         posterDiv.innerHTML = 'No poster';
@@ -740,21 +474,9 @@ export class Menu {
                     a.appendChild(posterDiv);
                     const titleDiv = document.createElement("div");
                     titleDiv.classList.add("title");
-                    titleDiv.innerHTML = result[resultNames[type]];
+                    titleDiv.innerHTML = result[gThis.resultNames[type]];
                     a.appendChild(titleDiv);
-                    a.addEventListener("click", (e) => {
-                        const menuDiv = e.currentTarget.closest(".multi-search");
-                        const multiSearchInput = menuDiv.querySelector("input");
-                        const resultsDiv = menuDiv.querySelector(".search-results");
-                        const ul = menuDiv.querySelectorAll("li");
-                        ul.forEach(item => {
-                            item.remove();
-                        });
-                        resultsDiv.classList.remove("showing-something");
-                        multiSearchInput.value = '';
-                        gThis.tooltips.hide();
-                        window.location.href = url;
-                    });
+                    gThis.addAuxClickListener(a);
                     li.appendChild(a);
                     ul.appendChild(li);
                 });
@@ -779,13 +501,15 @@ export class Menu {
                 e.preventDefault();
                 const li = ul.querySelector("li.active") ?? ul.querySelector("li");
                 if (type === 'multi') {
-                    e.preventDefault();
                     li.querySelector("a").click();
                     return;
                 }
                 //const multiSearchMenuResultType = (type === 'multi') ? li?.getAttribute("data-type") : null;
 
                 if (!li) {
+                    if (type === 'movie') {
+                        window.location.href = '/' + gThis.lang + '/movie/search/all?q=' + value;
+                    }
                     if (type === 'tv') {
                         window.location.href = '/' + gThis.lang + '/series/search/all?q=' + value;
                     }
@@ -798,7 +522,11 @@ export class Menu {
                 const searchResults = li.closest(".search-results");
                 const a = li.querySelector("a");
                 /* >> Fermeture du menu au cas où le lien serait ouvert dans un autre onglet ou une autre fenêtre */
-                ul.remove();
+                // ul.remove();
+                const lis = ul.querySelectorAll("li");
+                lis.forEach(item => {
+                    item.remove();
+                });
                 e.target.value = '';
                 searchResults.classList.remove("showing-something");
                 const menuDiv = searchResults.closest(".menu");
@@ -869,7 +597,7 @@ export class Menu {
             method: 'POST',
             headers: {
                 accept: 'application/json'
-            },
+            }@,
             body: JSON.stringify({query: 'init'})
         })
             .then(response => response.json())
@@ -882,6 +610,13 @@ export class Menu {
                 /*console.log(data);*/
                 gThis.posterUrl = data.posterUrl;
                 gThis.profileUrl = data.profileUrl;
+                gThis.imagePaths = {
+                    'movie': gThis.posterUrl,
+                    'collection': gThis.posterUrl,
+                    'tv': gThis.posterUrl,
+                    'dbtv': '/series/posters',
+                    'people': gThis.profileUrl
+                };
             })
             .catch((error) => {
                 console.error({error});

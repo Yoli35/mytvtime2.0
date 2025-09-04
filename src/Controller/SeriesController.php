@@ -2538,7 +2538,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/fetch/search/db/tv', name: 'fetch_search_db_tv', methods: ['POST'])]
+    #[Route('/fetch/search/tv', name: 'fetch_search_db_tv', methods: ['POST'])]
     public function fetchSearchDbTv(Request $request): Response
     {
         $user = $this->getUser();
@@ -2575,7 +2575,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/fetch/search/series', name: 'fetch_search_series', methods: ['POST'])]
+    #[Route('/fetch/search/tmdb', name: 'fetch_search_series', methods: ['POST'])]
     public function fetchSearchSeries(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);

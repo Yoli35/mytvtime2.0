@@ -16,7 +16,9 @@
                             <input type="search" id="movie-search" data-type="movie" class="search" spellcheck="false">
                             {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                         </label>
-                        <div class="search-results __movie"></div>
+                        <div class="search-results __movie">
+                            <ul data-type="movie"></ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -36,14 +38,18 @@
                             <input type="search" id="tv-search" data-type="tv" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}">
                             {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                         </label>
-                        <div class="search-results __series"></div>
+                        <div class="search-results __series">
+                            <ul data-type="tv"></ul>
+                        </div>
                     </div>
                     <div class="menu-item">
                         <label for="tv-search-db">
                             <input type="search" id="tv-search-db" data-type="db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}">
                             {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                         </label>
-                        <div class="search-results __db_series"></div>
+                        <div class="search-results __db_series">
+                            <ul data-type="dbtv"></ul>
+                        </div>
                     </div>
                     <div class="separation">{{ 'Search'|trans }}</div>
                     {% if app.user %}
@@ -70,7 +76,9 @@
                             <input type="search" id="person-search" data-type="person" class="search" spellcheck="false">
                             {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
                         </label>
-                        <div class="search-results __people"></div>
+                        <div class="search-results __people">
+                            <ul data-type="people"></ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -175,33 +183,7 @@
                 </span>
             </label>
             <div class="search-results __multi">
-                <div class="search-options">
-                    <div class="row">
-                        <label for="multi-search-movie" class="search-option">
-                            <input type="checkbox" id="multi-search-movie" checked switch>
-                            {{ 'Movies'|trans }}
-                        </label>
-                        <label for="multi-search-series" class="search-option">
-                            <input type="checkbox" id="multi-search-series" checked switch>
-                            {{ 'Series'|trans }}
-                        </label>
-                        {# <label for="multi-search-video" class="search-option">
-                    <input type="checkbox" id="multi-search-video" checked switch>
-                    {{ ux_icon('mdi:youtube-tv', {height: "16px", width: "16px"}) }} {{ 'Videos'|trans }}
-                </label> #}
-                        <label for="multi-search-people" class="search-option">
-                            <input type="checkbox" id="multi-search-people" checked switch>
-                            {{ 'People'|trans }}
-                        </label>
-                    </div>
-                    <div class="row">
-                        <label for="open-in-new-window" class="search-option">
-                            <input type="checkbox" id="open-in-new-window" checked switch>
-                            {{ 'Open in new tab'|trans }}
-                        </label>
-                    </div>
-                </div>
-                <ul></ul>
+                <ul data-type="multi"></ul>
             </div>
         </div>
     {% endif %}

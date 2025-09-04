@@ -642,7 +642,7 @@ class MovieController extends AbstractController
         ]);
     }
 
-    #[Route('/fetch/search/movies', name: 'fetch_search_movies', methods: ['POST'])]
+    #[Route('/fetch/search', name: 'fetch_search', methods: ['POST'])]
     public function fetchSearchMovies(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);

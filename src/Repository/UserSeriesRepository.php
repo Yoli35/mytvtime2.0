@@ -364,7 +364,7 @@ class UserSeriesRepository extends ServiceEntityRepository
     public function searchSeries(User $user, mixed $query, string $locale): array
     {
         $userId = $user->getId();
-        $sql = "SELECT s.`id`                                     as series_id,
+        $sql = "SELECT s.`id`                                     as id,
                        s.`tmdb_id`                                as tmdb_id,
                        s.`poster_path`                            as poster_path,
                        IF(sln.name IS NOT NULL, sln.name, s.name) as display_name,

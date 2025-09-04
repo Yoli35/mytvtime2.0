@@ -356,7 +356,7 @@ class PeopleController extends AbstractController
         ]);
     }
 
-    #[Route('/fetch/search/person', name: 'fetch_search_person', methods: ['POST'])]
+    #[Route('/fetch/search', name: 'fetch_search', methods: ['POST'])]
     public function fetchSearchPerson(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
