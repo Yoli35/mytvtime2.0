@@ -13,7 +13,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PhotoRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry,  private readonly EntityManagerInterface $em)
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $em)
     {
         parent::__construct($registry, Photo::class);
     }
@@ -33,6 +33,26 @@ class PhotoRepository extends ServiceEntityRepository
                 FROM `photo` p
                 WHERE p.`user_id`=$userId AND DATE(p.`date`)='$date'
                 ORDER BY p.`created_at` DESC";
+
+        return $this->getAll($sql);
+    }
+
+    public function photoByFilename(int $userId, string $filename): array
+    {
+        $sql = "SELECT *
+                FROM `photo` p
+                	LEFT JOIN `photo_album` pa ON pa.`photo_id`=p.`id`
+                WHERE p.`user_id`=$userId AND p.`image_path`='$filename'";
+
+        return $this->getAll($sql);
+    }
+
+    public function photoByAlbum(int $albumId): array
+    {
+        $sql = "SELECT *
+                FROM `photo` p
+                    INNER JOIN `photo_album` pa ON pa.`photo_id`=p.`id`
+                WHERE pa.`album_id`=$albumId";
 
         return $this->getAll($sql);
     }

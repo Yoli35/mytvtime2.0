@@ -359,9 +359,11 @@ export class AlbumShow {
     fetchFile(formFiles, summaryDiv) {
         const count = formFiles.length;
         if (count) {
-            const formFile = formFiles.shift();
-            const filename = formFile.name;
+            const formFile = formFiles.shift(); // Tableau de FormData contenant un objet file dont la clé est 'additional-image'
+            const filename = formFile.get('additional-image').name;
+            const progress = Math.round(100 * (gThis.fileCount - count + 1) / gThis.fileCount);
             summaryDiv.innerText = 'Saving ' + filename + ' file' + ' - ' + (gThis.fileCount - count) + ' / ' + gThis.fileCount;
+            summaryDiv.setAttribute('style', "background: linear-gradient(to right, #E0861F " + progress + "%, transparent " + progress + "%);");
             fetch('/' + gThis.lang + '/album/add/' + gThis.album.id,
                 {
                     method: 'POST',
@@ -379,6 +381,7 @@ export class AlbumShow {
                         const albumPhotosDiv = document.querySelector('.album-photos');
                         results.forEach(result => {
                             gThis.map.addPhotoMarker(result);
+                            gThis.map.adjustBounds();
                             const albumPhotoDiv = document.createElement('div');
                             albumPhotoDiv.classList.add('album-photo');
                             albumPhotoDiv.setAttribute('data-id', result.id);
@@ -551,7 +554,7 @@ export class AlbumShow {
         const formDataArr = [];
         Array.from(imageFilesInput.files).forEach(function (file, index) {
             const formData = new FormData();
-            formData.append('additional-image-' + index, file);
+            formData.append('additional-image', file);
             formDataArr.push(formData);
         });
 

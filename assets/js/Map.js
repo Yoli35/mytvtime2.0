@@ -18,6 +18,7 @@ export class Map {
         /*console.log(this.locations);*/
         this.bounds = data.bounds;
         this.pointsOfInterest = data.pointsOfInterest || [];
+        this.id = data.id || null;
         this.albumName = data.albumName || null;
         this.photos = data.photos || [];
         // this.latLngs = locations.map(location => [location.latitude, location.longitude]);
@@ -239,9 +240,10 @@ export class Map {
 
     addPhotoMarker(photo, index = 0) {
         if (photo.latitude && photo.longitude) {
+            const path = '/albums/' + this.id + '/576p';
             let marker = new mapboxgl.Marker({color: "#196c00"})
                 .setLngLat([photo.longitude, photo.latitude])
-                .setPopup(new mapboxgl.Popup().setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title photo">' + this.albumName + '</div>' + (photo.caption ? '<div class="leaflet-popup-content-description poi">' + photo.caption + '</div>' : '') + '<div class="leaflet-popup-content-image"><img src="/albums/576p' + photo.image_path + '" alt="' + photo.caption + '"></div>'))
+                .setPopup(new mapboxgl.Popup().setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title photo">' + this.albumName + '</div>' + (photo.caption ? '<div class="leaflet-popup-content-description poi">' + photo.caption + '</div>' : '') + '<div class="leaflet-popup-content-image"><img src="'+path + photo.image_path + '" alt="' + photo.caption + '"></div>'))
                 .addTo(this.map);
             let markerIcon = marker.getElement();
             markerIcon.setAttribute('data-id', photo.id);
@@ -250,6 +252,30 @@ export class Map {
             if (index)
                 markerIcon.setAttribute('data-index', index);
         }
+    }
+
+    adjustBounds() {
+        const markers = document.querySelectorAll('.mapboxgl-marker');
+        if (!markers.length) {
+            return;
+        }
+        if (markers.length === 1) {
+            const lat = parseFloat(markers[0].getAttribute('data-latitude'));
+            const lng = parseFloat(markers[0].getAttribute('data-longitude'));
+            this.map.setCenter([lng, lat], { padding: 30 });
+            // this.map.setZoom(12);
+            return;
+        }
+        let minLat = 90, maxLat = -90, minLng = 180, maxLng = -180;
+        markers.forEach(marker => {
+            const lat = parseFloat(marker.getAttribute('data-latitude'));
+            const lng = parseFloat(marker.getAttribute('data-longitude'));
+            minLat = Math.min(lat, minLat);
+            maxLat = Math.max(lat, maxLat);
+            minLng = Math.min(lng, minLng);
+            maxLng = Math.max(lng, maxLng);
+        });
+        this.map.fitBounds([[minLng, minLat], [maxLng, maxLat]], { padding: 30 });
     }
 
     getPosition(e) {

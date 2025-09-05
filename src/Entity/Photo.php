@@ -18,37 +18,37 @@ class Photo
 
     #[ORM\ManyToOne(inversedBy: 'photos')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private ?User $user;
 
     #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'photos')]
     private Collection $albums;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $caption = null;
+    private ?string $caption;
 
     #[ORM\Column(length: 255)]
-    private ?string $image_path = null;
+    private ?string $imagePath;
 
     #[ORM\Column]
-    private ?DateTimeImmutable $createdAt = null;
+    private ?DateTimeImmutable $createdAt;
 
     #[ORM\Column]
-    private ?DateTimeImmutable $updatedAt = null;
+    private ?DateTimeImmutable $updatedAt;
 
     #[ORM\Column]
-    private ?DateTimeImmutable $date = null;
+    private ?DateTimeImmutable $date;
 
     #[ORM\Column(nullable: true)]
-    private ?float $latitude = null;
+    private ?float $latitude;
 
     #[ORM\Column(nullable: true)]
-    private ?float $longitude = null;
+    private ?float $longitude;
 
     public function __construct(
         ?User              $user = null,
         ?Album             $album = null,
         ?string            $caption = null,
-        string             $image_path = '',
+        string             $imagePath = '',
         ?DateTimeImmutable $createdAt = null,
         ?DateTimeImmutable $updatedAt = null,
         ?DateTimeImmutable $date = null,
@@ -59,7 +59,7 @@ class Photo
         $this->albums = new ArrayCollection();
         $album?->addPhoto($this);
         $this->caption = $caption;
-        $this->image_path = $image_path;
+        $this->imagePath = $imagePath;
         $this->createdAt = $createdAt ?? new DateTimeImmutable();
         $this->updatedAt = $updatedAt ?? new DateTimeImmutable();
         $this->date = $date ?? new DateTimeImmutable();
@@ -69,7 +69,7 @@ class Photo
 
     public function __toString(): string
     {
-        return $this->image_path;
+        return $this->imagePath;
     }
 
     public function toArray(): array
@@ -119,12 +119,12 @@ class Photo
 
     public function getImagePath(): ?string
     {
-        return $this->image_path;
+        return $this->imagePath;
     }
 
-    public function setImagePath(string $image_path): static
+    public function setImagePath(string $imagePath): static
     {
-        $this->image_path = $image_path;
+        $this->imagePath = $imagePath;
 
         return $this;
     }

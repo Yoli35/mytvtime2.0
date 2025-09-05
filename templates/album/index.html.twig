@@ -24,14 +24,17 @@
         {{ pagination|raw }}
         <div class="album-wrapper">
             {% for album in albums %}
+                {%  set id = album.user.id %}
                 <div class="album">
                     <div class="thumbnail">
                         <a href="{{ path('app_album_show', {'id': album.id}) }}">
                             {% if album.photos|length %}
+                                {% set n = album.photos|length %}
+                                {% set n = random(n-1) %}
                                 <img
-                                        src="/albums/576p{{ album.photos.0.imagePath }}"
+                                        src="/albums/{{ id }}/576p{{ album.photos[n].imagePath }}"
                                         alt="{{ album.name }}"
-                                        srcset="/albums/576p{{ album.photos.0.imagePath }} 576w, /albums/720p{{ album.photos.0.imagePath }} 720w, /albums/1080p{{ album.photos.0.imagePath }} 1080w"
+                                        srcset="/albums/{{ id }}/576p{{ album.photos[n].imagePath }} 576w, /albums/{{ id }}/720p{{ album.photos[n].imagePath }} 720w, /albums/{{ id }}/1080p{{ album.photos[n].imagePath }} 1080w"
                                 >
                             {% else %}
                                 <div>{{ 'No photo'|trans }}</div>

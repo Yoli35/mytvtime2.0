@@ -131,11 +131,33 @@ class ImageService extends AbstractController
         return $image;
     }
 
-    public function photoToWebp(UploadedFile $file, string $path = '/public/albums/'): array|null
+    public function photoExists(UploadedFile $file, int $userId, string $path = '/public/albums/'): ?string
+    {
+        $kernelProjectDir = $this->getParameter('kernel.project_dir');
+        $photoPath = $kernelProjectDir . $path . $userId . '/';
+        $filename = $file->getClientOriginalName();
+        $basename = pathinfo($filename, PATHINFO_FILENAME);
+        $originalPath = $photoPath . 'original/';
+        $highResPath = $photoPath . '1080p/';
+        $mediumResPath = $photoPath . '720p/';
+        $lowResPath = $photoPath . '576p/';
+
+        return file_exists($originalPath . $basename . '.webp') &&
+        file_exists($highResPath . $basename . '.webp') &&
+        file_exists($mediumResPath . $basename . '.webp') &&
+        file_exists($lowResPath . $basename . '.webp') ? '/' . $basename . '.webp' : null;
+    }
+
+    public function photoExif(UploadedFile $file): array|null
+    {
+        return @$this->exifInfos($file->getPathname());
+    }
+
+    public function photoToWebp(UploadedFile $file, int $userId, string $path = '/public/albums/'): array|null
     {
         $kernelProjectDir = $this->getParameter('kernel.project_dir');
 
-        $photoPath = $kernelProjectDir . $path;
+        $photoPath = $kernelProjectDir . $path . $userId . '/';
         $imageTempPath = $kernelProjectDir . '/public/images/temp/';
 
         $filename = $file->getClientOriginalName();
@@ -244,6 +266,9 @@ class ImageService extends AbstractController
 
     private function resizeWebpImage(string $sourcePath, string $destPath, int $newWidth): ?string
     {
+        if (file_exists($destPath)) {
+            return $destPath; // If the file already exists, return its path
+        }
         $info = getimagesize($sourcePath);
         if ($info === false) {
             return null;

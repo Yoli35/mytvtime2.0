@@ -11,18 +11,24 @@
 {% endblock %}
 
 {% block body %}
+    {% set id = album.user.id %}
     {{ include('_blocks/_menu.html.twig') }}
     <div class="container-fluid">
         <div class="album-page" data-id="{{ album.id }}">
             {% if albumArray.photos|length %}
+                {% set photo = albumArray.photos|last %}
                 <div class="protection">
                     <div class="layers">
                         <div class="backgrounds">
                             <div class="background-1">
-                                <img src="/albums/original{{ albumArray.photos.0.image_path }}" alt="{{ album.name }}" loading="lazy">
+                                <img src="/albums/{{ id }}/1080p{{ photo.image_path }}" alt="{{ album.name }}" loading="lazy"
+{#                                     srcset="/albums/576p{{ photo.image_path }} 576w, /albums/720p{{ photo.image_path }} 720w, /albums/1080p{{ photo.image_path }} 1080w, /albums/original{{ photo.image_path }} 1920w"#}
+                                >
                             </div>
                             <div class="background-2">
-                                <img src="/albums/original{{ albumArray.photos.0.image_path }}" alt="{{ album.name }}" loading="lazy">
+                                <img src="/albums/{{ id }}/1080p{{ photo.image_path }}" alt="{{ album.name }}" loading="lazy"
+{#                                     srcset="/albums/576p{{ photo.image_path }} 576w, /albums/720p{{ photo.image_path }} 720w, /albums/1080p{{ photo.image_path }} 1080w, /albums/original{{ photo.image_path }} 1920w"#}
+                                >
                             </div>
                         </div>
                     </div>
@@ -52,7 +58,7 @@
                                 {% set c = previousAlbum.photos|length %}
                                 {% if c > 0 %}
                                     {% set photo = previousAlbum.photos[random(c-1)] %}
-                                    <img src="/albums/576p{{ photo.imagePath }}" alt="{{ previousAlbum.name }}">
+                                    <img src="/albums/{{ id }}/576p{{ photo.imagePath }}" alt="{{ previousAlbum.name }}">
                                 {% else %}
                                     <div class="no-photo">{{ previousAlbum.name|first }}</div>
                                 {% endif %}
@@ -67,7 +73,7 @@
                                 {% set c = nextAlbum.photos|length %}
                                 {% if c > 0 %}
                                     {% set photo = nextAlbum.photos[random(c-1)] %}
-                                    <img src="/albums/576p{{ photo.imagePath }}" alt="{{ nextAlbum.name }}e">
+                                    <img src="/albums/{{ id }}/576p{{ photo.imagePath }}" alt="{{ nextAlbum.name }}e">
                                 {% else %}
                                     <div class="no-photo">{{ nextAlbum.name|first }}</div>
                                 {% endif %}
@@ -91,11 +97,11 @@
                         {% for photo in albumArray.photos %}
                             <div class="album-photo {{ cellClasses[loop.index0] }}" data-id="{{ photo.id }}">
                                 <img
-                                        src="/albums/1080p{{ photo.image_path }}"
+                                        src="/albums/{{ id }}/1080p{{ photo.image_path }}"
                                         alt="{{ photo.caption }}"
                                         data-title="{{ photo.caption }} {{ photo.date|format_datetime('relative_short', 'short', locale: 'fr') }}"
                                         loading="lazy"
-                                        srcset="/albums/576p{{ photo.image_path }} 576w, /albums/720p{{ photo.image_path }} 720w, /albums/1080p{{ photo.image_path }} 1080w, /albums/original{{ photo.image_path }} 1920w"
+                                        srcset="/albums/{{ id }}/576p{{ photo.image_path }} 576w, /albums/{{ id }}/720p{{ photo.image_path }} 720w, /albums/{{ id }}/1080p{{ photo.image_path }} 1080w, /albums/{{ id }}/original{{ photo.image_path }} 1920w"
                                 >
                                 {# <div class="number-badge">{{ loop.index }}</div> #}
                                 <div class="album-photo-infos">
@@ -124,6 +130,7 @@
     {% include '_blocks/_footer.html.twig' %}
     <div id="globs-map" style="display: none">
         {
+        "id": {{ id }},
         "albumName": "{{ album.name|e('js') }}",
         "photos": {{ albumArray.photos|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "bounds": {{ albumArray.bounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
