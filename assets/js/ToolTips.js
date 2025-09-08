@@ -16,6 +16,7 @@ export class ToolTips {
         this.tooltipsElement = tooltipsDiv;
         this.bodyElement = this.tooltipsElement.querySelector(".body");
         this.tailElement = this.tooltipsElement.querySelector(".tail");
+        this.style = "";
 
         this.init(element, className);
         this.hideOnLinkClick();
@@ -40,17 +41,16 @@ export class ToolTips {
     hideOnLinkClick() {
         const links = document.querySelectorAll("a");
         links.forEach(link => {
-            link.addEventListener("click", (evt) => {
+            link.addEventListener("click", () => {
                 this.hide();
             });
         });
     }
+
     initElement(element) {
         element.addEventListener('mousemove', this.move.bind(this));
         element.addEventListener('mouseenter', this.show.bind(this));
         element.addEventListener('mouseleave', this.hide.bind(this));
-        // element.addEventListener('mouseover', this.show.bind(this));
-        // element.addEventListener('mouseout', this.hide.bind(this));
     }
 
     createTooltips() {
@@ -96,35 +96,9 @@ export class ToolTips {
             p.innerHTML = text;
             body.appendChild(p);
         }
-
-        // Hauteur de l'écran
-        const fromTopViewport = evt.clientY;
-        // Si le pointeur de la souris est dans la moitié haute de l'écran, le tooltip est affiché en dessous,
-        // sinon il est affiché au-dessus.
-        let displayAbove = false, maxHeight = 0;
-        if (fromTopViewport < (window.innerHeight / 2)) {
-            maxHeight = fromTopViewport - 64;
-        } else {
-            displayAbove = true;
-            maxHeight = window.innerHeight - fromTopViewport - 64;
-        }
         gThis.move(evt);
 
-        /*const width = body.offsetWidth;
-        const height = body.offsetHeight - 48;
-        let style;
-        if (displayAbove) {
-            style = "translate: " + (evt.pageX - (width / 2)) + "px " + (evt.pageY - height) + "px; max-height: " + maxHeight + "px;";
-            tail.setAttribute("style", "translate: 0 -.55rem; background-color: " + tooltips.getAttribute("bg") + ";");
-        } else {
-            style = "translate: " + (evt.pageX - (width / 2)) + "px " + (evt.pageY + 8) + "px; max-height: " + maxHeight + "px;";
-            tail.setAttribute("style", "translate: 0 -" + (height + 8) + "px; background-color: " + tooltips.getAttribute("bg") + ";");
-        }
-        tooltips.setAttribute("style", style);*/
-
         tooltips.classList.add("show");
-        // console.log("show - " + text);
-        // console.log({x: evt.pageX, y: evt.pageY, width: width, height: height});
     }
 
     hide() {
@@ -133,10 +107,6 @@ export class ToolTips {
             return;
         }
         tooltips.classList.remove("show");
-        setTimeout(() => {
-            tooltips.setAttribute("style", "translate: 0px 0px;");
-        }, 300);
-        // console.log("hide");
     }
 
     move(evt) {
@@ -153,8 +123,6 @@ export class ToolTips {
         const windowWidth = window.innerWidth;
         const visualViewport = window.visualViewport;
 
-        // console.log("move @ " + new Date().toLocaleString());
-        // console.log({x: evt.pageX, y: evt.pageY, width: width, height: height, fromTopViewport: fromTopViewport});
 
         if (evt.pageX === 0 && evt.pageY === 0) {
             return;
@@ -175,22 +143,33 @@ export class ToolTips {
         const left = evt.pageX - (width / 2);
         if (left < 0) {
             let style = "transform: translate(" + (evt.pageX - (width / 2) + (left * -1)) + "px, " + toolTipsTranslateY + "px);";
-            tooltips.setAttribute("style", style);
-            tail.setAttribute("style", "translate: " + left + "px -" + tailTranslateY + "px;" + bg);
+            if (style !== gThis.style) {
+                gThis.style = style;
+                console.log(style);
+                tooltips.setAttribute("style", style);
+                tail.setAttribute("style", "translate: " + left + "px -" + tailTranslateY + "px;" + bg);
+            }
             return;
         }
 
         const right = evt.pageX + (width / 2);
         if (right > windowWidth * visualViewport.scale) {
             let style = "transform: translate(" + (evt.pageX - (width / 2) - (right - windowWidth)) + "px, " + toolTipsTranslateY + "px);";
-            tooltips.setAttribute("style", style);
-            tail.setAttribute("style", "translate: " + (right - windowWidth) + "px -" + tailTranslateY + "px;" + bg);
+            if (style !== gThis.style) {
+                gThis.style = style;
+                console.log(style);
+                tooltips.setAttribute("style", style);
+                tail.setAttribute("style", "translate: " + (right - windowWidth) + "px -" + tailTranslateY + "px;" + bg);
+            }
             return;
         }
 
         let style = "transform: translate(" + (evt.pageX - (width / 2)) + "px, " + toolTipsTranslateY + "px);";
-        tooltips.setAttribute("style", style);
-        tail.setAttribute("style", "translate: 0 -" + tailTranslateY + "px;" + bg);
-        // console.log("move - " + style);
+        if (style !== gThis.style) {
+            gThis.style = style;
+            console.log(style);
+            tooltips.setAttribute("style", style);
+            tail.setAttribute("style", "translate: 0 -" + tailTranslateY + "px;" + bg);
+        }
     }
 }
