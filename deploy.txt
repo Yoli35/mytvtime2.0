@@ -48,7 +48,7 @@ zip -rn .png:.webp:.jpg:.jpeg:.mp4 Archives.zip bin composer.json composer.lock 
 11- paste this in your remote terminal:
 
 clear;
-rm Archive.zip; echo 'Archives.zip file removed';
+rm Archives.zip; echo 'Archives.zip file removed';
 echo 'Removing macos files';      rm -R __MACOSX;
 echo 'Removing .DS_Store files';  find ./ -depth -name ".DS_Store" -exec rm {} \;
 echo 'Removing file in ./temp';   cd temp;
