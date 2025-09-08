@@ -1288,7 +1288,7 @@ export class Show {
         addLocationDialog.classList.remove('open');
     }
 
-    /*displayForm(form) {
+    displayForm(form) {
         form.classList.add('display');
         setTimeout(function () {
             form.classList.add('active');
@@ -1300,5 +1300,5 @@ export class Show {
         setTimeout(function () {
             form.classList.remove('display');
         }, 300);
-    }*/
+    }
 }
