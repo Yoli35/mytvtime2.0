@@ -57,6 +57,15 @@ class PhotoRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function photoAll(): array
+    {
+        $sql = "SELECT *
+                FROM `photo` p
+                WHERE 1";
+
+        return $this->getAll($sql);
+    }
+
     public function getAll($sql): array
     {
         try {

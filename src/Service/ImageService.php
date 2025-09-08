@@ -169,13 +169,15 @@ class ImageService extends AbstractController
         $highResPath = $photoPath . '1080p/';
         $mediumResPath = $photoPath . '720p/';
         $lowResPath = $photoPath . '576p/';
+        $mobileResPath = $photoPath . 'mobile/';
         $this->checkForPaths([
             $photoPath,
             $imageTempPath,
             $originalPath,
             $highResPath,
             $mediumResPath,
-            $lowResPath
+            $lowResPath,
+            $mobileResPath
         ]);
 
         // Extract EXIF data
@@ -236,12 +238,23 @@ class ImageService extends AbstractController
         } else {
             $image576p = null;
         }
+        // If the image is successfully resized to 1024x576, resize it to 640x360 (destination path: /mobile/)
+        if ($image576p) {
+            $imageMobile = $this->resizeWebpImage(
+                $lowResPath . $imagePath,
+                $mobileResPath . $imagePath,
+                640
+            );
+        } else {
+            $imageMobile = null;
+        }
 
         return [
             'path' => '/' . $imagePath,
             '1080p' => $image1080p,
             '720p' => $image720p,
             '576p' => $image576p,
+            'mobile' => $imageMobile,
             'exif' => $exif
         ];
     }
@@ -264,7 +277,7 @@ class ImageService extends AbstractController
         }
     }
 
-    private function resizeWebpImage(string $sourcePath, string $destPath, int $newWidth): ?string
+    public function resizeWebpImage(string $sourcePath, string $destPath, int $newWidth): ?string
     {
         if (file_exists($destPath)) {
             return $destPath; // If the file already exists, return its path
