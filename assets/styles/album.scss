@@ -191,6 +191,24 @@
                 }
             }
 
+            .user-created {
+                border-radius: 50%;
+                height: 2.5rem;
+                overflow: hidden;
+                position: absolute;
+                right: .5rem;
+                top: .5rem;
+                width: 2.5rem;
+
+                img {
+                    border: 2px solid var(--orange-100);
+                    border-radius: 50%;
+                    height: 100%;
+                    object-fit: cover;
+                    width: 100%;
+                }
+            }
+
             .infos {
                 background-color: var(--orange-30-alpha-75);
                 border-radius: 0 0 .5rem .5rem;

@@ -41,6 +41,15 @@
                             {% endif %}
                         </a>
                     </div>
+                    {% if album.userCreated %}
+                        <div class="user-created">
+                            {% if album.user.avatar %}
+                                <img src="/images/users/avatars/{{ album.user.avatar }}" alt="{{ album.user.username }}">
+                            {% else %}
+                                <div class="no-avatar">{{ album.user.username|first|upper }}</div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
                     <div class="infos">
                         <div class="content">
                             <div class="name">{{ album.userCreated ? album.name : album.description }}</div>
