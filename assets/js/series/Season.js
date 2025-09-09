@@ -408,7 +408,6 @@ export class Season {
                 globsMapDiv.innerText = '{';
                 globsMapDiv.innerText += '"locations": ' + JSON.stringify(data["locations"]) + ', ';
                 globsMapDiv.innerText += '"bounds": ' + JSON.stringify(data["locationsBounds"]) + ', ';
-                globsMapDiv.innerText += '"pointsOfInterest": ' + JSON.stringify(data["pois"]["list"]) + ', ';
                 globsMapDiv.innerText += '"emptyLocation": ' + JSON.stringify(data["emptyLocation"]) + ', ';
                 globsMapDiv.innerText += '"fieldList": ' + JSON.stringify(data["fieldList"]) + ', ';
                 globsMapDiv.innerText += '"locationImagePath": "' + data["locationImagePath"] + '", ';

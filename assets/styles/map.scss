@@ -75,8 +75,9 @@
         .poi-marker {
             background-color: var(--green-50);
             background-size: cover;
-            border: 2px solid;
+            border: 2px solid var(--green-70);
             border-radius: .25rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,.25);
             cursor: pointer;
             height: 5rem;
             width: 5rem;
@@ -88,7 +89,7 @@
 
             &::after {
                 border: 6px solid transparent;
-                border-top: 6px solid var(--green-50);
+                border-top: 6px solid var(--green-70);
                 content: '';
                 position: absolute;
                 top: 100%;
@@ -257,7 +258,7 @@
         .map-controller {
             height: 80vh;
             margin-inline: auto;
-            width: 80vw;
+            width: 100vw;
         }
     }
 }

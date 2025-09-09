@@ -2,7 +2,6 @@
 
 namespace App\Api;
 
-use App\Controller\MapController;
 use App\Entity\FilmingLocation;
 use App\Entity\User;
 use App\Repository\FilmingLocationRepository;
@@ -19,7 +18,6 @@ class SeriesFilmingLocations extends AbstractController
     public function __construct(
         private readonly DateService               $dateService,
         private readonly FilmingLocationRepository $filmingLocationRepository,
-        private readonly MapController             $mapController,
     )
     {
     }
@@ -34,7 +32,6 @@ class SeriesFilmingLocations extends AbstractController
 
         return new JsonResponse([
             'locations' => $filmingLocationsWithBounds['filmingLocations'],
-            'pois' => count($filmingLocationsWithBounds['filmingLocations']) ? $this->mapController->getALlPointsOfInterest() : ["list" => []],
             'locationsBounds' => $filmingLocationsWithBounds['bounds'],
             'emptyLocation' => $filmingLocationsWithBounds['emptyLocation'],
             'fieldList' => ['series-id', 'tmdb-id', 'crud-type', 'crud-id', 'title', 'location', 'season-number', 'episode-number', 'description', 'latitude', 'longitude', 'radius', "source-name", "source-url"],

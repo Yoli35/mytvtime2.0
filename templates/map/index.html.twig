@@ -341,6 +341,7 @@
         "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "countryLatLngs": {{ countryLatLngs|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "countryLocationIds": {{ countryLocationIds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "pointsOfInterest": {{ pois.list|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "latitude": 2,
         "longitude": 45
         }
@@ -357,6 +358,7 @@
         /** @typedef LogItem
          * @type {Object}
          *  @property {Array} locations
+         *  @property {Array} pois
          *  @property {Array} countryLatLngs
          *  @property {Array} countryLocationIds
          *  @property {number} latitude
@@ -367,6 +369,7 @@
         console.log(globsData);
         const data = JSON.parse(globsData.textContent);
         const locations = data.locations;
+        const pointsOfInterest = data.pointsOfInterest;
         const center = [data.latitude, data.longitude];
         const countryBounds = data.countryLatLngs;
         const countryLocationIds = data.countryLocationIds;
@@ -422,10 +425,25 @@
         }));
         map.addControl(new mapboxgl.ScaleControl());
 
+        pointsOfInterest.forEach((point, index) => {
+            const el = document.createElement('div');
+            el.classList.add('poi-marker');
+            el.style.backgroundImage = 'url(' + '"/images/poi' + point['still_path'] + '")';
+            let marker = new mapboxgl.Marker({element: el, offset: [0, -40]}) /* {color: "#196c00"} */
+                .setLngLat([point.longitude, point.latitude])
+                .setPopup(new mapboxgl.Popup({closeOnMove: true}).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title poi">' + point.name + '</div><div class="leaflet-popup-content-description poi">' + point.address + '</div><div class="leaflet-popup-content-image"><img src="/images/poi' + point['still_path'] + '" alt="' + point['name'] + '" style="height: auto; width: 100%"></div>'))
+                .addTo(map);
+            let markerIcon = marker.getElement();
+            markerIcon.setAttribute('data-id', point.id);
+            markerIcon.setAttribute('data-latitude', point.latitude);
+            markerIcon.setAttribute('data-longitude', point.longitude);
+            markerIcon.setAttribute('data-index', index);
+        });
+
         locations.forEach(location => {
-            let marker = new mapboxgl.Marker({color: "#B46B18FF"})
+            let marker = new mapboxgl.Marker({color: "#B46B18FF", scale: .5})
                 .setLngLat([location.longitude, location.latitude])
-                .setPopup(new mapboxgl.Popup().setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
+                .setPopup(new mapboxgl.Popup({closeOnMove: true}).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
                 .addTo(map);
             let markerIcon = marker.getElement();
             markerIcon.setAttribute('data-tmdb-id', location.tmdb_id);

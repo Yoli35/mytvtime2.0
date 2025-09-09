@@ -89,9 +89,11 @@ class MapController extends AbstractController
                 }
             }
         }
+        $pois = $this->getALlPointsOfInterest();
 
         return $this->render('map/index.html.twig', [
             'fl' => $fl,
+            'pois' => $pois,
             'selectedFilmingLocation' => $selectedFilmingLocation,
             'countries' => $countries,
             'countryLatLngs' => $countryLatLngs,
@@ -127,14 +129,12 @@ class MapController extends AbstractController
         $perPage = $data->getPerPage();
 
         $locations = $this->getAllFilmingLocations($type, $page, $perPage);
-        $pois = $this->getALlPointsOfInterest();
 
         return $this->render('map/last.html.twig', [
             'form' => $form->createView(),
             'locations' => $locations['filmingLocations'],
             'filmingLocationCount' => $locations['filmingLocationCount'],
             'filmingLocationImageCount' => $locations['filmingLocationImageCount'],
-            'pois' => $pois,
             'seriesCount' => $this->filmingLocationRepository->seriesCount(),
             'bounds' => $locations['bounds'],
             'type' => $type,

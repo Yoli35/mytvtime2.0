@@ -902,7 +902,6 @@
         {
         "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "bounds": {{ locationsBounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "pointsOfInterest": {{ pois.list|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "emptyLocation": {{ emptyLocation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "fieldList": {{ fieldList|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "locationImagePath": "/images/map",
