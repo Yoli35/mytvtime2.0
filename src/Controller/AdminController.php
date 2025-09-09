@@ -706,10 +706,11 @@ class AdminController extends AbstractController
             $loc = $pois[0];
             $bounds = [[$loc['longitude'] + .1, $loc['latitude'] + .1], [$loc['longitude'] - .1, $loc['latitude'] - .1]];
         } else {
-            $minLat = min(array_column($pois, 'latitude'));
-            $maxLat = max(array_column($pois, 'latitude'));
-            $minLng = min(array_column($pois, 'longitude'));
-            $maxLng = max(array_column($pois, 'longitude'));
+            $boundsArr = array_slice($pois, 0, 5);
+            $minLat = min(array_column($boundsArr, 'latitude'));
+            $maxLat = max(array_column($boundsArr, 'latitude'));
+            $minLng = min(array_column($boundsArr, 'longitude'));
+            $maxLng = max(array_column($boundsArr, 'longitude'));
             $bounds = [[$maxLng + .1, $maxLat + .1], [$minLng - .1, $minLat - .1]];
         }
         foreach ($pois as &$poi) {
