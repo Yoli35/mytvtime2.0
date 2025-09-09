@@ -34,7 +34,7 @@ export class Map {
                 bearing: 0,
                 bounds: this.bounds,
                 fitBoundsOptions: {
-                    padding: 15
+                    padding: 45
                 }
             });
             console.log('Map initialized', this.map);
@@ -179,11 +179,13 @@ export class Map {
                 if (value !== "all") {
                     const markerToHide = mapDiv.querySelectorAll(`.mapboxgl-marker:not([data-tmdb-id="${value}"])`);
                     markerToHide.forEach(marker => {
-                        marker.style.display = 'none';
+                        if (!marker.classList.contains('poi-marker'))
+                            marker.style.display = 'none';
                     });
                     const markerToShow = mapDiv.querySelectorAll(`.mapboxgl-marker[data-tmdb-id="${value}"]`);
                     markerToShow.forEach(marker => {
-                        marker.style.display = 'block';
+                        if (!marker.classList.contains('poi-marker'))
+                            marker.style.display = 'block';
                     });
                     const seriesLocationsToHide = allSeriesLocations.querySelectorAll(`.series-locations:not([data-tmdb-id="${value}"])`);
                     const serieLocations = document.querySelector(`.series-locations[data-tmdb-id="${value}"]`);

@@ -41,7 +41,7 @@
                 <h2>
                     <label for="fl-series-map-select">{{ 'Go to'|trans }}
                         <select id="fl-series-map-select">
-                            <option value="" data-country="">{{ 'All series'|trans }}</option>
+                            <option value="all" data-country="">{{ 'All series'|trans }}</option>
                             {% for key,l in fl %}
                                 <option value="{{ key }}" data-country="{{ l.country.0 }}">{{ l.locations.0.title }} ({{ l.locations|length }})</option>
                             {% endfor %}
