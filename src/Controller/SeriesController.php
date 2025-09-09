@@ -1096,6 +1096,22 @@ class SeriesController extends AbstractController
             }, $s['airDays']);
         }
 //        dump($alternateSchedules);
+        $alternativeSchedules = array_filter($schedules, function ($s) {
+            return $s['override'];
+        });
+        if ($alternativeSchedules) {
+            foreach ($tv['seasons'] as &$season) {
+                $seasonNumber = $season['season_number'];
+                $seasonSchedules = array_filter($alternativeSchedules, function ($s) use ($seasonNumber) {
+                    return $s['seasonNumber'] == $seasonNumber;
+                });
+                if ($seasonSchedules) {
+                    // Remplacer la date de la saison par la date du schedule
+                    $time = explode(':', $seasonSchedules[0]['airAt']);
+                    $season['final_air_date'] = $seasonSchedules[0]['firstAirDate']->setTime($time[0], $time[1], 0)->format('Y-m-d H:i:s');
+                }
+            }
+        }
 
         $seriesArr = $series->toArray();
         $seriesArr['userVotes'] = $userVotes;
@@ -3188,7 +3204,7 @@ class SeriesController extends AbstractController
 
     public function getAlternateSchedule(SeriesBroadcastSchedule $schedule, ?array $tv, array $userEpisodes): array
     {
-        $errorArr = ['override'=> false, 'seasonNumber' => 0, 'multiPart' => false, 'seasonPart' => 0, 'airDays' => []];
+        $errorArr = ['override' => false, 'seasonNumber' => 0, 'multiPart' => false, 'seasonPart' => 0, 'airDays' => []];
         $now = $this->now();
         $seasonNumber = $schedule->getSeasonNumber();
         $override = $schedule->isOverride();
@@ -3205,7 +3221,7 @@ class SeriesController extends AbstractController
                 $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $episodeNumber), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $episodeNumber), 'future' => $now < $date];
                 $episodeNumber++;
             }
-            return ['override'=> false, 'seasonNumber' => $seasonNumber, 'multiPart' => false, 'seasonPart' => 0, 'airDays' => $dayArr];
+            return ['override' => false, 'seasonNumber' => $seasonNumber, 'multiPart' => false, 'seasonPart' => 0, 'airDays' => $dayArr];
         }
         /*if (!$seasonNumber) {
             return $errorArr;
@@ -3419,7 +3435,7 @@ class SeriesController extends AbstractController
                 }
                 break;
         }
-        return ['override'=> $override, 'seasonNumber' => $seasonNumber, 'multiPart' => $multiPart, 'seasonPart' => $seasonPart, 'airDays' => $dayArr];
+        return ['override' => $override, 'seasonNumber' => $seasonNumber, 'multiPart' => $multiPart, 'seasonPart' => $seasonPart, 'airDays' => $dayArr];
     }
 
     private function isValidDaysOfWeek(array $daysOfWeek, int $selectedDayCount, int $firstDayOfWeek, DateTimeImmutable $date): bool

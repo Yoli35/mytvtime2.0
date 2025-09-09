@@ -20,6 +20,9 @@ Mandatory variables:
                     <div class="schedule">
                         {% set country = user.country ?? 'FR' %}
                         <div class="next-episode" onclick="ToggleScheduleForm({{ schedule.id }})">
+                            {% if schedule.override %}
+                                <div class="override">{{ ux_icon('mdi:calendar', {height: '18px', width: '18px'}) }}</div>
+                            {% endif %}
                             <div class="type">{{ ux_icon('mdi:clock-outline', {height: "18px", width: "18px"}) }}</div>
                             <div class="season">
                                 {{ 'Season'|trans }} {{ schedule.seasonNumber }}

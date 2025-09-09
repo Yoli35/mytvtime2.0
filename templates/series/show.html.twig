@@ -681,13 +681,17 @@
                                             <div class="season__overview">{{ season.overview }}</div>
                                         {% endif %}
                                         <div class="season__air-date">{{ 'Air date'|trans }}
-                                            {% if season.air_date %}
-                                                {{ date(season.air_date)|format_date('relative_long') }}
-                                                {% if userSeries.lastSeason is not null and userSeries.lastSeason == season.season_number %}
-                                                    — {{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}
-                                                {% endif %}
+                                            {% if season.final_air_date is defined %}
+                                                {{ date(season.final_air_date)|format_datetime('relative_long', 'short') }}
                                             {% else %}
-                                                {{ 'TBA'|trans }}
+                                                {% if season.air_date %}
+                                                    {{ date(season.air_date)|format_date('relative_long') }}
+                                                    {% if userSeries.lastSeason is not null and userSeries.lastSeason == season.season_number %}
+                                                        — {{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {{ 'TBA'|trans }}
+                                                {% endif %}
                                             {% endif %}
                                         </div>
                                         <div class="season__episodes">

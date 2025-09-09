@@ -1214,7 +1214,7 @@ h2 {
                 color: var(--green-20);
             }
 
-            .type {
+            .override, .type {
                 align-items: center;
                 border: 2px solid var(--ardoise-10);
                 border-radius: 50%;
@@ -1223,9 +1223,16 @@ h2 {
                 height: 2rem;
                 justify-content: center;
                 position: absolute;
-                right: .5rem;
                 top: .5rem;
                 width: 2rem;
+            }
+
+            .override {
+                left: .5rem;
+            }
+
+            .type {
+                right: .5rem;
             }
         }
 
