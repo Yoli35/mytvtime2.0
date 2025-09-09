@@ -561,6 +561,7 @@ h2 {
         display: flex;
         gap: 1rem;
         justify-content: flex-start;
+        position: relative;
 
         .poster {
             align-items: center;
@@ -665,7 +666,7 @@ h2 {
             flex-direction: column;
             gap: clamp(.5rem, 1vw, 2rem);
             justify-content: flex-start;
-            max-height: 60rem;
+            max-height: 100vh;
             min-height: 30vw;
             overflow-y: auto;
             padding: 1rem;
@@ -683,7 +684,7 @@ h2 {
             .backdrop {
                 height: 100%;
                 inset: 0;
-                opacity: .25;
+                opacity: .5;
                 position: absolute;
                 width: 100%;
                 z-index: -1;
@@ -835,6 +836,41 @@ h2 {
                 margin-inline: auto;
                 padding-block: 1.25rem;
                 padding-inline: 2.5rem;
+            }
+        }
+
+        .progress {
+            background-color: var(--orange-20);
+            border: .125rem solid var(--orange-50);
+            border-radius: 999px;
+            bottom: 1rem;
+            color: transparent;
+            height: 1rem;
+            left: 1rem;
+            position: absolute;
+            /*right: 1rem;*/
+            width: min(15rem, 50%); /*calc(100% - 2rem);*/
+
+            &.full {
+                background-color: var(--green-80);
+                border-color: var(--green-70);
+                transition: background-color 2s ease-out, border-color 2s ease-out;
+
+                .progress-bar {
+                    background-color: var(--green-50);
+                    transition: background-color 2s ease-out;
+                }
+            }
+
+            .progress-bar {
+                background-color: var(--orange-50);
+                border-radius: 999px;
+                height: 100%;
+                width: 0;
+
+                &.set {
+                    transition: width 2s ease-out;
+                }
             }
         }
 
@@ -2162,6 +2198,37 @@ h2 {
         }
     }
 
+    .header {
+        gap: 0;
+
+        .poster {
+            width: 0;
+        }
+
+        .infos {
+            background-color: unset;
+            padding-block-end: 3rem;
+            padding-inline: 1rem;
+            width: 100%;
+
+            h1 {
+                font-size: clamp(2rem, 5vw, 6rem);
+                font-weight: 300;
+                line-height: 1.1em;
+            }
+
+            .season-name {
+                font-size: clamp(1.5rem, 5vw, 4rem);
+                font-weight: 100;
+                line-height: clamp(1.25rem, 6.25vw, 5rem);
+            }
+
+            .backdrop {
+                height: unset;
+                inset: 0 0 -3rem 0;
+            }
+        }
+    }
 }
 
 .add-backdrop-dialog,
@@ -2870,23 +2937,25 @@ h2 {
     }
 
     .season-overview {
+        max-width: 64rem;
+
         .header {
-            background-color: var(--orange-40);
+            /* background-color: var(--orange-40); */
             border-radius: .5rem .5rem 0 0;
-            color: var(--orange-90);
-            font-size: 1rem;
-            font-weight: 600;
+            color: var(--orange-100);
+            font-size: 1.5rem;
+            font-weight: 300;
             line-height: 1.25em;
             padding: .5rem 1rem;
         }
 
         .body {
-            background-color: var(--ardoise-100-alpha-20);
+            /*background-color: var(--ardoise-100-alpha-20);*/
             border-radius: 0 0 .5rem .5rem;
-            color: var(--ardoise-10);
+            color: var(--orange-100);
             display: flex;
             flex-direction: column;
-            font-size: 1rem;
+            font-size: clamp(1rem, 1vw, 1.25rem);
             font-weight: 300;
             gap: 1rem;
             line-height: 1.25em;
@@ -2894,7 +2963,7 @@ h2 {
             text-wrap: pretty;
 
             .content {
-                background-color: var(--ardoise-90-alpha-20);
+                /*background-color: var(--ardoise-90-alpha-20);*/
                 border-radius: .5rem;
                 margin-block-end: unset;
                 padding: .5rem;

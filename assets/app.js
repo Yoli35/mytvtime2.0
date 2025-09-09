@@ -184,27 +184,37 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     const seriesShow = document.querySelector(".series-show");
     if (seriesShow) {
-        // const navbar = document.querySelector(".navbar");
-        // const navbarLinks = document.querySelectorAll(".navbar a");
-        // const footer = document.querySelector(".home-footer");
-        // const infos = seriesShow.querySelector(".infos");
-        const img = seriesShow.querySelector(".poster").querySelector("img") ?? seriesShow.querySelector(".backdrop").querySelector("img");
-        const averageColor = new AverageColor();
-        const color = averageColor.getColor(img);
-        /*if (color.lightness > 185) {
-            infos.style.color = "#101010";
+        const isSeasonPage = document.querySelector("#series-season");
+        let img;
+        if (isSeasonPage) {
+            img = seriesShow.querySelector(".backdrop").querySelector("img");
+            if (!img) {
+                img = seriesShow.querySelector(".series-back").querySelector("img");
+            }
+            if (!img) {
+                img = seriesShow.querySelector(".header-back").querySelector("img");
+            }
         } else {
-            infos.style.color = "#f5f5f5";
-        }*/
-        const hsl = averageColor.rgbToHsl(color);
-        hsl.l *= .8;
-        // hsl.s *= 1.25;
-        hsl.s = 20;
-        if (hsl.l > 100) {
-            hsl.l = 100;
+            img = seriesShow.querySelector(".poster")?.querySelector("img") ?? seriesShow.querySelector(".backdrop")?.querySelector("img");
         }
+        if (img) {
+            const averageColor = new AverageColor();
+            const color = averageColor.getColor(img);
+            /*if (color.lightness > 185) {
+                infos.style.color = "#101010";
+            } else {
+                infos.style.color = "#f5f5f5";
+            }*/
+            const hsl = averageColor.rgbToHsl(color);
+            hsl.l *= .8;
+            // hsl.s *= 1.25;
+            hsl.s = 20;
+            if (hsl.l > 100) {
+                hsl.l = 100;
+            }
 
-        navBar.navBarColor(hsl);
+            navBar.navBarColor(hsl);
+        }
 
         const seasonOrder = document.querySelector(".season-order");
         seasonOrder?.addEventListener("click", () => {
