@@ -7,12 +7,12 @@ export class Map {
         console.log('Map starting');
         gThis = this;
         const globsData = document.querySelector('#globs-map');
-        const data = JSON.parse(globsData.textContent);
-        this.locations = data.locations || [];
-        this.bounds = data.bounds;
-        this.id = data.id || null;
-        this.albumName = data.albumName || null;
-        this.photos = data.photos || [];
+        this. data = JSON.parse(globsData.textContent);
+        this.locations = this.data.locations || [];
+        this.bounds = this.data.bounds;
+        this.id = this.data.id || null;
+        this.albumName = this.data.albumName || null;
+        this.photos = this.data.photos || [];
         this.locale = document.querySelector('html').getAttribute('lang');
         this.map = null;
         this.circles = [];
@@ -157,6 +157,181 @@ export class Map {
 
         initializeMap();
         initializeMapHandle();
+
+        if (document.querySelector("#map-index")) {
+            const locations = this.data['locations'];
+            const countryBounds = this.data['countryLatLngs'];
+            const countryLocationIds = this.data['countryLocationIds'];
+            const latLngs = locations.map(location => [location.latitude, location.longitude]);
+
+            /** @param {Event|number} selectedValue */
+            const gotoLocation = (selectedValue) => {
+                /*const select = document.getElementById('fl-series-map-select');
+                const id = select.options[select.selectedIndex].value;
+                const locationH4 = document.querySelector(`h4[data-tmdb-id="${id}"]`);
+                locationH4.scrollIntoView({behavior: 'instant', block: 'center'});*/
+                const mapDiv = document.getElementById('map');
+                const allSeriesLocations = document.querySelector('.all-series-locations');
+                /** @type {HTMLSelectElement} */
+                const select = document.getElementById('fl-series-map-select');
+                const value = typeof selectedValue == "number" ? selectedValue : select.options[select.selectedIndex].value;
+                let country;
+                if (value !== "all") {
+                    const markerToHide = mapDiv.querySelectorAll(`.mapboxgl-marker:not([data-tmdb-id="${value}"])`);
+                    markerToHide.forEach(marker => {
+                        marker.style.display = 'none';
+                    });
+                    const markerToShow = mapDiv.querySelectorAll(`.mapboxgl-marker[data-tmdb-id="${value}"]`);
+                    markerToShow.forEach(marker => {
+                        marker.style.display = 'block';
+                    });
+                    const seriesLocationsToHide = allSeriesLocations.querySelectorAll(`.series-locations:not([data-tmdb-id="${value}"])`);
+                    const serieLocations = document.querySelector(`.series-locations[data-tmdb-id="${value}"]`);
+                    seriesLocationsToHide.forEach(locationItem => {
+                        locationItem.style.display = 'none';
+                    });
+                    serieLocations.style.display = "flex";
+                    country = serieLocations?.getAttribute('data-country') || "";
+                } else {
+                    const allSeriesLocationDivs = allSeriesLocations.querySelectorAll('.series-locations');
+                    const allMarkers = mapDiv.querySelectorAll('.mapboxgl-marker');
+                    allMarkers.forEach(marker => {
+                        marker.style.display = 'block';
+                    });
+                    allSeriesLocationDivs.forEach(loc => {
+                        loc.style.display = "flex";
+                    });
+                    country = "";
+                }
+                console.log(country);
+                const flCountryBbSelect = document.getElementById('fl-country-bb-select');
+                flCountryBbSelect.selectedIndex = getSelectIndex(flCountryBbSelect, country);
+                zoomToCountry();
+
+                // Lorsqu'on change de series, on veut que le bouton "Zoom to" soit actif pour les pays
+                const zoomToCountryButtons = document.querySelectorAll('.to-country');
+                zoomToCountryButtons.forEach(button => {
+                    button.classList.add('active');
+                });
+                const zoomToMarkersButtons = document.querySelectorAll('.to-markers');
+                zoomToMarkersButtons.forEach(button => {
+                    button.classList.remove('active');
+                });
+            }
+
+            const getSelectIndex = (select, value) => {
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].value === value) {
+                        return i;
+                    }
+                }
+                return 0;
+            }
+
+            const zoomToSeriesCountry = (e) => {
+                const target = e.currentTarget;
+                const locationsButton = target.parentElement.querySelector('.to-markers');
+                locationsButton.classList.remove('active');
+                target.classList.add('active');
+                const countryCode = target.getAttribute('data-country');
+                const select = document.getElementById('fl-country-bb-select');
+                select.selectedIndex = getSelectIndex(select, countryCode);
+                zoomToCountry();
+            }
+
+            const zoomToSeriesLocations = (e) => {
+                const target = e.currentTarget;
+                const countryButton = target.parentElement.querySelector('.to-country');
+                countryButton.classList.remove('active');
+                target.classList.add('active');
+                let minLat = parseFloat(target.getAttribute('data-min-lat'));
+                let maxLat = parseFloat(target.getAttribute('data-max-lat'));
+                let minLng = parseFloat(target.getAttribute('data-min-lng'));
+                let maxLng = parseFloat(target.getAttribute('data-max-lng'));
+                minLat -= 0.1;
+                maxLat += 0.1;
+                minLng -= 0.1;
+                maxLng += 0.1;
+                this.map.fitBounds([[minLng, minLat], [maxLng, maxLat]]);
+            }
+
+            const zoomToLocation = () => {
+                /** @type {HTMLSelectElement} */
+                const select = document.getElementById('fl-country-map-select');
+                const country = select.options[select.selectedIndex].value;
+                const leafletMarkerIcons = document.querySelectorAll('.leaflet-marker-icon');
+                const leafletMarkerShadows = document.querySelectorAll('.leaflet-marker-shadow');
+
+                if (country) {
+                    const latLngs = countryBounds[country];
+                    this.map.fitBounds(latLngs);
+
+                    const locationIds = countryLocationIds[country];
+                    leafletMarkerIcons.forEach(markerIcon => {
+                        const tmdbId = markerIcon.getAttribute('data-tmdb-id');
+                        if (locationIds.includes(parseInt(tmdbId))) {
+                            markerIcon.style.display = 'block';
+                        } else {
+                            markerIcon.style.display = 'none';
+                        }
+                    });
+                    leafletMarkerShadows.forEach(markerShadow => {
+                        const tmdbId = markerShadow.getAttribute('data-tmdb-id');
+                        if (locationIds.includes(parseInt(tmdbId))) {
+                            markerShadow.style.display = 'block';
+                        } else {
+                            markerShadow.style.display = 'none';
+                        }
+                    });
+                } else {
+                    this.map.fitBounds(latLngs);
+                    leafletMarkerIcons.forEach(markerIcon => {
+                        markerIcon.style.display = 'block';
+                    });
+                }
+            }
+
+            const zoomToCountry = () => {
+                /** @type {HTMLSelectElement} */
+                const select = document.getElementById('fl-country-bb-select');
+                const country = select.options[select.selectedIndex];
+                if (country.value === "") {
+                    const center = this.map.getCenter();
+                    this.map.setZoom(3);
+                    this.map.easeTo({center, duration: 1000, easing: (n) => n});
+                } else {
+                    // dans la base les latitudes et longitudes sont inversées
+                    const lat1 = country.getAttribute('data-lat1');
+                    const lng1 = country.getAttribute('data-lng1');
+                    const lat2 = country.getAttribute('data-lat2');
+                    const lng2 = country.getAttribute('data-lng2');
+                    this.map.fitBounds([[lat1, lng1], [lat2, lng2]]);
+                }
+            }
+
+            const selectedFilmingLocation = parseInt(document.querySelector('.series-location-selected').textContent) || 0;
+            const flSeriesMapSelect = document.getElementById('fl-series-map-select');
+            const flCountryMapSelect = document.getElementById('fl-country-map-select');
+            const flCountryBbSelect = document.getElementById('fl-country-bb-select');
+
+            flSeriesMapSelect.addEventListener('change', gotoLocation);
+            flCountryMapSelect.addEventListener('change', zoomToLocation);
+            flCountryBbSelect.addEventListener('change', zoomToCountry);
+
+            const allSeriesLocations = document.querySelector('.all-series-locations');
+            const seriesLocations = allSeriesLocations.querySelectorAll('.series-locations');
+            seriesLocations.forEach(loc => {
+                const toCountry = loc.querySelector('.to-country');
+                const toMarkers = loc.querySelector('.to-markers');
+                toCountry.addEventListener('click', zoomToSeriesCountry);
+                toMarkers.addEventListener('click', zoomToSeriesLocations);
+            });
+
+            if (selectedFilmingLocation > 0) {
+                flSeriesMapSelect.value = selectedFilmingLocation;
+                gotoLocation(selectedFilmingLocation);
+            }
+        }
 
         const thumbnails = document.querySelectorAll('.thumbnail');
         thumbnails.forEach(thumbnail => {

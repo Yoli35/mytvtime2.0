@@ -19,7 +19,7 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid">
-        <div class="series-map import-map">
+        <div id="map-last" class="series-map import-map">
             <div class="series-map-header">
                 <h1>{{ (type=='creation' ? 'Recent additions':'Recent updates')|trans }}</h1>
                 <div class="numbers">
@@ -28,7 +28,6 @@
                     <div data-title="{{ filmingLocationImageCount }} {{ 'images'|trans }}">{{ filmingLocationImageCount }} {{ ux_icon('mdi:image-multiple', {height: '32px', width: '32px'}) }}</div>
                 </div>
             </div>
-{#            <div id="map" class="map-controller all"></div>#}
             {{ include('_blocks/map/_map-container.html.twig', {type: 'all', styleSettings: settings.data.styles}) }}
         </div>
 
@@ -121,7 +120,7 @@
             </div>
         </div>
     </div>
-    <div id="globs-map" style="display: none">{# {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }} #}
+    <div id="globs-map" style="display: none">
         {
             "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "bounds": {{ bounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
