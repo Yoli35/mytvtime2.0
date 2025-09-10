@@ -170,6 +170,7 @@ class ImageService extends AbstractController
         $mediumResPath = $photoPath . '720p/';
         $lowResPath = $photoPath . '576p/';
         $mobileResPath = $photoPath . 'mobile/';
+        $thumbnailPath = $photoPath . 'thumbnail/';
         $this->checkForPaths([
             $photoPath,
             $imageTempPath,
@@ -177,7 +178,8 @@ class ImageService extends AbstractController
             $highResPath,
             $mediumResPath,
             $lowResPath,
-            $mobileResPath
+            $mobileResPath,
+            $thumbnailPath
         ]);
 
         // Extract EXIF data
@@ -248,6 +250,16 @@ class ImageService extends AbstractController
         } else {
             $imageMobile = null;
         }
+        // If the image is successfully resized to 640x360, resize it to 320x180 (destination path: /thumbnail/)
+        if ($imageMobile) {
+            $imageThumbnail = $this->resizeWebpImage(
+                $mobileResPath . $imagePath,
+                $thumbnailPath . $imagePath,
+                320
+            );
+        } else {
+            $imageThumbnail = null;
+        }
 
         return [
             'path' => '/' . $imagePath,
@@ -255,11 +267,12 @@ class ImageService extends AbstractController
             '720p' => $image720p,
             '576p' => $image576p,
             'mobile' => $imageMobile,
+            'thumbnail' => $imageThumbnail,
             'exif' => $exif
         ];
     }
 
-    private function checkForPaths(array $paths): void
+    public function checkForPaths(array $paths): void
     {
         foreach ($paths as $path) {
             $this->checkForPath($path);

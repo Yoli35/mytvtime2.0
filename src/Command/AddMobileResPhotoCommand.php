@@ -34,10 +34,21 @@ class AddMobileResPhotoCommand
         $this->commandStart();
 
         $photoPath = './public/albums/';
-        $lowResPath = '/576p';
         $mobileResPath = '/mobile';
+        $thumbnailResPath = '/thumbnail';
 
         $photos = $this->photoRepository->photoAll();
+
+//        $userIds = array_unique(array_column($photos, 'user_id'));
+        // on vérifie que les dossiers de vignettes existent pour chaque utilisateur
+//        foreach ($userIds as $userId) {
+//            $path = $photoPath . $userId . $thumbnailResPath;
+//            $io->writeln("Checking path: $path");
+//            $this->imageService->checkForPaths([$path]);
+//        }
+//        return Command::SUCCESS;
+
+        // on crée un tableau des noms de fichiers pour vérifier à la fin les photos en trop
         $photoFilenames = array_column($photos, 'imagePath');
         $photoMissingLowRes = [];
         $total = count($photos);
@@ -50,21 +61,21 @@ class AddMobileResPhotoCommand
             $userId = $photo['user_id'];
 
             // Check if mobile resolution photo already exists
-            if (file_exists($photoPath . $userId . $mobileResPath . $filename)) {
-                $this->io->writeln("Mobile resolution photo already exists for [" . $photoPath . $userId . $mobileResPath . $filename . "], skipping.");
+            if (file_exists($photoPath . $userId . $thumbnailResPath . $filename)) {
+                $this->io->writeln("Thumbnail resolution photo already exists for [" . $photoPath . $userId . $thumbnailResPath . $filename . "], skipping.");
                 continue;
             }
             // Check if low resolution photo exists
-            if (!file_exists($photoPath . $userId . $lowResPath . $filename)) {
-                $this->io->writeln("Low resolution photo does not exist for [". $photoPath . $userId . $lowResPath . $filename."], skipping.");
+            if (!file_exists($photoPath . $userId . $mobileResPath . $filename)) {
+                $this->io->writeln("Mobile resolution photo does not exist for [". $photoPath . $userId . $mobileResPath . $filename."], skipping.");
                 $photoMissingLowRes[] = $filename;
                 continue;
             }
             // Create mobile resolution photo
             if ($this->imageService->resizeWebpImage(
-                $photoPath . $userId . $lowResPath . $filename,
                 $photoPath . $userId . $mobileResPath . $filename,
-                640
+                $photoPath . $userId . $thumbnailResPath . $filename,
+                320
             )) {
                 $this->io->writeln("Mobile resolution photo created for $filename.");
             } else {
