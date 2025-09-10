@@ -124,9 +124,7 @@ final class AlbumController extends AbstractController
         ];
 //        $album->setDate('');
         $albumArr = $this->toArray($album);
-        $imagePaths = array_map(function ($photo) {
-            return $photo['image_path'];
-        }, $albumArr['photos']);
+        $imagePaths = array_column($albumArr['photos'], 'image_path');
 
         return $this->render('album/show.html.twig', [
             'album' => $album,
@@ -580,6 +578,12 @@ final class AlbumController extends AbstractController
             $array['photos'][] = $arr;
         }
         $photos = $array['photos'];
+        // Sort photos by date desc
+        usort($photos, function ($a, $b) {
+            return $b['date'] <=> $a['date'];
+        });
+        $array['photos'] = $photos;
+        // Calculate bounds
         $photosWithLocation = array_filter($photos, function ($photo) {
             return $photo['latitude'] !== null && $photo['longitude'] !== null;
         });

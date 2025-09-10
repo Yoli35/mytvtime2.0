@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}my Tv Time → {{ 'My albums'|trans }}{% endblock %}
+{% block title %}my Tv Time → {{ 'Photos'|trans }}{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -10,21 +10,48 @@
 {% block body %}
     {{ include('_blocks/_menu.html.twig') }}
     <div class="container-fluid photos-page">
-        <div class="sidebar"></div>
+        <div class="toggler">{{ ux_icon('mdi:menu') }}</div>
+        <script>
+            document.querySelector('.photos-page .toggler').addEventListener('click', function () {
+                document.querySelector('.photos-page .sidebar').classList.toggle('open');
+            });
+            document.addEventListener('click', function (event) {
+                if (!event.target.closest('.photos-page .toggler') && !event.target.closest('.photos-page .sidebar')) {
+                    document.querySelector('.photos-page .sidebar').classList.remove('open');
+                    event.stopPropagation();
+                }
+            });
+        </script>
+        <div class="sidebar">
+            <div class="menu">
+                <div class="header">
+                    <h2>{{ 'Albums'|trans }}</h2>
+                    <div class="toggler">{{ ux_icon('mdi:chevron-down') }}</div>
+                </div>
+                <div class="wrapper">
+                    {% for album in albums %}
+                        {% set id = album.user.id %}
+                        <a href="{{ path('app_album_show', {'id': album.id}) }}">
+                            <div class="thumbnail">
+                                {% if album.photos|length %}
+                                    {% set n = album.photos|length %}
+                                    {% set n = random(n-1) %}
+                                    <img
+                                            src="/albums/{{ id }}/thumbnail{{ album.photos[n].imagePath }}"
+                                            alt="{{ album.description }}"
+                                    >
+                                {% else %}
+                                    <div>{{ 'No photo'|trans }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="name">{{ album.name }}</div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
         <div class="photos">
             <div class="menu">
-                <div class="toggler">{{ ux_icon('mdi:menu') }}</div>
-                <script>
-                    document.querySelector('.photos-page .menu .toggler').addEventListener('click', function () {
-                        document.querySelector('.photos-page .sidebar').classList.toggle('open');
-                    });
-                    document.addEventListener('click', function (event) {
-                        if (!event.target.closest('.photos-page .menu .toggler') && !event.target.closest('.photos-page .sidebar')) {
-                            document.querySelector('.photos-page .sidebar').classList.remove('open');
-                            event.stopPropagation();
-                        }
-                    });
-                </script>
                 <h1>{{ 'Photos'|trans }}</h1>
             </div>
             <div class="wrapper">
