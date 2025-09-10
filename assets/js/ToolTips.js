@@ -145,7 +145,7 @@ export class ToolTips {
             let style = "transform: translate(" + (evt.pageX - (width / 2) + (left * -1)) + "px, " + toolTipsTranslateY + "px);";
             if (style !== gThis.style) {
                 gThis.style = style;
-                console.log(style);
+                // console.log(style);
                 tooltips.setAttribute("style", style);
                 tail.setAttribute("style", "translate: " + left + "px -" + tailTranslateY + "px;" + bg);
             }
@@ -157,7 +157,7 @@ export class ToolTips {
             let style = "transform: translate(" + (evt.pageX - (width / 2) - (right - windowWidth)) + "px, " + toolTipsTranslateY + "px);";
             if (style !== gThis.style) {
                 gThis.style = style;
-                console.log(style);
+                // console.log(style);
                 tooltips.setAttribute("style", style);
                 tail.setAttribute("style", "translate: " + (right - windowWidth) + "px -" + tailTranslateY + "px;" + bg);
             }
@@ -167,7 +167,7 @@ export class ToolTips {
         let style = "transform: translate(" + (evt.pageX - (width / 2)) + "px, " + toolTipsTranslateY + "px);";
         if (style !== gThis.style) {
             gThis.style = style;
-            console.log(style);
+            // console.log(style);
             tooltips.setAttribute("style", style);
             tail.setAttribute("style", "translate: 0 -" + tailTranslateY + "px;" + bg);
         }
