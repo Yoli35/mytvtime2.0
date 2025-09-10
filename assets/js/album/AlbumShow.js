@@ -173,7 +173,6 @@ export class AlbumShow {
 
     initAlbumForm() {
         const addPhotos = document.querySelector('#add-photos');
-        const addPhotosButton = document.querySelector('.add-photos-button');
         const modifyAlbumDialog = document.querySelector('.side-panel.modify-album-dialog');
         const modifyAlbumForm = modifyAlbumDialog?.querySelector('form');
         const nameInput = document.querySelector('input[name="name"]');
@@ -200,14 +199,9 @@ export class AlbumShow {
             });
         }
 
-        if (addPhotos) {
-            addPhotos.addEventListener('click', function () {
+        addPhotos?.addEventListener('click', function () {
                 gThis.openAlbumPanel(modifyAlbumDialog);
             });
-            addPhotosButton.addEventListener('click', function () {
-                gThis.openAlbumPanel(modifyAlbumDialog);
-            });
-        }
 
         if (modifyAlbumForm) {
             // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file
@@ -380,13 +374,16 @@ export class AlbumShow {
                     if (results.length) {
                         const albumPhotosDiv = document.querySelector('.album-photos');
                         results.forEach(result => {
+                            const imagePath = result['image_path'];
+                            // Add marker to the map
                             gThis.map.addPhotoMarker(result);
-                            gThis.map.adjustBounds();
+                            gThis.map.adjustBounds('photo-marker');
+                            // Add imagePath to gThis.imagePaths
+                            gThis.imagePaths.push(imagePath);
                             const albumPhotoDiv = document.createElement('div');
                             albumPhotoDiv.classList.add('album-photo');
                             albumPhotoDiv.setAttribute('data-id', result.id);
                             const img = document.createElement('img');
-                            const imagePath = result['image_path'];
                             img.setAttribute('data-title', result['date_string']);
                             img.src = gThis.srcsetPaths['highRes'] + imagePath;
                             img.alt = imagePath;

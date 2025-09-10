@@ -55,7 +55,7 @@ export class Map {
                 fetch('/api/pois/get')
                     .then(res => res.json())
                     .then(data => {
-                        console.log(data);
+                        // console.log(data);
                         const list = data['pois']['list'];
                         list.forEach((point, index) => {
                             this.addPoiMarker(point, index);
@@ -205,7 +205,7 @@ export class Map {
                     });
                     country = "";
                 }
-                console.log(country);
+                // console.log(country);
                 const flCountryBbSelect = document.getElementById('fl-country-bb-select');
                 flCountryBbSelect.selectedIndex = getSelectIndex(flCountryBbSelect, country);
                 zoomToCountry();
@@ -405,7 +405,9 @@ export class Map {
                 .setLngLat([photo.longitude, photo.latitude])
                 .setPopup(new mapboxgl.Popup({closeOnMove: true}).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title photo">' + this.albumName + '</div>' + (photo.caption ? '<div class="leaflet-popup-content-description poi">' + photo.caption + '</div>' : '') + '<div class="leaflet-popup-content-image"><img src="' + path + photo.image_path + '" alt="' + photo.caption + '"></div>'))
                 .addTo(this.map);
+            /** @type HTMLDivElement markerIcon */
             let markerIcon = marker.getElement();
+            markerIcon.classList.add('photo-marker');
             markerIcon.setAttribute('data-id', photo.id);
             markerIcon.setAttribute('data-latitude', photo.latitude);
             markerIcon.setAttribute('data-longitude', photo.longitude);
@@ -414,8 +416,11 @@ export class Map {
         }
     }
 
-    adjustBounds() {
-        const markers = document.querySelectorAll('.mapboxgl-marker');
+    adjustBounds(type) {
+        // type:
+        //   → photo: 'photo-marker'
+        //   → point of interest: 'poi-marker'
+        const markers = document.querySelectorAll('.mapboxgl-marker.' + type);
         if (!markers.length) {
             return;
         }
