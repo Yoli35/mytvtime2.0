@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'My albums'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/album.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {{ include('_blocks/_menu.html.twig') }}
+    <div class="container-fluid photos-page">
+        <div class="sidebar"></div>
+        <div class="photos">
+            <div class="menu">
+                <div class="toggler">{{ ux_icon('mdi:menu') }}</div>
+                <script>
+                    document.querySelector('.photos-page .menu .toggler').addEventListener('click', function () {
+                        document.querySelector('.photos-page .sidebar').classList.toggle('open');
+                    });
+                    document.addEventListener('click', function (event) {
+                        if (!event.target.closest('.photos-page .menu .toggler') && !event.target.closest('.photos-page .sidebar')) {
+                            document.querySelector('.photos-page .sidebar').classList.remove('open');
+                            event.stopPropagation();
+                        }
+                    });
+                </script>
+                <h1>{{ 'Photos'|trans }}</h1>
+            </div>
+            <div class="wrapper">
+                {% for photo in photos %}
+                    {% set id = photo.user.id %}
+                    <div class="photo">
+                        {#                    <a href="{{ path('app_album_photo', {id: photo.id}) }}" title="{{ 'View photo'|trans }}"> #}
+                        <img src="/album/{{ id }}/thumbnail{{ photo.imagePath }}" alt="{{ 'Photo'|trans }}"
+                             loading="lazy"
+                             srcset="/albums/{{ id }}/mobile{{ photo.imagePath }} 360w, /albums/{{ id }}/576p{{ photo.imagePath }} 576w, /albums/{{ id }}/720p{{ photo.imagePath }} 720w">
+                        {#                    </a> #}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <h2>{{ 'Last days'|trans }}</h2>
+        <div class="last-days">
+            <div class="wrapper">
+                {% for album in albumsByDays %}
+                    {% set id = album.user.id %}
+                    <a href="{{ path('app_album_show', {'id': album.id}) }}">
+                        <div class="album">
+                            {% if album.photos|length %}
+                                {% set n = album.photos|length %}
+                                {% set n = random(n-1) %}
+                                <img
+                                        src="/albums/{{ id }}/mobile{{ album.photos[n].imagePath }}"
+                                        alt="{{ album.description }}"
+                                        srcset="/albums/{{ id }}/mobile{{ album.photos[n].imagePath }} 360w, /albums/{{ id }}/576p{{ album.photos[n].imagePath }} 576w, /albums/{{ id }}/720p{{ album.photos[n].imagePath }} 720w, /albums/{{ id }}/1080p{{ album.photos[n].imagePath }} 1080w"
+                                >
+                            {% else %}
+                                <div>{{ 'No photo'|trans }}</div>
+                            {% endif %}
+                            <div class="name">{{ album.description }}</div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% include '_blocks/_footer.html.twig' %}
+{% endblock %}

@@ -37,13 +37,11 @@
             {% endif %}
             <header>
                 <div class="h1-tools">
-                    <h1>{{ album.name }} ({{ albumArray.photos|length }})</h1>
+                    <h1>{{ album.userCreated ? album.name : album.description }} ({{ albumArray.photos|length }})</h1>
                     <div class="tools">
                         <div class="layout-buttons">
-                            <button class="photo-albums-button" data-title="{{ 'My albums'|trans }}"><a href="{{ path('app_album_index') }}">{{ ux_icon('mdi:image-album') }}</a></button>
-                            {% if album.userCreated %}
-                                <button class="add-photos-button" data-title="{{ 'Modify album'|trans }}">{{ ux_icon('mdi:edit') }}</button>
-                            {% endif %}
+                            <button class="albums-button" data-title="{{ 'My albums'|trans }}"><a href="{{ path('app_album_index') }}">{{ ux_icon('mdi:image-album') }}</a></button>
+                            <button class="photos-button" data-title="{{ 'Photos'|trans }}"><a href="{{ path('app_album_all') }}">{{ ux_icon('mdi:photo-camera') }}</a></button>
                         </div>
                         <div class="layout-switcher">
                             <button class="layout-grid{% if settings.layout == 'grid' %} active{% endif %}">{{ ux_icon('mdi:view-grid') }}</button>

@@ -36,19 +36,13 @@ final class AlbumController extends AbstractController
     {
     }
 
-    #[Route('/', name: 'index')]
+    #[Route('/albums', name: 'index')]
     public function index(Request $request): Response
     {
         $user = $this->getUser();
         $albums = $this->albumRepository->findBy(['user' => $user, 'userCreated' => true], ['createdAt' => 'DESC']);
 
-        $newAlbumName = $request->query->get('new-album');
-        if (strlen($newAlbumName) > 0) {
-            $now = $this->dateService->getNowImmutable('UTC');
-            $album = new Album($user, true, $newAlbumName, $now);
-            $this->albumRepository->save($album, true);
-            return $this->redirectToRoute('app_album_show', ['id' => $album->getId()]);
-        }
+        $this->handleNewAlbum($request, $user);
 
         foreach ($albums as $album) {
             $photos = $album->getPhotos()->toArray();
@@ -75,6 +69,32 @@ final class AlbumController extends AbstractController
         return $this->render('album/index.html.twig', [
             'albums' => $albums,
             'pagination' => '',
+        ]);
+    }
+
+    #[Route('/all', name: 'all')]
+    public function all(Request $request): Response
+    {
+        $user = $this->getUser();
+        $albums = $this->albumRepository->findBy(['user' => $user, 'userCreated' => true], ['createdAt' => 'DESC']);
+        $photos = $this->photoRepository->findBy(['user' => $user], ['date' => 'DESC']);
+        $albumsByDays = $this->albumsByDays($photos, 10);
+
+        $this->handleNewAlbum($request, $user);
+        $this->setAlbumRanges($albums);
+
+        $this->dateRangeString($albums);
+        $this->dateRangeString($albumsByDays);
+
+        dump([
+            'albums' => $albums,
+            'albumsByDays' => $albumsByDays,
+            'photos' => $photos,
+        ]);
+        return $this->render('album/photos.html.twig', [
+            'albums' => $albums,
+            'albumsByDays' => $albumsByDays,
+            'photos' => $photos,
         ]);
     }
 
@@ -297,7 +317,6 @@ final class AlbumController extends AbstractController
                         $albumIds = [];
                     }
 
-//                    $messages[] = $photo ? 'Photo trouvée avec coordonnées GPS (' . $photo['latitude'] . ', ' . $photo['longitude'] . ')' : 'Aucune photo trouvée avec ces coordonnées GPS';
                     if ($photo) {
                         $latitude = round($latitude, 3);
                         $longitude = round($longitude, 3);
@@ -372,6 +391,38 @@ final class AlbumController extends AbstractController
         ]);
     }
 
+    private function handleNewAlbum(Request $request, User $user): void
+    {
+        $newAlbumName = $request->query->get('new-album');
+        if (strlen($newAlbumName) > 0) {
+            $now = $this->dateService->getNowImmutable('UTC');
+            $album = new Album($user, true, $newAlbumName, $now);
+            $this->albumRepository->save($album, true);
+            $this->redirectToRoute('app_album_show', ['id' => $album->getId()]);
+        }
+    }
+
+    private function setAlbumRanges(array $albums): void
+    {
+        foreach ($albums as $album) {
+            $photos = $album->getPhotos()->toArray();
+            $dates = array_map(function ($photo) {
+                return $photo->getDate()->format('Y-m-d H:i:s');
+            }, $photos);
+
+            if (count($dates) === 0) {
+                $album->setDateRange([]);
+                continue; // Skip albums with no photos
+            }
+            // Set the date range for the album
+            $range = [
+                'min' => min($dates),
+                'max' => max($dates),
+            ];
+            $album->setDateRange($range);
+        }
+    }
+
     private function getImportResult(string $name, Photo $photo, string $locale): array
     {
         $createdAt = $photo->getCreatedAt()->format('Y-m-d H:i:s');
@@ -430,43 +481,52 @@ final class AlbumController extends AbstractController
         return $cellClasses;
     }
 
-    private function albumsByDays(): array
+    private function albumsByDays(array $photos = [], int|null $limit = null): array
     {
         $user = $this->getUser();
         $now = $this->dateService->getNowImmutable('UTC');
-        $photos = $this->photoRepository->findBy(['user' => $user], ['date' => 'DESC']);
-        if ($photos) {
-            $albums = $this->albumRepository->findBy(['userCreated' => false], ['createdAt' => 'DESC']);
-            /** @var Photo $photo */
-            foreach ($photos as $photo) {
-                $date = $photo->getDate();
-                $day = $date->format('Y-m-d');
-                $album = $albums ? array_find($albums, function ($a) use ($day) {
-                    return $a->getName() === $day;
-                }) : null;
-                $diff = $now->diff($date);
-                if ($diff->days > 1 && $diff->days < 7) {
-                    $name = $this->translator->trans($date->format('l'));
-                } else {
-                    $name = ucfirst($this->dateService->formatDateRelativeMedium($day, 'UTC', $this->getUser()->getPreferredLanguage() ?? 'en'));
-                }
-                if (!$album) {
-                    $album = new Album($user, false, $day, $now);
-                    $this->albumRepository->save($album, true);
-                    $albums[] = $album;
-                }
-                // Set the date range for the album
-                $album->setDateRange([
-                    'min' => $day,
-                    'max' => $day,
-                ]);
-                $album->setDescription($name);
-                $album->addPhoto($photo);
-            }
-            $this->albumRepository->flush();
-            return array_values($albums);
+        if (!count($photos)) {
+            $photos = $this->photoRepository->findBy(['user' => $user], ['date' => 'DESC']);
         }
-        return [];
+        if (!count($photos)) {
+            return [];
+        }
+        $albums = $this->albumRepository->findBy(['userCreated' => false], ['createdAt' => 'DESC']);
+        /** @var Photo $photo */
+        foreach ($photos as $photo) {
+            $date = $photo->getDate();
+            $day = $date->format('Y-m-d');
+            $album = $albums ? array_find($albums, function ($a) use ($day) {
+                return $a->getName() === $day;
+            }) : null;
+            $diff = $now->diff($date);
+            if ($diff->days > 1 && $diff->days < 7) {
+                $name = $this->translator->trans($date->format('l'));
+            } else {
+                $name = ucfirst($this->dateService->formatDateRelativeMedium($day, 'UTC', $this->getUser()->getPreferredLanguage() ?? 'en'));
+            }
+            if (!$album) {
+                $album = new Album($user, false, $day, $now);
+                $this->albumRepository->save($album, true);
+                $albums[] = $album;
+            }
+            // Set the date range for the album
+            $album->setDateRange([
+                'min' => $day,
+                'max' => $day,
+            ]);
+            $album->setDescription($name);
+            $album->addPhoto($photo);
+        }
+        $this->albumRepository->flush();
+        // Trier les albums par name desc
+        usort($albums, function ($a, $b) {
+            return $b->getName() <=> $a->getName();
+        });
+        if ($limit) {
+            $albums = array_slice($albums, 0, $limit);
+        }
+        return array_values($albums);
     }
 
     private function newPhoto(Album $album): array
