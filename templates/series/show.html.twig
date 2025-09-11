@@ -47,94 +47,96 @@
                             <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
                         </div>
                     {% endif %}
-                    <div class="name">
-                        <h1>
-                            {% if tv.localized_name %}
-                                <span class="localization-span">{{ tv.localized_name.name }}</span><br>
-                            {% elseif tv.original_language != app.locale and tv.name == tv.original_name and tv.translations %}
-                                <span class="localization-span">{{ tv.translations.data.name }}</span><br>
-                            {% endif %}
-                            <span class="name-span">{{ series.name }}</span>
-                            {% if series.firstAirDate %}
-                                <span title="{{ series.firstAirDate|date("d/m/Y") }}">({{ series.firstAirDate|date("Y") }})</span>
-                            {% elseif series.schedules|length %}
-                                {% set sc = series.schedules|first %}
-                                <span class="from-schedule" title="{{ sc.firstAirDate|date("d/m/Y") }}">({{ sc.firstAirDate|date("Y") }})</span>
-                            {% endif %}
-                        </h1>
-                        {{ include('_blocks/translations/_tools.html.twig') }}
-                    </div>
-                    {{ include('_blocks/forms/_delete-overview.html.twig') }}
-                    {{ include('_blocks/forms/_localized-name.html.twig', {media: tv}) }}
-                    {{ include('_blocks/forms/_overview.html.twig', {media: tv}) }}
-                    <h5>
-                        {% set n = series.visitNumber %}
-                        {% if n > 1000 %}
-                            {% set n = (n / 1000)|round(1, 'floor') ~ 'k' %}
-                        {% endif %}
-                        {{ n }} {{ (n > 1 ? 'visits':'visit')|trans }}
-                    </h5>
-                    <div class="series-overview">{{ tv.overview }}</div>
-                    {% if tv.localized_overviews|length %}
-                        <div class="localized overviews">
-                            <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
-                            {% for overview in tv.localized_overviews %}
-                                <div class="localized overview" data-id="{{ overview.id }}">
-                                    <div class="content" data-overview="{{ overview.overview }}">
-                                        {{ overview.overview|nl2br }}
-                                    </div>
-                                    <div class="tools">
-                                        <div class="locale">{{ overview.locale|upper }}</div>
-                                        <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
-                                            {{ ux_icon('mdi:pencil') }}
-                                        </div>
-                                        <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
-                                            {{ ux_icon('mdi:trash') }}
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
+                    <div class="infos-content">
+                        <div class="name">
+                            <h1>
+                                {% if tv.localized_name %}
+                                    <span class="localization-span">{{ tv.localized_name.name }}</span><br>
+                                {% elseif tv.original_language != app.locale and tv.name == tv.original_name and tv.translations %}
+                                    <span class="localization-span">{{ tv.translations.data.name }}</span><br>
+                                {% endif %}
+                                <span class="name-span">{{ series.name }}</span>
+                                {% if series.firstAirDate %}
+                                    <span title="{{ series.firstAirDate|date("d/m/Y") }}">({{ series.firstAirDate|date("Y") }})</span>
+                                {% elseif series.schedules|length %}
+                                    {% set sc = series.schedules|first %}
+                                    <span class="from-schedule" title="{{ sc.firstAirDate|date("d/m/Y") }}">({{ sc.firstAirDate|date("Y") }})</span>
+                                {% endif %}
+                            </h1>
+                            {{ include('_blocks/translations/_tools.html.twig') }}
                         </div>
-                    {% endif %}
-                    {% if tv.additional_overviews|length %}
-                        <div class="additional overviews">
-                            <h4 class="additional-h4">{{ 'Additional overviews'|trans }}</h4>
-                            {% for overview in tv.additional_overviews %}
-                                <div class="additional overview" data-id="{{ overview.id }}" data-source-id="{{ overview.source.id }}">
-                                    <div class="content" data-overview="{{ overview.overview }}">
-                                        {{ overview.overview|nl2br }}
+                        {{ include('_blocks/forms/_delete-overview.html.twig') }}
+                        {{ include('_blocks/forms/_localized-name.html.twig', {media: tv}) }}
+                        {{ include('_blocks/forms/_overview.html.twig', {media: tv}) }}
+                        <h5>
+                            {% set n = series.visitNumber %}
+                            {% if n > 1000 %}
+                                {% set n = (n / 1000)|round(1, 'floor') ~ 'k' %}
+                            {% endif %}
+                            {{ n }} {{ (n > 1 ? 'visits':'visit')|trans }}
+                        </h5>
+                        <div class="series-overview">{{ tv.overview }}</div>
+                        {% if tv.localized_overviews|length %}
+                            <div class="localized overviews">
+                                <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
+                                {% for overview in tv.localized_overviews %}
+                                    <div class="localized overview" data-id="{{ overview.id }}">
+                                        <div class="content" data-overview="{{ overview.overview }}">
+                                            {{ overview.overview|nl2br }}
+                                        </div>
+                                        <div class="tools">
+                                            <div class="locale">{{ overview.locale|upper }}</div>
+                                            <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
+                                                {{ ux_icon('mdi:pencil') }}
+                                            </div>
+                                            <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
+                                                {{ ux_icon('mdi:trash') }}
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="tools">
-                                        <div class="source">
-                                            <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
-                                                <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
-                                            </a>
-                                        </div>
-                                        <div class="locale">{{ overview.locale|upper }}</div>
-                                        <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
-                                            {{ ux_icon('mdi:pencil') }}
-                                        </div>
-                                        <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
-                                            {{ ux_icon('mdi:trash') }}
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                    {% if series.updates %}
-                        <h4>{{ 'Updates'|trans }}</h4>
-                        <div class="updates">
-                            <div class="wrapper">
-                                {% for update in series.updates %}
-                                    <div class="update">{{ update }}</div>
                                 {% endfor %}
                             </div>
-                        </div>
-                    {% endif %}
-                    {% if series.firstAirDate is null %}
-                        <div class="no-air-date">{{ 'No date yet'|trans }}</div>
-                    {% endif %}
+                        {% endif %}
+                        {% if tv.additional_overviews|length %}
+                            <div class="additional overviews">
+                                <h4 class="additional-h4">{{ 'Additional overviews'|trans }}</h4>
+                                {% for overview in tv.additional_overviews %}
+                                    <div class="additional overview" data-id="{{ overview.id }}" data-source-id="{{ overview.source.id }}">
+                                        <div class="content" data-overview="{{ overview.overview }}">
+                                            {{ overview.overview|nl2br }}
+                                        </div>
+                                        <div class="tools">
+                                            <div class="source">
+                                                <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
+                                                    <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
+                                                </a>
+                                            </div>
+                                            <div class="locale">{{ overview.locale|upper }}</div>
+                                            <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
+                                                {{ ux_icon('mdi:pencil') }}
+                                            </div>
+                                            <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
+                                                {{ ux_icon('mdi:trash') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if series.updates %}
+                            <h4>{{ 'Updates'|trans }}</h4>
+                            <div class="updates">
+                                <div class="wrapper">
+                                    {% for update in series.updates %}
+                                        <div class="update">{{ update }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if series.firstAirDate is null %}
+                            <div class="no-air-date">{{ 'No date yet'|trans }}</div>
+                        {% endif %}
+                    </div>
                 </div>
                 {% if oldSeriesAdded %}
                     <div class="side-panel old-series-added-panel open">

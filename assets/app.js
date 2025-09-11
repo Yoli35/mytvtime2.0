@@ -200,11 +200,15 @@ window.addEventListener("DOMContentLoaded", () => {
         if (img) {
             const averageColor = new AverageColor();
             const color = averageColor.getColor(img);
-            /*if (color.lightness > 185) {
-                infos.style.color = "#101010";
-            } else {
-                infos.style.color = "#f5f5f5";
-            }*/
+            if (isSeasonPage) {
+                const infos = document.querySelector(".infos");
+                console.log({color})
+                if (color.lightness > 150) {
+                    infos.style.color = "#101010";
+                } else {
+                    infos.style.color = "#f5f5f5";
+                }
+            }
             const hsl = averageColor.rgbToHsl(color);
             hsl.l *= .8;
             // hsl.s *= 1.25;

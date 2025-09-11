@@ -22,92 +22,94 @@
     <div class="container-fluid backgroundImageOverlay">
         <div id="series-season" class="series-show">
             <div class="header">
-{#                <div class="poster" id="top">#}
-{#                    {% if season.poster_path %}#}
-{#                        <img src="/series/posters{{ season.poster_path }}" alt="{{ series.name }} {{ season.season_number }}"#}
-{#                             data-id="{{ series.id }}"#}
-{#                             data-name="{{ season.series_localized_name ? season.series_localized_name.name:series.name }}"#}
-{#                             data-slug="{{ season.series_localized_name ? season.series_localized_name.slug:series.slug }}">#}
-{#                    {% else %}#}
-{#                        <div>{{ 'No poster'|trans }}</div>#}
-{#                    {% endif %}#}
-{#                    {% set episodeCount = season.episodes|length %}#}
-{#                    {% set episodeWatchedCount = season.episodes|reduce((carry, ep) => carry + (ep.user_episode.watch_at is not null ? 1:0)) %}#}
-{#                    {% if episodeCount > 1 %}#}{# Les saisons à venir ont généralement un seul épisode au départ #}
-{#                        <div class="progress" data-value="{{ 100 * episodeWatchedCount / episodeCount }}" data-title="{{ episodeWatchedCount }} / {{ episodeCount }}">#}
-{#                            <div class="progress-bar"></div>#}
-{#                        </div>#}
-{#                    {% endif %}#}
-{#                </div>#}
+                {#                <div class="poster" id="top"> #}
+                {#                    {% if season.poster_path %} #}
+                {#                        <img src="/series/posters{{ season.poster_path }}" alt="{{ series.name }} {{ season.season_number }}" #}
+                {#                             data-id="{{ series.id }}" #}
+                {#                             data-name="{{ season.series_localized_name ? season.series_localized_name.name:series.name }}" #}
+                {#                             data-slug="{{ season.series_localized_name ? season.series_localized_name.slug:series.slug }}"> #}
+                {#                    {% else %} #}
+                {#                        <div>{{ 'No poster'|trans }}</div> #}
+                {#                    {% endif %} #}
+                {#                    {% set episodeCount = season.episodes|length %} #}
+                {#                    {% set episodeWatchedCount = season.episodes|reduce((carry, ep) => carry + (ep.user_episode.watch_at is not null ? 1:0)) %} #}
+                {#                    {% if episodeCount > 1 %} #}{# Les saisons à venir ont généralement un seul épisode au départ #}
+                {#                        <div class="progress" data-value="{{ 100 * episodeWatchedCount / episodeCount }}" data-title="{{ episodeWatchedCount }} / {{ episodeCount }}"> #}
+                {#                            <div class="progress-bar"></div> #}
+                {#                        </div> #}
+                {#                    {% endif %} #}
+                {#                </div> #}
                 <div class="infos">
-                    <div class="name">
-                        <h1>
-                            {% if season.series_localized_name %}
-                                <span class="localization-span">{{ season.series_localized_name.name }}</span><br>
-                            {% endif %}
-                            <span class="name-span">{{ series.name }} ({{ series.firstAirDate|date("Y") }})</span>
-                        </h1>
-                    </div>
-                    <div class="season-name">{{ season.name }}{% if season.season_number > 1 %} ({{ season.air_date|date("Y") }}){% endif %}</div>
-                    {% if season.season_localized_overview|length %}
-                        <div class="season-overview">
-                            <div class="header">{{ 'Season localized overview'|trans }} ({{ season.season_localized_overview.locale|upper }})</div>
-                            <div class="content">{{ season.season_localized_overview.overview|nl2br }}</div>
-                        </div>
-                    {% endif %}
-                    {% if season.overview %}
-                        <div class="season-overview">
-                            <div class="header">
-                                {% if season.is_series_overview %}
-                                    {{ 'Overview for the series'|trans }}
-                                {% else %}
-                                    {{ 'Overview for the season'|trans }}
+                    <div class="infos-content">
+                        <div class="name">
+                            <h1>
+                                {% if season.series_localized_name %}
+                                    <span class="localization-span">{{ season.series_localized_name.name }}</span><br>
                                 {% endif %}
-                            </div>
-                            <div class="body">{{ season.overview|nl2br }}</div>
+                                <span class="name-span">{{ series.name }} ({{ series.firstAirDate|date("Y") }})</span>
+                            </h1>
                         </div>
-                    {% endif %}
-                    {% if season.series_localized_overviews|length %}
-                        <div class="season-overview">
-                            <div class="header">{{ 'Localized overviews for the series'|trans }}</div>
-                            <div class="body">
-                                {% for overview in season.series_localized_overviews %}
-                                    <div class="content" data-overview="{{ overview.overview }}" data-id="{{ overview.id }}">
-                                        {{ overview.overview|nl2br }}
-                                        <div class="tools">
-                                            <div class="locale">{{ overview.locale|upper }}</div>
+                        <div class="season-name">{{ season.name }}{% if season.season_number > 1 %} ({{ season.air_date|date("Y") }}){% endif %}</div>
+                        {% if season.season_localized_overview|length %}
+                            <div class="season-overview">
+                                <div class="header">{{ 'Season localized overview'|trans }} ({{ season.season_localized_overview.locale|upper }})</div>
+                                <div class="overview-content">{{ season.season_localized_overview.overview|nl2br }}</div>
+                            </div>
+                        {% endif %}
+                        {% if season.overview %}
+                            <div class="season-overview">
+                                <div class="header">
+                                    {% if season.is_series_overview %}
+                                        {{ 'Overview for the series'|trans }}
+                                    {% else %}
+                                        {{ 'Overview for the season'|trans }}
+                                    {% endif %}
+                                </div>
+                                <div class="body">{{ season.overview|nl2br }}</div>
+                            </div>
+                        {% endif %}
+                        {% if season.series_localized_overviews|length %}
+                            <div class="season-overview">
+                                <div class="header">{{ 'Localized overviews for the series'|trans }}</div>
+                                <div class="body">
+                                    {% for overview in season.series_localized_overviews %}
+                                        <div class="content" data-overview="{{ overview.overview }}" data-id="{{ overview.id }}">
+                                            {{ overview.overview|nl2br }}
+                                            <div class="tools">
+                                                <div class="locale">{{ overview.locale|upper }}</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                {% endfor %}
+                                    {% endfor %}
+                                </div>
                             </div>
-                        </div>
-                        {# {% else %}
+                            {# {% else %}
                         {% if season.deepl %}
                             {% if season.deepl.localized %}
                                 <div class="series-overview deepl">{{ season.deepl.localizedOverview|raw }}</div>
                             {% endif %}
                         {% endif %} #}
-                    {% endif %}
-                    {% if season.series_additional_overviews|length %}
-                        <div class="season-overview">
-                            <div class="header">{{ 'Additional overviews for the series'|trans }}</div>
-                            <div class="body">
-                                {% for overview in season.series_additional_overviews %}
-                                    <div class="content" data-overview="{{ overview.overview }}" data-id="{{ overview.id }}" data-source-id="{{ overview.source.id }}">
-                                        {{ overview.overview|nl2br }}
-                                        <div class="tools">
-                                            <div class="source">
-                                                <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
-                                                    <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
-                                                </a>
+                        {% endif %}
+                        {% if season.series_additional_overviews|length %}
+                            <div class="season-overview">
+                                <div class="header">{{ 'Additional overviews for the series'|trans }}</div>
+                                <div class="body">
+                                    {% for overview in season.series_additional_overviews %}
+                                        <div class="content" data-overview="{{ overview.overview }}" data-id="{{ overview.id }}" data-source-id="{{ overview.source.id }}">
+                                            {{ overview.overview|nl2br }}
+                                            <div class="tools">
+                                                <div class="source">
+                                                    <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
+                                                        <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
+                                                    </a>
+                                                </div>
+                                                <div class="locale">{{ overview.locale|upper }}</div>
                                             </div>
-                                            <div class="locale">{{ overview.locale|upper }}</div>
                                         </div>
-                                    </div>
-                                {% endfor %}
+                                    {% endfor %}
+                                </div>
                             </div>
-                        </div>
-                    {% endif %}
+                        {% endif %}
+                    </div>
                     {% if series.backdropPath %}
                         <div class="backdrop">
                             <img src="/series/backdrops{{ series.backdropPath }}" alt="{{ series.name }}">
@@ -136,7 +138,7 @@
                 </div>
             </div>
 
-            {{ include('_blocks/series/_changes.html.twig') }}
+{#            {{ include('_blocks/series/_changes.html.twig') }}#}
             {{ include('_blocks/series/_externals.html.twig') }}
 
             <div class="season-stuff">
