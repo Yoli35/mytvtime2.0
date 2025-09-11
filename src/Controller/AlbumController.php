@@ -86,11 +86,11 @@ final class AlbumController extends AbstractController
         $this->dateRangeString($albums);
         $this->dateRangeString($albumsByDays);
 
-        dump([
-            'albums' => $albums,
-            'albumsByDays' => $albumsByDays,
-            'photos' => $photos,
-        ]);
+//        dump([
+//            'albums' => $albums,
+//            'albumsByDays' => $albumsByDays,
+//            'photos' => $photos,
+//        ]);
         return $this->render('album/photos.html.twig', [
             'albums' => $albums,
             'albumsByDays' => $albumsByDays,
