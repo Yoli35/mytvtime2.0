@@ -20,13 +20,74 @@
                     });
                 });
             </script>
-            <div class="site-update glowing-border right">
+            <div class="site-update glowing-border">
                 <div class="updates-title">
                     <h1>Mises à jour / Updates / {{ 'Updates'|trans(domain = 'messages', locale = 'ko') }}</h1>
                     <h4>myTvTime 2.0 : 18/09/2024</h4>
                 </div>
             </div>
-            <div class="site-update glowing-border left">
+            <div class="site-update glowing-border">
+                <h2>34ᵉ mise à jour : 11/09/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }} → Add consistent padding to map fitBounds calls</div>
+                        <div class="details">Standardizes the padding option to 45 for all map.fitBounds calls to improve map display consistency. Also fixes a minor whitespace typo in property assignment.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series info layout and styling on season page</div>
+                        <div class="details">Reorganized the structure of series and season info sections by introducing a new .infos-content wrapper in templates and updating related CSS for better layout control. Improved color contrast logic in JS for season pages and adjusted various style details for consistency and readability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }}→ Redesign album sidebar and improve photo sorting</div>
+                        <div class="details">Refactored sidebar and toggler styles in album.scss for a more modern UI and moved sidebar markup to photos.html.twig with improved toggler logic. Updated AlbumController to sort photos by date descending and optimized image path extraction. Changed page title to 'Photos' for clarity.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }} → Refactor marker handling and album photo logic</div>
+                        <div class="details">Commented out debug console logs in Map.js and improved marker handling by adding a 'photo-marker' class to photo markers. The adjustBounds method now accepts a marker type for more precise bounds adjustment. In AlbumShow.js, removed redundant addPhotosButton logic and updated photo marker addition to use the new marker type, also ensuring image paths are tracked.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }}→ Add photos overview page and update album features</div>
+                        <div class="details">Introduces a new 'Photos' overview page with dedicated route, controller logic, and template. Updates album controller to refactor album creation, add album date ranges, and improve daily album grouping. Enhances styles for the new page, updates navigation menus, and adds French translations for new labels.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }}→ Add thumbnail image generation and update paths</div>
+                        <div class="details">Introduces thumbnail image generation at 320px width in both AddMobileResPhotoCommand and ImageService. Updates logic to check for and create thumbnails instead of mobile resolution images, and ensures necessary directories are created. Also exposes checkForPaths as public in ImageService.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor season header layout and progress bar</div>
+                        <div class="details">Moved the season progress bar outside the poster element in the season template and updated its styling in SCSS. Improved image selection logic for color extraction in app.js to better support season pages. Adjusted header and overview styles for better visual consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }} → Improve map marker filtering and padding</div>
+                        <div class="details">Increased map fitBounds padding from 15 to 45 for better visibility. Updated marker filtering logic to exclude markers with the 'poi-marker' class from being hidden or shown, and fixed the 'All series' option value in the series select dropdown.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }} → Limit POI bounds calculation to first 5 items</div>
+                        <div class="details">Updated AdminController to calculate map bounds using only the first 5 points of interest, improving performance and relevance for large datasets. Also fixed Twig template to remove extra curly braces around keyboard icon rendering.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add support for schedule overrides in series view</div>
+                        <div class="details">Introduces handling and display of schedule overrides for series seasons. The controller now sets a 'final_air_date' when an override is present, and the UI shows an override icon and uses the override date for season air date display. Also includes minor code style fixes for array formatting.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }} → Move map logic from template JS to Map.js</div>
+                        <div class="details">Refactored map interaction logic from inline JavaScript in index.html.twig to the Map.js module for better maintainability and separation of concerns. Updated template to remove redundant scripts and ensure map initialization and controls are handled in Map.js. Also added missing map container IDs for consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }} → Refactor POI loading and map marker rendering</div>
+                        <div class="details">Points of Interest (POIs) are now fetched via a dedicated API endpoint and rendered dynamically on the map, removing POI data from series and season endpoints. Updated Map.js to fetch and display POIs, added src/Api/PointOfInterest.php for POI API, and adjusted templates and styles for improved marker appearance and separation of POI logic.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }} → Enhance POI markers and popup behavior on map</div>
+                        <div class="details">Custom POI markers now use images and improved styling via .poi-marker class. Popups for locations, POIs, and photos now close on map move for better UX.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:update') }}→ Update user updates page and style SVG icons</div>
+                        <div class="details">Added a new update section to the user updates page with detailed changelog entries and standardized arrow spacing in change descriptions. Updated SCSS to set consistent height and width for SVG icons within update entries for improved visual alignment.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>33ᵉ mise à jour : 07/09/2025</h2>
                 <ul>
                     <li>
@@ -67,11 +128,11 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:search') }}→ Refactor search endpoints and menu search logic</div>
-                        <div class="details">Unified and renamed search API endpoints in controllers for movies, series, and people. Refactored Menu.js to use new endpoints and improved search result handling, including multi-search and menu closing logic. Updated SCSS for search input and results styling, and adjusted menu template to include <ul> elements for search results. Also fixed SQL alias in UserSeriesRepository.</div>
+                        <div class="details">Unified and renamed search API endpoints in controllers for movies, series, and people. Refactored Menu.js to use new endpoints and improved search result handling, including multi-search and menu closing logic. Updated SCSS for search input and results styling, and adjusted menu template to include &lt;ul&gt; elements for search results. Also fixed SQL alias in UserSeriesRepository.</div>
                     </li>
                 </ul>
             </div>
-            <div class="site-update glowing-border right">
+            <div class="site-update glowing-border">
                 <h2>32ᵉ mise à jour : 03/09/2025</h2>
                 <ul>
                     <li>
@@ -92,7 +153,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="site-update glowing-border left">
+            <div class="site-update glowing-border">
                 <h2>31ᵉ mise à jour : 01/09/2025</h2>
                 <ul>
                     <li>
@@ -125,7 +186,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="site-update glowing-border right">
+            <div class="site-update glowing-border">
                 <h2>30ᵉ mise à jour : 28/08/2025</h2>
                 <ul>
                     <li>
@@ -170,7 +231,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="site-update glowing-border left">
+            <div class="site-update glowing-border">
                 <h2>29ᵉ mise à jour : 25/08/2025</h2>
                 <ul>
                     <li>
@@ -195,7 +256,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="site-update glowing-border right">
+            <div class="site-update glowing-border">
                 <h2>28ᵉ mise à jour : 24/08/2025</h2>
                 <ul>
                     <li>
@@ -228,7 +289,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="site-update glowing-border left">
+            <div class="site-update glowing-border">
                 <h2>27ᵉ mise à jour : 21/08/2025</h2>
                 <ul>
                     <li>
@@ -257,7 +318,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="site-update glowing-border right">
+            <div class="site-update glowing-border">
                 <h2>26ᵉ mise à jour : 20/08/2025</h2>
                 <ul>
                     <li>
@@ -270,7 +331,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="site-update glowing-border left">
+            <div class="site-update glowing-border">
                 <h2>25ᵉ mise à jour : 18/08/2025</h2>
                 <ul>
                     <li>
@@ -363,7 +424,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="site-update glowing-border right">
+            <div class="site-update glowing-border">
                 <h2>24ᵉ mise à jour : 06/08/2025</h2>
                 <ul>
                     <li>
@@ -447,7 +508,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="site-update glowing-border left">
+            <div class="site-update glowing-border">
                 <h2>23ᵉ mise à jour : 01/08/2025</h2>
                 <ul>
                     <li>
@@ -470,7 +531,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="site-update glowing-border right">
+            <div class="site-update glowing-border">
                 <h2>22ᵉ mise à jour : 31/07/2025</h2>
                 <ul>
                     <li>
@@ -533,7 +594,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="site-update glowing-border left">
+            <div class="site-update glowing-border">
                 <h2>21ᵉ mise à jour : 20/07/2025</h2>
                 <ul>
                     <li>
@@ -586,7 +647,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="site-update glowing-border right">
+            <div class="site-update glowing-border">
                 <h2>20ᵉ mise à jour : 14/07/2025</h2>
                 <ul>
                     <li>
@@ -630,7 +691,7 @@
                     <li>→ Filming locations: radius added to coordinates</li>
                 </ul>
             </div>
-            <div class="site-update glowing-border left">
+            <div class="site-update glowing-border">
                 <h2>19ᵉ mise à jour : 23/06/2025</h2>
                 <ul>
                     <li>→ Image service: code factoring & Apple Maps mark up</li>
@@ -642,7 +703,7 @@
                     <li>→ Schedules: number of episodes by selected day taken in count</li>
                 </ul>
             </div>
-            <div class="site-update glowing-border right">
+            <div class="site-update glowing-border">
                 <h2>18ᵉ mise à jour : 16/06/2025</h2>
                 <ul>
                     <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ Site updates pages</li>
@@ -655,7 +716,7 @@
                     <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ Map - last adds: points of interest displayed</li>
                 </ul>
             </div>
-            <div class="site-update glowing-border left">
+            <div class="site-update glowing-border">
                 <h2>17ᵉ mise à jour : 10/06/2025</h2>
                 <ul>
                     <li><span class="fix">{{ ux_icon('mdi:auto-fix') }}</span>→ Season page: quick episode links fixed</li>
@@ -669,7 +730,7 @@
                     <li><span class="css">{{ ux_icon('mdi:language-css3') }}</span>→ css corrections here and there...</li>
                 </ul>
             </div>
-            <div class="site-update glowing-border right">
+            <div class="site-update glowing-border">
                 16ᵉ mise à jour : 05/06/2025<br>
                 <ul>
                     <li>→ Series crew css (no image profile)</li>
@@ -688,7 +749,7 @@
                     <li>→ Map: ?fl=123→ goes directly to the location with series id=123</li>
                 </ul>
             </div>
-            <div class="site-update glowing-border left">
+            <div class="site-update glowing-border">
                 15ᵉ mise à jour : 29/05/2025<br>
                 <ul>
                     <li>→ Videos: sql optimizations, time to watch YT, pagination, categories</li>
@@ -701,7 +762,7 @@
                     <li>→ Advanced search: landscape orientation on iPad</li>
                 </ul>
             </div>
-            <div class="site-update glowing-border right">
+            <div class="site-update glowing-border">
                 14ᵉ mise à jour : 25/05/2025<br>
                 <ul>
                     <li>→ Advanced search: user series highlighted</li>
@@ -711,7 +772,7 @@
                     <li>→ The Movie Database: people names may need to be trim</li>
                 </ul>
             </div>
-            <div class="site-update glowing-border left">
+            <div class="site-update glowing-border">
                 13ᵉ mise à jour : 23/05/2025<br>
                 <ul>
                     <li>→ New video section (YouTube)</li>
@@ -730,7 +791,7 @@
                     <li>→ And many more ...</li>
                 </ul>
             </div>
-            <div class="site-update glowing-border right">
+            <div class="site-update glowing-border">
                 12ᵉ mise à jour : 11/05/2025<br>
                 11ᵉ mise à jour : 08/05/2025<br>
                 10ᵉ mise à jour : 23/04/2025<br>
@@ -744,7 +805,7 @@
                 2ᵉ mise à jour : 04/04/2025<br>
                 1ᵉ mise à jour : 25/09/2024<br>
             </div>
-            <div class="site-update glowing-border left">
+            <div class="site-update glowing-border">
                 Ouverture : 27/10/2022<br>
                 <div class="list">
                     27ᵉ mise à jour : 11/06/2024<br>
