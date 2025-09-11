@@ -7,7 +7,7 @@ export class Map {
         console.log('Map starting');
         gThis = this;
         const globsData = document.querySelector('#globs-map');
-        this. data = JSON.parse(globsData.textContent);
+        this.data = JSON.parse(globsData.textContent);
         this.locations = this.data.locations || [];
         this.bounds = this.data.bounds;
         this.id = this.data.id || null;
@@ -254,7 +254,7 @@ export class Map {
                 maxLat += 0.1;
                 minLng -= 0.1;
                 maxLng += 0.1;
-                this.map.fitBounds([[minLng, minLat], [maxLng, maxLat]]);
+                this.map.fitBounds([[minLng, minLat], [maxLng, maxLat]], {padding: 45});
             }
 
             const zoomToLocation = () => {
@@ -266,7 +266,7 @@ export class Map {
 
                 if (country) {
                     const latLngs = countryBounds[country];
-                    this.map.fitBounds(latLngs);
+                    this.map.fitBounds(latLngs, {padding: 45});
 
                     const locationIds = countryLocationIds[country];
                     leafletMarkerIcons.forEach(markerIcon => {
@@ -286,7 +286,7 @@ export class Map {
                         }
                     });
                 } else {
-                    this.map.fitBounds(latLngs);
+                    this.map.fitBounds(latLngs, {padding: 45});
                     leafletMarkerIcons.forEach(markerIcon => {
                         markerIcon.style.display = 'block';
                     });
@@ -307,7 +307,7 @@ export class Map {
                     const lng1 = country.getAttribute('data-lng1');
                     const lat2 = country.getAttribute('data-lat2');
                     const lng2 = country.getAttribute('data-lng2');
-                    this.map.fitBounds([[lat1, lng1], [lat2, lng2]]);
+                    this.map.fitBounds([[lat1, lng1], [lat2, lng2]], {padding: 45});
                 }
             }
 
@@ -440,7 +440,7 @@ export class Map {
             minLng = Math.min(lng, minLng);
             maxLng = Math.max(lng, maxLng);
         });
-        this.map.fitBounds([[minLng, minLat], [maxLng, maxLat]], {padding: 30});
+        this.map.fitBounds([[minLng, minLat], [maxLng, maxLat]], {padding: 45});
     }
 
     getPosition(e) {
