@@ -736,18 +736,6 @@ h2 {
                     margin-block: auto;
                 }
 
-                .localized-h4, .additional-h4 {
-                    /*color: var(--orange-70);*/
-                    font-size: clamp(1.25rem, 1.875vw, 2.5rem);
-                    font-weight: 300;
-                    padding-block: .25rem;
-                    padding-inline: .5rem;
-
-                    &.hide {
-                        display: none;
-                    }
-                }
-
                 .overviews {
                     display: flex;
                     flex-direction: column;
@@ -762,6 +750,17 @@ h2 {
                         }
                     }
 
+                    .localized-h4, .additional-h4 {
+                        /*color: var(--orange-70);*/
+                        font-size: clamp(1.25rem, 1.875vw, 2.5rem);
+                        font-weight: 300;
+                        padding-block: .25rem;
+                        padding-inline: .5rem;
+
+                        &.hide {
+                            display: none;
+                        }
+                    }
 
                     .overview {
                         align-items: center;
@@ -820,7 +819,7 @@ h2 {
                                 .source, .locale, .edit, .delete {
                                     align-items: center;
                                     border-radius: .25rem;
-                                    color: var(--orange-90);
+                                    /*color: var(--orange-90);*/
                                     display: flex;
                                     font-size: 1rem;
                                     font-weight: 300;

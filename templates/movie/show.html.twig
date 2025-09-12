@@ -57,9 +57,9 @@
                     {% if movie.overview|length %}
                         <div class="movie-overview">{{ movie.overview|nl2br }}</div>
                     {% endif %}
-                    {% if movie.localized_overviews|length %}
-                        <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
                         <div class="localized overviews">
+                            <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
+                            {% if movie.localized_overviews|length %}
                             {% for overview in movie.localized_overviews %}
                                 <div class="localized overview" data-id="{{ overview.id }}">
                                     <div class="content" data-overview="{{ overview.overview }}">
@@ -76,11 +76,11 @@
                                     </div>
                                 </div>
                             {% endfor %}
+                            {% endif %}
                         </div>
-                    {% endif %}
-                    {% if movie.additional_overviews|length %}
-                        <h4 class="additional-h4">{{ 'Additional overviews'|trans }}</h4>
                         <div class="additional overviews">
+                            <h4 class="additional-h4">{{ 'Additional overviews'|trans }}</h4>
+                            {% if movie.additional_overviews|length %}
                             {% for overview in movie.additional_overviews %}
                                 <div class="additional overview" data-id="{{ overview.id }}">
                                     <div class="content" data-overview="{{ overview.overview }}">
@@ -112,8 +112,8 @@
                                     </div>
                                 </div>
                             {% endfor %}
+                            {% endif %}
                         </div>
-                    {% endif %}
                 </div>
             </header>
             <main>

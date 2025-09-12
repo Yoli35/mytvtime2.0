@@ -6,10 +6,11 @@ export class TranslationsForms {
     constructor(id, type, translations) {
         gThis = this;
         this.toolTips = new ToolTips();
-        this.init(id, type, translations);
+        this.translations = translations;
+        this.init(id, type);
     }
 
-    init(id, mediaType, translations) {
+    init(id, mediaType) {
         const lang = document.documentElement.lang;
         const localizationToolsButton = document.querySelector('.localization-tools-button');
         const localizationToolsMenu = document.querySelector('.localization-tools-menu');
@@ -75,7 +76,7 @@ export class TranslationsForms {
                 error.textContent = '';
             });
             if (!name.value) {
-                name.nextElementSibling.textContent = translations['This field is required'];
+                name.nextElementSibling.textContent = gThis.translations['This field is required'];
             } else {
                 fetch('/' + lang + '/' + mediaType + '/localized/name/add/' + id,
                     {
@@ -114,7 +115,7 @@ export class TranslationsForms {
             hiddenInputTool.setAttribute('data-overview-id', "-1");
             firstRow.classList.add('hide');
             const submitButton = ovForm.querySelector('button[type="submit"]');
-            submitButton.textContent = translations['Add'];
+            submitButton.textContent = gThis.translations['Add'];
             const overviewField = ovForm.querySelector('#overview-field');
             overviewField.value = '';
             localizationToolsMenu.classList.toggle('active');
@@ -128,7 +129,7 @@ export class TranslationsForms {
             hiddenInputTool.setAttribute('data-overview-id', "-1");
             firstRow.classList.remove('hide');
             const submitButton = ovForm.querySelector('button[type="submit"]');
-            submitButton.textContent = translations['Add'];
+            submitButton.textContent = gThis.translations['Add'];
             const overviewField = ovForm.querySelector('#overview-field');
             overviewField.value = '';
             localizationToolsMenu.classList.toggle('active');
@@ -141,44 +142,11 @@ export class TranslationsForms {
         /* Tools for every added overview */
         if (overviews) {
             overviews.forEach(function (overview) {
-                const type = overview.classList.contains('localized') ? 'localized' : 'additional';
                 const tools = overview.querySelector('.tools');
                 const edit = tools.querySelector('.edit');
                 const del = tools.querySelector('.delete');
-                edit.addEventListener('click', function () {
-                    const id = this.getAttribute('data-id');
-                    const content = overview.querySelector('.content').getAttribute('data-overview');
-                    const form = document.querySelector('.overview-form');
-                    const hiddenInputTool = form.querySelector('#tool');
-                    const overviewField = form.querySelector('#overview-field');
-                    hiddenInputTool.value = id;
-                    hiddenInputTool.setAttribute('data-type', type);
-                    hiddenInputTool.setAttribute('data-crud', 'edit');
-                    hiddenInputTool.setAttribute('data-overview-id', id);
-                    overviewField.value = content.trim();
-                    const firstRow = form.querySelector('.form-row:first-child');
-                    if (type === 'localized') {
-                        firstRow.classList.add('hide');
-                    } else {
-                        firstRow.classList.remove('hide');
-                        const select = form.querySelector('#overview-source');
-                        const sourceId = overview.getAttribute('data-source-id');
-                        if (sourceId) {
-                            select.value = sourceId;
-                        }
-                    }
-                    const submitButton = form.querySelector('button[type="submit"]');
-                    submitButton.textContent = translations['Edit'];
-                    gThis.displayForm(overviewForm);
-                });
-                del.addEventListener('click', function () {
-                    const id = this.getAttribute('data-id');
-                    const overviewType = deleteOverviewForm.querySelector('#overview-type');
-                    const overviewId = deleteOverviewForm.querySelector('#overview-id');
-                    overviewType.value = type;
-                    overviewId.value = id;
-                    gThis.displayForm(deleteOverviewForm);
-                });
+                edit.addEventListener('click', gThis.editOverview);
+                del.addEventListener('click', gThis.deleteOverview);
             });
         }
 
@@ -264,28 +232,16 @@ export class TranslationsForms {
                     }
 
                     // crud: add
-                    const infos = document.querySelector('.infos');
-                    let h4 = infos.querySelector('.' + type + '-h4'), overviewsDiv;
-                    if (!h4) {
-                        h4 = document.createElement('h4');
-                        h4.classList.add(type + '-h4');
-                        h4.textContent = type === 'localized' ? translations['Localized overviews'] : translations['Additional overviews'];
-                        infos.appendChild(h4);
-
-                        overviewsDiv = document.createElement('div');
-                        overviewsDiv.classList.add(type);
-                        overviewsDiv.classList.add('overviews');
-                        infos.appendChild(overviewsDiv);
-                    }
-                    overviewsDiv = infos.querySelector('.' + type + '.overviews');
+                    const infosDiv = document.querySelector('.infos');
+                    const infosContentDiv = infosDiv.querySelector('.infos-content');
+                    let overviewsDiv = infosContentDiv.querySelector('.' + type + '.overviews');
 
                     const newId = response.id;
                     /** @type {Source} */
                     const sourceRecord = response.source;
 
                     const overviewDiv = document.createElement('div');
-                    overviewDiv.classList.add(type);
-                    overviewDiv.classList.add('overview');
+                    overviewDiv.classList.add(type, 'overview');
                     const contentDiv = document.createElement('div');
                     contentDiv.classList.add('content');
                     contentDiv.setAttribute('data-overview', overviewField.value);
@@ -325,21 +281,19 @@ export class TranslationsForms {
                     const editDiv = document.createElement('div');
                     editDiv.classList.add('edit');
                     editDiv.setAttribute('data-id', newId);
-                    editDiv.setAttribute('data-title', translations['Edit']);
-                    const editI = document.createElement('i');
-                    editI.classList.add('fas');
-                    editI.classList.add('fa-pen');
-                    editDiv.appendChild(editI);
+                    editDiv.setAttribute('data-title', gThis.translations['Edit']);
+                    const penSvg = document.querySelector('#svgs').querySelector('#pen').querySelector('svg').cloneNode(true);
+                    editDiv.appendChild(penSvg);
+                    editDiv.addEventListener('click', gThis.editOverview);
                     toolsDiv.appendChild(editDiv);
 
                     const deleteDiv = document.createElement('div');
                     deleteDiv.classList.add('delete');
                     deleteDiv.setAttribute('data-id', newId);
-                    deleteDiv.setAttribute('data-title', translations['Delete']);
-                    const deleteI = document.createElement('i');
-                    deleteI.classList.add('fas');
-                    deleteI.classList.add('fa-trash');
-                    deleteDiv.appendChild(deleteI);
+                    deleteDiv.setAttribute('data-title', gThis.translations['Delete']);
+                    const trashSvg = document.querySelector('#svgs').querySelector('#pen').querySelector('svg').cloneNode(true);
+                    deleteDiv.appendChild(trashSvg);
+                    deleteDiv.addEventListener('click', gThis.deleteOverview);
                     toolsDiv.appendChild(deleteDiv);
 
                     overviewDiv.appendChild(toolsDiv);
@@ -375,6 +329,50 @@ export class TranslationsForms {
                 }
             });
         });
+    }
+
+    editOverview(e) {
+        const overviewForm = document.querySelector('.overview-form');
+        const editTool = e.currentTarget;
+        const overviewDiv = editTool.closest('.overview');
+        const type = overviewDiv.classList.contains('localized') ? 'localized' : 'additional';
+        const id = editTool.getAttribute('data-id');
+        const content = overviewDiv.querySelector('.content').getAttribute('data-overview');
+        const form = document.querySelector('.overview-form');
+        const hiddenInputTool = form.querySelector('#tool');
+        const overviewField = form.querySelector('#overview-field');
+        hiddenInputTool.value = id;
+        hiddenInputTool.setAttribute('data-type', type);
+        hiddenInputTool.setAttribute('data-crud', 'edit');
+        hiddenInputTool.setAttribute('data-overview-id', id);
+        overviewField.value = content.trim();
+        const firstRow = form.querySelector('.form-row:first-child');
+        if (type === 'localized') {
+            firstRow.classList.add('hide');
+        } else {
+            firstRow.classList.remove('hide');
+            const select = form.querySelector('#overview-source');
+            const sourceId = overviewDiv.getAttribute('data-source-id');
+            if (sourceId) {
+                select.value = sourceId;
+            }
+        }
+        const submitButton = form.querySelector('button[type="submit"]');
+        submitButton.textContent = gThis.translations['Edit'];
+        gThis.displayForm(overviewForm);
+    }
+
+    deleteOverview(e) {
+        const deleteOverviewForm = document.querySelector('.delete-overview-form');
+        const deleteToolDiv = e.currentTarget;
+        const overviewDiv = deleteToolDiv.closest('.overview');
+        const type = overviewDiv.classList.contains('localized') ? 'localized' : 'additional';
+        const id = deleteToolDiv.getAttribute('data-id');
+        const overviewType = deleteOverviewForm.querySelector('#overview-type');
+        const overviewId = deleteOverviewForm.querySelector('#overview-id');
+        overviewType.value = type;
+        overviewId.value = id;
+        gThis.displayForm(deleteOverviewForm);
     }
 
     displayForm(form) {
