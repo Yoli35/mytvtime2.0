@@ -2,7 +2,7 @@
 .movie-index {
     main {
         .wrapper {
-            background-color: var(--ardoise-100-alpha-20);
+            background-color: var(--ardoise-90-alpha-20);
             border-radius: .5rem;
             display: grid;
             flex-wrap: wrap;
@@ -13,7 +13,7 @@
 
         .card {
             align-items: center;
-            /*background-color: var(--ardoise-100-alpha-20);*/
+            /*background-color: var(--ardoise-90-alpha-20);*/
             border-radius: .5rem;
             display: flex;
             flex-direction: column;
@@ -122,7 +122,7 @@
         .poster {
             align-items: center;
             aspect-ratio: 78 / 117;
-            background-color: var(--grey-75-alpha-40);
+            background-color: var(--green-40);
             border-radius: .5rem;
             display: flex;
             justify-content: center;
@@ -328,7 +328,7 @@
         }
 
         .movie-details {
-            background-color: var(--ardoise-100-alpha-20);
+            background-color: var(--ardoise-90-alpha-20);
             border-radius: 0;
             display: flex;
             /*flex-direction: column;*/
@@ -519,7 +519,7 @@
                             }
 
                             .keywords {
-                                background-color: var(--ardoise-100-alpha-20);
+                                background-color: var(--ardoise-90-alpha-20);
                                 border-radius: .5rem;
                                 display: flex;
                                 flex-wrap: wrap;
@@ -530,7 +530,7 @@
                                 .keyword {
                                     background-color: var(--green-50);
                                     border-radius: .25rem;
-                                    color: var(--ardoise-0);
+                                    color: var(--ardoise-10);
                                     font-size: 1rem;
                                     font-weight: 300;
                                     padding: .125rem .5rem;
@@ -659,7 +659,7 @@
         }
 
         .user-details {
-            background-color: var(--ardoise-100-alpha-20);
+            background-color: var(--ardoise-90-alpha-20);
             border-radius: 0;
             display: flex;
             flex-direction: column;
@@ -678,7 +678,7 @@
         }
 
         .movie-collection {
-            background-color: var(--ardoise-100-alpha-20);
+            background-color: var(--ardoise-90-alpha-20);
             border-radius: 0;
             display: flex;
             flex-direction: column;
@@ -723,7 +723,7 @@
 
                     .name {
                         backdrop-filter: blur(8px);
-                        background-color: var(--ardoise-100-alpha-20);
+                        background-color: var(--ardoise-90-alpha-20);
                         border-radius: .25rem;
                         bottom: 2rem;
                         color: var(--orange-50);
@@ -759,7 +759,7 @@
         .poster {
             align-items: center;
             aspect-ratio: 78 / 117;
-            background-color: var(--grey-75-alpha-40);
+            background-color: var(--green-40);
             border-radius: .5rem;
             display: flex;
             justify-content: center;
@@ -776,7 +776,7 @@
         }
 
         .infos {
-            background-color: var(--ardoise-100-alpha-50);
+            background-color: var(--ardoise-90-alpha-50);
             border-radius: .5rem;
             display: flex;
             flex-direction: column;
@@ -804,7 +804,7 @@
 
             .title {
                 h1 {
-                    background-color: var(--ardoise-100-alpha-50);
+                    background-color: var(--ardoise-90-alpha-50);
                     border-radius: .5rem;
                     color: var(--orange-50);
                     font-size: clamp(1rem, 5vw, 4rem);
@@ -821,7 +821,7 @@
             }
 
             .movie-overview {
-                background-color: var(--ardoise-100-alpha-50);
+                background-color: var(--ardoise-90-alpha-50);
                 border-radius: .5rem;
                 color: var(--ardoise-10);
                 font-size: 1.25rem;
@@ -882,7 +882,7 @@
                     }
 
                     .title {
-                        background-color: var(--ardoise-100-alpha-50);
+                        background-color: var(--ardoise-90-alpha-50);
                         border-radius: .5rem;
                         color: var(--ardoise-10);
                         font-size: 1rem;
@@ -895,7 +895,7 @@
                     }
 
                     .movie-overview {
-                        background-color: var(--ardoise-100-alpha-50);
+                        background-color: var(--ardoise-90-alpha-50);
                         border-radius: .5rem;
                         color: var(--ardoise-10);
                         font-size: 1rem;

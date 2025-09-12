@@ -648,9 +648,6 @@ export class Menu {
 
     initTheme() {
         let theme = localStorage.getItem("mytvtime_2_theme");
-        if (theme !== null && theme !== 'auto') {
-            document.body.classList.add(theme);
-        }
         if (theme === null) {
             const dark = window.matchMedia("(prefers-color-scheme: dark)");
             const light = window.matchMedia("(prefers-color-scheme: light)");
@@ -673,13 +670,13 @@ export class Menu {
     setTheme(e) {
         const theme = e.currentTarget.getAttribute("data-theme");
 
-        if (!document.startViewTransition) {
+        // if (!document.startViewTransition) {
             gThis.updateTheme(theme);
-        } else {
-            document.startViewTransition(() => {
-                gThis.updateTheme(theme);
-            });
-        }
+        // } else {
+        //     document.startViewTransition(() => {
+        //         gThis.updateTheme(theme);
+        //     });
+        // }
 
         localStorage.setItem("mytvtime_2_theme", theme);
         this.checkTheme(theme);
@@ -689,8 +686,7 @@ export class Menu {
     }
 
     updateTheme(theme) {
-        document.body.classList.remove("dark", "light");
-        if (theme !== 'auto') document.body.classList.add(theme);
+        document.documentElement.setAttribute('data-theme', theme);
     }
 
     checkTheme(theme) {
@@ -699,6 +695,7 @@ export class Menu {
         });
         const newTheme = document.querySelector(`.menu-theme[data-theme="${theme}"]`);
         newTheme.classList.add("active");
+        document.documentElement.setAttribute('data-theme', theme);
     }
 
     markNotificationsAsRead() {

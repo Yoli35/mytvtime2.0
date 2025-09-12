@@ -49,22 +49,6 @@ html {
     color-scheme: light dark;
     interpolate-size: allow-keywords;
     scroll-behavior: smooth;
-    /*scroll-padding: 10rem;*/
-
-    &:has(body.dark) {
-        @for $i from 0 through 100 {
-            --value-#{$i}: #{100 - $i};
-            --percent-#{$i}: calc(calc(calc(100 - #{$i}) / 100) * 100%) !important;
-        }
-    }
-
-    &:has(.container-fluid.light),
-    &:has(body.light) {
-        @for $i from 0 through 100 {
-            --value-#{$i}: #{$i};
-            --percent-#{$i}: calc(calc(#{$i} / 100) * 100%) !important;
-        }
-    }
 }
 
 a {
@@ -79,20 +63,21 @@ a {
 
 body {
     align-items: center;
-    background: hsl(202, var(--saturation), var(--percent-95)) linear-gradient(
+    background: var(--background)
+        linear-gradient(
                     45deg,
-                    hsl(212deg var(--saturation) var(--percent-84)) 0%,
-                    hsl(211deg var(--saturation) var(--percent-85)) 11%,
-                    hsl(210deg var(--saturation) var(--percent-86)) 22%,
-                    hsl(210deg var(--saturation) var(--percent-87)) 33%,
-                    hsl(209deg var(--saturation) var(--percent-88)) 44%,
-                    hsl(208deg var(--saturation) var(--percent-89)) 56%,
-                    hsl(207deg var(--saturation) var(--percent-90)) 67%,
-                    hsl(207deg var(--saturation) var(--percent-91)) 78%,
-                    hsl(206deg var(--saturation) var(--percent-92)) 89%,
-                    hsl(206deg var(--saturation) var(--percent-93)) 100%
+                    var(--background-gradient-0) 0%,
+                    var(--background-gradient-11) 11%,
+                    var(--background-gradient-22) 22%,
+                    var(--background-gradient-33) 33%,
+                    var(--background-gradient-44) 44%,
+                    var(--background-gradient-56) 56%,
+                    var(--background-gradient-67) 67%,
+                    var(--background-gradient-78) 78%,
+                    var(--background-gradient-89) 89%,
+                    var(--background-gradient-100) 100%
     ) fixed;
-    color: var(--mtt-body-color);
+    color: var(--ardoise-10);
     display: flex;
     flex-direction: column;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -428,7 +413,7 @@ label:has(input[type="text"]) {
         .menu {
             background-color: var(--navbar-bg);
             border-radius: .25rem;
-            box-shadow: 0 0 1rem var(--ardoise-100-alpha-20);
+            box-shadow: 0 0 1rem var(--ardoise-90-alpha-20);
             list-style: none;
             width: max-content;
 
@@ -612,7 +597,7 @@ label:has(input[type="text"]) {
                         }
 
                         .time {
-                            background-color: var(--grey-95-alpha-20);
+                            background-color: var(--ardoise-90-alpha-20);
                             border-radius: .25rem;
                             color: var(--orange-90);
                             font-family: monospace;
@@ -807,7 +792,7 @@ label:has(input[type="text"]) {
 
             input {
                 appearance: none;
-                background-color: var(--grey-95-alpha-20);
+                background-color: var(--ardoise-90-alpha-20);
                 border: none;
                 border-radius: 5rem;
                 color: var(--orange-90);
@@ -2069,7 +2054,7 @@ dialog {
                 position: relative;
 
                 img {
-                    border: .25em solid var(--grey-20);
+                    border: .25em solid var(--green-20);
                     cursor: pointer;
                     max-height: 4rem;
                     max-width: 4rem;
@@ -2123,9 +2108,9 @@ dialog {
 
         > div {
             align-items: center;
-            background-color: var(--grey-20-alpha-50);
+            background-color: var(--ardoise-20-alpha-50);
             border-radius: 50%;
-            color: var(--grey-10);
+            color: var(--ardoise-10);
             cursor: pointer;
             display: flex;
             font-size: 2rem;

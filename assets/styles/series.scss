@@ -121,7 +121,7 @@ h2 {
         }
 
         .day-of-week {
-            color: var(--grey-10);
+            color: var(--ardoise-10);
             font-size: 2rem;
             line-height: 1.1em;
             z-index: 1;
@@ -132,7 +132,7 @@ h2 {
         }
 
         .month {
-            color: var(--grey-10);
+            color: var(--ardoise-10);
             font-size: 1.5rem;
             line-height: 1.1em;
             z-index: 1;
@@ -297,7 +297,7 @@ h2 {
             }
         }
 
-        .legends {
+        /*.legends {
             background-color: var(--ardoise-90);
             border-radius: .5rem;
             display: flex;
@@ -314,11 +314,11 @@ h2 {
                 padding-inline: 1rem;
 
                 &.to-start {
-                    background-color: var(--series-to-start);
+                    background-color: var(--orange-60);
                 }
 
                 &.up-to-date {
-                    background-color: var(--series-up-to-date);
+                    background-color: var(--green-50);
                 }
 
                 &.in-progress {
@@ -330,7 +330,7 @@ h2 {
                     width: 1rem;
                 }
             }
-        }
+        }*/
     }
 
     .series-group {
@@ -509,11 +509,11 @@ h2 {
                             }
 
                             &.to-start {
-                                background-color: var(--series-to-start);
+                                background-color: var(--orange-60);
                             }
 
                             &.up-to-date {
-                                background-color: var(--series-up-to-date);
+                                background-color: var(--green-50);
                             }
                         }
                     }
@@ -683,8 +683,6 @@ h2 {
                 img {
                     border-radius: .5rem;
                     height: 100%;
-                    mask-image: linear-gradient(to bottom, #000 95%, #ffffff00 100%);
-                    mask-size: cover;
                     object-fit: cover;
                     width: 100%;
                 }
@@ -692,7 +690,7 @@ h2 {
 
             .infos-content {
                 align-items: flex-start;
-                background-color: var(--ardoise-100-alpha-20);
+                background-color: var(--ardoise-90-alpha-20);
                 border-radius: .5rem;
                 display: flex;
                 flex-direction: column;
@@ -964,7 +962,7 @@ h2 {
 
         .backdrops, .logos, .posters, .series {
             align-items: center;
-            background-color: var(--ardoise-100-alpha-20);
+            background-color: var(--ardoise-90-alpha-20);
             border-radius: .5rem;
             display: flex;
             gap: .5rem;
@@ -1040,7 +1038,7 @@ h2 {
             }
 
             .other-logo {
-                background-color: var(--ardoise-100-alpha-20);
+                background-color: var(--ardoise-90-alpha-20);
                 border-radius: .25rem;
                 height: 7rem;
                 padding: .5rem;
@@ -1065,7 +1063,7 @@ h2 {
 
             .previous-series, .next-series {
                 align-items: center;
-                background-color: var(--ardoise-100-alpha-20);
+                background-color: var(--ardoise-90-alpha-20);
                 border-radius: .25rem;
                 color: var(--ardoise-10);
                 cursor: pointer;
@@ -1095,7 +1093,7 @@ h2 {
     }
 
     .videos {
-        background-color: var(--ardoise-100-alpha-20);
+        background-color: var(--ardoise-90-alpha-20);
         border-radius: .5rem;
         display: flex;
         flex-direction: column;
@@ -1184,7 +1182,7 @@ h2 {
 
     .schedules {
         align-items: stretch;
-        background-color: var(--ardoise-100-alpha-20);
+        background-color: var(--ardoise-90-alpha-20);
         border-radius: .5rem;
         display: flex;
         flex-direction: column;
@@ -1215,7 +1213,7 @@ h2 {
 
         .episode, .next-episode {
             align-items: center;
-            background-color: var(--ardoise-100-alpha-20);
+            background-color: var(--ardoise-90-alpha-20);
             border-radius: .5rem;
             box-shadow: 0 0 1rem #0000003f;
             color: var(--ardoise-10);
@@ -1375,7 +1373,7 @@ h2 {
 
                 .schedule {
                     align-items: stretch;
-                    /*background-color: var(--ardoise-100-alpha-20);*/
+                    /*background-color: var(--ardoise-90-alpha-20);*/
                     border-bottom: .5rem solid var(--orange-50);
                     border-radius: .5rem;
                     color: var(--ardoise-10);
@@ -1434,7 +1432,7 @@ h2 {
                         align-items: center;
                         background-color: var(--orange-50);
                         border-radius: .5rem .5rem 0 0;
-                        color: var(--ardoise-0);
+                        color: var(--ardoise-10);
                         display: flex;
                         font-size: 1.5rem;
                         font-weight: 300;
@@ -1596,7 +1594,7 @@ h2 {
     }
 
     .season-changes {
-        background-color: var(--ardoise-100-alpha-20);
+        background-color: var(--ardoise-90-alpha-20);
         border-radius: .5rem;
         display: flex;
         flex-direction: column;
@@ -1662,7 +1660,7 @@ h2 {
                         }
 
                         &:nth-child(2n) {
-                            background-color: var(--ardoise-100-alpha-20);
+                            background-color: var(--ardoise-90-alpha-20);
                         }
 
                         .item-data {
@@ -1687,7 +1685,7 @@ h2 {
     }
 
     .externals {
-        background-color: var(--ardoise-100-alpha-20);
+        background-color: var(--ardoise-90-alpha-20);
         border-radius: .5rem;
         display: flex;
         flex-direction: column;
@@ -1753,7 +1751,7 @@ h2 {
     }
 
     .user-actions {
-        background-color: var(--ardoise-100-alpha-20);
+        background-color: var(--ardoise-90-alpha-20);
         border-radius: .5rem;
         padding: .5rem 1rem;
 
@@ -1802,7 +1800,7 @@ h2 {
         }
 
         .content-infos {
-            background-color: var(--ardoise-100-alpha-20);
+            background-color: var(--ardoise-90-alpha-20);
             border-radius: .5rem;
             padding: .5rem 1rem;
             position: relative;
@@ -1868,7 +1866,7 @@ h2 {
 
                 .fact {
                     align-items: center;
-                    background-color: var(--ardoise-100-alpha-20);
+                    background-color: var(--ardoise-90-alpha-20);
                     border-radius: .25rem;
                     color: var(--ardoise-10);
                     display: flex;
@@ -2029,7 +2027,7 @@ h2 {
                 padding-inline-start: 2rem;
 
                 li {
-                    background-color: var(--ardoise-100-alpha-50);
+                    background-color: var(--ardoise-90-alpha-50);
                     border-radius: .25rem;
                     list-style: none;
                     padding-block: .25rem;
@@ -2141,7 +2139,7 @@ h2 {
                                 &.added {
                                     background-color: var(--orange-50);
                                     border-radius: 0 0 .25rem .25rem;
-                                    color: var(--ardoise-100);
+                                    color: var(--ardoise-90);
                                     font-weight: 500;
                                 }
                             }
@@ -2240,6 +2238,8 @@ h2 {
             .backdrop {
                 height: calc(100% + 10rem);
                 inset: -5rem;
+                mask-image: linear-gradient(to bottom, #000 90%, #ffffff00 100%);
+                mask-size: cover;
                 opacity: .5;
                 width: calc(100% + 10rem);
             }
@@ -2306,7 +2306,7 @@ h2 {
 
         .progress-bar {
             align-items: center;
-            background-color: var(--ardoise-100-alpha-20);
+            background-color: var(--ardoise-90-alpha-20);
             border-radius: .25rem;
             display: none;
             gap: .5rem;
@@ -2467,14 +2467,14 @@ h2 {
     }
 
     button[name=cancel] {
-        background-color: var(--grey-50);
-        border: 2px solid var(--grey-20);
-        color: var(--grey-10);
+        background-color: var(--ardoise-50);
+        border: 2px solid var(--ardoise-20);
+        color: var(--ardoise-10);
         margin-inline-start: auto;
 
         &:hover {
-            background-color: var(--grey-40);
-            border: 2px solid var(--grey-60);
+            background-color: var(--ardoise-40);
+            border: 2px solid var(--ardoise-60);
         }
     }
 
@@ -2538,7 +2538,7 @@ h2 {
 
         .poster {
             align-items: center;
-            background-color: var(--ardoise-100-alpha-20);
+            background-color: var(--ardoise-90-alpha-20);
             border-radius: .5rem 0 0 .5rem;
             color: var(--green-10);
             display: flex;
@@ -2601,7 +2601,7 @@ h2 {
         }
 
         .infos {
-            background-color: var(--ardoise-100-alpha-20);
+            background-color: var(--ardoise-90-alpha-20);
             border-radius: 0 .5rem .5rem 0;
             color: var(--ardoise-10);
             display: flex;
@@ -2750,7 +2750,7 @@ h2 {
             .user-votes, .last-episode, .next-episode {
                 .show-tab {
                     align-items: center;
-                    background-color: var(--ardoise-100-alpha-20);
+                    background-color: var(--ardoise-90-alpha-20);
                     border-radius: .25rem;
                     color: var(--ardoise-10);
                     cursor: pointer;
@@ -2794,7 +2794,7 @@ h2 {
 
         .size-item {
             align-items: center;
-            background-color: var(--ardoise-100-alpha-20);
+            background-color: var(--ardoise-90-alpha-20);
             border-radius: .25rem;
             color: var(--ardoise-10);
             display: flex;
@@ -2815,7 +2815,7 @@ h2 {
 
         .ar-item {
             align-items: center;
-            background-color: var(--ardoise-100-alpha-20);
+            background-color: var(--ardoise-90-alpha-20);
             border-radius: .25rem;
             color: var(--ardoise-10);
             display: flex;
@@ -2836,7 +2836,7 @@ h2 {
 
         .edit-episode-infos {
             align-items: center;
-            background-color: var(--ardoise-100-alpha-20);
+            background-color: var(--ardoise-90-alpha-20);
             border-radius: .25rem;
             color: var(--ardoise-10);
             cursor: pointer;
@@ -2859,7 +2859,7 @@ h2 {
 
     .quick-episodes {
         align-items: center;
-        background-color: var(--ardoise-100-alpha-20);
+        background-color: var(--ardoise-90-alpha-20);
         border-radius: .25rem;
         display: flex;
         flex-wrap: wrap;
@@ -2963,7 +2963,7 @@ h2 {
                     }
 
                     .body {
-                        /*background-color: var(--ardoise-100-alpha-20);*/
+                        /*background-color: var(--ardoise-90-alpha-20);*/
                         /*border-radius: 0 0 .5rem .5rem;*/
                         /*color: var(--orange-100);*/
                         display: flex;
@@ -3156,7 +3156,7 @@ h2 {
             .still {
                 align-items: center;
                 aspect-ratio: var(--episode-aspect-ratio);
-                background-color: var(--ardoise-100-alpha-20);
+                background-color: var(--ardoise-90-alpha-20);
                 border: 2px solid transparent;
                 border-radius: .5rem;
                 color: var(--green-10);
@@ -3306,7 +3306,7 @@ h2 {
             }
 
             .infos {
-                background-color: var(--ardoise-100-alpha-20);
+                background-color: var(--ardoise-90-alpha-20);
                 border: 2px solid transparent;
                 border-radius: .5rem;
                 color: var(--ardoise-10);
@@ -3666,7 +3666,7 @@ h2 {
 
 .user-episode {
     align-items: center;
-    background-color: var(--ardoise-100-alpha-20);
+    background-color: var(--ardoise-90-alpha-20);
     border: 2px solid transparent;
     border-radius: 0.5rem;
     display: flex;
@@ -3791,7 +3791,7 @@ h2 {
                 background-color: var(--orange-50);
                 border-radius: .25rem;
                 border: none;
-                color: var(--ardoise-0);
+                color: var(--ardoise-10);
                 cursor: pointer;
                 display: flex;
                 flex-shrink: 0;
@@ -3825,7 +3825,7 @@ h2 {
 
     .episode-votes {
         align-items: flex-end;
-        background-color: var(--ardoise-100-alpha-20);
+        background-color: var(--ardoise-90-alpha-20);
         border-radius: .25rem;
         display: flex;
         gap: 1rem;
@@ -3876,7 +3876,7 @@ h2 {
 
                 .dashed-vote {
                     background-color: var(--green-40-alpha-50);
-                    border: 1px dashed var(--grey-30);
+                    border: 1px dashed var(--green-30);
                     height: 10rem;
                 }
             }
@@ -3930,7 +3930,7 @@ h2 {
     }
 
     .series-to-watch {
-        background-color: var(--ardoise-100-alpha-20);
+        background-color: var(--ardoise-90-alpha-20);
         border-radius: .5rem;
         padding: 1rem;
         width: 100%;
@@ -4191,7 +4191,7 @@ h2 {
 
             .infos {
                 align-items: center;
-                background-color: var(--ardoise-100-alpha-20);
+                background-color: var(--ardoise-90-alpha-20);
                 border-radius: 0 0 .25rem .25rem;
                 display: flex;
                 flex-direction: column;
@@ -5171,7 +5171,7 @@ h2 {
                 }
 
                 .leaflet-popup-content-description {
-                    background-color: var(--ardoise-100-alpha-50);
+                    background-color: var(--ardoise-90-alpha-50);
                     border-radius: 0 0 .25rem .25rem;
                     color: var(--ardoise-10);
                     font-size: 1rem;
@@ -5272,7 +5272,7 @@ h2 {
             margin-inline: auto;
 
             li {
-                background-color: var(--ardoise-100-alpha-50);
+                background-color: var(--ardoise-90-alpha-50);
                 border-radius: .375rem;
                 display: flex;
                 flex-direction: column;
@@ -5333,7 +5333,7 @@ h2 {
 
                     .arrow, .edit {
                         align-items: center;
-                        background-color: var(--grey-80-alpha-50);
+                        background-color: var(--ardoise-80-alpha-50);
                         border-radius: 50%;
                         color: var(--ardoise-10);
                         cursor: pointer;
@@ -5799,7 +5799,7 @@ dialog {
             width: 100%;
 
             button {
-                background-color: var(--emerald-50);
+                background-color: cadetblue;
                 border-radius: .25rem;
                 border: none;
                 color: var(--ardoise-10);

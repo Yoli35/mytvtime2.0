@@ -2,168 +2,71 @@ $transition-delay: .5s;
 $fa-font-path: "../webfonts";
 
 :root {
+    color-scheme: light dark;
+
     accent-color: hsl(32, 76%, 50%);
 
-    --button-border-radius: .25em;
-
-    --saturation: 18%;
-    /*--saturation: calc(var(--saturation) / 2);*/
-
-    --mtt-body-bg: hsl(202, var(--saturation), var(--percent-95));
-    --mtt-body-bg-gradiant: hsl(202, 0%, var(--percent-93));
-    --mtt-body-color: hsl(202, var(--saturation), var(--percent-10));
-
-    --menu-shadow: 0 0 1em 0 hsla(0, 0%, 0%, .5);
-    --dialog-bg: hsla(202, var(--saturation), var(--percent-95), .5);
-    --dialog-color: hsl(202, var(--saturation), var(--percent-10));
-    --dialog-backdrop: #000000af;
-    --network-bg: hsl(202, 50%, 95%);
-    --network-border: hsl(202, 50%, 5%);
-    --header-fade-bg: hsla(202, var(--saturation), 10%, .2);
-    --header-flat-color: hsla(202, var(--saturation), 10%, .9);
-
     --error: hsl(0, 50%, 50%);
+    --background: light-dark(hsl(202, 18%, 95%), hsl(202, 18%, 5%));
+    --background-gradient-0: light-dark(hsl(212, 18%, 84%), hsl(212, 18%, 16%));
+    --background-gradient-11: light-dark(hsl(211, 18%, 85%), hsl(211, 18%, 15%));
+    --background-gradient-22: light-dark(hsl(210, 18%, 86%), hsl(210, 18%, 14%));
+    --background-gradient-33: light-dark(hsl(210, 18%, 87%), hsl(210, 18%, 13%));
+    --background-gradient-44: light-dark(hsl(209, 18%, 88%), hsl(209, 18%, 12%));
+    --background-gradient-56: light-dark(hsl(208, 18%, 89%), hsl(208, 18%, 11%));
+    --background-gradient-67: light-dark(hsl(207, 18%, 90%), hsl(207, 18%, 10%));
+    --background-gradient-78: light-dark(hsl(207, 18%, 91%), hsl(207, 18%, 9%));
+    --background-gradient-89: light-dark(hsl(206, 18%, 92%), hsl(206, 18%, 8%));
+    --background-gradient-100: light-dark(hsl(206, 18%, 93%), hsl(206, 18%, 7%));
 
-    --bg-gradient: linear-gradient(
-                    45deg,
-                    hsl(212deg var(--saturation) var(--percent-74)) 0%,
-                    hsl(211deg var(--saturation) var(--percent-75)) 11%,
-                    hsl(210deg var(--saturation) var(--percent-76)) 22%,
-                    hsl(210deg var(--saturation) var(--percent-77)) 33%,
-                    hsl(209deg var(--saturation) var(--percent-78)) 44%,
-                    hsl(208deg var(--saturation) var(--percent-79)) 56%,
-                    hsl(207deg var(--saturation) var(--percent-80)) 67%,
-                    hsl(207deg var(--saturation) var(--percent-81)) 78%,
-                    hsl(206deg var(--saturation) var(--percent-82)) 89%,
-                    hsl(206deg var(--saturation) var(--percent-83)) 100%
-    );
+    --ardoise-10-alpha-50: light-dark(hsla(202, 18%, 10%, .5), hsla(202, 18%, 90%, .5));
+    --ardoise-10: light-dark(hsl(202, 18%, 10%), hsl(202, 18%, 90%));
+    --ardoise-20-alpha-50: light-dark(hsla(202, 18%, 20%, .5), hsla(202, 18%, 80%, .5));
+    --ardoise-20: light-dark(hsl(202, 18%, 20%), hsl(202, 18%, 80%));
+    --ardoise-25-alpha-25: light-dark(hsla(202, 18%, 25%, .25), hsla(202, 18%, 75%, .25));
+    --ardoise-25: light-dark(hsl(202, 18%, 25%), hsl(202, 18%, 75%));
+    --ardoise-30-alpha-50: light-dark(hsla(202, 18%, 30%, .5), hsla(202, 18%, 70%, .5));
+    --ardoise-30: light-dark(hsl(202, 18%, 30%), hsl(202, 18%, 70%));
+    --ardoise-40-alpha-50: light-dark(hsla(202, 18%, 40%, .5), hsla(202, 18%, 60%, .5));
+    --ardoise-40: light-dark(hsl(202, 18%, 40%), hsl(202, 18%, 60%));
+    --ardoise-50: hsl(202, 18%, 50%);
+    --ardoise-60-alpha-50: light-dark(hsla(202, 18%, 60%, .5), hsla(202, 18%, 40%, .5));
+    --ardoise-60: light-dark(hsl(202, 18%, 60%), hsl(202, 18%, 40%));
+    --ardoise-70-alpha-25: light-dark(hsla(202, 18%, 70%, .25), hsla(202, 18%, 30%, .25));
+    --ardoise-70-alpha-50: light-dark(hsla(202, 18%, 70%, .5), hsla(202, 18%, 30%, .5));
+    --ardoise-70-alpha-75: light-dark(hsla(202, 18%, 70%, .75), hsla(202, 18%, 30%, .75));
+    --ardoise-70: light-dark(hsl(202, 18%, 70%), hsl(202, 18%, 30%));
+    --ardoise-75: light-dark(hsl(202, 18%, 75%), hsl(202, 18%, 25%));
+    --ardoise-80-alpha-50: light-dark(hsla(202, 18%, 80%, .5), hsla(202, 18%, 20%, .5));
+    --ardoise-80-alpha-90: light-dark(hsla(202, 18%, 80%, .9), hsla(202, 18%, 20%, .9));
+    --ardoise-80: light-dark(hsl(202, 18%, 80%), hsl(202, 18%, 20%));
+    --ardoise-90-alpha-10: light-dark(hsla(202, 18%, 90%, .1), hsla(202, 18%, 10%, .1));
+    --ardoise-90-alpha-20: light-dark(hsla(202, 18%, 90%, .2), hsla(202, 18%, 10%, .2));
+    --ardoise-90-alpha-50: light-dark(hsla(202, 18%, 90%, .5), hsla(202, 18%, 10%, .5));
+    --ardoise-90-alpha-80: light-dark(hsla(202, 18%, 90%, .8), hsla(202, 18%, 10%, .8));
+    --ardoise-90: light-dark(hsl(202, 18%, 90%), hsl(202, 18%, 10%));
 
-    --ardoise-100: hsl(202, var(--saturation), var(--percent-100));
-    --ardoise-100-alpha-20: hsla(202, var(--saturation), var(--percent-100), .2);
-    --ardoise-100-alpha-50: hsla(202, var(--saturation), var(--percent-100), .5);
-    --ardoise-90: hsl(202, var(--saturation), var(--percent-90));
-    --ardoise-90-alpha-80: hsla(202, var(--saturation), var(--percent-90), .8);
-    --ardoise-90-alpha-50: hsla(202, var(--saturation), var(--percent-90), .5);
-    --ardoise-90-alpha-20: hsla(202, var(--saturation), var(--percent-90), .2);
-    --ardoise-90-alpha-10: hsla(202, var(--saturation), var(--percent-90), .1);
-    --ardoise-80: hsl(202, var(--saturation), var(--percent-80));
-    --ardoise-80-alpha-50: hsla(202, var(--saturation), var(--percent-80), .5);
-    --ardoise-80-alpha-90: hsla(202, var(--saturation), var(--percent-80), .9);
-    --ardoise-75: hsl(202, var(--saturation), var(--percent-75));
-    --ardoise-75-alpha-25: hsla(202, var(--saturation), var(--percent-75), .25);
-    --ardoise-70: hsl(202, var(--saturation), var(--percent-70));
-    --ardoise-70-alpha-50: hsla(202, var(--saturation), var(--percent-70), .5);
-    --ardoise-70-alpha-75: hsla(202, var(--saturation), var(--percent-70), .75);
-    --ardoise-70-alpha-90: hsla(202, var(--saturation), var(--percent-70), .9);
-    --ardoise-60: hsl(202, var(--saturation), var(--percent-60));
-    --ardoise-60-alpha-50: hsla(202, var(--saturation), var(--percent-60), .5);
-    --ardoise-50: hsl(202, var(--saturation), var(--percent-50));
-    --ardoise-40: hsl(202, var(--saturation), var(--percent-40));
-    --ardoise-40-alpha-50: hsla(202, var(--saturation), var(--percent-40), .5);
-    --ardoise-40-alpha-20: hsla(202, var(--saturation), var(--percent-40), .2);
-    --ardoise-30: hsl(202, var(--saturation), var(--percent-30));
-    --ardoise-30-alpha-50: hsla(202, var(--saturation), var(--percent-30), .5);
-    --ardoise-30-alpha-75: hsla(202, var(--saturation), var(--percent-30), .75);
-    --ardoise-30-alpha-90: hsla(202, var(--saturation), var(--percent-30), .9);
-    --ardoise-30-horizontal: linear-gradient(90deg, hsla(202, var(--saturation), var(--percent-30), .2), hsla(202, var(--saturation), var(--percent-30), 1));
-    --ardoise-25: hsl(202, var(--saturation), var(--percent-25));
-    --ardoise-25-alpha-25: hsla(202, var(--saturation), var(--percent-25), .25);
-    --ardoise-25-alpha-05: hsla(202, var(--saturation), var(--percent-25), .01);
-    --ardoise-20: hsl(202, var(--saturation), var(--percent-20));
-    --ardoise-20-alpha-50: hsla(202, var(--saturation), var(--percent-20), .5);
-    --ardoise-20-alpha-80: hsla(202, var(--saturation), var(--percent-20), .8);
-    --ardoise-10: hsl(202, var(--saturation), var(--percent-10));
-    --ardoise-10-alpha-90: hsla(202, var(--saturation), var(--percent-10), .9);
-    --ardoise-10-alpha-80: hsla(202, var(--saturation), var(--percent-10), .8);
-    --ardoise-10-alpha-50: hsla(202, var(--saturation), var(--percent-10), .5);
-    --ardoise-10-alpha-20: hsla(202, var(--saturation), var(--percent-10), .2);
-    --ardoise-0: hsl(202, var(--saturation), var(--percent-0));
+    --green-100: light-dark(hsl(166, 18%, 100%), hsl(166, 18%, 0%));
+    --green-90: light-dark(hsl(166, 18%, 90%), hsl(166, 18%, 10%));
+    --green-80: light-dark(hsl(166, 18%, 80%), hsl(166, 18%, 20%));
+    --green-80--alpha-50: light-dark(hsla(166, 18%, 80%, .5), hsla(166, 18%, 20%, .5));
+    --green-70: light-dark(hsl(166, 18%, 70%), hsl(166, 18%, 30%));
+    --green-70-alpha-50: light-dark(hsla(166, 18%, 70%, .5), hsla(166, 18%, 30%, .5));
+    --green-60: light-dark(hsl(166, 18%, 60%), hsl(166, 18%, 40%));
+    --green-50: hsl(166, 18%, 50%);
+    --green-40: light-dark(hsl(166, 18%, 40%), hsl(166, 18%, 60%));
+    --green-40-alpha-50: light-dark(hsla(166, 18%, 40%, .5), hsla(166, 18%, 60%, .5));
+    --green-30: light-dark(hsl(166, 18%, 30%), hsl(166, 18%, 70%));
+    --green-20: light-dark(hsl(166, 18%, 20%), hsl(166, 18%, 80%));
+    --green-10: light-dark(hsl(166, 18%, 10%), hsl(166, 18%, 90%));
 
-    --ardoise-90-forced: hsl(202, var(--saturation), 90%);
-    --ardoise-30-forced: hsl(202, var(--saturation), 30%);
+    --red-50: hsl(0, 18%, 50%);
+    --red-50-alpha-50: hsla(0, 18%, 50%, .5);
+    --red-20: light-dark(hsl(0, 18%, 20%), hsl(0, 18%, 80%));
 
-    --grey-100: hsl(0, 0%, var(--percent-100));
-    --grey-95: hsl(0, 0%, var(--percent-95));
-    --grey-95-alpha-20: hsla(0, 0%, var(--percent-95), .2);
-    --grey-90: hsl(0, 0%, var(--percent-90));
-    --grey-90-alpha-10: hsla(0, 0%, var(--percent-90), .1);
-    --grey-90-alpha-20: hsla(0, 0%, var(--percent-90), .2);
-    --grey-90-alpha-50: hsla(0, 0%, var(--percent-90), .5);
-    --grey-90-alpha-90: hsla(0, 0%, var(--percent-90), .95);
-    --grey-85: hsl(0, 0%, var(--percent-85));
-    --grey-80: hsl(0, 0%, var(--percent-80));
-    --grey-80-alpha-50: hsla(0, 0%, var(--percent-80), .5);
-    --grey-75: hsl(0, 0%, var(--percent-75));
-    --grey-75-alpha-40: hsla(0, 0%, var(--percent-75), .4);
-    --grey-70: hsl(0, 0%, var(--percent-70));
-    --grey-60: hsl(0, 0%, var(--percent-60));
-    --grey-60-alpha-90: hsla(0, 0%, var(--percent-60), .9);
-    --grey-50: hsl(0, 0%, var(--percent-50));
-    --grey-40: hsl(0, 0%, var(--percent-40));
-    --grey-40-alpha-50: hsla(0, 0%, var(--percent-40), .5);
-    --grey-40-alpha-20: hsla(0, 0%, var(--percent-40), .2);
-    --grey-30: hsl(0, 0%, var(--percent-30));
-    --grey-30-alpha-90: hsla(0, 0%, var(--percent-30), .9);
-    --grey-30-alpha-50: hsla(0, 0%, var(--percent-30), .5);
-    --grey-30-alpha-10: hsla(0, 0%, var(--percent-30), .1);
-    --grey-25: hsl(0, 0%, var(--percent-25));
-    --grey-20: hsl(0, 0%, var(--percent-20));
-    --grey-20-alpha-50: hsla(0, 0%, var(--percent-20), .5);
-    --grey-10: hsl(0, 0%, var(--percent-10));
-    --grey-10-alpha-90: hsla(0, 0%, var(--percent-10), .9);
-    --grey-10-alpha-75: hsla(0, 0%, var(--percent-10), .75);
-    --grey-10-alpha-50: hsla(0, 0%, var(--percent-10), .5);
-    --grey-10-alpha-20: hsla(0, 0%, var(--percent-10), .2);
-    --grey-0: hsl(0, 0%, var(--percent-0));
+    --yellow-50: hsl(45, 50%, 50%);
 
-    --green-100: hsl(166, var(--saturation), var(--percent-100));
-    --green-90: hsl(166, var(--saturation), var(--percent-90));
-    --green-80: hsl(166, var(--saturation), var(--percent-80));
-    --green-80-alpha-50: hsla(166, var(--saturation), var(--percent-80), .5);
-    --green-70: hsl(166, var(--saturation), var(--percent-70));
-    --green-70-alpha-50: hsla(166, var(--saturation), var(--percent-70), .5);
-    --green-60: hsl(166, var(--saturation), var(--percent-60));
-    --green-50: hsl(166, var(--saturation), var(--percent-50));
-    --green-40: hsl(166, var(--saturation), var(--percent-40));
-    --green-40-alpha-50: hsla(166, var(--saturation), var(--percent-40), .5);
-    --green-30: hsl(166, var(--saturation), var(--percent-30));
-    --green-30-alpha-50: hsla(166, var(--saturation), var(--percent-30), .5);
-    --green-20: hsl(166, var(--saturation), var(--percent-20));
-    --green-20-alpha-50: hsla(166, var(--saturation), var(--percent-20), .8);
-    --green-20-horizontal: linear-gradient(90deg, hsla(166, var(--saturation), var(--percent-20), .2), hsla(166, var(--saturation), var(--percent-20), 1));
-    --green-15: hsl(166, var(--saturation), var(--percent-15));
-    --green-10: hsl(166, var(--saturation), var(--percent-10));
-    --green-0: hsl(166, var(--saturation), var(--percent-0));
-
-    --red-90: hsl(0, var(--saturation), var(--percent-90));
-    --red-80: hsl(0, var(--saturation), var(--percent-80));
-    --red-60: hsl(0, var(--saturation), var(--percent-60));
-    --red-50: hsl(0, var(--saturation), var(--percent-50));
-    --red-50-alpha-50: hsla(0, var(--saturation), var(--percent-50), .5);
-    --red-40: hsl(0, var(--saturation), var(--percent-40));
-    --red-40-alpha-50: hsla(0, var(--saturation), var(--percent-40), .5);
-    --red-20: hsl(0, var(--saturation), var(--percent-20));
-
-    --yellow-80: hsl(45, var(--saturation), var(--percent-80));
-    --yellow-60: hsl(45, var(--saturation), var(--percent-60));
-    --yellow-50: hsl(45, var(--saturation), var(--percent-50));
-    --yellow-50-alpha-50: hsla(45, var(--saturation), var(--percent-50), .5);
-    --yellow-40: hsl(45, var(--saturation), var(--percent-40));
-    --yellow-20: hsl(45, var(--saturation), var(--percent-20));
-
-    --purple-100: hsl(306, 50%, 100%);
-    --purple-90: hsl(306, 50%, 90%);
-    --purple-80: hsl(306, 50%, 80%);
-    --purple-70: hsl(306, 50%, 70%);
-    --purple-60: hsl(306, 50%, 60%);
     --purple-50: hsl(306, 50%, 50%);
-    --purple-40-alpha-50: hsla(306, 50%, 40%, .5);
-    --purple-40: hsl(306, 50%, 40%);
-    --purple-30: hsl(306, 50%, 30%);
-    --purple-30-alpha-50: hsla(306, 50%, 30%, .5);
-    --purple-20: hsl(306, 50%, 20%);
-    --purple-10: hsl(306, 50%, 10%);
-    --purple-0: hsl(306, 50%, 0%);
 
     --orange-100: hsl(32, 76%, 100%);
     --orange-90: hsl(32, 76%, 90%);
@@ -183,57 +86,27 @@ $fa-font-path: "../webfonts";
     --orange-10: hsl(32, 76%, 10%);
     --orange-0: hsl(32, 76%, 0%);
 
-    --series-to-start: hsl(32, 18%, 50%);
-    --series-up-to-date: hsl(127, 18%, 50%);
-
-    --connected: hsl(127, 76%, 50%);
-
-    --emerald-40: hsl(186, 50%, 40%);
-    --emerald-50: hsl(186, 50%, 50%);
-
     --add-this: hsl(45, 80%, 45%);
-    --astart-this-series: hsl(186, 80%, 45%);
+    --start-this-series: hsl(186, 80%, 45%);
     --add-this-episode: hsl(45, 80%, 45%);
     --up-to-date-series: hsl(127, 25%, 45%);
     --up-to-date-series-border: hsl(127, 25%, 35%);
     --up-to-date-series-bg: hsl(127, 25%, 25%);
-    --that-s-all-folks: cadetblue;/*hsl(127, 25%, 45%);*/
-    --that-s-all-folks-border: teal;/*hsl(127, 25%, 45%);*/
-    --user-episode-actions: cadetblue; /*hsl(127, 25%, 45%);*/
+    --that-s-all-folks: cadetblue;
+    --that-s-all-folks-border: teal;
+    --user-episode-actions: cadetblue;
     --user-episode-list: hsl(202, 20%, 60%);
     --remove-this-series: hsl(0, 50%, 45%);
     --favorite-series: hsl(32, 76%, 50%);
     --marathoner-series: hsl(45, 80%, 45%);
     --rating: hsl(45, 80%, 45%);
+}
 
-    --form-bg: var(--ardoise-80);
-    --form-border: var(--ardoise-20);
-    --form-text: var(--ardoise-20);
-
-    --vote-1: hsl(127deg 54% 49%);
-    --vote-2: hsl(103deg 46% 50%);
-    --vote-3: hsl(88deg 44% 50%);
-    --vote-4: hsl(76deg 39% 50%);
-    --vote-5: hsl(61deg 39% 47%);
-    --vote-6: hsl(49deg 40% 48%);
-    --vote-7: hsl(40deg 39% 49%);
-    --vote-8: hsl(27deg 40% 49%);
-    --vote-9: hsl(15deg 37% 49%);
-    --vote-10: hsl(0deg 30% 48%);
-
-    @media (prefers-color-scheme: light) {
-        @for $i from 0 through 100 {
-            --value-#{$i}: #{$i};
-            --percent-#{$i}: calc(calc(#{$i} / 100) * 100%);
-        }
-    }
-
-    @media (prefers-color-scheme: dark) {
-        @for $i from 0 through 100 {
-            --value-#{$i}: #{100 - $i};
-            --percent-#{$i}: calc(calc(calc(100 - #{$i}) / 100) * 100%);
-        }
-    }
+:root[data-theme='dark'] {
+    color-scheme: dark;
+}
+:root[data-theme='light'] {
+    color-scheme: light;
 }
 
 @mixin flex-row($align: center, $justify: center) {

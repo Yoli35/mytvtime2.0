@@ -87,8 +87,8 @@
         & .provider {
             & label {
                 img, .no-logo {
-                    background-color: var(--grey-30);
-                    border: 2px solid var(--grey-20);
+                    background-color: var(--ardoise-30);
+                    border: 2px solid var(--ardoise-20);
                     border-radius: .375rem;
                     flex-shrink: 0;
                     height: 2rem;
@@ -99,7 +99,7 @@
 
                 .no-logo {
                     align-items: center;
-                    color: var(--grey-80);
+                    color: var(--ardoise-80);
                     display: flex;
                     font-size: 1.25rem;
                     font-weight: 600;
