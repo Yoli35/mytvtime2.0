@@ -660,6 +660,7 @@ h2 {
         }
 
         .infos {
+            background-color: var(--ardoise-70-alpha-50);
             height: calc(40vw * calc(117 / 78));
             position: relative;
             width: calc(60vw - 3rem);
@@ -736,8 +737,7 @@ h2 {
                 }
 
                 .localized-h4, .additional-h4 {
-                    background-color: var(--orange-20);
-                    color: var(--orange-70);
+                    /*color: var(--orange-70);*/
                     font-size: clamp(1.25rem, 1.875vw, 2.5rem);
                     font-weight: 300;
                     padding-block: .25rem;
@@ -756,6 +756,13 @@ h2 {
                     margin-block: 0 auto;
                     width: 100%;
 
+                    &.localized, &.additional {
+                        &:not(:has(.content)) {
+                            display: none;
+                        }
+                    }
+
+
                     .overview {
                         align-items: center;
                         display: flex;
@@ -766,13 +773,13 @@ h2 {
                         width: 100%;
 
                         &.localized, &.additional {
-                            color: var(--orange-90);
+                            /*color: var(--orange-90);*/
                             font-weight: 100;
                             letter-spacing: .05rem;
                             position: relative;
 
                             .content {
-                                background-color: var(--ardoise-70-alpha-50);
+                                /*background-color: var(--ardoise-70-alpha-50);*/
                                 border-radius: .5rem;
                                 margin-block-end: unset;
                                 padding: .5rem;
