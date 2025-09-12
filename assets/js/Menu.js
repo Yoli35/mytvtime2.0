@@ -188,13 +188,13 @@ export class Menu {
 
         const searchResults = navbar.querySelectorAll(".search-results");
         const multiSearchResults = navbar.querySelector(".search-results.__multi");
-        const multiSearchUlTag = multiSearchResults.querySelector("ul");
+        const multiSearchUlTag = multiSearchResults?.querySelector("ul");
         const menus = navbar.querySelectorAll(".menu");
 
         document.addEventListener("click", (e) => {
             const target = e.target;
 
-            searchResults.forEach((searchResult) => {
+            searchResults?.forEach((searchResult) => {
                 const ul = searchResult.querySelector("ul");
                 if (ul && !searchResult.parentElement.contains(target)) {
                     if (searchResult.contains(multiSearchUlTag)) {
