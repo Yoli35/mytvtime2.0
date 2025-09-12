@@ -27,7 +27,7 @@ export class PeopleShow {
         document.addEventListener("click", this.hideInfos);
         this.initInfos();
 
-        const images = document.querySelector(".person").querySelector(".images").querySelectorAll("img");
+        const images = document.querySelector(".person").querySelector(".images")?.querySelectorAll("img");
         this.diaporama.start(images);
 
         const media = document.querySelector(".person").querySelector(".known-for").querySelectorAll(".poster");
