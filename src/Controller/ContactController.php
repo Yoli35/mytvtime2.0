@@ -54,7 +54,7 @@ class ContactController extends AbstractController
                 $this->addFlash('error', $this->translator->trans('An error occurred, please try again later'));
             }
             $this->addFlash('success', $this->translator->trans('Your message has been sent'));
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_home_index');
         }
         return $this->render('contact/index.html.twig', [
             'form' => $form->createView(),

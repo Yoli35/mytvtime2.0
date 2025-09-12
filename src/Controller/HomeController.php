@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
 /** @method User|null getUser() */
-#[Route('/home', name: 'app_home_')]
+#[Route('/', name: 'app_home_')]
 class HomeController extends AbstractController
 {
     public function __construct(
@@ -37,10 +37,10 @@ class HomeController extends AbstractController
     #[Route('/', name: 'without_locale')]
     public function indexWithoutLocale(Request $request): Response
     {
-        return $this->redirectToRoute('app_home', ['_locale' => $request->getLocale()]);
+        return $this->redirectToRoute('app_home_index', ['_locale' => $request->getLocale()]);
     }
 
-    #[Route('/{_locale}/', name: 'index', requirements: ['_locale' => 'fr|en|ko'])]
+    #[Route('/home/{_locale}/', name: 'index', requirements: ['_locale' => 'fr|en|ko'])]
     public function index(Request $request): Response
     {
         $user = $this->getUser();

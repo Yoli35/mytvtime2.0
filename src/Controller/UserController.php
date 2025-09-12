@@ -67,7 +67,7 @@ class UserController extends AbstractController
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_home_index');
         }
         $translationSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'translations']);
         $translationSettings = $translationSettings ? $translationSettings->getData() : [];

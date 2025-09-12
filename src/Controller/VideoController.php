@@ -160,7 +160,7 @@ final class VideoController extends AbstractController
         if (!$video) {
             $user = $this->getUser();
             $this->addFlash('error', 'Video not found');
-            return $this->redirectToRoute('app_home', ['_locale' => $request->getLocale()]);
+            return $this->redirectToRoute('app_home_index', ['_locale' => $request->getLocale()]);
         }
         $publishedDate = $this->sharedVideoFormatDate($video);
 

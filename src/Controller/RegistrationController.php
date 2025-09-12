@@ -56,7 +56,7 @@ class RegistrationController extends AbstractController
             // Send the email
             $this->addFlash('success', 'An email has been sent to you. Please check your inbox to verify your email address.');
 
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_home_index');
         }
 
         return $this->render('registration/register.html.twig', [
@@ -91,6 +91,6 @@ class RegistrationController extends AbstractController
         // @TODO Change the redirect on success and handle or remove the flash message in your templates
         $this->addFlash('success', 'Your email address has been verified.');
 
-        return $this->redirectToRoute('app_home');
+        return $this->redirectToRoute('app_home_index');
     }
 }
