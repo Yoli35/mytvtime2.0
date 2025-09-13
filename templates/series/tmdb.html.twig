@@ -27,21 +27,23 @@
                     {% endif %}
                 </div>
                 <div class="infos">
-                    <div class="name">
-                        <h1>
-                            {% if localizedName %}
-                                <span class="localization-span">{{ localizedName.name }}</span><br>
-                            {% elseif tv.original_language != app.locale and tv.name == tv.original_name and tv.translations %}
-                                <span class="localization-span">{{ tv.translations.data.name }}</span><br>
-                            {% endif %}
-                            {{ tv.name }}
-                            {% if tv.first_air_date %}
-                                ({{ tv.first_air_date|date("Y") }})
-                            {% endif %}
-                        </h1>
-                    </div>
-                    <div class="series-overview">
-                        {{ tv.overview|nl2br }}
+                    <div class="infos-content">
+                        <div class="name">
+                            <h1>
+                                {% if localizedName %}
+                                    <span class="localization-span">{{ localizedName.name }}</span><br>
+                                {% elseif tv.original_language != app.locale and tv.name == tv.original_name and tv.translations %}
+                                    <span class="localization-span">{{ tv.translations.data.name }}</span><br>
+                                {% endif %}
+                                {{ tv.name }}
+                                {% if tv.first_air_date %}
+                                    ({{ tv.first_air_date|date("Y") }})
+                                {% endif %}
+                            </h1>
+                        </div>
+                        <div class="series-overview">
+                            {{ tv.overview|nl2br }}
+                        </div>
                     </div>
                     {% if tv.backdrop_path %}
                         <div class="backdrop">
