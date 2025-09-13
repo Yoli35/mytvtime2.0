@@ -5,7 +5,7 @@
     min-height: calc(100vh - 7rem);
 
     aside {
-        background-color: var(--ardoise-80-alpha-50);
+        background-color: hsla(from var(--ardoise-80) h s l / .5);
         border-radius: .25rem;
         display: flex;
         flex-direction: column;
@@ -42,7 +42,7 @@
 
             a {
                 align-items: center;
-                background-color: var(--ardoise-80-alpha-50);
+                background-color: hsla(from var(--ardoise-80) h s l / .5);
                 border-radius: .25rem;
                 color: var(--ardoise-10);
                 cursor: pointer;
@@ -352,18 +352,18 @@
                 white-space: nowrap;
 
                 &:nth-child(odd) {
-                    background-color: var(--ardoise-80-alpha-50);
+                    background-color: hsla(from var(--ardoise-80) h s l / .5);
 
                     &:hover {
-                        background-color: var(--ardoise-60-alpha-50);
+                        background-color: hsla(from var(--ardoise-60) h s l / .5);
                     }
                 }
 
                 &:nth-child(even) {
-                    background-color: var(--ardoise-90-alpha-50);
+                    background-color: hsla(from var(--ardoise-90) h s l / .5);
 
                     &:hover {
-                        background-color: var(--ardoise-70-alpha-50);
+                        background-color: hsla(from var(--ardoise-70) h s l / .5);
                     }
                 }
             }
@@ -426,18 +426,18 @@
             }
 
             &:nth-child(odd) {
-                background-color: var(--ardoise-80-alpha-50);
+                background-color: hsla(from var(--ardoise-80) h s l / .5);
 
                 &:hover {
-                    background-color: var(--ardoise-60-alpha-50);
+                    background-color: hsla(from var(--ardoise-60) h s l / .5);
                 }
             }
 
             &:nth-child(even) {
-                background-color: var(--ardoise-90-alpha-50);
+                background-color: hsla(from var(--ardoise-90) h s l / .5);
 
                 &:hover {
-                    background-color: var(--ardoise-70-alpha-50);
+                    background-color: hsla(from var(--ardoise-70) h s l / .5);
                 }
             }
         }
@@ -445,7 +445,7 @@
 
     .admin__tools {
         align-items: center;
-        background-color: var(--ardoise-80-alpha-50);
+        background-color: hsla(from var(--ardoise-80) h s l / .5);
         border-radius: .25rem;
         display: flex;
         flex-wrap: wrap;
@@ -455,7 +455,7 @@
 
         .admin__series__tool {
             align-items: center;
-            background-color: var(--orange-40-alpha-50);
+            background-color: hsla(from var(--orange-40) h s l / .5);
             border-radius: .5rem;
             display: flex;
             gap: 1rem;
@@ -474,7 +474,7 @@
                 gap: .5rem;
 
                 input {
-                    background-color: var(--orange-40-alpha-50);
+                    background-color: hsla(from var(--orange-40) h s l / .5);
                     border-radius: .25rem;
                     border: 2px solid var(--orange-50);
                     color: var(--ardoise-10);
@@ -493,7 +493,7 @@
 
             button {
                 align-items: center;
-                background-color: var(--orange-40-alpha-50);
+                background-color: hsla(from var(--orange-40) h s l / .5);
                 border-radius: 50%;
                 border: 2px solid var(--orange-50);
                 color: var(--ardoise-10);
@@ -511,7 +511,7 @@
 
         .admin__button {
             align-items: center;
-            background-color: var(--orange-40-alpha-50);
+            background-color: hsla(from var(--orange-40) h s l / .5);
             border-radius: .25rem;
             border: 2px solid var(--orange-50);
             color: var(--ardoise-10);
@@ -529,8 +529,8 @@
         }
 
         .admin__button[disabled] {
-            background-color: var(--ardoise-80-alpha-50);
-            border-color: var(--ardoise-90-alpha-50);
+            background-color: hsla(from var(--ardoise-80) h s l / .5);
+            border-color: hsla(from var(--ardoise-90) h s l / .5);
             color: var(--ardoise-30);
             cursor: not-allowed;
         }
@@ -574,7 +574,7 @@
 
         .go-to-top, .go-to-bottom {
             align-items: center;
-            background-color: var(--ardoise-80-alpha-50);
+            background-color: hsla(from var(--ardoise-80) h s l / .5);
             border-radius: 50%;
             bottom: 24rem;
             color: var(--orange-50);
@@ -589,7 +589,7 @@
 
             &:hover {
                 backdrop-filter: blur(2px);
-                background-color: var(--ardoise-20-alpha-50);
+                background-color: hsla(from var(--ardoise-20) h s l / .5);
                 color: var(--ardoise-10);
                 transform: scale(2);
             }
@@ -647,7 +647,7 @@
                     padding: .25rem;
 
                     .header, .footer {
-                        background-color: var(--ardoise-60-alpha-50);
+                        background-color: hsla(from var(--ardoise-60) h s l / .5);
                         border-radius: .25rem;
                         display: flex;
                         font-weight: bold;
@@ -876,7 +876,7 @@
     }
 
     .admin__series {
-        background-color: var(--ardoise-80-alpha-50);
+        background-color: hsla(from var(--ardoise-80) h s l / .5);
         border-radius: .25rem;
         display: flex;
         flex-direction: column;
@@ -1064,7 +1064,7 @@
         gap: 1rem;
 
         > div {
-            background-color: var(--ardoise-80-alpha-50);
+            background-color: hsla(from var(--ardoise-80) h s l / .5);
             border-radius: .25rem;
             padding: 1rem;
         }
@@ -1106,7 +1106,7 @@
                 .series__db,
                 .movie__db {
                     backdrop-filter: blur(16px) brightness(.5);
-                    background-color: var(--green-40-alpha-50);
+                    background-color: hsla(from var(--green-40) h s l / .5);
                     border-radius: .25rem;
                     color: var(--ardoise-10);
                     display: none;
@@ -1170,7 +1170,7 @@
                 .series__tmdb,
                 .movie__tmdb {
                     backdrop-filter: blur(16px) brightness(.5);
-                    background-color: var(--green-40-alpha-50);
+                    background-color: hsla(from var(--green-40) h s l / .5);
                     border-radius: .25rem;
                     color: var(--ardoise-10);
                     display: none;
@@ -1224,7 +1224,7 @@
                         .series__tmdb__property_value__item,
                         .movie__tmdb__property_value__item {
                             align-items: flex-start;
-                            background-color: var(--green-40-alpha-50);
+                            background-color: hsla(from var(--green-40) h s l / .5);
                             border-radius: .25rem;
                             display: flex;
                             gap: .5rem;
@@ -1240,7 +1240,7 @@
 
                         .series__tmdb__property_value__iterable,
                         .movie__tmdb__property_value__iterable {
-                            background-color: var(--green-40-alpha-50);
+                            background-color: hsla(from var(--green-40) h s l / .5);
                             border-radius: .25rem;
                             flex-direction: column;
                             flex-shrink: 0;
@@ -1254,7 +1254,7 @@
 
                         .series__tmdb__property_value,
                         .movie__tmdb__property_value {
-                            background-color: var(--green-40-alpha-50);
+                            background-color: hsla(from var(--green-40) h s l / .5);
 
                             &:has(img) {
                                 border-radius: .375rem;
@@ -1266,7 +1266,7 @@
                         .series__tmdb__property_value__item,
                         .movie__tmdb__property_value,
                         .movie__tmdb__property_value__item {
-                            background-color: var(--green-40-alpha-50);
+                            background-color: hsla(from var(--green-40) h s l / .5);
                         }
 
                         .series__tmdb__property_value,
@@ -1361,7 +1361,7 @@
 
                     input, textarea {
                         appearance: none;
-                        background-color: var(--orange-40-alpha-50);
+                        background-color: hsla(from var(--orange-40) h s l / .5);
                         border-radius: .25rem;
                         border: 2px solid var(--orange-50);
                         color: var(--ardoise-10);
@@ -1377,7 +1377,7 @@
             .admin__localized__name {
                 .admin__localized__name__name {
                     input {
-                        background-color: var(--ardoise-80-alpha-50);
+                        background-color: hsla(from var(--ardoise-80) h s l / .5);
                         border-radius: .25rem;
                         color: var(--ardoise-10);
                         font-size: 1rem;
@@ -1402,7 +1402,7 @@
             .poster {
                 align-items: center;
                 aspect-ratio: 78/117;
-                background-color: var(--orange-40-alpha-50);
+                background-color: hsla(from var(--orange-40) h s l / .5);
                 border-radius: .25rem;
                 color: var(--ardoise-10);
                 display: flex;
@@ -1433,7 +1433,7 @@
 
             .backdrop {
                 aspect-ratio: 16/9;
-                background-color: var(--orange-40-alpha-50);
+                background-color: hsla(from var(--orange-40) h s l / .5);
                 border-radius: .25rem;
                 color: var(--ardoise-10);
                 display: flex;
@@ -1594,18 +1594,18 @@
                 }
 
                 &:nth-child(odd) {
-                    background-color: var(--ardoise-80-alpha-50);
+                    background-color: hsla(from var(--ardoise-80) h s l / .5);
 
                     &:hover {
-                        background-color: var(--ardoise-60-alpha-50);
+                        background-color: hsla(from var(--ardoise-60) h s l / .5);
                     }
                 }
 
                 &:nth-child(even) {
-                    background-color: var(--ardoise-90-alpha-50);
+                    background-color: hsla(from var(--ardoise-90) h s l / .5);
 
                     &:hover {
-                        background-color: var(--ardoise-70-alpha-50);
+                        background-color: hsla(from var(--ardoise-70) h s l / .5);
                     }
                 }
             }
@@ -1660,7 +1660,7 @@
             gap: 1rem;
 
             .source {
-                background-color: var(--orange-40-alpha-50);
+                background-color: hsla(from var(--orange-40) h s l / .5);
                 border-radius: .25rem;
                 color: var(--ardoise-10);
                 font-size: 1rem;

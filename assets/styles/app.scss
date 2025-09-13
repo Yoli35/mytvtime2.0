@@ -235,7 +235,7 @@ body:has(dialog[open]) {
     --navbar-border: var(--ardoise-20);
     --navbar-bg-hover: var(--orange-50);
     --navbar-bg-25: var(--ardoise-70-alpha-25);
-    --navbar-bg-50: var(--ardoise-70-alpha-50);
+    --navbar-bg-50: hsla(from var(--ardoise-70) h s l / .5);
     --navbar-bg-75: var(--ardoise-70-alpha-75);
     --navbar-color: var(--ardoise-25-alpha-25);
     --navbar-color-hover: var(--ardoise-10);
@@ -421,7 +421,7 @@ label:has(input[type="text"]) {
         .menu {
             background-color: var(--navbar-bg);
             border-radius: .25rem;
-            box-shadow: 0 0 1rem var(--ardoise-90-alpha-20);
+            box-shadow: 0 0 1rem hsla(from var(--ardoise-90) h s l / .2);
             list-style: none;
             width: max-content;
 
@@ -605,7 +605,7 @@ label:has(input[type="text"]) {
                         }
 
                         .time {
-                            background-color: var(--ardoise-90-alpha-20);
+                            background-color: hsla(from var(--ardoise-90) h s l / .2);
                             border-radius: .25rem;
                             color: var(--orange-90);
                             font-family: monospace;
@@ -794,7 +794,7 @@ label:has(input[type="text"]) {
 
             input {
                 appearance: none;
-                background-color: var(--ardoise-90-alpha-20);
+                background-color: hsla(from var(--ardoise-90) h s l / .2);
                 border: none;
                 border-radius: 5rem;
                 color: var(--orange-90);
@@ -1631,7 +1631,7 @@ section:has(.pages) {
         justify-content: center;
 
         .pages {
-            background-color: var(--ardoise-60-alpha-50);
+            background-color: hsla(from var(--ardoise-60) h s l / .5);
             margin-block-start: unset;
             padding: .25rem;
 
@@ -1809,9 +1809,9 @@ section:has(.pages) {
 .login, .register {
 
     form {
-        background-color: var(--ardoise-80-alpha-50);
+        background-color: hsla(from var(--ardoise-80) h s l / .5);
         border-radius: 1rem;
-        border: 2px solid var(--ardoise-20-alpha-50);
+        border: 2px solid hsla(from var(--ardoise-20) h s l / .5);
         display: flex;
         flex-direction: column;
         gap: 1rem;
@@ -1842,8 +1842,8 @@ section:has(.pages) {
 
                 input[type="text"],
                 input[type="password"] {
-                    background-color: var(--ardoise-80-alpha-50);
-                    border: 1px solid var(--ardoise-20-alpha-50);
+                    background-color: hsla(from var(--ardoise-80) h s l / .5);
+                    border: 1px solid hsla(from var(--ardoise-20) h s l / .5);
                     border-radius: .25rem;
                     color: var(--ardoise-10);
                     padding: .5rem;
@@ -1926,7 +1926,7 @@ section:has(.pages) {
 .flying-poster {
     align-items: center;
     display: none;
-    background-color: var(--ardoise-90-alpha-80);
+    background-color: hsla(from var(--ardoise-90) h s l / .8);
     border-radius: .5rem;
     height: 44rem;
     justify-content: center;
@@ -1968,7 +1968,7 @@ dialog {
 
 .back-diapo {
     align-items: center;
-    background-color: var(--ardoise-90-alpha-80);
+    background-color: hsla(from var(--ardoise-90) h s l / .8);
     display: flex;
     inset: 0;
     justify-content: center;
@@ -2016,7 +2016,7 @@ dialog {
 
             .chevron {
                 align-items: center;
-                background-color: var(--ardoise-60-alpha-50);
+                background-color: hsla(from var(--ardoise-60) h s l / .5);
                 border-radius: 50%;
                 color: var(--ardoise-20);
                 cursor: pointer;
@@ -2111,7 +2111,7 @@ dialog {
 
         > div {
             align-items: center;
-            background-color: var(--ardoise-20-alpha-50);
+            background-color: hsla(from var(--ardoise-20) h s l / .5);
             border-radius: 50%;
             color: var(--ardoise-10);
             cursor: pointer;
@@ -2282,7 +2282,7 @@ dialog {
 
 .flash-messages {
     align-items: flex-end;
-    background-color: var(--orange-50-alpha-50);
+    background-color: hsla(from var(--orange-50) h s l / .5);
     border-radius: .5rem;
     border: 1px dashed var(--orange-50);
     display: flex;
@@ -2331,14 +2331,14 @@ dialog {
         }
 
         &.warning {
-            background-color: var(--orange-50-alpha-50);
+            background-color: hsla(from var(--orange-50) h s l / .5);
             border-color: var(--orange-70);
             color: var(--orange-90);
             font-weight: 300;
         }
 
         &.danger {
-            background-color: var(--red-50-alpha-50);
+            background-color: hsla(from var(--red-50) h s l / .5);
             border-color: var(--red-20);
             color: var(--red-20);
         }
@@ -2376,7 +2376,7 @@ dialog {
         }
 
         &.update {
-            background-color: var(--green-70-alpha-50);
+            background-color: hsla(from var(--green-70) h s l / .5);
             border-color: var(--green-10);
             color: var(--green-10);
             display: flex;
@@ -2547,9 +2547,9 @@ dialog {
 }
 
 .error-page {
-    background-color: var(--ardoise-80-alpha-50);
+    background-color: hsla(from var(--ardoise-80) h s l / .5);
     border-radius: 1rem;
-    border: 2px solid var(--ardoise-20-alpha-50);
+    border: 2px solid hsla(from var(--ardoise-20) h s l / .5);
     display: flex;
     flex-direction: column;
     gap: 1rem;

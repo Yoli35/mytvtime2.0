@@ -22,7 +22,7 @@
             gap: 1rem;
 
             .person-card {
-                background-color: var(--orange-40-alpha-50);
+                background-color: hsla(from var(--orange-40) h s l / .5);
                 border-radius: .5rem;
                 display: flex;
                 height: 22.5rem;
@@ -302,7 +302,7 @@
     .left-column {
         //@include flex-col(start, start);
         align-items: flex-start;
-        background-color: var(--ardoise-80-alpha-50);
+        background-color: hsla(from var(--ardoise-80) h s l / .5);
         border-radius: 1rem;
         color: var(--ardoise-20);
         display: flex;
@@ -408,7 +408,7 @@
                             width: 100%;
 
                             li {
-                                background-color: var(--ardoise-90-alpha-10);
+                                background-color: hsla(from var(--ardoise-90) h s l / .1);
                                 border-radius: .5rem;
                                 color: var(--ardoise-20);
                                 font-weight: 100;
@@ -446,8 +446,8 @@
                             justify-content: flex-start;
 
                             input[type="text"] {
-                                background-color: var(--ardoise-90-alpha-10);
-                                border: 1px solid var(--ardoise-40-alpha-50);
+                                background-color: hsla(from var(--ardoise-90) h s l / .1);
+                                border: 1px solid hsla(from var(--ardoise-40) h s l / .5);
                                 border-radius: .375rem;
                                 color: var(--ardoise-20);
                                 /* font-size: .875rem; */
@@ -455,7 +455,7 @@
                                 width: 100%;
 
                                 &::placeholder {
-                                    color: var(--ardoise-40-alpha-50);
+                                    color: hsla(from var(--ardoise-40) h s l / .5);
                                 }
                             }
 
@@ -515,7 +515,7 @@
         width: calc(100% - 18rem);
 
         .content {
-            background-color: var(--ardoise-90-alpha-10);
+            background-color: hsla(from var(--ardoise-90) h s l / .1);
             border-radius: 1rem;
             padding: 1rem;
             width: 100%;
@@ -533,7 +533,7 @@
             }
 
             .known-for {
-                background-color: var(--ardoise-90-alpha-10);
+                background-color: hsla(from var(--ardoise-90) h s l / .1);
                 border-radius: .5rem;
                 overflow-x: scroll;
                 padding: 1rem;
@@ -624,7 +624,7 @@
                     display: flex;
                     flex-direction: column;
                     justify-content: flex-start;
-                    background-color: var(--ardoise-90-alpha-10);
+                    background-color: hsla(from var(--ardoise-90) h s l / .1);
                     border-radius: 1rem;
                     gap: .25rem;
                     padding: 1rem;
@@ -688,7 +688,7 @@
 
                             .rating {
                                 align-items: center;
-                                background-color: var(--ardoise-80-alpha-50);
+                                background-color: hsla(from var(--ardoise-80) h s l / .5);
                                 border-radius: .25rem;
                                 color: var(--yellow-50);
                                 display: flex;
@@ -708,7 +708,7 @@
                     }
 
                     .separation {
-                        border-bottom: 1px solid var(--ardoise-40-alpha-50);
+                        border-bottom: 1px solid hsla(from var(--ardoise-40) h s l / .5);
                         width: 100%;
                     }
                 }

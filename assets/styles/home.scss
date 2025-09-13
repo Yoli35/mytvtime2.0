@@ -511,7 +511,7 @@
                         }
 
                         .air-at {
-                            background-color: var(--ardoise-80-alpha-90);
+                            background-color: hsla(from var(--ardoise-80) h s l / .9);
                             border-radius: .25rem;
                             color: var(--ardoise-10);
                             font-size: 1rem;
@@ -564,7 +564,7 @@
 
                             .favorite, .quick-watcher {
                                 align-items: center;
-                                background-color: var(--ardoise-80-alpha-50);
+                                background-color: hsla(from var(--ardoise-80) h s l / .5);
                                 border-radius: .25rem;
                                 color: var(--favorite-series);
                                 display: flex;
@@ -574,7 +574,7 @@
                             }
 
                             .episode-number {
-                                background-color: var(--ardoise-80-alpha-90);
+                                background-color: hsla(from var(--ardoise-80) h s l / .9);
                                 border-radius: .25rem;
                                 color: var(--ardoise-10);
                                 padding: .25rem;
@@ -589,7 +589,7 @@
                             }
 
                             .date {
-                                background-color: var(--ardoise-80-alpha-90);
+                                background-color: hsla(from var(--ardoise-80) h s l / .9);
                                 border-radius: .25rem;
                                 color: var(--ardoise-10);
                                 padding: .25rem;

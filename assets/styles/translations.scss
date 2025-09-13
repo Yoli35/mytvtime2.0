@@ -64,7 +64,7 @@
 .overview-form,
 .delete-overview-form,
 .keyword-translation-form {
-    background-color: var(--ardoise-80-alpha-90);
+    background-color: hsla(from var(--ardoise-80) h s l / .9);
     border-radius: 0.5rem 0 0 0.5rem;
     border: 2px solid var(--orange-50);
     border-right-width: 0;

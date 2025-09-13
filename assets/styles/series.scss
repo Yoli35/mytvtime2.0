@@ -322,7 +322,7 @@ h2 {
                 }
 
                 &.in-progress {
-                    background-color: var(--ardoise-30-alpha-50);
+                    background-color: hsla(from var(--ardoise-30) h s l / .5);
                 }
 
                 svg {
@@ -429,7 +429,7 @@ h2 {
                                 right: 0;
 
                                 .dates {
-                                    background-color: var(--ardoise-80-alpha-90);
+                                    background-color: hsla(from var(--ardoise-80) h s l / .9);
                                     display: flex;
                                     justify-content: center;
                                     width: 100%;
@@ -437,7 +437,7 @@ h2 {
 
                                 .air-date, .add-date {
                                     align-items: center;
-                                    background-color: var(--ardoise-80-alpha-90);
+                                    background-color: hsla(from var(--ardoise-80) h s l / .9);
                                     border-radius: .25rem;
                                     color: var(--ardoise-10);
                                     display: flex;
@@ -454,7 +454,7 @@ h2 {
                         }
 
                         .name {
-                            background-color: var(--ardoise-30-alpha-50);
+                            background-color: hsla(from var(--ardoise-30) h s l / .5);
                             border-radius: 0 0 .5rem .5rem;
                             font-size: 1.25rem;
                             font-weight: 300;
@@ -501,7 +501,7 @@ h2 {
                                 height: 5rem;
 
                                 span {
-                                    background-color: var(--ardoise-80-alpha-90);
+                                    background-color: hsla(from var(--ardoise-80) h s l / .9);
                                     border-radius: .25rem;
                                     color: var(--orange-50);
                                     padding: .25rem .5rem;
@@ -660,7 +660,6 @@ h2 {
         }
 
         .infos {
-            /*background-color: var(--ardoise-70-alpha-50);*/
             height: calc(40vw * calc(117 / 78));
             position: relative;
             width: calc(60vw - 3rem);
@@ -683,7 +682,7 @@ h2 {
 
             .infos-content {
                 align-items: flex-start;
-                background-color: var(--ardoise-90-alpha-20);
+                background-color: hsla(from var(--ardoise-90) h s l / .2);
                 border-radius: .5rem;
                 display: flex;
                 flex-direction: column;
@@ -769,7 +768,6 @@ h2 {
                             position: relative;
 
                             .content {
-                                /*background-color: var(--ardoise-70-alpha-50);*/
                                 border-radius: .5rem;
                                 margin-block-end: unset;
                                 padding: .5rem;
@@ -782,7 +780,7 @@ h2 {
                             }
 
                             .tools {
-                                background-color: var(--ardoise-90-alpha-50);
+                                background-color: hsla(from var(--ardoise-90) h s l / .5);
                                 border-radius: .25rem;
                                 display: flex;
                                 flex-direction: column;
@@ -938,7 +936,7 @@ h2 {
 
                 .series-back-link {
                     align-items: center;
-                    background-color: var(--ardoise-70-alpha-75);
+                    background-color: hsla(from var(--ardoise-70) h s l / .75);
                     border-radius: .25rem;
                     color: var(--ardoise-10);
                     display: flex;
@@ -959,7 +957,7 @@ h2 {
 
         .backdrops, .logos, .posters, .series {
             align-items: center;
-            background-color: var(--ardoise-90-alpha-20);
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: .5rem;
             display: flex;
             gap: .5rem;
@@ -983,7 +981,6 @@ h2 {
             }
 
             img {
-                /*border: 2px solid var(--orange-50);*/
                 border-radius: .25rem;
                 height: 7rem;
                 object-fit: contain;
@@ -1035,7 +1032,7 @@ h2 {
             }
 
             .other-logo {
-                background-color: var(--ardoise-90-alpha-20);
+                background-color: hsla(from var(--ardoise-90) h s l / .2);
                 border-radius: .25rem;
                 height: 7rem;
                 padding: .5rem;
@@ -1060,7 +1057,7 @@ h2 {
 
             .previous-series, .next-series {
                 align-items: center;
-                background-color: var(--ardoise-90-alpha-20);
+                background-color: hsla(from var(--ardoise-90) h s l / .2);
                 border-radius: .25rem;
                 color: var(--ardoise-10);
                 cursor: pointer;
@@ -1090,7 +1087,7 @@ h2 {
     }
 
     .videos {
-        background-color: var(--ardoise-90-alpha-20);
+        background-color: hsla(from var(--ardoise-90) h s l / .2);
         border-radius: .5rem;
         display: flex;
         flex-direction: column;
@@ -1179,7 +1176,7 @@ h2 {
 
     .schedules {
         align-items: stretch;
-        background-color: var(--ardoise-90-alpha-20);
+        background-color: hsla(from var(--ardoise-90) h s l / .2);
         border-radius: .5rem;
         display: flex;
         flex-direction: column;
@@ -1210,7 +1207,7 @@ h2 {
 
         .episode, .next-episode {
             align-items: center;
-            background-color: var(--ardoise-90-alpha-20);
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: .5rem;
             box-shadow: 0 0 1rem #0000003f;
             color: var(--ardoise-10);
@@ -1370,7 +1367,7 @@ h2 {
 
                 .schedule {
                     align-items: stretch;
-                    /*background-color: var(--ardoise-90-alpha-20);*/
+                    /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
                     border-bottom: .5rem solid var(--orange-50);
                     border-radius: .5rem;
                     color: var(--ardoise-10);
@@ -1465,7 +1462,7 @@ h2 {
         }
 
         .schedule-form {
-            background-color: var(--orange-40-alpha-50);
+            background-color: hsla(from var(--orange-40) h s l / .5);
             border: 4px dashed var(--orange-50);
             border-radius: .5rem;
             display: none;
@@ -1591,7 +1588,7 @@ h2 {
     }
 
     .season-changes {
-        background-color: var(--ardoise-90-alpha-20);
+        background-color: hsla(from var(--ardoise-90) h s l / .2);
         border-radius: .5rem;
         display: flex;
         flex-direction: column;
@@ -1653,11 +1650,11 @@ h2 {
                         padding: 1rem;
 
                         &:nth-child(odd) {
-                            background-color: var(--ardoise-80-alpha-50);
+                            background-color: hsla(from var(--ardoise-80) h s l / .5);
                         }
 
                         &:nth-child(2n) {
-                            background-color: var(--ardoise-90-alpha-20);
+                            background-color: hsla(from var(--ardoise-90) h s l / .2);
                         }
 
                         .item-data {
@@ -1682,7 +1679,7 @@ h2 {
     }
 
     .externals {
-        background-color: var(--ardoise-90-alpha-20);
+        background-color: hsla(from var(--ardoise-90) h s l / .2);
         border-radius: .5rem;
         display: flex;
         flex-direction: column;
@@ -1712,7 +1709,7 @@ h2 {
             width: round(down, 100%, 11rem);
 
             .external {
-                background-color: var(--orange-40-alpha-50);
+                background-color: hsla(from var(--orange-40) h s l / .5);
                 border: 2px solid var(--orange-50);
                 border-radius: .375rem;
                 color: var(--orange-90);
@@ -1748,7 +1745,7 @@ h2 {
     }
 
     .user-actions {
-        background-color: var(--ardoise-90-alpha-20);
+        background-color: hsla(from var(--ardoise-90) h s l / 0.1);
         border-radius: .5rem;
         padding: .5rem 1rem;
 
@@ -1783,7 +1780,7 @@ h2 {
 
                 .season-order {
                     align-items: center;
-                    background-color: var(--ardoise-80-alpha-50);
+                    background-color: hsla(from var(--ardoise-80) h s l / .5);
                     border-radius: .25rem;
                     color: var(--ardoise-10);
                     cursor: pointer;
@@ -1797,7 +1794,7 @@ h2 {
         }
 
         .content-infos {
-            background-color: var(--ardoise-90-alpha-20);
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: .5rem;
             padding: .5rem 1rem;
             position: relative;
@@ -1863,7 +1860,7 @@ h2 {
 
                 .fact {
                     align-items: center;
-                    background-color: var(--ardoise-90-alpha-20);
+                    background-color: hsla(from var(--ardoise-90) h s l / .2);
                     border-radius: .25rem;
                     color: var(--ardoise-10);
                     display: flex;
@@ -2024,7 +2021,7 @@ h2 {
                 padding-inline-start: 2rem;
 
                 li {
-                    background-color: var(--ardoise-90-alpha-50);
+                    background-color: hsla(from var(--ardoise-90) h s l / .5);
                     border-radius: .25rem;
                     list-style: none;
                     padding-block: .25rem;
@@ -2037,7 +2034,7 @@ h2 {
                     }
 
                     &:hover {
-                        background-color: var(--ardoise-70-alpha-50);
+                        background-color: hsla(from var(--ardoise-70) h s l / .5);
                     }
                 }
             }
@@ -2077,7 +2074,7 @@ h2 {
 
                         &:has(+ *:hover),
                         &:hover + * {
-                            border: 2px solid var(--orange-50-alpha-50);
+                            border: 2px solid hsla(from var(--orange-50) h s l / .5);
                             transform: scale(1.30);
                             z-index: 2;
                         }
@@ -2303,7 +2300,7 @@ h2 {
 
         .progress-bar {
             align-items: center;
-            background-color: var(--ardoise-90-alpha-20);
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: .25rem;
             display: none;
             gap: .5rem;
@@ -2380,7 +2377,7 @@ h2 {
 }
 
 .old-series-added-panel {
-    background-color: var(--ardoise-80-alpha-90) !important;
+    background-color: hsla(from var(--ardoise-80) h s l / .9) !important;
     width: 36rem !important;
 
     .dialog-content {
@@ -2535,7 +2532,7 @@ h2 {
 
         .poster {
             align-items: center;
-            background-color: var(--ardoise-90-alpha-20);
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: .5rem 0 0 .5rem;
             color: var(--green-10);
             display: flex;
@@ -2598,7 +2595,7 @@ h2 {
         }
 
         .infos {
-            background-color: var(--ardoise-90-alpha-20);
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: 0 .5rem .5rem 0;
             color: var(--ardoise-10);
             display: flex;
@@ -2747,7 +2744,7 @@ h2 {
             .user-votes, .last-episode, .next-episode {
                 .show-tab {
                     align-items: center;
-                    background-color: var(--ardoise-90-alpha-20);
+                    background-color: hsla(from var(--ardoise-90) h s l / .2);
                     border-radius: .25rem;
                     color: var(--ardoise-10);
                     cursor: pointer;
@@ -2791,7 +2788,7 @@ h2 {
 
         .size-item {
             align-items: center;
-            background-color: var(--ardoise-90-alpha-20);
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: .25rem;
             color: var(--ardoise-10);
             display: flex;
@@ -2812,7 +2809,7 @@ h2 {
 
         .ar-item {
             align-items: center;
-            background-color: var(--ardoise-90-alpha-20);
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: .25rem;
             color: var(--ardoise-10);
             display: flex;
@@ -2833,7 +2830,7 @@ h2 {
 
         .edit-episode-infos {
             align-items: center;
-            background-color: var(--ardoise-90-alpha-20);
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: .25rem;
             color: var(--ardoise-10);
             cursor: pointer;
@@ -2856,7 +2853,7 @@ h2 {
 
     .quick-episodes {
         align-items: center;
-        background-color: var(--ardoise-90-alpha-20);
+        background-color: hsla(from var(--ardoise-90) h s l / 0.1);
         border-radius: .25rem;
         display: flex;
         flex-wrap: wrap;
@@ -2868,8 +2865,8 @@ h2 {
 
         .quick-episode {
             align-items: center;
-            background-color: var(--ardoise-80-alpha-50);
-            border: 2px solid var(--ardoise-30-alpha-50);
+            background-color: hsla(from var(--ardoise-80) h s l / .5);
+            border: 2px solid hsla(from var(--ardoise-30) h s l / .5);
             border-radius: .25rem;
             color: var(--ardoise-10);
             cursor: pointer;
@@ -2896,7 +2893,7 @@ h2 {
 
             &:has(+ .quick-episode:hover),
             &:hover + .quick-episode {
-                border: 2px solid var(--orange-50-alpha-50);
+                border: 2px solid hsla(from var(--orange-50) h s l / .5);
                 border-radius: 1rem;
                 transform: scale(1.5);
                 z-index: 2;
@@ -2923,8 +2920,8 @@ h2 {
 
         .future-episode {
             align-items: center;
-            background-color: var(--ardoise-40-alpha-50);
-            border: 2px dashed var(--ardoise-30-alpha-50);
+            background-color: hsla(from var(--ardoise-40) h s l / .5);
+            border: 2px dashed hsla(from var(--ardoise-30) h s l / .5);
             border-radius: .25rem;
             color: var(--ardoise-30);
             display: flex;
@@ -2952,7 +2949,7 @@ h2 {
                     .header {
                         /* background-color: var(--orange-40); */
                         /*border-radius: .5rem .5rem 0 0;*/
-                        /*color: var(--orange-100);*/
+                        /*color: var(--orange-90);*/
                         font-size: 1.5rem;
                         font-weight: 300;
                         line-height: 1.25em;
@@ -2960,9 +2957,9 @@ h2 {
                     }
 
                     .body {
-                        /*background-color: var(--ardoise-90-alpha-20);*/
+                        /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
                         /*border-radius: 0 0 .5rem .5rem;*/
-                        /*color: var(--orange-100);*/
+                        /*color: var(--orange-90);*/
                         display: flex;
                         flex-direction: column;
                         font-size: 1.25rem;
@@ -2973,7 +2970,7 @@ h2 {
                         text-wrap: pretty;
 
                         .content {
-                            /*background-color: var(--ardoise-90-alpha-20);*/
+                            /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
                             border-radius: .5rem;
                             margin-block-end: unset;
                             padding: .5rem;
@@ -2988,7 +2985,7 @@ h2 {
                             }
 
                             .tools {
-                                background-color: var(--ardoise-90-alpha-50);
+                                background-color: hsla(from var(--ardoise-90) h s l / .5);
                                 border-radius: .25rem;
                                 display: flex;
                                 flex-direction: column;
@@ -3044,7 +3041,7 @@ h2 {
         .watch-links {
             .watch-link {
                 .watch-link-tools {
-                    background-color: var(--ardoise-90-alpha-80);
+                    background-color: hsla(from var(--ardoise-90) h s l / .8);
 
                     .watch-link-name {
                         padding-inline-end: 1rem;
@@ -3074,7 +3071,7 @@ h2 {
             max-width: 50%;
 
             span {
-                /*background-color: var(--ardoise-90-alpha-20);*/
+                /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
                 /*border-radius: .5rem;*/
                 /*padding-inline: .5rem;*/
             }
@@ -3153,7 +3150,7 @@ h2 {
             .still {
                 align-items: center;
                 aspect-ratio: var(--episode-aspect-ratio);
-                background-color: var(--ardoise-90-alpha-20);
+                background-color: hsla(from var(--ardoise-90) h s l / 0.1);
                 border: 2px solid transparent;
                 border-radius: .5rem;
                 color: var(--green-10);
@@ -3178,7 +3175,7 @@ h2 {
 
                 &:hover {
                     .custom-stills {
-                        background-color: var(--orange-40-alpha-50);
+                        background-color: hsla(from var(--orange-40) h s l / .2);
                         border-color: var(--orange-50);
                         opacity: 1;
                     }
@@ -3205,7 +3202,7 @@ h2 {
                     transition: opacity 0.3s ease-in-out;
 
                     &.active {
-                        background-color: var(--green-40-alpha-50);
+                        background-color: hsla(from var(--green-40) h s l / .5);
                         border-color: var(--green-30);
                     }
 
@@ -3303,7 +3300,7 @@ h2 {
             }
 
             .infos {
-                background-color: var(--ardoise-90-alpha-20);
+                background-color: hsla(from var(--ardoise-90) h s l / 0.1);
                 border: 2px solid transparent;
                 border-radius: .5rem;
                 color: var(--ardoise-10);
@@ -3427,7 +3424,7 @@ h2 {
                 }
 
                 .episode-overview {
-                    background-color: var(--ardoise-90-alpha-20);
+                    background-color: hsla(from var(--ardoise-90) h s l / 0.1);
                     border-radius: .25rem;
                     padding: .5rem;
                     position: relative;
@@ -3519,7 +3516,7 @@ h2 {
 
                     .airing {
                         align-items: center;
-                        background-color: var(--ardoise-80-alpha-50);
+                        background-color: hsla(from var(--ardoise-80) h s l / .5);
                         border-radius: .25rem;
                         color: var(--ardoise-10);
                         display: flex;
@@ -3663,7 +3660,7 @@ h2 {
 
 .user-episode {
     align-items: center;
-    background-color: var(--ardoise-90-alpha-20);
+    background-color: hsla(from var(--ardoise-90) h s l / .2);
     border: 2px solid transparent;
     border-radius: 0.5rem;
     display: flex;
@@ -3822,7 +3819,7 @@ h2 {
 
     .episode-votes {
         align-items: flex-end;
-        /*background-color: var(--ardoise-90-alpha-20);*/
+        /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
         border-radius: .25rem;
         display: flex;
         gap: 1rem;
@@ -3881,7 +3878,7 @@ h2 {
     }
 
     .vote-average {
-        background-color: var(--green-80-alpha-50);
+        background-color: hsla(from var(--green-80) h s l / .5);
         border: 2px solid var(--green-20);
         border-radius: .5rem;
         flex-shrink: 0;
@@ -3917,7 +3914,7 @@ h2 {
 
         &.disabled {
             background-color: hsla(from var(--ardoise-50) h s l / .5);
-            color: var(--ardoise-10-alpha-50);
+            color: hsla(from var(--ardoise-10) h s l / .5);
             cursor: not-allowed;
         }
 
@@ -3927,7 +3924,7 @@ h2 {
     }
 
     .series-to-watch {
-        background-color: var(--ardoise-90-alpha-20);
+        background-color: hsla(from var(--ardoise-90) h s l / .2);
         border-radius: .5rem;
         padding: 1rem;
         width: 100%;
@@ -3945,7 +3942,7 @@ h2 {
                 a {
                     .poster, .name {
                         align-items: center;
-                        background-color: var(--ardoise-70-alpha-50);
+                        background-color: hsla(from var(--ardoise-70) h s l / .5);
                         display: flex;
                         justify-content: center;
                         width: 15rem;
@@ -4056,8 +4053,8 @@ h2 {
         width: fit-content;
 
         &.disabled {
-            background-color: var(--ardoise-80-alpha-50);
-            color: var(--ardoise-10-alpha-50);
+            background-color: hsla(from var(--ardoise-80) h s l / .5);
+            color: hsla(from var(--ardoise-10) h s l / .5);
             cursor: not-allowed;
         }
 
@@ -4075,7 +4072,7 @@ h2 {
     width: 16rem;
 
     .content {
-        background-color: var(--ardoise-80-alpha-50);
+        background-color: hsla(from var(--ardoise-80) h s l / .5);
         color: var(--ardoise-10);
         padding: 1rem 2rem;
 
@@ -4109,7 +4106,7 @@ h2 {
     width: 16rem;
 
     .content {
-        background-color: var(--ardoise-80-alpha-50);
+        background-color: hsla(from var(--ardoise-80) h s l / .5);
         color: var(--ardoise-10);
         display: flex;
         gap: 1rem;
@@ -4188,7 +4185,7 @@ h2 {
 
             .infos {
                 align-items: center;
-                background-color: var(--ardoise-90-alpha-20);
+                background-color: hsla(from var(--ardoise-90) h s l / .2);
                 border-radius: 0 0 .25rem .25rem;
                 display: flex;
                 flex-direction: column;
@@ -4276,7 +4273,7 @@ h2 {
                 a {
                     .poster, .name {
                         align-items: center;
-                        background-color: var(--ardoise-70-alpha-50);
+                        background-color: hsla(from var(--ardoise-70) h s l / .5);
                         display: flex;
                         justify-content: center;
                         width: 15rem;
@@ -4647,7 +4644,7 @@ h2 {
                 padding-inline: 0;
 
                 .still {
-                    border: 2px solid var(--orange-40-alpha-50);
+                    border: 2px solid hsla(from var(--orange-40) h s l / .5);
                     max-width: unset;
                     width: 100%;
 
@@ -4657,12 +4654,12 @@ h2 {
                 }
 
                 .infos {
-                    border: 2px solid var(--orange-40-alpha-50);
+                    border: 2px solid hsla(from var(--orange-40) h s l / .5);
                     width: calc(100% - 4.75rem) !important;
                 }
 
                 .user-episode {
-                    border: 2px solid var(--orange-40-alpha-50);
+                    border: 2px solid hsla(from var(--orange-40) h s l / .5);
                 }
 
                 &:hover {
@@ -5149,7 +5146,7 @@ h2 {
         }
 
         .leaflet-popup-content-wrapper {
-            background-color: var(--orange-40-alpha-50);
+            background-color: hsla(from var(--orange-40) h s l / .5);
             overflow: hidden;
 
             .leaflet-popup-content {
@@ -5168,7 +5165,7 @@ h2 {
                 }
 
                 .leaflet-popup-content-description {
-                    background-color: var(--ardoise-90-alpha-50);
+                    background-color: hsla(from var(--ardoise-90) h s l / .5);
                     border-radius: 0 0 .25rem .25rem;
                     color: var(--ardoise-10);
                     font-size: 1rem;
@@ -5269,7 +5266,7 @@ h2 {
             margin-inline: auto;
 
             li {
-                background-color: var(--ardoise-90-alpha-50);
+                background-color: hsla(from var(--ardoise-90) h s l / .5);
                 border-radius: .375rem;
                 display: flex;
                 flex-direction: column;
@@ -5330,7 +5327,7 @@ h2 {
 
                     .arrow, .edit {
                         align-items: center;
-                        background-color: var(--ardoise-80-alpha-50);
+                        background-color: hsla(from var(--ardoise-80) h s l / .5);
                         border-radius: 50%;
                         color: var(--ardoise-10);
                         cursor: pointer;
@@ -5438,7 +5435,7 @@ h2 {
         .keyboard-help {
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            background-color: var(--ardoise-80-alpha-50);
+            background-color: hsla(from var(--ardoise-80) h s l / .5);
             border-radius: .5rem;
             bottom: 8rem;
             color: var(--ardoise-10);
@@ -5729,7 +5726,7 @@ h2 {
 }
 
 dialog {
-    background-color: var(--ardoise-80-alpha-90);
+    background-color: hsla(from var(--ardoise-80) h s l / .9);
     border-radius: .5rem;
     inset: 0;
     margin-block: auto;
@@ -6009,7 +6006,7 @@ dialog, .side-panel {
     }
 
     .form-column {
-        background-color: var(--ardoise-80-alpha-50);
+        background-color: hsla(from var(--ardoise-80) h s l / .5);
         border-radius: .5rem;
         padding: 1rem;
 
@@ -6063,7 +6060,7 @@ dialog, .side-panel {
 
 .edit-episode-infos-dialog {
     .form-row {
-        background-color: var(--ardoise-80-alpha-50);
+        background-color: hsla(from var(--ardoise-80) h s l / .5);
         border-radius: .5rem;
         padding: 1rem;
 

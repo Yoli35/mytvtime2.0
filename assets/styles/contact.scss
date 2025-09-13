@@ -300,7 +300,7 @@
 
         .preview-avatar-file, .preview-banner-file {
             align-items: center;
-            background-color: var(--orange-40-alpha-50);
+            background-color: hsla(from var(--orange-40) h s l / .5);
             border-radius: .5rem;
             cursor: pointer;
             display: flex;

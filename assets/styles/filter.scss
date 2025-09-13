@@ -79,7 +79,7 @@
             transition: height 0.6s ease-in-out;
 
             .filter {
-                background-color: var(--ardoise-80-alpha-50);
+                background-color: hsla(from var(--ardoise-80) h s l / .5);
                 border-radius: .25rem;
                 color: var(--ardoise-10);
                 padding-block: .5rem;
@@ -124,7 +124,7 @@
         }
 
         .pages {
-            background-color: var(--ardoise-80-alpha-50);
+            background-color: hsla(from var(--ardoise-80) h s l / .5);
             border-radius: .25rem;
             display: flex;
             flex-wrap: wrap;

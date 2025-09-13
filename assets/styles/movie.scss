@@ -2,7 +2,7 @@
 .movie-index {
     main {
         .wrapper {
-            background-color: var(--ardoise-90-alpha-20);
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: .5rem;
             display: grid;
             flex-wrap: wrap;
@@ -13,7 +13,7 @@
 
         .card {
             align-items: center;
-            /*background-color: var(--ardoise-90-alpha-20);*/
+            /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
             border-radius: .5rem;
             display: flex;
             flex-direction: column;
@@ -56,7 +56,7 @@
 
                 .viewed {
                     align-items: center;
-                    background-color: var(--orange-50-alpha-80);
+                    background-color: hsla(from var(--orange-50) h s l / .8);
                     bottom: 0;
                     position: absolute;
                     display: flex;
@@ -138,7 +138,7 @@
         }
 
         .infos {
-            background-color: var(--ardoise-90-alpha-20);
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: 0;
             display: flex;
             flex-direction: column;
@@ -166,7 +166,7 @@
 
             .title {
                 align-items: flex-start;
-                background-color: var(--ardoise-90-alpha-50);
+                background-color: hsla(from var(--ardoise-90) h s l / .5);
                 border-radius: .5rem;
                 display: flex;
                 padding: .5rem;
@@ -188,7 +188,7 @@
             }
 
             .movie-overview {
-                background-color: var(--ardoise-90-alpha-50);
+                background-color: hsla(from var(--ardoise-90) h s l / .5);
                 border-radius: .5rem;
                 color: var(--ardoise-10);
                 font-size: clamp(1rem, 1.5vw, 2rem);
@@ -239,7 +239,7 @@
                         position: relative;
 
                         .content {
-                            /*background-color: var(--ardoise-70-alpha-50);*/
+                            /*background-color: hsla(from var(--ardoise-70) h s l / .5);*/
                             border-radius: .5rem;
                             font-size: clamp(1.25rem, 1.25vw, 3rem);
                             line-height: 1.1em;
@@ -333,7 +333,7 @@
         }
 
         .movie-details {
-            background-color: var(--ardoise-90-alpha-20);
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: 0;
             display: flex;
             /*flex-direction: column;*/
@@ -429,7 +429,7 @@
                         .poster {
                             align-items: center;
                             aspect-ratio: 78 / 117;
-                            background-color: var(--green-70-alpha-50);
+                            background-color: hsla(from var(--green-70) h s l / .5);
                             border-radius: .5rem;
                             display: flex;
                             height: 16rem;
@@ -524,7 +524,7 @@
                             }
 
                             .keywords {
-                                background-color: var(--ardoise-90-alpha-20);
+                                background-color: hsla(from var(--ardoise-90) h s l / .2);
                                 border-radius: .5rem;
                                 display: flex;
                                 flex-wrap: wrap;
@@ -664,7 +664,7 @@
         }
 
         .user-details {
-            background-color: var(--ardoise-90-alpha-20);
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: 0;
             display: flex;
             flex-direction: column;
@@ -683,7 +683,7 @@
         }
 
         .movie-collection {
-            background-color: var(--ardoise-90-alpha-20);
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: 0;
             display: flex;
             flex-direction: column;
@@ -704,7 +704,7 @@
 
                 .collection-poster {
                     align-items: center;
-                    background-color: var(--green-70-alpha-50);
+                    background-color: hsla(from var(--green-70) h s l / .5);
                     border-radius: .5rem;
                     display: flex;
                     height: 100%;
@@ -728,7 +728,7 @@
 
                     .name {
                         backdrop-filter: blur(8px);
-                        background-color: var(--ardoise-90-alpha-20);
+                        background-color: hsla(from var(--ardoise-90) h s l / .2);
                         border-radius: .25rem;
                         bottom: 2rem;
                         color: var(--orange-50);
@@ -781,7 +781,7 @@
         }
 
         .infos {
-            background-color: var(--ardoise-90-alpha-50);
+            background-color: hsla(from var(--ardoise-90) h s l / .5);
             border-radius: .5rem;
             display: flex;
             flex-direction: column;
@@ -809,7 +809,7 @@
 
             .title {
                 h1 {
-                    background-color: var(--ardoise-90-alpha-50);
+                    background-color: hsla(from var(--ardoise-90) h s l / .5);
                     border-radius: .5rem;
                     color: var(--orange-50);
                     font-size: clamp(1rem, 5vw, 4rem);
@@ -826,7 +826,7 @@
             }
 
             .movie-overview {
-                background-color: var(--ardoise-90-alpha-50);
+                background-color: hsla(from var(--ardoise-90) h s l / .5);
                 border-radius: .5rem;
                 color: var(--ardoise-10);
                 font-size: 1.25rem;
@@ -849,7 +849,7 @@
                 .poster {
                     align-items: center;
                     aspect-ratio: 78 / 117;
-                    background-color: var(--green-70-alpha-50);
+                    background-color: hsla(from var(--green-70) h s l / .5);
                     border-radius: .5rem;
                     display: flex;
                     justify-content: center;
@@ -887,7 +887,7 @@
                     }
 
                     .title {
-                        background-color: var(--ardoise-90-alpha-50);
+                        background-color: hsla(from var(--ardoise-90) h s l / .5);
                         border-radius: .5rem;
                         color: var(--ardoise-10);
                         font-size: 1rem;
@@ -900,7 +900,7 @@
                     }
 
                     .movie-overview {
-                        background-color: var(--ardoise-90-alpha-50);
+                        background-color: hsla(from var(--ardoise-90) h s l / .5);
                         border-radius: .5rem;
                         color: var(--ardoise-10);
                         font-size: 1rem;
