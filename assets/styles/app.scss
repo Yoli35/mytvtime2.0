@@ -173,8 +173,7 @@ body:has(dialog[open]) {
 .backgroundImageOverlay {
     -webkit-backdrop-filter: blur(256px) brightness(75%) saturate(85%);
     backdrop-filter: blur(256px) brightness(75%) saturate(85%);
-    /*height: 100dvh;
-    overflow-y: auto;*/
+    overflow: hidden;
     padding: 0;
     width: 100%;
 

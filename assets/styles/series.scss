@@ -660,18 +660,10 @@ h2 {
         }
 
         .infos {
-            background-color: var(--ardoise-70-alpha-50);
+            /*background-color: var(--ardoise-70-alpha-50);*/
             height: calc(40vw * calc(117 / 78));
             position: relative;
             width: calc(60vw - 3rem);
-
-            &.light {
-                color: #f7f7f7; /*var(--orange-80);*/
-            }
-
-            &.dark {
-                color: #030303; /*var(--ardoise-90);*/
-            }
 
             .backdrop {
                 height: 100%;
@@ -701,7 +693,6 @@ h2 {
                 overflow-y: auto;
                 padding: 1rem;
                 position: relative;
-                /*text-shadow: 0 0 2px rgb(0, 0, 0);*/
                 width: 100%;
 
 
@@ -3831,7 +3822,7 @@ h2 {
 
     .episode-votes {
         align-items: flex-end;
-        background-color: var(--ardoise-90-alpha-20);
+        /*background-color: var(--ardoise-90-alpha-20);*/
         border-radius: .25rem;
         display: flex;
         gap: 1rem;
@@ -3849,8 +3840,8 @@ h2 {
             gap: .5rem;
 
             .vote {
-                background-color: var(--orange-50-alpha-50);
-                border-color: var(--orange-50);
+                background-color: hsla(from var(--orange-50) h s l / .2);
+                border-color: hsla(from var(--orange-50) h s l / .4);
                 border-radius: .25rem;
                 border-style: solid;
                 border-width: 2px;
@@ -3876,12 +3867,12 @@ h2 {
                 }
 
                 .user-vote {
-                    background-color: var(--green-80-alpha-50);
+                    background-color: hsla(from var(--green-40), h s l / .4);
                     border: 2px solid var(--green-20);
                 }
 
                 .dashed-vote {
-                    background-color: var(--green-40-alpha-50);
+                    background-color: hsla(from var(--green-40), h s l / .1);
                     border: 1px dashed var(--green-30);
                     height: 10rem;
                 }
@@ -3911,8 +3902,8 @@ h2 {
 
     .next-button {
         align-items: center;
-        background-color: var(--green-50);
-        border-radius: .25rem;
+        background-color: hsla(from var(--green-50) h s l / .5);
+        border-radius: 25rem;
         color: var(--ardoise-10);
         cursor: pointer;
         display: flex;
@@ -3925,13 +3916,13 @@ h2 {
         width: fit-content;
 
         &.disabled {
-            background-color: var(--ardoise-80-alpha-50);
+            background-color: hsla(from var(--ardoise-50) h s l / .5);
             color: var(--ardoise-10-alpha-50);
             cursor: not-allowed;
         }
 
         &:hover {
-            background-color: var(--green-40);
+            background-color: var(--green-50);
         }
     }
 
