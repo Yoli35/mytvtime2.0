@@ -10,7 +10,7 @@
 {% endblock %}
 {% block body %}
     <script>
-        const bd = '/series/posters{{ season.poster_path }}';
+        const bd = '/series/posters-blurred{{ season.blurred_poster_path }}';
         const body = document.querySelector("body");
         body.style.backgroundSize = "cover";
         body.style.backgroundPosition = "center";
@@ -19,7 +19,7 @@
         body.style.backgroundImage = "url(" + bd + ")";
     </script>
     {{ include('_blocks/_menu.html.twig', {seriesName: season.series_localized_name ? season.series_localized_name.name:series.name, seriesLink: path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }) }}
-    <div class="container-fluid backgroundImageOverlay">
+    <div class="container-fluid {#backgroundImageOverlay#}">
         <div id="series-season" class="series-show">
             <div class="header">
                 {#                <div class="poster" id="top"> #}

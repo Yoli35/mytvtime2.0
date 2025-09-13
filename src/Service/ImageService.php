@@ -272,6 +272,51 @@ class ImageService extends AbstractController
         ];
     }
 
+    public function blurPoster(string $imagePath, int $blur = 3): ?string
+    {
+        $kernelProjectDir = $this->getParameter('kernel.project_dir');
+        $fullPath = $kernelProjectDir . '/public/series/posters' . $imagePath;
+        $imageDestPath = str_replace(['.jpg', '.jpeg', '.png'], '.webp', $imagePath);
+        $fullDestPath = $kernelProjectDir . '/public/series/posters-blurred' . $imageDestPath;
+
+        // if the blurred image already exists, do nothing
+        if (file_exists($fullDestPath)) {
+            return $imageDestPath;
+        }
+
+        $info = @getimagesize($fullPath);
+        if ($info === false) {
+            return null;
+        }
+        $isAlpha = false;
+
+        if ($info['mime'] == 'image/jpeg')
+            $image = imagecreatefromjpeg($fullPath);
+        elseif ($isAlpha = $info['mime'] == 'image/png') {
+            $image = imagecreatefrompng($fullPath);
+        } elseif ($isAlpha = $info['mime'] == 'image/webp') {
+            $image = imagecreatefromwebp($fullPath);
+        } else {
+            return null;
+        }
+        if ($isAlpha) {
+            imagepalettetotruecolor($image);
+            imagealphablending($image, true);
+            imagesavealpha($image, true);
+        }
+
+        $blurredImage = $this->blurImage($image, $blur);
+        imagedestroy($image);
+        if ($isAlpha) {
+            imagealphablending($blurredImage, false);
+            imagesavealpha($blurredImage, true);
+        }
+        imagewebp($blurredImage, $fullDestPath, 90);
+        imagedestroy($blurredImage);
+
+        return $imageDestPath;
+    }
+
     public function checkForPaths(array $paths): void
     {
         foreach ($paths as $path) {
@@ -562,6 +607,64 @@ class ImageService extends AbstractController
         $this->ImageRoundFilledRectangle($newImage, 20, $height - $textHeight - 40, $textWidth + 60, $height - 10, $radius, $rectangleColor);
         // Add the text
         imagettftext($newImage, $fontSize, 0, 40, $height - 30, $textColor, $font, $title);
+    }
+
+    /**
+     * Strong Blur
+     *
+     * @param GdImage $gdImage
+     * @param int $blurFactor optional
+     *  This is the strength of the blur
+     *  0 = no blur, 3 = default, anything over 5 is extremely blurred
+     * @return GDImage resource
+     * @author Martijn Frazer, idea based on http://stackoverflow.com/a/20264482
+     */
+    private function blurImage(GdImage $gdImage, int $blurFactor = 3): GdImage
+    {
+        // blurFactor has to be an integer
+        $blurFactor = round($blurFactor);
+
+        $originalWidth = imagesx($gdImage);
+        $originalHeight = imagesy($gdImage);
+
+        $smallestWidth = ceil($originalWidth * pow(0.5, $blurFactor));
+        $smallestHeight = ceil($originalHeight * pow(0.5, $blurFactor));
+
+        // for the first run, the previous image is the original input
+        $prevImage = $nextImage = $gdImage;
+        $prevWidth = $nextWidth = $originalWidth;
+        $prevHeight = $nextHeight = $originalHeight;
+
+        // scale way down and gradually scale back up, blurring all the way
+        for ($i = 0; $i < $blurFactor; $i += 1) {
+            // determine dimensions of next image
+            $nextWidth = $smallestWidth * pow(2, $i);
+            $nextHeight = $smallestHeight * pow(2, $i);
+
+            // resize previous image to next size
+            $nextImage = imagecreatetruecolor($nextWidth, $nextHeight);
+            imagecopyresized($nextImage, $prevImage, 0, 0, 0, 0,
+                $nextWidth, $nextHeight, $prevWidth, $prevHeight);
+
+            // apply blur filter
+            imagefilter($nextImage, IMG_FILTER_GAUSSIAN_BLUR);
+
+            // now the new image becomes the previous image for the next step
+            $prevImage = $nextImage;
+            $prevWidth = $nextWidth;
+            $prevHeight = $nextHeight;
+        }
+
+        // scale back to original size and blur one more time
+        imagecopyresized($gdImage, $nextImage,
+            0, 0, 0, 0, $originalWidth, $originalHeight, $nextWidth, $nextHeight);
+        imagefilter($gdImage, IMG_FILTER_GAUSSIAN_BLUR);
+
+        // clean up
+        imagedestroy($prevImage);
+
+        // return result
+        return $gdImage;
     }
 
     private function ImageRoundFilledRectangle(GdImage $im, int $x1, int $y1, int $x2, int $y2, int $radius, int $color): void

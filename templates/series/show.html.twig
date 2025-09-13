@@ -12,17 +12,19 @@
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css">
 {% endblock %}
 {% block body %}
-    <script>
-        const bd = '/series/posters{{ series.posterPath }}';
-        const body = document.querySelector("body");
-        body.style.backgroundSize = "cover";
-        body.style.backgroundPosition = "center";
-        body.style.backgroundRepeat = "no-repeat";
-        body.style.backgroundAttachment = "fixed";
-        body.style.backgroundImage = "url(" + bd + ")";
-    </script>
+    {% if series.blurredPosterPath %}
+        <script>
+            const bd = '/series/posters-blurred{{ series.blurredPosterPath }}';
+            const body = document.querySelector("body");
+            body.style.backgroundSize = "cover";
+            body.style.backgroundPosition = "center";
+            body.style.backgroundRepeat = "no-repeat";
+            body.style.backgroundAttachment = "fixed";
+            body.style.backgroundImage = "url(" + bd + ")";
+        </script>
+    {% endif %}
     {% include '_blocks/_menu.html.twig' %}
-    <div class="container-fluid backgroundImageOverlay">
+    <div class="container-fluid {# backgroundImageOverlay #}">
         <div class="series-show user-series-show">
             <div class="header">
                 <div class="poster">

@@ -995,6 +995,11 @@ class SeriesController extends AbstractController
             foreach ($tv['seasons'] as $season) {
                 if (key_exists('vote_average', $season)) {
                     $userVotes[$season['season_number']]['avs'] = array_fill(0, $season['episode_count'], $season['vote_average']);
+                } else {
+                    $userVotes[$season['season_number']]['avs'] = array_fill(0, $season['episode_count'], 0);
+                }
+                if (!key_exists('ues', $userVotes[$season['season_number']])) {
+                    $userVotes[$season['season_number']]['ues'] = $season['episode_count'] ? [] : array_fill(0, $season['episode_count'], null);
                 }
             }
 
@@ -1068,6 +1073,7 @@ class SeriesController extends AbstractController
         $this->seriesRepository->save($series, true);
 
         list($seriesBackdrops, $seriesLogos, $seriesPosters) = $this->getSeriesImages($series);
+        $blurredPosterPath = $this->imageService->blurPoster($series->getPosterPath(), 8);
 
         if ($tv) {
             $userSeries = $this->updateUserSeries($userSeries, $tv);
@@ -1114,6 +1120,7 @@ class SeriesController extends AbstractController
         }
 
         $seriesArr = $series->toArray();
+        $seriesArr['blurredPosterPath'] = $blurredPosterPath;
         $seriesArr['userVotes'] = $userVotes;
         $seriesArr['schedules'] = $schedules;
         $seriesArr['emptySchedule'] = $emptySchedule;
@@ -1519,6 +1526,7 @@ class SeriesController extends AbstractController
         } else {
             $season['poster_path'] = $series->getPosterPath();
         }
+        $season['blurred_poster_path'] = $this->imageService->blurPoster($season['poster_path'], 8);
 
         $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
         $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
