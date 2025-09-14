@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\SeriesAdditionalOverview;
-use App\Entity\SeriesLocalizedOverview;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -32,10 +31,10 @@ class SeriesAdditionalOverviewRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(?SeriesLocalizedOverview $seriesLocalizedName): void
+    public function remove(?SeriesAdditionalOverview $overview): void
     {
-        if ($seriesLocalizedName) {
-            $this->em->remove($seriesLocalizedName);
+        if ($overview) {
+            $this->em->remove($overview);
             $this->em->flush();
         }
     }

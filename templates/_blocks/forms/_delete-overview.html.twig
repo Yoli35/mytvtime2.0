@@ -1,4 +1,4 @@
-<div class="delete-overview-form">
+<div class="delete-overview-form" popover id="delete-overview-form-container">
     <form class="form" action="" id="delete-overview-form">
         <div class="form-row">
             <div class="form-field">
@@ -8,7 +8,7 @@
         <div class="form-row">
             <div class="form-field">
                 <button type="button">{{ 'Cancel'|trans }}</button>
-                <button type="submit" value="delete">{{ 'Add'|trans }}</button>
+                <button type="submit" value="delete" class="delete">{{ 'Delete'|trans }}</button>
             </div>
         </div>
         <input type="hidden" name="overview-type" id="overview-type" value=""> {# localized|additional #}

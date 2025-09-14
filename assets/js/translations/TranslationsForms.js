@@ -41,10 +41,7 @@ export class TranslationsForms {
             gThis.displayForm(localizedNameForm);
         });
         lnCancel.addEventListener('click', function () {
-            localizedNameForm.classList.remove('active');
-            setTimeout(function () {
-                localizedNameForm.classList.remove('display');
-            }, 300);
+            gThis.hideForm(localizedNameForm);
         });
         lnDelete?.addEventListener('click', function (event) {
             event.preventDefault();
@@ -190,145 +187,138 @@ export class TranslationsForms {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
-            }).then(function (response) {
-                if (response.ok) {
-                    gThis.hideForm(overviewForm);
+            })
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.success) {
+                        gThis.hideForm(overviewForm);
 
-                    if (crud === 'edit') {
-                        const overviewDiv = document.querySelector('.' + type + '.overview[data-id="' + overviewId + '"]');
-                        const contentDiv = overviewDiv.querySelector('.content');
-                        const newContentText = overviewField.value;
-                        contentDiv.setAttribute('data-overview', newContentText);
-                        // replace \n by <br>
-                        //contentDiv.innerHTML = newContentText.replace(/\n/g, '<br>');
-                        contentDiv.textContent = newContentText;
+                        if (crud === 'edit') {
+                            const overviewDiv = document.querySelector('.' + type + '.overview[data-id="' + overviewId + '"]');
+                            const contentDiv = overviewDiv.querySelector('.content');
+                            const newContentText = overviewField.value;
+                            contentDiv.setAttribute('data-overview', newContentText);
+                            // replace \n by <br>
+                            contentDiv.innerHTML = newContentText.replace(/\n/g, '<br>');
+                            //contentDiv.textContent = newContentText;
 
-                        /*const toolsDiv = overviewDiv.querySelector('.tools');
-                        const sourceDiv = toolsDiv.querySelector('.source');
-                        if (source.value) {
-                            if (sourceDiv) {
-                                const sourceA = sourceDiv.querySelector('a');
-                                sourceA.href = source.value;
-                                sourceA.setAttribute('data-title', source.value);
-                                sourceA.textContent = source.value;
-                            } else {
-                                const sourceDiv = document.createElement('div');
-                                sourceDiv.classList.add('source');
-                                const sourceA = document.createElement('a');
-                                sourceA.href = source.value;
-                                sourceA.setAttribute('data-title', source.value);
-                                sourceA.target = '_blank';
-                                sourceA.rel = 'noopener noreferrer';
-                                sourceA.textContent = source.value;
-                                sourceDiv.appendChild(sourceA);
-                                toolsDiv.insertBefore(sourceDiv, toolsDiv.firstChild);
-                            }
-                        } else {
-                            if (sourceDiv) {
-                                sourceDiv.remove();
-                            }
-                        }*/
-                        return;
-                    }
+                            const toolsDiv = overviewDiv.querySelector('.tools');
+                            gThis.setSource(toolsDiv, data.source);
 
-                    // crud: add
-                    const infosDiv = document.querySelector('.infos');
-                    const infosContentDiv = infosDiv.querySelector('.infos-content');
-                    let overviewsDiv = infosContentDiv.querySelector('.' + type + '.overviews');
-
-                    const newId = response.id;
-                    /** @type {Source} */
-                    const sourceRecord = response.source;
-
-                    const overviewDiv = document.createElement('div');
-                    overviewDiv.classList.add(type, 'overview');
-                    const contentDiv = document.createElement('div');
-                    contentDiv.classList.add('content');
-                    contentDiv.setAttribute('data-overview', overviewField.value);
-                    contentDiv.innerHTML = overviewField.value.replace(/\n/g, '<br>');
-                    overviewDiv.appendChild(contentDiv);
-
-                    const toolsDiv = document.createElement('div');
-                    toolsDiv.classList.add('tools');
-                    if (sourceRecord) {
-                        const sourceDiv = document.createElement('div');
-                        sourceDiv.classList.add('source');
-                        if (sourceRecord.path) {
-                            const sourceA = document.createElement('a');
-                            sourceA.href = sourceRecord.path;
-                            sourceA.setAttribute('data-title', sourceRecord.name);
-                            sourceA.target = '_blank';
-                            sourceA.rel = 'noopener noreferrer';
-                            sourceDiv.appendChild(sourceA);
-                            if (sourceRecord.logoPath) {
-                                const sourceImg = document.createElement('img');
-                                sourceImg.src = sourceRecord.logoPath;
-                                sourceImg.alt = sourceRecord.name;
-                                sourceA.appendChild(sourceImg);
-                            } else {
-                                sourceA.textContent = sourceRecord.name;
-                            }
-                        } else {
-                            sourceDiv.textContent = sourceRecord.name;
+                            return;
                         }
-                        toolsDiv.appendChild(sourceDiv);
+
+                        // crud: add
+                        const infosDiv = document.querySelector('.infos');
+                        const infosContentDiv = infosDiv.querySelector('.infos-content');
+                        let overviewsDiv = infosContentDiv.querySelector('.' + type + '.overviews');
+
+                        const newId = data.id;
+                        /** @type {Source} */
+                        const sourceRecord = data.source;
+
+                        const overviewDiv = document.createElement('div');
+                        overviewDiv.classList.add(type, 'overview');
+                        overviewDiv.setAttribute('data-id', newId);
+                        const contentDiv = document.createElement('div');
+                        contentDiv.classList.add('content');
+                        contentDiv.setAttribute('data-overview', overviewField.value);
+                        contentDiv.innerHTML = overviewField.value.replace(/\n/g, '<br>');
+                        overviewDiv.appendChild(contentDiv);
+
+                        const toolsDiv = document.createElement('div');
+                        toolsDiv.classList.add('tools');
+                        gThis.setSource(toolsDiv, sourceRecord);
+
+                        const localeDiv = document.createElement('div');
+                        localeDiv.classList.add('locale');
+                        localeDiv.textContent = lang.toUpperCase();
+                        toolsDiv.appendChild(localeDiv);
+
+                        const editDiv = document.createElement('div');
+                        editDiv.classList.add('edit');
+                        editDiv.setAttribute('data-id', newId);
+                        editDiv.setAttribute('data-title', gThis.translations['Edit']);
+                        const penSvg = document.querySelector('#svgs').querySelector('#pen').querySelector('svg').cloneNode(true);
+                        editDiv.appendChild(penSvg);
+                        editDiv.addEventListener('click', gThis.editOverview);
+                        toolsDiv.appendChild(editDiv);
+
+                        const deleteDiv = document.createElement('div');
+                        deleteDiv.classList.add('delete');
+                        deleteDiv.setAttribute('data-id', newId);
+                        deleteDiv.setAttribute('data-title', gThis.translations['Delete']);
+                        const trashSvg = document.querySelector('#svgs').querySelector('#trash').querySelector('svg').cloneNode(true);
+                        deleteDiv.appendChild(trashSvg);
+                        deleteDiv.addEventListener('click', gThis.deleteOverview);
+                        toolsDiv.appendChild(deleteDiv);
+
+                        overviewDiv.appendChild(toolsDiv);
+
+                        overviewsDiv.appendChild(overviewDiv);
+                        gThis.toolTips.init(overviewDiv);
+
+                        overviewField.value = '';
                     }
-                    const localeDiv = document.createElement('div');
-                    localeDiv.classList.add('locale');
-                    localeDiv.textContent = lang.toUpperCase();
-                    toolsDiv.appendChild(localeDiv);
-
-                    const editDiv = document.createElement('div');
-                    editDiv.classList.add('edit');
-                    editDiv.setAttribute('data-id', newId);
-                    editDiv.setAttribute('data-title', gThis.translations['Edit']);
-                    const penSvg = document.querySelector('#svgs').querySelector('#pen').querySelector('svg').cloneNode(true);
-                    editDiv.appendChild(penSvg);
-                    editDiv.addEventListener('click', gThis.editOverview);
-                    toolsDiv.appendChild(editDiv);
-
-                    const deleteDiv = document.createElement('div');
-                    deleteDiv.classList.add('delete');
-                    deleteDiv.setAttribute('data-id', newId);
-                    deleteDiv.setAttribute('data-title', gThis.translations['Delete']);
-                    const trashSvg = document.querySelector('#svgs').querySelector('#pen').querySelector('svg').cloneNode(true);
-                    deleteDiv.appendChild(trashSvg);
-                    deleteDiv.addEventListener('click', gThis.deleteOverview);
-                    toolsDiv.appendChild(deleteDiv);
-
-                    overviewDiv.appendChild(toolsDiv);
-
-                    overviewsDiv.appendChild(overviewDiv);
-                    gThis.toolTips.init(overviewDiv);
-
-                    overviewField.value = '';
-                }
-            });
+                });
         });
         deleteOvDelete.addEventListener('click', function (event) {
             event.preventDefault();
 
             const overviewType = deleteOverviewForm.querySelector('#overview-type').value;
             const overviewId = deleteOverviewForm.querySelector('#overview-id').value;
-            fetch('/' + lang + '/' + type + '/overview/delete/' + overviewId, {
+            fetch('/' + lang + '/' + mediaType + '/overview/delete/' + overviewId, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({overviewType: overviewType})
-            }).then(function (response) {
-                if (response.ok) {
-                    gThis.hideForm(deleteOverviewForm);
-                    const overviewDiv = document.querySelector('.' + overviewType + '.overview[data-id="' + overviewId + '"]');
-                    overviewDiv.remove();
-                    const localizedOverviewDivs = document.querySelectorAll('.' + overviewType + '.overview');
-                    if (localizedOverviewDivs.length === 0) {
-                        document.querySelector('.' + overviewType + '-h4').remove();
-                        document.querySelector('.' + overviewType + '.overviews').remove();
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        gThis.hideForm(deleteOverviewForm);
+                        const overviewDiv = document.querySelector('.' + overviewType + '.overview[data-id="' + overviewId + '"]');
+                        overviewDiv.remove();
                     }
-                }
-            });
+                });
         });
+    }
+
+    setSource(toolsDiv, sourceRecord) {
+        if (sourceRecord) {
+            let sourceDiv = toolsDiv.querySelector('.source'), sourceExists = false;
+            if (!sourceDiv) {
+                sourceDiv = document.createElement('div');
+                sourceDiv.classList.add('source');
+            } else {
+                sourceDiv.innerHTML = "";
+                sourceExists = true;
+            }
+            if (sourceRecord.path) {
+                const sourceA = document.createElement('a');
+                sourceA.href = sourceRecord.path;
+                sourceA.setAttribute('data-title', sourceRecord.name);
+                sourceA.target = '_blank';
+                sourceA.rel = 'noopener noreferrer';
+                sourceDiv.appendChild(sourceA);
+                if (sourceRecord.logoPath) {
+                    const sourceImg = document.createElement('img');
+                    sourceImg.src = sourceRecord.logoPath;
+                    sourceImg.alt = sourceRecord.name;
+                    sourceA.appendChild(sourceImg);
+                } else {
+                    sourceA.textContent = sourceRecord.name;
+                }
+                gThis.toolTips.init(sourceDiv);
+            } else {
+                sourceDiv.textContent = sourceRecord.name;
+            }
+            if (!sourceExists) {
+                toolsDiv.appendChild(sourceDiv);
+            }
+        }
     }
 
     editOverview(e) {
@@ -359,6 +349,7 @@ export class TranslationsForms {
         }
         const submitButton = form.querySelector('button[type="submit"]');
         submitButton.textContent = gThis.translations['Edit'];
+        e.preventDefault();
         gThis.displayForm(overviewForm);
     }
 
@@ -372,20 +363,30 @@ export class TranslationsForms {
         const overviewId = deleteOverviewForm.querySelector('#overview-id');
         overviewType.value = type;
         overviewId.value = id;
+        e.preventDefault();
         gThis.displayForm(deleteOverviewForm);
+
     }
 
     displayForm(form) {
-        form.classList.add('display');
-        setTimeout(function () {
-            form.classList.add('active');
-        }, 0);
+        if (form.getAttribute('popover') === "") {
+            form.showPopover();
+        } else {
+            form.classList.add('display');
+            setTimeout(function () {
+                form.classList.add('active');
+            }, 0);
+        }
     }
 
     hideForm(form) {
-        form.classList.remove('active');
-        setTimeout(function () {
-            form.classList.remove('display');
-        }, 300);
+        if (form.getAttribute('popover') === "") {
+            form.hidePopover();
+        } else {
+            form.classList.remove('active');
+            setTimeout(function () {
+                form.classList.remove('display');
+            }, 300);
+        }
     }
 }

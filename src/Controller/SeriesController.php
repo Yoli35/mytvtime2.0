@@ -1681,11 +1681,9 @@ class SeriesController extends AbstractController
         }
 
         return $this->json([
-            'ok' => true,
-            'body' => [
-                'id' => $overviewId,
-                'source' => $source ? ['id' => $source->getId(), 'name' => $source->getName(), 'path' => $source->getPath(), 'logoPath' => $source->getLogoPath()] : null,
-            ]
+            'success' => true,
+            'id' => $overviewId,
+            'source' => $source ? ['id' => $source->getId(), 'name' => $source->getName(), 'path' => $source->getPath(), 'logoPath' => $source->getLogoPath()] : null,
         ]);
     }
 
@@ -1712,7 +1710,7 @@ class SeriesController extends AbstractController
         }
 
         return $this->json([
-            'ok' => true,
+            'success' => true,
         ]);
     }
 

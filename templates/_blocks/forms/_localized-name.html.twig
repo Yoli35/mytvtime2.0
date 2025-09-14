@@ -1,4 +1,4 @@
-<div class="localized-name-form">
+<div class="localized-name-form" popover id="localized-name-form-container">
     <form class="form" action="" id="localized-name-form">
         <div class="form-row">
             <div class="form-field">
@@ -12,7 +12,7 @@
             <div class="form-field">
                 <button type="button">{{ 'Cancel'|trans }}</button>
                 {% if media.localized_name %}
-                    <button type="submit" value="delete">{{ 'Delete'|trans }}</button>
+                    <button type="submit" value="delete" class="delete">{{ 'Delete'|trans }}</button>
                 {% endif %}
                 <button type="submit" value="add">{{ 'Add'|trans }}</button>
             </div>

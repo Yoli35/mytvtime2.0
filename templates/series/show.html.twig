@@ -88,12 +88,12 @@
                                         </div>
                                         <div class="tools">
                                             <div class="locale">{{ overview.locale|upper }}</div>
-                                            <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
+                                            <button class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}" popovertarget="overview-form-container">
                                                 {{ ux_icon('mdi:pencil') }}
-                                            </div>
-                                            <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
+                                            </button>
+                                            <button class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}" popovertarget="delete-overview-form-container">
                                                 {{ ux_icon('mdi:trash') }}
-                                            </div>
+                                            </button>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -114,12 +114,12 @@
                                                 </a>
                                             </div>
                                             <div class="locale">{{ overview.locale|upper }}</div>
-                                            <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
+                                            <button class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}" popovertarget="overview-form-container">
                                                 {{ ux_icon('mdi:pencil') }}
-                                            </div>
-                                            <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
+                                            </button>
+                                            <button class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}" popovertarget="delete-overview-form-container">
                                                 {{ ux_icon('mdi:trash') }}
-                                            </div>
+                                            </button>
                                         </div>
                                     </div>
                                 {% endfor %}
