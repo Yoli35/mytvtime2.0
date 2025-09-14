@@ -73,6 +73,9 @@ return [
     'PeopleStar' => [
         'path' => './assets/js/people/PeopleStar.js',
     ],
+    'Photos' => [
+        'path' => './assets/js/album/Photos.js',
+    ],
     'PosterHover' => [
         'path' => './assets/js/images/PosterHover.js',
     ],

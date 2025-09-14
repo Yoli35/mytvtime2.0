@@ -16,6 +16,7 @@ import {NavBar} from 'NavBar';
 import {NetworkAndProvider} from "NetworkAndProvider";
 import {PeopleShow} from "PeopleShow";
 import {PeopleStar} from "PeopleStar";
+import {Photos} from 'Photos';
 import {PosterHover} from 'PosterHover';
 import {Profile} from 'Profile';
 import {ProviderSelect} from 'ProviderSelect';
@@ -248,6 +249,11 @@ window.addEventListener("DOMContentLoaded", () => {
     const userAlbumShow = document.querySelector(".album-page");
     if (userAlbumShow) {
         new AlbumShow();
+    }
+
+    const photosPage = document.querySelector(".photos-page");
+    if (photosPage) {
+        new Photos();
     }
 
     const movieShow = document.querySelector(".movie-show");

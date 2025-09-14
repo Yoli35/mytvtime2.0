@@ -57,9 +57,9 @@
             <div class="wrapper">
                 {% for photo in photos %}
                     {% set id = photo.user.id %}
-                    <div class="photo">
+                    <div class="photo" data-id="{{ photo.id }}">
                         {#                    <a href="{{ path('app_album_photo', {id: photo.id}) }}" title="{{ 'View photo'|trans }}"> #}
-                        <img src="/album/{{ id }}/thumbnail{{ photo.imagePath }}" alt="{{ 'Photo'|trans }}"
+                        <img src="/albums/{{ id }}/thumbnail{{ photo.imagePath }}" alt="{{ 'Photo'|trans }}"
                              loading="lazy"
                              srcset="/albums/{{ id }}/mobile{{ photo.imagePath }} 360w, /albums/{{ id }}/576p{{ photo.imagePath }} 576w, /albums/{{ id }}/720p{{ photo.imagePath }} 720w">
                         {#                    </a> #}
@@ -91,6 +91,11 @@
                 {% endfor %}
             </div>
         </div>
+    </div>
+    <div id="svgs" style="display: none">
+        <div class="svg" id="arrow-left"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"  font-size="1.25em" height="16px" width="16px" aria-hidden="true"><path fill="currentColor" d="M20 11v2H8l5.5 5.5l-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5L8 11z"></path></svg></div>
+        <div class="svg" id="arrow-right"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"  font-size="1.25em" height="16px" width="16px" aria-hidden="true"><path fill="currentColor" d="M4 11v2h12l-5.5 5.5l1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5L16 11z"></path></svg></div>
+        <div class="svg" id="xmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"  font-size="1.25em" height="16px" width="16px" aria-hidden="true"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12z"></path></svg></div>
     </div>
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}
