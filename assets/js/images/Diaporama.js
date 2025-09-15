@@ -89,7 +89,8 @@ export class Diaporama {
         const imageSrcSet = e.currentTarget.getAttribute("srcset");
         const imgDiv = document.createElement("img");
         imgDiv.setAttribute("src", imageSrc);
-        imgDiv.setAttribute('srcset', imageSrcSet);
+        if (imageSrcSet)
+            imgDiv.setAttribute('srcset', imageSrcSet);
 
         if (count > 1) {
             srcArray.forEach((src, index) => {
@@ -102,7 +103,8 @@ export class Diaporama {
                 }
                 const img = document.createElement("img");
                 img.setAttribute("src", src);
-                img.setAttribute("srcset", srcsetArray[index]);
+                if (srcsetArray[index])
+                    img.setAttribute("srcset", srcsetArray[index]);
                 thumbnail.appendChild(img);
                 thumbnail.addEventListener("click", gThis.gotoImage);
                 thumbnails.appendChild(thumbnail);
@@ -212,8 +214,7 @@ export class Diaporama {
         gThis.thumbnailActivate(gThis.diaporamaIndex);
         const img = document.querySelector(".back-diapo").querySelector(".image").querySelector("img");
         img.setAttribute("src", gThis.diaporamaSrc[gThis.diaporamaIndex]);
-        img.setAttribute("srcset", gThis.diaporamaSrcset[gThis.diaporamaIndex]);
-        if (gThis.diaporamaSrcset[gThis.diaporamaIndex].length) {
+        if (gThis.diaporamaSrcset[gThis.diaporamaIndex]){
             img.setAttribute("srcset", gThis.diaporamaSrcset[gThis.diaporamaIndex]);
         } else {
             img.removeAttribute("srcset");
