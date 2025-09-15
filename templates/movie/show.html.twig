@@ -116,53 +116,56 @@
                     </div>
                 </div>
             </header>
-            <header>
-                <div class="select-languages">
-                    <label for="language-select">{{ 'Select a language'|trans }}
-                        <select name="language-select" id="language-select">
-                            <option value="">{{ 'Select a language'|trans }}</option>
-                            {% for iso, language in images.select %}
-                                <option value="{{ iso }}"{% if iso == app.locale %} selected{% endif %}>{{ language }}</option>
+            {% if images.counts|reduce((carry, c) => carry + c|length) %}
+                <header>
+                    <div class="select-languages">
+                        <label for="language-select">{{ 'Select a language'|trans }}
+                            <select name="language-select" id="language-select">
+                                {#<option value="">{{ 'Select a language'|trans }}</option>#}
+                                {% for iso, language in images.select %}
+                                    <option value="{{ iso }}"{% if iso == app.locale %} selected{% endif %}>{{ language }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    </div>
+                    {% set posters = images.posters|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
+                        <div class="poster-container">
+                            <h3>{{ 'Posters'|trans }} (<span class="poster-count">{{ posters|length }}</span>)</h3>
+                        <div class="posters">
+                            {% for poster in posters %}
+                                <div class="poster" data-title="{{ 'Poster'|trans }}" data-iso_639_1="{{ poster.iso_639_1 }}">
+                                    <img src="{{ images.poster_path['780w'] ~ poster.file_path }}" alt="{{ movie.title }}" loading="lazy"
+                                         srcset="{{ images.poster_path['780w'] ~ poster.file_path }} 780w, {{ images.poster_path['1080w'] ~ poster.file_path }} 1080w">
+                                </div>
                             {% endfor %}
-                        </select>
-                    </label>
-                </div>
-                {% set posters = images.posters|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
-                {% if posters|length %}
-                    <h3>{{ 'Posters'|trans }} ({{ posters|length }})</h3>
-                    <div class="posters">
-                        {% for poster in posters %}
-                            <div class="poster" data-title="{{ 'Poster'|trans }}" data-iso_639_1="{{ poster.iso_639_1 }}">
-                                <img src="{{ images.poster_path['780w'] ~ poster.file_path }}" alt="{{ movie.title }}" loading="lazy"
-                                     srcset="{{ images.poster_path['780w'] ~ poster.file_path }} 780w, {{ images.poster_path['1080w'] ~ poster.file_path }} 1080w">
-                            </div>
-                        {% endfor %}
+                        </div>
+                        </div>
+                    {% set backdrops = images.backdrops|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
+                    <div class="backdrop-container">
+                        <h3>{{ 'Backdrops'|trans }} (<span class="backdrop-count">{{ backdrops|length }}</span>)</h3>
+                        <div class="backdrops">
+                            {% for backdrop in backdrops %}
+                                <div class="backdrop" data-title="{{ 'Backdrop'|trans }}" data-iso_639_1="{{ backdrop.iso_639_1 }}">
+                                    <img src="{{ images.backdrop_path['1280w'] ~ backdrop.file_path }}" alt="{{ movie.title }}" loading="lazy"
+                                         srcset="{{ images.backdrop_path['780w'] ~ backdrop.file_path }} 780w, {{ images.backdrop_path['1280w'] ~ backdrop.file_path }} 1280w, {{ images.backdrop_path['1920w'] ~ backdrop.file_path }} 1920w">
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
-                {% endif %}
-                {% set backdrops = images.backdrops|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
-                {% if backdrops|length %}
-                    <h3>{{ 'Backdrops'|trans }} ({{ backdrops|length }})</h3>
-                    <div class="backdrops">
-                        {% for backdrop in backdrops %}
-                            <div class="backdrop" data-title="{{ 'Backdrop'|trans }}" data-iso_639_1="{{ backdrop.iso_639_1 }}">
-                                <img src="{{ images.backdrop_path['1280w'] ~ backdrop.file_path }}" alt="{{ movie.title }}" loading="lazy"
-                                srcset="{{ images.backdrop_path['780w'] ~ backdrop.file_path }} 780w, {{ images.backdrop_path['1280w'] ~ backdrop.file_path }} 1280w, {{ images.backdrop_path['1920w'] ~ backdrop.file_path }} 1920w">
-                            </div>
-                        {% endfor %}
+                    {% set logos = images.logos|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
+                    <div class="logo-container">
+                        <h3>{{ 'Logos'|trans }} (<span class="logo-count">{{ logos|length }}</span>)</h3>
+                        <div class="logos">
+                            {% for logo in logos %}
+                                <div class="logo" data-title="{{ 'Logo'|trans }}" data-iso_639_1="{{ logo.iso_639_1 }}">
+                                    <img src="{{ images.logo_path['500w'] ~ logo.file_path }}" alt="{{ movie.title }}" loading="lazy"
+                                    srcset="{{ images.logo_path['154w'] ~ logo.file_path }} 154w, {{ images.logo_path['185w'] ~ logo.file_path }} 185w, {{ images.logo_path['300w'] ~ logo.file_path }} 300w, {{ images.logo_path['500w'] ~ logo.file_path }} 500w, {{ images.logo_path['1000w'] ~ logo.file_path }} 1000w">
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
-                {% endif %}
-                {% set logos = images.logos|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
-                {% if logos|length %}
-                    <h3>{{ 'Logos'|trans }} ({{ logos|length }})</h3>
-                    <div class="logos">
-                        {% for logo in logos %}
-                            <div class="logo" data-title="{{ 'Logo'|trans }}" data-iso_639_1="{{ logo.iso_639_1 }}">
-                                <img src="{{ images.logo_path['500w'] ~ logo.file_path }}" alt="{{ movie.title }}" loading="lazy">
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </header>
+                </header>
+            {% endif %}
             <main>
                 <section>
                     <div class="details">
@@ -440,18 +443,31 @@
     </div>
     <div id="globs" style="display: none">
         {
-        "userMovieId": {{ userMovie.id }},
-        "tmdbId": {{ movie.id }},
-        "mediaType": "movie",
-        "images": {{ images|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+            "userMovieId": {{ userMovie.id }},
+            "tmdbId": {{ movie.id }},
+            "mediaType": "movie",
+            "title": "{{ movie.title|e('js') }}",
+            "images": {{ images|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
     <div id="svgs" style="display: none">
-        <div class="svg" id="arrow-left"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"  font-size="1.25em" height="16px" width="16px" aria-hidden="true"><path fill="currentColor" d="M20 11v2H8l5.5 5.5l-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5L8 11z"></path></svg></div>
-        <div class="svg" id="arrow-right"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"  font-size="1.25em" height="16px" width="16px" aria-hidden="true"><path fill="currentColor" d="M4 11v2h12l-5.5 5.5l1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5L16 11z"></path></svg></div>
-        <div class="svg" id="xmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"  font-size="1.25em" height="16px" width="16px" aria-hidden="true"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12z"></path></svg></div>
+        <div class="svg" id="arrow-left">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" font-size="1.25em" height="16px" width="16px" aria-hidden="true">
+                <path fill="currentColor" d="M20 11v2H8l5.5 5.5l-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5L8 11z"></path>
+            </svg>
+        </div>
+        <div class="svg" id="arrow-right">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" font-size="1.25em" height="16px" width="16px" aria-hidden="true">
+                <path fill="currentColor" d="M4 11v2h12l-5.5 5.5l1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5L16 11z"></path>
+            </svg>
+        </div>
+        <div class="svg" id="xmark">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" font-size="1.25em" height="16px" width="16px" aria-hidden="true">
+                <path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12z"></path>
+            </svg>
+        </div>
     </div>
     {% include('_blocks/_footer.html.twig') %}
 {% endblock %}

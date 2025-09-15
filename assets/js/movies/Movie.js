@@ -2,6 +2,7 @@ import {Keyword} from "Keyword";
 import {TranslationsForms} from "TranslationsForms";
 import {Diaporama} from "Diaporama";
 import {ToolTips} from "ToolTips";
+import {AverageColor} from "AverageColor";
 
 let gThis;
 
@@ -11,6 +12,8 @@ export class Movie {
      * @type {Object}
      * @property {number} userMovieId
      * @property {number} tmdbId
+     * @property {string} title
+     * @property {Array} images
      * @property {Array} providers
      * @property {Array} translations
      */
@@ -27,11 +30,16 @@ export class Movie {
 
         /** @var {Globs} */
         const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
+        this.images = jsonGlobsObject.images;
+        this.title = jsonGlobsObject.title;
         this.providers = jsonGlobsObject?.providers;
         this.userMovieId = jsonGlobsObject?.userMovieId;
         this.tmdbId = jsonGlobsObject?.tmdbId;
         this.translations = jsonGlobsObject?.translations;
         this.lang = document.documentElement.lang;
+
+        this.diaporama = new Diaporama();
+        this.tooltips = new ToolTips();
         gThis.init();
     }
 
@@ -42,6 +50,26 @@ export class Movie {
         if (!userActions) {
             return;
         }
+
+        /******************************************************************************
+         * Adjust text color / backdrop average color                                 *
+         ******************************************************************************/
+        const overviewsDiv = document.querySelector('.movie-show header .infos .overviews');
+        const img = document.querySelector('.movie-show header .infos .backdrop img')
+        const infosDiv = document.querySelector('.movie-show header .infos');
+        if (img) {
+            const averageColor = new AverageColor();
+            const color = averageColor.getColor(img);
+            if (color.lightness > 160) {
+                infosDiv.style.color = '#111';
+                overviewsDiv.style.setProperty('--overview-bg-hover', '#eeeeeecc')
+            } else {
+                infosDiv.style.color = '#eee';
+                overviewsDiv.style.setProperty('--overview-bg-hover', '#111111cc');
+            }
+        }
+
+
         const stars = userActions.querySelectorAll('.star');
         stars.forEach(function (star) {
             star.addEventListener('click', function () {
@@ -237,25 +265,106 @@ export class Movie {
         /******************************************************************************
          * Diaporama for posters, backdrops and logos                                 *
          ******************************************************************************/
-        const diaporama = new Diaporama();
-        const posters = document.querySelector('.posters')?.querySelectorAll('img');
-        const backdrops = document.querySelector('.backdrops')?.querySelectorAll('img');
-        const logos = document.querySelector('.logos')?.querySelectorAll('img');
-
-        diaporama.start(posters);
-        diaporama.start(backdrops);
-        diaporama.start(logos);
+        this.initDiaporama();
 
         /******************************************************************************
          * ToolTips for posters, backdrops and logos                                  *
          ******************************************************************************/
-        const tooltips = new ToolTips();
+        this.initToolTips();
+
+        /******************************************************************************
+         * Movie images / languages                                                   *
+         ******************************************************************************/
+        const languageSelect = document.querySelector('#language-select');
+        if (languageSelect) {
+            languageSelect.addEventListener('change', function () {
+                const iso_639_1 = languageSelect.value;
+                const posters = iso_639_1 === 'all' ? gThis.images.posters.slice() : gThis.images.posters.filter(poster => poster['iso_639_1'] === iso_639_1 || !poster['iso_639_1']);
+                const backdrops = iso_639_1 === 'all' ? gThis.images.backdrops.slice() : gThis.images.backdrops.filter(backdrop => backdrop['iso_639_1'] === iso_639_1 || !backdrop['iso_639_1']);
+                const logos = iso_639_1 === 'all' ? gThis.images.logos.slice() : gThis.images.logos.filter(logo => logo['iso_639_1'] === iso_639_1 || !logo['iso_639_1']);
+                const backdropsDiv = document.querySelector('.movie-show header .backdrops');
+                const backdropCountSpan = document.querySelector('.movie-show header .backdrop-count');
+                backdropCountSpan.innerText = backdrops.length.toString();
+                backdropsDiv.innerHTML = '';
+                backdrops.forEach(backdrop => {
+                    const backdropDiv = document.createElement('div');
+                    backdropDiv.classList.add('backdrop');
+                    backdropDiv.setAttribute('data-title', gThis.translations['Backdrop']);
+                    backdropDiv.setAttribute('data-iso_639_1', backdrop['iso_639_1']);
+                    const img = document.createElement('img');
+                    img.setAttribute('loading', 'lazy');
+                    img.src = gThis.images['backdrop_path']['780w'] + backdrop['file_path'];
+                    //
+                    img.srcset = gThis.images['backdrop_path']['780w'] + backdrop['file_path'] + " 780w, "
+                        + gThis.images['backdrop_path']['1280w'] + backdrop['file_path'] + " 1280w, "
+                        + gThis.images['backdrop_path']['1920w'] + backdrop['file_path'] + " 1920w";
+                    img.alt = gThis.title;
+                    backdropDiv.appendChild(img);
+                    backdropsDiv.appendChild(backdropDiv);
+                });
+                const logosDiv = document.querySelector('.movie-show header .logos');
+                const logoCountSpan = document.querySelector('.movie-show header .logo-count');
+                logoCountSpan.innerText = logos.length.toString();
+                logosDiv.innerHTML = '';
+                logos.forEach(logo => {
+                    const logoDiv = document.createElement('div');
+                    logoDiv.classList.add('logo');
+                    logoDiv.setAttribute('data-title', gThis.translations['Logo']);
+                    logoDiv.setAttribute('data-iso_639_1', logo['iso_639_1']);
+                    const img = document.createElement('img');
+                    img.setAttribute('loading', 'lazy');
+                    img.src = gThis.images['logo_path']['500w'] + logo['file_path'];
+                    img.srcset = gThis.images['logo_path']['154w'] + logo['file_path'] + " 154w, "
+                        + gThis.images['logo_path']['185w'] + logo['file_path'] + "185w, "
+                        + gThis.images['logo_path']['300w'] + logo['file_path'] + " 300w, "
+                        + gThis.images['logo_path']['500w'] + logo['file_path'] + " 500w, "
+                        + gThis.images['logo_path']['1000w'] + logo['file_path'] + " 1000w";
+                    img.alt = gThis.title;
+                    logoDiv.appendChild(img);
+                    logosDiv.appendChild(logoDiv);
+                });
+                const postersDiv = document.querySelector('.movie-show header .posters');
+                const posterCountSpan = document.querySelector('.movie-show header .poster-count');
+                posterCountSpan.innerText = posters.length.toString();
+                postersDiv.innerHTML = '';
+                posters.forEach(poster => {
+                    const posterDiv = document.createElement('div');
+                    posterDiv.classList.add('poster');
+                    posterDiv.setAttribute('data-title', gThis.translations['Backdrop']);
+                    posterDiv.setAttribute('data-iso_639_1', poster['iso_639_1']);
+                    const img = document.createElement('img');
+                    img.setAttribute('loading', 'lazy');
+                    img.src = gThis.images['poster_path']['780w'] + poster['file_path'];
+                    //
+                    img.srcset = gThis.images['poster_path']['780w'] + poster['file_path'] + " 780w, "
+                        + gThis.images['poster_path']['1080w'] + poster['file_path'] + " 1080w";
+                    img.alt = gThis.title;
+                    posterDiv.appendChild(img);
+                    postersDiv.appendChild(posterDiv);
+                });
+                gThis.initDiaporama();
+                gThis.initToolTips();
+            });
+        }
+    }
+
+    initDiaporama() {
+        const posters = document.querySelector('.posters')?.querySelectorAll('img');
+        const backdrops = document.querySelector('.backdrops')?.querySelectorAll('img');
+        const logos = document.querySelector('.logos')?.querySelectorAll('img');
+
+        gThis.diaporama.start(posters);
+        gThis.diaporama.start(backdrops);
+        gThis.diaporama.start(logos);
+    }
+
+    initToolTips() {
         const postersDiv = document.querySelector('.posters');
         const backdropsDiv = document.querySelector('.backdrops');
         const logosDiv = document.querySelector('.logos');
-        tooltips.init(postersDiv);
-        tooltips.init(backdropsDiv);
-        tooltips.init(logosDiv);
+        gThis.tooltips.init(postersDiv);
+        gThis.tooltips.init(backdropsDiv);
+        gThis.tooltips.init(logosDiv);
     }
 
     displayForm(form) {

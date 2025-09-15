@@ -208,7 +208,7 @@
             }
 
             .localized-h4, .additional-h4 {
-                /*color: var(--orange-70);*/
+                font-size: clamp(1.5rem, 1.5vw, 4rem);
                 font-weight: 300;
 
                 &.hide {
@@ -217,6 +217,8 @@
             }
 
             .overviews {
+                --overview-bg-hover-lightness: #111;
+
                 display: flex;
                 flex-direction: column;
                 gap: .5rem;
@@ -251,9 +253,14 @@
                             /*background-color: hsla(from var(--ardoise-70) h s l / .5);*/
                             border-radius: .5rem;
                             font-size: clamp(1.25rem, 1.25vw, 3rem);
+                            font-weight: 300;
                             line-height: 1.1em;
                             margin-block-end: unset;
                             padding: .5rem;
+
+                            &:hover {
+                                background-color: var(--overview-bg-hover);
+                            }
                         }
 
                         &:hover {
@@ -333,6 +340,19 @@
                 top: 32%;
             }
         }
+
+        .poster-container:not(:has(.poster)) {
+            display: none;
+        }
+
+        .backdrop-container:not(:has(.backdrop)) {
+            display: none;
+        }
+
+        .logo-container:not(:has(.logo)) {
+            display: none;
+        }
+
         .posters {
             display: flex;
             gap: 1rem;
