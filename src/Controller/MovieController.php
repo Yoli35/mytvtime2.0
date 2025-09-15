@@ -235,6 +235,7 @@ class MovieController extends AbstractController
                 $this->movieRepository->save($dbMovie, true);
             }
         }
+        $blurredPosterPath = $this->imageService->blurPoster($dbMovie->getPosterPath(), 'movies', 8);
 
         $this->getBelongToCollection($movie);
         $this->getCredits($movie);
@@ -266,6 +267,7 @@ class MovieController extends AbstractController
             'userMovie' => $userMovie,
             'movie' => $movie,
             'dbMovie' => $dbMovie,
+            'blurredPosterPath' => $blurredPosterPath,
             'providers' => $providers,
             'translations' => $translations,
         ]);
@@ -295,6 +297,7 @@ class MovieController extends AbstractController
             $this->imageService->saveImage("posters", $movie['belongs_to_collection']['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
             $this->imageService->saveImage("backdrops", $movie['belongs_to_collection']['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3), '/movies/');
         }
+        $blurredPosterPath = $this->imageService->blurPoster($movie['poster_path'], 'movies', 8);
         $this->getCredits($movie);
         $this->getProviders($movie, $country);
         $this->getReleaseDates($movie);
@@ -303,6 +306,7 @@ class MovieController extends AbstractController
         return $this->render('movie/tmdb.html.twig', [
             'movie' => $movie,
             'providers' => [],
+            'blurredPosterPath' => $blurredPosterPath,
             'translations' => [],
         ]);
     }

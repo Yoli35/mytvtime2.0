@@ -272,12 +272,12 @@ class ImageService extends AbstractController
         ];
     }
 
-    public function blurPoster(string $imagePath, int $blur = 3): ?string
+    public function blurPoster(string $imagePath, string $mediaPath, int $blur = 3): ?string
     {
         $kernelProjectDir = $this->getParameter('kernel.project_dir');
-        $fullPath = $kernelProjectDir . '/public/series/posters' . $imagePath;
+        $fullPath = $kernelProjectDir . "/public/$mediaPath/posters" . $imagePath;
         $imageDestPath = str_replace(['.jpg', '.jpeg', '.png'], '.webp', $imagePath);
-        $fullDestPath = $kernelProjectDir . '/public/series/posters-blurred' . $imageDestPath;
+        $fullDestPath = $kernelProjectDir . "/public/$mediaPath/posters_blurred" . $imageDestPath;
 
         // if the blurred image already exists, do nothing
         if (file_exists($fullDestPath)) {

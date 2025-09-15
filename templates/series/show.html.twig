@@ -14,7 +14,7 @@
 {% block body %}
     {% if series.blurredPosterPath %}
         <script>
-            const bd = '/series/posters-blurred{{ series.blurredPosterPath }}';
+            const bd = '/series/posters_blurred{{ series.blurredPosterPath }}';
             const body = document.querySelector("body");
             body.style.backgroundSize = "cover";
             body.style.backgroundPosition = "center";
@@ -346,7 +346,7 @@
 
             {{ include('_blocks/series/_schedules.html.twig') }}
 
-            {{ include('_blocks/series/_externals.html.twig') }}
+{#            {{ include('_blocks/series/_externals.html.twig') }}#}
 
             <div class="user-actions">
                 <h2>{{ 'User actions'|trans }}</h2>

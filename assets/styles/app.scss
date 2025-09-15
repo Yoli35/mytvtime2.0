@@ -171,15 +171,15 @@ body:has(dialog[open]) {
 }
 
 .backgroundImageOverlay {
-    -webkit-backdrop-filter: blur(256px) brightness(75%) saturate(85%);
-    backdrop-filter: blur(256px) brightness(75%) saturate(85%);
+    /*-webkit-backdrop-filter: blur(256px) brightness(75%) saturate(85%);
+    backdrop-filter: blur(256px) brightness(75%) saturate(85%);*/
     overflow: hidden;
     padding: 0;
     width: 100%;
 
-    &:has(dialog[open]) {
+    /*&:has(dialog[open]) {
         overflow: hidden;
-    }
+    }*/
 }
 
 .container-fluid:not(:has(.backgroundImageOverlay)) {
@@ -1167,7 +1167,7 @@ label:has(input[type="text"]) {
     .menu.users,
     .menu.user {
         backdrop-filter: blur(8px);
-        background-color: hsla(from var(--navbar-bg) h s l / 0.4);
+        background-color: hsla(from var(--navbar-bg) h s l / 0.8);
         border-radius: .25rem;
         display: none;
         flex-direction: column;

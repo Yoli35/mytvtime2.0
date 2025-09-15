@@ -7,7 +7,7 @@
 {% endblock %}
 {% block body %}
     <script>
-        const bd = '/series/posters{{ tv.poster_path ?? ('/../backdrops' ~ tv.backdrop_path) }}';
+        const bd = '/series/posters_blurred{{ tv.blurredPosterPath }}';
         const body = document.querySelector("body");
         body.style.backgroundSize = "cover";
         body.style.backgroundPosition = "center";
@@ -53,7 +53,7 @@
                 </div>
             </div>
 
-            {{ include('_blocks/series/_externals.html.twig') }}
+{#            {{ include('_blocks/series/_externals.html.twig') }}#}
 
             <div class="content column">
                 <div class="content-infos">

@@ -811,6 +811,7 @@ class SeriesController extends AbstractController
         }
         $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
         $this->imageService->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
+        $tv['blurredPosterPath'] = $this->imageService->blurPoster($tv['poster_path'], 'series', 8);
 
         $tv['credits'] = $this->castAndCrew($tv);
         $tv['networks'] = $this->networks($tv);
@@ -826,7 +827,7 @@ class SeriesController extends AbstractController
             'tv' => $tv,
             'localizedName' => $localizedName,
             'localizedOverview' => $localizedOverview,
-            'externals' => $this->getTMDBExternals($tv['name'], $tv['origin_country']),
+//            'externals' => $this->getTMDBExternals($tv['name'], $tv['origin_country']),
         ]);
     }
 
@@ -1073,7 +1074,7 @@ class SeriesController extends AbstractController
         $this->seriesRepository->save($series, true);
 
         list($seriesBackdrops, $seriesLogos, $seriesPosters) = $this->getSeriesImages($series);
-        $blurredPosterPath = $this->imageService->blurPoster($series->getPosterPath(), 8);
+        $blurredPosterPath = $this->imageService->blurPoster($series->getPosterPath(), 'series', 8);
 
         if ($tv) {
             $userSeries = $this->updateUserSeries($userSeries, $tv);
@@ -1249,7 +1250,7 @@ class SeriesController extends AbstractController
             'addLocationFormData' => $addLocationFormData,
             'fieldList' => ['series-id', 'tmdb-id', 'crud-type', 'crud-id', 'title', 'location', 'season-number', 'episode-number', 'description', 'latitude', 'longitude', 'radius', "source-name", "source-url"],
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
-            'externals' => $this->getExternals($series, $tvKeywords, $tvExternalIds, $request->getLocale()),
+//            'externals' => $this->getExternals($series, $tvKeywords, $tvExternalIds, $request->getLocale()),
             'translations' => $translations,
             'addBackdropForm' => $addBackdropForm->createView(),
             'addVideoForm' => $addVideoForm->createView(),
@@ -1526,7 +1527,7 @@ class SeriesController extends AbstractController
         } else {
             $season['poster_path'] = $series->getPosterPath();
         }
-        $season['blurred_poster_path'] = $this->imageService->blurPoster($season['poster_path'], 8);
+        $season['blurred_poster_path'] = $this->imageService->blurPoster($season['poster_path'], 'series', 8);
 
         $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
         $season['episodes'] = $this->seasonEpisodes($season, $userSeries);

@@ -12,7 +12,7 @@
 
 {% block body %}
     <script>
-        const bd = '/movies/posters{{ movie.poster_path }}';
+        const bd = '/movies/posters_blurred{{ blurredPosterPath }}';
         const body = document.querySelector("body");
         body.style.backgroundSize = "cover";
         body.style.backgroundPosition = "center";
