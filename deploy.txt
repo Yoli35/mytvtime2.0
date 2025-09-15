@@ -44,7 +44,7 @@ zip -rn .png:.webp:.jpg:.jpeg:.mp4 Archives.zip bin composer.json composer.lock 
 		importmap.php
 		package.json
 		symfony.lock > temp
-10- > unzip Archive.zip;
+10- > unzip Archives.zip;
 11- paste this in your remote terminal:
 
 clear;
