@@ -52,8 +52,9 @@
                     {% endif %}
                     <div class="infos">
                         <div class="content">
+                            {% set count = album.photos|length %}
                             <div class="name">{{ album.userCreated ? album.name : album.description }}</div>
-                            <div class="count">{{ album.photos|length }} {{ 'photos'|trans }}</div>
+                            <div class="count">{{ count }} {{ (count > 1 ? 'photos' : 'photo')|trans }}</div>
                             {% if album.userCreated %}
                                 <div class="range">{{ album.dateRangeString }}</div>
                             {% endif %}
