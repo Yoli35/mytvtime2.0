@@ -612,6 +612,26 @@ class TMDBService
         }
     }
 
+    public function getMovieImages(int $movieId, ?string $language = null): ?string
+    {
+        $request = "https://api.themoviedb.org/3/movie/$movieId/images";
+        if ($language) $request .= "?language=$language";
+        try {
+            $response = $this->client->request(
+                'GET',
+                $request,
+                ['auth_bearer' => $this->getBearer()]
+            );
+            try {
+                return $response->getContent();
+            } catch (Throwable $e) {
+                return json_encode(['error' => 'Response error: ' . $e->getMessage() . ' - code: ' . $e->getCode()]);
+            }
+        } catch (Throwable $e) {
+            return json_encode(['error' => 'Request error: ' . $e->getMessage() . ' - code: ' . $e->getCode()]);
+        }
+    }
+
     public function getMovieExtras(int $movieID, string $extra, ?int $page, ?string $include_image_language, ?string $language): ?string
     {
         $request = "https://api.themoviedb.org/3/movie/$movieID/$extra?api_key=$this->api_key";

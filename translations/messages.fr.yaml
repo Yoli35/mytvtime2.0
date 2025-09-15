@@ -213,6 +213,7 @@ Additional overviews: Aperçus supplémentaires
 After tomorrow: Après-demain
 Air date: 'Date de diffusion :'
 All episodes seen: Tous les épisodes vus
+All languages: Toutes les langues
 All seasons: Toutes les saisons
 Alternate schedules: Horaires alternatifs
 Are you sure you want to delete this overview?: Êtes-vous sûr de vouloir supprimer cet aperçu ?
@@ -1196,45 +1197,52 @@ Targeted Languages: Langues cibles
 Preferred Languages: Langues préférées
 
 # Movies
-Movies: Films
-movies: films
-Title: Titre
-My movies: Mes films
-poster: affiche
-backdrop: arrière-plan
-Genres: Genres
-Collection: Collection
-Runtime: Durée
-Note: Note
-Average: Moyenne
-Count: Nombre
-Release date: Date de sortie
-Recommendations: Recommandations
+2015: 2015
 Add this movie to your watchlist: Ajouter ce film à votre liste de suivi
-Premiere: Première
-Theatrical (limited): Cinéma (limité)
-Theatrical: Cinéma
+Average: Moyenne
+Backdrops: Arrière-plans
+Backdrop: Arrière-plan
+Collection: Collection
+Count: Nombre
+Delete this movie from your watchlist: Supprimer ce film de votre liste de suivi
 Digital: Numérique
+Genres: Genres
+Logos: Logos
+Logo: Logo
+Mark as viewed: Marquer comme vu
+Movie not found on TMDB: Film non trouvé sur le site The Movie Database
+Movies: Films
+My movies: Mes films
+Name of the movie: Nom du film
+Next video: Vidéo suivante
+Not found: Non trouvé
+Note: Note
 Physical: Physique
-TV: Télévision
-Released: Sorti
+Posters: Affiches
+Poster: Affiche
+Premiere: Première
+Previous video: Vidéo précédente
 Production companies: Sociétés de production
 Production countries: Pays de production
-Mark as viewed: Marquer comme vu
-Not found: Non trouvé
-Movie not found on TMDB: Film non trouvé sur le site The Movie Database
-Search on TMDB: Rechercher sur The Movie Database
-Delete this movie from your watchlist: Supprimer ce film de votre liste de suivi
-Previous video: Vidéo précédente
-Next video: Vidéo suivante
-Search a movie: Rechercher un film
-Name of the movie: Nom du film
+Recommendations: Recommandations
 Release date year: Année de sortie
-2015: 2015
+Release date: Date de sortie
+Released: Sorti
+Runtime: Durée
+Search a movie: Rechercher un film
+Search on TMDB: Rechercher sur The Movie Database
+Select a language: Sélectionner une langue
+TV: Télévision
+Theatrical (limited): Cinéma (limité)
+Theatrical: Cinéma
+Title: Titre
+Where to buy or rent: Où acheter ou louer
+Where to buy: Où acheter
 Where to flatrate: Où regarder en streaming
 Where to rent: Où louer
-Where to buy: Où acheter
-Where to buy or rent: Où acheter ou louer
+backdrop: arrière-plan
+movies: films
+poster: affiche
 
 # Map
 Add a shooting location: Ajouter un lieu de tournage

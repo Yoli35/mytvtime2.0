@@ -119,6 +119,15 @@
         display: flex;
         gap: .5rem;
 
+        &:has(.posters) {
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
+            border-radius: .5rem;
+            flex-direction: column;
+            gap: 1rem;
+            margin-block-start: 1rem;
+            padding: 1rem;
+        }
+
         .poster {
             align-items: center;
             aspect-ratio: 78 / 117;
@@ -315,6 +324,77 @@
                             gap: .125rem;
                         }
                     }
+                }
+            }
+        }
+
+        .select-languages {
+            label:has(select)::after {
+                top: 32%;
+            }
+        }
+        .posters {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: .5rem 0;
+            width: 100%;
+
+            .poster {
+                aspect-ratio: 78 / 117;
+                border-radius: .5rem;
+                height: 9rem;
+                width: auto;
+
+                img {
+                    border-radius: .5rem;
+                    height: 100%;
+                    object-fit: cover;
+                    width: auto;
+                }
+            }
+        }
+
+        .backdrops {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: .5rem 0;
+            width: 100%;
+
+            .backdrop {
+                aspect-ratio: 16 / 9;
+                border-radius: .5rem;
+                height: 9rem;
+                width: auto;
+
+                img {
+                    border-radius: .5rem;
+                    height: 100%;
+                    object-fit: cover;
+                    width: 100%;
+                }
+            }
+        }
+
+        .logos {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: .5rem 0;
+            width: 100%;
+
+            .logo {
+                aspect-ratio: 3 / 1;
+                border-radius: .5rem;
+                height: 6rem;
+                width: auto;
+
+                img {
+                    border-radius: .5rem;
+                    height: 100%;
+                    object-fit: contain;
+                    width: auto;
                 }
             }
         }

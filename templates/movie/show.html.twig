@@ -49,7 +49,7 @@
                                 <span title="{{ movie.release_date|date("d/m/Y") }}">({{ movie.release_date|date("Y") }})</span>
                             {% endif %}
                         </h1>
-                        {{  include('_blocks/translations/_tools.html.twig') }}
+                        {{ include('_blocks/translations/_tools.html.twig') }}
                     </div>
                     {{ include('_blocks/forms/_delete-overview.html.twig') }}
                     {{ include('_blocks/forms/_localized-name.html.twig', {media: movie}) }}
@@ -57,9 +57,9 @@
                     {% if movie.overview|length %}
                         <div class="movie-overview">{{ movie.overview|nl2br }}</div>
                     {% endif %}
-                        <div class="localized overviews">
-                            <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
-                            {% if movie.localized_overviews|length %}
+                    <div class="localized overviews">
+                        <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
+                        {% if movie.localized_overviews|length %}
                             {% for overview in movie.localized_overviews %}
                                 <div class="localized overview" data-id="{{ overview.id }}">
                                     <div class="content" data-overview="{{ overview.overview }}">
@@ -76,11 +76,11 @@
                                     </div>
                                 </div>
                             {% endfor %}
-                            {% endif %}
-                        </div>
-                        <div class="additional overviews">
-                            <h4 class="additional-h4">{{ 'Additional overviews'|trans }}</h4>
-                            {% if movie.additional_overviews|length %}
+                        {% endif %}
+                    </div>
+                    <div class="additional overviews">
+                        <h4 class="additional-h4">{{ 'Additional overviews'|trans }}</h4>
+                        {% if movie.additional_overviews|length %}
                             {% for overview in movie.additional_overviews %}
                                 <div class="additional overview" data-id="{{ overview.id }}">
                                     <div class="content" data-overview="{{ overview.overview }}">
@@ -112,9 +112,56 @@
                                     </div>
                                 </div>
                             {% endfor %}
-                            {% endif %}
-                        </div>
+                        {% endif %}
+                    </div>
                 </div>
+            </header>
+            <header>
+                <div class="select-languages">
+                    <label for="language-select">{{ 'Select a language'|trans }}
+                        <select name="language-select" id="language-select">
+                            <option value="">{{ 'Select a language'|trans }}</option>
+                            {% for iso, language in images.select %}
+                                <option value="{{ iso }}"{% if iso == app.locale %} selected{% endif %}>{{ language }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                </div>
+                {% set posters = images.posters|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
+                {% if posters|length %}
+                    <h3>{{ 'Posters'|trans }} ({{ posters|length }})</h3>
+                    <div class="posters">
+                        {% for poster in posters %}
+                            <div class="poster" data-title="{{ 'Poster'|trans }}" data-iso_639_1="{{ poster.iso_639_1 }}">
+                                <img src="{{ images.poster_path['780w'] ~ poster.file_path }}" alt="{{ movie.title }}" loading="lazy"
+                                     srcset="{{ images.poster_path['780w'] ~ poster.file_path }} 780w, {{ images.poster_path['1080w'] ~ poster.file_path }} 1080w">
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% set backdrops = images.backdrops|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
+                {% if backdrops|length %}
+                    <h3>{{ 'Backdrops'|trans }} ({{ backdrops|length }})</h3>
+                    <div class="backdrops">
+                        {% for backdrop in backdrops %}
+                            <div class="backdrop" data-title="{{ 'Backdrop'|trans }}" data-iso_639_1="{{ backdrop.iso_639_1 }}">
+                                <img src="{{ images.backdrop_path['1280w'] ~ backdrop.file_path }}" alt="{{ movie.title }}" loading="lazy"
+                                srcset="{{ images.backdrop_path['780w'] ~ backdrop.file_path }} 780w, {{ images.backdrop_path['1280w'] ~ backdrop.file_path }} 1280w, {{ images.backdrop_path['1920w'] ~ backdrop.file_path }} 1920w">
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% set logos = images.logos|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
+                {% if logos|length %}
+                    <h3>{{ 'Logos'|trans }} ({{ logos|length }})</h3>
+                    <div class="logos">
+                        {% for logo in logos %}
+                            <div class="logo" data-title="{{ 'Logo'|trans }}" data-iso_639_1="{{ logo.iso_639_1 }}">
+                                <img src="{{ images.logo_path['500w'] ~ logo.file_path }}" alt="{{ movie.title }}" loading="lazy">
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </header>
             <main>
                 <section>
@@ -359,31 +406,31 @@
                         {% if movie.credits.cast %}
                             <div class="cast">
                                 <div class="label">{{ 'Cast'|trans }}</div>
-                                    <div class="wrapper">
-                                        {% for cast in movie.credits.cast %}
-                                            {{ include('_blocks/movie/_cast.html.twig', {cast: cast, job: cast.character}) }}
-                                        {% endfor %}
-                                    </div>
+                                <div class="wrapper">
+                                    {% for cast in movie.credits.cast %}
+                                        {{ include('_blocks/movie/_cast.html.twig', {cast: cast, job: cast.character}) }}
+                                    {% endfor %}
+                                </div>
                             </div>
                         {% endif %}
                         {% if movie.credits.crew %}
                             <div class="cast">
                                 <div class="label">{{ 'Crew'|trans }}</div>
-                                    <div class="wrapper">
-                                        {% for crew in movie.credits.crew %}
-                                            {{ include('_blocks/movie/_cast.html.twig', {cast: crew, job: crew.job}) }}
-                                        {% endfor %}
-                                    </div>
+                                <div class="wrapper">
+                                    {% for crew in movie.credits.crew %}
+                                        {{ include('_blocks/movie/_cast.html.twig', {cast: crew, job: crew.job}) }}
+                                    {% endfor %}
+                                </div>
                             </div>
                         {% endif %}
                         {% if movie.recommendations|length %}
                             <div class="recommendations">
                                 <div class="label">{{ 'Recommendations'|trans }}</div>
-                                    <div class="wrapper">
-                                        {% for recommendation in movie.recommendations %}
-                                            {{ include('_blocks/movie/_recommandation.html.twig', {recommendation: recommendation}) }}
-                                        {% endfor %}
-                                    </div>
+                                <div class="wrapper">
+                                    {% for recommendation in movie.recommendations %}
+                                        {{ include('_blocks/movie/_recommandation.html.twig', {recommendation: recommendation}) }}
+                                    {% endfor %}
+                                </div>
                             </div>
                         {% endif %}
                     </div>
@@ -395,9 +442,16 @@
         {
         "userMovieId": {{ userMovie.id }},
         "tmdbId": {{ movie.id }},
+        "mediaType": "movie",
+        "images": {{ images|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
         "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
+    </div>
+    <div id="svgs" style="display: none">
+        <div class="svg" id="arrow-left"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"  font-size="1.25em" height="16px" width="16px" aria-hidden="true"><path fill="currentColor" d="M20 11v2H8l5.5 5.5l-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5L8 11z"></path></svg></div>
+        <div class="svg" id="arrow-right"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"  font-size="1.25em" height="16px" width="16px" aria-hidden="true"><path fill="currentColor" d="M4 11v2h12l-5.5 5.5l1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5L16 11z"></path></svg></div>
+        <div class="svg" id="xmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"  font-size="1.25em" height="16px" width="16px" aria-hidden="true"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12z"></path></svg></div>
     </div>
     {% include('_blocks/_footer.html.twig') %}
 {% endblock %}

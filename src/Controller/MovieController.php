@@ -37,6 +37,7 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Extra\Intl\IntlExtension;
 
 /** @method User|null getUser() */
 #[Route('/{_locale}/movie', name: 'app_movie_', requirements: ['_locale' => 'fr|en|ko'])]
@@ -267,10 +268,58 @@ class MovieController extends AbstractController
             'userMovie' => $userMovie,
             'movie' => $movie,
             'dbMovie' => $dbMovie,
+            'images' => $this->getImages($movie['id'], $locale),
             'blurredPosterPath' => $blurredPosterPath,
             'providers' => $providers,
             'translations' => $translations,
         ]);
+    }
+
+    private function getImages($movieId, string $locale): array
+    {
+        $images = json_decode($this->tmdbService->getMovieImages($movieId), true);
+        $imageLanguages = [];
+        foreach (['backdrops', 'logos', 'posters'] as $key) {
+            foreach ($images[$key] as $image) {
+                $imageLanguages[] = $image['iso_639_1'];
+            }
+        }
+        $imageLanguages = array_unique(array_filter($imageLanguages));
+        $languages = (new IntlExtension)->getLanguageNames($locale);
+        $languagesArr0 = ['all' => $this->translator->trans('All languages')];
+        $languagesArr1 = [];
+        foreach ($imageLanguages as $lang) {
+            $languagesArr1[$lang] = ucfirst($languages[$lang]);
+        }
+        asort($languagesArr1);
+        $images['select'] = array_merge($languagesArr0, $languagesArr1);
+
+        // backdrops: {i:0;s:4:"w300";i:1;s:4:"w780";i:2;s:5:"w1280";i:3;s:8:"original";}
+        $images['backdrop_path']['300w'] = $this->imageConfiguration->getUrl('backdrop_sizes', 0);
+        $images['backdrop_path']['780w'] = $this->imageConfiguration->getUrl('backdrop_sizes', 1);
+        $images['backdrop_path']['1280w'] = $this->imageConfiguration->getUrl('backdrop_sizes', 2);
+        $images['backdrop_path']['1920w'] = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
+        // posters: {i:0;s:3:"w92";i:1;s:4:"w154";i:2;s:4:"w185";i:3;s:4:"w342";i:4;s:4:"w500";i:5;s:4:"w780";i:6;s:8:"original";}
+        $images['poster_path']['92w'] = $this->imageConfiguration->getUrl('poster_sizes', 0);
+        $images['poster_path']['154w'] = $this->imageConfiguration->getUrl('poster_sizes', 1);
+        $images['poster_path']['185w'] = $this->imageConfiguration->getUrl('poster_sizes', 2);
+        $images['poster_path']['342w'] = $this->imageConfiguration->getUrl('poster_sizes', 3);
+        $images['poster_path']['500w'] = $this->imageConfiguration->getUrl('poster_sizes', 4);
+        $images['poster_path']['780w'] = $this->imageConfiguration->getUrl('poster_sizes', 5);
+        $images['poster_path']['1080w'] = $this->imageConfiguration->getUrl('poster_sizes', 6);
+        // logos: {i:0;s:3:"w45";i:1;s:3:"w92";i:2;s:4:"w154";i:3;s:4:"w185";i:4;s:4:"w300";i:5;s:4:"w500";i:6;s:8:"original";}
+        $images['logo_path']['45w'] = $this->imageConfiguration->getUrl('logo_sizes', 0);
+        $images['logo_path']['92w'] = $this->imageConfiguration->getUrl('logo_sizes', 1);
+        $images['logo_path']['154w'] = $this->imageConfiguration->getUrl('logo_sizes', 2);
+        $images['logo_path']['185w'] = $this->imageConfiguration->getUrl('logo_sizes', 3);
+        $images['logo_path']['300w'] = $this->imageConfiguration->getUrl('logo_sizes', 4);
+        $images['logo_path']['500w'] = $this->imageConfiguration->getUrl('logo_sizes', 5);
+        $images['logo_path']['1000w'] = $this->imageConfiguration->getUrl('logo_sizes', 6);
+
+//        dump([
+//            'images' => $images,
+//        ]);
+        return $images;
     }
 
     #[Route('/tmdb/{id}', name: 'tmdb', requirements: ['id' => '\d+'])]

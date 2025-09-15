@@ -1,5 +1,7 @@
 import {Keyword} from "Keyword";
 import {TranslationsForms} from "TranslationsForms";
+import {Diaporama} from "Diaporama";
+import {ToolTips} from "ToolTips";
 
 let gThis;
 
@@ -231,6 +233,29 @@ export class Movie {
          * Keyword translation                                                        *
          ******************************************************************************/
         new Keyword('movie');
+
+        /******************************************************************************
+         * Diaporama for posters, backdrops and logos                                 *
+         ******************************************************************************/
+        const diaporama = new Diaporama();
+        const posters = document.querySelector('.posters')?.querySelectorAll('img');
+        const backdrops = document.querySelector('.backdrops')?.querySelectorAll('img');
+        const logos = document.querySelector('.logos')?.querySelectorAll('img');
+
+        diaporama.start(posters);
+        diaporama.start(backdrops);
+        diaporama.start(logos);
+
+        /******************************************************************************
+         * ToolTips for posters, backdrops and logos                                  *
+         ******************************************************************************/
+        const tooltips = new ToolTips();
+        const postersDiv = document.querySelector('.posters');
+        const backdropsDiv = document.querySelector('.backdrops');
+        const logosDiv = document.querySelector('.logos');
+        tooltips.init(postersDiv);
+        tooltips.init(backdropsDiv);
+        tooltips.init(logosDiv);
     }
 
     displayForm(form) {
