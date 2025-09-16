@@ -1,4 +1,5 @@
 import mapboxgl from 'mapbox-gl';
+import { MapboxAddressAutofill, MapboxSearchBox, MapboxGeocoder, config } from '@mapbox/search-js-web'
 
 let gThis = null;
 
@@ -49,6 +50,30 @@ export class Map {
                 });
 
                 this.map.setConfigProperty('basemap', 'show3dObjects', true);
+
+                const searchBox = new MapboxSearchBox();
+                // set the mapbox access token, search box API options
+                searchBox.accessToken = mapboxgl.accessToken;
+                searchBox.options = {
+                    language: 'fr',
+                    proximity: 'auto',
+                };
+                // set the mapboxgl library to use for markers and enable the marker functionality
+                searchBox.mapboxgl = mapboxgl;
+                searchBox.marker = true;
+                searchBox.componentOptions = { allowReverse: true, flipCoordinates: true };
+                this.map.addControl(searchBox);
+
+                this.map.addControl(new mapboxgl.NavigationControl());
+                this.map.addControl(new mapboxgl.GeolocateControl({
+                    positionOptions: {
+                        enableHighAccuracy: true
+                    },
+                    trackUserLocation: true,
+                    showUserHeading: true
+                }));
+                this.map.addControl(new mapboxgl.ScaleControl());
+
                 /************************************************************************
                  * Fetch pois[, locations, photos ]                                     *
                  ************************************************************************/
@@ -115,16 +140,6 @@ export class Map {
             this.map.on('click', (e) => {
                 navigator.clipboard.writeText(`${e.lngLat.lat}, ${e.lngLat.lng}`).then(r => console.log(`A click event has occurred /*at ${e.lngLat}*/ ${r}`));
             });
-
-            this.map.addControl(new mapboxgl.NavigationControl());
-            this.map.addControl(new mapboxgl.GeolocateControl({
-                positionOptions: {
-                    enableHighAccuracy: true
-                },
-                trackUserLocation: true,
-                showUserHeading: true
-            }));
-            this.map.addControl(new mapboxgl.ScaleControl());
         }
 
         const initializeMapHandle = () => {

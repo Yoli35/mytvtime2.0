@@ -165,4 +165,28 @@ return [
     'nanoid' => [
         'version' => '3.3.11',
     ],
+    '@mapbox/search-js-web' => [
+        'version' => '1.3.0',
+    ],
+    '@mapbox/search-js-core' => [
+        'version' => '1.3.0',
+    ],
+    '@floating-ui/dom' => [
+        'version' => '0.5.4',
+    ],
+    'no-scroll' => [
+        'version' => '2.1.1',
+    ],
+    'focus-trap' => [
+        'version' => '6.9.4',
+    ],
+    '@mapbox/sphericalmercator' => [
+        'version' => '1.2.0',
+    ],
+    '@floating-ui/core' => [
+        'version' => '0.7.3',
+    ],
+    'tabbable' => [
+        'version' => '5.3.3',
+    ],
 ];
