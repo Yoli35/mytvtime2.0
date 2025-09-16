@@ -336,8 +336,21 @@
         }
 
         .select-languages {
-            label:has(select)::after {
-                top: 32%;
+            width: fit-content;
+
+            label {
+                select {
+                    appearance: none;
+                    background-color: var(--orange-40);
+                    border: 1px solid var(--orange-70);
+                    border-radius: 25rem;
+                    color: var(--ardoise-10);
+                    padding-block: 0.5rem;
+                }
+
+                &:has(select)::after {
+                    top: 32%;
+                }
             }
         }
 

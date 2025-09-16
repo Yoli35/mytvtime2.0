@@ -760,7 +760,7 @@ class MovieController extends AbstractController
         $languagesArr0 = ['all' => $this->translator->trans('All languages')];
         $languagesArr1 = [];
         foreach ($imageLanguages as $lang) {
-            $languagesArr1[$lang] = ucfirst($languages[$lang]);
+            $languagesArr1[$lang] = key_exists($lang, $languages) ? ucfirst($languages[$lang]) : $lang;
         }
         asort($languagesArr1);
         $images['select'] = array_merge($languagesArr0, $languagesArr1);
