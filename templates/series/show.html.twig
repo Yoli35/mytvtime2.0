@@ -351,7 +351,8 @@
             <div class="user-actions">
                 <h2>{{ 'User actions'|trans }}</h2>
                 <div class="wrapper">
-                    <div class="watch-links">
+                    {{ include('_blocks/_watch-links.html.twig', {type: 'series', media: series}) }}
+                    {#<div class="watch-links">
                         <div class="label">{{ 'Watch links'|trans }}</div>
                         {% for link in series.watchLinks %}
                             <div class="watch-link" data-id="{{ link.id }}">
@@ -440,10 +441,10 @@
                                     <button type="submit">{{ 'Add'|trans }}</button>
                                 </div>
                             </div>
-                            <input type="hidden" name="crud-type" id="crud-type" value="">{# create (new) | update (edit) | delete (remove) #}
-                            <input type="hidden" name="crud-id" id="crud-id" value="">{# id of updated watch link #}
+                            <input type="hidden" name="crud-type" id="crud-type" value="">#}{# create (new) | update (edit) | delete (remove) #}{#
+                            <input type="hidden" name="crud-id" id="crud-id" value="">#}{# id of updated watch link #}{#
                         </form>
-                    </div>
+                    </div>#}
                     <div class="rating">
                         <div class="rating-stars">
                             <div class="stars" data-trans-rating="Cancel rating|{{ 'Cancel rating'|trans }}" data-trans-star="star|{{ 'star'|trans }}" data-trans-stars="stars|{{ 'stars'|trans }}">
@@ -610,7 +611,7 @@
                         {% endif %}
                         {% if tv.keywords.results|length %}
                             <div class="fact keyword-block">
-                                {{ include('_blocks/series/_keywords.html.twig', {id: tv.id, keywords: tv.keywords.results, missing: tv.missing_translations}) }}
+                                {{ include('_blocks/_keywords.html.twig', {id: tv.id, keywords: tv.keywords.results, missing: tv.missing_translations}) }}
                             </div>
                         {% endif %}
                     </div>
@@ -901,9 +902,6 @@
             </div>
         </div>
     </div>
-    {% if tv.keywords.results|length %}
-        {{ include('_blocks/forms/_keyword-translation.html.twig') }}
-    {% endif %}
     {{ include('_blocks/forms/_add-location-form.html.twig', addLocationFormData) }}
 
     <div id="globs-map" style="display: none">
@@ -918,19 +916,19 @@
     </div>
     <div id="globs" style="display: none">{# |replace({'\'': '\\\'', '"': '\\"'}}) #}
         {
-        "seriesId": {{ series.id }},
-        "userSeriesId": {{ userSeries.id }},
-        "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "api": {
-        "directLinkCrud": {
-        "create": "{{ path('api_series_direct_link_create') }}",
-        "read": "{{ path('api_series_direct_link_read', {id: 0})|slice(0,-1) }}",
-        "update": "{{ path('api_series_direct_link_update', {id: 0})|slice(0,-1) }}",
-        "delete": "{{ path('api_series_direct_link_delete', {id: 0})|slice(0,-1) }}"
-        }
-        }
+            "seriesId": {{ series.id }},
+            "userSeriesId": {{ userSeries.id }},
+            "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "api": {
+                "directLinkCrud": {
+                    "create": "{{ path('api_watch_link_series_create') }}",
+                    "read": "{{ path('api_watch_link_series_read', {id: 0})|slice(0,-1) }}",
+                    "update": "{{ path('api_watch_link_series_update', {id: 0})|slice(0,-1) }}",
+                    "delete": "{{ path('api_watch_link_series_delete', {id: 0})|slice(0,-1) }}"
+                }
+            }
         }
     </div>
     <div id="svgs" style="display: none">
@@ -940,6 +938,7 @@
         <div class="svg" id="arrow-right">{{ ux_icon('mdi:arrow-right') }}</div>
         <div class="svg" id="xmark">{{ ux_icon('mdi:close') }}</div>
         <div class="svg" id="pen">{{ ux_icon('mdi:pencil') }}</div>
+        <div class="svg" id="copy">{{ux_icon('mdi:content-paste')}}</div>
         <div class="svg" id="trash">{{ ux_icon('mdi:trash') }}</div>
     </div>
     {% include '_blocks/_footer.html.twig' %}

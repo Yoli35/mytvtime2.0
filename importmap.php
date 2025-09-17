@@ -100,6 +100,9 @@ return [
     'Videos' => [
         'path' => './assets/js/videos/Videos.js',
     ],
+    'WatchLinkCrud' => [
+        'path' => './assets/js/watch-link/WatchLinkCrud.js',
+    ],
     '@symfony/stimulus-bundle' => [
         'path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js',
     ],

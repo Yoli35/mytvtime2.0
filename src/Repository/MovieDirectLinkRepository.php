@@ -25,4 +25,12 @@ class MovieDirectLinkRepository extends ServiceEntityRepository
             $this->em->flush();
         }
     }
+
+    public function delete(?MovieDirectLink $link): void
+    {
+        if ($link) {
+            $this->em->remove($link);
+            $this->em->flush();
+        }
+    }
 }

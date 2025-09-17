@@ -271,7 +271,7 @@
                                 {% if movie.keywords.keywords|length %}
                                     <div class="movie-keywords">
                                         <div class="content keyword-block">
-                                            {{ include('_blocks/movie/_keywords.html.twig', {id: movie.id, keywords: movie.keywords.keywords, missing: movie.missing_translations}) }}
+                                            {{ include('_blocks/_keywords.html.twig', {id: movie.id, keywords: movie.keywords.keywords, missing: movie.missing_translations}) }}
                                         </div>
                                     </div>
                                 {% endif %}
@@ -300,61 +300,7 @@
                             <div class="user-actions">
                                 <h2>{{ 'User actions'|trans }}</h2>
                                 <div class="wrapper">
-                                    <div class="watch-links">
-                                        <div class="label">{{ 'Watch links'|trans }}</div>
-                                        {% for link in movie.direct_links %}
-                                            <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
-                                                <div class="watch-link">
-                                                    {% if link.providerId %}
-                                                        <img src="{{ providers.logos[link.providerId] }}" alt="{{ providers.names[link.providerId] }}" data-title="{{ link.title ?? providers.names[link.providerId] }}">
-                                                    {% else %}
-                                                        <span>{{ link.title }}</span>
-                                                    {% endif %}
-                                                </div>
-                                            </a>
-                                        {% endfor %}
-                                        <div class="add-watch-link" data-title="{{ 'Add a watch link'|trans }}">
-                                            {{ ux_icon('mdi:plus') }}
-                                        </div>
-                                    </div>
-                                    <div class="watch-link-form">
-                                        <form class="form" action="" id="watch-link-form">
-                                            <div class="form-row">
-                                                <div class="form-field">
-                                                    <label for="provider">{{ 'Provider'|trans }}
-                                                        <select name="provider" id="provider">
-                                                            <option value="">{{ 'Select a provider'|trans }}</option>
-                                                            {% for name, id in providers.select %}
-                                                                <option value="{{ id }}">{{ name }}</option>
-                                                            {% endfor %}
-                                                        </select>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="form-row">
-                                                <div class="form-field">
-                                                    <label for="name">{{ 'Name'|trans }}
-                                                        <input type="text" name="name" id="name" required>
-                                                        <span class="error"></span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="form-row">
-                                                <div class="form-field">
-                                                    <label for="url">{{ 'URL'|trans }}
-                                                        <input type="url" name="url" id="url" required>
-                                                        <span class="error"></span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="form-row">
-                                                <div class="form-field">
-                                                    <button type="button">{{ 'Cancel'|trans }}</button>
-                                                    <button type="submit">{{ 'Add'|trans }}</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
+                                    {{ include('_blocks/_watch-links.html.twig', {type: 'movie', media: movie}) }}
                                     <div class="viewed-at" data-viewed="{{ userMovie.viewed }}">
                                         <div class="mark-as-viewed{% if userMovie.lastViewedAt %} viewed{% endif %}">{{ ux_icon('mdi:eye') }}</div>
                                         {% if userMovie.lastViewedAt %}
@@ -444,30 +390,30 @@
     <div id="globs" style="display: none">
         {
             "userMovieId": {{ userMovie.id }},
+            "movieId": {{ dbMovie.id }},
             "tmdbId": {{ movie.id }},
             "mediaType": "movie",
             "title": "{{ movie.title|e('js') }}",
             "images": {{ images|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+            "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "api": {
+                "directLinkCrud": {
+                    "create": "{{ path('api_watch_link_movie_create') }}",
+                    "read": "{{ path('api_watch_link_movie_read', {id: 0})|slice(0,-1) }}",
+                    "update": "{{ path('api_watch_link_movie_update', {id: 0})|slice(0,-1) }}",
+                    "delete": "{{ path('api_watch_link_movie_delete', {id: 0})|slice(0,-1) }}"
+                }
+            }
         }
     </div>
     <div id="svgs" style="display: none">
-        <div class="svg" id="arrow-left">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" font-size="1.25em" height="16px" width="16px" aria-hidden="true">
-                <path fill="currentColor" d="M20 11v2H8l5.5 5.5l-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5L8 11z"></path>
-            </svg>
-        </div>
-        <div class="svg" id="arrow-right">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" font-size="1.25em" height="16px" width="16px" aria-hidden="true">
-                <path fill="currentColor" d="M4 11v2h12l-5.5 5.5l1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5L16 11z"></path>
-            </svg>
-        </div>
-        <div class="svg" id="xmark">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" font-size="1.25em" height="16px" width="16px" aria-hidden="true">
-                <path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12z"></path>
-            </svg>
-        </div>
+        <div class="svg" id="arrow-left">{{ ux_icon('mdi:arrow-left') }}</div>
+        <div class="svg" id="arrow-right">{{ ux_icon('mdi:arrow-right') }}</div>
+        <div class="svg" id="xmark">{{ ux_icon('mdi:close') }}</div>
+        <div class="svg" id="pen">{{ ux_icon('mdi:pencil') }}</div>
+        <div class="svg" id="copy">{{ux_icon('mdi:content-paste')}}</div>
+        <div class="svg" id="trash">{{ ux_icon('mdi:trash') }}</div>
     </div>
     {% include('_blocks/_footer.html.twig') %}
 {% endblock %}

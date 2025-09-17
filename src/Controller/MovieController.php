@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Api\WatchLink;
 use App\DTO\MovieSearchDTO;
 use App\Entity\Movie;
 use App\Entity\MovieAdditionalOverview;
@@ -22,7 +23,7 @@ use App\Repository\MovieRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
 use App\Repository\UserMovieRepository;
-use App\Repository\WatchProviderRepository;
+//use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
@@ -60,7 +61,8 @@ class MovieController extends AbstractController
         private readonly TMDBService                       $tmdbService,
         private readonly TranslatorInterface               $translator,
         private readonly UserMovieRepository               $userMovieRepository,
-        private readonly WatchProviderRepository           $watchProviderRepository,
+        private readonly WatchLink                         $watchLinkApi,
+//        private readonly WatchProviderRepository           $watchProviderRepository,
     )
     {
     }
@@ -244,7 +246,7 @@ class MovieController extends AbstractController
         $this->getProductionCompanies($movie);
         $this->getReleaseDates($movie);
         $this->getRecommandations($movie);
-        $this->getDirectLinks($movie, $dbMovie);
+        $this->getWatchLinks($movie, $dbMovie);
         $this->getAdditionalOverviews($movie, $dbMovie);
         $this->getLocalizedName($movie, $dbMovie);
         $this->getLocalizedOverviews($movie, $dbMovie);
@@ -265,7 +267,7 @@ class MovieController extends AbstractController
             'Poster' => $this->translator->trans('Poster'),
             'Logo' => $this->translator->trans('Logo'),
         ];
-        $providers = $this->getWatchProviders($user->getPreferredLanguage() ?? $request->getLocale(), $user->getCountry() ?? 'FR');
+        $providers = $this->watchLinkApi->getWatchProviders($user->getCountry() ?? 'FR');
 
         return $this->render('movie/show.html.twig', [
             'userMovie' => $userMovie,
@@ -607,48 +609,6 @@ class MovieController extends AbstractController
         ]);
     }
 
-    #[Route('/keywords/save', name: 'keywords_save', methods: ['POST'])]
-    public function translationSave(Request $request): Response
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $tmdbId = $data['id'];
-        $keywords = $data['keywords'];
-        $language = $data['language'];
-
-        $keywordYaml = $this->keywordService->getTranslationLines($language);
-
-        $n = count($keywords);
-        for ($i = 0; $i < $n; $i++) {
-            $line = $keywords[$i]['original'] . ': ' . $keywords[$i]['translated'] . "\n";
-            $keywordYaml[] = $line;
-        }
-        usort($keywordYaml, fn($a, $b) => $a <=> $b);
-
-        $filename = '../translations/keywords.' . $language . '.yaml';
-        $res = fopen($filename, 'w');
-
-        foreach ($keywordYaml as $line) {
-            fputs($res, $line);
-        }
-        fclose($res);
-
-        $movieKeywords = json_decode($this->tmdbService->getMovieKeywords($tmdbId), true);
-
-        $missingKeywords = $this->keywordService->keywordsTranslation($movieKeywords['keywords'], $language);
-        $keywordBlock = $this->renderView('_blocks/movie/_keywords.html.twig', [
-            'id' => $tmdbId,
-            'keywords' => $movieKeywords['keywords'],
-            'missing' => $missingKeywords,
-        ]);
-
-        // fetch response
-        return $this->json([
-            'ok' => true,
-            'keywords' => $keywordBlock,
-        ]);
-    }
-
     #[Route('/fetch/search', name: 'fetch_search', methods: ['POST'])]
     public function fetchSearchMovies(Request $request): Response
     {
@@ -864,9 +824,9 @@ class MovieController extends AbstractController
         return $movieCollection;
     }
 
-    public function getDirectLinks(array &$movie, Movie $dbMovie): void
+    public function getWatchLinks(array &$movie, Movie $dbMovie): void
     {
-        $movie['direct_links'] = $dbMovie->getMovieDirectLinks()->toArray();
+        $movie['watchLinks'] = $dbMovie->getMovieDirectLinks()->toArray();
     }
 
     public function getAdditionalOverviews(array &$movie, Movie $dbMovie): void
@@ -889,39 +849,6 @@ class MovieController extends AbstractController
     public function getLocalizedOverviews(array &$movie, Movie $dbMovie): void
     {
         $movie['localized_overviews'] = $dbMovie->getMovieLocalizedOverviews()->toArray();
-    }
-
-    public function getWatchProviders(string $language, string $watchRegion): array
-    {
-        $providers = json_decode($this->tmdbService->getMovieWatchProviderList($language, $watchRegion), true);
-        $providers = $providers['results'];
-        if (count($providers) == 0) {
-            $providers = $this->watchProviderRepository->getWatchProviderList($watchRegion);
-        }
-        $watchProviders = [];
-        foreach ($providers as $provider) {
-            $watchProviders[$provider['provider_name']] = $provider['provider_id'];
-        }
-        $watchProviderNames = [];
-        foreach ($providers as $provider) {
-            $watchProviderNames[$provider['provider_id']] = $provider['provider_name'];
-        }
-        $watchProviderLogos = [];
-        foreach ($providers as $provider) {
-            $watchProviderLogos[$provider['provider_id']] = $this->imageConfiguration->getCompleteUrl($provider['logo_path'], 'logo_sizes', 2);
-        }
-        ksort($watchProviders);
-        $list = [];
-        foreach ($watchProviders as $key => $value) {
-            $list[] = ['provider_id' => $value, 'provider_name' => $key, 'logo_path' => $watchProviderLogos[$value]];
-        }
-
-        return [
-            'select' => $watchProviders,
-            'logos' => $watchProviderLogos,
-            'names' => $watchProviderNames,
-            'list' => $list,
-        ];
     }
 
     public function getSources(array &$movie): void

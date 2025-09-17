@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Api\WatchLink;
 use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\EpisodeLocalizedOverview;
@@ -115,6 +116,7 @@ class SeriesController extends AbstractController
         private readonly UserEpisodeRepository              $userEpisodeRepository,
         private readonly UserPinnedSeriesRepository         $userPinnedSeriesRepository,
         private readonly UserSeriesRepository               $userSeriesRepository,
+        private readonly WatchLink                          $watchLinkApi,
         private readonly WatchProviderRepository            $watchProviderRepository,
     )
     {
@@ -680,7 +682,7 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $series = [];
         $slugger = new AsciiSlugger();
-        $watchProviders = $this->getWatchProviders($user?->getCountry() ?? 'FR');
+        $watchProviders = $this->watchLinkApi->getWatchProviders($user?->getCountry() ?? 'FR');
         $keywords = $this->getKeywords();
         $userSeriesIds = array_column($this->userSeriesRepository->userSeriesTMDBIds($user), 'id');
 
@@ -1081,7 +1083,7 @@ class SeriesController extends AbstractController
             $tv['status_css'] = $this->statusCss($userSeries, $tv);
         }
 
-        $providers = $this->getWatchProviders($country);
+        $providers = $this->watchLinkApi->getWatchProviders($country);
 
         $schedules = $this->seriesSchedulesV2($user, $series, $tv);
 
@@ -1185,8 +1187,8 @@ class SeriesController extends AbstractController
 
         $filmingLocationsWithBounds = $this->getFilmingLocations($series);
 
-        $tvKeywords = $tv['keywords']['results'] ?? [];
-        $tvExternalIds = $tv['external_ids'] ?? [];
+//        $tvKeywords = $tv['keywords']['results'] ?? [];
+//        $tvExternalIds = $tv['external_ids'] ?? [];
 
         $seriesAround = $this->userSeriesRepository->getSeriesAround($user, $series->getId(), $locale);
         $previousSeries = null;
@@ -1544,7 +1546,7 @@ class SeriesController extends AbstractController
         $season['series_localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
         $season['series_additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
 
-        $providers = $this->getWatchProviders($country);
+        $providers = $this->watchLinkApi->getWatchProviders($country);
         $devices = $this->deviceRepository->deviceArray();
 
         // Nouvelle saison, premier épisode non vu
@@ -2277,48 +2279,6 @@ class SeriesController extends AbstractController
 
         return $this->json([
             'ok' => true,
-        ]);
-    }
-
-    #[Route('/keywords/save', name: 'keywords_save', methods: ['POST'])]
-    public function translationSave(Request $request): Response
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $tmdbId = $data['id'];
-        $keywords = $data['keywords'];
-        $language = $data['language'];
-
-        $keywordYaml = $this->keywordService->getTranslationLines($language);
-
-        $n = count($keywords);
-        for ($i = 0; $i < $n; $i++) {
-            $line = $keywords[$i]['original'] . ': ' . str_replace(':', '→', $keywords[$i]['translated']) . "\n";
-            $keywordYaml[] = $line;
-        }
-        usort($keywordYaml, fn($a, $b) => $a <=> $b);
-
-        $filename = '../translations/keywords.' . $language . '.yaml';
-        $res = fopen($filename, 'w');
-
-        foreach ($keywordYaml as $line) {
-            fputs($res, $line);
-        }
-        fclose($res);
-
-        $tvKeywords = json_decode($this->tmdbService->getTvKeywords($tmdbId), true);
-
-        $missingKeywords = $this->keywordService->keywordsTranslation($tvKeywords['results'], $language);
-        $keywordBlock = $this->renderView('_blocks/series/_keywords.html.twig', [
-            'id' => $tmdbId,
-            'keywords' => $tvKeywords['results'],
-            'missing' => $missingKeywords,
-        ]);
-
-        // fetch response
-        return $this->json([
-            'ok' => true,
-            'keywords' => $keywordBlock,
         ]);
     }
 
@@ -3977,8 +3937,7 @@ class SeriesController extends AbstractController
         }, $tv['networks']);
     }
 
-    public
-    function getSeason(array $seasons, int $seasonNumber): array
+    public function getSeason(array $seasons, int $seasonNumber): array
     {
         foreach ($seasons as $season) {
             if ($season['season_number'] == $seasonNumber) {
@@ -3988,8 +3947,7 @@ class SeriesController extends AbstractController
         return [];
     }
 
-    public
-    function getSeasonEpisodeCount(array $seasons, int $seasonNumber): int
+    public function getSeasonEpisodeCount(array $seasons, int $seasonNumber): int
     {
         foreach ($seasons as $season) {
             if ($season['season_number'] == $seasonNumber) {
@@ -3999,8 +3957,7 @@ class SeriesController extends AbstractController
         return 0;
     }
 
-    public
-    function seasonsPosterPath(array $seasons): array
+    public function seasonsPosterPath(array $seasons): array
     {
         $slugger = new AsciiSlugger();
         $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
@@ -4011,8 +3968,7 @@ class SeriesController extends AbstractController
         }, $seasons);
     }
 
-    public
-    function seasonEpisodes(array $season, UserSeries $userSeries): array
+    public function seasonEpisodes(array $season, UserSeries $userSeries): array
     {
         $user = $userSeries->getUser();
         $series = $userSeries->getSeries();
@@ -4143,8 +4099,7 @@ class SeriesController extends AbstractController
         return $seasonEpisodes;
     }
 
-    public
-    function getUserEpisode(array $userEpisodes, int $episodeNumber): ?array
+    public function getUserEpisode(array $userEpisodes, int $episodeNumber): ?array
     {
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
         foreach ($userEpisodes as $userEpisode) {
@@ -4169,8 +4124,7 @@ class SeriesController extends AbstractController
         return null;
     }
 
-    public
-    function getUserEpisodes(array $userEpisodes, int $episodeNumber): array
+    public function getUserEpisodes(array $userEpisodes, int $episodeNumber): array
     {
         $episodes = array_values(array_filter($userEpisodes, function ($userEpisode) use ($episodeNumber) {
             return $userEpisode['episode_number'] == $episodeNumber;
@@ -4276,8 +4230,7 @@ class SeriesController extends AbstractController
 //        return $overview;
 //    }
 
-    public
-    function watchProviders($tv, $country): array
+    public function watchProviders($tv, $country): array
     {
         $watchProviders = [];
         if (isset($tv['watch/providers']['results'][$country])) {
@@ -4317,44 +4270,43 @@ class SeriesController extends AbstractController
         ];
     }
 
-    public
-    function getWatchProviders($watchRegion): array
-    {
-        // May be unavailable - when Youtube was added for example
-        // TODO: make a command to regularly update db
-//        $providers = json_decode($this->tmdbService->getTvWatchProviderList($language, $watchRegion), true);
-//        $providers = $providers['results'];
-//        if (count($providers) == 0) {
-        $providers = $this->watchProviderRepository->getWatchProviderList($watchRegion);
+//    public function getWatchProviders($watchRegion): array
+//    {
+//        // May be unavailable - when Youtube was added for example
+//        // TODO: make a command to regularly update db
+////        $providers = json_decode($this->tmdbService->getTvWatchProviderList($language, $watchRegion), true);
+////        $providers = $providers['results'];
+////        if (count($providers) == 0) {
+//        $providers = $this->watchProviderRepository->getWatchProviderList($watchRegion);
+////        }
+//        $watchProviders = [];
+//        foreach ($providers as $provider) {
+//            $watchProviders[$provider['provider_name']] = $provider['provider_id'];
 //        }
-        $watchProviders = [];
-        foreach ($providers as $provider) {
-            $watchProviders[$provider['provider_name']] = $provider['provider_id'];
-        }
-        $watchProviderNames = [];
-        foreach ($providers as $provider) {
-            $watchProviderNames[$provider['provider_id']] = $provider['provider_name'];
-        }
-        $watchProviderLogos = [];
-        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
-        foreach ($providers as $provider) {
-            $watchProviderLogos[$provider['provider_id']] = $this->getProviderLogoFullPath($provider['logo_path'], $logoUrl);
-        }
-        uksort($watchProviders, function ($a, $b) {
-            return strcasecmp($a, $b);
-        });
-        $list = [];
-        foreach ($watchProviders as $key => $value) {
-            $list[] = ['provider_id' => $value, 'provider_name' => $key, 'logo_path' => $watchProviderLogos[$value]];
-        }
-
-        return [
-            'select' => $watchProviders,
-            'logos' => $watchProviderLogos,
-            'names' => $watchProviderNames,
-            'list' => $list,
-        ];
-    }
+//        $watchProviderNames = [];
+//        foreach ($providers as $provider) {
+//            $watchProviderNames[$provider['provider_id']] = $provider['provider_name'];
+//        }
+//        $watchProviderLogos = [];
+//        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
+//        foreach ($providers as $provider) {
+//            $watchProviderLogos[$provider['provider_id']] = $this->getProviderLogoFullPath($provider['logo_path'], $logoUrl);
+//        }
+//        uksort($watchProviders, function ($a, $b) {
+//            return strcasecmp($a, $b);
+//        });
+//        $list = [];
+//        foreach ($watchProviders as $key => $value) {
+//            $list[] = ['provider_id' => $value, 'provider_name' => $key, 'logo_path' => $watchProviderLogos[$value]];
+//        }
+//
+//        return [
+//            'select' => $watchProviders,
+//            'logos' => $watchProviderLogos,
+//            'names' => $watchProviderNames,
+//            'list' => $list,
+//        ];
+//    }
 
     public
     function getProviderLogoFullPath(?string $path, string $tmdbUrl): ?string

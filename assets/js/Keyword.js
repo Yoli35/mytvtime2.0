@@ -9,12 +9,13 @@ export class Keyword {
         gThis = this;
         this.toolTips = new ToolTips();
         this.maxLength = 0;
-        this.init(type); // type: 'series'|'movies'
+        this.init(type);
     }
 
     init(type) {
         const lang = document.querySelector("html").getAttribute("lang");
-        const keywordForm = document.querySelector('.keyword-translation-form');
+        const keywordFormContainer = document.querySelector('.keyword-translation-form');
+        const keywordForm = document.querySelector('#keyword-translation-form');
         if (!keywordForm) {
             return;
         }
@@ -28,11 +29,11 @@ export class Keyword {
                 if (keywordForm.classList.contains('active')) {
                     return;
                 }
+                gThis.displayForm(keywordFormContainer);
                 gThis.keywordInitFields(keywordForm, missingKeywords);
-                gThis.displayForm(keywordForm);
             });
         });
-        // Copier dans le presse papiers le contenu du "data-title"
+        // Copier dans le presse-papiers le contenu du "data-title"
         keywords.forEach(keyword => {
             if (keyword.classList.contains('missing')) {
                 return;
@@ -47,32 +48,31 @@ export class Keyword {
             });
         });
         keywordFormsCancel.addEventListener('click', function () {
-            gThis.hideForm(keywordForm);
+            gThis.hideForm(keywordFormContainer);
         });
         keywordFormsSubmit.addEventListener('click', function (event) {
             event.preventDefault();
 
             const language = keywordForm.querySelector('#language');
-            const fields = keywordForm.querySelectorAll('.field');
+            const inputs = keywordForm.querySelectorAll('input[id^="translated"]');
             const tvId = keywordsDiv.getAttribute('data-id');
             const translations = [];
-            fields.forEach(field => {
-                const original = field.querySelector('input').getAttribute('data-original');
-                const translated = field.querySelector('input').value;
+            inputs.forEach(input => {
+                const original = input.getAttribute('data-original');
+                const translated = input.value;
                 translations.push({original: original, translated: translated});
             });
-            fetch('/' + lang + '/' + type + '/keywords/save', {
+            fetch('/api/keywords/save', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({id: tvId, language: language.value, keywords: translations})
+                body: JSON.stringify({type: type, id: tvId, language: language.value, keywords: translations})
             })
                 .then((response) => response.json())
                 .then(data => {
-                    console.log({data});
-                    gThis.hideForm(keywordForm);
-                    const factDiv = document.querySelector(type==='series'?'.fact.keyword-block':'.content.keyword-block');
+                    gThis.hideForm(keywordFormContainer);
+                    const factDiv = document.querySelector('.keyword-block');
                     factDiv.innerHTML = data.keywords;
                     gThis.toolTips.init(factDiv);
                 });
@@ -80,82 +80,90 @@ export class Keyword {
     }
 
     keywordInitFields(form, missingKeywords) {
-        const content = form.querySelector(".form-body");
+        const buttons = form.querySelector("#keyword-translation-buttons");
+        const rows = form.querySelectorAll('.form-row:not([id="keyword-translation-buttons"])')
         let values = [];
-        content.innerHTML = '';
+        rows.forEach(row => {
+            row.remove();
+        });
 
-        gThis.keywordTranslationSelect(content);
+        gThis.keywordTranslationSelect(buttons);
 
         missingKeywords.forEach((keyword) => {
             values.push(keyword.textContent);
             gThis.maxLength = Math.max(gThis.maxLength, keyword.textContent.length);
         });
-        console.log({values});
-        gThis.keywordTranslationFields(content, values);
+        gThis.keywordTranslationFields(buttons, values);
     }
 
-    keywordTranslationFields(content, keywords) {
+    keywordTranslationFields(buttons, keywords) {
         let index = 1;
-        let fields = '';
         keywords.forEach(keyword => {
-            console.log(keyword);
             keyword = keyword.trim();
+            const row = document.createElement("div");
+            row.classList.add('form-row');
             const field = ' \
-            <div class="field">\n \
-                <div class="translation">\n \
-                    <label for="translated-' + index + '"><div class="keyword">' + keyword + '</div>\n \
+                <div class="form-field">\n \
+                    <label for="translated-' + index + '">\n \
+                        <div class="keyword-translation-label">' + keyword + '</div>\n \
                         <input id="translated-' + index + '" type="text" data-original="' + keyword + '" value="' + keyword + '">\n \
                     </label>\n \
-                </div>\n \
             </div>\n';/* style="width: ' + gThis.maxLength + 'ch"*/
             index++;
-            fields += field;
+            row.innerHTML = field;
+            buttons.parentNode.insertBefore(row, buttons);
         });
-        let div = document.createElement("div");
-        div.classList.add("fields");
-        div.innerHTML = fields;
-        content.appendChild(div);
     }
 
-    keywordTranslationSelect(content) {
+    keywordTranslationSelect(buttons) {
         const locale = document.querySelector("html").getAttribute("lang");
         const languages = {
             "en": [["fr", "🇫🇷 French"], ["en", "🇬🇧 English"], ["kr", "🇰🇷 Korean"]],
             "fr": [["fr", "🇫🇷 Français"], ["en", "🇬🇧 Anglais"], ["kr", "🇰🇷 Coréen"]],
-            "kr": [["kr", "🇫🇷 한국어"], ["en", "🇬🇧 영어"], ["fr", "🇰🇷 프랑스어"]]
+            "kr": [["ko", "🇫🇷 한국어"], ["en", "🇬🇧 영어"], ["fr", "🇰🇷 프랑스어"]]
         };
         const label = {
             "en": "Language:",
             "fr": "Langue :",
-            "kr": "언어 :"
+            "ko": "언어 :"
         };
+        const row = document.createElement("div");
+        row.classList.add('form-row');
         let select = ' \
-            <label for="language">' + label[locale] + '&nbsp;\n \
-                <select id="language">\n';
+                <div class="form-field">\n \
+                    <label for="language">' + label[locale] + '&nbsp;\n \
+                        <select id="language">\n';
         languages[locale].forEach(language => {
             select += ' \
-                    <option value="' + language[0] + '"' + (language[0] === locale ? ' selected' : '') + '>' + language[1] + '</option>\n';
+                            <option value="' + language[0] + '"' + (language[0] === locale ? ' selected' : '') + '>' + language[1] + '</option>\n';
         });
         select += '\
-                </select>\n \
-            </label>\n';
-        let div = document.createElement("div");
-        div.classList.add("language");
-        div.innerHTML = select;
-        content.appendChild(div);
+                        </select>\n \
+                    </label>\n \
+            </div>\n';
+        row.innerHTML = select;
+        buttons.parentNode.insertBefore(row, buttons)
     }
 
     displayForm(form) {
-        form.classList.add('display');
-        setTimeout(function () {
-            form.classList.add('active');
-        }, 0);
+        if (form.getAttribute('popover') === "") {
+            form.showPopover();
+        } else {
+            form.classList.add('display');
+            setTimeout(function () {
+                form.classList.add('active');
+            }, 0);
+        }
     }
 
     hideForm(form) {
-        form.classList.remove('active');
-        setTimeout(function () {
-            form.classList.remove('display');
-        }, 300);
+        if (form.getAttribute('popover') === "") {
+            form.hidePopover();
+        } else {
+            form.classList.remove('active');
+            setTimeout(function () {
+                form.classList.remove('display');
+            }, 300);
+        }
     }
 }

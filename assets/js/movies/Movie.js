@@ -3,6 +3,7 @@ import {TranslationsForms} from "TranslationsForms";
 import {Diaporama} from "Diaporama";
 import {ToolTips} from "ToolTips";
 import {AverageColor} from "AverageColor";
+import {WatchLinkCrud} from "WatchLinkCrud";
 
 let gThis;
 
@@ -11,11 +12,13 @@ export class Movie {
      * @typedef Globs
      * @type {Object}
      * @property {number} userMovieId
+     * @property {number} movieId
      * @property {number} tmdbId
      * @property {string} title
      * @property {Array} images
      * @property {Array} providers
      * @property {Array} translations
+     * @property {Array} api
      */
     /**
      * @typedef Source
@@ -32,11 +35,13 @@ export class Movie {
         const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
         this.images = jsonGlobsObject.images;
         this.title = jsonGlobsObject.title;
+        this.movieId = jsonGlobsObject.movieId;
         this.providers = jsonGlobsObject?.providers;
         this.userMovieId = jsonGlobsObject?.userMovieId;
         this.tmdbId = jsonGlobsObject?.tmdbId;
         this.translations = jsonGlobsObject?.translations;
         this.lang = document.documentElement.lang;
+        this.api = jsonGlobsObject.api;
 
         this.diaporama = new Diaporama();
         this.tooltips = new ToolTips();
@@ -144,90 +149,17 @@ export class Movie {
             });
         });
 
-        const addWatchLink = document.querySelector('.add-watch-link');
-        const watchLinkForm = document.querySelector('.watch-link-form');
-        const form = document.querySelector('#watch-link-form');
-        const cancel = form.querySelector('button[type="button"]');
-        const submit = form.querySelector('button[type="submit"]');
+        /******************************************************************************
+         * Watch links: add, update, delete                                           *
+         ******************************************************************************/
+        if (userActions) {
+            new WatchLinkCrud({'mediaType': 'movie', 'mediaId': this.movieId, 'api': this.api, 'providers': this.providers, 'translations': this.translations})
+        }
 
-        addWatchLink.addEventListener('click', function () {
-            watchLinkForm.classList.add('display');
-            setTimeout(function () {
-                watchLinkForm.classList.add('active');
-            }, 0);
-        });
-        cancel.addEventListener('click', function () {
-            watchLinkForm.classList.remove('active');
-            setTimeout(function () {
-                watchLinkForm.classList.remove('display');
-            }, 300);
-        });
-        submit.addEventListener('click', function (event) {
-            event.preventDefault();
-
-            const provider = form.querySelector('#provider');
-            const name = form.querySelector('#name');
-            const url = form.querySelector('#url');
-            const errors = form.querySelectorAll('.error');
-            errors.forEach(function (error) {
-                error.textContent = '';
-            });
-            if (!provider.value) {
-                provider.value = null;
-            }
-            if (!name.value) {
-                name.nextElementSibling.textContent = gThis.translations['This field is required'];
-            }
-            if (!url.value) {
-                url.nextElementSibling.textContent = gThis.translations['This field is required'];
-            }
-            if (name.value && url.value) {
-                fetch('/' + gThis.lang + '/movie/add/direct/link/' + gThis.userMovieId, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({provider: provider.value, title: name.value, url: url.value})
-                    }
-                ).then(function (response) {
-                    if (response.ok) {
-                        watchLinkForm.classList.remove('active');
-                        setTimeout(function () {
-                            watchLinkForm.classList.remove('display');
-                        }, 300);
-                        const watchLinks = document.querySelector('.watch-links');
-                        const newLink = document.createElement('a');
-                        newLink.href = url.value;
-                        newLink.target = '_blank';
-                        newLink.rel = 'noopener noreferrer';
-                        if (provider.value) {
-                            const watchLink = document.createElement('div');
-                            watchLink.classList.add('watch-link');
-                            const img = document.createElement('img');
-                            img.src = gThis.providers.logos[provider.value];
-                            img.alt = gThis.providers.names[provider.value];
-                            img.setAttribute('data-title', name.value);
-                            watchLink.appendChild(img);
-                            newLink.appendChild(watchLink);
-                        } else {
-                            const watchLink = document.createElement('div');
-                            watchLink.classList.add('watch-link');
-                            const span = document.createElement('span');
-                            span.textContent = name.value;
-                            watchLink.appendChild(span);
-                            newLink.appendChild(watchLink);
-                        }
-                        watchLinks.insertBefore(newLink, watchLinks.lastElementChild);
-                        provider.value = '';
-                        name.value = '';
-                        url.value = '';
-                    }
-                });
-            }
-        });
-
+        /******************************************************************************
+         * Mark as viewed                                                             *
+         ******************************************************************************/
         const viewedAtDiv = userActions.querySelector('.viewed-at');
-
         viewedAtDiv.addEventListener('click', function () {
             const viewed = viewedAtDiv.getAttribute('data-viewed');
             fetch('/' + gThis.lang + '/movie/viewed/' + gThis.userMovieId,
