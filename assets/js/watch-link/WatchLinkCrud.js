@@ -1,3 +1,5 @@
+import {ToolTips} from "ToolTips";
+
 let gThis;
 
 export class WatchLinkCrud {
@@ -10,6 +12,8 @@ export class WatchLinkCrud {
         this.providers = options.providers;
         this.translations = options.translations;
         this.svgs = document.querySelector('div#svgs');
+
+        this.toolTips = new ToolTips();
 
         this.init();
     }
