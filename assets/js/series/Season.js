@@ -852,14 +852,15 @@ export class Season {
 
     nowEpisode(e, episodeId = null) { // Ajuste la date de visionnage à maintenant
         gThis.toolTips.hide();
-        const selector = episodeId ? '.remove-this-episode[data-id="' + episodeId + '"]' : null;
+        const selector = episodeId ? '.remove-this-episode[data-ue-id="' + episodeId + '"]' : null;
         const episode = episodeId ? document.querySelector(selector) : e.currentTarget;
         const sId = episode.getAttribute('data-show-id');
         const id = episode.getAttribute('data-id');
         const episodeNumber = episode.getAttribute('data-e-number');
         const seasonNumber = episode.getAttribute('data-s-number');
+        if (!episodeId) episode.getAttribute('data-ue-id');
 
-        fetch('/' + gThis.lang + '/series/episode/touch/' + id, {
+        fetch('/' + gThis.lang + '/series/episode/touch/' + episodeId, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
