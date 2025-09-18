@@ -3883,12 +3883,16 @@ class SeriesController extends AbstractController
     {
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 5);
         $ids = array_column($tv['networks'], 'id');
+        $networkDbs = $this->networkRepository->findBy(['networkId' => $ids]);
 
         $now = $this->now();
 
         foreach ($tv['networks'] as $tvNetwork) {
             $id = $tvNetwork['id'];
-            $networkDb = $this->networkRepository->findOneBy(['networkId' => $id]);
+            /** @var Network $networkDb */
+            $arr = array_filter($networkDbs, fn($n) => $n->getNetworkId() == $id);//$this->networkRepository->findOneBy(['networkId' => $id]);
+            $networkDb = array_values($arr)[0] ?? null;
+//            dump($networkDb);
             if (!$networkDb) {
                 $tmdbNetwork = json_decode($this->tmdbService->getNetworkDetails($id), true);
 
@@ -3897,8 +3901,8 @@ class SeriesController extends AbstractController
                     continue;
                 }
                 $networkDb = new Network($tmdbNetwork['logo_path'], $tmdbNetwork['name'], $id, $tmdbNetwork['origin_country'], $now);
-                $networkDb->setHeadquarters($tmdbNetwork['headquarters'] ?? null);
-                $networkDb->setHomepage($tmdbNetwork['homepage'] ?? null);
+                $networkDb->setHeadquarters($tmdbNetwork['headquarters']);
+                $networkDb->setHomepage($tmdbNetwork['homepage']);
                 $this->networkRepository->save($networkDb);
                 $this->addFlash('success', $this->translator->trans('network.added') . ' → ' . $networkDb->getName());
             } else {
@@ -3910,11 +3914,11 @@ class SeriesController extends AbstractController
                         $this->addFlash('error', $this->translator->trans('network.not_found') . ' → ' . $networkDb->getName() . ' (ID: ' . $networkDb->getNetworkId() . ')');
                         continue;
                     }
-                    $networkDb->setHeadquarters($tmdbNetwork['headquarters'] ?? null);
-                    $networkDb->setHomepage($tmdbNetwork['homepage'] ?? null);
-                    $networkDb->setLogoPath($tmdbNetwork['logo_path'] ?? null);
-                    $networkDb->setName($tmdbNetwork['name'] ?? null);
-                    $networkDb->setOriginCountry($tmdbNetwork['origin_country'] ?? null);
+                    $networkDb->setHeadquarters($tmdbNetwork['headquarters']);
+                    $networkDb->setHomepage($tmdbNetwork['homepage']);
+                    $networkDb->setLogoPath($tmdbNetwork['logo_path']);
+                    $networkDb->setName($tmdbNetwork['name']);
+                    $networkDb->setOriginCountry($tmdbNetwork['origin_country']);
                     $networkDb->setUpdatedAt($now);
                     $this->networkRepository->save($networkDb);
                     $this->addFlash('success', $this->translator->trans('network.updated') . ' → ' . $networkDb->getName());
