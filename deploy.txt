@@ -26,6 +26,16 @@ echo 'compile assets'; cons asset-map:compile
 
 zip -rn .png:.webp:.jpg:.jpeg:.mp4 Archives.zip bin composer.json composer.lock config importmap.php package.json public src symfony.lock templates translations var vendor;
 
+        ou
+
+zip -r Archives.zip bin composer.json composer.lock config importmap.php package.json src symfony.lock templates translations var vendor;
+find ./public/ -type f -mmin -4320 -exec zip -n .png:.webp:.jpg:.jpeg:.mp4 public.zip {} \;
+zip -r assets.zip ./public/assets;
+zip -r Archives.zip assets.zip public.zip;
+rm assets.zip public.zip;
+
+        en ajustant l'option -mmin (minutes) de la command find selon la fréquence de vos modifications dans /public
+
 4- copy Archives.zip to server
 5- export db
 6- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/"
@@ -44,7 +54,20 @@ zip -rn .png:.webp:.jpg:.jpeg:.mp4 Archives.zip bin composer.json composer.lock 
 		importmap.php
 		package.json
 		symfony.lock > temp
+
+        ou
+
+            move everything including /public/assets except /public to /temp
+
 10- > unzip Archives.zip;
+
+        ou
+
+            unzip -n Archives.zip;
+            unzip -o public.zip -d ./public;
+            unzip -o assets.zip -d ./public/assets;
+            rm assets.zip public.zip;
+
 11- paste this in your remote terminal:
 
 clear;
