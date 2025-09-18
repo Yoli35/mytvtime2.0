@@ -90,6 +90,13 @@ class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/tools', name: 'tools')]
+    public function tools(Request $request): Response
+    {
+         return $this->render('admin/index.html.twig', [
+        ]);
+    }
+
     #[Route('/series', name: 'series')]
     public function adminSeries(Request $request): Response
     {

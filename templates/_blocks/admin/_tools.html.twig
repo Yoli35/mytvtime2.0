@@ -1,0 +1,35 @@
+<h2>{{ 'Users'|trans }}</h2>
+<div class="admin__tools">
+
+    <div class="tools">
+        <h1>{{ ux_icon('mdi:tools') }} {{ 'Tools'|trans }}</h1>
+        <div class="tool">
+            <h2>{{ ux_icon('mdi:calendar-time') }} {{ 'Minutes passed since...'|trans }}</h2>
+            <form id="find-zip-command" class="form">
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="since">{{ 'Since'|trans }}
+                            <input type="datetime-local" id="since" name="since" value="{{ "now"|date("Y-m-d\TH:i") }}">
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <div class="form-row">
+                            <button type="submit" class="admin__button" value="calc">{{ 'Calculate'|trans }}</button>
+                            <button type="submit" class="admin__button" value="gen">{{ 'Generate find/zip command'|trans }}</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-results">
+                    <label for="results" class="relative">{{ 'Results'|trans }}
+                        <textarea id="results" name="results" rows="2" readonly></textarea>
+                        <button type="submit" class="copy-button" value="copy" data-title="Copy to clipboard">
+                            {{ ux_icon('mdi:content-copy') }}
+                        </button>
+                    </label>
+                </div>
+            </form>
+            <script type="module" src="{{ asset('js/admin/tools.js') }}"></script>
+        </div>
+    </div>
+
+</div>

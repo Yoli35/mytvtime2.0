@@ -3,6 +3,7 @@
 {% block title %}my Tv Time → {{ 'Admin'|trans }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/admin.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/map.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
@@ -23,6 +24,12 @@
                         <div>{{ ux_icon('mdi:user-outline', {height: "18px", width: "18px"}) }}</div>
                         <div class="large">
                             {{ 'Users'|trans }}
+                        </div>
+                    </a>
+                    <a href="{{ path('admin_tools') }}"{% if route starts with 'admin_tools' %} class="active"{% endif %}>
+                        <div>{{ ux_icon('mdi:tools', {height: "18px", width: "18px"}) }}</div>
+                        <div class="large">
+                            {{ 'Tools'|trans }}
                         </div>
                     </a>
                     {% if seriesLink is defined %}
@@ -143,6 +150,9 @@
 
                 {% if route == 'admin_index' or route == 'admin_users' %}
                     {% include('_blocks/admin/_users.html.twig') %}
+                {% endif %}
+                {% if route == 'admin_tools' %}
+                    {% include('_blocks/admin/_tools.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_series' %}
                     {% include('_blocks/admin/_series.html.twig') %}
