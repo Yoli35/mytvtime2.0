@@ -1,5 +1,5 @@
 import mapboxgl from 'mapbox-gl';
-import { MapboxAddressAutofill, MapboxSearchBox, MapboxGeocoder, config } from '@mapbox/search-js-web'
+import {MapboxSearchBox} from '@mapbox/search-js-web'
 
 let gThis = null;
 
@@ -62,7 +62,7 @@ export class Map {
                 // set the mapboxgl library to use for markers and enable the marker functionality
                 searchBox.mapboxgl = mapboxgl;
                 searchBox.marker = true;
-                searchBox.componentOptions = { allowReverse: true, flipCoordinates: true };
+                searchBox.componentOptions = {allowReverse: true, flipCoordinates: true};
                 this.map.addControl(searchBox);
 
                 this.map.addControl(new mapboxgl.NavigationControl());
@@ -91,7 +91,7 @@ export class Map {
                 this.locations.forEach(location => {
                     let marker = new mapboxgl.Marker({color: "#B46B18FF"})
                         .setLngLat([location.longitude, location.latitude])
-                        .setPopup(new mapboxgl.Popup({closeOnMove: true}).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description">' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
+                        .setPopup(new mapboxgl.Popup({closeOnMove: true}).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description"><div class="location">' + location.location + '</div>' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
                         .addTo(this.map);
                     let markerIcon = marker.getElement();
                     markerIcon.setAttribute('data-target-id', location.id);
@@ -401,11 +401,13 @@ export class Map {
 
     addPoiMarker(point, index) {
         const el = document.createElement('div');
+        // remplacer tous les \n par <br>
+        const description = point.description.replace(/\n/g, '<br>');
         el.classList.add('poi-marker');
         el.style.backgroundImage = 'url(' + '"/images/poi' + point['still_path'] + '")';
         let marker = new mapboxgl.Marker({element: el, offset: [0, -40]}) /* {color: "#196c00"} */
             .setLngLat([point.longitude, point.latitude])
-            .setPopup(new mapboxgl.Popup({closeOnMove: true}).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title poi">' + point.name + '</div><div class="leaflet-popup-content-description poi">' + point.address + '</div><div class="leaflet-popup-content-image"><img src="/images/poi' + point['still_path'] + '" alt="' + point['name'] + '" style="height: auto; width: 100%"></div>'))
+            .setPopup(new mapboxgl.Popup({closeOnMove: true}).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title poi">' + point.name + '</div><div class="leaflet-popup-content-description poi">' + point.address + '</div><div class="leaflet-popup-content-description poi">' + description + '</div><div class="leaflet-popup-content-image"><img src="/images/poi' + point['still_path'] + '" alt="' + point['name'] + '" style="height: auto; width: 100%"></div>'))
             .addTo(this.map);
         let markerIcon = marker.getElement();
         markerIcon.setAttribute('data-id', point.id);
@@ -428,7 +430,7 @@ export class Map {
             markerIcon.setAttribute('data-latitude', photo.latitude);
             markerIcon.setAttribute('data-longitude', photo.longitude);
             if (index)
-                markerIcon.setAttribute('data-index', index);
+                markerIcon.setAttribute('data-index', index.toString());
         }
     }
 

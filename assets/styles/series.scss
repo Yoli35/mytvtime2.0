@@ -5224,6 +5224,12 @@ h2 {
                 &.poi {
                     background-color: var(--green-70);
                 }
+
+                .location {
+                    background-color: hsla(from var(--orange-40) h s l / .5);
+                    margin-block-end: .5rem;
+                    padding-block: .25rem;
+                }
             }
 
             .leaflet-popup-content-image {
