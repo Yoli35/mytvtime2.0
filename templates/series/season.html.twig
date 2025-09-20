@@ -123,6 +123,11 @@
                         <div class="progress-bar"></div>
                     </div>
                 {% endif %}
+                {% if season.poster_path %}
+                    <div class="poster" id="top">
+                        <img src="/series/posters{{ season.poster_path }}" alt="{{ series.name }} {{ season.season_number }}">
+                    </div>
+                {% endif %}
                 <div class="series-back">
                     <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
                         {% if series.posterPath %}
@@ -138,8 +143,8 @@
                 </div>
             </div>
 
-{#            {{ include('_blocks/series/_changes.html.twig') }}#}
-{#            {{ include('_blocks/series/_externals.html.twig') }}#}
+            {#            {{ include('_blocks/series/_changes.html.twig') }} #}
+            {#            {{ include('_blocks/series/_externals.html.twig') }} #}
 
             <div class="season-stuff">
                 {#                <h2>{{ 'Season stuff'|trans }}</h2> #}

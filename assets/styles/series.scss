@@ -2203,7 +2203,18 @@ h2 {
         gap: 0;
 
         .poster {
-            width: 0;
+            bottom: 0;
+            height: calc(5rem * calc(117 / 78));
+            position: absolute;
+            right: 2rem;
+            transition: all 0.5s ease-in-out;
+            width: 5rem;
+            z-index: 2;
+
+            &:hover {
+                height: calc(40vw * calc(117 / 78));
+                width: 40vw;
+            }
         }
 
         .infos {
