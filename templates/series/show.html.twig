@@ -346,7 +346,9 @@
 
             {{ include('_blocks/series/_schedules.html.twig') }}
 
-{#            {{ include('_blocks/series/_externals.html.twig') }}#}
+            {% if app.environment == 'dev' %}
+                {{ include('_blocks/series/_externals.html.twig') }}
+            {% endif %}
 
             <div class="user-actions">
                 <h2>{{ 'User actions'|trans }}</h2>

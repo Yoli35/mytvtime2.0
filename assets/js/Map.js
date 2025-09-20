@@ -55,6 +55,7 @@ export class Map {
                 // set the mapbox access token, search box API options
                 searchBox.accessToken = mapboxgl.accessToken;
                 searchBox.options = {
+                    types: 'address,poi',
                     language: 'fr',
                     proximity: 'auto',
                 };

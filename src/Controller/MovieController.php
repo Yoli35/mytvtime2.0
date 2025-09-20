@@ -710,6 +710,9 @@ class MovieController extends AbstractController
         $imageLanguages = [];
         $counts = [];
         foreach (['backdrops', 'logos', 'posters'] as $key) {
+            if(!key_exists($key, $images)) {
+                $images[$key] = [];
+            }
             foreach ($images[$key] as $image) {
                 $imageLanguages[] = $image['iso_639_1'];
             }

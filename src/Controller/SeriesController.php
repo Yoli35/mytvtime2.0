@@ -1187,8 +1187,8 @@ class SeriesController extends AbstractController
 
         $filmingLocationsWithBounds = $this->getFilmingLocations($series);
 
-//        $tvKeywords = $tv['keywords']['results'] ?? [];
-//        $tvExternalIds = $tv['external_ids'] ?? [];
+        $tvKeywords = $tv['keywords']['results'] ?? [];
+        $tvExternalIds = $tv['external_ids'] ?? [];
 
         $seriesAround = $this->userSeriesRepository->getSeriesAround($user, $series->getId(), $locale);
         $previousSeries = null;
@@ -1252,7 +1252,7 @@ class SeriesController extends AbstractController
             'addLocationFormData' => $addLocationFormData,
             'fieldList' => ['series-id', 'tmdb-id', 'crud-type', 'crud-id', 'title', 'location', 'season-number', 'episode-number', 'description', 'latitude', 'longitude', 'radius', "source-name", "source-url"],
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
-//            'externals' => $this->getExternals($series, $tvKeywords, $tvExternalIds, $request->getLocale()),
+            'externals' => $this->getExternals($series, $tvKeywords, $tvExternalIds, $request->getLocale()),
             'translations' => $translations,
             'addBackdropForm' => $addBackdropForm->createView(),
             'addVideoForm' => $addVideoForm->createView(),
@@ -3917,7 +3917,7 @@ class SeriesController extends AbstractController
                     $networkDb->setHeadquarters($tmdbNetwork['headquarters']);
                     $networkDb->setHomepage($tmdbNetwork['homepage']);
                     $networkDb->setLogoPath($tmdbNetwork['logo_path']);
-                    $networkDb->setName($tmdbNetwork['name']);
+                    $networkDb->setName($tmdbNetwork['name'] ?? 'The name was null');
                     $networkDb->setOriginCountry($tmdbNetwork['origin_country']);
                     $networkDb->setUpdatedAt($now);
                     $this->networkRepository->save($networkDb);
