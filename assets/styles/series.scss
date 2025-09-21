@@ -5916,6 +5916,11 @@ dialog, .side-panel {
                 }
             }
 
+            .preview-image-files {
+                max-height: 30rem;
+                overflow-y: auto;
+            }
+
             .preview-image-file,
             .preview-image-files {
                 ol {
