@@ -1190,7 +1190,7 @@ class SeriesController extends AbstractController
         $tvKeywords = $tv['keywords']['results'] ?? [];
         $tvExternalIds = $tv['external_ids'] ?? [];
 
-        $seriesAround = $this->userSeriesRepository->getSeriesAround($user, $series->getId(), $locale);
+        $seriesAround = $this->userSeriesRepository->getSeriesAround($user, $userSeries->getId(), $locale);
         $previousSeries = null;
         $nextSeries = null;
         if (count($seriesAround) == 2) {
