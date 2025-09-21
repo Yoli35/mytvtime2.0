@@ -344,7 +344,13 @@ class TMDBService
             $response = $this->client->request(
                 'GET',
                 $request,
-                ['auth_bearer' => $this->getBearer()]
+                [
+                    'headers' =>
+                        [
+                            'Authorization' => 'Bearer ' . $this->getBearer(),
+                            'accept' => 'application/json',
+                        ],
+                ]
             );
             try {
                 return $response->getContent();
@@ -420,7 +426,13 @@ class TMDBService
             $response = $this->client->request(
                 'GET',
                 $request,
-                ['auth_bearer' => $this->getBearer()]
+                [
+                    'headers' =>
+                        [
+                            'Authorization' => 'Bearer ' . $this->getBearer(),
+                            'accept' => 'application/json',
+                        ],
+                ]
             );
             try {
                 return $response->getContent();
@@ -620,7 +632,13 @@ class TMDBService
             $response = $this->client->request(
                 'GET',
                 $request,
-                ['auth_bearer' => $this->getBearer()]
+                [
+                    'headers' =>
+                        [
+                            'Authorization' => 'Bearer ' . $this->getBearer(),
+                            'accept' => 'application/json',
+                        ],
+                ]
             );
             try {
                 return $response->getContent();
