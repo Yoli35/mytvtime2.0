@@ -27,6 +27,31 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>37ᵉ mise à jour : 21/09/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bug-outline') }}→ Update TMDB API requests to use explicit headers</div>
+                        <div class="details">Replaces 'auth_bearer' option with explicit 'Authorization' and 'accept' headers in TMDBService API requests. Ensures proper authentication and content negotiation for TMDB API calls.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Fix seriesAround lookup to use userSeries ID</div>
+                        <div class="details">Replaces usage of series ID with userSeries ID when fetching surrounding series. This ensures the correct context is used for user-specific series navigation.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }}→ Add max-height and scroll to preview images</div>
+                        <div class="details">Introduced a max-height and vertical scrolling for the .preview-image-files class to improve usability when displaying large sets of images.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Enhance map popups with location and improved styling</div>
+                        <div class="details">Added location details to map popups and formatted POI descriptions with line breaks. Updated map and series SCSS to improve popup content styling, including scrollable descriptions and highlighted location sections.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add season poster display and hover effect</div>
+                        <div class="details">Introduces a poster image for seasons in the template if available, and updates the SCSS to style the poster with a hover effect that enlarges it. Improves visual presentation and interactivity for season details.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>36ᵉ mise à jour : 18/09/2025</h2>
                 <ul>
                     <li>
