@@ -64,8 +64,8 @@ rm assets.zip public.zip;
         ou
 
             unzip -n Archives.zip;
-            unzip -o public.zip -d ./public;
-            unzip -o assets.zip -d ./public/assets;
+            unzip -o public.zip -d ./;
+            unzip -o assets.zip -d ./;
             rm assets.zip public.zip;
 
 11- paste this in your remote terminal:
