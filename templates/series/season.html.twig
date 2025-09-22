@@ -125,22 +125,25 @@
                 {% endif %}
                 {% if season.poster_path %}
                     <div class="poster" id="top">
-                        <img src="/series/posters{{ season.poster_path }}" alt="{{ series.name }} {{ season.season_number }}">
+                        <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
+                            <img src="/series/posters{{ season.poster_path }}" alt="{{ series.name }} {{ season.season_number }}">
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="series-back">
+                        <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
+                            {% if series.posterPath %}
+                                <div class="poster-back">
+                                    <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }} {{ season.season_number }}">
+                                </div>
+                            {% endif %}
+                            <div class="series-back-link">
+                                {{ ux_icon('mdi:arrow-left') }}
+                                <span>{{ 'Back to series'|trans }}</span>
+                            </div>
+                        </a>
                     </div>
                 {% endif %}
-                <div class="series-back">
-                    <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
-                        {% if series.posterPath %}
-                            <div class="poster-back">
-                                <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }} {{ season.season_number }}">
-                            </div>
-                        {% endif %}
-                        <div class="series-back-link">
-                            {{ ux_icon('mdi:arrow-left') }}
-                            <span>{{ 'Back to series'|trans }}</span>
-                        </div>
-                    </a>
-                </div>
             </div>
 
             {#            {{ include('_blocks/series/_changes.html.twig') }} #}
@@ -206,17 +209,28 @@
                     {% set itemPerLine = episodeCount %}
                     {% set lineCount = 1 %}
                 {% endif %}
-                <div class="quick-episodes" data-season-number="{{ season.season_number }}" style="height: {{ 36 * lineCount + 20 }}px; width: {{ 36 * itemPerLine + 32 }}px;">
+                <div class="quick-episodes" data-season-number="{{ season.season_number }}" style="height: {{ 36 * lineCount + 20 }}px; width: {{ 32 * itemPerLine + 4 * (itemPerLine - 1) + 20 }}px;">
                     {% for episode in season.episodes %}
                         {% set ue = episode.user_episode %}
                         {% set air_date = episode.air_date %}
                         {% if air_date %}
                             {% if air_date <= now %}
-                                <div class="quick-episode{% if ue and ue.watch_at %} watched{% endif %}" data-number="{{ ue.episode_number }}" data-title="{{ air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
+                                {% set class="quick-episode" %}
+                                {% if ue and ue.watch_at %}{% set class=class~" watched" %}{% endif %}
+                                {% if lineCount > 1 and loop.index == 1 %}{% set class=class~" top-left" %}{% endif %}
+                                {% if lineCount > 1 and loop.index == itemPerLine %}{% set class=class~" top-right" %}{% endif %}
+                                {% if lineCount > 1 and loop.index == episodeCount - itemPerLine + 1 %}{% set class=class~" bottom-left" %}{% endif %}
+                                {% if lineCount > 1 and loop.index == episodeCount %}{% set class=class~" bottom-right" %}{% endif %}
+                                <div class="{{ class }}" data-number="{{ ue.episode_number }}" data-title="{{ air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
                                     {{ episode.episode_number }}
                                 </div>
                             {% else %}
-                                <div class="future-episode" data-title="{{ air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
+                                {% set class="future-episode" %}
+                                {% if lineCount > 1 and loop.index == 1 %}{% set class=class~" top-left" %}{% endif %}
+                                {% if lineCount > 1 and loop.index == itemPerLine %}{% set class=class~" top-right" %}{% endif %}
+                                {% if lineCount > 1 and loop.index == episodeCount - itemPerLine + 1 %}{% set class=class~" bottom-left" %}{% endif %}
+                                {% if lineCount > 1 and loop.index == episodeCount %}{% set class=class~" bottom-right" %}{% endif %}
+                                <div class="{{ class }}" data-title="{{ air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
                                     {{ ue.episode_number }}
                                 </div>
                             {% endif %}

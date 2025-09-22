@@ -204,7 +204,7 @@ window.addEventListener("DOMContentLoaded", () => {
             if (isSeasonPage) {
                 const infos = document.querySelector(".infos");
                 console.log({color})
-                if (color.lightness > 150) {
+                if (color.lightness > 180) {
                     infos.style.color = "#101010";
                 } else {
                     infos.style.color = "#f5f5f5";

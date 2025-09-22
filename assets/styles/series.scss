@@ -1744,9 +1744,10 @@ h2 {
     }
 
     .user-actions {
-        background-color: hsla(from var(--ardoise-90) h s l / 0.1);
-        border-radius: .5rem;
-        padding: .5rem 1rem;
+        background-color: hsla(from var(--ardoise-90) h s l / 0.25);
+        border-radius: 5rem;
+        padding: .5rem;
+        width: fit-content;
 
         h2 {
             padding: 0;
@@ -2188,8 +2189,9 @@ h2 {
 
         .watch-links {
             background-color: var(--orange-50);
-            border-radius: .25rem;
-            color: hsl(0, 0%, 5%);
+            border-radius: 5rem;
+            color: hsl(0, 0%, 100%);
+            gap: .125rem;
             padding-block: .125rem;
             padding-inline: .75rem .125rem;
 
@@ -2792,7 +2794,7 @@ h2 {
     }
 
     .user-actions {
-        border-radius: .5rem;
+        border-radius: 5rem;
         flex-direction: row;
         padding: .5rem;
 
@@ -2863,8 +2865,8 @@ h2 {
 
     .quick-episodes {
         align-items: center;
-        background-color: hsla(from var(--ardoise-90) h s l / 0.1);
-        border-radius: .25rem;
+        background-color: hsla(from var(--ardoise-90) h s l / 0.25);
+        border-radius: 1.25rem;
         display: flex;
         flex-wrap: wrap;
         /*gap: .25rem;*/
@@ -2872,6 +2874,10 @@ h2 {
         justify-content: center;
         overflow-x: auto;
         padding: .5rem;
+
+        &:not(:has(.top-left)) {
+            border-radius: 5rem;
+        }
 
         .quick-episode {
             align-items: center;
@@ -2881,11 +2887,9 @@ h2 {
             color: var(--ardoise-10);
             cursor: pointer;
             display: flex;
-            gap: .5rem;
             height: 2rem;
             justify-content: center;
             margin-inline: .125rem;
-            padding: .25rem;
             transition: all 0.3s linear;
             width: 2rem;
             will-change: border, border-radius, transform, z-index;
@@ -2896,7 +2900,7 @@ h2 {
 
             &:hover {
                 border: 2px solid var(--orange-50);
-                border-radius: 5rem;
+                /*border-radius: 5rem;*/
                 transform: scale(1.75);
                 z-index: 3;
             }
@@ -2904,14 +2908,14 @@ h2 {
             &:has(+ .quick-episode:hover),
             &:hover + .quick-episode {
                 border: 2px solid hsla(from var(--orange-50) h s l / .5);
-                border-radius: 1rem;
+                /*border-radius: 1rem;*/
                 transform: scale(1.5);
                 z-index: 2;
             }
 
             &:has(+ .quick-episode + .quick-episode:hover),
             &:hover + .quick-episode + .quick-episode {
-                border-radius: .5rem;
+                /*border-radius: .5rem;*/
                 transform: scale(1.20);
                 z-index: 1;
             }
@@ -2936,15 +2940,52 @@ h2 {
             color: var(--ardoise-30);
             display: flex;
             gap: .5rem;
+            height: 2rem;
             justify-content: center;
             margin-inline: .125rem;
             padding: .25rem;
             width: 2rem;
         }
 
+        .quick-episode, .future-episode {
+            &.bottom-left {
+                border-bottom-left-radius: .75rem;
+                border-top-left-radius: .25rem;
+            }
+
+            &.bottom-right {
+                border-bottom-right-radius: .75rem;
+                border-top-right-radius: .25rem;
+            }
+
+            &.top-left {
+                border-top-left-radius: .75rem;
+                border-bottom-left-radius: .25rem;
+            }
+
+            &.top-right {
+                border-top-right-radius: .75rem;
+                border-bottom-right-radius: .25rem;
+            }
+        }
+
         .quick-episodes-break {
             height: 0;
             width: 100%;
+        }
+    }
+
+    .user-actions, .quick-episodes {
+        > div {
+            &:first-child {
+                border-bottom-left-radius: 5rem;
+                border-top-left-radius: 5rem;
+            }
+
+            &:last-child {
+                border-bottom-right-radius: 5rem;
+                border-top-right-radius: 5rem;
+            }
         }
     }
 }
@@ -2996,10 +3037,10 @@ h2 {
 
                             .tools {
                                 background-color: hsla(from var(--ardoise-90) h s l / .5);
-                                border-radius: .25rem;
+                                border-radius: 5rem;
                                 display: flex;
                                 flex-direction: column;
-                                gap: .5rem;
+                                gap: .125rem;
                                 margin-inline-start: auto;
                                 opacity: 0;
                                 padding: .5rem;
@@ -3026,6 +3067,26 @@ h2 {
                                         object-fit: cover;
                                         width: 2.75rem;
                                     }
+
+                                    &:first-child {
+                                        border-top-left-radius: 5rem;
+                                        border-top-right-radius: 5rem;
+
+                                        img {
+                                            border-top-left-radius: 5rem;
+                                            border-top-right-radius: 5rem;
+                                        }
+                                    }
+
+                                    &:last-child {
+                                        border-bottom-left-radius: 5rem;
+                                        border-bottom-right-radius: 5rem;
+
+                                        img {
+                                            border-bottom-left-radius: 5rem;
+                                            border-bottom-right-radius: 5rem;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -3050,6 +3111,16 @@ h2 {
     .user-actions {
         .watch-links {
             .watch-link {
+                &:last-child {
+                    border-bottom-right-radius: 5rem;
+                    border-top-right-radius: 5rem;
+
+                    img {
+                        border-bottom-right-radius: 5rem;
+                        border-top-right-radius: 5rem;
+                    }
+                }
+
                 .watch-link-tools {
                     background-color: hsla(from var(--ardoise-90) h s l / .8);
 
@@ -3527,7 +3598,7 @@ h2 {
                     .airing {
                         align-items: center;
                         background-color: hsla(from var(--ardoise-80) h s l / .5);
-                        border-radius: .25rem;
+                        border-radius: 5rem;
                         color: var(--ardoise-10);
                         display: flex;
                         font-size: 1rem;
@@ -3547,7 +3618,7 @@ h2 {
                         .watched-at {
                             align-items: center;
                             background-color: cadetblue;
-                            border-radius: .25rem;
+                            border-radius: 5rem;
                             cursor: grab;
                             display: flex;
                             flex-wrap: nowrap;
