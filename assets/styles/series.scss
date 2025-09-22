@@ -563,6 +563,32 @@ h2 {
         justify-content: flex-start;
         position: relative;
 
+        @media (width > 1200px) {
+            &:has(.poster) {
+                @media (orientation: portrait) {
+                    height: 50vh;
+                }
+                @media (orientation: landscape) {
+                    height: 60vh;
+                }
+            }
+        }
+        @media (width <= 1200px) {
+            &:has(.poster) {
+                @media (orientation: portrait) {
+                    flex-direction: column;
+                    height: auto;
+
+                    .poster {
+                        width: 100%;
+                    }
+                }
+                @media (orientation: landscape) {
+                    height: 70vh;
+                }
+            }
+        }
+
         .poster {
             align-items: center;
             aspect-ratio: 78 / 117;
@@ -573,9 +599,8 @@ h2 {
             flex-shrink: 0;
             height: 100%;
             justify-content: center;
-            max-height: 60rem;
             position: relative;
-            width: 40vw;
+            width: auto;
 
             &:hover {
                 .go-to-map {
@@ -655,14 +680,16 @@ h2 {
                 left: 2rem;
                 line-height: 1.25em;
                 position: absolute;
-                top: 2rem
+                top: 2rem;
+                width: fit-content;
             }
         }
 
         .infos {
-            height: calc(40vw * calc(117 / 78));
+            /*height: calc(40vw * calc(117 / 78));*/
+            height: 100%;
             position: relative;
-            width: calc(60vw - 3rem);
+            /*width: calc(60vw - 3rem);*/
 
             .backdrop {
                 height: 100%;
@@ -1061,14 +1088,17 @@ h2 {
                 color: var(--ardoise-10);
                 cursor: pointer;
                 display: flex;
+                flex: 1;
                 font-size: 1.25rem;
                 font-weight: 300;
                 gap: .5rem;
-                justify-content: center;
+                justify-content: flex-start;
                 height: 3rem;
                 line-height: 1.25em;
-                padding-inline: 2rem;
-                width: fit-content;
+                overflow-x: auto;
+                padding-inline: 1rem;
+                text-wrap: nowrap;
+                text-overflow: ellipsis;
 
                 &:hover {
                     background-color: var(--orange-50);
@@ -2892,7 +2922,7 @@ h2 {
             margin-inline: .125rem;
             transition: all 0.3s linear;
             width: 2rem;
-            will-change: border, border-radius, transform, z-index;
+            will-change: border, transform, z-index;
 
             &.watched {
                 background-color: var(--user-episode-actions);
@@ -4489,10 +4519,10 @@ h2 {
 
         .poster {
             flex-shrink: 0;
-            height: 135cqi !important;
+            /*height: 135cqi !important;*/
             margin-inline: auto;
             max-height: unset;
-            width: 90cqi !important;
+            /*width: 90cqi !important;*/
         }
 
         .infos {
@@ -4758,14 +4788,17 @@ h2 {
         margin-block-start: 2rem;
 
         .header {
+            gap: 0;
+
+            &:has(.poster) {
+                height: auto;
+            }
+
             .poster {
                 border-radius: 0;
-                width: 100% !important;
 
                 img {
                     border-radius: 0;
-                    height: auto;
-                    width: 100%;
                 }
             }
         }
