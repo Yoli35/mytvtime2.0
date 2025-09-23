@@ -43,6 +43,7 @@ export class AlbumShow {
     /**
      * @typedef Globs
      * @type {Object}
+     * @property {number} id
      * @property {Album} album
      * @property {Array.<string>} imagePaths
      * @property {Array.<string>} texts
@@ -58,6 +59,7 @@ export class AlbumShow {
         this.diaporama = new Diaporama();
         /** @var {Globs} */
         const globs = JSON.parse(document.querySelector('div#globs').textContent);
+        this.userId = globs.id;
         this.album = globs.album;
         this.imagePaths = globs.imagePaths;
         console.log(gThis.imagePaths);
@@ -200,8 +202,8 @@ export class AlbumShow {
         }
 
         addPhotos?.addEventListener('click', function () {
-                gThis.openAlbumPanel(modifyAlbumDialog);
-            });
+            gThis.openAlbumPanel(modifyAlbumDialog);
+        });
 
         if (modifyAlbumForm) {
             // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file
@@ -274,7 +276,7 @@ export class AlbumShow {
             const id = parseInt(btn.getAttribute('data-id'));
             const photo = gThis.album.photos.find(photo => photo.id === id);
             btn.addEventListener('click', function () {
-                photoThumbnail.src = "/albums/576p" + photo['image_path'];
+                photoThumbnail.src = "/albums/" + gThis.userId + "/576p" + photo['image_path'];
                 albumIdInput.value = photo['album_id'];
                 photoIdInput.value = id;
                 captionInput.value = photo['caption'];
