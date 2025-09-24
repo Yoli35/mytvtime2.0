@@ -42,7 +42,9 @@ final class AlbumController extends AbstractController
         $user = $this->getUser();
         $albums = $this->albumRepository->findBy(['user' => $user, 'userCreated' => true], ['createdAt' => 'DESC']);
 
-        $this->handleNewAlbum($request, $user);
+        if ($id = $this->handleNewAlbum($request, $user)) {
+            return $this->redirectToRoute('app_album_show', ['id' => $id, '_locale' => $request->getLocale()]);
+        }
 
         foreach ($albums as $album) {
             $photos = $album->getPhotos()->toArray();
@@ -340,7 +342,7 @@ final class AlbumController extends AbstractController
                     }
                 }
             }
-            $messages[] = 'Ajout de la photo : ' . $file->getClientOriginalName();
+//            $messages[] = 'Ajout de la photo : ' . $file->getClientOriginalName();
             $result = $this->imageService->photoToWebp($file, $user->getId());
             if ($result) {
                 $imagePath = $result['path']; // original image path
@@ -389,15 +391,16 @@ final class AlbumController extends AbstractController
         ]);
     }
 
-    private function handleNewAlbum(Request $request, User $user): void
+    private function handleNewAlbum(Request $request, User $user): false|int
     {
         $newAlbumName = $request->query->get('new-album');
         if (strlen($newAlbumName) > 0) {
             $now = $this->dateService->getNowImmutable('UTC');
             $album = new Album($user, true, $newAlbumName, $now);
             $this->albumRepository->save($album, true);
-            $this->redirectToRoute('app_album_show', ['id' => $album->getId()]);
+            return $album->getId();
         }
+        return false;
     }
 
     private function setAlbumRanges(array $albums): void

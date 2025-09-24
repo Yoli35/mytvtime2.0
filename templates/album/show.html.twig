@@ -37,7 +37,7 @@
             {% endif %}
             <header>
                 <div class="h1-tools">
-                    <h1>{{ album.userCreated ? album.name : album.description }} ({{ albumArray.photos|length }})</h1>
+                    <h1>{{ album.userCreated ? album.name : album.description }} (<span class="album-count">{{ albumArray.photos|length }}</span>)</h1>
                     <div class="tools">
                         <div class="layout-buttons">
                             <button class="albums-button" data-title="{{ 'My albums'|trans }}"><a href="{{ path('app_album_index') }}">{{ ux_icon('mdi:image-album') }}</a></button>

@@ -62,6 +62,7 @@ export class AlbumShow {
         this.userId = globs.id;
         this.album = globs.album;
         this.imagePaths = globs.imagePaths;
+        this.initialCount = this.imagePaths.length;
         console.log(gThis.imagePaths);
         this.texts = globs.texts;
         this.srcsetPaths = globs.srcsetPaths;
@@ -359,7 +360,6 @@ export class AlbumShow {
             const filename = formFile.get('additional-image').name;
             const progress = Math.round(100 * (gThis.fileCount - count + 1) / gThis.fileCount);
             summaryDiv.innerText = 'Saving ' + filename + ' file' + ' - ' + (gThis.fileCount - count) + ' / ' + gThis.fileCount;
-            summaryDiv.setAttribute('style', "background: linear-gradient(to right, #E0861F " + progress + "%, transparent " + progress + "%);");
             fetch('/' + gThis.lang + '/album/add/' + gThis.album.id,
                 {
                     method: 'POST',
@@ -382,6 +382,8 @@ export class AlbumShow {
                             gThis.map.adjustBounds('photo-marker');
                             // Add imagePath to gThis.imagePaths
                             gThis.imagePaths.push(imagePath);
+                            const albumCountSpan = document.querySelector('.album-count');
+                            albumCountSpan.innerText = gThis.imagePaths.length.toString();
                             const albumPhotoDiv = document.createElement('div');
                             albumPhotoDiv.classList.add('album-photo');
                             albumPhotoDiv.setAttribute('data-id', result.id);
@@ -435,10 +437,14 @@ export class AlbumShow {
                                     photoDiv.classList.remove('grid-span-2');
                                 }
                             });
+                            summaryDiv.setAttribute('style', "background: linear-gradient(to right, #E0861F " + progress + "%, transparent " + progress + "%);");
                         });
                     }
                 } else {
                     gThis.flashMessage.add('error', data.message);
+                }
+                if (gThis.initialCount === 0 && gThis.imagePaths.length === 2) {
+                    gThis.initAnimation();
                 }
                 gThis.fetchFile(formFiles, summaryDiv);
             });
@@ -450,6 +456,11 @@ export class AlbumShow {
             modifyAlbumSubmit.removeAttribute('disabled');
             summaryDiv.remove();
             gThis.closeAlbumPanel();
+            /*if (gThis.initialCount === 0) {
+                setTimeout(function () {
+                    window.location.reload();
+                }, 1000);
+            }*/
         }
     }
 
@@ -551,7 +562,7 @@ export class AlbumShow {
         }
 
         const formDataArr = [];
-        Array.from(imageFilesInput.files).forEach(function (file, index) {
+        Array.from(imageFilesInput.files).forEach(function (file) {
             const formData = new FormData();
             formData.append('additional-image', file);
             formDataArr.push(formData);
@@ -597,10 +608,50 @@ export class AlbumShow {
         if (albumPhotosDiv.classList.contains('list')) {
             return;
         }
+        if (gThis.initialCount === 0) {
+            const albumPageDiv = document.querySelector('.album-page');
+            const headerTag = albumPageDiv.querySelector('header');
+            const protectionDiv = document.createElement('div');
+            protectionDiv.classList.add('protection');
+            const layersDiv = document.createElement('div');
+            layersDiv.classList.add('layers');
+            const backgroundsDiv = document.createElement('div');
+            backgroundsDiv.classList.add('backgrounds');
+            const background1Div = document.createElement('div');
+            background1Div.classList.add('background-1');
+            const img1 = document.createElement('img');
+            img1.src = gThis.srcsetPaths.highRes +  gThis.imagePaths[0];
+            img1.alt = gThis.album.name;
+            background1Div.appendChild(img1);
+            const background2Div = document.createElement('div');
+            background2Div.classList.add('background-2');
+            const img2 = document.createElement('img');
+            img2.src = gThis.srcsetPaths.highRes +  gThis.imagePaths[0];
+            img2.alt = gThis.album.name;
+            background2Div.appendChild(img2);
+            backgroundsDiv.appendChild(background1Div);
+            backgroundsDiv.appendChild(background2Div);
+            layersDiv.appendChild(backgroundsDiv);
+            protectionDiv.appendChild(layersDiv);
+            const nameDiv = document.createElement('div');
+            nameDiv.classList.add('name');
+            nameDiv.innerText = gThis.album.name;
+            protectionDiv.appendChild(nameDiv);
+            albumPageDiv.insertBefore(protectionDiv, headerTag);
+        }
         const imgElement1 = document.querySelector(".background-1").querySelector('img');
         const imgElement2 = document.querySelector(".background-2").querySelector('img');
-        gThis.effect({img1: imgElement1, img2: imgElement2, path: gThis.srcsetPaths.original});
-        gThis.interval = setInterval(gThis.effect, 4000, {img1: imgElement1, img2: imgElement2, path: gThis.srcsetPaths.original});
+        const viewPortWidth = window.innerWidth;
+        let srcsetPath = gThis.srcsetPaths.lowRes;
+        if (viewPortWidth >= 1280) {
+            srcsetPath = gThis.srcsetPaths.original;
+        } else if (viewPortWidth >= 960) {
+            srcsetPath = gThis.srcsetPaths.highRes;
+        } else if (viewPortWidth >= 640) {
+            srcsetPath = gThis.srcsetPaths.mediumRes;
+        }
+        gThis.effect({img1: imgElement1, img2: imgElement2, path: srcsetPath});
+        gThis.interval = setInterval(gThis.effect, 4000, {img1: imgElement1, img2: imgElement2, path: srcsetPath});
     }
 
     stopAnimation() {
