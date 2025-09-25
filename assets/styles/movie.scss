@@ -148,7 +148,7 @@
 
         .infos {
             background-color: hsla(from var(--ardoise-90) h s l / .2);
-            border-radius: 0;
+            border-radius: .5rem;
             display: flex;
             flex-direction: column;
             gap: 1rem;
@@ -157,7 +157,6 @@
             padding: 1rem;
             position: relative;
             width: calc(65vw - 3rem);
-            z-index: 1;
 
             .backdrop {
                 inset: 0;
@@ -166,7 +165,7 @@
                 z-index: -1;
 
                 img {
-                    border-radius: 0;
+                    border-radius: .5rem;
                     height: 100%;
                     object-fit: cover;
                     width: 100%;

@@ -2276,7 +2276,7 @@ h2 {
                 inset: -5rem;
                 mask-image: linear-gradient(to bottom, #000 90%, #ffffff00 100%);
                 mask-size: cover;
-                opacity: .5;
+                opacity: .75;
                 width: calc(100% + 10rem);
             }
         }
@@ -3039,7 +3039,7 @@ h2 {
 
                     .body {
                         /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
-                        /*border-radius: 0 0 .5rem .5rem;*/
+                        border-radius: .5rem;
                         /*color: var(--orange-90);*/
                         display: flex;
                         flex-direction: column;
@@ -3058,7 +3058,7 @@ h2 {
                             position: relative;
 
                             &:hover {
-                                backdrop-filter: blur(10rem);
+                                backdrop-filter: blur(2rem);
 
                                 .tools {
                                     opacity: 1;
