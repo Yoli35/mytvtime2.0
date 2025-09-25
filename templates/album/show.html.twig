@@ -83,12 +83,12 @@
                 </div>
             </header>
             <main>
-                {% if album.userCreated %}
-                    <div id="add-photos" data-title="{{ 'Add photos'|trans }}">
-                        {{ ux_icon('mdi:plus') }}
-                    </div>
-                {% endif %}
                 <div class="album-container">
+                    {% if album.userCreated %}
+                        <div id="add-photos" data-title="{{ 'Add photos'|trans }}">
+                            {{ ux_icon('mdi:plus') }}
+                        </div>
+                    {% endif %}
                     <div class="bg-header"></div>
                     <div class="album-photos {{ settings.layout }}">
                         <div class="bg"></div>
