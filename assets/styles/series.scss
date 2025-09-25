@@ -983,8 +983,8 @@ h2 {
 
         .backdrops, .logos, .posters, .series {
             align-items: center;
-            background-color: hsla(from var(--ardoise-90) h s l / .2);
-            border-radius: .5rem;
+            /*background-color: hsla(from var(--ardoise-90) h s l / .2);
+            border-radius: .5rem;*/
             display: flex;
             gap: .5rem;
             height: 9rem;
@@ -1058,8 +1058,8 @@ h2 {
             }
 
             .other-logo {
-                background-color: hsla(from var(--ardoise-90) h s l / .2);
-                border-radius: .25rem;
+                /*background-color: hsla(from var(--ardoise-90) h s l / .2);
+                border-radius: .25rem;*/
                 height: 7rem;
                 padding: .5rem;
                 width: auto;
@@ -1116,8 +1116,8 @@ h2 {
     }
 
     .videos {
-        background-color: hsla(from var(--ardoise-90) h s l / .2);
-        border-radius: .5rem;
+        /*background-color: hsla(from var(--ardoise-90) h s l / .2);
+        border-radius: .5rem;*/
         display: flex;
         flex-direction: column;
         gap: .5rem;
@@ -1205,8 +1205,8 @@ h2 {
 
     .schedules {
         align-items: stretch;
-        background-color: hsla(from var(--ardoise-90) h s l / .2);
-        border-radius: .5rem;
+        /*background-color: hsla(from var(--ardoise-90) h s l / .2);
+        border-radius: .5rem;*/
         display: flex;
         flex-direction: column;
         font-size: 1rem;
@@ -1708,8 +1708,8 @@ h2 {
     }
 
     .externals {
-        background-color: hsla(from var(--ardoise-90) h s l / .2);
-        border-radius: .5rem;
+        /*background-color: hsla(from var(--ardoise-90) h s l / .2);
+        border-radius: .5rem;*/
         display: flex;
         flex-direction: column;
         gap: .25rem;
@@ -1773,7 +1773,7 @@ h2 {
         }
     }
 
-    .user-actions {
+    .user-actions:not(:has(h2)) {
         background-color: hsla(from var(--ardoise-90) h s l / 0.25);
         border-radius: 5rem;
         padding: .5rem;
@@ -1824,8 +1824,8 @@ h2 {
         }
 
         .content-infos {
-            background-color: hsla(from var(--ardoise-90) h s l / .2);
-            border-radius: .5rem;
+            /*background-color: hsla(from var(--ardoise-90) h s l / .2);
+            border-radius: .5rem;*/
             padding: .5rem 1rem;
             position: relative;
 
