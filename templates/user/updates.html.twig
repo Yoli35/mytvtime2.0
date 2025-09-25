@@ -27,6 +27,23 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>38ᵉ mise à jour : 25/09/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }}→ Update album photo count and animation logic</div>
+                        <div class="details">Synchronizes the displayed album photo count with uploads by updating the count in the DOM. Adds logic to initialize album animation when the first two photos are added, and improves image resolution selection for background animation. Refactors AlbumController to redirect after new album creation and updates the album count rendering in the template.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve responsive layout for series posters</div>
+                        <div class="details">Enhanced media queries and layout rules for .poster and related elements to better support various screen sizes and orientations. Adjusted widths, heights, and flex properties for improved responsiveness and visual consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve episode grid styling and navigation</div>
+                        <div class="details">Refines the border radius and background color for episode and user action elements in series.scss, adds contextual border radius for episode corners, and updates the season template to wrap posters in links and assign corner classes to episode items for better visual distinction. Also adjusts quick-episodes grid width calculation for improved layout.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>37ᵉ mise à jour : 21/09/2025</h2>
                 <ul>
                     <li>
