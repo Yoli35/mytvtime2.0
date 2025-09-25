@@ -351,7 +351,7 @@ label:has(input[type="text"]) {
     justify-content: flex-start;
     left: 1rem;
     opacity: var(--navbar-opacity);
-    padding-inline: 1rem;
+    padding-inline: 1rem 0;
     position: fixed;
     right: 1rem;
     top: 1rem;
@@ -673,7 +673,7 @@ label:has(input[type="text"]) {
     }
 
     > *:not(.multi-search, .navbar-items):hover,
-    .navbar-item:not(:has(.avatar)):hover,
+    .navbar-item:not(:has(.avatar, .burger)):hover,
     .navbar-items > a:hover {
         background-color: var(--navbar-bg-hover);
         color: var(--navbar-bg-hover);
@@ -1041,14 +1041,14 @@ label:has(input[type="text"]) {
 
     .burger {
         align-items: center;
-        border-radius: .25rem;
+        border-radius: 5rem;
         display: flex;
         flex-direction: column;
         gap: .25rem;
-        height: 2.5rem;
+        height: 2.75rem;
         justify-content: center;
         transition: transform 500ms ease-in-out;
-        width: 2.5rem;
+        width: 2.75rem;
 
         &:hover {
             background-color: var(--orange-50);
