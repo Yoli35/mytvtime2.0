@@ -3928,6 +3928,28 @@ h2 {
     max-width: 100%;
     width: fit-content;
 
+    &.dark {
+        .episode-votes {
+            .episode-vote {
+                .vote {
+                    .user-vote, .dashed-vote {
+                        color: var(--green-80);
+                    }
+
+                    .user-vote {
+                        background-color: hsla(from var(--green-60), h s l / .4);
+                        border: 2px solid var(--green-80);
+                    }
+
+                    .dashed-vote {
+                        background-color: hsla(from var(--green-60), h s l / .1);
+                        border: 1px dashed var(--green-70);
+                    }
+                }
+            }
+        }
+    }
+
     .episode-votes {
         align-items: flex-end;
         /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
@@ -4001,6 +4023,7 @@ h2 {
         text-align: center;
         text-wrap: nowrap;
     }
+
 }
 
 .what-to-watch-next {

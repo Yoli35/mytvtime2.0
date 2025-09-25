@@ -1,3 +1,4 @@
+import {AverageColor} from 'AverageColor';
 import {FlashMessage} from "FlashMessage";
 import {Map} from "Map";
 import {ToolTips} from 'ToolTips';
@@ -124,6 +125,11 @@ export class Season {
     }
 
     init() {
+        /******************************************************************************
+         * Adjust Vote section colors according to the brightness of the background   *
+         ******************************************************************************/
+        this.adjustVoteColors();
+
         /******************************************************************************
          * Animation for the progress bar                                             *
          ******************************************************************************/
@@ -1553,5 +1559,18 @@ export class Season {
         // Luminance formula (perceived brightness)
         const brightness = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
         return +(brightness * 100).toFixed(2);
+    }
+
+    adjustVoteColors() {
+        const body = document.querySelector("body");
+        const url = body.style.backgroundImage.slice(5, -2);
+        const img = document.createElement("img");
+        img.src = url;
+        const averageColor = new AverageColor();
+        const color = averageColor.getColor(img);
+        if (color.lightness > 160) {
+            const voteGraphDiv = document.querySelector('.vote-graph');
+            voteGraphDiv.classList.add('dark');
+        }
     }
 }
