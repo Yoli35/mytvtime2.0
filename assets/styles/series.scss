@@ -4038,7 +4038,7 @@ h2 {
 
     .next-button {
         align-items: center;
-        background-color: hsla(from var(--green-50) h s l / .5);
+        background-color: hsla(from var(--green-50) h s l / .75);
         border-radius: 25rem;
         color: var(--ardoise-10);
         cursor: pointer;
@@ -4341,6 +4341,12 @@ h2 {
 
                 .preferred-name {
                     color: var(--orange-80);
+                }
+
+                &:has(.preferred-name) {
+                    .name {
+                        color: var(--orange-90);
+                    }
                 }
 
                 div {

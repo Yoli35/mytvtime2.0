@@ -1568,7 +1568,8 @@ export class Season {
         img.src = url;
         const averageColor = new AverageColor();
         const color = averageColor.getColor(img);
-        if (color.lightness > 160) {
+        console.log({color});
+        if (Math.floor(color.lightness) > 160) {
             const voteGraphDiv = document.querySelector('.vote-graph');
             voteGraphDiv.classList.add('dark');
         }
