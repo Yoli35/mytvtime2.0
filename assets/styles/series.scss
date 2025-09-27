@@ -719,6 +719,7 @@ h2 {
                 overflow-y: auto;
                 padding: 1rem;
                 position: relative;
+                transition: background-color 0.3s ease-in-out;
                 width: 100%;
 
                 &:hover {
@@ -2259,6 +2260,7 @@ h2 {
                 background-color: unset;
                 padding-block-end: 3rem;
                 padding-inline: 1rem;
+                transition: all 0.5s ease-in-out;
                 width: 100%;
 
                 &:hover {
@@ -3807,7 +3809,6 @@ h2 {
         transition: height .3s ease-in-out, width 0.3s ease-in-out;
     }
 
-    .add-this-episode, .remove-this-episode,
     .back-to-top, .back-to-series {
         height: 0;
         opacity: 0;
@@ -3815,6 +3816,7 @@ h2 {
         width: 0;
     }
 
+    .add-this-episode, .remove-this-episode,
     .select-provider, .select-device, .select-vote {
         font-size: 2rem;
         /*margin-block: auto;*/
