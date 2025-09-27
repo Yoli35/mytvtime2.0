@@ -1,5 +1,5 @@
 <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
-    <div class="people" data-title="{{ people.name }}">
+    <div class="people" data-title="{{ people.name }}{% if people.preferred_name %} - {{ people.preferred_name }}{% endif %}{% if role %} ({{ role }}){% endif %}">
         <div class="photo">
             {% if people.profile_path %}
                 <img src="{{ people.profile_path }}" alt="{{ people.name }}">
