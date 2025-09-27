@@ -316,7 +316,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                       AND ue2.season_number > 0
                       AND ue2.`watch_at` IS NULL)                  as remainingEpisodes
                 FROM `user_series` us
-                    INNER JOIN `user_episode` lue ON lue.`id`=us.`last_user_episode_id`
+                    /*INNER JOIN `user_episode` lue ON lue.`id`=us.`last_user_episode_id`*/
                     INNER JOIN `user_episode` nue ON nue.`id`=us.`next_user_episode_id` AND nue.`air_date` IS NOT NULL
                     $innerJoin
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
