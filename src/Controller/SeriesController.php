@@ -1815,7 +1815,7 @@ class SeriesController extends AbstractController
             }
 
             // Si on regarde le dernier épisode de la saison (hors épisodes spéciaux : $seasonNumber > 0)
-            // et que l'on n'a pas regardé aure chose entre temps, on considère que c'est un binge
+            // et que l'on n'a pas regardé autre chose entre temps, on considère que c'est un binge
             if ($lastEpisode && $seasonNumber) {
                 $isBinge = $this->isBinge($userSeries, $seasonNumber, $episodeNumber);
                 $userSeries->setBinge($isBinge);
@@ -1832,14 +1832,14 @@ class SeriesController extends AbstractController
             $userSeries->setLastEpisode($episodeNumber);
             $userSeries->setLastSeason($seasonNumber);
             $userSeries->setLastUserEpisode($userEpisode);
-            $nextUserEpisode = array_find($userSeriesEpisodes, function ($ue) {
-                return $ue->getWatchAt() == null;
+            $nextUserEpisode = array_find($userSeriesEpisodes, function ($ue) use ($seasonNumber) {
+                return ($ue->getSeasonNumber() >= $seasonNumber && $ue->getWatchAt() == null);
             });
             $userSeries->setNextUserEpisode($nextUserEpisode);
 
             if (!$new) {
                 $userSeries->setViewedEpisodes($userSeries->getViewedEpisodes() + 1);
-                $userSeries->setProgress($userSeries->getViewedEpisodes() / $series->getNumberOfEpisode() * 100);
+                $userSeries->setProgress(round(100 * $userSeries->getViewedEpisodes() / $series->getNumberOfEpisode(), 2));
             }
             $this->userSeriesRepository->save($userSeries, true);
         }
@@ -1878,7 +1878,8 @@ class SeriesController extends AbstractController
             'airDateBlock' => $airDateBlock,
             'new' => $new,
             'views' => $this->translator->trans('Watched %time% times', ['%time%' => count($ues)]),
-            'progress' => $userSeries->getProgress(),//$this->userEpisodeRepository->seasonProgress($userSeries, $seasonNumber),
+            'series_progress' => $userSeries->getProgress(),
+            'season_progress' => $this->userEpisodeRepository->seasonProgress($userSeries, $seasonNumber),
             'messages' => $messages,
             'deviceId' => $userEpisode->getDeviceId() ?? 0,
             'providerId' => $userEpisode->getProviderId() ?? 0,
@@ -2958,8 +2959,7 @@ class SeriesController extends AbstractController
             $change = true;
         } else {
             if (/*$userSeries->getProgress() == 100 && */ $userSeries->getViewedEpisodes() < $episodeCount) {
-                $newProgress = $userSeries->getViewedEpisodes() / $episodeCount * 100;
-                $newProgress = number_format($newProgress, 2);
+                $newProgress = round(100 * $userSeries->getViewedEpisodes() / $episodeCount, 2);
                 if ($newProgress != $userSeries->getProgress()) {
                     $userSeries->setProgress($newProgress);
                     $this->addFlash('success', 'Progress updated to ' . $newProgress . '%');
@@ -3657,6 +3657,12 @@ class SeriesController extends AbstractController
         $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris', true) : null;
         $userEpisode->setAirDate($airDate);
         $this->userEpisodeRepository->save($userEpisode);
+        if ($userSeries->getNextUserEpisode() === null && $airDate && $airDate > $this->now()) {
+            $this->userEpisodeRepository->flush();
+            $userSeries->setNextUserEpisode($userEpisode);
+            $this->userSeriesRepository->save($userSeries, true);
+            $this->addFlash('info', $this->translator->trans('Next episode to watch: %episode%', ['%episode%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
+        }
         return 1;
     }
 

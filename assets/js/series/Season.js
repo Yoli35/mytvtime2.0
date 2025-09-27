@@ -702,7 +702,7 @@ export class Season {
 
                 const progressDiv = document.querySelector('.progress');
                 if (progressDiv) {
-                    progressDiv.setAttribute('data-value', data['progress']);
+                    progressDiv.setAttribute('data-value', data['season_progress']);
                     gThis.setProgress();
                 }
 

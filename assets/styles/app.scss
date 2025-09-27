@@ -2324,6 +2324,12 @@ dialog {
             opacity: 0;
         }
 
+        &.info {
+            background-color: hsl(from var(--purple) h s l / .5);
+            border-color: vhsl(from var(--purple) h s 50%);
+            color: hsl(from var(--purple) h s 50%);
+        }
+
         &.success {
             background-color: var(--green-70-50);
             border-color: var(--green-10);
