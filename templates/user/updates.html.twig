@@ -27,6 +27,43 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>39ᵉ mise à jour : 27/09/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ What to watch next query enhanced</div>
+                        <div class="details">The SQL query no longer filters on the existence of a last episode viewed, allowing you to see series that have not yet been started.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve season progress tracking and UI feedback</div>
+                        <div class="details">Refactored progress calculation to use rounded percentages and updated the API to return both series and season progress. Enhanced UI feedback with new info message styling and hover effects. Fixed a typo in a comment and improved logic for determining the next episode to watch.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:user-outline') }}→ Improve preferred name display and UI styles</div>
+                        <div class="details">Refactored the people block to always show both preferred and regular names if available. Updated SCSS to adjust next-button background opacity and highlight names when a preferred name is present. Fixed Season.js to use floored lightness for vote graph styling and added a debug log.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Adjust vote section colors based on background brightness</div>
+                        <div class="details">Added logic to Season.js to detect the brightness of the page background and apply a 'dark' class to the vote graph if the background is light. Updated series.scss to style vote elements differently when the 'dark' class is present, improving visibility and accessibility.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Comment out background and border styles in series.scss</div>
+                        <div class="details">Temporarily disables background-color and border-radius styles for several components by commenting them out. Also updates the .user-actions selector to apply styles only when h2 is not present.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}→ Update navbar and burger styles</div>
+                        <div class="details">Adjusted padding for navbar, improved hover selector to exclude burger, and modified burger button dimensions and border radius for better appearance.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }}→ Improve album add-photos button layout and responsiveness</div>
+                        <div class="details">Moved the add-photos button inside the album-container for better structure. Updated SVG sizing in SCSS to use orientation-based media queries for improved responsiveness in landscape and portrait modes.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }}{{ ux_icon('mdi:tv') }}→ Update border radius and opacity in movie and series styles</div>
+                        <div class="details">Adjusted border radius for .infos and .backdrop in movie.scss to .5rem for improved visual consistency. Increased opacity and set border radius for elements in series.scss, and reduced blur effect on hover for better UI clarity.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>38ᵉ mise à jour : 25/09/2025</h2>
                 <ul>
                     <li>
