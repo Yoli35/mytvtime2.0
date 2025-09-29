@@ -336,7 +336,7 @@
                                             <div class="guest-stars">
                                                 <div class="wrapper">
                                                     {% for people in episode.guest_stars %}
-                                                        <div class="people" data-title="{{ people.name }} - {{ people.character }}">
+                                                        <div class="people" data-title="{{ people.name }}{% if people.preferred_name %} - {{ people.preferred_name }}{% endif %} → {{ people.character }}">
                                                             <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
                                                                 <div class="photo">
                                                                     {% if people.profile_path %}

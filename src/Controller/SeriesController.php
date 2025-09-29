@@ -3911,6 +3911,11 @@ class SeriesController extends AbstractController
         $locale = $user->getPreferredLanguage() ?? 'fr';
         $seasonEpisodes = [];
         $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $locale, true);
+        $arr = $this->peopleUserPreferredNameRepository->getUserPreferredNames($user->getId());
+        $peopleUserPreferredNames = [];
+        foreach ($arr as $people) {
+            $peopleUserPreferredNames[$people['tmdb_id']] = $people;
+        }
 
         $episodeIds = array_column($userEpisodes, 'episode_id');
         $stills = $this->episodeStillRepository->getSeasonStills($episodeIds);
@@ -3961,15 +3966,6 @@ class SeriesController extends AbstractController
             if ($userEpisode['custom_date']) {
                 $episode['air_date'] = $userEpisode['custom_date'];
             }
-            $episode['crew'] = array_map(function ($crew) use ($slugger, $user, $profileUrl) {
-                if (key_exists('person_id', $crew)) return null;
-                $crew['profile_path'] = $crew['profile_path'] ? $profileUrl . $crew['profile_path'] : null; // w185
-                $crew['slug'] = $slugger->slug($crew['name'])->lower()->toString();
-                return $crew;
-            }, $episode['crew'] ?? []);
-            $episode['crew'] = array_filter($episode['crew'], function ($crew) {
-                return $crew;
-            });
 
             $episode['guest_stars'] = array_filter($episode['guest_stars'] ?? [], function ($guest) {
                 return key_exists('id', $guest);
@@ -3977,11 +3973,16 @@ class SeriesController extends AbstractController
             usort($episode['guest_stars'], function ($a, $b) {
                 return !$a['profile_path'] <=> !$b['profile_path'];
             });
-            $episode['guest_stars'] = array_map(function ($guest) use ($slugger, $series, $profileUrl) {
+            $episode['guest_stars'] = array_map(function ($guest) use ($slugger, $series, $profileUrl, $peopleUserPreferredNames) {
                 $guest['profile_path'] = $guest['profile_path'] ? $profileUrl . $guest['profile_path'] : null; // w185
                 $guest['slug'] = $slugger->slug($guest['name'])->lower()->toString();
                 if (!$guest['profile_path']) {
                     $guest['google'] = 'https://www.google.com/search?q=' . urlencode($guest['name'] . ' ' . $series->getName());
+                }
+                if (key_exists($guest['id'], $peopleUserPreferredNames)) {
+                    $guest['preferred_name'] = $peopleUserPreferredNames[$guest['id']]['name'];
+                } else {
+                    $guest['preferred_name'] = null;
                 }
                 return $guest;
             }, $episode['guest_stars']);

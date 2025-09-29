@@ -41,6 +41,12 @@ class PeopleUserPreferredNameRepository extends ServiceEntityRepository
         $this->em->flush();
     }
 
+    public function getUserPreferredNames(int $userId): array
+    {
+        $sql = "SELECT * FROM people_user_preferred_name WHERE user_id=$userId";
+        return $this->getAll($sql);
+    }
+
     public function getPreferredNames(array $tmdbIds): array
     {
         $sql = "SELECT * FROM people_user_preferred_name WHERE tmdb_id IN (" . implode(',', $tmdbIds) . ")";
