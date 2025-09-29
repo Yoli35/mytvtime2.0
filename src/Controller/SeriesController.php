@@ -127,157 +127,64 @@ class SeriesController extends AbstractController
     public function index(): Response
     {
         $user = $this->getUser();
-        $country = $user->getCountry() ?? 'FR';
         $locale = $user->getPreferredLanguage() ?? 'fr';
-        $language = $locale . '-' . $country;
-        $timezone = $user->getTimezone() ?? 'Europe/Paris';
-
-        $userProviderIds = array_map(function ($up) {
-            return $up->getProviderId();
-        }, $user->getProviders()->toArray());
-
-        $now = $this->now();
-        // Day of week with monday = 1 to sunday = 7
-        $dayOfWeek = $now->format('N') ? $now->format('N') : 7;
-        // Monday of the current week
-//        $monday = $now->modify('-' . ($dayOfWeek - 1) . ' days')->format('Y-m-d');
-        $monday = $this->dateModify($now, '-' . ($dayOfWeek - 1) . ' days')->format('Y-m-d');
-        // Sunday of the current week
-//        $sunday = $now->modify('+' . (7 - $dayOfWeek) . ' days')->format('Y-m-d');
-        $sunday = $this->dateModify($now, '+' . (7 - $dayOfWeek) . ' days')->format('Y-m-d');
-
-        $searchString = "&air_date.gte=$monday&air_date.lte=$sunday&include_adult=false&include_null_first_air_dates=false&language=$language&sort_by=first_air_date.desc&timezone=$timezone&watch_region=$country&with_watch_providers=" . implode('|', $userProviderIds);
-
-        $searchResult = json_decode($this->tmdbService->getFilterTv($searchString . "&page=1"), true);
-        for ($i = 2; $i <= $searchResult['total_pages']; $i++) {
-            $searchResult['results'] = array_merge($searchResult['results'], json_decode($this->tmdbService->getFilterTv($searchString . "&page=$i"), true)['results']);
-        }
-        $seriesList = $this->getSearchResult($searchResult, new AsciiSlugger());
-        $userSeriesTMDBIds = array_column($this->userSeriesRepository->userSeriesTMDBIds($user), 'id');
-
-        // Historique des épisodes vus pendant les 2 semaines passées
-        $episodeHistory = $this->getEpisodeHistory($user, 14, $locale);
 
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 4);
         $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
 
+        $arr = $this->userEpisodeRepository->episodesOfTheDay($user, $locale);
+        // LEFT JOIN watch_links peut générer plusieurs résultats pour une même série, à cause de différents liens de streaming (link_name, provider_logo_path, "provider_name).
+        $episodesOfTheDay = [];
+        foreach ($arr as $ue) {
+            $episodesOfTheDay[$ue['episode_id']] = $ue;
+        }
         $AllEpisodesOfTheDay = array_map(function ($ue) use ($posterUrl, $logoUrl) {
-            $this->imageService->saveImage("posters", $ue['posterPath'], $posterUrl);
-            if ($ue['airAt']) {
-                $time = explode(':', $ue['airAt']);
+            $this->imageService->saveImage("posters", $ue['poster_path'], $posterUrl);
+            $ue['episode_of_the_day'] = true;
+            if ($ue['air_at']) {
+                $time = explode(':', $ue['air_at']);
                 $now = $this->now()->setTime($time[0], $time[1], $time[2]);
-                $ue['airAt'] = $now->format('Y-m-d H:i:s');
+                $ue['air_at'] = $now->format('Y-m-d H:i:s');
             }
-            if (!$ue['posterPath']) {
+            if (!$ue['poster_path']) {
                 $ue['poster_path'] = $this->getAlternatePosterPath($ue['id']);
             }
-            return [
-                'episode_of_the_day' => true,
-                'id' => $ue['id'],
-                'tmdbId' => $ue['tmdbId'],
-                'date' => $ue['date'],
-                'name' => $ue['name'],
-                'slug' => $ue['slug'],
-                'status' => $ue['status'],
-                'released' => $ue['released'],
-                'localized_name' => $ue['localizedName'],
-                'localized_slug' => $ue['localizedSlug'],
-                'poster_path' => $ue['posterPath'] ? '/series/posters' . $ue['posterPath'] : null,
-                'progress' => $ue['progress'],
-                'favorite' => $ue['favorite'],
-                'episode_number' => $ue['episodeNumber'],
-                'season_number' => $ue['seasonNumber'],
-                'upToDate' => $ue['watched_aired_episode_count'] == $ue['aired_episode_count'],
-                'remainingEpisodes' => $ue['aired_episode_count'] - $ue['watched_aired_episode_count'],
-                'aired_episode_count' => $ue['aired_episode_count'],
-                'watch_at' => $ue['watchAt'],
-                'air_at' => $ue['airAt'],
-                'watch_providers' => $ue['providerId'] ? [['logo_path' => $this->getProviderLogoFullPath($ue['providerLogoPath'], $logoUrl), 'provider_name' => $ue['providerName']]] : [],
-            ];
-        }, $this->userEpisodeRepository->episodesOfTheDay($user, $locale));
-        $tmdbIds = array_column($AllEpisodesOfTheDay, 'tmdbId');
+            $ue['poster_path'] = $ue['poster_path'] ? '/series/posters' . $ue['poster_path'] : null;
+            $ue['up_to_date'] = $ue['watched_aired_episode_count'] == $ue['aired_episode_count'];
+            $ue['remaining_episodes'] = $ue['aired_episode_count'] - $ue['watched_aired_episode_count'];
+            $ue['watch_providers'] = $ue['provider_id'] ? [['logo_path' => $this->getProviderLogoFullPath($ue['provider_logo_path'], $logoUrl), 'provider_name' => $ue['provider_name']]] : [];
+            return $ue;
+        }, $episodesOfTheDay);
+
+        $tmdbIds = array_column($AllEpisodesOfTheDay, 'tmdb_id');
+
+        $today = $this->now()->format('Y-m-d');
+        $todayEpisodes = array_filter($AllEpisodesOfTheDay, function ($e) use ($today) {
+            return $e['date'] == $today;
+        });
         $episodesOfTheDay = [];
-        foreach ($AllEpisodesOfTheDay as $us) {
+        foreach ($todayEpisodes as $us) {
             if ($us['aired_episode_count'] > 1) {
                 $episodesOfTheDay[$us['date'] . '-' . $us['id']][] = $us;
             } else {
                 $episodesOfTheDay[$us['date'] . '-' . $us['id']][0] = $us;
             }
         }
-
-        $allEpisodesOfTheWeek = array_map(function ($us) use ($posterUrl, $logoUrl) {
-            $this->imageService->saveImage("posters", $us['poster_path'], $posterUrl);
-            if (!$us['poster_path']) {
-                $us['poster_path'] = $this->getAlternatePosterPath($us['id']);
-            }
-            return [
-                'series_of_the_week' => true,
-                'episode_of_the_day' => true,
-                'id' => $us['id'],
-                'tmdb_id' => $us['tmdb_id'],
-                'date' => $us['air_date'],
-                'original_air_date' => $us['original_air_date'],
-                'name' => $us['name'],
-                'slug' => $us['slug'],
-                'status' => $us['status'],
-                'released' => $us['released'],
-                'localized_name' => $us['localized_name'],
-                'localized_slug' => $us['localized_slug'],
-                'poster_path' => $us['poster_path'] ? '/series/posters' . $us['poster_path'] : null,
-                'progress' => $us['progress'],
-                'watch_at' => $us['watch_at'],
-                'season_number' => $us['season_number'],
-                'episode_number' => $us['episode_number'],
-                'released_episode_count' => $us['released_episode_count'],
-                'air_at' => $us['air_at'],
-                'watch_providers' => $us['provider_id'] ? [['logo_path' => $this->getProviderLogoFullPath($us['provider_logo_path'], $logoUrl), 'provider_name' => $us['provider_name']]] : [],
-            ];
-        }, $this->userSeriesRepository->getUserSeriesOfTheNext7Days($user, $locale));
-        $tmdbIds = array_values(array_unique(array_merge($tmdbIds, array_column($allEpisodesOfTheWeek, 'tmdb_id'))));
+        $next7dDaysEpisodes = array_filter($AllEpisodesOfTheDay, function ($e) use ($today) {
+            return $e['date'] > $today;
+        });
         $seriesOfTheWeek = [];
-        foreach ($allEpisodesOfTheWeek as $us) {
-            if ($us['released_episode_count'] > 1) {
+        foreach ($next7dDaysEpisodes as $us) {
+            if ($us['aired_episode_count'] > 1) {
                 $seriesOfTheWeek[$us['date'] . '-' . $us['id']][] = $us;
             } else {
                 $seriesOfTheWeek[$us['date'] . '-' . $us['id']][0] = $us;
             }
         }
 
-        $sort = 'firstAirDate'; // TODO: ajouter un menu pour choisir l'ordre (firstAirDate, lastWatched, addedAt, ...)
-        $order = 'DESC';
-        $seriesToStart = array_map(function ($s) use ($posterUrl, $logoUrl) {
-            $this->imageService->saveImage("posters", $s['poster_path'], $posterUrl);
-            $s['provider_logo_path'] = $this->getProviderLogoFullPath($s['provider_logo_path'], $logoUrl);
-            return $s;
-        }, $this->userSeriesRepository->seriesToStart($user, $locale, $sort, $order, 1, 20));
-        $seriesToStartCount = $this->userSeriesRepository->seriesToStartCount($user, $locale);
-        $series = [];
-        // Plusieurs résultats pour une même série, à cause de différents liens de streaming (link_name, provider_logo_path, "provider_name)
-        // On ne garde que le premier résultat pour chaque série et on ajoute les providers dans un tableau "watch_links".
-        foreach ($seriesToStart as $s) {
-            if (!array_key_exists($s['id'], $series)) {
-                $series[$s['id']] = $s;
-                $series[$s['id']]['watch_links'] = [];
-            }
-            if ($s['link_name']) {
-                $series[$s['id']]['watch_links'][] = [
-                    'link_name' => $s['link_name'],
-                    'logo_path' => $s['provider_logo_path'],
-                    'provider_name' => $s['provider_name']
-                ];
-            }
-        }
-        $seriesToStart = array_values($series);
-
         return $this->render('series/index.html.twig', [
             'episodesOfTheDay' => $episodesOfTheDay,
             'seriesOfTheWeek' => $seriesOfTheWeek,
-            'episodeHistory' => $episodeHistory,
-            'seriesToStart' => $seriesToStart,
-            'seriesToStartCount' => $seriesToStartCount,
-            'seriesList' => $seriesList,
-            'userSeriesTMDBIds' => $userSeriesTMDBIds,
-            'total_results' => $searchResult['total_results'] ?? -1,
             'tmdbIds' => $tmdbIds,
         ]);
     }
@@ -1114,6 +1021,7 @@ class SeriesController extends AbstractController
                 $seasonSchedules = array_filter($alternativeSchedules, function ($s) use ($seasonNumber) {
                     return $s['seasonNumber'] == $seasonNumber;
                 });
+                $seasonSchedules = array_values($seasonSchedules);
                 if ($seasonSchedules) {
                     // Remplacer la date de la saison par la date du schedule
                     $time = explode(':', $seasonSchedules[0]['airAt']);

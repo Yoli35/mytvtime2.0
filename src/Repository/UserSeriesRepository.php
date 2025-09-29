@@ -68,51 +68,6 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getUserSeriesOfTheNext7Days(User $user, string $locale): array
-    {
-        $userId = $user->getId();
-        $sql = "SELECT
-                    s.`id`                                              as id,
-                    s.`tmdb_id`                                         as tmdb_id,
-                    s.`name`                                            as name,
-                    sln.`name`                                          as localized_name,
-                    us.`progress`                                       as progress,
-                    IF(sbd.id IS NULL, ue.`air_date`, DATE(sbd.`date`)) as air_date,
-                    ue.`air_date`                                       as original_air_date,
-                    ue.`season_number`                                  as season_number,
-                    ue.`episode_number`                                 as episode_number,
-                    ue.watch_at                                         as watch_at,
-                    us.`last_episode`                                   as last_episode,
-                    us.`last_season`                                    as last_season,
-                    s.`slug` as slug, sln.`slug`                        as localized_slug,
-                    s.`poster_path`                                     as poster_path,
-                    (s.first_air_date <= NOW())                         as released,
-                    sbs.`air_at`                                        as air_at,
-                    IF(sbs.`id`, sbs.provider_id, swl.`provider_id`)    as provider_id,
-                    wp.`provider_name`                                  as provider_name,
-                    wp.`logo_path`                                      as provider_logo_path,
-                    s.`status`                                          as status,
-                    (SELECT count(*)
-                        FROM user_episode cue
-                        WHERE cue.user_series_id = us.id
-                          AND cue.season_number = ue.season_number
-                          AND cue.air_date = ue.air_date
-                            )                                           as released_episode_count
-                FROM `series` s
-                    INNER JOIN `user_series` us ON s.`id`=us.`series_id`
-                    INNER JOIN `user_episode` ue on us.`id` = ue.`user_series_id`
-                    LEFT JOIN series_broadcast_schedule sbs ON s.id = sbs.series_id
-                    LEFT JOIN series_broadcast_date sbd ON sbd.series_broadcast_schedule_id = sbs.id AND sbd.episode_id = ue.episode_id
-                    LEFT JOIN `series_watch_link` swl ON s.id = swl.`series_id`
-                    LEFT JOIN watch_provider wp ON wp.provider_id = IF(sbs.`id`, sbs.provider_id, swl.`provider_id`)
-                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale'
-                WHERE us.`user_id`=$userId
-                    AND IF(sbd.id IS NULL, ue.`air_date` > CURDATE() AND ue.`air_date` <= ADDDATE(CURDATE(), INTERVAL 7 DAY), DATE(sbd.date) > CURDATE() AND DATE(sbd.date) <= ADDDATE(CURDATE(), INTERVAL 7 DAY))
-                ORDER BY air_date, air_at, ue.season_number, ue.episode_number";
-
-        return $this->getAll($sql);
-    }
-
     public function getUserSeries(User $user, string $locale, int $page = 1, int $perPage = 20): array
     {
         $userId = $user->getId();

@@ -1,5 +1,5 @@
 {% if series.progress is defined %}
-    {% set upToDate = series.upToDate is defined and series.upToDate == 1 %}
+    {% set upToDate = series.up_to_date is defined and series.up_to_date == 1 %}
     {% set start = series.progress==0 %}
     {% set ended = series.progress==100 %}
     {% if  upToDate %}

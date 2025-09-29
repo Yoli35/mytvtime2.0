@@ -74,17 +74,6 @@
                                 {% if dayOfMonth == "1" and app.locale == 'fr' %}
                                     {% set dayOfMonth = '1<sup>er</sup>' %}
                                 {% endif %}
-                                {#{% if app.locale == 'en' %}
-                                    {% if dayOfMonth == 1 %}
-                                        {% set dayOfMonth = '1<sup>st</sup>' %}
-                                    {% elseif dayOfMonth == 2 %}
-                                        {% set dayOfMonth = '2<sup>nd</sup>' %}
-                                    {% elseif dayOfMonth == 3 %}
-                                        {% set dayOfMonth = '3<sup>rd</sup>' %}
-                                    {% else %}
-                                        {% set dayOfMonth = dayOfMonth ~ '<sup>th</sup>' %}
-                                    {% endif %}
-                                {% endif %}#}
                                 {% set day = date|format_datetime(pattern: "EEEE")|capitalize %}
                                 {% set month = date|format_datetime(pattern: "MMMM")|capitalize %}
                                 {% if app.locale == 'ko' %}
@@ -126,41 +115,6 @@
                 </div>
             </div>
         {% endif %}
-        {% if seriesToStart|length %}
-            <h2>
-                {{ 'Series to start'|trans }} ({{ seriesToStart|length }} / {{ seriesToStartCount }})
-                <button class="btn btn-primary" onclick="window.location.href='{{ path('app_series_to_start') }}'">{{ 'See all'|trans }}</button>
-            </h2>
-            <div class="series-group user">
-                <div class="wrapper">
-                    <div class="content center">
-                        {% for series in seriesToStart %}
-                            {{ include('_blocks/series/_card2Start.html.twig') }}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-        <h2>{{ 'Series airing this week'|trans }} ({{ seriesList|length }})</h2>
-        <div class="series-group user">
-            <div class="wrapper">
-                <div class="content center">
-                    {% for series in seriesList %}
-                        {{ include('_blocks/series/_card.html.twig', {ids: userSeriesTMDBIds}) }}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        <h2>{{ 'Episode history (%d)'|trans|format(14) }} ({{ episodeHistory|length }})</h2>
-        <div class="series-group user">
-            <div class="wrapper">
-                <div class="content center">
-                    {% for series in episodeHistory %}
-                        {{ include('_blocks/series/_episode-card.html.twig') }}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
         <div id="global-data" class="hidden">
             {
             "tmdbIds": {{ tmdbIds|json_encode|raw }},
