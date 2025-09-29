@@ -3833,23 +3833,34 @@ class SeriesController extends AbstractController
             $preferredNames[$name['tmdb_id']] = $name['name'];
         }
 
+        /******************************************************************************************
+         * slug() doesn't work well with some non-Latin characters (e.g. Laos, Cambodia, Myanmar) *
+         ******************************************************************************************/
+
         $slugger = new AsciiSlugger();
         $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
         $tv['credits']['cast'] = array_map(function ($cast) use ($slugger, $profileUrl, $preferredNames) {
-            $cast['slug'] = $slugger->slug($cast['name'])->lower()->toString();
             $cast['profile_path'] = $cast['profile_path'] ? $profileUrl . $cast['profile_path'] : null; // w185
             $cast['preferred_name'] = null;
             if (key_exists($cast['id'], $preferredNames)) {
                 $cast['preferred_name'] = $preferredNames[$cast['id']];
+                $cast['slug'] = $slugger->slug($cast['preferred_name'])->lower()->toString();
+            } else {
+                $cast['slug'] = $slugger->slug($cast['name'])->lower()->toString();
+            }
+            if ($cast['slug'] == '') {
+                $cast['slug'] = 'person-' . $cast['id'];
             }
             return $cast;
         }, $tv['credits']['cast'] ?? []);
         $tv['credits']['guest_stars'] = array_map(function ($cast) use ($slugger, $profileUrl, $preferredNames) {
-            $cast['slug'] = $slugger->slug($cast['name'])->lower()->toString();
             $cast['profile_path'] = $cast['profile_path'] ? $profileUrl . $cast['profile_path'] : null; // w185
             $cast['preferred_name'] = null;
             if (key_exists($cast['id'], $preferredNames)) {
                 $cast['preferred_name'] = $preferredNames[$cast['id']];
+                $cast['slug'] = $slugger->slug($cast['preferred_name'])->lower()->toString();
+            } else {
+                $cast['slug'] = $slugger->slug($cast['name'])->lower()->toString();
             }
             return $cast;
         }, $tv['credits']['guest_stars'] ?? []);
@@ -3864,11 +3875,16 @@ class SeriesController extends AbstractController
         }
         $crew = array_values($crew);
         $tv['credits']['crew'] = array_map(function ($c) use ($slugger, $profileUrl, $preferredNames) {
-            $c['slug'] = $slugger->slug($c['name'])->lower()->toString();
             $c['profile_path'] = $c['profile_path'] ? $profileUrl . $c['profile_path'] : null; // w185
             $c['preferred_name'] = null;
             if (key_exists($c['id'], $preferredNames)) {
                 $c['preferred_name'] = $preferredNames[$c['id']];
+                $c['slug'] = $slugger->slug($c['preferred_name'])->lower()->toString();
+            } else {
+                $c['slug'] = $slugger->slug($c['name'])->lower()->toString();
+            }
+            if ($c['slug'] == '') {
+                $c['slug'] = 'person-' . $c['id'];
             }
             return $c;
         }, $crew);
