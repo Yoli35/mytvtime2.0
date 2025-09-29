@@ -687,6 +687,7 @@ h2 {
 
         .infos {
             /*height: calc(40vw * calc(117 / 78));*/
+            flex-grow: 1;
             height: 100%;
             position: relative;
             /*width: calc(60vw - 3rem);*/
