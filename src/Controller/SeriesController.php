@@ -4243,8 +4243,7 @@ class SeriesController extends AbstractController
 //        ];
 //    }
 
-    public
-    function getProviderLogoFullPath(?string $path, string $tmdbUrl): ?string
+    public function getProviderLogoFullPath(?string $path, string $tmdbUrl): ?string
     {
         if (!$path) return null;
         if (str_starts_with($path, '/')) {
@@ -4253,8 +4252,7 @@ class SeriesController extends AbstractController
         return '/images/providers' . substr($path, 1);
     }
 
-    public
-    function getKeywords(): array
+    public function getKeywords(): array
     {
         $keywords = $this->keywordRepository->findby([], ['name' => 'ASC']);
 
@@ -4265,8 +4263,7 @@ class SeriesController extends AbstractController
         return $keywordArray;
     }
 
-    public
-    function getSearchString(?User $user, SeriesAdvancedSearchDTO $data): string
+    public function getSearchString(?User $user, SeriesAdvancedSearchDTO $data): string
     {
         // App\DTO\SeriesAdvancedSearchDTO {#811 ▼
         //  *-language: "fr"
@@ -4332,8 +4329,7 @@ class SeriesController extends AbstractController
         return $searchString;
     }
 
-    public
-    function getSearchResult($searchResult, $slugger): array
+    public function getSearchResult($searchResult, $slugger): array
     {
         return array_map(function ($tv) use ($slugger) {
             $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
@@ -4363,8 +4359,7 @@ class SeriesController extends AbstractController
         }, $searchResult['results'] ?? []);
     }
 
-    public
-    function getOneResult($tv, $slugger): Response
+    public function getOneResult($tv, $slugger): Response
     {
         return $this->redirectToRoute('app_series_tmdb', [
             'id' => $tv['id'],
@@ -4372,8 +4367,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    public
-    function getProjectDir(): string
+    public function getProjectDir(): string
     {
         return $this->getParameter('kernel.project_dir');
     }
