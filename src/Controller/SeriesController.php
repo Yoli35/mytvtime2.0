@@ -498,7 +498,6 @@ class SeriesController extends AbstractController
             $filters);
         $userSeriesCount = $this->userSeriesRepository->countAllSeries(
             $user,
-            $localisation,
             $filters);
 
         $userSeries = array_map(function ($series) {

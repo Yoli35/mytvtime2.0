@@ -223,7 +223,9 @@ class UserSeriesRepository extends ServiceEntityRepository
     public function getAllSeries(
         User  $user,
         array $localisation,
-        array $filters): array
+        array $filters,
+        bool $includeFirstEpisode = false
+    ): array
     {
         $page = intval($filters['page'] ?? 1);
         $perPage = intval($filters['perPage'] ?? 20);
@@ -248,6 +250,15 @@ class UserSeriesRepository extends ServiceEntityRepository
         $locale = $localisation['locale'];
         $offset = ($page - 1) * $perPage;
 
+        // Si on inclut le premier épisode, on fait un LEFT JOIN pour récupérer les séries où l'utilisateur n'a pas encore vu d'épisode
+        // Sinon, on fait un INNER JOIN pour ne récupérer que les séries où l'utilisateur a déjà vu au moins un épisode
+        // Cela permet de filtrer les séries en fonction de la progression de l'utilisateur
+        // et d'éviter d'afficher des séries que l'utilisateur n'a pas encore commencé à regarder.
+        // Menu Séries en cours ($includeFirstEpisode = false) : afficher les séries où l'utilisateur a déjà vu au moins un épisode
+        // Bouton "Que regarder ensuite" ($includeFirstEpisode = true) : afficher toutes les séries, y compris celles où l'utilisateur n'a pas encore vu d'épisode.
+
+        $lastEpisodeInnerJoin = !$includeFirstEpisode ? " INNER JOIN `user_episode` lue ON lue.`id`=us.`last_user_episode_id` " : " LEFT JOIN `user_episode` lue ON lue.`id`=us.`last_user_episode_id` ";
+
         $sql = "SELECT s.`id`                                         as id,
                     s.`name`                                       as name,
                     s.`poster_path`                                as poster_path, 
@@ -271,7 +282,7 @@ class UserSeriesRepository extends ServiceEntityRepository
                       AND ue2.season_number > 0
                       AND ue2.`watch_at` IS NULL)                  as remainingEpisodes
                 FROM `user_series` us
-                    INNER JOIN `user_episode` lue ON lue.`id`=us.`last_user_episode_id`
+                    $lastEpisodeInnerJoin
                     INNER JOIN `user_episode` nue ON nue.`id`=us.`next_user_episode_id` AND nue.`air_date` IS NOT NULL
                     $innerJoin
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`
@@ -289,8 +300,8 @@ class UserSeriesRepository extends ServiceEntityRepository
 
     public function countAllSeries(
         User  $user,
-        array $localisation,
-        array $filters): int
+        array $filters,
+        bool $includeFirstEpisode = false): int
     {
         $network = $filters['network'];
         if ($network !== 'all') {
@@ -299,11 +310,12 @@ class UserSeriesRepository extends ServiceEntityRepository
             $innerJoin = '';
         }
         $userId = $user->getId();
-        $country = $localisation['country'];
+
+        $lastEpisodeInnerJoin = !$includeFirstEpisode ? " INNER JOIN `user_episode` lue ON lue.`id`=us.`last_user_episode_id` " : " LEFT JOIN `user_episode` lue ON lue.`id`=us.`last_user_episode_id` ";
 
         $sql = "SELECT COUNT(*)
                 FROM `user_series` us
-                    INNER JOIN `user_episode` lue ON lue.`id`=us.`last_user_episode_id`
+                    $lastEpisodeInnerJoin
                     INNER JOIN `user_episode` nue ON nue.`id`=us.`next_user_episode_id` AND nue.`air_date` IS NOT NULL
                     $innerJoin
                     LEFT JOIN `series` s ON s.`id`=us.`series_id`

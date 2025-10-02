@@ -25,7 +25,7 @@ class SeriesWhatNext extends AbstractController
     }
 
     #[Route('/what/next', name: 'what_next', methods: ['GET'])]
-    public function whatNext(Request $request): JsonResponse
+    public function next(Request $request): JsonResponse
     {
         $user = $this->getUser();
         $filters = ['page' => 1, 'perPage' => 20, 'sort' => 'finalAirDate', 'order' => 'DESC', 'network' => 'all'];
@@ -33,7 +33,9 @@ class SeriesWhatNext extends AbstractController
         $userSeries = $this->userSeriesRepository->getAllSeries(
             $user,
             $localisation,
-            $filters);
+            $filters,
+            true
+        );
         $userSeries = array_map(function ($series) {
             $series['poster_path'] = $series['poster_path'] ? '/series/posters' . $series['poster_path'] : null;
             return $series;
