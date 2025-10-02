@@ -2001,8 +2001,6 @@ h2 {
                 }
 
                 .keywords {
-                    border: 2px dashed var(--orange-50);
-                    border-radius: .25rem;
                     display: flex;
                     flex-wrap: wrap;
                     gap: .5rem;
@@ -2260,6 +2258,11 @@ h2 {
             &:hover {
                 height: calc(40vw * calc(117 / 78));
                 width: 40vw;
+            }
+
+            a {
+                height: 100%;
+                width: 100%;
             }
         }
 
