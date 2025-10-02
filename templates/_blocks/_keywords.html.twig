@@ -1,8 +1,41 @@
 <div class="keywords" data-id="{{ id }}">
     {% for k in keywords %}
         <div class="keyword{% if k.name in missing %} missing{% endif %}" data-title="{{ k.name|trim|trans([], 'keywords') }}">
-                {{ k.name }}
+            {{ k.name }}
         </div>
     {% endfor %}
 </div>
 {{ include('_blocks/forms/_keyword-translation.html.twig') }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const container = document.querySelector('.keywords[data-id="{{ id }}"]');
+        if (!container) {
+            return;
+        }
+        adjustKeywordBlockWidth(container);
+        window.addEventListener('resize', function () {
+            adjustKeywordBlockWidth(container);
+        });
+    });
+
+    function adjustKeywordBlockWidth(container) {
+        const parentWidth = container.parentElement.clientWidth;
+        const keywordDivs = container.querySelectorAll('.keyword');
+        const keywordCount = keywordDivs.length;
+        const containerWidth = parentWidth;//container.clientWidth;
+        let totalWidth = 0;
+        keywordDivs.forEach(function (div) {
+            totalWidth += div.offsetWidth + 10; // Ajouter une marge de 10px
+        });
+        if (totalWidth > containerWidth) {
+            // Si la largeur totale dépasse la largeur du conteneur, on ajuste la largeur du container
+            // de manière à faire faire plusieurs lignes de mot clé de même taille.
+            const lineCount = Math.ceil(totalWidth / containerWidth);
+            const keywordByLine = Math.ceil(keywordCount / lineCount);
+            // gap: .5rem => 8px
+            const gapTotal = (keywordByLine - 1) * 8;
+            totalWidth = totalWidth + gapTotal;
+            container.style.width = (20 + totalWidth / lineCount) + 'px';
+        }
+    }
+</script>

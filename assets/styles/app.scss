@@ -2326,8 +2326,8 @@ dialog {
 
         &.info {
             background-color: hsl(from var(--purple) h s l / .5);
-            border-color: vhsl(from var(--purple) h s 50%);
-            color: hsl(from var(--purple) h s 50%);
+            border-color: vhsl(from var(--purple) h s 90%);
+            color: hsl(from var(--purple) h s 90%);
         }
 
         &.success {

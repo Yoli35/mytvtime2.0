@@ -25,7 +25,7 @@
 h2 {
     background-color: var(--orange-50);
     border-radius: .25rem;
-    color: var(--orange-90);
+    /*color: var(--orange-90);*/
     padding: .5rem 1rem;
 }
 
@@ -589,6 +589,27 @@ h2 {
             }
         }
 
+        &:not(:has(.backdrop)) {
+            background-color: hsl(from var(--ardoise-90) h s l /.1);
+        }
+
+        .backdrop {
+            height: calc(100% + 10rem);
+            inset: -5rem;
+            mask-image: linear-gradient(to bottom, #000 90%, #ffffff00 100%);
+            opacity: .5;
+            position: absolute;
+            width: calc(100% + 10rem);
+            z-index: -1;
+
+            img {
+                border-radius: .5rem;
+                height: 100%;
+                object-fit: cover;
+                width: 100%;
+            }
+        }
+
         .poster {
             align-items: center;
             aspect-ratio: 78 / 117;
@@ -692,25 +713,9 @@ h2 {
             position: relative;
             /*width: calc(60vw - 3rem);*/
 
-            .backdrop {
-                height: 100%;
-                inset: 0;
-                opacity: .5;
-                position: absolute;
-                width: 100%;
-                z-index: -1;
-
-                img {
-                    border-radius: .5rem;
-                    height: 100%;
-                    object-fit: cover;
-                    width: 100%;
-                }
-            }
-
             .infos-content {
                 align-items: flex-start;
-                background-color: hsla(from var(--ardoise-90) h s l / .2);
+                background-color: hsla(from var(--grey-50) h s l / .1);
                 border-radius: .5rem;
                 display: flex;
                 flex-direction: column;
@@ -724,7 +729,8 @@ h2 {
                 width: 100%;
 
                 &:hover {
-                    background-color: hsla(from var(--ardoise-90) h s l / .75);
+                    backdrop-filter: blur(80px);
+                    //background-color: hsla(from var(--grey-50) h s l / .75);
                 }
 
                 .name {
@@ -742,7 +748,7 @@ h2 {
                         text-align: left;
 
                         .localization-span, .from-schedule {
-                            color: var(--orange-50);
+                            font-weight: 300;
                         }
                     }
                 }
@@ -1131,7 +1137,7 @@ h2 {
 
         .video-tools {
             align-items: center;
-            color: var(--ardoise-10);
+            /*color: var(--ardoise-10);*/
             display: flex;
             gap: .5rem;
             justify-content: flex-end;
@@ -1897,7 +1903,7 @@ h2 {
                     align-items: center;
                     background-color: hsla(from var(--ardoise-90) h s l / .2);
                     border-radius: .25rem;
-                    color: var(--ardoise-10);
+                    /*color: var(--ardoise-10);*/
                     display: flex;
                     gap: .5rem;
                     justify-content: center;
@@ -1992,34 +1998,37 @@ h2 {
                         }
 
                     }
+                }
 
-                    .keywords {
+                .keywords {
+                    border: 2px dashed var(--orange-50);
+                    border-radius: .25rem;
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: .5rem;
+                    justify-content: center;
+                    margin-inline: auto;
+                    width: 100%;
+
+                    .keyword {
+                        align-items: center;
+                        background-color: var(--green-50);
+                        border-radius: .25rem;
+                        color: var(--orange-90);
                         display: flex;
-                        flex-wrap: wrap;
-                        gap: .5rem;
+                        font-size: 1rem;
+                        font-weight: 300;
+                        gap: .25rem;
                         justify-content: center;
-                        width: 100%;
+                        padding: .125rem .375rem;
+                        position: relative;
 
-                        .keyword {
-                            align-items: center;
-                            background-color: var(--green-50);
-                            border-radius: .25rem;
-                            color: var(--orange-90);
-                            display: flex;
-                            font-size: 1rem;
-                            font-weight: 300;
-                            gap: .25rem;
-                            justify-content: center;
-                            padding: .125rem .375rem;
-                            position: relative;
+                        &.missing {
+                            background-color: var(--orange-50);
+                            cursor: pointer;
 
-                            &.missing {
-                                background-color: var(--orange-50);
-                                cursor: pointer;
-
-                                &:hover {
-                                    background-color: var(--orange-60);
-                                }
+                            &:hover {
+                                background-color: var(--orange-60);
                             }
                         }
                     }

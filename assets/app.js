@@ -23,7 +23,7 @@ import {ProviderSelect} from 'ProviderSelect';
 import {Season} from 'Season';
 import {Show} from 'Show';
 import {ToolTips} from 'ToolTips';
-import {TranslationsForms} from "TranslationsForms";
+// import {TranslationsForms} from "TranslationsForms";
 import {Videos} from 'Videos';
 
 // new ResizeObserver(entries => {
@@ -201,15 +201,23 @@ window.addEventListener("DOMContentLoaded", () => {
         if (img) {
             const averageColor = new AverageColor();
             const color = averageColor.getColor(img);
-            if (isSeasonPage) {
+            // if (isSeasonPage) {
                 const infos = document.querySelector(".infos");
+                const localizationSpan = infos.querySelector('.localization-span');
+                const h1 = infos.querySelector('h1');
                 console.log({color})
                 if (color.lightness > 180) {
-                    infos.style.color = "#101010";
+                    infos.style.color = "hsl(202, 18%, 10%)";
+                    if (localizationSpan) localizationSpan.style.color = "hsl(32, 76%, 30%)";
+                    h1.style.color = "hsl(202, 18%, 10%)"
+                    seriesShow.style.color = "hsl(202, 18%, 10%)"
                 } else {
-                    infos.style.color = "#f5f5f5";
+                    infos.style.color = "hsl(202, 18%, 90%)";
+                    if (localizationSpan) localizationSpan.style.color = "hsl(32, 76%, 80%)";
+                    h1.style.color = "hsl(202, 18%, 90%)"
+                    seriesShow.style.color = "hsl(202, 18%, 90%)"
                 }
-            }
+            // }
             const hsl = averageColor.rgbToHsl(color);
             hsl.l *= .8;
             // hsl.s *= 1.25;
