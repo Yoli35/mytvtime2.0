@@ -371,6 +371,7 @@ export class TranslationsForms {
     displayForm(form) {
         if (form.getAttribute('popover') === "") {
             form.showPopover();
+            form.querySelector('textarea').focus();
         } else {
             form.classList.add('display');
             setTimeout(function () {
