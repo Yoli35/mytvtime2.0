@@ -11,20 +11,53 @@
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid user-profile-container"> {# ← light #}
         <div class="site-updates">
-            <div class="toggle-theme">{{ ux_icon('mdi:sun-moon-stars') }}</div>
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const toggleTheme = document.querySelector('.toggle-theme');
-                    toggleTheme.addEventListener('click', function () {
-                        document.querySelector(".container-fluid").classList.toggle('light');
-                    });
-                });
-            </script>
+{#            <div class="toggle-theme">{{ ux_icon('mdi:sun-moon-stars') }}</div>#}
+{#            <script>#}
+{#                document.addEventListener('DOMContentLoaded', function () {#}
+{#                    const toggleTheme = document.querySelector('.toggle-theme');#}
+{#                    toggleTheme.addEventListener('click', function () {#}
+{#                        document.querySelector(".container-fluid").classList.toggle('light');#}
+{#                    });#}
+{#                });#}
+{#            </script>#}
             <div class="site-update glowing-border">
                 <div class="updates-title">
                     <h1>Mises à jour / Updates / {{ 'Updates'|trans(domain = 'messages', locale = 'ko') }}</h1>
                     <h4>myTvTime 2.0 : 18/09/2024</h4>
                 </div>
+            </div>
+            <div class="site-update glowing-border">
+                <h2>40ᵉ mise à jour : 02/10/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add option to include all series in 'What Next' API</div>
+                        <div class="details">Updated the SeriesWhatNext API and UserSeriesRepository to allow including series where the user hasn't watched any episodes yet, by adding an $includeFirstEpisode parameter. Adjusted SQL joins accordingly and updated method signatures and usages. This enables the 'What Next' endpoint to show all series, not just those already started by the user.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series show layout and keyword styling</div>
+                        <div class="details">Reworked the series show page to move the backdrop image outside the .infos block and improved the layout for facts, networks, and keywords. Updated keyword block styles for better wrapping and appearance, and added a script to dynamically adjust keyword container width. Adjusted color schemes in SCSS for better contrast and readability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add user preferred names for guest stars in season view</div>
+                        <div class="details">Introduces retrieval of user-specific preferred names for people and displays them alongside guest star names in the season template. Updates SeriesController to fetch and inject preferred names, and modifies the template to show them if available.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series index to simplify episode queries</div>
+                        <div class="details">This page now displays the episodes of the day and for the 7 next days. Simplifies the logic for fetching and displaying episodes of the day and week by consolidating queries and removing unused code. Removes the 'series to start', 'series airing this week', and 'episode history' sections from the index view. Updates SQL queries and variable naming for consistency and future maintainability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:user-outline') }}→ Improve slug generation for non-Latin names</div>
+                        <div class="details">Slug generation now uses preferred names when available and falls back to a default format if the slug is empty, addressing issues with non-Latin characters.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add transitions to series.scss elements</div>
+                        <div class="details">The "Add this episode" button ([+]) is now always visible. Introduces smooth transition effects for background color and other properties on specific elements to enhance UI interactivity. Also refactors selector grouping for better maintainability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:user-outline') }}→ Enhance people block with preferred name and role</div>
+                        <div class="details">Updated the people block to display the preferred name and role in the data-title attribute if available, providing more context in the UI.</div>
+                    </li>
+                </ul>
             </div>
             <div class="site-update glowing-border">
                 <h2>39ᵉ mise à jour : 27/09/2025</h2>
