@@ -264,9 +264,14 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function episodesOfTheDay(User $user, string $locale = 'fr'): array
+    public function episodesOfTheDay(User $user, string $locale = 'fr', bool $next7Days = true): array
     {
         $userId = $user->getId();
+        if ($next7Days) {
+            $dayCondition = "IF(sbd.id IS NULL, ue.air_date >= CURDATE() AND ue.`air_date` <= ADDDATE(CURDATE(), INTERVAL 7 DAY), DATE(sbd.date) >= CURDATE() AND DATE(sbd.date) <= ADDDATE(CURDATE(), INTERVAL 7 DAY))";
+        } else {
+            $dayCondition = "IF(sbd.id IS NULL, ue.air_date = CURDATE(), DATE(sbd.date) = CURDATE())";
+        }
         $sql = "SELECT
                        ue.id                                               as episode_id,
                        s.id                                                as id,
@@ -319,7 +324,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                          LEFT JOIN watch_provider wp ON wp.provider_id = IF(sbs.`id`, sbs.provider_id, swl.`provider_id`)
                          LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
                 WHERE us.user_id = $userId
-                  AND IF(sbd.id IS NULL, ue.air_date >= CURDATE() AND ue.`air_date` <= ADDDATE(CURDATE(), INTERVAL 7 DAY), DATE(sbd.date) >= CURDATE() AND DATE(sbd.date) <= ADDDATE(CURDATE(), INTERVAL 7 DAY))
+                  AND $dayCondition
                 ORDER BY date, sbs.air_at, ue.season_number , ue.episode_number";
 //        AND ue.season_number > 0
 

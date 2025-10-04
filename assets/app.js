@@ -5,7 +5,7 @@ import {AdminPointsOfInterest} from "AdminPointsOfInterest";
 import {AdminSeriesUpdates} from "AdminSeriesUpdates";
 import {AlbumShow} from "AlbumShow";
 import {AverageColor} from 'AverageColor';
-import {DayCountHistory} from 'DayCountHistory';
+import {EpisodeHistory} from "EpisodeHistory";
 import {FlashMessage} from 'FlashMessage';
 import {HighlightSeries} from 'HighlightSeries';
 import {Index} from 'Index';
@@ -152,11 +152,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
 // Home page
     if (document.querySelector(".home")) {
-        const dayCountHistory = new DayCountHistory();
+        const episodeHistory = new EpisodeHistory();
         const providerSelect = new ProviderSelect();
         const highlightSeries = new HighlightSeries();
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
-        dayCountHistory.init();
+        episodeHistory.init(globs);
         providerSelect.init(globs);
         highlightSeries.init(globs);
 

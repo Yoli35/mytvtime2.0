@@ -31,11 +31,11 @@ return [
     'AverageColor' => [
         'path' => './assets/js/images/AverageColor.js',
     ],
-    'DayCountHistory' => [
-        'path' => './assets/js/home/DayCountHistory.js',
-    ],
     'Diaporama' => [
         'path' => './assets/js/images/Diaporama.js',
+    ],
+    'EpisodeHistory' => [
+        'path' => './assets/js/home/EpisodeHistory.js',
     ],
     'FlashMessage' => [
         'path' => './assets/js/FlashMessage.js',

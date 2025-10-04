@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @method User|null getUser() */
 #[Route('/', name: 'app_home_')]
@@ -29,6 +30,7 @@ class HomeController extends AbstractController
         private readonly UserEpisodeRepository   $userEpisodeRepository,
         private readonly UserSeriesRepository    $userSeriesRepository,
         private readonly TMDBService             $tmdbService,
+        private readonly TranslatorInterface     $translator,
         private readonly WatchProviderRepository $watchProviderRepository,
     )
     {
@@ -61,16 +63,23 @@ class HomeController extends AbstractController
             }, $userSeries);
 
             // Episodes du jour
-            $arr = $this->userEpisodeRepository->episodesOfTheDay($user, $language);
+            $arr = $this->userEpisodeRepository->episodesOfTheDay($user, $language, false);
+            $uniqueEpisodes = [];
+            foreach ($arr as $ue) {
+                $uniqueEpisodes[$ue['episode_id']] = $ue;
+            }
             $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
             $episodesOfTheDay = array_map(function ($series) use ($logoUrl) {
-                $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
-                $series['providerLogoPath'] = $this->getProviderLogoFullPath($series['providerLogoPath'], $logoUrl);
+                $series['poster_path'] = $series['poster_path'] ? '/series/posters' . $series['poster_path'] : null;
+                $series['provider_logo_path'] = $this->getProviderLogoFullPath($series['provider_logo_path'], $logoUrl);
+                if ($series['provider_logo_path']) {
+                    $series['watch_providers'][] = ['provider_name' => $series['provider_name'], 'logo_path' => $series['provider_logo_path']];
+                }
                 $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
                 $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
                 $series['released'] = true;
                 return $series;
-            }, $arr);
+            }, $uniqueEpisodes);
             // Épisodes à voir parmi les séries commencées
             $episodesToWatch = array_map(function ($series) {
                 $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
@@ -153,8 +162,6 @@ class HomeController extends AbstractController
             }
             $videoList = implode(',', $videoList);
             $movieVideos['videoList'] = $videoList;
-        } else {
-            $videos = [];
         }
 
         return $this->render('home/index.html.twig', [
@@ -220,6 +227,37 @@ class HomeController extends AbstractController
             'status' => 'success',
             'wrapperContent' => $this->render('_blocks/home/_provider-series.html.twig', [
                 'filteredSeries' => $seriesSelection,
+            ])->getContent(),
+        ]);
+    }
+
+    #[Route('/load-episode-history', name: 'load_episode_history', methods: ['POST'])]
+    public function loadEpisodeHistory(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $user = $this->getUser();
+        $language = $user?->getPreferredLanguage() ?? "fr";
+        $dayCount = $data['count'] ?? 8;
+
+        if (!is_numeric($dayCount)) {
+            return $this->json([
+                'status' => 'error',
+                'message' => 'Invalid provider',
+            ]);
+        }
+        $historyEpisode = $this->seriesController->getEpisodeHistory($user, $dayCount, $language);
+        $count = count($historyEpisode);
+
+        if ($dayCount == 1) {
+            $h2 = $this->translator->trans('Episodes watched in the last %dayCount% hours (%count%)', ['%dayCount%' => $dayCount * 24, '%count%' => $count]);
+        } else {
+            $h2 = $this->translator->trans('Episodes watched in the last %dayCount% days (%count%)', ['%dayCount%' => $dayCount, '%count%' => $count]);
+        }
+        return $this->json([
+            'status' => 'success',
+            'h2Text' => $h2,
+            'wrapperContent' => $this->render('_blocks/home/_episode-history.html.twig', [
+                'historyEpisode' => $historyEpisode,
             ])->getContent(),
         ]);
     }

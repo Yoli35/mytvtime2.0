@@ -27,10 +27,12 @@ Disconnect: Se déconnecter
 Email address: Adresse courriel
 Email: Courriel
 English: Anglais
-Episode history (%d): Épisodes regardés ces %d derniers jours
-Episode history (%h): Épisodes regardés ces %h dernières heures
+Episode history (%d): Épisodes vus au cours des %d derniers jours
+Episode history (%h): Épisodes vus au cours des %h dernières heures
 Episodes detail: Détails des épisodes
 Episodes to watch: Épisodes suivants disponibles à regarder
+Episodes watched in the last %dayCount% hours (%count%): Épisodes vus au cours des dernières %dayCount% heures (%count%)
+Episodes watched in the last %dayCount% days (%count%): Épisodes vus au cours des derniers %dayCount% jours (%count%)
 French: Français
 Guest: Invité
 Hide preview: Masquer l'aperçu
