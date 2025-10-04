@@ -49,7 +49,7 @@ export class ProviderSelect {
                 body: JSON.stringify({provider: provider})
             })
                 .then(res => res.json())
-                /* @param ProviderSeriesResult */
+                /** @param ProviderSeriesResult */
                 .then(data => {
                     if (data.status === 'success') {
                         const providerSeriesDiv = document.querySelector("#provider-series");
