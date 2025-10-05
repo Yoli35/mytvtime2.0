@@ -235,6 +235,11 @@
                         &.active {
                             color: var(--orange-50);
                         }
+
+                        svg {
+                            height: 2.5rem;
+                            width: 2.5rem;
+                        }
                     }
                 }
             }
@@ -273,17 +278,27 @@
                 height: 2rem;
                 justify-content: center;
 
-                &.remove-this-series {
+                &.remove-this-series, &.remove-this-movie {
                     background-color: var(--remove-this-series);
                     width: 2rem;
+
+                    svg {
+                        height: 2rem;
+                        width: 2rem;
+                    }
                 }
 
-                &.toggle-favorite-series {
+                &.toggle-favorite-series, &.toggle-favorite-movie {
                     background-color: hsla(from var(--ardoise-80) h s l / .5);
                     width: 2rem;
 
                     &.favorite {
                         color: var(--favorite-series);
+                    }
+
+                    svg {
+                        height: 2rem;
+                        width: 2rem;
                     }
                 }
 
@@ -293,6 +308,11 @@
 
                     &.pinned {
                         color: var(--favorite-series);
+                    }
+
+                    svg {
+                        height: 2rem;
+                        width: 2rem;
                     }
                 }
             }

@@ -134,15 +134,16 @@
             background-color: var(--green-40);
             border-radius: .5rem;
             display: flex;
+            flex-shrink: 0;
             justify-content: center;
             width: 35vw;
 
             img {
                 aspect-ratio: 78 / 117;
                 border-radius: .5rem;
-                height: auto;
+                height: 100%;
+                object-fit: cover;
                 position: relative;
-                width: 100%;
             }
         }
 
@@ -1075,14 +1076,11 @@
     }
     @media (orientation: portrait) {
         .movie-show {
-            padding-block-start: 5rem;
-
             header {
                 flex-direction: column;
 
                 .poster {
-                    margin-inline: auto;
-                    width: 75vw;
+                    width: 100%;
                 }
 
                 .infos {
