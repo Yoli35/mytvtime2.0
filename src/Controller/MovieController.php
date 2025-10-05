@@ -190,6 +190,26 @@ class MovieController extends AbstractController
         return json_decode($this->tmdbService->searchMovie($searchString), true);
     }
 
+    #[Route('/favorite', name: 'favorite_index')]
+    public function favoriteIndex(Request $request): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $userMovies = array_map(function ($movie) use ($user) {
+            $this->imageService->saveImage("posters", $movie['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
+            // release_date: 2024-07-24 → 24 juillet 2024
+            $movie['releaseDateString'] = ucfirst($this->dateService->formatDateLong($movie['releaseDate'], $user->getTimezone() ?? 'Europe/Paris', $user->getPreferredLanguage() ?? 'fr'));
+            $movie['lastViewedAtString'] = $movie['lastViewedAt'] ? ucfirst($this->dateService->formatDateLong($movie['lastViewedAt'], $user->getTimezone() ?? 'Europe/Paris', $user->getPreferredLanguage() ?? 'fr')) : null;
+            return $movie;
+        }, $this->movieRepository->getFavoriteMovieCards($user));
+
+        return $this->render('movie/favorite_index.html.twig', [
+            'userMovies' => $userMovies,
+            'userMovieCount' => count($userMovies),
+        ]);
+    }
+
     #[IsGranted('ROLE_USER')]
     #[Route('/show/{id}', name: 'show', requirements: ['id' => '\d+'])]
     public function show(Request $request, UserMovie $userMovie): Response

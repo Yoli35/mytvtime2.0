@@ -271,4 +271,23 @@ class MovieRepository extends ServiceEntityRepository
 
         return $this->getAll($sql);
     }
+
+    public function getFavoriteMovieCards(User $user): array
+    {
+        $userId = $user->getId();
+        $sql = "SELECT um.id             as userMovieId,
+                       m.title           as title,
+                       m.poster_path     as posterPath,
+                       m.release_date    as releaseDate,
+                       m.runtime         as runtime,
+                       um.favorite       as favorite,
+                       um.rating         as rating,
+                       um.last_viewed_at as lastViewedAt
+                FROM movie m
+                         INNER JOIN user_movie um ON m.id = um.movie_id
+                WHERE um.user_id = $userId and um.favorite = 1
+                ORDER BY um.last_viewed_at DESC";
+
+        return $this->getAll($sql);
+    }
 }

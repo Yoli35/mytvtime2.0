@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Movies'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/filter.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/movie.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid movie-index filter-page">
+
+        <h1>{{ 'My movies'|trans }} (<span id="movie-count">{{ userMovieCount }}</span>)</h1>
+        <main>
+            <article>
+                <div class="wrapper">
+                    {% for movie in userMovies %}
+                        {{ include('_blocks/movie/_card.html.twig') }}
+                    {% endfor %}
+                </div>
+            </article>
+        </main>
+    </div>
+    {% include('_blocks/_footer.html.twig') %}
+{% endblock %}
