@@ -37,82 +37,84 @@
                             <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
                         </div>
                     {% endif %}
-                    <div class="title">
-                        <h1>
-                            {% if movie.localized_name %}
-                                <span class="localization-span">{{ movie.localized_name.name }}</span><br>
-                            {% elseif movie.original_language != app.locale and movie.title == movie.original_title and movie.translations %}
-                                <span class="localization-span">{{ movie.translations.data.title }}</span><br>
-                            {% endif %}
-                            <span class="name-span">{{ movie.title }}</span>
-                            {% if movie.release_date %}
-                                <span title="{{ movie.release_date|date("d/m/Y") }}">({{ movie.release_date|date("Y") }})</span>
-                            {% endif %}
-                        </h1>
-                        {{ include('_blocks/translations/_tools.html.twig') }}
-                    </div>
-                    {{ include('_blocks/forms/_delete-overview.html.twig') }}
-                    {{ include('_blocks/forms/_localized-name.html.twig', {media: movie}) }}
-                    {{ include('_blocks/forms/_overview.html.twig', {media: movie}) }}
-                    {% if movie.overview|length %}
-                        <div class="movie-overview">{{ movie.overview|nl2br }}</div>
-                    {% endif %}
-                    <div class="localized overviews">
-                        <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
-                        {% if movie.localized_overviews|length %}
-                            {% for overview in movie.localized_overviews %}
-                                <div class="localized overview" data-id="{{ overview.id }}">
-                                    <div class="content" data-overview="{{ overview.overview }}">
-                                        {{ overview.overview|nl2br }}
-                                    </div>
-                                    <div class="tools">
-                                        <div class="locale">{{ overview.locale|upper }}</div>
-                                        <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
-                                            {{ ux_icon('mdi:pencil') }}
-                                        </div>
-                                        <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
-                                            {{ ux_icon('mdi:trash') }}
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
+                    <div class="infos-content">
+                        <div class="title">
+                            <h1>
+                                {% if movie.localized_name %}
+                                    <span class="localization-span">{{ movie.localized_name.name }}</span><br>
+                                {% elseif movie.original_language != app.locale and movie.title == movie.original_title and movie.translations %}
+                                    <span class="localization-span">{{ movie.translations.data.title }}</span><br>
+                                {% endif %}
+                                <span class="name-span">{{ movie.title }}</span>
+                                {% if movie.release_date %}
+                                    <span title="{{ movie.release_date|date("d/m/Y") }}">({{ movie.release_date|date("Y") }})</span>
+                                {% endif %}
+                            </h1>
+                            {{ include('_blocks/translations/_tools.html.twig') }}
+                        </div>
+                        {{ include('_blocks/forms/_delete-overview.html.twig') }}
+                        {{ include('_blocks/forms/_localized-name.html.twig', {media: movie}) }}
+                        {{ include('_blocks/forms/_overview.html.twig', {media: movie}) }}
+                        {% if movie.overview|length %}
+                            <div class="movie-overview">{{ movie.overview|nl2br }}</div>
                         {% endif %}
-                    </div>
-                    <div class="additional overviews">
-                        <h4 class="additional-h4">{{ 'Additional overviews'|trans }}</h4>
-                        {% if movie.additional_overviews|length %}
-                            {% for overview in movie.additional_overviews %}
-                                <div class="additional overview" data-id="{{ overview.id }}">
-                                    <div class="content" data-overview="{{ overview.overview }}">
-                                        {{ overview.overview|nl2br }}
-                                    </div>
-                                    <div class="tools">
-                                        {% if overview.source %}
-                                            <div class="source">
-                                                {% if overview.source.path %}
-                                                    <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
-                                                        {% if overview.source.LogoPath %}
-                                                            <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
-                                                        {% else %}
-                                                            {{ overview.source.name }}
-                                                        {% endif %}
-                                                    </a>
-                                                {% else %}
-                                                    {{ overview.source.name }}
-                                                {% endif %}
-                                            </div>
+                        <div class="localized overviews">
+                            <h4 class="localized-h4">{{ 'Localized overviews'|trans }}</h4>
+                            {% if movie.localized_overviews|length %}
+                                {% for overview in movie.localized_overviews %}
+                                    <div class="localized overview" data-id="{{ overview.id }}">
+                                        <div class="content" data-overview="{{ overview.overview }}">
+                                            {{ overview.overview|nl2br }}
+                                        </div>
+                                        <div class="tools">
                                             <div class="locale">{{ overview.locale|upper }}</div>
-                                        {% endif %}
-                                        <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
-                                            {{ ux_icon('mdi:pencil') }}
-                                        </div>
-                                        <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
-                                            {{ ux_icon('mdi:trash') }}
+                                            <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
+                                                {{ ux_icon('mdi:pencil') }}
+                                            </div>
+                                            <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
+                                                {{ ux_icon('mdi:trash') }}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="additional overviews">
+                            <h4 class="additional-h4">{{ 'Additional overviews'|trans }}</h4>
+                            {% if movie.additional_overviews|length %}
+                                {% for overview in movie.additional_overviews %}
+                                    <div class="additional overview" data-id="{{ overview.id }}">
+                                        <div class="content" data-overview="{{ overview.overview }}">
+                                            {{ overview.overview|nl2br }}
+                                        </div>
+                                        <div class="tools">
+                                            {% if overview.source %}
+                                                <div class="source">
+                                                    {% if overview.source.path %}
+                                                        <a href="{{ overview.source.path }}" data-title="{{ overview.source.name }}" target="_blank" rel="noopener noreferrer">
+                                                            {% if overview.source.LogoPath %}
+                                                                <img src="{{ overview.source.LogoPath }}" alt="{{ overview.source.name }}">
+                                                            {% else %}
+                                                                {{ overview.source.name }}
+                                                            {% endif %}
+                                                        </a>
+                                                    {% else %}
+                                                        {{ overview.source.name }}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="locale">{{ overview.locale|upper }}</div>
+                                            {% endif %}
+                                            <div class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}">
+                                                {{ ux_icon('mdi:pencil') }}
+                                            </div>
+                                            <div class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}">
+                                                {{ ux_icon('mdi:trash') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </header>
@@ -121,7 +123,7 @@
                     <div class="select-languages">
                         <label for="language-select">{{ 'Select a language'|trans }}
                             <select name="language-select" id="language-select">
-                                {#<option value="">{{ 'Select a language'|trans }}</option>#}
+                                {# <option value="">{{ 'Select a language'|trans }}</option> #}
                                 {% for iso, language in images.select %}
                                     <option value="{{ iso }}"{% if iso == app.locale %} selected{% endif %}>{{ language }}</option>
                                 {% endfor %}
@@ -129,8 +131,8 @@
                         </label>
                     </div>
                     {% set posters = images.posters|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
-                        <div class="poster-container">
-                            <h3>{{ 'Posters'|trans }} (<span class="poster-count">{{ posters|length }}</span>)</h3>
+                    <div class="poster-container">
+                        <h3>{{ 'Posters'|trans }} (<span class="poster-count">{{ posters|length }}</span>)</h3>
                         <div class="posters">
                             {% for poster in posters %}
                                 <div class="poster" data-title="{{ 'Poster'|trans }}" data-iso_639_1="{{ poster.iso_639_1 }}">
@@ -139,7 +141,7 @@
                                 </div>
                             {% endfor %}
                         </div>
-                        </div>
+                    </div>
                     {% set backdrops = images.backdrops|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
                     <div class="backdrop-container">
                         <h3>{{ 'Backdrops'|trans }} (<span class="backdrop-count">{{ backdrops|length }}</span>)</h3>
@@ -159,7 +161,7 @@
                             {% for logo in logos %}
                                 <div class="logo" data-title="{{ 'Logo'|trans }}" data-iso_639_1="{{ logo.iso_639_1 }}">
                                     <img src="{{ images.logo_path['500w'] ~ logo.file_path }}" alt="{{ movie.title }}" loading="lazy"
-                                    srcset="{{ images.logo_path['154w'] ~ logo.file_path }} 154w, {{ images.logo_path['185w'] ~ logo.file_path }} 185w, {{ images.logo_path['300w'] ~ logo.file_path }} 300w, {{ images.logo_path['500w'] ~ logo.file_path }} 500w, {{ images.logo_path['1000w'] ~ logo.file_path }} 1000w">
+                                         srcset="{{ images.logo_path['154w'] ~ logo.file_path }} 154w, {{ images.logo_path['185w'] ~ logo.file_path }} 185w, {{ images.logo_path['300w'] ~ logo.file_path }} 300w, {{ images.logo_path['500w'] ~ logo.file_path }} 500w, {{ images.logo_path['1000w'] ~ logo.file_path }} 1000w">
                                 </div>
                             {% endfor %}
                         </div>
@@ -412,7 +414,7 @@
         <div class="svg" id="arrow-right">{{ ux_icon('mdi:arrow-right') }}</div>
         <div class="svg" id="xmark">{{ ux_icon('mdi:close') }}</div>
         <div class="svg" id="pen">{{ ux_icon('mdi:pencil') }}</div>
-        <div class="svg" id="copy">{{ux_icon('mdi:content-paste')}}</div>
+        <div class="svg" id="copy">{{ ux_icon('mdi:content-paste') }}</div>
         <div class="svg" id="trash">{{ ux_icon('mdi:trash') }}</div>
     </div>
     {% include('_blocks/_footer.html.twig') %}
