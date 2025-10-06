@@ -19,7 +19,7 @@
             flex-direction: column;
             justify-content: center;
             outline: min(.5vh, .5vw) solid transparent;
-            outline-offset: max(-.5vh, -.5vw);
+            outline-offset: 0;
             width: 100%;
 
             &:hover {
@@ -59,47 +59,50 @@
                         width: 1.5rem;
                     }
                 }
-
-                .viewed {
-                    align-items: center;
-                    background-color: hsla(from var(--orange-50) h s l / .8);
-                    bottom: 0;
-                    position: absolute;
-                    display: flex;
-                    font-size: 1rem;
-                    justify-content: center;
-                    padding: .5rem;
-                    text-align: center;
-                    text-wrap: nowrap;
-                    text-overflow: ellipsis;
-                    text-shadow: 1px 1px 1px var(--ardoise-90);
-                    width: 100%;
-
-                    svg {
-                        flex-shrink: 0;
-                    }
-                }
             }
 
             .infos {
                 align-items: center;
+                background-color: hsl(from var(--orange-50) h s l /.15);
                 border-radius: 0 0 .5rem .5rem;
                 display: flex;
                 flex-direction: column;
                 font-size: clamp(1rem, 1.5vw, 2rem);
                 font-weight: 100;
-                height: clamp(3.75rem, 9.375vw, 7.5rem);
+                height: clamp(3.75rem, 9.375vw, 12rem);
                 justify-content: center;
                 line-height: 1.25em;
                 width: 100%;
 
                 .name {
                     color: var(--orange-50);
+                    margin-block-start: auto;
                     text-align: center;
                 }
 
                 .date {
                     color: var(--ardoise-10);
+                    margin-block-end: auto;
+                }
+
+                .viewed {
+                    align-items: center;
+                    background-color: hsla(from var(--orange-50) h s l / .8);
+                    border-radius: 0 0 .5rem .5rem;
+                    display: flex;
+                    font-size: 1rem;
+                    justify-content: center;
+                    margin-block-start: auto;
+                    padding: .5rem;
+                    text-align: center;
+                    text-overflow: ellipsis;
+                    text-shadow: 1px 1px 1px var(--ardoise-90);
+                    text-wrap: nowrap;
+                    width: 100%;
+
+                    svg {
+                        flex-shrink: 0;
+                    }
                 }
             }
         }
