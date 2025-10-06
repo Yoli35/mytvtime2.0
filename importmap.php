@@ -61,6 +61,9 @@ return [
     'Movie' => [
         'path' => './assets/js/movies/Movie.js',
     ],
+    'MovieIndex' => [
+        'path' => './assets/js/movies/MovieIndex.js',
+    ],
     'NavBar' => [
         'path' => './assets/js/NavBar.js',
     ],

@@ -12,6 +12,7 @@ import {Index} from 'Index';
 import {Menu} from 'Menu';
 import {Map} from 'Map';
 import {Movie} from 'Movie';
+import {MovieIndex} from 'MovieIndex';
 import {NavBar} from 'NavBar';
 import {NetworkAndProvider} from "NetworkAndProvider";
 import {PeopleShow} from "PeopleShow";
@@ -262,6 +263,12 @@ window.addEventListener("DOMContentLoaded", () => {
     const photosPage = document.querySelector(".photos-page");
     if (photosPage) {
         new Photos();
+    }
+
+    const movieIndex = document.querySelector(".movie-index");
+    if (movieIndex) {
+        const globs = JSON.parse(document.querySelector("#globs").textContent);
+        new MovieIndex(globs);
     }
 
     const movieShow = document.querySelector(".movie-show");
