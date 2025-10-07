@@ -22,23 +22,6 @@
     <div class="container-fluid backgroundImageOverlay">
         <div id="series-season" class="series-show">
             <div class="header">
-                {#                <div class="poster" id="top"> #}
-                {#                    {% if season.poster_path %} #}
-                {#                        <img src="/series/posters{{ season.poster_path }}" alt="{{ series.name }} {{ season.season_number }}" #}
-                {#                             data-id="{{ series.id }}" #}
-                {#                             data-name="{{ season.series_localized_name ? season.series_localized_name.name:series.name }}" #}
-                {#                             data-slug="{{ season.series_localized_name ? season.series_localized_name.slug:series.slug }}"> #}
-                {#                    {% else %} #}
-                {#                        <div>{{ 'No poster'|trans }}</div> #}
-                {#                    {% endif %} #}
-                {#                    {% set episodeCount = season.episodes|length %} #}
-                {#                    {% set episodeWatchedCount = season.episodes|reduce((carry, ep) => carry + (ep.user_episode.watch_at is not null ? 1:0)) %} #}
-                {#                    {% if episodeCount > 1 %} #}{# Les saisons à venir ont généralement un seul épisode au départ #}
-                {#                        <div class="progress" data-value="{{ 100 * episodeWatchedCount / episodeCount }}" data-title="{{ episodeWatchedCount }} / {{ episodeCount }}"> #}
-                {#                            <div class="progress-bar"></div> #}
-                {#                        </div> #}
-                {#                    {% endif %} #}
-                {#                </div> #}
                 <div class="infos">
                     <div class="infos-content">
                         <div class="name">
