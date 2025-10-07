@@ -836,25 +836,23 @@ class SeriesController extends AbstractController
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $country = $user->getCountry() ?? 'FR';
 
-        $addBackdropForm = $this->createForm(AddBackdropType::class);
-        $addBackdropForm->handleRequest($request);
-        if ($addBackdropForm->isSubmitted() && $addBackdropForm->isValid()) {
-            $data = $addBackdropForm->getData();
-            $this->addBackdrop($series, $data['file']);
-        }
-        $addVideoForm = $this->createForm(SeriesVideoType::class, new SeriesVideo($series, "", ""));
-        $addVideoForm->handleRequest($request);
-        if ($addVideoForm->isSubmitted() && $addVideoForm->isValid()) {
-            $data = $addVideoForm->getData();
-            $this->addVideo($data);
-        }
-
+        list($addBackdropForm, $addVideoForm) = $this->handleSerieShowForms($request, $series);
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
         $userVotes = [];
 
+        $seriesAround = $this->getSeriesAround($userSeries, $locale);
+
+        list($seriesBackdrops, $seriesLogos, $seriesPosters) = $this->getSeriesImages($series);
+        $blurredPosterPath = $this->imageService->blurPoster($series->getPosterPath(), 'series', 8);
+
+        $series->setUpdates([]);
+        $seriesArr = $series->toArray();
+        $seriesArr['blurredPosterPath'] = $blurredPosterPath;
+
         $this->checkSlug($series, $slug, $locale);
+
         // Get with fr-FR language to get the localized name
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), [
             "changes",
@@ -868,102 +866,7 @@ class SeriesController extends AbstractController
             "videos",
             "watch/providers",
         ]), true);
-        if ($tv) {
-            $newUserEpisodeCount = $this->checkSeasons($userSeries, $userEpisodes, $tv);
-            if ($newUserEpisodeCount) {
-                $series->addUpdate($newUserEpisodeCount . ' ' . $this->translator->trans('new episodes have been added to the series'));
-                $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
-            }
-            foreach ($userEpisodes as $ue) {
-                $userVotes[$ue->getSeasonNumber()]['ues'][] = $ue;
-                $userVotes[$ue->getSeasonNumber()]['avs'][] = 0;
-            }
-            if (!$tv['lists']['total_results']) {
-                // Get with en-US language to get the lists
-                $tvLists = json_decode($this->tmdbService->getTvLists($series->getTmdbId()), true);
-                $tv['lists'] = $tvLists;
-            }
-            if ($tv['similar']['total_results'] == 0) {
-                // Get with en-US language to get the similar series
-                $similar = json_decode($this->tmdbService->getTvSimilar($series->getTmdbId()), true);
-                $tv['similar'] = $similar;
-            }
-            $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
-            $backdropUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
-            $tv['similar']['results'] = array_map(function ($s) use ($posterUrl) {
-                $s['poster_path'] = $s['poster_path'] ? $posterUrl . $s['poster_path'] : null;
-                $s['tmdb'] = true;
-                $s['slug'] = new AsciiSlugger()->slug($s['name']);
-                return $s;
-            }, $tv['similar']['results']);
-
-            $this->imageService->saveImage("posters", $tv['poster_path'], $posterUrl);
-            $this->imageService->saveImage("backdrops", $tv['backdrop_path'], $backdropUrl);
-            $series = $this->updateSeries($series, $tv);
-
-            foreach ($tv['seasons'] as $season) {
-                if (key_exists('vote_average', $season)) {
-                    $userVotes[$season['season_number']]['avs'] = array_fill(0, $season['episode_count'], $season['vote_average']);
-                } else {
-                    $userVotes[$season['season_number']]['avs'] = array_fill(0, $season['episode_count'], 0);
-                }
-                if (!key_exists('ues', $userVotes[$season['season_number']])) {
-                    $userVotes[$season['season_number']]['ues'] = $season['episode_count'] ? [] : array_fill(0, $season['episode_count'], null);
-                }
-            }
-
-            $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
-            $tv['credits'] = $this->castAndCrew($tv);
-            $tv['localized_name'] = $series->getLocalizedName($request->getLocale());
-            $tv['localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
-            $tv['keywords']['results'] = $this->keywordService->keywordsCleaning($tv['keywords']['results']);
-            $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $locale);
-            $tv['networks'] = $this->networks($tv);
-            $tv['overview'] = $this->localizedOverview($tv, $series, $request);
-            $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
-            $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
-            $tv['watch/providers'] = $this->watchProviders($tv, $country);
-            $tv['translations'] = $this->getTranslations($tv, $user);
-            if ($tv['localized_name'] == null && $tv['translations'] && $tv['name'] != $tv['translations']['data']['name']) {
-                if (strlen($tv['translations']['data']['name'])) {
-                    $slugger = new AsciiSlugger();
-                    $slug = $slugger->slug($tv['translations']['data']['name'])->lower()->toString();
-                    $newLocalizedName = new SeriesLocalizedName($series, $tv['translations']['data']['name'], $slug, $locale);
-                    $this->seriesLocalizedNameRepository->save($newLocalizedName, true);
-                    $tv['localized_name'] = $newLocalizedName;
-                    $this->addFlash('success', 'The series name “' . $newLocalizedName->getName() . '” has been added to the database.');
-                }
-            }
-            if ($tv['last_episode_to_air']) {
-                $nextEpisode = $tv['last_episode_to_air'];
-
-                $nextEpisode['still_path'] = $nextEpisode['still_path'] ? $this->imageConfiguration->getUrl('still_sizes', 2) . $nextEpisode['still_path'] : null;
-                $nextEpisode['url'] = $this->generateUrl('app_series_season', [
-                        'id' => $series->getId(),
-                        'slug' => $series->getSlug(),
-                        'seasonNumber' => $nextEpisode['season_number'],
-                    ]) . "#episode-" . $nextEpisode['season_number'] . '-' . $nextEpisode['episode_number'];
-
-                $tv['last_episode_to_air'] = $nextEpisode;
-            }
-            if ($tv['next_episode_to_air']) {
-                $nextEpisode = $tv['next_episode_to_air'];
-
-                $nextEpisode['still_path'] = $nextEpisode['still_path'] ? $this->imageConfiguration->getUrl('still_sizes', 2) . $nextEpisode['still_path'] : null;
-                $nextEpisode['url'] = $this->generateUrl('app_series_season', [
-                        'id' => $series->getId(),
-                        'slug' => $series->getSlug(),
-                        'seasonNumber' => $nextEpisode['season_number'],
-                    ]) . "#episode-" . $nextEpisode['season_number'] . '-' . $nextEpisode['episode_number'];
-
-                $tv['next_episode_to_air'] = $nextEpisode;
-            }
-            $c = count($tv['episode_run_time']);
-            $tv['average_episode_run_time'] = $c ? array_reduce($tv['episode_run_time'], function ($carry, $item) {
-                    return $carry + $item;
-                }, 0) / $c : 0;
-            $noTv = [];
-        } else {
+        if (!$tv) {
             $series->setUpdates(['Series not found']);
             $noTv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($locale);
             $noTv['credits'] = $this->castAndCrew($tv);
@@ -972,7 +875,113 @@ class SeriesController extends AbstractController
             $noTv['seasons'] = $this->getUserSeasons($series, $userEpisodes);
             $noTv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
             $noTv['average_episode_run_time'] = 0;
+
+            $addLocationFormData = "";
+            return $this->render("series/show-not-found.html.twig", [
+                'series' => $seriesArr,
+                'previousSeries' => $seriesAround['previous'],
+                'nextSeries' => $seriesAround['next'],
+                'videoListFolded' => $videoListFolded ?? true,
+                'tv' => $tv ?? $noTv,
+                'userSeries' => $userSeries,
+            ]);
         }
+
+        $newUserEpisodeCount = $this->checkSeasons($userSeries, $userEpisodes, $tv);
+        if ($newUserEpisodeCount) {
+            $series->addUpdate($newUserEpisodeCount . ' ' . $this->translator->trans('new episodes have been added to the series'));
+            $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+        }
+        foreach ($userEpisodes as $ue) {
+            $userVotes[$ue->getSeasonNumber()]['ues'][] = $ue;
+            $userVotes[$ue->getSeasonNumber()]['avs'][] = 0;
+        }
+        if (!$tv['lists']['total_results']) {
+            // Get with en-US language to get the lists
+            $tvLists = json_decode($this->tmdbService->getTvLists($series->getTmdbId()), true);
+            $tv['lists'] = $tvLists;
+        }
+        if ($tv['similar']['total_results'] == 0) {
+            // Get with en-US language to get the similar series
+            $similar = json_decode($this->tmdbService->getTvSimilar($series->getTmdbId()), true);
+            $tv['similar'] = $similar;
+        }
+        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
+        $backdropUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
+        $tv['similar']['results'] = array_map(function ($s) use ($posterUrl) {
+            $s['poster_path'] = $s['poster_path'] ? $posterUrl . $s['poster_path'] : null;
+            $s['tmdb'] = true;
+            $s['slug'] = new AsciiSlugger()->slug($s['name']);
+            return $s;
+        }, $tv['similar']['results']);
+
+        $this->imageService->saveImage("posters", $tv['poster_path'], $posterUrl);
+        $this->imageService->saveImage("backdrops", $tv['backdrop_path'], $backdropUrl);
+        $series = $this->updateSeries($series, $tv);
+
+        foreach ($tv['seasons'] as $season) {
+            if (key_exists('vote_average', $season)) {
+                $userVotes[$season['season_number']]['avs'] = array_fill(0, $season['episode_count'], $season['vote_average']);
+            } else {
+                $userVotes[$season['season_number']]['avs'] = array_fill(0, $season['episode_count'], 0);
+            }
+            if (!key_exists('ues', $userVotes[$season['season_number']])) {
+                $userVotes[$season['season_number']]['ues'] = $season['episode_count'] ? [] : array_fill(0, $season['episode_count'], null);
+            }
+        }
+
+        $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
+        $tv['credits'] = $this->castAndCrew($tv);
+        $tv['localized_name'] = $series->getLocalizedName($request->getLocale());
+        $tv['localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
+        $tv['keywords']['results'] = $this->keywordService->keywordsCleaning($tv['keywords']['results']);
+        $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $locale);
+        $tv['networks'] = $this->networks($tv);
+        $tv['overview'] = $this->localizedOverview($tv, $series, $request);
+        $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
+        $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
+        $tv['watch/providers'] = $this->watchProviders($tv, $country);
+        $tv['translations'] = $this->getTranslations($tv, $user);
+        if ($tv['localized_name'] == null && $tv['translations'] && $tv['name'] != $tv['translations']['data']['name']) {
+            if (strlen($tv['translations']['data']['name'])) {
+                $slugger = new AsciiSlugger();
+                $slug = $slugger->slug($tv['translations']['data']['name'])->lower()->toString();
+                $newLocalizedName = new SeriesLocalizedName($series, $tv['translations']['data']['name'], $slug, $locale);
+                $this->seriesLocalizedNameRepository->save($newLocalizedName, true);
+                $tv['localized_name'] = $newLocalizedName;
+                $this->addFlash('success', 'The series name “' . $newLocalizedName->getName() . '” has been added to the database.');
+            }
+        }
+        if ($tv['last_episode_to_air']) {
+            $nextEpisode = $tv['last_episode_to_air'];
+
+            $nextEpisode['still_path'] = $nextEpisode['still_path'] ? $this->imageConfiguration->getUrl('still_sizes', 2) . $nextEpisode['still_path'] : null;
+            $nextEpisode['url'] = $this->generateUrl('app_series_season', [
+                    'id' => $series->getId(),
+                    'slug' => $series->getSlug(),
+                    'seasonNumber' => $nextEpisode['season_number'],
+                ]) . "#episode-" . $nextEpisode['season_number'] . '-' . $nextEpisode['episode_number'];
+
+            $tv['last_episode_to_air'] = $nextEpisode;
+        }
+        if ($tv['next_episode_to_air']) {
+            $nextEpisode = $tv['next_episode_to_air'];
+
+            $nextEpisode['still_path'] = $nextEpisode['still_path'] ? $this->imageConfiguration->getUrl('still_sizes', 2) . $nextEpisode['still_path'] : null;
+            $nextEpisode['url'] = $this->generateUrl('app_series_season', [
+                    'id' => $series->getId(),
+                    'slug' => $series->getSlug(),
+                    'seasonNumber' => $nextEpisode['season_number'],
+                ]) . "#episode-" . $nextEpisode['season_number'] . '-' . $nextEpisode['episode_number'];
+
+            $tv['next_episode_to_air'] = $nextEpisode;
+        }
+        $c = count($tv['episode_run_time']);
+        $tv['average_episode_run_time'] = $c ? array_reduce($tv['episode_run_time'], function ($carry, $item) {
+                return $carry + $item;
+            }, 0) / $c : 0;
+        $noTv = [];
+
 
         $series->setVisitNumber($series->getVisitNumber() + 1);
         if (!$series->getNumberOfEpisode() || $tv['number_of_episodes'] != $series->getNumberOfEpisode()) {
@@ -980,9 +989,6 @@ class SeriesController extends AbstractController
             $series->setNumberOfSeason($tv['number_of_seasons']);
         }
         $this->seriesRepository->save($series, true);
-
-        list($seriesBackdrops, $seriesLogos, $seriesPosters) = $this->getSeriesImages($series);
-        $blurredPosterPath = $this->imageService->blurPoster($series->getPosterPath(), 'series', 8);
 
         if ($tv) {
             $userSeries = $this->updateUserSeries($userSeries, $tv);
@@ -1029,8 +1035,6 @@ class SeriesController extends AbstractController
             }
         }
 
-        $seriesArr = $series->toArray();
-        $seriesArr['blurredPosterPath'] = $blurredPosterPath;
         $seriesArr['userVotes'] = $userVotes;
         $seriesArr['schedules'] = $schedules;
         $seriesArr['emptySchedule'] = $emptySchedule;
@@ -1099,44 +1103,38 @@ class SeriesController extends AbstractController
 
         $seriesAround = $this->getSeriesAround($userSeries, $locale);
 
-        if ($tv) {
-            $addLocationFormData = [
-                'hiddenFields' => [
-                    ['item' => 'hidden', 'name' => 'series-id', 'value' => $series->getId()],
-                    ['item' => 'hidden', 'name' => 'tmdb-id', 'value' => $tv['id']],
-                    ['item' => 'hidden', 'name' => 'crud-type', 'value' => 'create'],
-                    ['item' => 'hidden', 'name' => 'crud-id', 'value' => 0],
+        $addLocationFormData = [
+            'hiddenFields' => [
+                ['item' => 'hidden', 'name' => 'series-id', 'value' => $series->getId()],
+                ['item' => 'hidden', 'name' => 'tmdb-id', 'value' => $tv['id']],
+                ['item' => 'hidden', 'name' => 'crud-type', 'value' => 'create'],
+                ['item' => 'hidden', 'name' => 'crud-id', 'value' => 0],
+            ],
+            'rows' => [
+                [
+                    ['item' => 'input', 'name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true],
                 ],
-                'rows' => [
+                [
+                    ['item' => 'input', 'name' => 'location', 'label' => 'Location', 'type' => 'text', 'required' => false],
                     [
-                        ['item' => 'input', 'name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true],
+                        'item' => 'row',
+                        'fields' => [
+                            ['item' => 'input', 'name' => 'season-number', 'label' => 'Season number', 'type' => 'text', 'required' => false],
+                            ['item' => 'input', 'name' => 'episode-number', 'label' => 'Episode number', 'type' => 'text', 'required' => false],
+                        ]
                     ],
-                    [
-                        ['item' => 'input', 'name' => 'location', 'label' => 'Location', 'type' => 'text', 'required' => false],
-                        [
-                            'item' => 'row',
-                            'fields' => [
-                                ['item' => 'input', 'name' => 'season-number', 'label' => 'Season number', 'type' => 'text', 'required' => false],
-                                ['item' => 'input', 'name' => 'episode-number', 'label' => 'Episode number', 'type' => 'text', 'required' => false],
-                            ]
-                        ],
-                    ],
-                    [
-                        ['item' => 'textarea', 'name' => 'description', 'label' => 'Description', 'rows' => '5', 'required' => false],
-                    ],
-                    [
-                        ['item' => 'input', 'name' => 'source-name', 'label' => 'Source', 'type' => 'text', 'class' => 'flex-1', 'required' => false],
-                        ['item' => 'input', 'name' => 'source-url', 'label' => 'Url', 'type' => 'text', 'class' => 'flex-2', 'required' => false],
-                    ]
                 ],
-            ];
-            $twig = "series/show.html.twig";
-        } else {
-            $addLocationFormData = "";
-            $twig = "series/show-not-found.html.twig";
-        }
+                [
+                    ['item' => 'textarea', 'name' => 'description', 'label' => 'Description', 'rows' => '5', 'required' => false],
+                ],
+                [
+                    ['item' => 'input', 'name' => 'source-name', 'label' => 'Source', 'type' => 'text', 'class' => 'flex-1', 'required' => false],
+                    ['item' => 'input', 'name' => 'source-url', 'label' => 'Url', 'type' => 'text', 'class' => 'flex-2', 'required' => false],
+                ]
+            ],
+        ];
 
-        return $this->render($twig, [
+        return $this->render("series/show.html.twig", [
             'series' => $seriesArr,
             'previousSeries' => $seriesAround['previous'],
             'nextSeries' => $seriesAround['next'],
@@ -2568,13 +2566,24 @@ class SeriesController extends AbstractController
         return $results['changes'];
     }
 
-    public function addVideo(SeriesVideo $video): bool
+    private function handleSerieShowForms(Request $request, Series $series): array
     {
-        $this->seriesVideoRepository->save($video, true);
-        return true;
+        $addBackdropForm = $this->createForm(AddBackdropType::class);
+        $addBackdropForm->handleRequest($request);
+        if ($addBackdropForm->isSubmitted() && $addBackdropForm->isValid()) {
+            $data = $addBackdropForm->getData();
+            $this->addBackdrop($series, $data['file']);
+        }
+        $addVideoForm = $this->createForm(SeriesVideoType::class, new SeriesVideo($series, "", ""));
+        $addVideoForm->handleRequest($request);
+        if ($addVideoForm->isSubmitted() && $addVideoForm->isValid()) {
+            $data = $addVideoForm->getData();
+            $this->addVideo($data);
+        }
+        return [$addBackdropForm, $addVideoForm];
     }
 
-    public function addBackdrop(Series $series, UploadedFile $backdropFile): bool
+    private function addBackdrop(Series $series, UploadedFile $backdropFile): void
     {
         $source = $backdropFile->getPathname();
         $serverPath = '/public/series/backdrops/';
@@ -2583,9 +2592,12 @@ class SeriesController extends AbstractController
             $seriesImage = new SeriesImage($series, "backdrop", '/' . $backdropFile->getClientOriginalName());
             $this->seriesImageRepository->save($seriesImage, true);
             $this->addFlash('success', 'The backdrop has been added.');
-            return true;
         }
-        return false;
+    }
+
+    private function addVideo(SeriesVideo $video): void
+    {
+        $this->seriesVideoRepository->save($video, true);
     }
 
     public function isBinge(UserSeries $userSeries, int $seasonNumber, int $numberOfEpisode): bool
@@ -4372,12 +4384,12 @@ class SeriesController extends AbstractController
             $nextSeries = $seriesAround[1];
         }
         if (count($seriesAround) == 1 and $seriesAround[0]['id'] < $userSeries->getId()) {
-            $previousSeries =  $seriesAround[0];
+            $previousSeries = $seriesAround[0];
             $nextSeries = $this->userSeriesRepository->getFirstSeries($userSeries->getUser(), $locale)[0];
         }
         if (count($seriesAround) == 1 and $seriesAround[0]['id'] > $userSeries->getId()) {
             $previousSeries = $this->userSeriesRepository->getLastSeries($userSeries->getUser(), $locale)[0];
-            $nextSeries =  $seriesAround[0];
+            $nextSeries = $seriesAround[0];
         }
         return [
             'previous' => $previousSeries,

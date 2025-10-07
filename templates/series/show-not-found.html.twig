@@ -10,7 +10,7 @@
 {% endblock %}
 {% block body %}
     <script>
-        const bd = '/series/posters{{ series.posterPath }}';
+        const bd = '/series/posters_blurred{{ series.blurredPosterPath }}';
         const body = document.querySelector("body");
         body.style.backgroundSize = "cover";
         body.style.backgroundPosition = "center";
@@ -22,6 +22,11 @@
     <div class="container-fluid backgroundImageOverlay">
         <div class="series-show user-series-show">
             <div class="header">
+                {% if series.backdropPath %}
+                    <div class="backdrop">
+                        <img src="/series/backdrops{{ series.backdropPath }}" alt="{{ series.name }}">
+                    </div>
+                {% endif %}
                 <div class="poster">
                     {% if series.posterPath %}
                         <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
@@ -33,111 +38,47 @@
                             <div class="progress-bar"></div>
                         </div>
                     {% endif %}
-                </div>
-                <div class="infos">
-                    <div class="backdrop">
-                        {% if series.backdropPath %}
-                            <img src="/series/backdrops{{ series.backdropPath }}" alt="{{ series.name }}">
-                        {% endif %}
-                    </div>
                     {% if app.environment == 'dev' %}
                         <div class="debug">{{ series.id }} / {{ series.tmdbId }}</div>
                     {% endif %}
-                    <div class="name">
-                        <h1>
-                            {% if tv.localized_name %}
-                                <span class="localization-span">{{ tv.localized_name.name }}</span>
-                            {% endif %}
-                            <span class="name-span">{{ series.name }}</span>
-                            {% if series.firstAirDate %}
-                                <span title="{{ series.firstAirDate|date("d/m/Y") }}">({{ series.firstAirDate|date("Y") }})</span>
-                            {% endif %}
-                        </h1>
-                    </div>
-                    {{ include('_blocks/forms/_delete-overview.html.twig') }}
-                    {{ include('_blocks/forms/_localized-name.html.twig', {media: tv}) }}
-                    {{ include('_blocks/forms/_overview.html.twig', {media: tv}) }}
-                    <h5>
-                        {% set n = series.visitNumber %}
-                        {% if n > 1000 %}
-                            {% set n = (n / 1000)|round(1, 'floor') ~ 'k' %}
-                        {% endif %}
-                        {{ n }} {{ (n > 1 ? 'visits':'visit')|trans }}
-                    </h5>
-                    <div class="series-overview">{{ series.overview }}</div>
-                    {% if series.updates %}
-                        <h4>{{ 'Updates'|trans }}</h4>
-                        <div class="updates">
-                            <div class="wrapper">
-                                {% for update in series.updates %}
-                                    <div class="update">{{ update }}</div>
-                                {% endfor %}
-                            </div>
+                </div>
+                <div class="infos">
+                    <div class="infos-content">
+                        <div class="name">
+                            <h1>
+                                {% if tv.localized_name %}
+                                    <span class="localization-span">{{ tv.localized_name.name }}</span>
+                                {% endif %}
+                                <span class="name-span">{{ series.name }}</span>
+                                {% if series.firstAirDate %}
+                                    <span title="{{ series.firstAirDate|date("d/m/Y") }}">({{ series.firstAirDate|date("Y") }})</span>
+                                {% endif %}
+                            </h1>
                         </div>
-                    {% endif %}
-                    {% if series.firstAirDate is null %}
-                        <div class="no-air-date">{{ 'No date yet'|trans }}</div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="header">
-                <div class="posters">
-                    <div class="wrapper">
-                        {% for poster in series.images.posters %}
-                            <div class="other-poster">
-                                <img src="{{ poster }}" alt="{{ 'Poster #' ~ loop.index ~ ' ' ~ series.name }}">
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="backdrops">
-                    <div class="wrapper">
-                        {% for backdrop in series.images.backdrops %}
-                            <div class="other-backdrop">
-                                <img src="{{ backdrop }}" alt="{{ 'Backdrop #' ~ loop.index ~ ' ' ~ series.name }}">
-                            </div>
-                        {% else %}
-                            {{ 'No backdrop'|trans }}
-                        {% endfor %}
-                    </div>
-                    <div class="add-backdrop">
-                        {{ ux_icon('mdi:information-outline', {height: '36px', width:'36px'}) }}
-                    </div>
-                    <script>
-                        window.addEventListener("DOMContentLoaded", () => {
-
-                            const addBackdropDialog = document.querySelector('.add-backdrop-dialog');
-                            const addBackdropButton = document.querySelector('.add-backdrop');
-                            const addBackdropCancelButton = addBackdropDialog.querySelector('button[name="cancel"]');
-                            addBackdropButton.addEventListener('click', () => {
-                                addBackdropDialog.showModal();
-                            });
-                            addBackdropCancelButton.addEventListener('click', () => {
-                                addBackdropDialog.close();
-                            });
-                        });
-                    </script>
-                </div>
-            </div>
-
-            {% if series.images.logos|length %}
-                <div class="header">
-                    <div class="logos">
-                        <div class="wrapper">
-                            {% for logo in series.images.logos %}
-                                <div class="other-backdrop">
-                                    <img src="{{ logo }}" alt="{{ 'Backdrop #' ~ loop.index ~ ' ' ~ series.name }}">
+                        <h5>
+                            {% set n = series.visitNumber %}
+                            {% if n > 1000 %}
+                                {% set n = (n / 1000)|round(1, 'floor') ~ 'k' %}
+                            {% endif %}
+                            {{ n }} {{ (n > 1 ? 'visits':'visit')|trans }}
+                        </h5>
+                        <div class="series-overview">{{ series.overview }}</div>
+                        {% if series.updates %}
+                            <h4>{{ 'Updates'|trans }}</h4>
+                            <div class="updates">
+                                <div class="wrapper">
+                                    {% for update in series.updates %}
+                                        <div class="update">{{ update }}</div>
+                                    {% endfor %}
                                 </div>
-                            {% endfor %}
-                        </div>
+                            </div>
+                        {% endif %}
+                        {% if series.firstAirDate is null %}
+                            <div class="no-air-date">{{ 'No date yet'|trans }}</div>
+                        {% endif %}
                     </div>
                 </div>
-            {% endif %}
-
-            {{ include('_blocks/series/_schedules.html.twig') }}
-
-            {{ include('_blocks/series/_externals.html.twig') }}
+            </div>
 
             {% if userSeries %}
                 <div class="user-actions">
@@ -173,68 +114,6 @@
                                     </div>
                                 </div>
                             {% endfor %}
-                            <div class="add-watch-link" data-title="{{ 'Add a watch link'|trans }}">
-                                {{ ux_icon('mdi:plus') }}
-                            </div>
-                        </div>
-                        <div class="watch-link-form">
-                            <form class="form" action="" id="watch-link-form">
-                                <div class="form-row">
-                                    <div class="form-field">
-                                        <label for="provider">{{ 'Provider'|trans }}
-                                            <select name="provider" id="provider">
-                                                <option value="">{{ 'Select a provider'|trans }}</option>
-                                                {% for name, id in providers.select %}
-                                                    <option value="{{ id }}">{{ name }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-field">
-                                        <label for="name">{{ 'Name'|trans }}
-                                            <input type="text" name="name" id="name" required autocomplete="false">
-                                            <span class="error"></span>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-field">
-                                        <label for="url">{{ 'URL'|trans }}
-                                            <input type="url" name="url" id="url" required>
-                                            <span class="error"></span>
-                                        </label>
-                                    </div>
-                                </div>
-                                {% set numberOfSeason = tv.seasons|length %}
-                                {% if numberOfSeason > 1 %}
-                                    <div class="form-row">
-                                        <div class="form-field">
-                                            <label for="season-number">{{ 'Season'|trans }}
-                                                <select id="season-number" name="season-number">
-                                                    <option value="-1">{{ 'All seasons'|trans }}</option>
-                                                    {% for i in 1..numberOfSeason %}
-                                                        {% set seasonNumber = tv.seasons[i-1].season_number %}
-                                                        <option value="{{ seasonNumber }}">{{ seasonNumber ? ('Season x'|trans({'x': seasonNumber})):('Special episodes'|trans) }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                                <span class="error"></span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                {% else %}
-                                    <input type="hidden" name="season-number" id="season-number" value="{{ tv.seasons[0].season_number }}">
-                                {% endif %}
-                                <div class="form-row">
-                                    <div class="form-field">
-                                        <button type="button">{{ 'Cancel'|trans }}</button>
-                                        <button type="submit">{{ 'Add'|trans }}</button>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="crud-type" id="crud-type" value="">{# create (new) | update (edit) | delete (remove) #}
-                                <input type="hidden" name="crud-id" id="crud-id" value="">{# id of updated watch link #}
-                            </form>
                         </div>
                         <div class="rating">
                             <div class="rating-stars">
@@ -396,45 +275,15 @@
                             </div>
                         </div>
                     {% endif %}
-
-                </div>
-                <div class="right">
-                </div>
-            </div>
-            <div class="content">
-                <div id="series-map-title">
-                    <div class="title">{{ 'Shooting locations'|trans }}</div>
-                    <div class="add-location-button" data-title="{{ 'Add a shooting location'|trans }}">
-                        {{ ux_icon('mdi:plus') }}
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <dialog class="add-backdrop-dialog">
-        {{ form_start(addBackdropForm) }}
-        {{ form_widget(addBackdropForm) }}
-        <div class="form-row">
-            <button type="button" name="cancel">{{ 'Cancel'|trans }}</button>
-            <button type="submit">{{ 'Upload it!'|trans }}</button>
-        </div>
-        {{ form_end(addBackdropForm) }}
-    </dialog>
     <div id="globs" style="display: none">
         {
             "seriesName": "{{ series.name }}",
             "seriesId": {{ series.id }},
-            "userSeriesId": {{ userSeries.id }},
-            "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "api": {
-                "directLinkCrud": {
-                    "create": "{{ path('api_series_direct_link_create') }}",
-                    "read": "{{ path('api_series_direct_link_read', {id: 0})|slice(0,-1) }}",
-                    "update": "{{ path('api_series_direct_link_update', {id: 0})|slice(0,-1) }}",
-                    "delete": "{{ path('api_series_direct_link_delete', {id: 0})|slice(0,-1) }}"
-                }
-            }
+            "userSeriesId": {{ userSeries.id }}
         }
     </div>
     <div id="svgs" style="display: none">

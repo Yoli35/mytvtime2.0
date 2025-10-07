@@ -288,7 +288,7 @@ class Series
             'slug' => $this->getSlug(),
             'tmdbId' => $this->getTmdbId(),
             'updatedAt' => $this->getUpdatedAt(),
-            'updates' => $this->getUpdates(),
+            'updates' => $this->getUpdates() ?? [],
             'visitNumber' => $this->getVisitNumber(),
             'watchLinks' => $this->getSeriesWatchLinks()->toArray(),
         ];
