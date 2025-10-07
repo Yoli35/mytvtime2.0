@@ -533,7 +533,6 @@ h2 {
     }
 }
 
-/* Pages: series TMDB & user series */
 .series-show {
     container: series-show / inline-size;
     display: flex;
@@ -563,36 +562,6 @@ h2 {
         justify-content: flex-start;
         position: relative;
 
-        @media (width > 1200px) {
-            &:has(.poster) {
-                @media (orientation: portrait) {
-                    height: 50vh;
-                }
-                @media (orientation: landscape) {
-                    height: 60vh;
-                }
-            }
-        }
-        @media (width <= 1200px) {
-            &:has(.poster) {
-                @media (orientation: portrait) {
-                    flex-direction: column;
-                    height: auto;
-
-                    .poster {
-                        width: 100%;
-                    }
-                }
-                @media (orientation: landscape) {
-                    height: 70vh;
-                }
-            }
-        }
-
-        &:not(:has(.backdrop)) {
-            background-color: hsl(from var(--ardoise-90) h s l /.1);
-        }
-
         .backdrop {
             height: calc(100% + 10rem);
             inset: -5rem;
@@ -618,14 +587,21 @@ h2 {
             color: var(--ardoise-10);
             display: flex;
             flex-shrink: 0;
-            height: 100%;
+            height: 10%;
             justify-content: center;
             position: relative;
+            transition: height 0.3s ease-in-out;
             width: auto;
 
             &:hover {
+                height: 100%;
+
                 .go-to-map {
                     opacity: 1;
+                }
+
+                .debug {
+                    display: block;
                 }
             }
 
@@ -696,6 +672,7 @@ h2 {
             }
 
             .debug {
+                display: none;
                 font-size: 2rem;
                 font-weight: 300;
                 left: 2rem;
@@ -994,8 +971,6 @@ h2 {
 
         .backdrops, .logos, .posters, .series {
             align-items: center;
-            /*background-color: hsla(from var(--ardoise-90) h s l / .2);
-            border-radius: .5rem;*/
             display: flex;
             gap: .5rem;
             height: 9rem;
@@ -1094,8 +1069,6 @@ h2 {
 
             .previous-series, .next-series {
                 align-items: center;
-                background-color: hsla(from var(--ardoise-90) h s l / .2);
-                border-radius: .25rem;
                 color: var(--ardoise-10);
                 cursor: pointer;
                 display: flex;
@@ -1111,6 +1084,11 @@ h2 {
                 text-wrap: nowrap;
                 text-overflow: ellipsis;
 
+                &:last-child {
+                    justify-content: flex-end;
+                    text-align: right;
+                }
+
                 &:hover {
                     background-color: var(--orange-50);
                 }
@@ -1122,13 +1100,16 @@ h2 {
                     object-fit: cover;
                     width: 3rem;
                 }
+
+                svg {
+                    height: 1.5rem;
+                    width: 1.5rem;
+                }
             }
         }
     }
 
     .videos {
-        /*background-color: hsla(from var(--ardoise-90) h s l / .2);
-        border-radius: .5rem;*/
         display: flex;
         flex-direction: column;
         gap: .5rem;
@@ -1137,7 +1118,6 @@ h2 {
 
         .video-tools {
             align-items: center;
-            /*color: var(--ardoise-10);*/
             display: flex;
             gap: .5rem;
             justify-content: flex-end;
@@ -2183,6 +2163,43 @@ h2 {
                     }
                 }
             }
+        }
+    }
+}
+
+@media (width > 1200px) and (orientation: portrait) {
+    .series-show {
+        .header:has(.poster) {
+            height: 50vh;
+        }
+    }
+}
+
+@media (width > 1200px) and (orientation: landscape) {
+    .series-show {
+        .header:has(.poster) {
+            height: 60vh;
+        }
+    }
+}
+
+@media (width <= 1200px) and (orientation: portrait) {
+    .series-show {
+        .header:has(.poster) {
+            flex-direction: column;
+            height: auto;
+
+            .poster {
+                width: 100%;
+            }
+        }
+    }
+}
+
+@media (width <= 1200px) and (orientation: landscape) {
+    .series-show {
+        .header:has(.poster) {
+            height: 70vh;
         }
     }
 }
@@ -4628,32 +4645,6 @@ h2 {
     }
 }
 
-/*@media (width < 1200px) {
-    .all-my-series {
-        flex-direction: column;
-        flex-wrap: nowrap;
-
-        aside {
-            position: unset;
-            top: unset;
-            width: 100%;
-
-            .filters {
-                gap: .25rem;
-
-                .filter {
-                    padding-block: .25rem;
-                    padding-inline: .5rem;
-                }
-            }
-        }
-
-        main {
-            width: 100%;
-        }
-    }
-}*/
-
 @media (width <= 64rem) {
     .series-show {
         .header, .schedules {
@@ -4878,46 +4869,46 @@ h2 {
     }
 }
 
-@container episodes (width > 2000px) {
-    .episodes {
-        .episode-wrapper {
-            display: flex;
-            flex-direction: row;
-            gap: .5rem;
-            overflow-x: auto;
-            width: 100%;
-
-            .episode {
-                flex-direction: column;
-                height: 60rem;
-                padding-inline: 0;
-                position: relative;
-                width: 36rem;
-
-                .still {
-                    height: var(--episode-height);
-                    max-width: unset;
-                    width: 36rem;
-                }
-
-                .infos {
-                    height: calc(60rem - var(--episode-height));
-                    padding-block: 1rem;
-                    padding-inline: 1rem;
-                    width: calc(100% - 3.75rem);
-                }
-            }
-        }
-    }
-
-    .user-episode {
-        height: calc(59.5rem - var(--episode-height));
-        position: absolute;
-        right: 0;
-        top: calc(var(--episode-height) + .5rem);
-        width: 3.25rem;
-    }
-}
+//@container episodes (width > 2000px) {
+//    .episodes {
+//        .episode-wrapper {
+//            display: flex;
+//            flex-direction: row;
+//            gap: .5rem;
+//            overflow-x: auto;
+//            width: 100%;
+//
+//            .episode {
+//                flex-direction: column;
+//                height: 60rem;
+//                padding-inline: 0;
+//                position: relative;
+//                width: 36rem;
+//
+//                .still {
+//                    height: var(--episode-height);
+//                    max-width: unset;
+//                    width: 36rem;
+//                }
+//
+//                .infos {
+//                    height: calc(60rem - var(--episode-height));
+//                    padding-block: 1rem;
+//                    padding-inline: 1rem;
+//                    width: calc(100% - 3.75rem);
+//                }
+//            }
+//        }
+//    }
+//
+//    .user-episode {
+//        height: calc(59.5rem - var(--episode-height));
+//        position: absolute;
+//        right: 0;
+//        top: calc(var(--episode-height) + .5rem);
+//        width: 3.25rem;
+//    }
+//}
 
 /* Rechercher une série */
 .series-search {

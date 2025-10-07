@@ -436,9 +436,12 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getSeriesAround(User $user, int $userSeriesId, string $locale): array
+    public function getSeriesAround(UserSeries $userSeries, string $locale): array
     {
+        $user = $userSeries->getUser();
+        $userSeriesId = $userSeries->getId();
         $userId = $user->getId();
+
         $sql = "SELECT
                     s.`id` as id,
                     IF(sln.`id`, sln.`name`, s.`name`) as name,
@@ -464,6 +467,42 @@ class UserSeriesRepository extends ServiceEntityRepository
                                 ORDER BY id
                                 LIMIT 1
                             ))";
+
+        return $this->getAll($sql);
+    }
+
+    public function getFirstSeries(User $user, string $locale): array
+    {
+        $userId = $user->getId();
+        $sql = "SELECT
+                    s.`id` as id,
+                    IF(sln.`id`, sln.`name`, s.`name`) as name,
+                    IF(sln.`id`, sln.`slug`, s.`slug`) as slug,
+                    s.`poster_path` as poster_path,
+                    us.progress as progress
+                FROM `user_series` us
+                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale'
+                WHERE us.`user_id`=$userId
+                ORDER BY us.`id` LIMIT 1";
+
+        return $this->getAll($sql);
+    }
+
+    public function getLastSeries(User $user, string $locale): array
+    {
+        $userId = $user->getId();
+        $sql = "SELECT
+                    s.`id` as id,
+                    IF(sln.`id`, sln.`name`, s.`name`) as name,
+                    IF(sln.`id`, sln.`slug`, s.`slug`) as slug,
+                    s.`poster_path` as poster_path,
+                    us.progress as progress
+                FROM `user_series` us
+                    LEFT JOIN `series` s ON s.`id`=us.`series_id`
+                    LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale'
+                WHERE us.`user_id`=$userId
+                ORDER BY us.`id` DESC LIMIT 1";
 
         return $this->getAll($sql);
     }

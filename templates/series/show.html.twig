@@ -163,6 +163,31 @@
             </div>
 
             <div class="header">
+                <div class="series">
+                    {% if previousSeries %}
+                        <a href="{{ path('app_series_show', {id: previousSeries.id, slug: previousSeries.slug}) }}"
+                           class="previous-series" data-title="{{ 'Previous series'|trans }}">
+                            {{ ux_icon('mdi:arrow-left-bold') }}
+                            {{ previousSeries.name }} ({{ previousSeries.progress|format_number({max_fraction_digit:2}) }}%)
+                            {% if previousSeries.poster_path %}
+                                <img src="/series/posters{{ previousSeries.poster_path }}" alt="{{ 'Poster of the previous series'|trans }}">
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                    {% if nextSeries %}
+                        <a href="{{ path('app_series_show', {id: nextSeries.id, slug: nextSeries.slug}) }}"
+                           class="next-series" data-title="{{ 'Next series'|trans }}">
+                            {{ nextSeries.name }} ({{ nextSeries.progress|format_number({max_fraction_digit:2}) }}%)
+                            {{ ux_icon('mdi:arrow-right-bold') }}
+                            {% if nextSeries.poster_path %}
+                                <img src="/series/posters{{ nextSeries.poster_path }}" alt="{{ 'Poster of the next series'|trans }}">
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="header">
                 <div class="posters">
                     <div class="wrapper">
                         {% for poster in series.images.posters %}
@@ -236,33 +261,6 @@
                                 </div>
                             {% endfor %}
                         </div>
-                    </div>
-                </div>
-            {% endif %}
-
-            {% if previousSeries or nextSeries %}
-                <div class="header">
-                    <div class="series">
-                        {% if previousSeries %}
-                            <a href="{{ path('app_series_show', {id: previousSeries.id, slug: previousSeries.slug}) }}"
-                               class="previous-series" data-title="{{ 'Previous series'|trans }}">
-                                {{ ux_icon('mdi:arrow-left') }}
-                                {{ previousSeries.name }} ({{ previousSeries.progress|format_number({max_fraction_digit:2}) }}%)
-                                {% if previousSeries.poster_path %}
-                                    <img src="/series/posters{{ previousSeries.poster_path }}" alt="{{ 'Poster of the previous series'|trans }}">
-                                {% endif %}
-                            </a>
-                        {% endif %}
-                        {% if nextSeries %}
-                            <a href="{{ path('app_series_show', {id: nextSeries.id, slug: nextSeries.slug}) }}"
-                               class="next-series" data-title="{{ 'Next series'|trans }}">
-                                {{ nextSeries.name }} ({{ nextSeries.progress|format_number({max_fraction_digit:2}) }}%)
-                                {{ ux_icon('mdi:arrow-right') }}
-                                {% if nextSeries.poster_path %}
-                                    <img src="/series/posters{{ nextSeries.poster_path }}" alt="{{ 'Poster of the next series'|trans }}">
-                                {% endif %}
-                            </a>
-                        {% endif %}
                     </div>
                 </div>
             {% endif %}
@@ -818,12 +816,12 @@
 
     <div id="globs-map" style="display: none">
         {
-        "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "bounds": {{ locationsBounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "emptyLocation": {{ emptyLocation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "fieldList": {{ fieldList|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "locationImagePath": "/images/map",
-        "poiImagePath": "/images/poi"
+            "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "bounds": {{ locationsBounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "emptyLocation": {{ emptyLocation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "fieldList": {{ fieldList|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "locationImagePath": "/images/map",
+            "poiImagePath": "/images/poi"
         }
     </div>
     <div id="globs" style="display: none">{# |replace({'\'': '\\\'', '"': '\\"'}}) #}
@@ -850,7 +848,7 @@
         <div class="svg" id="arrow-right">{{ ux_icon('mdi:arrow-right') }}</div>
         <div class="svg" id="xmark">{{ ux_icon('mdi:close') }}</div>
         <div class="svg" id="pen">{{ ux_icon('mdi:pencil') }}</div>
-        <div class="svg" id="copy">{{ux_icon('mdi:content-paste')}}</div>
+        <div class="svg" id="copy">{{ ux_icon('mdi:content-paste') }}</div>
         <div class="svg" id="trash">{{ ux_icon('mdi:trash') }}</div>
     </div>
     {% include '_blocks/_footer.html.twig' %}

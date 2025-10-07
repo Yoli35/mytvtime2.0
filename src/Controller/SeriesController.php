@@ -1097,17 +1097,7 @@ class SeriesController extends AbstractController
         $tvKeywords = $tv['keywords']['results'] ?? [];
         $tvExternalIds = $tv['external_ids'] ?? [];
 
-        $seriesAround = $this->userSeriesRepository->getSeriesAround($user, $userSeries->getId(), $locale);
-        $previousSeries = null;
-        $nextSeries = null;
-        if (count($seriesAround) == 2) {
-            $previousSeries = $seriesAround[0];
-            $nextSeries = $seriesAround[1];
-        }
-        if (count($seriesAround) == 1) {
-            $previousSeries = $seriesAround[0]['id'] < $userSeries->getId() ? $seriesAround[0] : null;
-            $nextSeries = $seriesAround[0]['id'] > $userSeries->getId() ? $seriesAround[0] : null;
-        }
+        $seriesAround = $this->getSeriesAround($userSeries, $locale);
 
         if ($tv) {
             $addLocationFormData = [
@@ -1145,10 +1135,11 @@ class SeriesController extends AbstractController
             $addLocationFormData = "";
             $twig = "series/show-not-found.html.twig";
         }
+
         return $this->render($twig, [
             'series' => $seriesArr,
-            'previousSeries' => $previousSeries,
-            'nextSeries' => $nextSeries,
+            'previousSeries' => $seriesAround['previous'],
+            'nextSeries' => $seriesAround['next'],
             'videoListFolded' => $videoListFolded ?? true,
             'tv' => $tv ?? $noTv,
             'userSeries' => $userSeries,
@@ -4369,5 +4360,28 @@ class SeriesController extends AbstractController
     public function getProjectDir(): string
     {
         return $this->getParameter('kernel.project_dir');
+    }
+
+    private function getSeriesAround(?UserSeries $userSeries, string $locale): array
+    {
+        $seriesAround = $this->userSeriesRepository->getSeriesAround($userSeries, $locale);
+        $previousSeries = null;
+        $nextSeries = null;
+        if (count($seriesAround) == 2) {
+            $previousSeries = $seriesAround[0];
+            $nextSeries = $seriesAround[1];
+        }
+        if (count($seriesAround) == 1 and $seriesAround[0]['id'] < $userSeries->getId()) {
+            $previousSeries =  $seriesAround[0];
+            $nextSeries = $this->userSeriesRepository->getFirstSeries($userSeries->getUser(), $locale)[0];
+        }
+        if (count($seriesAround) == 1 and $seriesAround[0]['id'] > $userSeries->getId()) {
+            $previousSeries = $this->userSeriesRepository->getLastSeries($userSeries->getUser(), $locale)[0];
+            $nextSeries =  $seriesAround[0];
+        }
+        return [
+            'previous' => $previousSeries,
+            'next' => $nextSeries,
+        ];
     }
 }
