@@ -24,84 +24,9 @@ import {ProviderSelect} from 'ProviderSelect';
 import {Season} from 'Season';
 import {Show} from 'Show';
 import {ToolTips} from 'ToolTips';
-// import {TranslationsForms} from "TranslationsForms";
-import {Videos} from 'Videos';
+import {VideoList} from "VideoList";
+import {Video} from 'Video';
 
-// new ResizeObserver(entries => {
-//     entries.forEach( (entry) =>{
-//     console.log({entry});
-//     });
-//     drawBodyBackground(canvas);
-// }).observe(document.body);
-
-// const canvas = initBodyBackground();
-// new ResizeObserver(() => {
-//     drawBodyBackground(canvas);
-// }).observe(document.body);
-//
-// function initBodyBackground()
-// {
-//     const body = document.querySelector("body");
-//     const canvas = document.createElement("canvas");
-//     canvas.height = window.innerHeight;
-//     canvas.width = window.innerWidth;
-//     canvas.style.position = "fixed";
-//     canvas.style.top = "0";
-//     canvas.style.left = "0";
-//     canvas.style.zIndex = "-1";
-//     canvas.style.pointerEvents = "none";
-//     body.appendChild(canvas);
-//
-//     return canvas;
-// }
-// function drawBodyBackground(canvas)
-// {
-//     let ctx = canvas.getContext("2d");
-//     const scaleFactor = backingScale(ctx);
-//     const height = window.innerHeight;
-//     const width = window.innerWidth;
-//     const bodyVisibleHeight = height * scaleFactor;
-//     const bodyVisibleWidth = width * scaleFactor;
-//     if (scaleFactor > 1) {
-//         ctx = canvas.getContext("2d", { alpha: false });
-//     }
-//
-//     canvas.height = height;
-//     canvas.width = width;
-//     ctx.fillStyle = "#1E1E22";
-//     ctx.fillRect(0, 0, bodyVisibleWidth, bodyVisibleHeight);
-//
-//     ctx.beginPath();
-//     const grad1 = ctx.createRadialGradient(3 * width / 4, height / 4, 0, 3 * width / 4, height / 4, width / 3);
-//     grad1.addColorStop(0, "#5f6668");
-//     grad1.addColorStop(1, "#1E1E22");
-//     ctx.fillStyle = grad1;
-//     ctx.arc(3 * width / 4, height / 4, width / 3, 0, 2 * Math.PI);
-//     ctx.fill();
-//     ctx.beginPath();
-//     const grad2 = ctx.createRadialGradient(width / 4, 3 * height / 4, 0, width / 4, 3 * height / 4, width / 3);
-//     grad2.addColorStop(0, "#5f6668");
-//     grad2.addColorStop(1, "#1E1E22");
-//     ctx.fillStyle = grad2;
-//     ctx.arc(width / 4, 3 * height / 4, width / 3, 0, 2 * Math.PI);
-//     ctx.fill();
-//     // ctx.beginPath();
-//     // const grad = ctx.createRadialGradient(50, 50, 5, 50, 50, 50);
-//     // grad.addColorStop(0, '#5f6668');
-//     // grad.addColorStop(1, '#1e1e22');
-//     // ctx.fillStyle = grad;
-//     // ctx.arc(50, 50, 50, 0, 2 * Math.PI);
-//     // ctx.fill();
-// }
-//
-// function backingScale() {
-//     if ('devicePixelRatio' in window) {
-//         if (window.devicePixelRatio > 1) {
-//             return window.devicePixelRatio;
-//         }
-//     }
-//     return 1;
-// }
 window.addEventListener("DOMContentLoaded", () => {
 
     const toTop = document.querySelector(".to-top");
@@ -300,7 +225,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const videoPage = document.querySelector(".video-page");
     if (videoPage) {
-        const videos = new Videos();
-        videos.init();
+        const video = new Video();
+        video.init();
+    }
+
+    const videosPage = document.querySelector(".videos-page");
+    if (videosPage) {
+        const videoList = new VideoList();
+        videoList.init();
     }
 });

@@ -72,6 +72,15 @@
         justify-content: center;
         margin-block-end: 1rem;
 
+        .page-buttons {
+            display: flex;
+            gap: .5rem;
+            max-width: 15rem;
+            overflow-x: auto;
+            padding-bottom: .75rem;
+            width: 100%;
+        }
+
         .page {
             background-color: var(--orange-30-alpha-75);
             border-radius: .25rem;

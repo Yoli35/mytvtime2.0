@@ -100,8 +100,11 @@ return [
     'Show' => [
         'path' => './assets/js/series/Show.js',
     ],
-    'Videos' => [
-        'path' => './assets/js/videos/Videos.js',
+    'VideoList' => [
+        'path' => './assets/js/videos/VideoList.js',
+    ],
+    'Video' => [
+        'path' => './assets/js/videos/Video.js',
     ],
     'WatchLinkCrud' => [
         'path' => './assets/js/watch-link/WatchLinkCrud.js',

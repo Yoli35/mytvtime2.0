@@ -1,7 +1,7 @@
 import {ToolTips} from "ToolTips";
 
 let gThis = null;
-export class Videos {
+export class Video {
 
     /**
      * @typedef Comment
@@ -37,7 +37,6 @@ export class Videos {
     }
 
     initCategories() {
-        const videosPage = document.querySelector('.videos-page');
         const videoPage = document.querySelector('.video-page');
         const categorySelect = document.querySelector('select[id="categories"]');
 
@@ -59,9 +58,6 @@ export class Videos {
                     const selectedCategory = event.target.value;
                     this.addCategory(videoId, selectedCategory);
                 });
-            }
-            if (videosPage) {
-                console.log('Videos page detected, initializing categories select');
             }
         }
     }

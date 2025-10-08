@@ -679,7 +679,7 @@ final class VideoController extends AbstractController
         $previousPage = $page > 1 ? $page - 1 : null;
         $nextPage = $page < $totalPages ? $page + 1 : null;
 
-        // Return html code for pagination with previous page, current page, next page and total pages
+        // Return HTML code for pagination with previous page, current page, next page and total pages
         if ($totalPages <= 1) {
             return '<div class="pagination"><span class="total-pages">' . ($totalResults == 1 ? $this->translator->trans("One video") : $this->translator->trans("count videos", ["count" => $totalResults])) . '</span></div>';
         }
@@ -687,10 +687,32 @@ final class VideoController extends AbstractController
             throw new InvalidArgumentException('Page number out of range');
         }
         $html = '<div class="pagination">';
+
+        // Previous page button
         if ($previousPage) {
             $html .= '<a href="?page=' . $previousPage . ($categoryId ? '&category=' . $categoryId : '') . '"><button class="page">' . $this->translator->trans("Previous page") . '</button></a> ';
         }
+
+        // Wrapper for page buttons
+        $html .= '<span class="page-buttons">';
+
+        // Page buttons from 1 to page-1
+        for ($i = 1; $i < $page; $i++) {
+            $html .= '<a href="?page=' . $i . ($categoryId ? '&category=' . $categoryId : '') . '"><button class="page">' . $i . '</button></a> ';
+        }
+
+        // Current page button
         $html .= '<button class="page active">' . $page . '</button> ';
+
+        // Page buttons from page+1 to totalPages
+        for ($i = $page + 1; $i <= $totalPages; $i++) {
+            $html .= '<a href="?page=' . $i . ($categoryId ? '&category=' . $categoryId : '') . '"><button class="page">' . $i . '</button></a> ';
+        }
+
+        // Close wrapper for page buttons
+        $html .= '</span> ';
+
+        // Next page button
         if ($nextPage) {
             $html .= '<a href="?page=' . $nextPage . ($categoryId ? '&category=' . $categoryId : '') . '"><button class="page">' . $this->translator->trans("Next page") . '</button></a> ';
         }
