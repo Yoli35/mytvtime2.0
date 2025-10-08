@@ -853,19 +853,8 @@ class SeriesController extends AbstractController
 
         $this->checkSlug($series, $slug, $locale);
 
-        // Get with fr-FR language to get the localized name
-        $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $request->getLocale(), [
-            "changes",
-            "credits",
-            "external_ids",
-            "images",
-            "keywords",
-            "lists",
-            "similar",
-            "translations",
-            "videos",
-            "watch/providers",
-        ]), true);
+        $tv = $this->getTv($series, $locale);
+
         if (!$tv) {
             $series->setUpdates(['Series not found']);
             $noTv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($locale);
@@ -876,14 +865,12 @@ class SeriesController extends AbstractController
             $noTv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
             $noTv['average_episode_run_time'] = 0;
 
-            $addLocationFormData = "";
             return $this->render("series/show-not-found.html.twig", [
                 'series' => $seriesArr,
+                'userSeries' => $userSeries,
                 'previousSeries' => $seriesAround['previous'],
                 'nextSeries' => $seriesAround['next'],
-                'videoListFolded' => $videoListFolded ?? true,
-                'tv' => $tv ?? $noTv,
-                'userSeries' => $userSeries,
+                'tv' => $noTv,
             ]);
         }
 
@@ -1154,6 +1141,22 @@ class SeriesController extends AbstractController
             'addVideoForm' => $addVideoForm->createView(),
             'oldSeriesAdded' => $request->get('oldSeriesAdded') === 'true',
         ]);
+    }
+
+    private function getTv(Series $series, string $locale): ?array
+    {
+        return json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale, [
+            "changes",
+            "credits",
+            "external_ids",
+            "images",
+            "keywords",
+            "lists",
+            "similar",
+            "translations",
+            "videos",
+            "watch/providers",
+        ]), true);
     }
 
     #[IsGranted('ROLE_USER')]
