@@ -895,7 +895,8 @@ class SeriesController extends AbstractController
 
         $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($locale);
         $tv['credits'] = $this->castAndCrew($tv);
-        $tv['localized_name'] = $series->getLocalizedName($locale);
+        $tv['translations'] = $this->getTranslations($tv, $user);
+        $tv['localized_name'] = $this->getTvLocalizedName($tv, $series, $locale);
         $tv['localized_overviews'] = $series->getLocalizedOverviews($locale);
         $tv['keywords']['results'] = $this->keywordService->keywordsCleaning($tv['keywords']['results']);
         $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $locale);
@@ -904,8 +905,6 @@ class SeriesController extends AbstractController
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
         $tv['watch/providers'] = $this->watchProviders($tv, $country);
-        $tv['translations'] = $this->getTranslations($tv, $user);
-        $tv['localized_name'] = $this->getTvLocalizedName($tv, $series, $locale);
         $tv['last_episode_to_air'] = $this->getEpisodeToAir($tv['last_episode_to_air'], $series);
         $tv['next_episode_to_air'] = $this->getEpisodeToAir($tv['next_episode_to_air'], $series);
         $tv['average_episode_run_time'] = $this->getEpisodeRunTime($tv);
@@ -1098,8 +1097,9 @@ class SeriesController extends AbstractController
 
     private function getTvLocalizedName(array $tv, Series $series, string $locale): ?SeriesLocalizedName
     {
-        $newLocalizedName = null;
-        if ($tv['localized_name'] == null && $tv['translations'] && $tv['name'] != $tv['translations']['data']['name']) {
+        $newLocalizedName = $series->getLocalizedName($locale);
+
+        if (!$newLocalizedName && $tv['translations'] && $tv['name'] != $tv['translations']['data']['name']) {
             if (strlen($tv['translations']['data']['name'])) {
                 $slugger = new AsciiSlugger();
                 $slug = $slugger->slug($tv['translations']['data']['name'])->lower()->toString();
