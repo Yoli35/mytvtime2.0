@@ -3164,6 +3164,14 @@ h2 {
 
     .user-actions {
         .watch-links {
+            .label {
+                font-size: 1rem;
+            }
+
+            > :last-child {
+                padding-inline-end: 0;
+            }
+
             .watch-link {
                 &:last-child {
                     border-bottom-right-radius: 5rem;
@@ -3172,6 +3180,8 @@ h2 {
                     img {
                         border-bottom-right-radius: 5rem;
                         border-top-right-radius: 5rem;
+                        height: 2rem;
+                        width: 2rem;
                     }
                 }
 

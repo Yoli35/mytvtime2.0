@@ -57,22 +57,29 @@
 
         .watch-links {
             align-items: center;
+            background-color: hsla(from var(--ardoise-80) h s l / .5);
+            border-radius: 5rem;
             display: flex;
-            gap: .5rem;
             justify-content: center;
+            padding-inline-start: 1.5rem;
+
+            >:last-child {
+                border-radius: 0 5rem 5rem 0;
+                padding-inline-end: .5rem;
+            }
 
             &.hidden {
                 display: none;
             }
 
             .label {
-                font-size: 1rem;
+                font-size: 1.5rem;
                 font-weight: 300;
+                padding-inline-end: 1rem;
             }
 
             .watch-link {
                 background-color: cadetblue;
-                border-radius: .25rem;
                 position: relative;
 
                 span {
@@ -88,10 +95,9 @@
                 }
 
                 img {
-                    border-radius: .25rem;
-                    height: 2rem;
+                    height: 3.5rem;
                     object-fit: cover;
-                    width: 2rem;
+                    width: 3.5rem;
                 }
 
                 &:hover .watch-link-tools {
@@ -108,7 +114,7 @@
                     left: -1.5rem;
                     padding: .25rem;
                     position: absolute;
-                    top: 2rem;
+                    top: 3.5rem;
                     z-index: 10;
 
                     .watch-link-name {
@@ -153,13 +159,17 @@
             .add-watch-link {
                 align-items: center;
                 background-color: var(--orange-50);
-                border-radius: .25rem;
                 color: var(--orange-90);
                 cursor: pointer;
                 display: flex;
-                height: 2rem;
+                height: 3.5rem;
                 justify-content: center;
-                width: 2rem;
+                width: 3.5rem;
+
+                svg {
+                    height: 2rem;
+                    width: 2rem;
+                }
             }
         }
 
@@ -210,14 +220,14 @@
         .rating {
             align-items: center;
             background-color: hsla(from var(--ardoise-80) h s l / .5);
-            border-radius: .25rem;
+            border-radius: 5rem;
             color: var(--ardoise-10);
             display: flex;
             font-size: 1rem;
             font-weight: 300;
             gap: .5rem;
             justify-content: center;
-            padding: .5rem;
+            padding: .5rem 1rem;
 
             .rating-stars {
                 display: flex;
@@ -267,20 +277,28 @@
 
         .actions {
             display: flex;
-            gap: .5rem;
 
             .action {
                 align-items: center;
-                border-radius: .25rem;
                 color: var(--ardoise-10);
                 cursor: pointer;
                 display: flex;
-                height: 2rem;
+                height: 3.5rem;
                 justify-content: center;
+                width: 3.5rem;
+
+                &:first-child {
+                    border-radius: 5rem 0 0 5rem;
+                    padding-inline-start: .5rem;
+                }
+
+                &:last-child {
+                    border-radius: 0 5rem 5rem 0;
+                    padding-inline-end: .5rem;
+                }
 
                 &.remove-this-series, &.remove-this-movie {
                     background-color: var(--remove-this-series);
-                    width: 2rem;
 
                     svg {
                         height: 2rem;
@@ -290,7 +308,6 @@
 
                 &.toggle-favorite-series, &.toggle-favorite-movie {
                     background-color: hsla(from var(--ardoise-80) h s l / .5);
-                    width: 2rem;
 
                     &.favorite {
                         color: var(--favorite-series);
@@ -304,7 +321,6 @@
 
                 &.toggle-pinned-series {
                     background-color: hsla(from var(--ardoise-80) h s l / .5);
-                    width: 2rem;
 
                     &.pinned {
                         color: var(--favorite-series);
