@@ -61,10 +61,13 @@ use App\Service\ImageService;
 use App\Service\KeywordService;
 use App\Service\TMDBService;
 use DateMalformedStringException;
+use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
 use DeepL\DeepLException;
 use Deepl\TextResult;
+use IntlTimeZone;
 use Psr\Log\LoggerInterface as MonologLogger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -78,6 +81,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Extra\Intl\IntlExtension;
 
 /** @method User|null getUser() */
 #[Route('/{_locale}/series', name: 'app_series_', requirements: ['_locale' => 'fr|en|ko'])]
@@ -912,12 +916,14 @@ class SeriesController extends AbstractController
 
         $providers = $this->watchLinkApi->getWatchProviders($country);
         $schedules = $this->seriesSchedulesV2($user, $series, $tv);
+        $timezoneMenu = $this->getTimezoneMenu();
         $emptySchedule = $this->emptySchedule();
         $alternateSchedules = $this->alternateSchedules($tv, $series, $userEpisodes);
         $tv['seasons'] = $this->overrideSeasonAirDate($tv['seasons'], $schedules);
 
         $seriesArr['userVotes'] = $userVotes;
         $seriesArr['schedules'] = $schedules;
+        $seriesArr['timezoneMenu'] = $timezoneMenu;
         $seriesArr['emptySchedule'] = $emptySchedule;
         $seriesArr['alternateSchedules'] = $alternateSchedules;
         $seriesArr['seriesInProgress'] = $this->userEpisodeRepository->isFullyReleased($userSeries);
@@ -957,8 +963,6 @@ class SeriesController extends AbstractController
                 ]
             ],
         ];
-
-        dump($tv);
 
         return $this->render("series/show.html.twig", [
             'series' => $seriesArr,
@@ -1258,6 +1262,7 @@ class SeriesController extends AbstractController
         $seasonPartEpisodeCount = $inputBag->get('seasonPartEpisodeCount');
         $date = $inputBag->get('date');
         $time = $inputBag->get('time');
+        $timezone = $inputBag->get('timezone');
         $override = $inputBag->get('override');
         $frequency = $inputBag->get('frequency');
         $provider = $inputBag->get('provider');
@@ -1269,6 +1274,14 @@ class SeriesController extends AbstractController
             $dayArr[intval($arr['day'])] = intval($arr['count']);
         }
 
+        $user = $this->getUser();
+        $userTimezone = $user->getTimezone() ?? 'Europe/Paris';
+
+        $dateTime = $this->convertDateTime($date, $time, $timezone, $userTimezone);
+        $date = $dateTime->format('Y-m-d');
+        $time = $dateTime->format('H:i');
+
+        // Extract hour and minute from time string (format "HH:MM")
         $hour = (int)substr($time, 0, 2);
         $minute = (int)substr($time, 3, 2);
 
@@ -1334,6 +1347,40 @@ class SeriesController extends AbstractController
             'ok' => true,
             'success' => true,
         ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/schedules/convert', name: 'schedule_convert', methods: ['POST'])]
+    public function convertDate(Request $request): JsonResponse
+    {
+        $inputBag = $request->getPayload();
+
+        $date = $inputBag->get('date');
+        $time = $inputBag->get('time');
+        $timezone = $inputBag->get('timezone');
+        $user = $this->getUser();
+        $userTimezone = $user->getTimezone() ?? 'Europe/Paris';
+
+        $dateTime = $this->convertDateTime($date, $time, $timezone, $userTimezone);
+
+        $dayOfTheWeek = $this->translator->trans($dateTime->format('l'));
+        $dateTimeString = $dateTime->format('Y-m-d H:i');
+        $relativeDateTimeString = $this->dateService->formatDateRelativeLong($dateTimeString, null, $user->getPreferredLanguage() ?? 'fr');
+
+        return new JsonResponse([
+            'ok' => true,
+            'success' => true,
+            'date' => ucfirst($dayOfTheWeek). ', ' . $relativeDateTimeString,
+        ]);
+    }
+
+    private function convertDateTime(string $date, string $time, string $fromTimezone, string $toTimezone): DateTimeImmutable
+    {
+        $dateTime = new DateTime($date . ' ' . $time, new DateTimeZone($fromTimezone));
+        if ($fromTimezone != $toTimezone) {
+            $dateTime->setTimezone(new DateTimeZone($toTimezone));
+        }
+        return DateTimeImmutable::createFromMutable($dateTime);
     }
 
     #[Route('/pinned/{id}', name: 'pinned', requirements: ['id' => Requirement::DIGITS])]
@@ -2432,7 +2479,7 @@ class SeriesController extends AbstractController
     public function fetchSearchMulti(Request $request): Response
     {
         $user = $this->getUser();
-        $locale = $user?->getPreferredLanguage() ?? $request->getLocale();
+        $locale = 'en-US';//$user?->getPreferredLanguage() ?? $request->getLocale();
         $data = json_decode($request->getContent(), true);
         $query = $data['query'];
 
@@ -3057,6 +3104,7 @@ class SeriesController extends AbstractController
                 'seasonCompleted' => $endOfSeason,
                 'airAt' => $airAt->format('H:i'),
                 'firstAirDate' => $firstAirDate,
+                'timezone' => $user->getTimezone() ?? 'Europe/Paris',
                 'frequency' => $frequency ?? 0,
                 'override' => $override ?? false,
                 'providerId' => $providerId,
@@ -3077,6 +3125,16 @@ class SeriesController extends AbstractController
             ];
         }
         return $schedules;
+    }
+
+    private function getTimezoneMenu(): array
+    {
+        $timezones = (new IntlExtension)->getTimezoneNames('fr_FR');
+        $timezoneMenu = [];
+        foreach ($timezones as $code => $tz) {
+            $timezoneMenu[$code] = $tz;
+        }
+        return $timezoneMenu;
     }
 
     public function getAlternateSchedule(SeriesBroadcastSchedule $schedule, ?array $tv, array $userEpisodes): array
@@ -3398,6 +3456,7 @@ class SeriesController extends AbstractController
             'seasonPartFirstEpisode' => 1,
             'seasonPartEpisodeCount' => 1,
             'airAt' => "12:00",
+            'timezone' => $this->getUser()->getTimezone() ?? 'UTC',
             'firstAirDate' => $now,
             'frequency' => 0,
             'override' => false,

@@ -112,7 +112,7 @@ class DateService
         return datefmt_format($format, $timestamp);
     }
 
-    public function formatDateRelativeLong(string $dateSting, string $timeZone, string $locale): string
+    public function formatDateRelativeLong(string $dateSting, ?string $timeZone, string $locale): string
     {
         $timestamp = strtotime($dateSting);
         $format = datefmt_create($locale, IntlDateFormatter::RELATIVE_LONG, IntlDateFormatter::SHORT, $timeZone, IntlDateFormatter::GREGORIAN);

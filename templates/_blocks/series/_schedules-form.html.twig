@@ -27,10 +27,20 @@
                     </div>
                     <div class="date-time group full">
                         <label for="date-{{ schedule.id }}">{{ 'First air date'|trans }}
-                            <input type="date" name="date-{{ schedule.id }}" value="{% if schedule.firstAirDate %}{{ schedule.firstAirDate|date("Y-m-d") }}{% endif %}" id="date-{{ schedule.id }}">
+                            <input type="date" name="date-{{ schedule.id }}" onchange="convertDateTime({{ schedule.id }})" value="{% if schedule.firstAirDate %}{{ schedule.firstAirDate|date("Y-m-d") }}{% endif %}" id="date-{{ schedule.id }}">
                         </label>
                         <label for="time-{{ schedule.id }}">{{ 'Time'|trans }}
-                            <input type="time" name="time-{{ schedule.id }}" value="{{ schedule.airAt }}" step="300" id="time-{{ schedule.id }}">
+                            <input type="time" name="time-{{ schedule.id }}" onchange="convertDateTime({{ schedule.id }})" value="{{ schedule.airAt }}" step="300" id="time-{{ schedule.id }}">
+                        </label>
+                        <span class="finale-date"></span>
+                    </div>
+                    <div class="date-time group full">
+                        <label for="timezone-{{ schedule.id }}">{{ 'Timezone'|trans }}
+                            <select name="timezone-{{ schedule.id }}" onchange="convertDateTime({{ schedule.id }})" id="timezone-{{ schedule.id }}">
+                                {% for code, tz in series.timezoneMenu %}
+                                    <option value="{{ code }}" {% if code == schedule.timezone %}selected{% endif %}>{{ tz }}</option>
+                                {% endfor %}
+                            </select>
                         </label>
                     </div>
                     <div class="date-time group full">
