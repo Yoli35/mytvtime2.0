@@ -424,7 +424,11 @@ class UserEpisodeRepository extends ServiceEntityRepository
                      wp.provider_name                        as providerName,
                      wp.logo_path                            as providerLogoPath,
                      IF(ue.vote IS NULL, 0, ue.vote)         as vote,
-                     IF(sln.name IS NULL, s.name, sln.name)  as displayName 
+                     IF(sln.name IS NULL, s.name, sln.name)  as displayName,
+                     ((SELECT COUNT(*)
+                      FROM `user_episode` ue1
+                      WHERE ue1.`user_series_id`=ue.`user_series_id` AND ue1.`season_number`=ue.`season_number`) = ue.`episode_number`)
+                      					                     as last_episode  
               FROM series s 
                      INNER JOIN user_series us ON s.id = us.series_id 
                      INNER JOIN user_episode ue ON us.id = ue.user_series_id 

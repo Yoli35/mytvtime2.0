@@ -391,6 +391,9 @@
                                             {% if eotd.customDate %}
                                                 {{ ux_icon('mdi:calendar', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
                                             {% endif %}
+                                            {% if eotd.last_episode %}
+                                                {{ ux_icon('mdi:hand-wave', {'data-title': 'Season finale'|trans, height: '16px', width: '16px'}) }}
+                                            {% endif %}
                                         </div>
                                         {% if eotd.type == 'series' %}
                                             <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
