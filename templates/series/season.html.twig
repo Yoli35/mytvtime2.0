@@ -166,62 +166,11 @@
                     </div>
                 </div>
 
-                {% set episodeCount = season.episodes|length %}
-                {% if episodeCount > 10 %}
-                    {% if episodeCount is even %}
-                        {% set itemPerLine = episodeCount / 2 %}
-                    {% else %}
-                        {% set itemPerLine = (episodeCount + 1) / 2 %}
-                    {% endif %}
-                    {% if itemPerLine > 10 %}
-                        {% if episodeCount % 10 == 0 %}
-                            {% set itemPerLine = 10 %}
-                        {% endif %}
-                        {% if episodeCount % 9 == 0 %}
-                            {% set itemPerLine = 9 %}
-                        {% endif %}
-                        {% if episodeCount % 8 == 0 %}
-                            {% set itemPerLine = 8 %}
-                        {% endif %}
-                        {% if episodeCount % 7 == 0 %}
-                            {% set itemPerLine = 7 %}
-                        {% endif %}
-                    {% endif %}
-                    {% set lineCount = (episodeCount / itemPerLine)|round(0, 'ceil') %}
-                {% else %}
-                    {% set itemPerLine = episodeCount %}
-                    {% set lineCount = 1 %}
-                {% endif %}
-                <div class="quick-episodes" data-season-number="{{ season.season_number }}" style="height: {{ 32 * lineCount + 4 * (lineCount - 1) + 20 }}px; width: {{ 32 * itemPerLine + 4 * (itemPerLine - 1) + 20 }}px;">
-                    {% for episode in season.episodes %}
-                        {% set ue = episode.user_episode %}
-                        {% set air_date = episode.air_date %}
-                        {% if air_date %}
-                            {% if air_date <= now %}
-                                {% set class="quick-episode" %}
-                                {% if ue and ue.watch_at %}{% set class=class~" watched" %}{% endif %}
-                                {% if lineCount > 1 and loop.index == 1 %}{% set class=class~" top-left" %}{% endif %}
-                                {% if lineCount > 1 and loop.index == itemPerLine %}{% set class=class~" top-right" %}{% endif %}
-                                {% if lineCount > 1 and loop.index == episodeCount - itemPerLine + 1 %}{% set class=class~" bottom-left" %}{% endif %}
-                                {% if lineCount > 1 and loop.index == episodeCount %}{% set class=class~" bottom-right" %}{% endif %}
-                                <div class="{{ class }}" data-number="{{ ue.episode_number }}" data-title="{{ air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
-                                    {{ episode.episode_number }}
-                                </div>
-                            {% else %}
-                                {% set class="future-episode" %}
-                                {% if lineCount > 1 and loop.index == 1 %}{% set class=class~" top-left" %}{% endif %}
-                                {% if lineCount > 1 and loop.index == itemPerLine %}{% set class=class~" top-right" %}{% endif %}
-                                {% if lineCount > 1 and loop.index == episodeCount - itemPerLine + 1 %}{% set class=class~" bottom-left" %}{% endif %}
-                                {% if lineCount > 1 and loop.index == episodeCount %}{% set class=class~" bottom-right" %}{% endif %}
-                                <div class="{{ class }}" data-title="{{ air_date|format_date('relative_long') }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
-                                    {{ ue.episode_number }}
-                                </div>
-                            {% endif %}
-                        {% else %}
-                            <div class="future-episode" data-title="{{ 'No date'|trans }} | {{ episode.name }}{% if ue and ue.substitute_name %} - {{ ue.substitute_name }}{% endif %}">
-                                {{ ue.episode_number }}
+                <div class="quick-episodes" data-season-number="{{ season.season_number }}" style="height: {{ 32 * quickLinks.lineCount + 4 * (quickLinks.lineCount - 1) + 20 }}px; width: {{ 32 * quickLinks.itemPerLine + 4 * (quickLinks.itemPerLine - 1) + 20 }}px;">
+                    {% for episode in quickLinks.items %}
+                            <div class="{{ episode.class }}"{% if episode.name%} data-title="{{ episode.air_date|format_date('relative_long')|capitalize }} | {{ episode.name }}"{% endif %}>
+                                {{ episode.episode_number }}
                             </div>
-                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
@@ -485,38 +434,38 @@
 
     <div id="globs" style="display: none">
         {
-            "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "text": {
-                "provider": "{{ 'Choose a provider'|trans }}",
-                "device": "{{ 'Choose a device'|trans }}",
-                "rating": "{{ 'Give a rating'|trans }}",
-                "now": "{{ 'Now'|trans }}",
-                "Today": "{{ 'Today'|trans }}",
-                "add": "{{ 'Add'|trans }}",
-                "markAsWatched": "{{ 'Mark this episode as seen'|trans }}",
-                "Television": "{{ 'Television'|trans }}",
-                "Mobile": "{{ 'Mobile'|trans }}",
-                "Tablet": "{{ 'Tablet'|trans }}",
-                "Laptop": "{{ 'Laptop'|trans }}",
-                "Desktop": "{{ 'Desktop'|trans }}",
-                "Search": "{{ 'Search'|trans }}",
-                "days": "{{ 'days'|trans }}",
-                "hours": "{{ 'hours'|trans }}",
-                "minutes": "{{ 'minutes'|trans }}",
-                "seconds": "{{ 'seconds'|trans }}",
-                "day": "{{ 'day'|trans }}",
-                "hour": "{{ 'hour'|trans }}",
-                "minute": "{{ 'minute'|trans }}",
-                "second": "{{ 'second'|trans }}",
-                "copied": "{{ 'The link has been copied to your clipboard'|trans }}",
-                "additional": "{{ 'No overview'|trans }}",
-                "click": "{{ 'Click here to add an image'|trans }}",
-                "paste": "{{ 'Paste your image here (green)'|trans }}",
-                "No votes": "{{ 'No votes'|trans }}",
-                "loading": "{{ 'Loading filming locations…'|trans }}"
-            }
+        "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "text": {
+        "provider": "{{ 'Choose a provider'|trans }}",
+        "device": "{{ 'Choose a device'|trans }}",
+        "rating": "{{ 'Give a rating'|trans }}",
+        "now": "{{ 'Now'|trans }}",
+        "Today": "{{ 'Today'|trans }}",
+        "add": "{{ 'Add'|trans }}",
+        "markAsWatched": "{{ 'Mark this episode as seen'|trans }}",
+        "Television": "{{ 'Television'|trans }}",
+        "Mobile": "{{ 'Mobile'|trans }}",
+        "Tablet": "{{ 'Tablet'|trans }}",
+        "Laptop": "{{ 'Laptop'|trans }}",
+        "Desktop": "{{ 'Desktop'|trans }}",
+        "Search": "{{ 'Search'|trans }}",
+        "days": "{{ 'days'|trans }}",
+        "hours": "{{ 'hours'|trans }}",
+        "minutes": "{{ 'minutes'|trans }}",
+        "seconds": "{{ 'seconds'|trans }}",
+        "day": "{{ 'day'|trans }}",
+        "hour": "{{ 'hour'|trans }}",
+        "minute": "{{ 'minute'|trans }}",
+        "second": "{{ 'second'|trans }}",
+        "copied": "{{ 'The link has been copied to your clipboard'|trans }}",
+        "additional": "{{ 'No overview'|trans }}",
+        "click": "{{ 'Click here to add an image'|trans }}",
+        "paste": "{{ 'Paste your image here (green)'|trans }}",
+        "No votes": "{{ 'No votes'|trans }}",
+        "loading": "{{ 'Loading filming locations…'|trans }}"
+        }
         }
     </div>
     <div class="svgs" style="display: none">

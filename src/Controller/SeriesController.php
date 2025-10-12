@@ -1370,7 +1370,7 @@ class SeriesController extends AbstractController
         return new JsonResponse([
             'ok' => true,
             'success' => true,
-            'date' => ucfirst($dayOfTheWeek). ', ' . $relativeDateTimeString,
+            'date' => ucfirst($dayOfTheWeek) . ', ' . $relativeDateTimeString,
         ]);
     }
 
@@ -1525,6 +1525,7 @@ class SeriesController extends AbstractController
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'userSeries' => $userSeries,
+            'quickLinks' => $this->getQuickLinks($season['episodes']),
             'season' => $season,
             'filmingLocation' => $filmingLocation,
             'language' => $locale . '-' . $country,
@@ -1538,6 +1539,55 @@ class SeriesController extends AbstractController
             'devices' => $devices,
             'externals' => $this->getExternals($series, $tvKeywords['results'] ?? [], $tvExternalIds, $request->getLocale()),
         ]);
+    }
+
+    private function getQuickLinks(array $episodes): array
+    {
+        $now = $this->now();
+        $nowString = $now->format('Y-m-d H:i');
+
+        $quickLinks = array_map(function ($link) use ($nowString) {
+            $airAt = $link['user_episode']['air_at'] ?? ' 09:00';
+            $airString = $link['air_date'] . $airAt;
+            return [
+                'name' => $link['name'],
+                'episode_number' => $link['episode_number'],
+                'air_date' => $link['air_date'],
+                'watched' => (bool)$link['user_episode']['watch_at_db'],
+                'future' => $airString > $nowString,
+                'class' => 'quick-episode' . ((bool)$link['user_episode']['watch_at_db'] ? ' watched' : ($airString > $nowString ? ' future' : ''))
+            ];
+        }, $episodes);
+
+        $count = count($quickLinks);
+        if ($count % 2) {
+            $quickLinks[] = ['name' => null, 'episode_number' => null, 'air_date' => null, 'watched' => null, 'future' => null, 'class' => 'quick-episode empty'];
+        }
+        if ($count <= 10) {
+            $quickLinks[0]['class'] .= ' first';
+            $quickLinks[$count - 1]['class'] .= ' last';
+            $itemPerLine = $count;
+            $lineCount = 1;
+        } else {
+            if ($count % 2 == 0)
+                $itemPerLine = $count / 2;
+            else {
+                $itemPerLine = ($count + 1) / 2;
+                $count += 1;
+            }
+            if ($itemPerLine > 10) {
+                if ($count % 10 == 0) $itemPerLine = 10;
+                if ($count % 9 == 0) $itemPerLine = 9;
+                if ($count % 8 == 0) $itemPerLine = 8;
+                if ($count % 7 == 0) $itemPerLine = 7;
+            }
+            $lineCount = ceil($count / $itemPerLine);
+            $quickLinks[0]['class'] .= ' top-left';
+            $quickLinks[$itemPerLine - 1]['class'] .= ' top-right';
+            $quickLinks[$count - $itemPerLine]['class'] .= ' bottom-left';
+            $quickLinks[$count - 1]['class'] .= ' bottom-right';
+        }
+        return ['items' => $quickLinks, 'count' => $count, 'itemPerLine' => $itemPerLine, 'lineCount' => $lineCount];
     }
 
     #[Route('/localized/name/add/{id}', name: 'add_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
@@ -4095,33 +4145,6 @@ class SeriesController extends AbstractController
                 }
                 return $guest;
             }, $episode['guest_stars']);
-
-            /*if ($userEpisode == null) {
-                $ue = new UserEpisode($userSeries, $episode['id'], $season['season_number'], $episode['episode_number'], null);
-                $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris') : null;
-                $ue->setAirDate($airDate);
-                $this->userEpisodeRepository->save($ue);
-                $userSeries->addUserEpisode($ue);
-                $this->userSeriesRepository->save($userSeries, true);
-                $ue = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
-
-                $userEpisode['id'] = $ue->getId();
-                $userEpisode['episode_id'] = $ue->getEpisodeId();
-                $userEpisode['substitute_name'] = null;
-                $userEpisode['localized_overview'] = null;
-                $userEpisode['episode_number'] = $ue->getEpisodeNumber();
-                $userEpisode['watch_at'] = null;
-                $userEpisode['air_date'] = $ue->getAirDate();
-                $userEpisode['provider_id'] = null;
-                $userEpisode['provider_name'] = null;
-                $userEpisode['provider_logo_path'] = null;
-                $userEpisode['device_id'] = null;
-                $userEpisode['device_name'] = null;
-                $userEpisode['device_logo_path'] = null;
-                $userEpisode['device_svg'] = null;
-                $userEpisode['vote'] = 0;
-                $userEpisode['number_of_view'] = 0;
-            }*/
 
             $userEpisode['watch_at_db'] = $userEpisode['watch_at'];
             if ($userEpisode['watch_at']) {
