@@ -44,12 +44,18 @@ class UserPinnedSeriesRepository extends ServiceEntityRepository
                        s.`poster_path`  as posterPath,
                        ups.`created_at` as createdAt,
                        (IF(sln.`name` IS NULL, s.`name`, sln.`name`)) as name,
-                       (IF(sln.`name` IS NULL, s.`slug`, sln.`slug`)) as slug
+                       (IF(sln.`name` IS NULL, s.`slug`, sln.`slug`)) as slug,
+                       swl.`name` as linkName,
+                       wp.`logo_path` as providerLogoPath,
+                       wp.`provider_name` as providerName
                 FROM `user_pinned_series` ups
-                         INNER JOIN `user_series` us ON ups.`user_id` =$userId AND ups.`user_series_id` = us.`id`
-                         INNER JOIN `series` s ON us.`series_id` = s.`id`
-                         LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
+                    INNER JOIN `user_series` us ON ups.`user_id` =$userId AND ups.`user_series_id` = us.`id`
+                    INNER JOIN `series` s ON us.`series_id` = s.`id`
+                    LEFT JOIN series_localized_name sln ON s.id = sln.series_id AND sln.locale = '$locale'
+                    LEFT JOIN `series_watch_link` swl ON swl.`series_id`=s.`id`
+                    LEFT JOIN `watch_provider` wp ON wp.`provider_id`=swl.`provider_id` 
                 ORDER BY ups.`created_at` DESC";
+
         return $this->getAll($sql);
     }
 

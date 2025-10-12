@@ -454,9 +454,15 @@
                         <div class="separation">{{ 'Pinned series'|trans }} ({{ l }} {{ (l > 1 ? 'seriess':'series')|trans }})</div>
                         {% for series in pinnedSeries %}
                             <div class="a-preview">
-                                <a id="pinned-menu-item-{{ series.id }}"
+                                <a id="pinned-menu-item-{{ series.id }}"{% if series.linkName %} data-title="{{ series.linkName }}"{% endif %}
                                    href="{{ path('app_series_show', {id: series.id, slug: series.name|slug}) }}">
                                     {{ series.name }}
+                                    {% if series.providerLogoPath %}
+                                        <div class="time"></div>
+                                        <div class="provider">
+                                                <img src="{{ series.providerLogoPath }}" alt="{{ series.providerName }}">
+                                        </div>
+                                    {% endif %}
                                 </a>
                                 <div id="pinned-preview-{{ series.id }}" class="pinned-series-preview">
                                     <a href="{{ path('app_series_show', {id: series.id, slug: series.slug}) }}">
