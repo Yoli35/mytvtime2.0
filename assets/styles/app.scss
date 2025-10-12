@@ -340,7 +340,6 @@ label:has(input[type="text"]) {
 
 .navbar {
     align-items: center;
-    backdrop-filter: blur(8px);
     background-color: hsla(from var(--navbar-bg) h s l / 0.4);
     border: .125rem solid transparent;
     border-radius: 5rem;
@@ -1167,9 +1166,10 @@ label:has(input[type="text"]) {
     .menu.main,
     .menu.users,
     .menu.user {
-        backdrop-filter: blur(8px);
-        background-color: hsla(from var(--navbar-bg) h s l / 0.8);
+        backdrop-filter: blur(4rem);
+        background-color: hsla(from var(--navbar-bg) h s l / 0.4);
         border-radius: .25rem;
+        box-shadow: 0 0 1rem hsla(from var(--ardoise-90) h s l / .2);
         display: none;
         flex-direction: column;
         gap: .125rem;
@@ -1205,6 +1205,17 @@ label:has(input[type="text"]) {
         height: 1.5rem;
         width: 1.5rem;
     }
+}
+
+.under-navbar {
+    backdrop-filter: blur(8px);
+    border-radius: 5rem;
+    height: 3rem;
+    left: 1rem;
+    position: fixed;
+    right: 1rem;
+    top: 1rem;
+    z-index: 499;
 }
 
 .menu.main, .menu.user {
