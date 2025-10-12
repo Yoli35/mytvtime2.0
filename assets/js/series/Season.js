@@ -246,6 +246,7 @@ export class Season {
             episode.addEventListener('click', e => {
                 e.preventDefault();
                 const episodeNumber = e.currentTarget.getAttribute('data-number');
+                if (!episodeNumber) { return; }
                 const selector = '#episode-' + seasonNumber + '-' + episodeNumber;
                 const target = document.querySelector(selector);
                 target.scrollIntoView({behavior: 'smooth'});

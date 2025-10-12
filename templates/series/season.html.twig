@@ -167,9 +167,9 @@
                 </div>
 
                 <div class="quick-episodes" data-season-number="{{ season.season_number }}" style="height: {{ 32 * quickLinks.lineCount + 4 * (quickLinks.lineCount - 1) + 20 }}px; width: {{ 32 * quickLinks.itemPerLine + 4 * (quickLinks.itemPerLine - 1) + 20 }}px;">
-                    {% for episode in quickLinks.items %}
-                            <div class="{{ episode.class }}"{% if episode.name%} data-title="{{ episode.air_date|format_date('relative_long')|capitalize }} | {{ episode.name }}"{% endif %}>
-                                {{ episode.episode_number }}
+                    {% for item in quickLinks.items %}
+                            <div class="{{ item.class }}" data-number="{{ item.episode_number }}"{% if item.name%} data-title="{{ item.air_date|format_date('relative_long')|capitalize }} | {{ item.name }}"{% endif %}>
+                                {{ item.episode_number }}
                             </div>
                     {% endfor %}
                 </div>
