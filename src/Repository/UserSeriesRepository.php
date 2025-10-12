@@ -38,25 +38,6 @@ class UserSeriesRepository extends ServiceEntityRepository
         $this->em->flush();
     }
 
-//    public function getLastWatchedUserSeries(User $user, $locale, int $page = 1, int $perPage = 20): array
-//    {
-//        $userId = $user->getId();
-//        $sql = "SELECT s.`id` as id, s.`name` as name, sln.`name` as localized_name, us.`progress` as progress, "
-//            . "	    ue.`episode_number` as last_episode, ue.`season_number` as last_season, ue.`watch_at` as last_watch_at, "
-//            . "     s.`slug` as slug, sln.`slug` as localized_slug, "
-//            . "     s.`poster_path` as poster_path "
-//            . "FROM `user_series` us "
-//            . "INNER JOIN `series` s ON s.`id`=us.`series_id` "
-//            . "INNER JOIN `user_episode` ue ON ue.`user_series_id`=us.`id` "
-//            . "LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale' "
-//            . "WHERE us.`user_id`=$userId "
-//            . "     AND ue.`watch_at` IS NOT NULL "
-//            . "ORDER BY ue.`watch_at` DESC "
-//            . "LIMIT " . $perPage . " OFFSET " . ($page - 1) * $perPage;
-//
-//        return $this->getAll($sql);
-//    }
-
     public function userSeriesTMDBIds(User $user): array
     {
         $userId = $user->getId();
@@ -91,6 +72,18 @@ class UserSeriesRepository extends ServiceEntityRepository
             WHERE us.user_id=$userId 
             ORDER BY s.`first_air_date` DESC 
             LIMIT $perPage OFFSET $offset";
+
+        return $this->getAll($sql);
+    }
+
+    public function getUserSeriesStatus(User $user): array
+    {
+        $userId = $user->getId();
+        $sql = "SELECT s.`status`, COUNT(s.`status`) as count
+                FROM `series` s
+                    INNER JOIN `user_series` us ON s.id = us.series_id
+                WHERE us.user_id=$userId
+                GROUP BY s.`status`";
 
         return $this->getAll($sql);
     }

@@ -114,6 +114,16 @@
             </div> #}
 
             {% if app.user %}
+                <div class="series-status">
+                    {% for s in statusArray %}
+                        {#                        <a href="{{ path('app_series_status', {'status': s.value}) }}" class="status-item{% if s.value == status %} active{% endif %}"> #}
+                        <div class="status-item">
+                            <div class="name">{{ s.status|trans }}</div>
+                            <div class="count">{{ s.count }}</div>
+                        </div>
+                        {#                        </a> #}
+                    {% endfor %}
+                </div>
                 {% if episodesOfTheDay|length %}
                     <div class="series-group">
                         <h2>{{ 'Episodes of the day'|trans }} ({{ episodesOfTheDay|length }})</h2>
@@ -214,11 +224,11 @@
         </div>
         <div id="global-data" class="hidden">
             {
-                "highlightedSeries": {{ highlightedSeries|json_encode|raw }},
-                "watchProviders": {{ watchProviders|json_encode|raw }},
-                "app_series_tmdb": "{{ path('app_series_tmdb', {'id': 0, 'slug':"a"})|slice(0, -3) }}",
-                "app_home_load_episode_history": "{{ path('app_home_load_episode_history') }}",
-                "app_home_load_provider_series": "{{ path('app_home_load_provider_series') }}"
+            "highlightedSeries": {{ highlightedSeries|json_encode|raw }},
+            "watchProviders": {{ watchProviders|json_encode|raw }},
+            "app_series_tmdb": "{{ path('app_series_tmdb', {'id': 0, 'slug':"a"})|slice(0, -3) }}",
+            "app_home_load_episode_history": "{{ path('app_home_load_episode_history') }}",
+            "app_home_load_provider_series": "{{ path('app_home_load_provider_series') }}"
             }
         </div>
     </div>

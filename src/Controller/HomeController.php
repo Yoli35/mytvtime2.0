@@ -109,6 +109,8 @@ class HomeController extends AbstractController
             $cookieDayCount = $_COOKIE['mytvtime_2_day_count'] ?? 7;
             $dayCount = $request->query->get('daycount', $cookieDayCount);
             $historyEpisode = $this->seriesController->getEpisodeHistory($user, $dayCount, $language);
+
+            $statusArray = $this->userSeriesRepository->getUserSeriesStatus($user);
         } else {
             $userSeries = [];
             $episodesOfTheDay = [];
@@ -117,6 +119,7 @@ class HomeController extends AbstractController
             $historyEpisode = [];
             $dayCount = 0;
             $historySeries = [];
+            $statusArray = [];
         }
 
         /*
@@ -163,10 +166,14 @@ class HomeController extends AbstractController
             $videoList = implode(',', $videoList);
             $movieVideos['videoList'] = $videoList;
         }
+        dump([
+            'statusArray' => $statusArray,
+        ]);
 
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
             'highlightedMovies' => $movieSelection,
+            'statusArray' => $statusArray,
             'userSeries' => $userSeries,
             'episodesOfTheDay' => $episodesOfTheDay,
             'episodesToWatch' => $episodesToWatch,
