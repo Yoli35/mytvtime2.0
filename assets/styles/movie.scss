@@ -11,6 +11,19 @@
             width: 100%;
         }
 
+        .no-movies-header {
+            align-items: center;
+            color: var(--orange-50);
+            display: flex;
+            font-size: 2rem;
+            font-weight: 300;
+            height: 5rem;
+            justify-content: center;
+            line-height: 1.25em;
+            text-align: center;
+            width: 100%;
+        }
+
         .card {
             align-items: center;
             /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
@@ -78,6 +91,7 @@
                     color: var(--orange-50);
                     margin-block-start: auto;
                     text-align: center;
+                    text-wrap: balance;
                 }
 
                 .date {

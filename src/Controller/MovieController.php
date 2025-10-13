@@ -23,6 +23,7 @@ use App\Repository\MovieRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
 use App\Repository\UserMovieRepository;
+
 //use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
 use App\Service\ImageConfiguration;
@@ -46,6 +47,7 @@ class MovieController extends AbstractController
 {
     public function __construct(
         private readonly DateService                       $dateService,
+        private readonly HomeController                    $homeController,
         private readonly ImageConfiguration                $imageConfiguration,
         private readonly ImageService                      $imageService,
         private readonly KeywordService                    $keywordService,
@@ -89,38 +91,49 @@ class MovieController extends AbstractController
         // Parameters count
         if (!count($request->query->all())) {
             if (!$settings) {
-                $settings = new Settings($user, 'my movies', ['perPage' => 10, 'sort' => 'releaseDate', 'order' => 'DESC']);
+                $settings = new Settings($user, 'my movies', [
+                    'order' => 'DESC',
+                    'page' => 1,
+                    'perPage' => 10,
+                    'sort' => 'releaseDate',
+                    'title' => '',
+                ]);
                 $this->settingsRepository->save($settings, true);
             }
         } else {
             // /fr/series/all?sort=episodeAirDate&order=DESC&startStatus=series-not-started&endStatus=series-not-watched&perPage=10
+            $page = $request->get('page') ?? 1;
             $paramSort = $request->get('sort');
             $paramOrder = $request->get('order');
             $paramPerPage = $request->get('perPage');
             $paramTitle = $request->get('title');
             $settings->setData([
-                'title' => $paramTitle,
+                'order' => $paramOrder,
+                'page' => $page,
                 'perPage' => $paramPerPage,
                 'sort' => $paramSort,
-                'order' => $paramOrder,
+                'title' => $paramTitle,
             ]);
             $this->settingsRepository->save($settings, true);
-            $page = $request->get('page') ?? 1;
         }
         $data = $settings->getData();
         $filters = [
-            'title' => $data['title'],
+            'order' => $data['order'],
             'page' => $page,
             'perPage' => $data['perPage'],
             'sort' => $data['sort'],
-            'order' => $data['order'],
+            'title' => $data['title'],
         ];
-        $userMovies = array_map(function ($movie) {
-            $this->imageService->saveImage("posters", $movie['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
-            return $movie;
-        }, $this->movieRepository->getMovieCards($user, $filters));
 
         $userMovieCount = $this->movieRepository->countMovieCards($user, $filters);
+        if ($userMovieCount) {
+            $userMovies = array_map(function ($movie) {
+                $this->imageService->saveImage("posters", $movie['posterPath'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
+                return $movie;
+            }, $this->movieRepository->getMovieCards($user, $filters));
+        } else {
+            $userMovies = $this->getTMDBMovies();
+        }
 
         $filterMeanings = [
             'name' => 'Name',
@@ -204,9 +217,14 @@ class MovieController extends AbstractController
             return $movie;
         }, $this->movieRepository->getFavoriteMovieCards($user));
 
+        $userMovieCount = count($userMovies);
+        if (!$userMovieCount) {
+            $userMovies = $this->getTMDBMovies();
+        }
+
         return $this->render('movie/favorite_index.html.twig', [
             'userMovies' => $userMovies,
-            'userMovieCount' => count($userMovies),
+            'userMovieCount' => $userMovieCount,
         ]);
     }
 
@@ -644,7 +662,23 @@ class MovieController extends AbstractController
         ]);
     }
 
-    function getPagination(int $index, int $page, int $totalPages, string $route, string $locale): string
+    private function getTMDBMovies(): array
+    {
+        $arr = $this->homeController->getMovieSelection(new AsciiSlugger, 'FR');
+        shuffle($arr);
+        return array_map(function ($movie) {
+            return [
+                'userMovieId' => null,
+                'title' => $movie['title'],
+                'poster_path' => $movie['poster_path'],
+                'release_date' => "",
+                'date' => $movie['date'],
+                'id' => $movie['id'],
+            ];
+        }, $arr);
+    }
+
+    private function getPagination(int $index, int $page, int $totalPages, string $route, string $locale): string
     {
         return $this->renderView('_blocks/_pagination.html.twig', [
             'index' => $index,
@@ -730,7 +764,7 @@ class MovieController extends AbstractController
         $imageLanguages = [];
         $counts = [];
         foreach (['backdrops', 'logos', 'posters'] as $key) {
-            if(!key_exists($key, $images)) {
+            if (!key_exists($key, $images)) {
                 $images[$key] = [];
             }
             foreach ($images[$key] as $image) {

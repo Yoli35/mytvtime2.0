@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card tmdb">
     <a href="{{ path('app_movie_tmdb', {'id': movie.id}) }}">
         <div class="poster">
             {% if movie.poster_path %}
@@ -14,6 +14,9 @@
                     &nbsp;({{ movie.release_date|date('Y') }})
                 {% endif %}
             </div>
+            {% if movie.date is defined and movie.date|length %}
+                <div class="date">{{ movie.date }}</div>
+            {% endif %}
         </div>
     </a>
 </div>
