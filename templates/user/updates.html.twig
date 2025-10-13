@@ -27,6 +27,92 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>42ᵉ mise à jour : 13/10/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor quick episode links rendering for seasons</div>
+                        <div class="details">Moved quick episode link layout logic from Twig to SeriesController for better separation of concerns and maintainability. Added new getQuickLinks() method to generate episode link data and classes, updated season.html.twig to use this data, and adjusted SCSS for new 'first' and 'last' classes. Minor code cleanup and formatting fixes.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}→ Navbar AND menus now have blurred background</div>
+                        <div class="details">Update navbar and menu styles; add under-navbar element. Refined navbar and menu blur/background styles for improved appearance. Introduced a new .under-navbar element in both SCSS and Twig template for additional UI layering below the navbar.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:tv') }}→ Add watch provider info to pinned series</div>
+                        <div class="details">Extended pinned series data to include watch provider logo, name, and link name. Updated repository query, runtime logic, and menu template to display provider information alongside pinned series.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:home') }}→ Add user series status summary to home page</div>
+                        <div class="details">Introduces a visual summary of user's series statuses on the home page. Adds backend logic to fetch status counts, updates the controller to pass this data, and styles the new status display section.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:tv') }}→ Add season finale indicator to episode menu</div>
+                        <div class="details">Introduces a 'last_episode' flag in UserEpisodeRepository and passes it through to the Twig template. The menu now displays a special icon for episodes that are the last in their season.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add timezone support to series schedules</div>
+                        <div class="details">Introduces timezone selection and conversion for series schedules, allowing users to specify and convert air dates and times based on their preferred timezone. Updates controller logic, service methods, form fields, and JavaScript to handle timezone-aware scheduling and display.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refine styles for watch links and user actions</div>
+                        <div class="details">Improves the appearance and layout of .watch-links, .watch-link, and related user action elements in series.scss and user.scss. Updates border radii, font sizes, padding, and image dimensions for a more consistent and visually appealing UI.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor localized name and translations assignment</div>
+                        <div class="details">Moved assignment of 'translations' and 'localized_name' earlier in the data preparation to ensure correct dependencies. Updated getTvLocalizedName to use Series::getLocalizedName directly and adjusted null check logic for improved clarity.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor SeriesController and update app.scss styles</div>
+                        <div class="details">Refactored SeriesController by extracting logic into private helper methods for improved readability and maintainability, and streamlined the handling of series data, votes, schedules, and translations. Updated app.scss to hide horizontal overflow, adjusted transitions, and removed unused media queries and commented code for cleaner styles.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:youtube-tv') }}→ Refactor video modules and improve pagination UI</div>
+                        <div class="details">Split Videos.js into Video.js and VideoList.js for better separation of concerns. Updated app.js and importmap.php to use the new modules. Enhanced pagination in VideoController.php to wrap page buttons in a scrollable container, and updated video.scss for improved pagination styling.
+                            The active page button is now always centered.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor TV data fetching in SeriesController</div>
+                        <div class="details">Extracted TV data retrieval logic into a private getTv() method for improved code reuse and readability. Updated usage in show action and simplified not-found rendering logic.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update series color handling and styles</div>
+                        <div class="details">Commented out color changes for .infos and related elements in app.js, now only updating seriesShow color based on lightness. Added explicit color for series details container in series.scss for improved consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor SeriesController and update not-found view</div>
+                        <div class="details">Refactored SeriesController to extract form handling logic into private methods and improved separation of concerns. Updated the not-found series view to use blurred poster backgrounds and display backdrops more consistently. Adjusted Series entity to ensure 'updates' is always an array. Minor style changes to progress bar color in series.scss.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-css3') }}{{ ux_icon('mdi:tv') }}→ Update series.scss for improved UI styling</div>
+                        <div class="details">Refined background and hover effects for .infos-content, removed unused opacity and margin properties, and added border-radius to navigation elements. These changes enhance visual consistency and improve user experience.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series navigation and improve UI</div>
+                        <div class="details">Moved logic for finding previous and next series into a dedicated method in SeriesController and UserSeriesRepository, improving code clarity and maintainability. Updated the series navigation UI in show.html.twig for better structure and icon consistency. Enhanced series.scss styles for navigation elements and cleaned up unused or commented code.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Refactor movie index JS to external module</div>
+                        <div class="details">Moved the movie index page JavaScript from the Twig template to a new ES6 module (MovieIndex.js) for better maintainability and separation of concerns. Updated app.js and importmap.php to register and load the new module. The template now passes required globals via a JSON script block instead of inline JS.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Move 'viewed' indicator into movie card info section</div>
+                        <div class="details">Relocates the 'viewed' indicator from the image overlay to the '.infos' section in both the SCSS and Twig template. Updates styles to match the new structure and improve layout consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Add favorite movies page and related features</div>
+                        <div class="details">Introduces a new route, controller action, and template to display a user's favorite movies. Adds a repository method to fetch favorite movies, updates the menu to link to the new page, improves favorite icon styling, and adds a translation for 'My favorite movies'.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Improve poster and button SVG styling in SCSS</div>
+                        <div class="details">Refines the movie poster display by adjusting flex and image sizing for better aspect ratio and object-fit. Updates user.scss to standardize SVG icon sizes in various button states and adds support for movie-specific button classes.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Refactor movie info layout and styles</div>
+                        <div class="details">Reorganized the movie details section by wrapping related elements in a new .infos-content container and updating the associated SCSS for improved structure and maintainability. Adjusted background colors, spacing, and hover effects for better visual clarity. Minor formatting fixes and indentation improvements were also applied to the Twig template.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>41ᵉ mise à jour : 04/10/2025</h2>
                 <ul>
                     <li>
