@@ -126,7 +126,7 @@
                 {{ ux_icon('mdi:history') }}
                 {% set history = getHistory(app.user) %}
                 {% set historyCount = getHistoryCount(app.user) %}
-                <div class="menu log" id="log-list" data-last="{{ history.0.id }}">
+                <div class="menu log" id="log-list" data-last="{{ historyCount ? history.0.id : -1 }}">
                     <div class="menu-item" id="log-count">
                         {{ history|length }} / {{ historyCount }} {{ 'history entries'|trans }}
                     </div>
@@ -282,7 +282,7 @@
         {#            </div> #}
         {#        </div> #}
         <div class="navbar-item">
-            <div class="avatar">
+            <div class="avatar"{% if app.user and app.user.avatar is null %} data-title="{{ 'Change your avatar on your account page'|trans }}"{% endif %}>
                 {% if app.user %}
                     {% if app.user.avatar %}
                         <img src="/images/users/avatars/{{ app.user.avatar }}" alt="{{ app.user.username }}">

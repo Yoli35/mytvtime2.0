@@ -1394,6 +1394,15 @@ label:has(input[type="text"]) {
             top: 4rem;
         }
 
+        &:not(:has(.multi-search)) {
+            .navbar-items {
+                &.right {
+                    margin-inline-start: auto;
+                    margin-inline-end: 0;
+                }
+            }
+        }
+
         .navbar-items-toggler {
             background-color: var(--orange-50);
             display: flex;
@@ -1536,6 +1545,16 @@ label:has(input[type="text"]) {
 @media (width <= 52rem) { /* 800px */
     .container, .container-fluid {
         /*margin-block-start: 0 !important;*/
+    }
+
+    .under-navbar {
+        left: 0;
+        right: 0;
+        top: 0;
+        border-radius: 0;
+        height: 3rem;
+        margin-inline: 0;
+        width: 100%;
     }
 
     .navbar {
@@ -1794,6 +1813,7 @@ section:has(.pages) {
         flex-direction: column;
         gap: 1rem;
         margin-block: auto;
+        max-width: 100dvw;
         padding: 2rem;
         width: 32rem;
 
@@ -1875,6 +1895,7 @@ section:has(.pages) {
             align-items: center;
             display: flex;
             gap: 1rem;
+            flex-wrap: wrap;
             justify-content: flex-end;
             width: 100%;
 
@@ -2233,6 +2254,11 @@ dialog {
         background-color: var(--ardoise-90);
         border-radius: .25em;
         color: var(--ardoise-10);
+        font-size: clamp(1rem, 1.5dvh, 2rem);
+        line-height: 1.5em;
+        max-width: 100dvw;
+        overflow-y: auto;
+        text-align: center;
         padding: .5em;
         width: fit-content;
         z-index: 2;
@@ -2243,6 +2269,7 @@ dialog {
 
         img {
             border-radius: .25em;
+            margin-inline: auto;
             transition: all 300ms ease-in-out;
         }
     }
