@@ -743,30 +743,15 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    public function getTranslations(array $tv, User $user): ?array
+    public function getTranslations(array $tv, ?User $user): ?array
     {
-        // "translations" => array:10 [▼
-        //      0 => array:5 [▼
-        //        "iso_3166_1" => "CN"
-        //        "iso_639_1" => "zh"
-        //        "name" => "普通话"
-        //        "english_name" => "Mandarin"
-        //        "data" => array:4 [▶]
-        //      ]
-        //      1 => array:5 [▼
-        //        "iso_3166_1" => "US"
-        //        "iso_639_1" => "en"
-        //        "name" => "English"
-        //        "english_name" => "English"
-        //        "data" => array:4 [▼
-        //          "name" => "Reunion: The Sound of the Providence"
-        //          "overview" => "Ten years after their last mission, the famed tomb raiders Wu Xie, Wang Pang Zi, and Zhang Qi Ling have moved on, believing their days of adventure are behind t ▶"
-        //          "homepage" => ""
-        //          "tagline" => ""
-        //        ]
-        //      ]
-        $country = $user->getCountry() ?? 'FR'; // user iso_3166_1
-        $locale = $user->getPreferredLanguage() ?? 'fr'; // user iso_639_1
+        if (!$user) {
+            $country = 'FR';
+            $locale = 'fr';
+        } else {
+            $country = $user->getCountry() ?? 'FR'; // user iso_3166_1
+            $locale = $user->getPreferredLanguage() ?? 'fr'; // user iso_639_1
+        }
         $translations = $tv['translations']['translations'];
         $translation = null;
 
@@ -1301,7 +1286,7 @@ class SeriesController extends AbstractController
         $seriesBroadcastSchedule->setSeasonPart($seasonPart);
         $seriesBroadcastSchedule->setSeasonPartFirstEpisode($seasonPartFirstEpisode);
         $seriesBroadcastSchedule->setSeasonPartEpisodeCount($seasonPartEpisodeCount);
-        $seriesBroadcastSchedule->setFirstAirDate($this->dateService->newDateImmutable($date, "Europe/Paris", true));
+        $seriesBroadcastSchedule->setFirstAirDate($this->date($date, true));
         $seriesBroadcastSchedule->setAirAt(new DateTimeImmutable()->setTime($hour, $minute));
         $seriesBroadcastSchedule->setFrequency($frequency);
         $seriesBroadcastSchedule->setOverride($override);
@@ -1729,7 +1714,7 @@ class SeriesController extends AbstractController
         $userEpisode = $this->userEpisodeRepository->findOneBy(['id' => $ueId]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'episodeId' => $id], ['id' => 'ASC']);
 
-        $now = $this->dateService->getNowImmutable($user->getTimezone() ?? 'Europe/Paris');
+        $now = $this->now();
         if ($userEpisode->getWatchAt()) { // Si l'épisode a déjà été vu
             $userEpisode = new UserEpisode($userSeries, $id, $seasonNumber, $episodeNumber, $now);
             $userEpisode->setPreviousOccurrence($userEpisodes[count($userEpisodes) - 1]);
@@ -3082,8 +3067,8 @@ class SeriesController extends AbstractController
             $userLastEpisode = $userLastEpisode[0] ?? null;
             $userNextEpisode = $userNextEpisode[0] ?? null;
 
-            $userLastEpisode = $this->setEpisodeDatetime($userLastEpisode, $airAt, $user->getTimezone() ?? 'Europe/Paris');
-            $userNextEpisode = $this->setEpisodeDatetime($userNextEpisode, $airAt, $user->getTimezone() ?? 'Europe/Paris');
+            $userLastEpisode = $this->setEpisodeDatetime($userLastEpisode, $airAt);
+            $userNextEpisode = $this->setEpisodeDatetime($userNextEpisode, $airAt);
 
             $endOfSeason = $userLastEpisode && $userLastEpisode['episode_number'] == $episodeCount;
 
@@ -3571,7 +3556,7 @@ class SeriesController extends AbstractController
         return $tvSeasons;
     }
 
-    public function setEpisodeDatetime(?array $episode, DateTimeInterface $time, string $timezone): ?array
+    public function setEpisodeDatetime(?array $episode, DateTimeInterface $time): ?array
     {
         if (!$episode) return null;
         if (!$episode['air_date']) {
@@ -3579,7 +3564,7 @@ class SeriesController extends AbstractController
             return $episode;
         }
         $date = $episode['air_date'];
-        $date = $this->dateService->newDateImmutable($date, $timezone, true);
+        $date = $this->date($date, true);
 
         $date = $date->setTime($time->format('H'), $time->format('i'));
         $episode['date'] = $date;
@@ -3721,7 +3706,7 @@ class SeriesController extends AbstractController
             return 0;
         }*/
         $userEpisode = new UserEpisode($userSeries, $episode['id'], $seasonNumber, $episode['episode_number'], null);
-        $airDate = $episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris', true) : null;
+        $airDate = $episode['air_date'] ? $this->date($episode['air_date'], true) : null;
         $userEpisode->setAirDate($airDate);
         $this->userEpisodeRepository->save($userEpisode);
         if ($userSeries->getNextUserEpisode() === null && $airDate && $airDate > $this->now()) {
@@ -3812,13 +3797,15 @@ class SeriesController extends AbstractController
     public function now(): DateTimeImmutable
     {
         $user = $this->getUser();
-        return $this->dateService->newDateImmutable('now', $user->getTimezone() ?? 'Europe/Paris');
+        $timezone = $user ? $user->getTimezone() : 'Europe/Paris';
+        return $this->dateService->newDateImmutable('now', $timezone);
     }
 
-    public function date(string $dateString): DateTimeImmutable
+    public function date(string $dateString, bool $allDays = false): DateTimeImmutable
     {
         $user = $this->getUser();
-        return $this->dateService->newDateImmutable($dateString, $user->getTimezone() ?? 'Europe/Paris');
+        $timezone = $user ? $user->getTimezone() : 'Europe/Paris';
+        return $this->dateService->newDateImmutable($dateString, $timezone, $allDays);
     }
 
     public function dateModify(DateTimeImmutable $date, string $modify): DateTimeImmutable
@@ -4084,7 +4071,7 @@ class SeriesController extends AbstractController
             $userEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number']);
             if (!$userEpisode) {
                 $nue = new UserEpisode($userSeries, $episode['id'], $season['season_number'], $episode['episode_number'], null);
-                $nue->setAirDate($episode['air_date'] ? $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris') : null);
+                $nue->setAirDate($episode['air_date'] ? $this->date($episode['air_date']) : null);
                 if ($episode['episode_number'] > 1) {
                     $previousEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number'] - 1);
                     if ($previousEpisode) {
@@ -4102,7 +4089,7 @@ class SeriesController extends AbstractController
             if (!$userEpisode['air_date'] && $episode['air_date']) {
                 $ue = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
                 if ($ue) {
-                    $airDate = $this->dateService->newDateImmutable($episode['air_date'], $user->getTimezone() ?? 'Europe/Paris');
+                    $airDate = $this->date($episode['air_date']);
                     $ue->setAirDate($airDate);
                     $this->userEpisodeRepository->save($ue, true);
                     $userEpisode['air_date'] = $airDate;
@@ -4148,7 +4135,7 @@ class SeriesController extends AbstractController
 
             $userEpisode['watch_at_db'] = $userEpisode['watch_at'];
             if ($userEpisode['watch_at']) {
-                $userEpisode['watch_at'] = $this->dateService->newDateImmutable($userEpisode['watch_at'], $user->getTimezone() ?? 'Europe/Paris');
+                $userEpisode['watch_at'] = $this->date($userEpisode['watch_at']);
             }
             $episode['user_episode'] = $userEpisode;
             $episode['user_episodes'] = $userEpisodeList;

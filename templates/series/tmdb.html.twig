@@ -6,19 +6,26 @@
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
 {% endblock %}
 {% block body %}
-    <script>
-        const bd = '/series/posters_blurred{{ tv.blurredPosterPath }}';
-        const body = document.querySelector("body");
-        body.style.backgroundSize = "cover";
-        body.style.backgroundPosition = "center";
-        body.style.backgroundRepeat = "no-repeat";
-        body.style.backgroundAttachment = "fixed";
-        body.style.backgroundImage = "url(" + bd + ")";
-    </script>
+    {% if tv.blurredPosterPath %}
+        <script>
+            const bd = '/series/posters_blurred{{ tv.blurredPosterPath }}';
+            const body = document.querySelector("body");
+            body.style.backgroundSize = "cover";
+            body.style.backgroundPosition = "center";
+            body.style.backgroundRepeat = "no-repeat";
+            body.style.backgroundAttachment = "fixed";
+            body.style.backgroundImage = "url(" + bd + ")";
+        </script>
+    {% endif %}
     {% include '_blocks/_menu.html.twig' %}
     <div class="container-fluid backgroundImageOverlay">
         <div class="series-show">
             <div class="header">
+                {% if tv.backdrop_path %}
+                    <div class="backdrop">
+                        <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }}">
+                    </div>
+                {% endif %}
                 <div class="poster">
                     {% if tv.poster_path %}
                         <img src="/series/posters{{ tv.poster_path }}" alt="{{ tv.name }}">
@@ -45,15 +52,10 @@
                             {{ tv.overview|nl2br }}
                         </div>
                     </div>
-                    {% if tv.backdrop_path %}
-                        <div class="backdrop">
-                            <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }}">
-                        </div>
-                    {% endif %}
                 </div>
             </div>
 
-{#            {{ include('_blocks/series/_externals.html.twig') }}#}
+            {#            {{ include('_blocks/series/_externals.html.twig') }} #}
 
             <div class="content column">
                 <div class="content-infos">

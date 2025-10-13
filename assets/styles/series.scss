@@ -4094,6 +4094,8 @@ h2 {
         justify-content: center;
         margin-inline: auto;
         padding-inline: 3rem;
+        text-align: center;
+        text-wrap: balance;
         width: fit-content;
 
         &.disabled {
@@ -4234,6 +4236,8 @@ h2 {
         justify-content: center;
         margin-inline: auto;
         padding-inline: 3rem;
+        text-align: center;
+        text-wrap: balance;
         width: fit-content;
 
         &.disabled {
@@ -4854,6 +4858,18 @@ h2 {
                     border-radius: 0;
                 }
             }
+        }
+    }
+
+    .what-to-watch-next {
+        .next-button {
+            font-size: 1.5rem;
+        }
+    }
+
+    .get-filming-locations {
+        .get-filming-locations-button {
+            font-size: 1.5rem;
         }
     }
 

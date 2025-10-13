@@ -331,9 +331,10 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function episodesToWatch(User $user, string $locale = 'fr'): array
+    public function episodesToWatch(User $user, string $locale = 'fr', int $page = 1, int $limit = 20): array
     {
         $userId = $user->getId();
+        $offset = ($page - 1) * $limit;
         $sql = "SELECT s.id              as id,
                        s.tmdb_id         as tmdbId,
                        s.`name`          as name,
@@ -359,11 +360,11 @@ class UserEpisodeRepository extends ServiceEntityRepository
                                AND ue2.`watch_at` IS NULL
                                AND ue2.season_number > 0
                                AND IF(sbd.id IS NULL, ue2.`air_date` <= NOW(), DATE(sbd.date) <= NOW())
-                             ORDER BY ue2.episode_number
+                             ORDER BY ue2.season_number, ue2.episode_number
                              LIMIT 1)
                   AND us.progress > 0
                 ORDER BY us.`last_watch_at` DESC
-                LIMIT 20 OFFSET 0";
+                LIMIT $limit OFFSET $offset";
 
         return $this->getAll($sql);
     }
