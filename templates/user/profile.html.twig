@@ -10,15 +10,15 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid user-profile-container"> {# ← light #}
-{#        <div class="toggle-theme">{{ ux_icon('mdi:sun-moon-stars') }}</div>#}
-{#        <script>#}
-{#            document.addEventListener('DOMContentLoaded', function () {#}
-{#                const toggleTheme = document.querySelector('.toggle-theme');#}
-{#                toggleTheme.addEventListener('click', function () {#}
-{#                    document.querySelector(".container-fluid.user-profile-container").classList.toggle('light');#}
-{#                });#}
-{#            });#}
-{#        </script>#}
+        {#        <div class="toggle-theme">{{ ux_icon('mdi:sun-moon-stars') }}</div> #}
+        {#        <script> #}
+        {#            document.addEventListener('DOMContentLoaded', function () { #}
+        {#                const toggleTheme = document.querySelector('.toggle-theme'); #}
+        {#                toggleTheme.addEventListener('click', function () { #}
+        {#                    document.querySelector(".container-fluid.user-profile-container").classList.toggle('light'); #}
+        {#                }); #}
+        {#            }); #}
+        {#        </script> #}
         <div class="user-profile glowing-border left">
             {{ form_start(form, {'attr': {'class': 'form'}}) }}
             <div class="form-row">
@@ -99,46 +99,34 @@
             </div>
             {{ form_end(form) }}
         </div>
-        <div class="translation-settings glowing-border right">
-            <h2>{{ 'Translation Settings'|trans }}</h2>
-            <p>{{ 'You can change the translations of the application here.'|trans }}</p>
-            <div id="languages" class="languages">
-                <div class="targeted-languages">
-                    <h3>{{ 'Targeted Languages'|trans }}</h3>
-                    <label for="targetedLanguageSelect">
-                        <select id="targetedLanguageSelect" name="targetedLanguageSelect" class="form-control">
-                            {{ languageSelectHTML|raw }}
-                        </select>
-                    </label>
-                    <ul id="targeted-language-list" class="language-list">
-                        {#{% for lang in translationSettings.targeted_languages %}
-                            <li data-id="{{ lang }}" class="language-item">
-                                {{ lang|language_name|capitalize }}
-                                {{ ux_icon('solar:trash-bin-minimalistic-outline', {id: "delete-" ~ lang, class: "delete-language"}) }}
-                                {{ ux_icon('solar:hamburger-menu-outline', {id: "drag-" ~ lang, class: "drag-language"}) }}
-                            </li>
-                        {% endfor %}#}
-                    </ul>
-                </div>
-                <div class="preferred-languages">
-                    <h3>{{ 'Preferred Languages'|trans }}</h3>
-                    <label for="preferredLanguageSelect">
-                        <select id="preferredLanguageSelect" name="preferredLanguageSelect" class="form-control">
-                            {{ languageSelectHTML|raw }}
-                        </select>
-                    </label>
-                    <ul id="preferred-language-list" class="language-list">
-                        {#{% for lang in translationSettings.preferred_languages %}
-                            <li data-id="{{ lang }}" class="language-item">
-                                {{ lang|language_name|capitalize }}
-                                {{ ux_icon('solar:trash-bin-minimalistic-outline', {id: "delete-" ~ lang, class: "delete-language"}) }}
-                                {{ ux_icon('solar:hamburger-menu-outline', {id: "drag-" ~ lang, class: "drag-language"}) }}
-                            </li>
-                        {% endfor %}#}
-                    </ul>
+        {% if app.user.id == 1 %}
+            <div class="translation-settings glowing-border right">
+                <h2>{{ 'Translation Settings'|trans }}</h2>
+                <p>{{ 'You can change the translations of the application here.'|trans }}</p>
+                <div id="languages" class="languages">
+                    <div class="targeted-languages">
+                        <h3>{{ 'Targeted Languages'|trans }}</h3>
+                        <label for="targetedLanguageSelect">
+                            <select id="targetedLanguageSelect" name="targetedLanguageSelect" class="form-control">
+                                {{ languageSelectHTML|raw }}
+                            </select>
+                        </label>
+                        <ul id="targeted-language-list" class="language-list">
+                        </ul>
+                    </div>
+                    <div class="preferred-languages">
+                        <h3>{{ 'Preferred Languages'|trans }}</h3>
+                        <label for="preferredLanguageSelect">
+                            <select id="preferredLanguageSelect" name="preferredLanguageSelect" class="form-control">
+                                {{ languageSelectHTML|raw }}
+                            </select>
+                        </label>
+                        <ul id="preferred-language-list" class="language-list">
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
         <div id="globs" style="display: none">
             {
             "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},

@@ -27,10 +27,10 @@ export class Profile {
     init() {
         console.log("User profile init");
         const avatarFile = document.querySelector('#user_avatarFile');
-        avatarFile.addEventListener("change", updateImageDisplay);
+        avatarFile.addEventListener("change", gThis.updateImageDisplay);
 
         const bannerFile = document.querySelector('#user_bannerFile');
-        bannerFile.addEventListener("change", updateImageDisplay);
+        bannerFile.addEventListener("change", gThis.updateImageDisplay);
 
         const previewAvatar = document.querySelector('.preview-avatar-file');
         const previewBanner = document.querySelector('.preview-banner-file');
@@ -46,6 +46,7 @@ export class Profile {
         const preferredLanguageSelect = document.querySelector('#preferredLanguageSelect');
         const preferredLanguageList = document.querySelector('#preferred-language-list');
 
+        if (!targetLanguageSelect) return;
         targetLanguageSelect.addEventListener('change', (e) => {
             // add the selected language to the list of targeted languages
             const selectedLanguage = e.target.value;
@@ -78,44 +79,44 @@ export class Profile {
         this.preferredLanguages.forEach(language => {
             this.updateLanguageList(preferredLanguageList, language);
         });
+    }
 
-        function updateImageDisplay(e) {
-            const input = e.target;
-            /*const inputName = input.name;*/
-            const preview = input.closest('.form-field').querySelector("div[class^='preview']");
-            while (preview.firstChild) {
-                preview.removeChild(preview.firstChild);
-            }
-            const curFiles = input.files;
-            if (curFiles.length === 0) {
-                const div = document.createElement("div");
-                div.textContent = "No files currently selected for upload";
-                preview.appendChild(div);
-                return;
-            }
-
-            const file = curFiles[0];
-
-            if (validFileType(file)) {
-                preview.textContent = `${file.name}`;
-                const image = document.createElement("img");
-                image.src = URL.createObjectURL(file);
-                image.alt = image.title = file.name;
-                preview.appendChild(image);
-            } else {
-                preview.innerHTML = `${file.name}<span class="error">${gThis.translations['Not a valid file type. Update your selection']}.</span>`;
-            }
-
+    updateImageDisplay(e) {
+        const input = e.target;
+        /*const inputName = input.name;*/
+        const preview = input.closest('.form-field').querySelector("div[class^='preview']");
+        while (preview.firstChild) {
+            preview.removeChild(preview.firstChild);
+        }
+        const curFiles = input.files;
+        if (curFiles.length === 0) {
+            const div = document.createElement("div");
+            div.textContent = "No files currently selected for upload";
+            preview.appendChild(div);
+            return;
         }
 
-        function validFileType(file) {
-            const fileTypes = [
-                "image/jpeg",
-                "image/png",
-                "image/webp",
-            ];
-            return fileTypes.includes(file.type);
+        const file = curFiles[0];
+
+        if (gThis.validFileType(file)) {
+            preview.textContent = `${file.name}`;
+            const image = document.createElement("img");
+            image.src = URL.createObjectURL(file);
+            image.alt = image.title = file.name;
+            preview.appendChild(image);
+        } else {
+            preview.innerHTML = `${file.name}<span class="error">${gThis.translations['Not a valid file type. Update your selection']}.</span>`;
         }
+
+    }
+
+    validFileType(file) {
+        const fileTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+        ];
+        return fileTypes.includes(file.type);
     }
 
     updateLanguageList(listElement, language) {

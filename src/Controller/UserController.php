@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Settings;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\NetworkRepository;
@@ -70,7 +71,23 @@ class UserController extends AbstractController
             return $this->redirectToRoute('app_home_index');
         }
         $translationSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'translations']);
-        $translationSettings = $translationSettings ? $translationSettings->getData() : [];
+        if (!$translationSettings) {
+            $translationSettings = new Settings($user, 'translations', [
+                "targeted_languages" => [
+                    "th",
+                    "ja",
+                    "ko",
+                    "zh",
+                    "vi"
+                ],
+                "preferred_languages" => [
+                    "fr",
+                    "en"
+                ]
+            ]);
+            $this->settingsRepository->save($translationSettings, true);
+        }
+        $translationSettings = $translationSettings->getData();
         $languages = (new IntlExtension)->getLanguageNames('fr');
         foreach ($languages as $code => $name) {
             if (str_starts_with($code, 'x-') || str_starts_with($code, 'und-')) {
