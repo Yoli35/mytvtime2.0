@@ -357,6 +357,7 @@ final class VideoController extends AbstractController
         $video->setPublishedAt(date_create_immutable($youtubeVideo->getItems()[0]['snippet']['publishedAt']));
         $thumbnailUrl = null;
         $thumbnails = (array)$youtubeVideo->getItems()[0]['snippet']['thumbnails'];
+        dump($thumbnails);
         if (array_key_exists('high', $thumbnails) && $thumbnails['high']['url']) {
             $thumbnailUrl = $thumbnails['high']['url'];
         } else {
@@ -675,14 +676,14 @@ final class VideoController extends AbstractController
 
     private function pagination(int $page, int $categoryId, int $totalResults, int $maxResults): string
     {
+        if ($totalResults == 0) return "";
+
         $totalPages = ceil($totalResults / $maxResults);
+        if ($totalPages < 2) return "";
+
         $previousPage = $page > 1 ? $page - 1 : null;
         $nextPage = $page < $totalPages ? $page + 1 : null;
 
-        // Return HTML code for pagination with previous page, current page, next page and total pages
-        if ($totalPages <= 1) {
-            return '<div class="pagination"><span class="total-pages">' . ($totalResults == 1 ? $this->translator->trans("One video") : $this->translator->trans("count videos", ["count" => $totalResults])) . '</span></div>';
-        }
         if ($page < 1 || $page > $totalPages) {
             throw new InvalidArgumentException('Page number out of range');
         }

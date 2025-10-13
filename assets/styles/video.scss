@@ -1,3 +1,7 @@
+.container-fluid.videos-page, .container-fluid.video-page {
+    min-height: calc(100dvh - 7rem);
+}
+
 .videos-page {
     margin-block-start: 4rem;
 
@@ -108,6 +112,11 @@
         margin-block-end: 1rem;
         width: 100%;
 
+        &:not(:has(.video)) {
+            grid-template-columns: 1fr;
+            min-height: calc(100dvh - 17.5rem);
+        }
+
         .video {
             border: 2px solid transparent;
             border-radius: .5rem;
@@ -200,6 +209,27 @@
                         }
                     }
                 }
+            }
+        }
+
+        .no-video {
+            align-items: center;
+            color: var(--orange-70);
+            display: flex;
+            flex-direction: column;
+            font-size: 2rem;
+            font-weight: 600;
+            gap: 4rem;
+            height: 100%;
+            justify-content: center;
+            width: 100%;
+
+            img {
+                aspect-ratio: 1;
+                border-radius: 50%;
+                border: .25rem solid var(--orange-70);
+                height: 20rem;
+                object-fit: cover;
             }
         }
     }
