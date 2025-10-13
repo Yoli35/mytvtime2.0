@@ -4,6 +4,10 @@ Providers: Plateformes
 Dashboard: Tableau de bord
 more notifications: notifications supplémentaires
 
+# Menu
+No history: Pas d'historique
+Change your avatar on your account page: Changez votre avatar sur la page de votre compte
+
 # Home
 A series by name/year: Une série par nom/année
 A series: Une série
@@ -1246,6 +1250,7 @@ Where to buy or rent: Où acheter ou louer
 Where to buy: Où acheter
 Where to flatrate: Où regarder en streaming
 Where to rent: Où louer
+Your list does not contain any movies: Votre liste ne contient aucun film
 backdrop: arrière-plan
 movies: films
 poster: affiche
@@ -1324,6 +1329,7 @@ Lucy Darling: Lucy Darling
 My videos: Mes vidéos
 Neoliberalism: Néolibéralisme
 No comments: Aucun commentaire
+No video: Aucune vidéo
 One video: Une vidéo
 Pest: Nuisible / Ravageur
 Politics: Politique
