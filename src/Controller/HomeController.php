@@ -166,9 +166,6 @@ class HomeController extends AbstractController
             $videoList = implode(',', $videoList);
             $movieVideos['videoList'] = $videoList;
         }
-        dump([
-            'statusArray' => $statusArray,
-        ]);
 
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
