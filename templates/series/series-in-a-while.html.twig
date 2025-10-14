@@ -10,6 +10,7 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid series-to-start">
+        <h1>{{ 'Series not seen in a while'|trans }}</h1>
         {% if userSeriesCount < 20 %}
             {{ include('_blocks/series/_search.html.twig') }}
         {% endif %}

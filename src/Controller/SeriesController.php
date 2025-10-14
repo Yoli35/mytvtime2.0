@@ -279,6 +279,7 @@ class SeriesController extends AbstractController
         return $this->render('series/up-coming-series.html.twig', [
             'seriesList' => $series,
             'tmdbIds' => $tmdbIds,
+            'userSeriesCount' => $this->userSeriesRepository->count(['user' => $user])
         ]);
     }
 
@@ -304,6 +305,7 @@ class SeriesController extends AbstractController
         return $this->render('series/ranking-by-vote.html.twig', [
             'seriesList' => $series,
             'tmdbIds' => $tmdbIds,
+            'userSeriesCount' => $this->userSeriesRepository->count(['user' => $user])
         ]);
     }
 
