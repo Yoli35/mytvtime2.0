@@ -3249,12 +3249,14 @@ h2 {
         }
     }
 
-    .cast-and-name {
+    .cast-and-name, .crew-and-name {
         display: flex;
         gap: 1rem;
 
         .series-name {
             align-items: flex-end;
+            background-color: hsl(from var(--green-50) h s l / .5);
+            border-radius: .5rem;
             display: flex;
             flex-direction: column;
             font-size: clamp(1rem, 4vw, 4rem);
@@ -3263,6 +3265,7 @@ h2 {
             justify-content: center;
             line-height: 1.25em;
             margin-block: auto;
+            padding-inline: 1rem;
             position: relative;
             text-align: right;
             text-wrap: pretty;
@@ -3275,7 +3278,7 @@ h2 {
             }
 
             .localization-span {
-                color: var(--orange-50);
+                color: var(--orange-70);
             }
 
             .cast {
@@ -4378,9 +4381,14 @@ h2 {
         .people {
             display: flex;
             flex-direction: column;
-            height: 20rem;
+            height: 30rem;
             position: relative;
-            width: 12rem;
+            width: 15rem;
+
+            &.small {
+                height: 20rem;
+                width: 12rem;
+            }
 
             .photo, .profile {
                 align-items: center;

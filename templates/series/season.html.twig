@@ -367,7 +367,8 @@
                     </div>
                 {% endif %}
 
-                {% if season.credits.cast|length %}
+                {% set someCast = season.credits.cast|length %}
+                {% if someCast %}
                     <h3>{{ 'Cast'|trans }}</h3>
                     <div class="cast-and-name">
                         <div class="cast">
@@ -379,9 +380,9 @@
                         </div>
                         <div class="series-name">
                             {% if season.series_localized_name %}
-                                <span class="localization-span">{{ season.series_localized_name.name }} ({{ series.firstAirDate|date("Y") }})</span>
+                                <span class="localization-span">{{ season.series_localized_name.name }}</span>
                             {% else %}
-                                <span class="name-span">{{ series.name }} ({{ series.firstAirDate|date("Y") }})</span>
+                                <span class="name-span">{{ series.name }}</span>
                             {% endif %}
                         </div>
                     </div>
@@ -400,13 +401,32 @@
 
                 {% if season.credits.crew|length %}
                     <h3>{{ 'Crew'|trans }}</h3>
-                    <div class="crew">
-                        <div class="wrapper">
-                            {% for people in season.credits.crew %}
-                                {{ include('_blocks/series/_crew.html.twig') }}
-                            {% endfor %}
+                    {% if someCast %}
+                        <div class="crew">
+                            <div class="wrapper">
+                                {% for people in season.credits.crew %}
+                                    {{ include('_blocks/series/_crew.html.twig') }}
+                                {% endfor %}
+                            </div>
                         </div>
-                    </div>
+                    {% else %}
+                        <div class="crew-and-name">
+                            <div class="crew">
+                                <div class="wrapper">
+                                    {% for people in season.credits.crew %}
+                                        {{ include('_blocks/series/_crew.html.twig') }}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="series-name">
+                                {% if season.series_localized_name %}
+                                    <span class="localization-span">{{ season.series_localized_name.name }}</span>
+                                {% else %}
+                                    <span class="name-span">{{ series.name }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
