@@ -19,27 +19,18 @@ export class Index {
         };
     }
 
-    init(globs) {
+    init(globs, menu) {
         console.log("Index.js loaded");
-        console.log(globs)
         this.seriesId = globs.tmdbIds;
         this.app_series_tmdb_check = globs.app_series_tmdb_check;
-        console.log(this.seriesId);
-        console.log(this.app_series_tmdb_check);
-
-        /*setInterval(() => {
-            const now = new Date();
-            console.log("Index.js has been running for " + ((now - this.startDate) / 60000).toFixed(0) + " minutes");
-            if (now.getDate() !== this.startDate.getDate()) {
-                location.reload();
-            }
-        }, 1000 * 60 * 10); // 10 minutes
-        // Si la fenêtre redevient active et si la date a changé, on recharge la page
-        document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === "visible" && new Date().getDate() !== this.startDate.getDate()) {
-                location.reload();
-            }
-        });*/
+        this.menu = menu;
+        const seriesSearchBlockDiv = document.querySelector('.series-search-block');
+        if (seriesSearchBlockDiv) {
+            const seriesSearchInput = document.getElementById('series-search');
+            seriesSearchInput.focus();
+            seriesSearchInput.addEventListener("input", this.menu.searchFetch);
+            seriesSearchInput.addEventListener("keydown", this.menu.searchMenuNavigate);
+        }
 
         fetch(this.app_series_tmdb_check, {
             method: "POST",

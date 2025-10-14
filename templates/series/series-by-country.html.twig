@@ -10,6 +10,9 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid series-by-country">
+        {% if userSeriesCount < 20 %}
+            {{ include('_blocks/series/_search.html.twig') }}
+        {% endif %}
         {% if seriesByCountry|length %}
             <header>
                 {% set seriesCount = seriesByCountry|length %}
@@ -52,6 +55,12 @@
         </div>
     </div>
     {% include('_blocks/_footer.html.twig') %}
+    <div id="global-data" class="hidden">
+        {
+        "tmdbIds": {{ tmdbIds|json_encode|raw }},
+        "app_series_tmdb_check": "{{ path('app_series_tmdb_check') }}"
+        }
+    </div>
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}

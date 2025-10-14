@@ -104,10 +104,11 @@ window.addEventListener("DOMContentLoaded", () => {
     const seriesIndex = document.querySelector(".series-index");
     const seriesToStart = document.querySelector(".series-to-start");
     const seriesByCountry = document.querySelector(".series-by-country");
-    if (seriesIndex || seriesToStart || seriesByCountry) {
+    const allMySeries = document.querySelector(".all-my-series");
+    if (seriesIndex || seriesToStart || seriesByCountry || allMySeries) {
         const index = new Index();
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
-        index.init(globs);
+        index.init(globs, menu);
     }
     const seriesShow = document.querySelector(".series-show");
     if (seriesShow) {

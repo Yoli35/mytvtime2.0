@@ -12,7 +12,7 @@ route: string           // Route name from base.html.twig, otherwise it must be 
 Autre remarque:
     500 is the page limit imposed by the TMDB API
 #}
-{% if total_pages > 0 %}
+{% if total_pages > 1 %}
     <section id="pagination-section-{{ index }}">
         {% set page_max = min(500, total_pages) %}
         {% set start = max(1, current_page - 2) %}

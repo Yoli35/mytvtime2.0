@@ -190,6 +190,7 @@ class SeriesController extends AbstractController
             'episodesOfTheDay' => $episodesOfTheDay,
             'seriesOfTheWeek' => $seriesOfTheWeek,
             'tmdbIds' => $tmdbIds,
+            'userSeriesCount' => $this->userSeriesRepository->count(['user' => $user])
         ]);
     }
 
@@ -239,6 +240,7 @@ class SeriesController extends AbstractController
         return $this->render('series/series-to-start.html.twig', [
             'seriesToStart' => $seriesToStart,
             'tmdbIds' => $tmdbIds,
+            'userSeriesCount' => $this->userSeriesRepository->count(['user' => $user])
         ]);
     }
 
@@ -258,6 +260,7 @@ class SeriesController extends AbstractController
         return $this->render('series/series-in-a-while.html.twig', [
             'seriesInAWhile' => $series,
             'tmdbIds' => $tmdbIds,
+            'userSeriesCount' => $this->userSeriesRepository->count(['user' => $user])
         ]);
     }
 
@@ -359,6 +362,7 @@ class SeriesController extends AbstractController
             'userSeriesCountries' => $userSeriesCountries,
             'country' => $country,
             'tmdbIds' => $tmdbIds,
+            'userSeriesCount' => $this->userSeriesRepository->count(['user' => $user])
         ]);
     }
 
@@ -508,6 +512,7 @@ class SeriesController extends AbstractController
             $series['poster_path'] = $series['poster_path'] ? '/series/posters' . $series['poster_path'] : null;
             return $series;
         }, $userSeries);
+        $tmdbIds = array_column($userSeries, 'tmdb_id');
 
         $userNetworks = $user->getNetworks();
         $networks = $this->networkRepository->findBy([], ['name' => 'ASC']);
@@ -525,6 +530,7 @@ class SeriesController extends AbstractController
         return $this->render('series/all.html.twig', [
             'userSeries' => $userSeries,
             'userSeriesCount' => $userSeriesCount,
+            'tmdbIds' => $tmdbIds,
             'pages' => ceil($userSeriesCount / $filters['perPage']),
             'filters' => $filters,
             'filterBoxOpen' => $filterBoxOpen,

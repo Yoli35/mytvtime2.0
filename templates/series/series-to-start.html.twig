@@ -10,6 +10,9 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid series-to-start">
+        {% if userSeriesCount < 20 %}
+            {{ include('_blocks/series/_search.html.twig') }}
+        {% endif %}
         {% if seriesToStart|length %}
             <header>
                 <div class="infos">{{ 'Series to start'|trans }} ({{ seriesToStart|length }})</div>

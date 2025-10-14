@@ -10,6 +10,9 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid series-to-start">
+        {% if userSeriesCount < 20 %}
+            {{ include('_blocks/series/_search.html.twig') }}
+        {% endif %}
         {% if seriesInAWhile|length %}
             <header>
                 {{ 'Series not seen in a while'|trans }} ({{ seriesInAWhile|length }})
@@ -38,6 +41,12 @@
         </div>
     </div>
     {% include('_blocks/_footer.html.twig') %}
+    <div id="global-data" class="hidden">
+        {
+        "tmdbIds": {{ tmdbIds|json_encode|raw }},
+        "app_series_tmdb_check": "{{ path('app_series_tmdb_check') }}"
+        }
+    </div>
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
@@ -47,6 +56,9 @@
         function init() {
             /** @type {HTMLInputElement} */
             const filterByName = document.getElementById('filter-by-name');
+            if (filterByName === null) {
+                return;
+            }
             filterByName.addEventListener('input', filterSeries);
             filterByName.focus();
             setTimeout(() => {
