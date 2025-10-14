@@ -469,7 +469,7 @@ export class Menu {
                         img.alt = result[gThis.resultNames[type]];
                         posterDiv.appendChild(img);
                     } else {
-                        posterDiv.innerHTML = 'No poster';
+                        posterDiv.innerHTML = '<div>No poster</div>';
                     }
                     a.appendChild(posterDiv);
                     const titleDiv = document.createElement("div");

@@ -11,11 +11,16 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid movie-index filter-page">
+        {% set firstMovie = userMovies|first %}
 
         <h1>{{ 'My movies'|trans }} (<span id="movie-count">{{ userMovieCount }}</span>)</h1>
         <main>
             <article>
-                {% set firstMovie = userMovies|first %}
+                {% if firstMovie.userMovieId is null or userMovieCount < 20 %}
+                    {{ include('_blocks/movie/_search.html.twig') }}
+                {% endif %}
+            </article>
+            <article>
                 {% if firstMovie.userMovieId is null %}
                     <div class="no-movies-header">{{ 'Your list does not contain any movies'|trans }}</div>
                 {% endif %}
@@ -34,4 +39,10 @@
         </main>
     </div>
     {% include('_blocks/_footer.html.twig') %}
+    <div id="globs">
+        {
+        "app_series_settings_save": "{{ path('app_series_settings_save') }}",
+        "txt_no_poster": "{{ 'No poster'|trans }}"
+        }
+    </div>
 {% endblock %}

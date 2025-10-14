@@ -11,63 +11,69 @@
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid movie-index filter-page">
-
+        {% set firstMovie = userMovies|first %}
         <h1>{{ 'My movies'|trans }} (<span id="movie-count">{{ userMovieCount }}</span>)</h1>
         <aside>
-            <article>
-                <header>
-                    <div class="title">{{ 'Filters'|trans }}</div>
-                    <div class="filter-values">
-                        <div id="sort-value" class="filter-value" data-title="{{ 'Sort'|trans }} / {{ 'Order'|trans }}">{{ ux_icon('mdi:settings-outline') }}&nbsp;<span>{{ filterMeanings[filters.sort]|trans }} / {{ filterMeanings[filters.order]|trans }}</span></div>
-                        <div id="per-value" class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">{{ ux_icon('mdi:dots-grid') }}&nbsp;<span>{{ filters.perPage }}</span></div>
+            {% if firstMovie.userMovieId %}
+                <article id="filter-box" class="filter-box">
+                    <header>
+                        <div class="title">{{ 'Filters'|trans }}</div>
+                        <div class="filter-values">
+                            <div id="sort-value" class="filter-value" data-title="{{ 'Sort'|trans }} / {{ 'Order'|trans }}">{{ ux_icon('mdi:settings-outline') }}&nbsp;<span>{{ filterMeanings[filters.sort]|trans }} / {{ filterMeanings[filters.order]|trans }}</span></div>
+                            <div id="per-value" class="filter-value" data-title="{{ 'Number of elements per page'|trans }}">{{ ux_icon('mdi:dots-grid') }}&nbsp;<span>{{ filters.perPage }}</span></div>
+                        </div>
+                        <div class="collapse" data-for="filters" data-title="{{ 'Show / hide filter options'|trans }}">
+                            {% if filterBoxOpen %}
+                                {{ ux_icon('mdi:chevron-down') }}
+                            {% else %}
+                                {{ ux_icon('mdi:chevron-up') }}
+                            {% endif %}
+                        </div>
+                    </header>
+                    <div class="filters{% if filterBoxOpen == 0 %} collapse{% endif %}">
+                        <div class="filter">
+                            <label for="per-page">{{ 'Number of elements per page'|trans }}
+                                <select id="per-page">
+                                    {% for number in [10, 20, 50, 100] %}
+                                        <option value="{{ number }}"{% if filters.perPage==number %} selected{% endif %}>{{ number }}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                        </div>
+                        <div class="filter">
+                            <label for="title-filter">{{ 'Title'|trans }}
+                                <input type="search" id="title-filter" name="title-filter" value="{{ filters.title }}" {% if filters.title|length %} autofocus{% endif %}>
+                            </label>
+                        </div>
+                        <div class="filter">
+                            <label for="sort-by">{{ 'Sort'|trans }}
+                                <select id="sort-by">
+                                    <option value="name"{% if filters.sort=='name' %} selected{% endif %}>{{ 'Name'|trans }}</option>
+                                    <option value="releaseDate"{% if filters.sort=='releaseDate' %} selected{% endif %}>{{ 'Release date'|trans }}</option>
+                                    <option value="addedAt"{% if filters.sort=='addedAt' %} selected{% endif %}>{{ 'Date added'|trans }}</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="filter">
+                            <label for="order-by">{{ 'Order'|trans }}
+                                <select id="order-by">
+                                    <option value="DESC"{% if filters.order=='DESC' %} selected{% endif %}>{{ 'Descending'|trans }}</option>
+                                    <option value="ASC"{% if filters.order=='ASC' %} selected{% endif %}>{{ 'Ascending'|trans }}</option>
+                                </select>
+                            </label>
+                        </div>
                     </div>
-                    <div class="collapse" data-for="filters" data-title="{{ 'Show / hide filter options'|trans }}">
-                        {% if filterBoxOpen %}
-                            {{ ux_icon('mdi:chevron-down') }}
-                        {% else %}
-                            {{ ux_icon('mdi:chevron-up') }}
-                        {% endif %}
-                    </div>
-                </header>
-                <div class="filters{% if filterBoxOpen == 0 %} collapse{% endif %}">
-                    <div class="filter">
-                        <label for="per-page">{{ 'Number of elements per page'|trans }}
-                            <select id="per-page">
-                                {% for number in [10, 20, 50, 100] %}
-                                    <option value="{{ number }}"{% if filters.perPage==number %} selected{% endif %}>{{ number }}</option>
-                                {% endfor %}
-                            </select>
-                        </label>
-                    </div>
-                    <div class="filter">
-                        <label for="title-filter">{{ 'Title'|trans }}
-                            <input type="search" id="title-filter" name="title-filter" value="{{ filters.title }}" {% if filters.title|length %} autofocus{% endif %}>
-                        </label>
-                    </div>
-                    <div class="filter">
-                        <label for="sort-by">{{ 'Sort'|trans }}
-                            <select id="sort-by">
-                                <option value="name"{% if filters.sort=='name' %} selected{% endif %}>{{ 'Name'|trans }}</option>
-                                <option value="releaseDate"{% if filters.sort=='releaseDate' %} selected{% endif %}>{{ 'Release date'|trans }}</option>
-                                <option value="addedAt"{% if filters.sort=='addedAt' %} selected{% endif %}>{{ 'Date added'|trans }}</option>
-                            </select>
-                        </label>
-                    </div>
-                    <div class="filter">
-                        <label for="order-by">{{ 'Order'|trans }}
-                            <select id="order-by">
-                                <option value="DESC"{% if filters.order=='DESC' %} selected{% endif %}>{{ 'Descending'|trans }}</option>
-                                <option value="ASC"{% if filters.order=='ASC' %} selected{% endif %}>{{ 'Ascending'|trans }}</option>
-                            </select>
-                        </label>
-                    </div>
-                </div>
-            </article>
+                </article>
+            {% endif %}
             {{ include('_blocks/_pagination.html.twig', {index: 1, current_page: filters.page, total_pages: pages}) }}
         </aside>
         <main>
             <article>
-                {% set firstMovie = userMovies|first %}
+                {% if firstMovie.userMovieId is null or userMovieCount < 20 %}
+                    {{ include('_blocks/movie/_search.html.twig') }}
+                {% endif %}
+            </article>
+            <article>
                 {% if firstMovie.userMovieId is null %}
                     <div class="no-movies-header">{{ 'Your list does not contain any movies'|trans }}</div>
                 {% endif %}
@@ -88,7 +94,7 @@
             {{ include('_blocks/_pagination.html.twig', {index: 2, current_page: filters.page, total_pages: pages}) }}
         </aside>
 
-        </div>
+    </div>
     {% include('_blocks/_footer.html.twig') %}
     <div id="globs">
         {

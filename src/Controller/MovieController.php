@@ -132,7 +132,9 @@ class MovieController extends AbstractController
                 return $movie;
             }, $this->movieRepository->getMovieCards($user, $filters));
         } else {
-            $userMovies = $this->getTMDBMovies();
+            do {
+                $userMovies = $this->getTMDBMovies();
+            } while (!count($userMovies));
         }
 
         $filterMeanings = [
@@ -219,7 +221,9 @@ class MovieController extends AbstractController
 
         $userMovieCount = count($userMovies);
         if (!$userMovieCount) {
-            $userMovies = $this->getTMDBMovies();
+            do {
+                $userMovies = $this->getTMDBMovies();
+            } while (!count($userMovies));
         }
 
         return $this->render('movie/favorite_index.html.twig', [
@@ -342,7 +346,7 @@ class MovieController extends AbstractController
             $this->imageService->saveImage("posters", $movie['belongs_to_collection']['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5), '/movies/');
             $this->imageService->saveImage("backdrops", $movie['belongs_to_collection']['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3), '/movies/');
         }
-        $blurredPosterPath = $this->imageService->blurPoster($movie['poster_path'], 'movies', 8);
+        $blurredPosterPath = $movie['poster_path'] ? $this->imageService->blurPoster($movie['poster_path'], 'movies', 8) : null;
         $this->getCredits($movie);
         $this->getProviders($movie, $country);
         $this->getReleaseDates($movie);

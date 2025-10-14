@@ -181,7 +181,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const movieIndex = document.querySelector(".movie-index");
     if (movieIndex) {
         const globs = JSON.parse(document.querySelector("#globs").textContent);
-        new MovieIndex(globs);
+        new MovieIndex(globs, menu);
     }
 
     const movieShow = document.querySelector(".movie-show");

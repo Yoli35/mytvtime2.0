@@ -11,13 +11,15 @@
 
 {% block body %}
     <script>
-        const bd = '/movies/posters_blurred{{ blurredPosterPath }}';
-        const body = document.querySelector("body");
-        body.style.backgroundSize = "cover";
-        body.style.backgroundPosition = "center";
-        body.style.backgroundRepeat = "no-repeat";
-        body.style.backgroundAttachment = "fixed";
-        body.style.backgroundImage = "url(" + bd + ")";
+        {% if blurredPosterPath %}
+            const bd = '/movies/posters_blurred{{ blurredPosterPath }}';
+            const body = document.querySelector("body");
+            body.style.backgroundSize = "cover";
+            body.style.backgroundPosition = "center";
+            body.style.backgroundRepeat = "no-repeat";
+            body.style.backgroundAttachment = "fixed";
+            body.style.backgroundImage = "url(" + bd + ")";
+        {% endif %}
     </script>
     {% include '_blocks/_menu.html.twig' %}
     <div class="container-fluid backgroundImageOverlay">
@@ -32,7 +34,9 @@
                 </div>
                 <div class="infos">
                     <div class="backdrop">
-                        <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
+                        {% if movie.backdrop_path %}
+                            <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
+                        {% endif %}
                     </div>
                     <div class="title">
                         <h1>
