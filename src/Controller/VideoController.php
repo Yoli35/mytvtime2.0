@@ -357,7 +357,7 @@ final class VideoController extends AbstractController
         $video->setPublishedAt(date_create_immutable($youtubeVideo->getItems()[0]['snippet']['publishedAt']));
         $thumbnailUrl = null;
         $thumbnails = (array)$youtubeVideo->getItems()[0]['snippet']['thumbnails'];
-        dump($thumbnails);
+
         if (array_key_exists('high', $thumbnails) && $thumbnails['high']['url']) {
             $thumbnailUrl = $thumbnails['high']['url'];
         } else {
