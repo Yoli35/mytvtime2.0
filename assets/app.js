@@ -129,7 +129,7 @@ window.addEventListener("DOMContentLoaded", () => {
             const averageColor = new AverageColor();
             const color = averageColor.getColor(img);
             console.log({color})
-            if (color.lightness > 180) {
+            if (color.lightness > 160) {
                 seriesShow.style.color = "hsl(202, 18%, 10%)"
             } else {
                 seriesShow.style.color = "hsl(202, 18%, 90%)"
