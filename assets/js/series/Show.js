@@ -107,10 +107,10 @@ export class Show {
         /*console.log({api});*/
 
         this.filmingLocations = jsonGlobsObject.locations;
-        console.log({filmingLocations: this.filmingLocations});
+        // console.log({filmingLocations: this.filmingLocations});
         const jsonGlobsMap = JSON.parse(document.querySelector('div#globs-map').textContent);
         this.fieldList = jsonGlobsMap.fieldList;
-        console.log({fieldList: this.fieldList});
+        // console.log({fieldList: this.fieldList});
 
         const previousSeries = document.querySelector('.previous-series');
         const nextSeries = document.querySelector('.next-series');
@@ -472,7 +472,7 @@ export class Show {
         const submitRow = addLocationForm.querySelector('.form-row.submit-row');
         const scrollDownToSubmitDiv = addLocationDialog.querySelector('.scroll-down-to-submit');
         const scrollDownToSubmitButton = scrollDownToSubmitDiv.querySelector('button');
-        console.log({imageInputs});
+        // console.log({imageInputs});
         // Dev test
         /*const locationInput = addLocationForm.querySelector('input[name="location"]');*/
         /*locationInput.addEventListener('input', function () {
@@ -492,7 +492,7 @@ export class Show {
         // Si la div "submit-row" est visible, la div "scroll-down-to-submit" disparaît.
         const observer = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
-                console.log(entry)
+                // console.log(entry)
                 if (entry.isIntersecting) {
                     scrollDownToSubmitDiv.style.display = 'none';
                 } else {
