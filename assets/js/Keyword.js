@@ -72,9 +72,9 @@ export class Keyword {
                 .then((response) => response.json())
                 .then(data => {
                     gThis.hideForm(keywordFormContainer);
-                    const factDiv = document.querySelector('.keyword-block');
-                    factDiv.innerHTML = data.keywords;
-                    gThis.toolTips.init(factDiv);
+                    const keywordsDiv = document.querySelector('.keywords');
+                    keywordsDiv.innerHTML = data.keywords;
+                    gThis.toolTips.init(keywordsDiv);
                 });
         });
     }
