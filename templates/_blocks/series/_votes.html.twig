@@ -1,6 +1,7 @@
 <div class="vote-graph">
     {% set sum = 0 %}
     {% set count = 0 %}
+    {% if ues|length == vas|length %}
     <div class="episode-votes">
         {% for ue in ues %}
             {% set epId = type == 'array' ? ue.episode_id : ue.episodeId %}
@@ -29,4 +30,7 @@
             {{ 'No votes'|trans }}
         {% endif %}
     </div>
+    {% else %}
+        <div class="error">{{ 'Error → votes and episodes do not match'|trans }}</div>
+    {% endif %}
 </div>

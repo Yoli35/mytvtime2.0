@@ -264,6 +264,11 @@ Episode of the day: Épisode du jour
 Episode: Épisode
 Episodes of the day: Épisodes du jour
 Episodes: Épisodes
+'An episode has been removed from the series (%id%)': 'Un épisode a été supprimé de la série (%id%)'
+'%count% episodes have been removed from the series (%list%)': '%count% épisodes ont été supprimés de la série (%list%)'
+'Episode %number% has been updated': "L'épisode %number% a été mis à jour"
+Your episodes have been updated according to the series information.: Vos épisodes ont été mis à jour selon les informations de la série.
+Error → votes and episodes do not match: Erreur → les votes et les épisodes ne correspondent pas
 Expand all videos: Développer toutes les vidéos
 External sources: Sources externes
 Filming locations map: Carte des lieux de tournage
@@ -1176,6 +1181,18 @@ Writers' Assistant: Assistant des scénaristes
 Writers' Production: Production des scénaristes
 Runner Art Department: Assistant du département artistique
 Lighting Manager: Responsable de l'éclairage
+
+Additional Grip: Grip supplémentaire
+Ager/Dyer: Vieillisseur/Teinturier
+Charge Scenic Artist: Artiste de décor en chef
+Painter: Peintre
+Best Boy Electrician: Assistant chef électricien
+Assistant Gaffer: Assistant éclairagiste
+Assistant Decorator: Assistant décorateur
+Extras Makeup Artist: Maquilleur d'extras
+Drone Cinematographer: Cinéaste de drone
+Quality Control Supervisor: Superviseur du contrôle qualité
+Sound Effects: Effets sonores
 
 # Contact
 Contact: Contact

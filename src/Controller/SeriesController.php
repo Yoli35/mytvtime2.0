@@ -87,6 +87,8 @@ use Twig\Extra\Intl\IntlExtension;
 #[Route('/{_locale}/series', name: 'app_series_', requirements: ['_locale' => 'fr|en|ko'])]
 class SeriesController extends AbstractController
 {
+    private bool $reloadUserEpisodes = false;
+
     public function __construct(
         private readonly DateService                        $dateService,
         private readonly DeeplTranslator                    $deeplTranslator,
@@ -888,6 +890,11 @@ class SeriesController extends AbstractController
 
         $userSeries = $this->updateUserSeries($userSeries, $tv);
         $userEpisodes = $this->checkSeasons($userSeries, $userEpisodes, $tv);
+        if ($this->reloadUserEpisodes) {
+            $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+            $this->addFlash('info', $this->translator->trans('Your episodes have been updated according to the series information.'));
+            $this->reloadUserEpisodes = false;
+        }
         $userVotes = $this->getUserVotes($tv, $userEpisodes);
 
         $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($locale);
@@ -3662,7 +3669,7 @@ class SeriesController extends AbstractController
         }
 
         foreach ($tv['seasons'] as $season) {
-            $this->addSeasonToUser($user, $userSeries, $season, []);
+            $this->addSeasonToUser($user, $userSeries, $season['season_number'], []);
         }
         return $userSeries;
     }
@@ -3673,7 +3680,10 @@ class SeriesController extends AbstractController
         $series = $userSeries->getSeries();
         $newEpisodeCount = 0;
         foreach ($tv['seasons'] as $season) {
-            $newEpisodeCount += $this->addSeasonToUser($user, $userSeries, $season, $userEpisodes);
+            $seasonNumber = $season['season_number'];
+            $newEpisodeCount += $this->addSeasonToUser($user, $userSeries, $seasonNumber, array_filter($userEpisodes, function ($ue) use ($seasonNumber) {
+                return $ue->getSeasonNumber() == $seasonNumber;
+            }));
         }
         if ($newEpisodeCount) {
             $series->addUpdate($newEpisodeCount . ' ' . $this->translator->trans('new episodes have been added to the series'));
@@ -3682,41 +3692,83 @@ class SeriesController extends AbstractController
         return $userEpisodes;
     }
 
-    public function addSeasonToUser(User $user, UserSeries $userSeries, array $season, array $userEpisodes): int
+    public function addSeasonToUser(User $user, UserSeries $userSeries, int $seasonNumber, array $userEpisodes): int
     {
         $series = $userSeries->getSeries();
         $language = $user->getPreferredLanguage() ?? "fr" . "-" . $user->getCountry() ?? "FR";
-        $tvSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $season['season_number'], $language), true);
+        $tvSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $language), true);
         $newEpisodeCount = 0;
-        if ($tvSeason) {
-            $episodeCount = count($tvSeason['episodes']);
-            $seasonNumber = $tvSeason['season_number'];
-            foreach ($tvSeason['episodes'] as $episode) {
-                $dbUserEpisode = array_find($userEpisodes, fn($e) => $e->getEpisodeId() == $episode['id'] && $e->getSeasonNumber() == $seasonNumber);
-                if ($dbUserEpisode) {
-                    // Episode already exists in user's series
-                    continue;
+        if (!$tvSeason) {
+            return 0;
+        }
+        if (!isset($tvSeason['episodes']) || count($tvSeason['episodes']) == 0) {
+            return 0;
+        }
+
+        $seasonNumber = $tvSeason['season_number'];
+        foreach ($tvSeason['episodes'] as $episode) {
+            $dbUserEpisode = array_find($userEpisodes, fn($e) => $e->getEpisodeId() == $episode['id']);
+            if ($dbUserEpisode) {
+                // Episode already exists in user's series
+                continue;
+            }
+            $newEpisodeCount += $this->addEpisodeToUser($userSeries, $episode, $seasonNumber);
+        }
+
+        if ($newEpisodeCount) {
+            $this->userEpisodeRepository->flush();
+        }
+            $epIds = $tvSeason['episodes'] ? array_map(fn($e) => $e['id'], $tvSeason['episodes']) : [];
+            $ueIds = array_column($this->userEpisodeRepository->getSeasonEpisodeIds($userSeries->getId(), $seasonNumber), 'episode_id');
+            $removedEpisodeIds = array_values(array_diff($ueIds, $epIds));
+            $updatedEpisodeIds = array_values(array_intersect($ueIds, $epIds));
+            $removedEpisodeCount = count($removedEpisodeIds);
+//            dump([
+//                'seasonNumber' => $seasonNumber,
+//                'epIds' => $epIds,
+//                'ueIds' => $ueIds,
+//                'removedEpisodeIds' => $removedEpisodeIds,
+//                'updatedEpisodeIds' => $updatedEpisodeIds,
+//            ]);
+            if ($removedEpisodeCount) {
+            if ($removedEpisodeCount == 1) {
+                $this->addFlash('info', $this->translator->trans('An episode has been removed from the series (%id%)', ['%id%' => $removedEpisodeIds[0]]));
+            } else {
+                $this->addFlash('info', $this->translator->trans('%count% episodes have been removed from the series (%list%)', ['%count%' => $removedEpisodeCount, '%list%' => implode(', ', $removedEpisodeIds)]));
+            }
+                $this->userEpisodeRepository->removeByEpisodeIds($userSeries, $removedEpisodeIds);
+                $this->userEpisodeRepository->flush();
+                $this->reloadUserEpisodes = true;
+
+                // Get TMDB infos for remaining episodes
+                foreach ($updatedEpisodeIds as $episodeId) {
+                    /** @var UserEpisode $dbUserEpisode */
+                    $dbUserEpisode = array_find($userEpisodes, fn($e) => $e->getEpisodeId() == $episodeId);
+                    if ($dbUserEpisode) {
+                        $episode = array_find($tvSeason['episodes'], fn($e) => $e['id'] == $episodeId);
+                        if ($episode) {
+                            $airDate = $episode['air_date'] ? $this->date($episode['air_date'], true) : null;
+                            $dbUserEpisode->setAirDate($airDate);
+                            $dbUserEpisode->setEpisodeNumber($episode['episode_number']);
+                            $this->userEpisodeRepository->save($dbUserEpisode);
+                            $this->addFlash('info', $this->translator->trans('Episode %number% has been updated', ['%number%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
+                        }
+                    }
                 }
-                $newEpisodeCount += $this->addEpisodeToUser($user, $userSeries, $episode, $seasonNumber, $episodeCount);
             }
 
-            if ($newEpisodeCount) {
-                $this->userEpisodeRepository->flush();
-            }
-        }
         return $newEpisodeCount;
     }
 
-    public function addEpisodeToUser(User $user, UserSeries $userSeries, array $episode, int $seasonNumber, int $episodeCount): int
+    public function addEpisodeToUser(UserSeries $userSeries, array $episode, int $seasonNumber): int
     {
-        /*$userEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
-        if ($userEpisode) {
-            return 0;
-        }*/
         $userEpisode = new UserEpisode($userSeries, $episode['id'], $seasonNumber, $episode['episode_number'], null);
         $airDate = $episode['air_date'] ? $this->date($episode['air_date'], true) : null;
         $userEpisode->setAirDate($airDate);
         $this->userEpisodeRepository->save($userEpisode);
+        if ($seasonNumber == 0) {
+            return 1;
+        }
         if ($userSeries->getNextUserEpisode() === null && $airDate && $airDate > $this->now()) {
             $this->userEpisodeRepository->flush();
             $userSeries->setNextUserEpisode($userEpisode);
