@@ -12,13 +12,18 @@
     .localization-tools-button {
         align-items: center;
         aspect-ratio: 1;
-        background-color: var(--ardoise-80);
+        background-color: var(--orange);
         border-radius: .25rem;
         color: var(--ardoise-10);
         cursor: pointer;
         display: flex;
         justify-content: center;
         width: 2rem;
+
+        svg {
+            height: 1.5rem;
+            width: 1.5rem;
+        }
     }
 
     /*&:hover .localization-tools-menu {
