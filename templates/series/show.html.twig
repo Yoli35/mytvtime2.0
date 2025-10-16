@@ -36,7 +36,8 @@
                     {% if series.posterPath %}
                         <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
                     {% else %}
-                        <div>{{ 'No poster'|trans }}</div>
+                        <div class="text">{{ 'No poster'|trans }}</div>
+                        <div class="icon">{{ ux_icon('mdi:image-off-outline') }}</div>
                     {% endif %}
                     {% if series.firstAirDate %}
                         <div class="progress" data-value="{{ userSeries.progress }}">

@@ -644,6 +644,18 @@ h2 {
                 .debug {
                     display: block;
                 }
+
+                div.text {
+                    font-size: 2vw; /* No poster */
+                    display: block;
+                }
+
+                div.icon {
+                    svg {
+                        height: 0;
+                        width: 0;
+                    }
+                }
             }
 
             img {
@@ -653,8 +665,18 @@ h2 {
                 width: 100%;
             }
 
-            div {
-                font-size: 2vw; /* No poster */
+            div.text {
+                font-size: 0; /* No poster */
+                display: none;
+                transition: font-size 0.3s ease-in-out;
+            }
+
+            div.icon {
+                svg {
+                    height: 2rem;
+                    transition: height 0.3s ease-in-out;
+                    width: 2rem;
+                }
             }
 
             .progress {
