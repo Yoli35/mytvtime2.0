@@ -173,6 +173,29 @@
         }
     }
 
+    .map-poi-toggler {
+        align-items: center;
+        background-color: var(--orange-50);
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        height: 3rem;
+        justify-content: center;
+        left: 1rem;
+        position: absolute;
+        top: 2rem;
+        width: 3rem;
+        z-index: 10;
+
+        &.active {
+            background-color: var(--green-50);
+        }
+
+        svg {
+            height: 2rem;
+            width: 2rem;
+        }
+    }
 
     .map-style-list-toggler {
         align-items: center;

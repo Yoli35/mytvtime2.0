@@ -78,6 +78,7 @@ export class Map {
                 /************************************************************************
                  * Fetch pois[, locations, photos ]                                     *
                  ************************************************************************/
+                const poiToggler = document.querySelector('.map-poi-toggler');
                 fetch('/api/pois/get')
                     .then(res => res.json())
                     .then(data => {
@@ -85,7 +86,19 @@ export class Map {
                         const list = data['pois']['list'];
                         list.forEach((point, index) => {
                             this.addPoiMarker(point, index);
-                        })
+                        });
+                        const poiMarkers = document.querySelectorAll('.poi-marker');
+                        console.log(poiMarkers);
+                        poiToggler.addEventListener('click', () => {
+                            poiToggler.classList.toggle('active');
+                            poiMarkers.forEach(marker => {
+                                if (marker.style.display === 'block' || marker.style.display === '') {
+                                    marker.style.display = 'none';
+                                } else {
+                                    marker.style.display = 'block';
+                                }
+                            });
+                        });
                     });
 
                 this.locations.forEach(location => {

@@ -1,8 +1,11 @@
 <div class="map-container">
     <div id="map" class="map-controller {{ type }}"></div>
-    <div class="map-style-list-toggler">
+    <div class="map-style-list-toggler" data-title="{{ 'Map styles'|trans }}">
         <span>{{ ux_icon('mdi:earth') }}</span>
         <span class="hidden">{{ ux_icon('mdi:arrow-right') }}</span>
+    </div>
+    <div class="map-poi-toggler active" data-title="{{ 'Points of Interest toggle display'|trans }}">
+        <span>{{ ux_icon('mdi:location-favorite') }}</span>
     </div>
     {{ include('_blocks/map/_thumbnails.html.twig', {styles: styleSettings}) }}
 </div>
