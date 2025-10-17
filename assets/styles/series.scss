@@ -601,6 +601,7 @@ h2 {
         align-items: stretch;
         display: flex;
         gap: 1rem;
+        height: 50vh;
         justify-content: flex-start;
         position: relative;
 
@@ -628,7 +629,7 @@ h2 {
             color: var(--ardoise-10);
             display: flex;
             flex-shrink: 0;
-            height: 10%;
+            height: 5rem;
             justify-content: center;
             position: relative;
             transition: height 0.3s ease-in-out;
@@ -1042,6 +1043,7 @@ h2 {
             height: 9rem;
             justify-content: flex-start;
             overflow-x: hidden;
+            padding-block-end: .5rem;
 
             .wrapper {
                 align-items: center;
@@ -2253,12 +2255,7 @@ h2 {
 @media (width <= 1200px) and (orientation: portrait) {
     .series-show {
         .header:has(.poster) {
-            flex-direction: column;
-            height: auto;
-
-            .poster {
-                width: 100%;
-            }
+            height: 80vh;
         }
     }
 }
@@ -2791,8 +2788,26 @@ h2 {
                 &.show {
                     transform: translateX(0);
 
-                    .show-user-votes {
+                    .show-tab {
                         background-color: var(--orange-50);
+                    }
+
+                    .vote-graph {
+                        .episode-votes {
+                            backdrop-filter: blur(8px);
+                            background:
+                                    linear-gradient(hsl(from var(--green-50) h s l / .5) 0 0) padding-box,
+                                    linear-gradient(to right, hsl(from var(--green-50) h s 80% / .5) 0%, hsl(from var(--green-50) h s 20% / .5) 100%) border-box;
+                            border: 4px solid;
+                            border-radius: 2rem 0 0 2rem;
+                            border-right-width: 0;
+                        }
+                    }
+                }
+
+                .vote-graph {
+                    .episode-votes {
+                        transition: all 0.3s ease-in-out;
                     }
                 }
             }
@@ -3083,10 +3098,12 @@ h2 {
                 border-bottom-left-radius: .75rem;
                 border-top-left-radius: .75rem;
             }
+
             &.last {
                 border-bottom-right-radius: .75rem;
                 border-top-right-radius: .75rem;
             }
+
             &.bottom-left {
                 border-bottom-left-radius: .75rem;
                 border-top-left-radius: .25rem;
@@ -4668,29 +4685,6 @@ h2 {
     }
 
     .header {
-        flex-direction: column;
-        height: auto !important;
-        width: 100%;
-
-        .poster {
-            flex-shrink: 0;
-            /*height: 135cqi !important;*/
-            margin-inline: auto;
-            max-height: unset;
-            /*width: 90cqi !important;*/
-        }
-
-        .infos {
-            height: auto !important;
-            padding: 1rem;
-            width: 100%;
-
-            h1 {
-                font-size: 2rem;
-                line-height: 2.2rem;
-            }
-        }
-
         .backdrops {
             width: 100% !important;
         }
@@ -4742,18 +4736,6 @@ h2 {
     .series-show {
         .header, .schedules {
             padding: 0;
-        }
-
-        .header {
-            .infos {
-                border-radius: 0;
-
-                .backdrop {
-                    img {
-                        border-radius: 0;
-                    }
-                }
-            }
         }
 
         .content:has(.left) {
@@ -4915,22 +4897,6 @@ h2 {
 @media (width <= 52rem) {
     .series-show {
         margin-block-start: 2rem;
-
-        .header {
-            gap: 0;
-
-            &:has(.poster) {
-                height: auto;
-            }
-
-            .poster {
-                border-radius: 0;
-
-                img {
-                    border-radius: 0;
-                }
-            }
-        }
     }
 
     .what-to-watch-next {
@@ -4946,7 +4912,7 @@ h2 {
     }
 
     .add-this {
-        bottom: 4rem;
+        bottom: 0;
         border-radius: 0 0 1rem 1rem;
         left: 0;
         right: 0;
@@ -4974,48 +4940,6 @@ h2 {
     }
 }
 
-//@container episodes (width > 2000px) {
-//    .episodes {
-//        .episode-wrapper {
-//            display: flex;
-//            flex-direction: row;
-//            gap: .5rem;
-//            overflow-x: auto;
-//            width: 100%;
-//
-//            .episode {
-//                flex-direction: column;
-//                height: 60rem;
-//                padding-inline: 0;
-//                position: relative;
-//                width: 36rem;
-//
-//                .still {
-//                    height: var(--episode-height);
-//                    max-width: unset;
-//                    width: 36rem;
-//                }
-//
-//                .infos {
-//                    height: calc(60rem - var(--episode-height));
-//                    padding-block: 1rem;
-//                    padding-inline: 1rem;
-//                    width: calc(100% - 3.75rem);
-//                }
-//            }
-//        }
-//    }
-//
-//    .user-episode {
-//        height: calc(59.5rem - var(--episode-height));
-//        position: absolute;
-//        right: 0;
-//        top: calc(var(--episode-height) + .5rem);
-//        width: 3.25rem;
-//    }
-//}
-
-/* Rechercher une série */
 .series-search {
     display: flex;
     flex-direction: column;
@@ -5349,6 +5273,7 @@ h2 {
 }
 
 .series-map {
+    color: white;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
