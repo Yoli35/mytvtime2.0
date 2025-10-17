@@ -115,12 +115,12 @@ window.addEventListener("DOMContentLoaded", () => {
         const isSeasonPage = document.querySelector("#series-season");
         let img;
         if (isSeasonPage) {
-            img = seriesShow.querySelector(".backdrop").querySelector("img");
+            img = seriesShow.querySelector(".backdrop")?.querySelector("img");
             if (!img) {
-                img = seriesShow.querySelector(".series-back").querySelector("img");
+                img = seriesShow.querySelector(".series-back")?.querySelector("img");
             }
             if (!img) {
-                img = seriesShow.querySelector(".header-back").querySelector("img");
+                img = seriesShow.querySelector(".header-back")?.querySelector("img");
             }
         } else {
             img = seriesShow.querySelector(".poster")?.querySelector("img") ?? seriesShow.querySelector(".backdrop")?.querySelector("img");
