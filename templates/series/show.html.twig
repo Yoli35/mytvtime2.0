@@ -767,6 +767,10 @@
                                                     <div class="episode">
                                                         {{ 'S%02dE%02d'|format(location.season_number, location.episode_number) }}
                                                     </div>
+                                                {% elseif location.season_number %}
+                                                    <div class="episode">
+                                                        {{ 'S%02d'|format(location.season_number) }}
+                                                    </div>
                                                 {% endif %}
                                                 <div class="edit" data-loc-id="{{ location.id }}">{{ ux_icon('mdi:pencil') }}</div>
                                             </div>
