@@ -601,9 +601,12 @@ h2 {
         align-items: stretch;
         display: flex;
         gap: 1rem;
-        height: 50vh;
         justify-content: flex-start;
         position: relative;
+
+        &:has(.poster) {
+            height: 50vh;
+        }
 
         .backdrop {
             height: calc(100% + 10rem);
