@@ -247,6 +247,7 @@ attorney: avocat
 audacious: audacieux
 audio cassette: cassette audio
 audition: audition
+aunt nephew relationship: relation tante-neveu
 aunt niece relationship: relation tante-nièce
 austin, texas: austin, texas
 australia: Australie
@@ -269,6 +270,7 @@ band: groupe
 bangkok, thailand: bangkok, thaïlande
 bank: banque
 banker: banquier
+bankruptcy: faillite
 bantering relationship: relation taquine
 bar: bar
 barcelona, spain: barcelone, espagne
@@ -282,6 +284,7 @@ based on fairy tale: basé sur un conte de fées
 based on graphic novel: sur la base d'un roman graphique
 based on magazine, newspaper or article: basé sur un magazine, un journal ou un article
 based on manga: basé sur le manga
+based on manhua: basé sur le manhua - Manhua est le nom donné à la bande dessinée dans le monde chinois. Les auteurs de manhua sont des manhuajia. On différencie le terme manhua de lianhuanhua, qui désigne une bande dessinée plus traditionnelle, même si ce mot est de moins en moins utilisé.
 based on manhwa: basé sur un manhwa - Manhwa (hangeul → 만화, prononciation → /man.hwa/) est le nom donné à la bande dessinée en Corée, ce terme est aussi utilisé à l'étranger pour désigner la bande dessinée coréenne. Part importante de la culture coréenne, le manhwa est un art populaire que l'on peut retrouver sur différents supports → papier, ordinateur et téléphone mobile. Cette extension lui permet de le rendre accessible à une plus grande partie de la population, augmentant ainsi sa popularité.
 based on memoir or autobiography: basé sur des mémoires ou des autobiographies
 based on movie: basé sur un film
@@ -591,6 +594,7 @@ climate: climat
 clone: clone
 clones: clones
 closeted homosexual: homosexuel caché
+closeted: dans le placard
 club: club
 clues: indices
 clumsy: maladroit
@@ -626,6 +630,7 @@ comedy: comedie
 comet: comète
 comforting: réconfortant
 comic adaptation: adaptation de la bande dessinée
+comic artist: dessinateur de bandes dessinées
 comic book: bande dessinée
 coming of age: passage à l'âge adulte
 coming out: coming out
@@ -968,6 +973,7 @@ emergency services: services d'urgence
 emergency: urgence
 emily dickinson: emily dickinson
 emotional healing: guérison émotionnelle
+emotional infidelity: infidélité affective
 emotional: émotionnel
 emotions: émotions
 empathetic: empathique
@@ -1059,6 +1065,7 @@ exploration: exploration
 explore: explorer
 explorer: explorateur
 expressed consent: consentement exprimé
+extortion: extorsion
 extraterrestrial animal: animal extraterrestre
 extraterrestrial: extraterrestre
 extreme violence: violence extrême
@@ -1112,6 +1119,7 @@ family: famille
 famine: famine
 famous actor: acteur célèbre
 famous lead/common lead: rôle principal célèbre/principal commun
+famous man/common man: homme célèbre/homme ordinaire
 fandom: fandom
 fantastic realism: réalisme fantastique
 fantasy comedy: comédie fantastique
@@ -1387,6 +1395,7 @@ gypsy: gitan
 hacker: pirate informatique
 hacking: piratage
 half-brother: demi-frère
+half-brothers: demi-frères
 halloween: halloween
 handler: gestionnaire
 hanged woman: femme pendue
@@ -1436,6 +1445,8 @@ high school classmates: camarades de classe du lycée
 high school coach: Entraineur de lycée
 high school crush: béguin du lycée
 high school drama: drame lycéen
+high school friends: amis du lycée
+high school gang: bande de lycéens
 high school rivalry: rivalité lycéenne
 high school student: lycéen
 high school sweetheart: l'amour de lycée
@@ -1643,6 +1654,7 @@ jupiter: jupiter
 jury duty: devoir du jury
 just one more thing: encore une chose
 justice: justice
+juvenile delinquency: délinquance juvénile
 juvenile delinquent: délinquant juvénile
 k-pop: k-pop
 kaiju: kaiju
@@ -1682,6 +1694,7 @@ korean: coréen
 kraków, poland: Cracovie, pologne
 kung fu: kung-fu
 kyoto, japan: kyoto, japon
+lack of communication: manque de communication
 lakorn: drama thaï qui concentre de nombreux sujets sur la romance et le drame
 land struggle: lutte pour la terre
 land war: guerre des terres
@@ -1737,6 +1750,7 @@ loki: loki
 london, england: londres, angleterre
 london: london
 lone survivor: survivant solitaire
+loneliness: solitude
 long lost sibling: frère ou sœur perdu(e) de vue depuis longtemps
 long time crush: coup de foudre de longue date
 long-term observation: observation à long terme
@@ -1808,9 +1822,11 @@ manipulative man: homme manipulateur
 manipulative parent: parent manipulateur
 manipulative psychiatrist: psychiatre manipulateur
 manipulative relationship: relation manipulatrice
+manipulative: manipulateur
 manipulator: manipulateur
 mankind forced underground: l'humanité contrainte à la clandestinité
 mansion: manoir
+manslaughter: homicide involontaire
 marathon: marathon
 marijuana: marijuana
 marine biologist: biologiste marin
@@ -1835,6 +1851,7 @@ mass shooting: tir de masse
 mass surveillance: surveillance de masse
 massachusetts: massachusetts
 master servant relationship: relation maître-serviteur
+master-slave relationship: relation maître-esclave
 masturbation: masturbation
 matchmaker: matchmaker
 matchmaking: service d'assistance à la clientèle
@@ -1919,6 +1936,7 @@ miscarriage: fausse couche
 mischievous: espiègle
 misfit: misfit
 misinformation: désinformation
+misophonia: misophonie - La misophonie est une forme particulière d'intolérance au son, caractérisée par une réaction émotionnelle intense telle que l'irritation, le dégoût, la colère, le stress ou même la haine, déclenchée par un son spécifique dans un contexte donné
 missing brother: frère disparu
 missing child: enfant disparu
 missing friend: ami disparu
@@ -2135,6 +2153,7 @@ on the run: sur la route
 one man army: l'armée d'un seul homme
 one-night stand: coup d'un soir
 one-sided love: amour à sens unique
+open relationship: relation ouverte
 opposites attract: les opposés s'attirent
 opposites: opposés
 oppression: oppression
@@ -2161,6 +2180,7 @@ outlaw: hors-la-loi
 outsider: étranger
 oval office: bureau ovale
 overbearing mother: mère autoritaire
+overcoming fears: surmonter ses peurs
 overcoming the odds: surmonter les obstacles
 overprotective mother: mère surprotectrice
 oxygen: oxygène
@@ -2192,6 +2212,7 @@ pariah: paria
 paris, france: paris, france
 parliament: parlement
 parody: parodie
+part-time worker: travailleur à temps partiel
 partner: partenaire
 passengers: passagers
 past and present: passé et présent
@@ -2208,6 +2229,7 @@ period sitcom: période de sitcom
 perjalanan luar angkasa: voyage dans l'espace
 persecution: persécution
 personal data: données personnelles
+personality change: changement de personnalité
 perónism: péronisme
 pessimistic: pessimiste
 peugeot 403: peugeot 403
@@ -2277,6 +2299,7 @@ poor man: pauvre homme
 pop music: musique pop
 pop singer: chanteur pop
 pope: pape
+popular: populaire
 pornography addiction: addiction à la pornographie
 portal: portail
 possession: possession
@@ -2383,6 +2406,7 @@ radio: radio
 rags to riches: des haillons à la richesse
 ragtag: hétéroclite
 raincoat: imperméable
+rainy: pluvieux
 raised abroad: élevé à l'étranger
 ranch: ranch
 rancher: éleveur
@@ -2503,6 +2527,7 @@ rubber reality: réalité en caoutchouc
 rugby: rugby
 runaway: fugue
 rune: rune
+running: course à pied
 rural depopulation: dépopulation rurale
 rural drama: drame rural
 rural life: vie rurale
@@ -2566,6 +2591,7 @@ scotland: scotland
 sea monster: monstre marin
 sea: mer
 search for father: recherche du père
+search for happiness: recherche du bonheur
 search: recherche
 searching for love: recherche de l'amour
 seaside: bord de mer
@@ -2585,6 +2611,7 @@ secret hideout: cachette secrète
 secret identity: identité secrète
 secret investigation: enquête secrète
 secret life: vie secrète
+secret love: amour secret
 secret mission: mission secrète
 secret organization: organisation secrète
 secret past: passé secret
@@ -2635,6 +2662,7 @@ sexual abuse: abus sexuel
 sexual assault: agression sexuelle
 sexual blackmail: chantage sexuel
 sexual freedom: liberté sexuelle
+sexual harassment: harcèlement sexuel
 sexual humor: humour sexuel
 sexual tension: tension sexuelle
 sexual violence: violence sexuelle
@@ -2694,6 +2722,7 @@ sister: sœur
 sisterhood: sœur
 sisters: sœurs
 sitcom: sitcom
+situationship: relation
 skateboarding: skateboarding
 skater: skateur
 skepticism: scepticisme
@@ -2813,6 +2842,7 @@ stage fright: trac
 stage performance: performance scénique
 staged death: mise en scène de la mort
 stalker: espionnage
+stalking: harcèlement obsessionnel
 stand-up comedian: comédien de stand-up
 star crossed lovers: amants croisés
 star trek: star trek
@@ -2856,6 +2886,7 @@ stunt: cascade
 stuntman: cascadeur
 stupidity: stupidité
 submarine: sous-marin
+submissive: soumis
 substance abuse: toxicomanie
 suburbia: banlieue
 suicide attempt: tentative de suicide
@@ -2889,7 +2920,9 @@ supernatural phenomena: phénomène surnaturel
 supernatural power: pouvoir surnaturel
 supernatural: surnaturel
 supervillain: super-vilain
+supportive friend: ami qui soutient
 supportive parent: parent encourageant
+supportive sibling: frère ou sœur solidaire
 surfing: surf
 surgeon: chirurgien
 surreal world: monde surréaliste
@@ -3039,6 +3072,7 @@ town mayor: maire de la ville
 town: ville
 toxic masculinity: masculinité toxique
 toxic relationship: relation toxique
+track and field: athlétisme
 tragedy: tragédie
 tragic love: amour tragique
 tragic past: passé tragique
@@ -3113,10 +3147,12 @@ unaired: non diffusé
 unassuming: sans prétention
 uncharted: non répertorié
 uncle nephew relationship: relation oncle-neveu
+unconditional love: amour inconditionnel
 undead: mort-vivant
 underage: mineur
 undercover agent: agent infiltré
 undercover investigation: enquête sous couverture
+undercover operation: opération secrète
 undercover: sous couverture
 underdog story: histoire d'un outsider
 underdogs and coming of age: les outsiders et le passage à l'âge adulte
@@ -3186,9 +3222,11 @@ violence in schools: violence à l'école
 violence: violence
 virginia: vierge
 virtual reality: réalité virtuelle
+virtual world: monde virtuel
 virtual: virtuel
 virus: virus
 visions: visions
+visual arts: arts visuels
 vlogger: vlogger
 voguing: voguing
 volcanic eruption: éruption volcanique
@@ -3216,6 +3254,7 @@ watergate scandal: scandale du watergate
 wealthy family: famille riche
 wealthy: riche
 weather chasers: chasseurs météo
+weather forecaster: prévisionniste météorologique
 weather: météo
 web drama: série web dramatique
 web series: série web
