@@ -2974,6 +2974,7 @@ class SeriesController extends AbstractController
                 }
             }
             if ($userSeries->getProgress() != 100 && $episodeCount && $userSeries->getViewedEpisodes() === $episodeCount) {
+                $userSeries->setNextUserEpisode(null);
                 $userSeries->setProgress(100);
                 $this->addFlash('success', 'Progress fixed to 100%');
                 $change = true;
