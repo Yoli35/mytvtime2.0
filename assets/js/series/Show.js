@@ -201,6 +201,21 @@ export class Show {
         });
 
         /******************************************************************************
+         * Hide votes when mouse leave season div                                     *
+         ******************************************************************************/
+        const seasonDivs = document.querySelectorAll('.season');
+        if (seasonDivs) {
+            seasonDivs.forEach(function (seasonDiv) {
+                seasonDiv.addEventListener('mouseleave', function () {
+                    const userVotesDiv = seasonDiv.querySelector('.user-votes');
+                    if (userVotesDiv) {
+                        userVotesDiv.classList.remove("show");
+                    }
+                });
+            });
+        }
+
+        /******************************************************************************
          * Remaining time when schedule is present                                    *
          ******************************************************************************/
         const remainingDivs = document.querySelectorAll('.remaining');
