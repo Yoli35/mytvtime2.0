@@ -627,7 +627,7 @@
                                             <div class="user-votes">
                                                 <div class="show-tab">{{ ux_icon('mdi:bar-chart') }}</div>
                                                 {% set uvs = series.userVotes[season.season_number] %}
-                                                {{ include('_blocks/series/_votes.html.twig', {type: 'entity', season_number: season.season_number, ues: uvs.ues, vas: uvs.avs}) }}
+                                                {{ include('_blocks/series/_votes.html.twig', {scale: 0.5, type: 'entity', season_number: season.season_number, ues: uvs.ues, vas: uvs.avs}) }}
                                             </div>
                                         {% endif %}
                                     </div>

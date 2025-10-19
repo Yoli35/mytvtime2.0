@@ -355,7 +355,7 @@
                     </div>
                 </div>
 
-                {{ include('_blocks/series/_votes.html.twig', {type: 'array', season_number: season.season_number, ues: season.episodes|map(ep => ep.user_episode), vas: season.episodes|map(ep => ep.vote_average)}) }}
+                {{ include('_blocks/series/_votes.html.twig', {scale: 1, type: 'array', season_number: season.season_number, ues: season.episodes|map(ep => ep.user_episode), vas: season.episodes|map(ep => ep.vote_average)}) }}
 
                 <div class="what-to-watch-next">
                     <div class="next-button" data-id="{{ series.tmdbId }}" data-language="{{ language }}">{{ 'What to watch next?'|trans }}</div>

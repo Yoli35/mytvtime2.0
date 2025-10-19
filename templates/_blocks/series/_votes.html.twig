@@ -8,9 +8,9 @@
             {% set epN = type == 'array' ? ue.episode_number : ue.episodeNumber %}
             {% set epW = type == 'array' ? ue.watch_at_db : ue.watchAt %}
             <div class="episode-vote"{% if ue.vote %} data-vote="{{ ue.vote }}"{% endif %} data-ep-id="{{ epId }}" data-episode-number="{{ epN }}" data-season-number="{{ season_number }}">
-                <div class="vote" data-ep-id="{{ ue.id }}" style="height: {{ vas[loop.index0] / 2 }}rem; border-width: {{ vas[loop.index0] > 0 ? '2px':'0' }};">
+                <div class="vote" data-ep-id="{{ ue.id }}" style="height: {{ vas[loop.index0] * scale }}rem; border-width: {{ vas[loop.index0] > 0 ? '2px':'0' }};">
                     {% if epW and ue.vote is not null %}
-                        <div class="user-vote" style=" height: {{ ue.vote / 2 }}rem">
+                        <div class="user-vote" style=" height: {{ ue.vote * scale }}rem">
                             {{ ue.vote }}
                         </div>
                         {% set sum = sum + ue.vote %}
