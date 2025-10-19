@@ -27,6 +27,95 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>43ᵉ mise à jour : 19/10/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add POI toggler to map in season view</div>
+                        <div class="details">Introduces a 'Points of Interest' toggler button to the map in the season view. Updates the JavaScript and Twig template to support the new UI element, including translation support and SVG icon integration.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add scale parameter to episode votes display</div>
+                        <div class="details">Introduces a 'scale' parameter to the episode votes block for more flexible vote bar sizing. Updates all includes of the votes block to pass the appropriate scale value, improving visual consistency between season and show views.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Set next episode to null when progress is 100%</div>
+                        <div class="details">Ensures that when a user's viewed episodes match the total episode count and progress is set to 100%, the next user episode is set to null. This prevents inconsistencies in episode tracking when a series is fully watched.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor episode votes UI and remove next/last episode tabs</div>
+                        <div class="details">Simplifies the episode votes display by adjusting vote bar heights and background styles, and removes the next/last episode preview tabs from the series view. Also adds JS logic to hide user votes on mouse leave for improved UX.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Handle locations with only season number in series view</div>
+                        <div class="details">Added a conditional to display the season number when the episode number is missing in the series/show template. This improves clarity for locations that reference a whole season rather than a specific episode.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update series page layout and episode vote styles</div>
+                        <div class="details">Adjusted header and poster layout for better responsiveness, modified vote graph and episode vote styles for improved visual clarity, and updated padding and positioning for several elements. Removed redundant and commented-out styles to streamline the stylesheet.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Add POI display toggle to map interface</div>
+                        <div class="details">Introduces a 'Points of Interest' toggler button to the map UI, allowing users to show or hide POI markers. Updates JavaScript to handle toggling, adds relevant styles, modifies the map container template, and provides French translations for new UI labels.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve handling of missing series posters</div>
+                        <div class="details">Adds distinct styling and icon for missing posters in series view. Updates ImageService to handle null poster paths gracefully. Enhances user feedback and visual consistency when a poster is unavailable.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve episode sync and management in series</div>
+                        <div class="details">Enhanced SeriesController and UserEpisodeRepository to better handle addition, removal, and update of episodes when syncing with series data. Added user feedback for episode changes, improved error handling in vote display, and updated French translations for new messages and roles.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update keyword block selector in Keyword.js</div>
+                        <div class="details">Changed the DOM selector from '.keyword-block' to '.keywords' for displaying fetched keywords and initializing tooltips. Ensures correct element is targeted for keyword display and tooltip functionality.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Adjust lightness threshold for text color</div>
+                        <div class="details">Changed the lightness threshold from 180 to 160 for determining the text color in seriesShow. This may improve readability based on average image color.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add crew-and-name layout and update series display</div>
+                        <div class="details">Introduces a new .crew-and-name layout for crew sections without cast, updates styles for series name display, and removes year from series name in season template. Also adjusts people card sizing and color for localization span.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add user series count and search to series pages</div>
+                        <div class="details">Introduces 'userSeriesCount' to controller actions and templates, enabling conditional display of the series search block when the user has fewer than 20 series. Also adds page titles and global data blocks to several series-related templates for improved context and frontend integration.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add series search block for users with <20 series</div>
+                        <div class="details">Introduces a search block for series selection on key pages when the user has fewer than 20 series. Updates controller to provide userSeriesCount and tmdbIds, adjusts JS and styles for search functionality, and adds translation for the search placeholder.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Add movie search bar and improve UI handling</div>
+                        <div class="details">Introduces a new movie search bar for users with fewer than 20 movies or no movies, including related template and style updates. Refactors JS to support search input and event handling, improves fallback handling for missing posters, and ensures blurred poster and backdrop images are only rendered when available. Also updates French translations for search placeholder.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:youtube-tv') }}→ Improve video page empty state UI and pagination logic</div>
+                        <div class="details">Added a styled empty state with image for video pages when no videos are present. Updated pagination logic in VideoController to return an empty string when there are no results or only one page, removing unnecessary HTML output. Enhanced SCSS for better layout and appearance of the empty state.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}→ Improve navbar and dialog styles, update footer and menu</div>
+                        <div class="details">Enhanced SCSS for navbar layout, dialog appearance, and responsive design. Updated footer image path and improved menu logic for history and avatar display.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor date handling and improve UI in series pages</div>
+                        <div class="details">Replaced direct usage of dateService with new helper methods in SeriesController for consistent timezone handling. Updated UserEpisodeRepository to support pagination in episodesToWatch. Improved series.scss with better text alignment and button sizing. Enhanced tmdb.html.twig to conditionally render background and backdrop images for robustness.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:user-outline') }}→ Refactor profile UI and restrict translation settings</div>
+                        <div class="details">Refactored Profile.js to use class methods for image preview and file type validation. Updated SCSS for improved layout and preview styling. Translation settings in profile.html.twig are now only visible to user ID 1. UserController now creates default translation settings if missing.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Show TMDB suggestions when user has no movies</div>
+                        <div class="details">When a user's movie list is empty, display a header and show TMDB movie suggestions instead of an empty list. Updated MovieController logic, templates, and styles to support this fallback and visually distinguish TMDB cards.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Fix episode quick link click and data attributes</div>
+                        <div class="details">Added a check for missing episode number in Season.js to prevent errors on click. Updated season.html.twig to ensure each quick episode div has a data-number attribute and uses consistent variable naming.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>42ᵉ mise à jour : 13/10/2025</h2>
                 <ul>
                     <li>
