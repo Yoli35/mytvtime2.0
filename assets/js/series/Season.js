@@ -95,6 +95,7 @@ export class Season {
          * @property {string} second
          * @property {string} additional
          * @property {string} loading
+         * @property {string} poiToggler
          */
         /**
          * @typedef Globs
@@ -406,6 +407,9 @@ export class Season {
                 // 3- append these divs in getFilmingLocationsDiv
                 // <div class="map-container">
                 //     <div id="map" class="map-controller"></div>
+                //     <div className="map-poi-toggler active" data-title="{{ 'Points of Interest toggle display'|trans }}">
+                //         <span>{{ux_icon('mdi:location-favorite')}}</span>
+                //     </div>
                 // </div
                 // 4- remove getFilmingLocationsButton
                 // 5- init map
@@ -427,6 +431,16 @@ export class Season {
                 mapDiv.setAttribute('id', 'map');
                 mapDiv.classList.add('map-controller');
                 seriesMapDiv.appendChild(mapDiv);
+                const mapPoiTogglerDiv = document.createElement('div');
+                mapPoiTogglerDiv.classList.add('map-poi-toggler');
+                mapPoiTogglerDiv.classList.add('active');
+                mapPoiTogglerDiv.setAttribute('data-title', gThis.text['poiToggler']);
+                const span = document.createElement('span');
+                const svgElement = svgsDiv.querySelector('#poi-toggler-svg').cloneNode(true);
+                svgElement.removeAttribute('id');
+                span.appendChild(svgElement);
+                mapPoiTogglerDiv.appendChild(span);
+                seriesMapDiv.appendChild(mapPoiTogglerDiv);
                 getFilmingLocationsDiv.appendChild(seriesMapDiv);
                 getFilmingLocationsButton.remove();
                 gThis.map = new Map({cooperativeGesturesOption: true});

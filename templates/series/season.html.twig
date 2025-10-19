@@ -454,38 +454,39 @@
 
     <div id="globs" style="display: none">
         {
-        "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "text": {
-        "provider": "{{ 'Choose a provider'|trans }}",
-        "device": "{{ 'Choose a device'|trans }}",
-        "rating": "{{ 'Give a rating'|trans }}",
-        "now": "{{ 'Now'|trans }}",
-        "Today": "{{ 'Today'|trans }}",
-        "add": "{{ 'Add'|trans }}",
-        "markAsWatched": "{{ 'Mark this episode as seen'|trans }}",
-        "Television": "{{ 'Television'|trans }}",
-        "Mobile": "{{ 'Mobile'|trans }}",
-        "Tablet": "{{ 'Tablet'|trans }}",
-        "Laptop": "{{ 'Laptop'|trans }}",
-        "Desktop": "{{ 'Desktop'|trans }}",
-        "Search": "{{ 'Search'|trans }}",
-        "days": "{{ 'days'|trans }}",
-        "hours": "{{ 'hours'|trans }}",
-        "minutes": "{{ 'minutes'|trans }}",
-        "seconds": "{{ 'seconds'|trans }}",
-        "day": "{{ 'day'|trans }}",
-        "hour": "{{ 'hour'|trans }}",
-        "minute": "{{ 'minute'|trans }}",
-        "second": "{{ 'second'|trans }}",
-        "copied": "{{ 'The link has been copied to your clipboard'|trans }}",
-        "additional": "{{ 'No overview'|trans }}",
-        "click": "{{ 'Click here to add an image'|trans }}",
-        "paste": "{{ 'Paste your image here (green)'|trans }}",
-        "No votes": "{{ 'No votes'|trans }}",
-        "loading": "{{ 'Loading filming locations…'|trans }}"
-        }
+            "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "text": {
+                "provider": "{{ 'Choose a provider'|trans }}",
+                "device": "{{ 'Choose a device'|trans }}",
+                "rating": "{{ 'Give a rating'|trans }}",
+                "now": "{{ 'Now'|trans }}",
+                "Today": "{{ 'Today'|trans }}",
+                "add": "{{ 'Add'|trans }}",
+                "markAsWatched": "{{ 'Mark this episode as seen'|trans }}",
+                "Television": "{{ 'Television'|trans }}",
+                "Mobile": "{{ 'Mobile'|trans }}",
+                "Tablet": "{{ 'Tablet'|trans }}",
+                "Laptop": "{{ 'Laptop'|trans }}",
+                "Desktop": "{{ 'Desktop'|trans }}",
+                "Search": "{{ 'Search'|trans }}",
+                "days": "{{ 'days'|trans }}",
+                "hours": "{{ 'hours'|trans }}",
+                "minutes": "{{ 'minutes'|trans }}",
+                "seconds": "{{ 'seconds'|trans }}",
+                "day": "{{ 'day'|trans }}",
+                "hour": "{{ 'hour'|trans }}",
+                "minute": "{{ 'minute'|trans }}",
+                "second": "{{ 'second'|trans }}",
+                "copied": "{{ 'The link has been copied to your clipboard'|trans }}",
+                "additional": "{{ 'No overview'|trans }}",
+                "click": "{{ 'Click here to add an image'|trans }}",
+                "paste": "{{ 'Paste your image here (green)'|trans }}",
+                "No votes": "{{ 'No votes'|trans }}",
+                "loading": "{{ 'Loading filming locations…'|trans }}",
+                "poiToggler": "{{ 'Points of Interest toggle display'|trans }}"
+            }
         }
     </div>
     <div class="svgs" style="display: none">
@@ -499,6 +500,7 @@
         {{ ux_icon('mdi:checkbox-outline', {id: 'save', height: '18px', width: '18px'}) }}
         {{ ux_icon('mdi:trash', {id: 'delete', height: '18px', width: '18px'}) }}
         {{ ux_icon('mdi:close', {id: 'cancel', height: '18px', width: '18px'}) }}
+        {{ ux_icon('mdi:location-favorite', {id: 'poi-toggler-svg'}) }}
         <div class="svg" id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
     </div>
     {% include '_blocks/_footer.html.twig' %}
