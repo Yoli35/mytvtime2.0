@@ -201,7 +201,7 @@ export class Show {
         });
 
         /******************************************************************************
-         * Hide votes when mouse leave season div                                     *
+         * Hide votes when mouse leaves season div                                    *
          ******************************************************************************/
         const seasonDivs = document.querySelectorAll('.season');
         if (seasonDivs) {
