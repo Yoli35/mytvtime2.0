@@ -22,7 +22,7 @@ export class Map {
 
     init(options) {
         console.log('Map init');
-        console.log(`Mapbox GL JS v${mapboxgl.version}`);
+        console.log('Mapbox GL JS v' + mapboxgl.version);
         mapboxgl.accessToken = 'pk.eyJ1IjoiaWJveTQ0IiwiYSI6ImNtNTZqcXo4ZjAxYzIyaXM3cWZ5dnNheWkifQ.yY-zdieRm3Dhlrj3vYh9hg';
         mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js');
 
@@ -50,109 +50,115 @@ export class Map {
                 });
 
                 this.map.setConfigProperty('basemap', 'show3dObjects', true);
+            });
+        }
 
-                const searchBox = new MapboxSearchBox();
-                // set the mapbox access token, search box API options
-                searchBox.accessToken = mapboxgl.accessToken;
-                searchBox.options = {
-                    types: 'address,poi',
-                    language: 'fr',
-                    proximity: 'auto',
-                };
-                // set the mapboxgl library to use for markers and enable the marker functionality
-                searchBox.mapboxgl = mapboxgl;
-                searchBox.marker = true;
-                searchBox.componentOptions = {allowReverse: true, flipCoordinates: true};
-                this.map.addControl(searchBox);
+        const initializeControls = () => {
+            const searchBox = new MapboxSearchBox();
+            // set the mapbox access token, search box API options
+            searchBox.accessToken = mapboxgl.accessToken;
+            searchBox.options = {
+                types: 'address,poi',
+                language: 'fr',
+                proximity: 'auto',
+            };
+            // set the mapboxgl library to use for markers and enable the marker functionality
+            searchBox.mapboxgl = mapboxgl;
+            searchBox.marker = true;
+            searchBox.componentOptions = {allowReverse: true, flipCoordinates: true};
+            this.map.addControl(searchBox);
 
-                this.map.addControl(new mapboxgl.NavigationControl());
-                this.map.addControl(new mapboxgl.GeolocateControl({
-                    positionOptions: {
-                        enableHighAccuracy: true
-                    },
-                    trackUserLocation: true,
-                    showUserHeading: true
-                }));
-                this.map.addControl(new mapboxgl.ScaleControl());
+            this.map.addControl(new mapboxgl.NavigationControl());
+            this.map.addControl(new mapboxgl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: true
+                },
+                trackUserLocation: true,
+                showUserHeading: true
+            }));
+            this.map.addControl(new mapboxgl.ScaleControl());
+        }
 
-                /************************************************************************
-                 * Fetch pois[, locations, photos ]                                     *
-                 ************************************************************************/
-                const poiToggler = document.querySelector('.map-poi-toggler');
-                fetch('/api/pois/get')
-                    .then(res => res.json())
-                    .then(data => {
-                        // console.log(data);
-                        const list = data['pois']['list'];
-                        list.forEach((point, index) => {
-                            this.addPoiMarker(point, index);
-                        });
-                        const poiMarkers = document.querySelectorAll('.poi-marker');
-                        console.log(poiMarkers);
-                        poiToggler.addEventListener('click', () => {
-                            poiToggler.classList.toggle('active');
-                            poiMarkers.forEach(marker => {
-                                if (marker.style.display === 'block' || marker.style.display === '') {
-                                    marker.style.display = 'none';
-                                } else {
-                                    marker.style.display = 'block';
-                                }
-                            });
+        const initializeMarkers = () => {
+
+            /************************************************************************
+             * Fetch pois[, locations, photos ]                                     *
+             ************************************************************************/
+            const poiToggler = document.querySelector('.map-poi-toggler');
+            fetch('/api/pois/get')
+                .then(res => res.json())
+                .then(data => {
+                    // console.log(data);
+                    const list = data['pois']['list'];
+                    list.forEach((point, index) => {
+                        this.addPoiMarker(point, index);
+                    });
+                    const poiMarkers = document.querySelectorAll('.poi-marker');
+                    console.log(poiMarkers);
+                    poiToggler.addEventListener('click', () => {
+                        poiToggler.classList.toggle('active');
+                        poiMarkers.forEach(marker => {
+                            if (marker.style.display === 'block' || marker.style.display === '') {
+                                marker.style.display = 'none';
+                            } else {
+                                marker.style.display = 'block';
+                            }
                         });
                     });
+                });
 
-                this.locations.forEach(location => {
-                    let marker = new mapboxgl.Marker({color: "#B46B18FF"})
-                        .setLngLat([location.longitude, location.latitude])
-                        .setPopup(new mapboxgl.Popup({closeOnMove: true}).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description"><div class="location">' + location.location + '</div>' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
-                        .addTo(this.map);
-                    let markerIcon = marker.getElement();
-                    markerIcon.setAttribute('data-target-id', location.id);
-                    markerIcon.setAttribute('data-tmdb-id', location.tmdb_id);
-                    // markerIcon.setAttribute('data-country', location.country);
-                    markerIcon.setAttribute('data-latitude', location.latitude);
-                    markerIcon.setAttribute('data-longitude', location.longitude);
+            this.locations.forEach(location => {
+                let marker = new mapboxgl.Marker({color: "#B46B18FF"})
+                    .setLngLat([location.longitude, location.latitude])
+                    .setPopup(new mapboxgl.Popup({closeOnMove: true}).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description"><div class="location">' + location.location + '</div>' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
+                    .addTo(this.map);
+                let markerIcon = marker.getElement();
+                markerIcon.setAttribute('data-target-id', location.id);
+                markerIcon.setAttribute('data-tmdb-id', location.tmdb_id);
+                // markerIcon.setAttribute('data-country', location.country);
+                markerIcon.setAttribute('data-latitude', location.latitude);
+                markerIcon.setAttribute('data-longitude', location.longitude);
 
-                    if (location.radius) {
-                        this.circles.push(this.createCircle([location.longitude, location.latitude], location.radius / 1000));
+                if (location.radius) {
+                    this.circles.push(this.createCircle([location.longitude, location.latitude], location.radius / 1000));
+                }
+            });
+
+            if (this.circles.length) {
+                this.map.addSource('circles', {
+                    type: 'geojson',
+                    data: {
+                        type: 'FeatureCollection',
+                        features: this.circles
                     }
                 });
-
-                if (this.circles.length) {
-                    this.map.addSource('circles', {
-                        type: 'geojson',
-                        data: {
-                            type: 'FeatureCollection',
-                            features: this.circles
-                        }
-                    });
-                    this.map.addLayer({
-                        id: 'circle-layer',
-                        type: 'fill',
-                        source: 'circles',
-                        paint: {
-                            'fill-color': '#875012',
-                            'fill-opacity': 0.125,
-                            'fill-outline-color': '#E0861F'
-                        }
-                    });
-                    this.map.addLayer({
-                        id: 'circle-outline-layer',
-                        type: 'line',
-                        source: 'circles',
-                        paint: {
-                            'line-color': '#E0861F',
-                            'line-width': 4
-                        }
-                    });
-                }
-
-                this.photos.forEach((photo, index) => {
-                    this.addPhotoMarker(photo, index);
+                this.map.addLayer({
+                    id: 'circle-layer',
+                    type: 'fill',
+                    source: 'circles',
+                    paint: {
+                        'fill-color': '#875012',
+                        'fill-opacity': 0.125,
+                        'fill-outline-color': '#E0861F'
+                    }
                 });
+                this.map.addLayer({
+                    id: 'circle-outline-layer',
+                    type: 'line',
+                    source: 'circles',
+                    paint: {
+                        'line-color': '#E0861F',
+                        'line-width': 4
+                    }
+                });
+            }
+
+            this.photos.forEach((photo, index) => {
+                this.addPhotoMarker(photo, index);
             });
+
             this.map.on('click', (e) => {
-                navigator.clipboard.writeText(`${e.lngLat.lat}, ${e.lngLat.lng}`).then(r => console.log(`A click event has occurred /*at ${e.lngLat}*/ ${r}`));
+                navigator.clipboard.writeText(e.lngLat.lat + ', ' + e.lngLat.lng).then(() => console.log('A click event has occurred at ' + e.lngLat));
             });
         }
 
@@ -185,6 +191,8 @@ export class Map {
         };
 
         initializeMap();
+        initializeControls();
+        initializeMarkers();
         initializeMapHandle();
 
         if (document.querySelector("#map-index")) {
