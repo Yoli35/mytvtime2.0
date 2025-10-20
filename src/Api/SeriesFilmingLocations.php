@@ -5,6 +5,7 @@ namespace App\Api;
 use App\Entity\FilmingLocation;
 use App\Entity\User;
 use App\Repository\FilmingLocationRepository;
+use App\Repository\SettingsRepository;
 use App\Service\DateService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,6 +19,7 @@ class SeriesFilmingLocations extends AbstractController
     public function __construct(
         private readonly DateService               $dateService,
         private readonly FilmingLocationRepository $filmingLocationRepository,
+        private readonly SettingsRepository        $settingsRepository,
     )
     {
     }
@@ -29,8 +31,12 @@ class SeriesFilmingLocations extends AbstractController
             return new JsonResponse(['error' => 'No series ID provided'], 400);
         }
         $filmingLocationsWithBounds = $this->getFilmingLocations($id);
+        $mapSettings = $this->settingsRepository->findOneBy(['name' => 'mapbox']);
+        $mapSettingsData = $mapSettings ? $mapSettings->getData() : ['styles' => []];
+        $block = $this->render('_blocks/map/_map-container.html.twig', ['type' => 'series', 'styleSettings' => $mapSettingsData['styles']]);
 
         return new JsonResponse([
+            'mapBlock' => $block->getContent(),
             'locations' => $filmingLocationsWithBounds['filmingLocations'],
             'locationsBounds' => $filmingLocationsWithBounds['bounds'],
             'emptyLocation' => $filmingLocationsWithBounds['emptyLocation'],

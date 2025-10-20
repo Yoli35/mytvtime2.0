@@ -418,6 +418,17 @@ export class Map {
                 }
             });
         }
+
+        const mapStylesButton = document.querySelector('.map-style-list-toggler');
+        const mapList = document.querySelector('.map-style-list');
+        const spans = mapStylesButton.querySelectorAll('span');
+        mapStylesButton.addEventListener('click', () => {
+            mapList.classList.toggle('active');
+            mapStylesButton.classList.toggle('active');
+            spans.forEach(span => {
+                span.classList.toggle('hidden');
+            });
+        });
     }
 
     addPoiMarker(point, index) {

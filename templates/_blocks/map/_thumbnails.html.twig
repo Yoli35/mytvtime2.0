@@ -1,26 +1,16 @@
-<div class="map-style-list">
-    <div class="thumbnails">
-        {% for s in styles %}
-            <div
-                    class="thumbnail{% if loop.index0==2 %} selected{% endif %}"
-                    data-style="{{ s.style }}"
-                    data-title="{{ s.name }}"
-            >
-                <div class="name">{{ s.name }}</div>
-                <img src="{{ s.local_path }}" alt="{{ s.name }}">
-            </div>
-        {% endfor %}
+{% if styles|length %}
+    <div class="map-style-list">
+        <div class="thumbnails">
+            {% for s in styles %}
+                <div
+                        class="thumbnail{% if loop.index0==2 %} selected{% endif %}"
+                        data-style="{{ s.style }}"
+                        data-title="{{ s.name }}"
+                >
+                    <div class="name">{{ s.name }}</div>
+                    <img src="{{ s.local_path }}" alt="{{ s.name }}">
+                </div>
+            {% endfor %}
+        </div>
     </div>
-</div>
-<script>
-    const toggler = document.querySelector('.map-style-list-toggler');
-    const mapList = document.querySelector('.map-style-list');
-    const spans = toggler.querySelectorAll('span');
-    toggler.addEventListener('click', () => {
-        mapList.classList.toggle('active');
-        toggler.classList.toggle('active');
-        spans.forEach(span => {
-            span.classList.toggle('hidden');
-        });
-    });
-</script>
+{% endif %}

@@ -388,31 +388,8 @@ export class Season {
                 })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
                 const body = document.querySelector('body');
                 const svgsDiv = document.querySelector('.svgs');
-                // 1- create this:
-                // <div id="globs-map" style="display: none">
-                //     {
-                //         "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-                //         "bounds": {{ locationsBounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-                //         "pointsOfInterest": {{ pois.list|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-                //         "emptyLocation": {{ emptyLocation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-                //         "fieldList": {{ fieldList|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-                //         "locationImagePath": "/images/map",
-                //         "poiImagePath": "/images/poi"
-                //     }
-                // </div>
-                // 2- insert it before svgsDiv
-                // 3- append these divs in getFilmingLocationsDiv
-                // <div class="map-container">
-                //     <div id="map" class="map-controller"></div>
-                //     <div className="map-poi-toggler active" data-title="{{ 'Points of Interest toggle display'|trans }}">
-                //         <span>{{ux_icon('mdi:location-favorite')}}</span>
-                //     </div>
-                // </div
-                // 4- remove getFilmingLocationsButton
-                // 5- init map
                 const globsMapDiv = document.createElement('div');
                 globsMapDiv.setAttribute('id', 'globs-map');
                 globsMapDiv.style.display = 'none';
@@ -425,23 +402,7 @@ export class Season {
                 globsMapDiv.innerText += '"poiImagePath": "' + data["poiImagePath"] + '"';
                 globsMapDiv.innerText += '}';
                 body.insertBefore(globsMapDiv, svgsDiv);
-                const seriesMapDiv = document.createElement('div');
-                seriesMapDiv.classList.add('map-container');
-                const mapDiv = document.createElement('div');
-                mapDiv.setAttribute('id', 'map');
-                mapDiv.classList.add('map-controller');
-                seriesMapDiv.appendChild(mapDiv);
-                const mapPoiTogglerDiv = document.createElement('div');
-                mapPoiTogglerDiv.classList.add('map-poi-toggler');
-                mapPoiTogglerDiv.classList.add('active');
-                mapPoiTogglerDiv.setAttribute('data-title', gThis.text['poiToggler']);
-                const span = document.createElement('span');
-                const svgElement = svgsDiv.querySelector('#poi-toggler-svg').cloneNode(true);
-                svgElement.removeAttribute('id');
-                span.appendChild(svgElement);
-                mapPoiTogglerDiv.appendChild(span);
-                seriesMapDiv.appendChild(mapPoiTogglerDiv);
-                getFilmingLocationsDiv.appendChild(seriesMapDiv);
+                getFilmingLocationsDiv.innerHTML = data["mapBlock"];
                 getFilmingLocationsButton.remove();
                 gThis.map = new Map({cooperativeGesturesOption: true});
             })
