@@ -1,5 +1,7 @@
- 1- .env: APP_ENV: prod
- 2- > paste this in your local terminal:
+1- cons app:ep:ai;
+2- Ajuster l'option -mmin (minutes) de la command find selon la fréquence de vos modifications dans /public
+3- .env: APP_ENV: prod
+4- Paste this in your local terminal:
 
 clear;
 cons app:ep:ai;
@@ -8,17 +10,15 @@ rm -R var/cache/dev;
 composer install --no-dev --optimize-autoloader;
 APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear;
 zip -r Archives.zip bin composer.json composer.lock config importmap.php package.json src symfony.lock templates translations var vendor;
-find ./public/ -type f -mmin -4320 -exec zip -n .png:.webp:.jpg:.jpeg:.mp4 public.zip {} \;
+find ./public/ -type f -mmin -9181 -exec zip -n .png:.webp:.jpg:.jpeg:.mp4 public.zip {} \;
 cons asset-map:compile
 zip -r assets.zip ./public/assets;
 zip -r Archives.zip assets.zip public.zip;
 rm assets.zip public.zip;
 
-        en ajustant l'option -mmin (minutes) de la command find selon la fréquence de vos modifications dans /public
-
-4- copy Archives.zip to server
-5- export db
-6- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/"
+5- copy Archives.zip to server
+6- export db
+7- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/"
 8- if 5, delete all tables, then import db
 9- on server, move
         [bin]
@@ -35,19 +35,17 @@ rm assets.zip public.zip;
 		package.json
 		symfony.lock > temp
 
-10- >   unzip -n Archives.zip;
-        unzip -o public.zip -d ./;
-        unzip -o assets.zip -d ./;
-        rm Archives.zip assets.zip public.zip;
-
-11- paste this in your remote terminal:
+10- paste this in your remote terminal:
 
 clear;
-rm Archives.zip; echo 'Archives.zip file removed';
-echo 'Removing .DS_Store files';  find ./ -depth -name ".DS_Store" -exec rm {} \;
-echo 'Removing file in ./temp';   cd temp;
+unzip -n Archives.zip;
+unzip -o public.zip -d ./;
+unzip -o assets.zip -d ./;
+rm Archives.zip assets.zip public.zip;
+find ./ -depth -name ".DS_Store" -exec rm {} \;
+cd temp;
 rm -R *;
 cd ..;
-echo 'Think to reconnect the domain to the folder "/public"'
 
+11- 'Think to reconnect the domain to the folder "/public"'
 12- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/public"
