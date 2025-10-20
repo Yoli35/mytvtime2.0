@@ -636,6 +636,7 @@
                     border-radius: .5rem;
                     display: flex;
                     flex-direction: column;
+                    font-size: 1rem;
                     padding: .5rem;
 
                     .comment, .reply {
@@ -682,9 +683,12 @@
                         .comment-infos {
                             align-items: center;
                             display: flex;
-                            gap: 1rem;
+                            flex-wrap: wrap;
+                            gap: 0 1rem;
 
                             .author-thumbnail {
+                                flex-shrink: 0;
+
                                 img {
                                     aspect-ratio: 1;
                                     border-radius: 50%;
