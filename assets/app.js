@@ -128,11 +128,18 @@ window.addEventListener("DOMContentLoaded", () => {
         if (img) {
             const averageColor = new AverageColor();
             const color = averageColor.getColor(img);
+            const seasonInfosDivs = document.querySelectorAll(".seasons .season .infos");
             console.log({color})
             if (color.lightness > 160) {
-                seriesShow.style.color = "hsl(202, 18%, 10%)"
+                seriesShow.style.color = "hsl(202, 18%, 10%)";
+                if (seasonInfosDivs) seasonInfosDivs.forEach(seasonInfosDiv => {
+                    seasonInfosDiv.style.color = "hsl(202, 18%, 10%)";
+                });
             } else {
-                seriesShow.style.color = "hsl(202, 18%, 90%)"
+                seriesShow.style.color = "hsl(202, 18%, 90%)";
+                if (seasonInfosDivs) seasonInfosDivs.forEach(seasonInfosDiv => {
+                    seasonInfosDiv.style.color = "hsl(202, 18%, 90%)";
+                });
             }
             const hsl = averageColor.rgbToHsl(color);
             hsl.l *= .8;

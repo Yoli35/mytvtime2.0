@@ -460,8 +460,7 @@
                     <h2>{{ 'Key facts'|trans }}</h2>
                     <div class="facts">
                         <div class="fact {{ tv.status_css }}">
-                            {#                            <div class="fact-label">{{ 'Status'|trans }}</div> #}
-                            <div class="fact-content">{{ tv.status|trans }}</div>
+                            {{ tv.status|trans }}
                         </div>
                         {% if tv.average_episode_run_time %}
                             <div class="fact">
@@ -675,10 +674,6 @@
                     {% if locations|length %}
                         {% set loc = locations|first %}
                         {{ include('_blocks/map/_map-container.html.twig', {type: 'series', styleSettings: mapSettings.data.styles}) }}
-                        {# <div id="map" class="map-controller"></div>
-                        <div class="series-map-list">
-                            {{ include('_blocks/map/_thumbnails.html.twig', {styles: mapSettings.data.styles}) }}
-                        </div> #}
                         <div class="temp-locations">
                             <div class="locations">
                                 <ul>

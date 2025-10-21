@@ -2949,9 +2949,9 @@ class SeriesController extends AbstractController
         } else {
             $statusCss .= 'unknown';
         }
-        if ($progress == 100) {
-            $statusCss .= ' watched';
-        }
+//        if ($progress == 100) {
+//            $statusCss .= ' watched';
+//        }
         return $statusCss;
     }
 
