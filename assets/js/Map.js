@@ -125,32 +125,34 @@ export class Map {
             });
 
             if (this.circles.length) {
-                this.map.addSource('circles', {
-                    type: 'geojson',
-                    data: {
-                        type: 'FeatureCollection',
-                        features: this.circles
-                    }
-                });
-                this.map.addLayer({
-                    id: 'circle-layer',
-                    type: 'fill',
-                    source: 'circles',
-                    paint: {
-                        'fill-color': '#875012',
-                        'fill-opacity': 0.125,
-                        'fill-outline-color': '#E0861F'
-                    }
-                });
-                this.map.addLayer({
-                    id: 'circle-outline-layer',
-                    type: 'line',
-                    source: 'circles',
-                    paint: {
-                        'line-color': '#E0861F',
-                        'line-width': 4
-                    }
-                });
+                setTimeout(() => {
+                    this.map.addSource('circles', {
+                        type: 'geojson',
+                        data: {
+                            type: 'FeatureCollection',
+                            features: this.circles
+                        }
+                    });
+                    this.map.addLayer({
+                        id: 'circle-layer',
+                        type: 'fill',
+                        source: 'circles',
+                        paint: {
+                            'fill-color': '#875012',
+                            'fill-opacity': 0.125,
+                            'fill-outline-color': '#E0861F'
+                        }
+                    });
+                    this.map.addLayer({
+                        id: 'circle-outline-layer',
+                        type: 'line',
+                        source: 'circles',
+                        paint: {
+                            'line-color': '#E0861F',
+                            'line-width': 4
+                        }
+                    });
+                }, 1000);
             }
 
             this.photos.forEach((photo, index) => {
