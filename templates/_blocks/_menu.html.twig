@@ -150,6 +150,7 @@
                     </ul>
                 </div>
             </div>
+        {% endif %}
             <div class="navbar-item">
                 {{ ux_icon('mdi:map-outline') }}
                 <div class="menu map">
@@ -157,7 +158,6 @@
                     <div class="menu-item"><a href="{{ path('app_map_last', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></div>
                 </div>
             </div>
-        {% endif %}
         <a href="{{ path('app_contact_form') }}" class="desktop">{{ ux_icon('mdi:email') }}</a>
     </div>
     <script>
