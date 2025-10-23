@@ -198,7 +198,7 @@ class MovieController extends AbstractController
         $page = $simpleMovieSearch->getPage();
         $releaseDateYear = $simpleMovieSearch->getReleaseDateYear();
 
-        $searchString = "&query=$query&include_adult=false&page=$page";
+        $searchString = "query=$query&include_adult=false&page=$page";
         if (strlen($releaseDateYear)) $searchString .= "&year=$releaseDateYear";
         if (strlen($language)) $searchString .= "&language=$language";
 
@@ -657,7 +657,7 @@ class MovieController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $query = $data['query'];
 
-        $searchString = "&query=$query&include_adult=false&page=1";
+        $searchString = "query=$query&include_adult=false&page=1";
         $movies = json_decode($this->tmdbService->searchMovie($searchString), true);
 
         return $this->json([

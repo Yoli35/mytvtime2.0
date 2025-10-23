@@ -433,7 +433,7 @@ class SeriesController extends AbstractController
         $page = $simpleSeriesSearch->getPage();
         $firstAirDateYear = $simpleSeriesSearch->getFirstAirDateYear();
 
-        $searchString = "&query=$query&include_adult=false&page=$page";
+        $searchString = "query=$query&include_adult=false&page=$page";
         if (strlen($firstAirDateYear)) $searchString .= "&first_air_date_year=$firstAirDateYear";
         if (strlen($language)) $searchString .= "&language=$language";
 
@@ -1504,8 +1504,8 @@ class SeriesController extends AbstractController
             }
         }
 
-        $tvKeywords = json_decode($this->tmdbService->getTvKeywords($series->getTmdbId()), true);
-        $tvExternalIds = json_decode($this->tmdbService->getTvExternalIds($series->getTmdbId()), true);
+//        $tvKeywords = json_decode($this->tmdbService->getTvKeywords($series->getTmdbId()), true);
+//        $tvExternalIds = json_decode($this->tmdbService->getTvExternalIds($series->getTmdbId()), true);
 
         $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
         if ($series->getNumberOfEpisode() != $tv['number_of_episodes'] || $series->getNumberOfSeason() != $tv['number_of_seasons']) {
@@ -1537,7 +1537,7 @@ class SeriesController extends AbstractController
             ],
             'providers' => $providers,
             'devices' => $devices,
-            'externals' => $this->getExternals($series, $tvKeywords['results'] ?? [], $tvExternalIds, $request->getLocale()),
+//            'externals' => $this->getExternals($series, $tvKeywords['results'] ?? [], $tvExternalIds, $request->getLocale()),
         ]);
     }
 
@@ -2553,7 +2553,7 @@ class SeriesController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $query = $data['query'];
 
-        $searchString = "&query=$query&include_adult=false&page=1";
+        $searchString = "query=$query&include_adult=false&page=1";
         $series = json_decode($this->tmdbService->searchTv($searchString), true);
 
         return $this->json([

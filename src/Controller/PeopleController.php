@@ -361,7 +361,7 @@ class PeopleController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $query = $data['query'];
-        $searchString = "&query=$query&include_adult=false&page=1";
+        $searchString = "query=$query&include_adult=false&page=1";
         $people = json_decode($this->tmdbService->searchPerson($searchString), true);
 
         return $this->json([

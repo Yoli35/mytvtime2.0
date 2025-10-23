@@ -157,25 +157,25 @@ class AdminController extends AbstractController
                 $page = $data['page'] ?? null;
                 $endDate = $data['end_date'] ?? null;
                 $startDate = $data['start_date'] ?? null;
-                $param = "&page=$page&start_date=$startDate&end_date=$endDate";
+                $param = "page=$page&start_date=$startDate&end_date=$endDate";
                 $invalidRequest = !$endDate || !$startDate;
                 break;
             case 'credits':
             case 'aggregate_credits':
             case 'videos':
                 $language = $data['language'] ?? null;
-                $param = ($language ? "&language=$language" : "");
+                $param = ($language ? "language=$language" : "");
                 break;
             case 'images':
                 $language = $data['language'] ?? null;
                 $include_image_language = $data['include_image_language'] ?? null;
-                $param = ($include_image_language ? "&include_image_language=$include_image_language" : "") . ($language ? "&language=$language" : "");
+                $param = ($include_image_language ? "include_image_language=$include_image_language" : "") . ($language ? "language=$language" : "");
                 break;
             case 'lists':
             case 'reviews':
                 $page = $data['page'] ?? null;
                 $language = $data['language'] ?? null;
-                $param = "&page=$page" . ($language ? "&language=$language" : "");
+                $param = "page=$page" . ($language ? "&language=$language" : "");
                 break;
         }
 
@@ -323,7 +323,7 @@ class AdminController extends AbstractController
         }
 
         $tmdbSeries = json_decode(
-            $this->tmdbService->searchTv("&query=$name&include_adult=false&page=$page"),
+            $this->tmdbService->searchTv("query=$name&include_adult=false&page=$page"),
             true
         );
 
@@ -441,7 +441,28 @@ class AdminController extends AbstractController
         $include_image_language = $data['include_image_language'] ?? null;
         $language = $data['language'] ?? null;
 
-        $results = json_decode($this->tmdbService->getMovieExtras($movieId, $extra, $page, $include_image_language, $language), true);
+        $params = "";
+        switch ($extra) {
+            case 'changes':
+                $endDate = $data['end_date'] ?? null;
+                $startDate = $data['start_date'] ?? null;
+                $params = "page=$page&start_date=$startDate&end_date=$endDate";
+                break;
+            case 'videos':
+            case 'credits':
+                $params = ($language ? "language=$language" : "");
+                break;
+            case 'images':
+                $params = ($include_image_language ? "include_image_language=$include_image_language" : "") . ($language ? "language=$language" : "");
+                break;
+            case 'lists':
+            case 'reviews':
+                $params = "page=$page" . ($language ? "&language=$language" : "");
+                break;
+        }
+        dump($params);
+
+        $results = json_decode($this->tmdbService->getMovieExtras($movieId, $extra, $params), true);
 
         return $this->render('_blocks/admin/_movie-append-results.html.twig', [
                 'extra' => $extra,
