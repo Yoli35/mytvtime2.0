@@ -1186,19 +1186,37 @@
 
         .admin__series__edit__title,
         .admin__movie__edit__title {
+            align-items: center;
             display: flex;
             font-size: 2rem;
             gap: 1rem;
+            justify-content: space-between;
             line-height: 1.25em;
 
-            span {
-                color: var(--orange-50);
+            .title {
+                display: flex;
+                gap: .5rem;
+
+                > div {
+                    text-wrap: balance;
+
+                    &:nth-child(2) {
+                        color: var(--orange-50);
+                    }
+                }
+            }
+
+            .abstract {
+                display: flex;
+                flex-shrink: 0;
+                gap: .5rem;
             }
 
             .admin__series__edit__title__id,
             .admin__movie__edit__title__id {
                 align-items: center;
                 display: flex;
+                flex-shrink: 0;
                 gap: .5rem;
                 margin-inline-start: auto;
                 position: relative;
@@ -1214,6 +1232,7 @@
 
                 svg {
                     color: var(--green-50);
+                    flex-shrink: 0;
                     height: 2rem;
                     width: 2rem;
                 }
