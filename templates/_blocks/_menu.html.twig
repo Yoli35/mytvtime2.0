@@ -151,13 +151,13 @@
                 </div>
             </div>
         {% endif %}
-            <div class="navbar-item">
-                {{ ux_icon('mdi:map-outline') }}
-                <div class="menu map">
-                    <div class="menu-item"><a href="{{ path('app_map_index') }}" class="desktop">{{ 'Shooting locations'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_map_last', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></div>
-                </div>
+        <div class="navbar-item">
+            {{ ux_icon('mdi:map-outline') }}
+            <div class="menu map">
+                <div class="menu-item"><a href="{{ path('app_map_index') }}" class="desktop">{{ 'Shooting locations'|trans }}</a></div>
+                <div class="menu-item"><a href="{{ path('app_map_last', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></div>
             </div>
+        </div>
         <a href="{{ path('app_contact_form') }}" class="desktop">{{ ux_icon('mdi:email') }}</a>
     </div>
     <script>
@@ -321,23 +321,17 @@
                 <div class="separation">{{ 'Language'|trans }}</div>
                 <a href="{{ path(route, route_params|merge({'_locale': 'fr'})) ~ p }}"{% if app.locale=='fr' %} class="active"{% endif %}>
                     {{ getEmojiFlag('FR') }} Français - French - 프랑스어
-                    {# {{ 'French'|trans }} #}
                 </a>
                 <a href="{{ path(route, route_params|merge({'_locale': 'en'})) ~ p }}"{% if app.locale=='en' %} class="active"{% endif %}>
                     {{ getEmojiFlag('GB') }} Anglais - English - 영어
-                    {# {{ 'English'|trans }} #}
                 </a>
                 <a href="{{ path(route, route_params|merge({'_locale': 'ko'})) ~ p }}"{% if app.locale=='ko' %} class="active"{% endif %}>
                     {{ getEmojiFlag('KR') }} Coréen - Korean - 한국어
-                    {# {{ 'Korean'|trans }} #}
                 </a>
             </div>
         </div>
         <div class="navbar-item">
             <div class="burger">
-                {#                <span></span> #}
-                {#                <span></span> #}
-                {#                <span></span> #}
                 <div>
                     <div></div>
                 </div>
@@ -346,19 +340,6 @@
                 </div>
             </div>
             <div class="menu main">
-{#                <a href="{{ path('app_home_index') }}">{{ 'Home'|trans }}</a>#}
-                {% if app.user %}
-{#                    <a href="{{ path('app_movie_index') }}">{{ 'My movies'|trans }}</a>#}
-                    <div class="separation">{{ 'Series'|trans }}</div>
-                    <a href="{{ path('app_series_index') }}">{{ 'Series.week'|trans }}</a>
-                    <a href="{{ path('app_series_all') }}">{{ 'Series.in progress'|trans }}</a>
-                    <a href="{{ path('app_series_not_seen_in_a_while') }}">{{ 'Series.not seen in a while'|trans }}</a>
-                    <a href="{{ path('app_series_to_start') }}">{{ 'Series.to start'|trans }}</a>
-                    <a href="{{ path('app_series_up_coming') }}">{{ 'Series.up coming series'|trans }}</a>
-                    <a href="{{ path('app_series_ranking_by_vote') }}">{{ 'Series.by ranking vote'|trans }}</a>
-                    <a href="{{ path('app_people_index') }}">{{ 'People'|trans }}</a>
-                    <a href="{{ path('app_map_index') }}">{{ 'Shooting locations'|trans }}</a>
-                {% endif %}
                 {% if app.user %}
                     {% set relativeDayStrings = {
                         "-2": 'Two days ago'|trans,
@@ -460,7 +441,7 @@
                                     {% if series.providerLogoPath %}
                                         <div class="time"></div>
                                         <div class="provider">
-                                                <img src="{{ series.providerLogoPath }}" alt="{{ series.providerName }}">
+                                            <img src="{{ series.providerLogoPath }}" alt="{{ series.providerName }}">
                                         </div>
                                     {% endif %}
                                 </a>
@@ -472,13 +453,11 @@
                             </div>
                         {% endfor %}
                     {% endif %}
+                {% else %}
+                    <div class="separation">{{ 'Please log in to see more options'|trans }}</div>
+                    <a href="{{ path('app_login') }}">{{ 'Connect'|trans }}</a>
+                    <a href="{{ path('app_register') }}">{{ 'Register'|trans }}</a>
                 {% endif %}
-                <div class="separation">{{ 'Search'|trans }}</div>
-                {% if app.user %}
-                    <a href="{{ path('app_series_search_db') }}">{{ 'Among your series'|trans }}</a>
-                {% endif %}
-                <a href="{{ path('app_series_search') }}">{{ 'A series by name/year'|trans }}</a>
-                <a href="{{ path('app_series_advanced_search') }}">{{ 'Advanced search'|trans }}</a>
             </div>
         </div>
     </div>
