@@ -1,0 +1,78 @@
+<h2>{{ 'Users'|trans }}</h2>
+<div class="admin__tools">
+
+    <div class="tools">
+        <h1>{{ ux_icon('mdi:tools') }} {{ 'Tools'|trans }}</h1>
+        <div class="tool">
+            <h2>{{ ux_icon('mdi:api') }} <b>data.</b>nantesmetropoles<b>.fr</b></h2>
+            <form id="api-form" class="form">
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="base_url">{{ 'Base url'|trans }}
+                            <input type="search" id="base_url" name="base_url" value="{{ baseUrl }}">
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="module-select">{{ 'Modules'|trans }}
+                            <select id="module-select" name="module">
+                                {% for m in modules %}
+                                    <option value="{{ m.value }}">{{ m.label|trans }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                {% for m in modules %}
+                    <div class="form-tab{% if loop.first %} active{% endif %}" data-for="{{ m.value }}">
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="module-select">{{ m.label|trans }} {{ 'Endpoints'|trans }}
+                                    <select id="endpoint-select-{{ m.value }}" name="endpoint">
+                                        {% for item in m.menu %}
+                                            <option value="{{ item.value }}">{{ item.label|trans }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-field d-none">
+                                <label for="param-1"><span class="param-name">param #1</span>
+                                    <input type="search" id="param-1" name="param-1">
+                                </label>
+                            </div>
+                            <div class="form-field d-none">
+                                <label for="param-2"><span class="param-name">param #2</span>
+                                    <input type="search" id="param-2" name="param-2">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="form-row">
+                    <div class="form-field">
+                        <div class="form-row">
+                            <button type="submit" class="admin__button" value="exec">{{ 'Execute'|trans }}</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-results">
+                    <label for="results" class="relative">{{ 'Results'|trans }}
+                        <textarea id="results" name="results" rows="20" readonly></textarea>
+                        <button type="submit" class="copy-button" value="copy" data-title="Copy to clipboard">
+                            {{ ux_icon('mdi:content-copy') }}
+                        </button>
+                    </label>
+                </div>
+            </form>
+            <script type="module" src="{{ asset('js/admin/api.js') }}"></script>
+        </div>
+    </div>
+    <div class="globs" style="display: none">
+        {
+            "api_modules": {{ modules|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        }
+    </div>
+</div>

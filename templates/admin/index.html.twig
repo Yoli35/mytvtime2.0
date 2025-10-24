@@ -32,6 +32,12 @@
                             {{ 'Tools'|trans }}
                         </div>
                     </a>
+                    <a href="{{ path('admin_api') }}"{% if route starts with 'admin_api' %} class="active"{% endif %}>
+                        <div>{{ ux_icon('mdi:api', {height: "18px", width: "18px"}) }}</div>
+                        <div class="large">
+                            {{ 'Api'|trans }}
+                        </div>
+                    </a>
                     {% if seriesLink is defined %}
                         <a href="{{ seriesLink|raw }}"{% if route starts with 'admin_series' %} class="active"{% endif %}>
                             <div>{{ ux_icon('mdi:tv', {height: "18px", width: "18px"}) }}</div>
@@ -128,18 +134,19 @@
                     <script>
                         const dimDiv = document.querySelector('.dim');
                         // Get the dimensions of the window when the  window is resized
-                        window.addEventListener('resize', function () {
-                            const dim = {
+                        window.addEventListener('resize', displayDimensions);
+                        // Display the dimensions when the page is loaded
+                        window.addEventListener('load', displayDimensions);
+                        function displayDimensions() {
+                            const dim = getWindowDimensions();
+                            dimDiv.innerHTML = dim.width + 'px<span class="large">&nbsp;x&nbsp;</span> ' + dim.height + 'px';
+                        }
+                        function getWindowDimensions() {
+                            return {
                                 width: window.innerWidth,
                                 height: window.innerHeight
                             };
-                            dimDiv.innerHTML = dim.width + 'px<span class="large">&nbsp;x&nbsp;</span> ' + dim.height + 'px';
-                        });
-                        const dim = {
-                            width: window.innerWidth,
-                            height: window.innerHeight
-                        };
-                        dimDiv.innerHTML = dim.width + 'px<span class="large">&nbsp;x&nbsp;</span> ' + dim.height + 'px';
+                        }
                     </script>
                 {% endif %}
             </aside>
@@ -153,6 +160,9 @@
                 {% endif %}
                 {% if route == 'admin_tools' %}
                     {% include('_blocks/admin/_tools.html.twig') %}
+                {% endif %}
+                {% if route == 'admin_api' %}
+                    {% include('_blocks/admin/_api.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_series' %}
                     {% include('_blocks/admin/_series.html.twig') %}

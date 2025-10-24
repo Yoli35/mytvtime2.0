@@ -32,6 +32,14 @@
             }
         }
 
+        .form-tab {
+            display: none;
+
+            &.active {
+                display: block;
+            }
+        }
+
         .form-row {
             display: flex;
             flex-direction: row;

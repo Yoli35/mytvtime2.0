@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\PointOfInterest;
 use App\Entity\PointOfInterestImage;
+use App\Entity\Settings;
 use App\Entity\User;
 use App\Form\PointOfInterestForm;
 use App\Repository\FilmingLocationRepository;
@@ -93,7 +94,53 @@ class AdminController extends AbstractController
     #[Route('/tools', name: 'tools')]
     public function tools(Request $request): Response
     {
-         return $this->render('admin/index.html.twig', [
+        return $this->render('admin/index.html.twig');
+    }
+
+    #[Route('/api', name: 'api')]
+    public function api(Request $request): Response
+    {
+        $user = $this->getUser();
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'api data.nantes.metropole.fr']);
+        if (!$settings) {
+            $modules = [
+                'catalog' => [
+                    'label' => 'Catalog - API to enumerate datasets',
+                    'value' => 'catalog',
+                    'menu' => [
+                        ['value'=>'/catalog/datasets', 'label' => 'Query catalog datasets', 'fields' => []],
+                        ['value'=>'/catalog/exports', 'label' => 'List export formats', 'fields' => []],
+                        ['value'=>'/catalog/exports/{format}', 'label' => 'Export catalog in specified format', 'fields' => ['format']],
+                        ['value'=>'/catalog/exports/csv', 'label' => 'Export catalog in CSV format', 'fields' => []],
+                        ['value'=>'/catalog/exports/dcat{dcat_ap_format}', 'label' => 'Export a catalog in RDF/XML (DCAT)', 'fields' => ['dcat_ap_format']],
+                        ['value'=>'/catalog/facets', 'label' => 'List facet values', 'fields' => []],
+                        ['value'=>'/catalog/datasets/{dataset_id}', 'label' => 'Show dataset information', 'fields' => ['dataset_id']],
+                    ],
+                ],
+                'datasets' => [
+                    'label' => 'Dataset - API to work on records',
+                    'value' => 'dataset',
+                    'menu' => [
+                        ['value'=>'catalog/datasets/{dataset_id}/records', 'label' => 'Query dataset records', 'fields' => ['dataset_id']],
+                        ['value'=>'catalog/datasets/{dataset_id}/exports', 'label' => 'List export formats for a dataset', 'fields' => ['dataset_id']],
+                        ['value'=>'catalog/datasets/{dataset_id}/exports/{format}', 'label' => 'Export a dataset', 'fields' => ['dataset_id', 'format']],
+                        ['value'=>'catalog/datasets/{dataset_id}/exports/csv', 'label' => 'Export a dataset in CSV format', 'fields' => ['dataset_id']],
+                        ['value'=>'catalog/datasets/{dataset_id}/exports/parquet', 'label' => 'Export a dataset in Parquet', 'fields' => ['dataset_id']],
+                        ['value'=>'catalog/datasets/{dataset_id}/exports/gpx', 'label' => 'Export a dataset in GPX format', 'fields' => ['dataset_id']],
+                        ['value'=>'catalog/datasets/{dataset_id}/facets', 'label' => 'List facet values for a dataset', 'fields' => ['dataset_id']],
+                        ['value'=>'catalog/datasets/{dataset_id}/attachments', 'label' => 'List dataset attachments', 'fields' => ['dataset_id']],
+                        ['value'=>'catalog/datasets/{dataset_id}/records/{record_id}', 'label' => 'Read a dataset record', 'fields' => ['dataset_id', 'record_id']],
+                    ],
+                ],
+            ];
+            $settings = new Settings($user, 'api data.nantes.metropole.fr', $modules);
+            $this->settingsRepository->save($settings, true);
+        }
+        $modules = $settings->getData();
+        dump($modules);
+        return $this->render('admin/index.html.twig', [
+            'baseUrl' => "https://data.nantesmetropole.fr/api/explore/v2.1/catalog/datasets",
+            'modules' => $modules,
         ]);
     }
 
@@ -366,7 +413,7 @@ class AdminController extends AbstractController
 
         if ($settings && $settings->getData()) {
             $data = $settings->getData();
-            $lastUpdate = $this->dateService->newDateFromTimestamp(($data['end date']/1000) ?? 0, "UTC")->format("Y-m-d H:i:s");
+            $lastUpdate = $this->dateService->newDateFromTimestamp(($data['end date'] / 1000) ?? 0, "UTC")->format("Y-m-d H:i:s");
             $lastUpdateString = $this->dateService->formatDateRelativeLong($lastUpdate, "Europe/Paris", $request->getLocale());
             $lastDuration = ($data['end date'] - $data['start date']) / 1000;
             $lastDurationString = $this->dateService->getDurationString($lastDuration, $units);

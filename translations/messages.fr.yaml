@@ -1,7 +1,30 @@
 #Admin
-Users: Utilisateurs
-Providers: Plateformes
+Api: API
+Base url: URL de base
+Catalog - API to enumerate datasets: Catalogue - API pour énumérer les ensembles de données
 Dashboard: Tableau de bord
+Dataset - API to work on records: Ensemble de données - API pour travailler sur les enregistrements
+Endpoints: Points de terminaison
+Execute: Exécuter
+Export a catalog in RDF/XML (DCAT): Exporter un catalogue en RDF/XML (DCAT)
+Export a dataset in CSV format: Exporter un ensemble de données au format CSV
+Export a dataset in GPX format: Exporter un ensemble de données au format GPX
+Export a dataset in Parquet: Exporter un ensemble de données en Parquet
+Export a dataset: Exporter un ensemble de données
+Export catalog in CSV format: Exporter un catalogue au format CSV
+Export catalog in specified format: Exporter le catalogue dans le format spécifié
+List dataset attachments: Lister les pièces jointes de l'ensemble de données
+List export formats for a dataset: Lister les formats d'exportation pour un ensemble de données
+List export formats: Lister les formats d'exportation
+List facet values for a dataset: Lister les valeurs de facette pour un ensemble de données
+List facet values: Lister les valeurs de facette
+Modules: Modules
+Providers: Plateformes
+Query catalog datasets: Interroger les ensembles de données du catalogue
+Query dataset records: Interroger les enregistrements de l'ensemble de données
+Read a dataset record: Lire un enregistrement d'ensemble de données
+Show dataset information: Afficher les informations sur l'ensemble de données
+Users: Utilisateurs
 more notifications: notifications supplémentaires
 
 # Menu
