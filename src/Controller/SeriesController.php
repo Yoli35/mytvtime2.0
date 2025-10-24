@@ -1473,6 +1473,7 @@ class SeriesController extends AbstractController
 
         $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
         $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
+        dump($season['episodes']);
         $season['credits'] = $this->castAndCrew($season);
         $season['watch/providers'] = $this->watchProviders($season, $country);
         if ($season['overview'] == "") {
@@ -4128,8 +4129,14 @@ class SeriesController extends AbstractController
         $stills = $this->episodeStillRepository->getSeasonStills($episodeIds);
 
         $newCount = 0;
+        $finale = false;
         foreach ($season['episodes'] as $episode) {
+            if ($finale) {
+                // Skip episodes after a finale
+                continue;
+            }
             $userEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number']);
+            $finale = (key_exists('episode_type', $episode) && $episode['episode_type'] == 'finale') ? true : $finale;
             if (!$userEpisode) {
                 $nue = new UserEpisode($userSeries, $episode['id'], $season['season_number'], $episode['episode_number'], null);
                 $nue->setAirDate($episode['air_date'] ? $this->date($episode['air_date']) : null);
