@@ -98,7 +98,7 @@ class WatchLink extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $url = $data['url'];
-        $title = $data['title'];
+        $title = $data['name'];
         $movieId = $data['mediaId'];
         $providerId = $data['provider'];
         if ($providerId == "") $providerId = null;
