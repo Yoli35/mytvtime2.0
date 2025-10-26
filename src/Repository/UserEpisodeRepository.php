@@ -552,7 +552,8 @@ class UserEpisodeRepository extends ServiceEntityRepository
         $userId = $user->getId();
         $sql = "SELECT s.`id` as id,
                        s.poster_path as posterPath, 
-                       IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
+                       IF(sln.`name` IS NOT NULL, sln.`name`, s.`name`) as name,
+                       /*IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,*/
                        IF(sln.`name` IS NOT NULL, sln.`slug`, s.`slug`) as slug,
                        ue.episode_id as episodeId,
                        ue.`season_number` as nextEpisodeSeason,
