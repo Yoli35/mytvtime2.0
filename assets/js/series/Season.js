@@ -1261,7 +1261,7 @@ export class Season {
         voteList.setAttribute('data-id', 'vote-' + episodeId);
         voteList.setAttribute('data-save', 'saveVote');
         selectVoteDiv.appendChild(voteList);
-        for (let i = 1; i <= 10; i++) {
+        for (let i = 1; i <= 12; i++) {
             const vote = document.createElement('div');
             vote.classList.add('item');
             vote.setAttribute('data-vote', i.toString());
