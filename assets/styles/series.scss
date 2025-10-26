@@ -2871,11 +2871,26 @@ h2 {
         flex-direction: row;
         padding: .5rem;
 
+        .separator {
+            align-items: center;
+            background-color: transparent;
+            color: var(--ardoise-10);
+            display: flex;
+            height: 2rem;
+            justify-content: center;
+            width: 2rem;
+
+            svg {
+                transform: scale(0.5);
+            }
+        }
+
         .size-item {
             align-items: center;
             background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: .25rem;
             color: var(--ardoise-10);
+            cursor: pointer;
             display: flex;
             height: 2rem;
             justify-content: center;
@@ -2897,6 +2912,7 @@ h2 {
             background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: .25rem;
             color: var(--ardoise-10);
+            cursor: pointer;
             display: flex;
             height: 2rem;
             justify-content: center;
@@ -3068,6 +3084,20 @@ h2 {
             &:last-child {
                 border-bottom-right-radius: 5rem;
                 border-top-right-radius: 5rem;
+            }
+        }
+    }
+
+    .user-actions {
+        > div {
+            &:first-child:not(.wrapper) {
+                padding-inline-start: 1rem;
+                width: 2.5rem;
+            }
+
+            &:last-child:not(.wrapper) {
+                padding-inline-end: 1rem;
+                width: 2.5rem;
             }
         }
     }
@@ -3691,7 +3721,7 @@ h2 {
                         font-weight: 500;
                         gap: .5rem;
                         padding-block: .25rem;
-                        padding-inline: .5rem;
+                        padding-inline: 1rem;
                     }
 
                     .watch-at-list {

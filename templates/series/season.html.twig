@@ -146,9 +146,9 @@
                     <div class="size-item{% if episodeDiv.height == '25rem' %} active{% endif %}" data-size="25rem" data-type="size">
                         {{ ux_icon('mdi:size-l') }}
                     </div>
-                </div>
-
-                <div class="user-actions" data-user-series-id="{{ userSeries.id }}">
+{#                </div>#}
+                    <div class="separator">{{ ux_icon('mdi:circle') }}</div>
+{#                <div class="user-actions" data-user-series-id="{{ userSeries.id }}">#}
                     <div class="ar-item{% if episodeDiv.aspectRatio == '16 / 9' %} active{% endif %}" data-ar="16 / 9" data-type="aspect-ratio">
                         {{ ux_icon('mdi:crop-landscape') }}
                     </div>
@@ -158,9 +158,9 @@
                     <div class="ar-item{% if episodeDiv.aspectRatio == '9 / 16' %} active{% endif %}" data-ar="9 / 16" data-type="aspect-ratio">
                         {{ ux_icon('mdi:crop-portrait') }}
                     </div>
-                </div>
-
-                <div class="user-actions">
+{#                </div>#}
+                    <div class="separator">{{ ux_icon('mdi:circle') }}</div>
+{#                <div class="user-actions">#}
                     <div class="edit-episode-infos" data-title="{{ 'Edit all episodes name and overview'|trans }}">
                         {{ ux_icon('mdi:edit-box-outline') }}
                     </div>
