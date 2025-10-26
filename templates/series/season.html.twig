@@ -207,11 +207,8 @@
                                         <div class="number{% if ue and ue.watch_at %} watched{% endif %}" data-title="{{ 'Watched %time% times'|trans({'%time%': ues|length}) }}">
                                             {{ episode.episode_number }}<span>/{{ episodeCount }}</span>
                                         </div>
-                                        {% if episode.episode_number == episodeCount %}
-                                            <div class="finale season-finale{% if ue and ue.watch_at %} watched{% endif %}">{{ 'Season finale'|trans }}</div>
-                                            {% if season.season_number == seasonCount or (episode.episode_type is defined and episode.episode_type == 'finale') %}
-                                                <div class="finale series-finale{% if ue and ue.watch_at %} watched{% endif %}">{{ 'Series finale'|trans }}</div>
-                                            {% endif %}
+                                        {% if episode.episode_type is defined and episode.episode_type == 'finale' %}
+                                            <div class="finale season-finale{% if ue and ue.watch_at %} watched{% endif %}">{{ 'Season finale'|trans }}</div>menu
                                         {% endif %}
                                     </div>
                                     <div class="infos">
