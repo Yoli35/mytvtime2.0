@@ -98,7 +98,14 @@ class AdminController extends AbstractController
     }
 
     #[Route('/api', name: 'api')]
-    public function api(Request $request): Response
+    public function api(): Response
+    {
+        return $this->render('admin/index.html.twig', [
+        ]);
+    }
+
+    #[Route('/api/modules', name: 'api_modules', methods: ['GET'])]
+    public function apiModules(): JsonResponse
     {
         $user = $this->getUser();
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'api data.nantes.metropole.fr']);
@@ -116,31 +123,37 @@ class AdminController extends AbstractController
                         ['value'=>'/catalog/facets', 'label' => 'List facet values', 'fields' => []],
                         ['value'=>'/catalog/datasets/{dataset_id}', 'label' => 'Show dataset information', 'fields' => ['dataset_id']],
                     ],
+                    "selected_item" => '/catalog/datasets',
                 ],
                 'datasets' => [
                     'label' => 'Dataset - API to work on records',
                     'value' => 'dataset',
                     'menu' => [
-                        ['value'=>'catalog/datasets/{dataset_id}/records', 'label' => 'Query dataset records', 'fields' => ['dataset_id']],
-                        ['value'=>'catalog/datasets/{dataset_id}/exports', 'label' => 'List export formats for a dataset', 'fields' => ['dataset_id']],
-                        ['value'=>'catalog/datasets/{dataset_id}/exports/{format}', 'label' => 'Export a dataset', 'fields' => ['dataset_id', 'format']],
-                        ['value'=>'catalog/datasets/{dataset_id}/exports/csv', 'label' => 'Export a dataset in CSV format', 'fields' => ['dataset_id']],
-                        ['value'=>'catalog/datasets/{dataset_id}/exports/parquet', 'label' => 'Export a dataset in Parquet', 'fields' => ['dataset_id']],
-                        ['value'=>'catalog/datasets/{dataset_id}/exports/gpx', 'label' => 'Export a dataset in GPX format', 'fields' => ['dataset_id']],
-                        ['value'=>'catalog/datasets/{dataset_id}/facets', 'label' => 'List facet values for a dataset', 'fields' => ['dataset_id']],
-                        ['value'=>'catalog/datasets/{dataset_id}/attachments', 'label' => 'List dataset attachments', 'fields' => ['dataset_id']],
-                        ['value'=>'catalog/datasets/{dataset_id}/records/{record_id}', 'label' => 'Read a dataset record', 'fields' => ['dataset_id', 'record_id']],
+                        ['value'=>'/catalog/datasets/{dataset_id}/records', 'label' => 'Query dataset records', 'fields' => ['dataset_id']],
+                        ['value'=>'/catalog/datasets/{dataset_id}/exports', 'label' => 'List export formats for a dataset', 'fields' => ['dataset_id']],
+                        ['value'=>'/catalog/datasets/{dataset_id}/exports/{format}', 'label' => 'Export a dataset', 'fields' => ['dataset_id', 'format']],
+                        ['value'=>'/catalog/datasets/{dataset_id}/exports/csv', 'label' => 'Export a dataset in CSV format', 'fields' => ['dataset_id']],
+                        ['value'=>'/catalog/datasets/{dataset_id}/exports/parquet', 'label' => 'Export a dataset in Parquet', 'fields' => ['dataset_id']],
+                        ['value'=>'/catalog/datasets/{dataset_id}/exports/gpx', 'label' => 'Export a dataset in GPX format', 'fields' => ['dataset_id']],
+                        ['value'=>'/catalog/datasets/{dataset_id}/facets', 'label' => 'List facet values for a dataset', 'fields' => ['dataset_id']],
+                        ['value'=>'/catalog/datasets/{dataset_id}/attachments', 'label' => 'List dataset attachments', 'fields' => ['dataset_id']],
+                        ['value'=>'/catalog/datasets/{dataset_id}/records/{record_id}', 'label' => 'Read a dataset record', 'fields' => ['dataset_id', 'record_id']],
                     ],
+                    "selected_item" => '/catalog/datasets/{dataset_id}/records',
                 ],
             ];
             $settings = new Settings($user, 'api data.nantes.metropole.fr', $modules);
             $this->settingsRepository->save($settings, true);
         }
         $modules = $settings->getData();
-        dump($modules);
-        return $this->render('admin/index.html.twig', [
+        $block = $this->render('_blocks/admin/_api-modules.html.twig', [
             'baseUrl' => "https://data.nantesmetropole.fr/api/explore/v2.1/catalog/datasets",
             'modules' => $modules,
+        ]);
+        dump($modules);
+        return $this->json([
+            'modules' => $modules,
+            'block' => $block->getContent(),
         ]);
     }
 

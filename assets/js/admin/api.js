@@ -1,17 +1,32 @@
+let apiModules = [];
+
 document.addEventListener("DOMContentLoaded", () => {
-    const globsContent = document.querySelector(".globs").textContent;
-    console.log(globsContent);
-    const globs = JSON.parse(globsContent);
-    const apiModules = globs['api_modules'];
-    console.log(apiModules);
-    init();
+    fetchModules();
 });
+
+function fetchModules() {
+    const lang = document.querySelector("html").getAttribute("lang");
+    fetch("/" + lang + "/admin/api/modules", {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log(data);
+        apiModules = data['modules'];
+        const toolDiv = document.querySelector(".tool");
+        toolDiv.innerHTML = data['block'];
+        init();
+    })
+    .catch(err => {
+        console.error('Error getting module info ', err);
+    });
+}
 
 function init() {
     console.log("Api loaded");
-
-    const modules = ""
-
     const apiForm = document.getElementById("api-form");
     const moduleSelect = apiForm.querySelector("#module-select");
     const formTabs = apiForm.querySelectorAll(".form-tab");
