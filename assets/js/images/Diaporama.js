@@ -131,6 +131,7 @@ export class Diaporama {
         const imgDiv = diaporamaDiv.querySelector("#diaporamaImg");
 
         diaporamaDiv.requestFullscreen().then(() => {
+            e.preventDefault();
             setTimeout(() => {
                 imgDiv.classList.add("fade");
             }, 0);
@@ -179,21 +180,22 @@ export class Diaporama {
         thumbnail.scrollIntoView(false);
     }
 
-    closeDiaporama() {
+    closeDiaporama(e) {
         const diaporamaDiv = document.querySelector(".diaporama");
         const backDiapo = document.querySelector(".back-diapo");
         const imgDiv = backDiapo.querySelector("img");
 
-        document.exitFullscreen().then(() => {
-            document.removeEventListener("keydown", gThis.getKey);
-            document.body.style.overflow = 'unset';
-            setTimeout(() => {
-                imgDiv.classList.remove("fade");
-            }, 0);
-            setTimeout(() => {
-                document.querySelector("body").removeChild(diaporamaDiv);
-            }, 300);
-        });
+        document.removeEventListener("keydown", gThis.getKey);
+        document.body.style.overflow = 'unset';
+        setTimeout(() => {
+            imgDiv.classList.remove("fade");
+        }, 0);
+        setTimeout(() => {
+            document.querySelector("body").removeChild(diaporamaDiv);
+        }, 300);
+
+        if (document.fullscreenElement)
+            document.exitFullscreen();
     }
 
     getKey(e) {
@@ -202,7 +204,7 @@ export class Diaporama {
         } else if (e.key === "ArrowRight") {
             if (gThis.diaporamaCount > 1) gThis.nextImage();
         } else if (e.key === "Escape") {
-            gThis.closeDiaporama();
+            gThis.closeDiaporama(e);
         }
     }
 }
