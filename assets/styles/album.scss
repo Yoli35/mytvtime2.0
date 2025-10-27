@@ -571,7 +571,7 @@
     }
 
     main {
-        height: calc(100vh - 13rem);
+        height: calc(100vh - 10rem);
         overflow-y: auto;
         position: relative;
 
@@ -608,7 +608,7 @@
         }
 
         .album-container {
-            height: calc(calc(100vh - var(--map-height-album)) - 13rem);
+            height: calc(calc(100vh - var(--map-height-album)) - 10rem);
             overflow-y: auto;
             position: relative;
             width: 100%;
@@ -1261,8 +1261,10 @@
     }
 
     .photos {
+        flex-shrink: 0;
         height: calc(100% - 22rem);
         margin-block-end: 1rem;
+        max-height: 90%;
         overflow-y: auto;
         position: relative;
         width: 100%;
@@ -1323,6 +1325,8 @@
     }
 
     .last-days {
+        flex-shrink: 0;
+        height: fit-content;
         overflow-x: auto;
         width: 100%;
 
@@ -1332,38 +1336,54 @@
             padding-bottom: .5rem;
 
             .album {
+                aspect-ratio: 1 / 1;
+                border: 2px solid transparent;
+                border-radius: .5rem;
+                cursor: pointer;
+                position: relative;
+                width: 15rem;
+
+                img {
                     aspect-ratio: 1 / 1;
-                    border: 2px solid transparent;
                     border-radius: .5rem;
-                    cursor: pointer;
-                    position: relative;
-                    width: 15rem;
+                    height: 100%;
+                    object-fit: cover;
+                    width: 100%;
+                }
 
-                    img {
-                        aspect-ratio: 1 / 1;
-                        border-radius: .5rem;
-                        height: 100%;
-                        object-fit: cover;
-                        width: 100%;
-                    }
+                .name {
+                    align-items: center;
+                    background-color: var(--orange-30-alpha-75);
+                    border-radius: 0 0 .5rem .5rem;
+                    bottom: 0;
+                    color: var(--orange-90);
+                    display: flex;
+                    font-size: 1.5rem;
+                    font-weight: 600;
+                    height: 3rem;
+                    justify-content: center;
+                    padding: .5rem;
+                    position: absolute;
+                    text-align: center;
+                    text-wrap: balance;
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
 
-                    .name {
-                        align-items: center;
-                        background-color: var(--orange-30-alpha-75);
-                        border-radius: 0 0 .5rem .5rem;
-                        bottom: 0;
-                        color: var(--orange-90);
-                        display: flex;
-                        font-size: 1.5rem;
-                        font-weight: 600;
-                        height: 3rem;
-                        justify-content: center;
-                        padding: .5rem;
-                        position: absolute;
-                        text-align: center;
-                        text-wrap: balance;
-                        width: 100%;
-                    }
+@media (width <= 64rem) {
+    .photos-page {
+        .photos {
+            min-height: 80%;
+
+            .wrapper {
+                grid-template-columns: repeat(3, 1fr);
+
+                .photo {
+                    min-width: 30vw;
+                }
             }
         }
     }
