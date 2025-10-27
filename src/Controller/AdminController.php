@@ -150,7 +150,6 @@ class AdminController extends AbstractController
             'baseUrl' => "https://data.nantesmetropole.fr/api/explore/v2.1/catalog/datasets",
             'modules' => $modules,
         ]);
-        dump($modules);
         return $this->json([
             'modules' => $modules,
             'block' => $block->getContent(),
@@ -520,7 +519,6 @@ class AdminController extends AbstractController
                 $params = "page=$page" . ($language ? "&language=$language" : "");
                 break;
         }
-        dump($params);
 
         $results = json_decode($this->tmdbService->getMovieExtras($movieId, $extra, $params), true);
 
