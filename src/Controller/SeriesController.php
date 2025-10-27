@@ -311,6 +311,26 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[Route('/user/favorites', name: 'user_favorites')]
+    public function favorite(Request $request): Response
+    {
+        $user = $this->getUser();
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+
+        $series = array_map(function ($s) {
+            $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            return $s;
+        }, $this->userSeriesRepository->favoriteSeries($user, $locale, 1, -1));
+
+        $tmdbIds = array_column($series, 'tmdb_id');
+
+        return $this->render('series/favorite.html.twig', [
+            'seriesList' => $series,
+            'tmdbIds' => $tmdbIds,
+            'userSeriesCount' => $this->userSeriesRepository->count(['user' => $user])
+        ]);
+    }
+
     #[IsGranted('ROLE_USER')]
     #[Route('/by/country/{country}', name: 'by_country', requirements: ['country' => '[A-Z]{2}'])]
     public function seriesByCountry(Request $request, string $country): Response
@@ -1473,7 +1493,7 @@ class SeriesController extends AbstractController
 
         $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
         $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
-        dump($season['episodes']);
+
         $season['credits'] = $this->castAndCrew($season);
         $season['watch/providers'] = $this->watchProviders($season, $country);
         if ($season['overview'] == "") {

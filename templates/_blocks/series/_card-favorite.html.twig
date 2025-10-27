@@ -1,0 +1,26 @@
+<div class="card">
+    {% set url = path('app_series_show', {'id': series.id, 'slug': series.slug }) %}
+    <a href="{{ url }}">
+        <div class="poster">
+            {% if series.poster_path is defined %}
+                {% if series.poster_path %}
+                    <img src="/series/posters{{ series.poster_path }}" alt="{{ series.name }}">
+                {% else %}
+                    <div>{{ 'No poster'|trans }}</div>
+                {% endif %}
+            {% endif %}
+            <div class="series-infos">
+                <div class="air-date" data-title="{{ 'Episode air date'|trans }}">
+                    {% if series.final_air_date %}
+                        {{ series.final_air_date|format_date('relative_full')|capitalize }}
+                    {% else %}
+                        {{ 'No date'|trans }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="name">
+            {{ series.name }}
+        </div>
+    </a>
+</div>
