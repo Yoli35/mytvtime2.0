@@ -50,8 +50,8 @@ export class Diaporama {
         gThis.diaporamaSrc = srcArray;
         gThis.diaporamaSrcset = srcsetArray;
 
-        const dialog = document.createElement("dialog");
-        dialog.classList.add("diaporama");
+        const diaporamaDiv = document.createElement("div");
+        diaporamaDiv.classList.add("diaporama");
 
         const backDiapo = document.createElement("div");
         backDiapo.classList.add("back-diapo");
@@ -67,8 +67,6 @@ export class Diaporama {
             thumbnails.classList.add("thumbnails");
             wrapperDiv.appendChild(thumbnails);
         }
-        // document.querySelector("body").appendChild(backDiapo);
-        // document.body.style.overflow = 'hidden';
 
         const closeDiv = document.createElement("div");
         closeDiv.classList.add("close");
@@ -88,6 +86,7 @@ export class Diaporama {
         const imageSrc = e.currentTarget.getAttribute("src");
         const imageSrcSet = e.currentTarget.getAttribute("srcset");
         const imgDiv = document.createElement("img");
+        imgDiv.setAttribute("id", "diaporamaImg");
         imgDiv.setAttribute("src", imageSrc);
         if (imageSrcSet)
             imgDiv.setAttribute('srcset', imageSrcSet);
@@ -120,17 +119,22 @@ export class Diaporama {
         imageDiv.appendChild(imgDiv);
         if (count > 1) imageDiv.appendChild(nextDiv);
 
-        dialog.appendChild(backDiapo);
-        document.querySelector("body").appendChild(dialog);
-        dialog.showModal();
+        diaporamaDiv.appendChild(backDiapo);
+        diaporamaDiv.addEventListener("click", gThis.fullScreen);
+        document.querySelector("body").appendChild(diaporamaDiv);
 
-        setTimeout(() => {
-            imgDiv.classList.add("fade");
-        }, 0);
-        // backDiapo.style.bottom = -window.scrollY + "px";
-        // backDiapo.style.top = window.scrollY + "px";
+        diaporamaDiv.click();
+    }
 
-        /*gThis.initShortcutsHelp(backDiapo, count);*/
+    fullScreen(e) {
+        const diaporamaDiv = e.currentTarget;
+        const imgDiv = diaporamaDiv.querySelector("#diaporamaImg");
+
+        diaporamaDiv.requestFullscreen().then(() => {
+            setTimeout(() => {
+                imgDiv.classList.add("fade");
+            }, 0);
+        });
     }
 
     nextImage() {
@@ -138,65 +142,6 @@ export class Diaporama {
         gThis.diaporamaIndex = (gThis.diaporamaIndex + 1) % gThis.diaporamaCount;
         gThis.setImage();
     }
-
-    /*initShortcutsHelp(back, count) {
-        const txt = {
-            'title': {
-                'fr': 'Raccourcis clavier',
-                'en': 'Keyboard shortcuts',
-                'de': 'Tastaturkürzel',
-                'es': 'Atajos de teclado',
-            },
-            'left': {
-                'fr': 'Image précédente',
-                'en': 'Previous image',
-                'de': 'Vorheriges Bild',
-                'es': 'Imagen anterior',
-            }
-            ,
-            'right': {
-                'fr': 'Image suivante',
-                'en': 'Next image',
-                'de': 'Nächstes Bild',
-                'es': 'Imagen siguiente',
-            }
-            ,
-            'escape': {
-                'fr': 'Quitter le diaporama',
-                'en': 'Quit diaporama',
-                'de': 'Diashow beenden',
-                'es': 'Salir de la presentación',
-            }
-        };
-        const navigation = document.createElement("div");
-        navigation.classList.add("navigation");
-        const help = document.createElement("div");
-        help.classList.add("help");
-        navigation.appendChild(help);
-        const mini = document.createElement("div");
-        mini.classList.add("mini");
-        mini.innerHTML = '<i class="fa-solid fa-circle-question"></i>';
-        mini.addEventListener("click", gThis.maximiseHelp);
-        help.appendChild(mini);
-        const maxi = document.createElement("div");
-        maxi.classList.add("maxi");
-        help.appendChild(maxi);
-        const title = document.createElement("div");
-        title.classList.add("title");
-        title.innerHTML = txt.title[gThis.locale];
-        maxi.appendChild(title);
-        if (count) {
-            gThis.addKey(maxi, "left", txt.left[gThis.locale]);
-            gThis.addKey(maxi, "right", txt.right[gThis.locale]);
-        }
-        gThis.addKey(maxi, "escape", txt.escape[gThis.locale]);
-        const close = document.createElement("div");
-        close.classList.add("close");
-        close.innerHTML = '<i class="fa-solid fa-circle-chevron-down"></i>';
-        close.addEventListener("click", gThis.minimiseHelp);
-        maxi.appendChild(close);
-        back.appendChild(navigation);
-    }*/
 
     prevImage() {
         gThis.thumbnailDeactivate(gThis.diaporamaIndex);
@@ -235,31 +180,20 @@ export class Diaporama {
     }
 
     closeDiaporama() {
-        const dialog = document.querySelector("dialog.diaporama");
+        const diaporamaDiv = document.querySelector(".diaporama");
         const backDiapo = document.querySelector(".back-diapo");
         const imgDiv = backDiapo.querySelector("img");
 
-        if (gThis.diaporamaCount > 1) {
-            for (let i = 0; i < gThis.diaporamaCount; i++) {
-                const selector = '.thumbnail[data-index="' + i + '"]'
-                const thumbnail = document.querySelector(selector);
-                thumbnail.removeEventListener("click", gThis.gotoImage);
-            }
-            const prevDiv = document.querySelector(".back-diapo").querySelector(".chevron.left").parentElement;
-            const nextDiv = document.querySelector(".back-diapo").querySelector(".chevron.right").parentElement;
-            prevDiv.removeEventListener("click", gThis.prevImage);
-            nextDiv.removeEventListener("click", gThis.nextImage);
-        }
-        document.removeEventListener("keydown", gThis.getKey);
-        document.body.style.overflow = 'unset';
-        setTimeout(() => {
-            imgDiv.classList.remove("fade");
-        }, 0);
-        setTimeout(() => {
-            dialog.close();
-            document.querySelector("body").removeChild(dialog);
-            // document.querySelector("body").removeChild(backDiapo);
-        }, 300);
+        document.exitFullscreen().then(() => {
+            document.removeEventListener("keydown", gThis.getKey);
+            document.body.style.overflow = 'unset';
+            setTimeout(() => {
+                imgDiv.classList.remove("fade");
+            }, 0);
+            setTimeout(() => {
+                document.querySelector("body").removeChild(diaporamaDiv);
+            }, 300);
+        });
     }
 
     getKey(e) {
@@ -270,27 +204,5 @@ export class Diaporama {
         } else if (e.key === "Escape") {
             gThis.closeDiaporama();
         }
-    }
-
-    minimiseHelp() {
-        const help = document.querySelector(".back-diapo").querySelector(".navigation").querySelector(".help");
-        help.classList.add("minimise");
-    }
-
-    maximiseHelp() {
-        const help = document.querySelector(".back-diapo").querySelector(".navigation").querySelector(".help");
-        help.classList.remove("minimise");
-    }
-
-    addKey(parent, name, txt) {
-        const key = document.createElement("div");
-        key.classList.add("key")
-        const img = document.createElement("img");
-        img.setAttribute("src", "/images/interface/key-" + name + ".png");
-        key.appendChild(img);
-        const text = document.createElement("div");
-        text.appendChild(document.createTextNode(txt));
-        key.appendChild(text);
-        parent.appendChild(key);
     }
 }
