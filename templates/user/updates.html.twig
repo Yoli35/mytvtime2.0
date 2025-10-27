@@ -27,6 +27,71 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>44ᵉ mise à jour : 27/10/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:heart') }}→ Add user favorites series page and menu link</div>
+                        <div class="details">Introduces a new route and controller action to display a user's favorite series, adds a repository method to fetch favorite series, and creates corresponding Twig templates for the favorites page and series cards. Updates the menu to include a link to the favorites page and adds a translation key for 'Series.favorites'.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update logic for displaying season finale label</div>
+                        <div class="details">Simplifies the condition for showing the 'Season finale' label by checking only the episode type. Removes the previous logic that also checked episode number and season count.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Extend vote range and adjust vote list width</div>
+                        <div class="details">Increased the vote options from 10 to 12 in the Season.js component and updated the max-width of the vote list in series.scss to accommodate the additional options.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:api') }}→ Refactor API admin tool to load modules via AJAX</div>
+                        <div class="details">Moved API modules form markup to a new Twig partial and now load it dynamically via a new /admin/api/modules endpoint. Updated the JavaScript to fetch module data and render the form asynchronously, simplifying the main API admin route and removing embedded JSON from the page.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve season controls UI and update styles</div>
+                        <div class="details">Added separator elements and adjusted layout in the season controls section of the series season template. Updated SCSS to style new separators, improve button interactivity with cursor changes, and refine padding and color for better visual clarity. Also updated user label color for improved contrast.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:api') }}→ Add admin API explorer tool with UI and translations</div>
+                        <div class="details">Introduces a new admin API explorer accessible from the admin panel, including a new route, controller logic, Twig block, JavaScript for UI interactivity, and related SCSS updates. Adds French translations for API-related terms and endpoints, and updates the admin navigation and layout to support the new tool.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Skip episodes after finale in season processing</div>
+                        <div class="details">Added logic to skip processing episodes that come after a finale episode in the season. Also added a debug dump for season episodes to assist with troubleshooting.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Fix watch link title field and add translation key</div>
+                        <div class="details">Update WatchLink API to use 'name' instead of 'title' from request data. Add 'Watch on' translation key in MovieController.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}→ Update menu for unauthenticated users and add translation</div>
+                        <div class="details">Refactored the menu block to display a message and login/register links for users who are not authenticated. Added the French translation for 'Please log in to see more options' in messages.fr.yaml. Cleaned up commented code and improved menu structure.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-css3') }}→ Update TMDB logo path and improve series edit layout</div>
+                        <div class="details">Changed the TMDB logo image path to '/images/interface/the-movie-database.png' in both movie and series edit templates. Refactored the series edit template to better structure the title and abstract sections for improved readability and maintainability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:api') }}→ Refactor TMDBService to remove api_key from requests</div>
+                        <div class="details">Updated TMDBService to stop appending the api_key parameter to TMDB API requests, centralizing request construction in a new getResults() method. Adjusted controllers to build query strings without leading ampersands and updated getMovieExtras/getSeriesExtras to accept a single params string. Also commented out unused TV keywords/external IDs code in SeriesController.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:map-outline') }}→ Fix menu block and update map stylesheets inclusion</div>
+                        <div class="details">Corrects misplaced Twig endif in the menu block template. Comments out conditional inclusion of Leaflet and Mapbox stylesheets in the map index template, leaving only the main Mapbox stylesheet active.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve series page styles and status display</div>
+                        <div class="details">Adjusted JS to update text color for season info blocks based on image color lightness. Tweaked SCSS for lighter background on fact and info blocks, enhanced styling for 'status-returning', and removed explicit color from .infos. Commented out 'watched' status CSS in SeriesController and simplified status display in the series show template.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Refactor map style selection and rendering logic</div>
+                        <div class="details">Moved map style toggler logic from Twig template to Map.js for better separation of concerns. SeriesFilmingLocations API now renders the map block server-side and returns it in the response, which is injected client-side. Cleaned up Season.js to use the new mapBlock and removed redundant DOM manipulation. Twig template now conditionally renders map style list only if styles are present.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Refactor map initialization and add padding to gallery</div>
+                        <div class="details">Split map control and marker initialization into separate functions for better readability and maintainability in Map.js. Also, added horizontal padding to the .gallery-list class in map.scss for improved layout.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>43ᵉ mise à jour : 19/10/2025</h2>
                 <ul>
                     <li>
