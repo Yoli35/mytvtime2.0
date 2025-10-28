@@ -156,9 +156,19 @@ class PeopleController extends AbstractController
             $indexedMovieInfos[$info['tmdbId']] = $info;
         }
 
-        $standing = $this->tmdbService->getPerson($id, $request->getLocale(), "images,combined_credits");
+        $standing = $this->tmdbService->getPerson($id, $request->getLocale(), "images,combined_credits,translations");
         $people = json_decode($standing, true);
         $credits = $people['combined_credits'];
+        $translations = $people['translations']['translations'] ?? [];
+
+        if ($people['biography'] == '' && !empty($translations)) {
+            foreach ($translations as $translation) {
+                if ($translation['iso_639_1'] == 'en' && $translation['data']['biography'] != '') {
+                    $people['biography'] = $translation['data']['biography'] ?? $people['biography'];
+                    break;
+                }
+            }
+        }
 
         $peopleUserRating = $this->peopleUserRatingRepository->getPeopleUserRating($user->getId(), $id);
         $people['userRating'] = $peopleUserRating['rating'] ?? 0;
