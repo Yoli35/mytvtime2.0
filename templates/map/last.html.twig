@@ -58,23 +58,8 @@
                     </div>
                     {{ form_end(form) }}
                 </div>
-                <div class="help">?</div>
-                <div class="keyboard-help">
-                    <div>{{ 'Click the map to copy the latitude and longitude to the clipboard'|trans }}</div>
-                    <div></div>
-                    <div>= / +: {{ 'Increase the zoom level by 1'|trans }}.</div>
-                    <div>{{ block('shift') }} = / {{ block('shift') }} +: {{ 'Increase the zoom level by 2'|trans }}.</div>
-                    <div>-: {{ 'Decrease the zoom level by 1'|trans }}.</div>
-                    <div>{{ block('shift') }} -: {{ 'Decrease the zoom level by 2'|trans }}.</div>
-                    <div>{{ 'Arrow keys'|trans }}: {{ 'Pan by 100 pixels'|trans }}.</div>
-                    <div>{{ block('shift') }} {{ block('arrowRight') }}: {{ 'Increase the rotation by 15 degrees'|trans }}.</div>
-                    <div>{{ block('shift') }} {{ block('arrowLeft') }}: {{ 'Decrease the rotation by 15 degrees'|trans }}.</div>
-                    <div>{{ block('shift') }} {{ block('arrowUp') }}: {{ 'Increase the pitch by 10 degrees'|trans }}.</div>
-                    <div>{{ block('shift') }} {{ block('arrowDown') }}: {{ 'Decrease the pitch by 10 degrees'|trans }}.</div>
-                </div>
+                {{ include('_blocks/map/_help.html.twig') }}
             </div>
-
-{#            {{ include('_blocks/map/_thumbnails.html.twig', {styles: settings.data.styles}) }}#}
 
             <div class="all-series-locations">
                 <div class="series-locations">
@@ -98,21 +83,23 @@
                                         {% endfor %}
                                     </div>
                                 </div>
-                                <div class="series-location-title">
-                                    <div class="text">{{ loc.title ?? 'No title entry!!' }}</div>
-                                    <div class="show-location">
-                                        <!-- Lien vers Google Maps -->
-                                        <a href="https://www.google.com/maps?q={{ loc.latitude }},{{ loc.longitude }}" target="_blank">
-                                            {{ ux_icon('logos:google-maps', {height: '36px', width: '36px'}) }}
-                                        </a>
-                                        <!-- Center location on map -->
-                                        <div class="target-map" data-title="{{ 'Center the map on this location'|trans }}" data-loc-id="{{ loc.id }}" data-lat="{{ loc.latitude }}" data-lng="{{ loc.longitude }}">
-                                            {{ ux_icon('mdi:crosshairs-gps', {height: '36px', width: '36px'}) }}
+                                <div class="series-location-infos">
+                                    <div class="series-location-title">
+                                        <div class="text">{{ loc.title ?? 'No title entry!!' }}</div>
+                                        <div class="show-location">
+                                            <!-- Lien vers Google Maps -->
+                                            <a href="https://www.google.com/maps?q={{ loc.latitude }},{{ loc.longitude }}" target="_blank">
+                                                {{ ux_icon('logos:google-maps', {height: '36px', width: '36px'}) }}
+                                            </a>
+                                            <!-- Center location on map -->
+                                            <div class="target-map" data-title="{{ 'Center the map on this location'|trans }}" data-loc-id="{{ loc.id }}" data-lat="{{ loc.latitude }}" data-lng="{{ loc.longitude }}">
+                                                {{ ux_icon('mdi:crosshairs-gps', {height: '36px', width: '36px'}) }}
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="series-location-location">{{ loc.location }}</div>
+                                    <div class="series-location-description">{{ loc.description }}</div>
                                 </div>
-                                <div class="series-location-location">{{ loc.location }}</div>
-                                <div class="series-location-description">{{ loc.description }}</div>
                             </div>
                         {% endfor %}
                     </div>

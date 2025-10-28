@@ -16,12 +16,6 @@
 {#    {% endif %}#}
 {% endblock %}
 
-{% block shift %}{{ ux_icon('mdi:apple-keyboard-shift') }}{% endblock %}
-{% block arrowUp %}{{ ux_icon('mdi:arrow-up') }}{% endblock %}
-{% block arrowDown %}{{ ux_icon('mdi:arrow-down') }}{% endblock %}
-{% block arrowRight %}{{ ux_icon('mdi:arrow-right') }}{% endblock %}
-{% block arrowLeft %}{{ ux_icon('mdi:arrow-left') }}{% endblock %}
-
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid">
@@ -69,20 +63,7 @@
                         </select>
                     </label>
                 </h2>
-                <div class="help">?</div>
-                <div class="keyboard-help">
-                    <div>{{ 'Click the map to copy the latitude and longitude to the clipboard'|trans }}</div>
-                    <div></div>
-                    <div>= / +: {{ 'Increase the zoom level by 1'|trans }}.</div>
-                    <div>{{ block('shift') }} = / {{ block('shift') }} +: {{ 'Increase the zoom level by 2'|trans }}.</div>
-                    <div>-: {{ 'Decrease the zoom level by 1'|trans }}.</div>
-                    <div>{{ block('shift') }} -: {{ 'Decrease the zoom level by 2'|trans }}.</div>
-                    <div>{{ 'Arrow keys'|trans }}: {{ 'Pan by 100 pixels'|trans }}.</div>
-                    <div>{{ block('shift') }} {{ block('arrowRight') }}: {{ 'Increase the rotation by 15 degrees'|trans }}.</div>
-                    <div>{{ block('shift') }} {{ block('arrowLeft') }}: {{ 'Decrease the rotation by 15 degrees'|trans }}.</div>
-                    <div>{{ block('shift') }} {{ block('arrowUp') }}: {{ 'Increase the pitch by 10 degrees'|trans }}.</div>
-                    <div>{{ block('shift') }} {{ block('arrowDown') }}: {{ 'Decrease the pitch by 10 degrees'|trans }}.</div>
-                </div>
+                {{ include('_blocks/map/_help.html.twig') }}
             </div>
 
             <div class="series-location-selected" style="display: none">{{ selectedFilmingLocation }}</div>
@@ -127,17 +108,19 @@
                                             {% endfor %}
                                         </div>
                                     </div>
-                                    <div class="series-location-title">
-                                        <div class="text">{{ loc.location ?? 'No title entry!!' }}</div>
-                                        <!-- Lien vers Google Maps -->
-                                        <div class="google-maps">
-                                            <a href="https://www.google.com/maps?q={{ loc.latitude }},{{ loc.longitude }}" target="_blank">
-                                                {{ ux_icon('logos:google-maps', {height: '36px', width: '36px'}) }}
-                                            </a>
+                                    <div class="series-location-infos">
+                                        <div class="series-location-title">
+                                            <div class="text">{{ loc.title ?? 'No title entry!!' }}</div>
+                                            <!-- Lien vers Google Maps -->
+                                            <div class="google-maps">
+                                                <a href="https://www.google.com/maps?q={{ loc.latitude }},{{ loc.longitude }}" target="_blank">
+                                                    {{ ux_icon('logos:google-maps', {height: '36px', width: '36px'}) }}
+                                                </a>
+                                            </div>
                                         </div>
+                                        <div class="series-location-location">{{ loc.location }}</div>
+                                        <div class="series-location-description">{{ loc.description }}</div>
                                     </div>
-                                    <div class="series-location-location">{{ loc.location }}</div>
-                                    <div class="series-location-description">{{ loc.description }}</div>
                                 </div>
                             {% endfor %}
                         </div>
