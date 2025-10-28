@@ -319,6 +319,7 @@ class SeriesController extends AbstractController
 
         $series = array_map(function ($s) {
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $this->imageService->saveImage("backdrops", $s['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
             return $s;
         }, $this->userSeriesRepository->favoriteSeries($user, $locale, 1, -1));
 

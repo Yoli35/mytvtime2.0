@@ -185,6 +185,8 @@ class UserSeriesRepository extends ServiceEntityRepository
                        IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
                        IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
                        s.`poster_path`                                                           as poster_path,
+                       s.`backdrop_path`                                                         as backdrop_path,
+                       s.overview                                                                as overview,
                        s.`first_air_date`                                                        as final_air_date
                 FROM `user_series` us
                     INNER JOIN `series` s ON us.`series_id`=s.`id`
