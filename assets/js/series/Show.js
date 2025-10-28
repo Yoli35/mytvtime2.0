@@ -91,10 +91,10 @@ export class Show {
         this.lang = document.documentElement.lang;
         this.toolTips = new ToolTips();
         this.flashMessage = new FlashMessage();
-        this.init();
     }
 
-    init() {
+    init(menu) {
+        this.menu = menu;
         /** @var {Globs} */
         const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
         const svgs = document.querySelector('div#svgs');
@@ -849,12 +849,35 @@ export class Show {
         const addVideoDialog = document.querySelector('.add-video-dialog');
         const addVideoCancelButton = addVideoDialog.querySelector('button[name="cancel"]');
 
+        /******************************************************************************
+         * Add a person to the cast - Search input                                    *
+         ******************************************************************************/
+        this.addCastInit();
+
         addVideoButton.addEventListener('click', () => {
             addVideoDialog.showModal();
         });
         addVideoCancelButton.addEventListener('click', () => {
             addVideoDialog.close();
         });
+    }
+
+    addCastInit() {
+        const peopleSearchBlockDiv = document.querySelector('.cast-search-block');
+        if (peopleSearchBlockDiv) {
+            const addCastButton = document.querySelector('.add-cast-button');
+            const peopleSearchInput = document.getElementById('cast-search');
+
+            peopleSearchInput.addEventListener("input", this.menu.searchFetch);
+            peopleSearchInput.addEventListener("keydown", this.menu.searchMenuNavigate);
+
+            addCastButton.addEventListener('click', (e) => {
+                peopleSearchBlockDiv.classList.toggle('active');
+                if (peopleSearchBlockDiv.classList.contains('active')) {
+                    peopleSearchInput.focus();
+                }
+            });
+        }
     }
 
     fetchSeriesImages(dialog, tmdbId, backdrops, posters) {

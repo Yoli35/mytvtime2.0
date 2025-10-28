@@ -172,7 +172,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const userSeriesShow = document.querySelector(".user-series-show");
     if (userSeriesShow) {
-        new Show();
+        const show = new Show();
+        show.init(menu);
     }
 
     const userAlbumShow = document.querySelector(".album-page");

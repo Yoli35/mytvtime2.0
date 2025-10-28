@@ -852,6 +852,10 @@ class SeriesController extends AbstractController
     #[Route('/show/{id}-{slug}', name: 'show', requirements: ['id' => Requirement::DIGITS])]
     public function show(Request $request, Series $series, string $slug): Response
     {
+        $message = $request->get('message');
+        if ($message) {
+            $this->addFlash('info', $message);
+        }
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $country = $user->getCountry() ?? 'FR';
@@ -1712,11 +1716,18 @@ class SeriesController extends AbstractController
         // TODO: implement cast editing
         $people = json_decode($this->tmdbService->getPerson($peopleId, 'en-US'), true);
 
-        return $this->redirectToRoute('app_series_season', [
+        if ($seasonNumber) {
+            return $this->redirectToRoute('app_series_season', [
+                'id' => $series->getId(),
+                'slug' => $series->getSlug(),
+                'seasonNumber' => $seasonNumber,
+                'message' => 'Season cast addition not yet implemented. People: ' . $people['name'],
+            ]);
+        }
+        return $this->redirectToRoute('app_series_show', [
             'id' => $series->getId(),
             'slug' => $series->getSlug(),
-            'seasonNumber' => $seasonNumber,
-            'message' => 'Cast addition not yet implemented. People: ' . $people['name'],
+            'message' => 'Series cast addition not yet implemented. People: ' . $people['name'],
         ]);
     }
 

@@ -636,12 +636,15 @@
                     </div>
                     {% if tv.credits.cast|length %}
                         <h3>{{ 'Cast'|trans }}</h3>
-                        <div class="cast">
-                            <div class="wrapper">
-                                {% for people in tv.credits.cast %}
-                                    {{ include('_blocks/series/_people.html.twig', { people: people, role: people.character }) }}
-                                {% endfor %}
+                        <div class="cast-and-name">
+                            <div class="cast">
+                                <div class="wrapper">
+                                    {% for people in tv.credits.cast %}
+                                        {{ include('_blocks/series/_people.html.twig', { people: people, role: people.character }) }}
+                                    {% endfor %}
+                                </div>
                             </div>
+                            {{ include('_blocks/series/_cast-buttons.html.twig', {localized_name: tv.localized_name, name: series.name, seriesId: series.id, seasonNumber: 0}) }}
                         </div>
                     {% endif %}
 
