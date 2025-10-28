@@ -15,6 +15,7 @@ use App\Entity\Series;
 use App\Entity\SeriesAdditionalOverview;
 use App\Entity\SeriesBroadcastDate;
 use App\Entity\SeriesBroadcastSchedule;
+use App\Entity\SeriesCast;
 use App\Entity\SeriesExternal;
 use App\Entity\SeriesImage;
 use App\Entity\SeriesLocalizedName;
@@ -37,11 +38,13 @@ use App\Repository\FilmingLocationImageRepository;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\KeywordRepository;
 use App\Repository\NetworkRepository;
+use App\Repository\PeopleRepository;
 use App\Repository\PeopleUserPreferredNameRepository;
 use App\Repository\SeasonLocalizedOverviewRepository;
 use App\Repository\SeriesAdditionalOverviewRepository;
 use App\Repository\SeriesBroadcastDateRepository;
 use App\Repository\SeriesBroadcastScheduleRepository;
+use App\Repository\SeriesCastRepository;
 use App\Repository\SeriesExternalRepository;
 use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesLocalizedNameRepository;
@@ -67,7 +70,6 @@ use DateTimeInterface;
 use DateTimeZone;
 use DeepL\DeepLException;
 use Deepl\TextResult;
-use IntlTimeZone;
 use Psr\Log\LoggerInterface as MonologLogger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -88,6 +90,7 @@ use Twig\Extra\Intl\IntlExtension;
 class SeriesController extends AbstractController
 {
     private bool $reloadUserEpisodes = false;
+    private string $message = '';
 
     public function __construct(
         private readonly DateService                        $dateService,
@@ -104,11 +107,14 @@ class SeriesController extends AbstractController
         private readonly KeywordService                     $keywordService,
         private readonly MonologLogger                      $logger,
         private readonly NetworkRepository                  $networkRepository,
+        private readonly PeopleController                   $peopleController,
+        private readonly PeopleRepository                   $peopleRepository,
         private readonly PeopleUserPreferredNameRepository  $peopleUserPreferredNameRepository,
         private readonly SeasonLocalizedOverviewRepository  $seasonLocalizedOverviewRepository,
         private readonly SeriesAdditionalOverviewRepository $seriesAdditionalOverviewRepository,
         private readonly SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
         private readonly SeriesBroadcastScheduleRepository  $seriesBroadcastScheduleRepository,
+        private readonly SeriesCastRepository               $seriesCastRepository,
         private readonly SeriesExternalRepository           $seriesExternalRepository,
         private readonly SeriesImageRepository              $seriesImageRepository,
         private readonly SeriesLocalizedNameRepository      $seriesLocalizedNameRepository,
@@ -854,7 +860,7 @@ class SeriesController extends AbstractController
     {
         $message = $request->get('message');
         if ($message) {
-            $this->addFlash('info', $message);
+            $this->addFlash('info', $this->message);
         }
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
@@ -880,7 +886,7 @@ class SeriesController extends AbstractController
         if (!$tv) {
             $series->setUpdates(['Series not found']);
             $noTv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($locale);
-            $noTv['credits'] = $this->castAndCrew($tv);
+            $noTv['credits'] = $this->castAndCrew($tv, $series);
             $noTv['localized_name'] = $series->getLocalizedName($locale);
             $noTv['localized_overviews'] = $series->getLocalizedOverviews($locale);
             $noTv['seasons'] = $this->getUserSeasons($series, $userEpisodes);
@@ -923,7 +929,7 @@ class SeriesController extends AbstractController
         $userVotes = $this->getUserVotes($tv, $userEpisodes);
 
         $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($locale);
-        $tv['credits'] = $this->castAndCrew($tv);
+        $tv['credits'] = $this->castAndCrew($tv, $series);
         $tv['translations'] = $this->getTranslations($tv, $user);
         $tv['localized_name'] = $this->getTvLocalizedName($tv, $series, $locale);
         $tv['localized_overviews'] = $series->getLocalizedOverviews($locale);
@@ -1460,7 +1466,7 @@ class SeriesController extends AbstractController
     {
         $message = $request->get('message');
         if ($message) {
-            $this->addFlash('info', $message);
+            $this->addFlash('info', $this->message);
         }
 
         $user = $this->getUser();
@@ -1504,7 +1510,7 @@ class SeriesController extends AbstractController
         $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
         $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
 
-        $season['credits'] = $this->castAndCrew($season);
+        $season['credits'] = $this->castAndCrew($season, $series);
         $season['watch/providers'] = $this->watchProviders($season, $country);
         if ($season['overview'] == "") {
             $season['overview'] = $series->getOverview();
@@ -1715,19 +1721,33 @@ class SeriesController extends AbstractController
     {
         // TODO: implement cast editing
         $people = json_decode($this->tmdbService->getPerson($peopleId, 'en-US'), true);
+        $peopleDb = $this->peopleRepository->findOneBy(['tmdbId' => $peopleId]);
+        if (!$peopleDb) {
+            $peopleDb = $this->peopleController->savePeople($people);
+        }
+        $seriesCast = $this->seriesCastRepository->findOneBy(['series' => $series, 'people' => $peopleDb]);
+        if (!$seriesCast) {
+            $seriesCast = new SeriesCast($series, $peopleDb, $seasonNumber);
+            $this->seriesCastRepository->save($seriesCast, true);
+            $this->message = $people['name'] . ' has been added to ';
+        } else {
+            $this->message = $people['name'] . ' is already in ';
+        }
 
         if ($seasonNumber) {
+            $this->message = $this->translator->trans($this->message . 'season cast');
             return $this->redirectToRoute('app_series_season', [
                 'id' => $series->getId(),
                 'slug' => $series->getSlug(),
                 'seasonNumber' => $seasonNumber,
-                'message' => 'Season cast addition not yet implemented. People: ' . $people['name'],
+                'message' => true,
             ]);
         }
+        $this->message = $this->translator->trans($this->message . 'series cast');
         return $this->redirectToRoute('app_series_show', [
             'id' => $series->getId(),
             'slug' => $series->getSlug(),
-            'message' => 'Series cast addition not yet implemented. People: ' . $people['name'],
+            'message' => true,
         ]);
     }
 
@@ -3770,11 +3790,11 @@ class SeriesController extends AbstractController
         if ($newEpisodeCount) {
             $this->userEpisodeRepository->flush();
         }
-            $epIds = $tvSeason['episodes'] ? array_map(fn($e) => $e['id'], $tvSeason['episodes']) : [];
-            $ueIds = array_column($this->userEpisodeRepository->getSeasonEpisodeIds($userSeries->getId(), $seasonNumber), 'episode_id');
-            $removedEpisodeIds = array_values(array_diff($ueIds, $epIds));
-            $updatedEpisodeIds = array_values(array_intersect($ueIds, $epIds));
-            $removedEpisodeCount = count($removedEpisodeIds);
+        $epIds = $tvSeason['episodes'] ? array_map(fn($e) => $e['id'], $tvSeason['episodes']) : [];
+        $ueIds = array_column($this->userEpisodeRepository->getSeasonEpisodeIds($userSeries->getId(), $seasonNumber), 'episode_id');
+        $removedEpisodeIds = array_values(array_diff($ueIds, $epIds));
+        $updatedEpisodeIds = array_values(array_intersect($ueIds, $epIds));
+        $removedEpisodeCount = count($removedEpisodeIds);
 //            dump([
 //                'seasonNumber' => $seasonNumber,
 //                'epIds' => $epIds,
@@ -3782,32 +3802,32 @@ class SeriesController extends AbstractController
 //                'removedEpisodeIds' => $removedEpisodeIds,
 //                'updatedEpisodeIds' => $updatedEpisodeIds,
 //            ]);
-            if ($removedEpisodeCount) {
+        if ($removedEpisodeCount) {
             if ($removedEpisodeCount == 1) {
                 $this->addFlash('info', $this->translator->trans('An episode has been removed from the series (%id%)', ['%id%' => $removedEpisodeIds[0]]));
             } else {
                 $this->addFlash('info', $this->translator->trans('%count% episodes have been removed from the series (%list%)', ['%count%' => $removedEpisodeCount, '%list%' => implode(', ', $removedEpisodeIds)]));
             }
-                $this->userEpisodeRepository->removeByEpisodeIds($userSeries, $removedEpisodeIds);
-                $this->userEpisodeRepository->flush();
-                $this->reloadUserEpisodes = true;
+            $this->userEpisodeRepository->removeByEpisodeIds($userSeries, $removedEpisodeIds);
+            $this->userEpisodeRepository->flush();
+            $this->reloadUserEpisodes = true;
 
-                // Get TMDB infos for remaining episodes
-                foreach ($updatedEpisodeIds as $episodeId) {
-                    /** @var UserEpisode $dbUserEpisode */
-                    $dbUserEpisode = array_find($userEpisodes, fn($e) => $e->getEpisodeId() == $episodeId);
-                    if ($dbUserEpisode) {
-                        $episode = array_find($tvSeason['episodes'], fn($e) => $e['id'] == $episodeId);
-                        if ($episode) {
-                            $airDate = $episode['air_date'] ? $this->date($episode['air_date'], true) : null;
-                            $dbUserEpisode->setAirDate($airDate);
-                            $dbUserEpisode->setEpisodeNumber($episode['episode_number']);
-                            $this->userEpisodeRepository->save($dbUserEpisode);
-                            $this->addFlash('info', $this->translator->trans('Episode %number% has been updated', ['%number%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
-                        }
+            // Get TMDB infos for remaining episodes
+            foreach ($updatedEpisodeIds as $episodeId) {
+                /** @var UserEpisode $dbUserEpisode */
+                $dbUserEpisode = array_find($userEpisodes, fn($e) => $e->getEpisodeId() == $episodeId);
+                if ($dbUserEpisode) {
+                    $episode = array_find($tvSeason['episodes'], fn($e) => $e['id'] == $episodeId);
+                    if ($episode) {
+                        $airDate = $episode['air_date'] ? $this->date($episode['air_date'], true) : null;
+                        $dbUserEpisode->setAirDate($airDate);
+                        $dbUserEpisode->setEpisodeNumber($episode['episode_number']);
+                        $this->userEpisodeRepository->save($dbUserEpisode);
+                        $this->addFlash('info', $this->translator->trans('Episode %number% has been updated', ['%number%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
                     }
                 }
             }
+        }
 
         return $newEpisodeCount;
     }
@@ -3984,11 +4004,20 @@ class SeriesController extends AbstractController
         return $overview;
     }
 
-    public function castAndCrew($tv): array
+    public function castAndCrew(array $tv, Series $series): array
     {
         if (!$tv) {
             return ['cast' => [], 'crew' => [], 'guest_stars' => []];
         }
+        $seriesCastArr = array_map(function ($sc) {
+            $sc['original_name'] = '';
+            $sc['popularity'] = 0;
+            $sc['character'] = '';
+            $sc['credit_id'] = '';
+            $sc['order'] = 0;
+            return $sc;
+        }, $this->seriesCastRepository->getSeriesCatsBySeriesId($series->getId()));
+        $tv['credits']['cast'] = array_merge($tv['credits']['cast'] ?? [], $seriesCastArr);
         $peopleIds = array_column($tv['credits']['cast'], 'id');
         $peopleIds = array_merge($peopleIds, array_column($tv['credits']['guest_stars'] ?? [], 'id'));
         $peopleIds = array_merge($peopleIds, array_column($tv['credits']['crew'] ?? [], 'id'));
@@ -4018,7 +4047,7 @@ class SeriesController extends AbstractController
                 $cast['slug'] = 'person-' . $cast['id'];
             }
             return $cast;
-        }, $tv['credits']['cast'] ?? []);
+        }, $tv['credits']['cast']);
         $tv['credits']['guest_stars'] = array_map(function ($cast) use ($slugger, $profileUrl, $preferredNames) {
             $cast['profile_path'] = $cast['profile_path'] ? $profileUrl . $cast['profile_path'] : null; // w185
             $cast['preferred_name'] = null;

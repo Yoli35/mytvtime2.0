@@ -118,6 +118,12 @@ class Series
     #[ORM\OneToMany(targetEntity: SeriesVideo::class, mappedBy: 'series', orphanRemoval: true)]
     private Collection $seriesVideos;
 
+    /**
+     * @var Collection<int, SeriesCast>
+     */
+    #[ORM\OneToMany(targetEntity: SeriesCast::class, mappedBy: 'series')]
+    private Collection $seriesCasts;
+
     public function __construct()
     {
         $this->networks = new ArrayCollection();
@@ -131,6 +137,7 @@ class Series
         $this->updates = [];
         $this->seriesVideos = new ArrayCollection();
         $this->watchProviders = new ArrayCollection();
+        $this->seriesCasts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -707,6 +714,36 @@ class Series
     public function setOriginalLanguage(?string $originalLanguage): static
     {
         $this->originalLanguage = $originalLanguage;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SeriesCast>
+     */
+    public function getSeriesCasts(): Collection
+    {
+        return $this->seriesCasts;
+    }
+
+    public function addSeriesCast(SeriesCast $seriesCast): static
+    {
+        if (!$this->seriesCasts->contains($seriesCast)) {
+            $this->seriesCasts->add($seriesCast);
+            $seriesCast->setSeries($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSeriesCast(SeriesCast $seriesCast): static
+    {
+        if ($this->seriesCasts->removeElement($seriesCast)) {
+            // set the owning side to null (unless already changed)
+            if ($seriesCast->getSeries() === $this) {
+                $seriesCast->setSeries(null);
+            }
+        }
 
         return $this;
     }

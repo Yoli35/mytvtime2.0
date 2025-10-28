@@ -291,6 +291,10 @@ Episode: Épisode
 Episodes of the day: Épisodes du jour
 Episodes: Épisodes
 'An episode has been removed from the series (%id%)': 'Un épisode a été supprimé de la série (%id%)'
+'%cast% has been added to the season cast': '%cast% a été ajoutés à la distribution de la saison'
+'%cast% has been added to the series cast': '%cast% a été ajoutés à la distribution de la série'
+'%cast% is already in the season cast': '%cast% fait déjà partie de la distribution de la saison'
+'%cast% is already in the series cast': '%cast% fait déjà partie de la distribution de la série'
 '%count% episodes have been removed from the series (%list%)': '%count% épisodes ont été supprimés de la série (%list%)'
 'Episode %number% has been updated': "L'épisode %number% a été mis à jour"
 Your episodes have been updated according to the series information.: Vos épisodes ont été mis à jour selon les informations de la série.

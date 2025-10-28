@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\PeopleRepository;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -55,6 +57,12 @@ class People
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $profilePath;
 
+    /**
+     * @var Collection<int, SeriesCast>
+     */
+    #[ORM\OneToMany(targetEntity: SeriesCast::class, mappedBy: 'people')]
+    private Collection $seriesCasts;
+
     public function __construct(
         bool               $adult,
         array              $alsoKnownAs,
@@ -84,6 +92,7 @@ class People
         $this->name = $name;
         $this->placeOfBirth = $placeOfBirth;
         $this->profilePath = $profilePath;
+        $this->seriesCasts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -267,5 +276,35 @@ class People
             'place_of_birth' => $this->getPlaceOfBirth(),
             'profile_path' => $this->getProfilePath(),
         ];
+    }
+
+    /**
+     * @return Collection<int, SeriesCast>
+     */
+    public function getSeriesCasts(): Collection
+    {
+        return $this->seriesCasts;
+    }
+
+    public function addSeriesCast(SeriesCast $seriesCast): static
+    {
+        if (!$this->seriesCasts->contains($seriesCast)) {
+            $this->seriesCasts->add($seriesCast);
+            $seriesCast->setPeople($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSeriesCast(SeriesCast $seriesCast): static
+    {
+        if ($this->seriesCasts->removeElement($seriesCast)) {
+            // set the owning side to null (unless already changed)
+            if ($seriesCast->getPeople() === $this) {
+                $seriesCast->setPeople(null);
+            }
+        }
+
+        return $this;
     }
 }

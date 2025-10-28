@@ -3341,6 +3341,13 @@ h2 {
         }
     }
 
+    .add-cast-button {
+        svg {
+            height: 4rem;
+            width: 4rem;
+        }
+    }
+
     .add-cast-button, .add-crew-button {
         background-color: var(--orange-50);
         color: var(--ardoise-10);
