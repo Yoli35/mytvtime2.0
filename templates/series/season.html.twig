@@ -375,13 +375,7 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        <div class="series-name">
-                            {% if season.series_localized_name %}
-                                <span class="localization-span">{{ season.series_localized_name.name }}</span>
-                            {% else %}
-                                <span class="name-span">{{ series.name }}</span>
-                            {% endif %}
-                        </div>
+                        {{ include('_blocks/series/_cast-buttons.html.twig', {localized_name: season.series_localized_name, name: series.name, seriesId: series.id, seasonNumber: season.season_number}) }}
                     </div>
                 {% endif %}
 
@@ -415,13 +409,7 @@
                                     {% endfor %}
                                 </div>
                             </div>
-                            <div class="series-name">
-                                {% if season.series_localized_name %}
-                                    <span class="localization-span">{{ season.series_localized_name.name }}</span>
-                                {% else %}
-                                    <span class="name-span">{{ series.name }}</span>
-                                {% endif %}
-                            </div>
+                            {{ include('_blocks/series/_cast-buttons.html.twig', {localized_name: season.series_localized_name, name: series.name, seriesId: series.id, seasonNumber: season.season_number}) }}
                         </div>
                     {% endif %}
                 {% endif %}

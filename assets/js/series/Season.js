@@ -125,7 +125,8 @@ export class Season {
         this.toolTips = new ToolTips();
     }
 
-    init() {
+    init(menu) {
+        this.menu = menu;
         /******************************************************************************
          * Adjust Vote section colors according to the brightness of the background   *
          ******************************************************************************/
@@ -408,6 +409,11 @@ export class Season {
             })
         });
 
+        /******************************************************************************
+         * Add a person to the cast - Search input                                    *
+         ******************************************************************************/
+        this.addCastInit();
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 const list = document.querySelector('.list');
@@ -608,6 +614,24 @@ export class Season {
         /*if (type === 'overview') {
             form.scrollIntoView({block: "end", inline: "nearest", behavior: 'smooth'});
         }*/
+    }
+
+    addCastInit() {
+        const peopleSearchBlockDiv = document.querySelector('.cast-search-block');
+        if (peopleSearchBlockDiv) {
+            const addCastButton = document.querySelector('.add-cast-button');
+            const peopleSearchInput = document.getElementById('cast-search');
+
+            peopleSearchInput.addEventListener("input", this.menu.searchFetch);
+            peopleSearchInput.addEventListener("keydown", this.menu.searchMenuNavigate);
+
+            addCastButton.addEventListener('click', (e) => {
+                peopleSearchBlockDiv.classList.toggle('active');
+                if (peopleSearchBlockDiv.classList.contains('active')) {
+                    peopleSearchInput.focus();
+                }
+            });
+        }
     }
 
     addEpisode(e, episodeId = null) {

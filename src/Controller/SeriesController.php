@@ -1454,6 +1454,11 @@ class SeriesController extends AbstractController
     #[Route('/season/{id}-{slug}/{seasonNumber}', name: 'season', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS])]
     public function showSeason(Request $request, Series $series, int $seasonNumber, string $slug): Response
     {
+        $message = $request->get('message');
+        if ($message) {
+            $this->addFlash('info', $message);
+        }
+
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $country = $user->getCountry() ?? 'FR';
@@ -1656,7 +1661,6 @@ class SeriesController extends AbstractController
         ]);
     }
 
-//    #[IsGranted('ROLE_USER')]
     #[Route('/overview/add/edit/{id}', name: 'add_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function addOverview(Request $request, int $id): Response
     {
@@ -1699,6 +1703,20 @@ class SeriesController extends AbstractController
             'success' => true,
             'id' => $overviewId,
             'source' => $source ? ['id' => $source->getId(), 'name' => $source->getName(), 'path' => $source->getPath(), 'logoPath' => $source->getLogoPath()] : null,
+        ]);
+    }
+
+    #[Route('/cast/add/{id}/{seasonNumber}/{peopleId}', name: 'add_cast', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS, 'peopleId' => Requirement::DIGITS], methods: ['GET'])]
+    public function addCast(Request $request, Series $series, int $seasonNumber, int $peopleId): Response
+    {
+        // TODO: implement cast editing
+        $people = json_decode($this->tmdbService->getPerson($peopleId, 'en-US'), true);
+
+        return $this->redirectToRoute('app_series_season', [
+            'id' => $series->getId(),
+            'slug' => $series->getSlug(),
+            'seasonNumber' => $seasonNumber,
+            'message' => 'Cast addition not yet implemented. People: ' . $people['name'],
         ]);
     }
 

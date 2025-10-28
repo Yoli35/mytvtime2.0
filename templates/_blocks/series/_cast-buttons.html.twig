@@ -1,0 +1,14 @@
+
+<div class="cast-buttons">
+    <div class="series-name">
+        {% if localized_name.name %}
+            <span class="localization-span">{{ localized_name.name }}</span>
+        {% else %}
+            <span class="name-span">{{ name }}</span>
+        {% endif %}
+    </div>
+    <div class="add-cast-button">
+        {{ 'Add someone to the cast'|trans }}
+    </div>
+    {{ include('_blocks/people/_search.html.twig') }}
+</div>

@@ -437,6 +437,8 @@ export class Menu {
             .then(res => res.json())
             .then(json => {
                 // console.log(json);
+                const addCastBlock = searchInput.closest('.cast-search-block');
+                const isAddCastInput = searchType === 'people' && addCastBlock !== null;
                 const lis = ul.querySelectorAll('li');
                 lis.forEach(item => {
                     item.remove();
@@ -454,8 +456,15 @@ export class Menu {
                         //return; // On ne veut pas de collection
                     }
                     const a = document.createElement("a");
-                    let url = baseHref + gThis.hRefs[type] + result['id'];
-                    if (type !== 'movie' && type !== 'collection') url += '-' + gThis.toSlug(result[gThis.resultNames[type]]);
+                    let url;
+                    if (isAddCastInput) {
+                        const seriesId = addCastBlock.getAttribute('data-series-id');
+                        const seasonNumber = addCastBlock.getAttribute('data-season-number');
+                        url = baseHref + 'series/cast/add/' + seriesId + '/' + seasonNumber + '/' + result['id'];
+                    } else {
+                        url = baseHref + gThis.hRefs[type] + result['id'];
+                        if (type !== 'movie' && type !== 'collection') url += '-' + gThis.toSlug(result[gThis.resultNames[type]]);
+                    }
                     a.href = url;
                     const li = document.createElement("li");
                     li.setAttribute('data-title', result[gThis.resultNames[type]]);

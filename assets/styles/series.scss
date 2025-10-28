@@ -3249,9 +3249,63 @@ h2 {
         display: flex;
         gap: 1rem;
 
-        .series-name {
+        .cast-buttons {
             align-items: flex-end;
-            background-color: hsl(from var(--green-50) h s l / .5);
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            justify-content: center;
+
+            .cast-search-block {
+                display: flex;
+                font-size: 2rem;
+                height: 0;
+                justify-content: center;
+                margin-block: 2rem;
+                overflow: hidden;
+                padding-block: 0;
+                position: relative;
+                transition: all 0.3s ease-in-out;
+                width: 100%;
+
+                &.active {
+                    height: auto;
+                    overflow: visible;
+                    padding-block: .5rem;
+                }
+
+                label {
+                    align-items: center;
+                    display: flex;
+                    gap: .5rem;
+                    min-width: 25rem;
+                    width: 50%;
+
+                    input {
+                        appearance: none;
+                        background-color: var(--orange-30);
+                        border: none;
+                        border-radius: 2rem;
+                        color: var(--orange-90);
+                        font-size: 2rem;
+                        font-weight: 300;
+                        line-height: 1.25em;
+                        padding: .25rem 1rem;
+                        width: 100%;
+                    }
+                }
+
+                .search-results {
+                    min-width: 25rem;
+                    width: 50%;
+                    left: 50%;
+                    translate: -50% 2rem;
+                }
+            }
+        }
+
+        .series-name, .add-cast-button, .add-crew-button {
+            align-items: flex-end;
             border-radius: .5rem;
             display: flex;
             flex-direction: column;
@@ -3260,12 +3314,15 @@ h2 {
             gap: .5rem;
             justify-content: center;
             line-height: 1.25em;
-            margin-block: auto;
+            padding-block: 1rem;
             padding-inline: 1rem;
             position: relative;
             text-align: right;
             text-wrap: pretty;
-            max-width: 50%;
+        }
+
+        .series-name {
+            background-color: hsl(from var(--green-50) h s l / .5);
 
             span {
                 /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
@@ -3280,6 +3337,17 @@ h2 {
             .cast {
                 max-width: 100%;
                 width: fit-content;
+            }
+        }
+
+        .add-cast-button, .add-crew-button {
+            background-color: var(--orange-50);
+            color: var(--ardoise-10);
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+
+            &:hover {
+                background-color: var(--orange-40);
             }
         }
     }

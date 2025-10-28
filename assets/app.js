@@ -164,10 +164,9 @@ window.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        const seasonPage = document.querySelector("#series-season");
-        if (seasonPage) {
+        if (isSeasonPage) {
             const season = new Season();
-            season.init();
+            season.init(menu);
         }
     }
 
