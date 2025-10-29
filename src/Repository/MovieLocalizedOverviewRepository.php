@@ -24,4 +24,12 @@ class MovieLocalizedOverviewRepository extends ServiceEntityRepository
             $this->em->flush();
         }
     }
+
+    public function remove(?MovieLocalizedOverview $overview)
+    {
+        if ($overview) {
+            $this->em->remove($overview);
+            $this->em->flush();
+        }
+    }
 }

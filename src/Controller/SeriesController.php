@@ -771,52 +771,6 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    public function getTranslations(array $tv, ?User $user): ?array
-    {
-        if (!$user) {
-            $country = 'FR';
-            $locale = 'fr';
-        } else {
-            $country = $user->getCountry() ?? 'FR'; // user iso_3166_1
-            $locale = $user->getPreferredLanguage() ?? 'fr'; // user iso_639_1
-        }
-        $translations = $tv['translations']['translations'];
-        $translation = null;
-
-        foreach ($translations as $t) {
-            if ($t['iso_3166_1'] == $country && $t['iso_639_1'] == $locale) {
-                $translation = $t;
-                break;
-            }
-        }
-        if ($translation == null) {
-            foreach ($translations as $t) {
-                if ($t['iso_3166_1'] == $country) {
-                    $translation = $t;
-                    break;
-                }
-            }
-        }
-        if ($translation == null) {
-            foreach ($translations as $t) {
-                if ($t['iso_639_1'] == $locale) {
-                    $translation = $t;
-                    break;
-                }
-            }
-        }
-        // get en-Us if null
-        if ($translation == null) {
-            foreach ($translations as $t) {
-                if ($t['iso_3166_1'] == 'US' && $t['iso_639_1'] == 'en') {
-                    $translation = $t;
-                    break;
-                }
-            }
-        }
-        return $translation;
-    }
-
     #[IsGranted('ROLE_USER')]
     #[Route('/list/{id}/{seriesId}', name: 'list', requirements: ['id' => Requirement::DIGITS, 'showId' => Requirement::DIGITS])]
     public function list(Request $request, int $id, int $seriesId): Response
@@ -1018,6 +972,52 @@ class SeriesController extends AbstractController
             "videos",
             "watch/providers",
         ]), true);
+    }
+
+    public function getTranslations(array $tv, ?User $user): ?array
+    {
+        if (!$user) {
+            $country = 'FR';
+            $locale = 'fr';
+        } else {
+            $country = $user->getCountry() ?? 'FR'; // user iso_3166_1
+            $locale = $user->getPreferredLanguage() ?? 'fr'; // user iso_639_1
+        }
+        $translations = $tv['translations']['translations'];
+        $translation = null;
+
+        foreach ($translations as $t) {
+            if ($t['iso_3166_1'] == $country && $t['iso_639_1'] == $locale) {
+                $translation = $t;
+                break;
+            }
+        }
+        if ($translation == null) {
+            foreach ($translations as $t) {
+                if ($t['iso_3166_1'] == $country) {
+                    $translation = $t;
+                    break;
+                }
+            }
+        }
+        if ($translation == null) {
+            foreach ($translations as $t) {
+                if ($t['iso_639_1'] == $locale) {
+                    $translation = $t;
+                    break;
+                }
+            }
+        }
+        // get en-Us if null
+        if ($translation == null) {
+            foreach ($translations as $t) {
+                if ($t['iso_3166_1'] == 'US' && $t['iso_639_1'] == 'en') {
+                    $translation = $t;
+                    break;
+                }
+            }
+        }
+        return $translation;
     }
 
     private function getSeriesAround(?UserSeries $userSeries, string $locale): array
@@ -1653,51 +1653,6 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/overview/add/edit/{id}', name: 'add_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function addOverview(Request $request, int $id): Response
-    {
-        $serie = $this->seriesRepository->findOneBy(['id' => $id]);
-        $data = json_decode($request->getContent(), true);
-        $overviewId = $data['overviewId'];
-        $overviewId = $overviewId == "-1" ? null : intval($overviewId);
-        $overviewType = $data['type'];
-        $overview = $data['overview'];
-        $locale = $data['locale'];
-        $source = null;
-
-        if ($overviewType == "additional") {
-            $sourceId = $data['source'];
-            $source = $this->sourceRepository->findOneBy(['id' => $sourceId]);
-            if ($overviewId) {
-                $seriesAdditionalOverview = $this->seriesAdditionalOverviewRepository->findOneBy(['id' => $overviewId]);
-                $seriesAdditionalOverview->setOverview($overview);
-                $seriesAdditionalOverview->setSource($source);
-                $this->seriesAdditionalOverviewRepository->save($seriesAdditionalOverview, true);
-            } else {
-                $seriesAdditionalOverview = new SeriesAdditionalOverview($serie, $overview, $locale, $source);
-                $this->seriesAdditionalOverviewRepository->save($seriesAdditionalOverview, true);
-                $overviewId = $seriesAdditionalOverview->getId();
-            }
-        }
-        if ($overviewType == "localized") {
-            if ($overviewId) {
-                $seriesLocalizedOverview = $this->seriesLocalizedOverviewRepository->findOneBy(['id' => $overviewId]);
-                $seriesLocalizedOverview->setOverview($overview);
-                $this->seriesLocalizedOverviewRepository->save($seriesLocalizedOverview, true);
-            } else {
-                $seriesLocalizedOverview = new SeriesLocalizedOverview($serie, $overview, $locale);
-                $this->seriesLocalizedOverviewRepository->save($seriesLocalizedOverview, true);
-                $overviewId = $seriesLocalizedOverview->getId();
-            }
-        }
-
-        return $this->json([
-            'success' => true,
-            'id' => $overviewId,
-            'source' => $source ? ['id' => $source->getId(), 'name' => $source->getName(), 'path' => $source->getPath(), 'logoPath' => $source->getLogoPath()] : null,
-        ]);
-    }
-
     #[Route('/cast/add/{id}/{seasonNumber}/{peopleId}', name: 'add_cast', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS, 'peopleId' => Requirement::DIGITS], methods: ['GET'])]
     public function addCast(Request $request, Series $series, int $seasonNumber, int $peopleId): Response
     {
@@ -1737,33 +1692,6 @@ class SeriesController extends AbstractController
         return $this->redirectToRoute('app_series_show', [
             'id' => $series->getId(),
             'slug' => $series->getSlug(),
-        ]);
-    }
-
-    #[Route('/overview/delete/{id}', name: 'delete_overview', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function deleteOverview(Request $request, int $id): Response
-    {
-        $data = json_decode($request->getContent(), true);
-        $overviewType = $data['overviewType'];
-        if ($overviewType == "additional") {
-            $overview = $this->seriesAdditionalOverviewRepository->findOneBy(['id' => $id]);
-        } else {
-            $overview = $this->seriesLocalizedOverviewRepository->findOneBy(['id' => $id]);
-        }
-        if ($overview) {
-            $series = $overview->getSeries();
-            if ($overviewType == "additional") {
-                $series->removeSeriesAdditionalOverview($overview);
-                $this->seriesAdditionalOverviewRepository->remove($overview);
-            } else {
-                $series->removeSeriesLocalizedOverview($overview);
-                $this->seriesLocalizedOverviewRepository->remove($overview);
-            }
-            $this->seriesRepository->save($series, true);
-        }
-
-        return $this->json([
-            'success' => true,
         ]);
     }
 

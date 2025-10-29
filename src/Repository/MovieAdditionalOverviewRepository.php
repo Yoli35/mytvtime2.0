@@ -24,4 +24,12 @@ class MovieAdditionalOverviewRepository extends ServiceEntityRepository
             $this->em->flush();
         }
     }
+
+    public function remove(?MovieAdditionalOverview $overview): void
+    {
+        if ($overview) {
+            $this->em->remove($overview);
+            $this->em->flush();
+        }
+    }
 }

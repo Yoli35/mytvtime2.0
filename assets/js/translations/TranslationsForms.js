@@ -46,8 +46,7 @@ export class TranslationsForms {
         lnDelete?.addEventListener('click', function (event) {
             event.preventDefault();
 
-            fetch('/' + lang + '/' + mediaType + '/localized/name/delete/' + id,
-                {
+            fetch('/api/' + mediaType + '/name/remove/' + id, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -75,8 +74,7 @@ export class TranslationsForms {
             if (!name.value) {
                 name.nextElementSibling.textContent = gThis.translations['This field is required'];
             } else {
-                fetch('/' + lang + '/' + mediaType + '/localized/name/add/' + id,
-                    {
+                fetch('/api/' + mediaType + '/name/add/' + id, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -181,7 +179,7 @@ export class TranslationsForms {
                 locale: lang
             };
 
-            fetch('/' + lang + '/' + mediaType + '/overview/add/edit/' + id, {
+            fetch('/api/' + mediaType + '/overview/add/' + id, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -268,7 +266,7 @@ export class TranslationsForms {
 
             const overviewType = deleteOverviewForm.querySelector('#overview-type').value;
             const overviewId = deleteOverviewForm.querySelector('#overview-id').value;
-            fetch('/' + lang + '/' + mediaType + '/overview/delete/' + overviewId, {
+            fetch('/api/' + mediaType + '/overview/remove/' + overviewId, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
