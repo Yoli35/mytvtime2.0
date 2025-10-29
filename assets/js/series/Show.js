@@ -104,7 +104,6 @@ export class Show {
         const userSeriesId = jsonGlobsObject.userSeriesId;
         const translations = jsonGlobsObject.translations;
         const api = jsonGlobsObject.api;
-        /*console.log({api});*/
 
         this.filmingLocations = jsonGlobsObject.locations;
         // console.log({filmingLocations: this.filmingLocations});
@@ -295,23 +294,6 @@ export class Show {
         });
 
         /******************************************************************************
-         * Alternate schedule : l'épisode avec la date de diffusion la plus proche de *
-         * maintenant doit être visible.                                              *
-         ******************************************************************************/
-        /*const alternateSchedules = document.querySelectorAll('.alternate-schedule');
-        alternateSchedules.forEach(function (alternateSchedule) {
-            const firstFutureAirDay = alternateSchedule.querySelector('.future.air-day');
-            if (firstFutureAirDay){
-                firstFutureAirDay.scrollIntoView({behavior: 'smooth', block: 'center'});
-            } else {
-                const lastWatchedAirDay = alternateSchedule.querySelector('.air-day.watched:last-of-type');
-                if (lastWatchedAirDay) {
-                    lastWatchedAirDay.scrollIntoView({behavior: 'smooth', block: 'center'});
-                }
-            }
-        });*/
-
-        /******************************************************************************
          * User's actions: rating, pinned, favorite, remove this series               *
          ******************************************************************************/
         const userActions = document.querySelector('.user-actions');
@@ -487,20 +469,6 @@ export class Show {
         const submitRow = addLocationForm.querySelector('.form-row.submit-row');
         const scrollDownToSubmitDiv = addLocationDialog.querySelector('.scroll-down-to-submit');
         const scrollDownToSubmitButton = scrollDownToSubmitDiv.querySelector('button');
-        // console.log({imageInputs});
-        // Dev test
-        /*const locationInput = addLocationForm.querySelector('input[name="location"]');*/
-        /*locationInput.addEventListener('input', function () {
-            const location = this.value;
-            if (location.length === 4 && location === 'test') {
-                const descriptionInput = addLocationForm.querySelector('input[name="description"]');
-                descriptionInput.value = 'bla bla bla';
-                const latitudeInput = addLocationForm.querySelector('input[name="latitude"]');
-                latitudeInput.value = 48.8566;
-                const longitudeInput = addLocationForm.querySelector('input[name="longitude"]');
-                longitudeInput.value = 2.3522;
-            }
-        });*/
 
         // Lorsque le panneau devient trop haut la div "submit-row" disparait.
         // Si la div "submit-row" est hors du cadre, la div "scroll-down-to-submit" apparaît.
