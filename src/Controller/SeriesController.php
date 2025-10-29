@@ -102,14 +102,12 @@ class SeriesController extends AbstractController
         private readonly PeopleRepository                   $peopleRepository,
         private readonly PeopleUserPreferredNameRepository  $peopleUserPreferredNameRepository,
         private readonly SeasonLocalizedOverviewRepository  $seasonLocalizedOverviewRepository,
-        private readonly SeriesAdditionalOverviewRepository $seriesAdditionalOverviewRepository,
         private readonly SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
         private readonly SeriesBroadcastScheduleRepository  $seriesBroadcastScheduleRepository,
         private readonly SeriesCastRepository               $seriesCastRepository,
         private readonly SeriesExternalRepository           $seriesExternalRepository,
         private readonly SeriesImageRepository              $seriesImageRepository,
         private readonly SeriesLocalizedNameRepository      $seriesLocalizedNameRepository,
-        private readonly SeriesLocalizedOverviewRepository  $seriesLocalizedOverviewRepository,
         private readonly SeriesVideoRepository              $seriesVideoRepository,
         private readonly SeriesRepository                   $seriesRepository,
         private readonly SettingsRepository                 $settingsRepository,
@@ -1607,50 +1605,6 @@ class SeriesController extends AbstractController
             $quickLinks[$count - 1]['class'] .= ' bottom-right';
         }
         return ['items' => $quickLinks, 'count' => $count, 'itemPerLine' => $itemPerLine, 'lineCount' => $lineCount];
-    }
-
-    #[Route('/localized/name/add/{id}', name: 'add_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function addLocalizedName(Request $request, int $id): Response
-    {
-        $data = json_decode($request->getContent(), true);
-        $name = $data['name'];
-        $series = $this->seriesRepository->findOneBy(['id' => $id]);
-        $slugger = new AsciiSlugger();
-
-        $localizedName = $series->getLocalizedName($request->getLocale());
-        if ($localizedName) {
-            $localizedName->setName($name);
-            $localizedName->setSlug($slugger->slug($name));
-        } else {
-            $slug = $slugger->slug($name)->lower()->toString();
-            $localizedName = new SeriesLocalizedName($series, $name, $slug, $request->getLocale());
-        }
-        $this->seriesLocalizedNameRepository->save($localizedName, true);
-
-        return $this->json([
-            'ok' => true,
-        ]);
-    }
-
-    #[Route('/localized/name/delete/{id}', name: 'delete_localized_name', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function deleteLocalizedName(Request $request, int $id): Response
-    {
-        $data = json_decode($request->getContent(), true);
-        $locale = $data['locale'];
-        $series = $this->seriesRepository->findOneBy(['id' => $id]);
-        $slugger = new AsciiSlugger();
-
-        $localizedName = $series->getLocalizedName($locale);
-        if ($localizedName) {
-            $series->removeSeriesLocalizedName($localizedName);
-            $series->setSlug($slugger->slug($series->getName())->lower()->toString());
-            $this->seriesRepository->save($series, true);
-            $this->seriesLocalizedNameRepository->remove($localizedName);
-        }
-
-        return $this->json([
-            'ok' => true,
-        ]);
     }
 
     #[Route('/cast/add/{id}/{seasonNumber}/{peopleId}', name: 'add_cast', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS, 'peopleId' => Requirement::DIGITS], methods: ['GET'])]
