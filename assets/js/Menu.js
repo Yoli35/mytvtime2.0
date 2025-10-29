@@ -460,7 +460,9 @@ export class Menu {
                     if (isAddCastInput) {
                         const seriesId = addCastBlock.getAttribute('data-series-id');
                         const seasonNumber = addCastBlock.getAttribute('data-season-number');
-                        url = baseHref + 'series/cast/add/' + seriesId + '/' + seasonNumber + '/' + result['id'];
+                        const characterNameInput = addCastBlock.querySelector('#character-name');
+                        const characterName = characterNameInput.value;
+                        url = baseHref + 'series/cast/add/' + seriesId + '/' + seasonNumber + '/' + result['id'] + '?name=' + encodeURIComponent(characterName);
                     } else {
                         url = baseHref + gThis.hRefs[type] + result['id'];
                         if (type !== 'movie' && type !== 'collection') url += '-' + gThis.toSlug(result[gThis.resultNames[type]]);

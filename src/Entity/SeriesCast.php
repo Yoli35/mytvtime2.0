@@ -31,11 +31,15 @@ class SeriesCast
     #[ORM\Column(nullable: true)]
     private ?int $seasonNumber = null;
 
-    public function __construct(Series $series, People $people, ?int $seasonNumber = null)
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $characterName = null;
+
+    public function __construct(Series $series, People $people, int $seasonNumber, ?string $characterName = null)
     {
         $this->series = $series;
         $this->people = $people;
         $this->seasonNumber = $seasonNumber;
+        $this->characterName = $characterName;
         $this->createdAt = new DateTimeImmutable();
         $this->updatedAt = new DateTimeImmutable();
     }
@@ -100,6 +104,18 @@ class SeriesCast
     public function setSeasonNumber(?int $seasonNumber): static
     {
         $this->seasonNumber = $seasonNumber;
+
+        return $this;
+    }
+
+    public function getCharacterName(): ?string
+    {
+        return $this->characterName;
+    }
+
+    public function setCharacterName(?string $characterName): static
+    {
+        $this->characterName = $characterName;
 
         return $this;
     }

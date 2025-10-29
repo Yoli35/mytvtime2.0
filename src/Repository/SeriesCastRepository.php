@@ -35,6 +35,7 @@ class SeriesCastRepository extends ServiceEntityRepository
                     p.`tmdb_id` as id,
                     p.`known_for_department` as known_for_department,
                     p.`name` as name,
+                    sc.`character_name` as character_name,
                     p.`profile_path` as profile_path
                 FROM people p
                     INNER JOIN `series_cast` sc ON sc.`series_id`=$seriesId AND sc.`people_id`=p.`id`";
