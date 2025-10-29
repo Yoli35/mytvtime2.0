@@ -43,6 +43,7 @@ composer.lock
 .DS_Store
 .env.temp
 .idea/mytvtime2.0.iml
+.idea/queries
 .idea/php.xml
 *.iml
 *.xml
