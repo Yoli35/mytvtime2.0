@@ -565,14 +565,22 @@ class ApiSeriesEpisode extends AbstractController
     {
         $isBinge = false;
 
-        $lastEpisodeDb = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber], ['episodeNumber' => 'DESC']);
+        $lastEpisodeDb = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber], ['watchAt' => 'DESC']);
+        $lastWatchDate = $lastEpisodeDb->getWatchAt();
         $firstEpisodeDb = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'episodeNumber' => 1]);
-        $lastId = $lastEpisodeDb->getId();
-        $firstId = $firstEpisodeDb->getId();
+        $firstWatchDate = $firstEpisodeDb->getWatchAt();
         $userSeriesId = $userSeries->getId();
         $userId = $userSeries->getUser()->getId();
-        $userEpisodes = $this->userEpisodeRepository->getEpisodeListBetweenIds($userId, $firstId, $lastId);
+        $userEpisodes = $this->userEpisodeRepository->getEpisodeListBetweenDates($userId, $firstWatchDate, $lastWatchDate);
         $episodeCount = count($userEpisodes);
+        dump([
+            'first EpisodeDb' => $firstEpisodeDb,
+            'last EpisodeDb' => $lastEpisodeDb,
+            'first WatchDate' => $firstWatchDate,
+            'last WatchDate' => $lastWatchDate,
+            'episode Count' => $episodeCount,
+            'user episodes' => $userEpisodes,
+        ]);
         if ($episodeCount == $numberOfEpisode) {
             return true;
         }
