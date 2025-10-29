@@ -198,7 +198,7 @@ export class Season {
                 const size = sizesDiv.querySelector('.size-item.active').getAttribute('data-size');
                 const ar = arsDiv.querySelector('.ar-item.active').getAttribute('data-ar');
 
-                fetch('/' + gThis.lang + '/series/episode/height/' + userSeriesId, {
+                fetch('/api/series/episode/height/' + userSeriesId, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -493,7 +493,7 @@ export class Season {
             formData.forEach((value, key) => {
                 data[key] = value;
             });
-            fetch('/' + gThis.lang + '/series/episode/update/infos', {
+            fetch('/api/episode/update/infos', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -561,7 +561,7 @@ export class Season {
         submit.addEventListener('click', (e) => {
             e.preventDefault();
             fieldContent = input.value;
-            fetch('/' + gThis.lang + '/series/episode/update/info/' + editDiv.getAttribute('data-id'), {
+            fetch('/api/episode/update/info/' + editDiv.getAttribute('data-id'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -654,7 +654,7 @@ export class Season {
         const episodeWatchLinks = episode.closest('.episode').querySelector('.watch-links');
         const finaleDivs = episode.closest('.episode').querySelectorAll('.finale');
 
-        fetch('/' + gThis.lang + '/series/episode/add/' + id, {
+        fetch('/api/episode/add/' + id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -866,7 +866,7 @@ export class Season {
         const seasonNumber = episode.getAttribute('data-s-number');
         if (!episodeId) episode.getAttribute('data-ue-id');
 
-        fetch('/' + gThis.lang + '/series/episode/touch/' + episodeId, {
+        fetch('/api/episode/touch/' + episodeId, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -995,7 +995,7 @@ export class Season {
         const episodeNumber = episode.getAttribute('data-e-number');
         const seasonNumber = episode.getAttribute('data-s-number');
 
-        fetch('/' + gThis.lang + '/series/episode/touch/' + id, {
+        fetch('/api/episode/touch/' + id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1105,7 +1105,7 @@ export class Season {
         const lastEpisode = episode.getAttribute('data-last-episode');
         const seriesId = episode.getAttribute('data-series-id');
         let views = parseInt(episode.getAttribute('data-views'));
-        fetch('/' + gThis.lang + '/series/episode/remove', {
+        fetch('/api/episode/remove', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1302,7 +1302,7 @@ export class Season {
     }
 
     saveProvider(episodeId, providerId, selectProviderDiv = null) {
-        fetch('/' + gThis.lang + '/series/episode/provider/' + episodeId, {
+        fetch('/api/episode/provider/' + episodeId, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1329,7 +1329,7 @@ export class Season {
     }
 
     saveDevice(episodeId, deviceId, selectDeviceDiv = null) {
-        fetch('/' + gThis.lang + '/series/episode/device/' + episodeId, {
+        fetch('/api/episode/device/' + episodeId, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1357,7 +1357,7 @@ export class Season {
     }
 
     saveVote(episodeId, voteValue, selectVoteDiv = null) {
-        fetch('/' + gThis.lang + '/series/episode/vote/' + episodeId, {
+        fetch('/api/episode/vote/' + episodeId, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1442,7 +1442,7 @@ export class Season {
                 formData.append('name', seriesNameSpan ? seriesNameSpan.textContent : 'Unknown Series');
                 formData.append('seasonNumber', seasonNumber);
                 formData.append('episodeNumber', episodeNumber);
-                const response = await fetch('/' + gThis.lang + '/series/episode/still/' + episodeId, {
+                const response = await fetch('/api/episode/still/' + episodeId, {
                     method: 'POST',
                     body: formData
                 });
