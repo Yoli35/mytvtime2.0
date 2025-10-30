@@ -367,7 +367,7 @@
     --gradient-glow: red, orange, yellow, green, blue, indigo, violet, red;
     /*--gradient-glow: var(--orange-80), var(--orange-20), var(--green-80), var(--green-20), var(--green-80), var(--orange-20), var(--orange-80);*/
 
-    /*animation: glow 10s linear infinite;*/
+    animation: glow 10s linear infinite;
     background: linear-gradient(var(--green-80) 0 0) padding-box,
     conic-gradient(from var(--glow-deg), var(--gradient-glow)) border-box;
     border: 2px solid transparent;
@@ -380,7 +380,7 @@
 
     &:nth-child(odd) {
         border-left: 0;
-        border-radius: 0 15rem 15rem 0;
+        border-radius: 0 5rem 5rem 0;
         margin-inline-end: auto;
         margin-inline-start: 0;
         padding: 2rem 8rem 2rem 2rem;
@@ -391,7 +391,7 @@
     }
 
     &:nth-child(even) {
-        border-radius: 15rem 0 0 15rem;
+        border-radius: 5rem 0 0 5rem;
         border-right: 0;
         margin-inline-end: 0;
         margin-inline-start: auto;

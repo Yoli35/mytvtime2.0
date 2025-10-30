@@ -27,6 +27,83 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>45ᵉ mise à jour : 30/10/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:administrator') }}{{ ux_icon('mdi:tv') }}→ Show add cast button only for admins</div>
+                        <div class="details">Wrapped the add cast button and search include in a check for the ROLE_ADMIN role, so only admin users can see and use these controls.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ TMDB series infos may have no network</div>
+                        <div class="details">Correct an issue when series comes with no networks infos.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor watch-links and add label-small styling</div>
+                        <div class="details">Reorganized the .watch-links structure under a .wrapper in series.scss and introduced a .label-small class for improved label handling. Updated user.scss to style .label-small and its SVGs. Also fixed the order of stylesheet imports in show.html.twig to ensure correct CSS precedence.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Adjust heights for map center and sidebar panels</div>
+                        <div class="details">Updated the .center class to use a fixed height of calc(50vh - 4rem) and modified the sidebar panel height to calc(100% - 2rem) for improved layout consistency and responsiveness.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Change delete button type to button in localized name form</div>
+                        <div class="details">Updated the 'Delete' button in the localized name form to use type="button" instead of type="submit" to prevent unintended form submissions when deleting.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update episode range logic to use watch dates</div>
+                        <div class="details">Changed the logic for determining the range of watched episodes from using episode IDs to using watch dates. This affects how episodes are retrieved and counted for binge detection.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:filmstrip-box') }}→ Refactor translation and overview endpoints to API routes</div>
+                        <div class="details">Moved movie and series name/overview add/remove logic from controllers to new API controllers under /api endpoints. Updated JavaScript to use new API routes. Added remove methods to MovieAdditionalOverviewRepository and MovieLocalizedOverviewRepository. This improves code organization and separates API logic from web controllers.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor episode API endpoints to /api and move logic</div>
+                        <div class="details">Updated frontend fetch calls in Season.js to use new /api/episode and /api/series/episode endpoints. Moved all episode-related API logic from SeriesController to a new ApiSeriesEpisode controller, cleaning up SeriesController and improving separation of concerns.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:user-outline') }}{{ ux_icon('mdi:tv') }}→ Add character name support to series cast management</div>
+                        <div class="details">Introduces a character name field to the SeriesCast entity, updates the repository to fetch this data, and modifies the UI to allow input and submission of a character name when adding a cast member. Also updates styles and translations to support the new input field.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:user-outline') }}{{ ux_icon('mdi:tv') }}→ Add SeriesCast entity and integrate cast management</div>
+                        <div class="details">Introduces the SeriesCast entity and repository to manage series and season cast members. Updates Series and People entities with SeriesCast relations. Modifies SeriesController to support adding cast members, updating flash messages, and merging custom cast data with TMDB data. Updates styles and templates for cast addition UI, and adds relevant French translations.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:user-outline') }}→ Fallback to English biography if local one is missing</div>
+                        <div class="details">When a person's biography is empty, attempt to use the English translation from TMDB translations if available. This improves the display of biographies for people lacking localized content.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:user-outline') }}{{ ux_icon('mdi:tv') }}→ Add cast search and UI for series show page</div>
+                        <div class="details">Introduces a cast search input and related UI for adding people to a series cast on the show page. Updates JavaScript to initialize and handle cast search interactions, adjusts controller to handle flash messages for cast addition, and refines SCSS and Twig templates for the new UI elements.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:user-outline') }}{{ ux_icon('mdi:tv') }}→ Add UI and backend for adding cast members to a season</div>
+                        <div class="details">Introduces a new UI component for searching and adding people to a series season's cast, including new Twig partials, updated styles, and JavaScript integration. Adds a backend route and controller action for handling cast addition (currently not fully implemented, shows a flash message). Updates translations and refactors season page templates to use the new cast button block.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add backdrop and overview to favorite series cards</div>
+                        <div class="details">Updated UserSeriesRepository to include backdrop_path and overview in favorite series data. SeriesController now saves backdrop images in addition to posters. The favorite series card template was updated to include a hidden backdrop image and use the overview as a data attribute.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Refactor map help and unify map styles</div>
+                        <div class="details">Extracted map keyboard help into a reusable Twig partial and included it in map pages. Moved and consolidated map-related SCSS from series.scss to map.scss for better organization and maintainability. Updated map location info markup for improved structure and consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:photo-library') }}→ Improve diaporama fullscreen and close behavior</div>
+                        <div class="details">Added preventDefault in fullscreen handler and refactored closeDiaporama to handle fullscreen exit more robustly. Also added pointer cursor to album images for better UX.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:image-album') }}→ Adjust album layout and improve responsiveness</div>
+                        <div class="details">Updated height calculations for main and album containers to use 10rem instead of 13rem. Added flex-shrink and max-height properties to .photos and .last-days for better layout control. Refactored .album and .name styles for improved appearance and accessibility. Enhanced responsive design for .photos-page at smaller screen widths.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:photo-library') }}→ Refactor diaporama to use fullscreen div</div>
+                        <div class="details">Replaces the dialog element with a div for the diaporama and utilizes the Fullscreen API for image display. Removes unused help and navigation code, streamlining the diaporama logic and improving user experience.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>44ᵉ mise à jour : 27/10/2025</h2>
                 <ul>
                     <li>
