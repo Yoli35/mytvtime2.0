@@ -3404,6 +3404,8 @@ class SeriesController extends AbstractController
 
     public function networks(array $tv): array
     {
+        if (!count($tv['networks'])) return [];
+
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 5);
         $ids = array_column($tv['networks'], 'id');
         $networkDbs = $this->networkRepository->findBy(['networkId' => $ids]);
