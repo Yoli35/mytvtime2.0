@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
-#[Route('/api/overview', name: 'api_overview_')]
+#[Route('/api/series/overview', name: 'api_overview_')]
 class ApiSeriesOverview extends AbstractController
 {
     public function __construct(
