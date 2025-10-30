@@ -4685,35 +4685,41 @@ h2 {
     .user-actions {
         padding-inline: 1rem;
 
-        .watch-links {
-            .label {
-                display: none;
-            }
-
-            .watch-link {
-                span {
+        .wrapper {
+            .watch-links {
+                .label {
                     display: none;
                 }
 
-                img {
+                .label-small {
+                    display: block;
+                }
+
+                .watch-link {
+                    span {
+                        display: none;
+                    }
+
+                    img {
+                        height: 3rem;
+                        width: 3rem;
+                    }
+                }
+            }
+
+            .rating {
+                .rating-stars {
+                    .star {
+                        padding-inline: .25rem;
+                    }
+                }
+            }
+
+            .actions {
+                .action {
                     height: 3rem;
                     width: 3rem;
                 }
-            }
-        }
-
-        .rating {
-            .rating-stars {
-                .star {
-                    padding-inline: .25rem;
-                }
-            }
-        }
-
-        .actions {
-            .action {
-                height: 3rem;
-                width: 3rem;
             }
         }
     }

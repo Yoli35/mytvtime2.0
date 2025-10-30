@@ -79,6 +79,17 @@
                 padding-inline-end: 1rem;
             }
 
+            .label-small {
+                color: var(--ardoise-0);
+                display: none;
+                padding-inline-end: 1rem;
+
+                svg {
+                    height: 1.5rem;
+                    width: 1.5rem;
+                }
+            }
+
             .watch-link {
                 background-color: cadetblue;
                 position: relative;
