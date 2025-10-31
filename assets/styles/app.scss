@@ -959,6 +959,11 @@ label:has(input[type="text"]) {
             height: auto;
             justify-content: center;
             width: 4rem;
+
+            svg {
+                height: 2.5rem;
+                width: 2.5rem;
+            }
         }
 
         &.open {
