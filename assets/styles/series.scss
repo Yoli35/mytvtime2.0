@@ -1603,6 +1603,24 @@ h2 {
                                 margin-inline-end: .5rem;
                             }
                         }
+
+                        .finale-date {
+                            align-items: center;
+                            background-color: var(--green);
+                            border-radius: 5rem;
+                            display: flex;
+                            font-size: 1.25rem;
+                            font-weight: 300;
+                            height: 2rem;
+                            margin-inline: auto;
+                            opacity: 0;
+                            padding-inline: 1rem;
+                            transition: opacity .3s ease-in-out;
+
+                            &:has(span) {
+                                opacity: 1;
+                            }
+                        }
                     }
 
                     h4 {

@@ -9,6 +9,7 @@
                         <label for="season-number-{{ schedule.id }}">{{ 'Season'|trans }}
                             <input type="number" name="season-number-{{ schedule.id }}" value="{{ schedule.seasonNumber }}" id="season-number-{{ schedule.id }}">
                         </label>
+                        <div class="finale-date"></div>
                     </div>
                     <div class="date-time group full">
                         <label for="multi-part-{{ schedule.id }}" data-title="{{ 'This season will be broadcast in several parts'|trans }}">
@@ -32,7 +33,6 @@
                         <label for="time-{{ schedule.id }}">{{ 'Time'|trans }}
                             <input type="time" name="time-{{ schedule.id }}" onchange="convertDateTime({{ schedule.id }})" value="{{ schedule.airAt }}" step="300" id="time-{{ schedule.id }}">
                         </label>
-                        <span class="finale-date"></span>
                     </div>
                     <div class="date-time group full">
                         <label for="timezone-{{ schedule.id }}">{{ 'Timezone'|trans }}

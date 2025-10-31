@@ -116,7 +116,7 @@
             .then(data => {
                 if (data.success) {
                     const finaleDateSpan = form.querySelector('.finale-date');
-                    finaleDateSpan.textContent = data.date;
+                    finaleDateSpan.innerHTML = '<span>' + data.date + '</span>';
 
                     // On coche le jour correspondant à la date renvoyée.
                     const selector = "days-" + id + "-" + data['dayIndex'];
