@@ -2894,7 +2894,6 @@ h2 {
             display: flex;
             height: 2rem;
             justify-content: center;
-            padding: .5rem;
             transition: background-color 0.3s linear;
             width: 2rem;
 
@@ -2916,7 +2915,6 @@ h2 {
             display: flex;
             height: 2rem;
             justify-content: center;
-            padding: .5rem;
             transition: background-color 0.3s linear;
             width: 2rem;
 
@@ -2938,7 +2936,6 @@ h2 {
             display: flex;
             height: 2rem;
             justify-content: center;
-            padding: .5rem;
             transition: background-color 0.3s linear;
             width: 2rem;
 
@@ -2948,7 +2945,9 @@ h2 {
         }
 
         svg {
-            transform: scale(1.75);
+            /*transform: scale(1.75);*/
+            height: 1.5rem;
+            width: 1.5rem;
         }
     }
 
@@ -4704,6 +4703,14 @@ h2 {
                         height: 3rem;
                         width: 3rem;
                     }
+
+                    .watch-link-tools {
+                        top: 3rem;
+                    }
+                }
+
+                .add-watch-link {
+                    height: 3rem;
                 }
             }
 

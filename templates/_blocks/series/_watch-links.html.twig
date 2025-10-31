@@ -5,6 +5,7 @@
         <div class="wrapper">
             <div class="watch-links">
                 <div class="label">{{ 'Watch links'|trans }}</div>
+                <div class="label-small" data-title="{{ 'Watch links'|trans }}">{{ ux_icon('mdi:link-variant') }}</div>
                 {% for link in links %}
                     {% set linkSeasonNumber = link.seasonNumber ?? -1 %}
                     {% if linkSeasonNumber == seasonNumber or linkSeasonNumber == -1 %}
