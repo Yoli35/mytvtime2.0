@@ -4,7 +4,6 @@
 4- Paste this in your local terminal:
 
 clear;
-cons app:ep:ai;
 echo '' > var/log/dev.log;
 rm -R var/cache/dev;
 composer install --no-dev --optimize-autoloader;
