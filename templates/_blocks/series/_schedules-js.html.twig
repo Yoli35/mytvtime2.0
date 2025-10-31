@@ -70,7 +70,7 @@
             override: override,
             frequency: frequency,
             days: dayArr,
-            provider: provider ==="" ? null : provider,
+            provider: provider === "" ? null : provider,
             seriesId: {{ series.id }}
         };
         fetch('{{ path('app_series_schedule_save') }}', {
@@ -115,9 +115,14 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // console.log(data);
                     const finaleDateSpan = form.querySelector('.finale-date');
                     finaleDateSpan.textContent = data.date;
+
+                    // On coche le jour correspondant à la date renvoyée.
+                    const selector = "days-" + id + "-" + data['dayIndex'];
+                    /** @type HTMLInputElement */
+                    const input = document.querySelector('input[id="' + selector + '"]');
+                    input.checked = true;
                 }
             });
     }

@@ -1379,6 +1379,7 @@ class SeriesController extends AbstractController
 
         $dateTime = $this->convertDateTime($date, $time, $timezone, $userTimezone);
 
+        $dayIndex = $dateTime->format('N');
         $dayOfTheWeek = $this->translator->trans($dateTime->format('l'));
         $dateTimeString = $dateTime->format('Y-m-d H:i');
         $relativeDateTimeString = $this->dateService->formatDateRelativeLong($dateTimeString, null, $user->getPreferredLanguage() ?? 'fr');
@@ -1387,6 +1388,7 @@ class SeriesController extends AbstractController
             'ok' => true,
             'success' => true,
             'date' => ucfirst($dayOfTheWeek) . ', ' . $relativeDateTimeString,
+            'dayIndex' => $dayIndex,
         ]);
     }
 
@@ -2555,12 +2557,7 @@ class SeriesController extends AbstractController
 
     private function getTimezoneMenu(): array
     {
-        $timezones = (new IntlExtension)->getTimezoneNames('fr_FR');
-        $timezoneMenu = [];
-        foreach ($timezones as $code => $tz) {
-            $timezoneMenu[$code] = $tz;
-        }
-        return $timezoneMenu;
+        return (new IntlExtension)->getTimezoneNames('fr_FR');
     }
 
     public function getAlternateSchedule(SeriesBroadcastSchedule $schedule, ?array $tv, array $userEpisodes): array
