@@ -9,14 +9,12 @@ use App\Entity\FilmingLocation;
 use App\Entity\FilmingLocationImage;
 use App\Entity\Network;
 use App\Entity\Series;
-use App\Entity\SeriesAdditionalOverview;
 use App\Entity\SeriesBroadcastDate;
 use App\Entity\SeriesBroadcastSchedule;
 use App\Entity\SeriesCast;
 use App\Entity\SeriesExternal;
 use App\Entity\SeriesImage;
 use App\Entity\SeriesLocalizedName;
-use App\Entity\SeriesLocalizedOverview;
 use App\Entity\SeriesVideo;
 use App\Entity\Settings;
 use App\Entity\User;
@@ -36,14 +34,12 @@ use App\Repository\NetworkRepository;
 use App\Repository\PeopleRepository;
 use App\Repository\PeopleUserPreferredNameRepository;
 use App\Repository\SeasonLocalizedOverviewRepository;
-use App\Repository\SeriesAdditionalOverviewRepository;
 use App\Repository\SeriesBroadcastDateRepository;
 use App\Repository\SeriesBroadcastScheduleRepository;
 use App\Repository\SeriesCastRepository;
 use App\Repository\SeriesExternalRepository;
 use App\Repository\SeriesImageRepository;
 use App\Repository\SeriesLocalizedNameRepository;
-use App\Repository\SeriesLocalizedOverviewRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\SeriesVideoRepository;
 use App\Repository\SettingsRepository;
@@ -86,39 +82,39 @@ class SeriesController extends AbstractController
     private bool $reloadUserEpisodes = false;
 
     public function __construct(
-        private readonly DateService                        $dateService,
-        private readonly DeeplTranslator                    $deeplTranslator,
-        private readonly DeviceRepository                   $deviceRepository,
-        private readonly EpisodeStillRepository             $episodeStillRepository,
-        private readonly FilmingLocationImageRepository     $filmingLocationImageRepository,
-        private readonly FilmingLocationRepository          $filmingLocationRepository,
-        private readonly ImageConfiguration                 $imageConfiguration,
-        private readonly ImageService                       $imageService,
-        private readonly KeywordRepository                  $keywordRepository,
-        private readonly KeywordService                     $keywordService,
-        private readonly MonologLogger                      $logger,
-        private readonly NetworkRepository                  $networkRepository,
-        private readonly PeopleController                   $peopleController,
-        private readonly PeopleRepository                   $peopleRepository,
-        private readonly PeopleUserPreferredNameRepository  $peopleUserPreferredNameRepository,
-        private readonly SeasonLocalizedOverviewRepository  $seasonLocalizedOverviewRepository,
-        private readonly SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
-        private readonly SeriesBroadcastScheduleRepository  $seriesBroadcastScheduleRepository,
-        private readonly SeriesCastRepository               $seriesCastRepository,
-        private readonly SeriesExternalRepository           $seriesExternalRepository,
-        private readonly SeriesImageRepository              $seriesImageRepository,
-        private readonly SeriesLocalizedNameRepository      $seriesLocalizedNameRepository,
-        private readonly SeriesVideoRepository              $seriesVideoRepository,
-        private readonly SeriesRepository                   $seriesRepository,
-        private readonly SettingsRepository                 $settingsRepository,
-        private readonly SourceRepository                   $sourceRepository,
-        private readonly TMDBService                        $tmdbService,
-        private readonly TranslatorInterface                $translator,
-        private readonly UserEpisodeRepository              $userEpisodeRepository,
-        private readonly UserPinnedSeriesRepository         $userPinnedSeriesRepository,
-        private readonly UserSeriesRepository               $userSeriesRepository,
-        private readonly WatchLink                          $watchLinkApi,
-        private readonly WatchProviderRepository            $watchProviderRepository,
+        private readonly DateService                       $dateService,
+        private readonly DeeplTranslator                   $deeplTranslator,
+        private readonly DeviceRepository                  $deviceRepository,
+        private readonly EpisodeStillRepository            $episodeStillRepository,
+        private readonly FilmingLocationImageRepository    $filmingLocationImageRepository,
+        private readonly FilmingLocationRepository         $filmingLocationRepository,
+        private readonly ImageConfiguration                $imageConfiguration,
+        private readonly ImageService                      $imageService,
+        private readonly KeywordRepository                 $keywordRepository,
+        private readonly KeywordService                    $keywordService,
+        private readonly MonologLogger                     $logger,
+        private readonly NetworkRepository                 $networkRepository,
+        private readonly PeopleController                  $peopleController,
+        private readonly PeopleRepository                  $peopleRepository,
+        private readonly PeopleUserPreferredNameRepository $peopleUserPreferredNameRepository,
+        private readonly SeasonLocalizedOverviewRepository $seasonLocalizedOverviewRepository,
+        private readonly SeriesBroadcastDateRepository     $seriesBroadcastDateRepository,
+        private readonly SeriesBroadcastScheduleRepository $seriesBroadcastScheduleRepository,
+        private readonly SeriesCastRepository              $seriesCastRepository,
+        private readonly SeriesExternalRepository          $seriesExternalRepository,
+        private readonly SeriesImageRepository             $seriesImageRepository,
+        private readonly SeriesLocalizedNameRepository     $seriesLocalizedNameRepository,
+        private readonly SeriesVideoRepository             $seriesVideoRepository,
+        private readonly SeriesRepository                  $seriesRepository,
+        private readonly SettingsRepository                $settingsRepository,
+        private readonly SourceRepository                  $sourceRepository,
+        private readonly TMDBService                       $tmdbService,
+        private readonly TranslatorInterface               $translator,
+        private readonly UserEpisodeRepository             $userEpisodeRepository,
+        private readonly UserPinnedSeriesRepository        $userPinnedSeriesRepository,
+        private readonly UserSeriesRepository              $userSeriesRepository,
+        private readonly WatchLink                         $watchLinkApi,
+        private readonly WatchProviderRepository           $watchProviderRepository,
     )
     {
     }
@@ -151,7 +147,7 @@ class SeriesController extends AbstractController
                 $ue['poster_path'] = $this->getAlternatePosterPath($ue['id']);
             }
             $ue['poster_path'] = $ue['poster_path'] ? '/series/posters' . $ue['poster_path'] : null;
-            $ue['up_to_date'] = $ue['watched_aired_episode_count'] == $ue['aired_episode_count'];
+            $ue['up_to_date'] = $ue['aired_episode_count'] > 0 && $ue['watched_aired_episode_count'] == $ue['aired_episode_count'];
             $ue['remaining_episodes'] = $ue['aired_episode_count'] - $ue['watched_aired_episode_count'];
             $ue['watch_providers'] = $ue['provider_id'] ? [['logo_path' => $this->getProviderLogoFullPath($ue['provider_logo_path'], $logoUrl), 'provider_name' => $ue['provider_name']]] : [];
             return $ue;
@@ -731,21 +727,17 @@ class SeriesController extends AbstractController
             $localizedOverview = null;
         }
         $tv = json_decode($this->tmdbService->getTv($id, $request->getLocale(), ["images", "videos", "credits", "watch/providers", "content/ratings", "keywords", "similar", "translations"]), true);
-
         $this->checkTmdbSlug($tv, $slug, $localizedName?->getSlug());
 
-        if (!$localizedOverview && $tv['overview'] == "" && $locale != 'en') {
-            $tvUS = json_decode($this->tmdbService->getTv($id, 'en-US', []), true);
-            $tv['overview'] = $tvUS['overview'];
-            foreach ($tv['seasons'] as $key => $season) {
-                $seasonUs = $this->getSeason($tvUS['seasons'], $season['season_number']);
-                if ($season['overview'] == "" && $seasonUs)
-                    $tv['seasons'][$key]['overview'] = $seasonUs['overview'];
-                if (!key_exists('name', $season)) $season['name'] = "";
-                if (!key_exists('name', $seasonUs)) $seasonUs['name'] = "";
-                if ($season['name'] == "" || ($season['name'] == "Saison " . $season['season_number'] && $seasonUs['name'] != "Season " . $season['season_number']))
-                    $tv['seasons'][$key]['name'] .= ' - ' . $seasonUs['name'];
-            }
+        if ($tv['overview'] == "" && $localizedOverview) {
+            $tv['overview'] = $localizedOverview->getOverview();
+        }
+        if ($tv['overview'] == "" && !$localizedOverview) {
+            $enTranslations = array_find($tv['translations']['translations'], function ($item) {
+                return $item['iso_639_1'] == 'en';
+            });
+//
+            $this->addFlash('info', 'The series overview is missing. "' . ($enTranslations['data']['overview'] ?? 'null') . '" found.');
         }
         $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
         $this->imageService->saveImage("backdrops", $tv['backdrop_path'], $this->imageConfiguration->getUrl('backdrop_sizes', 3));
@@ -2090,12 +2082,6 @@ class SeriesController extends AbstractController
         }
         $changes = $results['changes'];
         $changes['keys'] = array_column($changes, 'key');
-        /*dump([
-            'season id' => $seasonId,
-            'start date' => $startDate,
-            'end date' => $endDate,
-            'changes' => $results['changes'],
-        ]);*/
         return $results['changes'];
     }
 
@@ -2219,12 +2205,12 @@ class SeriesController extends AbstractController
             $series->setBackdropPath($tv['backdrop_path']);
             $series->addUpdate($this->translator->trans('Backdrop updated'));
         }
-
-        $series->setVisitNumber($series->getVisitNumber() + 1);
         if (!$series->getNumberOfEpisode() || $tv['number_of_episodes'] != $series->getNumberOfEpisode()) {
             $series->setNumberOfEpisode($tv['number_of_episodes']);
             $series->setNumberOfSeason($tv['number_of_seasons']);
         }
+
+        $series->setVisitNumber($series->getVisitNumber() + 1);
         $this->seriesRepository->save($series, true);
 
         return $series;
@@ -2337,6 +2323,13 @@ class SeriesController extends AbstractController
         $change = false;
         $episodeCount = $this->checkNumberOfEpisodes($tv);
 
+        $series = $userSeries->getSeries();
+        if ($series->getNumberOfEpisode() != $episodeCount) {
+            $series->setNumberOfEpisode($episodeCount);
+            $this->seriesRepository->save($series, true);
+            $this->addFlash('success', 'Number of episode updated to ' . $episodeCount);
+        }
+
         if ($episodeCount == 0 && $userSeries->getProgress() != 0) {
             $this->addFlash('warning', 'Number of episodes is zero');
             $userSeries->setProgress(0);
@@ -2404,6 +2397,13 @@ class SeriesController extends AbstractController
                     $episodeCount = 0;
                     foreach ($s['episodes'] as $episode) {
                         if ($episode['air_date']) $episodeCount++;
+                        if ($episode['episode_type'] == 'finale') {
+                            $count = count($s['episodes']);
+                            if ($count > $episode['episode_number']) {
+                                $this->addFlash('warning', 'Finale episode number: ' . sprintf("S%02dE%02d", $s['season_number'], $episode['episode_number']) . ' - episode count: ' . $count);
+                            }
+                            break;
+                        };
                     }
                     $seasonEpisodeCount += $episodeCount;
                 } else {
@@ -3079,10 +3079,16 @@ class SeriesController extends AbstractController
         }
 
         $seasonNumber = $tvSeason['season_number'];
+        $finaleEpisodeNumber = $this->getFinaleEpisodeNumber($tvSeason);
+
         foreach ($tvSeason['episodes'] as $episode) {
             $dbUserEpisode = array_find($userEpisodes, fn($e) => $e->getEpisodeId() == $episode['id']);
             if ($dbUserEpisode) {
                 // Episode already exists in user's series
+                continue;
+            }
+            if ($episode['episode_number'] > $finaleEpisodeNumber) {
+                $this->addFlash('warning', "// Skip episode " . sprintf("S%02dE%02d", $tvSeason['season_number'], $episode['episode_number']) . " after a finale");
                 continue;
             }
             $newEpisodeCount += $this->addEpisodeToUser($userSeries, $episode, $seasonNumber);
@@ -3096,13 +3102,7 @@ class SeriesController extends AbstractController
         $removedEpisodeIds = array_values(array_diff($ueIds, $epIds));
         $updatedEpisodeIds = array_values(array_intersect($ueIds, $epIds));
         $removedEpisodeCount = count($removedEpisodeIds);
-//            dump([
-//                'seasonNumber' => $seasonNumber,
-//                'epIds' => $epIds,
-//                'ueIds' => $ueIds,
-//                'removedEpisodeIds' => $removedEpisodeIds,
-//                'updatedEpisodeIds' => $updatedEpisodeIds,
-//            ]);
+
         if ($removedEpisodeCount) {
             if ($removedEpisodeCount == 1) {
                 $this->addFlash('info', $this->translator->trans('An episode has been removed from the series (%id%)', ['%id%' => $removedEpisodeIds[0]]));
@@ -3131,6 +3131,19 @@ class SeriesController extends AbstractController
         }
 
         return $newEpisodeCount;
+    }
+
+    private function getFinaleEpisodeNumber(array $tvSeason): int
+    {
+        $finaleEpisodeNumber = count($tvSeason['episodes']);
+        foreach ($tvSeason['episodes'] as $episode) {
+            if (key_exists("episode_type", $episode)) {
+                if ($episode['episode_type'] == "finale") {
+                    $finaleEpisodeNumber = $episode['episode_number'];
+                }
+            }
+        }
+        return $finaleEpisodeNumber;
     }
 
     public function addEpisodeToUser(UserSeries $userSeries, array $episode, int $seasonNumber): int
@@ -3414,7 +3427,7 @@ class SeriesController extends AbstractController
             /** @var Network $networkDb */
             $arr = array_filter($networkDbs, fn($n) => $n->getNetworkId() == $id);//$this->networkRepository->findOneBy(['networkId' => $id]);
             $networkDb = array_values($arr)[0] ?? null;
-//            dump($networkDb);
+            
             if (!$networkDb) {
                 $tmdbNetwork = json_decode($this->tmdbService->getNetworkDetails($id), true);
 
@@ -3513,14 +3526,16 @@ class SeriesController extends AbstractController
         $stills = $this->episodeStillRepository->getSeasonStills($episodeIds);
 
         $newCount = 0;
-        $finale = false;
+        $finaleEpisodeNumber = $this->getFinaleEpisodeNumber($season);
         foreach ($season['episodes'] as $episode) {
-            if ($finale) {
-                // Skip episodes after a finale
+            if (key_exists('episode_type', $episode) && $episode['episode_type'] == 'finale') {
+                $finaleEpisodeNumber = $episode['episode_number'];
+            }
+            if ($episode['episode_number'] > $finaleEpisodeNumber) {
+                $this->addFlash('warning', "// Skip episode " . sprintf("S%02dE%02d", $season['season_number'], $episode['episode_number']) . " after a finale");
                 continue;
             }
             $userEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number']);
-            $finale = (key_exists('episode_type', $episode) && $episode['episode_type'] == 'finale') ? true : $finale;
             if (!$userEpisode) {
                 $nue = new UserEpisode($userSeries, $episode['id'], $season['season_number'], $episode['episode_number'], null);
                 $nue->setAirDate($episode['air_date'] ? $this->date($episode['air_date']) : null);
