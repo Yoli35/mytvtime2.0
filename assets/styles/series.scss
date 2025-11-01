@@ -4214,6 +4214,24 @@ h2 {
 
 }
 
+.season-air-date {
+    align-items: center;
+    background-color: hsla(from var(--orange) h s l / .75);
+    border-radius: 25rem;
+    color: var(--ardoise-10);
+    cursor: pointer;
+    display: flex;
+    font-size: 2.5rem;
+    font-weight: 300;
+    height: 4.5rem;
+    justify-content: center;
+    margin-inline: auto;
+    padding-inline: 3rem;
+    text-align: center;
+    text-wrap: balance;
+    width: fit-content;
+}
+
 .what-to-watch-next {
     display: flex;
     flex-direction: column;

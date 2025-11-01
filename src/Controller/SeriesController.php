@@ -1483,6 +1483,8 @@ class SeriesController extends AbstractController
 
         $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
         $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
+        $season['air_date'] = $this->adjustSeasonAirDate($season, 'date');
+        $season['air_date_string'] = $this->adjustSeasonAirDate($season, 'string');
 
         $season['credits'] = $this->castAndCrew($season, $series);
         $season['watch/providers'] = $this->watchProviders($season, $country);
@@ -1538,6 +1540,7 @@ class SeriesController extends AbstractController
             'userSeries' => $userSeries,
             'quickLinks' => $this->getQuickLinks($season['episodes']),
             'season' => $season,
+            'today' => $this->now()->format('Y-m-d H:I:s'),
             'filmingLocation' => $filmingLocation,
             'language' => $locale . '-' . $country,
             'changes' => $this->getChanges($season['id']),
@@ -1554,6 +1557,9 @@ class SeriesController extends AbstractController
 
     private function getQuickLinks(array $episodes): array
     {
+        if (!count($episodes)) {
+            return ['items' => [], 'count' => 0, 'itemPerLine' => 0, 'lineCount' => 0];
+        }
         $now = $this->now();
         $nowString = $now->format('Y-m-d H:i');
 
@@ -3427,7 +3433,7 @@ class SeriesController extends AbstractController
             /** @var Network $networkDb */
             $arr = array_filter($networkDbs, fn($n) => $n->getNetworkId() == $id);//$this->networkRepository->findOneBy(['networkId' => $id]);
             $networkDb = array_values($arr)[0] ?? null;
-            
+
             if (!$networkDb) {
                 $tmdbNetwork = json_decode($this->tmdbService->getNetworkDetails($id), true);
 
@@ -3507,7 +3513,7 @@ class SeriesController extends AbstractController
         }, $seasons);
     }
 
-    public function seasonEpisodes(array $season, UserSeries $userSeries): array
+    private function seasonEpisodes(array $season, UserSeries $userSeries): array
     {
         $user = $userSeries->getUser();
         $series = $userSeries->getSeries();
@@ -3618,6 +3624,26 @@ class SeriesController extends AbstractController
             $this->addFlash('success', sprintf("Series updated (%d season%s, %d episode%s)", $tv['number_of_seasons'], $tv['number_of_seasons'] > 1 ? 's' : '', $tv['number_of_episodes'], $tv['number_of_episodes'] > 1 ? 's' : ''));
         }
         return $seasonEpisodes;
+    }
+
+    private function adjustSeasonAirDate(array $season, string $type): ?string
+    {
+        if ($type == 'string') {
+            $user = $this->getUser();
+            $timezone = $user->getTimezone() ?? "Europe/Berlin";
+            $locale = $user->getPreferredLanguage() ?? 'fr';
+            if (count($season['episodes']) < 1) {
+                return $season['air_date'] ? $this->dateService->formatDateRelativeLong($season['air_date'], $timezone, $locale) : $this->translator->trans('No date yet');
+            }
+            $firstEpisode = $season['episodes'][0];
+            $airDate = $firstEpisode['air_date'];
+            return $airDate ? $this->dateService->formatDateRelativeLong($airDate, $timezone, $locale) : $this->translator->trans('No date yet');
+        }
+        if (count($season['episodes']) < 1) {
+            return $season['air_date'];
+        }
+        $firstEpisode = $season['episodes'][0];
+        return $firstEpisode['air_date'];
     }
 
     public function getUserEpisode(array $userEpisodes, int $episodeNumber): ?array

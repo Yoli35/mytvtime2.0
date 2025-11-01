@@ -166,13 +166,15 @@
                     </div>
                 </div>
 
-                <div class="quick-episodes" data-season-number="{{ season.season_number }}" style="height: {{ 32 * quickLinks.lineCount + 4 * (quickLinks.lineCount - 1) + 20 }}px; width: {{ 32 * quickLinks.itemPerLine + 4 * (quickLinks.itemPerLine - 1) + 20 }}px;">
-                    {% for item in quickLinks.items %}
-                            <div class="{{ item.class }}" data-number="{{ item.episode_number }}"{% if item.name%} data-title="{{ item.air_date|format_date('relative_long')|capitalize }} | {{ item.name }}"{% endif %}>
+                {% if quickLinks.count > 1 %}
+                    <div class="quick-episodes" data-season-number="{{ season.season_number }}" style="height: {{ 32 * quickLinks.lineCount + 4 * (quickLinks.lineCount - 1) + 20 }}px; width: {{ 32 * quickLinks.itemPerLine + 4 * (quickLinks.itemPerLine - 1) + 20 }}px;">
+                        {% for item in quickLinks.items %}
+                            <div class="{{ item.class }}" data-number="{{ item.episode_number }}"{% if item.name %} data-title="{{ item.air_date|format_date('relative_long')|capitalize }} | {{ item.name }}"{% endif %}>
                                 {{ item.episode_number }}
                             </div>
-                    {% endfor %}
-                </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             {# <h3>{{ 'Episodes'|trans }}</h3> #}
@@ -208,7 +210,7 @@
                                             {{ episode.episode_number }}<span>/{{ episodeCount }}</span>
                                         </div>
                                         {% if episode.episode_type is defined and episode.episode_type == 'finale' %}
-                                            <div class="finale season-finale{% if ue and ue.watch_at %} watched{% endif %}">{{ 'Season finale'|trans }}</div>menu
+                                            <div class="finale season-finale{% if ue and ue.watch_at %} watched{% endif %}">{{ 'Season finale'|trans }}</div>
                                         {% endif %}
                                     </div>
                                     <div class="infos">
@@ -352,7 +354,13 @@
                     </div>
                 </div>
 
-                {{ include('_blocks/series/_votes.html.twig', {scale: 1, type: 'array', season_number: season.season_number, ues: season.episodes|map(ep => ep.user_episode), vas: season.episodes|map(ep => ep.vote_average)}) }}
+                {% if season.air_date and season.air_date <= today %}
+                    {{ include('_blocks/series/_votes.html.twig', {scale: 1, type: 'array', season_number: season.season_number, ues: season.episodes|map(ep => ep.user_episode), vas: season.episodes|map(ep => ep.vote_average)}) }}
+                {% else %}
+                    <div class="season-air-date">
+                        {{ season.air_date_string }}
+                    </div>
+                {% endif %}
 
                 <div class="what-to-watch-next">
                     <div class="next-button" data-id="{{ series.tmdbId }}" data-language="{{ language }}">{{ 'What to watch next?'|trans }}</div>
