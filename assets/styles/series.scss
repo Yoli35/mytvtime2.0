@@ -4094,9 +4094,8 @@ h2 {
         .list {
             background-color: var(--user-episode-list);
             border: 2px solid var(--user-episode-actions);
-            border-radius: .25rem;
+            border-radius: 5rem .25rem .25rem 5rem;
             display: flex;
-            gap: .25rem;
             overflow-x: auto;
             padding: .25rem;
             position: absolute;
@@ -4120,6 +4119,10 @@ h2 {
                 &:hover {
                     background-color: var(--orange-50);
                 }
+
+                &:first-child {
+                    border-radius: 5rem 0 0 5rem;
+                }
             }
 
             .separator {
@@ -4141,8 +4144,15 @@ h2 {
                 flex-shrink: 0;
                 height: 2rem;
                 justify-content: center;
+                margin-inline-start: .5rem;
                 width: 2rem;
             }
+        }
+    }
+
+    .select-provider {
+        .list {
+            gap: .25rem;
         }
     }
 
