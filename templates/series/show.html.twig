@@ -190,6 +190,9 @@
 
             <div class="block-infos user-actions">
                 <div class="wrapper">
+                    <div class="series-status {{ tv.status_css }}">
+                        {{ tv.status|trans }}
+                    </div>
                     {{ include('_blocks/_watch-links.html.twig', {type: 'series', media: series}) }}
                     <div class="rating">
                         <div class="rating-stars">
@@ -264,9 +267,9 @@
                     <div class="seasons">
                         {% for season in tv.seasons %}
                             {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
-                            <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: tv.localized_name.slug ?? series.slug}) }}">
                                 <div class="season">
-                                    <div class="poster" data-title="{{ "Season poster"|trans }}">
+                                    <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: tv.localized_name.slug ?? series.slug}) }}"{#>#}
+                                    {#<div#} class="poster" data-title="{{ "Season poster"|trans }}">
                                         {% if season.poster_path %}
                                             <img src="{{ season.poster_path }}" alt="{{ season.name }}">
                                         {% else %}
@@ -275,7 +278,8 @@
                                         <div class="number{% if viewedEpisodes and viewedEpisodes == season.episode_count %} complete{% endif %}">
                                             {{ season.season_number }}
                                         </div>
-                                    </div>
+                                    {#</div>#}
+                                    </a>
                                     <div class="infos">
                                         <div class="season__name">{{ season.name }}</div>
                                         {% if season.overview %}
@@ -317,7 +321,6 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                            </a>
                         {% endfor %}
                     </div>
                     {% if tv.credits.cast|length %}
@@ -406,9 +409,6 @@
                 <div class="content-infos">
                     <h2>{{ 'Key facts'|trans }}</h2>
                     <div class="facts">
-                        <div class="fact {{ tv.status_css }}">
-                            {{ tv.status|trans }}
-                        </div>
                         {% if tv.average_episode_run_time %}
                             <div class="fact">
                                 <div class="fact-label">{{ 'Average episode runtime'|trans }}</div>
