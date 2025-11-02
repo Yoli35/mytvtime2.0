@@ -3109,13 +3109,13 @@ h2 {
 
         .quick-episode, .future-episode {
             &.first {
-                border-bottom-left-radius: .75rem;
-                border-top-left-radius: .75rem;
+                border-bottom-left-radius: 5rem;
+                border-top-left-radius: 5rem;
             }
 
             &.last {
-                border-bottom-right-radius: .75rem;
-                border-top-right-radius: .75rem;
+                border-bottom-right-radius: 5rem;
+                border-top-right-radius: 5rem;
             }
 
             &.bottom-left {
@@ -3162,12 +3162,14 @@ h2 {
     .user-actions {
         > div {
             &:first-child:not(.wrapper) {
-                padding-inline-start: 1rem;
+                padding-inline-end: .25rem;
+                padding-inline-start: .75rem;
                 width: 2.5rem;
             }
 
             &:last-child:not(.wrapper) {
-                padding-inline-end: 1rem;
+                padding-inline-end: .75rem;
+                padding-inline-start: .25rem;
                 width: 2.5rem;
             }
         }
