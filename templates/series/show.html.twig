@@ -163,7 +163,7 @@
                 {% endif %}
             </div>
 
-            <div class="header">
+            <div class="block-infos">
                 <div class="series">
                     {% if previousSeries %}
                         <a href="{{ path('app_series_show', {id: previousSeries.id, slug: previousSeries.slug}) }}"
@@ -188,169 +188,7 @@
                 </div>
             </div>
 
-            <div class="header">
-                <div class="posters">
-                    <div class="wrapper">
-                        {% for poster in series.images.posters %}
-                            <div class="other-poster">
-                                <img src="{{ poster }}" alt="{{ 'Poster #' ~ loop.index ~ ' ' ~ series.name }}">
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="backdrops">
-                    <div class="wrapper">
-                        {% for backdrop in series.images.backdrops %}
-                            <div class="other-backdrop">
-                                <img src="{{ backdrop }}" alt="{{ 'Backdrop #' ~ loop.index ~ ' ' ~ series.name }}">
-                            </div>
-                        {% else %}
-                            {{ 'No backdrop'|trans }}
-                        {% endfor %}
-                    </div>
-                    <div class="add-backdrop" data-title="{{ 'Add a backdrop'|trans }}">
-                        {{ ux_icon('mdi:plus-circle-outline', {height: '36px', width:'36px'}) }}
-                    </div>
-                    <div class="add-all-backdrops"
-                         data-series-id="{{ series.tmdbId }}"
-                         data-series-name="{{ tv.localized_name.name ?? series.name }}"
-                         data-title="{{ 'Add all available backdrops from TMDB'|trans }}">
-                        {{ ux_icon('mdi:arrow-down-circle-outline', {height: '36px', width:'36px'}) }}
-                    </div>
-                    <dialog id="add-all-backdrops-dialog" class="add-all-backdrops-dialog">
-                        <div class="dialog-content">
-                            <div class="dialog-header">
-                                <h2>{{ 'Add all available images'|trans }}</h2>
-                                <button name="cancel">{{ 'Cancel'|trans }}</button>
-                                <button name="add">{{ 'Add'|trans }}</button>
-                            </div>
-                            <div class="dialog-header">
-                                <h3>
-                                    {{ 'Poster count'|trans }} {{ ux_icon('mdi:arrow-right') }} <span class="poster-count"></span>
-                                    {{ ux_icon('mdi:minus') }}
-                                    {{ 'Backdrop count'|trans }} {{ ux_icon('mdi:arrow-right') }}<span class="backdrop-count"></span>
-                                </h3>
-                            </div>
-                            <div class="dialog-header">
-                                <div class="progress-bar"></div>
-                            </div>
-                            <div class="dialog-body">
-                                <div class="all-images">
-                                </div>
-                            </div>
-                        </div>
-                    </dialog>
-                </div>
-                <dialog class="add-backdrop-dialog">
-                    {{ form_start(addBackdropForm) }}
-                    {{ form_widget(addBackdropForm.file) }}
-                    <div class="form-row">
-                        <button type="button" name="cancel">{{ 'Cancel'|trans }}</button>
-                        <button type="submit">{{ 'Upload it!'|trans }}</button>
-                    </div>
-                    {{ form_end(addBackdropForm) }}
-                </dialog>
-            </div>
-
-            {% if series.images.logos|length %}
-                <div class="header">
-                    <div class="logos">
-                        <div class="wrapper">
-                            {% for logo in series.images.logos %}
-                                <div class="other-logo">
-                                    <img src="{{ logo }}" alt="{{ 'Logo #' ~ loop.index ~ ' ' ~ series.name }}">
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-
-            {% set videoCount = series.videos|length %}
-            <div class="videos">
-                <div class="video-tools">
-                    <h2>{{ 'Videos'|trans }}{% if videoCount %} ({{ videoCount }}){% endif %}</h2>
-                    <div class="video-tool add-video" data-title="{{ 'Add a video'|trans }}">
-                        {{ ux_icon('mdi:plus') }}
-                    </div>
-                    {% if videoCount %}
-                        <div class="video-tool folder" data-title="{{ (videoListFolded ? 'Expand all videos' : 'Collapse all videos')|trans }}">
-                            {{ ux_icon('mdi:chevron-down') }}
-                        </div>
-                        <script>
-                            const dataTitles = {
-                                'expand': '{{ 'Expand all videos'|trans }}',
-                                'collapse': '{{ 'Collapse all videos'|trans }}'
-                            };
-                            document.querySelector('.video-tool.folder').addEventListener('click', function (e) {
-                                e.preventDefault();
-                                const tool = e.currentTarget;
-                                const videoList = document.querySelector('.video-list');
-                                videoList.classList.toggle('folded');
-                                if (videoList.classList.contains('folded')) {
-                                    tool.setAttribute('data-title', dataTitles.expand);
-                                    saveSettings(1);
-                                } else {
-                                    tool.setAttribute('data-title', dataTitles.collapse);
-                                    saveSettings(0);
-                                }
-                            });
-
-                            function saveSettings(newValue) {
-                                // Use fetch to send the new value to the server
-                                fetch('{{ path('app_series_settings_save') }}', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-Token': '{{ csrf_token('user_settings') }}'
-                                    },
-                                    body: JSON.stringify({"name": "series_video_list_folded", "value": {"folded": newValue}})
-                                })
-                                    .then(response => {
-                                        if (!response.ok) {
-                                            throw new Error('Network response was not ok');
-                                        }
-                                        return response.json();
-                                    })
-                                    .then(data => {
-                                        console.log('Settings saved:', data);
-                                    })
-                                    .catch(error => {
-                                        console.error('Error saving settings:', error);
-                                    });
-                            }
-                        </script>
-                    {% endif %}
-                </div>
-                <div class="video-list{% if videoListFolded %} folded{% endif %}">
-                    {% for video in series.videos %}
-                        {#                        {% if video.iframe == true %} #}
-                        <div class="video">
-                            <iframe src="{{ video.link }}" title="{{ video.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                        {#                        {% endif %} #}
-                    {% endfor %}
-                </div>
-                <dialog class="add-video-dialog">
-                    {{ form_start(addVideoForm) }}
-                    {{ form_widget(addVideoForm.title) }}
-                    {{ form_widget(addVideoForm.link) }}
-                    <div class="form-row">
-                        <button type="button" name="cancel">{{ 'Cancel'|trans }}</button>
-                        <button type="submit" name="add">{{ 'Add'|trans }}</button>
-                    </div>
-                    {{ form_end(addVideoForm) }}
-                </dialog>
-            </div>
-
-            {{ include('_blocks/series/_schedules.html.twig') }}
-
-            {% if app.environment == 'dev' %}
-                {{ include('_blocks/series/_externals.html.twig') }}
-            {% endif %}
-
-            <div class="user-actions">
-                <h2>{{ 'User actions'|trans }}</h2>
+            <div class="block-infos user-actions">
                 <div class="wrapper">
                     {{ include('_blocks/_watch-links.html.twig', {type: 'series', media: series}) }}
                     <div class="rating">
@@ -404,6 +242,115 @@
                     </div>
                 </div>
             </div>
+
+            <div class="block-infos">
+                {% if tv.keywords.results|length %}
+                    {{ include('_blocks/_keywords.html.twig', {id: tv.id, keywords: tv.keywords.results, missing: tv.missing_translations}) }}
+                {% endif %}
+            </div>
+
+            {{ include('_blocks/series/_schedules.html.twig') }}
+
+            <div class="content column">
+                <div class="content-seasons">
+                    <div class="all-seasons">
+                        <div>{{ 'Seasons'|trans }}</div>
+                        {% if tv.seasons|length > 1 %}
+                            <div class="season-order">
+                                {{ ux_icon('mdi:arrow-down') }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="seasons">
+                        {% for season in tv.seasons %}
+                            {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
+                            <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: tv.localized_name.slug ?? series.slug}) }}">
+                                <div class="season">
+                                    <div class="poster" data-title="{{ "Season poster"|trans }}">
+                                        {% if season.poster_path %}
+                                            <img src="{{ season.poster_path }}" alt="{{ season.name }}">
+                                        {% else %}
+                                            <div>{{ 'No poster'|trans }}</div>
+                                        {% endif %}
+                                        <div class="number{% if viewedEpisodes and viewedEpisodes == season.episode_count %} complete{% endif %}">
+                                            {{ season.season_number }}
+                                        </div>
+                                    </div>
+                                    <div class="infos">
+                                        <div class="season__name">{{ season.name }}</div>
+                                        {% if season.overview %}
+                                            <div class="season__overview">{{ season.overview }}</div>
+                                        {% endif %}
+                                        <div class="season__air-date">{{ 'Air date'|trans }}
+                                            {% if season.final_air_date is defined %}
+                                                {{ date(season.final_air_date)|format_datetime('relative_long', 'short') }}
+                                            {% else %}
+                                                {% if season.air_date %}
+                                                    {{ date(season.air_date)|format_date('relative_long') }}
+                                                    {% if userSeries.lastSeason is not null and userSeries.lastSeason == season.season_number %}
+                                                        — {{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {{ 'TBA'|trans }}
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                        <div class="season__episodes">
+                                            {{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}
+                                            <div class="watched"></div>
+                                            {% if viewedEpisodes == 0 %}
+                                                {{ 'No episode seen'|trans }}
+                                            {% elseif viewedEpisodes == 1 %}
+                                                {{ '1 episode seen'|trans }}
+                                            {% elseif viewedEpisodes == season.episode_count %}
+                                                {{ 'All episodes seen'|trans }}
+                                            {% else %}
+                                                {{ viewedEpisodes }} {{ 'episodes seen'|trans }}
+                                            {% endif %}
+                                        </div>
+                                        {% if userSeries.progress and series.userVotes|length %}
+                                            <div class="user-votes">
+                                                <div class="show-tab">{{ ux_icon('mdi:bar-chart') }}</div>
+                                                {% set uvs = series.userVotes[season.season_number] %}
+                                                {{ include('_blocks/series/_votes.html.twig', {scale: 0.5, type: 'entity', season_number: season.season_number, ues: uvs.ues, vas: uvs.avs}) }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                    {% if tv.credits.cast|length %}
+                        <h3>{{ 'Cast'|trans }}</h3>
+                        <div class="cast-and-name">
+                            <div class="cast">
+                                <div class="wrapper">
+                                    {% for people in tv.credits.cast %}
+                                        {{ include('_blocks/series/_people.html.twig', { people: people, role: people.character }) }}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {{ include('_blocks/series/_cast-buttons.html.twig', {localized_name: tv.localized_name, name: series.name, seriesId: series.id, seasonNumber: 0}) }}
+                        </div>
+                    {% endif %}
+
+                    {% if tv.credits.crew|length %}
+                        <h3>{{ 'Crew'|trans }}</h3>
+                        <div class="crew">
+                            <div class="wrapper">
+                                {% for people in tv.credits.crew %}
+                                    {{ include('_blocks/series/_crew.html.twig') }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+            {% if app.environment == 'dev' %}
+                {{ include('_blocks/series/_externals.html.twig') }}
+            {% endif %}
 
             <div class="content column">
                 {% if tv['watch/providers'].flatrate|length or tv['watch/providers'].rent|length or tv['watch/providers'].buy|length %}
@@ -519,12 +466,6 @@
                             </script>
                         </div>
                     {% endif %}
-                    {% if tv.keywords.results|length %}
-                        <h2>{{ 'Keywords'|trans }}</h2>
-                        <div class="facts">
-                            {{ include('_blocks/_keywords.html.twig', {id: tv.id, keywords: tv.keywords.results, missing: tv.missing_translations}) }}
-                        </div>
-                    {% endif %}
                     <div class="toggle-visibility facts-block" data-title="{{ 'Hide all facts'|trans }}">
                         {{ ux_icon('mdi:eye', {height: '18px', width: '18px', class: 'hidden'}) }}
                         {{ ux_icon('mdi:eye-off') }}
@@ -566,101 +507,163 @@
                         });
                     });
                 </script>
-                <div class="content-seasons">
-                    <div class="all-seasons">
-                        <div>{{ 'Seasons'|trans }}</div>
-                        {% if tv.seasons|length > 1 %}
-                            <div class="season-order">
-                                {{ ux_icon('mdi:arrow-down') }}
+            </div>
+
+            <div class="block-infos">
+                <div class="posters">
+                    <div class="wrapper">
+                        {% for poster in series.images.posters %}
+                            <div class="other-poster">
+                                <img src="{{ poster }}" alt="{{ 'Poster #' ~ loop.index ~ ' ' ~ series.name }}">
                             </div>
-                        {% endif %}
-                    </div>
-                    <div class="seasons">
-                        {% for season in tv.seasons %}
-                            {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
-                            <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: tv.localized_name.slug ?? series.slug}) }}">
-                                <div class="season">
-                                    <div class="poster" data-title="{{ "Season poster"|trans }}">
-                                        {% if season.poster_path %}
-                                            <img src="{{ season.poster_path }}" alt="{{ season.name }}">
-                                        {% else %}
-                                            <div>{{ 'No poster'|trans }}</div>
-                                        {% endif %}
-                                        <div class="number{% if viewedEpisodes and viewedEpisodes == season.episode_count %} complete{% endif %}">
-                                            {{ season.season_number }}
-                                        </div>
-                                    </div>
-                                    <div class="infos">
-                                        <div class="season__name">{{ season.name }}</div>
-                                        {% if season.overview %}
-                                            <div class="season__overview">{{ season.overview }}</div>
-                                        {% endif %}
-                                        <div class="season__air-date">{{ 'Air date'|trans }}
-                                            {% if season.final_air_date is defined %}
-                                                {{ date(season.final_air_date)|format_datetime('relative_long', 'short') }}
-                                            {% else %}
-                                                {% if season.air_date %}
-                                                    {{ date(season.air_date)|format_date('relative_long') }}
-                                                    {% if userSeries.lastSeason is not null and userSeries.lastSeason == season.season_number %}
-                                                        — {{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}
-                                                    {% endif %}
-                                                {% else %}
-                                                    {{ 'TBA'|trans }}
-                                                {% endif %}
-                                            {% endif %}
-                                        </div>
-                                        <div class="season__episodes">
-                                            {{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}
-                                            <div class="watched"></div>
-                                            {% if viewedEpisodes == 0 %}
-                                                {{ 'No episode seen'|trans }}
-                                            {% elseif viewedEpisodes == 1 %}
-                                                {{ '1 episode seen'|trans }}
-                                            {% elseif viewedEpisodes == season.episode_count %}
-                                                {{ 'All episodes seen'|trans }}
-                                            {% else %}
-                                                {{ viewedEpisodes }} {{ 'episodes seen'|trans }}
-                                            {% endif %}
-                                        </div>
-                                        {% if userSeries.progress and series.userVotes|length %}
-                                            <div class="user-votes">
-                                                <div class="show-tab">{{ ux_icon('mdi:bar-chart') }}</div>
-                                                {% set uvs = series.userVotes[season.season_number] %}
-                                                {{ include('_blocks/series/_votes.html.twig', {scale: 0.5, type: 'entity', season_number: season.season_number, ues: uvs.ues, vas: uvs.avs}) }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </a>
                         {% endfor %}
                     </div>
-                    {% if tv.credits.cast|length %}
-                        <h3>{{ 'Cast'|trans }}</h3>
-                        <div class="cast-and-name">
-                            <div class="cast">
-                                <div class="wrapper">
-                                    {% for people in tv.credits.cast %}
-                                        {{ include('_blocks/series/_people.html.twig', { people: people, role: people.character }) }}
-                                    {% endfor %}
+                </div>
+                <div class="backdrops">
+                    <div class="wrapper">
+                        {% for backdrop in series.images.backdrops %}
+                            <div class="other-backdrop">
+                                <img src="{{ backdrop }}" alt="{{ 'Backdrop #' ~ loop.index ~ ' ' ~ series.name }}">
+                            </div>
+                        {% else %}
+                            {{ 'No backdrop'|trans }}
+                        {% endfor %}
+                    </div>
+                    <div class="add-backdrop" data-title="{{ 'Add a backdrop'|trans }}">
+                        {{ ux_icon('mdi:plus-circle-outline', {height: '36px', width:'36px'}) }}
+                    </div>
+                    <div class="add-all-backdrops"
+                         data-series-id="{{ series.tmdbId }}"
+                         data-series-name="{{ tv.localized_name.name ?? series.name }}"
+                         data-title="{{ 'Add all available backdrops from TMDB'|trans }}">
+                        {{ ux_icon('mdi:arrow-down-circle-outline', {height: '36px', width:'36px'}) }}
+                    </div>
+                    <dialog id="add-all-backdrops-dialog" class="add-all-backdrops-dialog">
+                        <div class="dialog-content">
+                            <div class="dialog-header">
+                                <h2>{{ 'Add all available images'|trans }}</h2>
+                                <button name="cancel">{{ 'Cancel'|trans }}</button>
+                                <button name="add">{{ 'Add'|trans }}</button>
+                            </div>
+                            <div class="dialog-header">
+                                <h3>
+                                    {{ 'Poster count'|trans }} {{ ux_icon('mdi:arrow-right') }} <span class="poster-count"></span>
+                                    {{ ux_icon('mdi:minus') }}
+                                    {{ 'Backdrop count'|trans }} {{ ux_icon('mdi:arrow-right') }}<span class="backdrop-count"></span>
+                                </h3>
+                            </div>
+                            <div class="dialog-header">
+                                <div class="progress-bar"></div>
+                            </div>
+                            <div class="dialog-body">
+                                <div class="all-images">
                                 </div>
                             </div>
-                            {{ include('_blocks/series/_cast-buttons.html.twig', {localized_name: tv.localized_name, name: series.name, seriesId: series.id, seasonNumber: 0}) }}
                         </div>
-                    {% endif %}
-
-                    {% if tv.credits.crew|length %}
-                        <h3>{{ 'Crew'|trans }}</h3>
-                        <div class="crew">
-                            <div class="wrapper">
-                                {% for people in tv.credits.crew %}
-                                    {{ include('_blocks/series/_crew.html.twig') }}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-
+                    </dialog>
                 </div>
+                <dialog class="add-backdrop-dialog">
+                    {{ form_start(addBackdropForm) }}
+                    {{ form_widget(addBackdropForm.file) }}
+                    <div class="form-row">
+                        <button type="button" name="cancel">{{ 'Cancel'|trans }}</button>
+                        <button type="submit">{{ 'Upload it!'|trans }}</button>
+                    </div>
+                    {{ form_end(addBackdropForm) }}
+                </dialog>
             </div>
+
+            <div class="block-infos">
+                {% if series.images.logos|length %}
+                    <div class="logos">
+                        <div class="wrapper">
+                            {% for logo in series.images.logos %}
+                                <div class="other-logo">
+                                    <img src="{{ logo }}" alt="{{ 'Logo #' ~ loop.index ~ ' ' ~ series.name }}">
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="videos">
+                {% set videoCount = series.videos|length %}
+                <div class="video-tools">
+                    <h2>{{ 'Videos'|trans }}{% if videoCount %} ({{ videoCount }}){% endif %}</h2>
+                    <div class="video-tool add-video" data-title="{{ 'Add a video'|trans }}">
+                        {{ ux_icon('mdi:plus') }}
+                    </div>
+                    {% if videoCount %}
+                        <div class="video-tool folder" data-title="{{ (videoListFolded ? 'Expand all videos' : 'Collapse all videos')|trans }}">
+                            {{ ux_icon('mdi:chevron-down') }}
+                        </div>
+                        <script>
+                            const dataTitles = {
+                                'expand': '{{ 'Expand all videos'|trans }}',
+                                'collapse': '{{ 'Collapse all videos'|trans }}'
+                            };
+                            document.querySelector('.video-tool.folder').addEventListener('click', function (e) {
+                                e.preventDefault();
+                                const tool = e.currentTarget;
+                                const videoList = document.querySelector('.video-list');
+                                videoList.classList.toggle('folded');
+                                if (videoList.classList.contains('folded')) {
+                                    tool.setAttribute('data-title', dataTitles.expand);
+                                    saveSettings(1);
+                                } else {
+                                    tool.setAttribute('data-title', dataTitles.collapse);
+                                    saveSettings(0);
+                                }
+                            });
+
+                            function saveSettings(newValue) {
+                                // Use fetch to send the new value to the server
+                                fetch('{{ path('app_series_settings_save') }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-Token': '{{ csrf_token('user_settings') }}'
+                                    },
+                                    body: JSON.stringify({"name": "series_video_list_folded", "value": {"folded": newValue}})
+                                })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error('Network response was not ok');
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        console.log('Settings saved:', data);
+                                    })
+                                    .catch(error => {
+                                        console.error('Error saving settings:', error);
+                                    });
+                            }
+                        </script>
+                    {% endif %}
+                </div>
+                <div class="video-list{% if videoListFolded %} folded{% endif %}">
+                    {% for video in series.videos %}
+                        {#                        {% if video.iframe == true %} #}
+                        <div class="video">
+                            <iframe src="{{ video.link }}" title="{{ video.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        {#                        {% endif %} #}
+                    {% endfor %}
+                </div>
+                <dialog class="add-video-dialog">
+                    {{ form_start(addVideoForm) }}
+                    {{ form_widget(addVideoForm.title) }}
+                    {{ form_widget(addVideoForm.link) }}
+                    <div class="form-row">
+                        <button type="button" name="cancel">{{ 'Cancel'|trans }}</button>
+                        <button type="submit" name="add">{{ 'Add'|trans }}</button>
+                    </div>
+                    {{ form_end(addVideoForm) }}
+                </dialog>
+            </div>
+
             <div class="content">
                 <div id="series-map-title">
                     <div class="title">{{ 'Shooting locations'|trans }}</div>

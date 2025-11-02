@@ -1038,6 +1038,46 @@ h2 {
         &:hover .series-back {
             display: flex;
         }
+    }
+
+    .block-infos {
+        align-items: stretch;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-start;
+        position: relative;
+
+        .keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            justify-content: center;
+            margin-inline: auto;
+            width: 100%;
+
+            .keyword {
+                align-items: center;
+                background-color: var(--green-50);
+                border-radius: .25rem;
+                color: var(--orange-90);
+                display: flex;
+                font-size: 1rem;
+                font-weight: 300;
+                gap: .25rem;
+                justify-content: center;
+                padding: .125rem .375rem;
+                position: relative;
+
+                &.missing {
+                    background-color: var(--orange-50);
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: var(--orange-60);
+                    }
+                }
+            }
+        }
 
         .backdrops, .logos, .posters, .series {
             align-items: center;
@@ -1071,6 +1111,16 @@ h2 {
                 &.pointer {
                     cursor: pointer;
                 }
+            }
+        }
+
+        .posters {
+            width: 40vw;
+
+            .other-poster {
+                aspect-ratio: 78/117;
+                border-radius: .25rem;
+                height: 7rem;
             }
         }
 
@@ -1120,16 +1170,6 @@ h2 {
                 height: 7rem;
                 padding: .5rem;
                 width: auto;
-            }
-        }
-
-        .posters {
-            width: 40vw;
-
-            .other-poster {
-                aspect-ratio: 78/117;
-                border-radius: .25rem;
-                height: 7rem;
             }
         }
 
@@ -1854,7 +1894,7 @@ h2 {
         }
     }
 
-    .user-actions:not(:has(h2)) {
+    .user-actions:not(:has(.rating)) {
         background-color: hsla(from var(--ardoise-90) h s l / 0.25);
         border-radius: 5rem;
         padding: .5rem;

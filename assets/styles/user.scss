@@ -53,12 +53,14 @@
         flex-wrap: wrap;
         gap: 1rem;
         justify-content: center;
+        margin-inline: auto;
         position: relative;
 
         .watch-links {
             align-items: center;
             background-color: hsla(from var(--ardoise-80) h s l / .5);
             border-radius: 5rem;
+            color: var(--ardoise-10);
             display: flex;
             justify-content: center;
             padding-inline-start: 1.5rem;

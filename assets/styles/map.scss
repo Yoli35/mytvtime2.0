@@ -334,9 +334,12 @@
     color: white;
     display: flex;
     flex-direction: column;
-    height: calc(50vh - 4rem);
     justify-content: flex-end;
     overflow: hidden;
+
+    &:has(.map-container) {
+        height: calc(50vh - 4rem);
+    }
 
     &:has(h1) {
         margin-block-start: 4rem;
