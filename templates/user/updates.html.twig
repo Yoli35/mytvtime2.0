@@ -27,6 +27,59 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>46ᵉ mise à jour : 03/11/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Standardize template file naming to snake_case</div>
+                        <div class="details">Renamed all Twig template files and their references from kebab-case to snake_case for consistency. Updated all PHP controllers and template includes to use the new naming convention. This improves maintainability and reduces confusion caused by mixed naming styles.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update episode list (provider, device & vote) border radius and spacing</div>
+                        <div class="details">Adjusted the border-radius for the episode list to have rounded ends and moved the gap property to the .select-provider context. Also added specific border-radius for the first child and updated separator margin for improved UI consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Adjust border radius and padding in series.scss</div>
+                        <div class="details">Increased the border radius for .quick-episode and .future-episode first/last classes to 5rem for a more rounded appearance. Updated padding for .user-actions child divs to improve layout consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve series status display and season layout</div>
+                        <div class="details">Refactored the series status badge to a more prominent position in the user actions block and updated its styling for better visibility. Enhanced season poster layout with aspect ratio, larger card height, and improved font sizing. Added French translation for 'New schedule' and included a data-title attribute for accessibility. Cleaned up redundant status display in key facts.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series page layout and update styles</div>
+                        <div class="details">Reorganizes the series detail page by introducing 'block-infos' containers for better structure and modularity, moving posters, backdrops, logos, keywords, and user actions into their own blocks. Updates SCSS to support the new layout, adds improved styling for keywords and posters, and adjusts selectors for user actions. This refactor enhances maintainability and visual consistency across the series page.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Show season air date if not yet released</div>
+                        <div class="details">Added logic to display the season air date in a styled element when the season has not yet aired, instead of showing the votes block. Introduced helper methods in SeriesController to determine and format the season air date, updated the template to conditionally render the air date or votes, and added corresponding styles.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve episode handling and cleanup in SeriesController</div>
+                        <div class="details">Refactored logic to better handle 'finale' episodes, ensuring episodes after a finale are skipped when syncing user episodes. Removed unused imports and commented code, and improved the logic for updating series overviews and episode counts. Also adjusted the 'up_to_date' calculation to account for series with zero aired episodes.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:user-outline') }}→ Add access control to PeopleController</div>
+                        <div class="details">Applied the #[IsGranted('ROLE_USER')] attribute to the PeopleController to restrict access to users with the ROLE_USER role.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve finale date display in schedules form</div>
+                        <div class="details">Refactored the finale date element from a span to a div for better styling control, updated SCSS to style the finale date with a green background and transition, and adjusted JS to wrap the date in a span for opacity transitions. This enhances the visual feedback when a finale date is present.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add day selection sync in schedule form</div>
+                        <div class="details">The controller now returns the day index when converting date and time, and the frontend updates the corresponding day checkbox based on the returned value. Also includes minor code cleanups in timezone menu generation and option rendering.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refine watch links UI and update series styles</div>
+                        <div class="details">Removed extra padding from watch link buttons and adjusted SVG sizing for better alignment. Added a small label with an icon to the watch links block. Fixed stylesheet load order in season.html.twig to ensure correct CSS application.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-css3') }}→ Enable glow animation and update border radius in user.scss</div>
+                        <div class="details">Uncommented the glow animation for elements with the glowing-border class and reduced the border radius for odd and even children from 15rem to 5rem for a more subtle rounded effect. Also added the 45th update entry to updates.html.twig, detailing recent features and improvements.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>45ᵉ mise à jour : 30/10/2025</h2>
                 <ul>
                     <li>
