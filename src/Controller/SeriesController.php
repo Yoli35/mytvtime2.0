@@ -230,7 +230,7 @@ class SeriesController extends AbstractController
         }
         $seriesToStart = array_values($series);
 
-        return $this->render('series/series-to-start.html.twig', [
+        return $this->render('series/series_to_start.html.twig', [
             'seriesToStart' => $seriesToStart,
             'tmdbIds' => $tmdbIds,
             'userSeriesCount' => $this->userSeriesRepository->count(['user' => $user])
@@ -250,7 +250,7 @@ class SeriesController extends AbstractController
         }, $this->userSeriesRepository->seriesNotSeenInAWhile($user, $locale, $inAWhileDate, 1, -1));
         $tmdbIds = array_column($series, 'tmdb_id');
 
-        return $this->render('series/series-in-a-while.html.twig', [
+        return $this->render('series/series_in_a_while.html.twig', [
             'seriesInAWhile' => $series,
             'tmdbIds' => $tmdbIds,
             'userSeriesCount' => $this->userSeriesRepository->count(['user' => $user])
@@ -269,7 +269,7 @@ class SeriesController extends AbstractController
         }, $this->userSeriesRepository->upComingSeries($user, $locale, 'firstAirDate', 1, -1));
         $tmdbIds = array_column($series, 'tmdb_id');
 
-        return $this->render('series/up-coming-series.html.twig', [
+        return $this->render('series/up_coming_series.html.twig', [
             'seriesList' => $series,
             'tmdbIds' => $tmdbIds,
             'userSeriesCount' => $this->userSeriesRepository->count(['user' => $user])
@@ -295,7 +295,7 @@ class SeriesController extends AbstractController
 
         $tmdbIds = array_column($series, 'tmdb_id');
 
-        return $this->render('series/ranking-by-vote.html.twig', [
+        return $this->render('series/ranking_by_vote.html.twig', [
             'seriesList' => $series,
             'tmdbIds' => $tmdbIds,
             'userSeriesCount' => $this->userSeriesRepository->count(['user' => $user])
@@ -373,7 +373,7 @@ class SeriesController extends AbstractController
 
         $tmdbIds = array_column($series, 'tmdb_id');
 
-        return $this->render('series/series-by-country.html.twig', [
+        return $this->render('series/series_by_country.html.twig', [
             'seriesByCountry' => $series,
             'userSeriesCountries' => $userSeriesCountries,
             'country' => $country,
@@ -668,7 +668,7 @@ class SeriesController extends AbstractController
             $series = $this->getSearchResult($searchResult, $slugger);
         }
 
-        return $this->render('series/search-advanced.html.twig', [
+        return $this->render('series/search_advanced.html.twig', [
             'form' => $form->createView(),
             'displaySettings' => ['id' => $advancedDisplaySettings->getId(), 'data' => $displaySettings],
             'seriesList' => $series,

@@ -12,7 +12,7 @@ Mandatory variables:
             {{ ux_icon('mdi:plus', {height: "18px", width: "18px"}) }}
         </div>
     </h2>
-    {{ include('_blocks/series/_schedules-form.html.twig', {schedule: series.emptySchedule, country: user.country ?? 'FR'}) }}
+    {{ include('_blocks/series/_schedules_form.html.twig', {schedule: series.emptySchedule, country: user.country ?? 'FR'}) }}
     {% if series.schedules|length or series.nextEpisodeAirDate %}
         <div class="wrapper">
             {% for schedule in series.schedules %}
@@ -109,7 +109,7 @@ Mandatory variables:
                             {% endif %}
                         {% endif %} #}
                     </div>
-                    {{ include('_blocks/series/_schedules-form.html.twig', {schedule: schedule, country: country}) }}
+                    {{ include('_blocks/series/_schedules_form.html.twig', {schedule: schedule, country: country}) }}
                 </div>
             {% endfor %}
         </div>
@@ -141,5 +141,5 @@ Mandatory variables:
             </div>
         </div>
     {% endif %}
-    {{ include('_blocks/series/_schedules-js.html.twig') }}
+    {{ include('_blocks/series/_schedules_js.html.twig') }}
 </div>

@@ -73,7 +73,7 @@
                                         {{ include('_blocks/series/_card.html.twig', {'series': result}) }}
                                     {% endif %}
                                     {% if result.media_type == 'movie' %}
-                                        {{ include('_blocks/movie/_card-tmdb.html.twig', {'movie': result}) }}
+                                        {{ include('_blocks/movie/_card_tmdb.html.twig', {'movie': result}) }}
                                     {% endif %}
                                 {% endfor %}
                             </div>

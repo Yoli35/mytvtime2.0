@@ -117,12 +117,12 @@
                         {% endfor %}
                     </div>
                 </div>
-                {{ include('_blocks/map/_map-container.html.twig', {type: 'album', styleSettings: mapSettings.data.styles}) }}
+                {{ include('_blocks/map/_map_container.html.twig', {type: 'album', styleSettings: mapSettings.data.styles}) }}
             </main>
             {% if album.date|length == 0 %}
-                {{ include('_blocks/forms/_modify-album-form.html.twig', addPhotoFormData) }}
+                {{ include('_blocks/forms/_modify_album_form.html.twig', addPhotoFormData) }}
             {% endif %}
-            {{ include('_blocks/forms/_edit-photo-form.html.twig', addPhotoFormData) }}
+            {{ include('_blocks/forms/_edit_photo_form.html.twig', addPhotoFormData) }}
         </div>
     </div>
     {% include '_blocks/_footer.html.twig' %}

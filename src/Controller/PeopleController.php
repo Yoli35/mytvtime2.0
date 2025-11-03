@@ -323,7 +323,7 @@ class PeopleController extends AbstractController
 
         $standing = $this->tmdbService->getPerson($id, $request->getLocale());
         $people = json_decode($standing, true);
-        $nameBlock = $this->renderView('_blocks/people/_preferred-name.html.twig', [
+        $nameBlock = $this->renderView('_blocks/people/_preferred_name.html.twig', [
             'people' => $people,
             'preferredName' => $name,
         ]);

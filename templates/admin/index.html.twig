@@ -152,7 +152,7 @@
             </aside>
             <main>
                 {% if route starts with 'admin_series' %}
-                    {{ include('_blocks/admin/_series-tools.html.twig') }}
+                    {{ include('_blocks/admin/_series_tools.html.twig') }}
                 {% endif %}
 
                 {% if route == 'admin_index' or route == 'admin_users' %}
@@ -168,28 +168,28 @@
                     {% include('_blocks/admin/_series.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_series_check_updates' %}
-                    {% include('_blocks/admin/_series-updates.html.twig') %}
+                    {% include('_blocks/admin/_series_updates.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_series_edit' %}
-                    {% include('_blocks/admin/_series-edit.html.twig') %}
+                    {% include('_blocks/admin/_series_edit.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_series_search_by_id' %}
-                    {% include('_blocks/admin/_series-detail.html.twig') %}
+                    {% include('_blocks/admin/_series_detail.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_series_search_by_name' %}
-                    {% include('_blocks/admin/_series-list.html.twig') %}
+                    {% include('_blocks/admin/_series_list.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_movies' %}
                     {% include('_blocks/admin/_movies.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_movie_edit' %}
-                    {% include('_blocks/admin/_movie-edit.html.twig') %}
+                    {% include('_blocks/admin/_movie_edit.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_filming_locations' %}
-                    {% include('_blocks/admin/_filming-locations.html.twig') %}
+                    {% include('_blocks/admin/_filming_locations.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_filming_location_edit' %}
-                    {% include('_blocks/admin/_filming-location-edit.html.twig') %}
+                    {% include('_blocks/admin/_filming_location_edit.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_points_of_interest' %}
                     {% include('_blocks/admin/_points_of_interest.html.twig') %}
@@ -201,13 +201,13 @@
                     {% include('_blocks/admin/_videos.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_video_edit' %}
-                    {% include('_blocks/admin/_video-edit.html.twig') %}
+                    {% include('_blocks/admin/_video_edit.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_providers' %}
                     {% include('_blocks/admin/_providers.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_provider_edit' %}
-                    {% include('_blocks/admin/_provider-edit.html.twig') %}
+                    {% include('_blocks/admin/_provider_edit.html.twig') %}
                 {% endif %}
                 {% if route == 'admin_settings' %}
                     {% include('_blocks/admin/_settings.html.twig') %}

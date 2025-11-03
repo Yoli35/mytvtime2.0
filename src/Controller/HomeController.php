@@ -229,7 +229,7 @@ class HomeController extends AbstractController
 
         return $this->json([
             'status' => 'success',
-            'wrapperContent' => $this->render('_blocks/home/_provider-series.html.twig', [
+            'wrapperContent' => $this->render('_blocks/home/_provider_series.html.twig', [
                 'filteredSeries' => $seriesSelection,
             ])->getContent(),
         ]);
@@ -260,7 +260,7 @@ class HomeController extends AbstractController
         return $this->json([
             'status' => 'success',
             'h2Text' => $h2,
-            'wrapperContent' => $this->render('_blocks/home/_episode-history.html.twig', [
+            'wrapperContent' => $this->render('_blocks/home/_episode_history.html.twig', [
                 'historyEpisode' => $historyEpisode,
             ])->getContent(),
         ]);

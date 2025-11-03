@@ -33,7 +33,7 @@ class SeriesFilmingLocations extends AbstractController
         $filmingLocationsWithBounds = $this->getFilmingLocations($id);
         $mapSettings = $this->settingsRepository->findOneBy(['name' => 'mapbox']);
         $mapSettingsData = $mapSettings ? $mapSettings->getData() : ['styles' => []];
-        $block = $this->render('_blocks/map/_map-container.html.twig', ['type' => 'series', 'styleSettings' => $mapSettingsData['styles']]);
+        $block = $this->render('_blocks/map/_map_container.html.twig', ['type' => 'series', 'styleSettings' => $mapSettingsData['styles']]);
 
         return new JsonResponse([
             'mapBlock' => $block->getContent(),

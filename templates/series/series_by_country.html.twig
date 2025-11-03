@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}my Tv Time → {{ 'Series.up coming series'|trans }}{% endblock %}
+{% block title %}my Tv Time → {{ 'Series by country'|trans }} - {{ country|country_name }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
@@ -9,28 +9,42 @@
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-    <div class="container-fluid series-to-start">
-        <h1>{{ 'Series.up coming series'|trans }}</h1>
+    <div class="container-fluid series-by-country">
+        <h1>{{ 'Series by country'|trans }} - {{ country|country_name }}</h1>
         {% if userSeriesCount < 20 %}
             {{ include('_blocks/series/_search.html.twig') }}
         {% endif %}
-        {% if seriesList|length %}
+{#        {% if seriesByCountry|length %}#}
             <header>
-                {{ 'Series.up coming series'|trans }} ({{ seriesList|length }})
+                {% set seriesCount = seriesByCountry|length %}
+                <h2>{{ seriesCount }} {{ (seriesCount > 1 ? 'seriess':'series')|trans }}</h2>
+                {#<div class="legends">
+                    <div class="legend to-start" data-title="{{ 'To start'|trans }}">{{ ux_icon('mdi:battery-outline') }}</div>
+                    <div class="legend in-progress" data-title="{{ 'In progress'|trans }}">{{ ux_icon('mdi:battery-50') }}</div>
+                    <div class="legend up-to-date" data-title="{{ 'Up to date'|trans }}">{{ ux_icon('mdi:battery') }}</div>
+                </div>#}
+                <label for="filter-by-country">
+                    <select id="filter-by-country">
+                        <option value="">{{ 'All'|trans }}</option>
+                        {% for c in userSeriesCountries %}
+                            <option value="{{ c }}"{{ c == country ? ' selected' : '' }}>{{ c|country_name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
                 <label for="filter-by-name">
-                    <input type="search" id="filter-by-name" placeholder="{{ 'Search'|trans }}" autocomplete="off">
+                    <input type="search" id="filter-by-name" placeholder="{{ 'Search'|trans }}">
                 </label>
             </header>
             <div class="series-group user">
                 <div class="wrapper">
                     <div class="content center">
-                        {% for series in seriesList %}
-                            {{ include('_blocks/series/_card-up-coming.html.twig') }}
+                        {% for series in seriesByCountry %}
+                            {{ include('_blocks/series/_card_by_country.html.twig') }}
                         {% endfor %}
                     </div>
                 </div>
             </div>
-        {% endif %}
+{#        {% endif %}#}
         <div id="global-data" class="hidden">
             {
             "tmdbIds": {{ tmdbIds|json_encode|raw }},
@@ -55,6 +69,12 @@
         window.addEventListener("DOMContentLoaded", init);
 
         function init() {
+            const lang = document.documentElement.lang;
+            const filterByCountry = document.getElementById('filter-by-country');
+            filterByCountry.addEventListener('change', (e) => {
+                const country = e.target.value;
+                window.location.href = '/' + lang + '/series/by/country/' + country;
+            });
             /** @type {HTMLInputElement} */
             const filterByName = document.getElementById('filter-by-name');
             filterByName.addEventListener('input', filterSeries);

@@ -68,8 +68,8 @@
                             </h1>
                             {{ include('_blocks/translations/_tools.html.twig') }}
                         </div>
-                        {{ include('_blocks/forms/_delete-overview.html.twig') }}
-                        {{ include('_blocks/forms/_localized-name.html.twig', {media: tv}) }}
+                        {{ include('_blocks/forms/_delete_overview.html.twig') }}
+                        {{ include('_blocks/forms/_localized_name.html.twig', {media: tv}) }}
                         {{ include('_blocks/forms/_overview.html.twig', {media: tv}) }}
                         <h5>
                             {% set n = series.visitNumber %}
@@ -193,7 +193,7 @@
                     <div class="series-status {{ tv.status_css }}">
                         {{ tv.status|trans }}
                     </div>
-                    {{ include('_blocks/_watch-links.html.twig', {type: 'series', media: series}) }}
+                    {{ include('_blocks/_watch_links.html.twig', {type: 'series', media: series}) }}
                     <div class="rating">
                         <div class="rating-stars">
                             <div class="stars" data-trans-rating="Cancel rating|{{ 'Cancel rating'|trans }}" data-trans-star="star|{{ 'star'|trans }}" data-trans-stars="stars|{{ 'stars'|trans }}">
@@ -333,7 +333,7 @@
                                     {% endfor %}
                                 </div>
                             </div>
-                            {{ include('_blocks/series/_cast-buttons.html.twig', {localized_name: tv.localized_name, name: series.name, seriesId: series.id, seasonNumber: 0}) }}
+                            {{ include('_blocks/series/_cast_buttons.html.twig', {localized_name: tv.localized_name, name: series.name, seriesId: series.id, seasonNumber: 0}) }}
                         </div>
                     {% endif %}
 
@@ -679,7 +679,7 @@
                 <div class="series-map">
                     {% if locations|length %}
                         {% set loc = locations|first %}
-                        {{ include('_blocks/map/_map-container.html.twig', {type: 'series', styleSettings: mapSettings.data.styles}) }}
+                        {{ include('_blocks/map/_map_container.html.twig', {type: 'series', styleSettings: mapSettings.data.styles}) }}
                         <div class="temp-locations">
                             <div class="locations">
                                 <ul>
@@ -754,7 +754,7 @@
             </div>
         </div>
     </div>
-    {{ include('_blocks/forms/_add-location-form.html.twig', addLocationFormData) }}
+    {{ include('_blocks/forms/_add_location_form.html.twig', addLocationFormData) }}
 
     <div id="globs-map" style="display: none">
         {

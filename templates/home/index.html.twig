@@ -78,7 +78,7 @@
                 <div class="wrapper">
                     <div class="content">
                         {% for m in highlightedMovies %}
-                            {{ include('_blocks/movie/_card-tmdb.html.twig', { movie: m }) }}
+                            {{ include('_blocks/movie/_card_tmdb.html.twig', { movie: m }) }}
                         {% endfor %}
                     </div>
                 </div>
@@ -142,7 +142,7 @@
                         <div class="wrapper">
                             <div class="content">
                                 {% for s in episodesToWatch %}
-                                    {{ include('_blocks/series/_history-card.html.twig', { series: s }) }}
+                                    {{ include('_blocks/series/_history_card.html.twig', { series: s }) }}
                                 {% endfor %}
                             </div>
                         </div>
@@ -173,7 +173,7 @@
                     <div class="wrapper">
                         <div class="content">
                             {% for s in historySeries %}
-                                {{ include('_blocks/series/_episode-card.html.twig', { series: s }) }}
+                                {{ include('_blocks/series/_episode_card.html.twig', { series: s }) }}
                             {% endfor %}
                         </div>
                     </div>
@@ -196,7 +196,7 @@
                     </div>
                     <div class="wrapper" id="episode-history">
                         <div class="content">
-                            {{ include('_blocks/home/_episode-history.html.twig') }}
+                            {{ include('_blocks/home/_episode_history.html.twig') }}
                         </div>
                     </div>
                 </div>
@@ -217,7 +217,7 @@
                 </div>
                 <div class="wrapper" id="provider-series">
                     <div class="content">
-                        {{ include('_blocks/home/_provider-series.html.twig') }}
+                        {{ include('_blocks/home/_provider_series.html.twig') }}
                     </div>
                 </div>
             </div>

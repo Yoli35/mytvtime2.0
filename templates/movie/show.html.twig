@@ -52,8 +52,8 @@
                             </h1>
                             {{ include('_blocks/translations/_tools.html.twig') }}
                         </div>
-                        {{ include('_blocks/forms/_delete-overview.html.twig') }}
-                        {{ include('_blocks/forms/_localized-name.html.twig', {media: movie}) }}
+                        {{ include('_blocks/forms/_delete_overview.html.twig') }}
+                        {{ include('_blocks/forms/_localized_name.html.twig', {media: movie}) }}
                         {{ include('_blocks/forms/_overview.html.twig', {media: movie}) }}
                         {% if movie.overview|length %}
                             <div class="movie-overview">{{ movie.overview|nl2br }}</div>
@@ -196,7 +196,7 @@
                                         </div>
                                     </div>
                                 {% endif %}
-                                {{ include('_blocks/movie/_release-dates.html.twig') }}
+                                {{ include('_blocks/movie/_release_dates.html.twig') }}
                                 <div class="original-name">
                                     <div class="label">{{ 'Original name'|trans }}</div>
                                     <div class="content">{{ movie.original_title }}</div>
@@ -302,7 +302,7 @@
                             <div class="user-actions">
                                 <h2>{{ 'User actions'|trans }}</h2>
                                 <div class="wrapper">
-                                    {{ include('_blocks/_watch-links.html.twig', {type: 'movie', media: movie}) }}
+                                    {{ include('_blocks/_watch_links.html.twig', {type: 'movie', media: movie}) }}
                                     <div class="viewed-at" data-viewed="{{ userMovie.viewed }}">
                                         <div class="mark-as-viewed{% if userMovie.lastViewedAt %} viewed{% endif %}">{{ ux_icon('mdi:eye') }}</div>
                                         {% if userMovie.lastViewedAt %}

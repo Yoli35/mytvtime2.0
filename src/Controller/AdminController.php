@@ -146,7 +146,7 @@ class AdminController extends AbstractController
             $this->settingsRepository->save($settings, true);
         }
         $modules = $settings->getData();
-        $block = $this->render('_blocks/admin/_api-modules.html.twig', [
+        $block = $this->render('_blocks/admin/_api_modules.html.twig', [
             'baseUrl' => "https://data.nantesmetropole.fr/api/explore/v2.1/catalog/datasets",
             'modules' => $modules,
         ]);
@@ -247,7 +247,7 @@ class AdminController extends AbstractController
             $results = json_decode($this->tmdbService->getSeriesExtras($seriesId, $extra, $param), true);
         }
 
-        return $this->render('_blocks/admin/_series-append-results.html.twig', [
+        return $this->render('_blocks/admin/_series_append_results.html.twig', [
                 'extra' => $extra,
                 'results' => $results,
                 'urls' => [
@@ -522,7 +522,7 @@ class AdminController extends AbstractController
 
         $results = json_decode($this->tmdbService->getMovieExtras($movieId, $extra, $params), true);
 
-        return $this->render('_blocks/admin/_movie-append-results.html.twig', [
+        return $this->render('_blocks/admin/_movie_append_results.html.twig', [
                 'extra' => $extra,
                 'results' => $results,
                 'urls' => [
@@ -837,7 +837,7 @@ class AdminController extends AbstractController
                 ],
             ],
         ];
-        $addLocationForm = $this->render('_blocks/forms/_add-location-form.html.twig', $data);
+        $addLocationForm = $this->render('_blocks/forms/_add_location_form.html.twig', $data);
         $now = $this->dateService->getNowImmutable("Europe/Paris");
         $emptyPoi = new PointOfInterest('New point of interest', '', '', '', '', 0, 0, $now);
 //        dump($data, $addLocationForm, $emptyPoi);

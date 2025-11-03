@@ -134,7 +134,7 @@
 
             <div class="season-stuff">
                 {#                <h2>{{ 'Season stuff'|trans }}</h2> #}
-                {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: false}) }}
+                {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: false}) }}
 
                 <div class="user-actions" data-user-series-id="{{ userSeries.id }}">
                     <div class="size-item{% if episodeDiv.height == '15rem' %} active{% endif %}" data-size="15rem" data-type="size">
@@ -229,8 +229,8 @@
                                                 {{ ux_icon('mdi:pencil') }}
                                             </div>
                                         </div>
-                                        {{ include('_blocks/series/_watch-links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (ue.watch_at != null)}) }}
-                                        {{ include('_blocks/series/_episode-air-date.html.twig', {episode: episode, ue: ue, ues: episode.user_episodes}) }}
+                                        {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (ue.watch_at != null)}) }}
+                                        {{ include('_blocks/series/_episode_air_date.html.twig', {episode: episode, ue: ue, ues: episode.user_episodes}) }}
                                         {% if episode.runtime or episode.vote_average %}
                                             <div class="episode-stats">
                                                 {% if episode.runtime %}
@@ -383,7 +383,7 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        {{ include('_blocks/series/_cast-buttons.html.twig', {localized_name: season.series_localized_name, name: series.name, seriesId: series.id, seasonNumber: season.season_number}) }}
+                        {{ include('_blocks/series/_cast_buttons.html.twig', {localized_name: season.series_localized_name, name: series.name, seriesId: series.id, seasonNumber: season.season_number}) }}
                     </div>
                 {% endif %}
 
@@ -417,7 +417,7 @@
                                     {% endfor %}
                                 </div>
                             </div>
-                            {{ include('_blocks/series/_cast-buttons.html.twig', {localized_name: season.series_localized_name, name: series.name, seriesId: series.id, seasonNumber: season.season_number}) }}
+                            {{ include('_blocks/series/_cast_buttons.html.twig', {localized_name: season.series_localized_name, name: series.name, seriesId: series.id, seasonNumber: season.season_number}) }}
                         </div>
                     {% endif %}
                 {% endif %}
@@ -443,7 +443,7 @@
         </div>
     </dialog>
 
-    {{ include('_blocks/forms/_edit-episode-infos-form.html.twig') }}
+    {{ include('_blocks/forms/_edit_episode_infos_form.html.twig') }}
 
     <div id="globs" style="display: none">
         {

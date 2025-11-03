@@ -10,11 +10,11 @@
                         {% if itemLevel1.item == 'row' %}
                             <div class="form-row">
                                 {% for itemLevel2 in itemLevel1.fields %}
-                                    {{ include('_blocks/forms/_location-' ~ itemLevel2.item ~ '.html.twig', { field: itemLevel2 }) }}
+                                    {{ include('_blocks/forms/_location_' ~ itemLevel2.item ~ '.html.twig', { field: itemLevel2 }) }}
                                 {% endfor %}
                             </div>
                         {% else %}
-                            {{ include('_blocks/forms/_location-' ~ itemLevel1.item ~ '.html.twig', { field: itemLevel1 }) }}
+                            {{ include('_blocks/forms/_location_' ~ itemLevel1.item ~ '.html.twig', { field: itemLevel1 }) }}
                         {% endif %}
                     {% endfor %}
                 </div>

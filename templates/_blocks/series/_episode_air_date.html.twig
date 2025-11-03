@@ -13,7 +13,7 @@
         {% if ue  and ue.watch_at %}
             <div class="watch-at-list">
                 {% for ue in ues %}
-                    {{ include ('_blocks/series/_watched-at.html.twig', {e: ue}) }}
+                    {{ include ('_blocks/series/_watched_at.html.twig', {e: ue}) }}
                 {% endfor %}
             </div>
         {% endif %}
