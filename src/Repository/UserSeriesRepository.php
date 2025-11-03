@@ -451,11 +451,8 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getSeriesAround(UserSeries $userSeries, string $locale): array
+    public function getSeriesAround(int $userId, int $userSeriesId, string $locale): array
     {
-        $user = $userSeries->getUser();
-        $userSeriesId = $userSeries->getId();
-        $userId = $user->getId();
 
         $sql = "SELECT
                     s.`id` as id,
@@ -486,9 +483,8 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getFirstSeries(User $user, string $locale): array
+    public function getFirstSeries(int $userId, string $locale): array
     {
-        $userId = $user->getId();
         $sql = "SELECT
                     s.`id` as id,
                     IF(sln.`id`, sln.`name`, s.`name`) as name,
@@ -504,9 +500,8 @@ class UserSeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getLastSeries(User $user, string $locale): array
+    public function getLastSeries(int $userId, string $locale): array
     {
-        $userId = $user->getId();
         $sql = "SELECT
                     s.`id` as id,
                     IF(sln.`id`, sln.`name`, s.`name`) as name,

@@ -1232,11 +1232,11 @@ h2 {
             align-items: center;
             display: flex;
             gap: .5rem;
-            justify-content: flex-end;
+            justify-content: flex-start;
 
             h2 {
                 background-color: transparent;
-                margin-inline-end: auto;
+                margin-inline-end: 1rem;
                 padding: 0;
             }
 

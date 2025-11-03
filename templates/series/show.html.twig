@@ -165,7 +165,8 @@
 
             <div class="block-infos">
                 <div class="series">
-                    {% if previousSeries %}
+                    {% if series.seriesAround.previous %}
+                        {% set previousSeries = series.seriesAround.previous %}
                         <a href="{{ path('app_series_show', {id: previousSeries.id, slug: previousSeries.slug}) }}"
                            class="previous-series" data-title="{{ 'Previous series'|trans }}">
                             {{ ux_icon('mdi:arrow-left-bold') }}
@@ -175,7 +176,8 @@
                             {% endif %}
                         </a>
                     {% endif %}
-                    {% if nextSeries %}
+                    {% if series.seriesAround.next %}
+                        {% set nextSeries = series.seriesAround.next %}
                         <a href="{{ path('app_series_show', {id: nextSeries.id, slug: nextSeries.slug}) }}"
                            class="next-series" data-title="{{ 'Next series'|trans }}">
                             {{ nextSeries.name }} ({{ nextSeries.progress|format_number({max_fraction_digit:2}) }}%)
@@ -258,14 +260,14 @@
                 <div class="content-seasons">
                     <div class="all-seasons">
                         <div>{{ 'Seasons'|trans }}</div>
-                        {% if tv.seasons|length > 1 %}
+                        {% if series.seasons|length > 1 %}
                             <div class="season-order">
                                 {{ ux_icon('mdi:arrow-down') }}
                             </div>
                         {% endif %}
                     </div>
                     <div class="seasons">
-                        {% for season in tv.seasons %}
+                        {% for season in series.seasons %}
                             {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
                                 <div class="season">
                                     <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: tv.localized_name.slug ?? series.slug}) }}"{#>#}
@@ -563,13 +565,13 @@
                     </dialog>
                 </div>
                 <dialog class="add-backdrop-dialog">
-                    {{ form_start(addBackdropForm) }}
-                    {{ form_widget(addBackdropForm.file) }}
+                    {{ form_start(forms.backdropForm) }}
+                    {{ form_widget(forms.backdropForm.file) }}
                     <div class="form-row">
                         <button type="button" name="cancel">{{ 'Cancel'|trans }}</button>
                         <button type="submit">{{ 'Upload it!'|trans }}</button>
                     </div>
-                    {{ form_end(addBackdropForm) }}
+                    {{ form_end(forms.backdropForm) }}
                 </dialog>
             </div>
 
@@ -595,7 +597,7 @@
                         {{ ux_icon('mdi:plus') }}
                     </div>
                     {% if videoCount %}
-                        <div class="video-tool folder" data-title="{{ (videoListFolded ? 'Expand all videos' : 'Collapse all videos')|trans }}">
+                        <div class="video-tool folder" data-title="{{ (series.videoListFolded ? 'Expand all videos' : 'Collapse all videos')|trans }}">
                             {{ ux_icon('mdi:chevron-down') }}
                         </div>
                         <script>
@@ -643,24 +645,22 @@
                         </script>
                     {% endif %}
                 </div>
-                <div class="video-list{% if videoListFolded %} folded{% endif %}">
+                <div class="video-list{% if series.videoListFolded %} folded{% endif %}">
                     {% for video in series.videos %}
-                        {#                        {% if video.iframe == true %} #}
                         <div class="video">
                             <iframe src="{{ video.link }}" title="{{ video.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
-                        {#                        {% endif %} #}
                     {% endfor %}
                 </div>
                 <dialog class="add-video-dialog">
-                    {{ form_start(addVideoForm) }}
-                    {{ form_widget(addVideoForm.title) }}
-                    {{ form_widget(addVideoForm.link) }}
+                    {{ form_start(forms.videoForm) }}
+                    {{ form_widget(forms.videoForm.title) }}
+                    {{ form_widget(forms.videoForm.link) }}
                     <div class="form-row">
                         <button type="button" name="cancel">{{ 'Cancel'|trans }}</button>
                         <button type="submit" name="add">{{ 'Add'|trans }}</button>
                     </div>
-                    {{ form_end(addVideoForm) }}
+                    {{ form_end(forms.videoForm) }}
                 </dialog>
             </div>
 

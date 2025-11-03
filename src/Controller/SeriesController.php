@@ -7,14 +7,12 @@ use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\FilmingLocation;
 use App\Entity\FilmingLocationImage;
-use App\Entity\Network;
 use App\Entity\Series;
 use App\Entity\SeriesBroadcastDate;
 use App\Entity\SeriesBroadcastSchedule;
 use App\Entity\SeriesCast;
 use App\Entity\SeriesExternal;
 use App\Entity\SeriesImage;
-use App\Entity\SeriesLocalizedName;
 use App\Entity\SeriesVideo;
 use App\Entity\Settings;
 use App\Entity\User;
@@ -39,7 +37,6 @@ use App\Repository\SeriesBroadcastScheduleRepository;
 use App\Repository\SeriesCastRepository;
 use App\Repository\SeriesExternalRepository;
 use App\Repository\SeriesImageRepository;
-use App\Repository\SeriesLocalizedNameRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\SeriesVideoRepository;
 use App\Repository\SettingsRepository;
@@ -49,18 +46,15 @@ use App\Repository\UserPinnedSeriesRepository;
 use App\Repository\UserSeriesRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
-use App\Service\DeeplTranslator;
 use App\Service\ImageConfiguration;
 use App\Service\ImageService;
-use App\Service\KeywordService;
+use App\Service\SeriesService;
 use App\Service\TMDBService;
 use DateMalformedStringException;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
-use DeepL\DeepLException;
-use Deepl\TextResult;
 use Psr\Log\LoggerInterface as MonologLogger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -83,7 +77,6 @@ class SeriesController extends AbstractController
 
     public function __construct(
         private readonly DateService                       $dateService,
-        private readonly DeeplTranslator                   $deeplTranslator,
         private readonly DeviceRepository                  $deviceRepository,
         private readonly EpisodeStillRepository            $episodeStillRepository,
         private readonly FilmingLocationImageRepository    $filmingLocationImageRepository,
@@ -91,7 +84,6 @@ class SeriesController extends AbstractController
         private readonly ImageConfiguration                $imageConfiguration,
         private readonly ImageService                      $imageService,
         private readonly KeywordRepository                 $keywordRepository,
-        private readonly KeywordService                    $keywordService,
         private readonly MonologLogger                     $logger,
         private readonly NetworkRepository                 $networkRepository,
         private readonly PeopleController                  $peopleController,
@@ -103,7 +95,7 @@ class SeriesController extends AbstractController
         private readonly SeriesCastRepository              $seriesCastRepository,
         private readonly SeriesExternalRepository          $seriesExternalRepository,
         private readonly SeriesImageRepository             $seriesImageRepository,
-        private readonly SeriesLocalizedNameRepository     $seriesLocalizedNameRepository,
+        private readonly SeriesService                     $seriesService,
         private readonly SeriesVideoRepository             $seriesVideoRepository,
         private readonly SeriesRepository                  $seriesRepository,
         private readonly SettingsRepository                $settingsRepository,
@@ -188,7 +180,7 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/to/start', name: 'to_start')]
-    public function serieToStart(Request $request): Response
+    public function start(Request $request): Response
     {
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
@@ -238,7 +230,7 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/not/seen/in/a/while', name: 'not_seen_in_a_while')]
-    public function serieNotSeen(Request $request): Response
+    public function continue(Request $request): Response
     {
         $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
@@ -707,7 +699,8 @@ class SeriesController extends AbstractController
         $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
         $userSeries = ($user && $series) ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
-        $locale = $user ? $user->getPreferredLanguage() : $request->getLocale();
+        $country = $user ? $user->getCountry() ?? 'FR' : 'FR';
+        $locale = $user ? $user->getPreferredLanguage() ?? 'fr' : $request->getLocale();
 
         if ($userSeries) {
             return $this->redirectToRoute('app_series_show', [
@@ -736,7 +729,7 @@ class SeriesController extends AbstractController
             $enTranslations = array_find($tv['translations']['translations'], function ($item) {
                 return $item['iso_639_1'] == 'en';
             });
-//
+            $tv['overview'] = $enTranslations['data']['overview'];
             $this->addFlash('info', 'The series overview is missing. "' . ($enTranslations['data']['overview'] ?? 'null') . '" found.');
         }
         $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
@@ -744,10 +737,10 @@ class SeriesController extends AbstractController
         $tv['blurredPosterPath'] = $this->imageService->blurPoster($tv['poster_path'], 'series', 8);
 
         $tv['credits'] = $this->castAndCrew($tv, $series);
-        $tv['networks'] = $this->networks($tv);
-        $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
+        $tv['networks'] = $this->seriesService->networks($tv);
+        $tv['seasons'] = $this->seriesService->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
-        $tv['translations'] = $this->getTranslations($tv, $user);
+        $tv['translations'] = $this->seriesService->getTranslations($tv['translations']['translations'], $country, $locale);
         $c = count($tv['episode_run_time']);
         $tv['average_episode_run_time'] = $c ? array_reduce($tv['episode_run_time'], function ($carry, $item) {
                 return $carry + $item;
@@ -757,7 +750,6 @@ class SeriesController extends AbstractController
             'tv' => $tv,
             'localizedName' => $localizedName,
             'localizedOverview' => $localizedOverview,
-//            'externals' => $this->getTMDBExternals($tv['name'], $tv['origin_country']),
         ]);
     }
 
@@ -797,12 +789,12 @@ class SeriesController extends AbstractController
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $country = $user->getCountry() ?? 'FR';
 
-        list($addBackdropForm, $addVideoForm) = $this->handleSerieShowForms($request, $series);
+        $forms = $this->handleSerieShowForms($request, $series);
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
 
-        $seriesAround = $this->getSeriesAround($userSeries, $locale);
+        $seriesAround = $this->seriesService->getSeriesAround($user->getId(), $userSeries->getId(), $locale);
 
         $blurredPosterPath = $this->imageService->blurPoster($series->getPosterPath(), 'series', 8);
 
@@ -812,7 +804,7 @@ class SeriesController extends AbstractController
 
         $this->checkSlug($series, $slug, $locale);
 
-        $tv = $this->getTv($series, $locale);
+        $tv = $this->seriesService->getTv($series, $country, $locale);
 
         if (!$tv) {
             $series->setUpdates(['Series not found']);
@@ -832,21 +824,10 @@ class SeriesController extends AbstractController
                 'tv' => $noTv,
             ]);
         }
-        if ($tv['lists']['total_results'] == 0) {
-            // Get with en-US language to get the lists
-            $tv['lists'] = json_decode($this->tmdbService->getTvLists($series->getTmdbId()), true);
-        }
-        if ($tv['similar']['total_results'] == 0) {
-            // Get with en-US language to get the similar series
-            $tv['similar'] = json_decode($this->tmdbService->getTvSimilar($series->getTmdbId()), true);
-        }
 
-        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
-        $backdropUrl = $this->imageConfiguration->getUrl('backdrop_sizes', 3);
-        $tv['similar']['results'] = $this->getSimilarSeries($tv, $posterUrl);
-
-        $this->imageService->saveImage("posters", $tv['poster_path'], $posterUrl);
-        $this->imageService->saveImage("backdrops", $tv['backdrop_path'], $backdropUrl);
+        $tv['credits'] = $this->castAndCrew($tv, $series);
+        $tv['watch/providers'] = $this->watchProviders($tv, $country);
+        $tv['status_css'] = $this->statusCss($userSeries, $tv);
 
         $series = $this->updateSeries($series, $tv);
 
@@ -857,41 +838,20 @@ class SeriesController extends AbstractController
             $this->addFlash('info', $this->translator->trans('Your episodes have been updated according to the series information.'));
             $this->reloadUserEpisodes = false;
         }
-        $userVotes = $this->getUserVotes($tv, $userEpisodes);
 
-        $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($locale);
-        $tv['credits'] = $this->castAndCrew($tv, $series);
-        $tv['translations'] = $this->getTranslations($tv, $user);
-        $tv['localized_name'] = $this->getTvLocalizedName($tv, $series, $locale);
-        $tv['localized_overviews'] = $series->getLocalizedOverviews($locale);
-        $tv['keywords']['results'] = $this->keywordService->keywordsCleaning($tv['keywords']['results']);
-        $tv['missing_translations'] = $this->keywordService->keywordsTranslation($tv['keywords']['results'], $locale);
-        $tv['networks'] = $this->networks($tv);
-        $tv['overview'] = $this->localizedOverview($tv, $series, $request);
-        $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
-        $tv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
-        $tv['watch/providers'] = $this->watchProviders($tv, $country);
-        $tv['last_episode_to_air'] = $this->getEpisodeToAir($tv['last_episode_to_air'], $series);
-        $tv['next_episode_to_air'] = $this->getEpisodeToAir($tv['next_episode_to_air'], $series);
-        $tv['average_episode_run_time'] = $this->getEpisodeRunTime($tv);
-        $tv['status_css'] = $this->statusCss($userSeries, $tv);
-
-        $providers = $this->watchLinkApi->getWatchProviders($country);
         $schedules = $this->seriesSchedulesV2($user, $series, $tv);
-        $timezoneMenu = $this->getTimezoneMenu();
-        $emptySchedule = $this->emptySchedule();
-        $alternateSchedules = $this->alternateSchedules($tv, $series, $userEpisodes);
-        $tv['seasons'] = $this->overrideSeasonAirDate($tv['seasons'], $schedules);
-
-        $seriesArr['userVotes'] = $userVotes;
+        $alternateSchedules = $this->seriesService->alternateSchedules($tv['seasons'], $series, $userEpisodes);
+        $seriesArr['seasons'] = $this->overrideSeasonAirDate($tv['seasons'], $schedules);
+        $seriesArr['seriesAround'] = $seriesAround;
+        $seriesArr['userVotes'] = $this->seriesService->getUserVotes($tv['seasons'], $userEpisodes);
         $seriesArr['schedules'] = $schedules;
-        $seriesArr['timezoneMenu'] = $timezoneMenu;
-        $seriesArr['emptySchedule'] = $emptySchedule;
+        $seriesArr['timezoneMenu'] = (new IntlExtension)->getTimezoneNames('fr_FR');
+        $seriesArr['emptySchedule'] = $this->seriesService->emptySchedule();
         $seriesArr['alternateSchedules'] = $alternateSchedules;
         $seriesArr['seriesInProgress'] = $this->userEpisodeRepository->isFullyReleased($userSeries);
         $seriesArr['images'] = $this->getSeriesImages($series);
-        $seriesArr['videos'] = $this->getSeriesVideoList($series);
-        $videoListFolded = $this->isVideoListFolded($seriesArr, $user);
+        $seriesArr['videos'] = $this->seriesService->getSeriesVideoList($series);
+        $seriesArr['videoListFolded'] = $this->seriesService->isVideoListFolded(count($seriesArr['videos']), $user);
 
         $filmingLocationsWithBounds = $this->getFilmingLocations($series);
 
@@ -928,12 +888,9 @@ class SeriesController extends AbstractController
 
         return $this->render("series/show.html.twig", [
             'series' => $seriesArr,
-            'previousSeries' => $seriesAround['previous'],
-            'nextSeries' => $seriesAround['next'],
-            'videoListFolded' => $videoListFolded,
             'tv' => $tv,
             'userSeries' => $userSeries,
-            'providers' => $providers,
+            'providers' => $this->watchLinkApi->getWatchProviders($country),
             'locations' => $filmingLocationsWithBounds['filmingLocations'],
             'locationsBounds' => $filmingLocationsWithBounds['bounds'],
             'emptyLocation' => $filmingLocationsWithBounds['emptyLocation'],
@@ -941,228 +898,10 @@ class SeriesController extends AbstractController
             'fieldList' => ['series-id', 'tmdb-id', 'crud-type', 'crud-id', 'title', 'location', 'season-number', 'episode-number', 'description', 'latitude', 'longitude', 'radius', "source-name", "source-url"],
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
             'externals' => $this->getExternals($series, $tv['keywords']['results'], $tv['external_ids'] ?? [], $locale),
-            'translations' => $this->getSeriesShowTranslations(),
-            'addBackdropForm' => $addBackdropForm->createView(),
-            'addVideoForm' => $addVideoForm->createView(),
+            'translations' => $this->seriesService->getSeriesShowTranslations(),
+            'forms' => $forms,
             'oldSeriesAdded' => $request->get('oldSeriesAdded') === 'true',
         ]);
-    }
-
-    private function getTv(Series $series, string $locale): ?array
-    {
-        return json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale, [
-            "changes",
-            "credits",
-            "external_ids",
-            "images",
-            "keywords",
-            "lists",
-            "similar",
-            "translations",
-            "videos",
-            "watch/providers",
-        ]), true);
-    }
-
-    public function getTranslations(array $tv, ?User $user): ?array
-    {
-        if (!$user) {
-            $country = 'FR';
-            $locale = 'fr';
-        } else {
-            $country = $user->getCountry() ?? 'FR'; // user iso_3166_1
-            $locale = $user->getPreferredLanguage() ?? 'fr'; // user iso_639_1
-        }
-        $translations = $tv['translations']['translations'];
-        $translation = null;
-
-        foreach ($translations as $t) {
-            if ($t['iso_3166_1'] == $country && $t['iso_639_1'] == $locale) {
-                $translation = $t;
-                break;
-            }
-        }
-        if ($translation == null) {
-            foreach ($translations as $t) {
-                if ($t['iso_3166_1'] == $country) {
-                    $translation = $t;
-                    break;
-                }
-            }
-        }
-        if ($translation == null) {
-            foreach ($translations as $t) {
-                if ($t['iso_639_1'] == $locale) {
-                    $translation = $t;
-                    break;
-                }
-            }
-        }
-        // get en-Us if null
-        if ($translation == null) {
-            foreach ($translations as $t) {
-                if ($t['iso_3166_1'] == 'US' && $t['iso_639_1'] == 'en') {
-                    $translation = $t;
-                    break;
-                }
-            }
-        }
-        return $translation;
-    }
-
-    private function getSeriesAround(?UserSeries $userSeries, string $locale): array
-    {
-        $seriesAround = $this->userSeriesRepository->getSeriesAround($userSeries, $locale);
-        $previousSeries = null;
-        $nextSeries = null;
-        if (count($seriesAround) == 2) {
-            $previousSeries = $seriesAround[0];
-            $nextSeries = $seriesAround[1];
-        }
-        if (count($seriesAround) == 1 and $seriesAround[0]['id'] < $userSeries->getId()) {
-            $previousSeries = $seriesAround[0];
-            $nextSeries = $this->userSeriesRepository->getFirstSeries($userSeries->getUser(), $locale)[0];
-        }
-        if (count($seriesAround) == 1 and $seriesAround[0]['id'] > $userSeries->getId()) {
-            $previousSeries = $this->userSeriesRepository->getLastSeries($userSeries->getUser(), $locale)[0];
-            $nextSeries = $seriesAround[0];
-        }
-        return [
-            'previous' => $previousSeries,
-            'next' => $nextSeries,
-        ];
-    }
-
-    private function getSimilarSeries(array $tv, string $posterUrl): array
-    {
-        $tv['similar']['results'] = array_map(function ($s) use ($posterUrl) {
-            $s['poster_path'] = $s['poster_path'] ? $posterUrl . $s['poster_path'] : null;
-            $s['tmdb'] = true;
-            $s['slug'] = new AsciiSlugger()->slug($s['name']);
-            return $s;
-        }, $tv['similar']['results']);
-
-        return $tv['similar']['results'];
-    }
-
-    private function getSeriesShowTranslations(): array
-    {
-        return [
-            'Add to favorites' => $this->translator->trans('Add to favorites'),
-            'Add' => $this->translator->trans('Add'),
-            'Additional overviews' => $this->translator->trans('Additional overviews'),
-            'After tomorrow' => $this->translator->trans('After tomorrow'),
-            'Available' => $this->translator->trans('Available'),
-            'Delete' => $this->translator->trans('Delete'),
-            'Edit' => $this->translator->trans('Edit'),
-            'Ended' => $this->translator->trans('Ended'),
-            'Localized overviews' => $this->translator->trans('Localized overviews'),
-            'Now' => $this->translator->trans('Now'),
-            'Remove from favorites' => $this->translator->trans('Remove from favorites'),
-            'Since' => $this->translator->trans('Since'),
-            'That\'s all!' => $this->translator->trans('That\'s all!'),
-            'This field is required' => $this->translator->trans('This field is required'),
-            'To be continued' => $this->translator->trans('To be continued'),
-            'Today' => $this->translator->trans('Today'),
-            'Tomorrow' => $this->translator->trans('Tomorrow'),
-            'Update' => $this->translator->trans('Update'),
-            'Watch on' => $this->translator->trans('Watch on'),
-            'available' => $this->translator->trans('available'),
-            'day' => $this->translator->trans('day'),
-            'days' => $this->translator->trans('days'),
-            "and" => $this->translator->trans('and'),
-            'since' => $this->translator->trans('since'),
-            'Season completed' => $this->translator->trans('Season completed'),
-            'Up to date' => $this->translator->trans('Up to date'),
-            'Not a valid file type. Update your selection' => $this->translator->trans('Not a valid file type. Update your selection'),
-        ];
-    }
-
-    private function getSeriesVideoList(Series $series): array
-    {
-        return array_map(function ($v) {
-            $vArr['title'] = $v->getTitle();
-            $link = $v->getLink();
-            if (strlen($link) === 11) {
-                $vArr['link'] = 'https://www.youtube.com/embed/' . $link;
-                $vArr['iframe'] = true;
-            } else {
-                $vArr['link'] = $link;
-                $vArr['iframe'] = false;
-            }
-            return $vArr;
-        }, $series->getSeriesVideos()->toArray());
-    }
-
-    private function isVideoListFolded(array $seriesArr, User $user): bool
-    {
-        if (count($seriesArr['videos'])) {
-            $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'series_video_list_folded']);
-            if (!$settings) {
-                $settings = new Settings($user, 'series_video_list_folded', ['folded' => true]);
-                $this->settingsRepository->save($settings, true);
-            }
-            return $settings->getData()['folded'];
-        }
-        return true;
-    }
-
-    private function getTvLocalizedName(array $tv, Series $series, string $locale): ?SeriesLocalizedName
-    {
-        $newLocalizedName = $series->getLocalizedName($locale);
-
-        if (!$newLocalizedName && $tv['translations'] && $tv['name'] != $tv['translations']['data']['name']) {
-            if (strlen($tv['translations']['data']['name'])) {
-                $slugger = new AsciiSlugger();
-                $slug = $slugger->slug($tv['translations']['data']['name'])->lower()->toString();
-                $newLocalizedName = new SeriesLocalizedName($series, $tv['translations']['data']['name'], $slug, $locale);
-                $this->seriesLocalizedNameRepository->save($newLocalizedName, true);
-                $this->addFlash('success', 'The series name “' . $newLocalizedName->getName() . '” has been added to the database.');
-            }
-        }
-        return $newLocalizedName;
-    }
-
-    private function getEpisodeToAir(?array $ep, Series $series): ?array
-    {
-        if (!$ep) return null;
-
-        $ep['still_path'] = $ep['still_path'] ? $this->imageConfiguration->getUrl('still_sizes', 2) . $ep['still_path'] : null;
-        $ep['url'] = $this->generateUrl('app_series_season', [
-                'id' => $series->getId(),
-                'slug' => $series->getSlug(),
-                'seasonNumber' => $ep['season_number'],
-            ]) . "#episode-" . $ep['season_number'] . '-' . $ep['episode_number'];
-
-        return $ep;
-    }
-
-    private function getEpisodeRuntime(array $tv): int
-    {
-        $c = count($tv['episode_run_time']);
-        return $c ? array_reduce($tv['episode_run_time'], function ($carry, $item) {
-                return $carry + $item;
-            }, 0) / $c : 0;
-    }
-
-    private function getUserVotes(array $tv, array $userEpisodes): array
-    {
-        $userVotes = [];
-        foreach ($userEpisodes as $ue) {
-            $userVotes[$ue->getSeasonNumber()]['ues'][] = $ue;
-            $userVotes[$ue->getSeasonNumber()]['avs'][] = 0;
-        }
-        foreach ($tv['seasons'] as $season) {
-            if (key_exists('vote_average', $season)) {
-                $userVotes[$season['season_number']]['avs'] = array_fill(0, $season['episode_count'], $season['vote_average']);
-            } else {
-                $userVotes[$season['season_number']]['avs'] = array_fill(0, $season['episode_count'], 0);
-            }
-            if (!key_exists('ues', $userVotes[$season['season_number']])) {
-                $userVotes[$season['season_number']]['ues'] = $season['episode_count'] ? [] : array_fill(0, $season['episode_count'], null);
-            }
-        }
-        return $userVotes;
     }
 
     #[IsGranted('ROLE_USER')]
@@ -1325,7 +1064,7 @@ class SeriesController extends AbstractController
             $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
 
             $tv = json_decode($this->tmdbService->getTv($seriesBroadcastSchedule->getSeries()->getTmdbId(), 'fr-FR', ['seasons']), true);
-            $as = $this->getAlternateSchedule($seriesBroadcastSchedule, $tv, $userEpisodes);
+            $as = $this->seriesService->getAlternateSchedule($seriesBroadcastSchedule, $tv, $userEpisodes);
 
             $airDays = $as['airDays'];
             foreach ($airDays as $airDay) {
@@ -1347,10 +1086,6 @@ class SeriesController extends AbstractController
         }
         $this->seriesBroadcastDateRepository->flush();
 
-        /*return $this->json([
-            'ok' => true,
-            'success' => true,
-        ]);*/
         return new JsonResponse([
             'ok' => true,
             'success' => true,
@@ -1572,7 +1307,7 @@ class SeriesController extends AbstractController
                 'air_date' => $link['air_date'],
                 'watched' => (bool)$link['user_episode']['watch_at_db'],
                 'future' => $airString > $nowString,
-                'class' => 'quick-episode' . ((bool)$link['user_episode']['watch_at_db'] ? ' watched' : ($airString > $nowString ? ' future' : ''))
+                'class' => 'quick-episode' . ($link['user_episode']['watch_at_db'] ? ' watched' : ($airString > $nowString ? ' future' : ''))
             ];
         }, $episodes);
 
@@ -1960,7 +1695,7 @@ class SeriesController extends AbstractController
     #[Route('/fetch/search/multi', name: 'fetch_search_multi', methods: ['POST'])]
     public function fetchSearchMulti(Request $request): Response
     {
-        $user = $this->getUser();
+//        $user = $this->getUser();
         $locale = 'en-US';//$user?->getPreferredLanguage() ?? $request->getLocale();
         $data = json_decode($request->getContent(), true);
         $query = $data['query'];
@@ -2105,7 +1840,7 @@ class SeriesController extends AbstractController
             $data = $addVideoForm->getData();
             $this->addVideo($data);
         }
-        return [$addBackdropForm, $addVideoForm];
+        return ['backdropForm' => $addBackdropForm->createView(), 'videoForm' => $addVideoForm->createView()];
     }
 
     private function addBackdrop(Series $series, UploadedFile $backdropFile): void
@@ -2299,7 +2034,7 @@ class SeriesController extends AbstractController
     public function statusCss(UserSeries $userSeries, array $tv): string
     {
         $status = $tv['status'];
-        $progress = $userSeries->getProgress();
+//        $progress = $userSeries->getProgress();
         $statusCss = 'status-';
         if ($status == 'Returning Series') {
             $statusCss .= 'returning';
@@ -2409,7 +2144,7 @@ class SeriesController extends AbstractController
                                 $this->addFlash('warning', 'Finale episode number: ' . sprintf("S%02dE%02d", $s['season_number'], $episode['episode_number']) . ' - episode count: ' . $count);
                             }
                             break;
-                        };
+                        }
                     }
                     $seasonEpisodeCount += $episodeCount;
                 } else {
@@ -2559,373 +2294,6 @@ class SeriesController extends AbstractController
             ];
         }
         return $schedules;
-    }
-
-    private function getTimezoneMenu(): array
-    {
-        return (new IntlExtension)->getTimezoneNames('fr_FR');
-    }
-
-    public function getAlternateSchedule(SeriesBroadcastSchedule $schedule, ?array $tv, array $userEpisodes): array
-    {
-        $errorArr = ['override' => false, 'seasonNumber' => 0, 'multiPart' => false, 'seasonPart' => 0, 'airDays' => []];
-        $now = $this->now();
-        $seasonNumber = $schedule->getSeasonNumber();
-        $override = $schedule->isOverride();
-        $multiPart = $schedule->isMultiPart();
-        $seasonPart = $schedule->getSeasonPart();
-
-        if (!$tv) {
-            $dayArr = [];
-            $episodeNumber = 1;
-            $airAt = $schedule->getAirAt();
-            foreach ($userEpisodes as $userEpisode) {
-                $ue = $userEpisode;
-                $date = $ue->getAirDate()->setTime($airAt->format('H'), $airAt->format('i'));
-                $dayArr[] = ['date' => $date, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $episodeNumber), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $episodeNumber), 'future' => $now < $date];
-                $episodeNumber++;
-            }
-            return ['override' => false, 'seasonNumber' => $seasonNumber, 'multiPart' => false, 'seasonPart' => 0, 'airDays' => $dayArr];
-        }
-        /*if (!$seasonNumber) {
-            return $errorArr;
-        }*/
-        $frequency = $schedule->getFrequency();
-        $firstAirDate = $schedule->getFirstAirDate();
-        $airAt = $schedule->getAirAt();
-        $daysOfWeek = $schedule->getDaysOfWeek();
-
-        if ($schedule->isMultiPart()) {
-            $firstEpisode = $schedule->getSeasonPartFirstEpisode();
-            $episodeCount = $schedule->getSeasonPartEpisodeCount();
-            $lastEpisode = $firstEpisode + $episodeCount - 1;
-        } else {
-            $firstEpisode = 1;
-            $episodeCount = $this->getSeason($tv['seasons'], $seasonNumber)['episode_count'];
-            $lastEpisode = $episodeCount;
-        }
-        // Frequency values:
-        //  1 - All at once
-        //  2 - Daily
-        //  3 - Weekly, one at a time
-        //  4 - Weekly, two at a time
-        //  5 - Weekly, three at a time
-        // 11 - Weekly, four at a time
-        //  6 - Weekly, two, then one
-        //  7 - Weekly, three, then one
-        //  8 - Weekly, four, then one
-        //  9 - Weekly, four, then two
-        // 10 - Weekly, selected days
-        // 12 - Selected days, then weekly, one at a time
-
-        $firstAirDate = $firstAirDate->setTime($airAt->format('H'), $airAt->format('i'));
-        $date = $firstAirDate;
-        $dayArr = [];
-        switch ($frequency) {
-            case 1: // All at once
-                for ($i = $firstEpisode; $i <= $lastEpisode; $i++) {
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
-                }
-                break;
-            case 2: //
-                $n = array_reduce($daysOfWeek, function ($carry, $day) {
-                    return $carry + $day;
-                }, 0);
-                if ($n) {
-                    // day of week of first air date
-                    $firstAirDayOfWeek = intval($firstAirDate->format('w'));
-                    $weekNumber = 0;
-                    $episodeIndex = $firstEpisode;
-                    /*$this->addFlash('success',
-                        'date: ' . $firstAirDate->format('Y-m-d')
-                        . ' firstAirDayOfWeek: ' . $firstAirDayOfWeek
-                        . ' daysOfWeek: ' . implode(',', $daysOfWeek),
-                    );*/
-                    while ($episodeIndex <= $lastEpisode) {
-                        /*$this->addFlash('success', 'weekNumber: ' . $weekNumber);*/
-                        for ($i = 0; $i < 7 && $episodeIndex <= $lastEpisode; $i++) {
-                            for ($j = 0; $j < $daysOfWeek[$i] && $episodeIndex <= $lastEpisode; $j++) {
-                                $date = $this->dateModify($firstAirDate, '+' . (($i - $firstAirDayOfWeek + 7) % 7) . ' days');
-                                $date = $this->dateModify($date, "+$weekNumber week");
-                                $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $episodeIndex), 'episodeNumber' => $episodeIndex, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $episodeIndex), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $episodeIndex), 'future' => $now < $date];
-                                $episodeIndex++;
-                                /*$this->addFlash('success', 'episode index: ' . $episodeIndex);*/
-                            }
-                        }
-                        $weekNumber++;
-                    }
-                } else {
-                    for ($i = $firstEpisode; $i <= $lastEpisode; $i++) {
-                        $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
-                        $date = $this->dateModify($date, '+1 day');
-                    }
-                }
-                break;
-            case 3: // Weekly, one at a time
-                for ($i = $firstEpisode; $i <= $lastEpisode; $i++) {
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
-                    $date = $this->dateModify($date, '+1 week');
-                }
-                break;
-            case 4: // Weekly, two at a time
-                for ($i = $firstEpisode; $i <= $lastEpisode; $i += 2) {
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i + 1), 'episodeNumber' => $i + 1, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
-                    $date = $this->dateModify($date, '+1 week');
-                }
-                break;
-            case 5: // Weekly, three at a time
-                for ($i = $firstEpisode; $i <= $lastEpisode; $i += 3) {
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i + 1), 'episodeNumber' => $i + 1, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i + 2), 'episodeNumber' => $i + 2, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 2), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 2), 'future' => $now < $date];
-                    $date = $this->dateModify($date, '+1 week');
-                }
-                break;
-            case 11: // Weekly, four at a time
-                for ($i = $firstEpisode; $i <= $lastEpisode; $i += 4) {
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i + 1), 'episodeNumber' => $i + 1, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i + 2), 'episodeNumber' => $i + 2, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 2), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 2), 'future' => $now < $date];
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i + 3), 'episodeNumber' => $i + 3, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 3), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 3), 'future' => $now < $date];
-                    $date = $this->dateModify($date, '+1 week');
-                }
-                break;
-            case 6: // Weekly, two, then one
-                $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $firstEpisode), 'episodeNumber' => $firstEpisode, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $firstEpisode), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $firstEpisode), 'future' => $now < $date];
-                for ($i = $firstEpisode + 1; $i <= $lastEpisode; $i++) {
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
-                    $date = $this->dateModify($date, '+1 week');
-                }
-                break;
-            case 7: // Weekly, three, then one
-                $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $firstEpisode), 'episodeNumber' => $firstEpisode, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $firstEpisode), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $firstEpisode), 'future' => $now < $date];
-                $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $firstEpisode + 1), 'episodeNumber' => $firstEpisode + 1, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $firstEpisode + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $firstEpisode + 1), 'future' => $now < $date];
-                for ($i = $firstEpisode + 2; $i <= $lastEpisode; $i++) {
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
-                    $date = $this->dateModify($date, '+1 week');
-                }
-                break;
-            case 8: // 4, then 1
-                $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $firstEpisode), 'episodeNumber' => $firstEpisode, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $firstEpisode), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $firstEpisode), 'future' => $now < $date];
-                $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $firstEpisode + 1), 'episodeNumber' => $firstEpisode + 1, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $firstEpisode + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $firstEpisode + 1), 'future' => $now < $date];
-                $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $firstEpisode + 2), 'episodeNumber' => $firstEpisode + 2, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $firstEpisode + 2), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $firstEpisode + 2), 'future' => $now < $date];
-                for ($i = $firstEpisode + 3; $i <= $lastEpisode; $i++) {
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
-                    $date = $this->dateModify($date, '+1 week');
-                }
-                break;
-            case 9: // 4, then 2
-                $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $firstEpisode), 'episodeNumber' => $firstEpisode, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $firstEpisode), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $firstEpisode), 'future' => $now < $date];
-                $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $firstEpisode + 1), 'episodeNumber' => $firstEpisode + 1, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $firstEpisode + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $firstEpisode + 1), 'future' => $now < $date];
-                for ($i = $firstEpisode + 2; $i <= $lastEpisode; $i += 2) {
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i + 1), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i + 1), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i + 1), 'future' => $now < $date];
-                    $date = $this->dateModify($date, '+1 week');
-                }
-                break;
-            case 10:
-                $firstDayOfWeek = intval($date->format('w'));
-                $selectedDayCount = array_reduce($daysOfWeek, function ($carry, $day) {
-                    return $carry + ($day > 0);
-                }, 0);
-                $selectedEpisodeCount = array_reduce($daysOfWeek, function ($carry, $day) {
-                    return $carry + $day;
-                }, 0);
-                if (!$this->isValidDaysOfWeek($daysOfWeek, $selectedDayCount, $firstDayOfWeek, $date)) {
-                    return $errorArr;
-                }
-                // First  day of week: 5
-                // DaysOfWeek: [1,0,0,0,0,1,1], [1,1,0,0,0,1,1], [1,1,1,0,0,0,1], [1,1,1,1,0,0,0]
-                //$dayIndexArr = array_keys($daysOfWeek, 1);
-                // → dayIndexArr: [0,5,6], [0,1,5,6], [0,1,2,6], [0,1,2,3]
-                //for ($i = 0; $i < $selectedDayCount; $i++) {
-                //    if ($dayIndexArr[$i] < $firstDayOfWeek) {
-                //        $dayIndexArr[$i] += 7;
-                //    }
-                //}
-                // → dayIndexArr: [7,5,6], [7,1,5,6], [7,1,2,6], [7,1,2,3]
-                //sort($dayIndexArr);
-                // → dayIndexArr: [5,6,7], [1,5,6,7], [1,2,6,7], [1,2,3,7]*/
-                $dayIndexArr = $this->daysOfWeekToDayIndexArr($daysOfWeek, $selectedDayCount, $firstDayOfWeek);
-
-                for ($i = $firstEpisode, $k = 1; $i <= $lastEpisode; $i += $selectedEpisodeCount, $k++) {
-                    $j = $i;
-                    $firstDateOfWeek = $date;
-                    foreach ($dayIndexArr as $day) {
-                        if ($j <= $lastEpisode) {
-                            $d = $day - $firstDayOfWeek;
-                            if ($d < 0) $d += 7;
-                            if ($d) $date = $this->dateModify($firstDateOfWeek, '+' . $d . ' day');
-                            for ($jj = 0; $jj < $daysOfWeek[$day]; $jj++) { // $jj → number of episodes on this day
-                                if ($j <= $lastEpisode) {
-                                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $j), 'episodeNumber' => $j, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $j), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $j), 'future' => $now < $date];
-                                    $j++;
-                                }
-                            }
-//                            $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $j), 'episodeNumber' => $j, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $j), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $j), 'future' => $now < $date];
-//                            $j++;
-                        }
-                    }
-//                    $date = $firstAirDate->modify('+' . $k . ' week');
-                    $date = $this->dateModify($firstAirDate, '+' . $k . ' week');
-                }
-                break;
-            case 12: // Selected days, then weekly, one at a time
-                $firstDayOfWeek = intval($date->format('w'));
-                $selectedDayCount = array_reduce($daysOfWeek, function ($carry, $day) {
-                    return $carry + ($day > 0);
-                }, 0);
-                if (!$this->isValidDaysOfWeek($daysOfWeek, $selectedDayCount, $firstDayOfWeek, $date)) {
-                    return $errorArr;
-                }
-                $dayIndexArr = $this->daysOfWeekToDayIndexArr($daysOfWeek, $selectedDayCount, $firstDayOfWeek);
-                $j = $firstEpisode;
-                foreach ($dayIndexArr as $day) {
-                    $d = $day - $firstDayOfWeek;
-                    if ($d < 0) $d += 7;
-                    if ($d) $date = $this->dateModify($date, '+' . $d . ' day');
-                    for ($jj = 0; $jj < $daysOfWeek[$day]; $jj++) { // number of episodes on this day
-                        if ($j <= $lastEpisode) {
-                            $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $j), 'episodeNumber' => $j, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $j), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $j), 'future' => $now < $date];
-                            $j++;
-                        }
-                    }
-                }
-                $secondAirDate = $this->dateModify($firstAirDate, '+' . ($dayIndexArr[$selectedDayCount - 1] - $dayIndexArr[0]) . ' day');
-                for ($i = $selectedDayCount + 1; $i <= $lastEpisode; $i++) { // $i → episode number
-                    $date = $this->dateModify($secondAirDate, '+' . $i - $selectedDayCount . ' week');
-                    $dayArr[] = ['date' => $date, 'episodeId' => $this->getEpisodeId($userEpisodes, $seasonNumber, $i), 'episodeNumber' => $i, 'episode' => sprintf('S%02dE%02d', $seasonNumber, $i), 'watched' => $this->isEpisodeWatched($userEpisodes, $seasonNumber, $i), 'future' => $now < $date];
-                }
-                break;
-        }
-        return ['override' => $override, 'seasonNumber' => $seasonNumber, 'multiPart' => $multiPart, 'seasonPart' => $seasonPart, 'airDays' => $dayArr];
-    }
-
-    private function isValidDaysOfWeek(array $daysOfWeek, int $selectedDayCount, int $firstDayOfWeek, DateTimeImmutable $date): bool
-    {
-        if (!$selectedDayCount) {
-            // No selected days of week
-            $this->addFlash('error', $this->translator->trans('No selected days of week.'));
-            return false;
-        }
-
-        if (!$daysOfWeek[$firstDayOfWeek]) {
-            $dayStrings = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-            $selectedDaysString = '';
-            foreach ($daysOfWeek as $key => $day) {
-                if ($day) {
-                    $selectedDaysString .= $this->translator->trans($dayStrings[$key]) . ', ';
-                }
-            }
-            $selectedDaysString = rtrim($selectedDaysString, ', ');
-            $firstDayString = $this->translator->trans($dayStrings[$firstDayOfWeek]);
-            $this->addFlash('error', $this->translator->trans('The first day of the week must be in the selected days of the week.')
-                . '<br>' . $this->translator->trans('Selected days of the week → %days%', ['%days%' => $selectedDaysString])
-                . '<br>' . $this->translator->trans('First day of the week → %day%', ['%day%' => $firstDayString]));
-            return false;
-        }
-        return true;
-    }
-
-    private function daysOfWeekToDayIndexArr(array $daysOfWeek, int $selectedDayCount, int $firstDayOfWeek): array
-    {
-        // First  day of week: 5
-        // DaysOfWeek: [1,0,0,0,0,1,1], [1,1,0,0,0,1,1], [1,1,1,0,0,0,1], [1,1,1,1,0,0,0]
-        $dayIndexArr = [];
-        foreach ($daysOfWeek as $key => $day) {
-            if ($day) {
-                $dayIndexArr[] = $key;
-            }
-        }
-        // → dayIndexArr: [0,5,6], [0,1,5,6], [0,1,2,6], [0,1,2,3]
-        for ($i = 0; $i < $selectedDayCount; $i++) {
-            if ($dayIndexArr[$i] < $firstDayOfWeek) {
-                $dayIndexArr[$i] += 7;
-            }
-        }
-        // → dayIndexArr: [7,5,6], [7,1,5,6], [7,1,2,6], [7,1,2,3]
-        sort($dayIndexArr);
-        // → dayIndexArr: [5,6,7], [1,5,6,7], [1,2,6,7], [1,2,3,7]
-
-        return $dayIndexArr;
-    }
-
-    public function isEpisodeWatched(array $episodes, int $seasonNumber, int $episodeNumber): bool
-    {
-        /** @var UserEpisode $episode */
-        foreach ($episodes as $episode) {
-            if ($episode->getSeasonNumber() == $seasonNumber && $episode->getEpisodeNumber() == $episodeNumber) {
-                return $episode->getWatchAt() != null;
-            }
-        }
-        return false;
-    }
-
-    public function getEpisodeId(array $episodes, int $seasonNumber, int $episodeNumber): ?int
-    {
-        /** @var UserEpisode $episode */
-        foreach ($episodes as $episode) {
-            if ($episode->getSeasonNumber() == $seasonNumber && $episode->getEpisodeNumber() == $episodeNumber) {
-                return $episode->getEpisodeId();
-            }
-        }
-        return null;
-    }
-
-    private function emptySchedule(): array
-    {
-        $now = $this->now();
-        $dayArrEmpty = array_fill(0, 7, 0);
-        return [
-            'id' => 0,
-            'seasonNumber' => 1,
-            'multiPart' => false,
-            'seasonPart' => 1,
-            'seasonPartFirstEpisode' => 1,
-            'seasonPartEpisodeCount' => 1,
-            'airAt' => "12:00",
-            'timezone' => $this->getUser()->getTimezone() ?? 'UTC',
-            'firstAirDate' => $now,
-            'frequency' => 0,
-            'override' => false,
-            'providerId' => null,
-            'providerName' => null,
-            'providerLogo' => null,
-            'targetTS' => null,
-            'before' => null,
-            'dayList' => [],
-            'dayArr' => $dayArrEmpty,
-            'userLastEpisode' => null,
-            'userNextEpisode' => null,
-            'multiple' => null,
-            'userLastNextEpisode' => null,
-            'tvLastEpisode' => null,
-            'tvNextEpisode' => null,
-            'toBeContinued' => null,
-            'tmdbStatus' => null,
-        ];
-    }
-
-    private function alternateSchedules(array $tv, Series $series, array $userEpisodes): array
-    {
-        $alternateSchedules = array_map(function ($s) use ($tv, $userEpisodes) {
-            // Ajouter la "user" séries pour les épisodes vus
-            return $this->getAlternateSchedule($s, $tv, array_filter($userEpisodes, function ($ue) use ($s) {
-                return $ue->getSeasonNumber() == $s->getSeasonNumber();
-            }));
-        }, $series->getSeriesBroadcastSchedules()->toArray());
-        foreach ($alternateSchedules as &$s) {
-            $s['airDays'] = array_map(function ($day) use ($s, $series) {
-                $day['url'] = $this->generateUrl('app_series_season', [
-                        'id' => $series->getId(),
-                        'slug' => $series->getSlug(),
-                        'seasonNumber' => $s['seasonNumber'],
-                    ]) . "#episode-" . $s['seasonNumber'] . '-' . $day['episodeNumber'];
-                return $day;
-            }, $s['airDays']);
-        }
-        return $alternateSchedules;
     }
 
     private function overrideSeasonAirDate(array $tvSeasons, array $schedules): array
@@ -3300,30 +2668,6 @@ class SeriesController extends AbstractController
         return true;
     }
 
-    public function localizedOverview($tv, $series, $request): string
-    {
-        if ($tv['overview']) return $tv['overview'];
-        $overview = $series->getOverview();
-        if (!strlen($series->getOverview())) {
-            $usSeries = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
-            $overview = $usSeries['overview'];
-            if (strlen($overview)) {
-                try {
-                    $usage = $this->deeplTranslator->translator->getUsage();
-                    if ($usage->character->count + strlen($overview) < $usage->character->limit) {
-                        /** @var TextResult $DeeplOverview */
-                        $DeeplOverview = $this->deeplTranslator->translator->translateText($usSeries['overview'], null, $request->getLocale());
-                        $overview = $DeeplOverview->text;
-                        $series->setOverview($overview);
-                        $this->seriesRepository->save($series, true);
-                    }
-                } catch (DeepLException) {
-                }
-            }
-        }
-        return $overview;
-    }
-
     public function castAndCrew(array $tv, ?Series $series): array
     {
         if (!$tv) {
@@ -3418,70 +2762,6 @@ class SeriesController extends AbstractController
         return $tv['credits'];
     }
 
-    public function networks(array $tv): array
-    {
-        if (!count($tv['networks'])) return [];
-
-        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 5);
-        $ids = array_column($tv['networks'], 'id');
-        $networkDbs = $this->networkRepository->findBy(['networkId' => $ids]);
-
-        $now = $this->now();
-
-        foreach ($tv['networks'] as $tvNetwork) {
-            $id = $tvNetwork['id'];
-            /** @var Network $networkDb */
-            $arr = array_filter($networkDbs, fn($n) => $n->getNetworkId() == $id);//$this->networkRepository->findOneBy(['networkId' => $id]);
-            $networkDb = array_values($arr)[0] ?? null;
-
-            if (!$networkDb) {
-                $tmdbNetwork = json_decode($this->tmdbService->getNetworkDetails($id), true);
-
-                if (!$tmdbNetwork) {
-                    $this->addFlash('error', $this->translator->trans('network.not_found') . ' → ' . $tvNetwork['name'] . ' (ID: ' . $id . ')');
-                    continue;
-                }
-                $networkDb = new Network($tmdbNetwork['logo_path'], $tmdbNetwork['name'], $id, $tmdbNetwork['origin_country'], $now);
-                $networkDb->setHeadquarters($tmdbNetwork['headquarters']);
-                $networkDb->setHomepage($tmdbNetwork['homepage']);
-                $this->networkRepository->save($networkDb);
-                $this->addFlash('success', $this->translator->trans('network.added') . ' → ' . $networkDb->getName());
-            } else {
-                $diff = $networkDb->getUpdatedAt()->diff($now);
-                if ($diff->days > 30) {
-                    $tmdbNetwork = json_decode($this->tmdbService->getNetworkDetails($networkDb->getNetworkId()), true);
-
-                    if (!$tmdbNetwork) {
-                        $this->addFlash('error', $this->translator->trans('network.not_found') . ' → ' . $networkDb->getName() . ' (ID: ' . $networkDb->getNetworkId() . ')');
-                        continue;
-                    }
-                    $networkDb->setHeadquarters($tmdbNetwork['headquarters']);
-                    $networkDb->setHomepage($tmdbNetwork['homepage']);
-                    $networkDb->setLogoPath($tmdbNetwork['logo_path']);
-                    $networkDb->setName($tmdbNetwork['name'] ?? 'The name was null');
-                    $networkDb->setOriginCountry($tmdbNetwork['origin_country']);
-                    $networkDb->setUpdatedAt($now);
-                    $this->networkRepository->save($networkDb);
-                    $this->addFlash('success', $this->translator->trans('network.updated') . ' → ' . $networkDb->getName());
-                }
-            }
-        }
-
-        $dbNetworks = $this->networkRepository->findBy(['networkId' => $ids]);
-        return array_map(function ($network) use ($logoUrl, $dbNetworks) {
-            $network['logo_path'] = $network['logo_path'] ? $logoUrl . $network['logo_path'] : null; // w92
-            $dbNetwork = array_values(array_filter($dbNetworks, fn($n) => $n->getNetworkId() == $network['id']))[0] ?? null;
-            if ($dbNetwork) {
-                $network['headquarters'] = $dbNetwork->getHeadquarters();
-                $network['homepage'] = $dbNetwork->getHomepage();
-            } else {
-                $network['headquarters'] = null;
-                $network['homepage'] = null;
-            }
-            return $network;
-        }, $tv['networks']);
-    }
-
     public function getSeason(array $seasons, int $seasonNumber): array
     {
         foreach ($seasons as $season) {
@@ -3500,17 +2780,6 @@ class SeriesController extends AbstractController
             }
         }
         return 0;
-    }
-
-    public function seasonsPosterPath(array $seasons): array
-    {
-        $slugger = new AsciiSlugger();
-        $posterUrl = $this->imageConfiguration->getUrl('poster_sizes', 5);
-        return array_map(function ($season) use ($slugger, $posterUrl) {
-            $season['slug'] = $slugger->slug($season['name'])->lower()->toString();
-            $season['poster_path'] = $season['poster_path'] ? $posterUrl . $season['poster_path'] : null;
-            return $season;
-        }, $seasons);
     }
 
     private function seasonEpisodes(array $season, UserSeries $userSeries): array
