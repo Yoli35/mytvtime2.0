@@ -309,28 +309,51 @@
         border-radius: 1rem;
         color: var(--orange-80);
         display: flex;
+        flex-wrap: wrap;
         font-size: 1.5rem;
         font-weight: 600;
-        gap: 5rem;
-        justify-content: space-between;
+        gap: 1rem;
+        justify-content: center;
         padding: 2rem;
 
         .status-item {
             align-items: center;
+            background-color: var(--orange-30);
+            border-radius: 1rem;
             display: flex;
             flex-direction: column;
             gap: .5rem;
             justify-content: center;
+            padding: 1rem;
+
+            &:has(.title) {
+                background-color: var(--green);
+            }
+
+            .title {
+                text-align: center;
+                text-wrap: balance;
+                width: min-content;
+            }
 
             .name {
                 font-size: 1rem;
                 font-weight: 400;
+                line-height: 1.1em;
                 text-transform: uppercase;
             }
 
             .count {
                 font-size: 3rem;
                 font-weight: 800;
+                line-height: 1.1em;
+            }
+
+            .percent {
+                color: var(--orange-90);
+                font-size: 1rem;
+                font-weight: 400;
+                line-height: 1.1em;
             }
         }
     }
@@ -528,7 +551,7 @@
                         color: var(--ardoise-10);
                         display: flex;
                         flex-shrink: 0;
-                        height: 15rem;/* 75dvh;*/
+                        height: 15rem; /* 75dvh;*/
                         justify-content: center;
                         /*overflow: hidden;*/
                         position: relative;
@@ -633,7 +656,7 @@
 
                         .status {
                             background-color: var(--orange-40);
-                            border-radius: .25rem;
+                            border-radius: 5rem;
                             bottom: .25rem;
                             color: var(--orange-80);
                             left: .25rem;
@@ -641,8 +664,8 @@
                             right: .25rem;
 
                             &.coming-soon {
-                                background-color: cadetblue;
-                                bottom: -.75rem;
+                                background-color: hsl(from cadetblue h s 40%);
+                                /*bottom: -.75rem;*/
                                 color: var(--ardoise-10);
                             }
                         }
@@ -704,7 +727,7 @@
                                 position: absolute;
                                 right: -3rem;
                                 top: 1rem;
-                                transform: rotate(45deg) translate(0px,-1px);
+                                transform: rotate(45deg) translate(0px, -1px);
                                 width: 10rem;
 
                                 &.premiere {

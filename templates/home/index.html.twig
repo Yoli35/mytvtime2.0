@@ -115,11 +115,21 @@
 
             {% if app.user %}
                 <div class="series-status">
+                    {% set total = statusArray|reduce((carry, s) => carry + s.count) %}
+                    <div class="status-item">
+                        <div class="title">{{ 'My series'|trans }}</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="name">{{ 'Total'|trans }}</div>
+                        <div class="count">{{ total }}</div>
+                        <div class="percent">100%</div>
+                    </div>
                     {% for s in statusArray %}
                         {#                        <a href="{{ path('app_series_status', {'status': s.value}) }}" class="status-item{% if s.value == status %} active{% endif %}"> #}
                         <div class="status-item">
                             <div class="name">{{ s.status|trans }}</div>
                             <div class="count">{{ s.count }}</div>
+                            <div class="percent">{{ (100 * s.count / total)|round(1) }}%</div>
                         </div>
                         {#                        </a> #}
                     {% endfor %}

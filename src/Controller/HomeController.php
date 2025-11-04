@@ -355,7 +355,6 @@ class HomeController extends AbstractController
         }));
     }
 
-
     public function getProviderSeries(int $providerId, AsciiSlugger $slugger, ?string $country = null, ?string $timezone = 'Europe/Paris', ?string $preferredLanguage = 'fr'): array
     {
         $filterString = "&page=1&sort_by=first_air_date.desc&with_watch_providers=" . $providerId . "&with_watch_monetization_types=flatrate&language=fr&timezone=Europe/Paris&watch_region=FR&include_adult=false";
