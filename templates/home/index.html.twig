@@ -84,20 +84,16 @@
                 </div>
             </div>
 
-            {% if movieVideos.firstVideo|length %}
+            {% if 0 %}
+                {#            {% if movieVideos.firstVideo|length %} #}
                 {% set video = movieVideos.firstVideo %}
                 {% if video.site == 'YouTube' %}
                     <h2>{{ movieVideos.title }}</h2>
-                    {#                    <div class="series-group"> #}
-                    {#                        <div class="video" style="width: 100%;"> #}
                     <div class="video-background">
                         <div class="video-background__inner">
                             <object class="video-background__video"
-                                    {#                                    style="width: 100%; aspect-ratio: 16/9;" #}
                                     data="https://www.youtube.com/embed/{{ video.key }}?autoplay=1&mute=1&loop=1&playlist={{ movieVideos.videoList }}">
                             </object>
-                            {#                        </div> #}
-                            {#                    </div> #}
                         </div>
                     </div>
                 {% endif %}
@@ -116,23 +112,21 @@
             {% if app.user %}
                 <div class="series-status">
                     {% set total = statusArray|reduce((carry, s) => carry + s.count) %}
-                    <div class="status-item">
-                        <div class="title">{{ 'My series'|trans }}</div>
-                    </div>
-                    <div class="status-item">
-                        <div class="name">{{ 'Total'|trans }}</div>
-                        <div class="count">{{ total }}</div>
-                        <div class="percent">100%</div>
-                    </div>
-                    {% for s in statusArray %}
-                        {#                        <a href="{{ path('app_series_status', {'status': s.value}) }}" class="status-item{% if s.value == status %} active{% endif %}"> #}
+                    <div class="status-title">{{ 'My series'|trans }}</div>
+                    <div class="status-items">
                         <div class="status-item">
-                            <div class="name">{{ s.status|trans }}</div>
-                            <div class="count">{{ s.count }}</div>
-                            <div class="percent">{{ (100 * s.count / total)|round(1) }}%</div>
+                            <div class="name">{{ 'Total'|trans }}</div>
+                            <div class="count">{{ total }}</div>
+                            <div class="percent">100%</div>
                         </div>
-                        {#                        </a> #}
-                    {% endfor %}
+                        {% for s in statusArray %}
+                            <div class="status-item">
+                                <div class="name">{{ s.status|trans }}</div>
+                                <div class="count">{{ s.count }}</div>
+                                <div class="percent">{{ (100 * s.count / total)|round(1) }}%</div>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
                 {% if episodesOfTheDay|length %}
                     <div class="series-group">

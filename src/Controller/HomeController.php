@@ -86,7 +86,7 @@ class HomeController extends AbstractController
 //                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
                 $series['released'] = true;
                 return $series;
-            }, $this->userEpisodeRepository->episodesToWatch($user, $language, 1, 20));
+            }, $this->userEpisodeRepository->episodesToWatch($user, $language));
             // Dernières séries ajoutées
             $lastAddedSeries = array_map(function ($series) {
 //                $s = $serie->homeArray();
@@ -274,7 +274,7 @@ class HomeController extends AbstractController
         $endDate = date('Y-m-d', strtotime('+6 month'));
 
         if ($forceProvider) {
-            $selectedProviders = "8|337|119|350";
+            $selectedProviders = "8|337|119|344|350";
         } else {
             // providers: 8|35|43|119|234|236|337|344|345|350|381
             // 8: Netflix           // 35: Rakuten TV        // 43: Starz            // 119: Amazon Prime Video
@@ -320,7 +320,7 @@ class HomeController extends AbstractController
         $endDate = date('Y-m-d', strtotime('+6 month'));
 
         if ($forceProvider) {
-            $selectedProviders = "8|119|337|350";
+            $selectedProviders = "8|119|337|344|350";
         } else {
             // providers: 8|35|43|119|234|236|337|344|345|350|381
             // 8: Netflix           // 35: Rakuten TV        // 43: Starz            // 119: Amazon Prime Video
@@ -341,16 +341,13 @@ class HomeController extends AbstractController
             }
             $selectedProviders = implode('|', $selectedProviders);
         }
-        // type: possible values are: [0 Documentary, 1 News, 2 Miniseries, 3 Reality, 4 Scripted, 5 Talk Show, 6 Video],
-        // can be a comma (AND) or pipe (OR) separated query
-        $filterString = "&sort_by=first_air_date.desc&page=$page&with_type=0|2|4&language=$language"
-            . "&timezone=$timezone&watch_region=$country&include_adult=false"
+        $filterString = "&sort_by=primary_release_date.desc&page=$page&language=$language"
+            . "&watch_region=$country&include_adult=false"
             . "&release_date.gte=$startDate&release_date.lte=$endDate"
             . "&with_watch_monetization_types=flatrate&with_watch_providers=$selectedProviders";
-        $seriesSelection = $this->getSelection('movie', $filterString, $slugger, $country, $timezone, $language);
-
+        $movieSelection = $this->getSelection('movie', $filterString, $slugger, $country, $timezone, $language);
         // array_filter pour retirer les séries sans poster & array_values() pour ré-indexer le tableau
-        return array_values(array_filter($seriesSelection, function ($tv) {
+        return array_values(array_filter($movieSelection, function ($tv) {
             return $tv['poster_path'];
         }));
     }
@@ -365,11 +362,11 @@ class HomeController extends AbstractController
     {
         $root = $this->getParameter('kernel.project_dir') . '/public';
         if ($media === 'movie') {
-            $mediaSelection = json_decode($this->tmdbService->getFilterMovie($filterString . '&append_to_response=watch/providers'), true)['results'];
+            $mediaSelection = json_decode($this->tmdbService->getFilterMovie($filterString), true)['results'];
             $name = 'title';
             $date = 'release_date';
         } else {
-            $mediaSelection = json_decode($this->tmdbService->getFilterTv($filterString . '&append_to_response=watch/providers'), true)['results'];
+            $mediaSelection = json_decode($this->tmdbService->getFilterTv($filterString), true)['results'];
             $name = 'name';
             $date = 'first_air_date';
         }
@@ -389,7 +386,6 @@ class HomeController extends AbstractController
                 $tv['poster_path'] = null;
             }
             $tv['slug'] = strtolower($slugger->slug($tv[$media === 'tv' ? 'name' : 'title']));
-            $tv['watch_providers'] = [];
 
             return [
                 'date' => $this->dateService->newDateImmutable($tv[$date], $timezone)->format('d/m/Y'),
@@ -400,9 +396,7 @@ class HomeController extends AbstractController
                 'slug' => $tv['slug'],
                 'status' => $tv['status'] ?? 'no status',
                 'tmdb' => true,
-                'watch_providers' => $tv['watch_providers'],
-                'year' => $tv[$date] ? substr($tv[$date], 0, 4) : '',
-                'videos' => $tv['videos']['results'] ?? '',
+                'watch_providers' => [],
             ];
         }, $mediaSelection);
     }

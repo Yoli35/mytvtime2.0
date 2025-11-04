@@ -304,56 +304,65 @@
     }
 
     .series-status {
-        align-items: center;
+        align-items: stretch;
         background-color: var(--orange-40);
         border-radius: 1rem;
         color: var(--orange-80);
         display: flex;
-        flex-wrap: wrap;
         font-size: 1.5rem;
         font-weight: 600;
-        gap: 1rem;
         justify-content: center;
-        padding: 2rem;
 
-        .status-item {
+        .status-title {
             align-items: center;
-            background-color: var(--orange-30);
-            border-radius: 1rem;
+            background-color: var(--green);
+            border-radius: 1rem 0 0 1rem;
             display: flex;
-            flex-direction: column;
-            gap: .5rem;
+            min-height: 100%;
+            padding-inline: 2vw;
+            text-align: center;
+            text-wrap: balance;
+            width: min-content;
+        }
+
+        .status-items {
+            align-items: center;
+            display: flex;
+            flex-grow: 1;
+            flex-wrap: wrap;
+            gap: 1rem;
             justify-content: center;
-            padding: 1rem;
+            padding: 2rem;
 
-            &:has(.title) {
-                background-color: var(--green);
-            }
+            .status-item {
+                align-items: center;
+                background-color: var(--orange-30);
+                border-radius: 1rem;
+                display: flex;
+                flex-direction: column;
+                gap: .5rem;
+                justify-content: center;
+                padding: 1rem;
 
-            .title {
-                text-align: center;
-                text-wrap: balance;
-                width: min-content;
-            }
+                .name {
+                    font-size: 1rem;
+                    font-weight: 400;
+                    line-height: 1.1em;
+                    text-transform: uppercase;
+                }
 
-            .name {
-                font-size: 1rem;
-                font-weight: 400;
-                line-height: 1.1em;
-                text-transform: uppercase;
-            }
+                .count {
+                    font-size: 3rem;
+                    font-weight: 800;
+                    line-height: 1.1em;
+                }
 
-            .count {
-                font-size: 3rem;
-                font-weight: 800;
-                line-height: 1.1em;
-            }
-
-            .percent {
-                color: var(--orange-90);
-                font-size: 1rem;
-                font-weight: 400;
-                line-height: 1.1em;
+                .percent {
+                    color: var(--orange-90);
+                    font-size: 1rem;
+                    font-weight: 400;
+                    line-height: 1.1em;
+                }
             }
         }
     }
@@ -511,12 +520,17 @@
         width: 100%;
 
         .content {
+            align-items: stretch;
             display: flex;
             gap: .25rem;
             flex-shrink: 0;
             justify-content: flex-start;
             margin: 0 auto;
             padding-block: 1rem;
+
+            &:has(.tmdb) {
+                align-items: stretch;
+            }
 
             &.center {
                 width: round(down, 100%, 10.25rem); /* 10rem (card) + 0.25rem (gap) */
@@ -536,6 +550,26 @@
                 color: var(--ardoise-10);
                 height: 18rem;
                 width: 10rem;
+
+                &.tmdb {
+                    height: unset;
+
+                    .infos {
+                        align-items: center;
+                        background-color: var(--green-60);
+                        border-radius: 0 0 .25rem .25rem;
+                        display: flex;
+                        flex-direction: column;
+                        flex-grow: 1;
+                        justify-content: center;
+
+                        .name {
+                            background-color: unset;
+                            border-radius: unset;
+                            height: unset;
+                        }
+                    }
+                }
 
                 a {
                     display: flex;
