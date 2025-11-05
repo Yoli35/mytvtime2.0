@@ -2729,7 +2729,7 @@ h2 {
     .season {
         align-items: flex-start;
         border: 2px solid transparent;
-        border-radius: .5rem;
+        border-radius: 1rem;
         display: flex;
         height: 25rem;
         justify-content: flex-start;
@@ -2788,33 +2788,11 @@ h2 {
                     background-color: var(--user-episode-actions);
                 }
             }
-
-            /*.finale {
-                align-items: center;
-                background-color: var(--orange-50);
-                border-radius: .25rem;
-                color: var(--ardoise-10);
-                display: flex;
-                font-size: 1.5rem;
-                font-weight: 500;
-                justify-content: center;
-                left: .5rem;
-                max-width: calc(100% - 1rem);
-                padding-block: .25rem;
-                padding-inline: .5rem;
-                position: absolute;
-                text-align: center;
-                top: .5rem;
-
-                &.watched {
-                    background-color: var(--user-episode-actions);
-                }
-            }*/
         }
 
         .infos {
             background-color: hsla(from var(--ardoise-90) h s l / .1);
-            border-radius: 0 .5rem .5rem 0;
+            border-radius: 0 1rem 1rem 0;
             display: flex;
             flex-direction: column;
             font-size: clamp(1rem, 1.5vw, 1.5rem);
@@ -2861,7 +2839,26 @@ h2 {
                 transition: transform 300ms ease-in-out;
 
                 .show-tab {
+                    align-items: center;
+                    background-color: hsla(from var(--ardoise-90) h s l / .2);
+                    border-radius: .25rem;
+                    color: var(--ardoise-10);
+                    cursor: pointer;
+                    display: flex;
+                    height: 2rem;
+                    justify-content: center;
+                    left: -3rem;
+                    opacity: 0;
+                    padding-inline: .5rem;
+                    position: absolute;
                     top: 0;
+                    transition: background-color 0.3s linear, opacity 0.3s linear, transform 0.3s ease-in-out;
+                    width: 2rem;
+
+                    &:hover {
+                        background-color: var(--orange-50);
+                        transform: scale(1.25);
+                    }
                 }
 
                 &.show {
@@ -2897,32 +2894,36 @@ h2 {
                     }
                 }
             }
+        }
+    }
+}
 
-            .user-votes {
-                .show-tab {
-                    align-items: center;
-                    background-color: hsla(from var(--ardoise-90) h s l / .2);
-                    border-radius: .25rem;
-                    color: var(--ardoise-10);
-                    cursor: pointer;
-                    display: flex;
-                    height: 2rem;
-                    justify-content: center;
-                    left: -3rem;
-                    opacity: 0;
-                    padding-inline: .5rem;
-                    position: absolute;
-                    transition: background-color 0.3s linear, opacity 0.3s linear, transform 0.3s ease-in-out;
-                    width: 2rem;
+@media (width < 32rem) {
+    .seasons {
+        .season {
+            flex-direction: column;
+            height: fit-content;
 
-                    &:hover {
-                        background-color: var(--orange-50);
-                        transform: scale(1.25);
-                    }
+            .poster {
+                aspect-ratio: 1;
+                border-radius: 1rem 1rem 0 0;
+                height: unset;
+                width: 100%;
+
+                img {
+                    border-radius: 1rem 1rem 0 0;
                 }
+            }
+
+            .infos {
+                border-radius: 0 0 1rem 1rem;
+                height: unset;
+                justify-content: center;
+                min-height: 15rem;
             }
         }
     }
+
 }
 
 .season-stuff {
@@ -3434,6 +3435,14 @@ h2 {
 
         &:hover {
             background-color: var(--orange-40);
+        }
+    }
+}
+
+@media (width < 32rem) {
+    .cast-and-name, .crew-and-name {
+        .cast-buttons {
+            display: none;
         }
     }
 }
