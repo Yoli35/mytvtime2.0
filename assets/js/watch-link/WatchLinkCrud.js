@@ -295,6 +295,8 @@ export class WatchLinkCrud {
                 form.classList.add('active');
             }, 0);
         }
+        const url = form.querySelector("#url");
+        url.focus();
     }
 
     hideForm(form) {

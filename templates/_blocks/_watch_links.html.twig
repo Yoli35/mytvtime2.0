@@ -39,26 +39,6 @@
     <form class="form" action="" id="watch-link-form">
         <div class="form-row">
             <div class="form-field">
-                <label for="provider">{{ 'Provider'|trans }}
-                    <select name="provider" id="provider">
-                        <option value="">{{ 'Select a provider'|trans }}</option>
-                        {% for name, id in providers.select %}
-                            <option value="{{ id }}">{{ name }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-field">
-                <label for="name">{{ 'Name'|trans }}
-                    <input type="text" name="name" id="name" required autocomplete="false">
-                    <span class="error"></span>
-                </label>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-field">
                 <label for="url">{{ 'URL'|trans }}
                     <input type="url" name="url" id="url" required>
                     <span class="error"></span>
@@ -88,6 +68,26 @@
         {% else %}
             <input type="hidden" name="season-number" id="season-number" value="{{ -1 }}">
         {% endif %}
+        <div class="form-row">
+            <div class="form-field">
+                <label for="provider">{{ 'Provider'|trans }}
+                    <select name="provider" id="provider">
+                        <option value="">{{ 'Select a provider'|trans }}</option>
+                        {% for name, id in providers.select %}
+                            <option value="{{ id }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field">
+                <label for="name">{{ 'Name'|trans }}
+                    <input type="text" name="name" id="name" required autocomplete="false">
+                    <span class="error"></span>
+                </label>
+            </div>
+        </div>
         <div class="form-row">
             <div class="form-field">
                 <button type="button">{{ 'Cancel'|trans }}</button>
