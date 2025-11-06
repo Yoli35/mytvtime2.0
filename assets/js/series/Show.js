@@ -97,7 +97,7 @@ export class Show {
         this.menu = menu;
         /** @var {Globs} */
         const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
-        const svgs = document.querySelector('div#svgs');
+        // const svgs = document.querySelector('div#svgs');
         const providers = jsonGlobsObject.providers;
         const seriesId = jsonGlobsObject.seriesId;
         const seriesName = document.querySelector('span.localization-span, span.name-span').textContent;//jsonGlobsObject.seriesName;
@@ -140,6 +140,13 @@ export class Show {
                 }, 1000);
             }
         }
+
+        /******************************************************************************
+         * Fetch episode stills for each season                                       *
+         ******************************************************************************/
+        const episodeCardDivs = document.querySelectorAll('.episode__cards');
+        const length = episodeCardDivs.length;
+        gThis.fetchEpisodeCards(episodeCardDivs, 0, length);
 
         /******************************************************************************
          * Old series added?                                                          *
@@ -839,13 +846,32 @@ export class Show {
             peopleSearchInput.addEventListener("input", this.menu.searchFetch);
             peopleSearchInput.addEventListener("keydown", this.menu.searchMenuNavigate);
 
-            addCastButton.addEventListener('click', (e) => {
+            addCastButton.addEventListener('click', () => {
                 peopleSearchBlockDiv.classList.toggle('active');
                 if (peopleSearchBlockDiv.classList.contains('active')) {
                     peopleSearchInput.focus();
                 }
             });
         }
+    }
+
+    fetchEpisodeCards(cards, index, length) {
+        const episodeCardDiv = cards.item(index);
+        const id = episodeCardDiv.getAttribute('data-id');
+        const tmdbId = episodeCardDiv.getAttribute('data-tmdb-id');
+        const seasonNumber = episodeCardDiv.getAttribute('data-season-number');
+        const seriesSlug = episodeCardDiv.getAttribute('data-series-slug');
+        fetch('/api/series/season/episode/stills/' + id + '/' + tmdbId + '/' + seasonNumber + '/' + seriesSlug, {method: 'GET'})
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                episodeCardDiv.innerHTML = data['episodeCards'];
+                gThis.toolTips.init(episodeCardDiv);
+                index++;
+                if (index < length) gThis.fetchEpisodeCards(cards, index, length);
+            })
+            .catch(err => console.log(err));
     }
 
     fetchSeriesImages(dialog, tmdbId, backdrops, posters) {

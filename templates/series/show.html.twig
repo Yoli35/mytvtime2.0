@@ -314,6 +314,7 @@
                                                 {{ viewedEpisodes }} {{ 'episodes seen'|trans }}
                                             {% endif %}
                                         </div>
+                                        <div class="episode__cards" data-id="{{ series.id }}" data-tmdb-id="{{ series.tmdbId }}" data-season-number="{{ season.season_number }}" data-series-slug="{{ tv.localized_name.slug ?? series.slug }}"></div>
                                         {% if userSeries.progress and series.userVotes|length %}
                                             <div class="user-votes">
                                                 <div class="show-tab">{{ ux_icon('mdi:bar-chart') }}</div>

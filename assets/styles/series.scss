@@ -2731,7 +2731,7 @@ h2 {
         border: 2px solid transparent;
         border-radius: 1rem;
         display: flex;
-        height: 25rem;
+        height: 32rem;
         justify-content: flex-start;
         transition: border-color 0.3s ease-in-out;
         width: 100%;
@@ -2824,6 +2824,92 @@ h2 {
                 .watched {
                     display: flex;
                     gap: .5rem;
+                }
+            }
+
+            .episode__cards {
+                align-items: stretch;
+                display: flex;
+                gap: .5rem;
+                overflow-x: auto;
+                width: 100%;
+
+                a {
+                    height: 100%;
+
+                    .episode-card {
+                        display: flex;
+                        flex-direction: column;
+                        height: 100%;
+                        min-height: fit-content;
+
+                        .episode-still {
+                            aspect-ratio: 16 / 9;
+                            height: 10rem;
+
+                            img {
+                                border-radius: 1rem 1rem 0 0;
+                                height: 100%;
+                                object-fit: cover;
+                                width: 100%;
+                            }
+
+                            .no-image {
+                                align-items: center;
+                                background-color: hsla(from var(--green) h s l / .5);
+                                border-radius: 1rem 1rem 0 0;
+                                color: var(--ardoise-10);
+                                display: flex;
+                                font-size: 1rem;
+                                height: 100%;
+                                justify-content: center;
+                                padding: 1rem;
+                                text-align: center;
+                                text-wrap: balance;
+                                width: 100%;
+                            }
+                        }
+
+                        .episode-infos {
+                            background-color: hsla(from var(--green) h s l / .75);
+                            border-radius: 0 0 1rem 1rem;
+                            height: calc(100% - 10rem);
+                            overflow-y: auto;
+                            padding: .5rem;
+                            width: 100%;
+
+                            .line-1 {
+                                align-items: center;
+                                display: flex;
+                                gap: .5rem;
+
+                                .episode-number {
+                                    align-items: center;
+                                    background-color: var(--orange);
+                                    border-radius: 50%;
+                                    color: var(--ardoise-10);
+                                    display: flex;
+                                    font-size: 1rem;
+                                    font-weight: 500;
+                                    height: 2rem;
+                                    justify-content: center;
+                                    width: 2rem;
+                                }
+
+                                .episode-name {
+                                    font-size: 1rem;
+                                    font-weight: 500;
+                                }
+                            }
+
+                            .line-2 {
+                                .episode-air-date {
+                                    font-size: 0.875rem;
+                                    font-weight: 300;
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -3402,7 +3488,7 @@ h2 {
     }
 
     .series-name {
-        background-color: hsl(from var(--green-50) h s l / .5);
+        background-color: hsl(from var(--green-50) h s l / .75);
 
         span {
             /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/

@@ -99,36 +99,36 @@ class DateService
         return $date;
     }
 
-    public function formatDate(string $dateSting, string $timeZone, string $locale): string
+    public function formatDate(string $dateString, string $timeZone, string $locale): string
     {
         $format = datefmt_create($locale, IntlDateFormatter::SHORT, IntlDateFormatter::NONE, $timeZone, IntlDateFormatter::GREGORIAN);
-        return datefmt_format($format, $dateSting);
+        return datefmt_format($format, $dateString);
     }
 
-    public function formatDateLong(string $dateSting, string $timeZone, string $locale): string
+    public function formatDateLong(string $dateString, string $timeZone, string $locale): string
     {
-        $timestamp = strtotime($dateSting);
+        $timestamp = strtotime($dateString);
         $format = datefmt_create($locale, IntlDateFormatter::FULL, IntlDateFormatter::NONE, $timeZone, IntlDateFormatter::GREGORIAN);
         return datefmt_format($format, $timestamp);
     }
 
-    public function formatDateRelativeLong(string $dateSting, ?string $timeZone, string $locale): string
+    public function formatDateRelativeLong(string $dateString, ?string $timeZone, string $locale): string
     {
-        $timestamp = strtotime($dateSting);
-        $format = datefmt_create($locale, IntlDateFormatter::RELATIVE_LONG, IntlDateFormatter::SHORT, $timeZone, IntlDateFormatter::GREGORIAN);
+        $timestamp = strtotime($dateString);
+        $format = datefmt_create($locale, IntlDateFormatter::RELATIVE_LONG, strlen($dateString) == 10 ? IntlDateFormatter::NONE : IntlDateFormatter::SHORT, $timeZone, IntlDateFormatter::GREGORIAN);
         return datefmt_format($format, $timestamp);
     }
 
-    public function formatDateRelativeMedium(string $dateSting, string $timeZone, string $locale): string
+    public function formatDateRelativeMedium(string $dateString, string $timeZone, string $locale): string
     {
-        $timestamp = strtotime($dateSting);
+        $timestamp = strtotime($dateString);
         $format = datefmt_create($locale, IntlDateFormatter::RELATIVE_MEDIUM, IntlDateFormatter::NONE, $timeZone, IntlDateFormatter::GREGORIAN);
         return datefmt_format($format, $timestamp);
     }
 
-    public function formatDateRelativeShort(string $dateSting, string $timeZone, string $locale): string
+    public function formatDateRelativeShort(string $dateString, string $timeZone, string $locale): string
     {
-        $timestamp = strtotime($dateSting);
+        $timestamp = strtotime($dateString);
         $format = datefmt_create($locale, IntlDateFormatter::RELATIVE_SHORT, IntlDateFormatter::NONE, $timeZone, IntlDateFormatter::GREGORIAN);
         return datefmt_format($format, $timestamp);
     }

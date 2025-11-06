@@ -1,0 +1,20 @@
+<a href="{{ episode.link }}">
+    <div class="episode-card"{% if episode.overview|length %} data-title="{{ episode.overview }}"{% endif %}>
+        <div class="episode-still">
+            {% if episode.still %}
+                <img src="{{ episode.still }}" alt="{{ episode.name }}" loading="lazy">
+            {% else %}
+                <div class="no-image">{{ 'No image'|trans }}</div>
+            {% endif %}
+        </div>
+        <div class="episode-infos">
+            <div class="line-1">
+                <div class="episode-number">{{ episode.episode_number }}</div>
+                <div class="episode-name">{{ episode.name }}</div>
+            </div>
+            <div class="line-2">
+                <div class="episode-air-date">{{ episode.air_date }}</div>
+            </div>
+        </div>
+    </div>
+</a>
