@@ -39,8 +39,8 @@ class SeriesService extends AbstractController
         private readonly UserSeriesRepository          $userSeriesRepository,
     )
     {
-
     }
+
     public function getTv(Series $series, string $country, string $locale): ?array
     {
         $seriesTmdbId = $series->getTmdbId();
