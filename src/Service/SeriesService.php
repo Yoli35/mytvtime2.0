@@ -723,7 +723,7 @@ class SeriesService extends AbstractController
     public function now(): DateTimeImmutable
     {
         $user = $this->getUser();
-        $timezone = $user->getTimezone() ?? 'Europe/Paris';
+        $timezone = $user?->getTimezone() ?? 'Europe/Paris';
         return $this->dateService->newDateImmutable('now', $timezone);
     }
 

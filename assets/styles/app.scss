@@ -2229,7 +2229,7 @@ section:has(.pages) {
     z-index: 510;
 
     &:not(:has(img)) {
-        max-width: max(25%, 25rem);
+        max-width: max(50%, 50rem);
     }
 
     &.show {

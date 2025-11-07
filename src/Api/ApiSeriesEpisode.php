@@ -571,7 +571,7 @@ class ApiSeriesEpisode extends AbstractController
         $firstWatchDate = $firstEpisodeDb->getWatchAt();
         $userSeriesId = $userSeries->getId();
         $userId = $userSeries->getUser()->getId();
-        $userEpisodes = $this->userEpisodeRepository->getEpisodeListBetweenDates($userId, $firstWatchDate, $lastWatchDate);
+        $userEpisodes = $this->userEpisodeRepository->getEpisodeListBetweenDates($userId, $firstWatchDate->format("Y-m-d"), $lastWatchDate->format("Y-m-d"));
         $episodeCount = count($userEpisodes);
         /*dump([
             'first EpisodeDb' => $firstEpisodeDb,

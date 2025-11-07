@@ -198,7 +198,7 @@ export class Season {
                 const size = sizesDiv.querySelector('.size-item.active').getAttribute('data-size');
                 const ar = arsDiv.querySelector('.ar-item.active').getAttribute('data-ar');
 
-                fetch('/api/series/episode/height/' + userSeriesId, {
+                fetch('/api/episode/height/' + userSeriesId, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -251,7 +251,7 @@ export class Season {
                 if (!episodeNumber) { return; }
                 const selector = '#episode-' + seasonNumber + '-' + episodeNumber;
                 const target = document.querySelector(selector);
-                target.scrollIntoView({behavior: 'smooth'});
+                target.scrollIntoView({behavior: 'smooth', block: 'center'});
             });
         });
 
@@ -625,7 +625,7 @@ export class Season {
             peopleSearchInput.addEventListener("input", this.menu.searchFetch);
             peopleSearchInput.addEventListener("keydown", this.menu.searchMenuNavigate);
 
-            addCastButton.addEventListener('click', (e) => {
+            addCastButton.addEventListener('click', () => {
                 peopleSearchBlockDiv.classList.toggle('active');
                 if (peopleSearchBlockDiv.classList.contains('active')) {
                     peopleSearchInput.focus();
@@ -861,7 +861,7 @@ export class Season {
         const selector = episodeId ? '.remove-this-episode[data-ue-id="' + episodeId + '"]' : null;
         const episode = episodeId ? document.querySelector(selector) : e.currentTarget;
         const sId = episode.getAttribute('data-show-id');
-        const id = episode.getAttribute('data-id');
+        /*const id = episode.getAttribute('data-id');*/
         const episodeNumber = episode.getAttribute('data-e-number');
         const seasonNumber = episode.getAttribute('data-s-number');
         if (!episodeId) episode.getAttribute('data-ue-id');

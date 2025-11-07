@@ -465,7 +465,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getEpisodeListBetweenDates($userId, $startDate, $endDate): array
+    public function getEpisodeListBetweenDates(int $userId, string $startDate, string $endDate): array
     {
         $sql = "SELECT ue.`episode_number`, ue.`season_number`, ue.`user_series_id`, ue.`watch_at`
                 FROM `user_episode` ue
