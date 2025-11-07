@@ -1,20 +1,28 @@
 <a href="{{ episode.link }}">
-    <div class="episode-card"{% if episode.overview|length %} data-title="{{ episode.overview }}"{% endif %}>
-        <div class="episode-still">
+    <div class="episode-card">
+        <div class="episode-still"{% if episode.overview|length %} data-title="{{ episode.overview }}"{% endif %}>
             {% if episode.still %}
                 <img src="{{ episode.still }}" alt="{{ episode.name }}" loading="lazy">
             {% else %}
                 <div class="no-image">{{ 'No image'|trans }}</div>
             {% endif %}
         </div>
-        <div class="episode-infos">
-            <div class="line-1">
-                <div class="episode-number">{{ episode.episode_number }}</div>
-                <div class="episode-name">{{ episode.name }}</div>
-            </div>
-            <div class="line-2">
-                <div class="episode-air-date">{{ episode.air_date }}</div>
-            </div>
+        <div class="episode-infos{% if episode.watchedAt %} data-title="{{ episode.watchedAt }}"{% endif %}">
+        <div class="line-1">
+            <div class="episode-number{% if episode.watchedAt %} watched{% endif %}">{{ episode.episode_number }}</div>
+            <div class="episode-name">{{ episode.name }}</div>
         </div>
+        <div class="line-2">
+            <div class="episode-air-date">{{ episode.air_date }}</div>
+            {% if episode.vote %}
+                <div class="episode-vote">{{ episode.vote }} / 10</div>
+            {% endif %}
+            {% if episode.provider_path %}
+                <div class="provider-logo">
+                    <img src="{{ episode.provider_path }}" alt="{{ episode.provider_name }}" data-title="{{ episode.provider_name }}">
+                </div>
+            {% endif %}
+        </div>
+    </div>
     </div>
 </a>

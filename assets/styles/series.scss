@@ -2846,8 +2846,9 @@ h2 {
                         .episode-still {
                             aspect-ratio: 16 / 9;
                             height: 10rem;
+                            position: relative;
 
-                            img {
+                            > img {
                                 border-radius: 1rem 1rem 0 0;
                                 height: 100%;
                                 object-fit: cover;
@@ -2886,14 +2887,20 @@ h2 {
                                 .episode-number {
                                     align-items: center;
                                     background-color: var(--orange);
+                                    border: 2px solid var(--ardoise-10);
                                     border-radius: 50%;
                                     color: var(--ardoise-10);
                                     display: flex;
+                                    flex-shrink: 0;
                                     font-size: 1rem;
                                     font-weight: 500;
                                     height: 2rem;
                                     justify-content: center;
                                     width: 2rem;
+
+                                    &.watched {
+                                        background-color: var(--green);
+                                    }
                                 }
 
                                 .episode-name {
@@ -2903,9 +2910,42 @@ h2 {
                             }
 
                             .line-2 {
-                                .episode-air-date {
+                                align-items: center;
+                                display: flex;
+                                gap: .5rem;
+                                margin-block-start: auto;
+
+                                .episode-air-date, .episode-vote {
                                     font-size: 0.875rem;
                                     font-weight: 300;
+                                }
+
+                                .episode-vote {
+                                    background-color: var(--orange-50);
+                                    border-radius: .25rem;
+                                    color: var(--ardoise-10);
+                                    font-weight: 500;
+                                    margin-inline-start: auto;
+                                    padding: .125rem .5rem;
+                                }
+
+                                .provider-logo {
+                                    height: 2rem;
+                                    width: 2rem;
+
+                                    img {
+                                        border-radius: .25rem;
+                                        aspect-ratio: 1 / 1;
+                                        height: 100%;
+                                        object-fit: cover;
+                                        width: 100%;
+                                    }
+                                }
+
+                                &:not(:has(.episode-vote)) {
+                                    .provider-logo {
+                                        margin-inline-start: auto;
+                                    }
                                 }
                             }
                         }
