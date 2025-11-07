@@ -1312,9 +1312,6 @@ class SeriesController extends AbstractController
         }, $episodes);
 
         $count = count($quickLinks);
-        if ($count % 2) {
-            $quickLinks[] = ['name' => null, 'episode_number' => null, 'air_date' => null, 'watched' => null, 'future' => null, 'class' => 'quick-episode empty'];
-        }
         if ($count <= 10) {
             $quickLinks[0]['class'] .= ' first';
             $quickLinks[$count - 1]['class'] .= ' last';
@@ -1324,6 +1321,7 @@ class SeriesController extends AbstractController
             if ($count % 2 == 0)
                 $itemPerLine = $count / 2;
             else {
+                $quickLinks[] = ['name' => null, 'episode_number' => null, 'air_date' => null, 'watched' => null, 'future' => null, 'class' => 'quick-episode empty'];
                 $itemPerLine = ($count + 1) / 2;
                 $count += 1;
             }
