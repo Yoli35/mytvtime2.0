@@ -46,6 +46,7 @@ class SeriesSeasonEpisodes extends AbstractController
         $timezone = $user?->getTimezone() ?? 'Europe/Paris';
 
         $season = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, $user->getPreferredLanguage() ?? $request->getLocale()), true);
+        $seasonUS = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, 'en-US'), true);
         $episodeIds = array_column($season['episodes'] ?? [], 'id');
         $dbEpisodeSubstituteNames = $this->episodeSubstituteNameRepository->findBy(['episodeId' => $episodeIds]);
         $dbEpisodeLocalizedOverviews = $this->episodeLocalizedOverviewRepository->findBy(['episodeId' => $episodeIds]);
@@ -75,7 +76,7 @@ class SeriesSeasonEpisodes extends AbstractController
             }
         }
 
-        $episodes = array_map(function ($episode) use ($id, $slug, $seasonNumber, $dbEpisodeSubstituteNames, $dbEpisodeLocalizedOverviews, $dbEpisodeStills, $userEpisodes, $watchProviderPaths, $watchProviderNames, $locale, $timezone, $stillUrl) {
+        $episodes = array_map(function ($episode) use ($id, $slug, $seasonNumber, $seasonUS, $dbEpisodeSubstituteNames, $dbEpisodeLocalizedOverviews, $dbEpisodeStills, $userEpisodes, $watchProviderPaths, $watchProviderNames, $locale, $timezone, $stillUrl) {
             //
             // Substitute Name
             //
@@ -104,7 +105,10 @@ class SeriesSeasonEpisodes extends AbstractController
                 }
             }
             if ($episode['overview'] === '') {
-                $episodeUS = json_decode($this->tmdbService->getTvEpisode($episode['show_id'], $seasonNumber, $episode['episode_number'], 'en-US'), true);
+//                $episodeUS = json_decode($this->tmdbService->getTvEpisode($episode['show_id'], $seasonNumber, $episode['episode_number'], 'en-US'), true);
+                $episodeUS = array_find($seasonUS['episodes'] ?? [], function ($e) use ($episode) {
+                    return $e['episode_number'] === $episode['episode_number'];
+                });
                 $episode['overview'] = $episodeUS['overview'] ?? '';
                 if (strlen($episode['overview']) > 0) {
                     $localizedOverview = new EpisodeLocalizedOverview($episode['id'], $episode['overview'], 'en');
@@ -146,16 +150,17 @@ class SeriesSeasonEpisodes extends AbstractController
             }
             return [
                 'air_date' => $episode['air_date'] ? ucfirst($this->dateService->formatDateRelativeLong($episode['air_date'], $timezone, $locale)) : $this->translator->trans('No date'),
+                'device' => $device,
                 'episode_number' => $episode['episode_number'],
                 'link' => "/$locale/series/season/$id-$slug/$seasonNumber#episode-$seasonNumber-" . $episode['episode_number'],
                 'name' => $episode['name'],
                 'overview' => $episode['overview'],
-                'still' => $episode['still_path'],
-                'watchedAt' => $watchedAt ? ucfirst($this->dateService->formatDateRelativeLong($watchedAt->format("Y-m-d H:i"), $timezone, $locale)) : null,
-                'provider_path' => $providerPath,
                 'provider_name' => $providerName,
-                'device' => $device,
+                'provider_path' => $providerPath,
+                'runtime' => $episode['runtime'] ?? $season['episode_run_time'][0] ??  $seasonUS['episode_run_time'][0] ?? null,
+                'still' => $episode['still_path'],
                 'vote' => $vote,
+                'watchedAt' => $watchedAt ? ucfirst($this->dateService->formatDateRelativeLong($watchedAt->format("Y-m-d H:i"), $timezone, $locale)) : null,
             ];
         }, $season['episodes'] ?? []);
 

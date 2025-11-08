@@ -8,21 +8,26 @@
             {% endif %}
         </div>
         <div class="episode-infos">
-        <div class="line-1">
-            <div class="episode-number{% if episode.watchedAt %} watched{% endif %}"{% if episode.watchedAt %} data-title="{{ episode.watchedAt }}"{% endif %}>{{ episode.episode_number }}</div>
-            <div class="episode-name">{{ episode.name }}</div>
-        </div>
-        <div class="line-2">
-            <div class="episode-air-date">{{ episode.air_date }}</div>
-            {% if episode.vote %}
-                <div class="episode-vote">{{ episode.vote }} / 10</div>
-            {% endif %}
-            {% if episode.provider_path %}
-                <div class="provider-logo" data-title="{{ episode.provider_name }}">
-                    <img src="{{ episode.provider_path }}" alt="{{ episode.provider_name }}">
+            <div class="line-1">
+                <div class="episode-number{% if episode.watchedAt %} watched{% endif %}"{% if episode.watchedAt %} data-title="{{ episode.watchedAt }}"{% endif %}>{{ episode.episode_number }}</div>
+                <div class="episode-name">{{ episode.name }}</div>
+            </div>
+            {% if episode.runtime %}
+                <div class="line-2">
+                    <div class="episode-runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
                 </div>
             {% endif %}
+            <div class="line-2">
+                <div class="episode-air-date">{{ episode.air_date }}</div>
+                {% if episode.vote %}
+                    <div class="episode-vote">{{ episode.vote }} / 10</div>
+                {% endif %}
+                {% if episode.provider_path %}
+                    <div class="provider-logo" data-title="{{ episode.provider_name }}">
+                        <img src="{{ episode.provider_path }}" alt="{{ episode.provider_name }}">
+                    </div>
+                {% endif %}
+            </div>
         </div>
-    </div>
     </div>
 </a>
