@@ -1064,7 +1064,7 @@ class SeriesController extends AbstractController
             $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
 
             $tv = json_decode($this->tmdbService->getTv($seriesBroadcastSchedule->getSeries()->getTmdbId(), 'fr-FR', ['seasons']), true);
-            $as = $this->seriesService->getAlternateSchedule($seriesBroadcastSchedule, $tv, $userEpisodes);
+            $as = $this->seriesService->getAlternateSchedule($seriesBroadcastSchedule, $tv['seasons'], $userEpisodes);
 
             $airDays = $as['airDays'];
             foreach ($airDays as $airDay) {
