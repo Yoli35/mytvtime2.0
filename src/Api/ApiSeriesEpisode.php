@@ -411,6 +411,12 @@ class ApiSeriesEpisode extends AbstractController
         if ($type === 'name') {
             $esn = $this->episodeSubstituteNameRepository->findOneBy(['episodeId' => $id]);
             if ($esn) {
+                if (strlen($content) === 0) {
+                    $this->episodeSubstituteNameRepository->remove($esn, true);
+                    return $this->json([
+                        'ok' => true,
+                    ]);
+                }
                 $esn->setName($content);
             } else {
                 $esn = new EpisodeSubstituteName($id, $content);
@@ -420,6 +426,12 @@ class ApiSeriesEpisode extends AbstractController
         if ($type === 'overview') {
             $elo = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $id]);
             if ($elo) {
+                if (strlen($content) === 0) {
+                    $this->episodeLocalizedOverviewRepository->remove($elo, true);
+                    return $this->json([
+                        'ok' => true,
+                    ]);
+                }
                 $elo->setOverview($content);
             } else {
                 $elo = new EpisodeLocalizedOverview($id, $content, $request->getLocale());

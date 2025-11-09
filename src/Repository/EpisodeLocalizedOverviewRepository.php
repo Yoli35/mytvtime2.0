@@ -22,9 +22,17 @@ class EpisodeLocalizedOverviewRepository extends ServiceEntityRepository
         parent::__construct($registry, EpisodeLocalizedOverview::class);
     }
 
-    public function save(EpisodeLocalizedOverview $episodeLocalizedOverview, $flush = false): void
+    public function save(EpisodeLocalizedOverview $episodeLocalizedOverview, bool $flush = false): void
     {
         $this->em->persist($episodeLocalizedOverview);
+        if ($flush) {
+            $this->em->flush();
+        }
+    }
+
+    public function remove(EpisodeLocalizedOverview $elo, bool $flush = false)
+    {
+        $this->em->remove($elo);
         if ($flush) {
             $this->em->flush();
         }

@@ -22,7 +22,7 @@ class EpisodeSubstituteNameRepository extends ServiceEntityRepository
         parent::__construct($registry, EpisodeSubstituteName::class);
     }
 
-    public function save(EpisodeSubstituteName $episodeSubstituteName, bool $flush=false): void
+    public function save(EpisodeSubstituteName $episodeSubstituteName, bool $flush = false): void
     {
         $this->entityManager->persist($episodeSubstituteName);
         if ($flush) {
@@ -30,28 +30,11 @@ class EpisodeSubstituteNameRepository extends ServiceEntityRepository
         }
     }
 
-    //    /**
-    //     * @return EpisodeSubstituteName[] Returns an array of EpisodeSubstituteName objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('e.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?EpisodeSubstituteName
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function remove(EpisodeSubstituteName $esn, bool $flush = false): void
+    {
+        $this->entityManager->remove($esn);
+        if ($flush) {
+            $this->entityManager->flush();
+        }
+    }
 }
