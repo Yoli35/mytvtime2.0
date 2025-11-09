@@ -87,7 +87,7 @@ class SeriesSeasonEpisodes extends AbstractController
             // User Episode
             $userInfos = $this->getUserInfos($episode['id']);
             // Custom Broadcast Date
-            if ($dbBroadcastDateArray[$episode['id']] ?? false) {
+            if ($this->dbBroadcastDateArray[$episode['id']] ?? false) {
                 $episode['air_date'] = $this->dbBroadcastDateArray[$episode['id']];
             }
             return [
