@@ -2850,7 +2850,7 @@ h2 {
 
                         .episode-still {
                             aspect-ratio: 16 / 9;
-                            height: 10rem;
+                            height: 12rem;
                             position: relative;
 
                             > img {
@@ -2879,7 +2879,9 @@ h2 {
                         .episode-infos {
                             background-color: rgba(0, 0, 0, 0.25);
                             border-radius: 0 0 1rem 1rem;
-                            height: calc(100% - 10rem);
+                            display: flex;
+                            flex-direction: column;
+                            height: calc(100% - 12rem);
                             overflow-y: auto;
                             padding: .5rem;
                             width: 100%;
@@ -2918,9 +2920,20 @@ h2 {
                                 align-items: center;
                                 display: flex;
                                 gap: .5rem;
+
+                                .episode-runtime {
+                                    font-size: 0.875rem;
+                                    font-weight: 300;
+                                }
+                            }
+
+                            .line-3 {
+                                align-items: center;
+                                display: flex;
+                                gap: .5rem;
                                 margin-block-start: auto;
 
-                                .episode-air-date, .episode-vote, .episode-runtime {
+                                .episode-air-date, .episode-vote {
                                     font-size: 0.875rem;
                                     font-weight: 300;
                                 }

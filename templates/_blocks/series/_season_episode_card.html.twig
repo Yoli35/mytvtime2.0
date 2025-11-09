@@ -17,7 +17,7 @@
                     <div class="episode-runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
                 </div>
             {% endif %}
-            <div class="line-2">
+            <div class="line-3">
                 <div class="episode-air-date">{{ episode.air_date }}</div>
                 {% if episode.vote %}
                     <div class="episode-vote"{% if episode.vote_color_background %} style="background-color: {{ episode.vote_color_background }};color: {{ episode.vote_color }};"{% endif %}>{{ episode.vote }} / 10</div>

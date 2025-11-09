@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Repository\EpisodeLocalizedOverviewRepository;
 use App\Repository\EpisodeStillRepository;
 use App\Repository\EpisodeSubstituteNameRepository;
+use App\Repository\SeriesBroadcastDateRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
@@ -22,12 +23,26 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/api/series', name: 'api_series_')]
 class SeriesSeasonEpisodes extends AbstractController
 {
+    private string $logoUrl;
+    private string $stillUrl;
+    private string $locale;
+    private string $timezone;
+    private array $seasonUS;
+    private array $episodeIds;
+    private array $dbBroadcastDateArray;
+    private array $dbEpisodeSubstituteNames;
+    private array $dbEpisodeLocalizedOverviews;
+    private array $dbEpisodeStills;
+    private array $userEpisodes;
+    private array $providersInfos;
+
     public function __construct(
         private readonly EpisodeStillRepository             $episodeStillRepository,
         private readonly EpisodeLocalizedOverviewRepository $episodeLocalizedOverviewRepository,
         private readonly EpisodeSubstituteNameRepository    $episodeSubstituteNameRepository,
         private readonly ImageConfiguration                 $imageConfiguration,
         private readonly DateService                        $dateService,
+        private readonly SeriesBroadcastDateRepository      $seriesBroadcastDateRepository,
         private readonly TMDBService                        $tmdbService,
         private readonly TranslatorInterface                $translator,
         private readonly UserEpisodeRepository              $userEpisodeRepository,
@@ -40,145 +55,55 @@ class SeriesSeasonEpisodes extends AbstractController
     public function next(Request $request, int $id, int $tmdbId, int $seasonNumber, string $slug): JsonResponse
     {
         $user = $this->getUser();
-        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
-        $stillUrl = $this->imageConfiguration->getUrl('still_sizes', 3);
-        $locale = $request->getLocale();
-        $timezone = $user?->getTimezone() ?? 'Europe/Paris';
+        $this->logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
+        $this->stillUrl = $this->imageConfiguration->getUrl('still_sizes', 3);
+        $this->locale = $request->getLocale();
+        $this->timezone = $user?->getTimezone() ?? 'Europe/Paris';
 
         $season = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, $user->getPreferredLanguage() ?? $request->getLocale()), true);
-        $seasonUS = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, 'en-US'), true);
-        $episodeIds = array_column($season['episodes'] ?? [], 'id');
-        $dbEpisodeSubstituteNames = $this->episodeSubstituteNameRepository->findBy(['episodeId' => $episodeIds]);
-        $dbEpisodeLocalizedOverviews = $this->episodeLocalizedOverviewRepository->findBy(['episodeId' => $episodeIds]);
-        $dbEpisodeStills = $this->episodeStillRepository->findBy(['episodeId' => $episodeIds]);
-        $userEpisodes = $this->userEpisodeRepository->findBy([
-            'user' => $user,
-            'episodeId' => $episodeIds,
-        ]);
-        $watchProviderPaths = [];
-        $watchProviderNames = [];
-        $voteColorBackgrounds = [];
-        $voteColors = [];
-        $providerIds = array_unique(array_map(function ($ue) {
-            return $ue->getProviderId();
-        }, array_filter($userEpisodes, function ($ue) {
-            return $ue->getProviderId() !== null;
-        })));
-        if (count($providerIds) > 0) {
-            $watchProviders = $this->watchProviderRepository->findBy(['providerId' => $providerIds]);
-            foreach ($watchProviders as $wp) {
-                $path = $wp->getLogoPath();
-                if (str_starts_with($path, '/')) {
-                    $path = $logoUrl . $path;
-                    $pathForColor = $path;
-                } else {
-                    $path = '/images/providers' . substr($path, 1);
-                    $pathForColor = $this->getParameter('kernel.project_dir') . '/public/' . substr($path, 1);
-                }
-                $watchProviderPaths[$wp->getProviderId()] = $path;
-                $watchProviderNames[$wp->getProviderId()] = $wp->getProviderName();
-                $colors = $this->detectColors($pathForColor, 10);
+        $this->seasonUS = json_decode($this->tmdbService->getTvSeason($tmdbId, $seasonNumber, 'en-US'), true);
+        $this->episodeIds = array_column($season['episodes'] ?? [], 'id');
+        $this->dbBroadcastDateArray = $this->getCustomBroadcastDates();
+        $this->dbEpisodeSubstituteNames = $this->episodeSubstituteNameRepository->findBy(['episodeId' => $this->episodeIds]);
+        $this->dbEpisodeLocalizedOverviews = $this->episodeLocalizedOverviewRepository->findBy(['episodeId' => $this->episodeIds]);
+        $this->dbEpisodeStills = $this->episodeStillRepository->findBy(['episodeId' => $this->episodeIds]);
+        $this->userEpisodes = $this->userEpisodeRepository->findBy(['user' => $user, 'episodeId' => $this->episodeIds]);
+        $this->providersInfos = $this->getProvidersInfos();
 
-                if ($colors === true) {
-                    $colors = [
-                        'bgcolor' => '#69968C',
-                        'color' => '#E1E7EA',
-                    ];
-                }
-                $voteColorBackgrounds[$wp->getProviderId()] = "#" . $colors['bgcolor'];
-                $voteColors[$wp->getProviderId()] = "#" . $colors['color'];
-            }
-        }
+        $baseLink = "/" . $this->locale . "/series/season/$id-$slug/$seasonNumber#episode-$seasonNumber-";
 
-        $episodes = array_map(function ($episode) use ($id, $slug, $seasonNumber, $seasonUS, $dbEpisodeSubstituteNames, $dbEpisodeLocalizedOverviews, $dbEpisodeStills, $userEpisodes, $watchProviderPaths, $watchProviderNames, $voteColors, $voteColorBackgrounds, $locale, $timezone, $stillUrl) {
-            //
+        $episodes = array_map(function ($episode) use ($baseLink) {
             // Substitute Name
-            //
-            $substituteName = array_find($dbEpisodeSubstituteNames, function ($esn) use ($episode) {
+            $substituteName = array_find($this->dbEpisodeSubstituteNames, function ($esn) use ($episode) {
                 return $esn->getEpisodeId() === $episode['id'];
             });
             if ($substituteName) {
                 $episode['name'] .= " - " . $substituteName->getName();
             }
-            //
             // Overview
-            //
-            if ($episode['overview'] === '') {
-                // Si overview est vide, on vérifie si on a une version 'fr' (ou 'en', 'ko') dans la base de données.
-                $localizedOverview = array_find($dbEpisodeLocalizedOverviews, function ($eo) use ($episode, $locale) {
-                    return $eo->getEpisodeId() === $episode['id'] && $eo->getLocale() === $locale;
-                });
-                if (!$localizedOverview) {
-                    // Si overview est vide, on vérifie si on a une version 'en' en base
-                    $localizedOverview = array_find($dbEpisodeLocalizedOverviews, function ($eo) use ($episode) {
-                        return $eo->getEpisodeId() === $episode['id'] && $eo->getLocale() === 'en';
-                    });
-                }
-                if ($localizedOverview) {
-                    $episode['overview'] = $localizedOverview->getOverview();
-                }
-            }
-            if ($episode['overview'] === '') {
-//                $episodeUS = json_decode($this->tmdbService->getTvEpisode($episode['show_id'], $seasonNumber, $episode['episode_number'], 'en-US'), true);
-                $episodeUS = array_find($seasonUS['episodes'] ?? [], function ($e) use ($episode) {
-                    return $e['episode_number'] === $episode['episode_number'];
-                });
-                $episode['overview'] = $episodeUS['overview'] ?? '';
-                if (strlen($episode['overview']) > 0) {
-                    $localizedOverview = new EpisodeLocalizedOverview($episode['id'], $episode['overview'], 'en');
-                    $this->episodeLocalizedOverviewRepository->save($localizedOverview, true);
-                }
-            }
-            //
+            $episode['overview'] = $this->getOverview($episode['overview'], $episode['id'], $episode['episode_number']);
             // Still
-            //
-            if ($episode['still_path'] === null) {
-                $episodeStill = array_find($dbEpisodeStills, function ($es) use ($episode) {
-                    return $es->getEpisodeId() === $episode['id'];
-                });
-                if ($episodeStill) {
-                    $episode['still_path'] = "/series/stills" . $episodeStill->getPath();
-                }
-            } else {
-                $episode['still_path'] = $stillUrl . $episode['still_path'];
-            }
-            //
+            $episode['still_path'] = $this->getStillPath($episode['still_path'], $episode['id']);
             // User Episode
-            //
-            $watchedAt = null;
-            $providerPath = null;
-            $providerName = null;
-            $device = null;
-            $vote = null;
-            if (count($userEpisodes)) {
-                $userEpisode = array_find($userEpisodes, function ($ue) use ($episode) {
-                    return $ue->getEpisodeId() === $episode['id'];
-                });
-                $watchedAt = $userEpisode ? $userEpisode->getWatchAt() : false;
-                if ($watchedAt) {
-                    $providerPath = $userEpisode->getProviderId() ? $watchProviderPaths[$userEpisode->getProviderId()] : null;
-                    $providerName = $userEpisode->getProviderId() ? $watchProviderNames[$userEpisode->getProviderId()] : null;
-                    $voteColorBackground = $userEpisode->getProviderId() ? $voteColorBackgrounds[$userEpisode->getProviderId()] : null;
-                    $voteColor = $userEpisode->getProviderId() ? $voteColors[$userEpisode->getProviderId()] : null;
-                    $device = $userEpisode->getDeviceId();
-                    $vote = $userEpisode->getVote();
-                }
+            $userInfos = $this->getUserInfos($episode['id']);
+            // Custom Broadcast Date
+            if ($dbBroadcastDateArray[$episode['id']] ?? false) {
+                $episode['air_date'] = $this->dbBroadcastDateArray[$episode['id']];
             }
             return [
-                'air_date' => $episode['air_date'] ? ucfirst($this->dateService->formatDateRelativeLong($episode['air_date'], $timezone, $locale)) : $this->translator->trans('No date'),
-                'device' => $device,
+                'air_date' => $episode['air_date'] ? ucfirst($this->dateService->formatDateRelativeLong($episode['air_date'], 'UTC', $this->locale)) : $this->translator->trans('No date'),
                 'episode_number' => $episode['episode_number'],
-                'link' => "/$locale/series/season/$id-$slug/$seasonNumber#episode-$seasonNumber-" . $episode['episode_number'],
+                'link' => $baseLink . $episode['episode_number'],
                 'name' => $episode['name'],
                 'overview' => $episode['overview'],
-                'provider_name' => $providerName,
-                'provider_path' => $providerPath,
-                'vote_color_background' => $voteColorBackground ?? null,
-                'vote_color' => $voteColor ?? null,
+                'provider_name' => $userInfos['providerName'],
+                'provider_path' => $userInfos['providerPath'],
+                'vote_color_background' => $userInfos['voteColorBackground'],
+                'vote_color' => $userInfos['voteColor'],
                 'runtime' => $episode['runtime'] ?? $season['episode_run_time'][0] ?? $seasonUS['episode_run_time'][0] ?? null,
                 'still' => $episode['still_path'],
-                'vote' => $vote,
-                'watchedAt' => $watchedAt ? ucfirst($this->dateService->formatDateRelativeLong($watchedAt->format("Y-m-d H:i"), $timezone, $locale)) : null,
+                'vote' => $userInfos['vote'],
+                'watchedAt' => $userInfos['watchedAt'] ? ucfirst($this->dateService->formatDateRelativeLong($userInfos['watchedAt']->format("Y-m-d H:i"), $this->timezone, $this->locale)) : null,
             ];
         }, $season['episodes'] ?? []);
 
@@ -191,6 +116,143 @@ class SeriesSeasonEpisodes extends AbstractController
         return new JsonResponse([
             'episodeCards' => implode("\n", $episodeCards),
         ]);
+    }
+
+    private function getCustomBroadcastDates(): array
+    {
+        $dbBroadcastDates = $this->seriesBroadcastDateRepository->findBy(['episodeId' => $this->episodeIds]);
+        $dbBroadcastDateArray = [];
+        foreach ($dbBroadcastDates as $dbBroadcastDate) {
+            $dbBroadcastDateArray[$dbBroadcastDate->getEpisodeId()] = $dbBroadcastDate->getDate()->format('Y-m-d H:i');
+        }
+        return $dbBroadcastDateArray;
+    }
+
+    private function getProvidersInfos(): array
+    {
+        $providersInfos = [];
+        $providerIds = array_unique(array_map(function ($ue) {
+            return $ue->getProviderId();
+        }, array_filter($this->userEpisodes, function ($ue) {
+            return $ue->getProviderId() !== null;
+        })));
+        if (count($providerIds) > 0) {
+            $watchProviders = $this->watchProviderRepository->findBy(['providerId' => $providerIds]);
+            foreach ($watchProviders as $wp) {
+                $wpId = $wp->getProviderId();
+                $path = $wp->getLogoPath();
+                if (str_starts_with($path, '/')) {
+                    $path = $this->logoUrl . $path;
+                    $pathForColor = $path;
+                } else {
+                    $path = '/images/providers' . substr($path, 1);
+                    $pathForColor = $this->getParameter('kernel.project_dir') . '/public/' . substr($path, 1);
+                }
+
+                $colors = $this->detectColors($pathForColor, 10);
+                if ($colors === true) {
+                    $colors = [
+                        'bgcolor' => '#69968C',
+                        'color' => '#E1E7EA',
+                    ];
+                }
+
+                $providersInfos[$wpId] = [
+                    'path' => $path,
+                    'name' => $wp->getProviderName(),
+                    'vote_color_background' => "#" . $colors['bgcolor'],
+                    'vote_color' => "#" . $colors['color'],
+                ];
+            }
+        }
+        return $providersInfos;
+    }
+
+    private function getOverview(string $overview, int $episodeId, int $episodeNumber): string
+    {
+        if ($overview === '') {
+            // Si overview est vide, on vérifie si on a une version 'fr' (ou 'en', 'ko') dans la base de données.
+            $localizedOverview = array_find($this->dbEpisodeLocalizedOverviews, function ($eo) use ($episodeId) {
+                return $eo->getEpisodeId() === $episodeId && $eo->getLocale() === $this->locale;
+            });
+            if (!$localizedOverview) {
+                // Si overview est vide, on vérifie si on a une version 'en' en base
+                $localizedOverview = array_find($this->dbEpisodeLocalizedOverviews, function ($eo) use ($episodeId) {
+                    return $eo->getEpisodeId() === $episodeId && $eo->getLocale() === 'en';
+                });
+            }
+            if ($localizedOverview) {
+                $overview = $localizedOverview->getOverview();
+            }
+        }
+        if ($overview === '') {
+            $episodeUS = array_find($this->seasonUS['episodes'] ?? [], function ($e) use ($episodeNumber) {
+                return $e['episode_number'] === $episodeNumber;
+            });
+            $overview = $episodeUS['overview'] ?? '';
+            if (strlen($overview) > 0) {
+                $localizedOverview = new EpisodeLocalizedOverview($episodeId, $overview, 'en');
+                $this->episodeLocalizedOverviewRepository->save($localizedOverview, true);
+            }
+        }
+        return $overview;
+    }
+
+    private function getStillPath(?string $path, int $episodeId): ?string
+    {
+        if ($path !== null) {
+            return $this->stillUrl . $path;
+        }
+
+        $episodeStill = array_find($this->dbEpisodeStills, function ($es) use ($episodeId) {
+            return $es->getEpisodeId() === $episodeId;
+        });
+        if ($episodeStill) {
+            $path = "/series/stills" . $episodeStill->getPath();
+        }
+
+        return $path;
+    }
+
+    private function getUserInfos(int $episodeId): array
+    {
+        if (count($this->userEpisodes) === 0) {
+            return [
+                'watchedAt' => null,
+                'providerPath' => null,
+                'providerName' => null,
+                'voteColorBackground' => null,
+                'voteColor' => null,
+                'vote' => null,
+            ];
+        }
+
+        $providerPath = null;
+        $providerName = null;
+        $voteColorBackground = null;
+        $voteColor = null;
+        $vote = null;
+
+        $userEpisode = array_find($this->userEpisodes, function ($ue) use ($episodeId) {
+            return $ue->getEpisodeId() === $episodeId;
+        });
+        $watchedAt = $userEpisode->getWatchAt();
+        if ($watchedAt && $wpId = $userEpisode->getProviderId()) {
+            $providerPath = $this->providersInfos[$wpId]['path'];
+            $providerName = $this->providersInfos[$wpId]['name'];
+            $voteColorBackground = $this->providersInfos[$wpId]['vote_color_background'];
+            $voteColor = $this->providersInfos[$wpId]['vote_color'];
+            $vote = $userEpisode->getVote();
+        }
+
+        return [
+            'watchedAt' => $watchedAt,
+            'providerPath' => $providerPath,
+            'providerName' => $providerName,
+            'voteColorBackground' => $voteColorBackground,
+            'voteColor' => $voteColor,
+            'vote' => $vote,
+        ];
     }
 
     /**
@@ -208,7 +270,7 @@ class SeriesSeasonEpisodes extends AbstractController
      *                     5 = check every 5th pixel (faster, still accurate)
      *                     10 = check every 10th pixel (very fast, less accurate)
      *
-     * @return array|bool - Array of hex color codes, or true on error
+     * @return array|bool - Array of hex bgcolor / color codes, or true on error
      */
     private function detectColors(string $image, int $level = 5): array|bool
     {
