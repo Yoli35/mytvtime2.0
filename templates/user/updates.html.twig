@@ -27,6 +27,79 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>47ᵉ mise à jour : 09/11/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bug-outline') }}→ Fix broadcast date lookup in SeriesSeasonEpisodes</div>
+                        <div class="details">Replaces usage of local variable, falsely masked by the use of '??', with class property for broadcast date array, ensuring correct episode air date assignment.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add removal of episode name and overview if empty</div>
+                        <div class="details">When updating an episode's substitute name or localized overview, the entry is now removed if the new content is empty. Repository classes for EpisodeSubstituteName and EpisodeLocalizedOverview now include a remove method to support this behavior.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Refactor SeriesSeasonEpisodes and episode card layout</div>
+                        <div class="details">Refactored SeriesSeasonEpisodes.php to improve code structure by extracting logic into private methods and using class properties for shared data. Updated SCSS and Twig templates to adjust episode card layout, increase still image height, and reorganize info lines for better display and maintainability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Dynamic vote color styling for episode cards</div>
+                        <div class="details">Adds automatic color detection for provider logos and applies dynamic background and text colors to episode vote elements. Updates SeriesSeasonEpisodes API to compute and pass color values, modifies SCSS for vote styling, and updates Twig template to use these colors for improved visual integration.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add episode runtime display to season episode cards</div>
+                        <div class="details">Episode runtime is now retrieved and displayed in the season episode card if available. SCSS and Twig templates updated for styling and layout, and backend logic improved to fetch runtime from localized or fallback data.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bug-outline') }}→ Fix getAlternateSchedule parameter to use seasons data</div>
+                        <div class="details">Changed the call to getAlternateSchedule to pass only the 'seasons' data from the TMDB response instead of the entire TV object. This ensures the method receives the expected data structure.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve episode card styling and tooltips</div>
+                        <div class="details">Updated SCSS to refine font sizes and background colors for season and episode cards. Enhanced HTML to provide better tooltip data by using episode name when overview is missing, moving watched date tooltip to episode number, and improving provider logo tooltip handling.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor quickLinks padding logic in SeriesController</div>
+                        <div class="details">Moved the logic for adding an empty quickLink to ensure even count from before the itemPerLine calculation to inside the else block. This ensures padding is only added when necessary for layout purposes.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Enhance episode card with watch status, provider, and vote</div>
+                        <div class="details">Updated the episode card UI and backend to display watch status, streaming provider logo, and user vote for each episode. The SeriesSeasonEpisodes API now aggregates and returns additional episode metadata, and the SCSS and Twig templates have been updated to reflect these new features visually.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:api') }}→ Update episode API, UI behaviors, and translations</div>
+                        <div class="details">Refactored episode height API endpoint in Season.js and improved scrollIntoView behavior. Adjusted event handler and removed unused variable. Increased max-width for modal without images in app.scss. Standardized date formatting for episode queries and updated method signatures for type safety. Improved timezone handling in SeriesService. Added new French translations for missing image and crew roles.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add fallback to series poster if season poster missing</div>
+                        <div class="details">If a season poster is not available, the template now displays the series poster as a fallback before showing the 'No poster' message.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Reorder provider and name fields in watch link form</div>
+                        <div class="details">Moved the 'Provider' and 'Name' input fields below the season/episode hidden fields in the watch link form for improved form structure and logical grouping. And set focus to the url input.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add dynamic episode cards with stills to series seasons</div>
+                        <div class="details">Introduces an API endpoint and supporting frontend logic to fetch and display episode cards with still images for each season in a series. Adds new styles for episode cards, updates the series show template to include the episode cards container, and fixes typos in DateService method parameters. Also adds a Twig partial for rendering individual episode cards.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update season and info card styles for responsiveness</div>
+                        <div class="details">Increased border-radius for season and info elements, refactored .show-tab styles for better hover effects, and improved mobile responsiveness by adjusting flex direction, border-radius, and hiding cast buttons on small screens.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:home') }}→ Refactor home page series status and TMDB movie display</div>
+                        <div class="details">Improves the layout and structure of the series status section on the home page for better clarity and visual hierarchy. Updates HomeController to adjust provider selection and refines TMDB movie selection logic, removing unused video and provider data. Enhances SCSS for new status and TMDB card layouts, and disables the home page video background block.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:home') }}→ Add series status summary with percentages on home page</div>
+                        <div class="details">Enhanced the series status section for logged-in users by displaying a summary with total count and percentage breakdowns for each status. Updated SCSS for improved layout and styling, including new background colors and responsive adjustments. Added translation for 'Total' in French.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Refactor SeriesController to use SeriesService</div>
+                        <div class="details">Moved multiple methods from SeriesController to SeriesService, reducing controller complexity and improving separation of concerns. Updated method calls and dependency injection accordingly. Also made minor style and variable improvements in series.scss and templates.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>46ᵉ mise à jour : 03/11/2025</h2>
                 <ul>
                     <li>
