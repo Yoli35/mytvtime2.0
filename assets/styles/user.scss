@@ -114,6 +114,22 @@
                     width: 3.5rem;
                 }
 
+                .season-number-badge {
+                    align-items: center;
+                    aspect-ratio: 1;
+                    backdrop-filter: blur(8px);
+                    background-color: hsl(from var(--season-number-badge) h s l / .125);
+                    border-radius: 50%;
+                    display: flex;
+                    font-weight: 600;
+                    height: 2rem;
+                    justify-content: center;
+                    position: absolute;
+                    right: -0.5rem;
+                    bottom: -0.5rem;
+                    z-index: 1;
+                }
+
                 &:hover .watch-link-tools {
                     display: flex;
                 }
@@ -278,14 +294,20 @@
             .badge {
                 align-items: center;
                 background-color: var(--marathoner-series);
-                border-radius: .25rem;
+                border-radius: 50%;
                 color: var(--ardoise-10);
                 display: flex;
                 font-size: 1rem;
                 font-weight: 300;
                 gap: .25rem;
                 justify-content: center;
-                padding: .5rem;
+                height: 3.25rem;
+                width: 3.25rem;
+
+                svg {
+                    height: 2rem;
+                    width: 2rem;
+                }
             }
         }
 

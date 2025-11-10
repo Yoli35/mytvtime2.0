@@ -10,6 +10,9 @@
                     <span>{{ link.name }}</span>
                 {% endif %}
             </a>
+            {% if link.seasonNumber is defined and link.seasonNumber > 0 %}
+                <div class="season-number-badge">{{ link.seasonNumber }}</div>
+            {% endif %}
             <div class="watch-link-tools"
                  data-id="{{ link.id }}"
                  data-provider="{{ link.providerId }}"

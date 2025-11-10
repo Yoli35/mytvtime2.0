@@ -151,17 +151,18 @@ window.addEventListener("DOMContentLoaded", () => {
             navBar.navBarColor(hsl);
         }
 
-        const seasonOrder = document.querySelector(".season-order");
-        seasonOrder?.addEventListener("click", () => {
-            const seasonList = seasonOrder.closest(".content").querySelector(".seasons");
+        const seasonOrderBadge = document.querySelector(".season-order-badge");
+        seasonOrderBadge?.addEventListener("click", () => {
+            const seasonList = seasonOrderBadge.closest(".content").querySelector(".seasons");
             seasonList.classList.toggle("reverse");
-            if (seasonList.classList.contains("reverse")) {
+            seasonOrderBadge.classList.toggle("reversed");
+            /*if (seasonList.classList.contains("reverse")) {
                 const arrowUp = document.querySelector(".svgs #arrow-up").querySelector("svg").cloneNode(true);
-                seasonOrder.innerHTML = arrowUp.outerHTML;
+                seasonOrderBadge.innerHTML = arrowUp.outerHTML;
             } else {
                 const arrowDown = document.querySelector(".svgs #arrow-down").querySelector("svg").cloneNode(true);
-                seasonOrder.innerHTML = arrowDown.outerHTML;
-            }
+                seasonOrderBadge.innerHTML = arrowDown.outerHTML;
+            }*/
         });
 
         if (isSeasonPage) {
