@@ -407,6 +407,7 @@ class ApiSeriesEpisode extends AbstractController
         $data = json_decode($request->getContent(), true);
         $content = $data['content'];
         $type = $data['type'];
+        $locale = $request->getLocale();
 
         if ($type === 'name') {
             $esn = $this->episodeSubstituteNameRepository->findOneBy(['episodeId' => $id]);
@@ -424,7 +425,7 @@ class ApiSeriesEpisode extends AbstractController
             $this->episodeSubstituteNameRepository->save($esn, true);
         }
         if ($type === 'overview') {
-            $elo = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $id]);
+            $elo = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $id, 'locale' => $locale]);
             if ($elo) {
                 if (strlen($content) === 0) {
                     $this->episodeLocalizedOverviewRepository->remove($elo, true);
@@ -434,7 +435,7 @@ class ApiSeriesEpisode extends AbstractController
                 }
                 $elo->setOverview($content);
             } else {
-                $elo = new EpisodeLocalizedOverview($id, $content, $request->getLocale());
+                $elo = new EpisodeLocalizedOverview($id, $content, $locale);
             }
             $this->episodeLocalizedOverviewRepository->save($elo, true);
         }
