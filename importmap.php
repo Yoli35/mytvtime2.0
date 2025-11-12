@@ -79,9 +79,9 @@ return [
     'Photos' => [
         'path' => './assets/js/album/Photos.js',
     ],
-    'PosterHover' => [
-        'path' => './assets/js/images/PosterHover.js',
-    ],
+//    'PosterHover' => [
+//        'path' => './assets/js/images/PosterHover.js',
+//    ],
     'Profile' => [
         'path' => './assets/js/user/Profile.js',
     ],

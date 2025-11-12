@@ -18,7 +18,7 @@ import {NetworkAndProvider} from "NetworkAndProvider";
 import {PeopleShow} from "PeopleShow";
 import {PeopleStar} from "PeopleStar";
 import {Photos} from 'Photos';
-import {PosterHover} from 'PosterHover';
+// import {PosterHover} from 'PosterHover';
 import {Profile} from 'Profile';
 import {ProviderSelect} from 'ProviderSelect';
 import {Season} from 'Season';
@@ -57,8 +57,8 @@ window.addEventListener("DOMContentLoaded", () => {
     new ToolTips();
 
 // Poster hover option
-    const posterHover = new PosterHover();
-    posterHover.init();
+//     const posterHover = new PosterHover();
+//     posterHover.init();
 
 // Admin page
     const admin = document.querySelector(".admin");
