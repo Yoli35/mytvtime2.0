@@ -25,6 +25,13 @@
     <div class="container-fluid backgroundImageOverlay">
         <div class="movie-show">
             <header>
+                <div class="backdrop">
+                    {% if movie.backdrop_path %}
+                        <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
+                    {% elseif movie.poster_path %}
+                        <img src="/movies/posters{{ movie.poster_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
+                    {% endif %}
+                </div>
                 <div class="poster">
                     {% if movie.poster_path %}
                         <img src="/movies/posters{{ movie.poster_path }}" alt="{{ movie.title }} {{ 'poster'|trans }}">
@@ -33,11 +40,6 @@
                     {% endif %}
                 </div>
                 <div class="infos">
-                    <div class="backdrop">
-                        {% if movie.backdrop_path %}
-                            <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
-                        {% endif %}
-                    </div>
                     <div class="title">
                         <h1>
                             {{ movie.title }} ({{ movie.release_date|date("Y") }})

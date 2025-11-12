@@ -1,0 +1,255 @@
+.card {
+    aspect-ratio: 5 / 9;
+    background-color: var(--ardoise-90);
+    border-radius: .5rem;
+    color: var(--ardoise-10);
+    height: max(18rem, 24vh, 24vw);
+
+    &.tmdb {
+        .infos {
+            align-items: center;
+            background-color: var(--green-60);
+            border-radius: 0 0 .5rem .5rem;
+            display: flex;
+            flex-direction: column;
+            height: max(3rem, 4vh,4vw);
+            justify-content: center;
+            max-width: 100%;
+
+            .name {
+                background-color: unset;
+                border-radius: unset;
+                height: unset;
+            }
+        }
+    }
+
+    a {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+
+        .poster {
+            align-items: center;
+            aspect-ratio: 2 / 3;
+            background-color: var(--ardoise-80);
+            border-radius: .5rem .5rem 0 0;
+            color: var(--ardoise-10);
+            display: flex;
+            flex-shrink: 0;
+            height: max(15rem, 20vh, 20vw);
+            justify-content: center;
+            position: relative;
+
+            img {
+                aspect-ratio: 2 / 3;
+                border-radius: .5rem .5rem 0 0;
+                height: 100%;
+                object-fit: cover;
+                width: 100%;
+            }
+
+            .air-at {
+                background-color: hsla(from var(--ardoise-80) h s l / .9);
+                border-radius: .25rem;
+                color: var(--ardoise-10);
+                font-size: 1rem;
+                font-weight: 600;
+                padding: 0 .25rem;
+                position: absolute;
+                left: .25rem;
+                top: .25rem;
+            }
+
+            .series-infos {
+                align-items: center;
+                bottom: 1rem;
+                display: flex;
+                flex-wrap: wrap;
+                gap: .25rem;
+                justify-content: flex-end;
+                left: .25rem;
+                position: absolute;
+                right: .25rem;
+
+                .providers {
+                    overflow-x: auto;
+                    padding: 0 .25rem;
+
+                    &:has(.provider:hover) {
+                        transition: all .25s ease-in-out;
+                        transform: scale(2);
+                    }
+
+                    .provider-content {
+                        display: flex;
+                        gap: .25rem;
+
+                        .provider {
+                            background-color: var(--navbar-bg);
+                            border-radius: .25rem;
+                            height: 2rem;
+                            width: 2rem;
+
+                            img {
+                                border-radius: .25rem;
+                                height: 100%;
+                                object-fit: cover;
+                                width: 100%;
+                            }
+                        }
+                    }
+                }
+
+                .favorite, .quick-watcher {
+                    align-items: center;
+                    background-color: hsla(from var(--ardoise-80) h s l / .5);
+                    border-radius: .25rem;
+                    color: var(--favorite-series);
+                    display: flex;
+                    height: 2rem;
+                    justify-content: center;
+                    width: 2rem;
+                }
+
+                .episode-number {
+                    background-color: hsla(from var(--ardoise-80) h s l / .9);
+                    border-radius: .25rem;
+                    color: var(--ardoise-10);
+                    padding: .25rem;
+                    font-size: 1.5rem;
+                    font-weight: 400;
+                    width: fit-content;
+
+                    &.watched {
+                        background-color: var(--green-60);
+                        color: var(--green-10);
+                    }
+                }
+
+                .date {
+                    background-color: hsla(from var(--ardoise-80) h s l / .9);
+                    border-radius: .25rem;
+                    color: var(--ardoise-10);
+                    padding: .25rem;
+                    font-size: .875rem;
+                    font-weight: 300;
+                    width: fit-content;
+                }
+            }
+
+            .status {
+                background-color: var(--orange-40);
+                border-radius: 5rem;
+                bottom: .25rem;
+                color: var(--orange-80);
+                left: .25rem;
+                position: absolute;
+                right: .25rem;
+
+                &.coming-soon {
+                    background-color: hsl(from cadetblue h s 40%);
+                    /*bottom: -.75rem;*/
+                    color: var(--ardoise-10);
+                }
+            }
+
+            .progress {
+                background-color: var(--orange-20);
+                border: 2px solid var(--orange-40);
+                border-radius: .5rem;
+                height: 1rem;
+                left: .5rem;
+                overflow: hidden;
+                position: absolute;
+                bottom: -.5rem;
+                width: calc(100% - 1rem);
+
+                &.start-this-series {
+                    border-color: var(--start-this-series);
+                }
+
+                &.up-to-date {
+                    background-color: var(--up-to-date-series-bg);
+                    border-color: var(--up-to-date-series-border);
+
+                    .progress-bar {
+                        background-color: var(--up-to-date-series);
+                    }
+                }
+
+                &.that-s-all-folks {
+                    border-color: var(--that-s-all-folks-border);
+
+                    .progress-bar {
+                        background-color: var(--that-s-all-folks);
+                    }
+                }
+
+                .progress-bar {
+                    background: var(--orange-50);
+                    height: .875rem;
+                    transition: width 20s linear;
+                    width: 0;
+                }
+            }
+
+            .up-to-date-mask {
+                border-radius: .25rem;
+                height: 5rem;
+                left: 5rem;
+                overflow: hidden;
+                position: absolute;
+                right: -1px;
+                top: -1px;
+
+                .up-to-date-banner {
+                    background-color: var(--up-to-date-series);
+                    color: var(--green-10);
+                    font-weight: 600;
+                    padding: .125rem;
+                    position: absolute;
+                    right: -3rem;
+                    top: 1rem;
+                    transform: rotate(45deg) translate(0px, -1px);
+                    width: 10rem;
+
+                    &.premiere {
+                        background-color: var(--orange-50);
+                        color: var(--orange-90);
+                    }
+
+                    &.ended {
+                        background-color: var(--that-s-all-folks);
+                        color: var(--green-10);
+                    }
+                }
+            }
+        }
+
+        .name {
+            align-items: center;
+            background-color: cadetblue;
+            border-radius: 0 0 .5rem .5rem;
+            display: flex;
+            flex-shrink: 0;
+            font-size: max(1rem, 1.25vh,1.25vw);
+            font-weight: 500;
+            height: max(3rem, 4vh, 4vw);
+            justify-content: center;
+            line-height: 1em;
+            overflow-y: auto;
+            padding-block: .125rem;
+            padding-inline: .5rem;
+            text-align: center;
+            text-wrap: balance;
+            width: 100%;
+
+            &.added {
+                background-color: var(--orange-50);
+                color: var(--green-10);
+            }
+        }
+    }
+}

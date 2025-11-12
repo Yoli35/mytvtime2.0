@@ -1,6 +1,5 @@
 <a href="{{ path('app_movie_show', {'id': movie.userMovieId}) }}">
-    <div class="card">
-        {#    <a href="{{ path('app_movie_show', {'id': movie.id, 'slug': movie.slug }) }}"> #}
+    <div class="card" data-title="{{ movie.releaseDate|format_date('relative_medium')|capitalize }}">
         <div class="poster">
             {% if movie.posterPath %}
                 <img src="/movies/posters/{{ movie.posterPath }}" alt="{{ movie.title }}">
@@ -12,13 +11,13 @@
                     {{ ux_icon('mdi:heart') }}
                 </div>
             {% endif %}
-        </div>
-        <div class="infos">
-            <div class="name">{{ movie.title }}</div>
-            <div class="date">{{ movie.releaseDate|format_date('relative_medium')|capitalize }}</div>
             {% if movie.lastViewedAt %}
                 <div class="viewed">{{ ux_icon('mdi:eye-outline') }}&nbsp;{{ movie.lastViewedAt|format_date('relative_medium')|capitalize }}</div>
             {% endif %}
+        </div>
+        <div class="infos">
+            <div class="name">{{ movie.title }}</div>
+{#            <div class="date">{{ movie.releaseDate|format_date('relative_medium')|capitalize }}</div>#}
         </div>
     </div>
 </a>
