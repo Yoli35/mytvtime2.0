@@ -1400,7 +1400,9 @@ export class Season {
                             }
                         });
                         if (count) {
-                            voteAverageDiv.innerHTML = (sum / count).toFixed(1) + " / 10";
+                            let result = (sum / count);
+                            if (result > 10) result = result.toFixed(0) + "+"; else result = result.toFixed(1);
+                            voteAverageDiv.innerHTML = result + " / 10";
                         } else {
                             voteAverageDiv.innerHTML = gThis.text['No votes'];
                         }

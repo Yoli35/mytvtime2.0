@@ -25,7 +25,9 @@
     </div>
     <div class="vote-average">
         {% if count > 0 %}
-            {{ (sum / count)|round(1) }} / 10
+            {% set result = (sum / count)|round(1) %}
+            {% if result > 10 %} {% set result = "10+" %} {% endif %}
+            {{ result }} / 10
         {% else %}
             {{ 'No votes'|trans }}
         {% endif %}
