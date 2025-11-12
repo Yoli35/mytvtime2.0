@@ -510,7 +510,7 @@ label:has(input[type="text"]) {
 
                         .poster {
                             align-items: center;
-                            aspect-ratio: 78 / 117;
+                            aspect-ratio: 2 / 3;
                             background-color: var(--orange-50);
                             border-radius: .125rem;
                             color: var(--orange-90);
@@ -1190,7 +1190,7 @@ label:has(input[type="text"]) {
 
                 .poster {
                     align-items: center;
-                    aspect-ratio: 78 / 117;
+                    aspect-ratio: 2 / 3;
                     display: flex;
                     font-size: inherit;
                     height: 3em;
@@ -1371,7 +1371,7 @@ label:has(input[type="text"]) {
 
             a {
                 img {
-                    aspect-ratio: 78 / 117;
+                    aspect-ratio: 2 / 3;
                     border-radius: .5rem;
                     width: 9.75rem; /* 156px;*/
                 }
@@ -1379,7 +1379,7 @@ label:has(input[type="text"]) {
 
             a:not(:has(img)) {
                 align-items: center;
-                aspect-ratio: 78 / 117;
+                aspect-ratio: 2 / 3;
                 background-color: var(--orange-50);
                 border-radius: .5rem;
                 display: flex;
@@ -2404,7 +2404,7 @@ section:has(.pages) {
 
             .poster {
                 align-items: center;
-                aspect-ratio: 78 / 117;
+                aspect-ratio: 2 / 3;
                 display: flex;
                 font-size: .5rem;
                 height: 5rem;

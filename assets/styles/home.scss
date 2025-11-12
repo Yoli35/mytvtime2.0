@@ -37,7 +37,7 @@
         width: 90vw;
 
         .poster {
-            aspect-ratio: 78 / 117;
+            aspect-ratio: 2 / 3;
             flex-shrink: 0;
             height: 115%;
             opacity: 0;
@@ -417,7 +417,7 @@
             width: 90vw;
 
             .poster {
-                aspect-ratio: 78 / 117;
+                aspect-ratio: 2 / 3;
                 height: 64dvh;
                 max-width: 90vw;
                 width: auto;
@@ -544,15 +544,16 @@
                 width: 100%;
             }
 
-            .card {
+            .card, .card-home {
+                aspect-ratio: 5 / 9;
                 background-color: var(--ardoise-90);
                 border-radius: .25rem;
                 color: var(--ardoise-10);
-                height: 18rem;
-                width: 10rem;
+                height: max(18rem, 24vh, 24vw);
+                /*width: 10rem;*/
 
                 &.tmdb {
-                    height: unset;
+                    /*height: unset;*/
 
                     .infos {
                         align-items: center;
@@ -560,8 +561,9 @@
                         border-radius: 0 0 .25rem .25rem;
                         display: flex;
                         flex-direction: column;
-                        flex-grow: 1;
+                        height: max(3rem, 4vh,4vw);
                         justify-content: center;
+                        max-width: 100%;
 
                         .name {
                             background-color: unset;
@@ -579,24 +581,24 @@
 
                     .poster {
                         align-items: center;
-                        aspect-ratio: 78 / 117;
+                        aspect-ratio: 2 / 3;
                         background-color: var(--ardoise-80);
                         border-radius: .25rem .25rem 0 0;
                         color: var(--ardoise-10);
                         display: flex;
                         flex-shrink: 0;
-                        height: 15rem; /* 75dvh;*/
+                        height: max(15rem, 20vh, 20vw);
                         justify-content: center;
                         /*overflow: hidden;*/
                         position: relative;
-                        width: 10rem;
+                        /*width: 10rem;*/
 
                         img {
-                            aspect-ratio: 78 / 117;
+                            aspect-ratio: 2 / 3;
                             border-radius: .25rem .25rem 0 0;
-                            height: 15rem; /* 75dvh;*/
+                            height: 100%;
                             object-fit: cover;
-                            width: 10rem; /*auto;*/
+                            width: 100%;
                         }
 
                         .air-at {
@@ -783,17 +785,18 @@
                         border-radius: 0 0 .25rem .25rem;
                         display: flex;
                         flex-shrink: 0;
-                        font-size: 1rem;
+                        font-size: max(1rem, 1.25vh,1.25vw);
                         font-weight: 500;
-                        height: 3rem;
+                        height: max(3rem, 4vh, 4vw);
                         justify-content: center;
-                        line-height: 1rem;
+                        line-height: 1em;
                         overflow-y: auto;
                         padding-block: .125rem;
                         padding-inline: .5rem;
                         text-align: center;
                         text-wrap: balance;
-                        width: 10rem;
+                        /*width: 10rem;*/
+                        width: 100%;
 
                         &.added {
                             background-color: var(--orange-50);

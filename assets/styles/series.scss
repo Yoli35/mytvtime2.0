@@ -69,35 +69,37 @@ h2 {
 
     .episode-arrow {
         align-items: center;
+        aspect-ratio: 1 / 1;
         background-color: var(--orange-50);
         border-radius: 50%;
         color: var(--ardoise-10);
         display: flex;
-        height: 3rem;
-        font-size: 2.5rem;
+        height: max(3rem, 4vh, 4vw);
+        font-size: max(2.5rem, 3vh, 3vw);
         justify-content: center;
-        margin-block-start: 8rem;
-        margin-inline: -1.625rem;
-        width: 3rem;
+        margin-block-start: max(8rem, 8vh, 8vw);
+        margin-inline: min(-1.625rem, -2vh, -2vw);
+        /*width: 3rem;*/
         z-index: 2;
     }
 
     .calendar {
         align-items: center;
+        aspect-ratio: 5 / 9;
         background-color: var(--green-70);
         border-radius: .25rem;
         color: var(--orange-50);
         display: flex;
         flex-direction: column;
-        height: 18rem;
+        height: max(18rem, max(24vh, 24vw));
         justify-content: center;
         overflow: hidden;
         position: relative;
-        width: 10rem;
+        /*width: 10rem;*/
 
         .count {
             color: var(--orange-60);
-            font-size: 18rem;
+            font-size: max(18rem, max(24vh, 24vw));
             font-weight: 600;
             left: 50%;
             opacity: .25;
@@ -111,7 +113,7 @@ h2 {
         }
 
         .day-of-mouth {
-            font-size: 8rem;
+            font-size: max(8rem, 12vh);
             line-height: 1.1em;
             z-index: 1;
 
@@ -122,7 +124,7 @@ h2 {
 
         .day-of-week {
             color: var(--ardoise-10);
-            font-size: 2rem;
+            font-size: max(2rem, 3vh);
             line-height: 1.1em;
             z-index: 1;
 
@@ -133,7 +135,7 @@ h2 {
 
         .month {
             color: var(--ardoise-10);
-            font-size: 1.5rem;
+            font-size: max(1.5rem, 2.5vh);
             line-height: 1.1em;
             z-index: 1;
         }
@@ -626,7 +628,7 @@ h2 {
 
         .poster {
             align-items: center;
-            aspect-ratio: 78 / 117;
+            aspect-ratio: 2 / 3;
             background-color: var(--ardoise-80);
             border-radius: .5rem;
             color: var(--ardoise-10);
@@ -2762,7 +2764,7 @@ h2 {
 
         .poster {
             align-items: center;
-            aspect-ratio: 78 / 117;
+            aspect-ratio: 2 / 3;
             background-color: hsla(from var(--ardoise-90) h s l / .2);
             border-radius: 1rem 0 0 1rem;
             color: var(--green-10);
@@ -5147,7 +5149,7 @@ h2 {
                             height: unset;
 
                             img {
-                                aspect-ratio: 78 / 117;
+                                aspect-ratio: 2 / 3;
                                 height: auto;
                                 width: 100%;
                             }

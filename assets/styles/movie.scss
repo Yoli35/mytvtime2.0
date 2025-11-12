@@ -40,7 +40,7 @@
             }
 
             .poster {
-                aspect-ratio: 78 / 117;
+                aspect-ratio: 2 / 3;
                 position: relative;
                 width: 100%;
                 z-index: -1;
@@ -189,7 +189,7 @@
 
         .poster {
             align-items: center;
-            aspect-ratio: 78 / 117;
+            aspect-ratio: 2 / 3;
             background-color: var(--green-40);
             border-radius: .5rem;
             display: flex;
@@ -198,7 +198,7 @@
             width: 35vw;
 
             img {
-                aspect-ratio: 78 / 117;
+                aspect-ratio: 2 / 3;
                 border-radius: .5rem;
                 height: 100%;
                 object-fit: cover;
@@ -448,7 +448,7 @@
             width: 100%;
 
             .poster {
-                aspect-ratio: 78 / 117;
+                aspect-ratio: 2 / 3;
                 border-radius: .5rem;
                 height: 9rem;
                 width: auto;
@@ -615,7 +615,7 @@
                     .item {
                         .poster {
                             align-items: center;
-                            aspect-ratio: 78 / 117;
+                            aspect-ratio: 2 / 3;
                             background-color: hsla(from var(--green-70) h s l / .5);
                             border-radius: .5rem;
                             display: flex;
@@ -868,7 +868,7 @@
                     justify-content: center;
 
                     img {
-                        aspect-ratio: 78 / 117;
+                        aspect-ratio: 2 / 3;
                         border-radius: .5rem;
                         height: 100%;
                     }
@@ -920,7 +920,7 @@
 
         .poster {
             align-items: center;
-            aspect-ratio: 78 / 117;
+            aspect-ratio: 2 / 3;
             background-color: var(--green-40);
             border-radius: .5rem;
             display: flex;
@@ -928,7 +928,7 @@
             width: 28vw;
 
             img {
-                aspect-ratio: 78 / 117;
+                aspect-ratio: 2 / 3;
                 border-radius: .5rem;
                 height: auto;
                 position: relative;
@@ -1005,7 +1005,7 @@
 
                 .poster {
                     align-items: center;
-                    aspect-ratio: 78 / 117;
+                    aspect-ratio: 2 / 3;
                     background-color: hsla(from var(--green-70) h s l / .5);
                     border-radius: .5rem;
                     display: flex;
