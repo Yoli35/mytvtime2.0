@@ -334,7 +334,7 @@
                             <div class="cast">
                                 <div class="wrapper">
                                     {% for people in tv.credits.cast %}
-                                        {{ include('_blocks/series/_people.html.twig', { people: people, role: people.character }) }}
+                                        {{ include('_blocks/series/_cast.html.twig', { people: people, role: people.character }) }}
                                     {% endfor %}
                                 </div>
                             </div>

@@ -841,6 +841,7 @@ export class Show {
         const peopleSearchBlockDiv = document.querySelector('.cast-search-block');
         if (peopleSearchBlockDiv) {
             const addCastButton = document.querySelector('.add-cast-button');
+            const characterNameInput = document.querySelector('#character-name');
             const peopleSearchInput = document.getElementById('cast-search');
 
             peopleSearchInput.addEventListener("input", this.menu.searchFetch);
@@ -849,7 +850,7 @@ export class Show {
             addCastButton.addEventListener('click', () => {
                 peopleSearchBlockDiv.classList.toggle('active');
                 if (peopleSearchBlockDiv.classList.contains('active')) {
-                    peopleSearchInput.focus();
+                    characterNameInput.focus();
                 }
             });
         }

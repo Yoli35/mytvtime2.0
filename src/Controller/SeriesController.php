@@ -2678,7 +2678,7 @@ class SeriesController extends AbstractController
                 $sc['popularity'] = 0;
                 $sc['character'] = $sc['character_name'];
                 $sc['credit_id'] = '';
-                $sc['order'] = 0;
+                $sc['order'] = -1;
                 return $sc;
             }, $this->seriesCastRepository->getSeriesCatsBySeriesId($series->getId()));
             $tv['credits']['cast'] = array_merge($tv['credits']['cast'] ?? [], $seriesCastArr);
