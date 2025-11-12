@@ -70,6 +70,7 @@ export class ToolTips {
     show(evt) {
         evt.preventDefault();
         evt.stopPropagation();
+        const previewImage = localStorage.getItem("mytvtime_2_preview");
         const tooltips = gThis.tooltipsElement;
         if (tooltips.classList.contains("show")) {
             return;
@@ -80,7 +81,7 @@ export class ToolTips {
         const img = currentTarget.querySelector("img");
         const body = this.bodyElement;
         const tail = this.tailElement;
-        if (!img) {
+        if (!img || !previewImage) {
             body.innerHTML = text;
         } else {
             const imgClone = img.cloneNode(true);
