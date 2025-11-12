@@ -2934,23 +2934,33 @@ h2 {
                             .line-2 {
                                 align-items: center;
                                 display: flex;
+                                font-size: 0.875rem;
+                                font-weight: 300;
                                 gap: .5rem;
 
+                                .episode-air-date {
+                                    align-items: center;
+                                    display: flex;
+                                    gap: .5rem;
+                                }
+
                                 .episode-runtime {
-                                    font-size: 0.875rem;
-                                    font-weight: 300;
+                                    margin-inline-start: auto;
                                 }
                             }
 
                             .line-3 {
                                 align-items: center;
                                 display: flex;
+                                font-size: 0.875rem;
+                                font-weight: 300;
                                 gap: .5rem;
                                 margin-block-start: auto;
 
-                                .episode-air-date, .episode-vote {
-                                    font-size: 0.875rem;
-                                    font-weight: 300;
+                                .episode-watched-at {
+                                    align-items: center;
+                                    display: flex;
+                                    gap: .5rem;
                                 }
 
                                 .episode-vote {

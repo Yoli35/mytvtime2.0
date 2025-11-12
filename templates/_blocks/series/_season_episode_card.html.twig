@@ -9,16 +9,19 @@
         </div>
         <div class="episode-infos">
             <div class="line-1">
-                <div class="episode-number{% if episode.watchedAt %} watched{% endif %}"{% if episode.watchedAt %} data-title="{{ episode.watchedAt }}"{% endif %}>{{ episode.episode_number }}</div>
+                <div class="episode-number{% if episode.watchedAt %} watched{% endif %}">{{ episode.episode_number }}</div>
                 <div class="episode-name">{{ episode.name }}</div>
             </div>
             {% if episode.runtime %}
                 <div class="line-2">
+                    <div class="episode-air-date">{{ ux_icon('mdi:broadcast') }} {{ episode.air_date }}</div>
                     <div class="episode-runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
                 </div>
             {% endif %}
             <div class="line-3">
-                <div class="episode-air-date">{{ episode.air_date }}</div>
+                {% if episode.watchedAt %}
+                    <div class="episode-watched-at">{{ ux_icon('mdi:eye') }} {{ episode.watchedAt }}</div>
+                {% endif %}
                 {% if episode.vote %}
                     <div class="episode-vote"{% if episode.vote_color_background %} style="background-color: {{ episode.vote_color_background }};color: {{ episode.vote_color }};"{% endif %}>{{ episode.vote }} / 10</div>
                 {% endif %}
