@@ -79,6 +79,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
             }
             if (!$this->seriesInArray($seriesArr[$index], $item)) {
                 $item['episodes'] = [$item['episodeNumber']];
+                $item['episodeIds'] = [$item['episodeId']];
                 if ($item['posterPath'] === null) {
                     $item['posterPath'] = $this->seriesController->getAlternatePosterPath($item['id']);
                 }
@@ -95,6 +96,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
                 $seriesArr[$index][$item['id']] = $item;
             } else {
                 if (!$this->episodeInArray($seriesArr[$index], $item)) {
+                    $seriesArr[$index][$item['id']]['episodeIds'][] = $item['episodeId'];
                     $seriesArr[$index][$item['id']]['episodes'][] = $item['episodeNumber'];
                     $seriesArr[$index][$item['id']]['episodesWatched'] += $item['watchAt'] === null ? 0 : 1;
                 }
@@ -135,8 +137,10 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
                         $display = sprintf('Special #%02d', $episodeNumber);
                     $item['firstEpisodeNumber'] = $episodeNumber;
                 }
+                $episodeIdArr = array_unique($item['episodeIds']);
+                $item['episodeIds'] = implode('-', $episodeIdArr);
                 $item['display'] = $item['displayName'] . ' ' . $display;
-                $item['episodeCount'] = count($item['episodes']);
+                $item['episodeCount'] = count($episodeIdArr);
 
                 $dayArr[$key] = $item;
             }
@@ -178,7 +182,6 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
 
         foreach ($seriesArr as $indexKey => $itemArr) {
             $totalEpisodeCount = array_reduce($itemArr, function ($carry, $item) {
-                ;
                 return $carry + $item['episodeCount'];
             }, 0);
             $results = array_map(function ($item) {
@@ -188,6 +191,8 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
                     'displayName' => $item['displayName'],
                     'airAt' => $item['airAt'],
                     'customDate' => $item['customDate'],
+                    'episodeId' => $item['episodeId'] ?? null,
+                    'episodeIds' => $item['episodeIds'] ?? null,
                     'episodeCount' => $item['episodeCount'],
                     'episodesWatched' => $item['episodesWatched'],
                     'firstEpisodeNumber' => $item['firstEpisodeNumber'],
@@ -248,13 +253,11 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
 
     private function episodeInArray($arr, $item): bool
     {
-        $seriesId = $item['id'];
-        $episodeNumber = $item['episodeNumber'];
-        $seasonNumber = $item['seasonNumber'];
-        $itemAlreadyInArray = array_filter($arr, function ($item) use ($episodeNumber, $seasonNumber, $seriesId) {
-            return $item['episodeNumber'] === $episodeNumber && $item['seasonNumber'] === $seasonNumber && $item['id'] === $seriesId;
+        $episodeId = $item['episodeId'];
+        $itemAlreadyInArray = array_find($arr, function ($item) use ($episodeId) {
+            return $item['episodeId'] === $episodeId;
         });
-        return $itemAlreadyInArray !== [];
+        return $itemAlreadyInArray !== null;
     }
 
     private function minNumberInArray($arr): int

@@ -388,6 +388,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                      s.slug                                  as slug, 
                      sln.name                                as localizedName, 
                      sln.slug                                as localizedSlug, 
+                     ue.episode_id                           as episodeId,
                      ue.`episode_number`                     as episodeNumber, 
                      ue.`season_number`                      as seasonNumber,
                      ue.`watch_at`                           as watchAt,

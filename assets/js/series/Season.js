@@ -739,7 +739,8 @@ export class Season {
                 // Mise à jour du menu
                 let episodesOfTheDayInMenu = document.querySelectorAll('a[id^="eotd-menu-item-"]');
                 episodesOfTheDayInMenu.forEach(eotd => {
-                    if (eotd.getAttribute('id').includes(seriesId)) {
+                    // if (eotd.getAttribute('id').includes(seriesId)) {
+                    if (eotd.getAttribute('data-episode-ids').includes(episodeId ? episodeId : id)) {
                         const episodeCount = parseInt(eotd.getAttribute('data-episode-count'));
                         const firstEpisodeNumber = parseInt(eotd.getAttribute('data-first-episode-number'));
                         const number = parseInt(episodeNumber);
