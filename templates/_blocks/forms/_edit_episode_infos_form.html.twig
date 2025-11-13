@@ -22,6 +22,9 @@
                             {% endif %}
                         </div>
                         <div>{{ episode.air_date|format_date("short") }}</div>
+                        <label for="copy-{{ episode.id }}">
+                            <input type="checkbox" id="copy-{{ episode.id }}" name="copy-{{ episode.id }}" data-id="{{ episode.id }}" switch>{{ 'Copy'|trans }}
+                        </label>
                     </div>
                     <div class="form-column">
                         <div class="form-field">
@@ -44,12 +47,22 @@
                     </div>
                 </div>
             {% endfor %}
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="edit-episode-infos-copy-all">
+                        <input type="checkbox" id="edit-episode-infos-copy-all" switch="">{{ 'Copy all'|trans }}
+                    </label>
+                </div>
+            </div>
             <div class="form-row submit-row">
                 <div class="form-field">
-                    <button type="button">{{ 'Cancel'|trans }}</button>
+                    <button type="button" id="edit-episode-infos-copy">{{ 'Copy'|trans }}</button>
                 </div>
                 <div class="form-field">
-                    <button type="submit">{{ 'Add'|trans }}</button>
+                    <button type="button" id="edit-episode-infos-cancel">{{ 'Cancel'|trans }}</button>
+                </div>
+                <div class="form-field">
+                    <button type="submit" id="edit-episode-infos-save">{{ 'Add'|trans }}</button>
                 </div>
             </div>
         </form>

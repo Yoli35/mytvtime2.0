@@ -481,11 +481,35 @@ export class Season {
             });
         });
         const submitRow = editEpisodeInfosForm.querySelector('.form-row.submit-row');
-        const cancelButton = submitRow.querySelector('button[type="button"]');
+        const copySwitch = editEpisodeInfosForm.querySelector('input[id="edit-episode-infos-copy-all"]');
+        copySwitch.addEventListener('click', () => {
+            const switchStatus = copySwitch.checked;
+            const switchInputs = editEpisodeInfosForm.querySelectorAll('input[id^=copy]')
+            switchInputs.forEach(switchInput => {
+                switchInput.checked = switchStatus;
+            });
+        });
+        const copyButton = submitRow.querySelector('button[id="edit-episode-infos-copy"]');
+        copyButton.addEventListener('click', () => {
+            const data = {};
+            const switchInputs = editEpisodeInfosForm.querySelectorAll('input[id^=copy]')
+            switchInputs.forEach(switchInput => {
+                if (switchInput.checked) {
+                    const id = switchInput.getAttribute('data-id');
+                    const formColumnDiv = switchInput.closest('.form-row').querySelector('.form-column');
+                    const title = formColumnDiv.querySelector('input[id^=title]').value;
+                    const overview = formColumnDiv.querySelector('textarea[id^=overview]').value;
+                    data[id] = {title: title, overview: overview};
+                }
+            });
+            // Copy data to the clipboard
+            navigator.clipboard.writeText(JSON.stringify(data)).then(r => console.log(r));
+        });
+        const cancelButton = submitRow.querySelector('button[id="edit-episode-infos-cancel"]');
         cancelButton.addEventListener('click', () => {
             editEpisodeInfosDialog.classList.remove('open');
         });
-        const submitButton = submitRow.querySelector('button[type="submit"]');
+        const submitButton = submitRow.querySelector('button[id="edit-episode-infos-save"]');
         submitButton.addEventListener('click', (e) => {
             e.preventDefault();
             const formData = new FormData(editEpisodeInfosForm);
@@ -1401,7 +1425,7 @@ export class Season {
                         });
                         if (count) {
                             let result = (sum / count);
-                            if (result > 10) result = result.toFixed(0) + "+"; else result = result.toFixed(1);
+                            if (result > 10) result = "10+"; else result = result.toFixed(1);
                             voteAverageDiv.innerHTML = result + " / 10";
                         } else {
                             voteAverageDiv.innerHTML = gThis.text['No votes'];
