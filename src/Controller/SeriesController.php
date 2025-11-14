@@ -854,6 +854,10 @@ class SeriesController extends AbstractController
         $seriesArr['videos'] = $this->seriesService->getSeriesVideoList($series);
         $seriesArr['videoListFolded'] = $this->seriesService->isVideoListFolded(count($seriesArr['videos']), $user);
 
+        if ($tv['backdrop_path'] == null && count($seriesArr['images']['backdrops']) > 0) {
+            $tv['backdrop_path'] = substr($seriesArr['images']['backdrops'][0], strlen("/series/backdrops"));
+        }
+
         $filmingLocationsWithBounds = $this->getFilmingLocations($series);
 
         $addLocationFormData = [
