@@ -248,7 +248,9 @@ export class Season {
             episode.addEventListener('click', e => {
                 e.preventDefault();
                 const episodeNumber = e.currentTarget.getAttribute('data-number');
-                if (!episodeNumber) { return; }
+                if (!episodeNumber) {
+                    return;
+                }
                 const selector = '#episode-' + seasonNumber + '-' + episodeNumber;
                 const target = document.querySelector(selector);
                 target.scrollIntoView({behavior: 'smooth', block: 'center'});
@@ -350,27 +352,27 @@ export class Season {
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
-            .then(res => res.json())
-            .then(data => {
-                const blocks = data['blocks'];
-                let containerDiv = whatToWatchNextDiv.querySelector('.series-to-watch');
-                let wrapperDiv;
-                if (!containerDiv) {
-                    containerDiv = document.createElement('div');
-                    containerDiv.classList.add('series-to-watch');
-                    wrapperDiv = document.createElement('div');
-                    wrapperDiv.classList.add('wrapper');
-                    containerDiv.appendChild(wrapperDiv);
-                    whatToWatchNextDiv.appendChild(containerDiv);
-                } else {
-                    wrapperDiv = containerDiv.querySelector('.wrapper')
-                    wrapperDiv.innerHTML = '';
-                }
-                blocks.forEach((block) => {
-                    wrapperDiv.insertAdjacentHTML('beforeend', block);
+                .then(res => res.json())
+                .then(data => {
+                    const blocks = data['blocks'];
+                    let containerDiv = whatToWatchNextDiv.querySelector('.series-to-watch');
+                    let wrapperDiv;
+                    if (!containerDiv) {
+                        containerDiv = document.createElement('div');
+                        containerDiv.classList.add('series-to-watch');
+                        wrapperDiv = document.createElement('div');
+                        wrapperDiv.classList.add('wrapper');
+                        containerDiv.appendChild(wrapperDiv);
+                        whatToWatchNextDiv.appendChild(containerDiv);
+                    } else {
+                        wrapperDiv = containerDiv.querySelector('.wrapper')
+                        wrapperDiv.innerHTML = '';
+                    }
+                    blocks.forEach((block) => {
+                        wrapperDiv.insertAdjacentHTML('beforeend', block);
+                    });
+                    whatToWatchNextButton.classList.remove('disabled');
                 });
-                whatToWatchNextButton.classList.remove('disabled');
-            });
         });
 
         const getFilmingLocationsDiv = document.querySelector('.get-filming-locations');
@@ -387,26 +389,26 @@ export class Season {
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
-            .then(res => res.json())
-            .then(data => {
-                const body = document.querySelector('body');
-                const svgsDiv = document.querySelector('.svgs');
-                const globsMapDiv = document.createElement('div');
-                globsMapDiv.setAttribute('id', 'globs-map');
-                globsMapDiv.style.display = 'none';
-                globsMapDiv.innerText = '{';
-                globsMapDiv.innerText += '"locations": ' + JSON.stringify(data["locations"]) + ', ';
-                globsMapDiv.innerText += '"bounds": ' + JSON.stringify(data["locationsBounds"]) + ', ';
-                globsMapDiv.innerText += '"emptyLocation": ' + JSON.stringify(data["emptyLocation"]) + ', ';
-                globsMapDiv.innerText += '"fieldList": ' + JSON.stringify(data["fieldList"]) + ', ';
-                globsMapDiv.innerText += '"locationImagePath": "' + data["locationImagePath"] + '", ';
-                globsMapDiv.innerText += '"poiImagePath": "' + data["poiImagePath"] + '"';
-                globsMapDiv.innerText += '}';
-                body.insertBefore(globsMapDiv, svgsDiv);
-                getFilmingLocationsDiv.innerHTML = data["mapBlock"];
-                getFilmingLocationsButton.remove();
-                gThis.map = new Map({cooperativeGesturesOption: true});
-            })
+                .then(res => res.json())
+                .then(data => {
+                    const body = document.querySelector('body');
+                    const svgsDiv = document.querySelector('.svgs');
+                    const globsMapDiv = document.createElement('div');
+                    globsMapDiv.setAttribute('id', 'globs-map');
+                    globsMapDiv.style.display = 'none';
+                    globsMapDiv.innerText = '{';
+                    globsMapDiv.innerText += '"locations": ' + JSON.stringify(data["locations"]) + ', ';
+                    globsMapDiv.innerText += '"bounds": ' + JSON.stringify(data["locationsBounds"]) + ', ';
+                    globsMapDiv.innerText += '"emptyLocation": ' + JSON.stringify(data["emptyLocation"]) + ', ';
+                    globsMapDiv.innerText += '"fieldList": ' + JSON.stringify(data["fieldList"]) + ', ';
+                    globsMapDiv.innerText += '"locationImagePath": "' + data["locationImagePath"] + '", ';
+                    globsMapDiv.innerText += '"poiImagePath": "' + data["poiImagePath"] + '"';
+                    globsMapDiv.innerText += '}';
+                    body.insertBefore(globsMapDiv, svgsDiv);
+                    getFilmingLocationsDiv.innerHTML = data["mapBlock"];
+                    getFilmingLocationsButton.remove();
+                    gThis.map = new Map({cooperativeGesturesOption: true});
+                })
         });
 
         /******************************************************************************
@@ -482,57 +484,72 @@ export class Season {
         });
         const submitRow = editEpisodeInfosForm.querySelector('.form-row.submit-row');
         const copySwitch = editEpisodeInfosForm.querySelector('input[id="edit-episode-infos-copy-all"]');
-        copySwitch.addEventListener('click', () => {
-            const switchStatus = copySwitch.checked;
-            const switchInputs = editEpisodeInfosForm.querySelectorAll('input[id^=copy]')
-            switchInputs.forEach(switchInput => {
-                switchInput.checked = switchStatus;
-            });
-        });
+        copySwitch.addEventListener('click', gThis.editEpisodeInfosCopySwitch);
         const copyButton = submitRow.querySelector('button[id="edit-episode-infos-copy"]');
-        copyButton.addEventListener('click', () => {
-            const data = {};
-            const switchInputs = editEpisodeInfosForm.querySelectorAll('input[id^=copy]')
-            switchInputs.forEach(switchInput => {
-                if (switchInput.checked) {
-                    const id = switchInput.getAttribute('data-id');
-                    const formColumnDiv = switchInput.closest('.form-row').querySelector('.form-column');
-                    const title = formColumnDiv.querySelector('input[id^=title]').value;
-                    const overview = formColumnDiv.querySelector('textarea[id^=overview]').value;
-                    data[id] = {title: title, overview: overview};
-                }
-            });
-            // Copy data to the clipboard
-            navigator.clipboard.writeText(JSON.stringify(data)).then(r => console.log(r));
-        });
+        copyButton.addEventListener('click', gThis.editEpisodeInfosCopy);
         const cancelButton = submitRow.querySelector('button[id="edit-episode-infos-cancel"]');
-        cancelButton.addEventListener('click', () => {
-            editEpisodeInfosDialog.classList.remove('open');
-        });
+        cancelButton.addEventListener('click', gThis.editEpisodeInfosCancel);
         const submitButton = submitRow.querySelector('button[id="edit-episode-infos-save"]');
-        submitButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            const formData = new FormData(editEpisodeInfosForm);
-            const data = {};
-            formData.forEach((value, key) => {
-                data[key] = value;
-            });
-            fetch('/api/episode/update/infos', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify(data)
-            }).then(function (response) {
-                if (response.ok) {
-                    editEpisodeInfosDialog.classList.remove('open');
-                    window.location.reload();
-                }
-            });
-        });
+        submitButton.addEventListener('click', gThis.editEpisodeInfosSubmit);
 
         editEpisodeInfosDialog.classList.add('open');
+    }
+
+    editEpisodeInfosCopySwitch(e) {
+        const copySwitch = e.currentTarget;
+        const editEpisodeInfosForm = document.querySelector('#edit-episode-infos-form');
+        const switchStatus = copySwitch.checked;
+        const switchInputs = editEpisodeInfosForm.querySelectorAll('input[id^=copy]')
+        switchInputs.forEach(switchInput => {
+            switchInput.checked = switchStatus;
+        });
+    }
+
+    editEpisodeInfosCopy() {
+        const editEpisodeInfosForm = document.querySelector('#edit-episode-infos-form');
+        const data = {};
+        const switchInputs = editEpisodeInfosForm.querySelectorAll('input[id^=copy]')
+        switchInputs.forEach(switchInput => {
+            if (switchInput.checked) {
+                const id = switchInput.getAttribute('data-id');
+                const formColumnDiv = switchInput.closest('.form-row').querySelector('.form-column');
+                const title = formColumnDiv.querySelector('input[id^=title]').value;
+                const overview = formColumnDiv.querySelector('textarea[id^=overview]').value;
+                data[id] = {title: title, overview: overview};
+            }
+        });
+        // Copy data to the clipboard
+        navigator.clipboard.writeText(JSON.stringify(data)).then(r => console.log(r));
+    }
+
+    editEpisodeInfosCancel() {
+        const editEpisodeInfosDialog = document.querySelector('.side-panel.edit-episode-infos-dialog');
+        editEpisodeInfosDialog.classList.remove('open');
+    }
+
+    editEpisodeInfosSubmit(e) {
+        e.preventDefault();
+        const editEpisodeInfosForm = document.querySelector('#edit-episode-infos-form');
+        const editEpisodeInfosDialog = document.querySelector('.side-panel.edit-episode-infos-dialog');
+        const formData = new FormData(editEpisodeInfosForm);
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+        fetch('/api/episode/update/infos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(data)
+        }).then(function (response) {
+            if (response.ok) {
+                editEpisodeInfosDialog.classList.remove('open');
+                window.location.reload();
+            }
+        });
+
     }
 
     openTitleForm(e) {
