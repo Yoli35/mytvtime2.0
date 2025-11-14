@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\UserSeries;
 use App\Repository\UserEpisodeRepository;
+use App\Repository\UserMovieRepository;
 use App\Repository\UserSeriesRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
@@ -28,6 +29,7 @@ class HomeController extends AbstractController
         private readonly ImageService            $imageService,
         private readonly SeriesController        $seriesController,
         private readonly UserEpisodeRepository   $userEpisodeRepository,
+        private readonly UserMovieRepository     $userMovieRepository,
         private readonly UserSeriesRepository    $userSeriesRepository,
         private readonly TMDBService             $tmdbService,
         private readonly TranslatorInterface     $translator,
@@ -111,12 +113,15 @@ class HomeController extends AbstractController
             $historyEpisode = $this->seriesController->getEpisodeHistory($user, $dayCount, $language);
 
             $statusArray = $this->userSeriesRepository->getUserSeriesStatus($user);
+
+            $lastViewedMovies = $this->userMovieRepository->lastViewedMovies($user->getId());
         } else {
             $userSeries = [];
             $episodesOfTheDay = [];
             $episodesToWatch = [];
             $lastAddedSeries = [];
             $historyEpisode = [];
+            $lastViewedMovies = [];
             $dayCount = 0;
             $historySeries = [];
             $statusArray = [];
@@ -176,6 +181,7 @@ class HomeController extends AbstractController
             'episodesToWatch' => $episodesToWatch,
             'lastAddedSeries' => $lastAddedSeries,
             'historyEpisode' => $historyEpisode,
+            'lastViewedMovies' => $lastViewedMovies,
             'dayCount' => $dayCount,
             'historySeries' => $historySeries,
             'userSeriesCount' => $userSeriesCount ?? 0,

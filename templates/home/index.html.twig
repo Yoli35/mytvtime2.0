@@ -111,6 +111,18 @@
             </div> #}
 
             {% if app.user %}
+                {% if lastViewedMovies|length %}
+                    <div class="series-group">
+                        <h2>{{ 'Last viewed movies'|trans }} ({{ lastViewedMovies|length }})</h2>
+                        <div class="wrapper">
+                            <div class="content">
+                                {% for movie in lastViewedMovies %}
+                                    {{ include('_blocks/movie/_card.html.twig') }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
                 <div class="series-status">
                     {% set total = statusArray|reduce((carry, s) => carry + s.count) %}
                     <div class="status-title">{{ 'My series'|trans }}</div>

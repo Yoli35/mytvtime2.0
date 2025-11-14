@@ -72,29 +72,6 @@
                         width: 1.5rem;
                     }
                 }
-
-                .viewed {
-                    align-items: center;
-                    backdrop-filter: blur(8px);
-                    background-color: hsla(from var(--orange-50) h s l / .25);
-                    border-radius: 0;
-                    bottom: 0;
-                    display: flex;
-                    font-size: 1rem;
-                    justify-content: center;
-                    margin-block-start: auto;
-                    padding: .5rem;
-                    position: absolute;
-                    text-align: center;
-                    text-overflow: ellipsis;
-                    text-shadow: 1px 1px 1px var(--ardoise-90);
-                    text-wrap: nowrap;
-                    width: 100%;
-
-                    svg {
-                        flex-shrink: 0;
-                    }
-                }
             }
 
             .infos {
