@@ -36,7 +36,7 @@
                         {% if season.season_localized_overview|length %}
                             <div class="season-overview">
                                 <div class="header">{{ 'Season localized overview'|trans }} ({{ season.season_localized_overview.locale|upper }})</div>
-                                <div class="overview-content">{{ season.season_localized_overview.overview|nl2br }}</div>
+                                <div class="body">{{ season.season_localized_overview.overview|nl2br }}</div>
                             </div>
                         {% endif %}
                         {% if season.overview %}
