@@ -203,6 +203,7 @@ readonly class EpisodeExtensionRuntime implements RuntimeExtensionInterface
                     'providerName' => $item['providerName'],
                     'progress' => 100 * $item['episodesWatched'] / $item['episodeCount'],
                     'seasonNumber' => $item['seasonNumber'],
+                    'premiere' => $item['seasonNumber'] === 1 && $item['firstEpisodeNumber'] === 1,
                     'last_episode' => $item['last_episode'] ?? false,
                     'slug' => $item['localizedSlug'] ?? $item['slug'],
                 ];
