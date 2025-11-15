@@ -76,7 +76,7 @@
                             {% if n > 1000 %}
                                 {% set n = (n / 1000)|round(1, 'floor') ~ 'k' %}
                             {% endif %}
-                            {{ n }} {{ (n > 1 ? 'visits':'visit')|trans }}
+                            {{ n }} {{ (n > 1 ? 'visits':'visit')|trans }} - {{ 'Added at'|trans }} {{ userSeries.addedAt|format_date('long') }}
                         </h5>
                         <div class="series-overview">{{ tv.overview }}</div>
                         <div class="localized overviews">
