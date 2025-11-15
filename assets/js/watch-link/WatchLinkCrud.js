@@ -295,8 +295,10 @@ export class WatchLinkCrud {
                 form.classList.add('active');
             }, 0);
         }
+        /** @type HTMLInputElement */
         const url = form.querySelector("#url");
         url.focus();
+        url.select();
     }
 
     hideForm(form) {
