@@ -3,18 +3,18 @@ import {ToolTips} from "ToolTips";
 let gThis;
 
 export class TranslationsForms {
-    constructor(id, type, translations) {
+    constructor(id, type, translations, seasonNumber = null) {
         gThis = this;
         this.toolTips = new ToolTips();
         this.translations = translations;
-        this.init(id, type);
+        this.init(id, type, seasonNumber);
     }
 
-    init(id, mediaType) {
+    init(id, mediaType, seasonNumber) {
         const lang = document.documentElement.lang;
         const localizationToolsButton = document.querySelector('.localization-tools-button');
         const localizationToolsMenu = document.querySelector('.localization-tools-menu');
-        localizationToolsButton.addEventListener('click', function () {
+        localizationToolsButton?.addEventListener('click', function () {
             localizationToolsMenu.classList.toggle('active');
         });
 
@@ -26,9 +26,9 @@ export class TranslationsForms {
         const overviewForm = document.querySelector('.overview-form');
         const deleteOverviewForm = document.querySelector('.delete-overview-form');
         const lnForm = document.querySelector('#localized-name-form');
-        const lnCancel = lnForm.querySelector('button[type="button"]');
-        const lnDelete = lnForm.querySelector('button[value="delete"]');
-        const lnAdd = lnForm.querySelector('button[value="add"]');
+        const lnCancel = lnForm?.querySelector('button[type="button"]');
+        const lnDelete = lnForm?.querySelector('button[value="delete"]');
+        const lnAdd = lnForm?.querySelector('button[value="add"]');
         const ovForm = document.querySelector('#overview-form');
         const ovCancel = ovForm.querySelector('button[type="button"]');
         const ovAdd = ovForm.querySelector('button[value="add"]');
@@ -36,73 +36,75 @@ export class TranslationsForms {
         const deleteOvCancel = deleteOvForm.querySelector('button[type="button"]');
         const deleteOvDelete = deleteOvForm.querySelector('button[value="delete"]');
 
-        localizedName.addEventListener('click', function () {
-            localizationToolsMenu.classList.toggle('active');
-            gThis.displayForm(localizedNameForm);
-        });
-        lnCancel.addEventListener('click', function () {
-            gThis.hideForm(localizedNameForm);
-        });
-        lnDelete?.addEventListener('click', function (event) {
-            event.preventDefault();
-
-            fetch('/api/' + mediaType + '/name/remove/' + id, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({locale: lang})
-                }
-            ).then(function (response) {
-                if (response.ok) {
-                    gThis.hideForm(localizedNameForm);
-                    const localizedNameSpan = document.querySelector('.localization-span');
-                    const brJustAfterSpan = document.querySelector('.localization-span + br');
-                    localizedNameSpan.remove();
-                    brJustAfterSpan.remove();
-                }
+        if (seasonNumber == null) {
+            localizedName.addEventListener('click', function () {
+                localizationToolsMenu.classList.toggle('active');
+                gThis.displayForm(localizedNameForm);
             });
-        });
-        lnAdd.addEventListener('click', function (event) {
-            event.preventDefault();
-
-            const name = lnForm.querySelector('#name');
-            const errors = lnForm.querySelectorAll('.error');
-            errors.forEach(function (error) {
-                error.textContent = '';
+            lnCancel.addEventListener('click', function () {
+                gThis.hideForm(localizedNameForm);
             });
-            if (!name.value) {
-                name.nextElementSibling.textContent = gThis.translations['This field is required'];
-            } else {
-                fetch('/api/' + mediaType + '/name/add/' + id, {
+            lnDelete?.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                fetch('/api/' + mediaType + '/name/remove/' + id, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({name: name.value})
+                        body: JSON.stringify({locale: lang})
                     }
                 ).then(function (response) {
                     if (response.ok) {
                         gThis.hideForm(localizedNameForm);
                         const localizedNameSpan = document.querySelector('.localization-span');
-                        if (localizedNameSpan) {
-                            localizedNameSpan.textContent = name.value;
-                        } else {
-                            const h1 = document.querySelector('h1');
-                            const nameSpan = document.querySelector('.name-span');
-                            const localizedNameSpan = document.createElement('span');
-                            const brJustAfterSpan = document.createElement('br');
-                            localizedNameSpan.classList.add('localization-span');
-                            localizedNameSpan.textContent = name.value;
-                            h1.insertBefore(localizedNameSpan, nameSpan);
-                            h1.insertBefore(brJustAfterSpan, nameSpan);
-                        }
+                        const brJustAfterSpan = document.querySelector('.localization-span + br');
+                        localizedNameSpan.remove();
+                        brJustAfterSpan.remove();
                     }
                 });
-            }
-        });
+            });
+            lnAdd.addEventListener('click', function (event) {
+                event.preventDefault();
 
-        localizedOverview.addEventListener('click', function () {
+                const name = lnForm.querySelector('#name');
+                const errors = lnForm.querySelectorAll('.error');
+                errors.forEach(function (error) {
+                    error.textContent = '';
+                });
+                if (!name.value) {
+                    name.nextElementSibling.textContent = gThis.translations['This field is required'];
+                } else {
+                    fetch('/api/' + mediaType + '/name/add/' + id, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({name: name.value})
+                        }
+                    ).then(function (response) {
+                        if (response.ok) {
+                            gThis.hideForm(localizedNameForm);
+                            const localizedNameSpan = document.querySelector('.localization-span');
+                            if (localizedNameSpan) {
+                                localizedNameSpan.textContent = name.value;
+                            } else {
+                                const h1 = document.querySelector('h1');
+                                const nameSpan = document.querySelector('.name-span');
+                                const localizedNameSpan = document.createElement('span');
+                                const brJustAfterSpan = document.createElement('br');
+                                localizedNameSpan.classList.add('localization-span');
+                                localizedNameSpan.textContent = name.value;
+                                h1.insertBefore(localizedNameSpan, nameSpan);
+                                h1.insertBefore(brJustAfterSpan, nameSpan);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        localizedOverview?.addEventListener('click', function () {
             const firstRow = ovForm.querySelector('.form-row:first-child');
             const hiddenInputTool = ovForm.querySelector('#tool');
             hiddenInputTool.setAttribute('data-type', 'localized');
@@ -116,20 +118,22 @@ export class TranslationsForms {
             localizationToolsMenu.classList.toggle('active');
             gThis.displayForm(overviewForm);
         });
-        additionalOverview.addEventListener('click', function () {
-            const firstRow = ovForm.querySelector('.form-row:first-child');
-            const hiddenInputTool = ovForm.querySelector('#tool');
-            hiddenInputTool.setAttribute('data-type', 'additional');
-            hiddenInputTool.setAttribute('data-crud', 'add');
-            hiddenInputTool.setAttribute('data-overview-id', "-1");
-            firstRow.classList.remove('hide');
-            const submitButton = ovForm.querySelector('button[type="submit"]');
-            submitButton.textContent = gThis.translations['Add'];
-            const overviewField = ovForm.querySelector('#overview-field');
-            overviewField.value = '';
-            localizationToolsMenu.classList.toggle('active');
-            gThis.displayForm(overviewForm);
-        });
+        if (seasonNumber == null) {
+            additionalOverview.addEventListener('click', function () {
+                const firstRow = ovForm.querySelector('.form-row:first-child');
+                const hiddenInputTool = ovForm.querySelector('#tool');
+                hiddenInputTool.setAttribute('data-type', 'additional');
+                hiddenInputTool.setAttribute('data-crud', 'add');
+                hiddenInputTool.setAttribute('data-overview-id', "-1");
+                firstRow.classList.remove('hide');
+                const submitButton = ovForm.querySelector('button[type="submit"]');
+                submitButton.textContent = gThis.translations['Add'];
+                const overviewField = ovForm.querySelector('#overview-field');
+                overviewField.value = '';
+                localizationToolsMenu.classList.toggle('active');
+                gThis.displayForm(overviewForm);
+            });
+        }
         ovCancel.addEventListener('click', function () {
             gThis.hideForm(overviewForm);
         });
@@ -138,10 +142,12 @@ export class TranslationsForms {
         if (overviews) {
             overviews.forEach(function (overview) {
                 const tools = overview.querySelector('.tools');
-                const edit = tools.querySelector('.edit');
-                const del = tools.querySelector('.delete');
-                edit.addEventListener('click', gThis.editOverview);
-                del.addEventListener('click', gThis.deleteOverview);
+                if (tools) {
+                    const edit = tools.querySelector('.edit');
+                    const del = tools.querySelector('.delete');
+                    edit.addEventListener('click', gThis.editOverview);
+                    del.addEventListener('click', gThis.deleteOverview);
+                }
             });
         }
 
@@ -178,6 +184,9 @@ export class TranslationsForms {
                 crud: crud,
                 locale: lang
             };
+            if (seasonNumber) {
+                data = {seasonNumber: seasonNumber, ...data};
+            }
 
             fetch('/api/' + mediaType + '/overview/add/' + id, {
                 method: 'POST',
@@ -257,6 +266,11 @@ export class TranslationsForms {
                         overviewsDiv.appendChild(overviewDiv);
                         gThis.toolTips.init(overviewDiv);
 
+                        if (seasonNumber) {
+                            const globalToolsDiv = document.querySelector('.localization-tools');
+                            globalToolsDiv.classList.add('d-none');
+                        }
+
                         overviewField.value = '';
                     }
                 });
@@ -279,6 +293,10 @@ export class TranslationsForms {
                         gThis.hideForm(deleteOverviewForm);
                         const overviewDiv = document.querySelector('.' + overviewType + '.overview[data-id="' + overviewId + '"]');
                         overviewDiv.remove();
+                        if (seasonNumber) {
+                            const globalToolsDiv = document.querySelector('.localization-tools');
+                            globalToolsDiv.classList.remove('d-none');
+                        }
                     }
                 });
         });
@@ -369,12 +387,13 @@ export class TranslationsForms {
     displayForm(form) {
         if (form.getAttribute('popover') === "") {
             form.showPopover();
-            form.querySelector('textarea').focus();
+            form.querySelector('textarea')?.focus();
         } else {
             form.classList.add('display');
             setTimeout(function () {
                 form.classList.add('active');
             }, 0);
+            form.querySelector('textarea')?.focus();
         }
     }
 

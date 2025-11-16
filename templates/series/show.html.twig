@@ -66,11 +66,11 @@
                                     <span class="from-schedule" title="{{ sc.firstAirDate|date("d/m/Y") }}">({{ sc.firstAirDate|date("Y") }})</span>
                                 {% endif %}
                             </h1>
-                            {{ include('_blocks/translations/_tools.html.twig') }}
+                            {{ include('_blocks/translations/_tools.html.twig', {type: 'series', hidden: 0}) }}
                         </div>
                         {{ include('_blocks/forms/_delete_overview.html.twig') }}
-                        {{ include('_blocks/forms/_localized_name.html.twig', {media: tv}) }}
-                        {{ include('_blocks/forms/_overview.html.twig', {media: tv}) }}
+                        {{ include('_blocks/forms/_localized_name.html.twig', {localized_name: tv.localized_name}) }}
+                        {{ include('_blocks/forms/_overview.html.twig', {sources: tv.sources}) }}
                         <h5>
                             {% set n = series.visitNumber %}
                             {% if n > 1000 %}

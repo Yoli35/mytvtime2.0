@@ -1,10 +1,14 @@
-<div class="localization-tools">
+<div class="localization-tools{% if hidden %} d-none{% endif %}">
     <div class="localization-tools-button">
         {{ ux_icon('mdi:ellipsis-vertical') }}
     </div>
     <div class="localization-tools-menu">
-        <div id="localized-name">{{ 'Suggest a localized name'|trans }}</div>
+        {% if type != 'season' %}
+            <div id="localized-name">{{ 'Suggest a localized name'|trans }}</div>
+        {% endif %}
         <div id="localized-overview">{{ 'Add a localized overview'|trans }}</div>
-        <div id="additional-overview">{{ 'Add an additional overview'|trans }}</div>
+        {% if type != 'season' %}
+            <div id="additional-overview">{{ 'Add an additional overview'|trans }}</div>
+        {% endif %}
     </div>
 </div>

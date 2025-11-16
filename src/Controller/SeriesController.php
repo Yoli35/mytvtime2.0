@@ -1234,6 +1234,7 @@ class SeriesController extends AbstractController
         } else {
             $season['is_series_overview'] = false;
         }
+        $season['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
         $season['season_localized_overview'] = $this->seasonLocalizedOverviewRepository->getSeasonLocalizedOverview($series->getId(), $seasonNumber, $request->getLocale());
         $season['series_localized_name'] = $series->getLocalizedName($request->getLocale());
         $season['series_localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
@@ -1278,6 +1279,7 @@ class SeriesController extends AbstractController
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'userSeries' => $userSeries,
+            'translations' => $this->seriesService->getSeriesSeasonTranslations(),
             'quickLinks' => $this->getQuickLinks($season['episodes']),
             'season' => $season,
             'today' => $this->now()->format('Y-m-d H:I:s'),

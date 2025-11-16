@@ -206,6 +206,64 @@ class SeriesService extends AbstractController
         ];
     }
 
+    public function getSeriesSeasonTranslations(): array
+    {
+        return [
+            'Add to favorites' => $this->translator->trans('Add to favorites'),
+            'Add' => $this->translator->trans('Add'),
+            'Additional overviews' => $this->translator->trans('Additional overviews'),
+            'After tomorrow' => $this->translator->trans('After tomorrow'),
+            'Available' => $this->translator->trans('Available'),
+            'Delete' => $this->translator->trans('Delete'),
+            'Desktop' => $this->translator->trans('Desktop'),
+            'Edit' => $this->translator->trans('Edit'),
+            'Ended' => $this->translator->trans('Ended'),
+            'Laptop' => $this->translator->trans('Laptop'),
+            'Localized overviews' => $this->translator->trans('Localized overviews'),
+            'Mobile' => $this->translator->trans('Mobile'),
+            'No votes' => $this->translator->trans('No votes'),
+            'Not a valid file type. Update your selection' => $this->translator->trans('Not a valid file type. Update your selection'),
+            'Now' => $this->translator->trans('Now'),
+            'Remove from favorites' => $this->translator->trans('Remove from favorites'),
+            'Search' => $this->translator->trans('Search'),
+            'Season completed' => $this->translator->trans('Season completed'),
+            'Since' => $this->translator->trans('Since'),
+            'Tablet' => $this->translator->trans('Tablet'),
+            'Television' => $this->translator->trans('Television'),
+            'That\'s all!' => $this->translator->trans('That\'s all!'),
+            'This field is required' => $this->translator->trans('This field is required'),
+            'To be continued' => $this->translator->trans('To be continued'),
+            'Today' => $this->translator->trans('Today'),
+            'Tomorrow' => $this->translator->trans('Tomorrow'),
+            'Up to date' => $this->translator->trans('Up to date'),
+            'Update' => $this->translator->trans('Update'),
+            'Watch on' => $this->translator->trans('Watch on'),
+            'add' => $this->translator->trans('Add'),
+            'additional' => $this->translator->trans('No overview'),
+            "and" => $this->translator->trans('and'),
+            'available' => $this->translator->trans('available'),
+            'click' => $this->translator->trans('Click here to add an image'),
+            'copied' => $this->translator->trans('The link has been copied to your clipboard'),
+            'day' => $this->translator->trans('day'),
+            'days' => $this->translator->trans('days'),
+            'device' => $this->translator->trans('Choose a device'),
+            'hour' => $this->translator->trans('hour'),
+            'hours' => $this->translator->trans('hours'),
+            'loading' => $this->translator->trans('Loading filming locations…'),
+            'markAsWatched' => $this->translator->trans('Mark this episode as seen'),
+            'minute' => $this->translator->trans('minute'),
+            'minutes' => $this->translator->trans('minutes'),
+            'now' => $this->translator->trans('Now'),
+            'paste' => $this->translator->trans('Paste your image here (green)'),
+            'poiToggler' => $this->translator->trans('Points of Interest toggle display'),
+            'provider' => $this->translator->trans('Choose a provider'),
+            'rating' => $this->translator->trans('Give a rating'),
+            'second' => $this->translator->trans('second'),
+            'seconds' => $this->translator->trans('seconds'),
+            'since' => $this->translator->trans('since'),
+        ];
+    }
+
     public function getSeriesVideoList(Series $series): array
     {
         return array_map(function ($v) {

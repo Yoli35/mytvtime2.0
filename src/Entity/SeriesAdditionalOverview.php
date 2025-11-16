@@ -16,17 +16,17 @@ class SeriesAdditionalOverview
 
     #[ORM\ManyToOne(inversedBy: 'seriesAdditionalOverviews')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Series $series = null;
+    private ?Series $series;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $overview = null;
+    private ?string $overview;
 
     #[ORM\Column(length: 8)]
-    private ?string $locale = null;
+    private ?string $locale;
 
     #[ORM\ManyToOne(inversedBy: 'seriesAdditionalOverviews')]
     #[ORM\JoinColumn(nullable: true)]
-    private ?Source $source = null;
+    private ?Source $source;
 
     public function __construct(Series $series, string $overview, string $locale, Source $source)
     {

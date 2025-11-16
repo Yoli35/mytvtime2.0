@@ -2,6 +2,7 @@ import {AverageColor} from 'AverageColor';
 import {FlashMessage} from "FlashMessage";
 import {Map} from "Map";
 import {ToolTips} from 'ToolTips';
+import {TranslationsForms} from "TranslationsForms";
 
 let gThis;
 
@@ -101,6 +102,7 @@ export class Season {
          * @typedef Globs
          * @type {Object}
          * @property {SeasonProvider} seasonProvider
+         * @property {number} seasonNumber
          * @property {Providers} providers
          * @property {Devices} devices
          * @property {Translations} text
@@ -108,11 +110,13 @@ export class Season {
 
         /** @var {Globs} jsonGlobsObject */
         const jsonGlobsObject = JSON.parse(document.querySelector('div#globs').textContent);
-        this.seasonProvider = jsonGlobsObject.seasonProvider;
-        this.providers = jsonGlobsObject.providers;
-        this.providerArray = jsonGlobsObject.providers.list;
         this.devices = jsonGlobsObject.devices;
-        this.text = jsonGlobsObject.text;
+        this.providerArray = jsonGlobsObject.providers.list;
+        this.providers = jsonGlobsObject.providers;
+        this.seasonNumber  = jsonGlobsObject.seasonNumber;
+        this.seasonProvider = jsonGlobsObject.seasonProvider;
+        this.seriesId = jsonGlobsObject.seriesId;
+        this.translations = jsonGlobsObject.translations;
         this.lang = document.documentElement.lang;
         this.intervals = [];
         // this.initialDay = new Date().getDate();
@@ -137,6 +141,11 @@ export class Season {
          ******************************************************************************/
         this.setProgress();
 
+        /******************************************************************************
+         * Menu to add a localized name or an overview and additional overview        *
+         ******************************************************************************/
+        new TranslationsForms(this.seriesId, 'season', this.translations, this.seasonNumber);
+
         // Test
         console.log(this.getLightnessFromHex('#7f7f7f'));
 
@@ -151,7 +160,7 @@ export class Season {
             copy.addEventListener('click', function () {
                 navigator.clipboard.writeText(href).then(function () {
                     copy.classList.add('copied');
-                    linkNameDiv.innerText = gThis.text['copied'];
+                    linkNameDiv.innerText = gThis.translations['copied'];
                     setTimeout(function () {
                         copy.classList.remove('copied');
                         linkNameDiv.innerText = name;
@@ -242,20 +251,22 @@ export class Season {
         });
 
         const quickEpisodesDiv = document.querySelector('.quick-episodes');
-        const seasonNumber = quickEpisodesDiv.getAttribute('data-season-number');
-        const quickEpisodeLinks = document.querySelectorAll('.quick-episode');
-        quickEpisodeLinks.forEach(episode => {
-            episode.addEventListener('click', e => {
-                e.preventDefault();
-                const episodeNumber = e.currentTarget.getAttribute('data-number');
-                if (!episodeNumber) {
-                    return;
-                }
-                const selector = '#episode-' + seasonNumber + '-' + episodeNumber;
-                const target = document.querySelector(selector);
-                target.scrollIntoView({behavior: 'smooth', block: 'center'});
+        if (quickEpisodesDiv) {
+            const seasonNumber = quickEpisodesDiv.getAttribute('data-season-number');
+            const quickEpisodeLinks = document.querySelectorAll('.quick-episode');
+            quickEpisodeLinks.forEach(episode => {
+                episode.addEventListener('click', e => {
+                    e.preventDefault();
+                    const episodeNumber = e.currentTarget.getAttribute('data-number');
+                    if (!episodeNumber) {
+                        return;
+                    }
+                    const selector = '#episode-' + seasonNumber + '-' + episodeNumber;
+                    const target = document.querySelector(selector);
+                    target.scrollIntoView({behavior: 'smooth', block: 'center'});
+                });
             });
-        });
+        }
 
         const backToTops = document.querySelectorAll('.back-to-top');
         const top = document.querySelector('#top');
@@ -313,7 +324,7 @@ export class Season {
         customStillsTextDivs.forEach(customStillsTextDiv => {
             customStillsTextDiv.addEventListener('click', () => {
                 const customStillsDiv = customStillsTextDiv.parentElement.querySelector('.custom-stills');
-                customStillsTextDiv.innerText = gThis.text['paste'] + ' - 4';
+                customStillsTextDiv.innerText = gThis.translations['paste'] + ' - 4';
                 customStillsDiv.classList.add('active');
                 customStillsTextDiv.classList.add('active');
                 customStillsTextDiv.setAttribute('contenteditable', 'true');
@@ -321,14 +332,14 @@ export class Season {
                 customStillsTextDiv.addEventListener('paste', gThis.pasteStill);
                 let countDown = 4;
                 let intervalId = setInterval(() => {
-                    customStillsTextDiv.innerText = gThis.text['paste'] + ' - ' + --countDown;
+                    customStillsTextDiv.innerText = gThis.translations['paste'] + ' - ' + --countDown;
                     console.log(countDown);
                     if (countDown === 1) {
                         clearInterval(intervalId);
                     }
                 }, 1000);
                 setTimeout(() => {
-                    customStillsTextDiv.innerText = gThis.text['click'];
+                    customStillsTextDiv.innerText = gThis.translations['click'];
                     customStillsDiv.classList.remove('active');
                     customStillsTextDiv.classList.remove('active');
                     customStillsTextDiv.removeAttribute('contenteditable');
@@ -378,7 +389,7 @@ export class Season {
         const getFilmingLocationsDiv = document.querySelector('.get-filming-locations');
         const getFilmingLocationsButton = document.querySelector('.get-filming-locations-button');
         getFilmingLocationsButton?.addEventListener('click', () => {
-            getFilmingLocationsButton.innerHTML = gThis.text['loading'];
+            getFilmingLocationsButton.innerHTML = gThis.translations['loading'];
             getFilmingLocationsButton.classList.add('disabled');
             const id = getFilmingLocationsButton.getAttribute('data-id');
             fetch('/api/series/get/filming/locations/' + id,
@@ -392,7 +403,7 @@ export class Season {
                 .then(res => res.json())
                 .then(data => {
                     const body = document.querySelector('body');
-                    const svgsDiv = document.querySelector('.svgs');
+                    const svgsDiv = document.querySelector('#svgs');
                     const globsMapDiv = document.createElement('div');
                     globsMapDiv.setAttribute('id', 'globs-map');
                     globsMapDiv.style.display = 'none';
@@ -630,7 +641,7 @@ export class Season {
                         if (type === 'name') {
                             substituteDiv.remove();
                         } else {
-                            substituteDiv.innerText = gThis.text['additional'];
+                            substituteDiv.innerText = gThis.translations['additional'];
                         }
                     }
                 }
@@ -765,7 +776,7 @@ export class Season {
                 episode.replaceWith(newEpisode);
                 gThis.toolTips.init(newEpisode);/*episode.querySelector('.remove-this-episode'));*/
 
-                quickEpisodeLink.classList.add('watched');
+                quickEpisodeLink?.classList.add('watched');
 
                 numberDiv.classList.add('watched');
 
@@ -876,7 +887,7 @@ export class Season {
                         const deviceName = gThis.getDeviceName(deviceId);
                         deviceDiv.innerHTML = '';
                         deviceDiv.appendChild(gThis.getSvg('device-' + deviceId));
-                        deviceDiv.setAttribute('data-title', gThis.text[deviceName]);
+                        deviceDiv.setAttribute('data-title', gThis.translations[deviceName]);
                         gThis.toolTips.init(deviceDiv);
                     } else {
                         deviceDiv.setAttribute('data-title', gThis.text.device);
@@ -987,7 +998,7 @@ export class Season {
         datetimeSaveButton.appendChild(svgSave);
         datetimeSaveButton.setAttribute('data-ue-id', userEpisodeId);
         const datetimeDeleteButton = document.createElement('button');
-        const svgDelete = gThis.getSvg('delete');
+        const svgDelete = gThis.getSvg('trash');
         datetimeDeleteButton.appendChild(svgDelete);
         datetimeSaveButton.setAttribute('data-ue-id', userEpisodeId);
         const datetimeCancelButton = document.createElement('button');
@@ -1291,7 +1302,7 @@ export class Season {
         const deviceSvg = document.createElement('div');
         deviceSvg.classList.add('item');
         deviceSvg.setAttribute('data-id', device['id']);
-        deviceSvg.setAttribute('data-title', gThis.text[device['name']]);
+        deviceSvg.setAttribute('data-title', gThis.translations[device['name']]);
         deviceSvg.appendChild(gThis.getSvg('device-' + device['id']));
         deviceSvg.addEventListener('click', () => {
             const deviceId = deviceSvg.getAttribute('data-id');
@@ -1311,7 +1322,7 @@ export class Season {
     }
 
     getSvg(id) {
-        const clone = document.querySelector('.svgs').querySelector('svg[id="' + id + '"]').cloneNode(true);
+        const clone = document.querySelector('#svgs').querySelector('svg[id="' + id + '"]').cloneNode(true);
         clone.removeAttribute('id');
         return clone;
     }
@@ -1445,7 +1456,7 @@ export class Season {
                             if (result > 10) result = "10+"; else result = result.toFixed(1);
                             voteAverageDiv.innerHTML = result + " / 10";
                         } else {
-                            voteAverageDiv.innerHTML = gThis.text['No votes'];
+                            voteAverageDiv.innerHTML = gThis.translations['No votes'];
                         }
                     }
                 }
@@ -1562,7 +1573,7 @@ export class Season {
 
     listTrashButton(list, selectDiv) {
         const deleteButton = document.createElement('button');
-        const svgDelete = gThis.getSvg('delete');
+        const svgDelete = document.querySelector('#svgs').querySelector('#trash').querySelector('svg').cloneNode(true);
         const id = list.getAttribute('data-id').split('-')[1];
         const saveFunction = list.getAttribute('data-save');
 

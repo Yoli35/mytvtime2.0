@@ -5,7 +5,7 @@
                 <label for="overview-source"><span>{{ 'Source'|trans }} <span class="required">*</span></span> <span class="error"></span>
                     <select name="source" id="overview-source">
                         <option value="">{{ 'Select a source'|trans }}</option>
-                        {% for source in media.sources %}
+                        {% for source in sources %}
                             <option value="{{ source.id }}">{{ source.name }}</option>
                         {% endfor %}
                     </select>

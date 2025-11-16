@@ -3,9 +3,11 @@
 {% block title %}my Tv Time → {{ 'Series'|trans }} → {{ season.series_localized_name.name ?? series.name }} → {{ 'season'|trans }} {{ season.season_number }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/map.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/translations.scss') }}">
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css">
 {% endblock %}
 {% block body %}
@@ -31,14 +33,32 @@
                                 {% endif %}
                                 <span class="name-span">{{ series.name }} ({{ series.firstAirDate|date("Y") }})</span>
                             </h1>
+                            {{ include('_blocks/translations/_tools.html.twig', {type: 'season', hidden: season.season_localized_overview|length}) }}
                         </div>
+                        {{ include('_blocks/forms/_delete_overview.html.twig') }}
+                        {{ include('_blocks/forms/_overview.html.twig', {sources: season.sources}) }}
                         <div class="season-name">{{ season.name }}{% if season.season_number > 1 %} ({{ season.air_date|date("Y") }}){% endif %}</div>
-                        {% if season.season_localized_overview|length %}
-                            <div class="season-overview">
-                                <div class="header">{{ 'Season localized overview'|trans }} ({{ season.season_localized_overview.locale|upper }})</div>
-                                <div class="body">{{ season.season_localized_overview.overview|nl2br }}</div>
-                            </div>
-                        {% endif %}
+
+                        <div class="localized overviews">
+                            <h4 class="localized-h4">{{ 'Season localized overview'|trans }}</h4>
+                            {% if season.season_localized_overview|length %}
+                                {% set overview = season.season_localized_overview %}
+                                <div class="localized overview" data-id="{{ overview.id }}">
+                                    <div class="content" data-overview="{{ overview.overview }}">
+                                        {{ overview.overview|nl2br }}
+                                    </div>
+                                    <div class="tools">
+                                        <div class="locale">{{ overview.locale|upper }}</div>
+                                        <button class="edit" data-id="{{ overview.id }}" data-title="{{ 'Edit'|trans }}" popovertarget="overview-form-container">
+                                            {{ ux_icon('mdi:pencil') }}
+                                        </button>
+                                        <button class="delete" data-id="{{ overview.id }}" data-title="{{ 'Delete'|trans }}" popovertarget="delete-overview-form-container">
+                                            {{ ux_icon('mdi:trash') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
                         {% if season.overview %}
                             <div class="season-overview">
                                 <div class="header">
@@ -447,42 +467,15 @@
 
     <div id="globs" style="display: none">
         {
+            "seriesId": {{ series.id }},
+            "seasonNumber": {{ season.season_number }},
             "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "text": {
-                "provider": "{{ 'Choose a provider'|trans }}",
-                "device": "{{ 'Choose a device'|trans }}",
-                "rating": "{{ 'Give a rating'|trans }}",
-                "now": "{{ 'Now'|trans }}",
-                "Today": "{{ 'Today'|trans }}",
-                "add": "{{ 'Add'|trans }}",
-                "markAsWatched": "{{ 'Mark this episode as seen'|trans }}",
-                "Television": "{{ 'Television'|trans }}",
-                "Mobile": "{{ 'Mobile'|trans }}",
-                "Tablet": "{{ 'Tablet'|trans }}",
-                "Laptop": "{{ 'Laptop'|trans }}",
-                "Desktop": "{{ 'Desktop'|trans }}",
-                "Search": "{{ 'Search'|trans }}",
-                "days": "{{ 'days'|trans }}",
-                "hours": "{{ 'hours'|trans }}",
-                "minutes": "{{ 'minutes'|trans }}",
-                "seconds": "{{ 'seconds'|trans }}",
-                "day": "{{ 'day'|trans }}",
-                "hour": "{{ 'hour'|trans }}",
-                "minute": "{{ 'minute'|trans }}",
-                "second": "{{ 'second'|trans }}",
-                "copied": "{{ 'The link has been copied to your clipboard'|trans }}",
-                "additional": "{{ 'No overview'|trans }}",
-                "click": "{{ 'Click here to add an image'|trans }}",
-                "paste": "{{ 'Paste your image here (green)'|trans }}",
-                "No votes": "{{ 'No votes'|trans }}",
-                "loading": "{{ 'Loading filming locations…'|trans }}",
-                "poiToggler": "{{ 'Points of Interest toggle display'|trans }}"
-            }
+            "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
-    <div class="svgs" style="display: none">
+    <div id="svgs" style="display: none">
         {% for d in devices %}
             {{ ux_icon(d.svg, {id: 'device-'~d.id, height: '18px', width: '18px'}) }}
         {% endfor %}
@@ -491,10 +484,11 @@
         {{ ux_icon('mdi:arrow-up', {id: 'up', height: '18px', width: '18px'}) }}
         {{ ux_icon('mdi:arrow-left', {id: 'left', height: '18px', width: '18px'}) }}
         {{ ux_icon('mdi:checkbox-outline', {id: 'save', height: '18px', width: '18px'}) }}
-        {{ ux_icon('mdi:trash', {id: 'delete', height: '18px', width: '18px'}) }}
         {{ ux_icon('mdi:close', {id: 'cancel', height: '18px', width: '18px'}) }}
         {{ ux_icon('mdi:location-favorite', {id: 'poi-toggler-svg'}) }}
         <div class="svg" id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
+        <div class="svg" id="pen">{{ ux_icon('mdi:pencil') }}</div>
+        <div class="svg" id="trash">{{ ux_icon('mdi:trash') }}</div>
     </div>
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}

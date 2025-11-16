@@ -26,6 +26,12 @@ class SeasonLocalizedOverviewRepository extends ServiceEntityRepository
         }
     }
 
+    public function remove(SeasonLocalizedOverview $overview): void
+    {
+        $this->em->remove($overview);
+        $this->em->flush();
+    }
+
     public function getSeasonLocalizedOverview(int $serieId, int $seasonNumber, string $locale): array|bool
     {
         $sql = "SELECT slo.*

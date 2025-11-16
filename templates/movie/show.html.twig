@@ -50,11 +50,11 @@
                                     <span title="{{ movie.release_date|date("d/m/Y") }}">({{ movie.release_date|date("Y") }})</span>
                                 {% endif %}
                             </h1>
-                            {{ include('_blocks/translations/_tools.html.twig') }}
+                            {{ include('_blocks/translations/_tools.html.twig', {type: 'movie', hidden: 0}) }}
                         </div>
                         {{ include('_blocks/forms/_delete_overview.html.twig') }}
-                        {{ include('_blocks/forms/_localized_name.html.twig', {media: movie}) }}
-                        {{ include('_blocks/forms/_overview.html.twig', {media: movie}) }}
+                        {{ include('_blocks/forms/_localized_name.html.twig', {localized_name: movie.localized_name}) }}
+                        {{ include('_blocks/forms/_overview.html.twig', {sources: movie.sources}) }}
                         {% if movie.overview|length %}
                             <div class="movie-overview">{{ movie.overview|nl2br }}</div>
                         {% endif %}
