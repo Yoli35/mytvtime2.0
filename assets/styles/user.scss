@@ -63,6 +63,7 @@
             color: var(--ardoise-10);
             display: flex;
             justify-content: center;
+            outline: 4px solid hsl(from var(--ardoise-10) h s l / .25);
             padding-inline-start: 1.5rem;
 
             >:last-child {
@@ -257,6 +258,7 @@
             font-weight: 300;
             gap: .5rem;
             justify-content: center;
+            outline: 4px solid hsl(from var(--ardoise-10) h s l / .25);
             padding: .5rem 1rem;
 
             .rating-stars {
@@ -312,7 +314,9 @@
         }
 
         .actions {
+            border-radius: 5rem;
             display: flex;
+            outline: 4px solid hsl(from var(--ardoise-10) h s l / .25);
 
             .action {
                 align-items: center;

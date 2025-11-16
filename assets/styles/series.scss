@@ -1915,6 +1915,7 @@ h2 {
             gap: .5rem;
             height: 3.5rem;
             justify-content: center;
+            outline: 4px solid hsl(from var(--ardoise-10) h s l / .25);
             padding-inline: 2rem;
 
             &.status-rumored, &.status-planned,
