@@ -22,6 +22,7 @@ import {Photos} from 'Photos';
 import {Profile} from 'Profile';
 import {ProviderSelect} from 'ProviderSelect';
 import {Season} from 'Season';
+import {SeriesStatistics} from "SeriesStatistics";
 import {Show} from 'Show';
 import {ToolTips} from 'ToolTips';
 import {VideoList} from "VideoList";
@@ -81,10 +82,13 @@ window.addEventListener("DOMContentLoaded", () => {
         const episodeHistory = new EpisodeHistory();
         const providerSelect = new ProviderSelect();
         const highlightSeries = new HighlightSeries();
+        const seriesStatistics = new SeriesStatistics();
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         episodeHistory.init(globs);
         providerSelect.init(globs);
         highlightSeries.init(globs);
+        seriesStatistics.init();
+
 
     }
 

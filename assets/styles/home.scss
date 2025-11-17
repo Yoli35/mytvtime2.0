@@ -313,17 +313,22 @@
         font-weight: 600;
         justify-content: center;
         margin-inline: auto;
+        overflow: hidden;
+
+        &.vertical {
+            flex-direction: column;
+        }
 
         .status-title {
             align-items: center;
             background-color: var(--green);
-            border-radius: 1rem 0 0 1rem;
             display: flex;
+            justify-content: center;
             min-height: 100%;
+            padding-block: 1vw;
             padding-inline: 2vw;
             text-align: center;
             text-wrap: balance;
-            width: min-content;
         }
 
         .status-items {
@@ -334,6 +339,10 @@
             gap: 1rem;
             justify-content: center;
             padding: 2rem;
+
+            &:not(:has(> .status-item)) {
+                flex-direction: column;
+            }
 
             .status-item {
                 align-items: center;
@@ -364,6 +373,15 @@
                     font-weight: 400;
                     line-height: 1.1em;
                 }
+            }
+
+            .status-item-line {
+                align-items: center;
+                display: flex;
+                flex-grow: 1;
+                flex-wrap: wrap;
+                gap: 1rem;
+                justify-content: center;
             }
         }
     }
@@ -403,6 +421,27 @@
 
                     .card {
                         scroll-snap-align: start;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (width <= 52rem) {
+    .home {
+        .series-status {
+            flex-direction: column;
+
+            .status-items {
+                padding: 1rem;
+
+                .status-item {
+                    .name {
+                        font-size: max(.75rem, 2vw);
+                    }
+                    .count {
+                        font-size: max(2rem, 5vw);
                     }
                 }
             }

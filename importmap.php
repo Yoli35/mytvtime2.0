@@ -88,6 +88,9 @@ return [
     'ProviderSelect' => [
         'path' => './assets/js/home/ProviderSelect.js',
     ],
+    'SeriesStatistics' => [
+        'path' => './assets/js/home/SeriesStatistics.js',
+    ],
     'ToolTips' => [
         'path' => './assets/js/ToolTips.js',
     ],
