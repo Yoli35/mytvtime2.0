@@ -737,7 +737,7 @@ export class Season {
                 numberDiv.setAttribute('data-title', data['views']);
 
                 episode.setAttribute('data-views', '' + (views + 1));
-                episode.setAttribute('data-title', gThis.text.now);
+                episode.setAttribute('data-title', gThis.translations.now);
                 const now = new Date();
                 episode.setAttribute('data-time', now.toISOString());
                 episode.addEventListener('mouseenter', gThis.updateRelativeTime);
@@ -768,7 +768,7 @@ export class Season {
                 newEpisode.setAttribute('data-s-number', seasonNumber);
                 newEpisode.setAttribute('data-last-episode', lastEpisode);
                 newEpisode.setAttribute('data-views', '' + (views + 1));
-                newEpisode.setAttribute('data-title', gThis.text.now);
+                newEpisode.setAttribute('data-title', gThis.translations.now);
                 newEpisode.setAttribute('data-time', now.toISOString());
                 gThis.intervals[id] = setInterval(gThis.updateRelativeTime, 1000, {currentTarget: newEpisode});
                 newEpisode.addEventListener('click', gThis.removeOrReviewEpisode);
@@ -861,7 +861,7 @@ export class Season {
                             providerDiv.setAttribute('data-title', gThis.providers.names[providerId]);
                             gThis.toolTips.init(providerDiv);
                         } else {
-                            providerDiv.setAttribute('data-title', gThis.text.provider);
+                            providerDiv.setAttribute('data-title', gThis.translations.provider);
                             providerDiv.appendChild(gThis.getSvg('plus'));
                         }
                         providerDiv.addEventListener('click', gThis.selectProvider);
@@ -890,7 +890,7 @@ export class Season {
                         deviceDiv.setAttribute('data-title', gThis.translations[deviceName]);
                         gThis.toolTips.init(deviceDiv);
                     } else {
-                        deviceDiv.setAttribute('data-title', gThis.text.device);
+                        deviceDiv.setAttribute('data-title', gThis.translations.device);
                         deviceDiv.appendChild(gThis.getSvg('plus'));
                     }
                     deviceDiv.addEventListener('click', gThis.selectDevice);
@@ -901,7 +901,7 @@ export class Season {
                 vote.classList.add('select-vote');
                 vote.setAttribute('data-id', id);
                 vote.setAttribute('data-ue-id', ueId);
-                vote.setAttribute('data-title', gThis.text.rating);
+                vote.setAttribute('data-title', gThis.translations.rating);
                 vote.appendChild(gThis.getSvg('plus'));
                 vote.addEventListener('click', gThis.selectVote);
                 // vote.addEventListener('wheel', gThis.wheelVote);
@@ -938,7 +938,7 @@ export class Season {
                 const watchedAtDiv = airDateDiv.querySelector('.watched-at');
                 watchedAtDiv.innerHTML = data['viewedAt'];
                 watchedAtDiv.setAttribute('data-watched-at', data['dataViewedAt']);
-                episode.setAttribute('data-title', gThis.text.now);
+                episode.setAttribute('data-title', gThis.translations.now);
                 const now = new Date();
                 episode.setAttribute('data-time', now.toISOString());
             });
@@ -957,28 +957,28 @@ export class Season {
         const minutes = Math.floor(diff / (1000 * 60));
         const seconds = Math.floor(diff / 1000);
         if (days > 0) {
-            div.setAttribute('data-title', days + ' ' + (days > 1 ? gThis.text.days : gThis.text.day));
+            div.setAttribute('data-title', days + ' ' + (days > 1 ? gThis.translations.days : gThis.translations.day));
             if (gThis.lastDay !== days) {
                 gThis.lastDay = days;
                 clearInterval(gThis.intervals[id]);
                 gThis.intervals[id] = setInterval(gThis.updateRelativeTime, 86400000, e);
             }
         } else if (hours > 0) {
-            div.setAttribute('data-title', hours + ' ' + (hours > 1 ? gThis.text.hours : gThis.text.hour));
+            div.setAttribute('data-title', hours + ' ' + (hours > 1 ? gThis.translations.hours : gThis.translations.hour));
             if (gThis.lastHour !== hours) {
                 gThis.lastHour = hours;
                 clearInterval(gThis.intervals[id]);
                 gThis.intervals[id] = setInterval(gThis.updateRelativeTime, 3600000, e);
             }
         } else if (minutes > 0) {
-            div.setAttribute('data-title', minutes + ' ' + (minutes > 1 ? gThis.text.minutes : gThis.text.minute));
+            div.setAttribute('data-title', minutes + ' ' + (minutes > 1 ? gThis.translations.minutes : gThis.translations.minute));
             if (gThis.lastMinute !== minutes) {
                 gThis.lastMinute = minutes;
                 clearInterval(gThis.intervals[id]);
                 gThis.intervals[id] = setInterval(gThis.updateRelativeTime, 60000, e);
             }
         } else {
-            div.setAttribute('data-title', seconds + ' ' + (seconds > 1 ? gThis.text.seconds : gThis.text.second));
+            div.setAttribute('data-title', seconds + ' ' + (seconds > 1 ? gThis.translations.seconds : gThis.translations.second));
         }
     }
 
@@ -1069,7 +1069,7 @@ export class Season {
                 const newWatchedAtDiv = block.querySelector('.watched-at');
                 newWatchedAtDiv.addEventListener('click', gThis.modifyWatchedAtOpen);
                 watchedAtDiv.replaceWith(newWatchedAtDiv);
-                episode.setAttribute('data-title', gThis.text.now);
+                episode.setAttribute('data-title', gThis.translations.now);
                 const now = new Date();
                 episode.setAttribute('data-time', now.toISOString());
             });
@@ -1215,7 +1215,7 @@ export class Season {
                 newEpisode.setAttribute('data-s-number', seasonNumber);
                 newEpisode.setAttribute('data-last-episode', lastEpisode);
                 newEpisode.setAttribute('data-views', '0');
-                newEpisode.setAttribute('data-title', gThis.text.markAsWatched);
+                newEpisode.setAttribute('data-title', gThis.translations.markAsWatched);
                 newEpisode.appendChild(gThis.getSvg('plus'));
                 newEpisode.addEventListener('click', gThis.addEpisode);
                 episode.parentElement.appendChild(newEpisode);
@@ -1370,7 +1370,7 @@ export class Season {
                     if (providerId === -1) {
                         const svgPlus = gThis.getSvg('plus');
                         selectProviderDiv.innerHTML = '';
-                        selectProviderDiv.setAttribute('data-title', gThis.text.provider);
+                        selectProviderDiv.setAttribute('data-title', gThis.translations.provider);
                         selectProviderDiv.appendChild(svgPlus);
                         gThis.toolTips.init(selectProviderDiv);
                     } else {
@@ -1397,7 +1397,7 @@ export class Season {
                     if (deviceId === -1) {
                         const svgPlus = gThis.getSvg('plus');
                         selectDeviceDiv.innerHTML = '';
-                        selectDeviceDiv.setAttribute('data-title', gThis.text.device);
+                        selectDeviceDiv.setAttribute('data-title', gThis.translations.device);
                         selectDeviceDiv.appendChild(svgPlus);
                         gThis.toolTips.init(selectDeviceDiv);
                     } else {
@@ -1425,7 +1425,7 @@ export class Season {
                     if (voteValue === -1) {
                         const svgPlus = gThis.getSvg('plus');
                         selectVoteDiv.innerHTML = '';
-                        selectVoteDiv.setAttribute('data-title', gThis.text.rating);
+                        selectVoteDiv.setAttribute('data-title', gThis.translations.rating);
                         selectVoteDiv.appendChild(svgPlus);
                         gThis.toolTips.init(selectVoteDiv);
                     } else {
@@ -1549,7 +1549,7 @@ export class Season {
         input.setAttribute('id', listId);
         input.setAttribute('type', type);
         input.setAttribute('size', size);
-        input.setAttribute('placeholder', gThis.text.Search);
+        input.setAttribute('placeholder', gThis.translations.Search);
         list.appendChild(input);
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
