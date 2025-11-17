@@ -4497,6 +4497,7 @@ h2 {
         height: 4.5rem;
         justify-content: center;
         margin-inline: auto;
+        outline: 4px solid hsl(from var(--ardoise-10) h s l / .25);
         padding-inline: 3rem;
         text-align: center;
         text-wrap: balance;
@@ -4640,6 +4641,7 @@ h2 {
         height: 4.5rem;
         justify-content: center;
         margin-inline: auto;
+        outline: 4px solid hsl(from var(--ardoise-10) h s l / .25);
         padding-inline: 3rem;
         text-align: center;
         text-wrap: balance;
@@ -4736,6 +4738,7 @@ h2 {
         gap: .5rem;
         flex-shrink: 0;
         justify-content: flex-start;
+        padding-block-end: 1rem;
         padding-inline: 1rem;
 
         .people {
