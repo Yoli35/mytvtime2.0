@@ -72,13 +72,16 @@ class HomeController extends AbstractController
             }
             $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
             $episodesOfTheDay = array_map(function ($series) use ($logoUrl) {
-                $series['poster_path'] = $series['poster_path'] ? '/series/posters' . $series['poster_path'] : null;
+                $series['posterPath'] = $series['poster_path'] ? '/series/posters' . $series['poster_path'] : null;
                 $series['provider_logo_path'] = $this->getProviderLogoFullPath($series['provider_logo_path'], $logoUrl);
                 if ($series['provider_logo_path']) {
-                    $series['watch_providers'][] = ['provider_name' => $series['provider_name'], 'logo_path' => $series['provider_logo_path']];
+                    $series['providerLogoPath'] = $series['provider_logo_path'];
+                    $series['providerName'] = $series['provider_name'];
                 }
                 $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
                 $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
+                $series['seasonNumber'] = $series['season_number'];
+                $series['episodeNumber'] = $series['episode_number'];
                 $series['released'] = true;
                 return $series;
             }, $uniqueEpisodes);
