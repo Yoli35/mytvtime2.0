@@ -351,7 +351,7 @@ label:has(input[type="text"]) {
     justify-content: flex-start;
     left: 1rem;
     opacity: var(--navbar-opacity);
-    padding-inline: 1rem 0;
+    padding-inline: .5rem 0;
     position: fixed;
     right: 1rem;
     top: 1rem;
@@ -385,7 +385,6 @@ label:has(input[type="text"]) {
     .navbar-items {
         align-items: center;
         display: flex;
-        gap: .5rem;
 
         &.right {
             margin-inline-start: 0;
@@ -415,6 +414,10 @@ label:has(input[type="text"]) {
         &:has(.burger) {
             padding-inline: 0;
         }
+    }
+
+    .navbar-items > a:first-child {
+        border-radius: 5rem .25rem .25rem 5rem;
     }
 
     .navbar-item {
