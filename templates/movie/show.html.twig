@@ -337,7 +337,7 @@
                 </section>
             </main>
             {% if images.counts|reduce((carry, c) => carry + c|length) %}
-                <header>
+                <div class="images-section">
                     <div class="select-languages">
                         <label for="language-select">{{ 'Select a language'|trans }}
                             <select name="language-select" id="language-select">
@@ -384,7 +384,7 @@
                             {% endfor %}
                         </div>
                     </div>
-                </header>
+                </div>
             {% endif %}
         </div>
     </div>

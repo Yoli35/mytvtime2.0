@@ -401,103 +401,6 @@
                 }
             }
         }
-
-        .select-languages {
-            width: fit-content;
-
-            label {
-                select {
-                    appearance: none;
-                    background-color: var(--orange-40);
-                    border: 1px solid var(--orange-70);
-                    border-radius: 25rem;
-                    color: var(--ardoise-10);
-                    padding-block: 0.5rem;
-                }
-
-                &:has(select)::after {
-                    top: 32%;
-                }
-            }
-        }
-
-        .poster-container:not(:has(.poster)) {
-            display: none;
-        }
-
-        .backdrop-container:not(:has(.backdrop)) {
-            display: none;
-        }
-
-        .logo-container:not(:has(.logo)) {
-            display: none;
-        }
-
-        .posters {
-            display: flex;
-            gap: 1rem;
-            overflow-x: auto;
-            padding: .5rem 0;
-            width: 100%;
-
-            .poster {
-                aspect-ratio: 2 / 3;
-                border-radius: .5rem;
-                height: 9rem;
-                width: auto;
-
-                img {
-                    border-radius: .5rem;
-                    height: 100%;
-                    object-fit: cover;
-                    width: auto;
-                }
-            }
-        }
-
-        .backdrops {
-            display: flex;
-            gap: 1rem;
-            overflow-x: auto;
-            padding: .5rem 0;
-            width: 100%;
-
-            .backdrop {
-                aspect-ratio: 16 / 9;
-                border-radius: .5rem;
-                height: 9rem;
-                width: auto;
-
-                img {
-                    border-radius: .5rem;
-                    height: 100%;
-                    object-fit: cover;
-                    width: 100%;
-                }
-            }
-        }
-
-        .logos {
-            display: flex;
-            gap: 1rem;
-            overflow-x: auto;
-            padding: .5rem 0;
-            width: 100%;
-
-            .logo {
-                aspect-ratio: 3 / 1;
-                border-radius: .5rem;
-                height: 6rem;
-                width: auto;
-
-                img {
-                    border-radius: .5rem;
-                    height: 100%;
-                    object-fit: contain;
-                    width: auto;
-                }
-            }
-        }
     }
 
     main {
@@ -924,6 +827,124 @@
             }
         }
     }
+
+    .images-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding-block: 1rem;
+
+        .select-languages {
+            width: fit-content;
+
+            label {
+                select {
+                    appearance: none;
+                    background-color: var(--orange-40);
+                    border: 1px solid var(--orange-70);
+                    border-radius: 25rem;
+                    color: var(--ardoise-10);
+                    padding-block: 0.5rem;
+                }
+
+                &:has(select)::after {
+                    top: 32%;
+                }
+            }
+        }
+
+        .poster-container {
+            border: 2px dashed var(--orange-50);
+            border-radius: .5rem;
+
+            .posters {
+                display: flex;
+                gap: 1rem;
+                overflow-x: auto;
+                padding: .5rem 0;
+                width: 100%;
+
+                .poster {
+                    aspect-ratio: 2 / 3;
+                    border-radius: .5rem;
+                    height: 9rem;
+                    width: auto;
+
+                    img {
+                        border-radius: .5rem;
+                        height: 100%;
+                        object-fit: cover;
+                        width: 100%;
+                    }
+                }
+            }
+        }
+
+        .backdrop-container {
+            border: 2px dashed var(--orange-50);
+            border-radius: .5rem;
+
+            .backdrops {
+                display: flex;
+                gap: 1rem;
+                overflow-x: auto;
+                padding: .5rem 0;
+                width: 100%;
+
+                .backdrop {
+                    aspect-ratio: 16 / 9;
+                    border-radius: .5rem;
+                    height: 9rem;
+                    width: auto;
+
+                    img {
+                        border-radius: .5rem;
+                        height: 100%;
+                        object-fit: cover;
+                        width: 100%;
+                    }
+                }
+            }
+        }
+
+        .logo-container {
+            border: 2px dashed var(--orange-50);
+            border-radius: .5rem;
+
+            .logos {
+                display: flex;
+                gap: 1rem;
+                overflow-x: auto;
+                padding: .5rem 0;
+                width: 100%;
+
+                .logo {
+                    aspect-ratio: 3 / 1;
+                    border-radius: .5rem;
+                    height: 6rem;
+                    width: auto;
+
+                    img {
+                        border-radius: .5rem;
+                        height: 100%;
+                        object-fit: contain;
+                        width: auto;
+                    }
+                }
+            }
+        }
+
+        .poster-container:not(:has(.poster)) {
+            display: none;
+        }
+
+        .backdrop-container:not(:has(.backdrop)) {
+            display: none;
+        }
+
+        .logo-container:not(:has(.logo)) {
+            display: none;
+        }}
 }
 
 .collection-show {

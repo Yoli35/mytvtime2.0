@@ -214,8 +214,8 @@ export class Movie {
                 const posters = iso_639_1 === 'all' ? gThis.images.posters.slice() : gThis.images.posters.filter(poster => poster['iso_639_1'] === iso_639_1 || !poster['iso_639_1']);
                 const backdrops = iso_639_1 === 'all' ? gThis.images.backdrops.slice() : gThis.images.backdrops.filter(backdrop => backdrop['iso_639_1'] === iso_639_1 || !backdrop['iso_639_1']);
                 const logos = iso_639_1 === 'all' ? gThis.images.logos.slice() : gThis.images.logos.filter(logo => logo['iso_639_1'] === iso_639_1 || !logo['iso_639_1']);
-                const backdropsDiv = document.querySelector('.movie-show header .backdrops');
-                const backdropCountSpan = document.querySelector('.movie-show header .backdrop-count');
+                const backdropsDiv = document.querySelector('.movie-show .images-section .backdrops');
+                const backdropCountSpan = document.querySelector('.movie-show .images-section .backdrop-count');
                 backdropCountSpan.innerText = backdrops.length.toString();
                 backdropsDiv.innerHTML = '';
                 backdrops.forEach(backdrop => {
@@ -234,8 +234,8 @@ export class Movie {
                     backdropDiv.appendChild(img);
                     backdropsDiv.appendChild(backdropDiv);
                 });
-                const logosDiv = document.querySelector('.movie-show header .logos');
-                const logoCountSpan = document.querySelector('.movie-show header .logo-count');
+                const logosDiv = document.querySelector('.movie-show .images-section .logos');
+                const logoCountSpan = document.querySelector('.movie-show .images-section .logo-count');
                 logoCountSpan.innerText = logos.length.toString();
                 logosDiv.innerHTML = '';
                 logos.forEach(logo => {
@@ -255,8 +255,8 @@ export class Movie {
                     logoDiv.appendChild(img);
                     logosDiv.appendChild(logoDiv);
                 });
-                const postersDiv = document.querySelector('.movie-show header .posters');
-                const posterCountSpan = document.querySelector('.movie-show header .poster-count');
+                const postersDiv = document.querySelector('.movie-show .images-section .posters');
+                const posterCountSpan = document.querySelector('.movie-show .images-section .poster-count');
                 posterCountSpan.innerText = posters.length.toString();
                 postersDiv.innerHTML = '';
                 posters.forEach(poster => {
