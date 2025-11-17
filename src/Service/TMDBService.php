@@ -229,10 +229,21 @@ class TMDBService
             try {
                 return $response->getContent();
             } catch (Throwable $e) {
-                return json_encode(['error' => 'Response error: ' . $e->getMessage() . ' - code: ' . $e->getCode()]);
+                return json_encode([
+                    'error' => 'Response error: ' . $e->getMessage() . ' - code: ' . $e->getCode(),
+                    'message' => $e->getMessage(),
+                    'code' => $e->getCode(),
+                    'response' => $response->getContent(false),
+                    'request' => $request,
+                ]);
             }
         } catch (Throwable $e) {
-            return json_encode(['error' => 'Request error: ' . $e->getMessage() . ' - code: ' . $e->getCode()]);
+            return json_encode([
+                'error' => 'Request error: ' . $e->getMessage() . ' - code: ' . $e->getCode(),
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'request' => $request,
+            ]);
         }
     }
 

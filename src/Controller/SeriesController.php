@@ -910,6 +910,132 @@ class SeriesController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
+    #[Route('/season/{id}-{slug}/{seasonNumber}', name: 'season', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS])]
+    public function showSeason(Request $request, Series $series, int $seasonNumber, string $slug): Response
+    {
+        $user = $this->getUser();
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+        $country = $user->getCountry() ?? 'FR';
+        $this->logger->info('showSeason', ['series' => $series->getId(), 'season' => $seasonNumber, 'slug' => $slug]);
+
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+        $this->checkSlug($series, $slug, $locale);
+
+        $seriesImages = $series->getSeriesImages()->toArray();
+
+        $episodeSizeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'episode_div_size_' . $userSeries->getId()]);
+        if ($episodeSizeSettings) {
+            $value = $episodeSizeSettings->getData();
+            $episodeDivSize = $value['height'];
+            $aspectRatio = $value['aspect-ratio'] ?? '16 / 9';
+        } else {
+            $episodeSizeSettings = new Settings($user, 'episode_div_size_' . $userSeries->getId(), ['height' => '15rem', 'aspect-ratio' => '16 / 9']);
+            $this->settingsRepository->save($episodeSizeSettings, true);
+            $episodeDivSize = '15rem';
+            $aspectRatio = '16 / 9';
+        }
+
+        $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $request->getLocale(), ['credits', 'watch/providers']), true);
+        if (!$season) {
+            return $this->redirectToRoute('app_series_show', [
+                'id' => $series->getId(),
+                'slug' => $series->getSlug(),
+            ]);
+        }
+        if (key_exists('error', $season)) {
+            $this->addFlash('warning', 'Season not found on TMDB. You tried to access season ' . $seasonNumber . ' but the series "' . $series->getName() . '" has only ' . $series->getNumberOfSeason() . ' seasons.');
+            return $this->redirectToRoute('app_series_show', [
+                'id' => $series->getId(),
+                'slug' => $series->getSlug(),
+            ]);
+        }
+        dump($season);
+        if ($season['poster_path']) {
+            if (!$this->inImages($season['poster_path'], $seriesImages)) {
+                $this->addSeriesImage($series, $season['poster_path'], 'poster', $this->imageConfiguration->getUrl('poster_sizes', 5));
+            }
+        } else {
+            $season['poster_path'] = $series->getPosterPath();
+        }
+        $season['blurred_poster_path'] = $this->imageService->blurPoster($season['poster_path'], 'series', 8);
+
+        $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
+        $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
+        $season['air_date'] = $this->adjustSeasonAirDate($season, 'date');
+        $season['air_date_string'] = $this->adjustSeasonAirDate($season, 'string');
+
+        $season['credits'] = $this->castAndCrew($season, $series);
+        $season['watch/providers'] = $this->watchProviders($season, $country);
+        if ($season['overview'] == "") {
+            $season['overview'] = $series->getOverview();
+            $season['is_series_overview'] = true;
+        } else {
+            $season['is_series_overview'] = false;
+        }
+        $season['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
+        $season['season_localized_overview'] = $this->seasonLocalizedOverviewRepository->getSeasonLocalizedOverview($series->getId(), $seasonNumber, $request->getLocale());
+        $season['series_localized_name'] = $series->getLocalizedName($request->getLocale());
+        $season['series_localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
+        $season['series_additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
+
+        $providers = $this->watchLinkApi->getWatchProviders($country);
+        $devices = $this->deviceRepository->deviceArray();
+
+        // Nouvelle saison, premier épisode non vu
+        if ($season['season_number'] > 1 && count($season['episodes']) && $season['episodes'][0]['user_episode']['watch_at'] == null) {
+            $firstEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $season['season_number'], 'episodeNumber' => 1]);
+            $previousSeasonNumber = $season['season_number'] - 1;
+            $lastEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $previousSeasonNumber], ['episodeNumber' => 'DESC']);
+            $season['episodes'][0]['user_episode']['provider_id'] = $providerId = $lastEpisode->getProviderId();
+            $season['episodes'][0]['user_episode']['provider_logo_path'] = $providerId ? $providers['logos'][$providerId] : null;
+//            $season['episodes'][0]['user_episode']['device_id'] = $deviceId = $lastEpisode->getDeviceId();
+            if ($firstEpisode->getProviderId() != $providerId) {
+                $firstEpisode->setProviderId($providerId);
+//                $firstEpisode->setDeviceId($deviceId);
+                $this->userEpisodeRepository->save($firstEpisode, true);
+            }
+        }
+
+//        $tvKeywords = json_decode($this->tmdbService->getTvKeywords($series->getTmdbId()), true);
+//        $tvExternalIds = json_decode($this->tmdbService->getTvExternalIds($series->getTmdbId()), true);
+
+        $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
+        if ($series->getNumberOfEpisode() != $tv['number_of_episodes'] || $series->getNumberOfSeason() != $tv['number_of_seasons']) {
+            $this->addFlash('info', 'The number of episodes has changed, the series has been updated.');
+            if ($series->getNumberOfEpisode() != $tv['number_of_episodes'])
+                $series->setUpdates(['Number of episodes changed from ' . $series->getNumberOfEpisode() . ' to ' . $tv['number_of_episodes']]);
+            if ($series->getNumberOfSeason() != $tv['number_of_seasons'])
+                $series->setUpdates(['Number of seasons changed from ' . $series->getNumberOfSeason() . ' to ' . $tv['number_of_seasons']]);
+
+            $series->setNumberOfEpisode($tv['number_of_episodes']);
+            $series->setNumberOfSeason($tv['number_of_seasons']);
+            $this->seriesRepository->save($series, true);
+        }
+
+        $filmingLocation = $this->filmingLocationRepository->location($series->getTmdbId());
+
+        return $this->render('series/season.html.twig', [
+            'series' => $series,
+            'userSeries' => $userSeries,
+            'translations' => $this->seriesService->getSeriesSeasonTranslations(),
+            'quickLinks' => $this->getQuickLinks($season['episodes']),
+            'season' => $season,
+            'today' => $this->now()->format('Y-m-d H:I:s'),
+            'filmingLocation' => $filmingLocation,
+            'language' => $locale . '-' . $country,
+            'changes' => $this->getChanges($season['id']),
+            'now' => $this->now()->format('Y-m-d H:i O'),
+            'episodeDiv' => [
+                'height' => $episodeDivSize,
+                'aspectRatio' => $aspectRatio
+            ],
+            'providers' => $providers,
+            'devices' => $devices,
+//            'externals' => $this->getExternals($series, $tvKeywords['results'] ?? [], $tvExternalIds, $request->getLocale()),
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
     #[Route('/add/{id}', name: 'add', requirements: ['id' => Requirement::DIGITS])]
     public function addUserSeries(int $id): Response
     {
@@ -1176,124 +1302,6 @@ class SeriesController extends AbstractController
 
         return $this->json([
             'ok' => true,
-        ]);
-    }
-
-    #[IsGranted('ROLE_USER')]
-    #[Route('/season/{id}-{slug}/{seasonNumber}', name: 'season', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS])]
-    public function showSeason(Request $request, Series $series, int $seasonNumber, string $slug): Response
-    {
-        $user = $this->getUser();
-        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
-        $country = $user->getCountry() ?? 'FR';
-        $this->logger->info('showSeason', ['series' => $series->getId(), 'season' => $seasonNumber, 'slug' => $slug]);
-
-        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-        $this->checkSlug($series, $slug, $locale);
-
-        $seriesImages = $series->getSeriesImages()->toArray();
-
-        $episodeSizeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'episode_div_size_' . $userSeries->getId()]);
-        if ($episodeSizeSettings) {
-            $value = $episodeSizeSettings->getData();
-            $episodeDivSize = $value['height'];
-            $aspectRatio = $value['aspect-ratio'] ?? '16 / 9';
-        } else {
-            $episodeSizeSettings = new Settings($user, 'episode_div_size_' . $userSeries->getId(), ['height' => '15rem', 'aspect-ratio' => '16 / 9']);
-            $this->settingsRepository->save($episodeSizeSettings, true);
-            $episodeDivSize = '15rem';
-            $aspectRatio = '16 / 9';
-        }
-
-        $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $request->getLocale(), ['credits', 'watch/providers']), true);
-        if (!$season) {
-            return $this->redirectToRoute('app_series_show', [
-                'id' => $series->getId(),
-                'slug' => $series->getSlug(),
-            ]);
-        }
-        if ($season['poster_path']) {
-            if (!$this->inImages($season['poster_path'], $seriesImages)) {
-                $this->addSeriesImage($series, $season['poster_path'], 'poster', $this->imageConfiguration->getUrl('poster_sizes', 5));
-            }
-        } else {
-            $season['poster_path'] = $series->getPosterPath();
-        }
-        $season['blurred_poster_path'] = $this->imageService->blurPoster($season['poster_path'], 'series', 8);
-
-        $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
-        $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
-        $season['air_date'] = $this->adjustSeasonAirDate($season, 'date');
-        $season['air_date_string'] = $this->adjustSeasonAirDate($season, 'string');
-
-        $season['credits'] = $this->castAndCrew($season, $series);
-        $season['watch/providers'] = $this->watchProviders($season, $country);
-        if ($season['overview'] == "") {
-            $season['overview'] = $series->getOverview();
-            $season['is_series_overview'] = true;
-        } else {
-            $season['is_series_overview'] = false;
-        }
-        $season['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
-        $season['season_localized_overview'] = $this->seasonLocalizedOverviewRepository->getSeasonLocalizedOverview($series->getId(), $seasonNumber, $request->getLocale());
-        $season['series_localized_name'] = $series->getLocalizedName($request->getLocale());
-        $season['series_localized_overviews'] = $series->getLocalizedOverviews($request->getLocale());
-        $season['series_additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($request->getLocale());
-
-        $providers = $this->watchLinkApi->getWatchProviders($country);
-        $devices = $this->deviceRepository->deviceArray();
-
-        // Nouvelle saison, premier épisode non vu
-        if ($season['season_number'] > 1 && count($season['episodes']) && $season['episodes'][0]['user_episode']['watch_at'] == null) {
-            $firstEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $season['season_number'], 'episodeNumber' => 1]);
-            $previousSeasonNumber = $season['season_number'] - 1;
-            $lastEpisode = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'seasonNumber' => $previousSeasonNumber], ['episodeNumber' => 'DESC']);
-            $season['episodes'][0]['user_episode']['provider_id'] = $providerId = $lastEpisode->getProviderId();
-            $season['episodes'][0]['user_episode']['provider_logo_path'] = $providerId ? $providers['logos'][$providerId] : null;
-//            $season['episodes'][0]['user_episode']['device_id'] = $deviceId = $lastEpisode->getDeviceId();
-            if ($firstEpisode->getProviderId() != $providerId) {
-                $firstEpisode->setProviderId($providerId);
-//                $firstEpisode->setDeviceId($deviceId);
-                $this->userEpisodeRepository->save($firstEpisode, true);
-            }
-        }
-
-//        $tvKeywords = json_decode($this->tmdbService->getTvKeywords($series->getTmdbId()), true);
-//        $tvExternalIds = json_decode($this->tmdbService->getTvExternalIds($series->getTmdbId()), true);
-
-        $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
-        if ($series->getNumberOfEpisode() != $tv['number_of_episodes'] || $series->getNumberOfSeason() != $tv['number_of_seasons']) {
-            $this->addFlash('info', 'The number of episodes has changed, the series has been updated.');
-            if ($series->getNumberOfEpisode() != $tv['number_of_episodes'])
-                $series->setUpdates(['Number of episodes changed from ' . $series->getNumberOfEpisode() . ' to ' . $tv['number_of_episodes']]);
-            if ($series->getNumberOfSeason() != $tv['number_of_seasons'])
-                $series->setUpdates(['Number of seasons changed from ' . $series->getNumberOfSeason() . ' to ' . $tv['number_of_seasons']]);
-
-            $series->setNumberOfEpisode($tv['number_of_episodes']);
-            $series->setNumberOfSeason($tv['number_of_seasons']);
-            $this->seriesRepository->save($series, true);
-        }
-
-        $filmingLocation = $this->filmingLocationRepository->location($series->getTmdbId());
-
-        return $this->render('series/season.html.twig', [
-            'series' => $series,
-            'userSeries' => $userSeries,
-            'translations' => $this->seriesService->getSeriesSeasonTranslations(),
-            'quickLinks' => $this->getQuickLinks($season['episodes']),
-            'season' => $season,
-            'today' => $this->now()->format('Y-m-d H:I:s'),
-            'filmingLocation' => $filmingLocation,
-            'language' => $locale . '-' . $country,
-            'changes' => $this->getChanges($season['id']),
-            'now' => $this->now()->format('Y-m-d H:i O'),
-            'episodeDiv' => [
-                'height' => $episodeDivSize,
-                'aspectRatio' => $aspectRatio
-            ],
-            'providers' => $providers,
-            'devices' => $devices,
-//            'externals' => $this->getExternals($series, $tvKeywords['results'] ?? [], $tvExternalIds, $request->getLocale()),
         ]);
     }
 
