@@ -336,7 +336,7 @@
                     </div>
                 </section>
             </main>
-            {% if images.counts|reduce((carry, c) => carry + c|length) %}
+            {% if images.counts|reduce((carry, c) => carry + c) %}
                 <div class="images-section">
                     <div class="select-languages">
                         <label for="language-select">{{ 'Select a language'|trans }}
@@ -349,9 +349,9 @@
                         </label>
                     </div>
                     {% set posters = images.posters|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
-                    <div class="poster-container">
+                    <div class="image-container">
                         <h3>{{ 'Posters'|trans }} (<span class="poster-count">{{ posters|length }}</span>)</h3>
-                        <div class="posters">
+                        <div class="wrapper posters">
                             {% for poster in posters %}
                                 <div class="poster" data-title="{{ 'Poster'|trans }}" data-iso_639_1="{{ poster.iso_639_1 }}">
                                     <img src="{{ images.poster_path['780w'] ~ poster.file_path }}" alt="{{ movie.title }}" loading="lazy"
@@ -361,9 +361,9 @@
                         </div>
                     </div>
                     {% set backdrops = images.backdrops|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
-                    <div class="backdrop-container">
+                    <div class="image-container">
                         <h3>{{ 'Backdrops'|trans }} (<span class="backdrop-count">{{ backdrops|length }}</span>)</h3>
-                        <div class="backdrops">
+                        <div class="wrapper backdrops">
                             {% for backdrop in backdrops %}
                                 <div class="backdrop" data-title="{{ 'Backdrop'|trans }}" data-iso_639_1="{{ backdrop.iso_639_1 }}">
                                     <img src="{{ images.backdrop_path['1280w'] ~ backdrop.file_path }}" alt="{{ movie.title }}" loading="lazy"
@@ -373,9 +373,9 @@
                         </div>
                     </div>
                     {% set logos = images.logos|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
-                    <div class="logo-container">
+                    <div class="image-container">
                         <h3>{{ 'Logos'|trans }} (<span class="logo-count">{{ logos|length }}</span>)</h3>
-                        <div class="logos">
+                        <div class="wrapper logos">
                             {% for logo in logos %}
                                 <div class="logo" data-title="{{ 'Logo'|trans }}" data-iso_639_1="{{ logo.iso_639_1 }}">
                                     <img src="{{ images.logo_path['500w'] ~ logo.file_path }}" alt="{{ movie.title }}" loading="lazy"

@@ -72,6 +72,24 @@
                         width: 1.5rem;
                     }
                 }
+
+                .viewed {
+                    align-items: center;
+                    backdrop-filter: blur(8px);
+                    background-color: hsl(from var(--orange) h s l /.5);
+                    bottom: 0;
+                    display: flex;
+                    font-size: 1.5rem;
+                    height: 3rem;
+                    justify-content: center;
+                    position: absolute;
+                    width: 100%;
+
+                    svg {
+                        height: 1.5rem;
+                        width: 1.5rem;
+                    }
+                }
             }
 
             .infos {
@@ -739,6 +757,7 @@
                                 width: 2rem;
                             }
                         }
+
                         .view-date {
                             border-radius: 5rem;
                             font-size: 1.5rem;
@@ -853,98 +872,45 @@
             }
         }
 
-        .poster-container {
-            border: 2px dashed var(--orange-50);
-            border-radius: .5rem;
-
-            .posters {
+        .image-container {
+            .wrapper {
                 display: flex;
                 gap: 1rem;
                 overflow-x: auto;
                 padding: .5rem 0;
                 width: 100%;
+
+                .poster, .backdrop, .logo {
+                    border-radius: .5rem;
+                    height: 9rem;
+                    width: auto;
+
+                    img {
+                        border-radius: .5rem;
+                        height: 100%;
+                        object-fit: cover;
+                        width: 100%;
+                    }
+                }
 
                 .poster {
                     aspect-ratio: 2 / 3;
-                    border-radius: .5rem;
-                    height: 9rem;
-                    width: auto;
-
-                    img {
-                        border-radius: .5rem;
-                        height: 100%;
-                        object-fit: cover;
-                        width: 100%;
-                    }
                 }
-            }
-        }
-
-        .backdrop-container {
-            border: 2px dashed var(--orange-50);
-            border-radius: .5rem;
-
-            .backdrops {
-                display: flex;
-                gap: 1rem;
-                overflow-x: auto;
-                padding: .5rem 0;
-                width: 100%;
 
                 .backdrop {
                     aspect-ratio: 16 / 9;
-                    border-radius: .5rem;
-                    height: 9rem;
-                    width: auto;
-
-                    img {
-                        border-radius: .5rem;
-                        height: 100%;
-                        object-fit: cover;
-                        width: 100%;
-                    }
                 }
-            }
-        }
-
-        .logo-container {
-            border: 2px dashed var(--orange-50);
-            border-radius: .5rem;
-
-            .logos {
-                display: flex;
-                gap: 1rem;
-                overflow-x: auto;
-                padding: .5rem 0;
-                width: 100%;
 
                 .logo {
                     aspect-ratio: 3 / 1;
-                    border-radius: .5rem;
-                    height: 6rem;
-                    width: auto;
-
-                    img {
-                        border-radius: .5rem;
-                        height: 100%;
-                        object-fit: contain;
-                        width: auto;
-                    }
                 }
             }
         }
 
-        .poster-container:not(:has(.poster)) {
+        .image-container:not(:has(.poster, .backdrop, .logo)) {
             display: none;
         }
-
-        .backdrop-container:not(:has(.backdrop)) {
-            display: none;
-        }
-
-        .logo-container:not(:has(.logo)) {
-            display: none;
-        }}
+    }
 }
 
 .collection-show {
