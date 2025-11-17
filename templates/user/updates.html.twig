@@ -27,6 +27,92 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>48ᵉ mise à jour : 17/11/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-javascript') }}→ Replace text references with translations in Season.js</div>
+                        <div class="details">Updated all occurrences of gThis.text to gThis.translations for setting data-title and placeholder attributes. This change improves internationalization support by ensuring UI strings are sourced from the translations object.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add outline styling to series and user components</div>
+                        <div class="details">Introduces a 4px solid outline using a semi-transparent ardoise color to various flex containers in series.scss and user.scss for improved visual distinction and consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add season localized overview API and refactor forms</div>
+                        <div class="details">Introduces ApiSeasonOverview for managing season localized overviews via API. Refactors JS and Twig templates to support season-specific translation forms, updates entity constructors for stricter typing, and centralizes translation strings for season pages. Improves handling of SVG icons and conditional UI logic for translation tools and forms.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Show added date in series details</div>
+                        <div class="details">Displays the date when the series was added alongside the visit count in the series details view for improved context.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:tv') }}→ Add premiere indicator for first episode of season</div>
+                        <div class="details">Introduces a 'premiere' flag in EpisodeExtensionRuntime for episodes where seasonNumber and firstEpisodeNumber are both 1. Updates the menu block to display a premiere icon when this condition is met.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Focus and select URL input on form show</div>
+                        <div class="details">When displaying the form, the URL input is now both focused and its contents selected for easier editing.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Set default backdrop path for series if missing</div>
+                        <div class="details">Assigns the first available backdrop image to the series if 'backdrop_path' is null and backdrops exist, ensuring a fallback image is displayed.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:home') }}{{ ux_icon('mdi:filmstrip-box') }}→ Show last viewed movies on home page</div>
+                        <div class="details">Added retrieval and display of the user's last viewed movies on the home page. Updated UserMovieRepository with a method to fetch recently viewed movies, adjusted HomeController to pass this data, and updated templates and styles for proper rendering. Added French translation for 'Last viewed movies'.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor episode info form event handlers</div>
+                        <div class="details">Moved inline event handler logic for episode info form actions (copy switch, copy, cancel, submit) into dedicated class methods for better code organization and maintainability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add bulk copy feature to episode info form</div>
+                        <div class="details">Introduces checkboxes to select episodes for copying their title and overview, a 'Copy all' switch, and a button to copy selected data to the clipboard. Updates related JavaScript, SCSS for styling, and French translations. Also refines dialog and form button selectors and improves vote average display logic.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Cap vote average display at 10+ in series view</div>
+                        <div class="details">Updated both the Season.js and _votes.html.twig template to display '10+' if the calculated vote average exceeds 10, ensuring consistent and user-friendly output for unusually high averages.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor cast display and improve cast UI</div>
+                        <div class="details">Renamed _people.html.twig to _cast.html.twig and updated all references to use the new template for cast display. Enhanced cast card styling with larger border radii and a new 'added' state. Changed focus behavior in Show.js to target the character name input. Updated SeriesController to set order to -1 for added cast. Added a new blurred poster image.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bug-outline') }}→ Update Doctrine config and fix datetime format in admin tools</div>
+                        <div class="details">Replaces deprecated Doctrine ORM options with updated equivalents and adds controller_resolver auto_mapping. Also corrects the datetime-local input value format in the admin tools Twig template.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Refactor movie card styles and improve movie page layout</div>
+                        <div class="details">Extracted card styles into a new card.scss file and removed duplicate card styles from home.scss. Enhanced movie.scss with improved layout, hover effects, and visual refinements for movie details, posters, and backdrops. Updated movie card Twig templates to use new data attributes and structure. Refactored movie show and tmdb pages to improve backdrop handling, user actions, and overall layout consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Comment out PosterHover imports and usage</div>
+                        <div class="details">Temporarily disables the PosterHover feature by commenting out its import and initialization in app.js, as well as its entry in importmap.php. This may be for debugging, refactoring, or to address issues related to PosterHover.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bug-outline') }}→ Update twig/intl-extra version constraint</div>
+                        <div class="details">Changed the version constraint for twig/intl-extra from ~3.8.0 to ^3.0 in composer.json to allow for a wider range of compatible versions.
+                            version: 3.8.x → 3.22.0</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update episode card layout and styles</div>
+                        <div class="details">Refactored the episode card template and SCSS to improve layout and visual grouping. Added icons for air date and watched status, adjusted flex and font styles, and separated air date and watched information for better clarity.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:tv') }}→ Track episode IDs for improved menu updates</div>
+                        <div class="details">Refactored episode tracking to use episode IDs instead of series IDs in menu updates and data attributes. Updated backend and Twig logic to aggregate and expose episode IDs, ensuring accurate episode count and selection in UI components.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Fix locale handling for episode overview updates</div>
+                        <div class="details">Episode overview updates now correctly use the request locale when querying and creating EpisodeLocalizedOverview entities, ensuring proper localization support.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add season and order badges for improved UI clarity</div>
+                        <div class="details">Introduces distinct badges for season numbers and season order in the UI, updates related CSS for styling, and refactors JS and templates to use new class names. Enhances visual clarity and user interaction for season navigation and watch links.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>47ᵉ mise à jour : 09/11/2025</h2>
                 <ul>
                     <li>
