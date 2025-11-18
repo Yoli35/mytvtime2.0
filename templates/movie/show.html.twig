@@ -40,9 +40,9 @@
                     <div class="infos-content">
                         <div class="title">
                             <h1>
-                                {% if movie.localized_name %}
+                                {% if movie.localized_name|length %}
                                     <span class="localization-span">{{ movie.localized_name.name }}</span><br>
-                                {% elseif movie.original_language != app.locale and movie.title == movie.original_title and movie.translations %}
+                                {% elseif movie.original_language != app.locale and movie.title == movie.original_title and movie.translations.data.title %}
                                     <span class="localization-span">{{ movie.translations.data.title }}</span><br>
                                 {% endif %}
                                 <span class="name-span">{{ movie.title }}</span>

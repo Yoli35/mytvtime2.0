@@ -440,7 +440,7 @@
         }
 
         .movie-details {
-            background-color: hsla(from var(--ardoise-90) h s l / .2);
+            /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
             border-radius: 1rem;
             display: flex;
             /*flex-direction: column;*/
@@ -601,13 +601,13 @@
 
                         &.keyword-block {
                             .keywords {
-                                background-color: hsla(from var(--ardoise-90) h s l / .2);
-                                border-radius: .5rem;
+                                /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
+                                /*border-radius: .5rem;*/
                                 display: flex;
                                 flex-wrap: wrap;
                                 gap: .25rem;
                                 justify-content: center;
-                                padding: 1rem;
+                                /*padding: 1rem;*/
 
                                 .keyword {
                                     background-color: var(--green-50);
