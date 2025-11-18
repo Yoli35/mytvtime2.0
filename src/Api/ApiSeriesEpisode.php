@@ -448,6 +448,7 @@ class ApiSeriesEpisode extends AbstractController
     #[Route('/update/infos', name: 'update_infos', methods: ['POST'])]
     public function updates(Request $request): JsonResponse
     {
+        $locale = $request->getLocale();
         $createdTitleCount = 0;
         $createdOverviewCount = 0;
         $updatedTitleCount = 0;
@@ -478,7 +479,7 @@ class ApiSeriesEpisode extends AbstractController
                     $this->episodeSubstituteNameRepository->save($esn, true);
                 }
                 if ($type === 'overview') {
-                    $elo = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $episodeId]);
+                    $elo = $this->episodeLocalizedOverviewRepository->findOneBy(['episodeId' => $episodeId, 'locale' => $locale]);
                     if ($elo) {
                         if ($content === $elo->getOverview()) {
                             continue;
@@ -486,25 +487,25 @@ class ApiSeriesEpisode extends AbstractController
                         $elo->setOverview($content);
                         $updatedOverviewCount++;
                     } else {
-                        $elo = new EpisodeLocalizedOverview($episodeId, $content, $request->getLocale());
+                        $elo = new EpisodeLocalizedOverview($episodeId, $content, $locale);
                         $createdOverviewCount++;
                     }
                     $this->episodeLocalizedOverviewRepository->save($elo, true);
                 }
             }
         }
-        $message = 'Titles and overviews updated.<br>';
+        $message = "Titles and overviews updated ($locale)<br>";
         if ($createdTitleCount) {
-            $message .= 'Created titles: ' . $createdTitleCount . '<br>';
+            $message .= "Created titles: $createdTitleCount<br>";
         }
         if ($createdOverviewCount) {
-            $message .= 'Created overviews: ' . $createdOverviewCount . '<br>';
+            $message .= "Created overviews: $createdOverviewCount<br>";
         }
         if ($updatedTitleCount) {
-            $message .= 'Updated titles: ' . $updatedTitleCount . '<br>';
+            $message .= "Updated titles: $updatedTitleCount<br>";
         }
         if ($updatedOverviewCount) {
-            $message .= 'Updated overviews: ' . $updatedOverviewCount;
+            $message .= "Updated overviews: $updatedOverviewCount";
         }
         $this->addFlash('success', $message);
         return new JsonResponse([
