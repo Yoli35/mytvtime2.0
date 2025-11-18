@@ -207,9 +207,9 @@
         .viewed-at {
             align-items: center;
             display: flex;
+            flex-shrink: 0;
             gap: 1rem;
             justify-content: center;
-            margin-inline-end: auto;
 
             .mark-as-viewed {
                 align-items: center;
@@ -220,6 +220,7 @@
                 display: flex;
                 height: 2rem;
                 justify-content: center;
+                outline: 4px solid hsl(from var(--ardoise-10) h s l / .25);
                 width: 2rem;
 
                 &:hover {
@@ -240,10 +241,11 @@
                 align-items: center;
                 background-color: var(--green-50);
                 border-radius: .25rem;
-                display: flex;
+                display: none;
                 font-size: 1rem;
                 font-weight: 300;
                 height: 2rem;
+                outline: 4px solid hsl(from var(--ardoise-10) h s l / .25);
                 padding-inline: .5rem;
             }
         }
@@ -369,6 +371,48 @@
                     svg {
                         height: 2rem;
                         width: 2rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (width <= 52rem) {
+    .movie-show {
+        main {
+            .user-details {
+                .user-actions {
+                    .wrapper {
+                        .viewed-at {
+                            .view-date.large {
+                                display: none;
+                            }
+                            .view-date.narrow {
+                                display: flex;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (width > 52rem) {
+    .movie-show {
+        main {
+            .user-details {
+                .user-actions {
+                    .wrapper {
+                        .viewed-at {
+                            .view-date.large {
+                                display: flex;
+                            }
+                            .view-date.narrow {
+                                display: none;
+                            }
+                        }
                     }
                 }
             }

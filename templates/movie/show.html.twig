@@ -128,7 +128,8 @@
                                     <div class="viewed-at" data-viewed="{{ userMovie.viewed }}">
                                         <div class="mark-as-viewed{% if userMovie.lastViewedAt %} viewed{% endif %}">{{ ux_icon('mdi:eye') }}</div>
                                         {% if userMovie.lastViewedAt %}
-                                            <div class="view-date"> {{ userMovie.lastViewedAt|format_datetime('relative_full', 'short')|capitalize }}</div>
+                                            <div class="view-date large"> {{ userMovie.lastViewedAt|format_datetime('relative_full', 'short')|capitalize }}</div>
+                                            <div class="view-date narrow"> {{ userMovie.lastViewedAt|format_datetime('relative_short', 'short')|capitalize }}</div>
                                         {% endif %}
                                         {% for viewDate in userMovie.viewArray %}
                                             <div class="view-date"> {{ viewDate|format_datetime('relative_full', 'short')|capitalize }}</div>
@@ -169,6 +170,56 @@
                                 </div>
                             </div>
                         </div>
+                        {% if movie.found == false %}
+                            <div class="not-found">
+                                <div class="label">{{ 'Not found'|trans }}</div>
+                                <div class="content">
+                                    <p>{{ 'Movie not found on TMDB'|trans }}</p>
+                                </div>
+                                <div class="actions">
+                                    <div class="search-movie">
+                                        <label for="movieTitle">{{ 'Title'|trans }}
+                                            <input type="search" name="movieTitle" id="movieTitle" value="{{ movie.title }}">
+                                        </label>
+                                        <button id="search-tmdb">{{ 'Search'|trans }}</button>
+                                    </div>
+                                    <div class="delete-movie">
+                                        <button id="delete-movie">{{ 'Delete this movie from your watchlist'|trans }}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+                <section>
+                    {{ include('_blocks/movie/_collection.html.twig') }}
+                </section>
+                <section>
+                    <div class="movie-details">
+                        {% if movie.credits.cast %}
+                            <div class="cast">
+                                <div class="label">{{ 'Cast'|trans }}</div>
+                                <div class="wrapper">
+                                    {% for cast in movie.credits.cast %}
+                                        {{ include('_blocks/movie/_cast.html.twig', {cast: cast, job: cast.character}) }}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if movie.credits.crew %}
+                            <div class="cast">
+                                <div class="label">{{ 'Crew'|trans }}</div>
+                                <div class="wrapper">
+                                    {% for crew in movie.credits.crew %}
+                                        {{ include('_blocks/movie/_cast.html.twig', {cast: crew, job: crew.job}) }}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+                <section>
+                    <div class="details">
                         <div class="movie-details">
                             <div class="left">
                                 {% if movie.genres|length %}
@@ -277,52 +328,62 @@
                                 {% endif %}
                             </div>
                         </div>
-                        {% if movie.found == false %}
-                            <div class="not-found">
-                                <div class="label">{{ 'Not found'|trans }}</div>
-                                <div class="content">
-                                    <p>{{ 'Movie not found on TMDB'|trans }}</p>
-                                </div>
-                                <div class="actions">
-                                    <div class="search-movie">
-                                        <label for="movieTitle">{{ 'Title'|trans }}
-                                            <input type="search" name="movieTitle" id="movieTitle" value="{{ movie.title }}">
-                                        </label>
-                                        <button id="search-tmdb">{{ 'Search'|trans }}</button>
-                                    </div>
-                                    <div class="delete-movie">
-                                        <button id="delete-movie">{{ 'Delete this movie from your watchlist'|trans }}</button>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
                     </div>
                 </section>
                 <section>
-                    {{ include('_blocks/movie/_collection.html.twig') }}
+                    {% if images.counts|reduce((carry, c) => carry + c) %}
+                        <div class="images-section">
+                            <div class="select-languages">
+                                <label for="language-select">{{ 'Select a language'|trans }}
+                                    <select name="language-select" id="language-select">
+                                        {# <option value="">{{ 'Select a language'|trans }}</option> #}
+                                        {% for iso, language in images.select %}
+                                            <option value="{{ iso }}"{% if iso == app.locale %} selected{% endif %}>{{ language }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                            </div>
+                            {% set posters = images.posters|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
+                            <div class="image-container">
+                                <h3>{{ 'Posters'|trans }} (<span class="poster-count">{{ posters|length }}</span>)</h3>
+                                <div class="wrapper posters">
+                                    {% for poster in posters %}
+                                        <div class="poster" data-title="{{ 'Poster'|trans }}" data-iso_639_1="{{ poster.iso_639_1 }}">
+                                            <img src="{{ images.poster_path['780w'] ~ poster.file_path }}" alt="{{ movie.title }}" loading="lazy"
+                                                 srcset="{{ images.poster_path['780w'] ~ poster.file_path }} 780w, {{ images.poster_path['1080w'] ~ poster.file_path }} 1080w">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% set backdrops = images.backdrops|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
+                            <div class="image-container">
+                                <h3>{{ 'Backdrops'|trans }} (<span class="backdrop-count">{{ backdrops|length }}</span>)</h3>
+                                <div class="wrapper backdrops">
+                                    {% for backdrop in backdrops %}
+                                        <div class="backdrop" data-title="{{ 'Backdrop'|trans }}" data-iso_639_1="{{ backdrop.iso_639_1 }}">
+                                            <img src="{{ images.backdrop_path['1280w'] ~ backdrop.file_path }}" alt="{{ movie.title }}" loading="lazy"
+                                                 srcset="{{ images.backdrop_path['780w'] ~ backdrop.file_path }} 780w, {{ images.backdrop_path['1280w'] ~ backdrop.file_path }} 1280w, {{ images.backdrop_path['1920w'] ~ backdrop.file_path }} 1920w">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% set logos = images.logos|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
+                            <div class="image-container">
+                                <h3>{{ 'Logos'|trans }} (<span class="logo-count">{{ logos|length }}</span>)</h3>
+                                <div class="wrapper logos">
+                                    {% for logo in logos %}
+                                        <div class="logo" data-title="{{ 'Logo'|trans }}" data-iso_639_1="{{ logo.iso_639_1 }}">
+                                            <img src="{{ images.logo_path['500w'] ~ logo.file_path }}" alt="{{ movie.title }}" loading="lazy"
+                                                 srcset="{{ images.logo_path['154w'] ~ logo.file_path }} 154w, {{ images.logo_path['185w'] ~ logo.file_path }} 185w, {{ images.logo_path['300w'] ~ logo.file_path }} 300w, {{ images.logo_path['500w'] ~ logo.file_path }} 500w, {{ images.logo_path['1000w'] ~ logo.file_path }} 1000w">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
                 </section>
                 <section>
                     <div class="movie-details">
-                        {% if movie.credits.cast %}
-                            <div class="cast">
-                                <div class="label">{{ 'Cast'|trans }}</div>
-                                <div class="wrapper">
-                                    {% for cast in movie.credits.cast %}
-                                        {{ include('_blocks/movie/_cast.html.twig', {cast: cast, job: cast.character}) }}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endif %}
-                        {% if movie.credits.crew %}
-                            <div class="cast">
-                                <div class="label">{{ 'Crew'|trans }}</div>
-                                <div class="wrapper">
-                                    {% for crew in movie.credits.crew %}
-                                        {{ include('_blocks/movie/_cast.html.twig', {cast: crew, job: crew.job}) }}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endif %}
                         {% if movie.recommendations|length %}
                             <div class="recommendations">
                                 <div class="label">{{ 'Recommendations'|trans }}</div>
@@ -336,56 +397,6 @@
                     </div>
                 </section>
             </main>
-            {% if images.counts|reduce((carry, c) => carry + c) %}
-                <div class="images-section">
-                    <div class="select-languages">
-                        <label for="language-select">{{ 'Select a language'|trans }}
-                            <select name="language-select" id="language-select">
-                                {# <option value="">{{ 'Select a language'|trans }}</option> #}
-                                {% for iso, language in images.select %}
-                                    <option value="{{ iso }}"{% if iso == app.locale %} selected{% endif %}>{{ language }}</option>
-                                {% endfor %}
-                            </select>
-                        </label>
-                    </div>
-                    {% set posters = images.posters|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
-                    <div class="image-container">
-                        <h3>{{ 'Posters'|trans }} (<span class="poster-count">{{ posters|length }}</span>)</h3>
-                        <div class="wrapper posters">
-                            {% for poster in posters %}
-                                <div class="poster" data-title="{{ 'Poster'|trans }}" data-iso_639_1="{{ poster.iso_639_1 }}">
-                                    <img src="{{ images.poster_path['780w'] ~ poster.file_path }}" alt="{{ movie.title }}" loading="lazy"
-                                         srcset="{{ images.poster_path['780w'] ~ poster.file_path }} 780w, {{ images.poster_path['1080w'] ~ poster.file_path }} 1080w">
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% set backdrops = images.backdrops|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
-                    <div class="image-container">
-                        <h3>{{ 'Backdrops'|trans }} (<span class="backdrop-count">{{ backdrops|length }}</span>)</h3>
-                        <div class="wrapper backdrops">
-                            {% for backdrop in backdrops %}
-                                <div class="backdrop" data-title="{{ 'Backdrop'|trans }}" data-iso_639_1="{{ backdrop.iso_639_1 }}">
-                                    <img src="{{ images.backdrop_path['1280w'] ~ backdrop.file_path }}" alt="{{ movie.title }}" loading="lazy"
-                                         srcset="{{ images.backdrop_path['780w'] ~ backdrop.file_path }} 780w, {{ images.backdrop_path['1280w'] ~ backdrop.file_path }} 1280w, {{ images.backdrop_path['1920w'] ~ backdrop.file_path }} 1920w">
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% set logos = images.logos|filter(i => i.iso_639_1 == app.locale or i.iso_639_1 is null) %}
-                    <div class="image-container">
-                        <h3>{{ 'Logos'|trans }} (<span class="logo-count">{{ logos|length }}</span>)</h3>
-                        <div class="wrapper logos">
-                            {% for logo in logos %}
-                                <div class="logo" data-title="{{ 'Logo'|trans }}" data-iso_639_1="{{ logo.iso_639_1 }}">
-                                    <img src="{{ images.logo_path['500w'] ~ logo.file_path }}" alt="{{ movie.title }}" loading="lazy"
-                                         srcset="{{ images.logo_path['154w'] ~ logo.file_path }} 154w, {{ images.logo_path['185w'] ~ logo.file_path }} 185w, {{ images.logo_path['300w'] ~ logo.file_path }} 300w, {{ images.logo_path['500w'] ~ logo.file_path }} 500w, {{ images.logo_path['1000w'] ~ logo.file_path }} 1000w">
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
         </div>
     </div>
     <div id="globs" style="display: none">
