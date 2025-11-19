@@ -712,14 +712,30 @@ class SeriesService extends AbstractController
         // → dayIndexArr: [0,5,6], [0,1,5,6], [0,1,2,6], [0,1,2,3]
         for ($i = 0; $i < $selectedDayCount; $i++) {
             if ($dayIndexArr[$i] < $firstDayOfWeek) {
-                $dayIndexArr[$i] += 7;
+                $dayIndexArr[$i] = ($dayIndexArr[$i] + 7) % 7;
             }
         }
         // → dayIndexArr: [7,5,6], [7,1,5,6], [7,1,2,6], [7,1,2,3]
         sort($dayIndexArr);
         // → dayIndexArr: [5,6,7], [1,5,6,7], [1,2,6,7], [1,2,3,7]
 
-        return $dayIndexArr;
+        return $this->reorderDayIndexArr($dayIndexArr, $firstDayOfWeek);
+    }
+
+    function reorderDayIndexArr(array $dayIndexArr, int $firstDayOfWeek): array
+    {
+        $first = ($firstDayOfWeek % 7 + 7) % 7;
+        // normaliser en 0..6
+        $normalized = array_map(fn($v) => ($v % 7 + 7) % 7, $dayIndexArr);
+        // garder les valeurs uniques
+        $unique = array_values(array_unique($normalized));
+        // trier par distance cyclique depuis $first
+        usort($unique, function (int $a, int $b) use ($first) {
+            $da = ($a - $first + 7) % 7;
+            $db = ($b - $first + 7) % 7;
+            return $da <=> $db;
+        });
+        return $unique;
     }
 
     public function isEpisodeWatched(array $episodes, int $seasonNumber, int $episodeNumber): bool
