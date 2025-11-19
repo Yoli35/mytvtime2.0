@@ -306,6 +306,7 @@
                 gap: .25rem;
                 justify-content: center;
                 height: 3.25rem;
+                outline: 4px solid hsl(from var(--ardoise-10) h s l / .25);
                 width: 3.25rem;
 
                 svg {
