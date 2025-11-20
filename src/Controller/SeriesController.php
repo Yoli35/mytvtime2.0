@@ -526,7 +526,7 @@ class SeriesController extends AbstractController
             $series['poster_path'] = $series['poster_path'] ? '/series/posters' . $series['poster_path'] : null;
             return $series;
         }, $userSeries);
-        dump($userSeries);
+
         $tmdbIds = array_column($userSeries, 'tmdbId');
 
         $userNetworks = $user->getNetworks();

@@ -69,7 +69,7 @@
                 <div class="wrapper">
                     <div class="content">
                         {% for s in highlightedSeries %}
-                            {{ include('_blocks/series/_card.html.twig', { series: s }) }}
+                            {{ include('_blocks/series/_card.html.twig', { series: s, dataTitle: s.date }) }}
                         {% endfor %}
                     </div>
                 </div>
@@ -147,7 +147,7 @@
                         <div class="wrapper">
                             <div class="content">
                                 {% for s in episodesOfTheDay %}
-                                    {{ include('_blocks/series/_history_card.html.twig', { series: s }) }}
+                                    {{ include('_blocks/series/_history_card.html.twig', { series: s, dataTitle: s.date|format_date("relative_short") }) }}
                                 {% endfor %}
                             </div>
                         </div>
@@ -159,7 +159,7 @@
                         <div class="wrapper">
                             <div class="content">
                                 {% for s in episodesToWatch %}
-                                    {{ include('_blocks/series/_history_card.html.twig', { series: s }) }}
+                                    {{ include('_blocks/series/_history_card.html.twig', { series: s, dataTitle: 'S%02dE%02d'|format(s.seasonNumber, s.episodeNumber) }) }}
                                 {% endfor %}
                             </div>
                         </div>
@@ -170,7 +170,7 @@
                     <div class="wrapper">
                         <div class="content">
                             {% for s in userSeries %}
-                                {{ include('_blocks/series/_card.html.twig', { series: s }) }}
+                                {{ include('_blocks/series/_card.html.twig', { series: s, dataTitle: s.localized_name ?? s.name }) }}
                             {% endfor %}
                         </div>
                     </div>
@@ -180,7 +180,7 @@
                     <div class="wrapper">
                         <div class="content">
                             {% for s in lastAddedSeries %}
-                                {{ include('_blocks/series/_card.html.twig', { series: s }) }}
+                                {{ include('_blocks/series/_card.html.twig', { series: s, dataTitle: s.localized_name ?? s.name }) }}
                             {% endfor %}
                         </div>
                     </div>
@@ -190,7 +190,7 @@
                     <div class="wrapper">
                         <div class="content">
                             {% for s in historySeries %}
-                                {{ include('_blocks/series/_episode_card.html.twig', { series: s }) }}
+                                {{ include('_blocks/series/_episode_card.html.twig', { series: s, dataTitle: s.localized_name ?? s.name }) }}
                             {% endfor %}
                         </div>
                     </div>

@@ -27,7 +27,10 @@
 {% set route_params = app.request.attributes.get('_route_params') %}
 {% block body %}{% endblock %}
 {% include "_blocks/_flash_messages.html.twig" %}
-<div class="to-top{% if app.environment is same as 'dev' %} dev{% endif %}">{{ ux_icon('mdi:arrow-up') }}</div>
+<div class="global-tools{% if app.environment is same as 'dev' %} dev{% endif %}">
+    <div class="preview-toggler">{{ ux_icon('mdi:eye') }}</div>
+    <div class="to-top">{{ ux_icon('mdi:arrow-up') }}</div>
+</div>
 </body>
 </html>
 {% if app.user and route is not null %}

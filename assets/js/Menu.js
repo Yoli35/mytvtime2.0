@@ -665,6 +665,10 @@ export class Menu {
         this.setPreview(localStorage.getItem("mytvtime_2_preview"));
     }
 
+    getPreview() {
+        return localStorage.getItem("mytvtime_2_preview");
+    }
+
     setPreview(preview) {
         if (preview !== null) {
             this.menuPreview.innerHTML = this.menuPreview.getAttribute("data-on");

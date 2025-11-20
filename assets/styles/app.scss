@@ -2524,49 +2524,74 @@ section:has(.pages) {
     }
 }
 
-.to-top {
-    align-items: center;
-    background-color: var(--orange-50);
-    border-radius: 50%;
+.global-tools {
+    backdrop-filter: blur(8px);
+    background-color: var(--orange-90-alpha-25);
+    border-radius: 5rem;
     bottom: 1rem;
-    color: var(--orange-90);
-    cursor: pointer;
-    display: none;
-    font-size: 1.5rem;
-    height: 2rem;
-    justify-content: center;
-    opacity: 0;
+    display: flex;
+    gap: 1rem;
+    outline: 4px solid hsl(from var(--ardoise-10) h s l / .25);
+    padding: .5rem;
     position: fixed;
     right: 1rem;
-    transition: display .25s, height .25s, opacity .25s, width .25s;
-    transition-behavior: allow-discrete;
-    transition-timing-function: ease-in-out;
-    width: 2rem;
-    z-index: 999;
-
-    svg {
-        transition: all 0.25s ease-in-out;
-    }
-
-    &.show {
-        display: flex;
-        opacity: 1;
-    }
+    transition: opacity .25s;
 
     &.dev {
         bottom: 3rem;
     }
 
     &:hover {
-        backdrop-filter: blur(8px);
-        background-color: var(--orange-90-alpha-25);
-        color: var(--orange-90);
-        height: 6rem;
-        width: 6rem;
+        > div {
+            color: var(--orange-90);
+            height: 6rem;
+            width: 6rem;
 
-        svg {
-            height: 3rem;
-            width: 3rem;
+            svg {
+                height: 3rem;
+                width: 3rem;
+            }
+        }
+    }
+
+    svg {
+        height: 1.5rem;
+        transition: all 0.25s ease-in-out;
+        width: 1.5rem;
+    }
+
+    .to-top, .preview-toggler {
+        align-items: center;
+        background-color: var(--orange-50);
+        border-radius: 50%;
+        color: var(--orange-90);
+        cursor: pointer;
+        font-size: 1.5rem;
+        height: 2rem;
+        justify-content: center;
+        transition: display .25s, height .25s, opacity .25s, visibility .25s, width .25s;
+        transition-behavior: allow-discrete;
+        transition-timing-function: ease-in-out;
+        width: 2rem;
+        z-index: 999;
+    }
+
+    .to-top {
+        display: none;
+        opacity: 0;
+
+        &.show {
+            display: flex;
+            opacity: 1;
+        }
+    }
+
+    .preview-toggler {
+        display: flex;
+
+        &.active {
+            background-color: var(--green-50);
+            color: var(--green-20);
         }
     }
 }

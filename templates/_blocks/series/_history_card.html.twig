@@ -1,11 +1,11 @@
 {% set upToDate = series.upToDate is defined and series.upToDate == 1 %}
 {% set start = series.progress==0 %}
 {% set ended = series.progress==100 %}
-<div class="card">
+<div class="card"{% if dataTitle is defined %} data-title="{{ dataTitle }}"{% endif %}>
     <a href="{{ path('app_series_season', {'id': series.id, 'seasonNumber': series.seasonNumber, 'slug': series.localizedSlug ?? series.slug }) }}#episode-{{ series.episodeNumber }}">
         <div class="poster">
             {% if series.posterPath %}
-                <img src="{{ series.posterPath }}" alt="{{ series.name }}"{% if series.date is defined %} data-title="{{ series.date }}{% endif %}">
+                <img src="{{ series.posterPath }}" alt="{{ series.name }}">
             {% else %}
                 <div>{{ 'No poster'|trans }}</div>
             {% endif %}

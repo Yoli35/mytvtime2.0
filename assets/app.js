@@ -30,6 +30,10 @@ import {Video} from 'Video';
 
 window.addEventListener("DOMContentLoaded", () => {
 
+    const navBar = new NavBar();
+    const menu = new Menu();
+    menu.init();
+
     const toTop = document.querySelector(".to-top");
     if (toTop) {
         toTop.addEventListener("click", () => {
@@ -46,22 +50,30 @@ window.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+    const previewToggler = document.querySelector(".preview-toggler");
+    const toggler = function() {
+        if (menu.getPreview()) {
+            previewToggler.classList.add("active");
+        } else {
+            previewToggler.classList.remove("active");
+        }
+    }
+    toggler();
+    if (previewToggler) {
+        previewToggler.addEventListener("click", (e) => {
+            e.preventDefault();
+            menu.togglePreview();
+            toggler();
+        });
+    }
 
-    const navBar = new NavBar();
-    const menu = new Menu();
-    menu.init();
-
-// Flash messages
+    // Flash messages
     new FlashMessage();
 
     // Tooltips
-    new ToolTips();
+    const toolTips = new ToolTips();
 
-// Poster hover option
-//     const posterHover = new PosterHover();
-//     posterHover.init();
-
-// Admin page
+    // Admin page
     const admin = document.querySelector(".admin");
     const adminMovieEditDiv = admin?.querySelector(".admin__movie__edit");
     const adminSeriesEditDiv = admin?.querySelector(".admin__series__edit");
@@ -85,7 +97,7 @@ window.addEventListener("DOMContentLoaded", () => {
         const seriesStatistics = new SeriesStatistics();
         const globs = JSON.parse(document.querySelector("#global-data").textContent);
         episodeHistory.init(globs);
-        providerSelect.init(globs);
+        providerSelect.init(globs, toolTips);
         highlightSeries.init(globs);
         seriesStatistics.init();
 

@@ -33,7 +33,7 @@ export class ProviderSelect {
         this.select = document.querySelector("#watch-providers");
     }
 
-    init(globs) {
+    init(globs, toolTips) {
         this.providerSeriesUrl = globs.app_home_load_provider_series;
         this.providers = globs.watchProviders;
 
@@ -55,6 +55,7 @@ export class ProviderSelect {
                         const providerSeriesDiv = document.querySelector("#provider-series");
                         const contentDiv = providerSeriesDiv.querySelector('.content');
                         contentDiv.innerHTML = data.wrapperContent;
+                        toolTips.init(contentDiv);
                         /** @type ProviderData */
                         const providerData = this.providers.find((p) => p.provider_id === parseInt(provider));
                         const headerDiv = providerSeriesDiv.parentElement.querySelector('.header');
