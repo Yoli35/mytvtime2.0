@@ -16,6 +16,9 @@ return [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
+    'AddCast' => [
+        'path' => './assets/js/series/AddCast.js',
+    ],
     'AdminMovieEdit' => [
         'path' => './assets/js/admin/AdminMovieEdit.js',
     ],

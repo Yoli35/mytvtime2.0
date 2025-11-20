@@ -1,3 +1,4 @@
+import {AddCast} from 'AddCast';
 import {Diaporama} from 'Diaporama';
 import {FlashMessage} from "FlashMessage";
 import {Keyword} from 'Keyword';
@@ -827,7 +828,8 @@ export class Show {
         /******************************************************************************
          * Add a person to the cast - Search input                                    *
          ******************************************************************************/
-        this.addCastInit();
+        const addCast = new AddCast();
+        addCast.init(menu);
 
         addVideoButton.addEventListener('click', () => {
             addVideoDialog.showModal();
@@ -835,25 +837,6 @@ export class Show {
         addVideoCancelButton.addEventListener('click', () => {
             addVideoDialog.close();
         });
-    }
-
-    addCastInit() {
-        const peopleSearchBlockDiv = document.querySelector('.cast-search-block');
-        if (peopleSearchBlockDiv) {
-            const addCastButton = document.querySelector('.add-cast-button');
-            const characterNameInput = document.querySelector('#character-name');
-            const peopleSearchInput = document.getElementById('cast-search');
-
-            peopleSearchInput.addEventListener("input", this.menu.searchFetch);
-            peopleSearchInput.addEventListener("keydown", this.menu.searchMenuNavigate);
-
-            addCastButton.addEventListener('click', () => {
-                peopleSearchBlockDiv.classList.toggle('active');
-                if (peopleSearchBlockDiv.classList.contains('active')) {
-                    characterNameInput.focus();
-                }
-            });
-        }
     }
 
     fetchEpisodeCards(cards, index, length) {

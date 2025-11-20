@@ -455,19 +455,35 @@ export class Menu {
                         console.log({result});
                         //return; // On ne veut pas de collection
                     }
-                    const a = document.createElement("a");
                     let url;
                     if (isAddCastInput) {
-                        const seriesId = addCastBlock.getAttribute('data-series-id');
-                        const seasonNumber = addCastBlock.getAttribute('data-season-number');
-                        const characterNameInput = addCastBlock.querySelector('#character-name');
-                        const characterName = characterNameInput.value;
-                        url = baseHref + 'series/cast/add/' + seriesId + '/' + seasonNumber + '/' + result['id'] + '?name=' + encodeURIComponent(characterName);
+                        url = null;
                     } else {
                         url = baseHref + gThis.hRefs[type] + result['id'];
                         if (type !== 'movie' && type !== 'collection') url += '-' + gThis.toSlug(result[gThis.resultNames[type]]);
                     }
-                    a.href = url;
+                    const a = document.createElement(url ? "a" : "div");
+                    if (url) {
+                        a.href = url;
+                    } else {
+                        const hiddenInputPersonId = addCastBlock.querySelector('#cast-search-person-id');
+                        const castNameInput = addCastBlock.querySelector('#cast-search');
+                        a.setAttribute("person-id", result['id'].toString());
+                        a.setAttribute("name", result['name'].toString());
+                        a.addEventListener("click", e => {
+                            castNameInput.removeEventListener("input", gThis.searchFetch);
+                            castNameInput.addEventListener("input", e => {
+                                castNameInput.addEventListener("input", gThis.searchFetch); // Same type & listener do not add event listener
+                            });
+                            hiddenInputPersonId.value = a.getAttribute("person-id");
+                            castNameInput.value = a.getAttribute("name");
+                            const thisUl = e.target.closest("ul");
+                            const lis = thisUl.querySelectorAll('li');
+                            lis.forEach(item => {
+                                item.remove();
+                            });
+                        })
+                    }
                     const li = document.createElement("li");
                     li.setAttribute('data-title', result[gThis.resultNames[type]]);
                     if (!index) li.classList.add("active");

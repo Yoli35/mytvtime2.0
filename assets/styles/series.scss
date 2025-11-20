@@ -3504,24 +3504,54 @@ h2 {
         flex-direction: column;
         gap: .5rem;
         justify-content: center;
+        position: relative;
+        width: fit-content;
 
         .cast-search-block {
-            display: flex;
+            background-color: var(--green);
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem #0000003c;
+            display: none;
             flex-direction: column;
             font-size: 1.5rem;
             gap: .5rem;
             height: 0;
             justify-content: center;
-            overflow: hidden;
+            outline: 4px solid hsl(from var(--ardoise-10) h s l / .25);
             padding-block: 0;
-            position: relative;
+            padding: 2rem;
+            position: absolute;
+            right: 1rem;
             transition: all 0.3s ease-in-out;
-            width: 100%;
+            width: fit-content;
+
+            form {
+                all: inherit;
+                display: contents;
+
+                .cast-add-button {
+                    align-items: center;
+                    background-color: var(--orange-50);
+                    border-radius: .5rem;
+                    color: var(--ardoise-10);
+                    cursor: pointer;
+                    display: flex;
+                    font-size: 1.5rem;
+                    font-weight: 300;
+                    height: 3rem;
+                    justify-content: center;
+                    padding-inline: 1rem;
+                    transition: background-color 0.3s ease-in-out;
+
+                    &:hover {
+                        background-color: var(--orange-40);
+                    }
+                }
+            }
 
             &.active {
+                display: flex;
                 height: auto;
-                overflow: visible;
-                padding-block: .5rem;
             }
 
             label {
@@ -3549,7 +3579,7 @@ h2 {
                 min-width: 25rem;
                 width: 50%;
                 left: 50%;
-                top: 4rem;
+                top: 5.5rem;
                 translate: -50% 2rem;
             }
         }

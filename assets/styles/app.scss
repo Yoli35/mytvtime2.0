@@ -1179,7 +1179,7 @@ label:has(input[type="text"]) {
                 color: var(--orange-90);
             }
 
-            a {
+            a, div {
                 align-items: center;
                 color: var(--navbar-color-hover);
                 display: flex;
@@ -1192,13 +1192,9 @@ label:has(input[type="text"]) {
                 }
 
                 .poster {
-                    align-items: center;
-                    aspect-ratio: 2 / 3;
-                    display: flex;
-                    font-size: inherit;
                     height: 3em;
-                    justify-content: center;
-                    text-align: center;
+                    padding: 0;
+                    width: 2em;
 
                     img {
                         border-radius: .125em;
@@ -1207,8 +1203,15 @@ label:has(input[type="text"]) {
                         width: 100%;
                     }
 
-                    div {
-                        font-size: .5em;
+                    &:has(div) {
+                        div {
+                            align-items: center;
+                            display: flex;
+                            font-size: .5em;
+                            justify-content: center;
+                            padding: 0;
+                            text-align: center;
+                        }
                     }
                 }
 

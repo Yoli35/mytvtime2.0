@@ -1,3 +1,4 @@
+import {AddCast} from "AddCast";
 import {AverageColor} from 'AverageColor';
 import {FlashMessage} from "FlashMessage";
 import {Map} from "Map";
@@ -425,7 +426,8 @@ export class Season {
         /******************************************************************************
          * Add a person to the cast - Search input                                    *
          ******************************************************************************/
-        this.addCastInit();
+        const addCast = new AddCast();
+        addCast.init(menu);
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -666,24 +668,6 @@ export class Season {
         /*if (type === 'overview') {
             form.scrollIntoView({block: "end", inline: "nearest", behavior: 'smooth'});
         }*/
-    }
-
-    addCastInit() {
-        const peopleSearchBlockDiv = document.querySelector('.cast-search-block');
-        if (peopleSearchBlockDiv) {
-            const addCastButton = document.querySelector('.add-cast-button');
-            const peopleSearchInput = document.getElementById('cast-search');
-
-            peopleSearchInput.addEventListener("input", this.menu.searchFetch);
-            peopleSearchInput.addEventListener("keydown", this.menu.searchMenuNavigate);
-
-            addCastButton.addEventListener('click', () => {
-                peopleSearchBlockDiv.classList.toggle('active');
-                if (peopleSearchBlockDiv.classList.contains('active')) {
-                    peopleSearchInput.focus();
-                }
-            });
-        }
     }
 
     addEpisode(e, episodeId = null) {
