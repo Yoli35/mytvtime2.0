@@ -339,7 +339,14 @@ h2 {
         .wrapper {
             .content {
                 &.center {
-                    width: round(down, 100%, 15.25rem);
+                    width: round(down, 100%, 16rem);
+                }
+
+                a {
+                    align-items: stretch;
+                    display: flex;
+                    flex-direction: column;
+                    height: 100%;
                 }
 
                 .card {
@@ -348,130 +355,147 @@ h2 {
                     transition: opacity 0.3s ease-in-out, width 0.3s ease-in-out;
                     width: 15rem;
 
-                    a {
-                        .poster {
+                    .poster {
+                        border-radius: .5rem .5rem 0 0;
+                        height: 22.5rem;
+                        position: relative;
+                        width: 15rem;
+
+                        img {
                             border-radius: .5rem .5rem 0 0;
                             height: 22.5rem;
-                            position: relative;
                             width: 15rem;
+                        }
 
-                            img {
-                                border-radius: .5rem .5rem 0 0;
-                                height: 22.5rem;
-                                width: 15rem;
-                            }
+                        &:not(:has(img)) {
+                            align-items: center;
+                            background-color: var(--ardoise-80);
+                            color: var(--ardoise-10);
+                            display: flex;
+                            flex-direction: column;
+                            font-size: 1.5rem;
+                            font-weight: 300;
+                            justify-content: center;
+                            text-align: center;
+                            padding: 1rem;
+                        }
 
-                            .watch-links {
-                                align-items: flex-end;
-                                display: flex;
-                                flex-direction: column;
-                                gap: .5rem;
-                                position: absolute;
-                                right: 1rem;
-                                top: 1rem;
+                        .watch-links {
+                            align-items: flex-end;
+                            display: flex;
+                            flex-direction: column;
+                            gap: .5rem;
+                            position: absolute;
+                            right: 1rem;
+                            top: 1rem;
 
-                                .provider {
-                                    background-color: var(--orange-20);
+                            .provider {
+                                background-color: var(--orange-20);
+                                border-radius: .25rem;
+                                height: 3rem;
+                                width: 3rem;
+
+                                img {
                                     border-radius: .25rem;
                                     height: 3rem;
+                                    object-fit: cover;
                                     width: 3rem;
-
-                                    img {
-                                        border-radius: .25rem;
-                                        height: 3rem;
-                                        object-fit: cover;
-                                        width: 3rem;
-                                    }
-                                }
-
-                                .provider-name {
-                                    background-color: var(--orange-50);
-                                    border-radius: .25rem;
-                                    color: var(--ardoise-10);
-                                    font-size: 1rem;
-                                    font-weight: 300;
-                                    padding: .25rem .5rem;
-                                    text-align: center;
-                                    text-wrap: balance;
                                 }
                             }
 
-                            .average-vote-index {
-                                background-color: var(--green-50);
-                                border-radius: .25rem;
-                                color: var(--ardoise-10);
-                                font-size: 2rem;
-                                font-weight: 300;
-                                line-height: 1.1em;
-                                padding: .5rem 1rem;
-                                position: absolute;
-                                left: .25rem;
-                                top: .25rem;
-                            }
-
-                            .average-vote {
+                            .provider-name {
                                 background-color: var(--orange-50);
                                 border-radius: .25rem;
                                 color: var(--ardoise-10);
-                                font-size: 2rem;
+                                font-size: 1rem;
                                 font-weight: 300;
-                                line-height: 1.1em;
-                                padding: .5rem 1rem;
-                                position: absolute;
-                                right: .25rem;
-                                top: .25rem;
-                            }
-
-                            .series-infos {
-                                bottom: 0;
-                                flex-direction: column;
-                                gap: .25rem;
-                                justify-content: center;
-                                left: 0;
-                                right: 0;
-
-                                .dates {
-                                    background-color: hsla(from var(--ardoise-80) h s l / .9);
-                                    display: flex;
-                                    justify-content: center;
-                                    width: 100%;
-                                }
-
-                                .air-date, .add-date {
-                                    align-items: center;
-                                    background-color: hsla(from var(--ardoise-80) h s l / .9);
-                                    border-radius: .25rem;
-                                    color: var(--ardoise-10);
-                                    display: flex;
-                                    flex: 0 0 fit-content;
-                                    gap: .25rem;
-                                    padding: .25rem .5rem;
-                                    font-size: 1rem;
-                                    font-weight: 300;
-                                    text-align: center;
-                                    text-wrap: balance;
-                                    width: fit-content;
-                                }
+                                padding: .25rem .5rem;
+                                text-align: center;
+                                text-wrap: balance;
                             }
                         }
 
-                        .name {
-                            background-color: hsla(from var(--ardoise-30) h s l / .5);
-                            border-radius: 0 0 .5rem .5rem;
-                            font-size: 1.25rem;
+                        .average-vote-index {
+                            background-color: var(--green-50);
+                            border-radius: .25rem;
+                            color: var(--ardoise-10);
+                            font-size: 2rem;
                             font-weight: 300;
                             line-height: 1.1em;
-                            overflow-y: auto;
-                            padding-inline: .5rem;
-                            text-align: center;
-                            text-wrap: balance;
-                            width: 15rem;
+                            padding: .5rem 1rem;
+                            position: absolute;
+                            left: .25rem;
+                            top: .25rem;
+                        }
+
+                        .average-vote {
+                            background-color: var(--orange-50);
+                            border-radius: .25rem;
+                            color: var(--ardoise-10);
+                            font-size: 2rem;
+                            font-weight: 300;
+                            line-height: 1.1em;
+                            padding: .5rem 1rem;
+                            position: absolute;
+                            right: .25rem;
+                            top: .25rem;
+                        }
+
+                        .series-infos {
+                            bottom: 0;
+                            display: flex;
+                            flex-direction: column;
+                            gap: .25rem;
+                            justify-content: center;
+                            left: 0;
+                            position: absolute;
+                            right: 0;
+
+                            .dates {
+                                background-color: hsla(from var(--ardoise-80) h s l / .9);
+                                display: flex;
+                                justify-content: center;
+                                width: 100%;
+                            }
+
+                            .air-date, .add-date {
+                                align-items: center;
+                                background-color: hsla(from var(--ardoise-80) h s l / .9);
+                                border-radius: .25rem;
+                                color: var(--ardoise-10);
+                                display: flex;
+                                flex: 0 0 fit-content;
+                                gap: .25rem;
+                                padding: .25rem .5rem;
+                                font-size: 1rem;
+                                font-weight: 300;
+                                text-align: center;
+                                text-wrap: balance;
+                                width: fit-content;
+                            }
                         }
                     }
 
-                    &:has(.name.by-country) {
-                        height: 27.5rem;
+                    .name {
+                        align-items: center;
+                        background-color: hsla(from var(--ardoise-30) h s l / .5);
+                        border-radius: 0 0 .5rem .5rem;
+                        display: flex;
+                        font-size: 1.25rem;
+                        font-weight: 300;
+                        height: 4.5rem;
+                        justify-content: center;
+                        line-height: 1.1em;
+                        overflow-y: auto;
+                        padding-inline: .5rem;
+                        text-align: center;
+                        text-wrap: balance;
+                        width: 15rem;
                     }
+                }
+
+                &:has(.name.by-country) {
+                    height: 27.5rem;
                 }
             }
         }

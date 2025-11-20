@@ -1,31 +1,28 @@
 <div class="card" data-first-air-date="{{ series.final_air_date|date('Y-m-d') }}" data-added-at="{{ series.added_at|date('Y-m-d') }}">
-    {% set url = path('app_series_show', {'id': series.id, 'slug': series.slug }) %}
-    <a href="{{ url }}">
+    <a href="{{ series.url }}">
         <div class="poster">
-            {% if series.poster_path is defined %}
-                {% if series.poster_path %}
-                    <img src="/series/posters{{ series.poster_path }}" alt="{{ series.name }}">
-                {% else %}
-                    <div>{{ 'No poster'|trans }}</div>
-                {% endif %}
+            {% if series.poster_path is defined and series.poster_path %}
+                <img src="/series/posters{{ series.poster_path }}" alt="{{ series.name }}">
+            {% else %}
+                <div>{{ 'No poster'|trans }}</div>
+            {% endif %}
+            {% if series.watch_links|length %}
+                <div class="watch-links">
+                    {% for wl in series.watch_links %}
+                        <div class="provider">
+                            <img src="{{ wl.logo_path }}" data-title="{{ wl.link_name }}" alt="{{ wl.provider_name }}">
+                        </div>
+                    {% endfor %}
+                </div>
             {% endif %}
             <div class="series-infos">
-                {% if series.provider_logo_path %}
-                    <div class="providers">
-                        <div class="provider-content">
-                            <div class="provider">
-                                <img src="{{ series.provider_logo_path }}" alt="{{ series.link_name }}">
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
                 <div class="dates">
                     <div class="air-date" data-title="{{ 'First air date'|trans }}">{{ ux_icon('mdi:date-range') }}{{ series.final_air_date|format_date('relative_short')|capitalize }}</div>
                     <div class="add-date" data-title="{{ 'Added on'|trans }}">{{ ux_icon('mdi:plus') }}{{ series.added_at|format_date('relative_short')|capitalize }}</div>
                 </div>
             </div>
         </div>
-        <div class="name">
+        <div class="name"{% if series.sln_name %} data-title="{{ series.sln_name }}"{% endif %}>
             {{ series.name }}
         </div>
     </a>

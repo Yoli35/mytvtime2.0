@@ -209,7 +209,13 @@ class SeriesController extends AbstractController
         // On ne garde que le premier résultat pour chaque série et on ajoute les providers dans un tableau "watch_links".
         foreach ($seriesToStart as $s) {
             if (!array_key_exists($s['id'], $series)) {
-                $series[$s['id']] = $s;
+                $series[$s['id']]['url'] = $this->generateUrl('app_series_show', ['id'=> $s['id'], 'slug' => $s['slug']]);
+                $series[$s['id']]['name'] = $s['name'];
+                $series[$s['id']]['sln_name'] = $s['sln_name'];
+                $series[$s['id']]['poster_path'] = $s['poster_path'];
+                $series[$s['id']]['final_air_date'] = $s['final_air_date'];
+                $series[$s['id']]['added_at'] = $s['added_at'];
+                $series[$s['id']]['number_of_episode'] = $s['number_of_episode'];
                 $series[$s['id']]['watch_links'] = [];
             }
             if ($s['link_name']) {
@@ -949,7 +955,7 @@ class SeriesController extends AbstractController
                 'slug' => $series->getSlug(),
             ]);
         }
-        dump($season);
+
         if ($season['poster_path']) {
             if (!$this->inImages($season['poster_path'], $seriesImages)) {
                 $this->addSeriesImage($series, $season['poster_path'], 'poster', $this->imageConfiguration->getUrl('poster_sizes', 5));
@@ -1341,6 +1347,11 @@ class SeriesController extends AbstractController
                 $count += 1;
             }
             if ($itemPerLine > 10) {
+                if ($count % 19== 0) $itemPerLine = 19;
+                if ($count % 17 == 0) $itemPerLine = 17;
+                if ($count % 15 == 0) $itemPerLine = 15;
+                if ($count % 13 == 0) $itemPerLine = 13;
+                if ($count % 11 == 0) $itemPerLine = 11;
                 if ($count % 10 == 0) $itemPerLine = 10;
                 if ($count % 9 == 0) $itemPerLine = 9;
                 if ($count % 8 == 0) $itemPerLine = 8;

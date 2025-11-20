@@ -10,7 +10,7 @@
                 {% endif %}
             {% endif %}
             <div class="average-vote-index">{{ loop.index }}</div>
-            <div class="average-vote">{{ '%.02f'|format(series.average_vote) }}</div>
+            <div class="average-vote">{% if series.average_vote <= 10 %}{{ '%.02f'|format(series.average_vote) }}{% else %}10+{% endif %}</div>
             <div class="series-infos">
                 <div class="air-date" data-title="{{ 'Episode air date'|trans }}">
                     {% if series.final_air_date %}
