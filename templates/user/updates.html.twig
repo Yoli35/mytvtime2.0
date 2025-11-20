@@ -27,6 +27,51 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>49ᵉ mise à jour : 20/11/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series card layout and data handling</div>
+                        <div class="details">Improves the series card layout in SCSS and Twig for better alignment and display of poster, watch links, and series info. Refactors SeriesController and UserSeriesRepository to provide more explicit series data, including URLs and localized names. Adds card.scss stylesheet to series-related templates for consistent styling. Also updates ranking card to cap average vote display at 10+.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor and enhance cast addition UI for series</div>
+                        <div class="details">Moved cast addition logic to a new AddCast.js module and updated Season.js and Show.js to use it. Improved the cast search block UI and form structure in the template, added hidden fields, and updated styles for better usability. Enhanced Menu.js to handle cast selection and input events more robustly.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Format season number badge with leading zero</div>
+                        <div class="details">Season number badge now displays as 'S01', 'S02', etc. instead of just the number. This improves clarity and consistency in the UI.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor day index normalization and sorting logic</div>
+                        <div class="details">Extracted and improved the logic for normalizing, deduplicating, and cyclically sorting day indices into a new reorderDayIndexArr() method. This enhances code clarity and ensures correct handling of day indices relative to the first day of the week.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Refactor movie show page layout and styles</div>
+                        <div class="details">Reorganized sections in the movie show template for improved structure and clarity, including moving cast, crew, and not-found blocks. Updated image section placement and responsive behavior for view dates. Enhanced SCSS for better transitions, responsive layouts, and visibility toggling of elements based on screen size.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update episode card rendering and data mapping</div>
+                        <div class="details">Switched to using '_history_card.html.twig' for episode cards in the home page template. Updated data mapping in HomeController to use camelCase keys and added season and episode numbers for each series.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor image containers and update styles in movie page</div>
+                        <div class="details">Unified poster, backdrop, and logo containers into a single .image-container with a shared .wrapper for improved maintainability and consistency. Updated SCSS to reflect the new structure and added styles for a .viewed overlay. Adjusted template logic for image counts and container rendering.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Refactor movie images section layout and styles</div>
+                        <div class="details">Moved posters, backdrops, and logos from header to a dedicated .images-section container in the movie show template. Updated JavaScript selectors and restructured SCSS to scope styles under .images-section, improving maintainability and visual separation of image groups.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:home') }}{{ ux_icon('mdi:tv') }}→ Add SeriesStatistics component to home page</div>
+                        <div class="details">Introduces the SeriesStatistics JavaScript module for dynamic layout adjustment of series status items on the home page. Updates app.js to initialize the new component, modifies home.scss for improved responsive styling, and registers SeriesStatistics in importmap.php.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor showSeason action and improve TMDB error handling</div>
+                        <div class="details">Moved and updated the showSeason method in SeriesController for better code organization and maintainability. Enhanced error handling in TMDBService to return more detailed information on request and response failures.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>48ᵉ mise à jour : 17/11/2025</h2>
                 <ul>
                     <li>
