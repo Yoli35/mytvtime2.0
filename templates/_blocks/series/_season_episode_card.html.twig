@@ -12,12 +12,14 @@
                 <div class="episode-number{% if episode.watchedAt %} watched{% endif %}">{{ episode.episode_number }}</div>
                 <div class="episode-name">{{ episode.name }}</div>
             </div>
-            {% if episode.runtime %}
-                <div class="line-2">
-                    <div class="episode-air-date">{{ ux_icon('mdi:broadcast') }} {{ episode.air_date }}</div>
-                    <div class="episode-runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
+            <div class="line-2">
+                <div class="episode-air-date">
+                    {% if episode.air_date %}{{ ux_icon('mdi:broadcast') }} {{ episode.air_date }}{% endif %}
                 </div>
-            {% endif %}
+                <div class="episode-runtime">
+                    {% if episode.runtime %}{{ episode.runtime }} {{ 'minutes'|trans }}{% endif %}
+                </div>
+            </div>
             <div class="line-3">
                 {% if episode.watchedAt %}
                     <div class="episode-watched-at">{{ ux_icon('mdi:eye') }} {{ episode.watchedAt }}</div>
