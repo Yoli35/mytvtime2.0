@@ -672,6 +672,16 @@ label:has(input[type="text"]) {
                     position: relative;
                 }
             }
+
+            .separation {
+                background-color: var(--navbar-bg-75);
+                color: var(--orange-80);
+                flex-shrink: 0;
+                padding-block: 0.25rem;
+                margin-inline: -.5rem;
+                padding-inline: 1rem;
+                width: calc(100% + 1rem);
+            }
         }
     }
 
@@ -1291,16 +1301,6 @@ label:has(input[type="text"]) {
             right: 100%;
             top: 1rem;
         }
-    }
-
-    .separation {
-        background-color: var(--navbar-bg-75);
-        color: var(--orange-80);
-        flex-shrink: 0;
-        padding-block: 0.25rem;
-        margin-inline: -.5rem;
-        padding-inline: 1rem;
-        width: calc(100% + 1rem);
     }
 
     .a-preview {
