@@ -873,7 +873,6 @@ h2 {
                         width: 100%;
 
                         &.localized, &.additional {
-                            /*color: var(--orange-90);*/
                             font-weight: 100;
                             letter-spacing: .05rem;
                             position: relative;
@@ -882,12 +881,6 @@ h2 {
                                 border-radius: .5rem;
                                 margin-block-end: unset;
                                 padding: .5rem;
-                            }
-
-                            &:hover {
-                                .tools {
-                                    opacity: 1;
-                                }
                             }
 
                             .tools {
@@ -933,6 +926,20 @@ h2 {
                                         width: 1.75rem;
                                     }
                                 }
+                            }
+
+                            &:hover {
+                                .tools {
+                                    opacity: 1;
+                                }
+                            }
+
+                            &:nth-child(odd) {
+                                border-left: 4px solid hsl(from var(--orange) h s l / .5);
+                            }
+
+                            &:nth-child(even) {
+                                border-left: 4px solid hsl(from var(--green) h s l / .5);
                             }
                         }
                     }
@@ -4810,7 +4817,7 @@ h2 {
             .photo, .profile {
                 align-items: center;
                 background-color: var(--green-70);
-                border-radius: 1rem;
+                border-radius: 1rem 1rem 0 0;
                 color: var(--ardoise-10);
                 display: flex;
                 flex-direction: column;

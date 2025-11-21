@@ -3,6 +3,7 @@
 {% block title %}my Tv Time → {{ 'Series'|trans }} → {{ tv.localized_name.name ?? series.name }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/card.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/map.scss') }}">
