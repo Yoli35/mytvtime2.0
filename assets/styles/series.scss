@@ -3406,7 +3406,6 @@ h2 {
                         text-wrap: pretty;
 
                         .content {
-                            border-radius: .5rem;
                             margin-block-end: unset;
                             padding: .5rem;
                             position: relative;
@@ -3470,6 +3469,14 @@ h2 {
                                         }
                                     }
                                 }
+                            }
+
+                            &:nth-child(odd) {
+                                border-left: 4px solid hsl(from var(--orange) h s l / .5);
+                            }
+
+                            &:nth-child(even) {
+                                border-left: 4px solid hsl(from var(--green) h s l / .5);
                             }
                         }
                     }
