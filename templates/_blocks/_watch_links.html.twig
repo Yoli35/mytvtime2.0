@@ -1,6 +1,6 @@
 <div class="watch-links">
-    <div class="label">{{ 'Watch links'|trans }}</div>
-    <div class="label-small" data-title="{{ 'Watch links'|trans }}">{{ ux_icon('mdi:link-variant') }}</div>
+    <div class="label">{{ 'Watch on'|trans }}</div>
+    <div class="label-small" data-title="{{ 'Watch on'|trans }}">{{ ux_icon('mdi:link-variant') }}</div>
     {% for link in media.watchLinks %}
         <div class="watch-link" data-id="{{ link.id }}">
             <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">

@@ -239,6 +239,13 @@ This series is more than 2 years old: Cette série a plus de 2 ans
 Have you already watched it and want to mark all episodes as viewed?: L'avez-vous déjà regardée et souhaitez-vous marquer tous les épisodes comme vus ?
 
 # Series Show
+'%cast% has been added to the season cast': '%cast% a été ajoutés à la distribution de la saison'
+'%cast% has been added to the series cast': '%cast% a été ajoutés à la distribution de la série'
+'%cast% is already in the season cast': '%cast% fait déjà partie de la distribution de la saison'
+'%cast% is already in the series cast': '%cast% fait déjà partie de la distribution de la série'
+'%count% episodes have been removed from the series (%list%)': '%count% épisodes ont été supprimés de la série (%list%)'
+'An episode has been removed from the series (%id%)': 'Un épisode a été supprimé de la série (%id%)'
+'Episode %number% has been updated': "L'épisode %number% a été mis à jour"
 1 episode seen: 1 épisode vu
 A real binger!: Un vrai binge-watcher !
 A real marathoner!: Un vrai marathonien !
@@ -278,9 +285,9 @@ Choose a provider: Choisissez une plateforme
 Click to select, then paste your overview.: Cliquez pour sélectionner, puis collez votre aperçu.
 Collapse all videos: Réduire toutes les vidéos
 Continuing: Série en cours
-Copy: Copier
 Copy all: Tout copier
 Copy this watch link: Copier l'adresse du lien
+Copy: Copier
 Crew: Équipe
 Custom schedule: Horaire personnalisé
 Delay in days: Décalage en jour
@@ -293,6 +300,7 @@ Drop your additional images files here: Déposez vos images supplémentaires ici
 Drop your file here: Déposez votre fichier ici
 Drop your image file here: Déposez votre image ici
 Edit all episodes name and overview: Modifier le nom et l'aperçu de tous les épisodes
+Edit location: Modifier le lieu
 Edit this watch link: Modifier ce lien pour regarder
 Edit: Modifier
 Ended: Série terminée
@@ -301,19 +309,12 @@ Episode of the day: Épisode du jour
 Episode: Épisode
 Episodes of the day: Épisodes du jour
 Episodes: Épisodes
-'An episode has been removed from the series (%id%)': 'Un épisode a été supprimé de la série (%id%)'
-'%cast% has been added to the season cast': '%cast% a été ajoutés à la distribution de la saison'
-'%cast% has been added to the series cast': '%cast% a été ajoutés à la distribution de la série'
-'%cast% is already in the season cast': '%cast% fait déjà partie de la distribution de la saison'
-'%cast% is already in the series cast': '%cast% fait déjà partie de la distribution de la série'
-'%count% episodes have been removed from the series (%list%)': '%count% épisodes ont été supprimés de la série (%list%)'
-'Episode %number% has been updated': "L'épisode %number% a été mis à jour"
-Your episodes have been updated according to the series information.: Vos épisodes ont été mis à jour selon les informations de la série.
 Error → votes and episodes do not match: Erreur → les votes et les épisodes ne correspondent pas
 Expand all videos: Développer toutes les vidéos
 External sources: Sources externes
 Filming locations map: Carte des lieux de tournage
 First air date updated: Date de première diffusion mise à jour
+Fly to the location: Aller au lieu
 Give a rating: Donnez une note
 In Production: En Production
 In progress: Visionnage en cours
@@ -326,10 +327,12 @@ Last seen: 'Dernière vue :'
 Last to air: Dernier à diffuser
 Last to watch: Dernier épisode à voir
 Last watched series: Dernière séries regardées
+Loading filming locations…: Chargement des lieux de tournage…
 Local files: Fichiers depuis votre ordinateur
 Localized name: Nom localisé
 Localized overviews for the series: Aperçus localisés pour la série
 Localized overviews: Aperçus localisés
+Location marker: Marqueur de lieu
 Logo added: Logo ajouté
 Marathoner badge unlocked: Badge de marathonien débloqué
 Mark this episode as seen: Marquer cet épisode comme vu
@@ -342,6 +345,7 @@ New status: Nouveau statut
 Next episode air date updated: Date de diffusion du prochain épisode mise à jour
 Next episode to air: Prochain épisode
 Next episode to watch: Prochain épisode à voir
+Next image: Image suivante
 Next series: Série suivante
 No additional images currently selected for upload: Pas d'images supplémentaires actuellement sélectionnées pour le téléversement
 No date yet: Pas encore de date
@@ -374,13 +378,16 @@ Poster added: Affiche ajoutée
 Poster of the next series: Affiche de la série suivante
 Poster of the previous series: Affiche de la série précédente
 Poster updated: Affiche mise à jour
+Previous image: Image précédente
 Previous series: Série précédente
 Provider: Plateforme
+Purchase: Achat
 Quick day watch badge unlocked: Badge de visionnage rapide débloqué
 Quick week watch badge unlocked: Badge de visionnage rapide hebdomadaire débloqué
 Remove from favorites: Retirer des favoris
 Remove this series from your watchlist: Retirer cette série de votre liste de suivi
 Remove: Pas vu
+Rental: Location
 Returning Series: Série renouvelée
 Save: Enregistrer
 Schedules: Horaires
@@ -416,6 +423,7 @@ Special episodes: Épisodes spéciaux
 Specials: Épisodes spéciaux
 Status: Statut
 Still: Vignette
+Streaming: Streaming
 Suggest a localized name: Suggérer un nom localisé
 Suggest a name: Suggérer un nom
 Suggest a title: Suggérer un titre
@@ -447,18 +455,14 @@ Video Identifier (11 characters - i.e. 5KHgFEiPD4g): Identifiant de la vidéo (1
 Videos: Vidéos
 View date: Date de vue
 Vote: Voter
-Watch links: Liens pour regarder
 Watch on: Regarder sur
 Watched %time% times: Vu %time% fois
 Watched again: Vu à nouveau
 What to watch next?: Que regarder ensuite ?
 Where was "%name%" filmed?: Où a été filmé "%name%" ?
-Loading filming locations…: Chargement des lieux de tournage…
-Purchase: Achat
-Rental: Location
-Streaming: Streaming
 Yesterday: Hier
-available: disponible
+Your episodes have been updated according to the series information.: Vos épisodes ont été mis à jour selon les informations de la série.
+
 day: jour
 days: jours
 and: et
