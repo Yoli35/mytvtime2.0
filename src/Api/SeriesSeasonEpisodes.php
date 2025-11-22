@@ -149,7 +149,7 @@ class SeriesSeasonEpisodes extends AbstractController
                     $pathForColor = $this->getParameter('kernel.project_dir') . '/public/' . substr($path, 1);
                 }
 
-                $colors = $this->detectColors($pathForColor, 10);
+                $colors = $this->detectColors($pathForColor);
                 if ($colors === true) {
                     $colors = [
                         'bgcolor' => '#69968C',
