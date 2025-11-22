@@ -6,6 +6,7 @@
   "require": {
     "php": ">=8.4",
     "ext-ctype": "*",
+    "ext-exif": "*",
     "ext-gd": "*",
     "ext-iconv": "*",
     "ext-intl": "*",
@@ -30,6 +31,7 @@
     "symfony/form": "7.*",
     "symfony/framework-bundle": "7.*",
     "symfony/http-client": "7.*",
+    "symfony/http-foundation": "7.*",
     "symfony/intl": "7.*",
     "symfony/mailer": "7.*",
     "symfony/mime": "7.*",
@@ -60,8 +62,7 @@
     "twig/intl-extra": "^3.0",
     "twig/string-extra": "^3.17",
     "twig/twig": "^3.0",
-    "webonyx/graphql-php": "^15.14",
-    "ext-exif": "*"
+    "webonyx/graphql-php": "^15.14"
   },
   "config": {
     "allow-plugins": {
