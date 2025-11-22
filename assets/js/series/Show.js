@@ -503,52 +503,54 @@ export class Show {
             const mapViewValue = JSON.parse(seriesMap.getAttribute('data-symfony--ux-leaflet-map--map-view-value'));
             console.log({mapViewValue});
 
-            const locationsDiv = document.querySelector('.temp-locations');
+            const locationsDiv = document.querySelector('.locations');
             const imageDivs = locationsDiv.querySelectorAll('.image');
             let imageSrcLists = [];
             let currentImages = [];
             imageDivs.forEach(function (imageDiv, imageDivIndex) {
-                const isDB = imageDiv.classList.contains('db');
-                const listDiv = imageDiv.querySelector('.list');
-                let imageList;
-                if (listDiv) {
-                    if (isDB) {
-                        imageList = listDiv.querySelectorAll('img');
-                    } else {
-                        imageList = imageDiv.querySelectorAll('img');
-                    }
-                    imageList = Array.from(imageList);
-                    if (imageList.length > 1) {
-                        imageSrcLists[imageDivIndex] = imageList.map(function (image) {
-                            return {src: image.src};
-                        });
-                        const imageImg = imageDiv.querySelector('img');
-                        const leftArrow = imageDiv.querySelector('.arrow.left');
-                        const rightArrow = imageDiv.querySelector('.arrow.right');
-                        currentImages[imageDivIndex] = 0;
+                if (!imageDiv.classList.contains('help-text')) {
+                    const isDB = imageDiv.classList.contains('db');
+                    const listDiv = imageDiv.querySelector('.list');
+                    let imageList;
+                    if (listDiv) {
+                        if (isDB) {
+                            imageList = listDiv.querySelectorAll('img');
+                        } else {
+                            imageList = imageDiv.querySelectorAll('img');
+                        }
+                        imageList = Array.from(imageList);
+                        if (imageList.length > 1) {
+                            imageSrcLists[imageDivIndex] = imageList.map(function (image) {
+                                return {src: image.src};
+                            });
+                            const imageImg = imageDiv.querySelector('img');
+                            const leftArrow = imageDiv.querySelector('.arrow.left');
+                            const rightArrow = imageDiv.querySelector('.arrow.right');
+                            currentImages[imageDivIndex] = 0;
 
-                        leftArrow.addEventListener('click', function () {
-                            const lastIndex = imageSrcLists[imageDivIndex].length - 1;
-                            let i = currentImages[imageDivIndex];
-                            i = i === 0 ? lastIndex : (i - 1);
-                            currentImages[imageDivIndex] = i;
-                            imageImg.src = imageSrcLists[imageDivIndex][i].src;
-                        });
-                        rightArrow.addEventListener('click', function () {
-                            const lastIndex = imageSrcLists[imageDivIndex].length - 1;
-                            let i = currentImages[imageDivIndex];
-                            i = i === lastIndex ? 0 : (i + 1);
-                            currentImages[imageDivIndex] = i;
-                            imageImg.src = imageSrcLists[imageDivIndex][i].src;
-                        });
+                            leftArrow.addEventListener('click', function () {
+                                const lastIndex = imageSrcLists[imageDivIndex].length - 1;
+                                let i = currentImages[imageDivIndex];
+                                i = i === 0 ? lastIndex : (i - 1);
+                                currentImages[imageDivIndex] = i;
+                                imageImg.src = imageSrcLists[imageDivIndex][i].src;
+                            });
+                            rightArrow.addEventListener('click', function () {
+                                const lastIndex = imageSrcLists[imageDivIndex].length - 1;
+                                let i = currentImages[imageDivIndex];
+                                i = i === lastIndex ? 0 : (i + 1);
+                                currentImages[imageDivIndex] = i;
+                                imageImg.src = imageSrcLists[imageDivIndex][i].src;
+                            });
+                        }
                     }
+                    const editButton = imageDiv.querySelector('.edit');
+                    editButton.addEventListener('click', function () {
+                        const locationId = this.getAttribute('data-loc-id');
+                        const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
+                        gThis.openLocationPanel('update', location, translations['Update']);
+                    });
                 }
-                const editButton = imageDiv.querySelector('.edit');
-                editButton.addEventListener('click', function () {
-                    const locationId = this.getAttribute('data-loc-id');
-                    const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
-                    gThis.openLocationPanel('update', location, translations['Update']);
-                });
             });
         }
 
