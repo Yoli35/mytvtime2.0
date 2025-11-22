@@ -387,7 +387,7 @@ export class Map {
                 const lat = targetMapDiv.getAttribute('data-lat');
                 const lng = targetMapDiv.getAttribute('data-lng');
                 // Center map to location (lat, lng)
-                this.map.flyTo({center: [lng, lat], duration: 3000, zoom: 15, curve: 2,/* speed: 0.2,*/ easing: (n) => n});
+                this.map.flyTo({center: [lng, lat], duration: 5000, zoom: 15, curve: 2,easing: (n) => n, essential: true});
                 const markerElement = document.querySelector('div[data-target-id="' + locId + '"]');
                 if (markerElement) {
                     markerElement.click();

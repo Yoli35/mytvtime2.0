@@ -270,63 +270,62 @@
                     <div class="seasons">
                         {% for season in series.seasons %}
                             {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
-                                <div class="season">
-                                    <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: tv.localized_name.slug ?? series.slug}) }}"{#>#}
-                                    {#<div#} class="poster" data-title="{{ "Season poster"|trans }}">
-                                        {% if season.poster_path %}
-                                            <img src="{{ season.poster_path }}" alt="{{ season.name }}">
-                                        {% elseif series.posterPath %}
-                                            <img src="/series/posters{{ series.posterPath }}" alt="{{ season.name }}">
+                            <div class="season">
+                                <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: tv.localized_name.slug ?? series.slug}) }}"
+                                   class="poster" data-title="{{ "Season poster"|trans }}">
+                                    {% if season.poster_path %}
+                                        <img src="{{ season.poster_path }}" alt="{{ season.name }}">
+                                    {% elseif series.posterPath %}
+                                        <img src="/series/posters{{ series.posterPath }}" alt="{{ season.name }}">
+                                    {% else %}
+                                        <div>{{ 'No poster'|trans }}</div>
+                                    {% endif %}
+                                    <div class="number{% if viewedEpisodes and viewedEpisodes == season.episode_count %} complete{% endif %}">
+                                        {{ season.season_number }}
+                                    </div>
+                                </a>
+                                <div class="infos">
+                                    <div class="season__name">{{ season.name }}</div>
+                                    {% if season.overview %}
+                                        <div class="season__overview">{{ season.overview }}</div>
+                                    {% endif %}
+                                    <div class="season__air-date">{{ 'Air date'|trans }}
+                                        {% if season.final_air_date is defined %}
+                                            {{ date(season.final_air_date)|format_datetime('relative_long', 'short') }}
                                         {% else %}
-                                            <div>{{ 'No poster'|trans }}</div>
-                                        {% endif %}
-                                        <div class="number{% if viewedEpisodes and viewedEpisodes == season.episode_count %} complete{% endif %}">
-                                            {{ season.season_number }}
-                                        </div>
-                                    {#</div>#}
-                                    </a>
-                                    <div class="infos">
-                                        <div class="season__name">{{ season.name }}</div>
-                                        {% if season.overview %}
-                                            <div class="season__overview">{{ season.overview }}</div>
-                                        {% endif %}
-                                        <div class="season__air-date">{{ 'Air date'|trans }}
-                                            {% if season.final_air_date is defined %}
-                                                {{ date(season.final_air_date)|format_datetime('relative_long', 'short') }}
-                                            {% else %}
-                                                {% if season.air_date %}
-                                                    {{ date(season.air_date)|format_date('relative_long') }}
-                                                    {% if userSeries.lastSeason is not null and userSeries.lastSeason == season.season_number %}
-                                                        — {{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}
-                                                    {% endif %}
-                                                {% else %}
-                                                    {{ 'TBA'|trans }}
+                                            {% if season.air_date %}
+                                                {{ date(season.air_date)|format_date('relative_long') }}
+                                                {% if userSeries.lastSeason is not null and userSeries.lastSeason == season.season_number %}
+                                                    — {{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}
                                                 {% endif %}
-                                            {% endif %}
-                                        </div>
-                                        <div class="season__episodes">
-                                            {{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}
-                                            <div class="watched"></div>
-                                            {% if viewedEpisodes == 0 %}
-                                                {{ 'No episode seen'|trans }}
-                                            {% elseif viewedEpisodes == 1 %}
-                                                {{ '1 episode seen'|trans }}
-                                            {% elseif viewedEpisodes == season.episode_count %}
-                                                {{ 'All episodes seen'|trans }}
                                             {% else %}
-                                                {{ viewedEpisodes }} {{ 'episodes seen'|trans }}
+                                                {{ 'TBA'|trans }}
                                             {% endif %}
-                                        </div>
-                                        <div class="episode__cards" data-id="{{ series.id }}" data-tmdb-id="{{ series.tmdbId }}" data-season-number="{{ season.season_number }}" data-series-slug="{{ tv.localized_name.slug ?? series.slug }}"></div>
-                                        {% if userSeries.progress and series.userVotes|length %}
-                                            <div class="user-votes">
-                                                <div class="show-tab">{{ ux_icon('mdi:bar-chart') }}</div>
-                                                {% set uvs = series.userVotes[season.season_number] %}
-                                                {{ include('_blocks/series/_votes.html.twig', {scale: 0.5, type: 'entity', season_number: season.season_number, ues: uvs.ues, vas: uvs.avs}) }}
-                                            </div>
                                         {% endif %}
                                     </div>
+                                    <div class="season__episodes">
+                                        {{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}
+                                        <div class="watched"></div>
+                                        {% if viewedEpisodes == 0 %}
+                                            {{ 'No episode seen'|trans }}
+                                        {% elseif viewedEpisodes == 1 %}
+                                            {{ '1 episode seen'|trans }}
+                                        {% elseif viewedEpisodes == season.episode_count %}
+                                            {{ 'All episodes seen'|trans }}
+                                        {% else %}
+                                            {{ viewedEpisodes }} {{ 'episodes seen'|trans }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="episode__cards" data-id="{{ series.id }}" data-tmdb-id="{{ series.tmdbId }}" data-season-number="{{ season.season_number }}" data-series-slug="{{ tv.localized_name.slug ?? series.slug }}"></div>
+                                    {% if userSeries.progress and series.userVotes|length %}
+                                        <div class="user-votes">
+                                            <div class="show-tab">{{ ux_icon('mdi:bar-chart') }}</div>
+                                            {% set uvs = series.userVotes[season.season_number] %}
+                                            {{ include('_blocks/series/_votes.html.twig', {scale: 0.5, type: 'entity', season_number: season.season_number, ues: uvs.ues, vas: uvs.avs}) }}
+                                        </div>
+                                    {% endif %}
                                 </div>
+                            </div>
                         {% endfor %}
                     </div>
                     {% if tv.credits.cast|length %}
@@ -684,44 +683,52 @@
                     {% if locations|length %}
                         {% set loc = locations|first %}
                         {{ include('_blocks/map/_map_container.html.twig', {type: 'series', styleSettings: mapSettings.data.styles}) }}
-                        <div class="temp-locations">
-                            <div class="locations">
-                                <ul>
-                                    {% for location in locations %}
-                                        <li class="location-item" data-loc-id="{{ location.id }}">
-                                            <div class="image db">
-                                                <img src="/images/map{{ location.still_path }}" alt="{{ location.title }}">
-                                                {% if location.filmingLocationImages|length-1 %}
-                                                    <div class="count">
-                                                        {{ location.filmingLocationImages|length }}
-                                                    </div>
-                                                    <div class="arrow left">{{ ux_icon('mdi:arrow-left') }}</div>
-                                                    <div class="arrow right">{{ ux_icon('mdi:arrow-right') }}</div>
-                                                    <div class="list">
-                                                        {#                                                    <img src="{{ location.image }}" alt="{{ location.location ~ ' - ' ~ 'image'|trans ~ ' #1' }}"> #}
-                                                        {% for i in location.filmingLocationImages %}
-                                                            <img src="/images/map{{ i.path }}" alt="{{ location.title ~ ' - ' ~ 'image'|trans ~ ' #' ~ (loop.index + 1) }}">
-                                                        {% endfor %}
-                                                    </div>
-                                                {% endif %}
-                                                {% if location.season_number and location.episode_number %}
-                                                    <div class="episode">
-                                                        {{ 'S%02dE%02d'|format(location.season_number, location.episode_number) }}
-                                                    </div>
-                                                {% elseif location.season_number %}
-                                                    <div class="episode">
-                                                        {{ 'S%02d'|format(location.season_number) }}
-                                                    </div>
-                                                {% endif %}
-                                                <div class="edit" data-loc-id="{{ location.id }}">{{ ux_icon('mdi:pencil') }}</div>
-                                            </div>
-                                            <div class="location" data-loc-id="{{ location.id }}">
-                                                {{ location.location }}
-                                            </div>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
+                        <div class="locations">
+                            <ul>
+                                <li class="location-item">
+                                    <div class="image help-text">
+                                        <div><div class="icon">{{ ux_icon('mdi:map-marker') }}</div>{{ 'Location marker'|trans }}</div>
+                                        <div><div class="icon">{{ ux_icon('mdi:pencil') }}</div>{{ 'Edit location'|trans }}</div>
+                                        <div><div class="icon">{{ ux_icon('mdi:arrow-left') }}</div>{{ 'Previous image'|trans }}</div>
+                                        <div><div class="icon">{{ ux_icon('mdi:arrow-right') }}</div>{{ 'Next image'|trans }}</div>
+                                    </div>
+                                    <div class="location help-text">
+                                        {{ ux_icon('mdi:hand-back-right') }}{{ 'Fly to the location'|trans }}
+                                    </div>
+                                </li>
+                                {% for location in locations %}
+                                    <li class="location-item" data-loc-id="{{ location.id }}">
+                                        <div class="image db">
+                                            <img src="/images/map{{ location.still_path }}" alt="{{ location.title }}">
+                                            {% if location.filmingLocationImages|length-1 %}
+                                                <div class="count">
+                                                    {{ location.filmingLocationImages|length }}
+                                                </div>
+                                                <div class="arrow left">{{ ux_icon('mdi:arrow-left') }}</div>
+                                                <div class="arrow right">{{ ux_icon('mdi:arrow-right') }}</div>
+                                                <div class="list">
+                                                    {% for i in location.filmingLocationImages %}
+                                                        <img src="/images/map{{ i.path }}" alt="{{ location.title ~ ' - ' ~ 'image'|trans ~ ' #' ~ (loop.index + 1) }}">
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                            {% if location.season_number and location.episode_number %}
+                                                <div class="episode">
+                                                    {{ 'S%02dE%02d'|format(location.season_number, location.episode_number) }}
+                                                </div>
+                                            {% elseif location.season_number %}
+                                                <div class="episode">
+                                                    {{ 'S%02d'|format(location.season_number) }}
+                                                </div>
+                                            {% endif %}
+                                            <div class="edit" data-loc-id="{{ location.id }}">{{ ux_icon('mdi:pencil') }}</div>
+                                        </div>
+                                        <div class="location target-map" data-loc-id="{{ location.id }}" data-lat="{{ location.latitude }}" data-lng="{{ location.longitude }}">
+                                            {{ location.location }}
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
                         </div>
                     {% endif %}
                 </div>
