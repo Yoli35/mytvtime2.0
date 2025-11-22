@@ -109,7 +109,8 @@
                     </div>
                     <ul>
                         {% for h in history.list %}
-                            <li class="menu-item history-item" id="{{ h.episodeId }}">
+                            {% set ep = 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) %}
+                            <li class="menu-item history-item" id="{{ h.episodeId }}" data-title="{{ h.name }} - {{ ep }}">
                                 <a class="history" href="{{ path('app_series_season', {id: h.id, slug: h.name|slug, seasonNumber: h.seasonNumber}) }}">
                                     <div class="poster">
                                         {% if h.posterPath|length %}
@@ -119,7 +120,7 @@
                                         {% endif %}
                                     </div>
                                     <div class="name">{{ h.name }}</div>
-                                    <div class="number{% if h.progress==100 %} ended{% endif %}">{{ 'S%02dE%02d'|format(h.seasonNumber, h.episodeNumber) }}</div>
+                                    <div class="number{% if h.progress==100 %} ended{% endif %}">{{ ep }}</div>
                                     <div class="date">{{ h.lastWatchAt|format_datetime('relative_short', 'short') }}</div>
                                     <div class="vote{% if history.vote == 0 %} hidden{% endif %}">{% if h.vote %}{{ h.vote }}{% endif %}</div>
                                     <div class="device{% if history.device == 0 %} hidden{% endif %}">{% if h.deviceSvg %}{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}{% endif %}</div>
