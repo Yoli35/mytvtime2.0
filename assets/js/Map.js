@@ -94,7 +94,7 @@ export class Map {
                         this.addPoiMarker(point, index);
                     });
                     const poiMarkers = document.querySelectorAll('.poi-marker');
-                    console.log(poiMarkers);
+                    /*console.log(poiMarkers);*/
                     poiToggler.addEventListener('click', () => {
                         poiToggler.classList.toggle('active');
                         poiMarkers.forEach(marker => {
