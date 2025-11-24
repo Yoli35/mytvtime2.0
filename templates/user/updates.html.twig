@@ -9,22 +9,82 @@
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-    <div class="container-fluid user-profile-container"> {# ← light #}
+    <div class="container-fluid user-profile-container">
         <div class="site-updates">
-{#            <div class="toggle-theme">{{ ux_icon('mdi:sun-moon-stars') }}</div>#}
-{#            <script>#}
-{#                document.addEventListener('DOMContentLoaded', function () {#}
-{#                    const toggleTheme = document.querySelector('.toggle-theme');#}
-{#                    toggleTheme.addEventListener('click', function () {#}
-{#                        document.querySelector(".container-fluid").classList.toggle('light');#}
-{#                    });#}
-{#                });#}
-{#            </script>#}
             <div class="site-update glowing-border">
                 <div class="updates-title">
                     <h1>Mises à jour / Updates / {{ 'Updates'|trans(domain = 'messages', locale = 'ko') }}</h1>
                     <h4>myTvTime 2.0 : 18/09/2024</h4>
                 </div>
+            </div>
+            <div class="site-update glowing-border">
+                <h2>50ᵉ mise à jour : 24/11/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Adjust background and backdrop styles in series.scss</div>
+                        <div class="details">Increased background opacity for .user-actions and .quick-episodes from 0.25 to 0.5 for better visibility. Modified .backdrop height and inset values to improve layout and visual appearance.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Update map image and help-text styles</div>
+                        <div class="details">Increased the width of .image and .help-text elements from 15rem to 20rem, added a border to .help-text, and adjusted padding for better alignment and visual consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:map-outline') }}→ Skip help-text divs in location image handling</div>
+                        <div class="details">Updated the image handling logic to ignore divs with the 'help-text' class when initializing image carousels and edit buttons. This prevents errors and unintended behavior for non-image elements within the locations container.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Remove hardcoded color count in detectColors call</div>
+                        <div class="details">Updated the detectColors method call to no longer pass a hardcoded value of 10 for the color count, allowing the method to use its default behavior or internal logic.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Add map centering button to location info panel</div>
+                        <div class="details">Introduced a new button with a crosshairs icon to allow users to center the map on a specific location directly from the location info panel. The button includes data attributes for location ID, latitude, and longitude.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Wrap series name in link to series page</div>
+                        <div class="details">The series name in the cast buttons block is now wrapped in a link to the series show page, improving navigation for users.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update 'Watch links' label to 'Watch on' and improve FR translations</div>
+                        <div class="details">Changed the label 'Watch links' to 'Watch on' in relevant Twig templates for consistency. Updated and reorganized French translations, adding new keys for cast and episode actions, filming locations, and watch link features, while removing duplicates and improving translation order.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor history item to use episode code variable</div>
+                        <div class="details">Introduced a variable 'ep' to store the formatted episode code (SxxExx) for history items. Updated the markup to use this variable in both the data-title attribute and the episode number display, improving code readability and maintainability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Symfony/http-foundation added</div>
+                        <div class="details">The Symfony HttpFoundation component has a very powerful and flexible session subsystem which is designed to provide session management that you can use to store information about the user between requests through a clear object-oriented interface using a variety of session storage drivers.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:map-outline') }}→ Improve map UI and add help text for locations</div>
+                        <div class="details">Extended map flyTo animation duration and added 'essential' flag in Map.js. Refactored map.scss to clean up height variables and styles, and introduced new styles for help-text UI elements. Updated show.html.twig to add a help-text row explaining map controls above the locations list, and improved markup structure for season and location displays.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add alternating border colors to .content elements</div>
+                        <div class="details">Removed border-radius from .content and introduced left borders with different colors for odd and even .content elements to improve visual distinction.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}→ Refactor menu structure and add icon tooltips</div>
+                        <div class="details">Reorganized the navigation menu for improved clarity, adding section separators and grouping related items. Enhanced accessibility by adding 'data-title' tooltips to menu icons and updated French translations for new menu labels.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve episode card layout and add trash icon</div>
+                        <div class="details">Refactored the episode card to always show air date and runtime containers, displaying their content conditionally. Added a trash icon to the season template for additional UI functionality.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Enhance series page styles and add card stylesheet</div>
+                        <div class="details">Refactored SCSS for series page: improved hover behavior, added alternating border colors for localized/additional items, and adjusted border radius for photo/profile sections. Included card.scss in the series show template for additional styling.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:administrator') }}→ Update user avatar styles in admin panel</div>
+                        <div class="details">Added flex-shrink: 0 to .user__avatar and reordered height and width properties for consistency. This improves avatar layout within flex containers.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add preview toggler and improve card tooltips</div>
+                        <div class="details">Introduces a preview toggler button to the global tools bar and updates related JS logic for toggling preview mode. Refactors card includes to pass a dataTitle for improved tooltip support, and updates styles for the new global tools layout. Also removes a debug dump from SeriesController.</div>
+                    </li>
+                </ul>
             </div>
             <div class="site-update glowing-border">
                 <h2>49ᵉ mise à jour : 20/11/2025</h2>
@@ -76,7 +136,7 @@
                 <ul>
                     <li>
                         <div class="change">{{ ux_icon('mdi:language-javascript') }}→ Replace text references with translations in Season.js</div>
-                        <div class="details">Updated all occurrences of gThis.text to gThis.translations for setting data-title and placeholder attributes. This change improves internationalization support by ensuring UI strings are sourced from the translations object.</div>
+                        <div class="details">Updated all occurrences of "gThis.text" to "gThis.translations" for setting data-title and placeholder attributes. This change improves internationalization support by ensuring UI strings are sourced from the translations object.</div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Add outline styling to series and user components</div>
@@ -823,7 +883,7 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:language-css3') }}→ Refactor theme and color variables for CSS and JS</div>
-                        <div class="details">Updated theme management in Menu.js to use data-theme on :root and removed legacy body class logic. Refactored SCSS variables to use light-dark() and consolidated color variables, replacing many --grey and --ardoise references with new variables. Updated all stylesheets to use the new color variables and gradients, improving consistency and maintainability for light/dark themes.</div>
+                        <div class="details">Updated theme management in Menu.js to use data-theme on :root and removed legacy body class logic. Refactored SCSS variables to use light-dark() and consolidated color variables, replacing many "--grey" and --ardoise references with new variables. Updated all stylesheets to use the new color variables and gradients, improving consistency and maintainability for light/dark themes.</div>
                     </li>
                 </ul>
             </div>
@@ -1015,7 +1075,7 @@
                         <div class="details">Consolidated 'sizes', 'aspect-ratios', and 'edit-episode-infos' into a unified 'user-actions' class in both HTML and JS selectors. Updated SCSS to style the new structure, removed redundant classes, and improved selector specificity. Also added a null check for the filming locations button event listener.</div>
                     </li>
                     <li>
-                        <div class="change">{{ ux_icon('mdi:bug-outline') }}→ The killer death bug who kills… javascript!</div>
+                        <div class="change">{{ ux_icon('mdi:bug-outline') }}→ The killer death bug who kills… JavaScript!</div>
                         <div class="details">It's like desactivate javascript</div>
                     </li>
                     <li>
@@ -1528,13 +1588,13 @@
                     <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ User Profile page: theme toggler</li>
                     <li><span class="feature">{{ ux_icon('mdi:feature-highlight') }}</span>→ Episode schedules: "Selected days" frequency</li>
                     <li><span class="improvement">{{ ux_icon('mdi:arrow-top-right') }}</span>→ Videos page: better display on small devices</li>
-                    <li><span class="css">{{ ux_icon('mdi:language-css3') }}</span>→ css corrections here and there...</li>
+                    <li><span class="css">{{ ux_icon('mdi:language-css3') }}</span>→ CSS corrections here and there...</li>
                 </ul>
             </div>
             <div class="site-update glowing-border">
                 16ᵉ mise à jour : 05/06/2025<br>
                 <ul>
-                    <li>→ Series crew css (no image profile)</li>
+                    <li>→ Series crew CSS (no image profile)</li>
                     <li>→ Network & provider update command</li>
                     <li>→ Series network logos display fixed</li>
                     <li>→ Commands: Invokable Commands and Input Attributes - new in 7.3</li>
@@ -1553,7 +1613,7 @@
             <div class="site-update glowing-border">
                 15ᵉ mise à jour : 29/05/2025<br>
                 <ul>
-                    <li>→ Videos: sql optimizations, time to watch YT, pagination, categories</li>
+                    <li>→ Videos: SQL optimizations, time to watch YT, pagination, categories</li>
                     <li>→ Symfony 7.3</li>
                     <li>→ Layout: footer outside the container</li>
                     <li>→ Movie search page (Menu movie)</li>
