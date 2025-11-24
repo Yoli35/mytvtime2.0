@@ -371,7 +371,7 @@
                 .image {
                     aspect-ratio: 16/9;
                     position: relative;
-                    width: 15rem;
+                    width: 20rem;
 
                     &.db {
                         border: 2px solid var(--orange-50);
@@ -381,6 +381,7 @@
                     &.help-text {
                         align-items: flex-start;
                         background-color: var(--green);
+                        border: 2px solid var(--orange-50);
                         border-radius: .375rem .375rem 0 0;
                         color: var(--ardoise-10);
                         display: flex;
@@ -389,7 +390,7 @@
                         font-weight: 500;
                         gap: .25rem;
                         justify-content: center;
-                        padding-inline-start: 1rem;
+                        padding-inline-start: 2rem;
 
                         > div {
                             align-items: center;
@@ -508,7 +509,7 @@
                     padding-inline: .5rem;
                     text-align: center;
                     text-wrap: balance;
-                    width: 15rem;
+                    width: 20rem;
 
                     &.poi {
                         flex-direction: column;
