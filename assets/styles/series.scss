@@ -993,7 +993,7 @@ h2 {
 
                 .no-air-date {
                     background-color: var(--orange-50);
-                    border-radius: .25rem;
+                    border-radius: 5rem;
                     color: var(--ardoise-10);
                     font-size: 2rem;
                     font-weight: 300;
@@ -1008,7 +1008,7 @@ h2 {
         .progress {
             background-color: var(--orange-20);
             border: .125rem solid var(--orange-50);
-            border-radius: 999px;
+            border-radius: 5rem;
             bottom: 1rem;
             color: transparent;
             height: 1rem;
@@ -1137,14 +1137,14 @@ h2 {
             .keyword {
                 align-items: center;
                 background-color: var(--green-50);
-                border-radius: .25rem;
+                border-radius: 5rem;
                 color: var(--orange-90);
                 display: flex;
                 font-size: clamp(1rem, 1vw, 1.5rem);
                 font-weight: 300;
                 gap: .25rem;
                 justify-content: center;
-                padding: clamp(.125rem, .25vw, .5rem) clamp(.375rem, .75vw, 1rem);
+                padding: clamp(.125rem, .25vw, .5rem) clamp(1rem, 1vw, 1.5rem);
                 position: relative;
 
                 &.missing {
