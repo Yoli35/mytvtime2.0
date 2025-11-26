@@ -314,10 +314,67 @@ export class Menu {
             personSearch.addEventListener("input", gThis.searchFetch);
             personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
-            multiSearchDiv.addEventListener("click", () => {
-                multiSearchDiv.classList.add("active");
-                multiSearch.focus();
+            const magnifyingGlassSpan = multiSearchDiv.querySelector(".magnifying-glass");
+            magnifyingGlassSpan.addEventListener("click", () => {
+                multiSearchDiv.classList.toggle("active");
+                if (multiSearchDiv.classList.contains("active")) {
+                    multiSearch.focus();
+                }
             });
+            const multiSearchOptionsButton = multiSearchDiv.querySelector(".multi-search-options-button");
+            const multiSearchOptionsMenu = multiSearchDiv.querySelector(".multi-search-options-menu");
+            const multiSearchOptions = multiSearchOptionsMenu.querySelectorAll(".multi-search-option");
+            multiSearchOptionsButton.addEventListener("click", () => {
+                multiSearchOptionsMenu.classList.toggle("active");
+            });
+            multiSearchOptions.forEach(option => {
+                option.addEventListener("click", () => {
+                    if (option.classList.contains("active")) {
+                        return;
+                    }
+                    const newValue = option.getAttribute("data-value");
+                    // On assigne la nouvelle option
+                    multiSearchDiv.querySelector("ul").setAttribute("data-sub-type", newValue);
+                    // On modifie le placeholder
+                    multiSearch.setAttribute("placeholder", option.innerText);
+                    // On active la nouvelle option
+                    multiSearchOptions.forEach(option => {
+                        option.classList.remove("active");
+                    });
+                    option.classList.add("active");
+                    // On ferme le menu
+                    multiSearchOptionsMenu.classList.toggle("active");
+                    // On met le focus sur le champ de recherche
+                    multiSearch.focus();
+                    // On sauve l'option dans un cookie
+                    gThis.setMultiSearchOptionCookie(newValue);
+                    // On relance la recherche
+                    gThis.searchFetch({target: multiSearch});
+                });
+            });
+
+            const cookie = document.cookie;
+            let initialValue = "multi";
+            if (cookie) {
+                const re = new RegExp(/mytvtime_2_multi_search_sub_type=(\w+);/);
+                const result = re.exec(cookie);
+                if (result) {
+                    initialValue = result[1];
+                }
+            }
+            if (initialValue !== "multi") {
+                // On assigne la nouvelle option
+                multiSearchDiv.querySelector("ul").setAttribute("data-sub-type", initialValue);
+                const option = multiSearchOptionsMenu.querySelector("div[data-value=\"" + initialValue + "\"]")
+                // On modifie le placeholder
+                multiSearch.setAttribute("placeholder", option.innerText);
+                // On active la nouvelle option
+                multiSearchOptions.forEach(option => {
+                    option.classList.remove("active");
+                });
+                option.classList.add("active");
+            }
+
             multiSearch.addEventListener("input", gThis.searchFetch);
             multiSearch.addEventListener("keydown", gThis.searchMenuNavigate);
         }
@@ -329,6 +386,12 @@ export class Menu {
                 historyOption.addEventListener("change", this.reloadHistory);
             });
         }
+    }
+
+    setMultiSearchOptionCookie(multiSearchSubType) {
+        const date = new Date();
+        date.setTime(date.getTime() + 365 * 24 * 60 * 60 * 1000);
+        document.cookie = "mytvtime_2_multi_search_sub_type=" + multiSearchSubType + ";expires=" + date.toUTCString() + ";path=/";
     }
 
     addAuxClickListener(a) {
@@ -422,9 +485,10 @@ export class Menu {
             return;
         }
         const searchType = ul.getAttribute("data-type");
+        const searchSubType = ul.getAttribute("data-sub-type");
         const baseHref = "/" + gThis.lang + "/";
 
-        const url = gThis.apiEndPoints[searchType];
+        const url = gThis.apiEndPoints[searchSubType || searchType];
         const options = {
             method: 'POST',
             headers: {
@@ -449,7 +513,7 @@ export class Menu {
                 }
 
                 json.results.forEach((result, index) => {
-                    const type = result['media_type'] || searchType; // Pour les résultats de recherche multi
+                    const type = result['media_type'] || searchSubType || searchType; // Pour les résultats de recherche multi
                     if (type === 'collection') {
                         console.log({index});
                         console.log({result});
@@ -472,7 +536,7 @@ export class Menu {
                         a.setAttribute("name", result['name'].toString());
                         a.addEventListener("click", e => {
                             castNameInput.removeEventListener("input", gThis.searchFetch);
-                            castNameInput.addEventListener("input", e => {
+                            castNameInput.addEventListener("input", () => {
                                 castNameInput.addEventListener("input", gThis.searchFetch); // Same type & listener do not add event listener
                             });
                             hiddenInputPersonId.value = a.getAttribute("person-id");
@@ -702,7 +766,7 @@ export class Menu {
         const theme = e.currentTarget.getAttribute("data-theme");
 
         // if (!document.startViewTransition) {
-            gThis.updateTheme(theme);
+        gThis.updateTheme(theme);
         // } else {
         //     document.startViewTransition(() => {
         //         gThis.updateTheme(theme);

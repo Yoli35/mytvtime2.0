@@ -14,7 +14,7 @@
                     <div class="menu-item"><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'My movies'|trans }}</a></div>
                     <div class="menu-item"><a href="{{ path('app_movie_favorite_index') }}" class="desktop">{{ 'My favorite movies'|trans }}</a></div>
                     <div class="separation">{{ 'Search'|trans }}</div>
-                    <div class="menu-item">
+                    {#<div class="menu-item">
                         <label for="movie-search">
                             <input type="search" id="movie-search" data-type="movie" class="search" spellcheck="false">
                             {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
@@ -22,7 +22,7 @@
                         <div class="search-results __movie">
                             <ul data-type="movie"></ul>
                         </div>
-                    </div>
+                    </div>#}
                     <div class="menu-item"><a href="{{ path('app_movie_search') }}" class="desktop">{{ 'Search'|trans }}</a></div>
                 </div>
             </div>
@@ -42,24 +42,24 @@
                     <div class="menu-item"><a href="{{ path('app_map_index') }}" class="desktop">{{ 'All locations'|trans }}</a></div>
                     <div class="menu-item"><a href="{{ path('app_map_last', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></div>
                     <div class="separation">{{ 'Search'|trans }}</div>
-                    <div class="menu-item">
-                        <label for="tv-search">
-                            <input type="search" id="tv-search" data-type="tv" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}">
-                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                        </label>
-                        <div class="search-results __series">
-                            <ul data-type="tv"></ul>
-                        </div>
-                    </div>
-                    <div class="menu-item">
-                        <label for="tv-search-db">
-                            <input type="search" id="tv-search-db" data-type="db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}">
-                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                        </label>
-                        <div class="search-results __db_series">
-                            <ul data-type="dbtv"></ul>
-                        </div>
-                    </div>
+{#                    <div class="menu-item">#}
+{#                        <label for="tv-search">#}
+{#                            <input type="search" id="tv-search" data-type="tv" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}">#}
+{#                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}#}
+{#                        </label>#}
+{#                        <div class="search-results __series">#}
+{#                            <ul data-type="tv"></ul>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class="menu-item">#}
+{#                        <label for="tv-search-db">#}
+{#                            <input type="search" id="tv-search-db" data-type="db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}">#}
+{#                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}#}
+{#                        </label>#}
+{#                        <div class="search-results __db_series">#}
+{#                            <ul data-type="dbtv"></ul>#}
+{#                        </div>#}
+{#                    </div>#}
                     {% if app.user %}
                         <div class="menu-item"><a href="{{ path('app_series_search_db') }}">{{ 'Among your series'|trans }}</a></div>
                     {% endif %}
@@ -72,16 +72,16 @@
                 <div class="menu people">
                     <div class="menu-item"><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></div>
                     <div class="menu-item"><a href="{{ path('app_people_star') }}" class="desktop">{{ 'Star people'|trans }}</a></div>
-                    <div class="separation">{{ 'Search'|trans }}</div>
-                    <div class="menu-item">
-                        <label for="person-search">
-                            <input type="search" id="person-search" data-type="person" class="search" spellcheck="false">
-                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
-                        </label>
-                        <div class="search-results __people">
-                            <ul data-type="people"></ul>
-                        </div>
-                    </div>
+{#                    <div class="separation">{{ 'Search'|trans }}</div>#}
+{#                    <div class="menu-item">#}
+{#                        <label for="person-search">#}
+{#                            <input type="search" id="person-search" data-type="person" class="search" spellcheck="false">#}
+{#                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}#}
+{#                        </label>#}
+{#                        <div class="search-results __people">#}
+{#                            <ul data-type="people"></ul>#}
+{#                        </div>#}
+{#                    </div>#}
                 </div>
             </div>
             <div class="navbar-item">
@@ -192,13 +192,24 @@
     {% if app.user %}
         <div class="multi-search">
             <label for="multi-search">
-                <input type="search" id="multi-search" data-type="multi" class="search" spellcheck="false">
+                <input type="search" id="multi-search" data-type="multi" data-sub-type="all" class="search" placeholder="{{ 'Movies, series, actors…'|trans }}" spellcheck="false">
+                <span class="multi-search-options-button" data-title="{{ 'Search options'|trans }}">
+                    {{ ux_icon('mdi:ellipsis-horizontal', {height: '16px', width:'16px'}) }}
+                </span>
                 <span class="magnifying-glass">
                     {{ ux_icon('mdi:search', {height: '16px', width:'16px'}) }}
                 </span>
             </label>
+            <div id="multi-search-options" class="multi-search-options-menu">
+                <div class="multi-search-option active" data-value="multi">{{ 'Movies, series, actors…'|trans }}</div>
+                <div class="multi-search-option" data-value="movie">{{ 'Movies'|trans }}</div>
+                <div class="multi-search-option" data-value="tv">{{ 'Series'|trans }}</div>
+                <div class="multi-search-option" data-value="people">{{ 'People'|trans }}</div>
+                <div class="multi-search-option-separator"></div>
+                <div class="multi-search-option" data-value="dbtv">{{ 'Your series'|trans }}</div>
+            </div>
             <div class="search-results __multi">
-                <ul data-type="multi"></ul>
+                <ul data-type="multi" data-sub-type="multi"></ul>
             </div>
         </div>
     {% endif %}
