@@ -32,6 +32,10 @@
                     <div class="backdrop">
                         <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">
                     </div>
+                {% elseif series.posterPath %}
+                    <div class="backdrop">
+                        <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
+                    </div>
                 {% endif %}
                 <div class="poster">
                     {% if series.posterPath %}
