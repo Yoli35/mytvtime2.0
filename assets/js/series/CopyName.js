@@ -1,7 +1,6 @@
 export class CopyName {
     constructor(parentElement) {
         const spans = parentElement.querySelectorAll('span');
-        console.log({spans});
         spans.forEach(span => {
             const copySvg = document.querySelector('#svgs').querySelector('svg[id="copy"]').cloneNode(true);
             copySvg.removeAttribute('id');
