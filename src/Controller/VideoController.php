@@ -74,7 +74,11 @@ final class VideoController extends AbstractController
         if ($newLink) {
             $link = $this->parseLink($newLink);
             if ($link) {
-                $this->addVideo($link, $now);
+                $newId = $this->addVideo($link, $now);
+                return $this->redirectToRoute('app_video_show', [
+                    'id' => $newId,
+                    'page' => 1,
+                ]);
             } else {
                 $this->addFlash('error', 'Invalid YouTube link: "' . $newLink . '"<br> Please provide a valid YouTube link.');
             }
@@ -313,7 +317,7 @@ final class VideoController extends AbstractController
         }
     }
 
-    private function addVideo(string $link, DateTimeImmutable $now): void
+    private function addVideo(string $link, DateTimeImmutable $now): int
     {
         $video = $this->videoRepository->findOneBy(['link' => $link]);
         if (!$video) {
@@ -328,6 +332,7 @@ final class VideoController extends AbstractController
         } else {
             $this->addFlash('error', 'You already added this video: "' . $link . '"<br> Please provide a different YouTube link.');
         }
+        return $userVideo->getId();
     }
 
     private function checkVideo(?Video $video, DateTimeImmutable $now): void
