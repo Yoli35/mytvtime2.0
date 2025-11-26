@@ -1,4 +1,5 @@
 import {AddCast} from 'AddCast';
+import {CopyName} from "CopyName";
 import {Diaporama} from 'Diaporama';
 import {FlashMessage} from "FlashMessage";
 import {Keyword} from 'Keyword';
@@ -141,6 +142,11 @@ export class Show {
                 }, 1000);
             }
         }
+
+        /******************************************************************************
+         * Add a copy badge to name and localized name                                *
+         ******************************************************************************/
+        new CopyName(document.querySelector('.header .name h1'));
 
         /******************************************************************************
          * Fetch episode stills for each season                                       *

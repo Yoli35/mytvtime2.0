@@ -1,5 +1,6 @@
 import {AddCast} from "AddCast";
 import {AverageColor} from 'AverageColor';
+import {CopyName} from "CopyName";
 import {FlashMessage} from "FlashMessage";
 import {Map} from "Map";
 import {ToolTips} from 'ToolTips';
@@ -141,6 +142,11 @@ export class Season {
          * Animation for the progress bar                                             *
          ******************************************************************************/
         this.setProgress();
+
+        /******************************************************************************
+         * Add a copy badge to name and localized name                                *
+         ******************************************************************************/
+        new CopyName(document.querySelector('.header .name h1'));
 
         /******************************************************************************
          * Menu to add a localized name or an overview and additional overview        *

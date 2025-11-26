@@ -34,6 +34,9 @@ return [
     'AverageColor' => [
         'path' => './assets/js/images/AverageColor.js',
     ],
+    'CopyName' => [
+        'path' => './assets/js/series/CopyName.js',
+    ],
     'Diaporama' => [
         'path' => './assets/js/images/Diaporama.js',
     ],

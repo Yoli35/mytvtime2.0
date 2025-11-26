@@ -849,6 +849,28 @@ h2 {
                         .localization-span, .from-schedule {
                             font-weight: 300;
                         }
+
+                        span {
+                            position: relative;
+
+                            svg {
+                                cursor: pointer;
+                                fill: var(--ardoise-10);
+                                fill-opacity: 0;
+                                height: 2rem;
+                                position: absolute;
+                                right: -2rem;
+                                top: 50%;
+                                transform: translateY(-50%);
+                                width: 2rem;
+                            }
+
+                            &:hover {
+                                svg {
+                                    fill-opacity: 1;
+                                }
+                            }
+                        }
                     }
                 }
 
