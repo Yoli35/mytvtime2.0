@@ -3,7 +3,7 @@
     background-color: var(--ardoise-90);
     border-radius: .5rem;
     color: var(--ardoise-10);
-    height: max(18rem, 24vh, 24vw);
+    height: max(18rem, 24vmax);
 
     &.tmdb {
         .infos {
@@ -12,7 +12,7 @@
             border-radius: 0 0 .5rem .5rem;
             display: flex;
             flex-direction: column;
-            height: max(3rem, 4vh,4vw);
+            height: max(3rem, 4vmax);
             justify-content: center;
             max-width: 100%;
 
@@ -38,7 +38,7 @@
             color: var(--ardoise-10);
             display: flex;
             flex-shrink: 0;
-            height: max(15rem, 20vh, 20vw);
+            height: max(15rem, 20vmax);
             justify-content: center;
             position: relative;
 
@@ -257,9 +257,9 @@
             border-radius: 0 0 .5rem .5rem;
             display: flex;
             flex-shrink: 0;
-            font-size: max(1rem, 1.25vh,1.25vw);
+            font-size: max(1rem, 1.25vmax);
             font-weight: 500;
-            height: max(3rem, 4vh, 4vw);
+            height: max(3rem, 4vmax);
             justify-content: center;
             line-height: 1em;
             overflow-y: auto;

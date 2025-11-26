@@ -60,6 +60,30 @@ h2 {
                 }
             }
         }
+
+        .clamp-display {
+            background-color: var(--orange-30);
+            border-radius: .375rem;
+            border: 2px dashed var(--orange-60);
+            color: var(--orange-90);
+            cursor: pointer;
+            margin-inline-start: auto;
+            padding: .25rem .5rem;
+
+            em {
+                background-color: var(--green);
+                border-radius: .25rem;
+                color: var(--green-10);
+                font-style: normal;
+                padding: .125rem .5rem;
+            }
+
+            &.active {
+                background-color: var(--green-50);
+                border: 2px solid var(--green-70);
+                color: var(--green-10);
+            }
+        }
     }
 
     .new-line {
@@ -4501,12 +4525,12 @@ h2 {
                 }
 
                 .user-vote {
-                    background-color: hsla(from var(--green-40), h s l / .4);
+                    background-color: hsla(from var(--green-40) h s l / .4);
                     border: 2px solid var(--green-20);
                 }
 
                 .dashed-vote {
-                    background-color: hsla(from var(--green-40), h s l / .1);
+                    background-color: hsla(from var(--green-40) h s l / .1);
                     border: 1px dashed var(--green-30);
                     height: 10rem;
                 }

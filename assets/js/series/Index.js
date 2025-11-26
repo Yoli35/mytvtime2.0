@@ -10,7 +10,10 @@ import {FlashMessage} from "FlashMessage";
 export class Index {
     constructor() {
         this.init = this.init.bind(this);
-        this.startDate = new Date();
+        this.clampDisplay = this.clampDisplay.bind(this);
+        this.clampCalc = this.clampCalc.bind(this);
+        this.toFix = this.toFix.bind(this);
+        // this.startDate = new Date();
         this.flashMessage = new FlashMessage();
         this.lang = document.querySelector('html').getAttribute('lang');
         this.translations = {
@@ -21,6 +24,8 @@ export class Index {
 
     init(globs, menu) {
         console.log("Index.js loaded");
+        // this.clampDisplay();
+
         this.seriesId = globs.tmdbIds;
         this.app_series_tmdb_check = globs.app_series_tmdb_check;
         this.menu = menu;
@@ -52,7 +57,7 @@ export class Index {
             const tmdbCalls = data['tmdbCalls'];
             // this.flashMessage.add('success', 'Check count: ' + tmdbCalls + ' / ' + checkCount);
             this.flashMessage.add('success', this.translations[this.lang]['check_count'].replace('%d', tmdbCalls).replace('%d', checkCount));
-                updates.forEach((series) => {
+            updates.forEach((series) => {
                 const updates = series['updates'];
                 if (updates.length > 0) {
                     // On crée un nouveau flash message
@@ -79,5 +84,38 @@ export class Index {
         }).catch((error) => {
             console.error("Fetch error:", error);
         });
+    }
+
+    // clamp(-8rem, calc(-0.1 * max(18rem, 24vmax)), -11rem)
+    // Display the 3 parameters of clamp CSS function
+    clampDisplay() {
+        let displayDiv = document.querySelector('.clamp-display');
+        if (!displayDiv) {
+            const h2 = document.querySelector('h2');
+            displayDiv = document.createElement('div');
+            displayDiv.classList.add('clamp-display');
+            h2.appendChild(displayDiv);
+        }
+
+        this.clampCalc();
+        window.addEventListener('resize', this.clampCalc);
+    }
+
+    clampCalc() {
+        const displayDiv = document.querySelector('.clamp-display');
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        let temp = windowWidth > windowWidth ? windowWidth : window.innerWidth;
+        const vmax = this.toFix(temp);
+        temp = .24 * vmax;
+        const calc_24 = this.toFix(temp);
+        temp = -.1 * Math.max(288, .24 * vmax);
+        const calc_0_1 = this.toFix(temp);
+
+        displayDiv.innerHTML = "<em>" + windowWidth + "</em>x<em>" + windowHeight + "</em>px - clamp(-128px, calc(-0.1 * max(288px, 24vmax<em>" + calc_24 + "</em>px))<em>" + calc_0_1 + "</em>, -176px)";
+    }
+
+    toFix(x) {
+        return Number.parseFloat(x).toFixed(1);
     }
 }
