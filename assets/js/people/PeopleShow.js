@@ -144,8 +144,6 @@ export class PeopleShow {
 
     hidePoster(e) {
         const poster = document.querySelector(".person").querySelector(".poster-hover");
-        // poster.classList.remove("show");
-        console.log(e);
         if (poster.classList.contains("show") && e.type === "click") {
             e.preventDefault();
         }
@@ -215,7 +213,6 @@ export class PeopleShow {
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 const leftColumn = document.querySelector(".left-column");
                 const preferredNameInfos = leftColumn.querySelector(".preferred-name-infos");
                 const newBlockDiv = document.createElement("div");
