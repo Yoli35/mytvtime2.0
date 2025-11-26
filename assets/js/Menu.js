@@ -177,10 +177,10 @@ export class Menu {
         const pinnedMenuItems = document.querySelectorAll("a[id^='pinned-menu-item-']");
         const seriesInProgress = document.querySelector("a[id^='sip-menu-item-']");
         const notifications = document.querySelector(".notifications");
-        const movieSearch = navbar.querySelector("#movie-search");
-        const tvSearch = navbar.querySelector("#tv-search");
-        const tvSearchDb = navbar.querySelector("#tv-search-db");
-        const personSearch = navbar.querySelector("#person-search");
+        // const movieSearch = navbar.querySelector("#movie-search");
+        // const tvSearch = navbar.querySelector("#tv-search");
+        // const tvSearchDb = navbar.querySelector("#tv-search-db");
+        // const personSearch = navbar.querySelector("#person-search");
         const multiSearch = navbar.querySelector("#multi-search");
         const multiSearchDiv = navbar.querySelector(".multi-search");
         const historyNavbarItem = navbar.querySelector("#history-menu");
@@ -301,18 +301,18 @@ export class Menu {
             this.markNotificationsAsRead();
         });
 
-        if (movieSearch) {
-            movieSearch.addEventListener("input", gThis.searchFetch);
-            movieSearch.addEventListener("keydown", gThis.searchMenuNavigate);
+        if (multiSearch) {
+            // movieSearch.addEventListener("input", gThis.searchFetch);
+            // movieSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
-            tvSearch.addEventListener("input", gThis.searchFetch);
-            tvSearch.addEventListener("keydown", gThis.searchMenuNavigate);
+            // tvSearch.addEventListener("input", gThis.searchFetch);
+            // tvSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
-            tvSearchDb.addEventListener("input", gThis.searchFetch);
-            tvSearchDb.addEventListener("keydown", gThis.searchMenuNavigate);
+            // tvSearchDb.addEventListener("input", gThis.searchFetch);
+            // tvSearchDb.addEventListener("keydown", gThis.searchMenuNavigate);
 
-            personSearch.addEventListener("input", gThis.searchFetch);
-            personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
+            // personSearch.addEventListener("input", gThis.searchFetch);
+            // personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
 
             const magnifyingGlassSpan = multiSearchDiv.querySelector(".magnifying-glass");
             magnifyingGlassSpan.addEventListener("click", () => {
