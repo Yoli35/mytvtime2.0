@@ -362,10 +362,12 @@
                                         <div class="back-to-top" data-title="{{ 'Back to top'|trans }}">
                                             {{ ux_icon('mdi:arrow-up') }}
                                         </div>
-                                        <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}">
-                                            <div class="back-to-series" data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.series_localized_name %}{{ season.series_localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»">
+                                        <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}"
+                                           class="back-to-series"
+                                           data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.series_localized_name %}{{ season.series_localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»">
+{#                                            <div class="back-to-series" data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.series_localized_name %}{{ season.series_localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»">#}
                                                 {{ ux_icon('mdi:arrow-left') }}
-                                            </div>
+{#                                            </div>#}
                                         </a>
                                     </div>
                                 </div>

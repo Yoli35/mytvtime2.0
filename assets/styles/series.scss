@@ -2554,17 +2554,18 @@ h2 {
 .add-backdrop-dialog,
 .add-all-backdrops-dialog,
 .add-video-dialog {
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     background-color: var(--orange-30-alpha-75);
     border-color: var(--orange-50);
-    border-radius: .5rem;
+    border-radius: 1rem;
     gap: 1rem;
-    padding: 1rem;
+    padding: 2rem;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    width: 40rem;
     z-index: 500;
 }
 
@@ -2718,8 +2719,7 @@ h2 {
 
             button {
                 background-color: var(--orange-50);
-                border: 2px solid var(--orange-80);
-                border-radius: .25rem;
+                border-radius: 5rem;
                 color: var(--ardoise-10);
                 cursor: pointer;
                 font-weight: 300;
@@ -2727,7 +2727,6 @@ h2 {
 
                 &:hover {
                     background-color: var(--orange-40);
-                    border: 2px solid var(--orange-60);
                 }
             }
         }
@@ -2764,46 +2763,43 @@ h2 {
     }
 
     button {
-        border-radius: .25rem;
+        border-radius: 5rem;
         cursor: pointer;
         font-weight: 300;
-        padding: .25rem .5rem;
+        padding: .25rem 1.5rem;
     }
 
     button[name=cancel] {
         background-color: var(--ardoise-50);
-        border: 2px solid var(--ardoise-20);
         color: var(--ardoise-10);
         margin-inline-start: auto;
 
         &:hover {
             background-color: var(--ardoise-40);
-            border: 2px solid var(--ardoise-60);
         }
     }
 
 
     button[type=submit] {
         background-color: var(--orange-50);
-        border: 2px solid var(--orange-80);
         color: var(--orange-90);
 
         &:hover {
             background-color: var(--orange-40);
-            border: 2px solid var(--orange-60);
         }
     }
 }
 
 .add-video-dialog {
+
     .form-row {
         justify-content: flex-end;
 
         button {
-            border-radius: .25rem;
+            border-radius: 5rem;
             cursor: pointer;
             font-weight: 300;
-            padding: .25rem .5rem;
+            padding: .25rem 1.5rem;
         }
     }
 }
@@ -3765,29 +3761,36 @@ h2 {
                 }
 
                 .user-episode {
-                    gap: .5rem;
+                    /*gap: .5rem;
                     justify-content: flex-start;
-                    width: 3.25rem;
+                    width: 3.25rem;*/
                 }
 
                 .add-this-episode, .remove-this-episode,
-                .select-provider, .select-device, .select-vote,
-                .back-to-top, .back-to-series {
-                    height: 2rem;
-                    opacity: 1;
+                .select-provider, .select-device, .select-vote {
                     overflow: visible;
-                    width: 2rem;
+                }
+
+                .back-to-top, .back-to-series {
+                    height: 100%;
+                    margin-block-start: 5%;
+                    opacity: 1;
+                    width: 3rem;
 
                     svg {
-                        height: 1.25rem;
-                        width: 1.25rem;
+                        height: 2rem;
+                        width: 2rem;
                     }
                 }
 
+                .select-vote {
+                    border-radius: .25rem;
+                }
+
                 .select-provider, .select-vote {
-                    display: flex;
+                    /*display: flex;
                     font-size: 1.25rem;
-                    margin-block: unset;
+                    margin-block: unset;*/
                 }
             }
 
@@ -4308,12 +4311,12 @@ h2 {
     align-items: center;
     background-color: hsla(from var(--ardoise-90) h s l / .2);
     border: 2px solid transparent;
-    border-radius: 0.5rem;
+    border-radius: 5rem;
     display: flex;
     flex-direction: column;
     font-size: 1.25rem;
     font-weight: 400;
-    gap: 1%;
+    /*gap: 1%;*/
     height: var(--episode-height);
     justify-content: center;
     padding: 0.5rem;
@@ -4331,21 +4334,45 @@ h2 {
         font-weight: 500;
         justify-content: center;
         line-height: 1em;
+        margin-block-start: 5%;
         overflow: hidden;
         transition: height .3s ease-in-out, width 0.3s ease-in-out;
     }
 
+    .add-this-episode, .remove-this-episode {
+        border-radius: 5rem 5rem 0 0;
+        margin-block-start: 0;
+
+        svg {
+            margin-block-start: 10%;
+        }
+    }
+
+    .select-vote,
+    .back-to-series {
+        border-radius: 0 0 5rem 5rem;
+
+        svg {
+            margin-block-end: 10%;
+        }
+    }
+
     .back-to-top, .back-to-series {
         height: 0;
+        margin-block-start: 0;
         opacity: 0;
-        transition: opacity 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
         width: 0;
+
+        svg {
+            height: 0;
+            width: 0;
+        }
     }
 
     .add-this-episode, .remove-this-episode,
     .select-provider, .select-device, .select-vote {
         font-size: 2rem;
-        /*margin-block: auto;*/
         height: 100%;
         transition: font-size 0.3s ease-in-out;
         width: 3rem;
@@ -5340,11 +5367,11 @@ h2 {
                     border: 2px solid hsla(from var(--orange-40) h s l / .5);
                 }
 
-                &:hover {
+                /*&:hover {
                     .infos {
                         width: calc(100% - 3.75rem) !important;
                     }
-                }
+                }*/
             }
         }
     }
