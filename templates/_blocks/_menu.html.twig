@@ -366,14 +366,15 @@
             <div class="menu main">
                 {% if app.user %}
                     {% set relativeDayStrings = {
+                        "-3": 'Three days ago'|trans,
                         "-2": 'Two days ago'|trans,
                         "-1": 'Yesterday'|trans,
                         "0": 'Today'|trans,
                         "1": 'Tomorrow'|trans,
                         "2": 'In two days'|trans
                     } %}
-                    {% set interval = listEpisodeOfTheInterval(app.user, "-2 day", "2 day", app.locale) %}
-                    {% for relativeDay in  -2..2 %}
+                    {% set interval = listEpisodeOfTheInterval(app.user, "-3 day", "2 day", app.locale) %}
+                    {% for relativeDay in  -3..2 %}
                         {#                {% set eotdList = listEpisodeOfTheDay(app.user, relativeDay) %} #}
                         {% set eotdList = interval[relativeDay] %}
                         {% set l = eotdList.totalEpisodeCount %}
