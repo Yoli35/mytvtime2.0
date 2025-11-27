@@ -112,8 +112,8 @@ export class HighlightSeries {
         posterImg.alt = series['name'];
         aDetails.href = link;
         posterImg.title = series['name'];
-        nameDiv.textContent = series['name'] + " (" + series['year'] + ")";
-        nameDiv.setAttribute('data-title', series['date']);
+        nameDiv.textContent = series['name'] + (series['year'] ? " (" + series['year'] + ")" : "");
+        if (series['date']) nameDiv.setAttribute('data-title', series['date']);
         overviewDiv.textContent = series['overview'];
         providerDiv.innerHTML = "";
         series['watch_providers'].forEach(provider => {

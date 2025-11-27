@@ -396,8 +396,10 @@ class HomeController extends AbstractController
             }
             $tv['slug'] = strtolower($slugger->slug($tv[$media === 'tv' ? 'name' : 'title']));
 
+            $airDate = $tv[$date] ? $this->dateService->newDateImmutable($tv[$date], $timezone) : null;
             return [
-                'date' => $this->dateService->newDateImmutable($tv[$date], $timezone)->format('d/m/Y'),
+                'date' => $airDate?->format('d/m/Y'),
+                'year' => $airDate?->format('Y'),
                 'id' => $tv['id'],
                 $name => $tv[$name],
                 'overview' => $tv['overview'],
