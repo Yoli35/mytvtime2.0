@@ -382,7 +382,7 @@
                             <div class="separation">{{ relativeDayStrings[relativeDay] }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
                             {% for eotd in eotdList.results %}
                                 {% if eotd.type == 'series' %}
-                                    {% set url = path('app_series_season', {id: eotd.id, slug: eotd.displayName|slug, seasonNumber: eotd.seasonNumber}) %}
+                                    {% set url = path('app_series_season', {id: eotd.id, slug: eotd.displayName|slug|lower, seasonNumber: eotd.seasonNumber}) %}
                                 {% else %}
                                     {% set url = path('app_movie_show', {id: eotd.id}) %}
                                 {% endif %}

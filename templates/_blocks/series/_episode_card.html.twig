@@ -1,6 +1,8 @@
 {% set upToDate = series.upToDate is defined and series.upToDate == 1 %}
 {% set start = series.progress==0 %}
 {% set ended = series.progress==100 %}
+{% set displayName = series.localizedName ?? series.name %}
+{% set displaySlug = displayName|slug|lower %}
 {% if not upToDate %}
     {% if series.remainingEpisodes > 1 %}
         {% set title = series.remainingEpisodes ~ ' ' ~ ('remaining episodes to see'|trans) %}
@@ -15,10 +17,10 @@
     {% endif %}
 {% endif %}
 <div class="card" data-title="{{ title }}">
-    <a href="{{ path('app_series_season', {'id': series.id, 'seasonNumber': series.seasonNumber, 'slug': series.localizedSlug ?? series.slug }) }}#episode-{{ series.episodeNumber }}">
+    <a href="{{ path('app_series_season', {'id': series.id, 'seasonNumber': series.seasonNumber, 'slug': displaySlug }) }}#episode-{{ series.episodeNumber }}">
         <div class="poster">
             {% if series.posterPath %}
-                <img src="{{ series.posterPath }}" alt="{{ series.name }}"{% if series.date is defined %} data-title="{{ series.date }}{% endif %}">
+                <img src="{{ series.posterPath }}" alt="{{ displayName }}"{% if series.date is defined %} data-title="{{ series.date }}{% endif %}">
             {% else %}
                 <div>{{ 'No poster'|trans }}</div>
             {% endif %}
@@ -55,6 +57,8 @@
                 <div class="progress-bar" style="width: {{ series.progress }}%"></div>
             </div>
         </div>
-        <div class="name">{{ series.localizedName ?? series.name }}</div>
+    </a>
+    <a href="{{ path('app_series_show', {'id': series.id, 'slug': displaySlug }) }}">
+        <div class="name">{{ displayName }}</div>
     </a>
 </div>

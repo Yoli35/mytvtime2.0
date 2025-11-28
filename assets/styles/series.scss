@@ -3749,51 +3749,6 @@ h2 {
             padding-inline: 1rem;
             width: 100%;
 
-            &:hover {
-                .still, .infos, .user-episode {
-                    border-color: var(--orange-50);
-                }
-
-                &:not(:has(form)):hover {
-                    .edit {
-                        opacity: 1;
-                    }
-                }
-
-                .user-episode {
-                    /*gap: .5rem;
-                    justify-content: flex-start;
-                    width: 3.25rem;*/
-                }
-
-                .add-this-episode, .remove-this-episode,
-                .select-provider, .select-device, .select-vote {
-                    overflow: visible;
-                }
-
-                .back-to-top, .back-to-series {
-                    height: 100%;
-                    margin-block-start: 5%;
-                    opacity: 1;
-                    width: 3rem;
-
-                    svg {
-                        height: 2rem;
-                        width: 2rem;
-                    }
-                }
-
-                .select-vote {
-                    border-radius: .25rem;
-                }
-
-                .select-provider, .select-vote {
-                    /*display: flex;
-                    font-size: 1.25rem;
-                    margin-block: unset;*/
-                }
-            }
-
             .still {
                 align-items: center;
                 aspect-ratio: var(--episode-aspect-ratio);
@@ -4284,6 +4239,51 @@ h2 {
             }
         }
 
+        .episode:hover {
+            .still, .infos, .user-episode {
+                border-color: var(--orange-50);
+            }
+
+            &:not(:has(form)):hover {
+                .edit {
+                    opacity: 1;
+                }
+            }
+
+            .user-episode, .user-episode:last-of-type {
+                .add-this-episode {
+                    border-radius: 5rem 5rem .25rem .25rem !important;
+                }
+
+                .add-this-episode, .remove-this-episode,
+                .select-provider, .select-device, .select-vote {
+                    overflow: visible;
+                }
+
+                .back-to-top, .back-to-series {
+                    height: 100%;
+                    margin-block-start: 5%;
+                    opacity: 1;
+                    width: 3rem;
+
+                    svg {
+                        height: 2rem;
+                        width: 2rem;
+                    }
+                }
+
+                .select-vote {
+                    border-radius: .25rem;
+                }
+
+                .select-provider, .select-vote {
+                    display: flex;
+                    /*font-size: 1.25rem;
+                    margin-block: unset;*/
+                }
+            }
+        }
+
         .episode:not(:has(.number.watched)) {
             display: none;
         }
@@ -4298,6 +4298,12 @@ h2 {
                 > span {
                     display: inline-block;
                 }
+            }
+        }
+
+        .user-episode {
+            .add-this-episode {
+                border-radius: 5rem;
             }
         }
     }
@@ -4340,7 +4346,7 @@ h2 {
     }
 
     .add-this-episode, .remove-this-episode {
-        border-radius: 5rem 5rem 0 0;
+        border-radius: 5rem 5rem .25rem .25rem;
         margin-block-start: 0;
 
         svg {
@@ -4350,7 +4356,7 @@ h2 {
 
     .select-vote,
     .back-to-series {
-        border-radius: 0 0 5rem 5rem;
+        border-radius: .25rem .25rem 5rem 5rem;
 
         svg {
             margin-block-end: 10%;
@@ -4422,21 +4428,21 @@ h2 {
             overflow-x: auto;
             padding: .25rem;
             position: absolute;
-            right: 2rem;
+            right: 3.5rem;
             z-index: 2;
 
             .item {
                 align-items: center;
                 display: flex;
                 flex-shrink: 0;
-                height: 2rem;
+                height: 3rem;
                 justify-content: center;
-                width: 2rem;
+                width: 3rem;
 
                 img {
-                    height: 2rem;
+                    height: 3rem;
                     object-fit: cover;
-                    width: 2rem;
+                    width: 3rem;
                 }
 
                 &:hover {
@@ -4451,7 +4457,7 @@ h2 {
             .separator {
                 background-color: var(--orange-50);
                 flex-shrink: 0;
-                height: 2rem;
+                height: 3rem;
                 margin-inline: 3px;
                 width: 2px;
             }
@@ -4481,13 +4487,27 @@ h2 {
 
     .select-provider, .select-vote {
         .list {
-            max-width: 29.5rem;
+            max-width: 37.5rem;
         }
     }
 
     .select-device {
         .list {
-            max-width: 14rem;
+            max-width: 16rem;
+        }
+    }
+}
+
+.user-episode:has(.select-vote svg) {
+    .select-device {
+        border-radius: .25rem .25rem 5rem 5rem;
+    }
+}
+
+.episode:hover {
+    .user-episode:has(.select-vote svg) {
+        .select-device {
+            border-radius: .25rem;
         }
     }
 }
