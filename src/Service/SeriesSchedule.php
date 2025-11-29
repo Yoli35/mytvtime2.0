@@ -6,6 +6,8 @@ use App\Controller\SeriesController;
 use App\Entity\User;
 use App\Repository\MovieRepository;
 use App\Repository\UserEpisodeRepository;
+use DateInvalidTimeZoneException;
+use DateMalformedStringException;
 use DateTimeZone;
 
 readonly class SeriesSchedule
@@ -23,11 +25,23 @@ readonly class SeriesSchedule
     {
         $intervalArr = ["start" => $start, "end" => $end];
         $providerUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
-        $timezone = new DateTimeZone($user->getTimezone() ?? 'Europe/Paris');
+        try {
+            $timezone = new DateTimeZone($user->getTimezone() ?? "Europe/Paris");
+        } catch (DateInvalidTimeZoneException) {
+            $timezone = new DateTimeZone("Europe/Paris");
+        }
 
         $now = date_create_immutable("now", $timezone)->setTime(0, 0);
-        $startDate = $now->modify($start)->format('Y-m-d');
-        $endDate = $now->modify($end)->format('Y-m-d');
+        try {
+            $startDate = $now->modify($start)->format('Y-m-d');
+        } catch (DateMalformedStringException) {
+            $startDate = $now->format('Y-m-d');
+        }
+        try {
+            $endDate = $now->modify($end)->format('Y-m-d');
+        } catch (DateMalformedStringException) {
+            $endDate = $now->format('Y-m-d');
+        }
 
         $sArr = $this->userEpisodeRepository->episodesOfTheIntervalForTwig($user, $startDate, $endDate, $locale);
         $mArr = $this->movieRepository->moviesOfTheIntervalForTwig($user, $startDate, $endDate, $locale);
@@ -194,7 +208,6 @@ readonly class SeriesSchedule
                 'results' => $results,
             ];
         }
-        dump($intervalArr);
         return $intervalArr;
     }
 

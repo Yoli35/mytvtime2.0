@@ -33,7 +33,13 @@ readonly class MainMenu
     public function update(Request $request): Response
     {
         $inputBag = $request->getPayload();
-        $user = ($this->getUser)(); //$inputBag['user'];
+        $user = ($this->getUser)();
+        if (!$user) {
+            return ($this->json)([
+                'ok' => true,
+                'update' => false,
+            ]);
+        }
         $lastViewedEpisodeId = $inputBag->getInt('lastViewedEpisodeId', -1);
         $actualLastViewedEpisodeId = $this->userEpisodeRepository->lastViewedEpisodeId($user);
 
