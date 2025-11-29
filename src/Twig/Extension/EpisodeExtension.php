@@ -18,9 +18,9 @@ class EpisodeExtension extends AbstractExtension
             new TwigFilter('countEpisodeNotifications', [EpisodeExtensionRuntime::class, 'countEpisodeNotifications']),
             new TwigFilter('countNewEpisodeNotifications', [EpisodeExtensionRuntime::class, 'countNewEpisodeNotifications']),
             new TwigFilter('listEpisodeNotifications', [EpisodeExtensionRuntime::class, 'listEpisodeNotifications']),
-//            new TwigFilter('listEpisodeOfTheDay', [EpisodeExtensionRuntime::class, 'listEpisodeOfTheDay']),
             new TwigFilter('listEpisodeOfTheInterval', [EpisodeExtensionRuntime::class, 'listEpisodeOfTheInterval']),
             new TwigFilter('inProgressSeries', [EpisodeExtensionRuntime::class, 'inProgressSeries']),
+            new TwigFilter('getLastEpisodeOfTheDayId', [EpisodeExtensionRuntime::class, 'getLastEpisodeOfTheDayId']),
         ];
     }
 
@@ -30,7 +30,6 @@ class EpisodeExtension extends AbstractExtension
             new TwigFunction('countEpisodeNotifications', [EpisodeExtensionRuntime::class, 'countEpisodeNotifications']),
             new TwigFunction('countNewEpisodeNotifications', [EpisodeExtensionRuntime::class, 'countNewEpisodeNotifications']),
             new TwigFunction('listEpisodeNotifications', [EpisodeExtensionRuntime::class, 'listEpisodeNotifications']),
-//            new TwigFunction('listEpisodeOfTheDay', [EpisodeExtensionRuntime::class, 'listEpisodeOfTheDay']),
             new TwigFunction('listEpisodeOfTheInterval', [EpisodeExtensionRuntime::class, 'listEpisodeOfTheInterval']),
             new TwigFunction('inProgressSeries', [EpisodeExtensionRuntime::class, 'inProgressSeries']),
         ];

@@ -1,0 +1,64 @@
+{% set relativeDayStrings = {
+    "-3": 'Three days ago'|trans,
+    "-2": 'Two days ago'|trans,
+    "-1": 'Yesterday'|trans,
+    "0": 'Today'|trans,
+    "1": 'Tomorrow'|trans,
+    "2": 'In two days'|trans
+} %}
+<div class="schedule-menu" data-id="{{ interval.lastViewedEpisodeId }}" data-start="{{ start }}" data-end="{{ end }}" data-start-day="{{ startDay }}" data-end-day="{{ endDay }}">
+{% for relativeDay in  startDay..endDay %}
+    {% set eotdList = interval[relativeDay] %}
+    {% set l = eotdList.totalEpisodeCount %}
+    {% if l %}
+        <div class="separation">{{ relativeDayStrings[relativeDay] }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
+        {% for eotd in eotdList.results %}
+            {% if eotd.type == 'series' %}
+                {% set url = path('app_series_season', {id: eotd.id, slug: eotd.displayName|slug|lower, seasonNumber: eotd.seasonNumber}) %}
+            {% else %}
+                {% set url = path('app_movie_show', {id: eotd.id}) %}
+            {% endif %}
+            <div class="a-preview">
+                <a id="eotd-menu-item-1-{{ eotd.id }}"
+                   href="{{ url }}"
+                   data-episode-ids="{{ eotd.episodeIds }}"
+                   data-episode-count="{{ eotd.episodeCount }}"
+                   data-first-episode-number="{{ eotd.firstEpisodeNumber }}"
+                   style="background: linear-gradient(90deg, var(--green-50) {{ eotd.progress }}%, transparent {{ eotd.progress }}%)">
+                    <div>
+                        {{ eotd.display }}
+                        {% if eotd.customDate %}
+                            {{ ux_icon('mdi:calendar', {'data-title': 'Custom schedule'|trans, height: '16px', width: '16px'}) }}
+                        {% endif %}
+                        {% if eotd.last_episode %}
+                            {{ ux_icon('mdi:hand-wave', {'data-title': 'Season finale'|trans, height: '16px', width: '16px'}) }}
+                        {% endif %}
+                        {% if eotd.premiere %}
+                            {{ ux_icon('mdi:new-box', {'data-title': 'Premiere'|trans, height: '16px', width: '16px'}) }}
+                        {% endif %}
+                    </div>
+                    {% if eotd.type == 'series' %}
+                        <div class="time">{{ eotd.airAt|slice(0,5) }}</div>
+                    {% else %}
+                        <div class="time movie">{{ 'Movie'|trans }}</div>
+                    {% endif %}
+                    <div class="provider">
+                        {% if eotd.providerLogoPath %}
+                            <img src="{{ eotd.providerLogoPath }}" alt="{{ eotd.providerName }}">
+                        {% endif %}
+                    </div>
+                </a>
+                <div id="eotd-preview-1-{{ eotd.id }}" class="episode-of-the-day-preview">
+                    <a href="{{ url }}">
+                        {% if eotd.posterPath %}
+                            <img src="{{ eotd.posterPath }}" alt="{{ eotd.name }}">
+                        {% else %}
+                            {{ eotd.name }}
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+</div>

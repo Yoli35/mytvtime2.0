@@ -195,6 +195,12 @@ export class Menu {
         const multiSearchUlTag = multiSearchResults?.querySelector("ul");
         const menus = navbar.querySelectorAll(".menu");
 
+        setInterval(() => {
+            const mainMenuIsOpen = navbar.querySelector(".menu.main.open.show");
+            if (!mainMenuIsOpen) { return; }
+            this.updateMainMenu();
+        }, 60000);
+
         document.addEventListener("click", (e) => {
             const target = e.target;
 
@@ -239,6 +245,9 @@ export class Menu {
                 }
                 if (menu.classList.contains("log")) {
                     gThis.checkLog();
+                }
+                if (menu.classList.contains("main")) {
+                    gThis.updateMainMenu();
                 }
             });
         });
@@ -471,6 +480,41 @@ export class Menu {
             this.initTheme();
             this.initPreview();
         }
+    }
+
+    updateMainMenu() {
+        const scheduleMenuDiv = document.querySelector(".schedule-menu");
+        const lastEpisodeId = scheduleMenuDiv.getAttribute("data-id") || "-1";
+        const start = scheduleMenuDiv.getAttribute("data-start") || 0;
+        const end = scheduleMenuDiv.getAttribute("data-end") || 0;
+        const startDay = scheduleMenuDiv.getAttribute("data-start-day") || 0;
+        const endDay = scheduleMenuDiv.getAttribute("data-end-day") || 7;
+        const locale = this.lang;
+        const apiUrl = '/api/main/menu/update';
+        const options = {
+            method: 'POST',
+            headers: {
+                accept: 'application/json'
+            },
+            body: JSON.stringify({start: start, end: end, startDay: startDay, endDay: endDay, locale: locale, lastViewedEpisodeId: lastEpisodeId }),
+        };
+
+        fetch(apiUrl, options)
+        .then(res => res.json())
+        .then(res => {
+            console.log(res);
+            if (res['update'] === false) return;
+            const scheduleMenuDiv = document.querySelector(".schedule-menu");
+            const block = res['block'];
+            const blockDiv = document.createElement('div');
+            blockDiv.innerHTML = block;
+            const newScheduleMenuDiv = blockDiv.querySelector(".schedule-menu");
+            scheduleMenuDiv.innerHTML = newScheduleMenuDiv.innerHTML;
+            scheduleMenuDiv.setAttribute("data-id", newScheduleMenuDiv.getAttribute("data-id"));
+        })
+        .catch(err => {
+            console.log(err);
+        });
     }
 
     searchFetch(e) {
