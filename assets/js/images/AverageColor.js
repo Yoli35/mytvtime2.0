@@ -19,8 +19,12 @@ export class AverageColor {
             return this.defaultRGB;
         }
 
-        height = this.canvas.height = img.naturalHeight || img.offsetHeight || img.height;
-        width = this.canvas.width = img.naturalWidth || img.offsetWidth || img.width;
+        height = this.canvas.height = img.naturalHeight || img.offsetHeight || img.height || 0;
+        width = this.canvas.width = img.naturalWidth || img.offsetWidth || img.width || 0;
+
+        if (!height || !width) {
+            return this.defaultRGB;
+        }
 
         this.context.drawImage(img, 0, 0);
 
