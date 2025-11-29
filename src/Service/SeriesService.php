@@ -360,8 +360,16 @@ class SeriesService extends AbstractController
                 $this->networkRepository->save($networkDb);
                 $this->addFlash('success', $this->translator->trans('network.added') . ' → ' . $networkDb->getName());
             } else {
-                $diff = $networkDb->getUpdatedAt()->diff($now);
-                if ($diff->days > 30) {
+                $isUpdateNeed = false;
+                if (!$networkDb->getUpdatedAt()) {
+                    $isUpdateNeed = true;
+                } else {
+                    $diff = $networkDb->getUpdatedAt()->diff($now);
+                    if ($diff->days > 30) {
+                        $isUpdateNeed = true;
+                    }
+                }
+                if ($isUpdateNeed) {
                     $tmdbNetwork = json_decode($this->tmdbService->getNetworkDetails($networkDb->getNetworkId()), true);
 
                     if (!$tmdbNetwork) {
