@@ -778,28 +778,6 @@ export class Season {
                     f.classList.add('watched');
                 });
 
-                // Mise à jour du menu
-                let episodesOfTheDayInMenu = document.querySelectorAll('a[id^="eotd-menu-item-"]');
-                episodesOfTheDayInMenu.forEach(eotd => {
-                    // if (eotd.getAttribute('id').includes(seriesId)) {
-                    if (eotd.getAttribute('data-episode-ids').includes(episodeId ? episodeId : id)) {
-                        const episodeCount = parseInt(eotd.getAttribute('data-episode-count'));
-                        const firstEpisodeNumber = parseInt(eotd.getAttribute('data-first-episode-number'));
-                        const number = parseInt(episodeNumber);
-                        if (episodeCount === 1) {
-                            if (number === firstEpisodeNumber) {
-                                eotd.setAttribute('style', 'background: linear-gradient(90deg, var(--green-50) 100%, transparent 100%)');
-                            }
-                        } else {
-                            if (number >= firstEpisodeNumber && number < firstEpisodeNumber + episodeCount) {
-                                const progress = Math.round(100 * (episodeNumber - firstEpisodeNumber + 1) / episodeCount);
-                                const style = "background: linear-gradient(90deg, var(--green-50) " + progress + "%, transparent " + progress + "%)";
-                                eotd.setAttribute('style', style);
-                            }
-                        }
-                    }
-                });
-
                 const previousEpisode = userEpisode.closest('.episodes').querySelector('.remove-this-episode[data-e-number="' + (episodeNumber - 1) + '"]');
                 const previousProvider = previousEpisode?.parentElement.querySelector('.select-provider');
                 if (previousProvider) {
