@@ -53,7 +53,7 @@ class WatchLink extends AbstractController
         ]);
     }
 
-    #[Route('/series/read/{id}', name: 'series_read', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    #[Route('/series/read/{id}', name: 'series_read', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
     public function read(SeriesWatchLink $seriesWatchLink): Response
     {
         return $this->json([
@@ -113,12 +113,12 @@ class WatchLink extends AbstractController
         ]);
     }
 
-    #[Route('/movie/read/{id}', name: 'movie_read', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function readDirectLink(SeriesWatchLink $seriesWatchLink): Response
+    #[Route('/movie/read/{id}', name: 'movie_read', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
+    public function readDirectLink(MovieDirectLink $link): Response
     {
         return $this->json([
             'ok' => true,
-            'link' => $this->getLink($seriesWatchLink),
+            'link' => $this->getLink($link),
         ]);
     }
 
@@ -152,13 +152,22 @@ class WatchLink extends AbstractController
     }
 
 
-    private function getLink(SeriesWatchLink $seriesWatchLink): array
+    private function getLink(SeriesWatchLink|MovieDirectLink $link): array
     {
+        if ($link instanceof MovieDirectLink) {
+            return [
+                'id' => $link->getId(),
+                'name' => $link->getName(),
+                'provider' => $this->getProvider($link->getProviderId()),
+                'url' => $link->getUrl(),
+            ];
+        }
         return [
-            'id' => $seriesWatchLink->getId(),
-            'name' => $seriesWatchLink->getName(),
-            'provider' => $this->getProvider($seriesWatchLink->getProviderId()),
-            'url' => $seriesWatchLink->getUrl(),
+            'id' => $link->getId(),
+            'name' => $link->getName(),
+            'provider' => $this->getProvider($link->getProviderId()),
+            'seasonNumber' => $link->getSeasonNumber(),
+            'url' => $link->getUrl(),
         ];
     }
 

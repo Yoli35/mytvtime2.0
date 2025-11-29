@@ -4,6 +4,22 @@ let gThis;
 
 export class WatchLinkCrud {
     constructor(options) {
+        /**
+         * @typedef Provider
+         * @type {Object}
+         * @property {number} id
+         * @property {string} logoPath
+         * @property {string} name
+         */
+        /**
+         * @typedef Link
+         * @type {Object}
+         * @property {number} id
+         * @property {string} name
+         * @property {Provider} provider
+         * @property {number} seasonNumber
+         * @property {string} url
+         */
         gThis = this;
         // {'mediaType': 'series', 'mediaId': seriesId, 'api': api, 'providers': providers, 'translations': translations}
         this.mediaType = options.mediaType;
@@ -15,6 +31,7 @@ export class WatchLinkCrud {
 
         this.toolTips = new ToolTips();
 
+        this.list();
         this.init();
     }
 
@@ -91,9 +108,16 @@ export class WatchLinkCrud {
 
         providerSelect.addEventListener('change', function () {
             const provider = this.value;
+            const seasonNumber = form.querySelector('#season-number').value
             if (provider) {
                 const name = form.querySelector('#name');
-                name.value = gThis.translations['Watch on'] + ' ' + gThis.providers.names[provider];
+                if (seasonNumber === "-1") {
+                    name.value = gThis.translations['Watch on'] + ' ' + gThis.providers.names[provider];
+                } else if (seasonNumber === "0") {
+                    name.value = gThis.translations['Watch'] + ' ' + gThis.translations['special.episodes'] + ' ' + gThis.translations['on'] + ' ' + gThis.providers.names[provider];
+                } else {
+                    name.value = gThis.translations['Watch'] + ' ' + gThis.translations['season'] + ' ' + seasonNumber + ' ' + gThis.translations['on'] + ' ' + gThis.providers.names[provider];
+                }
             }
         });
         watchLinkFormCancel.addEventListener('click', function () {
@@ -154,7 +178,7 @@ export class WatchLinkCrud {
                         console.log({link});
                         const newWatchLinkDiv = document.createElement('div');
                         newWatchLinkDiv.classList.add('watch-link');
-                        newWatchLinkDiv.setAttribute('data-id', link.id);
+                        newWatchLinkDiv.setAttribute('data-id', link.id.toString());
                         const newLink = document.createElement('a');
                         newLink.href = link.url;
                         newLink.target = '_blank';
@@ -176,10 +200,21 @@ export class WatchLinkCrud {
                             watchLink.appendChild(span);
                             newLink.appendChild(watchLink);
                         }
+                        // <div class="season-number-badge">S01</div>
+                        const seasonNumber = link.seasonNumber;
+                        if (seasonNumber > 0) {
+                            const seasonNumberBadge = document.createElement('div');
+                            seasonNumberBadge.classList.add('season-number-badge');
+                            if (seasonNumber < 10)
+                                seasonNumberBadge.textContent = 'S0' + seasonNumber.toString();
+                            else
+                                seasonNumberBadge.textContent = 'S' + seasonNumber.toString();
+                            newWatchLinkDiv.appendChild(seasonNumberBadge);
+                        }
                         const watchLinkTools = document.createElement('div');
                         watchLinkTools.classList.add('watch-link-tools');
-                        watchLinkTools.setAttribute('data-id', link.id);
-                        watchLinkTools.setAttribute('data-provider', link.provider.id);
+                        watchLinkTools.setAttribute('data-id', link.id.toString());
+                        watchLinkTools.setAttribute('data-provider', link.provider.id.toString());
                         watchLinkTools.setAttribute('data-name', link.name);
                         const edit = document.createElement('div');
                         edit.classList.add('watch-link-tool');
@@ -283,6 +318,20 @@ export class WatchLinkCrud {
                     url.value = '';
                 }
             });
+        });
+    }
+
+    list() {
+        const watchLinksDiv = document.querySelector(".watch-links");
+        const watchLinkDivs = watchLinksDiv.querySelectorAll(".watch-link");
+        watchLinkDivs.forEach(function (item) {
+            const id = item.getAttribute("data-id")
+            fetch(gThis.api.directLinkCrud.read + id)
+                .then(response => response.json())
+                .then(data => {
+                    const link = data.link;
+                    console.log(link);
+                });
         });
     }
 

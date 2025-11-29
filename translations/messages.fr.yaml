@@ -290,14 +290,14 @@ Click to select, then paste your overview.: Cliquez pour sélectionner, puis col
 Collapse all videos: Réduire toutes les vidéos
 Continuing: Série en cours
 Copy all: Tout copier
-Copy this watch link: Copier l'adresse du lien
+Copy watch link: Copier l'adresse du lien
 Copy: Copier
 Crew: Équipe
 Custom schedule: Horaire personnalisé
 Dailies Manager: Responsable des rushes
 Delay in days: Décalage en jour
 Delay: Décalage
-Delete this watch link: Supprimer ce lien pour regarder
+Delete watch link: Supprimer le lien
 Delete: Supprimer
 Desktop: Ordinateur de bureau
 Drag and drop a file or click to browse: Glissez-déposez un fichier ou cliquez pour parcourir
@@ -306,7 +306,7 @@ Drop your file here: Déposez votre fichier ici
 Drop your image file here: Déposez votre image ici
 Edit all episodes name and overview: Modifier le nom et l'aperçu de tous les épisodes
 Edit location: Modifier le lieu
-Edit this watch link: Modifier ce lien pour regarder
+Edit watch link: Modifier le lien
 Edit: Modifier
 Ended: Série terminée
 Episode number: Numéro de l'épisode
@@ -463,6 +463,7 @@ Video Identifier (11 characters - i.e. 5KHgFEiPD4g): Identifiant de la vidéo (1
 Videos: Vidéos
 View date: Date de vue
 Vote: Voter
+Watch: Regarder
 Watch on: Regarder sur
 Watched %time% times: Vu %time% fois
 Watched again: Vu à nouveau
@@ -487,10 +488,14 @@ minute: minute
 minutes: minutes
 network.not_found: réseau non trouvé
 new episodes have been added to the series: nouveaux épisodes ont été ajoutés à la série
+on: sur
 season: saison
+season.number: la saison
 second: seconde
 seconds: secondes
 since: depuis
+special.episode: l'épisode spécial
+special.episodes: les épisodes spéciaux
 star: étoile
 stars: étoiles
 visit: visite

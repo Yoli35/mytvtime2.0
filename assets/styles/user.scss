@@ -94,8 +94,15 @@
             }
 
             .watch-link {
-                background-color: cadetblue;
+                height: 3.5rem;
                 position: relative;
+
+                a {
+                    align-items: center;
+                    display: flex;
+                    height: 100%;
+                    width: 100%;
+                }
 
                 span {
                     align-items: center;
@@ -377,6 +384,11 @@
             }
         }
     }
+}
+
+#series-season .user-actions .watch-links .watch-link,
+#series-season .content.column .episodes .episode-wrapper .episode .infos .user-actions .wrapper .watch-links .watch-link {
+    height: 2rem;
 }
 
 @media (width <= 52rem) {
