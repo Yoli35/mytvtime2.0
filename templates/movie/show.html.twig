@@ -120,6 +120,11 @@
             </header>
             <main>
                 <section>
+                        {% if movie.release_date|date("Y-m-d") > 'now'|date('Y-m-d') %}
+                            <div class="coming-soon-banner">
+                                {{ movie.release_date|format_date('relative_long')|capitalize }}
+                            </div>
+                        {% endif %}
                     <div class="details">
                         <div class="user-details">
                             <div class="user-actions">
