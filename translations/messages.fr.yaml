@@ -711,7 +711,7 @@ job.Thanks.she: Remerciements
 job.Writer.he: Auteur
 job.Writer.she: Auteure
 
-#job
+# Jobs
 "First Assistant \"A\" Camera": Premier assistant caméra "A"
 "First Assistant \"B\" Camera": Premier assistant caméra "B"
 "First Assistant \"C\" Camera": Premier assistant caméra "C"
@@ -1041,6 +1041,7 @@ Picture Car Coordinator: Coordinateur de voiture de scène
 Pipeline Technical Director: Directeur technique de pipeline
 Playback Coordinator: Coordinateur de lecture
 Post Producer: Producteur de post-production
+Post Production: Post-production
 Post Production Accountant: Comptable de post-production
 Post Production Assistant: Assistant de post-production
 Post Production Consulting: Consultation de post-production
@@ -1287,6 +1288,8 @@ Targeted Languages: Langues cibles
 Preferred Languages: Langues préférées
 
 # Movies
+'%minutes% minutes': '%minutes% minutes'
+1 minute: 1 minute
 2015: 2015
 Add this movie to your watchlist: Ajouter ce film à votre liste de suivi
 Average: Moyenne
