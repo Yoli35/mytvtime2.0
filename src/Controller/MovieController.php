@@ -561,6 +561,23 @@ class MovieController extends AbstractController
         ]);
     }
 
+    #[Route('/fetch/search/movie', name: 'fetch_search_movie', methods: ['POST'])]
+    public function fetchSearchDBMovies(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $query = $data['query'];
+
+        $movies = array_map(function($movie) {
+            $movie['display_title'] = $movie['localized_name'] ?? $movie['title'] . ' - ' . ($movie['release_date'] ? substr($movie['release_date'], 0, 4) : $this->translator->trans('No date')) . ($movie['original_title'] && $movie['original_title'] !== $movie['title'] ? " - ({$movie['original_title']})" : '');
+            return $movie;
+        }, $this->userMovieRepository->searchMoviesByTitle($this->getUser(), $query));
+
+        return $this->json([
+            'ok' => true,
+            'results' => $movies,
+        ]);
+    }
+
     #[Route('/fetch/search', name: 'fetch_search', methods: ['POST'])]
     public function fetchSearchMovies(Request $request): Response
     {

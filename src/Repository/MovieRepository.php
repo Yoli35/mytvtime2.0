@@ -113,28 +113,6 @@ class MovieRepository extends ServiceEntityRepository
         return $this->getOneAsInt($sql);
     }
 
-    public function moviesOfTheDayForTwig(User $user, string $day, string $locale = 'fr'): array
-    {
-        $userId = $user->getId();
-        $sql = "SELECT m.`id` as id,
-                    m.`title` as name,
-                    m.`poster_path` as posterPath,
-                    mln.`name` as localizedName,
-                    wp.`provider_name` as providerName,
-                    wp.`logo_path` as providerLogoPath,
-                    um.last_viewed_at as watchAt,
-                    IF(mln.name IS NULL, m.title, mln.name) as displayName 
-                FROM movie m
-                    INNER JOIN `user_movie` um ON um.`movie_id`=m.`id`
-                    LEFT JOIN `movie_localized_name` mln ON mln.`movie_id`=m.`id` AND mln.`locale`='$locale'
-                    LEFT JOIN `movie_direct_link` mdl ON mdl.`movie_id`=m.`id`
-                    LEFT JOIN `watch_provider` wp ON wp.`provider_id`=mdl.`provider_id`
-                WHERE um.user_id = $userId
-                    AND DATE(m.release_date) = '$day'";
-
-        return $this->getAll($sql);
-    }
-
     public function moviesOfTheIntervalForTwig(User $user, string $start, string $end, string $locale = 'fr'): array
     {
         $userId = $user->getId();

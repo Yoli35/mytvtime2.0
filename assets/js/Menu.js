@@ -131,6 +131,7 @@ export class Menu {
 
         this.apiEndPoints = {
             "movie": "/" + gThis.lang + "/movie/fetch/search",
+            "dbmovie": "/" + gThis.lang + "/movie/fetch/search/movie",
             "dbtv": "/" + gThis.lang + "/series/fetch/search/tv",
             "tv": "/" + gThis.lang + "/series/fetch/search/tmdb",
             "people": "/" + gThis.lang + "/people/fetch/search",
@@ -138,6 +139,7 @@ export class Menu {
         }
         this.resultNames = {
             'movie': 'title',
+            'dbmovie': 'display_title',
             'collection': 'title',
             'tv': 'name',
             'dbtv': 'display_name',
@@ -145,6 +147,7 @@ export class Menu {
         }
         this.hRefs = {
             'movie': 'movie/tmdb/',
+            'dbmovie': 'movie/show/',
             'collection': 'movie/collection/',
             'tv': 'series/tmdb/',
             'dbtv': 'series/show/',
@@ -153,6 +156,7 @@ export class Menu {
         };
         this.resultPaths = {
             'movie': 'poster_path',
+            'dbmovie': 'poster_path',
             'collection': 'poster_path',
             'tv': 'poster_path',
             'dbtv': 'poster_path',
@@ -524,7 +528,7 @@ export class Menu {
                         url = null;
                     } else {
                         url = baseHref + gThis.hRefs[type] + result['id'];
-                        if (type !== 'movie' && type !== 'collection') url += '-' + gThis.toSlug(result[gThis.resultNames[type]]);
+                        if (type !== 'movie' && type !== 'dbmovie' && type !== 'collection') url += '-' + gThis.toSlug(result[gThis.resultNames[type]]);
                     }
                     const a = document.createElement(url ? "a" : "div");
                     if (url) {
@@ -703,6 +707,7 @@ export class Menu {
                 gThis.profileUrl = data.profileUrl;
                 gThis.imagePaths = {
                     'movie': gThis.posterUrl,
+                    'dbmovie': '/movies/posters',
                     'collection': gThis.posterUrl,
                     'tv': gThis.posterUrl,
                     'dbtv': '/series/posters',
