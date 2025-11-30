@@ -177,7 +177,6 @@ export class Menu {
         this.tooltips = new ToolTips();
 
         const navbarItems = navbar.querySelectorAll(".navbar-item");
-        const eotdMenuItems = document.querySelectorAll("a[id^='eotd-menu-item-']");
         const pinnedMenuItems = document.querySelectorAll("a[id^='pinned-menu-item-']");
         const seriesInProgress = document.querySelector("a[id^='sip-menu-item-']");
         const notifications = document.querySelector(".notifications");
@@ -252,25 +251,7 @@ export class Menu {
             });
         });
 
-        eotdMenuItems.forEach((item) => {
-            const group = item.id.split("-")[3]; // eotd-menu-item-{group}-{id}
-            const id = item.id.split("-")[4];
-            const eotdPreview = document.querySelector(`#eotd-preview-${group}-${id}`);
-            item.addEventListener("mouseenter", () => {
-                eotdPreview.classList.add("open");
-                setTimeout(() => {
-                    eotdPreview.classList.add("show");
-                }, 0);
-            });
-            item.addEventListener("mouseleave", () => {
-                setTimeout(() => {
-                    eotdPreview.classList.remove("show");
-                    setTimeout(() => {
-                        eotdPreview.classList.remove("open");
-                    }, 250);
-                }, 0);
-            });
-        });
+        this.posterPreview();
 
         pinnedMenuItems.forEach((item) => {
             const id = item.id.split("-")[3];
@@ -407,6 +388,29 @@ export class Menu {
         document.cookie = "mytvtime_2_multi_search_sub_type=" + multiSearchSubType + ";expires=" + date.toUTCString() + ";path=/";
     }
 
+    posterPreview() {
+        const eotdMenuItems = document.querySelectorAll("a[id^='eotd-menu-item-']");
+        eotdMenuItems.forEach((item) => {
+            const group = item.id.split("-")[3]; // eotd-menu-item-{group}-{id}
+            const id = item.id.split("-")[4];
+            const eotdPreview = document.querySelector(`#eotd-preview-${group}-${id}`);
+            item.addEventListener("mouseenter", () => {
+                eotdPreview.classList.add("open");
+                setTimeout(() => {
+                    eotdPreview.classList.add("show");
+                }, 0);
+            });
+            item.addEventListener("mouseleave", () => {
+                setTimeout(() => {
+                    eotdPreview.classList.remove("show");
+                    setTimeout(() => {
+                        eotdPreview.classList.remove("open");
+                    }, 250);
+                }, 0);
+            });
+        });
+    }
+
     addAuxClickListener(a) {
         // Si le lien DEPUIS UN MENU est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
         a.addEventListener("auxclick", () => {
@@ -511,6 +515,8 @@ export class Menu {
             const newScheduleMenuDiv = blockDiv.querySelector(".schedule-menu");
             scheduleMenuDiv.innerHTML = newScheduleMenuDiv.innerHTML;
             scheduleMenuDiv.setAttribute("data-id", newScheduleMenuDiv.getAttribute("data-id"));
+
+            gThis.posterPreview();
         })
         .catch(err => {
             console.log(err);
