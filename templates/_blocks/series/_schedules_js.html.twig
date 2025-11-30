@@ -151,6 +151,6 @@
     function ToggleScheduleForm(id) {
         const form = document.getElementById('schedule-form-' + id);
         const formBlock = form.parentElement;
-        formBlock.style.display = formBlock.style.display === 'block' ? 'none' : 'block';
+        formBlock.classList.toggle("show");
     }
 </script>
