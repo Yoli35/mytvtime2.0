@@ -1569,6 +1569,7 @@ h2 {
 
         .wrapper {
             display: flex;
+            flex-direction: column;
             max-width: 100%;
             overflow-x: auto;
 
@@ -1683,11 +1684,12 @@ h2 {
             margin-inline: -1rem;
             overflow: hidden;
             padding: 0;
-            transition: height 300ms ease-in-out, padding 300ms ease-in-out;
+            transition: all 300ms ease-in-out;
             width: calc(100% + 2rem);
 
             &.show {
                 height: auto;
+                margin-block-end: 1rem;
                 padding: 1rem;
                 transition-behavior: allow-discrete;
             }
