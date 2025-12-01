@@ -806,8 +806,18 @@ h2 {
             display: flex;
             flex-grow: 1;
             height: 100%;
+            padding-block-start: 50%;
             position: relative;
+            transition: padding-block-start 0.3s ease-in-out;
             /*width: calc(60vw - 3rem);*/
+
+            &:hover {
+                padding-block-start: 0;
+
+                .series-overview, .overviews, .season-overview {
+                    opacity: 1 !important;
+                }
+            }
 
             .infos-content {
                 align-items: flex-start;
@@ -882,6 +892,8 @@ h2 {
                     gap: .5rem;
                     justify-content: flex-start;
                     line-height: clamp(1.25rem, 1.875vw, 2.5rem);
+                    opacity:0;
+                    transition: opacity 0.3s ease-in-out;
                 }
 
                 .overviews {
@@ -889,6 +901,8 @@ h2 {
                     flex-direction: column;
                     gap: .5rem;
                     justify-content: center;
+                    opacity:0;
+                    transition: opacity 0.3s ease-in-out;
                     width: 100%;
 
                     &.localized, &.additional {
@@ -3454,6 +3468,8 @@ h2 {
             .infos-content {
                 .season-overview {
                     max-width: 64rem;
+                    opacity: 0;
+                    transition: opacity 0.5s ease-in-out;
 
                     .header {
                         background-color: transparent;
