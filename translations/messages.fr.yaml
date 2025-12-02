@@ -43,6 +43,7 @@ Search options: Options de recherche
 # Home
 A series by name/year: Une série par nom/année
 A series: Une série
+Accent color: Couleur d'accentuation
 Add to pinned series: Ajouter aux séries épinglées
 Admin: Admin
 Among your series: Parmi vos séries
@@ -116,6 +117,7 @@ Series.not seen in a while: Non vues depuis un moment
 Series.to start: À commencer
 Series.up coming series: À venir
 Series.week: Épisodes de la semaine
+Settings: Réglages
 Show preview: Afficher l'aperçu
 Sign in: Se connecter
 Similar series: Séries similaires

@@ -50,3 +50,4 @@ composer.lock
 *.pem
 /node_modules/
 .idea/commandlinetools/schemas/frameworkDescriptionVersion1.1.4.xsd
+config/reference.php

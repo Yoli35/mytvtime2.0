@@ -109,15 +109,18 @@ export class Menu {
      */
     constructor() {
         gThis = this;
+        this.root = document.documentElement;
         this.userMenu = document.querySelector(".menu.user");
-        this.menuPreview = document.querySelector(".menu-preview");
-        this.menuThemes = document.querySelectorAll(".menu-theme");
+        this.accentColor = this.userMenu.querySelector(".accent-color");
+        this.menuPreview = this.userMenu.querySelector(".menu-preview");
+        this.menuThemes = this.userMenu.querySelectorAll(".menu-theme");
         this.init = this.init.bind(this);
         this.togglePreview = this.togglePreview.bind(this);
         this.setPreview = this.setPreview.bind(this);
         this.initPreview = this.initPreview.bind(this);
         this.setTheme = this.setTheme.bind(this);
         this.checkTheme = this.checkTheme.bind(this);
+        this.getAccentColor = this.getAccentColor.bind(this);
         this.lang = document.documentElement.lang;
         this.posterUrl = null;
         this.profileUrl = null;
@@ -174,16 +177,14 @@ export class Menu {
         this.getTMDBConfig();
         this.initOptions();
 
+        this.getAccentColor();
+
         this.tooltips = new ToolTips();
 
         const navbarItems = navbar.querySelectorAll(".navbar-item");
         const pinnedMenuItems = document.querySelectorAll("a[id^='pinned-menu-item-']");
         const seriesInProgress = document.querySelector("a[id^='sip-menu-item-']");
         const notifications = document.querySelector(".notifications");
-        // const movieSearch = navbar.querySelector("#movie-search");
-        // const tvSearch = navbar.querySelector("#tv-search");
-        // const tvSearchDb = navbar.querySelector("#tv-search-db");
-        // const personSearch = navbar.querySelector("#person-search");
         const multiSearch = navbar.querySelector("#multi-search");
         const multiSearchDiv = navbar.querySelector(".multi-search");
         const historyNavbarItem = navbar.querySelector("#history-menu");
@@ -196,7 +197,9 @@ export class Menu {
 
         setInterval(() => {
             const mainMenuIsOpen = navbar.querySelector(".menu.main.open.show");
-            if (!mainMenuIsOpen) { return; }
+            if (!mainMenuIsOpen) {
+                return;
+            }
             this.updateMainMenu();
         }, 60000);
 
@@ -296,18 +299,6 @@ export class Menu {
         });
 
         if (multiSearch) {
-            // movieSearch.addEventListener("input", gThis.searchFetch);
-            // movieSearch.addEventListener("keydown", gThis.searchMenuNavigate);
-
-            // tvSearch.addEventListener("input", gThis.searchFetch);
-            // tvSearch.addEventListener("keydown", gThis.searchMenuNavigate);
-
-            // tvSearchDb.addEventListener("input", gThis.searchFetch);
-            // tvSearchDb.addEventListener("keydown", gThis.searchMenuNavigate);
-
-            // personSearch.addEventListener("input", gThis.searchFetch);
-            // personSearch.addEventListener("keydown", gThis.searchMenuNavigate);
-
             const magnifyingGlassSpan = multiSearchDiv.querySelector(".magnifying-glass");
             magnifyingGlassSpan.addEventListener("click", () => {
                 multiSearchDiv.classList.toggle("active");
@@ -477,6 +468,7 @@ export class Menu {
 
     initOptions() {
         if (this.userMenu) {
+            this.accentColor.addEventListener("click", this.setAccentColor)
             this.menuPreview.addEventListener("click", this.togglePreview);
             this.menuThemes.forEach((theme) => {
                 theme.addEventListener("click", this.setTheme);
@@ -500,27 +492,27 @@ export class Menu {
             headers: {
                 accept: 'application/json'
             },
-            body: JSON.stringify({start: start, end: end, startDay: startDay, endDay: endDay, locale: locale, lastViewedEpisodeId: lastEpisodeId }),
+            body: JSON.stringify({start: start, end: end, startDay: startDay, endDay: endDay, locale: locale, lastViewedEpisodeId: lastEpisodeId}),
         };
 
         fetch(apiUrl, options)
-        .then(res => res.json())
-        .then(res => {
-            console.log(res);
-            if (res['update'] === false) return;
-            const scheduleMenuDiv = document.querySelector(".schedule-menu");
-            const block = res['block'];
-            const blockDiv = document.createElement('div');
-            blockDiv.innerHTML = block;
-            const newScheduleMenuDiv = blockDiv.querySelector(".schedule-menu");
-            scheduleMenuDiv.innerHTML = newScheduleMenuDiv.innerHTML;
-            scheduleMenuDiv.setAttribute("data-id", newScheduleMenuDiv.getAttribute("data-id"));
+            .then(res => res.json())
+            .then(res => {
+                console.log(res);
+                if (res['update'] === false) return;
+                const scheduleMenuDiv = document.querySelector(".schedule-menu");
+                const block = res['block'];
+                const blockDiv = document.createElement('div');
+                blockDiv.innerHTML = block;
+                const newScheduleMenuDiv = blockDiv.querySelector(".schedule-menu");
+                scheduleMenuDiv.innerHTML = newScheduleMenuDiv.innerHTML;
+                scheduleMenuDiv.setAttribute("data-id", newScheduleMenuDiv.getAttribute("data-id"));
 
-            gThis.posterPreview();
-        })
-        .catch(err => {
-            console.log(err);
-        });
+                gThis.posterPreview();
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
 
     searchFetch(e) {
@@ -771,6 +763,66 @@ export class Menu {
 
     initPreview() {
         this.setPreview(localStorage.getItem("mytvtime_2_preview"));
+    }
+
+    setAccentColor() {
+        /** @type HTMLDialogElement */
+        const accentColorDialog = document.querySelector("#accentColorDialog");
+        const submitButton = accentColorDialog.querySelector("button[type=submit]");
+        const resetButton = accentColorDialog.querySelector("button[type=reset]");
+        const cancelButton = accentColorDialog.querySelector("button[type=button]");
+        const accentColorValue = gThis.accentColorValue;//gThis.accentColor.getAttribute("data-value");
+        const accentColorInput = accentColorDialog.querySelector("input[type=color]");
+        accentColorInput.value = accentColorValue;
+        console.log(accentColorValue);
+        cancelButton.addEventListener("click", () => {
+            gThis.root.style.setProperty("--accent-color", accentColorValue);
+            accentColorDialog.close();
+        });
+        resetButton.addEventListener("click", () => {
+            gThis.root.style.setProperty("--accent-color", gThis.accentColorValue);
+        });
+        submitButton.addEventListener("click", () => {
+            console.log("Save this color " + accentColorInput.value + " to the database");
+            gThis.updateAccentColor(accentColorInput.value);
+            accentColorDialog.close();
+        });
+        accentColorInput.addEventListener("input", () => {
+            console.log(accentColorInput.value);
+            gThis.root.style.setProperty("--accent-color", accentColorInput.value);
+        });
+        accentColorDialog.showModal();
+    }
+
+    getAccentColor() {
+        fetch("/api/settings/accent-color/read")
+            .then(response => response.json())
+            .then(data => {
+                /*console.log(data);*/
+                this.accentColorValue = data['value'];
+                this.defaultColorValue = data['default'];
+                this.root.style.setProperty("--accent-color", this.accentColorValue);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
+    updateAccentColor(value) {
+        fetch("/api/settings/accent-color/update", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({accentColor: value})
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     togglePreview() {

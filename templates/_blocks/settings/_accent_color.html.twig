@@ -1,0 +1,31 @@
+<dialog id="accentColorDialog" class="accent-color-dialog" closedby="any">
+    <label>
+        {{ 'Choose a color'|trans }}
+        <input type="color" list="theme-sunny"/>
+    </label>
+    <datalist id="theme-sunny">
+        <option value="#9EF6FF"></option>
+        <option value="#FFED63"></option>
+        <option value="#FFCC31"></option>
+        <option value="#FFA32F"></option>
+        <option value="#FF8462"></option>
+    </datalist>
+    <div class="row">
+        <div class="sample-gradient level-0"></div>
+        <div class="sample-gradient level-1"></div>
+        <div class="sample-gradient level-2"></div>
+        <div class="sample-gradient level-3"></div>
+        <div class="sample-gradient level-4"></div>
+        <div class="sample-gradient level-5"></div>
+        <div class="sample-gradient level-6"></div>
+        <div class="sample-gradient level-7"></div>
+        <div class="sample-gradient level-8"></div>
+        <div class="sample-gradient level-9"></div>
+        <div class="sample-gradient level-10"></div>
+    </div>
+    <div class="row">
+        <button type="reset">{{ 'Reset'|trans }}</button>
+        <button type="button">{{ 'Cancel'|trans }}</button>
+        <button type="submit">{{ 'Close'|trans }}</button>
+    </div>
+</dialog>

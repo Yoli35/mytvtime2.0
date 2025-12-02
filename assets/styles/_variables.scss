@@ -5,6 +5,7 @@ $fa-font-path: "../webfonts";
     color-scheme: light dark;
 
     accent-color: hsl(32, 76%, 50%);
+    --accent-color: hsl(32, 76%, 50%);
 
     --error: hsl(0, 50%, 50%);
     --background: light-dark(hsl(202, 18%, 95%), hsl(202, 18%, 5%));
@@ -54,15 +55,17 @@ $fa-font-path: "../webfonts";
     --purple-50: hsl(306, 50%, 50%);
 
     --orange: hsl(32, 76%, 50%);
-    --orange-10: hsl(32, 76%, 10%);
-    --orange-20: hsl(32, 76%, 20%);
-    --orange-30: hsl(32, 76%, 30%);
-    --orange-40: hsl(32, 76%, 40%);
-    --orange-50: hsl(32, 76%, 50%);
-    --orange-60: hsl(32, 76%, 60%);
-    --orange-70: hsl(32, 76%, 70%);
-    --orange-80: hsl(32, 76%, 80%);
-    --orange-90: hsl(32, 76%, 90%);
+    --orange-0: hsl(from var(--accent-color) h s 0%);
+    --orange-10: hsl(from var(--accent-color) h s 10%);
+    --orange-20: hsl(from var(--accent-color) h s 20%);
+    --orange-30: hsl(from var(--accent-color) h s 30%);
+    --orange-40: hsl(from var(--accent-color) h s 40%);
+    --orange-50: hsl(from var(--accent-color) h s 50%);
+    --orange-60: hsl(from var(--accent-color) h s 60%);
+    --orange-70: hsl(from var(--accent-color) h s 70%);
+    --orange-80: hsl(from var(--accent-color) h s 80%);
+    --orange-90: hsl(from var(--accent-color) h s 90%);
+    --orange-100: hsl(from var(--accent-color) h s 100%);
 
     --add-this: hsl(45, 80%, 45%);
     --start-this-series: hsl(186, 80%, 45%);
