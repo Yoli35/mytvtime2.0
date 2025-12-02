@@ -18,6 +18,87 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>51ᵉ mise à jour : 02/12/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve styles for series count and schedule form</div>
+                        <div class="details">Increased font weight and adjusted opacity for the .count element, set font weight for .day-of-mouth, and updated .schedule-form to use flex layout with centered content. Also set a fixed height for .schedule-form when shown and removed unused transition property.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add hover reveal effect to series overview sections</div>
+                        <div class="details">Introduces a hover effect that transitions padding and opacity to reveal the .series-overview, .overviews, and .season-overview sections. This enhances the user experience by making overview content visible only on hover, with smooth transitions for both padding and opacity.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update season page title to use season name</div>
+                        <div class="details">Replaces the season number in the page title with the season's name for improved clarity and consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:tv') }}→ Refactor EOTD menu item preview logic into method</div>
+                        <div class="details">Moved the event listener logic for EOTD menu item previews into a new posterPreview() method. This method is now called during initialization and after schedule menu updates to ensure preview functionality is consistently applied.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:calendar') }}{{ ux_icon('mdi:tv') }}→ Improve schedule form UI and toggle behavior</div>
+                        <div class="details">Refactored the schedule form styles for better layout, transitions, and button alignment. Updated the form markup to include a 'Close' button and improved button grouping. Changed the JavaScript toggle logic to use a CSS class instead of inline display styles for smoother transitions. Also fixed Twig whitespace in conditional attributes.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:calendar') }}{{ ux_icon('mdi:tv') }}→ Handle invalid user and timezone in menu and schedule</div>
+                        <div class="details">Added a check in MainMenu API to return early if no user is present. In SeriesSchedule, added exception handling for invalid or malformed user timezones and date modifications, defaulting to 'Europe/Paris' and current date as needed.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Add 'coming soon' banner for unreleased movies</div>
+                        <div class="details">Introduces a styled 'coming soon' banner on the movie detail page for movies with a future release date. The banner displays the relative release date and is styled with new SCSS rules.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:calendar') }}{{ ux_icon('mdi:tv') }}→ Refactor and add dynamic schedule menu update</div>
+                        <div class="details">Extracted schedule interval logic to a new SeriesSchedule service and API endpoint for main menu updates. Refactored Twig and JS to use a new _schedule_menu.html.twig partial, enabling dynamic updates of the schedule menu via AJAX. Added periodic refresh and manual update triggers in Menu.js, and improved styling for the schedule menu. Also added a repository method to fetch the last viewed episode ID.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Handle missing image dimensions in AverageColor</div>
+                        <div class="details">Added checks to ensure image height and width are set before drawing on canvas. If dimensions are missing, the function now returns the default RGB value to prevent errors.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:search') }}→ Add user movie search to menu and backend</div>
+                        <div class="details">Introduces a new 'Your movies' search option in the menu, allowing users to search their own movies. Implements backend endpoint and repository method for searching user-specific movies by title, and updates translations and frontend logic to support the new search type.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Enhance watch link handling for seasons and translations</div>
+                        <div class="details">Improves the WatchLink CRUD UI and backend to better support season-specific watch links, including badges for season numbers and more dynamic link naming based on season and provider. Updates translation keys and usage for consistency, adjusts API endpoints to use GET, and refines styles for watch link display. Also updates French translations and tooltip texts for clarity.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Fix network update check for missing updatedAt</div>
+                        <div class="details">Refactors the logic to update network data by handling cases where the updatedAt field is null. This ensures that networks without an updatedAt timestamp are properly updated.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series slugs and episode card styles</div>
+                        <div class="details">Standardizes the generation of series slugs by using the lowercased slugified display name throughout templates, improving URL consistency. Refactors episode and history card templates to use a new displayName variable and updates links for better navigation. Enhances card and episode-related SCSS for improved layout, hover effects, and border radius handling.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-css3') }}→ Refine dialog and button styles, update back-to-series markup</div>
+                        <div class="details">Improves the appearance of modal dialogs and buttons by increasing border radii, padding, and blur effects, and adjusts layout for better consistency. Updates the 'back-to-series' element in the season template to use an anchor tag with appropriate classes and data attributes, improving accessibility and markup clarity.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bug-outline') }}→ Handle missing year and date in series highlights</div>
+                        <div class="details">Updated HighlightSeries.js to display the year only if present and set the data-title attribute only if the date exists. Modified HomeController.php to provide both formatted date and year, handling cases where the air date may be missing.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add fallback to poster image if backdrop is missing</div>
+                        <div class="details">If a series does not have a backdrop image, the template now displays the poster image as a fallback. This improves the visual presentation for series lacking a backdrop.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:search') }}→ Add multi-search options menu to main search bar</div>
+                        <div class="details">Introduces a dropdown menu in the multi-search bar allowing users to select between searching all, movies, series, people, or their own series. Updates JavaScript to handle option selection, persist choice in a cookie, and update search behavior accordingly. Styles and markup are updated to support the new menu, and French translations are added for new UI elements. Old individual search bars in the menu are commented out.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add copy-to-clipboard feature for series names</div>
+                        <div class="details">Introduced a CopyName JS class to add a copy icon next to series names, allowing users to copy the name to the clipboard. Updated Season.js and Show.js to use this feature, added the necessary SVG icon to the templates, and styled the icon in series.scss. Registered the new module in importmap.php.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:youtube-tv') }}→ Redirect to video page after adding new video</div>
+                        <div class="details">After successfully adding a new video, the controller now redirects to the video's detail page instead of staying on the same page. The addVideo method now returns the new video's ID to support this redirect.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>50ᵉ mise à jour : 24/11/2025</h2>
                 <ul>
                     <li>
