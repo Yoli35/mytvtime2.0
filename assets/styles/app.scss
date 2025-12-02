@@ -683,6 +683,19 @@ label:has(input[type="text"]) {
                 width: calc(100% + 1rem);
             }
         }
+
+        .menu .user {
+            .accent-color {
+                display: flex;
+
+                .sample {
+                    background-color: var(accent-color);
+                    border: 2px solid;
+                    border-radius: 50%;
+                    height: 1.5rem;
+                    width: 1.5rem;}
+            }
+        }
     }
 
     > *:not(.multi-search, .navbar-items):hover,
