@@ -124,9 +124,10 @@ h2 {
         .count {
             color: var(--orange-60);
             font-size: max(18rem, max(24vh, 24vw));
-            font-weight: 600;
+            font-weight: 900;
+            line-height: 1.1em;
             left: 50%;
-            opacity: .25;
+            opacity: .125;
             position: absolute;
             top: 50%;
             transform: translate(-50%, -50%);
@@ -138,6 +139,7 @@ h2 {
 
         .day-of-mouth {
             font-size: max(8rem, 12vh);
+            font-weight: 900;
             line-height: 1.1em;
             z-index: 1;
 
@@ -1693,8 +1695,9 @@ h2 {
         .schedule-form {
             background-color: hsla(from var(--orange-50) h s l / 0.5);
             box-shadow: 0 0 1rem hsla(from var(--orange-10) h s l / 0.25) inset;
-            display: block;
+            display: flex;
             height: 0;
+            justify-content: center;
             margin-inline: -1rem;
             overflow: hidden;
             padding: 0;
@@ -1702,10 +1705,9 @@ h2 {
             width: calc(100% + 2rem);
 
             &.show {
-                height: auto;
+                height: 24rem;
                 margin-block-end: 1rem;
                 padding: 1rem;
-                transition-behavior: allow-discrete;
             }
 
             .form-field {
