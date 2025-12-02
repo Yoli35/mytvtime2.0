@@ -113,7 +113,14 @@
                             </div>
                         {% endif %}
                     </div>
-                    {% if series.backdropPath %}
+                    {% if series.backdropPath and series.posterPath %}
+                        <div class="backdrop">
+                            <picture>
+                                <source media="(orientation: portrait)" srcset="/series/posters{{ series.posterPath }}">
+                                <img src="/series/backdrops{{ series.backdropPath }}" alt="{{ series.name }} backdrop">
+                            </picture>
+                        </div>
+                    {% elseif series.backdropPath %}
                         <div class="backdrop">
                             <img src="/series/backdrops{{ series.backdropPath }}" alt="{{ series.name }}">
                         </div>
