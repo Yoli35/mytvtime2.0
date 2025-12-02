@@ -632,8 +632,6 @@ export class Menu {
             const ul = searchMenu.parentElement.parentElement.querySelector(".search-results ul");
             if (!ul) return;
             let type = ul.getAttribute("data-type");
-            // console.log({ul});
-            // console.log(e.key);
             if (e.key === 'Enter') {
                 e.preventDefault();
                 const li = ul.querySelector("li.active") ?? ul.querySelector("li");
@@ -641,7 +639,6 @@ export class Menu {
                     li.querySelector("a").click();
                     return;
                 }
-                //const multiSearchMenuResultType = (type === 'multi') ? li?.getAttribute("data-type") : null;
 
                 if (!li) {
                     if (type === 'movie') {
@@ -659,7 +656,6 @@ export class Menu {
                 const searchResults = li.closest(".search-results");
                 const a = li.querySelector("a");
                 /* >> Fermeture du menu au cas où le lien serait ouvert dans un autre onglet ou une autre fenêtre */
-                // ul.remove();
                 const lis = ul.querySelectorAll("li");
                 lis.forEach(item => {
                     item.remove();
@@ -671,28 +667,6 @@ export class Menu {
                 gThis.closeMenu(navbarItem, menuDiv);
                 /* << */
                 a.click();
-
-                /*if (multiSearchMenuResultType) {
-                    type = multiSearchMenuResultType;
-                }
-
-                const id = li.getAttribute("data-id");
-
-                if (type === 'movie') {
-                    window.location.href = '/' + gThis.lang + '/movie/tmdb/' + id;
-                }
-                if (type === 'tv') {
-                    const slug = li.getAttribute("data-slug");
-                    window.location.href = '/' + gThis.lang + '/series/tmdb/' + id + '-' + slug;
-                }
-                if (type === 'dbtv') {
-                    const slug = li.getAttribute("data-slug");
-                    window.location.href = '/' + gThis.lang + '/series/show/' + id + '-' + slug;
-                }
-                if (type === 'person') {
-                    const slug = li.getAttribute("data-slug");
-                    window.location.href = '/' + gThis.lang + '/people/show/' + id + '-' + slug;
-                }*/
             }
             if (e.key === 'ArrowDown') {
                 e.preventDefault();
@@ -766,24 +740,25 @@ export class Menu {
     }
 
     setAccentColor() {
+        document.documentElement.click();
         /** @type HTMLDialogElement */
         const accentColorDialog = document.querySelector("#accentColorDialog");
         const submitButton = accentColorDialog.querySelector("button[type=submit]");
         const resetButton = accentColorDialog.querySelector("button[type=reset]");
         const cancelButton = accentColorDialog.querySelector("button[type=button]");
-        const accentColorValue = gThis.accentColorValue;//gThis.accentColor.getAttribute("data-value");
         const accentColorInput = accentColorDialog.querySelector("input[type=color]");
-        accentColorInput.value = accentColorValue;
-        console.log(accentColorValue);
+
+        accentColorInput.value = gThis.accentColorValue;
         cancelButton.addEventListener("click", () => {
-            gThis.root.style.setProperty("--accent-color", accentColorValue);
+            gThis.root.style.setProperty("--accent-color", gThis.accentColorValue);
             accentColorDialog.close();
         });
         resetButton.addEventListener("click", () => {
-            gThis.root.style.setProperty("--accent-color", gThis.accentColorValue);
+            accentColorInput.value = gThis.defaultColorValue;
+            gThis.root.style.setProperty("--accent-color", gThis.defaultColorValue);
+            gThis.updateAccentColor(gThis.defaultColorValue);
         });
         submitButton.addEventListener("click", () => {
-            console.log("Save this color " + accentColorInput.value + " to the database");
             gThis.updateAccentColor(accentColorInput.value);
             accentColorDialog.close();
         });
