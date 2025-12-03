@@ -242,6 +242,8 @@ class SeriesSeasonEpisodes extends AbstractController
             $providerName = $this->providersInfos[$wpId]['name'];
             $voteColorBackground = $this->providersInfos[$wpId]['vote_color_background'];
             $voteColor = $this->providersInfos[$wpId]['vote_color'];
+        }
+        if ($watchedAt) {
             $vote = $userEpisode->getVote();
         }
 

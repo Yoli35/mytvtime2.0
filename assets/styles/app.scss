@@ -82,9 +82,10 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-size: 1rem;
     font-weight: 100;
-    /*height: 100dvh;*/
+    height: 100dvh;
     line-height: 1.5rem;
     margin: 0;
+    overflow-y: auto;
     position: relative;
 
     &.frozen {
@@ -173,7 +174,7 @@ body:has(dialog[open]) {
 .backgroundImageOverlay {
     /*-webkit-backdrop-filter: blur(256px) brightness(75%) saturate(85%);
     backdrop-filter: blur(256px) brightness(75%) saturate(85%);*/
-    overflow: hidden;
+    /*overflow: hidden;*/
     padding: 0;
     width: 100%;
 

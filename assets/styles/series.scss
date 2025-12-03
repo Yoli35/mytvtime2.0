@@ -5800,9 +5800,9 @@ dialog {
     inset: 0;
     margin-block: auto;
     margin-inline: auto;
+    max-width: 80%;
     padding: 1rem;
     position: absolute;
-    width: 80%;
     z-index: 2;
 }
 
@@ -6126,7 +6126,13 @@ dialog, .side-panel {
     }
 }
 
-@media (max-width: 920px) {
+@media (width < 52rem) {
+    dialog {
+        max-width: 95%;
+    }
+}
+
+@media (width < 60rem) {
     .add-location-dialog {
         .form-row {
             flex-wrap: wrap;
