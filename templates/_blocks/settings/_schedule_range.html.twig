@@ -1,0 +1,15 @@
+<dialog id="scheduleRangeDialog" class="schedule-range-dialog" closedby="any">
+    <label for="schedule-menu-range-start">
+        {{ 'Number of days before'|trans }}
+        <input type="number" id="schedule-menu-range-start" min="-7" max="0" step="1" value=""/>
+    </label>
+    <label for="schedule-menu-range-end">
+        {{ 'Number of days after'|trans }}
+        <input type="number" id="schedule-menu-range-end" min="0" max="7" step="1" value=""/>
+    </label>
+    <div class="row">
+        <button type="reset">{{ 'Reset'|trans }}</button>
+        <button type="button">{{ 'Cancel'|trans }}</button>
+        <button type="submit">{{ 'Close'|trans }}</button>
+    </div>
+</dialog>

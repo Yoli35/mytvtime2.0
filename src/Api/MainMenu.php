@@ -2,7 +2,9 @@
 
 namespace App\Api;
 
+use App\Entity\Settings;
 use App\Entity\User;
+use App\Repository\SettingsRepository;
 use App\Repository\UserEpisodeRepository;
 use App\Service\SeriesSchedule;
 use Closure;
@@ -24,6 +26,7 @@ readonly class MainMenu
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure               $renderView,
         private SeriesSchedule        $seriesSchedule,
+        private SettingsRepository    $settingsRepository,
         private UserEpisodeRepository $userEpisodeRepository,
     )
     {
@@ -50,10 +53,15 @@ readonly class MainMenu
             ]);
         }
 
-        $startDay = $inputBag->getInt("startDay");
-        $endDay = $inputBag->getInt("endDay", 7);
-        $start = $inputBag->get("start", "0 day");
-        $end = $inputBag->get("end", "7 day");
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'schedule_range']);
+        if (!$settings) {
+            $settings = new Settings($user, 'schedule_range', ['start' => "-2", 'end' => "2", 'default_start' => "-2", 'default_end' => "2"]);
+            $this->settingsRepository->save($settings, true);
+        }
+        $startDay = (int)$settings->getData()['start'];
+        $endDay = (int)$settings->getData()['end'];
+        $start = $startDay . " day";;
+        $end = $endDay . " day";
         $locale = $inputBag->getAlpha("locale", "fr");
 
         $interval = $this->seriesSchedule->getSchedule($user, $start, $end, $locale);
@@ -62,11 +70,11 @@ readonly class MainMenu
             'ok' => true,
             'update' => true,
             'block' => ($this->renderView)('_blocks/_schedule_menu.html.twig', [
-                'interval' => $interval,
-                'startDay' => $startDay,
-                'endDay' => $endDay,
-                'start' => $start,
-                'end' => $end,
+                'data' => [
+                    'interval' => $interval,
+                    'startDay' => $startDay,
+                    'endDay' => $endDay,
+                ]
             ]),
         ]);
     }

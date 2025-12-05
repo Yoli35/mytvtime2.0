@@ -31,6 +31,7 @@ more notifications: notifications supplémentaires
 All locations: Tous les lieux
 Change your avatar on your account page: Changez votre avatar sur la page de votre compte
 Contact me: Contactez-moi
+Display the poster: Montrer l'affiche
 Menu people: Personnes
 Movies, series, actors…: Films, séries, acteurs…
 My browsing history: Mon historique de navigation
@@ -255,6 +256,7 @@ Have you already watched it and want to mark all episodes as viewed?: L'avez-vou
 A real binger!: Un vrai binge-watcher !
 A real marathoner!: Un vrai marathonien !
 Add a localized overview: Ajouter un aperçu localisé
+Add a re-edited version to this season: Ajouter une version rééditée à cette saison
 Add a video: Ajouter une vidéo
 Add a watch link: Ajouter un lien pour regarder
 Add an additional overview: Ajouter un aperçu supplémentaire
@@ -322,10 +324,17 @@ Expand all videos: Développer toutes les vidéos
 External sources: Sources externes
 Filming locations map: Carte des lieux de tournage
 First air date updated: Date de première diffusion mise à jour
+Five days ago: Il y a cinq jours
 Fly to the location: Aller au lieu
+Four days ago: Il y a quatre jours
 Give a rating: Donnez une note
 In Production: En Production
+In five days: Dans cinq jours
+In four days: Dans quatre jours
 In progress: Visionnage en cours
+In seven days: Dans sept jours
+In six days: Dans six jours
+In three days: Dans trois jours
 In two days: Dans deux jours
 Key facts: Points clés
 Laptop: Ordinateur portable
@@ -370,6 +379,8 @@ Not a valid file type. Update your selection: Type de fichier non valide. Mettez
 Not watched yet: Pas encore vu
 Nothing to show here: Rien à montrer ici
 Now: Maintenant
+Number of days after: Nombre de jours après
+Number of days before: Nombre de jours avant
 Number of episodes has changed: Le nombre d'épisodes a changé
 On Set Key Props: Accessoiriste sur le plateau
 Original Country: Pays d'origine
@@ -423,9 +434,12 @@ Series not found on The Movie Database: Série non trouvée sur The Movie Databa
 Series not seen in a while: Séries non vues depuis un moment
 Series of the day: Série du jour
 Series of the next 7 days: Séries des 7 prochains jours
+Series schedule menu range: Plage du menu de l’agenda des séries
 Series: Séries
+Seven days ago: Il y a sept jours
 Show all: Afficher tout
 Since: Depuis
+Six days ago: Il y a six jours
 Slug updated: Slug mis à jour
 Source: Source
 Special episodes: Épisodes spéciaux
@@ -444,6 +458,7 @@ That's all!: C'est tout !
 That's all, Folks!: C'est tout, les amis !
 The link has been copied to your clipboard: Le lien a été copié dans votre presse-papiers
 This field is required: Ce champ est requis
+Three days ago: Il y a trois jours
 Thumbnail, additional images: Vignette, images supplémentaires
 Time: Heure
 To be continued: À suivre
@@ -452,7 +467,6 @@ Today: Aujourd'hui
 Tomorrow: Demain
 Translate: Traduire
 Two days ago: Il y a deux jours
-Three days ago: Il y a trois jours
 URL: URL
 Up to date!: À jour !
 Up to date: À jour
@@ -466,8 +480,8 @@ Video Identifier (11 characters - i.e. 5KHgFEiPD4g): Identifiant de la vidéo (1
 Videos: Vidéos
 View date: Date de vue
 Vote: Voter
-Watch: Regarder
 Watch on: Regarder sur
+Watch: Regarder
 Watched %time% times: Vu %time% fois
 Watched again: Vu à nouveau
 What to watch next?: Que regarder ensuite ?

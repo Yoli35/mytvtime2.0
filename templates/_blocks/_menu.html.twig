@@ -208,6 +208,8 @@
                 <div class="multi-search-option-separator"></div>
                 <div class="multi-search-option" data-value="dbmovie">{{ 'Your movies'|trans }}</div>
                 <div class="multi-search-option" data-value="dbtv">{{ 'Your series'|trans }}</div>
+                <div class="multi-search-option-separator"></div>
+                <div class="multi-search-setting"><label for="display-poster-toggler">{{ 'Display the poster'|trans }}<input type="checkbox" switch checked id="display-poster-toggler" /></label></div>
             </div>
             <div class="search-results __multi">
                 <ul data-type="multi" data-sub-type="multi"></ul>
@@ -339,6 +341,7 @@
                 {% endif %}
                 <div class="separation">{{ 'Settings'|trans }}</div>
                 <div class="accent-color" data-value="#E0861F">{{ 'Accent color'|trans }}…<div class="sample"></div></div>
+                <div class="schedule-range">{{ 'Series schedule menu range'|trans }}…</div>
                 <div class="menu-preview" data-on="{{ 'Hide preview'|trans }}" data-off="{{ 'Show preview'|trans }}">{{ 'Hide preview'|trans }}</div>
                 <div class="separation">{{ 'Theme'|trans }}</div>
                 <div class="menu-theme" data-theme="auto">{{ 'Automatic'|trans }}</div>
@@ -367,12 +370,11 @@
             </div>
             <div class="menu main">
                 {% if app.user %}
-
-                    {% set start="-3 day" %}
-                    {% set end="2 day" %}
-                    {% set startDay=-3 %}
-                    {% set endDay=2 %}
-                    {{ include('_blocks/_schedule_menu.html.twig', {interval: listEpisodeOfTheInterval(app.user, start, end, app.locale)}) }}
+{#                    {% set start="-3 day" %}#}
+{#                    {% set end="2 day" %}#}
+{#                    {% set startDay=-3 %}#}
+{#                    {% set endDay=2 %}#}
+                    {{ include('_blocks/_schedule_menu.html.twig', {data: listEpisodeOfTheInterval(app.user, app.locale)}) }}
 
                     {% set inProgress = inProgressSeries(app.user, app.user.preferredLanguage??'fr') %}
                     {% if inProgress.ok %}

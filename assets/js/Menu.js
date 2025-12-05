@@ -112,6 +112,7 @@ export class Menu {
         this.root = document.documentElement;
         this.userMenu = document.querySelector(".menu.user");
         this.accentColor = this.userMenu.querySelector(".accent-color");
+        this.scheduleRange = this.userMenu.querySelector(".schedule-range");
         this.menuPreview = this.userMenu.querySelector(".menu-preview");
         this.menuThemes = this.userMenu.querySelectorAll(".menu-theme");
         this.init = this.init.bind(this);
@@ -121,6 +122,7 @@ export class Menu {
         this.setTheme = this.setTheme.bind(this);
         this.checkTheme = this.checkTheme.bind(this);
         this.getAccentColor = this.getAccentColor.bind(this);
+        this.getScheduleRange = this.getScheduleRange.bind(this);
         this.lang = document.documentElement.lang;
         this.posterUrl = null;
         this.profileUrl = null;
@@ -300,15 +302,26 @@ export class Menu {
 
         if (multiSearch) {
             const magnifyingGlassSpan = multiSearchDiv.querySelector(".magnifying-glass");
+            const multiSearchOptionsButton = multiSearchDiv.querySelector(".multi-search-options-button");
+            const multiSearchOptionsMenu = multiSearchDiv.querySelector(".multi-search-options-menu");
+            const multiSearchOptions = multiSearchOptionsMenu.querySelectorAll(".multi-search-option");
+            const displayPosterToggler = multiSearchOptionsMenu.querySelector("#display-poster-toggler");
+            let initialPreviewSetting;
+
             magnifyingGlassSpan.addEventListener("click", () => {
                 multiSearchDiv.classList.toggle("active");
                 if (multiSearchDiv.classList.contains("active")) {
                     multiSearch.focus();
+                    initialPreviewSetting = gThis.getPreview();
+                    gThis.forcePreview(displayPosterToggler.checked);
+                } else {
+                    gThis.forcePreview(initialPreviewSetting);
                 }
             });
-            const multiSearchOptionsButton = multiSearchDiv.querySelector(".multi-search-options-button");
-            const multiSearchOptionsMenu = multiSearchDiv.querySelector(".multi-search-options-menu");
-            const multiSearchOptions = multiSearchOptionsMenu.querySelectorAll(".multi-search-option");
+            displayPosterToggler.addEventListener("change", () => {
+                gThis.forcePreview(displayPosterToggler.checked);
+            });
+
             multiSearchOptionsButton.addEventListener("click", () => {
                 multiSearchOptionsMenu.classList.toggle("active");
             });
@@ -468,7 +481,8 @@ export class Menu {
 
     initOptions() {
         if (this.userMenu) {
-            this.accentColor.addEventListener("click", this.setAccentColor)
+            this.accentColor.addEventListener("click", this.setAccentColor);
+            this.scheduleRange.addEventListener("click", this.setScheduleRange);
             this.menuPreview.addEventListener("click", this.togglePreview);
             this.menuThemes.forEach((theme) => {
                 theme.addEventListener("click", this.setTheme);
@@ -492,13 +506,14 @@ export class Menu {
             headers: {
                 accept: 'application/json'
             },
-            body: JSON.stringify({start: start, end: end, startDay: startDay, endDay: endDay, locale: locale, lastViewedEpisodeId: lastEpisodeId}),
+            body: JSON.stringify({locale: locale, lastViewedEpisodeId: localStorage.getItem("schedule_range_updated") ? -1 :  lastEpisodeId}),
         };
 
         fetch(apiUrl, options)
             .then(res => res.json())
             .then(res => {
                 console.log(res);
+                localStorage.removeItem("schedule_range_updated");
                 if (res['update'] === false) return;
                 const scheduleMenuDiv = document.querySelector(".schedule-menu");
                 const block = res['block'];
@@ -800,6 +815,67 @@ export class Menu {
             });
     }
 
+    setScheduleRange() {
+        document.documentElement.click();
+        /** @type HTMLDialogElement */
+        const scheduleRangeDialog = document.querySelector("#scheduleRangeDialog");
+        const submitButton = scheduleRangeDialog.querySelector("button[type=submit]");
+        const resetButton = scheduleRangeDialog.querySelector("button[type=reset]");
+        const cancelButton = scheduleRangeDialog.querySelector("button[type=button]");
+        const startInput = scheduleRangeDialog.querySelector("input[id=schedule-menu-range-start]");
+        const endInput = scheduleRangeDialog.querySelector("input[id=schedule-menu-range-end]");
+
+        gThis.getScheduleRange('values');
+
+        cancelButton.addEventListener("click", () => {
+            scheduleRangeDialog.close();
+        });
+        resetButton.addEventListener("click", () => {
+            gThis.getScheduleRange('default');
+            localStorage.setItem("schedule_range_updated", "true")
+        });
+        submitButton.addEventListener("click", () => {
+            gThis.updateScheduleRange(startInput.value, endInput.value);
+            localStorage.setItem("schedule_range_updated", "true")
+            scheduleRangeDialog.close();
+        });
+        scheduleRangeDialog.showModal();
+    }
+
+    getScheduleRange(type) {
+        fetch("/api/settings/schedule-range/read?t=" + type)
+            .then(response => response.json())
+            .then(data => {
+                /*console.log(data);*/
+                const scheduleRangeDialog = document.querySelector("#scheduleRangeDialog");
+                const startInput = scheduleRangeDialog.querySelector("input[id=schedule-menu-range-start]");
+                const endInput = scheduleRangeDialog.querySelector("input[id=schedule-menu-range-end]");
+
+                startInput.value = data['start'];
+                endInput.value = data['end'];
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
+    updateScheduleRange(start, end) {
+        fetch("/api/settings/schedule-range/update", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({start: start, end: end})
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
     togglePreview() {
         const preview = localStorage.getItem("mytvtime_2_preview");
 
@@ -811,12 +887,21 @@ export class Menu {
         this.setPreview(localStorage.getItem("mytvtime_2_preview"));
     }
 
+    forcePreview(preview) {
+        if (preview) {
+            localStorage.setItem("mytvtime_2_preview", "true");
+        } else {
+            localStorage.removeItem("mytvtime_2_preview");
+        }
+        this.setPreview(localStorage.getItem("mytvtime_2_preview"));
+    }
+
     getPreview() {
-        return localStorage.getItem("mytvtime_2_preview");
+        return !!localStorage.getItem("mytvtime_2_preview");
     }
 
     setPreview(preview) {
-        if (preview !== null) {
+        if (preview) {
             this.menuPreview.innerHTML = this.menuPreview.getAttribute("data-on");
         } else {
             this.menuPreview.innerHTML = this.menuPreview.getAttribute("data-off");

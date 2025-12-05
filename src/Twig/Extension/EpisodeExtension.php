@@ -31,6 +31,7 @@ class EpisodeExtension extends AbstractExtension
             new TwigFunction('countNewEpisodeNotifications', [EpisodeExtensionRuntime::class, 'countNewEpisodeNotifications']),
             new TwigFunction('listEpisodeNotifications', [EpisodeExtensionRuntime::class, 'listEpisodeNotifications']),
             new TwigFunction('listEpisodeOfTheInterval', [EpisodeExtensionRuntime::class, 'listEpisodeOfTheInterval']),
+            new TwigFunction('relativeDayStrings', [EpisodeExtensionRuntime::class, 'relativeDayStrings']),
             new TwigFunction('inProgressSeries', [EpisodeExtensionRuntime::class, 'inProgressSeries']),
         ];
     }

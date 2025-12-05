@@ -1,17 +1,12 @@
-{% set relativeDayStrings = {
-    "-3": 'Three days ago'|trans,
-    "-2": 'Two days ago'|trans,
-    "-1": 'Yesterday'|trans,
-    "0": 'Today'|trans,
-    "1": 'Tomorrow'|trans,
-    "2": 'In two days'|trans
-} %}
-<div class="schedule-menu" data-id="{{ interval.lastViewedEpisodeId }}" data-start="{{ start }}" data-end="{{ end }}" data-start-day="{{ startDay }}" data-end-day="{{ endDay }}">
+{% set interval = data.interval %}
+{% set startDay = data.startDay %}
+{% set endDay = data.endDay %}
+<div class="schedule-menu" data-id="{{ interval.lastViewedEpisodeId }}">
 {% for relativeDay in  startDay..endDay %}
     {% set eotdList = interval[relativeDay] %}
     {% set l = eotdList.totalEpisodeCount %}
     {% if l %}
-        <div class="separation">{{ relativeDayStrings[relativeDay] }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
+        <div class="separation">{{ relativeDayStrings(relativeDay) }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
         {% for eotd in eotdList.results %}
             {% if eotd.type == 'series' %}
                 {% set url = path('app_series_season', {id: eotd.id, slug: eotd.displayName|slug|lower, seasonNumber: eotd.seasonNumber}) %}
