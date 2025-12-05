@@ -2890,10 +2890,9 @@ h2 {
             border: 2px solid var(--orange-50);
 
             .infos {
-                .user-votes, .last-episode, .next-episode {
-                    .show-tab {
-                        opacity: 1;
-                    }
+                .user-votes .show-tab,
+                .new-edition-toggler {
+                    opacity: 1;
                 }
             }
         }
@@ -3197,6 +3196,59 @@ h2 {
                                 }
                             }
                         }
+                    }
+                }
+            }
+
+            .new-edition-toggler {
+                align-items: center;
+                background-color: var(--green-50);
+                border-radius: 50%;
+                color: var(--ardoise-10);
+                cursor: pointer;
+                display: flex;
+                height: 2rem;
+                justify-content: center;
+                opacity: 0;
+                position: absolute;
+                right: 1rem;
+                top: 1rem;
+                transition: opacity 0.3s ease-in-out;
+                width: 2rem;
+
+                svg {
+                    height: 1.5rem;
+                    width: 1.5rem;
+                }
+            }
+
+            .new-edition-menu {
+                position: absolute;
+                right: 3rem;
+                top: 1rem;
+                z-index: 1;
+
+                &.visible {
+                    display: block;
+                }
+
+                > div {
+                    align-items: center;
+                    background-color: var(--ardoise-70);
+                    border-radius: .25rem;
+                    color: var(--ardoise-10);
+                    cursor: pointer;
+                    display: flex;
+                    font-size: 1rem;
+                    font-weight: 300;
+                    gap: .5rem;
+                    justify-content: flex-start;
+                    padding-block: .5rem;
+                    padding-inline: 1rem;
+                    white-space: nowrap;
+
+                    &:hover {
+                        background-color: var(--orange-50);
                     }
                 }
             }

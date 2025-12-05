@@ -281,7 +281,7 @@
                     <div class="seasons">
                         {% for season in series.seasons %}
                             {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
-                            <div class="season">
+                            <div class="season" data-season-number="{{ season.season_number }}">
                                 <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: (series.localizedName ?? series.name)|slug|lower}) }}"
                                    class="poster" data-title="{{ "Season poster"|trans }}">
                                     {% if season.poster_path %}
@@ -335,6 +335,19 @@
                                             {{ include('_blocks/series/_votes.html.twig', {scale: 0.5, type: 'entity', season_number: season.season_number, ues: uvs.ues, vas: uvs.avs}) }}
                                         </div>
                                     {% endif %}
+                                    <div class="new-edition-toggler" data-title="{{ 'Add a re-edited version to this season'|trans }}">
+                                        {{ ux_icon('mdi:ellipsis-horizontal') }}
+                                    </div>
+                                    <div class="new-edition-menu">
+                                        <div class="new-edition-menu-item">{{ 'Add a re-edited version to this season'|trans }}</div>
+                                    </div>
+                                    <script>
+                                        const newEditionToggler = document.querySelector('.season[data-season-number="{{ season.season_number }}"] .new-edition-toggler');
+                                        const newEditionMenu = document.querySelector('.season[data-season-number="{{ season.season_number }}"] .new-edition-menu');
+                                        newEditionToggler.addEventListener('click', function () {
+                                            newEditionMenu.classList.toggle('visible');
+                                        });
+                                    </script>
                                 </div>
                             </div>
                         {% endfor %}
