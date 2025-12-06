@@ -158,230 +158,234 @@
 
             {#            {{ include('_blocks/series/_changes.html.twig') }} #}
             {#            {{ include('_blocks/series/_externals.html.twig') }} #}
+            {% set episodeCount = season.episodes|length %}
 
             <div class="season-stuff">
                 {#                <h2>{{ 'Season stuff'|trans }}</h2> #}
                 {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: false}) }}
 
-                <div class="user-actions" data-user-series-id="{{ userSeries.id }}">
-                    <div class="size-item{% if episodeDiv.height == '15rem' %} active{% endif %}" data-size="15rem" data-type="size">
-                        {{ ux_icon('mdi:size-s') }}
+                {% if episodeCount %}
+                    <div class="user-actions" data-user-series-id="{{ userSeries.id }}">
+                        <div class="size-item{% if episodeDiv.height == '15rem' %} active{% endif %}" data-size="15rem" data-type="size">
+                            {{ ux_icon('mdi:size-s') }}
+                        </div>
+                        <div class="size-item{% if episodeDiv.height == '20rem' %} active{% endif %}" data-size="20rem" data-type="size">
+                            {{ ux_icon('mdi:size-m') }}
+                        </div>
+                        <div class="size-item{% if episodeDiv.height == '25rem' %} active{% endif %}" data-size="25rem" data-type="size">
+                            {{ ux_icon('mdi:size-l') }}
+                        </div>
+                        {#                </div> #}
+                        <div class="separator">{{ ux_icon('mdi:circle') }}</div>
+                        {#                <div class="user-actions" data-user-series-id="{{ userSeries.id }}"> #}
+                        <div class="ar-item{% if episodeDiv.aspectRatio == '16 / 9' %} active{% endif %}" data-ar="16 / 9" data-type="aspect-ratio">
+                            {{ ux_icon('mdi:crop-landscape') }}
+                        </div>
+                        <div class="ar-item{% if episodeDiv.aspectRatio == '1 / 1' %} active{% endif %}" data-ar="1 / 1" data-type="aspect-ratio">
+                            {{ ux_icon('mdi:crop-square') }}
+                        </div>
+                        <div class="ar-item{% if episodeDiv.aspectRatio == '9 / 16' %} active{% endif %}" data-ar="9 / 16" data-type="aspect-ratio">
+                            {{ ux_icon('mdi:crop-portrait') }}
+                        </div>
+                        {#                </div> #}
+                        <div class="separator">{{ ux_icon('mdi:circle') }}</div>
+                        {#                <div class="user-actions"> #}
+                        <div class="edit-episode-infos" data-title="{{ 'Edit all episodes name and overview'|trans }}">
+                            {{ ux_icon('mdi:edit-box-outline') }}
+                        </div>
                     </div>
-                    <div class="size-item{% if episodeDiv.height == '20rem' %} active{% endif %}" data-size="20rem" data-type="size">
-                        {{ ux_icon('mdi:size-m') }}
-                    </div>
-                    <div class="size-item{% if episodeDiv.height == '25rem' %} active{% endif %}" data-size="25rem" data-type="size">
-                        {{ ux_icon('mdi:size-l') }}
-                    </div>
-{#                </div>#}
-                    <div class="separator">{{ ux_icon('mdi:circle') }}</div>
-{#                <div class="user-actions" data-user-series-id="{{ userSeries.id }}">#}
-                    <div class="ar-item{% if episodeDiv.aspectRatio == '16 / 9' %} active{% endif %}" data-ar="16 / 9" data-type="aspect-ratio">
-                        {{ ux_icon('mdi:crop-landscape') }}
-                    </div>
-                    <div class="ar-item{% if episodeDiv.aspectRatio == '1 / 1' %} active{% endif %}" data-ar="1 / 1" data-type="aspect-ratio">
-                        {{ ux_icon('mdi:crop-square') }}
-                    </div>
-                    <div class="ar-item{% if episodeDiv.aspectRatio == '9 / 16' %} active{% endif %}" data-ar="9 / 16" data-type="aspect-ratio">
-                        {{ ux_icon('mdi:crop-portrait') }}
-                    </div>
-{#                </div>#}
-                    <div class="separator">{{ ux_icon('mdi:circle') }}</div>
-{#                <div class="user-actions">#}
-                    <div class="edit-episode-infos" data-title="{{ 'Edit all episodes name and overview'|trans }}">
-                        {{ ux_icon('mdi:edit-box-outline') }}
-                    </div>
-                </div>
 
-                {% if quickLinks.count > 1 %}
-                    <div class="quick-episodes" data-season-number="{{ season.season_number }}" style="height: {{ 32 * quickLinks.lineCount + 4 * (quickLinks.lineCount - 1) + 20 }}px; width: {{ 32 * quickLinks.itemPerLine + 4 * (quickLinks.itemPerLine - 1) + 20 }}px;">
-                        {% for item in quickLinks.items %}
-                            <div class="{{ item.class }}" data-number="{{ item.episode_number }}"{% if item.name %} data-title="{{ item.air_date|format_date('relative_long')|capitalize }} | {{ item.name }}"{% endif %}>
-                                {{ item.episode_number }}
-                            </div>
-                        {% endfor %}
-                    </div>
+                    {% if quickLinks.count > 1 %}
+                        <div class="quick-episodes" data-season-number="{{ season.season_number }}" style="height: {{ 32 * quickLinks.lineCount + 4 * (quickLinks.lineCount - 1) + 20 }}px; width: {{ 32 * quickLinks.itemPerLine + 4 * (quickLinks.itemPerLine - 1) + 20 }}px;">
+                            {% for item in quickLinks.items %}
+                                <div class="{{ item.class }}" data-number="{{ item.episode_number }}"{% if item.name %} data-title="{{ item.air_date|format_date('relative_long')|capitalize }} | {{ item.name }}"{% endif %}>
+                                    {{ item.episode_number }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 {% endif %}
             </div>
 
             {# <h3>{{ 'Episodes'|trans }}</h3> #}
             <div class="content column">
-                <div class="episodes">
-                    <div class="episode-wrapper">
-                        {% set episodeCount = season.episodes|length %}
-                        {% set seasonCount = series.numberOfSeason %}
-                        {% for episode in season.episodes %}
-                            {% set ue = episode.user_episode %}
-                            {% set ues = episode.user_episodes %}
-                            {% set air_date = episode.air_date %}
-                            {% if air_date and air_date <= now %}
-                                <div class="episode" id="episode-{{ season.season_number }}-{{ episode.episode_number }}" data-ue-id="{{ ue.id }}" data-episode-id="{{ episode.id }}">
-                                    <div class="still" data-series-id="{{ series.tmdbId }}" data-season-id="{{ season.id }}" data-episode-id="{{ episode.id }}">
-                                        {% if episode.still_path %}
-                                            <img src="{{ episode.still_path }}" alt="{{ episode.name }}">
-                                        {% elseif episode.stills|length %}{# is defined and ue.still #}
-                                            {% set still = episode.stills|last %}
-                                            <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }}">
-                                        {% else %}
-                                            <div class="no-poster">{{ 'No poster'|trans }}</div>
-                                        {% endif %}
-                                        <div class="custom-stills">
-                                            {% for still in episode.stills %}
-                                                <div class="custom-still" data-title="{{ episode.name }}">
-                                                    <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }}">
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                        <div class="custom-stills-text">{{ 'Click here to add an image'|trans }}</div>
-                                        <div class="number{% if ue and ue.watch_at %} watched{% endif %}" data-title="{{ 'Watched %time% times'|trans({'%time%': ues|length}) }}">
-                                            {{ episode.episode_number }}<span>/{{ episodeCount }}</span>
-                                        </div>
-                                        {% if episode.episode_type is defined and episode.episode_type == 'finale' %}
-                                            <div class="finale season-finale{% if ue and ue.watch_at %} watched{% endif %}">{{ 'Season finale'|trans }}</div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="infos">
-                                        <div class="episode-name">
-                                            <div class="name">{{ episode.name }}</div>
-                                            {% if ue.substitute_name %}
-                                                <div class="substitute{% if ue and ue.watch_at %} watched{% endif %}">
-                                                    {{ ue.substitute_name }}
-                                                </div>
+                {% if episodeCount %}
+                    <div class="episodes">
+                        <div class="episode-wrapper">
+                            {% set seasonCount = series.numberOfSeason %}
+                            {% for episode in season.episodes %}
+                                {% set ue = episode.user_episode %}
+                                {% set ues = episode.user_episodes %}
+                                {% set air_date = episode.air_date %}
+                                {% if air_date and air_date <= now %}
+                                    <div class="episode" id="episode-{{ season.season_number }}-{{ episode.episode_number }}" data-ue-id="{{ ue.id }}" data-episode-id="{{ episode.id }}">
+                                        <div class="still" data-series-id="{{ series.tmdbId }}" data-season-id="{{ season.id }}" data-episode-id="{{ episode.id }}">
+                                            {% if episode.still_path %}
+                                                <img src="{{ episode.still_path }}" alt="{{ episode.name }}">
+                                            {% elseif episode.stills|length %}{# is defined and ue.still #}
+                                                {% set still = episode.stills|last %}
+                                                <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }}">
+                                            {% else %}
+                                                <div class="no-poster">{{ 'No poster'|trans }}</div>
                                             {% endif %}
-                                            <div class="edit"
-                                                 data-title="{{ 'Suggest a title'|trans }}"
-                                                 data-id="{{ episode.id }}"
-                                                 data-type="name"
-                                            >
-                                                {{ ux_icon('mdi:pencil') }}
+                                            <div class="custom-stills">
+                                                {% for still in episode.stills %}
+                                                    <div class="custom-still" data-title="{{ episode.name }}">
+                                                        <img src="/series/stills/{{ still.path }}" alt="{{ episode.name }}">
+                                                    </div>
+                                                {% endfor %}
                                             </div>
+                                            <div class="custom-stills-text">{{ 'Click here to add an image'|trans }}</div>
+                                            <div class="number{% if ue and ue.watch_at %} watched{% endif %}" data-title="{{ 'Watched %time% times'|trans({'%time%': ues|length}) }}">
+                                                {{ episode.episode_number }}<span>/{{ episodeCount }}</span>
+                                            </div>
+                                            {% if episode.episode_type is defined and episode.episode_type == 'finale' %}
+                                                <div class="finale season-finale{% if ue and ue.watch_at %} watched{% endif %}">{{ 'Season finale'|trans }}</div>
+                                            {% endif %}
                                         </div>
-                                        {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (ue.watch_at != null)}) }}
-                                        {{ include('_blocks/series/_episode_air_date.html.twig', {episode: episode, ue: ue, ues: episode.user_episodes}) }}
-                                        {% if episode.runtime or episode.vote_average %}
-                                            <div class="episode-stats">
-                                                {% if episode.runtime %}
-                                                    <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
+                                        <div class="infos">
+                                            <div class="episode-name">
+                                                <div class="name">{{ episode.name }}</div>
+                                                {% if ue.substitute_name %}
+                                                    <div class="substitute{% if ue and ue.watch_at %} watched{% endif %}">
+                                                        {{ ue.substitute_name }}
+                                                    </div>
                                                 {% endif %}
-                                                {% if episode.vote_average %}
-                                                    <div class="vote-average">{{ episode.vote_average }} / 10 - {{ episode.vote_count }} {{ (episode.vote_count > 1 ? 'votes':'vote')|trans }}</div>
+                                                <div class="edit"
+                                                     data-title="{{ 'Suggest a title'|trans }}"
+                                                     data-id="{{ episode.id }}"
+                                                     data-type="name"
+                                                >
+                                                    {{ ux_icon('mdi:pencil') }}
+                                                </div>
+                                            </div>
+                                            {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (ue.watch_at != null)}) }}
+                                            {{ include('_blocks/series/_episode_air_date.html.twig', {episode: episode, ue: ue, ues: episode.user_episodes}) }}
+                                            {% if episode.runtime or episode.vote_average %}
+                                                <div class="episode-stats">
+                                                    {% if episode.runtime %}
+                                                        <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
+                                                    {% endif %}
+                                                    {% if episode.vote_average %}
+                                                        <div class="vote-average">{{ episode.vote_average }} / 10 - {{ episode.vote_count }} {{ (episode.vote_count > 1 ? 'votes':'vote')|trans }}</div>
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                            <div class="episode-overview" data-id="{{ episode.id }}">
+                                                {% if episode.overview %}
+                                                    <div class="overview">
+                                                        {{ episode.overview }}
+                                                    </div>
                                                 {% endif %}
+                                                {% if ue.localized_overview|length %}
+                                                    <div class="overview additional">
+                                                        {{ ue.localized_overview|nl2br }}
+                                                    </div>
+                                                {% endif %}
+                                                {% if (episode.overview or ue.localized_overview|length) == 0 %}
+                                                    <div class="overview additional">{{ 'No overview'|trans }}</div>
+                                                {% endif %}
+                                                <div class="edit"
+                                                     data-title="{{ 'Suggest an overview'|trans }}"
+                                                     data-id="{{ episode.id }}"
+                                                     data-type="overview"
+                                                >
+                                                    {{ ux_icon("mdi:pencil") }}
+                                                </div>
                                             </div>
-                                        {% endif %}
-                                        <div class="episode-overview" data-id="{{ episode.id }}">
-                                            {% if episode.overview %}
-                                                <div class="overview">
-                                                    {{ episode.overview }}
+                                            {% if episode.guest_stars %}
+                                                <div class="guest-stars">
+                                                    <div class="wrapper">
+                                                        {% for people in episode.guest_stars %}
+                                                            <div class="people" data-title="{{ people.name }}{% if people.preferred_name %} - {{ people.preferred_name }}{% endif %} → {{ people.character }}">
+                                                                <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
+                                                                    <div class="photo">
+                                                                        {% if people.profile_path %}
+                                                                            <img src="{{ people.profile_path }}" alt="{{ people.name }}">
+                                                                        {% else %}
+                                                                            <div>{{ people.character }}</div>
+                                                                            <div>{{ people.name }}</div>
+                                                                            <div>{{ 'No picture'|trans }}</div>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </a>
+                                                                {% if people.google is defined %}
+                                                                    <div class="google" data-title="{{ 'See on Google'|trans }}">
+                                                                        <a href="{{ people.google }}" target="_blank">
+                                                                            {{ ux_icon('flat-color-icons:google') }}
+                                                                        </a>
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
                                                 </div>
                                             {% endif %}
-                                            {% if ue.localized_overview|length %}
-                                                <div class="overview additional">
-                                                    {{ ue.localized_overview|nl2br }}
-                                                </div>
-                                            {% endif %}
-                                            {% if (episode.overview or ue.localized_overview|length) == 0 %}
-                                                <div class="overview additional">{{ 'No overview'|trans }}</div>
-                                            {% endif %}
-                                            <div class="edit"
-                                                 data-title="{{ 'Suggest an overview'|trans }}"
-                                                 data-id="{{ episode.id }}"
-                                                 data-type="overview"
-                                            >
-                                                {{ ux_icon("mdi:pencil") }}
-                                            </div>
                                         </div>
-                                        {% if episode.guest_stars %}
-                                            <div class="guest-stars">
-                                                <div class="wrapper">
-                                                    {% for people in episode.guest_stars %}
-                                                        <div class="people" data-title="{{ people.name }}{% if people.preferred_name %} - {{ people.preferred_name }}{% endif %} → {{ people.character }}">
-                                                            <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
-                                                                <div class="photo">
-                                                                    {% if people.profile_path %}
-                                                                        <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                                                                    {% else %}
-                                                                        <div>{{ people.character }}</div>
-                                                                        <div>{{ people.name }}</div>
-                                                                        <div>{{ 'No picture'|trans }}</div>
-                                                                    {% endif %}
-                                                                </div>
-                                                            </a>
-                                                            {% if people.google is defined %}
-                                                                <div class="google" data-title="{{ 'See on Google'|trans }}">
-                                                                    <a href="{{ people.google }}" target="_blank">
-                                                                        {{ ux_icon('flat-color-icons:google') }}
-                                                                    </a>
-                                                                </div>
-                                                            {% endif %}
-                                                        </div>
-                                                    {% endfor %}
+                                        <div class="user-episode">
+                                            {% if ue and ue.watch_at %}
+                                                <div class="remove-this-episode" data-id="{{ episode.id }}"
+                                                     data-ue-id="{{ ue.id }}"
+                                                     data-series-id="{{ series.id }}"
+                                                     data-last-episode="{{ loop.last ?? 0 }}"
+                                                     data-show-id="{{ episode.show_id }}"
+                                                     data-s-number="{{ episode.season_number }}"
+                                                     data-e-number="{{ episode.episode_number }}"
+                                                     data-views="{{ episode.user_episodes|length }}"
+                                                     data-title="{{ ue.watch_at|format_datetime('relative_short', 'short')|capitalize }}">
+                                                    {{ ux_icon('mdi:eye') }}
                                                 </div>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="user-episode">
-                                        {% if ue and ue.watch_at %}
-                                            <div class="remove-this-episode" data-id="{{ episode.id }}"
-                                                 data-ue-id="{{ ue.id }}"
-                                                 data-series-id="{{ series.id }}"
-                                                 data-last-episode="{{ loop.last ?? 0 }}"
-                                                 data-show-id="{{ episode.show_id }}"
-                                                 data-s-number="{{ episode.season_number }}"
-                                                 data-e-number="{{ episode.episode_number }}"
-                                                 data-views="{{ episode.user_episodes|length }}"
-                                                 data-title="{{ ue.watch_at|format_datetime('relative_short', 'short')|capitalize }}">
-                                                {{ ux_icon('mdi:eye') }}
-                                            </div>
-                                            <div class="select-provider" data-ue-id="{{ ue.id }}" data-title="{{ ue.provider_id ? ue.provider_name : 'Choose a provider'|trans }}">
-                                                {% if ue.provider_id %}
-                                                    <img src="{{ ue.provider_logo_path }}" alt="{{ ue.provider_name }}">
-                                                {% else %}
+                                                <div class="select-provider" data-ue-id="{{ ue.id }}" data-title="{{ ue.provider_id ? ue.provider_name : 'Choose a provider'|trans }}">
+                                                    {% if ue.provider_id %}
+                                                        <img src="{{ ue.provider_logo_path }}" alt="{{ ue.provider_name }}">
+                                                    {% else %}
+                                                        {{ ux_icon('mdi:plus') }}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="select-device" data-ue-id="{{ ue.id }}" data-title="{{ 'Choose a device'|trans }}">
+                                                    {% if ue.device_id %}
+                                                        {{ ux_icon(ue.device_svg) }}
+                                                    {% else %}
+                                                        {{ ux_icon('mdi:plus') }}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="select-vote" data-ue-id="{{ ue.id }}" data-title="{{ 'Give a rating'|trans }}">
+                                                    {#                                        {% if ue.vote %} #}
+                                                    {#                                            {{ ue.vote }} #}
+                                                    {#                                        {% else %} #}
+                                                    {#                                            {{ ux_icon('fa6-solid:plus') }} #}
+                                                    {#                                        {% endif %} #}
+                                                    {{ ue.vote ?? ux_icon('mdi:plus') }}
+                                                </div>
+                                            {% else %}
+                                                <div class="add-this-episode" data-id="{{ episode.id }}"
+                                                     data-ue-id="{{ ue.id }}"
+                                                     data-series-id="{{ series.id }}"
+                                                     data-last-episode="{{ loop.last ?? 0 }}"
+                                                     data-show-id="{{ episode.show_id }}"
+                                                     data-s-number="{{ episode.season_number }}"
+                                                     data-e-number="{{ episode.episode_number }}"
+                                                     data-title="{{ 'Mark this episode as seen'|trans }}">
                                                     {{ ux_icon('mdi:plus') }}
-                                                {% endif %}
+                                                </div>
+                                            {% endif %}
+                                            <div class="back-to-top" data-title="{{ 'Back to top'|trans }}">
+                                                {{ ux_icon('mdi:arrow-up') }}
                                             </div>
-                                            <div class="select-device" data-ue-id="{{ ue.id }}" data-title="{{ 'Choose a device'|trans }}">
-                                                {% if ue.device_id %}
-                                                    {{ ux_icon(ue.device_svg) }}
-                                                {% else %}
-                                                    {{ ux_icon('mdi:plus') }}
-                                                {% endif %}
-                                            </div>
-                                            <div class="select-vote" data-ue-id="{{ ue.id }}" data-title="{{ 'Give a rating'|trans }}">
-                                                {#                                        {% if ue.vote %} #}
-                                                {#                                            {{ ue.vote }} #}
-                                                {#                                        {% else %} #}
-                                                {#                                            {{ ux_icon('fa6-solid:plus') }} #}
-                                                {#                                        {% endif %} #}
-                                                {{ ue.vote ?? ux_icon('mdi:plus') }}
-                                            </div>
-                                        {% else %}
-                                            <div class="add-this-episode" data-id="{{ episode.id }}"
-                                                 data-ue-id="{{ ue.id }}"
-                                                 data-series-id="{{ series.id }}"
-                                                 data-last-episode="{{ loop.last ?? 0 }}"
-                                                 data-show-id="{{ episode.show_id }}"
-                                                 data-s-number="{{ episode.season_number }}"
-                                                 data-e-number="{{ episode.episode_number }}"
-                                                 data-title="{{ 'Mark this episode as seen'|trans }}">
-                                                {{ ux_icon('mdi:plus') }}
-                                            </div>
-                                        {% endif %}
-                                        <div class="back-to-top" data-title="{{ 'Back to top'|trans }}">
-                                            {{ ux_icon('mdi:arrow-up') }}
-                                        </div>
-                                        <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}"
-                                           class="back-to-series"
-                                           data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.series_localized_name %}{{ season.series_localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»">
-{#                                            <div class="back-to-series" data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.series_localized_name %}{{ season.series_localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»">#}
+                                            <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}"
+                                               class="back-to-series"
+                                               data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.series_localized_name %}{{ season.series_localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»">
+                                                {#                                            <div class="back-to-series" data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.series_localized_name %}{{ season.series_localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»"> #}
                                                 {{ ux_icon('mdi:arrow-left') }}
-{#                                            </div>#}
-                                        </a>
+                                                {#                                            </div> #}
+                                            </a>
+                                        </div>
                                     </div>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
                     </div>
-                </div>
+                {% endif %}
 
                 {% if season.air_date and season.air_date <= today %}
                     {{ include('_blocks/series/_votes.html.twig', {scale: 1, type: 'array', season_number: season.season_number, ues: season.episodes|map(ep => ep.user_episode), vas: season.episodes|map(ep => ep.vote_average)}) }}
@@ -392,7 +396,13 @@
                 {% endif %}
 
                 <div class="what-to-watch-next">
-                    <div class="next-button" data-id="{{ series.tmdbId }}" data-language="{{ language }}">{{ 'What to watch next?'|trans }}</div>
+                    <div class="next-button" data-id="{{ series.tmdbId }}" data-language="{{ language }}">
+                        {% if episodeCount %}
+                        {{ 'What to watch next?'|trans }}
+                        {% else %}
+                        {{ 'What else to watch?'|trans }}
+                        {% endif %}
+                    </div>
                 </div>
 
                 {% if filmingLocation %}
