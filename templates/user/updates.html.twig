@@ -18,6 +18,39 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>52ᵉ mise à jour : 06/12/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Hide episode actions when no episodes in season</div>
+                        <div class="details">Wrapped episode-related UI elements in checks for episode count, so user actions and episode lists are only shown if the season has episodes. Also updated the 'What to watch next?' button text to display 'What else to watch?' when there are no episodes.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:settings') }}{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:search') }}→ Add 'Open in new tab' option to multi-search</div>
+                        <div class="details">Introduces a new setting to open search results in a new tab from the multi-search menu. Updates JavaScript logic, styles, template markup, and French translations to support this feature and improve menu UI.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:settings') }}{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:tv') }}→ Add customizable schedule range to series menu and option to search menu</div>
+                        <div class="details">Introduces a user setting for the series schedule menu range, allowing users to select the number of days before and after today to display. Adds backend API endpoints, frontend dialog, translations, and updates related JS, SCSS, Twig templates, and PHP logic to support this feature. Introduce an new option to force or prohibit the display of search results posters.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve dialog styles and fix vote assignment logic</div>
+                        <div class="details">Adjusted SCSS for dialog sizing and responsiveness, including use of max-width and updated media queries. Fixed logic in SeriesSeasonEpisodes.php to assign vote only if watchedAt is set. Added missing French translation for 'Choose a color'.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve series header backdrop and poster handling</div>
+                        <div class="details">Refactors SCSS and Twig templates to better handle series backdrops and posters, including aspect-ratio adjustments for portrait and landscape orientations. Updates logic to display posters in portrait mode when both poster and backdrop are available, and improves mask styling for backdrop images.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:settings') }}→ Refactor accent color dialog logic</div>
+                        <div class="details">Simplifies accent color value assignment and updates event handlers to use the correct color values. Removes unnecessary console logs and ensures reset sets both input and style to the default color.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:settings') }}→ Add accent color customization feature</div>
+                        <div class="details">Implements user-selectable accent color with a color picker dialog, updates SCSS variables to use dynamic accent color, and adds API endpoints for reading and updating the accent color. Removes unused config/reference.php and updates related templates and translations.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>51ᵉ mise à jour : 02/12/2025</h2>
                 <ul>
                     <li>
