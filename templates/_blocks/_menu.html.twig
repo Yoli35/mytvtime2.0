@@ -200,6 +200,7 @@
                     {{ ux_icon('mdi:search', {height: '16px', width:'16px'}) }}
                 </span>
             </label>
+            <div class="multi-search-options-menu-tail"></div>
             <div id="multi-search-options" class="multi-search-options-menu">
                 <div class="multi-search-option active" data-value="multi">{{ 'Movies, series, actors…'|trans }}</div>
                 <div class="multi-search-option" data-value="movie">{{ 'Movies'|trans }}</div>
@@ -210,6 +211,7 @@
                 <div class="multi-search-option" data-value="dbtv">{{ 'Your series'|trans }}</div>
                 <div class="multi-search-option-separator"></div>
                 <div class="multi-search-setting"><label for="display-poster-toggler">{{ 'Display the poster'|trans }}<input type="checkbox" switch checked id="display-poster-toggler" /></label></div>
+                <div class="multi-search-setting"><label for="new-tab-toggler">{{ 'Open in a new tab'|trans }}<input type="checkbox" switch checked id="new-tab-toggler" /></label></div>
             </div>
             <div class="search-results __multi">
                 <ul data-type="multi" data-sub-type="multi"></ul>

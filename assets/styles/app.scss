@@ -824,13 +824,30 @@ label:has(input[type="text"]) {
                 margin-block: 0.25rem;
             }
 
+            > div:first-child {
+                border-block-start-width: 2px;
+                border-top-left-radius: .5rem;
+                border-top-right-radius: .5rem;
+            }
+
+            > div:last-child {
+                border-block-end-width: 2px;
+                border-bottom-left-radius: .5rem;
+                border-bottom-right-radius: .5rem;
+            }
+
             .multi-search-option:has(+ .multi-search-option-separator) {
-                border-radius: 0 0 .25rem .25rem;
+                border-block-end-width: 2px;
+                border-bottom-left-radius: .5rem;
+                border-bottom-right-radius: .5rem;
             }
 
             .multi-search-option-separator + .multi-search-option,
             .multi-search-option-separator + .multi-search-setting {
-                border-radius: .25rem .25rem 0 0;
+
+                border-block-start-width: 2px;
+                border-top-left-radius: .5rem;
+                border-top-right-radius: .5rem;
             }
 
             .multi-search-setting:has(input[type=checkbox]) {
@@ -853,6 +870,9 @@ label:has(input[type="text"]) {
             .multi-search-setting {
                 align-items: center;
                 background-color: var(--ardoise-70);
+                border: 2px solid hsl(from var(--orange-90) h s l /.75);
+                border-block-end-width: 0;
+                border-block-start-width: 0;
                 color: var(--ardoise-10);
                 cursor: pointer;
                 display: flex;
@@ -871,9 +891,26 @@ label:has(input[type="text"]) {
                 }
 
                 &:hover {
-                    background-color: var(--orange-50);
+                    background-color: var(--orange-40);
                     color: var(--orange-90);
                 }
+            }
+        }
+
+        .multi-search-options-menu-tail {
+            border-left: 0.5rem solid transparent;
+            border-right: 0.5rem solid transparent;
+            border-bottom: 0.5rem solid hsl(from var(--orange-90) h s l /.75);
+            display:none;
+            height: 0;
+            position: absolute;
+            right: 2.75rem;
+            top: 1.5rem;
+            width: 0;
+            z-index: 12;
+
+            &.active {
+                display: block;
             }
         }
 

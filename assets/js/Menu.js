@@ -304,6 +304,7 @@ export class Menu {
             const magnifyingGlassSpan = multiSearchDiv.querySelector(".magnifying-glass");
             const multiSearchOptionsButton = multiSearchDiv.querySelector(".multi-search-options-button");
             const multiSearchOptionsMenu = multiSearchDiv.querySelector(".multi-search-options-menu");
+            const multiSearchOptionsMenuTail = multiSearchDiv.querySelector(".multi-search-options-menu-tail");
             const multiSearchOptions = multiSearchOptionsMenu.querySelectorAll(".multi-search-option");
             const displayPosterToggler = multiSearchOptionsMenu.querySelector("#display-poster-toggler");
             let initialPreviewSetting;
@@ -316,6 +317,10 @@ export class Menu {
                     gThis.forcePreview(displayPosterToggler.checked);
                 } else {
                     gThis.forcePreview(initialPreviewSetting);
+                    multiSearchOptionsMenu.classList.remove("active");
+                    multiSearchOptionsMenuTail.classList.remove("active");
+                    multiSearch.value = "";
+                    gThis.closeMultiSearchMenu(multiSearch);
                 }
             });
             displayPosterToggler.addEventListener("change", () => {
@@ -324,6 +329,7 @@ export class Menu {
 
             multiSearchOptionsButton.addEventListener("click", () => {
                 multiSearchOptionsMenu.classList.toggle("active");
+                multiSearchOptionsMenuTail.classList.toggle("active");
             });
             multiSearchOptions.forEach(option => {
                 option.addEventListener("click", () => {
@@ -531,18 +537,18 @@ export class Menu {
     }
 
     searchFetch(e) {
-        const searchInput = e.target;
+        const searchInput = e.currentTarget;
         const value = searchInput.value;
         const searchResults = searchInput.parentElement.parentElement.querySelector(".search-results");
         const ul = searchResults.querySelector('ul');//document.createElement("ul");
         const lis = ul?.querySelectorAll('li');
         if (value.length < 3) {
-            if (searchResults.innerHTML.length) {
+            /*if (searchResults.innerHTML.length) {*/
                 lis.forEach(item => {
                     item.remove();
                 }); //searchResults.innerHTML = '';
                 searchResults.classList.remove("showing-something");
-            }
+            /*}*/
             return;
         }
         const searchType = ul.getAttribute("data-type");
@@ -589,7 +595,10 @@ export class Menu {
                     }
                     const a = document.createElement(url ? "a" : "div");
                     if (url) {
+                        const openInNewTabSetting = document.querySelector("#new-tab-toggler").checked;
                         a.href = url;
+                        if (openInNewTabSetting)
+                            a.target = "_blank";
                     } else {
                         const hiddenInputPersonId = addCastBlock.querySelector('#cast-search-person-id');
                         const castNameInput = addCastBlock.querySelector('#cast-search');
@@ -636,6 +645,17 @@ export class Menu {
                 searchResults.appendChild(ul);
             })
             .catch(err => console.error('error:' + err));
+    }
+
+    closeMultiSearchMenu(input) {
+        const searchResults = input.parentElement.parentElement.querySelector(".search-results");
+        const ul = searchResults.querySelector('ul');//document.createElement("ul");
+        const lis = ul?.querySelectorAll('li');
+
+        lis.forEach(item => {
+            item.remove();
+        });
+        searchResults.classList.remove("showing-something");
     }
 
     searchMenuNavigate(e) {
