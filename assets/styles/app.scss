@@ -825,29 +825,29 @@ label:has(input[type="text"]) {
             }
 
             > div:first-child {
-                border-block-start-width: 2px;
-                border-top-left-radius: .5rem;
-                border-top-right-radius: .5rem;
+                border-block-start-width: 4px;
+                border-top-left-radius: .625rem;
+                border-top-right-radius: .625rem;
             }
 
             > div:last-child {
-                border-block-end-width: 2px;
-                border-bottom-left-radius: .5rem;
-                border-bottom-right-radius: .5rem;
+                border-block-end-width: 4px;
+                border-bottom-left-radius: .625rem;
+                border-bottom-right-radius: .625rem;
             }
 
             .multi-search-option:has(+ .multi-search-option-separator) {
-                border-block-end-width: 2px;
-                border-bottom-left-radius: .5rem;
-                border-bottom-right-radius: .5rem;
+                border-block-end-width: 4px;
+                border-bottom-left-radius: .625rem;
+                border-bottom-right-radius: .625rem;
             }
 
             .multi-search-option-separator + .multi-search-option,
             .multi-search-option-separator + .multi-search-setting {
 
-                border-block-start-width: 2px;
-                border-top-left-radius: .5rem;
-                border-top-right-radius: .5rem;
+                border-block-start-width: 4px;
+                border-top-left-radius: .625rem;
+                border-top-right-radius: .625rem;
             }
 
             .multi-search-setting:has(input[type=checkbox]) {
@@ -870,7 +870,7 @@ label:has(input[type="text"]) {
             .multi-search-setting {
                 align-items: center;
                 background-color: var(--ardoise-70);
-                border: 2px solid hsl(from var(--orange-90) h s l /.75);
+                border: 4px solid hsl(from var(--orange-90) h s l /.75);
                 border-block-end-width: 0;
                 border-block-start-width: 0;
                 color: var(--ardoise-10);
