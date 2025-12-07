@@ -1800,6 +1800,34 @@ h2 {
                         top: 20%;
                     }
 
+                    label:has(.provider-logo) {
+                        .provider-logo {
+                            border: 2px dashed var(--orange-50);
+                            border-radius: .5rem;
+                            flex-shrink: 0;
+                            height: 3rem;
+                            object-fit: cover;
+                            width: 3rem;
+
+                            &:has(img) {
+                                border-radius: .375rem;
+                                border-style: solid;
+
+                                img {
+                                    border-radius: .25rem;
+                                    height: 2.75rem;
+                                    object-fit: cover;
+                                    width: 2.75rem;
+                                }
+                            }
+                        }
+
+                        &::after {
+                            right: 4.5rem;
+                            top: 35%;
+                        }
+                    }
+
                     label:has(input[type=checkbox]) {
                         /*background-color: var(--orange-30);*/
                         border-radius: .25rem;

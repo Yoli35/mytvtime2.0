@@ -148,6 +148,23 @@
         }
     }
 
+    function updateProviderLogo(id) {
+        const selectElement = document.querySelector("#provider-" + id);
+        const selectedProvider = selectElement.value;
+        const logoDiv = selectElement.parentElement.querySelector('.provider-logo');
+        let logoImg = logoDiv.querySelector('img');
+        if (selectedProvider) {
+            if (!logoImg) {
+                logoImg = document.createElement('img');
+                logoDiv.appendChild(logoImg);
+            }
+            logoImg.src = selectElement.querySelector('option[value="' + selectedProvider + '"]').getAttribute('data-logo-url');
+            logoImg.alt = selectedProvider + ' logo';
+        } else {
+            if (logoImg) logoImg.remove();
+        }
+    }
+
     function ToggleScheduleForm(id) {
         const form = document.getElementById('schedule-form-' + id);
         const formBlock = form.parentElement;

@@ -68,12 +68,17 @@
                     </div>
                     <div class="group full">
                         <label for="provider-{{ schedule.id }}">{{ 'Provider'|trans }}
-                            <select id="provider-{{ schedule.id }}" name="provider-{{ schedule.id }}">
+                            <select id="provider-{{ schedule.id }}" name="provider-{{ schedule.id }}" onchange="updateProviderLogo({{ schedule.id }})">
                                 <option value="">{{ 'Select a provider'|trans }}</option>
                                 {% for providerName, providerId in providers.select %}
-                                    <option value="{{ providerId }}" {% if providerId == schedule.providerId %}selected{% endif %}>{{ providerName }}</option>
+                                    <option value="{{ providerId }}" data-logo-url="{{ providers.logos[providerId] }}" {% if providerId == schedule.providerId %}selected{% endif %}>{{ providerName }}</option>
                                 {% endfor %}
                             </select>
+                            <div class="provider-logo">
+                                {% if schedule.providerId %}
+                                    <img src="{{ providers.logos[schedule.providerId] }}" alt="{{ providers.names[schedule.providerId] }}">
+                                {% endif %}
+                            </div>
                         </label>
                     </div>
                 </div>
