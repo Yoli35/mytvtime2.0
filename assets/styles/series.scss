@@ -628,7 +628,7 @@ h2 {
 }
 
 .series-show {
-    container: series-show / inline-size;
+    /*container: series-show / inline-size;*/
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -815,7 +815,7 @@ h2 {
             display: flex;
             flex-grow: 1;
             height: 100%;
-            padding-block-start: 50%;
+            padding-block-start: 40%;
             position: relative;
             transition: padding-block-start 0.3s ease-in-out;
             /*width: calc(60vw - 3rem);*/
@@ -2606,7 +2606,6 @@ h2 {
                 inset: -5rem -5rem -10rem -5rem;
                 mask-image: linear-gradient(to bottom, #000 90%, #ffffff00 100%);
                 mask-size: cover;
-                opacity: .75;
                 width: calc(100% + 10rem);
             }
         }
@@ -3440,13 +3439,12 @@ h2 {
             }
         }
 
-        .quick-episode:not(.watched) {
+        .quick-episode:not(.enabled) {
             cursor: not-allowed;
             opacity: 0.25;
         }
 
-        .quick-episode:first-child,
-        .quick-episode.watched + * {
+        .quick-episode:first-child {
             cursor: pointer;
             opacity: 1;
         }
@@ -3848,7 +3846,7 @@ h2 {
     --episode-height: 15rem;
     --episode-aspect-ratio: 16/9;
 
-    container: episodes / inline-size;
+    /*container: episodes / inline-size;*/
 
     .episode-wrapper {
         display: flex;
@@ -4025,7 +4023,7 @@ h2 {
                 display: flex;
                 flex-direction: column;
                 gap: .5rem;
-                height: var(--episode-height);
+                height: 100%;
                 justify-content: flex-start;
                 overflow-y: auto;
                 padding-block: 1rem;
@@ -4439,9 +4437,9 @@ h2 {
     font-size: 1.25rem;
     font-weight: 400;
     /*gap: 1%;*/
-    height: var(--episode-height);
+    height: 100%;
     justify-content: center;
-    padding: 0.5rem;
+    /*padding: 0.5rem;*/
     transition: gap .3s ease-in-out, width .3s ease-in-out;
     width: 4.25rem;
 
@@ -5251,7 +5249,7 @@ h2 {
     }
 }
 
-@container series-show (width < 1024px) {
+@media (width <= 64rem) {
 
     .user-actions {
         padding-inline: 1rem;
@@ -5349,9 +5347,97 @@ h2 {
             }
         }
     }
+
+    .season-stuff .user-actions {
+        .size-item, .ar-item, .separator {
+            display: none;
+        }
+    }
+
+    .season-stuff  .user-actions  > div:last-child:not(.wrapper) {
+        padding-inline-end: .25rem;
+    }
+
+    .episodes {
+        --episode-height: 12.5rem;
+        --episode-aspect-ratio: 1/1;
+    }
+
+    .episodes .episode-wrapper .episode:hover {
+        .user-episode, .user-episode:last-of-type {
+            .back-to-top, .back-to-series {
+                font-size: 1.25rem;
+                width: 1.75rem;
+
+                svg {
+                    height: 1.25rem;
+                    width: 1.25rem;
+                }
+            }
+        }
+    }
+
+    .user-episode {
+        font-size: 1rem;
+        font-weight: 400;
+        width: 3rem;
+
+        .add-this-episode, .remove-this-episode,
+        .select-provider, .select-device, .select-vote {
+            font-size: 1.25rem;
+            width: 1.75rem;
+
+            svg {
+                height: 1.25rem;
+                width: 1.25rem;
+            }
+        }
+
+        .select-provider, .select-device, .select-vote {
+            img {
+                height: 1.25rem;
+                width: 1.25rem;
+            }
+
+            .list {
+                right: 2.75rem;
+
+                .item {
+                    height: 2rem;
+                    width: 2rem;
+
+                    img {
+                        height: 2rem;
+                        width: 2rem;
+                    }
+                }
+
+                .separator {
+                    height: 2rem;
+                }
+
+                button {
+                    height: 2rem;
+                    width: 2rem;
+                }
+            }
+        }
+
+        .select-provider, .select-vote {
+            .list {
+                max-width: 37.5rem;
+            }
+        }
+
+        .select-device {
+            .list {
+                max-width: 16rem;
+            }
+        }
+    }
 }
 
-@media (width <= 64rem) {
+@media (width <= 50rem) {
     .series-show {
         .header, .schedules {
             padding: 0;

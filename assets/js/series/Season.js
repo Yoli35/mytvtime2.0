@@ -184,11 +184,10 @@ export class Season {
         const itemDivs = [...sizesItemDivs, ...arsItemDivs];
         const initialActiveSizeItemDiv = sizesDiv.querySelector('.size-item.active');
         const initialActiveArItemDiv = arsDiv.querySelector('.ar-item.active');
-        const initialSize = initialActiveSizeItemDiv.getAttribute('data-size');
-        const initialAr = initialActiveArItemDiv.getAttribute('data-ar');
         const episodesDiv = document.querySelector('.episodes');
-        episodesDiv.style.setProperty('--episode-height', initialSize);
-        episodesDiv.style.setProperty('--episode-aspect-ratio', initialAr);
+
+        this.windowSizeListener();
+        window.addEventListener("resize", this.windowSizeListener);
 
         itemDivs.forEach(function (itemDiv) {
             itemDiv.addEventListener('click', function (e) {
@@ -260,7 +259,7 @@ export class Season {
         const quickEpisodesDiv = document.querySelector('.quick-episodes');
         if (quickEpisodesDiv) {
             const seasonNumber = quickEpisodesDiv.getAttribute('data-season-number');
-            const quickEpisodeLinks = document.querySelectorAll('.quick-episode');
+            const quickEpisodeLinks = document.querySelectorAll('.quick-episode.enabled');
             quickEpisodeLinks.forEach(episode => {
                 episode.addEventListener('click', e => {
                     e.preventDefault();
@@ -468,6 +467,24 @@ export class Season {
                     progressDiv.classList.add('full');
                 }, 1000);
             }
+        }
+    }
+
+    windowSizeListener() {
+        const sizesDiv = document.querySelector('.user-actions:has(.size-item)');
+        const arsDiv = document.querySelector('.user-actions:has(.ar-item)');
+        const initialActiveSizeItemDiv = sizesDiv.querySelector('.size-item.active');
+        const initialActiveArItemDiv = arsDiv.querySelector('.ar-item.active');
+        const initialSize = initialActiveSizeItemDiv.getAttribute('data-size');
+        const initialAr = initialActiveArItemDiv.getAttribute('data-ar');
+        const windowWidth = window.innerWidth;
+        const episodesDiv = document.querySelector('.episodes');
+
+        if (windowWidth > 1024) {
+            episodesDiv.style.setProperty('--episode-height', initialSize);
+            episodesDiv.style.setProperty('--episode-aspect-ratio', initialAr);
+        } else {
+            episodesDiv.removeAttribute("style");
         }
     }
 
