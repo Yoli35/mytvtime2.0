@@ -633,6 +633,7 @@ Refine your search: Affinez votre recherche
 
 # People
 Acting: Interprétation
+Add a new name: Ajouter un nouveau nom
 Also known as: Aussi connu sous le nom de
 Average rating: Note moyenne
 Birthday: Date de naissance
@@ -684,6 +685,10 @@ job.Co-Writer.he: Co-auteur
 job.Co-Writer.she: Co-auteure
 job.Comic Book.he: Bande dessinée
 job.Conductor.he: Chef d'orchestre
+job.Consulting Producer.he: Producteur consultant
+job.Consulting Producer.she: Productrice consultante
+job.Creative Consultant.he: Consultant créatif
+job.Creative Consultant.she: Consultante créative
 job.Creative Producer.he: Producteur créatif
 job.Creator.he: Créateur
 job.Creator.she: Créatrice
