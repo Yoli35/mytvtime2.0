@@ -698,7 +698,7 @@ h2 {
             width: auto;
 
             &:hover {
-                height: 100%;
+                height: 90%;
 
                 .go-to-map {
                     opacity: 1;
@@ -706,6 +706,8 @@ h2 {
 
                 .debug {
                     display: block;
+                    left: 6rem;
+                    top: 6rem;
                 }
 
                 div.text {
