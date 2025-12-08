@@ -63,6 +63,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\Uuid;
@@ -113,9 +114,8 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/', name: 'index')]
-    public function index(): Response
+    public function index(#[CurrentUser] User $user): Response
     {
-        $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? 'fr';
 
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 4);
@@ -180,16 +180,15 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/to/start', name: 'to_start')]
-    public function start(Request $request): Response
+    public function start(#[CurrentUser] User $user, Request $request): Response
     {
-        $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
-        $sort = $request->get('sort', 'firstAirDate');
+        $sort = $request->query->get('sort', 'firstAirDate');
         $sort = match ($sort) {
             'addedAt' => 'addedAt',
             default => 'firstAirDate',
         };
-        $order = $request->get('order', 'DESC');
+        $order = $request->query->get('order', 'DESC');
         $order = match ($order) {
             'ASC' => 'ASC',
             default => 'DESC',
@@ -236,9 +235,8 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/not/seen/in/a/while', name: 'not_seen_in_a_while')]
-    public function continue(Request $request): Response
+    public function continue(#[CurrentUser] User $user, Request $request): Response
     {
-        $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
         $inAWhileDate = $this->dateModify($this->now(), '-15 days')->format('Y-m-d');
@@ -256,9 +254,8 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/up/coming', name: 'up_coming')]
-    public function upComingSeries(Request $request): Response
+    public function upComingSeries(#[CurrentUser] User $user, Request $request): Response
     {
-        $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
         $series = array_map(function ($s) {
@@ -275,9 +272,8 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/ranking/vote', name: 'ranking_by_vote')]
-    public function rankingByVote(Request $request): Response
+    public function rankingByVote(#[CurrentUser] User $user, Request $request): Response
     {
-        $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
         $arr = $this->userSeriesRepository->rankingByVote($user, $locale, 1, -1);
@@ -301,9 +297,8 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/user/favorites', name: 'user_favorites')]
-    public function favorite(Request $request): Response
+    public function favorite(#[CurrentUser] User $user, Request $request): Response
     {
-        $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
         $series = array_map(function ($s) {
@@ -323,9 +318,8 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/by/country/{country}', name: 'by_country', requirements: ['country' => '[A-Z]{2}'])]
-    public function seriesByCountry(Request $request, string $country): Response
+    public function seriesByCountry(#[CurrentUser] User $user, Request $request, string $country): Response
     {
-        $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
         $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'by country']);
@@ -381,10 +375,10 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/tmdb/search', name: 'search')]
-    public function search(Request $request): Response
+    public function search(Request $request, AsciiSlugger $slugger): Response
     {
         $series = [];
-        $slugger = new AsciiSlugger();
+        /*$slugger = new AsciiSlugger();*/
         $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
         $simpleForm = $this->createForm(SeriesSearchType::class, $simpleSeriesSearch);
 
@@ -411,9 +405,8 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/search/all', name: 'search_all')]
-    public function searchAll(Request $request): Response
+    public function searchAll(Request $request, AsciiSlugger $slugger): Response
     {
-        $slugger = new AsciiSlugger();
         $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
         if ($request->get('q')) $simpleSeriesSearch->setQuery($request->get('q'));
         $simpleForm = $this->createForm(SeriesSearchType::class, $simpleSeriesSearch);
@@ -452,10 +445,8 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/all', name: 'all', methods: ['GET', 'POST'])]
-    public function all(Request $request): Response
+    public function all(#[CurrentUser] User $user, Request $request): Response
     {
-        /* @var User $user */
-        $user = $this->getUser();
         $localisation = [
             'locale' => $user?->getPreferredLanguage() ?? $request->getLocale(),
             'country' => $user?->getCountry() ?? "FR",
@@ -558,10 +549,9 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/db/search', name: 'search_db')]
-    public function searchDB(Request $request): Response
+    public function searchDB(#[CurrentUser] User $user, Request $request): Response
     {
-        $user = $this->getUser();
-        $searchName = $request->get('name');
+        $searchName = $request->query->get('name');
 
         $series = [];
         $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
@@ -599,7 +589,7 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    public function getDbSearchResult($user, $query, $page, $firstAirDateYear): array
+    public function getDbSearchResult(User $user, string $query, int $page, int $firstAirDateYear): array
     {
         return array_map(function ($s) {
             $s['poster_path'] = $s['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $s['poster_path'] : null;
@@ -608,11 +598,9 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/advanced/search', name: 'advanced_search')]
-    public function advancedSearch(Request $request): Response
+    public function advancedSearch(#[CurrentUser] User $user, Request $request, AsciiSlugger $slugger): Response
     {
-        $user = $this->getUser();
         $series = [];
-        $slugger = new AsciiSlugger();
         $watchProviders = $this->watchLinkApi->getWatchProviders($user?->getCountry() ?? 'FR');
         $keywords = $this->getKeywords();
         $userSeriesIds = array_column($this->userSeriesRepository->userSeriesTMDBIds($user), 'id');
@@ -701,9 +689,8 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/tmdb/{id}-{slug}', name: 'tmdb', requirements: ['id' => Requirement::DIGITS])]
-    public function tmdb(Request $request, $id, $slug): Response
+    public function tmdb(#[CurrentUser] User $user, Request $request, $id, $slug): Response
     {
-        $user = $this->getUser();
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
         $userSeries = ($user && $series) ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
         $country = $user ? $user->getCountry() ?? 'FR' : 'FR';
@@ -762,10 +749,9 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/list/{id}/{seriesId}', name: 'list', requirements: ['id' => Requirement::DIGITS, 'showId' => Requirement::DIGITS])]
-    public function list(Request $request, int $id, int $seriesId): Response
+    public function list(#[CurrentUser] User $user, Request $request, int $id, int $seriesId): Response
     {
-        $user = $this->getUser();
-        $page = $request->get('page') ?? 1;
+        $page = $request->query->get('page') ?? 1;
         $series = $this->seriesRepository->findOneBy(['id' => $seriesId]);
         $userSeriesTMDBIds = array_column($this->userSeriesRepository->userSeriesTMDBIds($user), 'id');
         $list = json_decode($this->tmdbService->getList($id, $page), true);
@@ -790,9 +776,8 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/show/{id}-{slug}', name: 'show', requirements: ['id' => Requirement::DIGITS])]
-    public function show(Request $request, Series $series, string $slug): Response
+    public function show(#[CurrentUser] User $user, Request $request, Series $series, string $slug): Response
     {
-        $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $country = $user->getCountry() ?? 'FR';
 
@@ -834,7 +819,7 @@ class SeriesController extends AbstractController
 
         $tv['credits'] = $this->castAndCrew($tv, $series);
         $tv['watch/providers'] = $this->watchProviders($tv, $country);
-        $tv['status_css'] = $this->statusCss($userSeries, $tv);
+        $tv['status_css'] = $this->statusCss($tv);
 
         $series = $this->updateSeries($series, $tv);
 
@@ -917,9 +902,8 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/season/{id}-{slug}/{seasonNumber}', name: 'season', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS])]
-    public function showSeason(Request $request, Series $series, int $seasonNumber, string $slug): Response
+    public function showSeason(#[CurrentUser] User $user, Request $request, Series $series, int $seasonNumber, string $slug): Response
     {
-        $user = $this->getUser();
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $country = $user->getCountry() ?? 'FR';
         $this->logger->info('showSeason', ['series' => $series->getId(), 'season' => $seasonNumber, 'slug' => $slug]);
@@ -1043,9 +1027,8 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/add/{id}', name: 'add', requirements: ['id' => Requirement::DIGITS])]
-    public function addUserSeries(int $id): Response
+    public function addUserSeries(#[CurrentUser] User $user, int $id): Response
     {
-        $user = $this->getUser();
         $date = $this->now();
 
         $result = $this->addSeries($id, $date);
@@ -1072,10 +1055,8 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/old/{id}', name: 'old', requirements: ['id' => Requirement::DIGITS])]
-    public function markAllEpisodeAsViewed(int $id): Response
+    public function markAllEpisodeAsViewed(#[CurrentUser] User $user, Series $series): Response
     {
-        $series = $this->seriesRepository->findOneBy(['id' => $id]);
-        $user = $this->getUser();
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries]);
 
@@ -1231,14 +1212,13 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/schedules/convert', name: 'schedule_convert', methods: ['POST'])]
-    public function convertDate(Request $request): JsonResponse
+    public function convertDate(#[CurrentUser] User $user, Request $request): JsonResponse
     {
         $inputBag = $request->getPayload();
 
         $date = $inputBag->get('date');
         $time = $inputBag->get('time');
         $timezone = $inputBag->get('timezone');
-        $user = $this->getUser();
         $userTimezone = $user->getTimezone() ?? 'Europe/Paris';
 
         $dateTime = $this->convertDateTime($date, $time, $timezone, $userTimezone);
@@ -1418,7 +1398,7 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/overview/{id}', name: 'get_overview', methods: 'GET')]
-    public function getOverview(Request $request, $id): Response
+    public function getOverview(Request $request, int $id): Response
     {
         $type = $request->query->get("type");
         $content = null;
@@ -1728,8 +1708,7 @@ class SeriesController extends AbstractController
     #[Route('/fetch/search/multi', name: 'fetch_search_multi', methods: ['POST'])]
     public function fetchSearchMulti(Request $request): Response
     {
-//        $user = $this->getUser();
-        $locale = 'en-US';//$user?->getPreferredLanguage() ?? $request->getLocale();
+        $locale = 'en-US';
         $data = json_decode($request->getContent(), true);
         $query = $data['query'];
 
@@ -2008,7 +1987,7 @@ class SeriesController extends AbstractController
         ];
     }
 
-    public function getExternals(Series $series, array $keywords, $externalIds, string $locale): array
+    public function getExternals(Series $series, array $keywords, array $externalIds, string $locale): array
     {
         $keywordIds = array_map(fn($k) => $k['id'], $keywords);
 
@@ -2064,10 +2043,9 @@ class SeriesController extends AbstractController
         return $externals;
     }
 
-    public function statusCss(UserSeries $userSeries, array $tv): string
+    public function statusCss(array $tv): string
     {
         $status = $tv['status'];
-//        $progress = $userSeries->getProgress();
         $statusCss = 'status-';
         if ($status == 'Returning Series') {
             $statusCss .= 'returning';
@@ -2086,9 +2064,6 @@ class SeriesController extends AbstractController
         } else {
             $statusCss .= 'unknown';
         }
-//        if ($progress == 100) {
-//            $statusCss .= ' watched';
-//        }
         return $statusCss;
     }
 
@@ -2405,7 +2380,7 @@ class SeriesController extends AbstractController
         $series->addUpdate($this->translator->trans(ucfirst($imageType) . ' added'));
     }
 
-    public function addSeries($id, $date): array
+    public function addSeries(int $id,  DateTimeImmutable $date): array
     {
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
 
@@ -2415,7 +2390,6 @@ class SeriesController extends AbstractController
         $series->setBackdropPath($tv['backdrop_path']);
         $series->setCreatedAt($date);
         $series->setFirstAirDate($tv['first_air_date'] ? $this->dateService->newDateImmutable($tv['first_air_date'], "Europe/Paris", true) : null);
-//        $series->setFirstAirDate($tv['first_air_date'] ? new DatePoint($tv['first_air_date']) : null);
         $series->setName($tv['name']);
         $series->setOriginalName($tv['original_name']);
         $series->setOriginCountry($tv['origin_country']);
@@ -2671,7 +2645,7 @@ class SeriesController extends AbstractController
         }
     }
 
-    public function checkSlug($series, $slug, $locale = 'fr'): bool|Response
+    public function checkSlug(Series $series, string $slug, string $locale = 'fr'): bool|Response
     {
         $localizedName = $series->getLocalizedName($locale);
         $seriesSlug = $localizedName ? $localizedName->getSlug() : $series->getSlug();
@@ -2684,7 +2658,7 @@ class SeriesController extends AbstractController
         return true;
     }
 
-    public function checkTmdbSlug($series, $slug, $localizedSlug = null): bool|Response
+    public function checkTmdbSlug(Series $series, string $slug, ?string $localizedSlug = null): bool|Response
     {
         if ($localizedSlug) {
             $realSlug = $localizedSlug;
@@ -2997,6 +2971,156 @@ class SeriesController extends AbstractController
         return $ues;
     }
 
+    public function watchProviders(array $tv, string $country): array
+    {
+        $watchProviders = [];
+        if (isset($tv['watch/providers']['results'][$country])) {
+            $watchProviders = $tv['watch/providers']['results'][$country];
+        }
+        $flatrate = $watchProviders['flatrate'] ?? [];
+        $rent = $watchProviders['rent'] ?? [];
+        $buy = $watchProviders['buy'] ?? [];
+
+        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
+
+        $flatrate = array_map(function ($wp) use ($logoUrl) {
+            return [
+                'provider_id' => $wp['provider_id'],
+                'provider_name' => $wp['provider_name'],
+                'logo_path' => $this->getProviderLogoFullPath($wp['logo_path'], $logoUrl),
+            ];
+        }, $flatrate);
+        $rent = array_map(function ($wp) use ($logoUrl) {
+            return [
+                'provider_id' => $wp['provider_id'],
+                'provider_name' => $wp['provider_name'],
+                'logo_path' => $this->getProviderLogoFullPath($wp['logo_path'], $logoUrl),
+            ];
+        }, $rent);
+        $buy = array_map(function ($wp) use ($logoUrl) {
+            return [
+                'provider_id' => $wp['provider_id'],
+                'provider_name' => $wp['provider_name'],
+                'logo_path' => $this->getProviderLogoFullPath($wp['logo_path'], $logoUrl),
+            ];
+        }, $buy);
+        return [
+            'flatrate' => $flatrate,
+            'rent' => $rent,
+            'buy' => $buy,
+        ];
+    }
+
+    public function getProviderLogoFullPath(?string $path, string $tmdbUrl): ?string
+    {
+        if (!$path) return null;
+        if (str_starts_with($path, '/')) {
+            return $tmdbUrl . $path;
+        }
+        return '/images/providers' . substr($path, 1);
+    }
+
+    public function getKeywords(): array
+    {
+        $keywords = $this->keywordRepository->findby([], ['name' => 'ASC']);
+
+        $keywordArray = [];
+        foreach ($keywords as $keyword) {
+            $keywordArray[$keyword->getName()] = $keyword->getKeywordId();
+        }
+        return $keywordArray;
+    }
+
+    public function getSearchString(?User $user, SeriesAdvancedSearchDTO $data): string
+    {
+        $settings['page'] = $page = $data->getPage();
+        $settings['language'] = $language = $data->getLanguage();
+        $settings['timezone'] = $timezone = $data->getTimezone();
+        $settings['watch region'] = $watchRegion = $data->getWatchRegion();
+        $settings['first air date year'] = $firstAirDateYear = $data->getFirstAirDateYear();
+        $settings['first air date  GTE'] = $firstAirDateGTE = $data->getFirstAirDateGTE()?->format('Y-m-d');
+        $settings['first air date LTE'] = $firstAirDateLTE = $data->getFirstAirDateLTE()?->format('Y-m-d');
+        $settings['with origin country'] = $withOriginCountry = $data->getWithOriginCountry();
+        $settings['with original language'] = $withOriginalLanguage = $data->getWithOriginalLanguage();
+        $settings['with watch monetization types'] = $withWatchMonetizationTypes = $data->getWithWatchMonetizationTypes();
+        $settings['with watch providers'] = $withWatchProviders = $data->getWithWatchProviders();
+        $settings['with keywords'] = $withKeywords = $data->getWithKeywords();
+        $settings['with runtime GTE'] = $withRuntimeGTE = $data->getWithRuntimeGTE();
+        $settings['with runtime LTE'] = $withRuntimeLTE = $data->getWithRuntimeLTE();
+        $settings['with status'] = $withStatus = $data->getWithStatus();
+        $settings['with type'] = $withType = $data->getWithType();
+        $settings['sort by'] = $sortBy = $data->getSortBy();
+
+        if ($user) {
+            $advancedSearchSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'advanced search']);
+            if (!$advancedSearchSettings) {
+                $advancedSearchSettings = new Settings($user, 'advanced search', $settings);
+            } else {
+                $advancedSearchSettings->setData($settings);
+            }
+            $this->settingsRepository->save($advancedSearchSettings, true);
+        }
+
+        $searchString = "&include_adult=false&page=$page&language=$language&timezone=$timezone&watch_region=$watchRegion";
+        if ($firstAirDateYear) $searchString .= "&first_air_date_year=$firstAirDateYear";
+        if ($firstAirDateGTE) $searchString .= "&first_air_date.gte=$firstAirDateGTE";
+        if ($firstAirDateLTE) $searchString .= "&first_air_date.lte=$firstAirDateLTE";
+        if ($withOriginCountry) $searchString .= "&with_origin_country=$withOriginCountry";
+        if ($withOriginalLanguage) $searchString .= "&with_original_language=$withOriginalLanguage";
+        if ($withWatchMonetizationTypes) $searchString .= "&with_watch_monetization_types=$withWatchMonetizationTypes";
+        if ($withWatchProviders) $searchString .= "&with_watch_providers=$withWatchProviders";
+        if ($withKeywords) $searchString .= "&with_keywords=$withKeywords";
+        if ($withRuntimeGTE) $searchString .= "&with_runtime.gte=$withRuntimeGTE";
+        if ($withRuntimeLTE) $searchString .= "&with_runtime.lte=$withRuntimeLTE";
+        if ($withStatus) $searchString .= "&with_status=$withStatus";
+        if ($withType) $searchString .= "&with_type=$withType";
+        if ($sortBy) $searchString .= "&sort_by=$sortBy";
+        return $searchString;
+    }
+
+    public function getSearchResult(array $searchResult, AsciiSlugger $slugger): array
+    {
+        return array_map(function ($tv) use ($slugger) {
+            $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
+            $tv['poster_path'] = $tv['poster_path'] ? '/series/posters' . $tv['poster_path'] : null;
+
+            $name = $tv['name'];
+            $slug = $slugger->slug($name)->lower()->toString();
+            if ($slug == "") {
+                $tvUS = $this->tmdbService->getTv($tv['id'], 'en-US');
+                $tvUS = json_decode($tvUS, true);
+                $slug = $slugger->slug($tvUS['name'])->lower()->toString();
+                if ($slug == "") {
+                    $slug = $tv['id'];
+                } else {
+                    $name = $tvUS['name'];
+                }
+            }
+
+            return [
+                'tmdb' => true,
+                'id' => $tv['id'],
+                'name' => $name,
+                'air_date' => $tv['first_air_date'],
+                'slug' => $slug,
+                'poster_path' => $tv['poster_path'],
+            ];
+        }, $searchResult['results'] ?? []);
+    }
+
+    public function getOneResult(array $tv, AsciiSlugger $slugger): Response
+    {
+        return $this->redirectToRoute('app_series_tmdb', [
+            'id' => $tv['id'],
+            'slug' => $slugger->slug($tv['name'])->lower()->toString(),
+        ]);
+    }
+
+    public function getProjectDir(): string
+    {
+        return $this->getParameter('kernel.project_dir');
+    }
+
 //    public function seasonLocalizedOverview($series, $season, $seasonNumber, $request): array|null
 //    {
 //        $locale = $request->getLocale();
@@ -3079,46 +3203,6 @@ class SeriesController extends AbstractController
 //        return $overview;
 //    }
 
-    public function watchProviders($tv, $country): array
-    {
-        $watchProviders = [];
-        if (isset($tv['watch/providers']['results'][$country])) {
-            $watchProviders = $tv['watch/providers']['results'][$country];
-        }
-        $flatrate = $watchProviders['flatrate'] ?? [];
-        $rent = $watchProviders['rent'] ?? [];
-        $buy = $watchProviders['buy'] ?? [];
-
-        $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 2);
-
-        $flatrate = array_map(function ($wp) use ($logoUrl) {
-            return [
-                'provider_id' => $wp['provider_id'],
-                'provider_name' => $wp['provider_name'],
-                'logo_path' => $this->getProviderLogoFullPath($wp['logo_path'], $logoUrl),
-            ];
-        }, $flatrate);
-        $rent = array_map(function ($wp) use ($logoUrl) {
-            return [
-                'provider_id' => $wp['provider_id'],
-                'provider_name' => $wp['provider_name'],
-                'logo_path' => $this->getProviderLogoFullPath($wp['logo_path'], $logoUrl),
-            ];
-        }, $rent);
-        $buy = array_map(function ($wp) use ($logoUrl) {
-            return [
-                'provider_id' => $wp['provider_id'],
-                'provider_name' => $wp['provider_name'],
-                'logo_path' => $this->getProviderLogoFullPath($wp['logo_path'], $logoUrl),
-            ];
-        }, $buy);
-        return [
-            'flatrate' => $flatrate,
-            'rent' => $rent,
-            'buy' => $buy,
-        ];
-    }
-
 //    public function getWatchProviders($watchRegion): array
 //    {
 //        // May be unavailable - when Youtube was added for example
@@ -3156,133 +3240,4 @@ class SeriesController extends AbstractController
 //            'list' => $list,
 //        ];
 //    }
-
-    public function getProviderLogoFullPath(?string $path, string $tmdbUrl): ?string
-    {
-        if (!$path) return null;
-        if (str_starts_with($path, '/')) {
-            return $tmdbUrl . $path;
-        }
-        return '/images/providers' . substr($path, 1);
-    }
-
-    public function getKeywords(): array
-    {
-        $keywords = $this->keywordRepository->findby([], ['name' => 'ASC']);
-
-        $keywordArray = [];
-        foreach ($keywords as $keyword) {
-            $keywordArray[$keyword->getName()] = $keyword->getKeywordId();
-        }
-        return $keywordArray;
-    }
-
-    public function getSearchString(?User $user, SeriesAdvancedSearchDTO $data): string
-    {
-        // App\DTO\SeriesAdvancedSearchDTO {#811 ▼
-        //  *-language: "fr"
-        //  *-timezone: "Europe/Paris"
-        //  *-watchRegion: "FR"
-        //  -firstAirDateYear: 2023                     → first_air_date_year
-        //  -firstAirDateGTE: null                      → first_air_date.gte
-        //  -firstAirDateLTE: null                      → first_air_date.lte
-        //  -withOriginCountry: null                    → with_origin_country
-        //  -withOriginalLanguage: null                 → with_original_language
-        //  -withWatchMonetizationTypes: "flatrate"     → with_watch_monetization_types
-        //  -withWatchProviders: "119"                  → with_watch_providers
-        //  -watchProviders: array:59 [▶]
-        //  -withRuntimeGTE: 0                          → with_runtime.gte
-        //  -withRuntimeLTE: 0                          → with_runtime.lte
-        //  -withStatus: null                           → with_status
-        //  -withType: null                             → with_type
-        //  -sortBy: "popularity.desc"                  → sort_by
-        //  *-page: 1
-        //}
-        $settings['page'] = $page = $data->getPage();
-        $settings['language'] = $language = $data->getLanguage();
-        $settings['timezone'] = $timezone = $data->getTimezone();
-        $settings['watch region'] = $watchRegion = $data->getWatchRegion();
-        $settings['first air date year'] = $firstAirDateYear = $data->getFirstAirDateYear();
-        $settings['first air date  GTE'] = $firstAirDateGTE = $data->getFirstAirDateGTE()?->format('Y-m-d');
-        $settings['first air date LTE'] = $firstAirDateLTE = $data->getFirstAirDateLTE()?->format('Y-m-d');
-        $settings['with origin country'] = $withOriginCountry = $data->getWithOriginCountry();
-        $settings['with original language'] = $withOriginalLanguage = $data->getWithOriginalLanguage();
-        $settings['with watch monetization types'] = $withWatchMonetizationTypes = $data->getWithWatchMonetizationTypes();
-        $settings['with watch providers'] = $withWatchProviders = $data->getWithWatchProviders();
-        $settings['with keywords'] = $withKeywords = $data->getWithKeywords();
-        $settings['with runtime GTE'] = $withRuntimeGTE = $data->getWithRuntimeGTE();
-        $settings['with runtime LTE'] = $withRuntimeLTE = $data->getWithRuntimeLTE();
-        $settings['with status'] = $withStatus = $data->getWithStatus();
-        $settings['with type'] = $withType = $data->getWithType();
-        $settings['sort by'] = $sortBy = $data->getSortBy();
-
-        if ($user) {
-            $advancedSearchSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'advanced search']);
-            if (!$advancedSearchSettings) {
-                $advancedSearchSettings = new Settings($user, 'advanced search', $settings);
-            } else {
-                $advancedSearchSettings->setData($settings);
-            }
-            $this->settingsRepository->save($advancedSearchSettings, true);
-        }
-
-        $searchString = "&include_adult=false&page=$page&language=$language&timezone=$timezone&watch_region=$watchRegion";
-        if ($firstAirDateYear) $searchString .= "&first_air_date_year=$firstAirDateYear";
-        if ($firstAirDateGTE) $searchString .= "&first_air_date.gte=$firstAirDateGTE";
-        if ($firstAirDateLTE) $searchString .= "&first_air_date.lte=$firstAirDateLTE";
-        if ($withOriginCountry) $searchString .= "&with_origin_country=$withOriginCountry";
-        if ($withOriginalLanguage) $searchString .= "&with_original_language=$withOriginalLanguage";
-        if ($withWatchMonetizationTypes) $searchString .= "&with_watch_monetization_types=$withWatchMonetizationTypes";
-        if ($withWatchProviders) $searchString .= "&with_watch_providers=$withWatchProviders";
-        if ($withKeywords) $searchString .= "&with_keywords=$withKeywords";
-        if ($withRuntimeGTE) $searchString .= "&with_runtime.gte=$withRuntimeGTE";
-        if ($withRuntimeLTE) $searchString .= "&with_runtime.lte=$withRuntimeLTE";
-        if ($withStatus) $searchString .= "&with_status=$withStatus";
-        if ($withType) $searchString .= "&with_type=$withType";
-        if ($sortBy) $searchString .= "&sort_by=$sortBy";
-        return $searchString;
-    }
-
-    public function getSearchResult($searchResult, $slugger): array
-    {
-        return array_map(function ($tv) use ($slugger) {
-            $this->imageService->saveImage("posters", $tv['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
-            $tv['poster_path'] = $tv['poster_path'] ? '/series/posters' . $tv['poster_path'] : null;
-
-            $name = $tv['name'];
-            $slug = $slugger->slug($name)->lower()->toString();
-            if ($slug == "") {
-                $tvUS = $this->tmdbService->getTv($tv['id'], 'en-US');
-                $tvUS = json_decode($tvUS, true);
-                $slug = $slugger->slug($tvUS['name'])->lower()->toString();
-                if ($slug == "") {
-                    $slug = $tv['id'];
-                } else {
-                    $name = $tvUS['name'];
-                }
-            }
-
-            return [
-                'tmdb' => true,
-                'id' => $tv['id'],
-                'name' => $name,
-                'air_date' => $tv['first_air_date'],
-                'slug' => $slug,
-                'poster_path' => $tv['poster_path'],
-            ];
-        }, $searchResult['results'] ?? []);
-    }
-
-    public function getOneResult($tv, $slugger): Response
-    {
-        return $this->redirectToRoute('app_series_tmdb', [
-            'id' => $tv['id'],
-            'slug' => $slugger->slug($tv['name'])->lower()->toString(),
-        ]);
-    }
-
-    public function getProjectDir(): string
-    {
-        return $this->getParameter('kernel.project_dir');
-    }
 }
