@@ -2658,7 +2658,7 @@ class SeriesController extends AbstractController
         return true;
     }
 
-    public function checkTmdbSlug(Series $series, string $slug, ?string $localizedSlug = null): bool|Response
+    public function checkTmdbSlug(array $series, string $slug, ?string $localizedSlug = null): bool|Response
     {
         if ($localizedSlug) {
             $realSlug = $localizedSlug;
