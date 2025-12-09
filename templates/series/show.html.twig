@@ -722,7 +722,7 @@
                                 </li>
                                 {% for location in locations %}
                                     <li class="location-item" data-loc-id="{{ location.id }}">
-                                        <div class="image db">
+                                        <div class="series-location-image" data-title="{{ location.title }}">
                                             <img src="/images/map{{ location.still_path }}" alt="{{ location.title }}">
                                             {% if location.filmingLocationImages|length-1 %}
                                                 <div class="count">
@@ -730,7 +730,7 @@
                                                 </div>
                                                 <div class="arrow left">{{ ux_icon('mdi:arrow-left') }}</div>
                                                 <div class="arrow right">{{ ux_icon('mdi:arrow-right') }}</div>
-                                                <div class="list">
+                                                <div class="image-list">
                                                     {% for i in location.filmingLocationImages %}
                                                         <img src="/images/map{{ i.path }}" alt="{{ location.title ~ ' - ' ~ 'image'|trans ~ ' #' ~ (loop.index + 1) }}">
                                                     {% endfor %}

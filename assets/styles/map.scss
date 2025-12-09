@@ -368,15 +368,12 @@
                 display: flex;
                 flex-direction: column;
 
-                .image {
+                .series-location-image {
                     aspect-ratio: 16/9;
+                    border: 2px solid var(--orange-50);
+                    border-radius: .375rem .375rem 0 0;
                     position: relative;
                     width: 20rem;
-
-                    &.db {
-                        border: 2px solid var(--orange-50);
-                        border-radius: .375rem .375rem 0 0;
-                    }
 
                     &.help-text {
                         align-items: flex-start;
@@ -464,14 +461,14 @@
                         display: flex;
                         font-size: 1.25rem;
                         font-weight: 600;
-                        height: 2rem;
+                        height: 2.5rem;
                         justify-content: center;
                         opacity: 0;
                         position: absolute;
                         top: 50%;
                         transform: translateY(-50%);
                         transition: opacity 0.3s ease-in-out;
-                        width: 2rem;
+                        width: 2.5rem;
 
                         &.left {
                             left: .5rem;
@@ -479,6 +476,11 @@
 
                         &.right {
                             right: .5rem;
+                        }
+
+                        svg {
+                            height: 1.5rem;
+                            width: 1.5rem;
                         }
                     }
 
@@ -493,7 +495,7 @@
                         }
                     }
 
-                    .list {
+                    .image-list {
                         display: none;
                     }
                 }

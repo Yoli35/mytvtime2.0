@@ -516,7 +516,7 @@ export class Show {
             imageDivs.forEach(function (imageDiv, imageDivIndex) {
                 if (!imageDiv.classList.contains('help-text')) {
                     const isDB = imageDiv.classList.contains('db');
-                    const listDiv = imageDiv.querySelector('.list');
+                    const listDiv = imageDiv.querySelector('.image-list');
                     let imageList;
                     if (listDiv) {
                         if (isDB) {
