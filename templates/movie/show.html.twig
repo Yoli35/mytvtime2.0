@@ -24,9 +24,25 @@
     <div class="container-fluid backgroundImageOverlay">
         <div class="movie-show">
             <header>
-                {% if movie.backdrop_path %}
+{#                {% if movie.backdrop_path %}#}
+{#                    <div class="backdrop">#}
+{#                        <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">#}
+{#                    </div>#}
+{#                {% endif %}#}
+                {% if movie.backdrop_path and movie.poster_path %}
                     <div class="backdrop">
-                        <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} {{ 'backdrop'|trans }}">
+                        <picture>
+                            <source media="(orientation: portrait)" srcset="/movies/posters{{ movie.poster_path }}">
+                            <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }} backdrop">
+                        </picture>
+                    </div>
+                {% elseif movie.backdrop_path %}
+                    <div class="backdrop">
+                        <img src="/movies/backdrops{{ movie.backdrop_path }}" alt="{{ movie.title }}">
+                    </div>
+                {% elseif movie.poster_path %}
+                    <div class="backdrop">
+                        <img src="/movies/posters{{ movie.poster_path }}" alt="{{ movie.title }}">
                     </div>
                 {% endif %}
                 <div class="poster">

@@ -135,6 +135,7 @@
         display: flex;
         font-size: 2rem;
         justify-content: center;
+        margin-block-end: 2rem;
         position: relative;
         width: 100%;
 
@@ -160,10 +161,14 @@
         }
 
         .search-results {
-            min-width: 25rem;
-            width: 50%;
             left: 50%;
-            translate: -50% 2rem;
+            max-width: 90vw;
+            translate: -50% 1rem;
+
+            ul {
+                border-radius: .5rem;
+                max-height: 80vh;
+            }
         }
     }
 }
@@ -176,6 +181,7 @@
         display: flex;
         gap: .5rem;
         height: 50vh;
+        transition: height 0.3s ease-in-out;
 
         &:has(.posters) {
             background-color: hsla(from var(--ardoise-90) h s l / .2);
@@ -222,6 +228,7 @@
             mask-image: linear-gradient(to bottom, #000 90%, #ffffff00 100%);
             overflow: auto;
             position: absolute;
+            transition: height 0.3s ease-in-out;
             width: calc(100% + 10rem);
             z-index: -1;
 
@@ -934,6 +941,18 @@
     }
 }
 
+@media (orientation: portrait) {
+    .movie-show {
+        header {
+            height: 75vh;
+
+            .backdrop {
+                height: calc(75vh + 10rem);
+            }
+        }
+    }
+}
+
 .collection-show {
     padding-block-start: 5rem;
 
@@ -1095,30 +1114,6 @@
     }
 }
 
-/*@media (width > 576px) {
-    .movie-show {
-        header {
-            gap: 1rem;
-
-            .infos {
-                border-radius: .5rem;
-
-                .backdrop {
-                    img {
-                        border-radius: .5rem;
-                    }
-                }
-            }
-        }
-
-        main {
-            .movie-details, .user-details, .movie-collection {
-                border-radius: .5rem;
-            }
-        }
-    }
-}*/
-
 @media (width < 1200px) {
     .movie-show {
         main {
@@ -1187,7 +1182,27 @@
     }
 }
 
-@media (width <= 52rem) {
+@media (width <= 64rem) {
+    .movie-index {
+        main {
+            .card {
+                .poster {
+                    .viewed {
+                        font-size: .875rem;
+                        height: 1.75rem;
+                    }
+                }
+
+                .infos {
+                    font-size: .875rem;
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
+@media (width <= 50rem) {
     .movie-index {
         main {
             .wrapper {
