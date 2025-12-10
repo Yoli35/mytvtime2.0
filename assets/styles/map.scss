@@ -356,6 +356,7 @@
     .locations {
         display: flex;
         overflow-x: auto;
+        padding-block-end: .5rem;
 
         ul {
             display: flex;
@@ -452,7 +453,7 @@
                         right: .5rem;
                     }
 
-                    .arrow, .edit {
+                    .arrow, .edit, .edit-images {
                         align-items: center;
                         background-color: hsla(from var(--ardoise-80) h s l / .5);
                         border-radius: 50%;
@@ -489,8 +490,19 @@
                         transform: translate(-50%, -50%);
                     }
 
+                    &:has(.edit-images) {
+                        .edit {
+                            transform: translate(-75%, -50%);
+                        }
+
+                        .edit-images {
+                            left: 50%;
+                            transform: translate(25%, -50%);
+                        }
+                    }
+
                     &:hover {
-                        .arrow, .edit {
+                        .arrow, .edit, .edit-images {
                             opacity: 1;
                         }
                     }

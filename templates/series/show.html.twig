@@ -710,7 +710,7 @@
                         <div class="locations">
                             <ul>
                                 <li class="location-item">
-                                    <div class="image help-text">
+                                    <div class="series-location-image help-text">
                                         <div><div class="icon">{{ ux_icon('mdi:map-marker') }}</div>{{ 'Location marker'|trans }}</div>
                                         <div><div class="icon">{{ ux_icon('mdi:pencil') }}</div>{{ 'Edit location'|trans }}</div>
                                         <div><div class="icon">{{ ux_icon('mdi:arrow-left') }}</div>{{ 'Previous image'|trans }}</div>
@@ -728,6 +728,7 @@
                                                 <div class="count">
                                                     {{ location.filmingLocationImages|length }}
                                                 </div>
+                                                <div class="edit-images" data-loc-id="{{ location.id }}">{{ ux_icon('mdi:images') }}</div>
                                                 <div class="arrow left">{{ ux_icon('mdi:arrow-left') }}</div>
                                                 <div class="arrow right">{{ ux_icon('mdi:arrow-right') }}</div>
                                                 <div class="image-list">
@@ -790,6 +791,7 @@
         </div>
     </div>
     {{ include('_blocks/forms/_add_location_form.html.twig', addLocationFormData) }}
+    {{ include('_blocks/forms/_edit_location_images_form.html.twig', addLocationFormData) }}
 
     <div id="globs-map" style="display: none">
         {
@@ -820,6 +822,7 @@
     </div>
     <div id="svgs" style="display: none">
         {{ ux_icon('mdi:content-copy', {id: 'copy', height: '18px', width: '18px'}) }}
+        {{ ux_icon('mdi:asterisk', {id: 'asterisk'}) }}
         <div class="svg" id="arrow-down">{{ ux_icon('mdi:arrow-down') }}</div>
         <div class="svg" id="arrow-up">{{ ux_icon('mdi:arrow-up') }}</div>
         <div class="svg" id="arrow-left">{{ ux_icon('mdi:arrow-left') }}</div>

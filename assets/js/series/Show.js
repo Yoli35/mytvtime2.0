@@ -474,11 +474,14 @@ export class Show {
         const addLocationButton = document.querySelector('.add-location-button');
         const addLocationDialog = document.querySelector('.side-panel.add-location-dialog');
         const addLocationForm = addLocationDialog.querySelector('form');
+        const editLocationImagesForm = document.querySelector('#edit-location-images-form');
         const inputGoogleMapsUrl = addLocationForm.querySelector('input[name="google-map-url"]');
         const inputLatitude = addLocationForm.querySelector('input[name="latitude"]');
         const inputLongitude = addLocationForm.querySelector('input[name="longitude"]');
         const addLocationCancel = addLocationForm.querySelector('button[type="button"]');
         const addLocationSubmit = addLocationForm.querySelector('button[type="submit"]');
+        const addLocationImagesCancel = editLocationImagesForm.querySelector('button[type="button"]');
+        const addLocationImagesSubmit = editLocationImagesForm.querySelector('button[type="submit"]');
         const imageInputs = addLocationForm.querySelectorAll('input[type="url"]');
         const submitRow = addLocationForm.querySelector('.form-row.submit-row');
         const scrollDownToSubmitDiv = addLocationDialog.querySelector('.scroll-down-to-submit');
@@ -510,7 +513,7 @@ export class Show {
             console.log({mapViewValue});
 
             const locationsDiv = document.querySelector('.locations');
-            const imageDivs = locationsDiv.querySelectorAll('.image');
+            const imageDivs = locationsDiv.querySelectorAll('.series-location-image');
             let imageSrcLists = [];
             let currentImages = [];
             imageDivs.forEach(function (imageDiv, imageDivIndex) {
@@ -555,6 +558,12 @@ export class Show {
                         const locationId = this.getAttribute('data-loc-id');
                         const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
                         gThis.openLocationPanel('update', location, translations['Update']);
+                    });
+                    const editImagesButton = imageDiv.querySelector('.edit-images');
+                    editImagesButton?.addEventListener('click', function () {
+                        const locationId = this.getAttribute('data-loc-id');
+                        const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
+                        gThis.openLocationImagesPanel('update', location, translations['Update']);
                     });
                 }
             });
@@ -623,6 +632,13 @@ export class Show {
                     gThis.closeLocationPanel();
                 });
             }
+        });
+        addLocationImagesCancel.addEventListener('click', function () {
+            gThis.closeLocationImagesPanel();
+        });
+        addLocationImagesSubmit.addEventListener('click', function (event) {
+            event.preventDefault();
+            gThis.closeLocationImagesPanel();
         });
 
         imageInputs.forEach(function (imageInput) {
@@ -1065,9 +1081,53 @@ export class Show {
         locationInput.select();
     }
 
+    openLocationImagesPanel(crud, location, buttonText) {
+        const editLocationImagesForm = document.querySelector('#edit-location-images-form');
+        const editLocationImagesDialog = document.querySelector('.side-panel.edit-location-images-dialog');
+        const locationImages = editLocationImagesForm.querySelector(".location-images");
+        const submitButton = editLocationImagesForm.querySelector('button[type="submit"]');
+
+        submitButton.innerText = buttonText;
+
+            const wrapper = locationImages.querySelector('.wrapper');
+            while (wrapper.firstChild) {
+                wrapper.firstChild.remove();
+            }
+            const additionalImagesArray = location.filmingLocationImages;/*.filter(fl => fl.id !== location.still_id);*/
+            additionalImagesArray.forEach(function (image) {
+                const img = document.createElement('img');
+                const imageDiv = document.createElement('div');
+                imageDiv.classList.add('image');
+                img.src = '/images/map' + image.path;
+                img.alt = image.title;
+                imageDiv.appendChild(img);
+                if (image.id === location.still_id) {
+                    const badge = document.createElement("div");
+                    badge.classList.add("still-badge");
+                    const asterisk = gThis.getSvg("asterisk");
+                    badge.appendChild(asterisk);
+                    imageDiv.appendChild(badge);
+                }
+                wrapper.appendChild(imageDiv);
+            });
+        editLocationImagesDialog.classList.add('open');
+    }
+
+    getSvg(id) {
+        const selector = 'svg[id="' + id + '"]';
+        const clone = document.querySelector('#svgs').querySelector(selector).cloneNode(true);
+        clone.removeAttribute('id');
+        return clone;
+    }
+
     closeLocationPanel() {
         const addLocationDialog = document.querySelector('.side-panel.add-location-dialog');
         addLocationDialog.classList.remove('open');
+    }
+
+    closeLocationImagesPanel() {
+        const editLocationImagesDialog = document.querySelector('.side-panel.edit-location-images-dialog');
+        editLocationImagesDialog.classList.remove('open');
     }
 
     displayForm(form) {

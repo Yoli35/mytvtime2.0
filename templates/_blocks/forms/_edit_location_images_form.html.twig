@@ -1,0 +1,21 @@
+<div class="side-panel edit-location-images-dialog">
+    <div class="frame">
+        <form action="" id="edit-location-images-form" enctype="multipart/form-data">
+            {% for h in hiddenFields %}
+                <input type="hidden" name="{{ h.name }}" id="{{ h.name }}" value="{{ h.value }}">
+            {% endfor %}
+            <div class="form-row">
+                <div class="form-field">
+                    <div class="location-images">
+                        <div class="wrapper">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row submit-row">
+                <button type="button">{{ 'Cancel'|trans }}</button>
+                <button type="submit">{{ 'Add'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>

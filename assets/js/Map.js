@@ -397,16 +397,18 @@ export class Map {
 
         const seriesLocationImages = document.querySelectorAll('.series-location-image');
         seriesLocationImages.forEach(image => {
-            image.addEventListener('mouseenter', () => {
-                image.addEventListener('mousemove', gThis.getPosition);
-            });
-            image.addEventListener('mouseleave', () => {
-                image.removeEventListener('mousemove', gThis.getPosition);
-                const imageList = image.querySelector('.image-list');
-                image.setAttribute('data-position', "0");
-                const imageSrc = imageList.children[0].getAttribute('src');
-                image.querySelector('img').setAttribute('src', imageSrc);
-            });
+            const imageList = image.querySelector('.image-list');
+            if (imageList) {
+                image.addEventListener('mouseenter', () => {
+                    image.addEventListener('mousemove', gThis.getPosition);
+                });
+                image.addEventListener('mouseleave', () => {
+                    image.removeEventListener('mousemove', gThis.getPosition);
+                    image.setAttribute('data-position', "0");
+                    const imageSrc = imageList.children[0].getAttribute('src');
+                    image.querySelector('img').setAttribute('src', imageSrc);
+                });
+            }
         });
 
         const toggleCooperativeGesturesButton = document.querySelector('.toggle-cooperative-gestures');
@@ -500,7 +502,8 @@ export class Map {
         const imageList = image.querySelector('.image-list');
         const count = imageList.children.length;
         const imageWidth = image.clientWidth;
-        const position = Math.floor(e.offsetX / (imageWidth / count));
+        let position = Math.floor(e.offsetX / (imageWidth / count));
+        if (position >= count - 1) position = count - 1;
         const oldPosition = parseInt(image.getAttribute('data-position'));
         if (oldPosition !== position) {
             image.setAttribute('data-position', position);
