@@ -32,7 +32,7 @@ export class FlashMessage {
         });
         // Add vanishing class to flashMessagesDiv (currentTarget) after 200ms
         setTimeout(() => {
-            flashMessagesDiv.classList.remove('vanishing');
+            flashMessagesDiv.classList.add('vanishing');
         }, 200);
         // Wait a bit to allow the clicks to be processed
         setTimeout(() => {

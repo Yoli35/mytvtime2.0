@@ -2377,6 +2377,10 @@ section:has(.pages) {
     transition: all 500ms ease-in-out;
     z-index: 999;
 
+    &.vanishing {
+        opacity: 0;
+    }
+
     &:not(:has(.flash-message)) {
         display: none;
     }
@@ -2595,6 +2599,7 @@ section:has(.pages) {
     position: fixed;
     right: 1rem;
     transition: opacity .25s;
+    z-index: 1000;
 
     &.dev {
         bottom: 3rem;
