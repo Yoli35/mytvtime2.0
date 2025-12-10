@@ -1467,6 +1467,11 @@ label:has(input[type="text"]) {
                 transform: translateX(0);
             }
 
+            &.up {
+                bottom: 2rem;
+                top: unset;
+            }
+
             a {
                 img {
                     aspect-ratio: 2 / 3;

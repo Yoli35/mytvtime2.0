@@ -115,6 +115,7 @@ export class Menu {
         this.scheduleRange = this.userMenu.querySelector(".schedule-range");
         this.menuPreview = this.userMenu.querySelector(".menu-preview");
         this.menuThemes = this.userMenu.querySelectorAll(".menu-theme");
+        this.clientHeight = window.innerHeight;
         this.init = this.init.bind(this);
         this.togglePreview = this.togglePreview.bind(this);
         this.setPreview = this.setPreview.bind(this);
@@ -124,6 +125,7 @@ export class Menu {
         this.getAccentColor = this.getAccentColor.bind(this);
         this.getScheduleRange = this.getScheduleRange.bind(this);
         this.lang = document.documentElement.lang;
+        this.initialPreviewSetting = null;
         this.posterUrl = null;
         this.profileUrl = null;
         this.svgs = {
@@ -175,6 +177,9 @@ export class Menu {
             console.log("Navbar not found");
             return;
         }
+
+        window.addEventListener("resize", ()=> { this.clientHeight = window.innerHeight; });
+
         this.reloadOnDayChange();
         this.getTMDBConfig();
         this.initOptions();
@@ -184,17 +189,13 @@ export class Menu {
         this.tooltips = new ToolTips();
 
         const navbarItems = navbar.querySelectorAll(".navbar-item");
-        const pinnedMenuItems = document.querySelectorAll("a[id^='pinned-menu-item-']");
-        const seriesInProgress = document.querySelector("a[id^='sip-menu-item-']");
         const notifications = document.querySelector(".notifications");
-        const multiSearch = navbar.querySelector("#multi-search");
-        const multiSearchDiv = navbar.querySelector(".multi-search");
         const historyNavbarItem = navbar.querySelector("#history-menu");
         this.adjustHistoryList();
 
         const searchResults = navbar.querySelectorAll(".search-results");
-        const multiSearchResults = navbar.querySelector(".search-results.__multi");
-        const multiSearchUlTag = multiSearchResults?.querySelector("ul");
+        /*const multiSearchResults = navbar.querySelector(".search-results.__multi");
+        const multiSearchUlTag = multiSearchResults?.querySelector("ul");*/
         const menus = navbar.querySelectorAll(".menu");
 
         setInterval(() => {
@@ -211,9 +212,9 @@ export class Menu {
             searchResults?.forEach((searchResult) => {
                 const ul = searchResult.querySelector("ul");
                 if (ul && !searchResult.parentElement.contains(target)) {
-                    if (searchResult.contains(multiSearchUlTag)) {
+                    /*if (searchResult.contains(multiSearchUlTag)) {
                         multiSearch.classList.remove("active");
-                    }
+                    }*/
                     const lis = ul.querySelectorAll("li");
                     lis.forEach(item => {
                         item.remove();
@@ -258,130 +259,11 @@ export class Menu {
 
         this.posterPreview();
 
-        pinnedMenuItems.forEach((item) => {
-            const id = item.id.split("-")[3];
-            const pinnedPreview = document.querySelector(`#pinned-preview-${id}`);
-            item.addEventListener("mouseenter", () => {
-                pinnedPreview.classList.add("open");
-                setTimeout(() => {
-                    pinnedPreview.classList.add("show");
-                }, 0);
-            });
-            item.addEventListener("mouseleave", () => {
-                setTimeout(() => {
-                    pinnedPreview.classList.remove("show");
-                    setTimeout(() => {
-                        pinnedPreview.classList.remove("open");
-                    }, 250);
-                }, 0);
-            });
-        });
-
-        if (seriesInProgress) {
-            const id = seriesInProgress.id.split("-")[3];
-            const sipPreview = document.querySelector(`#sip-preview-${id}`);
-            seriesInProgress.addEventListener("mouseenter", () => {
-                sipPreview.classList.add("open");
-                setTimeout(() => {
-                    sipPreview.classList.add("show");
-                }, 0);
-            });
-            seriesInProgress.addEventListener("mouseleave", () => {
-                setTimeout(() => {
-                    sipPreview.classList.remove("show");
-                    setTimeout(() => {
-                        sipPreview.classList.remove("open");
-                    }, 250);
-                }, 0);
-            });
-        }
-
         notifications?.addEventListener("click", () => {
             this.markNotificationsAsRead();
         });
 
-        if (multiSearch) {
-            const magnifyingGlassSpan = multiSearchDiv.querySelector(".magnifying-glass");
-            const multiSearchOptionsButton = multiSearchDiv.querySelector(".multi-search-options-button");
-            const multiSearchOptionsMenu = multiSearchDiv.querySelector(".multi-search-options-menu");
-            const multiSearchOptionsMenuTail = multiSearchDiv.querySelector(".multi-search-options-menu-tail");
-            const multiSearchOptions = multiSearchOptionsMenu.querySelectorAll(".multi-search-option");
-            const displayPosterToggler = multiSearchOptionsMenu.querySelector("#display-poster-toggler");
-            let initialPreviewSetting;
-
-            magnifyingGlassSpan.addEventListener("click", () => {
-                multiSearchDiv.classList.toggle("active");
-                if (multiSearchDiv.classList.contains("active")) {
-                    multiSearch.focus();
-                    initialPreviewSetting = gThis.getPreview();
-                    gThis.forcePreview(displayPosterToggler.checked);
-                } else {
-                    gThis.forcePreview(initialPreviewSetting);
-                    multiSearchOptionsMenu.classList.remove("active");
-                    multiSearchOptionsMenuTail.classList.remove("active");
-                    multiSearch.value = "";
-                    gThis.closeMultiSearchMenu(multiSearch);
-                }
-            });
-            displayPosterToggler.addEventListener("change", () => {
-                gThis.forcePreview(displayPosterToggler.checked);
-            });
-
-            multiSearchOptionsButton.addEventListener("click", () => {
-                multiSearchOptionsMenu.classList.toggle("active");
-                multiSearchOptionsMenuTail.classList.toggle("active");
-            });
-            multiSearchOptions.forEach(option => {
-                option.addEventListener("click", () => {
-                    if (option.classList.contains("active")) {
-                        return;
-                    }
-                    const newValue = option.getAttribute("data-value");
-                    // On assigne la nouvelle option
-                    multiSearchDiv.querySelector("ul").setAttribute("data-sub-type", newValue);
-                    // On modifie le placeholder
-                    multiSearch.setAttribute("placeholder", option.innerText);
-                    // On active la nouvelle option
-                    multiSearchOptions.forEach(option => {
-                        option.classList.remove("active");
-                    });
-                    option.classList.add("active");
-                    // On ferme le menu
-                    multiSearchOptionsMenu.classList.toggle("active");
-                    // On met le focus sur le champ de recherche
-                    multiSearch.focus();
-                    // On sauve l'option dans un cookie
-                    gThis.setMultiSearchOptionCookie(newValue);
-                    // On relance la recherche
-                    gThis.searchFetch({target: multiSearch});
-                });
-            });
-
-            const cookie = document.cookie;
-            let initialValue = "multi";
-            if (cookie) {
-                const re = new RegExp(/mytvtime_2_multi_search_sub_type=(\w+);/);
-                const result = re.exec(cookie);
-                if (result) {
-                    initialValue = result[1];
-                }
-            }
-            if (initialValue !== "multi") {
-                // On assigne la nouvelle option
-                multiSearchDiv.querySelector("ul").setAttribute("data-sub-type", initialValue);
-                const option = multiSearchOptionsMenu.querySelector("div[data-value=\"" + initialValue + "\"]")
-                // On modifie le placeholder
-                multiSearch.setAttribute("placeholder", option.innerText);
-                // On active la nouvelle option
-                multiSearchOptions.forEach(option => {
-                    option.classList.remove("active");
-                });
-                option.classList.add("active");
-            }
-
-            multiSearch.addEventListener("input", gThis.searchFetch);
-            multiSearch.addEventListener("keydown", gThis.searchMenuNavigate);
-        }
+        this.initMultiSearch(navbar);
 
         if (historyNavbarItem) {
             const historyMenu = historyNavbarItem.querySelector(".menu");
@@ -390,6 +272,91 @@ export class Menu {
                 historyOption.addEventListener("change", this.reloadHistory);
             });
         }
+    }
+
+
+    initMultiSearch(navbar) {
+        const multiSearch = navbar.querySelector("#multi-search");
+        const multiSearchDiv = navbar.querySelector(".multi-search");
+        const magnifyingGlassSpan = multiSearchDiv.querySelector(".magnifying-glass");
+        const multiSearchOptionsButton = multiSearchDiv.querySelector(".multi-search-options-button");
+        const multiSearchOptionsMenu = multiSearchDiv.querySelector(".multi-search-options-menu");
+        const multiSearchOptionsMenuTail = multiSearchDiv.querySelector(".multi-search-options-menu-tail");
+        const multiSearchOptions = multiSearchOptionsMenu.querySelectorAll(".multi-search-option");
+        const displayPosterToggler = multiSearchOptionsMenu.querySelector("#display-poster-toggler");
+
+        magnifyingGlassSpan.addEventListener("click", () => {
+            multiSearchDiv.classList.toggle("active");
+            if (multiSearchDiv.classList.contains("active")) {
+                multiSearch.focus();
+                gThis.initialPreviewSetting = gThis.getPreview();
+                gThis.forcePreview(displayPosterToggler.checked);
+            } else {
+                gThis.forcePreview(gThis.initialPreviewSetting);
+                multiSearchOptionsMenu.classList.remove("active");
+                multiSearchOptionsMenuTail.classList.remove("active");
+                multiSearch.value = "";
+                gThis.closeMultiSearchMenu(multiSearch);
+            }
+        });
+        displayPosterToggler.addEventListener("change", () => {
+            gThis.forcePreview(displayPosterToggler.checked);
+        });
+
+        multiSearchOptionsButton.addEventListener("click", () => {
+            multiSearchOptionsMenu.classList.toggle("active");
+            multiSearchOptionsMenuTail.classList.toggle("active");
+        });
+        multiSearchOptions.forEach(option => {
+            option.addEventListener("click", () => {
+                if (option.classList.contains("active")) {
+                    return;
+                }
+                const newValue = option.getAttribute("data-value");
+                // On assigne la nouvelle option
+                multiSearchDiv.querySelector("ul").setAttribute("data-sub-type", newValue);
+                // On modifie le placeholder
+                multiSearch.setAttribute("placeholder", option.innerText);
+                // On active la nouvelle option
+                multiSearchOptions.forEach(option => {
+                    option.classList.remove("active");
+                });
+                option.classList.add("active");
+                // On ferme le menu
+                multiSearchOptionsMenu.classList.toggle("active");
+                // On met le focus sur le champ de recherche
+                multiSearch.focus();
+                // On sauve l'option dans un cookie
+                gThis.setMultiSearchOptionCookie(newValue);
+                // On relance la recherche
+                gThis.searchFetch({target: multiSearch});
+            });
+        });
+
+        const cookie = document.cookie;
+        let initialValue = "multi";
+        if (cookie) {
+            const re = new RegExp(/mytvtime_2_multi_search_sub_type=(\w+);/);
+            const result = re.exec(cookie);
+            if (result) {
+                initialValue = result[1];
+            }
+        }
+        if (initialValue !== "multi") {
+            // On assigne la nouvelle option
+            multiSearchDiv.querySelector("ul").setAttribute("data-sub-type", initialValue);
+            const option = multiSearchOptionsMenu.querySelector("div[data-value=\"" + initialValue + "\"]")
+            // On modifie le placeholder
+            multiSearch.setAttribute("placeholder", option.innerText);
+            // On active la nouvelle option
+            multiSearchOptions.forEach(option => {
+                option.classList.remove("active");
+            });
+            option.classList.add("active");
+        }
+
+        multiSearch.addEventListener("input", gThis.searchFetch);
+        multiSearch.addEventListener("keydown", gThis.searchMenuNavigate);
     }
 
     setMultiSearchOptionCookie(multiSearchSubType) {
@@ -404,7 +371,11 @@ export class Menu {
             const group = item.id.split("-")[3]; // eotd-menu-item-{group}-{id}
             const id = item.id.split("-")[4];
             const eotdPreview = document.querySelector(`#eotd-preview-${group}-${id}`);
-            item.addEventListener("mouseenter", () => {
+            item.addEventListener("mouseenter", (e) => {
+                if (e.clientY > gThis.clientHeight / 2)
+                    eotdPreview.classList.add("up");
+                else
+                    eotdPreview.classList.remove("up");
                 eotdPreview.classList.add("open");
                 setTimeout(() => {
                     eotdPreview.classList.add("show");
@@ -415,6 +386,35 @@ export class Menu {
                     eotdPreview.classList.remove("show");
                     setTimeout(() => {
                         eotdPreview.classList.remove("open");
+                    }, 250);
+                }, 0);
+            });
+        });
+
+        const pinnedMenuItems = document.querySelectorAll("a[id^='pinned-menu-item-']");
+        const seriesInProgress = document.querySelector("a[id^='sip-menu-item-']");
+        // On ajoute seriesInProgress aux pinnedMenuItems dans un nouveau tableau
+        const arr = Array.from(pinnedMenuItems);
+        arr.push(seriesInProgress);
+
+        arr.forEach((item) => {
+            const id = item.id.split("-")[3];
+            const preview = document.querySelector(`div[id$="preview-${id}"]`);
+            item.addEventListener("mouseenter", (e) => {
+                if (e.clientY > gThis.clientHeight / 2)
+                    preview.classList.add("up");
+                else
+                    preview.classList.remove("up");
+                preview.classList.add("open");
+                setTimeout(() => {
+                    preview.classList.add("show");
+                }, 0);
+            });
+            item.addEventListener("mouseleave", () => {
+                setTimeout(() => {
+                    preview.classList.remove("show");
+                    setTimeout(() => {
+                        preview.classList.remove("open");
                     }, 250);
                 }, 0);
             });
@@ -501,10 +501,6 @@ export class Menu {
     updateMainMenu() {
         const scheduleMenuDiv = document.querySelector(".schedule-menu");
         const lastEpisodeId = scheduleMenuDiv.getAttribute("data-id") || "-1";
-        const start = scheduleMenuDiv.getAttribute("data-start") || 0;
-        const end = scheduleMenuDiv.getAttribute("data-end") || 0;
-        const startDay = scheduleMenuDiv.getAttribute("data-start-day") || 0;
-        const endDay = scheduleMenuDiv.getAttribute("data-end-day") || 7;
         const locale = this.lang;
         const apiUrl = '/api/main/menu/update';
         const options = {
@@ -512,7 +508,7 @@ export class Menu {
             headers: {
                 accept: 'application/json'
             },
-            body: JSON.stringify({locale: locale, lastViewedEpisodeId: localStorage.getItem("schedule_range_updated") ? -1 :  lastEpisodeId}),
+            body: JSON.stringify({locale: locale, lastViewedEpisodeId: localStorage.getItem("schedule_range_updated") ? -1 : lastEpisodeId}),
         };
 
         fetch(apiUrl, options)
@@ -537,6 +533,13 @@ export class Menu {
     }
 
     searchFetch(e) {
+        const multiSearchOptionsMenu = document.querySelector(".multi-search-options-menu.active");
+        if (multiSearchOptionsMenu) {
+            const multiSearchOptionsMenuTail = document.querySelector(".multi-search-options-menu-tail");
+            multiSearchOptionsMenu.classList.remove("active");
+            multiSearchOptionsMenuTail.classList.remove("active");
+        }
+
         const searchInput = e.currentTarget;
         const value = searchInput.value;
         const searchResults = searchInput.parentElement.parentElement.querySelector(".search-results");
@@ -544,10 +547,10 @@ export class Menu {
         const lis = ul?.querySelectorAll('li');
         if (value.length < 3) {
             /*if (searchResults.innerHTML.length) {*/
-                lis.forEach(item => {
-                    item.remove();
-                }); //searchResults.innerHTML = '';
-                searchResults.classList.remove("showing-something");
+            lis.forEach(item => {
+                item.remove();
+            }); //searchResults.innerHTML = '';
+            searchResults.classList.remove("showing-something");
             /*}*/
             return;
         }
@@ -597,8 +600,15 @@ export class Menu {
                     if (url) {
                         const openInNewTabSetting = document.querySelector("#new-tab-toggler").checked;
                         a.href = url;
-                        if (openInNewTabSetting)
-                            a.target = "_blank";
+                        a.addEventListener("click", e => {
+                            e.preventDefault();
+                            gThis.forcePreview(gThis.initialPreviewSetting);
+                            if (openInNewTabSetting) {
+                                window.open(url, "_blank");
+                            } else {
+                                window.location.href = url;
+                            }
+                        });
                     } else {
                         const hiddenInputPersonId = addCastBlock.querySelector('#cast-search-person-id');
                         const castNameInput = addCastBlock.querySelector('#cast-search');
