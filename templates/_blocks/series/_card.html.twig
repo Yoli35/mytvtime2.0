@@ -3,10 +3,14 @@
     {% set start = series.progress==0 %}
     {% set ended = series.progress==100 %}
     {% if  upToDate %}
-        {% if ended %}
-            {% set title = 'That\'s all, Folks!'|trans %}
+        {% if loop is not defined or (loop is defined and loop.index == 1) %}
+            {% if ended %}
+                {% set title = 'That\'s all, Folks!'|trans %}
+            {% else %}
+                {% set title = 'Up to date!'|trans %}
+            {% endif %}
         {% else %}
-            {% set title = 'Up to date!'|trans %}
+            {% set upToDate = 0 %}
         {% endif %}
     {% endif %}
 {% else %}

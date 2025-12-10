@@ -98,7 +98,9 @@
                                 </div>
                             {% endif %}
                             {% if series|length == 1 %}
-                                {{ include('_blocks/series/_card.html.twig', {series: series.0}) }}
+                                {% for episode in [series|first] %}
+                                    {{ include('_blocks/series/_card.html.twig', {series: episode}) }}
+                                {% endfor %}
                             {% endif %}
                             {% if series|length > 1 %}
                                 <div class="episode-block">
