@@ -57,6 +57,12 @@ class SeriesService extends AbstractController
             "watch/providers",
         ]), true);
 
+        dump($tv);
+        if (key_exists('error', $tv)) {
+            $this->logger->error("TMDB TV show not found", ['series_id' => $series->getId(), 'tmdb_id' => $seriesTmdbId]);
+            return null;
+        }
+
         if (!$tv) {
             return null;
         }
@@ -74,6 +80,8 @@ class SeriesService extends AbstractController
 
         $this->imageService->saveImage("posters", $tv['poster_path'], $posterUrl);
         $this->imageService->saveImage("backdrops", $tv['backdrop_path'], $backdropUrl);
+
+        $tv['overview'] = $this->buildOverview($tv);
 
         $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
         $tv['additional_overviews'] = $series->getSeriesAdditionalLocaleOverviews($locale);
@@ -829,5 +837,19 @@ class SeriesService extends AbstractController
             $this->logger->error($e->getMessage());
             return $date;
         }
+    }
+
+    private function buildOverview(array $tv):string
+    {
+        dump($tv['translations']);
+        $overview = '';
+        if (key_exists('overview', $tv) && strlen($tv['overview'])) {
+            $overview = $tv['overview'];
+        } elseif (key_exists('translations', $tv)) {
+            $arr = $tv['translations']['translations'];
+            $translations = array_find($arr, fn($t) => $t['iso_639_1'] === 'en' && key_exists('data', $t) && key_exists('overview', $t['data']) && strlen($t['data']['overview']));
+            $overview = $translations ? $translations['data']['overview'] : '';
+        }
+        return $overview;
     }
 }

@@ -29,12 +29,12 @@
         <div class="series-show user-series-show">
             <div class="header">
                 {% if tv.backdrop_path and series.posterPath %}
-                <div class="backdrop">
-                    <picture>
-                        <source media="(orientation: portrait)" srcset="/series/posters{{ series.posterPath }}">
-                        <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }} backdrop">
-                    </picture>
-                </div>
+                    <div class="backdrop">
+                        <picture>
+                            <source media="(orientation: portrait)" srcset="/series/posters{{ series.posterPath }}">
+                            <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }} backdrop">
+                        </picture>
+                    </div>
                 {% elseif tv.backdrop_path %}
                     <div class="backdrop">
                         <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ series.name }}">

@@ -808,12 +808,13 @@ class SeriesController extends AbstractController
             $noTv['sources'] = $this->sourceRepository->findBy([], ['name' => 'ASC']);
             $noTv['average_episode_run_time'] = 0;
 
-            return $this->render("series/show-not-found.html.twig", [
+            return $this->render("series/show_not_found.html.twig", [
                 'series' => $seriesArr,
                 'userSeries' => $userSeries,
                 'previousSeries' => $seriesAround['previous'],
                 'nextSeries' => $seriesAround['next'],
                 'tv' => $noTv,
+                'providers' => $this->watchLinkApi->getWatchProviders($country),
             ]);
         }
 
@@ -1778,8 +1779,9 @@ class SeriesController extends AbstractController
                 continue;
             }
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale, ['images']), true);
+            dump($tv);
             $tmdbCalls++;
-            if ($tv == null) {
+            if ($tv == null || isset($tv['error'])) {
                 $updates[] = [
                     'id' => $series->getId(),
                     'name' => $series->getName(),
@@ -2675,7 +2677,7 @@ class SeriesController extends AbstractController
         return true;
     }
 
-    public function castAndCrew(array $tv, ?Series $series): array
+    public function castAndCrew(?array $tv, ?Series $series): array
     {
         if (!$tv) {
             return ['cast' => [], 'crew' => [], 'guest_stars' => []];
