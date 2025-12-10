@@ -202,9 +202,23 @@ h2 {
     }
 }
 
-.series-to-start, .series-by-country {
-    margin-block-start: 4rem;
+.series-to-start, .series-by-country,
+.all-my-series {
+    margin-block-start: 10rem;
 
+    h1 {
+        background-color: var(--orange);
+        border-radius: 5rem;
+        left: 2rem;
+        padding-block: 1rem;
+        padding-inline: 2rem;
+        position: fixed;
+        top: 5rem;
+        z-index: 100;
+    }
+}
+
+.series-to-start, .series-by-country {
     header {
         align-items: center;
         background-color: var(--orange-50);
@@ -561,7 +575,7 @@ h2 {
                             }
 
                             &.to-start {
-                                background-color: var(--orange-60);
+                                background-color: var(--orange-40);
                             }
 
                             &.up-to-date {
@@ -5139,8 +5153,6 @@ h2 {
 }
 
 .all-my-series {
-    margin-block-start: 4rem;
-
     main {
         .wrapper {
             display: flex;
@@ -5353,7 +5365,7 @@ h2 {
         }
     }
 
-    .season-stuff  .user-actions  > div:last-child:not(.wrapper) {
+    .season-stuff .user-actions > div:last-child:not(.wrapper) {
         padding-inline-end: .25rem;
     }
 
