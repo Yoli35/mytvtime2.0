@@ -54,7 +54,7 @@ $fa-font-path: "../webfonts";
     --purple: hsl(306, 50%, 50%);
     --purple-50: hsl(306, 50%, 50%);
 
-    --orange: hsl(32, 76%, 50%);
+    --orange: hsl(from var(--accent-color) h s 50%);
     --orange-0: hsl(from var(--accent-color) h s 0%);
     --orange-10: hsl(from var(--accent-color) h s 10%);
     --orange-20: hsl(from var(--accent-color) h s 20%);
