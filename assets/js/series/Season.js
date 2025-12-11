@@ -1558,7 +1558,7 @@ export class Season {
 
     listTrashButton(list, selectDiv) {
         const deleteButton = document.createElement('button');
-        const svgDelete = document.querySelector('#svgs').querySelector('#trash').querySelector('svg').cloneNode(true);
+        const svgDelete = document.querySelector('#svgs #trash svg').cloneNode(true);
         const id = list.getAttribute('data-id').split('-')[1];
         const saveFunction = list.getAttribute('data-save');
 

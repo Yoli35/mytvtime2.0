@@ -4548,6 +4548,7 @@ h2 {
         }
 
         .list {
+            align-items: center;
             background-color: var(--user-episode-list);
             border: 2px solid var(--user-episode-actions);
             border-radius: 5rem .25rem .25rem 5rem;
@@ -4598,10 +4599,10 @@ h2 {
                 cursor: pointer;
                 display: flex;
                 flex-shrink: 0;
-                height: 2rem;
+                height: 3rem;
                 justify-content: center;
                 margin-inline-start: .5rem;
-                width: 2rem;
+                width: 3rem;
             }
         }
     }
