@@ -57,7 +57,6 @@ class SeriesService extends AbstractController
             "watch/providers",
         ]), true);
 
-        dump($tv);
         if (key_exists('error', $tv)) {
             $this->logger->error("TMDB TV show not found", ['series_id' => $series->getId(), 'tmdb_id' => $seriesTmdbId]);
             return null;
@@ -841,7 +840,6 @@ class SeriesService extends AbstractController
 
     private function buildOverview(array $tv):string
     {
-        dump($tv['translations']);
         $overview = '';
         if (key_exists('overview', $tv) && strlen($tv['overview'])) {
             $overview = $tv['overview'];
