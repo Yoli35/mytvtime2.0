@@ -281,7 +281,6 @@ export class Menu {
         const magnifyingGlassSpan = multiSearchDiv.querySelector(".magnifying-glass");
         const multiSearchOptionsButton = multiSearchDiv.querySelector(".multi-search-options-button");
         const multiSearchOptionsMenu = multiSearchDiv.querySelector(".multi-search-options-menu");
-        const multiSearchOptionsMenuTail = multiSearchDiv.querySelector(".multi-search-options-menu-tail");
         const multiSearchOptions = multiSearchOptionsMenu.querySelectorAll(".multi-search-option");
         const displayPosterToggler = multiSearchOptionsMenu.querySelector("#display-poster-toggler");
 
@@ -294,7 +293,6 @@ export class Menu {
             } else {
                 gThis.forcePreview(gThis.initialPreviewSetting);
                 multiSearchOptionsMenu.classList.remove("active");
-                multiSearchOptionsMenuTail.classList.remove("active");
                 multiSearch.value = "";
                 gThis.closeMultiSearchMenu(multiSearch);
             }
@@ -305,7 +303,6 @@ export class Menu {
 
         multiSearchOptionsButton.addEventListener("click", () => {
             multiSearchOptionsMenu.classList.toggle("active");
-            multiSearchOptionsMenuTail.classList.toggle("active");
         });
         multiSearchOptions.forEach(option => {
             option.addEventListener("click", () => {
@@ -535,9 +532,7 @@ export class Menu {
     searchFetch(e) {
         const multiSearchOptionsMenu = document.querySelector(".multi-search-options-menu.active");
         if (multiSearchOptionsMenu) {
-            const multiSearchOptionsMenuTail = document.querySelector(".multi-search-options-menu-tail");
             multiSearchOptionsMenu.classList.remove("active");
-            multiSearchOptionsMenuTail.classList.remove("active");
         }
 
         const searchInput = e.currentTarget;
