@@ -117,4 +117,13 @@ class FilmingLocationRepository extends ServiceEntityRepository
             return [];
         }
     }
+
+    public function getSourceList(): array
+    {
+        $sql = "SELECT DISTINCT source_name
+                FROM filming_location
+                WHERE source_name IS NOT NULL AND source_name!=''
+                ORDER BY source_name";
+        return $this->getAll($sql);
+    }
 }

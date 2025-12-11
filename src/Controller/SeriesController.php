@@ -852,6 +852,7 @@ class SeriesController extends AbstractController
 
         $filmingLocationsWithBounds = $this->getFilmingLocations($series);
 
+        $list = array_column($this->filmingLocationRepository->getSourceList(), "source_name");
         $addLocationFormData = [
             'hiddenFields' => [
                 ['item' => 'hidden', 'name' => 'series-id', 'value' => $series->getId()],
@@ -877,7 +878,7 @@ class SeriesController extends AbstractController
                     ['item' => 'textarea', 'name' => 'description', 'label' => 'Description', 'rows' => '5', 'required' => false],
                 ],
                 [
-                    ['item' => 'input', 'name' => 'source-name', 'label' => 'Source', 'type' => 'text', 'class' => 'flex-1', 'required' => false],
+                    ['item' => 'input_list', 'name' => 'source-name', 'label' => 'Source', 'type' => 'text', 'class' => 'flex-1', 'list' => $list, 'required' => false],
                     ['item' => 'input', 'name' => 'source-url', 'label' => 'Url', 'type' => 'text', 'class' => 'flex-2', 'required' => false],
                 ]
             ],

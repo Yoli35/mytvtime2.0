@@ -4505,7 +4505,7 @@ h2 {
 
     .add-this-episode, .remove-this-episode,
     .select-provider, .select-device, .select-vote {
-        font-size: 2rem;
+        font-size: 1.5rem;
         height: 100%;
         transition: font-size 0.3s ease-in-out;
         width: 3rem;
@@ -5963,6 +5963,7 @@ dialog {
     border-radius: 2rem 0 0 2rem;
     border: 2px solid var(--orange);
     max-height: calc(100vh - 18rem);
+    max-width: 80%;
     opacity: 0;
     overflow-y: auto;
     position: fixed;
@@ -5970,7 +5971,6 @@ dialog {
     top: 9rem;
     transform: translateX(100%);
     transition: transform 1s var(--side-panel-easing), opacity 0.3s ease-in-out;
-    width: 80%;
     z-index: 10;
 
     /* background:
