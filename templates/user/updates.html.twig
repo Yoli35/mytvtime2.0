@@ -18,6 +18,95 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>53ᵉ mise à jour : 12/12/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:tv') }}→ Add loader to empty schedule menu</div>
+                        <div class="details">Introduced a loader element with styling to the empty schedule menu block. Added a new atome.webp image for the loader and updated SCSS to style the loader appropriately.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Display localized series names in series cards</div>
+                        <div class="details">Updated series card templates to show the localized name (sln_name) as a subtitle when available, and adjusted styles for better presentation. Modified SQL queries in UserSeriesRepository to return the localized name separately. Also improved image handling in SeriesController to ensure images are processed only when available.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}→ Comment out notifications and update menu templates</div>
+                        <div class="details">Reduce query count from 54 to 41 on series page. Commented out notification-related code in Menu.js and the menu Twig template, effectively disabling notification features. Added a new empty schedule menu block and updated the main menu to include it instead of the previous schedule menu. Also made minor formatting adjustments to improve code readability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series image and provider handling</div>
+                        <div class="details">Reduce query count from 54 to 41 on series page. Refactored SeriesController to pass series images as arrays instead of fetching from the repository, and updated related methods to use object properties. Improved provider lookup in schedules by using a new getNameAndLogo method in WatchProviderRepository. Cleaned up and clarified code, including parameter type hints and minor formatting fixes.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve trash button alignment and size in series list</div>
+                        <div class="details">Refactored SVG selection for the trash button in Season.js for clarity. Updated series.scss to center list items and increased the trash button's size for better visibility and alignment.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Enhance vote graph styling and hover effects</div>
+                        <div class="details">Refactors the .vote-graph component to use relative positioning and adds a hover effect that blurs and fades episode votes while highlighting the vote average. Updates styling for episode numbers, vote containers, and average display for improved visual clarity and interactivity.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:search') }}→ Refactor multi-search options menu tail handling</div>
+                        <div class="details">Removed JavaScript toggling of the .multi-search-options-menu-tail element and shifted its display logic to CSS using the :has() selector. Also adjusted styling for better alignment and appearance of multi-search UI elements.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add source name input list to location form</div>
+                        <div class="details">Introduces a datalist input for the source name field in the add location form, allowing users to select from existing source names. Updates SeriesController and FilmingLocationRepository to provide the source list, adds a new Twig template for the input list, and adjusts styles for better dialog sizing.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Remove watch links section from not found series page</div>
+                        <div class="details">Deleted the watch links UI and related logic from the 'show_not_found.html.twig' template, simplifying the user actions area for series not found scenarios.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update series and filter styles for layout consistency</div>
+                        <div class="details">Removed h1 styles from filter.scss and consolidated margin and header styles for .series-to-start, .series-by-country, and .all-my-series in series.scss. Adjusted background colors and fixed selector spacing for improved layout and visual consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Improve TMDB error handling and overview fallback</div>
+                        <div class="details">Enhanced error handling for TMDB API responses in SeriesService and SeriesController, logging errors and checking for 'error' keys. Added a buildOverview method to provide a fallback overview from translations if the main overview is missing. Updated template and controller to reflect these changes and fixed a template name typo.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Improve movie page responsiveness and image handling</div>
+                        <div class="details">Updated movie.scss to enhance responsive design, including new portrait orientation styles and improved scaling for various breakpoints. Modified show.html.twig to use a <picture> element for the movie backdrop, displaying the poster image in portrait orientation and providing better fallbacks when images are missing.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-css3') }}→ Fix flash message vanishing animation and styles</div>
+                        <div class="details">Corrects the logic to add the 'vanishing' class for flash messages, enabling the fade-out effect. Updates SCSS to set opacity to 0 when 'vanishing' is applied and adjusts z-index for proper stacking.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Fix up-to-date title logic for single series card</div>
+                        <div class="details">Adjusts the logic in the series card partial to correctly display the 'Up to date!' or 'That's all, Folks!' title only for the first card when rendering a single series. Updates the series index template to use a loop for consistency when only one series is present.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:search') }}→ Refactor menu preview and multi-search logic</div>
+                        <div class="details">Moved multi-search initialization to a dedicated method and improved preview handling for pinned and in-progress menu items. Added dynamic preview positioning based on mouse Y coordinate. Cleaned up unused code and improved event handling for search and navigation. Enhanced preview restoration and cookie management for multi-search options.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add edit location images panel and UI integration</div>
+                        <div class="details">Introduces a side panel and form for editing location images, including new UI controls and event handlers for opening/closing the panel. Updates styles and markup to support the new edit-images button, image badges, and improved image list handling in both JS and SCSS. Refactors image event logic for robustness and updates template to include the new form and SVG icon.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor location image markup and styles</div>
+                        <div class="details">Renamed CSS class .image to .series-location-image and .list to .image-list for location images in map view. Updated related JavaScript and Twig template selectors. Improved styling for image containers and navigation arrows, including consistent border and sizing.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Adjust layout and styling in SCSS files</div>
+                        <div class="details">Replaced body height with min-height in app.scss for better layout flexibility. Increased button border-radius in schedule-range-dialog. Modified hover height and debug positioning in series.scss. Set font size for h1 in video.scss for improved heading appearance.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Refactor SeriesController to use #[CurrentUser] and type hints</div>
+                        <div class="details">Replaces $this->getUser() with the #[CurrentUser] attribute for dependency injection of the User object in controller actions. Updates method signatures to use explicit type hints for parameters and return types, and improves request query parameter access. Cleans up unused code and comments, and adjusts some internal method signatures for better type safety.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:calendar') }}→ Add dynamic provider logo display to schedules form</div>
+                        <div class="details">Introduces a provider logo preview in the schedules form, updating dynamically when the provider selection changes. Updates SCSS for provider logo styling and adds JavaScript logic to handle logo display based on the selected provider.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:language-css3') }}→ Clean up app.scss and adjust image widths</div>
+                        <div class="details">Removed commented-out and unused CSS code for better readability and maintainability. Increased image and related container in "episodes of the day" menu widths from 9.75rem to 15rem for improved layout.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>53ᵉ mise à jour : 07/12/2025</h2>
                 <ul>
                     <li>
