@@ -208,7 +208,7 @@ class SeriesController extends AbstractController
         // On ne garde que le premier résultat pour chaque série et on ajoute les providers dans un tableau "watch_links".
         foreach ($seriesToStart as $s) {
             if (!array_key_exists($s['id'], $series)) {
-                $series[$s['id']]['url'] = $this->generateUrl('app_series_show', ['id'=> $s['id'], 'slug' => $s['slug']]);
+                $series[$s['id']]['url'] = $this->generateUrl('app_series_show', ['id' => $s['id'], 'slug' => $s['slug']]);
                 $series[$s['id']]['name'] = $s['name'];
                 $series[$s['id']]['sln_name'] = $s['sln_name'];
                 $series[$s['id']]['poster_path'] = $s['poster_path'];
@@ -556,7 +556,7 @@ class SeriesController extends AbstractController
         $series = [];
         $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
         if ($searchName) {
-            $series = $this->getDbSearchResult($user, $searchName, 1, null);
+            $series = $this->getDbSearchResult($user, $searchName, 1, 0);
             $simpleSeriesSearch->setQuery($searchName);
         }
         $simpleForm = $this->createForm(SeriesSearchType::class, $simpleSeriesSearch);
@@ -822,7 +822,7 @@ class SeriesController extends AbstractController
         $tv['watch/providers'] = $this->watchProviders($tv, $country);
         $tv['status_css'] = $this->statusCss($tv);
 
-        $series = $this->updateSeries($series, $tv);
+        $series = $this->updateSeries($series, $tv, $seriesArr['images']);
 
         $userSeries = $this->updateUserSeries($userSeries, $tv);
         $userEpisodes = $this->checkSeasons($userSeries, $userEpisodes, $tv);
@@ -832,7 +832,7 @@ class SeriesController extends AbstractController
             $this->reloadUserEpisodes = false;
         }
 
-        $schedules = $this->seriesSchedulesV2($user, $series, $tv);
+        $schedules = $this->seriesSchedulesV2($userSeries, $tv);
         $alternateSchedules = $this->seriesService->alternateSchedules($tv['seasons'], $series, $userEpisodes);
         $seriesArr['seasons'] = $this->overrideSeasonAirDate($tv['seasons'], $schedules);
         $seriesArr['seriesAround'] = $seriesAround;
@@ -841,8 +841,8 @@ class SeriesController extends AbstractController
         $seriesArr['timezoneMenu'] = (new IntlExtension)->getTimezoneNames('fr_FR');
         $seriesArr['emptySchedule'] = $this->seriesService->emptySchedule();
         $seriesArr['alternateSchedules'] = $alternateSchedules;
-        $seriesArr['seriesInProgress'] = $this->userEpisodeRepository->isFullyReleased($userSeries);
-        $seriesArr['images'] = $this->getSeriesImages($series);
+//        $seriesArr['seriesInProgress'] = $this->userEpisodeRepository->isFullyReleased($userSeries);
+        $seriesArr['images'] = $this->getSeriesImages($seriesArr['images']);
         $seriesArr['videos'] = $this->seriesService->getSeriesVideoList($series);
         $seriesArr['videoListFolded'] = $this->seriesService->isVideoListFolded(count($seriesArr['videos']), $user);
 
@@ -1338,7 +1338,7 @@ class SeriesController extends AbstractController
                 $count += 1;
             }
             if ($itemPerLine > 10) {
-                if ($count % 19== 0) $itemPerLine = 19;
+                if ($count % 19 == 0) $itemPerLine = 19;
                 if ($count % 17 == 0) $itemPerLine = 17;
                 if ($count % 15 == 0) $itemPerLine = 15;
                 if ($count % 13 == 0) $itemPerLine = 13;
@@ -1780,7 +1780,6 @@ class SeriesController extends AbstractController
                 continue;
             }
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), $locale, ['images']), true);
-            dump($tv);
             $tmdbCalls++;
             if ($tv == null || isset($tv['error'])) {
                 $updates[] = [
@@ -1794,7 +1793,7 @@ class SeriesController extends AbstractController
                 $this->seriesRepository->save($series);
                 continue;
             }
-            $updateSeries = $this->updateSeries($series, $tv);
+            $updateSeries = $this->updateSeries($series, $tv, []);
             $update = $updateSeries->getUpdates();
             $updates[] = [
                 'id' => $series->getId(),
@@ -1875,7 +1874,7 @@ class SeriesController extends AbstractController
         $this->seriesVideoRepository->save($video, true);
     }
 
-    public function updateSeries(Series $series, array $tv): Series
+    public function updateSeries(Series $series, array $tv, array $seriesImages): Series
     {
         $slugger = new AsciiSlugger();
         $series->setUpdates([]);
@@ -1923,7 +1922,7 @@ class SeriesController extends AbstractController
         }
 
         $sizes = ['backdrops' => 3, 'logos' => 5, 'posters' => 5];
-        $seriesImages = $series->getSeriesImages()->toArray();
+        /*$seriesImages = $series->getSeriesImages()->toArray();*/
         foreach ($seriesImages as $seriesImage) {
             $type = $seriesImage->getType();
             $imageConfigType = $type . '_sizes';
@@ -1972,16 +1971,15 @@ class SeriesController extends AbstractController
         return $series;
     }
 
-    public function getSeriesImages(Series $series): array
+    public function getSeriesImages(array $seriesImages): array
     {
-        $seriesImages = $this->seriesRepository->seriesImages($series);
-        $seriesBackdrops = array_filter($seriesImages, fn($image) => $image['type'] == "backdrop");
-        $seriesLogos = array_filter($seriesImages, fn($image) => $image['type'] == "logo");
-        $seriesPosters = array_filter($seriesImages, fn($image) => $image['type'] == "poster");
+        $seriesBackdrops = array_filter($seriesImages, fn($image) => $image->getType() == "backdrop");
+        $seriesLogos = array_filter($seriesImages, fn($image) => $image->getType() == "logo");
+        $seriesPosters = array_filter($seriesImages, fn($image) => $image->getType() == "poster");
 
-        $seriesBackdrops = array_values(array_map(fn($image) => "/series/backdrops" . $image['image_path'], $seriesBackdrops));
-        $seriesLogos = array_values(array_map(fn($image) => "/series/logos" . $image['image_path'], $seriesLogos));
-        $seriesPosters = array_values(array_map(fn($image) => "/series/posters" . $image['image_path'], $seriesPosters));
+        $seriesBackdrops = array_values(array_map(fn($image) => "/series/backdrops" . $image->getImagePath(), $seriesBackdrops));
+        $seriesLogos = array_values(array_map(fn($image) => "/series/logos" . $image->getImagePath(), $seriesLogos));
+        $seriesPosters = array_values(array_map(fn($image) => "/series/posters" . $image->getImagePath(), $seriesPosters));
 
         return [
             'backdrops' => $seriesBackdrops,
@@ -2166,11 +2164,13 @@ class SeriesController extends AbstractController
         return $seasonEpisodeCount;
     }
 
-    public function seriesSchedulesV2(User $user, Series $series, ?array $tv): array
+    public function seriesSchedulesV2(UserSeries $userSeries, ?array $tv): array
     {
         $schedules = [];
+        $user = $userSeries->getUser();
+        $series = $userSeries->getSeries();
         $locale = $user->getPreferredLanguage() ?? 'fr';
-        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+//        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $logoUrl = $this->imageConfiguration->getUrl('logo_sizes', 5);
 
         foreach ($series->getSeriesBroadcastSchedules() as $schedule) {
@@ -2265,9 +2265,9 @@ class SeriesController extends AbstractController
 
             $providerId = $schedule->getProviderId();
             if ($providerId) {
-                $provider = $this->watchProviderRepository->findOneBy(['providerId' => $providerId]);
-                $providerName = $provider->getProviderName();
-                $providerLogo = $this->getProviderLogoFullPath($provider->getLogoPath(), $logoUrl);
+                $provider = $this->watchProviderRepository->getNameAndLogo($providerId);
+                $providerName = $provider['provider_name'];
+                $providerLogo = $this->getProviderLogoFullPath($provider['logo_path'], $logoUrl);
             } else {
                 $providerName = null;
                 $providerLogo = null;
@@ -2298,8 +2298,6 @@ class SeriesController extends AbstractController
                 'userNextEpisode' => $userNextEpisode,
                 'multiple' => $multiple,
                 'userLastNextEpisode' => $userLastNextEpisode,
-//                'tvLastEpisode' => $tvLastEpisode,
-//                'tvNextEpisode' => $tvNextEpisode,
                 'toBeContinued' => $tv ? $this->isToBeContinued($tv, $userLastEpisode) : $userNextEpisode != null,
                 'tmdbStatus' => $tv['status'] ?? 'series not found',
             ];
@@ -2383,7 +2381,7 @@ class SeriesController extends AbstractController
         $series->addUpdate($this->translator->trans(ucfirst($imageType) . ' added'));
     }
 
-    public function addSeries(int $id,  DateTimeImmutable $date): array
+    public function addSeries(int $id, DateTimeImmutable $date): array
     {
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
 
@@ -2480,9 +2478,14 @@ class SeriesController extends AbstractController
 
         if ($newEpisodeCount) {
             $this->userEpisodeRepository->flush();
+            $ueIds = array_column($this->userEpisodeRepository->getSeasonEpisodeIds($userSeries->getId(), $seasonNumber), 'episode_id');
+        } else {
+            $ueIds = array_filter($userEpisodes, fn($e) => $e->getSeasonNumber() == $seasonNumber);
+            $ueIds = array_map(fn($e) => $e->getEpisodeId(), $ueIds);
+//            dd(['user episodes' => $userEpisodes, 'ue ids' => $ueIds]);
         }
+
         $epIds = $tvSeason['episodes'] ? array_map(fn($e) => $e['id'], $tvSeason['episodes']) : [];
-        $ueIds = array_column($this->userEpisodeRepository->getSeasonEpisodeIds($userSeries->getId(), $seasonNumber), 'episode_id');
         $removedEpisodeIds = array_values(array_diff($ueIds, $epIds));
         $updatedEpisodeIds = array_values(array_intersect($ueIds, $epIds));
         $removedEpisodeCount = count($removedEpisodeIds);

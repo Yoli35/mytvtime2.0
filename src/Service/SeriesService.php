@@ -400,10 +400,10 @@ class SeriesService extends AbstractController
             }
         }
 
-        $dbNetworks = $this->networkRepository->findBy(['networkId' => $ids]);
-        return array_map(function ($network) use ($logoUrl, $dbNetworks) {
+//        $dbNetworks = $this->networkRepository->findBy(['networkId' => $ids]);
+        return array_map(function ($network) use ($logoUrl, $networkDbs) {
             $network['logo_path'] = $network['logo_path'] ? $logoUrl . $network['logo_path'] : null; // w92
-            $dbNetwork = array_values(array_filter($dbNetworks, fn($n) => $n->getNetworkId() == $network['id']))[0] ?? null;
+            $dbNetwork = array_values(array_filter($networkDbs, fn($n) => $n->getNetworkId() == $network['id']))[0] ?? null;
             if ($dbNetwork) {
                 $network['headquarters'] = $dbNetwork->getHeadquarters();
                 $network['homepage'] = $dbNetwork->getHomepage();

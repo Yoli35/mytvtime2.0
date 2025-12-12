@@ -54,7 +54,7 @@ class WatchProviderRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function getWatchProviderList($country): array
+    public function getWatchProviderList(string $country): array
     {
         $sql = "SELECT wp.`provider_name` as provider_name, wp.`logo_path` as logo_path, wp.`provider_id` as provider_id "
             . "FROM `watch_provider` wp "
@@ -62,6 +62,15 @@ class WatchProviderRepository extends ServiceEntityRepository
             . "ORDER BY wp.`provider_name` ";
 
         return $this->getAll($sql);
+    }
+
+    public function getNameAndLogo(int $id): array
+    {
+        $sql = "SELECT wp.`provider_name` as provider_name, wp.`logo_path` as logo_path, wp.`provider_id` as provider_id "
+            . "FROM `watch_provider` wp "
+            . "WHERE wp.`provider_id`=$id ";
+
+        return $this->getOne($sql);
     }
 
     public function adminProviders(int $page, string $sort, string $order, int $perPage = 20): array
