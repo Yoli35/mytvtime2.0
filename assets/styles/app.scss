@@ -1241,6 +1241,18 @@ label:has(input[type="text"]) {
             display: flex;
             flex-direction: column;
             gap: 0.125rem;
+
+            .loader {
+                align-items: center;
+                background-color: var(--orange-50);
+                border-radius: .25rem;
+                color: var(--orange-90);
+                display: flex;
+                height: 20rem;
+                justify-content: center;
+                min-width: 20rem;
+                width: 100%;
+            }
         }
     }
 
