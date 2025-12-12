@@ -189,7 +189,7 @@ export class Menu {
         this.tooltips = new ToolTips();
 
         const navbarItems = navbar.querySelectorAll(".navbar-item");
-        const notifications = document.querySelector(".notifications");
+        /*const notifications = document.querySelector(".notifications");*/
         const historyNavbarItem = navbar.querySelector("#history-menu");
         this.adjustHistoryList();
 
@@ -259,9 +259,9 @@ export class Menu {
 
         this.posterPreview();
 
-        notifications?.addEventListener("click", () => {
+        /*notifications?.addEventListener("click", () => {
             this.markNotificationsAsRead();
-        });
+        });*/
 
         this.initMultiSearch(navbar);
 
@@ -985,7 +985,7 @@ export class Menu {
         document.documentElement.setAttribute('data-theme', theme);
     }
 
-    markNotificationsAsRead() {
+    /*markNotificationsAsRead() {
         fetch('/' + gThis.lang + '/user/notifications/mark-as-read', {
             method: 'GET',
             headers: {
@@ -1004,7 +1004,7 @@ export class Menu {
                 console.error('Error:', error);
             });
 
-    }
+    }*/
 
     checkHistory() {
         const historyList = document.querySelector("#history-list");

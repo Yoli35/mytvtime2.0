@@ -14,7 +14,7 @@
                     <div class="menu-item"><a href="{{ path('app_movie_index') }}" class="desktop">{{ 'My movies'|trans }}</a></div>
                     <div class="menu-item"><a href="{{ path('app_movie_favorite_index') }}" class="desktop">{{ 'My favorite movies'|trans }}</a></div>
                     <div class="separation">{{ 'Search'|trans }}</div>
-                    {#<div class="menu-item">
+                    {# <div class="menu-item">
                         <label for="movie-search">
                             <input type="search" id="movie-search" data-type="movie" class="search" spellcheck="false">
                             {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}
@@ -22,7 +22,7 @@
                         <div class="search-results __movie">
                             <ul data-type="movie"></ul>
                         </div>
-                    </div>#}
+                    </div> #}
                     <div class="menu-item"><a href="{{ path('app_movie_search') }}" class="desktop">{{ 'Search'|trans }}</a></div>
                 </div>
             </div>
@@ -42,24 +42,24 @@
                     <div class="menu-item"><a href="{{ path('app_map_index') }}" class="desktop">{{ 'All locations'|trans }}</a></div>
                     <div class="menu-item"><a href="{{ path('app_map_last', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></div>
                     <div class="separation">{{ 'Search'|trans }}</div>
-{#                    <div class="menu-item">#}
-{#                        <label for="tv-search">#}
-{#                            <input type="search" id="tv-search" data-type="tv" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}">#}
-{#                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}#}
-{#                        </label>#}
-{#                        <div class="search-results __series">#}
-{#                            <ul data-type="tv"></ul>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                    <div class="menu-item">#}
-{#                        <label for="tv-search-db">#}
-{#                            <input type="search" id="tv-search-db" data-type="db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}">#}
-{#                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}#}
-{#                        </label>#}
-{#                        <div class="search-results __db_series">#}
-{#                            <ul data-type="dbtv"></ul>#}
-{#                        </div>#}
-{#                    </div>#}
+                    {#                    <div class="menu-item"> #}
+                    {#                        <label for="tv-search"> #}
+                    {#                            <input type="search" id="tv-search" data-type="tv" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}"> #}
+                    {#                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }} #}
+                    {#                        </label> #}
+                    {#                        <div class="search-results __series"> #}
+                    {#                            <ul data-type="tv"></ul> #}
+                    {#                        </div> #}
+                    {#                    </div> #}
+                    {#                    <div class="menu-item"> #}
+                    {#                        <label for="tv-search-db"> #}
+                    {#                            <input type="search" id="tv-search-db" data-type="db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}"> #}
+                    {#                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }} #}
+                    {#                        </label> #}
+                    {#                        <div class="search-results __db_series"> #}
+                    {#                            <ul data-type="dbtv"></ul> #}
+                    {#                        </div> #}
+                    {#                    </div> #}
                     {% if app.user %}
                         <div class="menu-item"><a href="{{ path('app_series_search_db') }}">{{ 'Among your series'|trans }}</a></div>
                     {% endif %}
@@ -72,16 +72,16 @@
                 <div class="menu people">
                     <div class="menu-item"><a href="{{ path('app_people_index') }}" class="desktop">{{ 'People'|trans }}</a></div>
                     <div class="menu-item"><a href="{{ path('app_people_star') }}" class="desktop">{{ 'Star people'|trans }}</a></div>
-{#                    <div class="separation">{{ 'Search'|trans }}</div>#}
-{#                    <div class="menu-item">#}
-{#                        <label for="person-search">#}
-{#                            <input type="search" id="person-search" data-type="person" class="search" spellcheck="false">#}
-{#                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }}#}
-{#                        </label>#}
-{#                        <div class="search-results __people">#}
-{#                            <ul data-type="people"></ul>#}
-{#                        </div>#}
-{#                    </div>#}
+                    {#                    <div class="separation">{{ 'Search'|trans }}</div> #}
+                    {#                    <div class="menu-item"> #}
+                    {#                        <label for="person-search"> #}
+                    {#                            <input type="search" id="person-search" data-type="person" class="search" spellcheck="false"> #}
+                    {#                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }} #}
+                    {#                        </label> #}
+                    {#                        <div class="search-results __people"> #}
+                    {#                            <ul data-type="people"></ul> #}
+                    {#                        </div> #}
+                    {#                    </div> #}
                 </div>
             </div>
             <div class="navbar-item">
@@ -162,13 +162,13 @@
                 </div>
             </div>
         {% endif %}
-        {#<div class="navbar-item">
+        {# <div class="navbar-item">
             {{ ux_icon('mdi:map-outline') }}
             <div class="menu map">
                 <div class="menu-item"><a href="{{ path('app_map_index') }}" class="desktop">{{ 'Shooting locations'|trans }}</a></div>
                 <div class="menu-item"><a href="{{ path('app_map_last', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></div>
             </div>
-        </div>#}
+        </div> #}
         <a href="{{ path('app_contact_form') }}" class="desktop">
             {{ ux_icon('mdi:email', {'data-title': 'Contact me'|trans}) }}
         </a>
@@ -210,8 +210,8 @@
                 <div class="multi-search-option" data-value="dbmovie">{{ 'In my movie list'|trans }}</div>
                 <div class="multi-search-option" data-value="dbtv">{{ 'In my series list'|trans }}</div>
                 <div class="multi-search-option-separator"></div>
-                <div class="multi-search-setting"><label for="display-poster-toggler">{{ 'Display the poster'|trans }}<input type="checkbox" switch checked id="display-poster-toggler" /></label></div>
-                <div class="multi-search-setting"><label for="new-tab-toggler">{{ 'Open in a new tab'|trans }}<input type="checkbox" switch checked id="new-tab-toggler" /></label></div>
+                <div class="multi-search-setting"><label for="display-poster-toggler">{{ 'Display the poster'|trans }}<input type="checkbox" switch checked id="display-poster-toggler"/></label></div>
+                <div class="multi-search-setting"><label for="new-tab-toggler">{{ 'Open in a new tab'|trans }}<input type="checkbox" switch checked id="new-tab-toggler"/></label></div>
             </div>
             <div class="search-results __multi">
                 <ul data-type="multi" data-sub-type="multi"></ul>
@@ -253,38 +253,39 @@
             {% endfor %}
         {% endif %}
 
-        {% if app.user %}
-            {% set notificationCount = countEpisodeNotifications(app.user) %}
-            {% if notificationCount %}
-                {% set notifications = listEpisodeNotifications(app.user) %}
-                {% set newCount = countNewEpisodeNotifications(app.user) %}
-                <div class="navbar-item notifications">
-                    <em>{{ ux_icon('mdi:bell') }}</em>
-                    {% if newCount %}
-                        <span>{{ newCount }}</span>
-                    {% endif %}
-                    <div class="menu menu-notifications">
-                        {% for n in notifications %}
-                            {% set message = n.message|replace({
-                                'New episode date': 'New episode date'|trans,
-                                'New episode': 'New episode'|trans,
-                                'New series date': 'New series date'|trans,
-                                'Unknown': 'Unknown'|trans,
-                            }) %}
-                            <div class="item{% if n.validated_at %} validated{% endif %}" data-id="{{ n.id }}" title="{{ message }}">
-                                <div class="message">{{ message }}</div>
-                                <div class="date">{{ n.created_at|date('d/m/Y h:i:s') }}</div>
-                            </div>
-                        {% endfor %}
-                        {% if notificationCount > 50 %}
-                            <div class="item">
-                                <div class="message">{{ notificationCount-50 }} {{ 'more notifications'|trans }}</div>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endif %}
-        {% endif %}
+        {#        Are this notifications usefull? #}
+        {#        {% if app.user %} #}
+        {#            {% set notificationCount = countEpisodeNotifications(app.user) %} #}
+        {#            {% if notificationCount %} #}
+        {#                {% set notifications = listEpisodeNotifications(app.user) %} #}
+        {#                {% set newCount = countNewEpisodeNotifications(app.user) %} #}
+        {#                <div class="navbar-item notifications"> #}
+        {#                    <em>{{ ux_icon('mdi:bell') }}</em> #}
+        {#                    {% if newCount %} #}
+        {#                        <span>{{ newCount }}</span> #}
+        {#                    {% endif %} #}
+        {#                    <div class="menu menu-notifications"> #}
+        {#                        {% for n in notifications %} #}
+        {#                            {% set message = n.message|replace({ #}
+        {#                                'New episode date': 'New episode date'|trans, #}
+        {#                                'New episode': 'New episode'|trans, #}
+        {#                                'New series date': 'New series date'|trans, #}
+        {#                                'Unknown': 'Unknown'|trans, #}
+        {#                            }) %} #}
+        {#                            <div class="item{% if n.validated_at %} validated{% endif %}" data-id="{{ n.id }}" title="{{ message }}"> #}
+        {#                                <div class="message">{{ message }}</div> #}
+        {#                                <div class="date">{{ n.created_at|date('d/m/Y h:i:s') }}</div> #}
+        {#                            </div> #}
+        {#                        {% endfor %} #}
+        {#                        {% if notificationCount > 50 %} #}
+        {#                            <div class="item"> #}
+        {#                                <div class="message">{{ notificationCount-50 }} {{ 'more notifications'|trans }}</div> #}
+        {#                            </div> #}
+        {#                        {% endif %} #}
+        {#                    </div> #}
+        {#                </div> #}
+        {#            {% endif %} #}
+        {#        {% endif %} #}
         {#        {% set users = getUsers() %} #}
         {#        <div class="navbar-item"> #}
         {#            {{ ux_icon('mdi:user-outline') }} #}
@@ -342,7 +343,9 @@
                     <a href="{{ path('app_register') }}">{{ 'Register'|trans }}…</a>
                 {% endif %}
                 <div class="separation">{{ 'Settings'|trans }}</div>
-                <div class="accent-color" data-value="#E0861F">{{ 'Accent color'|trans }}…<div class="sample"></div></div>
+                <div class="accent-color" data-value="#E0861F">{{ 'Accent color'|trans }}…
+                    <div class="sample"></div>
+                </div>
                 <div class="schedule-range">{{ 'Series schedule menu range'|trans }}…</div>
                 <div class="menu-preview" data-on="{{ 'Hide preview'|trans }}" data-off="{{ 'Show preview'|trans }}">{{ 'Hide preview'|trans }}</div>
                 <div class="separation">{{ 'Theme'|trans }}</div>
@@ -372,11 +375,11 @@
             </div>
             <div class="menu main">
                 {% if app.user %}
-{#                    {% set start="-3 day" %}#}
-{#                    {% set end="2 day" %}#}
-{#                    {% set startDay=-3 %}#}
-{#                    {% set endDay=2 %}#}
-                    {{ include('_blocks/_schedule_menu.html.twig', {data: listEpisodeOfTheInterval(app.user, app.locale)}) }}
+                    {#                    {% set start="-3 day" %} #}
+                    {#                    {% set end="2 day" %} #}
+                    {#                    {% set startDay=-3 %} #}
+                    {#                    {% set endDay=2 %} #}
+                    {{ include('_blocks/_empty_schedule_menu.html.twig') }}
 
                     {% set inProgress = inProgressSeries(app.user, app.user.preferredLanguage??'fr') %}
                     {% if inProgress.ok %}
