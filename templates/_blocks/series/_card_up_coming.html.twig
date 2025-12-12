@@ -19,8 +19,9 @@
                 </div>
             </div>
         </div>
-        <div class="name">
+        <div class="name up-coming">
             {{ series.name }}
+            {% if series.sln_name %}<span>{{ series.sln_name }}</span>{% endif %}
         </div>
     </a>
 </div>

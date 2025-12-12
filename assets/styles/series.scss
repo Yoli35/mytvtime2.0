@@ -531,6 +531,14 @@ h2 {
                         text-align: center;
                         text-wrap: balance;
                         width: 15rem;
+
+                        &.to-start, &.up-coming, &.ranking, &.favorite, &.by-country {
+                            flex-direction: column;
+
+                            span {
+                                color: var(--orange-90);
+                            }
+                        }
                     }
                 }
 

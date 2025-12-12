@@ -22,8 +22,9 @@
                 </div>
             </div>
         </div>
-        <div class="name"{% if series.sln_name %} data-title="{{ series.sln_name }}"{% endif %}>
+        <div class="name to-start"{% if series.sln_name %} data-title="{{ series.sln_name }}"{% endif %}>
             {{ series.name }}
+            {% if series.sln_name %}<span>{{ series.sln_name }}</span>{% endif %}
         </div>
     </a>
 </div>

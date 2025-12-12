@@ -130,12 +130,13 @@ class UserSeriesRepository extends ServiceEntityRepository
             'addedAt' => $order = 'us.`added_at`',
             default => $order = 's.`first_air_date`'
         };
-        $sql = "SELECT s.id                                                                      as id,
-                       s.tmdb_id                                                                 as tmdb_id,
-                       IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
-                       IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
-                       s.`poster_path`                                                           as poster_path,
-                       s.`first_air_date`                                                        as final_air_date
+        $sql = "SELECT s.id                                              as id,
+                       s.tmdb_id                                         as tmdb_id,
+                       s.`name`                                          as name,
+                       sln.`name`	                                     as sln_name,
+                       IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)  as slug,
+                       s.`poster_path`                                   as poster_path,
+                       s.`first_air_date`                                as final_air_date
                 FROM `series` s
                 INNER JOIN `user_series` us ON us.series_id=s.id
                 LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.id AND sln.`locale`='$locale'
@@ -151,22 +152,23 @@ class UserSeriesRepository extends ServiceEntityRepository
         $userId = $user->getId();
         $offset = ($page - 1) * $perPage;
         $sql = "SELECT 
-                       s.id                                                                      as id,
-                       s.tmdb_id                                                                 as tmdb_id,
-                       IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
-                       IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
-                       s.`poster_path`                                                           as poster_path,
-                       s.`first_air_date`                                                        as final_air_date,
+                       s.id                                                 as id,
+                       s.tmdb_id                                            as tmdb_id,
+                       s.`name`                                             as name,
+                       sln.`name`	                                        as sln_name,
+                       IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)     as slug,
+                       s.`poster_path`                                      as poster_path,
+                       s.`first_air_date`                                   as final_air_date,
                        (SELECT AVG(IF(ue.`vote`, ue.`vote`, 0))
                                 FROM `user_episode` ue
                                 WHERE ue.`user_series_id`=us.`id`
                                   AND ue.`vote` > 0
-                                  AND ue.`previous_occurrence_id` IS NULL)                       as average_vote,
+                                  AND ue.`previous_occurrence_id` IS NULL)  as average_vote,
                        (SELECT COUNT(*)
                                FROM `user_episode` ue
                            WHERE ue.`user_series_id`=us.`id`
                              AND ue.`vote`>0
-                             AND ue.`previous_occurrence_id` IS NULL)                            as episode_count
+                             AND ue.`previous_occurrence_id` IS NULL)       as episode_count
                 FROM `user_series` us
                     INNER JOIN `series` s ON us.`series_id`=s.`id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale'
@@ -181,14 +183,16 @@ class UserSeriesRepository extends ServiceEntityRepository
         $userId = $user->getId();
         $offset = ($page - 1) * $perPage;
         $sql = "SELECT 
-                       s.id                                                                      as id,
-                       s.tmdb_id                                                                 as tmdb_id,
-                       IF(sln.`name` IS NOT NULL, CONCAT(sln.`name`, ' - ', s.`name`), s.`name`) as name,
-                       IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`)                          as slug,
-                       s.`poster_path`                                                           as poster_path,
-                       s.`backdrop_path`                                                         as backdrop_path,
-                       s.overview                                                                as overview,
-                       s.`first_air_date`                                                        as final_air_date
+                       s.id                                             as id,
+                       s.tmdb_id                                        as tmdb_id,
+                       s.`name`                                         as name,
+                       sln.`name`	                                    as sln_name,
+                       IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`) as slug,
+                       IF(sln.`slug` IS NOT NULL, sln.`slug`, s.`slug`) as slug,
+                       s.`poster_path`                                  as poster_path,
+                       s.`backdrop_path`                                as backdrop_path,
+                       s.overview                                       as overview,
+                       s.`first_air_date`                               as final_air_date
                 FROM `user_series` us
                     INNER JOIN `series` s ON us.`series_id`=s.`id`
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.`id` AND sln.`locale`='$locale'

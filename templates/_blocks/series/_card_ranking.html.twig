@@ -21,8 +21,9 @@
                 </div>
             </div>
         </div>
-        <div class="name">
+        <div class="name ranking">
             {{ series.name }} ({{ series.episode_count }} ep.)
+            {% if series.sln_name %}<span>{{ series.sln_name }}</span>{% endif %}
         </div>
     </a>
 </div>

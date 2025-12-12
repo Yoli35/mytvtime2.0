@@ -1921,35 +1921,37 @@ class SeriesController extends AbstractController
             $series->addUpdate($this->translator->trans('Next episode air date updated') . ' → ' . $nextEpisodeAirDate?->format('d-m-Y'));
         }
 
-        $sizes = ['backdrops' => 3, 'logos' => 5, 'posters' => 5];
-        /*$seriesImages = $series->getSeriesImages()->toArray();*/
-        foreach ($seriesImages as $seriesImage) {
-            $type = $seriesImage->getType();
-            $imageConfigType = $type . '_sizes';
-            $type .= 's';
-            $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]);
-            $this->imageService->saveImage($type, $seriesImage->getImagePath(), $url);
-        }
-
-        if (!$this->inImages($tv['poster_path'], $seriesImages)) {
-            $this->addSeriesImage($series, $tv['poster_path'], "poster", $this->imageConfiguration->getUrl("poster_sizes", $sizes["posters"]));
-        }
-        if (!$this->inImages($tv['backdrop_path'], $seriesImages)) {
-            $this->addSeriesImage($series, $tv['backdrop_path'], "backdrop", $this->imageConfiguration->getUrl("backdrop_sizes", $sizes["backdrops"]));
-        }
-
-        foreach (['backdrops', 'logos', 'posters'] as $type) {
-            $dbType = substr($type, 0, -1);
-            $imageConfigType = $dbType . '_sizes';
-            $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]);
-            foreach ($tv['images'][$type] as $img) {
-                if (!$this->inImages($img['file_path'], $seriesImages)) {
-                    $this->addSeriesImage($series, $img['file_path'], $dbType, $url);
-                }
+        if (count($seriesImages)) {
+            $sizes = ['backdrops' => 3, 'logos' => 5, 'posters' => 5];
+            /*$seriesImages = $series->getSeriesImages()->toArray();*/
+            foreach ($seriesImages as $seriesImage) {
+                $type = $seriesImage->getType();
+                $imageConfigType = $type . '_sizes';
+                $type .= 's';
+                $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]);
+                $this->imageService->saveImage($type, $seriesImage->getImagePath(), $url);
             }
-            $tv['images'][$type] = array_map(function ($image) use ($type, $sizes, $imageConfigType) {
-                return '/series/' . $type . $image['file_path'];
-            }, $tv['images'][$type]);
+
+            if (!$this->inImages($tv['poster_path'], $seriesImages)) {
+                $this->addSeriesImage($series, $tv['poster_path'], "poster", $this->imageConfiguration->getUrl("poster_sizes", $sizes["posters"]));
+            }
+            if (!$this->inImages($tv['backdrop_path'], $seriesImages)) {
+                $this->addSeriesImage($series, $tv['backdrop_path'], "backdrop", $this->imageConfiguration->getUrl("backdrop_sizes", $sizes["backdrops"]));
+            }
+
+            foreach (['backdrops', 'logos', 'posters'] as $type) {
+                $dbType = substr($type, 0, -1);
+                $imageConfigType = $dbType . '_sizes';
+                $url = $this->imageConfiguration->getUrl($imageConfigType, $sizes[$type]);
+                foreach ($tv['images'][$type] as $img) {
+                    if (!$this->inImages($img['file_path'], $seriesImages)) {
+                        $this->addSeriesImage($series, $img['file_path'], $dbType, $url);
+                    }
+                }
+                $tv['images'][$type] = array_map(function ($image) use ($type, $sizes, $imageConfigType) {
+                    return '/series/' . $type . $image['file_path'];
+                }, $tv['images'][$type]);
+            }
         }
 
         if ($tv['poster_path'] != $series->getPosterPath()) {
