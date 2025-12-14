@@ -10,16 +10,12 @@
 {% endblock %}
 
 {% block body %}
-    <script>
-        const bd = '/movies/posters{{ collection.poster_path }}';
-        const body = document.querySelector("body");
-        body.style.backgroundSize = "cover";
-        body.style.backgroundPosition = "center";
-        body.style.backgroundRepeat = "no-repeat";
-        body.style.backgroundAttachment = "fixed";
-        body.style.backgroundImage = "url(" + bd + ")";
-    </script>
     {% include '_blocks/_menu.html.twig' %}
+    <div class="blur-background">
+        {% if collection.poster_path %}
+            <img src="/movies/posters{{ collection.poster_path }}" alt="{{ collection.name }} {{ 'poster'|trans }}">
+        {% endif %}
+    </div>
     <div class="container-fluid backgroundImageOverlay collection-show">
         <header>
             <div class="poster">

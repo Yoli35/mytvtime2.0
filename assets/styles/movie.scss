@@ -953,6 +953,24 @@
     }
 }
 
+.blur-background {
+    background-color: var(--ardoise-90);
+    height: 100vh;
+    left:0;
+    overflow: hidden;
+    position: absolute;
+    top:0;
+    width: 100vw;
+    z-index: -1;
+
+    img {
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+        filter: blur(5rem);
+    }
+}
+
 .collection-show {
     padding-block-start: 5rem;
 
@@ -976,7 +994,6 @@
                 height: auto;
                 position: relative;
                 width: 100%;
-                z-index: -1;
             }
         }
 
