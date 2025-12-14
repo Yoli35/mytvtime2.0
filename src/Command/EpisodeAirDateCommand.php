@@ -51,6 +51,12 @@ class EpisodeAirDateCommand
 
     public function __invoke(SymfonyStyle $io, #[Option(shortcut: 's')] ?int $seriesId = null, #[Option(shortcut: 'l')] bool $list = false, #[Option(shortcut: 'f')] bool $force = false): int
     {
+        // "Ended"
+        // "Canceled"
+        // "Returning Series"
+        // "In Production"
+        // "Pilot"
+        // "Planned"
         $endedSeriesStatus = ['Ended', 'Canceled'];
 
         $this->io = $io;
@@ -132,12 +138,15 @@ class EpisodeAirDateCommand
             }
 
             $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
-            $result = $this->adjustNextEpisodeToWatch($userSeries, $userEpisodes);
-            if ($result) {
-                $notifications[] = $name . $result;
+            if (!in_array($series->getStatus(), $endedSeriesStatus)) {
+                $result = $this->adjustNextEpisodeToWatch($userSeries, $userEpisodes);
+                if ($result) {
+                    $notifications[] = $name . $result;
+                }
             }
             $firstUnseenEpisode = $this->findFirstNotWatchedEpisode($userEpisodes);
             $startingSeason = $firstUnseenEpisode ? $firstUnseenEpisode->getSeasonNumber() : 1;
+            $writeln = false;
             foreach ($tv['seasons'] as $season) {
                 if (!$force && $season['season_number'] > 0 && $season['season_number'] < $startingSeason) {
                     continue;
@@ -146,7 +155,8 @@ class EpisodeAirDateCommand
                 $tvSeason = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $language), true);
                 $episodes = $tvSeason ? $tvSeason['episodes'] : [];
                 if (!count($episodes)) {
-                    $this->io->writeln(' 🚫 No episodes for season ' . $seasonNumber);
+                    $this->io->write(' 🚫 - No episodes for season ' . $seasonNumber);
+                    $writeln = true;
                     continue;
                 }
                 foreach ($episodes as $episode) {
@@ -175,7 +185,9 @@ class EpisodeAirDateCommand
                     $episodeCount++;
                 }
             }
-            $writeln = false;
+            if ($writeln) {
+                $this->io->newLine();
+            }
             if ($episodeUpdates) {
                 $this->episodeNotificationRepository->flush();
                 $this->userEpisodeNotificationRepository->flush();
@@ -268,7 +280,7 @@ class EpisodeAirDateCommand
     {
         if ($userSeries->getNextUserEpisode() === null) {
             $userEpisodes = array_filter($userEpisodes, function ($ue) {
-                return $ue->getWatchAt() === null && $ue->getPreviousOccurrence() === null;
+                return $ue->getSeasonNumber() && $ue->getWatchAt() === null && $ue->getPreviousOccurrence() === null;
             });
             usort($userEpisodes, function ($a, $b) {
                 if ($a->getSeasonNumber() == $b->getSeasonNumber()) {
