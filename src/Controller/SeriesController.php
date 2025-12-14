@@ -785,6 +785,7 @@ class SeriesController extends AbstractController
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+        $this->adjustNextEpisodeToWatch($userSeries, $userEpisodes);
 
         $seriesAround = $this->seriesService->getSeriesAround($user->getId(), $userSeries->getId(), $locale);
 
@@ -912,6 +913,7 @@ class SeriesController extends AbstractController
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
         $this->checkSlug($series, $slug, $locale);
+        $this->adjustNextEpisodeToWatch($userSeries, null);
 
         $seriesImages = $series->getSeriesImages()->toArray();
 
@@ -941,6 +943,7 @@ class SeriesController extends AbstractController
 
         $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
         $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
+        dump($season['episodes']);
         $season['air_date'] = $this->adjustSeasonAirDate($season, 'date');
         $season['air_date_string'] = $this->adjustSeasonAirDate($season, 'string');
 
@@ -2912,6 +2915,32 @@ class SeriesController extends AbstractController
             $this->addFlash('success', sprintf("Series updated (%d season%s, %d episode%s)", $tv['number_of_seasons'], $tv['number_of_seasons'] > 1 ? 's' : '', $tv['number_of_episodes'], $tv['number_of_episodes'] > 1 ? 's' : ''));
         }
         return $seasonEpisodes;
+    }
+
+    private function adjustNextEpisodeToWatch(UserSeries $userSeries, ?array $userEpisodes): void
+    {
+        if ($userSeries->getNextUserEpisode() === null) {
+            if (!$userEpisodes) {
+                $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'watchAt' => null, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+            }
+            else {
+                $userEpisodes = array_filter($userEpisodes, function ($ue) {
+                    return $ue->getWatchAt() === null && $ue->getPreviousOccurrence() === null;
+                });
+                usort($userEpisodes, function ($a, $b) {
+                    if ($a->getSeasonNumber() == $b->getSeasonNumber()) {
+                        return $a->getEpisodeNumber() <=> $b->getEpisodeNumber();
+                    }
+                    return $a->getSeasonNumber() <=> $b->getSeasonNumber();
+                });
+            }
+            if (count($userEpisodes) > 0) {
+                $ep = $userEpisodes[0];
+                $userSeries->setNextUserEpisode($ep);
+                $this->userSeriesRepository->save($userSeries, true);
+                $this->addFlash('info', $this->translator->trans('Next episode to watch: %episode%', ['%episode%' => sprintf('S%02dE%02d', $ep->getSeasonNumber(), $ep->getEpisodeNumber())]));
+            }
+        }
     }
 
     private function adjustSeasonAirDate(array $season, string $type): ?string

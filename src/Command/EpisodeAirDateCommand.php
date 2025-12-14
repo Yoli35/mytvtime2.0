@@ -79,11 +79,12 @@ class EpisodeAirDateCommand
             $episodeUpdates = 0;
             $seriesNewEpisodeCount = 0;
 
-            $line = sprintf('User %s - Series (%d): %s', $user->getUsername(), $seriesId, $series->getName());
+            $name = $series->getName();
             $localizedName = $series->getLocalizedName('fr');
             if ($localizedName) {
-                $line .= ' - ' . $localizedName->getName();
+                $name .= ' - ' . $localizedName->getName();
             }
+            $line = sprintf('User %s - Series (%d): %s', $user->getUsername(), $seriesId, $name);
             if ($force) {
                 $line .= ' 🔨 Force update';
             } else {
@@ -130,7 +131,11 @@ class EpisodeAirDateCommand
                 $this->seriesRepository->save($series, true);
             }
 
-            $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries]);
+            $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+            $result = $this->adjustNextEpisodeToWatch($userSeries, $userEpisodes);
+            if ($result) {
+                $notifications[] = $name . $result;
+            }
             $firstUnseenEpisode = $this->findFirstNotWatchedEpisode($userEpisodes);
             $startingSeason = $firstUnseenEpisode ? $firstUnseenEpisode->getSeasonNumber() : 1;
             foreach ($tv['seasons'] as $season) {
@@ -208,8 +213,7 @@ class EpisodeAirDateCommand
         return Command::SUCCESS;
     }
 
-    public
-    function newNotification(string $type, UserSeries $userSeries, ?UserEpisode $userEpisode, ?SeriesLocalizedName $localizedName, ?DateTimeImmutable $airDate): string
+    public function newNotification(string $type, UserSeries $userSeries, ?UserEpisode $userEpisode, ?SeriesLocalizedName $localizedName, ?DateTimeImmutable $airDate): string
     {
         $seasonNumber = $userEpisode ? $userEpisode->getSeasonNumber() : 0;
         $episodeNumber = $userEpisode ? $userEpisode->getEpisodeNumber() : 0;
@@ -236,15 +240,13 @@ class EpisodeAirDateCommand
         return $notification;
     }
 
-    public
-    function addUserNotification(User $user, EpisodeNotification $notification): void
+    public function addUserNotification(User $user, EpisodeNotification $notification): void
     {
         $userEpisodeNotification = new UserEpisodeNotification($user, $notification);
         $this->userEpisodeNotificationRepository->save($userEpisodeNotification, true);
     }
 
-    public
-    function getUserEpisodeById($userEpisodes, $episodeId): mixed
+    public function getUserEpisodeById($userEpisodes, $episodeId): mixed
     {
         /*array_filter($userEpisodes, function ($userEpisode) use ($episodeId) {
             return $userEpisode->getEpisodeId() == $episodeId;
@@ -252,14 +254,42 @@ class EpisodeAirDateCommand
         return array_find($userEpisodes, fn($userEpisode) => $userEpisode->getEpisodeId() == $episodeId);
     }
 
-    public
-    function findFirstNotWatchedEpisode($userEpisodes): mixed
+    public function findFirstNotWatchedEpisode($userEpisodes): mixed
     {
         return array_find($userEpisodes, fn($userEpisode) => $userEpisode->getWatchAt() === null);
     }
 
-    public
-    function commandStart(): void
+    /**
+     * @param UserSeries $userSeries
+     * @param UserEpisode [] $userEpisodes
+     * @return string|null
+     */
+    private function adjustNextEpisodeToWatch(UserSeries $userSeries, array $userEpisodes): ?string
+    {
+        if ($userSeries->getNextUserEpisode() === null) {
+            $userEpisodes = array_filter($userEpisodes, function ($ue) {
+                return $ue->getWatchAt() === null && $ue->getPreviousOccurrence() === null;
+            });
+            usort($userEpisodes, function ($a, $b) {
+                if ($a->getSeasonNumber() == $b->getSeasonNumber()) {
+                    return $a->getEpisodeNumber() <=> $b->getEpisodeNumber();
+                }
+                return $a->getSeasonNumber() <=> $b->getSeasonNumber();
+            });
+            if (count($userEpisodes) > 0) {
+                $ep = $userEpisodes[0];
+                $userSeries->setNextUserEpisode($ep);
+                $this->userSeriesRepository->save($userSeries, true);
+                $userName = $userSeries->getUser()->getUsername();
+                $nextEpisodeString = sprintf(' - 🎉→ Next episode to watch for user %s: S%02dE%02d', $userName, $ep->getSeasonNumber(), $ep->getEpisodeNumber());
+                $this->io->write($nextEpisodeString);
+                return $nextEpisodeString;
+            }
+        }
+        return null;
+    }
+
+    public function commandStart(): void
     {
         $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
         $this->io->newLine(2);
@@ -268,8 +298,7 @@ class EpisodeAirDateCommand
         $this->t0 = microtime(true);
     }
 
-    public
-    function commandEnd(): void
+    public function commandEnd(): void
     {
         $t1 = microtime(true);
         $now = $this->dateService->newDateImmutable('now', 'Europe/Paris');
