@@ -915,18 +915,6 @@ class SeriesController extends AbstractController
 
         $seriesImages = $series->getSeriesImages()->toArray();
 
-        $episodeSizeSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'episode_div_size_' . $userSeries->getId()]);
-        if ($episodeSizeSettings) {
-            $value = $episodeSizeSettings->getData();
-            $episodeDivSize = $value['height'];
-            $aspectRatio = $value['aspect-ratio'] ?? '16 / 9';
-        } else {
-            $episodeSizeSettings = new Settings($user, 'episode_div_size_' . $userSeries->getId(), ['height' => '15rem', 'aspect-ratio' => '16 / 9']);
-            $this->settingsRepository->save($episodeSizeSettings, true);
-            $episodeDivSize = '15rem';
-            $aspectRatio = '16 / 9';
-        }
-
         $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $request->getLocale(), ['credits', 'watch/providers']), true);
         if (!$season) {
             return $this->redirectToRoute('app_series_show', [
@@ -1017,10 +1005,7 @@ class SeriesController extends AbstractController
             'language' => $locale . '-' . $country,
             'changes' => $this->getChanges($season['id']),
             'now' => $this->now()->format('Y-m-d H:i O'),
-            'episodeDiv' => [
-                'height' => $episodeDivSize,
-                'aspectRatio' => $aspectRatio
-            ],
+            'episodeDiv' => $this->getEpisodeDivSize($userSeries),
             'providers' => $providers,
             'devices' => $devices,
 //            'externals' => $this->getExternals($series, $tvKeywords['results'] ?? [], $tvExternalIds, $request->getLocale()),
@@ -2327,6 +2312,25 @@ class SeriesController extends AbstractController
             }
         }
         return $tvSeasons;
+    }
+
+    private function getEpisodeDivSize(UserSeries $userSeries): array
+    {
+        $episodeSizeSettings = $this->settingsRepository->findOneBy(['user' => $userSeries->getUser(), 'name' => 'episode_div_size_' . $userSeries->getId()]);
+        if ($episodeSizeSettings) {
+            $value = $episodeSizeSettings->getData();
+            $episodeDivSize = $value['height'];
+            $aspectRatio = $value['aspect-ratio'] ?? '16 / 9';
+        } else {
+            $episodeSizeSettings = new Settings($userSeries->getUser(), 'episode_div_size_' . $userSeries->getId(), ['height' => '15rem', 'aspect-ratio' => '16 / 9']);
+            $this->settingsRepository->save($episodeSizeSettings, true);
+            $episodeDivSize = '15rem';
+            $aspectRatio = '16 / 9';
+        }
+        return [
+            'height' => $episodeDivSize,
+            'aspectRatio' => $aspectRatio
+        ];
     }
 
     public function setEpisodeDatetime(?array $episode, DateTimeInterface $time): ?array
