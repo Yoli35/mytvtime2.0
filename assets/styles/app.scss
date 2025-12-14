@@ -2860,3 +2860,28 @@ dialog.schedule-range-dialog {
         padding-inline: 1rem;
     }
 }
+
+.copy-badge {
+    align-items: center;
+    color: var(--green-10);
+    display: flex;
+    height: .75em;
+    justify-content: center;
+    opacity: 0;
+    position: absolute;
+    transition: all 300ms ease-in-out;
+    width: .75em;
+
+    svg {
+        height: .5em;
+        width: .5em;
+    }
+
+    &:hover {
+        color: var(--orange);
+    }
+
+    &.spin {
+        transform: rotate(180deg);
+    }
+}

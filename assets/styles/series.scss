@@ -896,21 +896,14 @@ h2 {
                         span {
                             position: relative;
 
-                            svg {
-                                cursor: pointer;
-                                fill: var(--ardoise-10);
-                                fill-opacity: 0;
-                                height: 2rem;
-                                position: absolute;
-                                right: -2rem;
-                                top: 50%;
-                                transform: translateY(-50%);
-                                width: 2rem;
+                            .copy-badge {
+                                right: -2.5rem;
+                                top: -.5rem;
                             }
 
                             &:hover {
-                                svg {
-                                    fill-opacity: 1;
+                                .copy-badge {
+                                    opacity: 1;
                                 }
                             }
                         }
