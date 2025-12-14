@@ -4692,6 +4692,7 @@ h2 {
         /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
         border-radius: .25rem;
         display: flex;
+        flex-direction: row-reverse;
         gap: 1rem;
         height: 14rem;
         justify-content: flex-start;
@@ -4708,6 +4709,11 @@ h2 {
             flex-grow: 1;
             font-weight: 500;
             gap: .75rem;
+            margin-inline-start: -3.25rem;
+
+            &:last-child {
+                margin-inline-start: 0;
+            }
 
             .episode-number {
                 background-color: hsla(from var(--green-50) h s l / .75);
@@ -4718,7 +4724,7 @@ h2 {
             }
 
             .vote {
-                background-color: hsla(from var(--orange-50) h s l / .2);
+                background-color: hsla(from var(--orange-50) h s l / .5);
                 border-color: hsla(from var(--orange-50) h s l / .6);
                 border-radius: 5rem;
                 border-style: solid;
@@ -4745,12 +4751,12 @@ h2 {
                 }
 
                 .user-vote {
-                    background-color: hsla(from var(--green-40) h s l / .4);
+                    background-color: hsla(from var(--green-40) h s l / .5);
                     border: 2px solid var(--green-20);
                 }
 
                 .dashed-vote {
-                    background-color: hsla(from var(--green-40) h s l / .1);
+                    background-color: hsla(from var(--green-40) h s l / .5);
                     border: 1px dashed var(--green-30);
                     height: 10rem;
                 }

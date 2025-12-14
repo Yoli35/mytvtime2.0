@@ -2,6 +2,8 @@
     {% set sum = 0 %}
     {% set count = 0 %}
     {% if ues|length == vas|length %}
+        {% set ues = ues|reverse %}
+        {% set vas = vas|reverse %}
     <div class="episode-votes">
         {% for ue in ues %}
             {% set epId = type == 'array' ? ue.episode_id : ue.episodeId %}
