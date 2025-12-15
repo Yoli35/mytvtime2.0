@@ -4751,12 +4751,13 @@ h2 {
                 }
 
                 .user-vote {
+                    backdrop-filter: blur(0.5rem);
                     background-color: hsla(from var(--green-40) h s l / .5);
                     border: 2px solid var(--green-20);
                 }
 
                 .dashed-vote {
-                    background-color: hsla(from var(--green-40) h s l / .5);
+                    background-color: hsla(from var(--green-40) h s l / .25);
                     border: 1px dashed var(--green-30);
                     height: 10rem;
                 }
