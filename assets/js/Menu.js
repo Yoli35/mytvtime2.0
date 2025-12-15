@@ -245,6 +245,7 @@ export class Menu {
                     gThis.closeMenu(i, m);
                 });
                 gThis.openMenu(item, menu);
+                gThis.tooltips.hide()
                 if (menu.classList.contains("history")) {
                     gThis.checkHistory();
                 }

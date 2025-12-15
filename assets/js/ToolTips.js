@@ -76,6 +76,10 @@ export class ToolTips {
             return;
         }
         const currentTarget = evt.currentTarget;
+        if (currentTarget.parentElement.classList.contains("open")) {
+            gThis.hide();
+            return;
+        }
         const text = currentTarget.getAttribute("data-title");
         const titleBg = currentTarget.getAttribute("data-title-bg");
         const img = currentTarget.querySelector("img");
@@ -113,6 +117,11 @@ export class ToolTips {
     move(evt) {
         evt.preventDefault();
         evt.stopPropagation();
+        const currentTarget = evt.currentTarget;
+        if (currentTarget.parentElement.classList.contains("open")) {
+            gThis.hide();
+            return;
+        }
         const tooltips = gThis.tooltipsElement;
         const tail = this.tailElement;
         const body = this.bodyElement;
