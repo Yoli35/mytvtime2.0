@@ -487,6 +487,7 @@
     <div id="globs" style="display: none">
         {
             "seriesId": {{ series.id }},
+            "showId": {{ series.tmdbId }},
             "seasonNumber": {{ season.season_number }},
             "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
             "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},

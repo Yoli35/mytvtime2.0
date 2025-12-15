@@ -4364,6 +4364,44 @@ h2 {
                         }
                     }
                 }
+
+                .season-filming-locations {
+                    display: flex;
+                    flex-direction: column;
+                    flex-shrink: 0;
+
+                    .season-filming-location {
+                        display: flex;
+                        gap: .5rem;
+                        height: 9rem;
+                        overflow-x: auto;
+
+                        .location-card {
+                            align-items: center;
+                            aspect-ratio: 16/9;
+                            background-color: hsla(from var(--ardoise-80) h s l / .5);
+                            border-radius: .25rem;
+                            display: flex;
+                            gap: .5rem;
+                            height: 100%;
+                            justify-content: center;
+                            text-align: center;
+                            width: auto;
+                        }
+
+                        .image {
+                            aspect-ratio: 16/9;
+                            height: 100%;
+
+                            img {
+                                border-radius: .25rem;
+                                height: 100%;
+                                object-fit: cover;
+                                width: 100%;
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -4439,6 +4477,7 @@ h2 {
     .episode:first-child {
         display: flex !important;
     }
+
 }
 
 .user-episode {
@@ -4681,6 +4720,7 @@ h2 {
             opacity: 0.25;
             filter: blur(8px);
         }
+
         .vote-average {
             filter: blur(0);
             opacity: 1;

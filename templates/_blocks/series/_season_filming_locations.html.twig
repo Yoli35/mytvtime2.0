@@ -1,0 +1,16 @@
+<div class="season-filming-locations">
+    {% for location in locations %}
+        <div class="season-filming-location">
+            <div class="location-card">
+                <div class="infos">
+                    {{ location.location }}
+                </div>
+            </div>
+            {% for image_path in location.images %}
+                <div class="image" data-title="{{ location.location }} image #{{ loop.index }}">
+                    <img src="/images/map{{ image_path }}" alt="Filming location image">
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>

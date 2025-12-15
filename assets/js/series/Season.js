@@ -104,6 +104,7 @@ export class Season {
          * @typedef Globs
          * @type {Object}
          * @property {SeasonProvider} seasonProvider
+         * @property {number} showId
          * @property {number} seasonNumber
          * @property {Providers} providers
          * @property {Devices} devices
@@ -115,9 +116,10 @@ export class Season {
         this.devices = jsonGlobsObject.devices;
         this.providerArray = jsonGlobsObject.providers.list;
         this.providers = jsonGlobsObject.providers;
-        this.seasonNumber  = jsonGlobsObject.seasonNumber;
+        this.seasonNumber = jsonGlobsObject.seasonNumber;
         this.seasonProvider = jsonGlobsObject.seasonProvider;
         this.seriesId = jsonGlobsObject.seriesId;
+        this.showId = jsonGlobsObject.showId;
         this.translations = jsonGlobsObject.translations;
         this.lang = document.documentElement.lang;
         this.intervals = [];
@@ -182,8 +184,6 @@ export class Season {
         const sizesItemDivs = sizesDiv.querySelectorAll('.size-item');
         const arsItemDivs = arsDiv.querySelectorAll('.ar-item');
         const itemDivs = [...sizesItemDivs, ...arsItemDivs];
-        const initialActiveSizeItemDiv = sizesDiv.querySelector('.size-item.active');
-        const initialActiveArItemDiv = arsDiv.querySelector('.ar-item.active');
         const episodesDiv = document.querySelector('.episodes');
 
         this.windowSizeListener();
@@ -434,6 +434,8 @@ export class Season {
         const addCast = new AddCast();
         addCast.init(menu);
 
+        this.getEpisodeFilmingLocations();
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 const list = document.querySelector('.list');
@@ -486,6 +488,35 @@ export class Season {
         } else {
             episodesDiv.removeAttribute("style");
         }
+    }
+
+    getEpisodeFilmingLocations() {
+        fetch('/api/season/filming/location/' + this.showId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                seasonNumber: this.seasonNumber
+            })
+        })
+            .then((response) => response.json())
+            .then(data => {
+                console.log(data);
+                const results = data['results'];
+                results.forEach(result => {
+                    const episodeSelector = "#episode-" + this.seasonNumber + "-" + result['episode_number'] + " .infos";
+                    console.log(episodeSelector)
+                    const episodeInfosDiv = document.querySelector(episodeSelector);
+                    console.log(episodeInfosDiv)
+                    const div = document.createElement("div");
+                    div.innerHTML = result['block'];
+                    gThis.toolTips.init(div);
+                    episodeInfosDiv.appendChild(div);
+                });
+            })
+            .catch(err => console.log(err));
     }
 
     openEditEpisodeInfosPanel() {
