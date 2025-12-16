@@ -222,12 +222,18 @@ h2 {
     header {
         align-items: center;
         background-color: var(--orange-50);
-        border-radius: .25rem;
+        border-radius: 5rem;
         color: var(--orange-90);
         display: flex;
         gap: 1rem;
-        /*margin-block-start: 3rem;*/
-        padding: .5rem 1rem;
+        padding: .5rem;
+
+        h2 {
+            background-color: hsl(from var(--orange-30) h s l /.5);
+            border-radius: 5rem;
+            font-size: 1.25rem;
+            padding-block: .25rem;
+        }
 
         .infos {
             flex: 0 0 fit-content;
@@ -543,7 +549,7 @@ h2 {
                 }
 
                 &:has(.name.by-country) {
-                    height: 27.5rem;
+                    /*height: 27.5rem;*/
                 }
             }
         }
@@ -3294,7 +3300,6 @@ h2 {
             }
         }
     }
-
 }
 
 .season-stuff {

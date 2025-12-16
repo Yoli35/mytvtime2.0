@@ -37,6 +37,32 @@ export class Index {
             seriesSearchInput.addEventListener("keydown", this.menu.searchMenuNavigate);
         }
 
+        const seriesToolsContainers = document.querySelectorAll('.series-tools-container');
+        seriesToolsContainers.forEach((seriesToolsContainer) => {
+            const seriesTools = seriesToolsContainer.querySelector('.series-tools');
+            const seriesToolsMenu = seriesToolsContainer.querySelector('.series-tools-menu');
+
+            seriesTools.addEventListener('click', (e) => {
+                e.preventDefault();
+                seriesToolsMenu.classList.toggle('visible');
+
+                if (seriesToolsMenu.classList.contains('visible')) {
+                    const visibleMenus = document.querySelectorAll('.series-tools-menu.visible')
+                    visibleMenus.forEach((menu) => {
+                        if (menu !== seriesToolsMenu) {
+                            menu.classList.remove('visible');
+                        }
+                    });
+                }
+            });
+
+            /*document.addEventListener('click', (event) => {
+                if (!seriesToolsContainer.contains(event.target)) {
+                    seriesToolsMenu.classList.remove('visible');
+                }
+            });*/
+        });
+
         fetch(this.app_series_tmdb_check, {
             method: "POST",
             headers: {

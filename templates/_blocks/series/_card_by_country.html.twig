@@ -39,8 +39,11 @@
                 </div>
             {% endif %}
         </div>
-        <div class="name by-country{% if upToDate %} up-to-date{% endif %}{% if toStart %} to-start{% endif %}">
-            {{ series.name|raw }}
+        <div class="infos">
+            <div class="name by-country{% if upToDate %} up-to-date{% endif %}{% if toStart %} to-start{% endif %}">
+                {{ series.name|raw }}
+            </div>
+            {{ include('_blocks/series/_tools.html.twig', {seriesId: series.tmdb_id}) }}
         </div>
     </a>
 </div>

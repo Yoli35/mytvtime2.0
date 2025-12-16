@@ -56,13 +56,8 @@
             <div id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
         </div>
     </div>
+    {{ include('_blocks/series/_tools_submenu_list.html.twig', {userLists: app.user.userLists}) }}
     {% include('_blocks/_footer.html.twig') %}
-    <div id="global-data" class="hidden">
-        {
-        "tmdbIds": {{ tmdbIds|json_encode|raw }},
-        "app_series_tmdb_check": "{{ path('app_series_tmdb_check') }}"
-        }
-    </div>
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}

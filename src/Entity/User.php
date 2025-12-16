@@ -130,6 +130,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $photos;
 
+    /**
+     * @var Collection<int, UserList>
+     */
+    #[ORM\OneToMany(targetEntity: UserList::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $userLists;
+
     public function __construct()
     {
         $this->history = new ArrayCollection();
@@ -146,6 +152,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->videos = new ArrayCollection();
         $this->albums = new ArrayCollection();
         $this->photos = new ArrayCollection();
+        $this->userLists = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -742,6 +749,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($photo->getUser() === $this) {
                 $photo->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserList>
+     */
+    public function getUserLists(): Collection
+    {
+        return $this->userLists;
+    }
+
+    public function addUserList(UserList $userList): static
+    {
+        if (!$this->userLists->contains($userList)) {
+            $this->userLists->add($userList);
+            $userList->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserList(UserList $userList): static
+    {
+        if ($this->userLists->removeElement($userList)) {
+            // set the owning side to null (unless already changed)
+            if ($userList->getUser() === $this) {
+                $userList->setUser(null);
             }
         }
 

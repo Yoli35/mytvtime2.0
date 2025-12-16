@@ -124,6 +124,12 @@ class Series
     #[ORM\OneToMany(targetEntity: SeriesCast::class, mappedBy: 'series')]
     private Collection $seriesCasts;
 
+    /**
+     * @var Collection<int, UserList>
+     */
+    #[ORM\ManyToMany(targetEntity: UserList::class, mappedBy: 'seriesList')]
+    private Collection $userLists;
+
     public function __construct()
     {
         $this->networks = new ArrayCollection();
@@ -138,6 +144,7 @@ class Series
         $this->seriesVideos = new ArrayCollection();
         $this->watchProviders = new ArrayCollection();
         $this->seriesCasts = new ArrayCollection();
+        $this->userLists = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -743,6 +750,33 @@ class Series
             if ($seriesCast->getSeries() === $this) {
                 $seriesCast->setSeries(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserList>
+     */
+    public function getUserLists(): Collection
+    {
+        return $this->userLists;
+    }
+
+    public function addUserList(UserList $userList): static
+    {
+        if (!$this->userLists->contains($userList)) {
+            $this->userLists->add($userList);
+            $userList->addSeriesList($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserList(UserList $userList): static
+    {
+        if ($this->userLists->removeElement($userList)) {
+            $userList->removeSeriesList($this);
         }
 
         return $this;
