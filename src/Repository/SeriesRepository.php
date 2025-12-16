@@ -56,6 +56,22 @@ class SeriesRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
+    public function searchCount(User $user, string $query, ?int $firstAirDateYear): array
+    {
+        $userId = $user->getId();
+
+        $sql = "SELECT COUNT(*) as count
+                FROM user_series us 
+                    INNER JOIN series s ON us.series_id = s.id 
+                    LEFT JOIN series_localized_name sln ON s.id = sln.series_id
+                WHERE us.user_id = $userId AND (s.name LIKE '%$query%' OR sln.name LIKE '%$query%') ";
+        if ($firstAirDateYear) {
+            $sql .= "AND YEAR(s.first_air_date) LIKE $firstAirDateYear ";
+        }
+
+        return $this->getOne($sql);
+    }
+
     public function getLocalizedNames(array $seriesIds, string $locale): array
     {
         $ids = implode(',', $seriesIds);

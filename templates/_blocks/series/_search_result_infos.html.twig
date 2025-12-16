@@ -1,0 +1,27 @@
+<div class="result-infos">
+    {% if results.total_results > 0 %}
+        <div>
+            <span>{{ results.total_results }} {{ 'results'|trans }}</span>
+            <span>{{ 'Page'|trans }} {{ results.page }}/{{ results.total_pages }}</span>
+        </div>
+        {% if results.total_pages > 1 %}
+            <div class="pages">
+                {% for page in 1..results.total_pages %}
+                    {% if page == form.page.vars.value %}
+                        <div class="current-page">{{ page }}</div>
+                        <script>
+                            const currentPage = document.querySelector('.current-page');
+                            currentPage.scrollIntoView({block: 'center'});
+                        </script>
+                    {% else %}
+                        <button type="submit" name="{{ field_name(form.page) }}" value="{{ page }}" data-title="{{ 'Go to page'|trans }} {{ page }}">{{ page }}</button>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% else %}
+        {% if results.total_results != -1 %}
+            <h4>{{ 'No results'|trans }}</h4>
+        {% endif %}
+    {% endif %}
+</div>

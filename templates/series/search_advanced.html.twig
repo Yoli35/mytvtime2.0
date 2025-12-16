@@ -6,329 +6,285 @@
     <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/series_search.scss') }}">
 {% endblock %}
 {% block body %}
     {% include '_blocks/_menu.html.twig' %}
     <div class="container-fluid">
         <div class="series-search">
+            <h1>{{ 'Advanced search'|trans }}</h1>
             {{ form_start(form, {'attr': {'class': 'form'}}) }}
-            <div class="form-col folded">
-                <div class="sticky">
-                    <h1>{{ 'Search'|trans }}</h1>
-                    <div class="hide-search">{{ ux_icon('mdi:close') }}</div>
-                    <div class="magnify">{{ ux_icon('mdi:search') }}</div>
-                    <script>
-                        const seriesSearchDiv = document.querySelector('.series-search');
-                        const hideSearchDiv = seriesSearchDiv.querySelector('.hide-search');
-                        const magnifyDiv = seriesSearchDiv.querySelector('.magnify');
-                        const formCol = seriesSearchDiv.querySelector('.form-col:first-child');
-                        hideSearchDiv.addEventListener('click', function () {
-                            formCol.classList.add('folded');
-                        });
-                        magnifyDiv.addEventListener('click', function () {
-                            formCol.classList.remove('folded');
-                        });
-                    </script>
-                    <div class="form-row{% if displaySettings.data.place %} dismissed{% endif %}">
-                        <div class="form-row-name">
-                            {{ 'Viewer place'|trans }}
-                            <div class="toggler">
-                                {{ ux_icon('mdi:ellipsis-vertical') }}
-                                <div class="toggler-menu" data-menu="place">
-                                    <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.place %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
-                                    <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
-                                </div>
+            <div class="magnify">{{ ux_icon('mdi:search') }}</div>
+            <div class="folder folded">
+                <div class="hide-search">{{ ux_icon('mdi:close') }}</div>
+                <div class="form-row{% if displaySettings.data.place %} dismissed{% endif %}">
+                    <div class="form-row-name">
+                        {{ 'Viewer place'|trans }}
+                        <div class="toggler">
+                            {{ ux_icon('mdi:ellipsis-vertical') }}
+                            <div class="toggler-menu" data-menu="place">
+                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.place %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
                             </div>
-                        </div>
-                        <div class="form-field">
-                            <label for="{{ form.language.vars.id }}">
-                                {{ form.language.vars.label|trans }}
-                                {{ form_widget(form.language) }}
-                                {{ form_errors(form.language) }}
-                            </label>
-                        </div>
-                        <div class="form-field">
-                            <label for="{{ form.timezone.vars.id }}">
-                                {{ form.timezone.vars.label|trans }}
-                                {{ form_widget(form.timezone) }}
-                                {{ form_errors(form.timezone) }}
-                            </label>
-                        </div>
-                        <div class="form-field">
-                            <label for="{{ form.watchRegion.vars.id }}">
-                                {{ form.watchRegion.vars.label|trans }}
-                                {{ form_widget(form.watchRegion) }}
-                                {{ form_errors(form.watchRegion) }}
-                            </label>
                         </div>
                     </div>
-                    <div class="form-row{% if displaySettings.data.dates %} dismissed{% endif %}">
-                        <div class="form-row-name">
-                            {{ 'Dates'|trans }}
-                            <div class="toggler">
-                                {{ ux_icon('mdi:ellipsis-vertical') }}
-                                <div class="toggler-menu" data-menu="dates">
-                                    <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.dates %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
-                                    <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
-                                </div>
+                    <div class="form-field">
+                        <label for="{{ form.language.vars.id }}">
+                            {{ form.language.vars.label|trans }}
+                            {{ form_widget(form.language) }}
+                            {{ form_errors(form.language) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.timezone.vars.id }}">
+                            {{ form.timezone.vars.label|trans }}
+                            {{ form_widget(form.timezone) }}
+                            {{ form_errors(form.timezone) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.watchRegion.vars.id }}">
+                            {{ form.watchRegion.vars.label|trans }}
+                            {{ form_widget(form.watchRegion) }}
+                            {{ form_errors(form.watchRegion) }}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row{% if displaySettings.data.dates %} dismissed{% endif %}">
+                    <div class="form-row-name">
+                        {{ 'Dates'|trans }}
+                        <div class="toggler">
+                            {{ ux_icon('mdi:ellipsis-vertical') }}
+                            <div class="toggler-menu" data-menu="dates">
+                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.dates %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
                             </div>
-                        </div>
-                        <div class="form-field">
-                            <label for="{{ form.firstAirDateYear.vars.id }}">
-                                {{ form.firstAirDateYear.vars.label|trans }}
-                                {{ form_widget(form.firstAirDateYear) }}
-                                {{ form_errors(form.firstAirDateYear) }}
-                            </label>
-                        </div>
-                        <div class="form-field">
-                            <label for="{{ form.firstAirDateGTE.vars.id }}">
-                                {{ form.firstAirDateGTE.vars.label|trans }}
-                                {{ form_widget(form.firstAirDateGTE) }}
-                                {{ form_errors(form.firstAirDateGTE) }}
-                            </label>
-                        </div>
-                        <div class="form-field">
-                            <label for="{{ form.firstAirDateLTE.vars.id }}">
-                                {{ form.firstAirDateLTE.vars.label|trans }}
-                                {{ form_widget(form.firstAirDateLTE) }}
-                                {{ form_errors(form.firstAirDateLTE) }}
-                            </label>
                         </div>
                     </div>
-                    <div class="form-row{% if displaySettings.data.origin %} dismissed{% endif %}">
-                        <div class="form-row-name">
-                            {{ 'Origin'|trans }}
-                            <div class="toggler">
-                                {{ ux_icon('mdi:ellipsis-vertical') }}
-                                <div class="toggler-menu" data-menu="origin">
-                                    <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.origin %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
-                                    <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
-                                </div>
+                    <div class="form-field">
+                        <label for="{{ form.firstAirDateYear.vars.id }}">
+                            {{ form.firstAirDateYear.vars.label|trans }}
+                            {{ form_widget(form.firstAirDateYear) }}
+                            {{ form_errors(form.firstAirDateYear) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.firstAirDateGTE.vars.id }}">
+                            {{ form.firstAirDateGTE.vars.label|trans }}
+                            {{ form_widget(form.firstAirDateGTE) }}
+                            {{ form_errors(form.firstAirDateGTE) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.firstAirDateLTE.vars.id }}">
+                            {{ form.firstAirDateLTE.vars.label|trans }}
+                            {{ form_widget(form.firstAirDateLTE) }}
+                            {{ form_errors(form.firstAirDateLTE) }}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row{% if displaySettings.data.origin %} dismissed{% endif %}">
+                    <div class="form-row-name">
+                        {{ 'Origin'|trans }}
+                        <div class="toggler">
+                            {{ ux_icon('mdi:ellipsis-vertical') }}
+                            <div class="toggler-menu" data-menu="origin">
+                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.origin %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
                             </div>
                         </div>
-                        <div class="form-field">
-                            <label for="{{ form.withOriginCountry.vars.id }}">
-                                {{ form.withOriginCountry.vars.label|trans }}
-                                {{ form_widget(form.withOriginCountry) }}
-                                {{ form_errors(form.withOriginCountry) }}
-                            </label>
-                            <script>
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    const originCountry = document.querySelector('#{{ form.withOriginCountry.vars.id }}');
-                                    const options = originCountry.querySelectorAll('option');
-                                    options.forEach(function (option) {
-                                        if (option.value) {
-                                            option.textContent = getFlagEmoji(option.value) + ' ' + option.textContent;
-                                        }
-                                    });
-                                    function getFlagEmoji(countryCode) {
-                                        const codePoints = countryCode.toUpperCase().split("").map((char) => 127397 + char.charCodeAt(0));
-                                        return String.fromCodePoint(...codePoints);
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.withOriginCountry.vars.id }}">
+                            {{ form.withOriginCountry.vars.label|trans }}
+                            {{ form_widget(form.withOriginCountry) }}
+                            {{ form_errors(form.withOriginCountry) }}
+                        </label>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const originCountry = document.querySelector('#{{ form.withOriginCountry.vars.id }}');
+                                const options = originCountry.querySelectorAll('option');
+                                options.forEach(function (option) {
+                                    if (option.value) {
+                                        option.textContent = getFlagEmoji(option.value) + ' ' + option.textContent;
                                     }
                                 });
-                            </script>
-                        </div>
-                        <div class="form-field">
-                            <label for="{{ form.withOriginalLanguage.vars.id }}">
-                                {{ form.withOriginalLanguage.vars.label|trans }}
-                                {{ form_widget(form.withOriginalLanguage) }}
-                                {{ form_errors(form.withOriginalLanguage) }}
-                            </label>
-                        </div>
+
+                                function getFlagEmoji(countryCode) {
+                                    const codePoints = countryCode.toUpperCase().split("").map((char) => 127397 + char.charCodeAt(0));
+                                    return String.fromCodePoint(...codePoints);
+                                }
+                            });
+                        </script>
                     </div>
-                    <div class="form-row{% if displaySettings.data.provider %} dismissed{% endif %}">
-                        <div class="form-row-name">
-                            {{ 'Provider'|trans }}
-                            <div class="toggler">
-                                {{ ux_icon('mdi:ellipsis-vertical') }}
-                                <div class="toggler-menu" data-menu="provider">
-                                    <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.provider %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
-                                    <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-field">
-                            <label for="{{ form.withWatchMonetizationTypes.vars.id }}">
-                                {{ form.withWatchMonetizationTypes.vars.label|trans }}
-                                {{ form_widget(form.withWatchMonetizationTypes) }}
-                                {{ form_errors(form.withWatchMonetizationTypes) }}
-                            </label>
-                        </div>
-                        <div class="form-field">
-                            <label for="{{ form.withWatchProviders.vars.id }}">
-                                {{ form.withWatchProviders.vars.label|trans }}
-                                {{ form_widget(form.withWatchProviders) }}
-                                {{ form_errors(form.withWatchProviders) }}
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-row{% if displaySettings.data.keywords %} dismissed{% endif %}">
-                        <div class="form-row-name">
-                            {{ 'Keywords'|trans }}
-                            <div class="toggler">
-                                {{ ux_icon('mdi:ellipsis-vertical') }}
-                                <div class="toggler-menu" data-menu="keywords">
-                                    <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.keywords %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
-                                    <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-field full-width">
-                            <label for="{{ form.withKeywords.vars.id }}">
-                                {{ 'Refine your search'|trans }}
-                                <div class="input-group">
-                                    <input type="search" class="keyword-input" placeholder="{{ 'Start tapping to search'|trans }}">
-                                    <div class="and-or">
-                                        <div class="and{% if form.keywordSeparator.vars.value==',' %} active{% endif %}" data-value="," data-title="{{ 'All keywords'|trans }}">{{ 'And'|trans }}</div>
-                                        <div class="or{% if form.keywordSeparator.vars.value=='|' %} active{% endif %}" data-value="|" data-title="{{ 'Any keywords'|trans }}">{{ 'Or'|trans }}</div>
-                                    </div>
-                                </div>
-                                <div class="keyword-list" id="keywords-list">
-                                    {% for label, value in form.vars.value.keywords %}
-                                        <div data-value="{{ value }}" class="keyword-item d-none" data-label="{{ label }}" data-title="{{ label|trans([], 'keywords') }}">{{ label }}</div>
-                                    {% endfor %}
-                                </div>
-                                <div class="form-keywords"></div>
-                            </label>
-                            <input type="hidden" id="{{ form.withKeywords.vars.id }}" name="{{ field_name(form.withKeywords) }}" value="{{ form.withKeywords.vars.value }}"/>
-                        </div>
-                    </div>
-                    <div class="form-row{% if displaySettings.data.runtime %} dismissed{% endif %}">
-                        <div class="form-row-name">
-                            {{ 'Runtime'|trans }}
-                            <div class="toggler">
-                                {{ ux_icon('mdi:ellipsis-vertical') }}
-                                <div class="toggler-menu" data-menu="runtime">
-                                    <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.runtime %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
-                                    <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-field">
-                            <label for="{{ form.withRuntimeGTE.vars.id }}">
-                                {{ form.withRuntimeGTE.vars.label|trans }}
-                                {{ form_widget(form.withRuntimeGTE) }}
-                                {{ form_errors(form.withRuntimeGTE) }}
-                            </label>
-                        </div>
-                        <div class="form-field">
-                            <label for="{{ form.withRuntimeLTE.vars.id }}">
-                                {{ form.withRuntimeLTE.vars.label|trans }}
-                                {{ form_widget(form.withRuntimeLTE) }}
-                                {{ form_errors(form.withRuntimeLTE) }}
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-row{% if displaySettings.data.status %} dismissed{% endif %}">
-                        <div class="form-row-name">
-                            {{ 'Status and type'|trans }}
-                            <div class="toggler">
-                                {{ ux_icon('mdi:ellipsis-vertical') }}
-                                <div class="toggler-menu" data-menu="status">
-                                    <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.status %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
-                                    <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-field">
-                            <label for="{{ form.withStatus.vars.id }}">
-                                {{ form.withStatus.vars.label|trans }}
-                                {{ form_widget(form.withStatus) }}
-                                {{ form_errors(form.withStatus) }}
-                            </label>
-                        </div>
-                        <div class="form-field">
-                            <label for="{{ form.withType.vars.id }}">
-                                {{ form.withType.vars.label|trans }}
-                                {{ form_widget(form.withType) }}
-                                {{ form_errors(form.withType) }}
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label for="{{ form.sortBy.vars.id }}">
-                                {{ form.sortBy.vars.label|trans }}
-                                {{ form_widget(form.sortBy) }}
-                                {{ form_errors(form.sortBy) }}
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <button type="submit">{{ 'Send'|trans }}</button>
+                    <div class="form-field">
+                        <label for="{{ form.withOriginalLanguage.vars.id }}">
+                            {{ form.withOriginalLanguage.vars.label|trans }}
+                            {{ form_widget(form.withOriginalLanguage) }}
+                            {{ form_errors(form.withOriginalLanguage) }}
+                        </label>
                     </div>
                 </div>
-            </div>
-            <div class="form-col">
-                <div class="series-search-result">
-                    <div class="header">
-                        {% if results.total_results > 0 %}
-                            <div class="results">
-                                <h4>
-                                    <span>{{ results.total_results }} {{ 'results'|trans }}</span>
-                                    <span> - </span>
-                                    <span>{{ 'Page'|trans }} {{ results.page }}/{{ results.total_pages }}</span>
-                                </h4>
+                <div class="form-row{% if displaySettings.data.provider %} dismissed{% endif %}">
+                    <div class="form-row-name">
+                        {{ 'Provider'|trans }}
+                        <div class="toggler">
+                            {{ ux_icon('mdi:ellipsis-vertical') }}
+                            <div class="toggler-menu" data-menu="provider">
+                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.provider %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
                             </div>
-                            {% if results.total_pages > 1 %}
-                                <div class="pages">
-                                    {% for page in 1..results.total_pages %}
-                                        {% if page == form.page.vars.value %}
-                                            <div class="btn current-page">{{ page }}</div>
-                                        {% else %}
-                                            <button type="submit" name="{{ field_name(form.page) }}" value="{{ page }}" data-title="{{ 'Go to page'|trans }} {{ page }}" class="btn btn-primary">{{ page }}</button>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        {% else %}
-                            {% if results.total_results != -1 %}
-                                <h4>{{ 'No results'|trans }}</h4>
-                            {% endif %}
-                        {% endif %}
+                        </div>
                     </div>
-                    <div class="wrapper">
-                        {#                    <div class="content"> #}
-                        {% for series in seriesList %}
-                            {{ include('_blocks/series/_card.html.twig', {target: '_blank', dataTitle: series.name, ids: userSeriesIds}) }}
-                        {% endfor %}
-                        {#                    </div> #}
+                    <div class="form-field">
+                        <label for="{{ form.withWatchMonetizationTypes.vars.id }}">
+                            {{ form.withWatchMonetizationTypes.vars.label|trans }}
+                            {{ form_widget(form.withWatchMonetizationTypes) }}
+                            {{ form_errors(form.withWatchMonetizationTypes) }}
+                        </label>
                     </div>
-                    <div class="footer">
-                        {% if results.total_results > 0 %}
-                            {% if results.total_pages > 1 %}
-                                <div class="pages">
-                                    {% for page in 1..results.total_pages %}
-                                        {% if page == form.page.vars.value %}
-                                            <div class="btn current-page">{{ page }}</div>
-                                        {% else %}
-                                            <button type="submit" name="{{ field_name(form.page) }}" value="{{ page }}" data-title="{{ 'Go to page'|trans }} {{ page }}" class="btn btn-primary">{{ page }}</button>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        {% endif %}
+                    <div class="form-field">
+                        <label for="{{ form.withWatchProviders.vars.id }}">
+                            {{ form.withWatchProviders.vars.label|trans }}
+                            {{ form_widget(form.withWatchProviders) }}
+                            {{ form_errors(form.withWatchProviders) }}
+                        </label>
                     </div>
                 </div>
+                <div class="form-row{% if displaySettings.data.keywords %} dismissed{% endif %}">
+                    <div class="form-row-name">
+                        {{ 'Keywords'|trans }}
+                        <div class="toggler">
+                            {{ ux_icon('mdi:ellipsis-vertical') }}
+                            <div class="toggler-menu" data-menu="keywords">
+                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.keywords %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-field full-width">
+                        <label for="{{ form.withKeywords.vars.id }}">
+                            {{ 'Refine your search'|trans }}
+                            <div class="input-group">
+                                <input type="search" class="keyword-input" placeholder="{{ 'Start typing to search'|trans }}">
+                                <div class="and-or">
+                                    <div class="and{% if form.keywordSeparator.vars.value==',' %} active{% endif %}" data-value="," data-title="{{ 'All keywords'|trans }}">{{ 'And'|trans }}</div>
+                                    <div class="or{% if form.keywordSeparator.vars.value=='|' %} active{% endif %}" data-value="|" data-title="{{ 'Any keywords'|trans }}">{{ 'Or'|trans }}</div>
+                                </div>
+                            </div>
+                            <div class="keyword-list" id="keywords-list">
+                                {% for label, value in form.vars.value.keywords %}
+                                    <div data-value="{{ value }}" class="keyword-item d-none" data-label="{{ label }}" data-title="{{ label|trans([], 'keywords') }}">{{ label }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="form-keywords"></div>
+                        </label>
+                        <input type="hidden" id="{{ form.withKeywords.vars.id }}" name="{{ field_name(form.withKeywords) }}" value="{{ form.withKeywords.vars.value }}"/>
+                    </div>
+                </div>
+                <div class="form-row{% if displaySettings.data.runtime %} dismissed{% endif %}">
+                    <div class="form-row-name">
+                        {{ 'Runtime'|trans }}
+                        <div class="toggler">
+                            {{ ux_icon('mdi:ellipsis-vertical') }}
+                            <div class="toggler-menu" data-menu="runtime">
+                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.runtime %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.withRuntimeGTE.vars.id }}">
+                            {{ form.withRuntimeGTE.vars.label|trans }}
+                            {{ form_widget(form.withRuntimeGTE) }}
+                            {{ form_errors(form.withRuntimeGTE) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.withRuntimeLTE.vars.id }}">
+                            {{ form.withRuntimeLTE.vars.label|trans }}
+                            {{ form_widget(form.withRuntimeLTE) }}
+                            {{ form_errors(form.withRuntimeLTE) }}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row{% if displaySettings.data.status %} dismissed{% endif %}">
+                    <div class="form-row-name">
+                        {{ 'Status and type'|trans }}
+                        <div class="toggler">
+                            {{ ux_icon('mdi:ellipsis-vertical') }}
+                            <div class="toggler-menu" data-menu="status">
+                                <div class="toggler-menu-item" data-item="toggler">{% if displaySettings.data.status %}{{ 'Show'|trans }}{% else %}{{ 'Hide'|trans }}{% endif %}</div>
+                                <div class="toggler-menu-item" data-item="reset">{{ 'Reset'|trans }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.withStatus.vars.id }}">
+                            {{ form.withStatus.vars.label|trans }}
+                            {{ form_widget(form.withStatus) }}
+                            {{ form_errors(form.withStatus) }}
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.withType.vars.id }}">
+                            {{ form.withType.vars.label|trans }}
+                            {{ form_widget(form.withType) }}
+                            {{ form_errors(form.withType) }}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.sortBy.vars.id }}">
+                            {{ form.sortBy.vars.label|trans }}
+                            {{ form_widget(form.sortBy) }}
+                            {{ form_errors(form.sortBy) }}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <button type="submit">{{ 'Send'|trans }}</button>
+                </div>
             </div>
+            <script>
+                const seriesSearchDiv = document.querySelector('.series-search');
+                const hideSearchDiv = seriesSearchDiv.querySelector('.hide-search');
+                const magnifyDiv = seriesSearchDiv.querySelector('.magnify');
+                const folder = seriesSearchDiv.querySelector('.folder');
+                hideSearchDiv.addEventListener('click', function () {
+                    folder.classList.add('folded');
+                });
+                magnifyDiv.addEventListener('click', function () {
+                    folder.classList.remove('folded');
+                });
+            </script>
+            {{ include('_blocks/series/_search_result_infos.html.twig') }}
             {{ form_end(form) }}
+            <div class="series-search-result">
+                <div class="wrapper">
+                    {% for series in seriesList %}
+                        {{ include('_blocks/series/_card.html.twig', {target: '_blank', dataTitle: series.name, ids: userSeriesIds}) }}
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
     {% include '_blocks/_footer.html.twig' %}
     <div id="global-data" style="display: none">
         {
-        "displaySettings": {
-        "id": {{ displaySettings.id }},
-        "data": {
-        "place": {{ displaySettings.data.place ? 1:0 }},
-        "dates": {{ displaySettings.data.dates ? 1:0 }},
-        "origin": {{ displaySettings.data.origin ? 1:0 }},
-        "provider": {{ displaySettings.data.provider ? 1:0 }},
-        "keywords": {{ displaySettings.data.keywords ? 1:0 }},
-        "runtime": {{ displaySettings.data.runtime ? 1:0 }},
-        "status": {{ displaySettings.data.status ? 1:0 }}
-        }
-        }
+            "displaySettings": {
+                "id": {{ displaySettings.id }},
+                "data": {
+                    "place": {{ displaySettings.data.place ? 1:0 }},
+                    "dates": {{ displaySettings.data.dates ? 1:0 }},
+                    "origin": {{ displaySettings.data.origin ? 1:0 }},
+                    "provider": {{ displaySettings.data.provider ? 1:0 }},
+                    "keywords": {{ displaySettings.data.keywords ? 1:0 }},
+                    "runtime": {{ displaySettings.data.runtime ? 1:0 }},
+                    "status": {{ displaySettings.data.status ? 1:0 }}
+                }
+            }
         }
     </div>
 {% endblock %}

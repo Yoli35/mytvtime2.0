@@ -571,65 +571,67 @@ November: Novembre
 December: Décembre
 
 #Search
-Search: Recherche
-Search a series: Rechercher une série
-Advanced search: Recherche avancée
-Page: Page
-Language: Langue
-First air date year: Année
-Name of the series: Nom de la série
-Search results: Résultats de la recherche
-No results: Aucun résultat
-results: résultats
-Go to page: Aller à la page
-After: Après
-Before: Avant
-Open in new tab: Ouvrir dans un nouvel onglet
-Origin country: Pays d'origine
-Monetization type: Type de monétisation
-Flatrate: Abonnement
-Watch providers: Plateformes de streaming
-Keywords: Mots-clés
-Start tapping to search: Commencez à taper pour rechercher
-And: Et
-Or: Ou
-All keywords: Tous les mots-clés
-Any keywords: N'importe quel mot-clé
-Runtime less than: Durée inférieure à
-Runtime greater than: Durée supérieure à
-Free: Gratuit
-Rent: Location
-Buy: Achat
 Ads: Publicités
-Documentary: Documentaire
-News: Actualités
-Miniseries: Mini-série
-Reality: Télé-réalité
-Scripted: Scénarisé
-Talk Show: Talk Show
-Video: Vidéo
-Type: Type
-Sort by: Trier par
-Popularity descending: Popularité décroissante
-Popularity ascending: Popularité croissante
-Vote average descending: Vote moyen décroissant
-Vote average ascending: Vote moyen croissant
-First air date descending: Date décroissante
-First air date ascending: Date croissante
-Original name descending: Nom original décroissant
-Original name ascending: Nom original croissant
-Name descending: Nom décroissant
-Name ascending: Nom croissant
-Vote count descending: Vote count décroissant
-Vote count ascending: Vote count croissant
-Viewer place: Lieu du spectateur
-Reset: Réinitialiser
-Hide: Masquer
-Show: Afficher
+Advanced search: Recherche avancée
+After: Après
+All keywords: Tous les mots-clés
+And: Et
+Any keywords: N'importe quel mot-clé
+Before: Avant
+Buy: Achat
 Dates: Dates
+Documentary: Documentaire
+First air date ascending: Date croissante
+First air date descending: Date décroissante
+First air date year: Année
+Flatrate: Abonnement
+Free: Gratuit
+Go to page: Aller à la page
+Hide: Masquer
+Keywords: Mots-clés
+Language: Langue
+Miniseries: Mini-série
+Monetization type: Type de monétisation
+Name ascending: Nom croissant
+Name descending: Nom décroissant
+Name of the series: Nom de la série
+News: Actualités
+No results: Aucun résultat
+Open in new tab: Ouvrir dans un nouvel onglet
+Or: Ou
+Origin country: Pays d'origine
 Origin: Origine
-Status and type: Statut et type
+Original name ascending: Nom original croissant
+Original name descending: Nom original décroissant
+Page: Page
+Popularity ascending: Popularité croissante
+Popularity descending: Popularité décroissante
+Reality: Télé-réalité
 Refine your search: Affinez votre recherche
+Rent: Location
+Reset: Réinitialiser
+Runtime greater than: Durée supérieure à
+Runtime less than: Durée inférieure à
+Scripted: Scénarisé
+Search a series: Rechercher une série
+Search results: Résultats de la recherche
+Search: Recherche
+Series name: Nom de la série
+Show: Afficher
+Sort by: Trier par
+Start typing to search: Commencez à taper pour rechercher
+Status and type: Statut et type
+Talk Show: Talk Show
+Type: Type
+Video: Vidéo
+Viewer place: Lieu du spectateur
+Vote average ascending: Vote moyen croissant
+Vote average descending: Vote moyen décroissant
+Vote count ascending: Vote count croissant
+Vote count descending: Vote count décroissant
+Watch providers: Plateformes de streaming
+Year: Année
+results: résultats
 
 # People
 Acting: Interprétation

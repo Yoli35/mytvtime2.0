@@ -375,10 +375,10 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/tmdb/search', name: 'search')]
-    public function search(Request $request, AsciiSlugger $slugger): Response
+    public function search(Request $request): Response
     {
         $series = [];
-        /*$slugger = new AsciiSlugger();*/
+        $slugger = new AsciiSlugger();
         $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
         $simpleForm = $this->createForm(SeriesSearchType::class, $simpleSeriesSearch);
 
@@ -405,12 +405,13 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/search/all', name: 'search_all')]
-    public function searchAll(Request $request, AsciiSlugger $slugger): Response
+    public function searchAll(Request $request): Response
     {
         $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
         if ($request->get('q')) $simpleSeriesSearch->setQuery($request->get('q'));
         $simpleForm = $this->createForm(SeriesSearchType::class, $simpleSeriesSearch);
         $searchResult = $this->handleSearch($simpleSeriesSearch);
+        $slugger = new AsciiSlugger();
         if ($searchResult['total_results'] == 1) {
             return $this->getOneResult($searchResult['results'][0], $slugger);
         }
@@ -554,19 +555,31 @@ class SeriesController extends AbstractController
         $searchName = $request->query->get('name');
 
         $series = [];
+        $searchResult['total_results'] = 0;
+        $searchResult['total_pages'] = 0;
+        $searchResult['page'] = 0;
         $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
         if ($searchName) {
-            $series = $this->getDbSearchResult($user, $searchName, 1, 0);
+            $series = $this->getDbSearchResult($user, $searchName, 1, null);
+            $count = $this->seriesRepository->searchCount($user, $searchName, null);
+            $searchResult['total_results'] = $count['count'];
+            $searchResult['total_pages'] = ceil($searchResult['total_results'] / 20);
+            $searchResult['page'] = 1;
             $simpleSeriesSearch->setQuery($searchName);
         }
         $simpleForm = $this->createForm(SeriesSearchType::class, $simpleSeriesSearch);
 
         $simpleForm->handleRequest($request);
         if ($simpleForm->isSubmitted() && $simpleForm->isValid()) {
+            dump($simpleSeriesSearch);
             $query = $simpleSeriesSearch->getQuery();
             $page = $simpleSeriesSearch->getPage();
             $firstAirDateYear = $simpleSeriesSearch->getFirstAirDateYear();
             $series = $this->getDbSearchResult($user, $query, $page, $firstAirDateYear);
+            $count = $this->seriesRepository->searchCount($user, $query, null);
+            $searchResult['total_results'] = $count['count'];
+            $searchResult['total_pages'] = ceil($searchResult['total_results'] / 20);
+            $searchResult['page'] = $page;
         }
 
         if (count($series) == 1) {
@@ -575,11 +588,7 @@ class SeriesController extends AbstractController
                 'slug' => $series[0]['slug'],
             ]);
         }
-
-        return $this->render('series/search.html.twig', [
-            'form' => $simpleForm->createView(),
-            'action' => 'app_series_search_db',
-            'title' => 'Search among your series',
+        dump([
             'seriesList' => $series,
             'results' => [
                 'total_results' => $searchResult['total_results'] ?? -1,
@@ -587,9 +596,21 @@ class SeriesController extends AbstractController
                 'page' => $searchResult['page'] ?? 0,
             ],
         ]);
+
+        return $this->render('series/search.html.twig', [
+            'form' => $simpleForm->createView(),
+            'action' => 'app_series_search_db',
+            'title' => 'Search among your series',
+            'seriesList' => $series,
+            'results' => [
+                'total_results' => $searchResult['total_results'],
+                'total_pages' => $searchResult['total_pages'],
+                'page' => $searchResult['page'],
+            ],
+        ]);
     }
 
-    public function getDbSearchResult(User $user, string $query, int $page, int $firstAirDateYear): array
+    public function getDbSearchResult(User $user, string $query, int $page, ?int $firstAirDateYear): array
     {
         return array_map(function ($s) {
             $s['poster_path'] = $s['poster_path'] ? $this->imageConfiguration->getUrl('poster_sizes', 5) . $s['poster_path'] : null;
@@ -598,7 +619,7 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/advanced/search', name: 'advanced_search')]
-    public function advancedSearch(#[CurrentUser] User $user, Request $request, AsciiSlugger $slugger): Response
+    public function advancedSearch(#[CurrentUser] User $user, Request $request): Response
     {
         $series = [];
         $watchProviders = $this->watchLinkApi->getWatchProviders($user?->getCountry() ?? 'FR');
@@ -608,6 +629,7 @@ class SeriesController extends AbstractController
         $seriesSearch = new SeriesAdvancedSearchDTO($user?->getPreferredLanguage() ?? $request->getLocale(), $user?->getCountry() ?? 'FR', $user?->getTimezone() ?? 'Europe/Paris', 1);
         $seriesSearch->setWatchProviders($watchProviders['select']);
         $seriesSearch->setKeywords($keywords);
+        $slugger = new AsciiSlugger();
 
         $advancedDisplaySettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'advanced search display']);
         if (!$advancedDisplaySettings) {
@@ -1017,7 +1039,7 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/add/{id}', name: 'add', requirements: ['id' => Requirement::DIGITS])]
-    public function addUserSeries(#[CurrentUser] User $user, int $id): Response
+    public function add(#[CurrentUser] User $user, int $id): Response
     {
         $date = $this->now();
 
@@ -1083,7 +1105,7 @@ class SeriesController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/remove/{id}', name: 'remove', requirements: ['id' => Requirement::DIGITS])]
-    public function removeUserSeries(UserSeries $userSeries): Response
+    public function remove(UserSeries $userSeries): Response
     {
         $userSeries->setLastUserEpisode(null);
         $userSeries->setNextUserEpisode(null);

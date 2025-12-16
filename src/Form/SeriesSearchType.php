@@ -18,13 +18,21 @@ class SeriesSearchType extends AbstractType
     {
         $builder
             ->add('query', SearchType::class, [
-                'label' => 'Name of the series',
+                'attr' => [
+                    'autofocus' => true,
+                    'select_on_focus' => true,
+                    'placeholder' => "Series name",
+                ],
                 'required' => true,
             ])
             ->add('firstAirDateYear', NumberType::class, [
-                'label' => 'First air date year',
+                'attr' => [
+                    'min' => 1900,
+                    'max' => (int)date('Y'),
+                    'placeholder' => 'Year',
+                ],
                 'required' => false,
-                'empty_data' => '',
+                'empty_data' => null,
             ])
             ->add('page', HiddenType::class, [
                 'data' => 1,
