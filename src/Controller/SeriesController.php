@@ -552,26 +552,15 @@ class SeriesController extends AbstractController
     #[Route('/db/search', name: 'search_db')]
     public function searchDB(#[CurrentUser] User $user, Request $request): Response
     {
-        $searchName = $request->query->get('name');
-
         $series = [];
         $searchResult['total_results'] = 0;
         $searchResult['total_pages'] = 0;
         $searchResult['page'] = 0;
         $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
-        if ($searchName) {
-            $series = $this->getDbSearchResult($user, $searchName, 1, null);
-            $count = $this->seriesRepository->searchCount($user, $searchName, null);
-            $searchResult['total_results'] = $count['count'];
-            $searchResult['total_pages'] = ceil($searchResult['total_results'] / 20);
-            $searchResult['page'] = 1;
-            $simpleSeriesSearch->setQuery($searchName);
-        }
         $simpleForm = $this->createForm(SeriesSearchType::class, $simpleSeriesSearch);
 
         $simpleForm->handleRequest($request);
         if ($simpleForm->isSubmitted() && $simpleForm->isValid()) {
-            dump($simpleSeriesSearch);
             $query = $simpleSeriesSearch->getQuery();
             $page = $simpleSeriesSearch->getPage();
             $firstAirDateYear = $simpleSeriesSearch->getFirstAirDateYear();
@@ -588,14 +577,6 @@ class SeriesController extends AbstractController
                 'slug' => $series[0]['slug'],
             ]);
         }
-        dump([
-            'seriesList' => $series,
-            'results' => [
-                'total_results' => $searchResult['total_results'] ?? -1,
-                'total_pages' => $searchResult['total_pages'] ?? 0,
-                'page' => $searchResult['page'] ?? 0,
-            ],
-        ]);
 
         return $this->render('series/search.html.twig', [
             'form' => $simpleForm->createView(),

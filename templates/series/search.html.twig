@@ -33,11 +33,9 @@
             {{ form_end(form) }}
             <div class="series-search-result">
                 <div class="wrapper">
-                    {#                    <div class="content"> #}
                     {% for series in seriesList %}
                         {{ include('_blocks/series/_card.html.twig') }}
                     {% endfor %}
-                    {#                    </div> #}
                 </div>
             </div>
         </div>

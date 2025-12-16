@@ -157,20 +157,12 @@ class MovieController extends AbstractController
     #[Route('/search/all', name: 'search')]
     public function search(Request $request): Response
     {
-        if ($request->get('q')) {
-            $simpleSeriesSearch = new MovieSearchDTO($request->getLocale(), 1);
-            $simpleSeriesSearch->setQuery($request->get('q'));
-        } else {
-            // on récupère le contenu du formulaire (POST parameters).
-            $formContent = $request->get('movie_search', ['query' => '', 'releaseDateYear' => null, 'language' => $request->getLocale(), 'page' => 1]);
-            $simpleSeriesSearch = new MovieSearchDTO($formContent['language'], $formContent['page']);
-            $simpleSeriesSearch->setQuery($formContent['query']);
-            $releaseYear = $formContent['releaseDateYear'] ? intval($formContent['releaseDateYear']) : null;
-            $releaseYear = !$releaseYear ? null : $releaseYear;
-            $simpleSeriesSearch->setReleaseDateYear($releaseYear);
-        }
-
+        $simpleSeriesSearch = new MovieSearchDTO($request->getLocale(), 1);
         $simpleForm = $this->createForm(MovieSearchType::class, $simpleSeriesSearch);
+        $simpleForm->handleRequest($request);
+        if ($simpleForm->isSubmitted() && $simpleForm->isValid()) {
+            $simpleSeriesSearch = $simpleForm->getData();
+        }
         $searchResult = $this->handleSearch($simpleSeriesSearch);
         if ($searchResult['total_results'] == 1) {
             return $this->getOneResult($searchResult['results'][0]);

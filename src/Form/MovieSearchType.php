@@ -16,6 +16,10 @@ class MovieSearchType extends AbstractType
     {
         $builder
             ->add('query', SearchType::class, [
+                'attr' => [
+                    'autofocus' => true,
+                    'placeholder' => 'Inception',
+                ],
                 'label' => 'Name of the movie',
                 'required' => true,
             ])
