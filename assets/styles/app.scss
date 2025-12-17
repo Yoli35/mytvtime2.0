@@ -2726,7 +2726,8 @@ section:has(.pages) {
 }
 
 dialog.accent-color-dialog,
-dialog.schedule-range-dialog {
+dialog.schedule-range-dialog,
+dialog.user-list-dialog {
     background-color: hsl(from var(--orange-50) h s 20%/0.8);
     border-radius: 2rem;
     border: none;
@@ -2757,8 +2758,19 @@ dialog.schedule-range-dialog {
         justify-content: flex-end;
     }
 
-    label:has(input[type="color"]),
-    label:has(input[type="number"]) {
+    button {
+        background-color: var(--orange-50);
+        border: none;
+        border-radius: 5rem;
+        color: var(--orange-90);
+        cursor: pointer;
+        padding-block: .25rem;
+        padding-inline: 1rem;
+    }
+}
+
+dialog.accent-color-dialog {
+    label:has(input[type="color"]) {
         align-items: center;
         display: flex;
         gap: 1rem;
@@ -2775,7 +2787,7 @@ dialog.schedule-range-dialog {
         block-size: 3.25rem;
     }
 
-    input[type=color]::-webkit-color-swatch-wrapper {
+    input[type="color"]::-webkit-color-swatch-wrapper {
         border-radius: 50%;
         height: 3rem;
         padding-block-end: 0;
@@ -2785,17 +2797,10 @@ dialog.schedule-range-dialog {
         width: 3rem;
     }
 
-    input[type=color]::-webkit-color-swatch {
+    input[type="color"]::-webkit-color-swatch {
         border-radius: 50%;
         height: 3rem;
         width: 3rem;
-    }
-
-    input[type=number] {
-        background-color: var(--orange-10);
-        border-radius: 5rem;
-        border: none;
-        padding: .5rem .5rem;
     }
 
     .sample-gradient {
@@ -2849,16 +2854,71 @@ dialog.schedule-range-dialog {
         }
 
     }
+}
 
-    button {
-        background-color: var(--orange-50);
-        border: none;
-        border-radius: 5rem;
-        color: var(--orange-90);
-        cursor: pointer;
-        padding-block: .25rem;
-        padding-inline: 1rem;
+dialog.schedule-range-dialog {
+    label:has(input[type="number"]) {
+        align-items: center;
+        display: flex;
+        gap: 1rem;
     }
+
+    input[type="number"] {
+        background-color: var(--orange-10);
+        border-radius: 5rem;
+        border: none;
+        padding: .5rem .5rem;
+    }
+}
+
+dialog.user-list-dialog {
+    max-width: 90dvw;
+    width: 40rem;
+
+    label:has(input[type="text"]) {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: column;
+        gap: .25rem;
+        width: 100%;
+
+        input[type="text"] {
+            background-color: var(--orange-30);
+            border-radius: 5rem;
+            border: none;
+            padding: .5rem 1rem;
+            width: 100%;
+        }
+    }
+
+    label:has(textarea) {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: column;
+        gap: .25rem;
+        width: 100%;
+
+        textarea {
+            background-color: var(--orange-30);
+            border-radius: .5rem;
+            border: none;
+            padding: .5rem 1rem;
+            width: 100%;
+        }
+    }
+
+    label:has(input[type="checkbox"]) {
+        align-items: center;
+        display: flex;
+        gap: .5rem;
+
+        span {
+            background-color: var(--green);
+            border-radius: 5rem;
+            padding: .25rem 1rem;
+        }
+    }
+
 }
 
 .copy-badge {

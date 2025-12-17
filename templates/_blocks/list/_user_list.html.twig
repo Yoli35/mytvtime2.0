@@ -1,0 +1,22 @@
+<dialog id="userListDialog" class="user-list-dialog" closedby="any">
+    <label for="user-list-name">
+        {{ 'List name'|trans }}
+        <input type="text" id="user-list-name" value="" aria-description="{{ 'Name of the list'|trans }}"/>
+    </label>
+    <label for="user-list-description">
+        {{ 'Description'|trans }}
+        <textarea id="user-list-description" rows="4" aria-description="{{ 'Description of the list'|trans }}"></textarea>
+    </label>
+    <label for="user-list-public">
+        <input type="checkbox" id="user-list-public" switch aria-description="{{ 'Make the list public'|trans }}"/>
+        {{ 'Public list'|trans }}
+    </label>
+    <label for="user-list-add-series">
+        <input type="checkbox" id="user-list-public" checked switch aria-description="{{ 'Add this series to the list public'|trans }}"/>
+        {{ 'Add'|trans }} <span></span>
+    </label>
+    <div class="row">
+        <button type="button">{{ 'Cancel'|trans }}</button>
+        <button type="submit">{{ 'Close'|trans }}</button>
+    </div>
+</dialog>

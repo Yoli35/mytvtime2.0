@@ -349,6 +349,8 @@ class SeriesController extends AbstractController
                 if (!str_contains($s['name'], $s['sln_name'])) {
                     $s['name'] = '<span>' . $s['sln_name'] . '</span>' . $s['name'];
                 }
+            } else {
+                $s['sln_name'] = $s['name'];
             }
             $this->imageService->saveImage("posters", $s['poster_path'], $this->imageConfiguration->getUrl('poster_sizes', 5));
             $s['upToDate'] = $s['watched_aired_episode_count'] == $s['aired_episode_count'];

@@ -40,20 +40,35 @@ export class Index {
         const seriesToolsContainers = document.querySelectorAll('.series-tools-container');
         const seriesListsMenu = document.querySelector(".series-lists-menu");
         const createNewList = seriesListsMenu.querySelector("li.create-new-list");
+        const userListDialog = document.querySelector("dialog.user-list-dialog");
+        const userListDialogCancel = userListDialog.querySelector("button[type=button]");
+        const userListDialogSubmit = userListDialog.querySelector("button[type=submit]");
         const svgBookmark = document.querySelector("#svgs #svg-bookmark");
         const svgBookmarkOutline = document.querySelector("#svgs #svg-bookmark-outline");
 
         createNewList.addEventListener("click", (e) => {
             e.preventDefault();
+            const seriesName = createNewList.getAttribute("data-name");
             const userLists = seriesListsMenu.querySelectorAll("li.user-list");
             userLists.forEach(list => {list.remove();});
             seriesListsMenu.style = "";
+            createNewList.removeAttribute("data-name");
+            const span = userListDialog.querySelector('label[for="user-list-add-series"] span');
+            span.innerText = seriesName;
+            userListDialog.showModal();
+        });
+        userListDialogCancel.addEventListener("click", (e) => {
+            userListDialog.close();
+        });
+        userListDialogSubmit.addEventListener("click", (e) => {
+            userListDialog.close();
         });
 
         seriesToolsContainers.forEach((seriesToolsContainer) => {
             const seriesTools = seriesToolsContainer.querySelector('.series-tools');
             const seriesToolsMenu = seriesToolsContainer.querySelector('.series-tools-menu');
             const tmdbId = seriesToolsContainer.getAttribute("data-id");
+            const seriesName = seriesToolsContainer.getAttribute("data-name");
             const bookmark = seriesToolsMenu.querySelector("li.bookmark");
 
             seriesTools.addEventListener('click', (e) => {
@@ -104,13 +119,15 @@ export class Index {
                         li.appendChild(svg);
                         li.appendChild(name);
                         seriesListsMenu.insertBefore(li, createNewList);
+                        createNewList.setAttribute("data-name", seriesName);
                     });
                     seriesToolsMenu.classList.remove('visible');
                     seriesListsMenu.style = "display: block; left: " + mouseX + "px; top: " + mouseY + "px;";
                     const rect = seriesListsMenu.getBoundingClientRect();
                     const windowWidth = window.innerWidth;
                     const x = Math.min(Math.max(8, mouseX - rect.width / 2), windowWidth - 8);
-                    seriesListsMenu.style = "display: block; left: " + x + "px; top: " + mouseY + "px;";
+                    const y = mouseY + window.scrollY;
+                    seriesListsMenu.style = "display: block; left: " + x + "px; top: " + y + "px;";
                 }).catch((error) => {
                     console.error("Fetch error:", error);
                 });

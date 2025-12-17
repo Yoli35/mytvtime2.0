@@ -1,4 +1,4 @@
-<div class="series-tools-container" data-id="{{ seriesId }}">
+<div class="series-tools-container" data-id="{{ seriesId }}" data-name="{{ seriesName|e('html_attr') }}">
     <div class="series-tools">{{ ux_icon('mdi:ellipsis-vertical') }}</div>
     <ul class="series-tools-menu">
         <li class="bookmark">{{ ux_icon('mdi:bookmark') }}<span>{{ 'Add to a list'|trans }}</span></li>
