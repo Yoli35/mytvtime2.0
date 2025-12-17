@@ -50,6 +50,7 @@ use App\Service\ImageConfiguration;
 use App\Service\ImageService;
 use App\Service\SeriesService;
 use App\Service\TMDBService;
+use DateInvalidTimeZoneException;
 use DateMalformedStringException;
 use DateTime;
 use DateTimeImmutable;
@@ -408,7 +409,7 @@ class SeriesController extends AbstractController
     public function searchAll(Request $request): Response
     {
         $simpleSeriesSearch = new SeriesSearchDTO($request->getLocale(), 1);
-        if ($request->get('q')) $simpleSeriesSearch->setQuery($request->get('q'));
+        if ($request->query->get('q')) $simpleSeriesSearch->setQuery($request->query->get('q'));
         $simpleForm = $this->createForm(SeriesSearchType::class, $simpleSeriesSearch);
         $searchResult = $this->handleSearch($simpleSeriesSearch);
         $slugger = new AsciiSlugger();
@@ -449,10 +450,10 @@ class SeriesController extends AbstractController
     public function all(#[CurrentUser] User $user, Request $request): Response
     {
         $localisation = [
-            'locale' => $user?->getPreferredLanguage() ?? $request->getLocale(),
-            'country' => $user?->getCountry() ?? "FR",
-            'language' => $user?->getPreferredLanguage() ?? $request->getLocale(),
-            'timezone' => $user?->getTimezone() ?? "Europe/Paris"
+            'locale' => $user->getPreferredLanguage() ?: $request->getLocale(),
+            'country' => $user->getCountry() ?: "FR",
+            'language' => $user->getPreferredLanguage() ?: $request->getLocale(),
+            'timezone' => $user->getTimezone() ?: "Europe/Paris"
         ];
         $filtersBoxSettings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'series to end: filter box']);
         if (!$filtersBoxSettings) {
@@ -472,10 +473,10 @@ class SeriesController extends AbstractController
             }
         } else {
             // /fr/series/all?sort=episodeAirDate&order=DESC&startStatus=series-not-started&endStatus=series-not-watched&perPage=10
-            $paramSort = $request->get('sort');
-            $paramOrder = $request->get('order');
-            $paramNetwork = $request->get('network');
-            $paramPerPage = $request->get('perPage');
+            $paramSort = $request->query->get('sort');
+            $paramOrder = $request->query->get('order');
+            $paramNetwork = $request->query->get('network');
+            $paramPerPage = $request->query->get('perPage');
             $settings->setData([
                 'perPage' => $paramPerPage,
                 'sort' => $paramSort,
@@ -483,7 +484,7 @@ class SeriesController extends AbstractController
                 'network' => $paramNetwork
             ]);
             $this->settingsRepository->save($settings, true);
-            $page = $request->get('page') ?? 1;
+            $page = $request->query->get('page') ?? 1;
         }
         $data = $settings->getData();
         $filters = [
@@ -603,11 +604,11 @@ class SeriesController extends AbstractController
     public function advancedSearch(#[CurrentUser] User $user, Request $request): Response
     {
         $series = [];
-        $watchProviders = $this->watchLinkApi->getWatchProviders($user?->getCountry() ?? 'FR');
+        $watchProviders = $this->watchLinkApi->getWatchProviders($user->getCountry() ?: 'FR');
         $keywords = $this->getKeywords();
         $userSeriesIds = array_column($this->userSeriesRepository->userSeriesTMDBIds($user), 'id');
 
-        $seriesSearch = new SeriesAdvancedSearchDTO($user?->getPreferredLanguage() ?? $request->getLocale(), $user?->getCountry() ?? 'FR', $user?->getTimezone() ?? 'Europe/Paris', 1);
+        $seriesSearch = new SeriesAdvancedSearchDTO($user->getPreferredLanguage() ?: $request->getLocale(), $user->getCountry() ?: 'FR', $user->getTimezone() ?: 'Europe/Paris', 1);
         $seriesSearch->setWatchProviders($watchProviders['select']);
         $seriesSearch->setKeywords($keywords);
         $slugger = new AsciiSlugger();
@@ -695,9 +696,9 @@ class SeriesController extends AbstractController
     public function tmdb(#[CurrentUser] User $user, Request $request, $id, $slug): Response
     {
         $series = $this->seriesRepository->findOneBy(['tmdbId' => $id]);
-        $userSeries = ($user && $series) ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
-        $country = $user ? $user->getCountry() ?? 'FR' : 'FR';
-        $locale = $user ? $user->getPreferredLanguage() ?? 'fr' : $request->getLocale();
+        $userSeries = $series ? $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]) : null;
+        $country = $user->getCountry() ?: 'FR';
+        $locale = $user->getPreferredLanguage() ?: $request->getLocale();
 
         if ($userSeries) {
             return $this->redirectToRoute('app_series_show', [
@@ -902,7 +903,7 @@ class SeriesController extends AbstractController
             'externals' => $this->getExternals($series, $tv['keywords']['results'], $tv['external_ids'] ?? [], $locale),
             'translations' => $this->seriesService->getSeriesShowTranslations(),
             'forms' => $forms,
-            'oldSeriesAdded' => $request->get('oldSeriesAdded') === 'true',
+            'oldSeriesAdded' => $request->query->get('oldSeriesAdded') === 'true',
         ]);
     }
 
@@ -1215,6 +1216,13 @@ class SeriesController extends AbstractController
         $userTimezone = $user->getTimezone() ?? 'Europe/Paris';
 
         $dateTime = $this->convertDateTime($date, $time, $timezone, $userTimezone);
+        if (!$dateTime) {
+            return new JsonResponse([
+                'ok' => false,
+                'success' => false,
+                'message' => 'Invalid date or timezone',
+            ]);
+        }
 
         $dayIndex = $dateTime->format('N');
         $dayOfTheWeek = $this->translator->trans($dateTime->format('l'));
@@ -1229,11 +1237,19 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    private function convertDateTime(string $date, string $time, string $fromTimezone, string $toTimezone): DateTimeImmutable
+    private function convertDateTime(string $date, string $time, string $fromTimezone, string $toTimezone): ?DateTimeImmutable
     {
-        $dateTime = new DateTime($date . ' ' . $time, new DateTimeZone($fromTimezone));
+        try {
+            $dateTime = new DateTime($date . ' ' . $time, new DateTimeZone($fromTimezone));
+        } catch (DateInvalidTimeZoneException|DateMalformedStringException) {
+            return null;
+        }
         if ($fromTimezone != $toTimezone) {
-            $dateTime->setTimezone(new DateTimeZone($toTimezone));
+            try {
+                $dateTime->setTimezone(new DateTimeZone($toTimezone));
+            } catch (DateInvalidTimeZoneException) {
+                return null;
+            }
         }
         return DateTimeImmutable::createFromMutable($dateTime);
     }
@@ -1351,7 +1367,7 @@ class SeriesController extends AbstractController
     #[Route('/cast/add/{id}/{seasonNumber}/{peopleId}', name: 'add_cast', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS, 'peopleId' => Requirement::DIGITS], methods: ['GET'])]
     public function addCast(Request $request, Series $series, int $seasonNumber, int $peopleId): Response
     {
-        $characterName = $request->get('name');
+        $characterName = $request->query->get('name');
         // TODO: implement cast editing
         $people = json_decode($this->tmdbService->getPerson($peopleId, 'en-US'), true);
         $peopleDb = $this->peopleRepository->findOneBy(['tmdbId' => $peopleId]);
