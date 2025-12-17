@@ -38,9 +38,25 @@ export class Index {
         }
 
         const seriesToolsContainers = document.querySelectorAll('.series-tools-container');
+        const seriesListsMenu = document.querySelector(".series-lists-menu");
+        const createNewList = seriesListsMenu.querySelector("li.create-new-list");
+        const svgBookmark = document.querySelector("#svgs #svg-bookmark");
+        const svgBookmarkOutline = document.querySelector("#svgs #svg-bookmark-outline");
+        console.log(svgBookmark);
+        console.log(svgBookmarkOutline);
+
+        createNewList.addEventListener("click", (e) => {
+            e.preventDefault();
+            const userLists = seriesListsMenu.querySelectorAll("li.user-list");
+            userLists.forEach(list => {list.remove();});
+            seriesListsMenu.style = "";
+        });
+
         seriesToolsContainers.forEach((seriesToolsContainer) => {
             const seriesTools = seriesToolsContainer.querySelector('.series-tools');
             const seriesToolsMenu = seriesToolsContainer.querySelector('.series-tools-menu');
+            const tmdbId = seriesToolsContainer.getAttribute("data-id");
+            const bookmark = seriesToolsMenu.querySelector("li.bookmark");
 
             seriesTools.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -56,11 +72,46 @@ export class Index {
                 }
             });
 
-            /*document.addEventListener('click', (event) => {
-                if (!seriesToolsContainer.contains(event.target)) {
+            bookmark.addEventListener("click", (e) => {
+                e.preventDefault();
+                const mouseX = e.clientX;
+                const mouseY = e.clientY;
+                
+                fetch("/api/series/list/get", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        tmdbId: tmdbId,
+                    }),
+                }).then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error("Network response was not ok.");
+                }).then((data) => {
+                    console.log(data);
+                    const userLists = data['userLists'];
+                    console.log(userLists);
+                    userLists.forEach((list) => {
+                        // const newLi =  `<li class="user-list" data-id=""><svg><span>${list['name']}</span></li>`
+                        const svg = svgBookmark.cloneNode(true);
+                        const name = document.createTextNode(list['name']);
+                        const li = document.createElement("li");
+                        svg.removeAttribute("id");
+                        li.classList.add("user-list");
+                        li.setAttribute("data-id", list['id']);
+                        li.appendChild(svg);
+                        li.appendChild(name);
+                        seriesListsMenu.insertBefore(li, createNewList);
+                    });
                     seriesToolsMenu.classList.remove('visible');
-                }
-            });*/
+                    seriesListsMenu.style = "display: block; left: " + mouseX + "px; top: " + mouseY + "px;";
+                }).catch((error) => {
+                    console.error("Fetch error:", error);
+                });
+            });
         });
 
         fetch(this.app_series_tmdb_check, {
