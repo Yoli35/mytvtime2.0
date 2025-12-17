@@ -42,8 +42,6 @@ export class Index {
         const createNewList = seriesListsMenu.querySelector("li.create-new-list");
         const svgBookmark = document.querySelector("#svgs #svg-bookmark");
         const svgBookmarkOutline = document.querySelector("#svgs #svg-bookmark-outline");
-        console.log(svgBookmark);
-        console.log(svgBookmarkOutline);
 
         createNewList.addEventListener("click", (e) => {
             e.preventDefault();
@@ -76,7 +74,7 @@ export class Index {
                 e.preventDefault();
                 const mouseX = e.clientX;
                 const mouseY = e.clientY;
-                
+
                 fetch("/api/series/list/get", {
                     method: "POST",
                     headers: {
@@ -93,10 +91,11 @@ export class Index {
                 }).then((data) => {
                     console.log(data);
                     const userLists = data['userLists'];
-                    console.log(userLists);
+                    const seriesListIds = data['seriesListIds'];
+                    console.log(seriesListIds);
                     userLists.forEach((list) => {
-                        // const newLi =  `<li class="user-list" data-id=""><svg><span>${list['name']}</span></li>`
-                        const svg = svgBookmark.cloneNode(true);
+                        const isListInSeriesList = seriesListIds.some(id => id === list.id);
+                        const svg = isListInSeriesList ? svgBookmark.cloneNode(true) : svgBookmarkOutline.cloneNode(true);
                         const name = document.createTextNode(list['name']);
                         const li = document.createElement("li");
                         svg.removeAttribute("id");
@@ -108,6 +107,10 @@ export class Index {
                     });
                     seriesToolsMenu.classList.remove('visible');
                     seriesListsMenu.style = "display: block; left: " + mouseX + "px; top: " + mouseY + "px;";
+                    const rect = seriesListsMenu.getBoundingClientRect();
+                    const windowWidth = window.innerWidth;
+                    const x = Math.min(Math.max(8, mouseX - rect.width / 2), windowWidth - 8);
+                    seriesListsMenu.style = "display: block; left: " + x + "px; top: " + mouseY + "px;";
                 }).catch((error) => {
                     console.error("Fetch error:", error);
                 });

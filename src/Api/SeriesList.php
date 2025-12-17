@@ -68,6 +68,7 @@ readonly class SeriesList
             'get' => true,
             'userLists' => $userLists,
             'seriesLists' => $seriesLists,
+            'seriesListIds' => $series ? array_map(fn($list) => $list->getId(), $series->getUserLists()->toArray()) : [],
         ]);
     }
 
