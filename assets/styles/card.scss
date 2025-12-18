@@ -307,6 +307,27 @@
     }
 }
 
+.series-in-list {
+    align-items: center;
+    border-radius: 50%;
+    display: none;
+    height: 2rem;
+    justify-content: center;
+    position: absolute;
+    right: 0;
+    top: .5rem;
+    width: 2rem;
+
+    &.added {
+        display: flex;
+    }
+
+    svg {
+        height: 1.5rem;
+        width: 1.5rem;
+    }
+}
+
 .series-tools-container {
     bottom: .5rem;
     position: absolute;

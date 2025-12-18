@@ -109,6 +109,9 @@ return [
     'Show' => [
         'path' => './assets/js/series/Show.js',
     ],
+    'UserList' => [
+        'path' => './assets/js/list/UserList.js',
+    ],
     'VideoList' => [
         'path' => './assets/js/videos/VideoList.js',
     ],

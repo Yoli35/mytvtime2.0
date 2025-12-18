@@ -405,7 +405,11 @@ class UserSeriesRepository extends ServiceEntityRepository
                        (SELECT CONCAT(ue.`season_number`, '/',ue.`episode_number`)
                             FROM `user_episode` ue
                             WHERE ue.`user_series_id`=us.id AND ue.`season_number`>0 AND ue.`watch_at` IS NULL
-                            ORDER BY ue.`episode_number` LIMIT 1)                                as episode
+                            ORDER BY ue.`episode_number` LIMIT 1)                                as episode,
+                       (SELECT COUNT(*)
+                       		  FROM `user_list_series` uls
+                       		      INNER JOIN `user_list` ul ON ul.`user_id`=$userId AND uls.`user_list_id`=ul.`id`
+                       		  WHERE uls.`series_id`=s.`id`)                                      as is_series_in_list
                 FROM `series` s
                     INNER JOIN `user_series` us ON us.user_id=$userId AND us.series_id=s.id
                     LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.id AND sln.`locale`='$locale'

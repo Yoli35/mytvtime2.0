@@ -43,7 +43,7 @@
             <div class="name by-country{% if upToDate %} up-to-date{% endif %}{% if toStart %} to-start{% endif %}">
                 {{ series.name|raw }}
             </div>
-            {{ include('_blocks/series/_tools.html.twig', {seriesId: series.tmdb_id, seriesName: series.sln_name}) }}
+            {{ include('_blocks/series/_tools.html.twig', {seriesId: series.tmdb_id, seriesName: series.sln_name, isSeriesInList: series.is_series_in_list}) }}
         </div>
     </a>
 </div>
