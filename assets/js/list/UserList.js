@@ -92,17 +92,21 @@ export class UserList {
                 if (response.ok) {
                     return response.json();
                 }
-                throw new Error("Network response was not ok. " + response.error);
+                const json = response.json();
+                throw new Error("Network response was not ok. " + json.error);
             }).then((data) => {
-                this.flashMessage.add("success", "List " + nameInput.value + "has been successfully created.");
-                const seriesName = this.createNewList.getAttribute("data-name");
+                this.flashMessage.add("success", "List " + nameInput.value + " has been successfully created.");
+                const seriesName = nameInput.value;
                 const selector = '.series-tools-container[data-id="' + tmdbInput.value + '"]'
-                const seriesToolsContainer = document.querySelector(selector)
-                const seriesInList = seriesToolsContainer.closest(".infos").querySelector(".series-in-list");
+                const seriesToolsContainers = document.querySelectorAll(selector);
+
                 if (data['final_state']) {
                     console.log("success", "Series " + seriesName + " added to list " + nameInput.value);
                     this.flashMessage.add("success", "Series " + seriesName + " added to list " + nameInput.value);
-                    seriesInList.classList.add("added");
+                    seriesToolsContainers.forEach(seriesToolsContainer => {
+                        const seriesInList = seriesToolsContainer.closest(".infos").querySelector(".series-in-list");
+                        seriesInList.classList.add("added");
+                    });
                 }
                 this.userListDialog.close();
             }).catch((error) => {
@@ -183,9 +187,9 @@ export class UserList {
                 li.appendChild(span);
                 li.addEventListener("click", this.bookMarkToggle);
                 seriesListsMenu.insertBefore(li, this.createNewList);
-                this.createNewList.setAttribute("data-name", seriesName);
-                this.createNewList.setAttribute("data-tmdb", tmdbId);
             });
+            this.createNewList.setAttribute("data-name", seriesName);
+            this.createNewList.setAttribute("data-tmdb", tmdbId);
             seriesToolsMenu.classList.remove('visible');
             seriesListsMenu.style = "display: block; left: " + mouseX + "px; top: " + mouseY + "px;";
             const rect = seriesListsMenu.getBoundingClientRect();
@@ -222,16 +226,21 @@ export class UserList {
             throw new Error("Network response was not ok. " + response.error);
         }).then((data) => {
             const selector = '.series-tools-container[data-id="' + tmdbId + '"]'
-            const seriesToolsContainer = document.querySelector(selector)
-            const seriesInList = seriesToolsContainer.closest(".infos").querySelector(".series-in-list");
+            const seriesToolsContainers = document.querySelectorAll(selector)
             if (data['final_state']) {
                 console.log("success", "Series " + seriesName + " added to list " + listName);
                 this.flashMessage.add("success", "Series " + seriesName + " added to list " + listName);
-                seriesInList.classList.add("added");
+                seriesToolsContainers.forEach(seriesToolsContainer => {
+                    const seriesInList = seriesToolsContainer.closest(".infos").querySelector(".series-in-list");
+                    seriesInList.classList.add("added");
+                });
             } else {
                 console.log("success", "Series " + seriesName + " removed from list " + listName);
                 this.flashMessage.add("success", "Series " + seriesName + " removed from list " + listName);
-                seriesInList.classList.remove("added");
+                seriesToolsContainers.forEach(seriesToolsContainer => {
+                    const seriesInList = seriesToolsContainer.closest(".infos").querySelector(".series-in-list");
+                    seriesInList.classList.remove("added");
+                });
             }
             this.closeSeriesListMenu();
         }).catch((error) => {
