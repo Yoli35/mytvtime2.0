@@ -12,9 +12,10 @@
         {{ 'Public list'|trans }}
     </label>
     <label for="user-list-add-series">
-        <input type="checkbox" id="user-list-public" checked switch aria-description="{{ 'Add this series to the list public'|trans }}"/>
+        <input type="checkbox" id="user-list-add-series" checked switch aria-description="{{ 'Add this series to the list public'|trans }}"/>
         {{ 'Add'|trans }} <span></span>
     </label>
+    <input type="hidden" id="tmdb-id" value=""/>
     <div class="row">
         <button type="button">{{ 'Cancel'|trans }}</button>
         <button type="submit">{{ 'Close'|trans }}</button>

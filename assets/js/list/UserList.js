@@ -44,13 +44,24 @@ export class UserList {
         this.createNewList.addEventListener("click", (e) => {
             e.preventDefault();
             const seriesName = this.createNewList.getAttribute("data-name");
+            const tmdbId = this.createNewList.getAttribute("data-tmdb");
             const userLists = this.seriesListsMenu.querySelectorAll("li.user-list");
             userLists.forEach(list => {
                 list.remove();
             });
             this.seriesListsMenu.style = "";
             this.createNewList.removeAttribute("data-name");
+            const nameInput = this.userListDialog.querySelector("#user-list-name");
+            const descriptionTextarea = this.userListDialog.querySelector("#user-list-description");
+            const publicCheckbox = this.userListDialog.querySelector("#user-list-public");
+            const addSeriesCheckbox = this.userListDialog.querySelector("#user-list-add-series");
+            const tmdbInput = this.userListDialog.querySelector("#tmdb-id");
             const span = this.userListDialog.querySelector('label[for="user-list-add-series"] span');
+            nameInput.value = "";
+            descriptionTextarea.value = "";
+            publicCheckbox.checked = true;
+            addSeriesCheckbox.checked = true;
+            tmdbInput.value = tmdbId;
             span.innerText = seriesName;
             this.userListDialog.showModal();
         });
@@ -60,7 +71,43 @@ export class UserList {
         });
         this.userListDialogSubmit.addEventListener("click", (e) => {
             e.preventDefault();
-            this.userListDialog.close();
+            const nameInput = this.userListDialog.querySelector("#user-list-name");
+            const descriptionTextarea = this.userListDialog.querySelector("#user-list-description");
+            const publicCheckbox = this.userListDialog.querySelector("#user-list-public");
+            const addSeriesCheckbox = this.userListDialog.querySelector("#user-list-add-series");
+            const tmdbInput = this.userListDialog.querySelector("#tmdb-id");
+            fetch("/api/series/list/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: nameInput.value,
+                    description: descriptionTextarea.value,
+                    public: publicCheckbox.checked,
+                    add: addSeriesCheckbox.checked,
+                    tmdbId: tmdbInput.value
+                }),
+            }).then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error("Network response was not ok. " + response.error);
+            }).then((data) => {
+                this.flashMessage.add("success", "List " + nameInput.value + "has been successfully created.");
+                const seriesName = this.createNewList.getAttribute("data-name");
+                const selector = '.series-tools-container[data-id="' + tmdbInput.value + '"]'
+                const seriesToolsContainer = document.querySelector(selector)
+                const seriesInList = seriesToolsContainer.closest(".infos").querySelector(".series-in-list");
+                if (data['final_state']) {
+                    console.log("success", "Series " + seriesName + " added to list " + nameInput.value);
+                    this.flashMessage.add("success", "Series " + seriesName + " added to list " + nameInput.value);
+                    seriesInList.classList.add("added");
+                }
+                this.userListDialog.close();
+            }).catch((error) => {
+                this.flashMessage.add("error", error);
+            });
         });
     }
 
@@ -176,7 +223,7 @@ export class UserList {
         }).then((data) => {
             const selector = '.series-tools-container[data-id="' + tmdbId + '"]'
             const seriesToolsContainer = document.querySelector(selector)
-            const seriesInList =seriesToolsContainer.closest(".infos").querySelector(".series-in-list");
+            const seriesInList = seriesToolsContainer.closest(".infos").querySelector(".series-in-list");
             if (data['final_state']) {
                 console.log("success", "Series " + seriesName + " added to list " + listName);
                 this.flashMessage.add("success", "Series " + seriesName + " added to list " + listName);

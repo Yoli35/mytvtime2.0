@@ -2,6 +2,7 @@
 
 namespace App\Api;
 
+use App\Entity\UserList;
 use App\Repository\SeriesRepository;
 use App\Repository\UserListRepository;
 use Closure;
@@ -69,6 +70,56 @@ readonly class SeriesList
             'userLists' => $userLists,
             'seriesLists' => $seriesLists,
             'seriesListIds' => $series ? array_map(fn($list) => $list->getId(), $series->getUserLists()->toArray()) : [],
+        ]);
+    }
+
+    #[Route('/create', name: 'create', methods: ['POST'])]
+    public function create(Request $request): Response
+    {
+        $inputBag = $request->getPayload();
+        $user = ($this->getUser)();
+        if (!$user) {
+            return ($this->json)([
+                'ok' => true,
+                'create' => false,
+                'error' => 'Unauthorized',
+            ]);
+        }
+        $name = $inputBag->get('name', '');
+        $description = $inputBag->get('description', '');
+        $public = $inputBag->getBoolean('public', false);
+        $add = $inputBag->getBoolean('add', false);
+        $tmdbId = $inputBag->getInt('tmdbId', -1);
+        if ($add && $tmdbId === -1) {
+            return ($this->json)([
+                'ok' => true,
+                'create' => false,
+                'error' => 'Invalid parameters',
+            ]);
+        }
+        if (empty($name)) {
+            return ($this->json)([
+                'ok' => true,
+                'create' => false,
+                'error' => 'Name cannot be empty',
+            ]);
+        }
+        $userList = new UserList($user, $name, $description, $public);
+        $this->userListRepository->save($userList, true);
+
+        if ($add) {
+            $series = $this->seriesRepository->findOneBy(['tmdbId' => $tmdbId]);
+            if ($series) {
+                $userList->addSeriesList($series);
+                $userList->setUpdatedAt(new DateTimeImmutable());
+                $this->userListRepository->save($userList, true);
+            }
+        }
+
+        return ($this->json)([
+            'ok' => true,
+            'create' => true,
+            'final_state' => $add ? $userList->getSeriesList()->contains($series) : null,
         ]);
     }
 

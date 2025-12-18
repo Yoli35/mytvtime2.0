@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserListRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -30,10 +31,10 @@ class UserList
     private ?bool $public = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $updatedAt = null;
+    private ?DateTimeImmutable $updatedAt = null;
 
     /**
      * @var Collection<int, Series>
@@ -41,8 +42,14 @@ class UserList
     #[ORM\ManyToMany(targetEntity: Series::class, inversedBy: 'userLists')]
     private Collection $seriesList;
 
-    public function __construct()
+    public function __construct(User $user, string $name, ?string $description, bool $public)
     {
+        $this->user = $user;
+        $this->name = $name;
+        $this->description = $description;
+        $this->public = $public;
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
         $this->seriesList = new ArrayCollection();
     }
 
@@ -99,24 +106,24 @@ class UserList
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    public function setUpdatedAt(DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
 
