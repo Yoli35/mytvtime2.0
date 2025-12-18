@@ -90,10 +90,15 @@
                 {% endif %}
             {% endif %}
         </div>
-        <div class="name{% if ids is defined and series.id in ids %} added{% endif %}">
-            {{ series.localized_name ?? series.name }}
-            {% if allFiltered is defined %}
-                <div class="">{% if series.remainingEpisodes > 1 %}{{ series.remainingEpisodes }} {{ 'remaining episodes'|trans }}{% else %}{{ 'Last episode'|trans }}{% endif %}</div>
+        <div class="infos">
+            <div class="name{% if ids is defined and series.id in ids %} added{% endif %}">
+                {{ series.localized_name ?? series.sln_name ?? series.name }}
+                {% if allFiltered is defined %}
+                    <div class="">{% if series.remainingEpisodes > 1 %}{{ series.remainingEpisodes }} {{ 'remaining episodes'|trans }}{% else %}{{ 'Last episode'|trans }}{% endif %}</div>
+                {% endif %}
+            </div>
+            {% if series.tmdb is not defined %}
+                {{ include('_blocks/series/_tools.html.twig', {seriesId: series.tmdb_id ?? series.tmdbId, seriesName: series.sln_name, isSeriesInList: series.is_series_in_list}) }}
             {% endif %}
         </div>
     </a>

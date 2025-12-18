@@ -210,12 +210,14 @@ class SeriesController extends AbstractController
         foreach ($seriesToStart as $s) {
             if (!array_key_exists($s['id'], $series)) {
                 $series[$s['id']]['url'] = $this->generateUrl('app_series_show', ['id' => $s['id'], 'slug' => $s['slug']]);
+                $series[$s['id']]['tmdb_id'] = $s['tmdb_id'];
                 $series[$s['id']]['name'] = $s['name'];
                 $series[$s['id']]['sln_name'] = $s['sln_name'];
                 $series[$s['id']]['poster_path'] = $s['poster_path'];
                 $series[$s['id']]['final_air_date'] = $s['final_air_date'];
                 $series[$s['id']]['added_at'] = $s['added_at'];
                 $series[$s['id']]['number_of_episode'] = $s['number_of_episode'];
+                $series[$s['id']]['is_series_in_list'] = $s['is_series_in_list'];
                 $series[$s['id']]['watch_links'] = [];
             }
             if ($s['link_name']) {
@@ -2591,6 +2593,7 @@ class SeriesController extends AbstractController
                 $series['posterPath'] = $this->getAlternatePosterPath($series['id']);
             }
             $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
+            $series['sln_name'] = $series['localizedName'] ?: $series['name'];
             $series['providerLogoPath'] = $this->getProviderLogoFullPath($series['providerLogoPath'], $logoUrl);
             $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
             $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];

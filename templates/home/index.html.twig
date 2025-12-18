@@ -170,7 +170,7 @@
                     <div class="wrapper">
                         <div class="content">
                             {% for s in userSeries %}
-                                {{ include('_blocks/series/_card.html.twig', { series: s, dataTitle: s.localized_name ?? s.name }) }}
+                                {{ include('_blocks/series/_card.html.twig', { series: s, dataTitle: s.localized_name ?? s.name, home: 1 }) }}
                             {% endfor %}
                         </div>
                     </div>
@@ -180,7 +180,7 @@
                     <div class="wrapper">
                         <div class="content">
                             {% for s in lastAddedSeries %}
-                                {{ include('_blocks/series/_card.html.twig', { series: s, dataTitle: s.localized_name ?? s.name }) }}
+                                {{ include('_blocks/series/_card.html.twig', { series: s, dataTitle: s.localized_name ?? s.name, home: 1 }) }}
                             {% endfor %}
                         </div>
                     </div>
@@ -190,7 +190,7 @@
                     <div class="wrapper">
                         <div class="content">
                             {% for s in historySeries %}
-                                {{ include('_blocks/series/_episode_card.html.twig', { series: s, dataTitle: s.localized_name ?? s.name }) }}
+                                {{ include('_blocks/series/_episode_card.html.twig', { series: s, dataTitle: s.localized_name ?? s.name, home: 1 }) }}
                             {% endfor %}
                         </div>
                     </div>
@@ -247,6 +247,11 @@
             "app_home_load_episode_history": "{{ path('app_home_load_episode_history') }}",
             "app_home_load_provider_series": "{{ path('app_home_load_provider_series') }}"
             }
+        </div>
+        <div id="svgs" style="display: none">
+            <div id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
+            <div id="svg-bookmark">{{ ux_icon('mdi:bookmark') }}</div>
+            <div id="svg-bookmark-outline">{{ ux_icon('mdi:bookmark-outline') }}</div>
         </div>
     </div>
     {% include('_blocks/_footer.html.twig') %}

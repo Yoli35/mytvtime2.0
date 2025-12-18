@@ -61,6 +61,7 @@ class HomeController extends AbstractController
 
             $userSeries = array_map(function ($series) {
                 $series['poster_path'] = $series['poster_path'] ? $this->imageConfiguration->getCompleteUrl($series['poster_path'], 'poster_sizes', 5) : null;
+                $series['sln_name'] = $series['localized_name'] ?: $series['name'];
                 return $series;
             }, $userSeries);
 
@@ -88,7 +89,7 @@ class HomeController extends AbstractController
             // Épisodes à voir parmi les séries commencées
             $episodesToWatch = array_map(function ($series) {
                 $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
-//                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+                $series['sln_name'] = $series['localizedName'] ?: $series['name'];
                 $series['released'] = true;
                 return $series;
             }, $this->userEpisodeRepository->episodesToWatch($user, $language));
@@ -96,7 +97,7 @@ class HomeController extends AbstractController
             $lastAddedSeries = array_map(function ($series) {
 //                $s = $serie->homeArray();
                 $series['poster_path'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
-//                $series['poster_path'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+                $series['sln_name'] = $series['localizedName'] ?: $series['name'];
                 $series['localized_name'] = $series['localizedName'];
                 $series['localized_slug'] = $series['localizedSlug'];
                 return $series;
@@ -104,7 +105,7 @@ class HomeController extends AbstractController
             // Historique des séries vues
             $historySeries = array_map(function ($series) {
                 $series['posterPath'] = $series['posterPath'] ? '/series/posters' . $series['posterPath'] : null;
-//                $series['posterPath'] = $series['posterPath'] ? $this->imageConfiguration->getCompleteUrl($series['posterPath'], 'poster_sizes', 5) : null;
+                $series['sln_name'] = $series['localizedName'] ?: $series['name'];
                 $series['upToDate'] = $series['watched_aired_episode_count'] == $series['aired_episode_count'];
                 $series['remainingEpisodes'] = $series['aired_episode_count'] - $series['watched_aired_episode_count'];
                 $series['released'] = true;
@@ -174,7 +175,10 @@ class HomeController extends AbstractController
             $videoList = implode(',', $videoList);
             $movieVideos['videoList'] = $videoList;
         }
-
+        dump([
+            'historyEpisode' => $historyEpisode,
+            'historySeries' => $historySeries,
+        ]);
         return $this->render('home/index.html.twig', [
             'highlightedSeries' => $seriesSelection,
             'highlightedMovies' => $movieSelection,

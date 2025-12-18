@@ -59,6 +59,9 @@
         </div>
     </a>
     <a href="{{ path('app_series_show', {'id': series.id, 'slug': displaySlug }) }}">
-        <div class="name">{{ displayName }}</div>
+        <div class="infos">
+            <div class="name">{{ displayName }}</div>
+            {{ include('_blocks/series/_tools.html.twig', {seriesId: series.tmdb_id ?? series.tmdbId, seriesName: series.sln_name, isSeriesInList: series.is_series_in_list}) }}
+        </div>
     </a>
 </div>

@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{{ asset('styles/filter.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/home.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/card.scss') }}">
 {% endblock %}
 
 {% block body %}
@@ -131,6 +132,9 @@
         <div id="arrow-up">{{ ux_icon('mdi:arrow-up') }}</div>
         <div id="chevron-collapse">{{ ux_icon('mdi:chevron-down') }}</div>
         <div id="chevron-expand">{{ ux_icon('mdi:chevron-up') }}</div>
+        <div id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
+        <div id="svg-bookmark">{{ ux_icon('mdi:bookmark') }}</div>
+        <div id="svg-bookmark-outline">{{ ux_icon('mdi:bookmark-outline') }}</div>
     </div>
     {% include('_blocks/_footer.html.twig') %}
 {% endblock %}

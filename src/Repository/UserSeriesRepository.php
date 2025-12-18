@@ -54,18 +54,22 @@ class UserSeriesRepository extends ServiceEntityRepository
         $userId = $user->getId();
         $offset = ($page - 1) * $perPage;
         $sql = "SELECT 
-                    s.`id`                      as id,
-                    s.`name`                    as name,
-                    s.`poster_path`             as poster_path, 
-                    s.`tmdb_id`                 as tmdbId,
-                    s.`slug`                    as slug,
-                    s.status                    as status,
-                    (s.first_air_date <= NOW()) as released,
-                    us.`user_id`                as user_id, 
-                    us.`progress`               as progress,
-                    us.`favorite`               as favorite, 
-                    sln.`name`                  as localized_name,
-                    sln.`slug`                  as localized_slug 
+                    s.`id`                              as id,
+                    s.`name`                            as name,
+                    s.`poster_path`                     as poster_path, 
+                    s.`tmdb_id`                         as tmdbId,
+                    s.`slug`                            as slug,
+                    s.status                            as status,
+                    (s.first_air_date <= NOW())         as released,
+                    us.`user_id`                        as user_id, 
+                    us.`progress`                       as progress,
+                    us.`favorite`                       as favorite, 
+                    sln.`name`                          as localized_name,
+                    sln.`slug`                          as localized_slug,
+                   (SELECT COUNT(*)
+                          FROM `user_list_series` uls
+                              INNER JOIN `user_list` ul ON ul.`user_id`=$userId AND uls.`user_list_id`=ul.`id`
+                          WHERE uls.`series_id`=s.`id`) as is_series_in_list 
                 FROM `user_series` us 
                     INNER JOIN `series` s ON s.`id` = us.`series_id` 
                     LEFT JOIN `series_localized_name` sln ON s.`id` = sln.`series_id` AND sln.locale='$locale' 
@@ -109,7 +113,11 @@ class UserSeriesRepository extends ServiceEntityRepository
                        wp.`provider_name`                                as provider_name,
                        (SELECT COUNT(*)
                             FROM `user_episode` ue
-                            WHERE ue.`user_series_id`=us.id)             as number_of_episode
+                            WHERE ue.`user_series_id`=us.id)             as number_of_episode,
+                       (SELECT COUNT(*)
+                       		  FROM `user_list_series` uls
+                       		      INNER JOIN `user_list` ul ON ul.`user_id`=$userId AND uls.`user_list_id`=ul.`id`
+                       		  WHERE uls.`series_id`=s.`id`)              as is_series_in_list
                 FROM `series` s
                 INNER JOIN `user_series` us ON us.series_id=s.id AND us.`progress`=0
                 LEFT JOIN `series_localized_name` sln ON sln.`series_id`=s.id AND sln.`locale`='$locale'
@@ -282,7 +290,7 @@ class UserSeriesRepository extends ServiceEntityRepository
         $sql = "SELECT s.`id`                                         as id,
                     s.`name`                                       as name,
                     s.`poster_path`                                as poster_path, 
-                    s.`tmdb_id`                                    as tmdbId,
+                    s.`tmdb_id`                                    as tmdb_id,
                     s.`slug`                                       as slug,
                     s.`status`                                     as status,
                     (s.first_air_date <= NOW())                    as released,
@@ -290,17 +298,21 @@ class UserSeriesRepository extends ServiceEntityRepository
                     us.`added_at`                                  as added_at,
                     us.`progress`                                  as progress,
                     us.`favorite`                                  as favorite, 
-                    sln.`name`                                     as localized_name,
-                    sln.`slug`                                     as localized_slug,
+                    sln.`name`                                     as sln_name,
+                    sln.`slug`                                     as sln_slug,
                     nue.air_date                                   as next_episode_air_date,
                     nue.season_number                              as next_episode_season_number,
                     nue.episode_number                             as next_episode_episode_number,
                     IF(sbd.id IS NULL, nue.`air_date`, sbd.`date`) as final_air_date,
                     (SELECT COUNT(*)
-                    FROM user_episode ue2
-                    WHERE ue2.user_series_id = us.id
-                      AND ue2.season_number > 0
-                      AND ue2.`watch_at` IS NULL)                  as remainingEpisodes
+                        FROM user_episode ue2
+                        WHERE ue2.user_series_id = us.id
+                          AND ue2.season_number > 0
+                          AND ue2.`watch_at` IS NULL)                  as remainingEpisodes,
+                    (SELECT COUNT(*)
+                        FROM `user_list_series` uls
+                            INNER JOIN `user_list` ul ON ul.`user_id`=$userId AND uls.`user_list_id`=ul.`id`
+                        WHERE uls.`series_id`=s.`id`)             as is_series_in_list
                 FROM `user_series` us
                     $lastEpisodeInnerJoin
                     INNER JOIN `user_episode` nue ON nue.`id`=us.`next_user_episode_id` AND nue.`air_date` IS NOT NULL

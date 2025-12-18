@@ -1,3 +1,3 @@
 {% for s in historyEpisode %}
-    {{ include('_blocks/series/_episode_card.html.twig', { series: s, dataTitle: s.localized_name ?? s.name }) }}
+    {{ include('_blocks/series/_episode_card.html.twig', { series: s, dataTitle: s.localized_name ?? s.name, home: 1}) }}
 {% endfor %}

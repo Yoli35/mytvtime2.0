@@ -25,6 +25,7 @@ import {Season} from 'Season';
 import {SeriesStatistics} from "SeriesStatistics";
 import {Show} from 'Show';
 import {ToolTips} from 'ToolTips';
+import {UserList} from "UserList";
 import {VideoList} from "VideoList";
 import {Video} from 'Video';
 
@@ -68,7 +69,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // Flash messages
-    new FlashMessage();
+    const flashMessage = new FlashMessage();
 
     // Tooltips
     const toolTips = new ToolTips();
@@ -101,7 +102,7 @@ window.addEventListener("DOMContentLoaded", () => {
         highlightSeries.init(globs);
         seriesStatistics.init();
 
-
+        new UserList(flashMessage);
     }
 
 // Profile page

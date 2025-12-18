@@ -1,7 +1,7 @@
 <div class="series-in-list{% if isSeriesInList %} added{% endif %}" data-title="{{ 'This series has been added to one or more lists'|trans }}">{{ ux_icon('mdi:bookmark') }}</div>
 <div class="series-tools-container" data-id="{{ seriesId }}" data-name="{{ seriesName|e('html_attr') }}">
     <div class="series-tools">{{ ux_icon('mdi:ellipsis-vertical') }}</div>
-    <ul class="series-tools-menu">
+    <ul class="series-tools-menu{% if home is defined %} up{% endif %}">
         <li class="bookmark">{{ ux_icon('mdi:bookmark') }}<span>{{ 'Add to a list'|trans }}</span></li>
         <li class="favorite">{{ ux_icon('mdi:favorite') }}<span>{{ 'Mark as favorite'|trans }}</span></li>
         <li class="share">{{ ux_icon('mdi:share-outline') }}<span>{{ 'Share'|trans }}</span></li>

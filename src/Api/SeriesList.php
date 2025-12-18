@@ -5,6 +5,7 @@ namespace App\Api;
 use App\Repository\SeriesRepository;
 use App\Repository\UserListRepository;
 use Closure;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
 use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\HttpFoundation\Request;
@@ -99,6 +100,7 @@ readonly class SeriesList
         } else {
             $userList->addSeriesList($series);
         }
+        $userList->setUpdatedAt(new DateTimeImmutable());
         $this->userListRepository->save($userList, true);
 
         return ($this->json)([

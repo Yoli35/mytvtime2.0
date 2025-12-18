@@ -22,9 +22,12 @@
                 </div>
             </div>
         </div>
-        <div class="name to-start"{% if series.sln_name %} data-title="{{ series.sln_name }}"{% endif %}>
-            {{ series.name }}
-            {% if series.sln_name %}<span>{{ series.sln_name }}</span>{% endif %}
+        <div class="infos">
+            <div class="name to-start"{% if series.sln_name %} data-title="{{ series.sln_name }}"{% endif %}>
+                {{ series.name }}
+                {% if series.sln_name %}<span>{{ series.sln_name }}</span>{% endif %}
+            </div>
+            {{ include('_blocks/series/_tools.html.twig', {seriesId: series.tmdb_id, seriesName: series.sln_name, isSeriesInList: series.is_series_in_list}) }}
         </div>
     </a>
 </div>
