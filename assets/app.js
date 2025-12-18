@@ -102,7 +102,7 @@ window.addEventListener("DOMContentLoaded", () => {
         highlightSeries.init(globs);
         seriesStatistics.init();
 
-        new UserList(flashMessage);
+        new UserList(flashMessage, toolTips);
     }
 
 // Profile page
@@ -186,6 +186,11 @@ window.addEventListener("DOMContentLoaded", () => {
             const season = new Season();
             season.init(menu);
         }
+    }
+
+    const userLists = document.querySelector(".user-lists");
+    if (userLists) {
+        new UserList(flashMessage, toolTips);
     }
 
     const userSeriesShow = document.querySelector(".user-series-show");

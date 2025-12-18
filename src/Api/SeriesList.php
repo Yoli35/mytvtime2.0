@@ -12,23 +12,25 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/api/series/list', name: 'api_series_list_')]
 readonly class SeriesList
 {
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure            $json,
+        private Closure             $json,
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure            $getUser,
-        private SeriesRepository   $seriesRepository,
-        private UserListRepository $userListRepository,
+        private Closure             $getUser,
+        private TranslatorInterface $translator,
+        private SeriesRepository    $seriesRepository,
+        private UserListRepository  $userListRepository,
     )
     {
     }
 
     #[Route('/get/lists', name: 'get_lists', methods: ['POST'])]
-    public function get(Request $request): Response
+    public function list(Request $request): Response
     {
         $inputBag = $request->getPayload();
         $user = ($this->getUser)();
@@ -73,6 +75,57 @@ readonly class SeriesList
         ]);
     }
 
+    #[Route('/get/list', name: 'get_list', methods: ['POST'])]
+    public function get(Request $request): Response
+    {
+        $user = ($this->getUser)();
+        $locale = $request->getLocale();
+        if (!$user) {
+            return ($this->json)([
+                'ok' => true,
+                'get_list' => false,
+                'error' => 'Unauthorized',
+            ]);
+        }
+        $inputBag = $request->getPayload();
+        $userListId = $inputBag->getInt('userListId');
+        if (!$userListId) {
+            return ($this->json)([
+                'ok' => true,
+                'get_list' => false,
+                'error' => 'Invalid parameters',
+            ]);
+        }
+        $listContent = array_map(function ($s) use ($locale) {
+            $s['poster_path'] = $s['poster_path'] ? '/series/posters' . $s['poster_path'] : null;
+            $s['sln_name'] = $s['localized_name'] ?: $s['name'];
+            $s['sln_slug'] = $s['localized_slug'] ?: $s['slug'];
+            $s['url'] = '/' . $locale . '/series/show/' . $s['id'] . '-' . $s['sln_slug'];
+            $s['is_series_in_list'] = true;
+            return $s;
+        }, $this->userListRepository->getListContent($user, $userListId, $user->getPreferredLanguage() ?? $request->getLocale()));
+
+        $count = count($listContent);
+
+        return ($this->json)([
+            'ok' => true,
+            'get_list' => true,
+            'infos' => $this->userListRepository->find($userListId) ? [
+                'id' => $this->userListRepository->find($userListId)->getId(),
+                'name' => $this->userListRepository->find($userListId)->getName(),
+                'description' => $this->userListRepository->find($userListId)->getDescription(),
+                'count' => $count .' ' . $this->translator->trans($count > 1 ? 'seriess' : 'series'),
+            ] : null,
+            'list' => $listContent,
+            'translations' => [
+                'bookmarked' => $this->translator->trans('This series has been added to one or more lists'),
+                'li.add' => $this->translator->trans('Add to a list'),
+                'li.fav' => $this->translator->trans('Mark as favorite'),
+                'li.share' => $this->translator->trans('Share'),
+            ]
+        ]);
+    }
+
     #[Route('/create', name: 'create', methods: ['POST'])]
     public function create(Request $request): Response
     {
@@ -87,8 +140,8 @@ readonly class SeriesList
         }
         $name = $inputBag->get('name', '');
         $description = $inputBag->get('description', '');
-        $public = $inputBag->getBoolean('public', false);
-        $add = $inputBag->getBoolean('add', false);
+        $public = $inputBag->getBoolean('public');
+        $add = $inputBag->getBoolean('add');
         $tmdbId = $inputBag->getInt('tmdbId', -1);
         if ($add && $tmdbId === -1) {
             return ($this->json)([

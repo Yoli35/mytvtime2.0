@@ -235,7 +235,6 @@ Agregate credits: Crédits agrégés
 End date: Date de fin
 Start date: Date de début
 
-
 # Add a series
 Search for a series…: Rechercher une série…
 Addition of older series: Ajout de séries plus anciennes
@@ -258,6 +257,9 @@ Name of the list: Nom de la liste
 Public list: Liste publique
 Share: Partager
 This series has been added to one or more lists: Cette série a été ajoutée à une ou plusieurs listes
+
+# User lists
+My lists: Mes listes
 
 # Series Show
 '%cast% has been added to the season cast': '%cast% a été ajoutés à la distribution de la saison'

@@ -27,7 +27,7 @@
                 {{ series.name }}
                 {% if series.sln_name %}<span>{{ series.sln_name }}</span>{% endif %}
             </div>
-            {{ include('_blocks/series/_tools.html.twig', {seriesId: series.tmdb_id, seriesName: series.sln_name, isSeriesInList: series.is_series_in_list}) }}
+            {{ include('_blocks/list/_tools.html.twig', {seriesId: series.tmdb_id, seriesName: series.sln_name, isSeriesInList: series.is_series_in_list}) }}
         </div>
     </a>
 </div>

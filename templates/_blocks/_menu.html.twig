@@ -328,6 +328,7 @@
             <div class="menu user">
                 {% if app.user %}
                     <a href="{{ path('app_user_profile') }}">{{ 'My account'|trans }}</a>
+                    <a href="{{ path('app_user_list_index') }}">{{ 'My lists'|trans }}</a>
                     <a href="{{ path('app_user_providers') }}">{{ 'My providers'|trans }}</a>
                     <a href="{{ path('app_user_networks') }}">{{ 'My networks'|trans }}</a>
                     <a href="{{ path('app_logout') }}">{{ 'Disconnect'|trans }}</a>

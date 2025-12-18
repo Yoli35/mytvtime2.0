@@ -1,5 +1,6 @@
 import {FlashMessage} from "FlashMessage";
 import {UserList} from "UserList";
+import {ToolTips} from "ToolTips";
 
 /**
  *  @typedef Globs
@@ -13,6 +14,7 @@ export class Index {
         this.init = this.init.bind(this);
 
         this.flashMessage = new FlashMessage();
+        this.toolTips = new ToolTips();
         this.lang = document.querySelector('html').getAttribute('lang');
         this.translations = {
             'fr': {'more': 'et %d de plus', 'update': 'Mise à jour', 'success': 'Succès', 'check_count': 'Vérifications: %d / %d'},
@@ -34,7 +36,7 @@ export class Index {
             seriesSearchInput.addEventListener("keydown", this.menu.searchMenuNavigate);
         }
 
-        new UserList(this.flashMessage);
+        new UserList(this.flashMessage, this.toolTips);
 
         fetch(this.app_series_tmdb_check, {
             method: "POST",

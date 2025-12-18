@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'My lists'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/user_list.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/card.scss') }}">
+{% endblock %}
+{% block body %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid">
+        <div class="user-lists">
+            <h1>{{ 'My lists'|trans }}</h1>
+            <div class="lists-container">
+                <div class="lists-list">
+                    {% for list in lists %}
+                        <div class="list-item{% if loop.index==1 %} active{% endif %}" data-id="{{ list.id }}">{{ list.name }}</div>
+                    {% else %}
+                        <p>{{ 'No lists found.'|trans }}</p>
+                    {% endfor %}
+                </div>
+                <div class="list-container">
+                    {% if lists|length %}
+                        {% set list = lists|first %}
+                        {% set count = firstListContent|length %}
+                        <div class="list-card">
+                            <div class="name">{{ list.name }}</div>
+                            <div class="count">{{ count }} {{ (count > 1 ? 'seriess' : 'series')|trans }}</div>
+                            <div class="description">{{ list.description }}</div>
+                        </div>
+                        <div class="list-content">
+                            {% for series in firstListContent %}
+                                {#                            <a href="{{ path('app_series_show', {'id': series.id, 'slug': series.name|slug}) }}" class="card-link"> #}
+                                {{ include('_blocks/series/_card.html.twig', {series: series}) }}
+                                {#                            </a> #}
+                            {% else %}
+                                <p>{{ 'No series found in this list.'|trans }}</p>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p>{{ 'No lists found.'|trans }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include('_blocks/_footer.html.twig') %}
+    <div id="svgs" style="display: none">
+        <div id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
+        <div id="svg-bookmark">{{ ux_icon('mdi:bookmark') }}</div>
+        <div id="svg-bookmark-outline">{{ ux_icon('mdi:bookmark-outline') }}</div>
+        <div id="svg-ellipsis">{{ ux_icon('mdi:ellipsis-vertical') }}</div>
+        <div id="svg-favorite">{{ ux_icon('mdi:favorite') }}</div>
+        <div id="svg-share-outline">{{ ux_icon('mdi:share-outline') }}</div>
+    </div>
+{% endblock %}

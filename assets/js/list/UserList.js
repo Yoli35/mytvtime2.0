@@ -1,6 +1,7 @@
 export class UserList {
-    constructor(flashMessage) {
+    constructor(flashMessage, toolTips) {
         this.flashMessage = flashMessage;
+        this.toolTips = toolTips;
         this.lang = document.querySelector('html').getAttribute('lang');
 
         this.init = this.init.bind(this);
@@ -8,6 +9,7 @@ export class UserList {
         this.bookMarkToggle = this.bookMarkToggle.bind(this);
         this.closeSeriesListMenu = this.closeSeriesListMenu.bind(this);
 
+        this.svgs = document.querySelector("#svgs");
         this.svgBookmark = document.querySelector("#svgs #svg-bookmark");
         this.svgBookmarkOutline = document.querySelector("#svgs #svg-bookmark-outline");
 
@@ -25,6 +27,7 @@ export class UserList {
 
         this.initCreateListDialog();
         this.initSeriesToolsContainers();
+        this.initUserListPage();
 
         document.addEventListener("click", (e) => {
             if (this.seriesListsMenu.style.length && !this.seriesListsMenu.contains(e.target)) {
@@ -38,6 +41,130 @@ export class UserList {
                 toolsMenu.classList.remove("visible");
             }
         });
+    }
+
+    initUserListPage() {
+        const userLists = document.querySelector(".user-lists");
+        if (!userLists) return;
+
+        const listItems = document.querySelector(".lists-list").querySelectorAll(".list-item");
+        listItems.forEach(item => {
+            item.addEventListener("click", e => {
+                e.preventDefault()
+                if (item.classList.contains("active")) {
+                    return;
+                }
+                const activeItem = document.querySelector(".lists-list .list-item.active");
+                activeItem.classList.remove("active");
+                item.classList.add("active");
+
+                fetch("/api/series/list/get/list", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        userListId: item.getAttribute("data-id")
+                    }),
+                }).then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error("Network response was not ok. " + response.error);
+                }).then((data) => {
+                    console.log(data);
+                    const contentDiv = document.querySelector(".list-container .list-content");
+                    const cards = contentDiv.querySelectorAll(".card");
+                    cards.forEach(card => {
+                        card.remove();
+                    });
+                    const infos = data['infos'];
+                    const list = data['list'];
+                    const listCardDiv = document.querySelector(".list-card");
+                    const nameDiv = listCardDiv.querySelector(".name");
+                    nameDiv.firstChild.remove();
+                    nameDiv.appendChild(document.createTextNode(infos['name']));
+                    const countDiv = listCardDiv.querySelector(".count");
+                    countDiv.firstChild.remove();
+                    countDiv.appendChild(document.createTextNode(infos['count']));
+                    const descriptionDiv = listCardDiv.querySelector(".description");
+                    descriptionDiv.firstChild.remove();
+                    descriptionDiv.appendChild(document.createTextNode(infos['description']));
+                    const translations = data['translations'];
+                    const svgBookmark = this.svgs.querySelector("#svg-bookmark").querySelector("svg");
+                    const svgEllipsis = this.svgs.querySelector("#svg-ellipsis").querySelector("svg");
+                    list.forEach(item => {
+                        const cardDiv = document.createElement("div");
+                        cardDiv.classList.add("card");
+                        const a = document.createElement("a");
+                        a.href = item['url'];
+                        const posterDiv = document.createElement("div");
+                        posterDiv.classList.add("poster");
+                        const img = document.createElement("img");
+                        img.src = item['poster_path'];
+                        img.alt = item['sln_name'];
+                        posterDiv.appendChild(img);
+                        const infosDiv = document.createElement("div");
+                        infosDiv.classList.add("infos");
+                        const nameDiv = document.createElement("div");
+                        nameDiv.classList.add("name");
+                        const nameText = document.createTextNode(item['sln_name']);
+                        nameDiv.appendChild(nameText);
+                        const seriesInListDiv = document.createElement("div");
+                        seriesInListDiv.classList.add("series-in-list");
+                        seriesInListDiv.classList.add("added");
+                        seriesInListDiv.setAttribute("data-title", translations['bookmarked']);
+                        const bookmarkSVG = svgBookmark.cloneNode(true);
+                        seriesInListDiv.appendChild(bookmarkSVG);
+                        const seriesToolsContainerDiv = document.createElement("div");
+                        seriesToolsContainerDiv.classList.add("series-tools-container");
+                        seriesToolsContainerDiv.setAttribute("data-id", item['tmdb_id'].toString());
+                        const seriesToolsDiv = document.createElement("div");
+                        seriesToolsDiv.classList.add("series-tools");
+                        const seriesToolsSVG = svgEllipsis.cloneNode(true);
+                        seriesToolsDiv.appendChild(seriesToolsSVG);
+                        const ul = this.createLu("series-tools-menu");
+                        ul.appendChild(this.createLi("bookmark", "#svg-bookmark", translations['li.add']));
+                        ul.appendChild(this.createLi("favorite", "#svg-favorite", translations['li.fav']));
+                        ul.appendChild(this.createLi("share", "#svg-share-outline", translations['li.share']));
+                        seriesToolsContainerDiv.appendChild(seriesToolsDiv);
+                        seriesToolsContainerDiv.appendChild(ul);
+                        infosDiv.appendChild(nameDiv);
+                        infosDiv.appendChild(seriesInListDiv);
+                        infosDiv.appendChild(seriesToolsContainerDiv);
+                        a.appendChild(posterDiv);
+                        a.appendChild(infosDiv);
+                        cardDiv.appendChild(a);
+                        contentDiv.appendChild(cardDiv);
+                    });
+                    this.initSeriesToolsContainers();
+                    this.toolTips.init(contentDiv);
+                }).catch((error) => {
+                    this.flashMessage.add("error", error);
+                });
+            });
+        });
+    }
+
+    createLu(clasName) {
+        const ul = document.createElement("ul");
+        ul.classList.add(clasName);
+
+        return ul;
+    }
+
+    createLi(className, svgId, text) {
+        const li = document.createElement("li");
+        li.classList.add(className);
+        const svg = this.svgs.querySelector(svgId).cloneNode(true);
+        svg.removeAttribute("id");
+        const span = document.createElement("span");
+        const textNode = document.createTextNode(text);
+        span.appendChild(textNode);
+        li.appendChild(svg);
+        li.appendChild(span);
+
+        return li;
     }
 
     initCreateListDialog() {
