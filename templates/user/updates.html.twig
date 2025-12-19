@@ -18,7 +18,116 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
-                <h2>53ᵉ mise à jour : 12/12/2025</h2>
+                <h2>55ᵉ mise à jour : 19/12/2025</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bookmark') }}→ Add initBookmarkBadges to handle bookmark badge clicks</div>
+                        <div class="details">Introduces the initBookmarkBadges method to prevent default actions and event propagation when clicking on elements with the 'series-in-list added' class. This helps avoid unintended behavior when interacting with bookmark badges in the user list.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update poster layout and styling in series page</div>
+                        <div class="details">Added a new .poster-container class for absolute positioning of the poster in the series page. Adjusted .poster hover behavior to use viewport height and improved z-index for layering. Updated the Twig template to wrap the poster in the new container for better layout control.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:images') }}→ Refactor diaporama modal and update styles</div>
+                        <div class="details">Reworked the diaporama modal to use an existing DOM element instead of creating/removing it dynamically, and removed fullscreen logic. Updated SCSS for .diaporama and .back-diapo to improve appearance and positioning. Added diaporama container to base.html.twig for consistent structure.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:list-box') }}→ Add user lists page with API and UI integration</div>
+                        <div class="details">Introduces a user lists page accessible from the menu, with backend API endpoints and repository methods for fetching user lists and their contents. Adds frontend logic and styles for displaying and switching between lists, updates templates to use new blocks, and provides translations for user lists. Refactors series tools templates for reuse in list context.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:list-box') }}→ Fix list creation and update UI for multiple containers</div>
+                        <div class="details">Corrects flash message spacing and ensures that UI updates (adding or removing 'added' class) are applied to all matching '.series-tools-container' elements, not just the first. Also fixes assignment of data attributes for new lists.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:list-box') }}→ Add user list creation with series addition support</div>
+                        <div class="details">Implemented frontend and backend logic to allow users to create new lists and optionally add a series during creation. Updated the UserList entity to require initialization parameters and set timestamps. Adjusted the user list dialog in the template and JavaScript to handle new fields and API integration.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:list-box') }}→ Add series list status and tools to series cards</div>
+                        <div class="details">Introduces the 'is_series_in_list' property to series and episode queries, allowing UI to indicate if a series is in any user list. Updates series and episode card templates to display new tools (bookmark, favorite, share) and visual indicators, and adjusts styles for improved layout. Also refactors some naming for consistency and adds SVG icons to relevant pages for UI actions.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve styling for season filming location section</div>
+                        <div class="details">Increased border-radius and added padding and gap to enhance the appearance of the season filming location elements. These changes improve visual consistency and spacing within the section.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:list-box') }}→ Refactor and enhance user series list management</div>
+                        <div class="details">Extracted user list logic to a new UserList.js module and integrated it into the series index. Updated backend API endpoints for fetching and toggling series in user lists, and improved repository methods. Enhanced UI to indicate when a series is in a user list, updated styles, and improved translations for list-related actions.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:list-box') }}→ Add user list dialog for series and update UI integration</div>
+                        <div class="details">Introduces a new user list dialog for creating and managing user lists, including relevant styles and markup. Updates JavaScript to handle dialog interactions and passes series name data for context. Adjusts templates to support the new dialog and ensure proper data flow, and refines SCSS for dialog consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:list-box') }}→ Improve series list menu UI and API data</div>
+                        <div class="details">Refactored the JavaScript to display the correct bookmark icon for each user list based on series association, and adjusted menu positioning for better UX. Updated the API to return a list of seriesListIds for easier client-side checks. Simplified and unified styles for series tools and lists menus in SCSS.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Refactor request parameter access and improve date handling</div>
+                        <div class="details">Replaces deprecated Request::get() with Request::query->get() for query parameters throughout SeriesController. Updates user property access to avoid nullsafe operator where not needed. Improves convertDateTime to handle invalid dates and timezones gracefully, returning null and providing error responses when necessary.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:list-box') }}→ Add user series list API and bookmark UI integration</div>
+                        <div class="details">Introduces a new SeriesList API endpoint to fetch user and series lists, and updates the frontend to display and manage user lists when bookmarking a series. Also adds SVG icons for bookmarks and adjusts the submenu list markup for improved interaction.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:list-box') }}→ Add user lists feature and series tools menu</div>
+                        <div class="details">Introduces the UserList entity and repository, enabling users to create and manage custom lists of series. Updates Series and User entities to support relationships with UserList. Adds a tools menu to series cards for actions like adding to lists, marking as favorite, and sharing, with corresponding UI and style changes. Also includes new translations for these features.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:search') }}→ Refactor movie and series search forms and styles</div>
+                        <div class="details">Unified and simplified the handling of search forms in MovieController and SeriesController by relying on Symfony form handling. Improved MovieSearchType with autofocus and placeholder. Updated movie and series search templates to streamline form layout and result display. Enhanced responsive styles for search pages in SCSS files.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Show location description in filming locations block</div>
+                        <div class="details">Added display of the location description alongside the location name in the season filming locations template. Simplified the markup by removing the 'infos' div wrapper.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:search') }}→ Refactor and enhance series search UI and backend</div>
+                        <div class="details">Extracted series search styles to a new SCSS file and improved form and result display for both simple and advanced search. Added a reusable Twig block for search result info and pagination. Updated SeriesController and SeriesRepository to support result counts and pagination, and improved form field attributes for better UX. Also updated translations and fixed minor UI/UX issues.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add season filming locations feature</div>
+                        <div class="details">Introduces backend API, frontend logic, and UI components to display filming locations for each episode in a season. Adds a new API endpoint, updates JavaScript to fetch and render locations, styles the new UI elements, and includes a Twig partial for displaying location data and images.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-css3') }}→ Enhance vote styles with blur and color adjustments</div>
+                        <div class="details">Added a backdrop blur effect to .user-vote and adjusted the background opacity for .dashed-vote to improve visual clarity and distinction between vote types.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}→ Hide tooltips when menu is open</div>
+                        <div class="details">Updated Menu and ToolTips components to hide tooltips when interacting with open menus. This prevents tooltips from displaying over open menu items, improving UI clarity.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve episode processing and status handling</div>
+                        <div class="details">Refactored episode processing to skip adjusting next episode for ended or canceled series. Enhanced output for seasons with no episodes and ensured proper line breaks. Also updated filtering in adjustNextEpisodeToWatch to require a valid season number (>0).</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update episode vote styles</div>
+                        <div class="details">Reverses the order of episode votes in the template to display them in the opposite direction. Updates the series.scss styles to use row-reverse flex direction and adjusts spacing, background colors, and margins for improved visual alignment and clarity.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add adjustNextEpisodeToWatch to update next episode logic</div>
+                        <div class="details">Introduced the adjustNextEpisodeToWatch method in both EpisodeAirDateCommand and SeriesController to ensure the next episode to watch is set for a user when missing. This includes sorting and filtering logic for user episodes and updates to relevant controller actions to invoke this method where appropriate.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Refactor episode div size logic into helper method</div>
+                        <div class="details">Moved the logic for retrieving and saving episode div size settings into a new private getEpisodeDivSize() method. Updated usage in the controller to call this helper, improving code reuse and maintainability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Add blurred background for movie collection page</div>
+                        <div class="details">Replaces the inline JavaScript background image with a new .blur-background div and associated SCSS. The background now uses a blurred poster image for improved visual effect and maintainability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-css3') }}→ Add animated copy badge to series name spans</div>
+                        <div class="details">Refactored the copy-to-clipboard feature by wrapping the copy SVG in a .copy-badge div, adding a spin animation on click, and updating styles for better positioning and visibility. The copy badge now appears on hover and animates when clicked, improving user feedback.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
+                <h2>54ᵉ mise à jour : 12/12/2025</h2>
                 <ul>
                     <li>
                         <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:tv') }}→ Add loader to empty schedule menu</div>
@@ -66,7 +175,7 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:filmstrip-box') }}→ Improve movie page responsiveness and image handling</div>
-                        <div class="details">Updated movie.scss to enhance responsive design, including new portrait orientation styles and improved scaling for various breakpoints. Modified show.html.twig to use a <picture> element for the movie backdrop, displaying the poster image in portrait orientation and providing better fallbacks when images are missing.</div>
+                        <div class="details">Updated movie.scss to enhance responsive design, including new portrait orientation styles and improved scaling for various breakpoints. Modified show.html.twig to use a <picture></picture> element for the movie backdrop, displaying the poster image in portrait orientation and providing better fallbacks when images are missing.</div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:language-css3') }}→ Fix flash message vanishing animation and styles</div>
