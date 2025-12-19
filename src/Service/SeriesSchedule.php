@@ -21,6 +21,7 @@ readonly class SeriesSchedule
     {
         // Inject dependencies if needed
     }
+
     public function getSchedule(User $user, string $start, string $end, string $locale = 'fr'): array
     {
         $intervalArr = ["start" => $start, "end" => $end];
@@ -68,7 +69,8 @@ readonly class SeriesSchedule
             if (!key_exists($index, $seriesArr)) {
                 $seriesArr[$index] = [];
             }
-            if (!$this->seriesInArray($seriesArr[$index], $item)) {
+            $seriesSeasonIndex = $item['id'] . '-' . $item['seasonNumber'];
+            if (!$this->seriesInArray($seriesArr[$index], $item, $seriesSeasonIndex)) {
                 $item['episodes'] = [$item['episodeNumber']];
                 $item['episodeIds'] = [$item['episodeId']];
                 if ($item['posterPath'] === null) {
@@ -84,12 +86,12 @@ readonly class SeriesSchedule
                     }
                 }
                 $item['episodesWatched'] = $item['watchAt'] === null ? 0 : 1;
-                $seriesArr[$index][$item['id']] = $item;
+                $seriesArr[$index][$seriesSeasonIndex] = $item;
             } else {
                 if (!$this->episodeInArray($seriesArr[$index], $item)) {
-                    $seriesArr[$index][$item['id']]['episodeIds'][] = $item['episodeId'];
-                    $seriesArr[$index][$item['id']]['episodes'][] = $item['episodeNumber'];
-                    $seriesArr[$index][$item['id']]['episodesWatched'] += $item['watchAt'] === null ? 0 : 1;
+                    $seriesArr[$index][$seriesSeasonIndex]['episodeIds'][] = $item['episodeId'];
+                    $seriesArr[$index][$seriesSeasonIndex]['episodes'][] = $item['episodeNumber'];
+                    $seriesArr[$index][$seriesSeasonIndex]['episodesWatched'] += $item['watchAt'] === null ? 0 : 1;
                 }
             }
         }
@@ -211,9 +213,18 @@ readonly class SeriesSchedule
         return $intervalArr;
     }
 
-    private function seriesInArray($seriesArr, $item): bool
+    private function seriesInArray(array $arr, array $item, string $idx): bool
     {
-        return key_exists($item['id'], $seriesArr);
+//        return key_exists($item['id'], $seriesArr);
+        $id = $item['id'];
+        $sn = $item['seasonNumber'];
+        if (!key_exists($idx, $arr)) {
+            return false;
+        }
+        $itemAlreadyInArray = array_find($arr, function ($i) use ($id, $sn) {
+            return $i['id'] === $id && $i['seasonNumber'] === $sn;
+        });
+        return $itemAlreadyInArray !== null;
     }
 
     private function episodeInArray($arr, $item): bool

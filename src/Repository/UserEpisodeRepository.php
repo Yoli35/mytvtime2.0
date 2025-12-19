@@ -440,7 +440,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
               WHERE us.user_id = $userId
                      AND IF(sbd.id, DATE(sbd.date) >= '$start', ue.air_date >= '$start')
                      AND IF(sbd.id, DATE(sbd.date) <= '$end',   ue.air_date <= '$end')
-              ORDER BY displayName ";
+              ORDER BY displayName, seasonNumber, episodeNumber ";
         //       (WHERE ...) AND ue.season_number > 0
 
         return $this->getAll($sql);
