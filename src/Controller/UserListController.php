@@ -23,7 +23,6 @@ final class UserListController extends AbstractController
     public function index(#[CurrentUser] User $user, Request $request): Response
     {
         $userLists = $this->userListRepository->getUserLists($user);
-        dump($userLists);
         $firstListContent = array_map(function ($s) {
             $s['poster_path'] = $s['poster_path'] ? '/series/posters' . $s['poster_path'] : null;
             $s['sln_name'] = $s['localized_name'] ?: $s['name'];
@@ -31,7 +30,6 @@ final class UserListController extends AbstractController
             $s['is_series_in_list'] = true;
             return $s;
         }, $this->userListRepository->getListContent($user, $userLists[0]['id'], $user->getPreferredLanguage() ?? $request->getLocale()));
-        dump($firstListContent);
         return $this->render('user_list/index.html.twig', [
             'lists' => $userLists,
             'firstListContent' => $firstListContent,

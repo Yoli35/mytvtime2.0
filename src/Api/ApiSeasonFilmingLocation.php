@@ -52,10 +52,6 @@ readonly class ApiSeasonFilmingLocation
             ]);
         }
 
-        dump([
-            'flArr' => array_values($flArr),
-        ]);
-
         return ($this->json)([
             'ok' => true,
             'results' => array_values($flArr),

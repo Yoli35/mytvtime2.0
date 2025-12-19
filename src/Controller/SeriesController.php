@@ -951,7 +951,6 @@ class SeriesController extends AbstractController
 
         $season['deepl'] = null;//$this->seasonLocalizedOverview($series, $season, $seasonNumber, $request);
         $season['episodes'] = $this->seasonEpisodes($season, $userSeries);
-        dump($season['episodes']);
         $season['air_date'] = $this->adjustSeasonAirDate($season, 'date');
         $season['air_date_string'] = $this->adjustSeasonAirDate($season, 'string');
 
