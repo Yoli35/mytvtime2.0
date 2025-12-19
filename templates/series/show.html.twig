@@ -44,6 +44,7 @@
                         <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
                     </div>
                 {% endif %}
+                <div class="poster-container">
                 <div class="poster">
                     {% if series.posterPath %}
                         <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
@@ -60,6 +61,7 @@
                     {% if app.environment == 'dev' %}
                         <div class="debug">{{ series.id }} / {{ userSeries.id }} / {{ tv.id }}</div>
                     {% endif %}
+                </div>
                 </div>
                 <div class="infos">
                     <div class="infos-content">

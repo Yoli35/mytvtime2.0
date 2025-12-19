@@ -711,6 +711,12 @@ h2 {
             }
         }
 
+        .poster-container {
+            left: 2rem;
+            position: absolute;
+            top: 2rem;
+        }
+
         .poster {
             align-items: center;
             aspect-ratio: 2 / 3;
@@ -724,9 +730,10 @@ h2 {
             position: relative;
             transition: height 0.3s ease-in-out;
             width: auto;
+            z-index: 2;
 
             &:hover {
-                height: 90%;
+                height: 90vh;
 
                 .go-to-map {
                     opacity: 1;
