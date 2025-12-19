@@ -27,6 +27,7 @@ export class UserList {
 
         this.initCreateListDialog();
         this.initSeriesToolsContainers();
+        this.initBookmarkBadges();
         this.initUserListPage();
 
         document.addEventListener("click", (e) => {
@@ -138,6 +139,7 @@ export class UserList {
                         contentDiv.appendChild(cardDiv);
                     });
                     this.initSeriesToolsContainers();
+                    this.initBookmarkBadges();
                     this.toolTips.init(contentDiv);
                 }).catch((error) => {
                     this.flashMessage.add("error", error);
@@ -266,6 +268,16 @@ export class UserList {
             });
 
             bookmark.addEventListener("click", this.bookmarkClick);
+        });
+    }
+
+    initBookmarkBadges() {
+        const bookmarkBadgeDivs = document.querySelectorAll(".series-in-list.added");
+        bookmarkBadgeDivs.forEach(div => {
+            div.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
         });
     }
 
