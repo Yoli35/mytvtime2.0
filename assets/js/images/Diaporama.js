@@ -50,8 +50,7 @@ export class Diaporama {
         gThis.diaporamaSrc = srcArray;
         gThis.diaporamaSrcset = srcsetArray;
 
-        const diaporamaDiv = document.createElement("div");
-        diaporamaDiv.classList.add("diaporama");
+        const diaporamaDiv = document.querySelector(".diaporama");
 
         const backDiapo = document.createElement("div");
         backDiapo.classList.add("back-diapo");
@@ -120,22 +119,14 @@ export class Diaporama {
         if (count > 1) imageDiv.appendChild(nextDiv);
 
         diaporamaDiv.appendChild(backDiapo);
-        diaporamaDiv.addEventListener("click", gThis.fullScreen);
-        document.querySelector("body").appendChild(diaporamaDiv);
+        document.body.classList.add("frozen");
+        diaporamaDiv.classList.add("show");
+        // diaporamaDiv.style.top =  window.scrollY + "px;";
+        diaporamaDiv.setAttribute("style", "top: " + window.scrollY + "px;")
 
-        diaporamaDiv.click();
-    }
-
-    fullScreen(e) {
-        const diaporamaDiv = e.currentTarget;
-        const imgDiv = diaporamaDiv.querySelector("#diaporamaImg");
-
-        diaporamaDiv.requestFullscreen().then(() => {
-            e.preventDefault();
-            setTimeout(() => {
-                imgDiv.classList.add("fade");
-            }, 0);
-        });
+        setTimeout(() => {
+            imgDiv.classList.add("fade");
+        }, 0);
     }
 
     nextImage() {
@@ -160,7 +151,7 @@ export class Diaporama {
         gThis.thumbnailActivate(gThis.diaporamaIndex);
         const img = document.querySelector(".back-diapo").querySelector(".image").querySelector("img");
         img.setAttribute("src", gThis.diaporamaSrc[gThis.diaporamaIndex]);
-        if (gThis.diaporamaSrcset[gThis.diaporamaIndex]){
+        if (gThis.diaporamaSrcset[gThis.diaporamaIndex]) {
             img.setAttribute("srcset", gThis.diaporamaSrcset[gThis.diaporamaIndex]);
         } else {
             img.removeAttribute("srcset");
@@ -177,7 +168,7 @@ export class Diaporama {
         const selector = '.thumbnail[data-index="' + index + '"]'
         const thumbnail = document.querySelector(selector);
         thumbnail.classList.add("active");
-        thumbnail.scrollIntoView(false);
+        /*thumbnail.scrollIntoView(false);*/
     }
 
     closeDiaporama(e) {
@@ -186,16 +177,14 @@ export class Diaporama {
         const imgDiv = backDiapo.querySelector("img");
 
         document.removeEventListener("keydown", gThis.getKey);
-        document.body.style.overflow = 'unset';
+        document.body.classList.remove("frozen");
         setTimeout(() => {
             imgDiv.classList.remove("fade");
         }, 0);
         setTimeout(() => {
-            document.querySelector("body").removeChild(diaporamaDiv);
+            diaporamaDiv.classList.remove("show");
+            backDiapo.remove();
         }, 300);
-
-        if (document.fullscreenElement)
-            document.exitFullscreen();
     }
 
     getKey(e) {

@@ -32,9 +32,10 @@
 {% include "_blocks/list/_user_list.html.twig" %}
 {% include "_blocks/list/_tools_submenu_list.html.twig" %}
 <div class="global-tools{% if app.environment is same as 'dev' %} dev{% endif %}">
-    <div class="preview-toggler">{{ ux_icon('mdi:eye') }}</div>
     <div class="to-top">{{ ux_icon('mdi:arrow-up') }}</div>
+    <div class="preview-toggler">{{ ux_icon('mdi:eye') }}</div>
 </div>
+<div class="diaporama"></div>
 </body>
 </html>
 {% if app.user and route is not null %}
