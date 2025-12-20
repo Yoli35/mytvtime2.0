@@ -38,6 +38,7 @@ readonly class UserListService
                 'name' => $userList->getName(),
                 'description' => $userList->getDescription(),
                 'count' => $count . ' ' . $this->translator->trans($count > 1 ? 'seriess' : 'series'),
+                'total_results' => $count,
             ] : null,
             'userListContent' => $listContent,
             'count' => $count,

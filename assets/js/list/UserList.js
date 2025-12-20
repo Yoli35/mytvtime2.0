@@ -57,6 +57,7 @@ export class UserList {
     initUserListPage() {
         const userLists = document.querySelector(".user-lists");
         if (!userLists) return;
+        this.totalCount = document.querySelectorAll(".cards").length;
 
         const listItems = document.querySelector(".lists-list").querySelectorAll(".list-item");
         listItems.forEach(item => {
@@ -94,10 +95,11 @@ export class UserList {
                     const years = data['years'];
                     const listCardDiv = document.querySelector(".list-card");
                     const nameDiv = listCardDiv.querySelector(".name");
+                    this.totalCount = infos['total_results'];
                     nameDiv.firstChild.remove();
                     nameDiv.appendChild(document.createTextNode(infos['name']));
                     const countDiv = listCardDiv.querySelector(".count");
-                    countDiv.firstChild.remove();
+                    countDiv.lastChild.remove();
                     countDiv.appendChild(document.createTextNode(infos['count']));
                     const descriptionDiv = listCardDiv.querySelector(".description");
                     descriptionDiv.firstChild.remove();
@@ -161,14 +163,51 @@ export class UserList {
                 });
             });
         });
+
+        this.initSelect();
+    }
+
+    initSelect() {
+        const yearSelect = document.querySelector("#year-filter");
+        yearSelect.addEventListener("change", () => {
+            const cards = document.querySelectorAll(".list-content > div");
+            const newValue = yearSelect.value;
+            if (newValue === 'all') {
+                cards.forEach(card => {
+                    card.classList.remove("d-none")
+                });
+                const subCountSpan = document.querySelector("span.sub-count");
+                subCountSpan.innerText = "";
+                return;
+            }
+            const cardsToShow = document.querySelectorAll(".list-content > div[data-year=\"" + newValue + "\"");
+            cards.forEach(card => {
+                card.classList.add("d-none")
+            });
+            cardsToShow.forEach(card => {
+                card.classList.remove("d-none")
+            });
+            const subCountSpan = document.querySelector("span.sub-count");
+            const hiddenCount = document.querySelectorAll(".list-content > div.d-none").length;
+            if (hiddenCount) {
+                subCountSpan.innerText = (this.totalCount - hiddenCount) + " / ";
+            }
+            else {
+                subCountSpan.innerText = "";
+            }
+        });
     }
 
     resetSelect(years) {
         const yearFilter = document.querySelector("#year-filter");
         const options = yearFilter.querySelectorAll("option");
-        options.forEach(option => {option.remove();});
+        options.forEach(option => {
+            option.remove();
+        });
         this.addOption(yearFilter, 'all', this.translations['All'])
-        years.forEach(year => {this.addOption(yearFilter, year, year.toString())});
+        years.forEach(year => {
+            this.addOption(yearFilter, year, year.toString())
+        });
 
         const selectYear = yearFilter.closest(".select-year");
         if (years.length < 2) {
@@ -283,6 +322,7 @@ export class UserList {
 
     initSeriesToolsContainers() {
         const seriesToolsContainers = document.querySelectorAll('.series-tools-container');
+        this.totalCount = seriesToolsContainers.length;
 
         seriesToolsContainers.forEach((seriesToolsContainer) => {
             const seriesTools = seriesToolsContainer.querySelector('.series-tools');
@@ -301,6 +341,20 @@ export class UserList {
                             menu.classList.remove('visible');
                         }
                     });
+                    const mouseX = e.clientX;
+                    const mouseY = e.clientY;
+                    const rect = seriesToolsMenu.getBoundingClientRect();
+                    console.log(rect)
+                    const windowWidth = window.innerWidth;
+                    const windowHeight = window.innerHeight;
+                    let dx = 0, dy = 32;
+                    if (mouseX - rect.width < 16) {
+                        dx = (mouseX - rect.width - 16)
+                    }
+                    if (windowHeight - rect.height < 16) {
+                        dy = (windowHeight - rect.height - 16)
+                    }
+                    seriesToolsMenu.setAttribute("style", "right: " + dx + "px; top: " + dy + "px;");
                 }
             });
 
@@ -326,8 +380,8 @@ export class UserList {
         const seriesToolsMenu = seriesToolsContainer.querySelector('.series-tools-menu');
         const tmdbId = seriesToolsContainer.getAttribute("data-id");
         const seriesName = seriesToolsContainer.getAttribute("data-name");
-        const mouseX = e.clientX;
-        const mouseY = e.clientY;
+        const mouseX = e.clientX + 32;
+        const mouseY = e.clientY - 8;
 
         fetch("/api/series/list/get/lists", {
             method: "POST",
@@ -369,9 +423,11 @@ export class UserList {
             seriesToolsMenu.classList.remove('visible');
             seriesListsMenu.style = "display: block; left: " + mouseX + "px; top: " + mouseY + "px;";
             const rect = seriesListsMenu.getBoundingClientRect();
+            console.log(rect)
             const windowWidth = window.innerWidth;
-            const x = Math.min(Math.max(8, mouseX - rect.width / 2), windowWidth - 8);
-            const y = mouseY + window.scrollY;
+            const windowHeight = window.innerHeight;
+            const x = Math.min(Math.max(16, mouseX - rect.width), windowWidth - 16);
+            const y = Math.min(window.scrollY + mouseY, window.scrollY + windowHeight - rect.height - 16);
             seriesListsMenu.style = "display: block; left: " + x + "px; top: " + y + "px;";
         }).catch((error) => {
             this.flashMessage.add("error", error);

@@ -23,7 +23,7 @@
                     {% if infos %}
                         <div class="list-card">
                             <div class="name">{{ infos.name }}</div>
-                            <div class="count">{{ infos.count }}</div>
+                            <div class="count"><span class="sub-count"></span>{{ infos.count }}</div>
                             <div class="description">{{ infos.description }}</div>
                             <div class="select-year{% if years|length < 2 %} d-none{% endif %}">
                                 <label for="year-filter">{{ 'Years'|trans }}
@@ -35,26 +35,6 @@
                                     </select>
                                 </label>
                             </div>
-                            <script>
-                                const yearSelect = document.querySelector("#year-filter");
-                                yearSelect.addEventListener("change", () => {
-                                    const cards = document.querySelectorAll(".list-content > div");
-                                    const newValue = yearSelect.value;
-                                    if (newValue === 'all') {
-                                        cards.forEach(card => {
-                                            card.classList.remove("d-none")
-                                        });
-                                        return;
-                                    }
-                                    const cardsToShow = document.querySelectorAll(".list-content > div[data-year=\"" + newValue + "\"");
-                                    cards.forEach(card => {
-                                        card.classList.add("d-none")
-                                    });
-                                    cardsToShow.forEach(card => {
-                                        card.classList.remove("d-none")
-                                    });
-                                });
-                            </script>
                         </div>
                         <div class="list-content">
                             {% for series in seriesList %}
