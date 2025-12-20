@@ -79,7 +79,15 @@
                     right: 1rem;
                     top: 1rem;
 
+                    label select {
+                        border-radius: 5rem;
+                        font-size: 1.25rem;
+                        padding-block: .5rem;
+                        padding-inline: 1.5rem 2.5rem;
+                    }
+
                     label:has(select)::after {
+                        right: 1.25rem;
                         top: 32%
                     }
                 }
