@@ -4,10 +4,20 @@ export class UserList {
         this.toolTips = toolTips;
         this.lang = document.querySelector('html').getAttribute('lang');
 
+        const globs = document.querySelector("#globs");
+        if (globs) {
+            const globsJson = JSON.parse(globs.textContent);
+            this.translations = globsJson['translations'];
+        } else {
+            this.translations = [];
+        }
+
         this.init = this.init.bind(this);
         this.bookmarkClick = this.bookmarkClick.bind(this);
         this.bookMarkToggle = this.bookMarkToggle.bind(this);
         this.closeSeriesListMenu = this.closeSeriesListMenu.bind(this);
+        this.resetSelect = this.resetSelect.bind(this);
+        this.addOption = this.addOption.bind(this);
 
         this.svgs = document.querySelector("#svgs");
         this.svgBookmark = document.querySelector("#svgs #svg-bookmark");
@@ -75,12 +85,13 @@ export class UserList {
                 }).then((data) => {
                     console.log(data);
                     const contentDiv = document.querySelector(".list-container .list-content");
-                    const cards = contentDiv.querySelectorAll(".card");
+                    const cards = contentDiv.querySelectorAll("div[data-year]");
                     cards.forEach(card => {
                         card.remove();
                     });
                     const infos = data['infos'];
                     const list = data['list'];
+                    const years = data['years'];
                     const listCardDiv = document.querySelector(".list-card");
                     const nameDiv = listCardDiv.querySelector(".name");
                     nameDiv.firstChild.remove();
@@ -91,10 +102,13 @@ export class UserList {
                     const descriptionDiv = listCardDiv.querySelector(".description");
                     descriptionDiv.firstChild.remove();
                     descriptionDiv.appendChild(document.createTextNode(infos['description']));
+                    this.resetSelect(years);
                     const translations = data['translations'];
                     const svgBookmark = this.svgs.querySelector("#svg-bookmark").querySelector("svg");
                     const svgEllipsis = this.svgs.querySelector("#svg-ellipsis").querySelector("svg");
                     list.forEach(item => {
+                        const div = document.createElement("div");
+                        div.setAttribute("data-year", item['air_year']);
                         const cardDiv = document.createElement("div");
                         cardDiv.classList.add("card");
                         const a = document.createElement("a");
@@ -136,7 +150,8 @@ export class UserList {
                         a.appendChild(posterDiv);
                         a.appendChild(infosDiv);
                         cardDiv.appendChild(a);
-                        contentDiv.appendChild(cardDiv);
+                        div.appendChild(cardDiv);
+                        contentDiv.appendChild(div);
                     });
                     this.initSeriesToolsContainers();
                     this.initBookmarkBadges();
@@ -146,6 +161,28 @@ export class UserList {
                 });
             });
         });
+    }
+
+    resetSelect(years) {
+        const yearFilter = document.querySelector("#year-filter");
+        const options = yearFilter.querySelectorAll("option");
+        options.forEach(option => {option.remove();});
+        this.addOption(yearFilter, 'all', this.translations['All'])
+        years.forEach(year => {this.addOption(yearFilter, year, year.toString())});
+
+        const selectYear = yearFilter.closest(".select-year");
+        if (years.length < 2) {
+            selectYear.classList.add("d-none");
+        } else {
+            selectYear.classList.remove("d-none");
+        }
+    }
+
+    addOption(selectElement, value, text) {
+        const option = document.createElement("option");
+        option.value = value;
+        option.appendChild(document.createTextNode(text));
+        selectElement.appendChild(option);
     }
 
     createLu(clasName) {

@@ -50,7 +50,9 @@ class UserListRepository extends ServiceEntityRepository
                     sln.`name` as localized_name,
                     s.`slug` as slug,
                     sln.`slug` as localized_slug,
-                    s.`poster_path` as poster_path
+                    s.`poster_path` as poster_path,
+                    s.first_air_date as first_air_date,
+                    YEAR(s.`first_air_date`) as air_year
                 FROM `series` s
                     INNER JOIN `user_list_series` uls ON uls.`user_list_id`=$id AND s.`id`=uls.`series_id`
                      LEFT JOIN `user_series` us ON us.`series_id`=s.`id` AND us.`user_id`=$userId

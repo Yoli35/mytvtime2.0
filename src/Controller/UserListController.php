@@ -4,17 +4,21 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserListRepository;
+use App\Service\UserListService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/{_locale}/user/list', name: 'app_user_list_', requirements: ['_locale' => 'en|fr|ko'])]
 final class UserListController extends AbstractController
 {
     public function __construct(
+        private TranslatorInterface $translator,
         private readonly UserListRepository $userListRepository,
+        private readonly UserListService $userListService,
     )
     {
     }
@@ -22,17 +26,18 @@ final class UserListController extends AbstractController
     #[Route('/index', name: 'index')]
     public function index(#[CurrentUser] User $user, Request $request): Response
     {
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
         $userLists = $this->userListRepository->getUserLists($user);
-        $firstListContent = array_map(function ($s) {
-            $s['poster_path'] = $s['poster_path'] ? '/series/posters' . $s['poster_path'] : null;
-            $s['sln_name'] = $s['localized_name'] ?: $s['name'];
-            $s['sln_slug'] = $s['localized_slug'] ?: $s['slug'];
-            $s['is_series_in_list'] = true;
-            return $s;
-        }, $this->userListRepository->getListContent($user, $userLists[0]['id'], $user->getPreferredLanguage() ?? $request->getLocale()));
+        $result = $this->userListService->getUserList($user, $userLists[0]['id'], $locale);
+
         return $this->render('user_list/index.html.twig', [
             'lists' => $userLists,
-            'firstListContent' => $firstListContent,
+            'infos' => $result['userList'],
+            'seriesList' => $result['userListContent'],
+            'years' => $result['years'],
+            'translations' => [
+                'All' => $this->translator->trans('All'),
+            ]
         ]);
     }
 }

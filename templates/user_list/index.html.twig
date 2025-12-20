@@ -20,19 +20,47 @@
                     {% endfor %}
                 </div>
                 <div class="list-container">
-                    {% if lists|length %}
-                        {% set list = lists|first %}
-                        {% set count = firstListContent|length %}
+                    {% if infos %}
                         <div class="list-card">
-                            <div class="name">{{ list.name }}</div>
-                            <div class="count">{{ count }} {{ (count > 1 ? 'seriess' : 'series')|trans }}</div>
-                            <div class="description">{{ list.description }}</div>
+                            <div class="name">{{ infos.name }}</div>
+                            <div class="count">{{ infos.count }}</div>
+                            <div class="description">{{ infos.description }}</div>
+                            <div class="select-year{% if years|length < 2 %} d-none{% endif %}">
+                                <label for="year-filter">{{ 'Years'|trans }}
+                                    <select id="year-filter">
+                                        <option value="all">{{ 'All'|trans }}</option>
+                                        {% for year in years %}
+                                            <option value="{{ year }}">{{ year }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                            </div>
+                            <script>
+                                const yearSelect = document.querySelector("#year-filter");
+                                yearSelect.addEventListener("change", () => {
+                                    const cards = document.querySelectorAll(".list-content > div");
+                                    const newValue = yearSelect.value;
+                                    if (newValue === 'all') {
+                                        cards.forEach(card => {
+                                            card.classList.remove("d-none")
+                                        });
+                                        return;
+                                    }
+                                    const cardsToShow = document.querySelectorAll(".list-content > div[data-year=\"" + newValue + "\"");
+                                    cards.forEach(card => {
+                                        card.classList.add("d-none")
+                                    });
+                                    cardsToShow.forEach(card => {
+                                        card.classList.remove("d-none")
+                                    });
+                                });
+                            </script>
                         </div>
                         <div class="list-content">
-                            {% for series in firstListContent %}
-                                {#                            <a href="{{ path('app_series_show', {'id': series.id, 'slug': series.name|slug}) }}" class="card-link"> #}
-                                {{ include('_blocks/series/_card.html.twig', {series: series}) }}
-                                {#                            </a> #}
+                            {% for series in seriesList %}
+                                <div data-year="{{ series.air_year }}">
+                                    {{ include('_blocks/series/_card.html.twig', {series: series}) }}
+                                </div>
                             {% else %}
                                 <p>{{ 'No series found in this list.'|trans }}</p>
                             {% endfor %}
@@ -45,6 +73,11 @@
         </div>
     </div>
     {% include('_blocks/_footer.html.twig') %}
+    <div id="globs" style="display: none">
+        {
+        "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        }
+    </div>
     <div id="svgs" style="display: none">
         <div id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
         <div id="svg-bookmark">{{ ux_icon('mdi:bookmark') }}</div>
