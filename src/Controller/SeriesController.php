@@ -1312,23 +1312,29 @@ class SeriesController extends AbstractController
         $nowString = $now->format('Y-m-d H:i');
 
         $quickLinks = array_map(function ($link) use ($nowString) {
-            $airAt = $link['user_episode']['air_at'] ?? ' 09:00';
-            $airString = $link['air_date'] . $airAt;
-            $class = "quick-episode";
-            if ($link['user_episode']['watch_at_db']) {
-                $class .= " watched";
-            }
-            if ($airString > $nowString) {
-                $class .= " future";
+            if (!$link['air_date']) {
+                $class = "quick-episode future";
+                $future = true;
             } else {
-                $class .= " enabled";
+                $airAt = $link['user_episode']['air_at'] ?? ' 09:00';
+                $airString = $link['air_date'] . $airAt;
+                $class = "quick-episode";
+                if ($link['user_episode']['watch_at_db']) {
+                    $class .= " watched";
+                }
+                if ($airString > $nowString) {
+                    $class .= " future";
+                } else {
+                    $class .= " enabled";
+                }
+                $future = $airString > $nowString;
             }
             return [
                 'name' => $link['name'],
                 'episode_number' => $link['episode_number'],
                 'air_date' => $link['air_date'],
                 'watched' => (bool)$link['user_episode']['watch_at_db'],
-                'future' => $airString > $nowString,
+                'future' => $future,
                 'class' => $class,
             ];
         }, $episodes);
