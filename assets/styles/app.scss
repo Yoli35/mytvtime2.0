@@ -140,6 +140,20 @@ body:has(dialog[open]) {
     display: none !important;
 }
 
+.d-flex-1 {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+}
+
+svg {
+    --size: 18px;
+
+    fill: currentColor;
+    height: var(--size);
+    width: var(--size);
+}
+
 .svg {
     fill: currentColor;
     height: 18px;

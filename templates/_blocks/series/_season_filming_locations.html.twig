@@ -2,7 +2,7 @@
     {% for location in locations %}
         <div class="season-filming-location">
             <div class="location-card">
-                <div>{{ location.location }}</div>
+                <div class="d-flex-1">{{ ux_icon('mdi:camera-outline', {style: "--size: 1.5rem;"}) }} {{ location.location }}</div>
                 <div>{{ location.description }}</div>
             </div>
             {% for image_path in location.images %}
