@@ -10,7 +10,7 @@
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid">
         <div class="user-lists">
-            <h1>{{ 'My lists'|trans }}</h1>
+            <h1>{{ 'My lists'|trans }}<span class="offset-count"></span></h1>
             <div class="lists-container">
                 <div class="lists-list-toggler" data-title="{{ 'Show/hide lists'|trans }}">{{ ux_icon('mdi:menu', {class: 'icon-open'}) }}{{ ux_icon('mdi:close', {class: 'icon-close'}) }}</div>
                 <div class="lists-list">
@@ -40,21 +40,46 @@
                 </script>
                 <div class="list-container">
                     {% if infos %}
-                        <div class="list-card">
-                            <div class="name">{{ infos.name }}</div>
-                            <div class="count"><span class="sub-count"></span>{{ infos.count }}</div>
-                            <div class="description">{{ infos.description }}</div>
-                            <div class="select-year{% if years|length < 2 %} d-none{% endif %}">
-                                <label for="year-filter">{{ 'Years'|trans }}
-                                    <select id="year-filter">
-                                        <option value="all">{{ 'All'|trans }}</option>
-                                        {% for year in years %}
-                                            <option value="{{ year }}">{{ year }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </label>
+                        <div class="list-header">
+                            <div class="list-card">
+                                <div class="name">{{ infos.name }}</div>
+                                <div class="count"><span class="sub-count"></span>{{ infos.count }}</div>
+                                <div class="description">{{ infos.description }}</div>
+                                <div class="select-year{% if years|length < 2 %} d-none{% endif %}">
+                                    <label for="year-filter">{{ 'Years'|trans }}
+                                        <select id="year-filter">
+                                            <option value="all">{{ 'All'|trans }}</option>
+                                            {% for year in years %}
+                                                <option value="{{ year }}">{{ year }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </label>
+                                </div>
                             </div>
                         </div>
+                        <script>
+                            window.addEventListener("DOMContentLoaded", (event) => {
+                                const listContainer = document.querySelector(".list-container");
+                                let lastTop = 0;
+                                listContainer.addEventListener("scroll", (event) => {
+                                    const listContent = document.querySelector(".list-content");
+                                    const rect = listContent.getBoundingClientRect();
+
+                                    const countDiv = document.querySelector("h1 .offset-count");
+                                    countDiv.innerText = rect.top;
+                                    if (rect.top < 0 && lastTop >= 0) {
+                                        const listHeader = document.querySelector(".list-header");
+                                        listHeader.classList.add("fixed");
+                                        lastTop = rect.top;
+                                    }
+                                    if (rect.top >= 0 && lastTop < 0) {
+                                        const listHeader = document.querySelector(".list-header");
+                                        listHeader.classList.remove("fixed");
+                                        lastTop = rect.top;
+                                    }
+                                });
+                            });
+                        </script>
                         <div class="list-content">
                             {% for series in seriesList %}
                                 <div data-year="{{ series.air_year }}">
