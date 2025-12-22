@@ -12,6 +12,7 @@
         <div class="user-lists">
             <h1>{{ 'My lists'|trans }}</h1>
             <div class="lists-container">
+                <div class="lists-list-toggler" data-title="{{ 'Show/hide lists'|trans }}">{{ ux_icon('mdi:menu', {class: 'icon-open'}) }}{{ ux_icon('mdi:close', {class: 'icon-close'}) }}</div>
                 <div class="lists-list">
                     {% for list in lists %}
                         <div class="list-item{% if loop.index==1 %} active{% endif %}" data-id="{{ list.id }}">{{ list.name }}</div>
@@ -19,6 +20,24 @@
                         <p>{{ 'No lists found.'|trans }}</p>
                     {% endfor %}
                 </div>
+                <script>
+                    const listsListToggler = document.querySelector('.lists-list-toggler');
+                    const listsListDiv = document.querySelector('.lists-list');
+                    listsListToggler.addEventListener("click", (e) => {
+                        listsListDiv.classList.toggle("show");
+                        listsListToggler.classList.toggle("show");
+                    });
+                    document.addEventListener("click", (e) => {
+                        const target = e.target;
+                        if (target === listsListToggler || listsListToggler.contains(target) || listsListDiv.contains(target)) {
+                            return;
+                        }
+                        if (listsListToggler.classList.contains("show")) {
+                            listsListDiv.classList.remove("show");
+                            listsListToggler.classList.remove("show");
+                        }
+                    });
+                </script>
                 <div class="list-container">
                     {% if infos %}
                         <div class="list-card">

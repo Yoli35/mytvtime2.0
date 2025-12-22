@@ -28,7 +28,6 @@ readonly class UserListService
 
         $years = array_unique(array_values(array_column($listContent, 'air_year')));
         rsort($years);
-        dump($years);
         $count = count($listContent);
         $userList = $this->userListRepository->find($id);
 
