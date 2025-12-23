@@ -21,6 +21,47 @@
                 <h2>55ᵉ mise à jour : 19/12/2025</h2>
                 <ul>
                     <li>
+                        <div class="change">{{ ux_icon('mdi:translate') }}{{ ux_icon('mdi:content-paste') }}→ Add clipboard paste button to translation form</div>
+                        <div class="details">Introduces a 'Paste' button to translation forms when clipboard text is available, allowing users to quickly insert clipboard content into the textarea. The button is removed after use or when the form is hidden.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Handle missing air_date in quickLinks mapping</div>
+                        <div class="details">Updated the quickLinks array mapping to properly handle cases where 'air_date' is missing. The 'future' flag and CSS class assignment now account for missing dates, ensuring correct UI behavior for episodes without an air date.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bookmark') }}→ Refactor user list header and add sticky behavior</div>
+                        <div class="details">Moved the list header into its own container and implemented sticky positioning via CSS and JavaScript. Updated styles for the header and list card, and added a scroll event to toggle the header's fixed state. Also added a dynamic offset count display in the page title.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Add icon and flex styling to filming locations</div>
+                        <div class="details">Introduced a new .d-flex-1 class for flex alignment and spacing in SCSS. Updated the season filming locations template to display a camera icon next to each location name, improving visual clarity and consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bookmark') }}→ Add toggleable side panel for user lists</div>
+                        <div class="details">Introduced a toggler button and animation for the user lists side panel in the user list page. Moved the --side-panel-easing variable to _variables.scss for reuse, updated styles for positioning and transitions, and added JavaScript to handle toggling and closing the panel when clicking outside.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bookmark') }}→ Update select styling in user list</div>
+                        <div class="details">Enhanced the appearance of select elements within labels by adding border-radius, font-size, and padding. Adjusted the position of the label's ::after pseudo-element for better alignment.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bookmark') }}→ Add year filter and count display to user list</div>
+                        <div class="details">Implemented a year filter dropdown for user lists, showing a sub-count of visible items when filtered. Moved filtering logic from template to JavaScript, improved menu positioning, and updated styles for better layout. Also added total_results to UserListService response for accurate counting.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:bookmark') }}→ Add year filter to user series lists</div>
+                        <div class="details">Introduced a year filter for user series lists, allowing users to filter series by their air year. Refactored list data handling into a new UserListService, updated repository and API to provide year data, and adjusted frontend JS, SCSS, and Twig templates to support the new filter UI. Also added translation for 'Years'.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Group episodes by season in schedule and update ordering</div>
+                        <div class="details">Updated the SQL query in UserEpisodeRepository to order by displayName, seasonNumber, and episodeNumber. Refactored SeriesSchedule to group episodes by both series and season, adjusted the seriesInArray logic to account for season. Special episodes (season 0) may air at the same time as standard episodes.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
+                <h2>55ᵉ mise à jour : 19/12/2025</h2>
+                <ul>
+                    <li>
                         <div class="change">{{ ux_icon('mdi:bookmark') }}→ Add initBookmarkBadges to handle bookmark badge clicks</div>
                         <div class="details">Introduces the initBookmarkBadges method to prevent default actions and event propagation when clicking on elements with the 'series-in-list added' class. This helps avoid unintended behavior when interacting with bookmark badges in the user list.</div>
                     </li>
@@ -66,7 +107,7 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:code') }}→ Refactor request parameter access and improve date handling</div>
-                        <div class="details">Replaces deprecated Request::get() with Request::query->get() for query parameters throughout SeriesController. Updates user property access to avoid nullsafe operator where not needed. Improves convertDateTime to handle invalid dates and timezones gracefully, returning null and providing error responses when necessary.</div>
+                        <div class="details">Replaces deprecated Request::get() with Request::query->get() for query parameters throughout SeriesController. Updates user property access to avoid null safe operator where not needed. Improves convertDateTime to handle invalid dates and timezones gracefully, returning null and providing error responses when necessary.</div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:list-box') }}→ Add user series list API and bookmark UI integration</div>
@@ -237,7 +278,7 @@
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:settings') }}{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:tv') }}→ Add customizable schedule range to series menu and option to search menu</div>
-                        <div class="details">Introduces a user setting for the series schedule menu range, allowing users to select the number of days before and after today to display. Adds backend API endpoints, frontend dialog, translations, and updates related JS, SCSS, Twig templates, and PHP logic to support this feature. Introduce an new option to force or prohibit the display of search results posters.</div>
+                        <div class="details">Introduces a user setting for the series schedule menu range, allowing users to select the number of days before and after today to display. Adds backend API endpoints, frontend dialog, translations, and updates related JS, SCSS, Twig templates, and PHP logic to support this feature. Introduce a new option to force or prohibit the display of search results posters.</div>
                     </li>
                     <li>
                         <div class="change">{{ ux_icon('mdi:tv') }}→ Improve dialog styles and fix vote assignment logic</div>
