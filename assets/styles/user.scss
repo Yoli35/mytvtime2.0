@@ -356,10 +356,10 @@
                     }
                 }
 
-                &.toggle-favorite-series, &.toggle-favorite-movie {
+                &.toggle-bookmark-series, &.toggle-favorite-series, &.toggle-favorite-movie {
                     background-color: hsla(from var(--ardoise-80) h s l / .5);
 
-                    &.favorite {
+                    &.bookmark, &.favorite {
                         color: var(--favorite-series);
                     }
 

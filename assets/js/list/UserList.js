@@ -1,5 +1,5 @@
 export class UserList {
-    constructor(flashMessage, toolTips) {
+    constructor(flashMessage, toolTips, buttons) {
         this.flashMessage = flashMessage;
         this.toolTips = toolTips;
         this.lang = document.querySelector('html').getAttribute('lang');
@@ -29,14 +29,14 @@ export class UserList {
         this.userListDialogCancel = this.userListDialog.querySelector("button[type=button]");
         this.userListDialogSubmit = this.userListDialog.querySelector("button[type=submit]");
 
-        this.init();
+        this.init(buttons);
     }
 
-    init() {
+    init(buttons) {
         console.log("UserList.js loaded");
 
         this.initCreateListDialog();
-        this.initSeriesToolsContainers();
+        this.initSeriesToolsContainers(buttons);
         this.initBookmarkBadges();
         this.initUserListPage();
 
@@ -191,8 +191,7 @@ export class UserList {
             const hiddenCount = document.querySelectorAll(".list-content > div.d-none").length;
             if (hiddenCount) {
                 subCountSpan.innerText = (this.totalCount - hiddenCount) + " / ";
-            }
-            else {
+            } else {
                 subCountSpan.innerText = "";
             }
         });
@@ -320,8 +319,13 @@ export class UserList {
         });
     }
 
-    initSeriesToolsContainers() {
-        const seriesToolsContainers = document.querySelectorAll('.series-tools-container');
+    initSeriesToolsContainers(buttons = null) {
+        let seriesToolsContainers;
+        if (buttons) {
+            seriesToolsContainers = buttons;
+        } else {
+            seriesToolsContainers = document.querySelectorAll('.series-tools-container');
+        }
         this.totalCount = seriesToolsContainers.length;
 
         seriesToolsContainers.forEach((seriesToolsContainer) => {
@@ -350,9 +354,13 @@ export class UserList {
                     let dx = 0, dy = 32;
                     if (mouseX - rect.width < 16) {
                         dx = (mouseX - rect.width - 16)
+                    } else {
+                        if (mouseX > windowWidth - 16) {
+                            dx = windowWidth - 16;
+                        }
                     }
-                    if (windowHeight - rect.height < 16) {
-                        dy = (windowHeight - rect.height - 16)
+                    if (windowHeight - (mouseY + dy + rect.height) < 16) {
+                        dy = (windowHeight - rect.height - dy - 16)
                     }
                     seriesToolsMenu.setAttribute("style", "right: " + dx + "px; top: " + dy + "px;");
                 }
@@ -375,7 +383,7 @@ export class UserList {
     bookmarkClick(e) {
         e.preventDefault();
         const li = e.currentTarget;
-        const seriesToolsContainer = li.closest(".series-tools-container");
+        const seriesToolsContainer = li.closest(".series-tools-container") ?? li.closest(".action.toggle-bookmark-series");
         const seriesListsMenu = this.seriesListsMenu;
         const seriesToolsMenu = seriesToolsContainer.querySelector('.series-tools-menu');
         const tmdbId = seriesToolsContainer.getAttribute("data-id");
@@ -423,7 +431,7 @@ export class UserList {
             seriesToolsMenu.classList.remove('visible');
             seriesListsMenu.style = "display: block; left: " + mouseX + "px; top: " + mouseY + "px;";
             const rect = seriesListsMenu.getBoundingClientRect();
-            console.log(rect)
+            /*console.log(rect)*/
             const windowWidth = window.innerWidth;
             const windowHeight = window.innerHeight;
             const x = Math.min(Math.max(16, mouseX - rect.width), windowWidth - 16);

@@ -36,7 +36,7 @@ export class Index {
             seriesSearchInput.addEventListener("keydown", this.menu.searchMenuNavigate);
         }
 
-        new UserList(this.flashMessage, this.toolTips);
+        new UserList(this.flashMessage, this.toolTips, null);
 
         fetch(this.app_series_tmdb_check, {
             method: "POST",

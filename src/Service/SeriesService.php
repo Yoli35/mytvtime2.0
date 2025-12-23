@@ -95,6 +95,14 @@ class SeriesService extends AbstractController
         $tv['next_episode_to_air'] = $this->getEpisodeToAir($tv['next_episode_to_air'], $series);
         $tv['average_episode_run_time'] = $this->getEpisodeRunTime($tv['episode_run_time']);
 
+        if ($tv['localized_name']) {
+            $tv['display_name'] = $tv['localized_name']->getName();
+        } elseif (strlen($tv['translations']['data']['name'])) {
+            $tv['display_name'] = $tv['translations']['data']['name'];
+        } else {
+            $tv['display_name'] = $tv['name'];
+        }
+
         return $tv;
     }
 

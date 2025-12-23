@@ -45,23 +45,23 @@
                     </div>
                 {% endif %}
                 <div class="poster-container">
-                <div class="poster">
-                    {% if series.posterPath %}
-                        <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
-                    {% else %}
-                        <div class="text">{{ 'No poster'|trans }}</div>
-                        <div class="icon">{{ ux_icon('mdi:image-off-outline') }}</div>
-                    {% endif %}
-                    {% if series.firstAirDate %}
-                        <div class="progress" data-value="{{ userSeries.progress }}">
-                            <div class="progress-bar"></div>
-                        </div>
-                    {% endif %}
-                    <div class="go-to-map"><a href="#series-map-title">{{ 'Filming locations map'|trans }}</a></div>
-                    {% if app.environment == 'dev' %}
-                        <div class="debug">{{ series.id }} / {{ userSeries.id }} / {{ tv.id }}</div>
-                    {% endif %}
-                </div>
+                    <div class="poster">
+                        {% if series.posterPath %}
+                            <img src="/series/posters{{ series.posterPath }}" alt="{{ series.name }}">
+                        {% else %}
+                            <div class="text">{{ 'No poster'|trans }}</div>
+                            <div class="icon">{{ ux_icon('mdi:image-off-outline') }}</div>
+                        {% endif %}
+                        {% if series.firstAirDate %}
+                            <div class="progress" data-value="{{ userSeries.progress }}">
+                                <div class="progress-bar"></div>
+                            </div>
+                        {% endif %}
+                        <div class="go-to-map"><a href="#series-map-title">{{ 'Filming locations map'|trans }}</a></div>
+                        {% if app.environment == 'dev' %}
+                            <div class="debug">{{ series.id }} / {{ userSeries.id }} / {{ tv.id }}</div>
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="infos">
                     <div class="infos-content">
@@ -252,6 +252,13 @@
                         <div class="action toggle-favorite-series{% if userSeries.favorite %} favorite{% endif %}" data-title="{{ (userSeries.favorite ? "Remove from favorites" : "Add to favorites")|trans }}">
                             {{ ux_icon('mdi:heart') }}
                         </div>
+                        <div class="action toggle-bookmark-series{% if series.userLists|length %} bookmark{% endif %}"
+                            data-title="{{ (series.userLists|length ? "Remove from a list" : "Add to a list")|trans }}"
+                            data-id="{{ tv.id }}"
+                            data-name="{{ tv.display_name }}">
+                            <div class="series-tools">{{ ux_icon('mdi:bookmark') }}</div>
+                            {{ include('_blocks/list/_tools_menu.html.twig', {seriesId: tv.id, seriesName: tv.display_name}) }}
+                        </div>
                         <div class="action remove-this-series"
                              data-tmdb-id="{{ series.tmdbId }}"
                              data-slug="{{ tv.localized_name.slug ?? series.slug }}"
@@ -337,19 +344,19 @@
                                             {{ include('_blocks/series/_votes.html.twig', {scale: 0.5, type: 'entity', season_number: season.season_number, ues: uvs.ues, vas: uvs.avs}) }}
                                         </div>
                                     {% endif %}
-{#                                    <div class="new-edition-toggler" data-title="{{ 'Add a re-edited version to this season'|trans }}">#}
-{#                                        {{ ux_icon('mdi:ellipsis-horizontal') }}#}
-{#                                    </div>#}
-{#                                    <div class="new-edition-menu">#}
-{#                                        <div class="new-edition-menu-item">{{ 'Add a re-edited version to this season'|trans }}</div>#}
-{#                                    </div>#}
-{#                                    <script>#}
-{#                                        const newEditionToggler = document.querySelector('.season[data-season-number="{{ season.season_number }}"] .new-edition-toggler');#}
-{#                                        const newEditionMenu = document.querySelector('.season[data-season-number="{{ season.season_number }}"] .new-edition-menu');#}
-{#                                        newEditionToggler.addEventListener('click', function () {#}
-{#                                            newEditionMenu.classList.toggle('visible');#}
-{#                                        });#}
-{#                                    </script>#}
+                                    {#                                    <div class="new-edition-toggler" data-title="{{ 'Add a re-edited version to this season'|trans }}"> #}
+                                    {#                                        {{ ux_icon('mdi:ellipsis-horizontal') }} #}
+                                    {#                                    </div> #}
+                                    {#                                    <div class="new-edition-menu"> #}
+                                    {#                                        <div class="new-edition-menu-item">{{ 'Add a re-edited version to this season'|trans }}</div> #}
+                                    {#                                    </div> #}
+                                    {#                                    <script> #}
+                                    {#                                        const newEditionToggler = document.querySelector('.season[data-season-number="{{ season.season_number }}"] .new-edition-toggler'); #}
+                                    {#                                        const newEditionMenu = document.querySelector('.season[data-season-number="{{ season.season_number }}"] .new-edition-menu'); #}
+                                    {#                                        newEditionToggler.addEventListener('click', function () { #}
+                                    {#                                            newEditionMenu.classList.toggle('visible'); #}
+                                    {#                                        }); #}
+                                    {#                                    </script> #}
                                 </div>
                             </div>
                         {% endfor %}
@@ -833,6 +840,9 @@
         <div class="svg" id="pen">{{ ux_icon('mdi:pencil') }}</div>
         <div class="svg" id="copy">{{ ux_icon('mdi:content-paste') }}</div>
         <div class="svg" id="trash">{{ ux_icon('mdi:trash') }}</div>
+        <div id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
+        <div id="svg-bookmark">{{ ux_icon('mdi:bookmark') }}</div>
+        <div id="svg-bookmark-outline">{{ ux_icon('mdi:bookmark-outline') }}</div>
     </div>
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}

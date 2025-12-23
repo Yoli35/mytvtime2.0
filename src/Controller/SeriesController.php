@@ -17,6 +17,7 @@ use App\Entity\SeriesVideo;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserEpisode;
+use App\Entity\UserList;
 use App\Entity\UserPinnedSeries;
 use App\Entity\UserSeries;
 use App\Form\AddBackdropType;
@@ -802,6 +803,10 @@ class SeriesController extends AbstractController
         $series->setUpdates([]);
         $seriesArr = $series->toArray();
         $seriesArr['blurredPosterPath'] = $blurredPosterPath;
+
+        $seriesArr['userLists'] = $series->getUserLists()->filter(function (UserList $ul) use ($user) {
+            return $ul->getUser() === $user;
+        })->toArray();
 
         $this->checkSlug($series, $slug, $locale);
 

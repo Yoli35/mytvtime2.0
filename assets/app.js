@@ -102,7 +102,7 @@ window.addEventListener("DOMContentLoaded", () => {
         highlightSeries.init(globs);
         seriesStatistics.init();
 
-        new UserList(flashMessage, toolTips);
+        new UserList(flashMessage, toolTips, null);
     }
 
 // Profile page
@@ -185,12 +185,14 @@ window.addEventListener("DOMContentLoaded", () => {
         if (isSeasonPage) {
             const season = new Season();
             season.init(menu);
+        } else {
+            new UserList(flashMessage, toolTips, document.querySelectorAll(".action.toggle-bookmark-series"))
         }
     }
 
     const userLists = document.querySelector(".user-lists");
     if (userLists) {
-        new UserList(flashMessage, toolTips);
+        new UserList(flashMessage, toolTips, null);
     }
 
     const userSeriesShow = document.querySelector(".user-series-show");
