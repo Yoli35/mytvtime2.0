@@ -10,7 +10,7 @@
     {% include('_blocks/_menu.html.twig') %}
     <div class="container-fluid">
         <div class="user-lists">
-            <h1>{{ 'My lists'|trans }}<span class="offset-count"></span></h1>
+            <h1>{{ 'My lists'|trans }}</h1>
             <div class="lists-container">
                 <div class="lists-list-toggler" data-title="{{ 'Show/hide lists'|trans }}">{{ ux_icon('mdi:menu', {class: 'icon-open'}) }}{{ ux_icon('mdi:close', {class: 'icon-close'}) }}</div>
                 <div class="lists-list">
@@ -65,8 +65,6 @@
                                     const listContent = document.querySelector(".list-content");
                                     const rect = listContent.getBoundingClientRect();
 
-                                    const countDiv = document.querySelector("h1 .offset-count");
-                                    countDiv.innerText = rect.top;
                                     if (rect.top < 0 && lastTop >= 0) {
                                         const listHeader = document.querySelector(".list-header");
                                         listHeader.classList.add("fixed");
