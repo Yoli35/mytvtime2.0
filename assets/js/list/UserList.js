@@ -100,7 +100,7 @@ export class UserList {
                     nameDiv.appendChild(document.createTextNode(infos['name']));
                     const countDiv = listCardDiv.querySelector(".count");
                     countDiv.lastChild.remove();
-                    countDiv.appendChild(document.createTextNode(infos['count']));
+                    countDiv.innerHTML = '<span class="sub-count"></span>' + infos['count'];
                     const descriptionDiv = listCardDiv.querySelector(".description");
                     descriptionDiv.firstChild.remove();
                     descriptionDiv.appendChild(document.createTextNode(infos['description']));
