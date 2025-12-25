@@ -72,6 +72,20 @@ class SeriesSeasonEpisodes extends AbstractController
 
         $baseLink = "/" . $this->locale . "/series/season/$id-$slug/$seasonNumber#episode-$seasonNumber-";
 
+        // TODO: Utiliser cette logique pour toutes les saisons
+        // Trouver l'épisode final avec 'episode_type' = 'finale' pour supprimer les suivants
+        $finaleEpisode = array_find($season['episodes'] ?? [], function ($e) {
+            return ($e['episode_type'] ?? 'standard') === 'finale';
+        });
+        $finalEpisodeNumber = $finaleEpisode ? $finaleEpisode['episode_number'] : null;
+        // Filtrer les épisodes pour ne garder que ceux jusqu'à l'épisode final
+        if ($finalEpisodeNumber !== null) {
+            $season['episodes'] = array_filter($season['episodes'] ?? [], function ($e) use ($finalEpisodeNumber) {
+                return $e['episode_number'] <= $finalEpisodeNumber;
+            });
+        }
+        // Fin TODO
+
         $episodes = array_map(function ($episode) use ($baseLink) {
             // Substitute Name
             $substituteName = array_find($this->dbEpisodeSubstituteNames, function ($esn) use ($episode) {
