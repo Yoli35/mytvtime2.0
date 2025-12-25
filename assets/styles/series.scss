@@ -823,11 +823,11 @@ h2 {
 
                 a {
                     background-color: var(--orange-50);
-                    border-radius: .25rem;
+                    border-radius: 5rem;
                     color: var(--ardoise-10);
                     font-size: 2rem;
                     font-weight: 300;
-                    padding: .5rem 1rem;
+                    padding: .75rem 2rem;
                     text-decoration: none;
                     text-wrap: nowrap;
                 }
@@ -5378,6 +5378,8 @@ h2 {
                 }
 
                 .watch-link {
+                    height: 3rem;
+
                     span {
                         display: none;
                     }
