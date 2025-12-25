@@ -1764,6 +1764,20 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[Route('/fetch/search/tmdb/id', name: 'fetch_search_series_id', methods: ['POST'])]
+    public function fetchSearchSeriesById(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $id = intval($data['query']);
+
+        $series = json_decode($this->tmdbService->getTv($id, 'en-US', ['translations']), true);
+
+        return $this->json([
+            'ok' => true,
+            'results' => [$series],
+        ]);
+    }
+
     #[Route('/tmdb/check', name: 'tmdb_check', methods: ['POST'])]
     public function tmdbCheck(Request $request): Response
     {

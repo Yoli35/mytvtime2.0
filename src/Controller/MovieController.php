@@ -585,6 +585,20 @@ class MovieController extends AbstractController
         ]);
     }
 
+    #[Route('/fetch/search/id', name: 'fetch_search_id', methods: ['POST'])]
+    public function fetchSearchMoviesById(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $id = intval($data['query']);
+
+        $movie = json_decode($this->tmdbService->getMovie($id, 'en-US', ['translations']), true);
+
+        return $this->json([
+            'ok' => true,
+            'results' => [$movie],
+        ]);
+    }
+
     private function getTMDBMovies(): array
     {
         $arr = $this->homeController->getMovieSelection(new AsciiSlugger, 'FR');

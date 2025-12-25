@@ -138,34 +138,42 @@ export class Menu {
 
         this.apiEndPoints = {
             "movie": "/" + gThis.lang + "/movie/fetch/search",
+            "movie_id": "/" + gThis.lang + "/movie/fetch/search/id",
             "dbmovie": "/" + gThis.lang + "/movie/fetch/search/movie",
             "dbtv": "/" + gThis.lang + "/series/fetch/search/tv",
             "tv": "/" + gThis.lang + "/series/fetch/search/tmdb",
+            "tv_id": "/" + gThis.lang + "/series/fetch/search/tmdb/id",
             "people": "/" + gThis.lang + "/people/fetch/search",
             "multi": "/" + gThis.lang + "/series/fetch/search/multi"
         }
         this.resultNames = {
             'movie': 'title',
+            'movie_id': 'title',
             'dbmovie': 'display_title',
             'collection': 'title',
             'tv': 'name',
+            'tv_id': 'name',
             'dbtv': 'display_name',
             'people': 'name'
         }
         this.hRefs = {
             'movie': 'movie/tmdb/',
+            'movie_id': 'movie/tmdb/',
             'dbmovie': 'movie/show/',
             'collection': 'movie/collection/',
             'tv': 'series/tmdb/',
+            'tv_id': 'series/tmdb/',
             'dbtv': 'series/show/',
             'people': 'people/show/',
             'multi': 'search/all?q='
         };
         this.resultPaths = {
             'movie': 'poster_path',
+            'movie_id': 'poster_path',
             'dbmovie': 'poster_path',
             'collection': 'poster_path',
             'tv': 'poster_path',
+            'tv_id': 'poster_path',
             'dbtv': 'poster_path',
             'people': 'profile_path'
         };
@@ -1285,6 +1293,8 @@ export class Menu {
             .replace(/\s+/g, '-') // collapse whitespace and replace by -
             .replace(/-+/g, '-'); // collapse dashes
 
+        if (!str || str === '') str = 'no-slug';
+        console.log(str);
         return str;
     }
 }
