@@ -30,13 +30,15 @@ export class TranslationsForms {
         const lnDelete = lnForm?.querySelector('button[value="delete"]');
         const lnAdd = lnForm?.querySelector('button[value="add"]');
         const ovForm = document.querySelector('#overview-form');
-        const ovCancel = ovForm.querySelector('button[type="button"]');
-        const ovAdd = ovForm.querySelector('button[value="add"]');
+        const ovCancel = ovForm?.querySelector('button[type="button"]');
+        const ovAdd = ovForm?.querySelector('button[value="add"]');
         const deleteOvForm = document.querySelector('#delete-overview-form');
-        const deleteOvCancel = deleteOvForm.querySelector('button[type="button"]');
-        const deleteOvDelete = deleteOvForm.querySelector('button[value="delete"]');
+        const deleteOvCancel = deleteOvForm?.querySelector('button[type="button"]');
+        const deleteOvDelete = deleteOvForm?.querySelector('button[value="delete"]');
 
-        if (seasonNumber == null) {
+        const biographyFormContainer = document.querySelector("#biography-form-container");
+
+        if (localizedName && seasonNumber == null) {
             localizedName.addEventListener('click', function () {
                 localizationToolsMenu.classList.toggle('active');
                 gThis.displayForm(localizedNameForm);
@@ -118,7 +120,7 @@ export class TranslationsForms {
             localizationToolsMenu.classList.toggle('active');
             gThis.displayForm(overviewForm);
         });
-        if (seasonNumber == null) {
+        if (additionalOverview && seasonNumber == null) {
             additionalOverview.addEventListener('click', function () {
                 const firstRow = ovForm.querySelector('.form-row:first-child');
                 const hiddenInputTool = ovForm.querySelector('#tool');
@@ -134,9 +136,165 @@ export class TranslationsForms {
                 gThis.displayForm(overviewForm);
             });
         }
-        ovCancel.addEventListener('click', function () {
-            gThis.hideForm(overviewForm);
-        });
+
+        if (ovForm) {
+            ovCancel.addEventListener('click', function () {
+                gThis.hideForm(overviewForm);
+            });
+
+            ovAdd.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const source = ovForm.querySelector('#overview-source');
+                const sourceError = source.closest('label').querySelector('.error');
+                const overviewField = ovForm.querySelector('#overview-field');
+                const overviewError = overviewField.closest('label').querySelector('.error');
+                const hiddenInputTool = ovForm.querySelector('#tool');
+                const errors = ovForm.querySelectorAll('.error');
+                errors.forEach(function (error) {
+                    error.textContent = '';
+                });
+                const type = hiddenInputTool.getAttribute('data-type');
+                const overviewId = parseInt(hiddenInputTool.getAttribute('data-overview-id'));
+                const crud = hiddenInputTool.getAttribute('data-crud');
+                const additional = type === 'additional';
+                if (additional && !source.value) {
+                    sourceError.textContent = gThis.translations['This field is required'];
+                }
+                if (!overviewField.value) {
+                    overviewError.textContent = gThis.translations['This field is required'];
+                }
+                let data = {
+                    overviewId: overviewId,
+                    source: source.value,
+                    overview: overviewField.value,
+                    type: type,
+                    crud: crud,
+                    locale: lang
+                };
+                if (seasonNumber) {
+                    data = {seasonNumber: seasonNumber, ...data};
+                }
+
+                fetch('/api/' + mediaType + '/overview/add/' + id, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log(data);
+                        if (data.success) {
+                            gThis.hideForm(overviewForm);
+
+                            if (crud === 'edit') {
+                                const overviewDiv = document.querySelector('.' + type + '.overview[data-id="' + overviewId + '"]');
+                                const contentDiv = overviewDiv.querySelector('.content');
+                                const newContentText = overviewField.value;
+                                contentDiv.setAttribute('data-overview', newContentText);
+                                // replace \n by <br>
+                                contentDiv.innerHTML = newContentText.replace(/\n/g, '<br>');
+                                //contentDiv.textContent = newContentText;
+
+                                const toolsDiv = overviewDiv.querySelector('.tools');
+                                gThis.setSource(toolsDiv, data.source);
+
+                                return;
+                            }
+
+                            // crud: add
+                            const infosDiv = document.querySelector('.infos');
+                            const infosContentDiv = infosDiv.querySelector('.infos-content');
+                            let overviewsDiv = infosContentDiv.querySelector('.' + type + '.overviews');
+
+                            const newId = data.id;
+                            /** @type {Source} */
+                            const sourceRecord = data.source;
+
+                            const overviewDiv = document.createElement('div');
+                            overviewDiv.classList.add(type, 'overview');
+                            overviewDiv.setAttribute('data-id', newId);
+                            const contentDiv = document.createElement('div');
+                            contentDiv.classList.add('content');
+                            contentDiv.setAttribute('data-overview', overviewField.value);
+                            contentDiv.innerHTML = overviewField.value.replace(/\n/g, '<br>');
+                            overviewDiv.appendChild(contentDiv);
+
+                            const toolsDiv = document.createElement('div');
+                            toolsDiv.classList.add('tools');
+                            gThis.setSource(toolsDiv, sourceRecord);
+
+                            const localeDiv = document.createElement('div');
+                            localeDiv.classList.add('locale');
+                            localeDiv.textContent = lang.toUpperCase();
+                            toolsDiv.appendChild(localeDiv);
+
+                            const editDiv = document.createElement('div');
+                            editDiv.classList.add('edit');
+                            editDiv.setAttribute('data-id', newId);
+                            editDiv.setAttribute('data-title', gThis.translations['Edit']);
+                            const penSvg = document.querySelector('#svgs').querySelector('#pen').querySelector('svg').cloneNode(true);
+                            editDiv.appendChild(penSvg);
+                            editDiv.addEventListener('click', gThis.editOverview);
+                            toolsDiv.appendChild(editDiv);
+
+                            const deleteDiv = document.createElement('div');
+                            deleteDiv.classList.add('delete');
+                            deleteDiv.setAttribute('data-id', newId);
+                            deleteDiv.setAttribute('data-title', gThis.translations['Delete']);
+                            const trashSvg = document.querySelector('#svgs').querySelector('#trash').querySelector('svg').cloneNode(true);
+                            deleteDiv.appendChild(trashSvg);
+                            deleteDiv.addEventListener('click', gThis.deleteOverview);
+                            toolsDiv.appendChild(deleteDiv);
+
+                            overviewDiv.appendChild(toolsDiv);
+
+                            overviewsDiv.appendChild(overviewDiv);
+                            gThis.toolTips.init(overviewDiv);
+
+                            if (seasonNumber) {
+                                const globalToolsDiv = document.querySelector('.localization-tools');
+                                globalToolsDiv.classList.add('d-none');
+                            }
+
+                            overviewField.value = '';
+                        }
+                    });
+            });
+        }
+
+        if (deleteOvForm) {
+            deleteOvCancel.addEventListener('click', function () {
+                gThis.hideForm(deleteOverviewForm);
+            });
+            deleteOvDelete.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const overviewType = deleteOverviewForm.querySelector('#overview-type').value;
+                const overviewId = deleteOverviewForm.querySelector('#overview-id').value;
+                fetch('/api/' + mediaType + '/overview/remove/' + overviewId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({overviewType: overviewType})
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            gThis.hideForm(deleteOverviewForm);
+                            const overviewDiv = document.querySelector('.' + overviewType + '.overview[data-id="' + overviewId + '"]');
+                            overviewDiv.remove();
+                            if (seasonNumber) {
+                                const globalToolsDiv = document.querySelector('.localization-tools');
+                                globalToolsDiv.classList.remove('d-none');
+                            }
+                        }
+                    });
+            });
+        }
 
         /* Tools for every added overview */
         if (overviews) {
@@ -151,155 +309,58 @@ export class TranslationsForms {
             });
         }
 
-        deleteOvCancel.addEventListener('click', function () {
-            gThis.hideForm(deleteOverviewForm);
-        });
-        ovAdd.addEventListener('click', function (event) {
-            event.preventDefault();
+        if (biographyFormContainer) {
+            const localizedBiographyText = document.querySelector(".localized-bio").innerText;
+            const localizedBiographyMenu = document.querySelector("#localized-biography");
+            const biographyForm = document.querySelector("#biography-form");
+            const biographyCancel = biographyForm.querySelector('button[type="button"]');
+            const biographyAdd = biographyForm.querySelector('button[value="add"]');
 
-            const source = ovForm.querySelector('#overview-source');
-            const sourceError = source.closest('label').querySelector('.error');
-            const overviewField = ovForm.querySelector('#overview-field');
-            const overviewError = overviewField.closest('label').querySelector('.error');
-            const hiddenInputTool = ovForm.querySelector('#tool');
-            const errors = ovForm.querySelectorAll('.error');
-            errors.forEach(function (error) {
-                error.textContent = '';
+            localizedBiographyMenu.addEventListener('click', function () {
+                const hiddenInputTool = biographyForm.querySelector('#tool');
+                hiddenInputTool.setAttribute('data-crud', localizedBiographyText.length ? 'edit' : 'add');
+                hiddenInputTool.setAttribute('data-people-id', "id");
+                const submitButton = biographyForm.querySelector('button[type="submit"]');
+                submitButton.textContent = gThis.translations[localizedBiographyText.length ? 'Edit' : 'Add'];
+                const biographyField = biographyForm.querySelector('#biography-field');
+                biographyField.value = localizedBiographyText;
+                localizationToolsMenu.classList.toggle('active');
+                gThis.displayForm(biographyFormContainer);
             });
-            const type = hiddenInputTool.getAttribute('data-type');
-            const overviewId = parseInt(hiddenInputTool.getAttribute('data-overview-id'));
-            const crud = hiddenInputTool.getAttribute('data-crud');
-            const additional = type === 'additional';
-            if (additional && !source.value) {
-                sourceError.textContent = gThis.translations['This field is required'];
-            }
-            if (!overviewField.value) {
-                overviewError.textContent = gThis.translations['This field is required'];
-            }
-            let data = {
-                overviewId: overviewId,
-                source: source.value,
-                overview: overviewField.value,
-                type: type,
-                crud: crud,
-                locale: lang
-            };
-            if (seasonNumber) {
-                data = {seasonNumber: seasonNumber, ...data};
-            }
 
-            fetch('/api/' + mediaType + '/overview/add/' + id, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-                .then(res => res.json())
-                .then(data => {
-                    console.log(data);
-                    if (data.success) {
-                        gThis.hideForm(overviewForm);
+            biographyCancel.addEventListener('click', function () {
+                gThis.hideForm(biographyFormContainer);
+            });
 
-                        if (crud === 'edit') {
-                            const overviewDiv = document.querySelector('.' + type + '.overview[data-id="' + overviewId + '"]');
-                            const contentDiv = overviewDiv.querySelector('.content');
-                            const newContentText = overviewField.value;
-                            contentDiv.setAttribute('data-overview', newContentText);
-                            // replace \n by <br>
-                            contentDiv.innerHTML = newContentText.replace(/\n/g, '<br>');
-                            //contentDiv.textContent = newContentText;
-
-                            const toolsDiv = overviewDiv.querySelector('.tools');
-                            gThis.setSource(toolsDiv, data.source);
-
-                            return;
+            biographyAdd.addEventListener("click", function (e) {
+                e.preventDefault();
+                const biographyField = biographyForm.querySelector('#biography-field');
+                if (biographyField.value.length < 20) {
+                    const errorSpan = biographyForm.querySelector(".error");
+                    errorSpan.innerText = gThis.translations['biography error'];
+                    return;
+                }
+                fetch('/api/people/biography/' + id, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({'bio': biographyField.value})
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log(data);
+                        if (data.success) {
+                            gThis.hideForm(biographyFormContainer);
+                            const localizedBioDiv = document.querySelector('.localized-bio');
+                            localizedBioDiv.innerText = biographyField.value;
                         }
-
-                        // crud: add
-                        const infosDiv = document.querySelector('.infos');
-                        const infosContentDiv = infosDiv.querySelector('.infos-content');
-                        let overviewsDiv = infosContentDiv.querySelector('.' + type + '.overviews');
-
-                        const newId = data.id;
-                        /** @type {Source} */
-                        const sourceRecord = data.source;
-
-                        const overviewDiv = document.createElement('div');
-                        overviewDiv.classList.add(type, 'overview');
-                        overviewDiv.setAttribute('data-id', newId);
-                        const contentDiv = document.createElement('div');
-                        contentDiv.classList.add('content');
-                        contentDiv.setAttribute('data-overview', overviewField.value);
-                        contentDiv.innerHTML = overviewField.value.replace(/\n/g, '<br>');
-                        overviewDiv.appendChild(contentDiv);
-
-                        const toolsDiv = document.createElement('div');
-                        toolsDiv.classList.add('tools');
-                        gThis.setSource(toolsDiv, sourceRecord);
-
-                        const localeDiv = document.createElement('div');
-                        localeDiv.classList.add('locale');
-                        localeDiv.textContent = lang.toUpperCase();
-                        toolsDiv.appendChild(localeDiv);
-
-                        const editDiv = document.createElement('div');
-                        editDiv.classList.add('edit');
-                        editDiv.setAttribute('data-id', newId);
-                        editDiv.setAttribute('data-title', gThis.translations['Edit']);
-                        const penSvg = document.querySelector('#svgs').querySelector('#pen').querySelector('svg').cloneNode(true);
-                        editDiv.appendChild(penSvg);
-                        editDiv.addEventListener('click', gThis.editOverview);
-                        toolsDiv.appendChild(editDiv);
-
-                        const deleteDiv = document.createElement('div');
-                        deleteDiv.classList.add('delete');
-                        deleteDiv.setAttribute('data-id', newId);
-                        deleteDiv.setAttribute('data-title', gThis.translations['Delete']);
-                        const trashSvg = document.querySelector('#svgs').querySelector('#trash').querySelector('svg').cloneNode(true);
-                        deleteDiv.appendChild(trashSvg);
-                        deleteDiv.addEventListener('click', gThis.deleteOverview);
-                        toolsDiv.appendChild(deleteDiv);
-
-                        overviewDiv.appendChild(toolsDiv);
-
-                        overviewsDiv.appendChild(overviewDiv);
-                        gThis.toolTips.init(overviewDiv);
-
-                        if (seasonNumber) {
-                            const globalToolsDiv = document.querySelector('.localization-tools');
-                            globalToolsDiv.classList.add('d-none');
-                        }
-
-                        overviewField.value = '';
-                    }
-                });
-        });
-        deleteOvDelete.addEventListener('click', function (event) {
-            event.preventDefault();
-
-            const overviewType = deleteOverviewForm.querySelector('#overview-type').value;
-            const overviewId = deleteOverviewForm.querySelector('#overview-id').value;
-            fetch('/api/' + mediaType + '/overview/remove/' + overviewId, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({overviewType: overviewType})
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        gThis.hideForm(deleteOverviewForm);
-                        const overviewDiv = document.querySelector('.' + overviewType + '.overview[data-id="' + overviewId + '"]');
-                        overviewDiv.remove();
-                        if (seasonNumber) {
-                            const globalToolsDiv = document.querySelector('.localization-tools');
-                            globalToolsDiv.classList.remove('d-none');
-                        }
-                    }
-                });
-        });
+                    })
+                    .catch(e => {
+                        console.log(e)
+                    });
+            });
+        }
     }
 
     setSource(toolsDiv, sourceRecord) {

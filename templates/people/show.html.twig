@@ -4,6 +4,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/people.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/translations.scss') }}">
 {% endblock %}
 
 {% block body %}
@@ -85,12 +86,21 @@
                 </div>
                 <div class="right-column">
                     <div class="content">
-                        <h1>{{ people.name }}{% if preferredName %}<span class="preferred-name"> - {{ preferredName }}</span>{% endif %}</h1>
-                        {% if people.biography|length %}
-                            <div class="bio">
+                        <div class="name">
+                            <h1>{{ people.name }}{% if preferredName %}<span class="preferred-name"> - {{ preferredName }}</span>{% endif %}</h1>
+                            {{ include('_blocks/translations/_tools.html.twig', {type: 'people', hidden: 0}) }}
+                        </div>
+                        {{ include('_blocks/forms/_localized_biography.html.twig') }}
+                        <div class="bio">
+                            {% if people.biography|length %}
                                 {{ people.biography|nl2br }}
-                            </div>
-                        {% endif %}
+                            {% endif %}
+                        </div>
+                        <div class="localized-bio">
+                            {% if people.localizedBiography|length %}
+                                {{ people.localizedBiography.biography|nl2br }}
+                            {% endif %}
+                        </div>
                         {% if credits.known_for|length %}
                             <h2>{{ 'Known for'|trans }}</h2>
                             <div class="known-for">
@@ -307,7 +317,12 @@
             "app_series_get_overview": "{{ path('app_series_get_overview', {id: 0})|slice(0, -1) }}",
             "app_people_rating": "{{ path('app_people_rating') }}",
             "app_people_preferred_name": "{{ path('app_people_preferred_name') }}",
-            "imgUrl": "{{ imageConfig.url ~ imageConfig.profile_sizes.2 }}"
+            "imgUrl": "{{ imageConfig.url ~ imageConfig.profile_sizes.2 }}",
+            "translations": {
+                "Add": "{{ 'Add'|trans }}",
+                "Edit": "{{ 'Edit'|trans }}",
+                "biography error": "{{ 'Biography must be at least 20 characters long.'|trans }}"
+            }
         }
     </div>
     <div id="svgs" style="display: none">

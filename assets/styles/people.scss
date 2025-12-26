@@ -292,12 +292,12 @@
     min-height: 50dvh;
     margin-block-start: 4rem;
 
-    &:has(.error) {
+    /*&:has(.error) {
         align-items: center;
         flex-direction: column;
         justify-content: center;
         min-height: unset;
-    }
+    }*/
 
     .left-column {
         //@include flex-col(start, start);
@@ -520,16 +520,26 @@
             padding: 1rem;
             width: 100%;
 
-            h1 {
-                color: var(--ardoise-20);
-                font-size: 2rem;
-                font-weight: 100;
-                line-height: 2.1rem;
-                margin-block-end: 1rem;
+            .name {
+                display: flex;
+                justify-content: space-between;
+
+                h1 {
+                    color: var(--ardoise-20);
+                    font-size: 2rem;
+                    font-weight: 100;
+                    line-height: 2.1rem;
+                    margin-block-end: 1rem;
+                }
             }
 
-            .bio {
-                font-weight: 100;
+            .bio, .localized-bio {
+                font-weight: 300;
+                padding: 1rem;
+                position: relative;
+                margin-block-end: 1rem;
+                text-wrap: pretty;
+                width: 100%;
             }
 
             .known-for {
@@ -716,14 +726,14 @@
         }
     }
 
-    .error {
+    /*.error {
         //@include flex-col(flex-end, center);
         align-items: flex-end;
         display: flex;
         flex-direction: column;
         justify-content: center;
         margin-block: 5rem;
-    }
+    }*/
 
     @container person (width < 576px) {
         .left-column {

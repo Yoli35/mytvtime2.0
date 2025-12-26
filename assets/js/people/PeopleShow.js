@@ -1,5 +1,6 @@
 import {Diaporama} from "Diaporama";
 import {ToolTips} from "ToolTips";
+import {TranslationsForms} from "TranslationsForms";
 
 let gThis = null;
 
@@ -13,6 +14,7 @@ export class PeopleShow {
         this.app_people_rating = this.globs.app_people_rating;
         this.app_people_preferred_name = this.globs.app_people_preferred_name;
         this.imgUrl = this.globs.imgUrl;
+        this.translations = this.globs.translations;
         this.toolTips = new ToolTips();
         this.diaporama = new Diaporama();
         this.start();
@@ -46,6 +48,12 @@ export class PeopleShow {
         const preferredNameForm = document.querySelector(".preferred-name");
         const preferredNameSubmit = preferredNameForm.querySelector("button[type=submit]");
         preferredNameSubmit.addEventListener("click", this.preferredName);
+
+        /******************************************************************************
+         * Menu to add a localized name or an overview and additional overview        *
+         ******************************************************************************/
+        const id = document.querySelector(".person").getAttribute("data-id");
+        new TranslationsForms(id, 'people', this.translations);
     }
 
     initInfos() {

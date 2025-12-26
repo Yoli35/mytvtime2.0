@@ -7,6 +7,7 @@ use App\Entity\PeopleUserPreferredName;
 use App\Entity\PeopleUserRating;
 use App\Entity\User;
 use App\Repository\MovieRepository;
+use App\Repository\PeopleLocalizedBiographyRepository;
 use App\Repository\PeopleRepository;
 use App\Repository\PeopleUserPreferredNameRepository;
 use App\Repository\PeopleUserRatingRepository;
@@ -32,16 +33,17 @@ class PeopleController extends AbstractController
 {
 
     public function __construct(
-        private readonly DateService                       $dateService,
-        private readonly ImageConfiguration                $imageConfiguration,
-        private readonly ImageService                      $imageService,
-        private readonly MovieRepository                   $movieRepository,
-        private readonly PeopleRepository                  $peopleRepository,
-        private readonly PeopleUserPreferredNameRepository $peopleUserPreferredNameRepository,
-        private readonly PeopleUserRatingRepository        $peopleUserRatingRepository,
-        private readonly SeriesRepository                  $seriesRepository,
-        private readonly TmdbService                       $tmdbService,
-        private readonly TranslatorInterface               $translator,
+        private readonly DateService                        $dateService,
+        private readonly ImageConfiguration                 $imageConfiguration,
+        private readonly ImageService                       $imageService,
+        private readonly MovieRepository                    $movieRepository,
+        private readonly PeopleRepository                   $peopleRepository,
+        private readonly PeopleLocalizedBiographyRepository $peopleLocalizedBiographyRepository,
+        private readonly PeopleUserPreferredNameRepository  $peopleUserPreferredNameRepository,
+        private readonly PeopleUserRatingRepository         $peopleUserRatingRepository,
+        private readonly SeriesRepository                   $seriesRepository,
+        private readonly TmdbService                        $tmdbService,
+        private readonly TranslatorInterface                $translator,
     )
     {
     }
@@ -177,6 +179,7 @@ class PeopleController extends AbstractController
         $people['avgRating'] = $peopleUserRating['avg_rating'] ?? 0;
 
         $people['preferredName'] = $this->peopleUserPreferredNameRepository->findOneBy(['user' => $user, 'tmdbId' => $id]);
+        $people['localizedBiography'] = $this->peopleLocalizedBiographyRepository->findOneBy(['tmdbId' => $id, 'locale' => $request->getLocale()]);
 
         if (key_exists('birthday', $people) && $people['birthday']) {
             $date = $this->dateService->newDate($people['birthday'], "Europe/Paris");

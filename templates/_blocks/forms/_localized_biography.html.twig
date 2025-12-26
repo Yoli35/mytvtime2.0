@@ -1,0 +1,19 @@
+<div class="biography-form" popover id="biography-form-container">
+    <form class="form" action="" id="biography-form">
+        <div class="form-row">
+            <div class="form-field">
+                <label for="biography-field"><span>{{ 'Biography'|trans }} <span class="required">*</span></span> <span class="error"></span>
+                    <textarea id="biography-field" rows="12" required></textarea>
+                    <span class="error"></span>
+                </label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field">
+                <button type="button">{{ 'Cancel'|trans }}</button>
+                <button type="submit" value="add">{{ 'Add'|trans }}</button>
+            </div>
+        </div>
+        <input type="hidden" name="tool" id="tool" value="create">
+    </form>
+</div>

@@ -80,6 +80,7 @@
     z-index: 1;
 }*/
 
+.biography-form,
 .delete-overview-form,
 .keyword-translation-form,
 .localized-name-form,
@@ -171,6 +172,23 @@
                 }
             }
 
+            .form-field:has(textarea) {
+                label {
+                    align-items: flex-start;
+                    display: flex;
+                    flex-direction: column;
+                    gap: .25rem;
+
+                    textarea {
+                        background-color: hsla(from var(--orange-10) h s l / .8);
+                        border: none;
+                        border-radius: .25rem;
+                        padding: .5rem .5rem;
+                        width: 100%;
+                    }
+                }
+            }
+
             .form-field:has(button) {
                 align-items: center;
                 display: flex;
@@ -230,6 +248,7 @@
     }
 }
 
+.biography-form::backdrop,
 .delete-overview-form::backdrop,
 .keyword-translation-form::backdrop,
 .localized-name-form::backdrop,

@@ -683,6 +683,10 @@ Star people: Personnes étoilées
 Writing: Écriture
 Your rating: Votre note
 Your stars: Vos étoiles
+Copy to clipboard: Copier dans le presse-papiers
+Add a localized biography: Ajouter une biographie localisée
+Biography: Biographie
+Biography must be at least 20 characters long.: La biographie doit comporter au moins 20 caractères.
 as.job: en tant que
 items: éléments
 movie: film
@@ -1351,6 +1355,7 @@ Logo: Logo
 Mark as viewed: Marquer comme vu
 Movie not found on TMDB: Film non trouvé sur le site The Movie Database
 Movies: Films
+Movies by ID: Films par ID
 My favorite movies: Mes films préférés
 My movies: Mes films
 Name of the movie: Nom du film
