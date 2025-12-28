@@ -1322,7 +1322,7 @@ class SeriesController extends AbstractController
                 $future = true;
             } else {
                 $airAt = $link['user_episode']['air_at'] ?? ' 09:00';
-                $airString = $link['air_date'] . $airAt;
+                $airString = $link['air_date'] . " " . $airAt;
                 $class = "quick-episode";
                 if ($link['user_episode']['watch_at_db']) {
                     $class .= " watched";
