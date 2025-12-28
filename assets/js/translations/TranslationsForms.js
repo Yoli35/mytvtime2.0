@@ -446,67 +446,57 @@ export class TranslationsForms {
     }
 
     displayForm(form) {
-        if (form.getAttribute('popover') === "") {
-            form.showPopover();
-            form.querySelector('textarea')?.focus();
-        } else {
-            form.classList.add('display');
-            setTimeout(function () {
-                form.classList.add('active');
-            }, 0);
-            form.querySelector('textarea')?.focus();
-        }
-
-        // Vérifier le presse-papier et afficher un bouton "Coller" si du texte est présent
-        (async () => {
-            try {
-                if (!navigator.clipboard || !form) return;
-                const text = await navigator.clipboard.readText();
-                if (!text || !text.trim()) return;
-
-                const textarea = form.querySelector('textarea');
-                if (!textarea) return;
-
-                // Crée le bouton si nécessaire
-                let pasteBtn = form.querySelector('.paste-from-clipboard');
-                if (!pasteBtn) {
-                    const ovAdd = form.querySelector('button[value="add"]');
-                    const parentElement = ovAdd.parentElement;
-                    pasteBtn = document.createElement('button');
-                    pasteBtn.type = 'button';
-                    pasteBtn.classList.add('paste-from-clipboard');
-                    pasteBtn.textContent = (gThis.translations && gThis.translations['Paste']) || 'Coller';
-                    // style minimal si besoin (laisser CSS global faire le reste)
-                    pasteBtn.style.marginLeft = '8px';
-
-                    // Inserter le bouton juste après la textarea si possible
-                    if (textarea.parentNode) {
-                        parentElement.insertBefore(pasteBtn, ovAdd);
-                    } else {
-                        form.appendChild(pasteBtn);
-                    }
-
-                    // Handler de collage à la position du curseur
-                    pasteBtn.addEventListener('click', function () {
-                        const start = textarea.selectionStart || 0;
-                        const end = textarea.selectionEnd || 0;
-                        const before = textarea.value.slice(0, start);
-                        const after = textarea.value.slice(end);
-                        textarea.value = before + text + after;
-                        // replacer le curseur après le texte collé
-                        const newPos = start + text.length;
-                        textarea.setSelectionRange(newPos, newPos);
-                        textarea.focus();
-                        // masquer le bouton après collage
-                        pasteBtn.remove();
-                    });
+        gThis.pasteButton()
+            .then(() => {
+                if (form.getAttribute('popover') === "") {
+                    form.showPopover();
+                    form.querySelector('textarea')?.focus();
                 } else {
-                    pasteBtn.style.display = '';
+                    form.classList.add('display');
+                    setTimeout(function () {
+                        form.classList.add('active');
+                    }, 0);
+                    form.querySelector('textarea')?.focus();
                 }
-            } catch (e) {
-                // accès refusé ou indisponible — on ne fait rien
-            }
-        })();
+            });
+    }
+
+    async pasteButton() {
+        try {
+            if (!navigator.clipboard || !form) return;
+            const text = await navigator.clipboard.readText();
+            if (!text || !text.trim()) return;
+
+            const textarea = form.querySelector('textarea');
+            if (!textarea) return;
+
+            // Crée le bouton si nécessaire
+            const ovAdd = form.querySelector('button[type="submit"]');
+            const parentElement = ovAdd.parentElement;
+            const pasteBtn = document.createElement('button');
+            pasteBtn.type = 'button';
+            pasteBtn.classList.add('paste-from-clipboard');
+            pasteBtn.textContent = (gThis.translations && gThis.translations['Paste']) || 'Coller';
+            pasteBtn.setAttribute("data-title", "“ " + text + " ”");
+            gThis.toolTips.initElement(pasteBtn);
+
+            pasteBtn.addEventListener('click', function () {
+                const start = textarea.selectionStart || 0;
+                const end = textarea.selectionEnd || 0;
+                const before = textarea.value.slice(0, start);
+                const after = textarea.value.slice(end);
+                textarea.value = before + text + after;
+                // replacer le curseur après le texte collé
+                const newPos = start + text.length;
+                textarea.setSelectionRange(newPos, newPos);
+                textarea.focus();
+                pasteBtn.remove();
+            });
+            parentElement.insertBefore(pasteBtn, ovAdd);
+        } catch (e) {
+            // accès refusé ou indisponible — on ne fait rien
+            console.log(e);
+        }
     }
 
     hideForm(form) {
