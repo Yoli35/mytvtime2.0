@@ -2,8 +2,10 @@
 
 namespace App\Api;
 
+use App\Entity\Settings;
 use App\Entity\UserList;
 use App\Repository\SeriesRepository;
+use App\Repository\SettingsRepository;
 use App\Repository\UserListRepository;
 use App\Service\UserListService;
 use Closure;
@@ -16,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/api/series/list', name: 'api_series_list_')]
-readonly class SeriesList
+readonly class ApiSeriesList
 {
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
@@ -25,6 +27,7 @@ readonly class SeriesList
         private Closure             $getUser,
         private TranslatorInterface $translator,
         private SeriesRepository    $seriesRepository,
+        private SettingsRepository $settingsRepository,
         private UserListRepository  $userListRepository,
         private UserListService     $userListService,
     )
@@ -202,6 +205,26 @@ readonly class SeriesList
             'ok' => true,
             'toggle' => true,
             'final_state' => $userList->getSeriesList()->contains($series),
+        ]);
+    }
+
+    #[Route('/save', name: 'add', methods: ['POST'])]
+    public function save(Request $request): Response
+    {
+        $user = ($this->getUser)();
+        $data = json_decode($request->getContent(), true);
+        $listId = $data['list_id'];
+        $listYear = $data['list_year'];
+
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'key' => 'series_lists']);
+        if (!$settings) {
+            $settings = new Settings($user, 'series_lists', ['list_id' => 0, 'list_year' => 0]);
+        }
+        $settings->setValue(['list_id' => $listId, 'list_year' => $listYear]);
+        $this->settingsRepository->save($settings, true);
+
+        return ($this->json)([
+            'ok' => true,
         ]);
     }
 }
