@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ asset('styles/map.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/card.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/translations.scss') }}">
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css">
 {% endblock %}
@@ -511,6 +512,8 @@
         <div class="svg" id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
         <div class="svg" id="pen">{{ ux_icon('mdi:pencil') }}</div>
         <div class="svg" id="trash">{{ ux_icon('mdi:trash') }}</div>
+        <div id="svg-bookmark">{{ ux_icon('mdi:bookmark') }}</div>
+        <div id="svg-bookmark-outline">{{ ux_icon('mdi:bookmark-outline') }}</div>
     </div>
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}

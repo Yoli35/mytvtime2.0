@@ -44,8 +44,9 @@ class SeriesWhatNext extends AbstractController
         foreach ($userSeries as $series) {
             $blocks[] = $this->renderView('_blocks/series/_card.html.twig', [
                 'series' => $series,
-                "allFiltered" => true,
-                "sort" => $filters['sort'],
+                'home' => true,
+                'allFiltered' => true,
+                'sort' => $filters['sort'],
             ]);
         }
 
@@ -74,6 +75,7 @@ class SeriesWhatNext extends AbstractController
             foreach ($similarSeries as $series) {
                 $blocks[] = $this->renderView('_blocks/series/_card.html.twig', [
                     'series' => $series,
+                    'home' => true,
                 ]);
             }
         }

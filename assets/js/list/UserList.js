@@ -339,30 +339,32 @@ export class UserList {
                 seriesToolsMenu.classList.toggle('visible');
 
                 if (seriesToolsMenu.classList.contains('visible')) {
-                    const visibleMenus = document.querySelectorAll('.series-tools-menu.visible')
-                    visibleMenus.forEach((menu) => {
-                        if (menu !== seriesToolsMenu) {
-                            menu.classList.remove('visible');
+                    if (!seriesToolsMenu.classList.contains('up')) {
+                        const visibleMenus = document.querySelectorAll('.series-tools-menu.visible')
+                        visibleMenus.forEach((menu) => {
+                            if (menu !== seriesToolsMenu) {
+                                menu.classList.remove('visible');
+                            }
+                        });
+                        const mouseX = e.clientX;
+                        const mouseY = e.clientY;
+                        const rect = seriesToolsMenu.getBoundingClientRect();
+                        console.log(rect)
+                        const windowWidth = window.innerWidth;
+                        const windowHeight = window.innerHeight;
+                        let dx = 0, dy = 32;
+                        if (mouseX - rect.width < 16) {
+                            dx = (mouseX - rect.width - 16)
+                        } else {
+                            if (mouseX > windowWidth - 16) {
+                                dx = windowWidth - 16;
+                            }
                         }
-                    });
-                    const mouseX = e.clientX;
-                    const mouseY = e.clientY;
-                    const rect = seriesToolsMenu.getBoundingClientRect();
-                    console.log(rect)
-                    const windowWidth = window.innerWidth;
-                    const windowHeight = window.innerHeight;
-                    let dx = 0, dy = 32;
-                    if (mouseX - rect.width < 16) {
-                        dx = (mouseX - rect.width - 16)
-                    } else {
-                        if (mouseX > windowWidth - 16) {
-                            dx = windowWidth - 16;
+                        if (windowHeight - (mouseY + dy + rect.height) < 16) {
+                            dy = (windowHeight - rect.height - dy - 16)
                         }
+                        seriesToolsMenu.setAttribute("style", "right: " + dx + "px; top: " + dy + "px;");
                     }
-                    if (windowHeight - (mouseY + dy + rect.height) < 16) {
-                        dy = (windowHeight - rect.height - dy - 16)
-                    }
-                    seriesToolsMenu.setAttribute("style", "right: " + dx + "px; top: " + dy + "px;");
                 }
             });
 

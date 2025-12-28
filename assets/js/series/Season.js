@@ -5,6 +5,7 @@ import {FlashMessage} from "FlashMessage";
 import {Map} from "Map";
 import {ToolTips} from 'ToolTips';
 import {TranslationsForms} from "TranslationsForms";
+import {UserList} from "UserList";
 
 let gThis;
 
@@ -72,6 +73,11 @@ export class Season {
         /**
          * @typedef Devices
          * @type {Array.<Device>}
+         */
+        /** @typedef EpisodeFilmingLocationResult
+         * @type {Object}
+         * @property {number} episode_number
+         * @property {string} block
          */
         /**
          * @typedef Translations
@@ -388,6 +394,7 @@ export class Season {
                     blocks.forEach((block) => {
                         wrapperDiv.insertAdjacentHTML('beforeend', block);
                     });
+                    new UserList(gThis.flashMessage, gThis.toolTips);
                     whatToWatchNextButton.classList.remove('disabled');
                 });
         });
@@ -504,6 +511,7 @@ export class Season {
             .then((response) => response.json())
             .then(data => {
                 console.log(data);
+                /** @type Array<EpisodeFilmingLocationResult> results */
                 const results = data['results'];
                 results.forEach(result => {
                     const episodeSelector = "#episode-" + this.seasonNumber + "-" + result['episode_number'] + " .infos";
