@@ -460,6 +460,7 @@ building: construction
 bully: intimidation
 bullying: intimidation
 bunker: bunker
+bureaucracy: bureaucratie
 burlesque: burlesque
 burnout: burnout
 bus: bus
@@ -1524,6 +1525,7 @@ homophobia: homophobie
 honor slaying: meurtre d'honneur
 hope for future: espoir pour l'avenir
 hopeful: plein d'espoir
+hopeless: sans espoir
 horrified: horrifié
 horror anthology: anthologie de l'horreur
 horror comedy: comédie d'horreur
@@ -1543,6 +1545,7 @@ human animal hybrid: hybride homme-animal
 human animal relationship: relation homme-animal
 human clone: clone humain
 human cloning: clonage humain
+human made disaster: catastrophe d'origine humaine
 human mystery: mystère humain
 human nature: nature humaine
 human rights: droits de l'homme
@@ -2160,10 +2163,12 @@ novel: nouvelle
 novelist: romancier
 nsa agent: agent de la nsa
 nuclear catastrophe: catastrophe nucléaire
+nuclear disaster: catastrophe nucléaire
 nuclear explosion: explosion nucléaire
 nuclear fallout: retombées nucléaires
 nuclear missile: missile nucléaire
 nuclear power plant: centrale nucléaire
+nuclear radiation: rayonnement nucléaire
 nuclear war: guerre nucléaire
 nudity: nudité
 nun: nonne
@@ -2342,6 +2347,7 @@ political mystery: mystère politique
 political satire: satire politique
 political scandal: scandale politique
 political thriller: thriller politique
+political turmoil: agitation politique
 political: politique
 politician: politique
 politics: politique
@@ -3129,6 +3135,7 @@ time: temps
 timeline: ligne du temps
 titanic: titanic
 tng: trek nouvelle génération
+tokusatsu: Le tokusatsu (特撮), contraction de tokushu satsuei (特殊撮影) qui signifie « effets spéciaux », est le nom générique de toutes les productions vidéo qui utilisent les effets spéciaux et l’esthétique liée à ces productions. L’idée de tokusatsu s’est propagée grâce au succès mondial du premier film tokusatsu, Godzilla, qui est créé en 1954 en imitant le film King Kong. Le tokusatsu devient complètement indépendant des genres de films hollywoodiens, malgré sa base qui est l’imitation du film King Kong. Le tokusatsu est en quelque sorte "fondé" par Eiji Tsuburaya (surnommé le "père du tokusatsu"), réalisateur et responsable des effets spéciaux de ce même Godzilla. Le succès du film Godzilla contribue à la célébrité des tokusatsu, et différents types de séries de tokusatsu sont créées par plusieurs studios. La réduction du nombre de séries tokusatsu après la prospérité dans les années 1970, ne les empêche pas d'avoir encore du succès, autant que les séries animées japonaises.
 tokyo, japan: tokyo, japon
 tokyo: tokyo
 tomb raiding: raid sur les tombes
@@ -3252,6 +3259,7 @@ upper class: classe supérieure
 upstate new york: nord-ouest de l'état de New York
 urgent: urgent
 us army: armée américaine
+us japan relations: relations entre les États-Unis et le Japon
 us military: armée américaine
 usa politics: politique américaine
 usa president: usa président
