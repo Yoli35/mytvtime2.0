@@ -977,8 +977,24 @@ h2 {
 
                             .content {
                                 border-radius: .5rem;
+                                display: block;
                                 margin-block-end: unset;
                                 padding: .5rem;
+
+                                &::after {
+                                    content: "";
+                                    clear: both;
+                                    display: block;
+                                }
+
+                                img {
+                                    float: left;
+                                    flex-shrink: 0;
+                                    height: 3rem;
+                                    margin-inline-end: 1rem;
+                                    shape-outside: margin-box;
+                                    width: auto;
+                                }
                             }
 
                             .tools {
@@ -2996,8 +3012,17 @@ h2 {
             }
 
             .season__episodes {
+                align-items: center;
                 display: flex;
                 gap: 1rem;
+
+                .episode-count {
+                    background-color: var(--orange-50);
+                    border-radius: .25rem;
+                    color: var(--ardoise-10);
+                    font-weight: 500;
+                    padding: .25rem .5rem;
+                }
 
                 .watched {
                     display: flex;
@@ -4044,9 +4069,10 @@ h2 {
                 background-color: hsla(from var(--ardoise-90) h s l / 0.1);
                 border: 2px solid transparent;
                 border-radius: .5rem;
-                color: var(--ardoise-10);
+                /*color: var(--ardoise-10);*/
                 display: flex;
                 flex-direction: column;
+                font-weight: 300;
                 gap: .5rem;
                 height: 100%;
                 justify-content: flex-start;
@@ -4060,6 +4086,7 @@ h2 {
 
                 .episode-name {
                     align-items: center;
+                    color: var(--ardoise-10);
                     display: flex;
                     flex-wrap: wrap;
                     font-size: 1.5rem;
@@ -4167,7 +4194,7 @@ h2 {
                 }
 
                 .episode-overview {
-                    background-color: hsla(from var(--ardoise-90) h s l / 0.325);
+                    background-color: hsla(from var(--ardoise-90) h s l / 0);
                     border-radius: .25rem;
                     padding: .5rem;
                     position: relative;
@@ -4182,36 +4209,6 @@ h2 {
                             border-left: 2px solid var(--green-50);
                             padding-inline-start: 1rem;
                         }
-
-                        /*&.us {
-                            border-left: 2px solid var(--green-50);
-                            position: relative;
-
-                            &:hover .translate {
-                                display: flex;
-                            }
-
-                            .translate {
-                                align-items: center;
-                                background-color: var(--green-50);
-                                border-radius: .25rem;
-                                color: var(--green-90);
-                                cursor: pointer;
-                                display: none;
-                                font-size: 1.25rem;
-                                font-weight: 300;
-                                height: 2rem;
-                                justify-content: center;
-                                position: absolute;
-                                right: 0;
-                                top: 0;
-                                width: 2rem;
-                            }
-
-                            svg {
-                                cursor: pointer;
-                            }
-                        }*/
                     }
 
                     .edit {
@@ -4391,7 +4388,7 @@ h2 {
                         .location-card {
                             align-items: center;
                             aspect-ratio: 16/9;
-                            background-color: hsla(from var(--ardoise-80) h s l / .5);
+                            background-color: hsla(from var(--ardoise-80) h s l / .25);
                             border-radius: .5rem;
                             display: flex;
                             flex-direction: column;
@@ -5001,10 +4998,15 @@ h2 {
                         }
                     }
 
+                    .infos {
+                        overflow-y: unset;
+                    }
+
                     .name {
                         border-radius: 0 0 .5rem .5rem;
                         flex-direction: column;
                         height: 5rem;
+                        overflow-y: auto;
                         text-align: center;
                     }
                 }
