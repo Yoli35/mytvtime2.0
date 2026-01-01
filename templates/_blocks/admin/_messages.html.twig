@@ -1,0 +1,31 @@
+<h2>{{ 'Messages'|trans }}</h2>
+<div class="admin__messages">
+
+    <div class="message">
+        <div class="message__read"></div>
+        <div class="message__id">#</div>
+        <div class="message__name">{{ 'Name'|trans }}</div>
+        <div class="message__email">{{ 'Email'|trans }}</div>
+        <div class="message__subject">{{ 'Subject'|trans }}</div>
+        <div class="message__date">{{ 'Date'|trans }}</div>
+    </div>
+    {% for m in messages %}
+        <a class="message" href="{{ path('admin_message_detail', {'id': m.id}) }}">
+            <div class="message__read">
+                {% if m.messageRead == 0 %}
+                    <div class="read-indicator"></div>
+                {% endif %}
+            </div>
+            <div class="message__id">{{ m.id }}</div>
+            <div class="message__name">{{ m.name }}</div>
+            <div class="message__email">{{ m.email }}</div>
+            <div class="message__subject">{{ m.subject }}</div>
+            <div class="message__date">{{ m.date|format_datetime('short', 'short') }}</div>
+        </a>
+    {% else %}
+        <div class="no-messages">
+            {{ 'No messages'|trans }}
+        </div>
+    {% endfor %}
+
+</div>

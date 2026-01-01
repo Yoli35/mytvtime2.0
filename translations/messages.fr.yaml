@@ -1508,12 +1508,15 @@ secondes: secondes
 # Admin
 Add a new point of interest: Ajouter un nouveau point d'intérêt
 Address: Adresse
+Are you sure you want to delete this message?: Êtes-vous sûr de vouloir supprimer ce message ?
+Back to messages: Retour aux messages
 Calculate: Calculer
 Channel: Chaîne
 Check for updates: Vérifier les mises à jour
 City: Ville
 Coordinates: Coordonnées
 Creation: Création
+Delete message: Supprimer le message
 Duration: Durée
 Edit filming location: Modifier le lieu de tournage
 Filming locations: Lieux de tournage
@@ -1521,7 +1524,10 @@ Force update: Mise à jour forcée
 Generate find/zip command: Générer la commande find/zip
 Go to video page: Aller à la page de la vidéo
 Last update: Dernière mise à jour
+Message details: Détails du message
+Messages: Messages
 Minutes passed since...: Minutes passées depuis...
+No messages: Aucun message
 Points of interrest: Points d'intérêt
 Results: Résultats
 See the filming location description: Voir la description du lieu de tournage
@@ -1531,6 +1537,8 @@ Tools: Outils
 Update_: Mise à jour
 Video Id: Id vidéo
 Work in progress: En cours de travail
+new message: nouveau message
+new messages: nouveaux messages
 point of interest: point d'intérêt
 points of interest: points d'intérêt
 videos: vidéos

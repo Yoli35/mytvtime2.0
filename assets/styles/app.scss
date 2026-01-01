@@ -694,6 +694,20 @@ label:has(input[type="text"]) {
         }
 
         .menu.user {
+            .admin-link {
+                align-items: center;
+                display: flex;
+
+                .admin-messages-count {
+                    background-color: var(--orange-50);
+                    border-radius: .25rem;
+                    color: var(--orange-90);
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    margin-inline-start: auto;
+                    padding: .125rem .5rem;
+                }
+            }
             .accent-color {
                 display: flex;
                 padding-inline: 1rem;

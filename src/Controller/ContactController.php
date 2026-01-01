@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
-use App\DTO\ContactDTO;
+//use App\DTO\ContactDTO;
+use App\Entity\ContactMessage;
 use App\Entity\User;
 use App\Form\ContactType;
+use App\Repository\ContactMessageRepository;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +20,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ContactController extends AbstractController
 {
     public function __construct(
+        private readonly ContactMessageRepository $contactMessageRepository,
         private readonly MailerInterface     $mailer,
         private readonly TranslatorInterface $translator,
     )
@@ -29,7 +32,7 @@ class ContactController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        $data = new ContactDTO();
+        $data = new ContactMessage($user->getTimezone() ?? 'Europe/Paris');
         if ($user) {
             $data->setName($user->getUsername());
             $data->setEmail($user->getEmail());
@@ -38,6 +41,8 @@ class ContactController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $this->contactMessageRepository->save($data, true);
             // Send mail
             $mail = new TemplatedEmail()
                 ->from($data->getEmail())

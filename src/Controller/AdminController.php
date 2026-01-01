@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\ContactMessage;
 use App\Entity\PointOfInterest;
 use App\Entity\PointOfInterestImage;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Form\PointOfInterestForm;
+use App\Repository\ContactMessageRepository;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\MovieRepository;
 use App\Repository\PointOfInterestCategoryRepository;
@@ -30,6 +32,7 @@ use Symfony\Component\Intl\Languages as Languages;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -41,6 +44,7 @@ class AdminController extends AbstractController
 {
 
     public function __construct(
+        private readonly ContactMessageRepository          $contactMessageRepository,
         private readonly DateService                       $dateService,
         private readonly FilmingLocationRepository         $filmingLocationRepository,
         private readonly ImageConfiguration                $imageConfiguration,
@@ -91,6 +95,36 @@ class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/messages', name: 'messages')]
+    public function messages(Request $request): Response
+    {
+        $messages = $this->contactMessageRepository->findBy([], ['date' => 'DESC']);
+
+        return $this->render('admin/index.html.twig', [
+            'messages' => $messages,
+        ]);
+    }
+
+    #[Route('/message/{id}', name: 'message_detail', requirements: ['id' => Requirement::DIGITS])]
+    public function message(Request $request, ContactMessage $message): Response
+    {
+        if ($message->isMessageRead() === false) {
+            $message->setMessageRead(true);
+            $this->contactMessageRepository->save($message, true);
+        }
+        return $this->render('admin/index.html.twig', [
+            'message' => $message,
+        ]);
+    }
+
+    #[Route('/message/delete/{id}', name: 'message_delete', requirements: ['id' => Requirement::DIGITS])]
+    public function messageDelete(Request $request, ContactMessage $message): Response
+    {
+        $this->contactMessageRepository->remove($message, true);
+
+        return $this->redirectToRoute('admin_messages');
+    }
+
     #[Route('/tools', name: 'tools')]
     public function tools(Request $request): Response
     {
@@ -115,13 +149,13 @@ class AdminController extends AbstractController
                     'label' => 'Catalog - API to enumerate datasets',
                     'value' => 'catalog',
                     'menu' => [
-                        ['value'=>'/catalog/datasets', 'label' => 'Query catalog datasets', 'fields' => []],
-                        ['value'=>'/catalog/exports', 'label' => 'List export formats', 'fields' => []],
-                        ['value'=>'/catalog/exports/{format}', 'label' => 'Export catalog in specified format', 'fields' => ['format']],
-                        ['value'=>'/catalog/exports/csv', 'label' => 'Export catalog in CSV format', 'fields' => []],
-                        ['value'=>'/catalog/exports/dcat{dcat_ap_format}', 'label' => 'Export a catalog in RDF/XML (DCAT)', 'fields' => ['dcat_ap_format']],
-                        ['value'=>'/catalog/facets', 'label' => 'List facet values', 'fields' => []],
-                        ['value'=>'/catalog/datasets/{dataset_id}', 'label' => 'Show dataset information', 'fields' => ['dataset_id']],
+                        ['value' => '/catalog/datasets', 'label' => 'Query catalog datasets', 'fields' => []],
+                        ['value' => '/catalog/exports', 'label' => 'List export formats', 'fields' => []],
+                        ['value' => '/catalog/exports/{format}', 'label' => 'Export catalog in specified format', 'fields' => ['format']],
+                        ['value' => '/catalog/exports/csv', 'label' => 'Export catalog in CSV format', 'fields' => []],
+                        ['value' => '/catalog/exports/dcat{dcat_ap_format}', 'label' => 'Export a catalog in RDF/XML (DCAT)', 'fields' => ['dcat_ap_format']],
+                        ['value' => '/catalog/facets', 'label' => 'List facet values', 'fields' => []],
+                        ['value' => '/catalog/datasets/{dataset_id}', 'label' => 'Show dataset information', 'fields' => ['dataset_id']],
                     ],
                     "selected_item" => '/catalog/datasets',
                 ],
@@ -129,15 +163,15 @@ class AdminController extends AbstractController
                     'label' => 'Dataset - API to work on records',
                     'value' => 'dataset',
                     'menu' => [
-                        ['value'=>'/catalog/datasets/{dataset_id}/records', 'label' => 'Query dataset records', 'fields' => ['dataset_id']],
-                        ['value'=>'/catalog/datasets/{dataset_id}/exports', 'label' => 'List export formats for a dataset', 'fields' => ['dataset_id']],
-                        ['value'=>'/catalog/datasets/{dataset_id}/exports/{format}', 'label' => 'Export a dataset', 'fields' => ['dataset_id', 'format']],
-                        ['value'=>'/catalog/datasets/{dataset_id}/exports/csv', 'label' => 'Export a dataset in CSV format', 'fields' => ['dataset_id']],
-                        ['value'=>'/catalog/datasets/{dataset_id}/exports/parquet', 'label' => 'Export a dataset in Parquet', 'fields' => ['dataset_id']],
-                        ['value'=>'/catalog/datasets/{dataset_id}/exports/gpx', 'label' => 'Export a dataset in GPX format', 'fields' => ['dataset_id']],
-                        ['value'=>'/catalog/datasets/{dataset_id}/facets', 'label' => 'List facet values for a dataset', 'fields' => ['dataset_id']],
-                        ['value'=>'/catalog/datasets/{dataset_id}/attachments', 'label' => 'List dataset attachments', 'fields' => ['dataset_id']],
-                        ['value'=>'/catalog/datasets/{dataset_id}/records/{record_id}', 'label' => 'Read a dataset record', 'fields' => ['dataset_id', 'record_id']],
+                        ['value' => '/catalog/datasets/{dataset_id}/records', 'label' => 'Query dataset records', 'fields' => ['dataset_id']],
+                        ['value' => '/catalog/datasets/{dataset_id}/exports', 'label' => 'List export formats for a dataset', 'fields' => ['dataset_id']],
+                        ['value' => '/catalog/datasets/{dataset_id}/exports/{format}', 'label' => 'Export a dataset', 'fields' => ['dataset_id', 'format']],
+                        ['value' => '/catalog/datasets/{dataset_id}/exports/csv', 'label' => 'Export a dataset in CSV format', 'fields' => ['dataset_id']],
+                        ['value' => '/catalog/datasets/{dataset_id}/exports/parquet', 'label' => 'Export a dataset in Parquet', 'fields' => ['dataset_id']],
+                        ['value' => '/catalog/datasets/{dataset_id}/exports/gpx', 'label' => 'Export a dataset in GPX format', 'fields' => ['dataset_id']],
+                        ['value' => '/catalog/datasets/{dataset_id}/facets', 'label' => 'List facet values for a dataset', 'fields' => ['dataset_id']],
+                        ['value' => '/catalog/datasets/{dataset_id}/attachments', 'label' => 'List dataset attachments', 'fields' => ['dataset_id']],
+                        ['value' => '/catalog/datasets/{dataset_id}/records/{record_id}', 'label' => 'Read a dataset record', 'fields' => ['dataset_id', 'record_id']],
                     ],
                     "selected_item" => '/catalog/datasets/{dataset_id}/records',
                 ],

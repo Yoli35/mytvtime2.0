@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\DTO\ContactDTO;
+use App\Entity\ContactMessage;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -45,7 +45,7 @@ class ContactType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ContactDTO::class,
+            'data_class' => ContactMessage::class,
         ]);
     }
 }
