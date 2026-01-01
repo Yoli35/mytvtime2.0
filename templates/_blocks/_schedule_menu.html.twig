@@ -6,7 +6,10 @@
     {% set eotdList = interval[relativeDay] %}
     {% set l = eotdList.totalEpisodeCount %}
     {% if l %}
-        <div class="separation">{{ relativeDayStrings(relativeDay) }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
+        <div class="separation">
+            <div class="relative-date">{{ relativeDayStrings(relativeDay) }} ({{ l }} {{ (l > 1 ? 'episodes':'episode')|trans }})</div>
+            <div class="date">{{ eotdList.date|format_date("long") }}</div>
+        </div>
         {% for eotd in eotdList.results %}
             {% if eotd.type == 'series' %}
                 {% set url = path('app_series_season', {id: eotd.id, slug: eotd.displayName|slug|lower, seasonNumber: eotd.seasonNumber}) %}

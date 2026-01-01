@@ -204,8 +204,14 @@ readonly class SeriesSchedule
             usort($results, function ($a, $b) {
                 return $a['airAt'] <=> $b['airAt'];
             });
+            try {
+                $date = $now->modify($indexKey . " day")->format('Y-m-d');
+            } catch (DateMalformedStringException) {
+                $date = $now->format('Y-m-d');
+            }
             $intervalArr[$indexKey] = [
                 'index' => $indexKey,
+                'date' => $date,
                 'totalEpisodeCount' => $totalEpisodeCount,
                 'results' => $results,
             ];

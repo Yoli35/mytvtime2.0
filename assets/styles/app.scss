@@ -686,6 +686,13 @@ label:has(input[type="text"]) {
             }
         }
 
+        .menu.main {
+            .separation {
+                display: flex;
+                justify-content: space-between;
+            }
+        }
+
         .menu.user {
             .accent-color {
                 display: flex;
