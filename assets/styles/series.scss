@@ -4081,6 +4081,7 @@ h2 {
                 padding-inline: 1rem;
                 position: relative;
                 scroll-behavior: smooth;
+                transform: translateZ(0);
                 transition: width .3s ease-in-out;
                 width: 100%;
 
@@ -4400,12 +4401,19 @@ h2 {
                             text-align: center;
                             width: auto;
 
-                            > div:first-child {
+                            .location {
+                                align-items: center;
+                                display: flex;
+                                gap: 1rem;
                                 font-size: 1.25rem;
                                 font-weight: 500;
+
+                                svg {
+                                    flex-shrink: 0;
+                                }
                             }
 
-                            > div:last-child {
+                            .description {
                                 overflow-y: auto;
                             }
                         }
@@ -4421,6 +4429,28 @@ h2 {
                                 width: 100%;
                             }
                         }
+                    }
+                }
+
+                .scroll-infos-button {
+                    align-items: center;
+                    aspect-ratio: 1;
+                    background-color: var(--orange-50);
+                    border-radius: 50%;
+                    bottom: 1rem;
+                    color: var(--ardoise-10);
+                    cursor: pointer;
+                    display: none;
+                    font-size: 1.5rem;
+                    height: 2.5rem;
+                    justify-content: center;
+                    position: fixed;
+                    right: 1rem;
+                    transition: background-color 0.3s ease-in-out;
+                    width: 2.5rem;
+
+                    &:hover {
+                        background-color: var(--orange-40);
                     }
                 }
             }

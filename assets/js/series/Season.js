@@ -518,13 +518,69 @@ export class Season {
                     console.log(episodeSelector)
                     const episodeInfosDiv = document.querySelector(episodeSelector);
                     console.log(episodeInfosDiv)
+                    const scrollButton = episodeInfosDiv.querySelector(".scroll-infos-button");
                     const div = document.createElement("div");
                     div.innerHTML = result['block'];
                     gThis.toolTips.init(div);
-                    episodeInfosDiv.appendChild(div);
+                    episodeInfosDiv.insertBefore(div, scrollButton);
                 });
+                gThis.initScrollInfosButtons();
             })
             .catch(err => console.log(err));
+    }
+
+    initScrollInfosButtons() {
+        const scrollButtons = document.querySelectorAll(".episodes .episode-wrapper .scroll-infos-button");
+        scrollButtons.forEach(button => {
+            button.addEventListener("click", gThis.buttonScrollAction)
+        });
+        // Mettre à jour la visibilité au chargement, redimensionnement et scroll
+        window.addEventListener('load', gThis.updateButtonVisibility);
+        window.addEventListener('resize', gThis.updateButtonVisibility);
+        window.addEventListener('scroll', gThis.updateButtonVisibility, true); // true pour capter le scroll des conteneurs
+        // et observer dynamiquement les changements dans la zone episodes
+        const observer = new MutationObserver(gThis.updateButtonVisibility);
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    isVisibleInContainer(el, container) {
+        const e = el.getBoundingClientRect();
+        const c = container.getBoundingClientRect();
+        return e.top >= c.top && e.bottom <= c.bottom;
+    }
+
+    findFirstHiddenTarget(infosDiv) {
+        const targets = infosDiv.querySelectorAll('.infos .season-filming-location');
+        for (const t of targets) {
+            // si l'élément n'est pas entièrement visible dans son conteneur
+            if (!gThis.isVisibleInContainer(t, infosDiv)) return { target: t, container: infosDiv };
+        }
+        return null;
+    }
+
+    updateButtonVisibility() {
+        const infosDivs = document.querySelectorAll(".episodes .episode-wrapper .infos");
+        infosDivs.forEach(infosDiv => {
+            const btn = infosDiv.querySelector(".scroll-infos-button");
+            const found = gThis.findFirstHiddenTarget(infosDiv);
+            btn.style.display = found ? 'flex' : 'none';
+        });
+    }
+
+    buttonScrollAction (evt) {
+        const infosDiv = evt.currentTarget.closest(".infos");
+        const found = gThis.findFirstHiddenTarget(infosDiv);
+        if (!found) return;
+        const { target, container } = found;
+
+        const e = target.getBoundingClientRect();
+        const c = container.getBoundingClientRect();
+        // calculer le delta pour aligner le bas de l'élément avec le bas du conteneur
+        const delta = e.bottom - c.bottom;
+        // si l'élément est au-dessus, on aligne son haut
+        const deltaTop = e.top - c.top;
+        const scrollTo = delta > 0 ? container.scrollTop + delta + 8 : container.scrollTop + deltaTop - 8;
+        container.scrollTo({ top: scrollTo, behavior: 'smooth' });
     }
 
     openEditEpisodeInfosPanel() {

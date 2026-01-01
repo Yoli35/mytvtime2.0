@@ -2,8 +2,8 @@
     {% for location in locations %}
         <div class="season-filming-location">
             <div class="location-card">
-                <div class="d-flex-1">{{ ux_icon('mdi:video-film', {style: "--size: 2rem;"}) }} {{ location.location }}</div>
-                <div>{{ location.description }}</div>
+                <div class="location">{{ ux_icon('mdi:video-film', {style: "--size: 2rem;"}) }} {{ location.location }}</div>
+                <div class="description">{{ location.description }}</div>
             </div>
             {% for image_path in location.images %}
                 <div class="image" data-title="{{ location.location }} image #{{ loop.index }}">
