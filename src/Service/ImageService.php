@@ -101,7 +101,7 @@ class ImageService extends AbstractController
         return $image;
     }
 
-    public function fileToWebp(UploadedFile $file, string $title, string $location, int $n, string $path = '/public/images/map/'): ?string
+    public function fileToWebp(UploadedFile $file, string $title, string $location, int $n, string $path, ?int $seasonNumber = null, ?int $episodeNumber = null): ?string
     {
         $kernelProjectDir = $this->getParameter('kernel.project_dir');
         $slugger = new AsciiSlugger();
@@ -112,7 +112,14 @@ class ImageService extends AbstractController
         $isGoogleMapsImage = str_contains($filename, 'maps');
         $isAppleMapsImage = str_contains($filename, 'apple');
         $extension = $file->guessExtension();
-        $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString() . '-' . ($isGoogleMapsImage ? 'maps-' : '') . ($isAppleMapsImage ? 'apple-' : '') . $n;
+        $basename = $slugger->slug($title)->lower()->toString() . '-' . $slugger->slug($location)->lower()->toString();
+        if ($seasonNumber != null) { // Season number  0 for specials
+            $basename .= '-s' . str_pad((string)$seasonNumber, 2, '0', STR_PAD_LEFT);
+        }
+        if ($episodeNumber != null) { // Episode number 0 for pilots
+            $basename .= '-e' . str_pad((string)$episodeNumber, 2, '0', STR_PAD_LEFT);
+        }
+        $basename .= '-' . ($isGoogleMapsImage ? 'maps-' : '') . ($isAppleMapsImage ? 'apple-' : '') . $n;
         $tempName = $imageTempPath . $basename . '.' . $extension;
         $destination = $imageMapPath . $basename . '.webp';
 
