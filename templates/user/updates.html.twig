@@ -18,7 +18,77 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
-                <h2>55ᵉ mise à jour : 19/12/2025</h2>
+                <h2>57ᵉ mise à jour : 01/01/2026</h2>
+
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Enhance fileToWebp to support season and episode numbers</div>
+                        <div class="details">Updated the ImageService::fileToWebp method to accept optional season and episode numbers, appending them to the generated image filename. Adjusted SeriesController to pass the image path explicitly. This allows for more descriptive and organized image naming, especially for series with multiple seasons and episodes.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:email') }}→ Refactor contact messages to entity with admin UI</div>
+                        <div class="details">Replaces ContactDTO with a ContactMessage entity, adds repository and admin interface for viewing, marking as read, and deleting contact messages. Updates form, controllers, and templates to support message management. Adds unread message indicator in admin menu and user menu, with related styles and translations.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:calendar') }}→ Add formatted date to schedule menu display</div>
+                        <div class="details">Introduces a formatted date next to the relative day in the schedule menu. Updates SeriesSchedule service to provide the formatted date, handles potential date parsing errors, and adjusts SCSS for layout improvements.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}{{ ux_icon('mdi:tv') }}→ Fix episode air date formatting in SeriesController</div>
+                        <div class="details">Adds a space between the air_date and air_at values when constructing the airString to ensure correct date-time formatting.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Enhance series overview and episode count display</div>
+                        <div class="details">Added source logo to additional overviews and improved the structure of the season episode count and watched status display for better clarity and styling.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Rename SeriesList to ApiSeriesList and add save endpoint</div>
+                        <div class="details">Renamed SeriesList.php to ApiSeriesList.php and updated the class name accordingly. Added a new /save POST endpoint to store user-specific series list settings using SettingsRepository.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve episode and content styling in series.scss</div>
+                        <div class="details">Enhanced the layout and appearance of episode content, including floating images, updated episode count styling, and adjusted background colors and font weights. Also improved overflow handling and removed unused/commented code for better maintainability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:translate') }}→ Refactor paste button logic into separate async method</div>
+                        <div class="details">Moved clipboard paste button creation and logic from displayForm to a new async pasteButton method for better separation of concerns and maintainability. Updated displayForm to call pasteButton before showing the form.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Enhance series card UI and user list integration</div>
+                        <div class="details">Added 'home' parameter to series card rendering for improved context. Integrated UserList initialization after loading blocks in Season.js. Updated season template to include card styles and bookmark icons. Improved positioning logic for series tools menu in UserList.js.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Update filming location icon and size</div>
+                        <div class="details">Replaces the camera icon with a video film icon and increases its size for better visual representation in the season filming locations block.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:user-outline') }}{{ ux_icon('mdi:translate') }}→ Add localized biography support for people</div>
+                        <div class="details">Introduces the ability to add and edit localized biographies for people. Adds PeopleLocalizedBiography entity, repository, and API endpoint. Updates PeopleController to fetch localized biographies, adds new form and UI logic in JS and Twig, and updates styles and translations to support the new feature.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Filter episodes after season finale</div>
+                        <div class="details">Added logic to identify the 'finale' episode in a season and filter out any subsequent episodes. This ensures only episodes up to and including the finale are included in the season's episode list.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update series.scss button styles and watch-link</div>
+                        <div class="details">Adjusted button border-radius and padding for improved appearance. Increased .watch-link height to 3rem for better layout consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:search') }}→ Add search by ID for movies and series</div>
+                        <div class="details">Introduces endpoints and UI options to search movies and series by their TMDB IDs. Updates JavaScript, controllers, and menu template to support the new search modes.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:list-box') }}{{ ux_icon('mdi:tv') }}→ Improve user list card layout and mobile responsiveness</div>
+                        <div class="details">Refactored styles and markup for user list cards to enhance layout consistency and mobile responsiveness. Updated count display to include a label wrapped in a span for better styling and accessibility. Adjusted JavaScript and PHP to support the new count markup, and improved SCSS for both desktop and mobile views.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor series list tools and add bookmark action</div>
+                        <div class="details">Refactored the series tools menu into a separate Twig partial for reuse and maintainability. Updated UserList JS to support bookmark actions and improved handling of tool containers. Added bookmark action to the series show page, updated styles for bookmark state, and enhanced SeriesController and SeriesService to provide user list data and display names. Updated French translations for bookmark actions.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
+                <h2>56ᵉ mise à jour : 19/12/2025</h2>
                 <ul>
                     <li>
                         <div class="change">{{ ux_icon('mdi:translate') }}{{ ux_icon('mdi:content-paste') }}→ Add clipboard paste button to translation form</div>
