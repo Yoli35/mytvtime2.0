@@ -147,11 +147,9 @@ body:has(dialog[open]) {
 }
 
 svg {
-    --size: 18px;
-
     fill: currentColor;
-    height: var(--size);
-    width: var(--size);
+    height: var(--svgSize);
+    width: var(--svgSize);
 }
 
 .svg {
