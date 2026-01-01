@@ -4086,7 +4086,7 @@ h2 {
 
                 .episode-name {
                     align-items: center;
-                    color: var(--ardoise-10);
+                    /*color: var(--ardoise-10);*/
                     display: flex;
                     flex-wrap: wrap;
                     font-size: 1.5rem;
@@ -4278,6 +4278,7 @@ h2 {
                             align-items: center;
                             background-color: cadetblue;
                             border-radius: 5rem;
+                            color: var(--ardoise-10);
                             cursor: grab;
                             display: flex;
                             flex-wrap: nowrap;
