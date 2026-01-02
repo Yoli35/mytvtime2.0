@@ -293,7 +293,8 @@ export class Season {
         const infos = episodes.querySelectorAll('.infos');
         infos.forEach(info => {
             info.addEventListener('mouseleave', () => {
-                info.scrollTop = 0;
+                const infosContentDiv = info.querySelector(".infos-content");
+                infosContentDiv.scrollTop = 0;
             });
             const episodeNameEdit = info.querySelector('.episode-name>.edit');
             episodeNameEdit.addEventListener('click', this.openTitleForm);
@@ -517,12 +518,15 @@ export class Season {
                     const episodeSelector = "#episode-" + this.seasonNumber + "-" + result['episode_number'] + " .infos";
                     console.log(episodeSelector)
                     const episodeInfosDiv = document.querySelector(episodeSelector);
+                    const episodeInfosContentDiv = episodeInfosDiv.querySelector(".infos-content");
                     console.log(episodeInfosDiv)
-                    const scrollButton = episodeInfosDiv.querySelector(".scroll-infos-button");
-                    const div = document.createElement("div");
-                    div.innerHTML = result['block'];
-                    gThis.toolTips.init(div);
-                    episodeInfosDiv.insertBefore(div, scrollButton);
+                    const block = result.block;
+                    const tempDiv = document.createElement("div");
+                    tempDiv.innerHTML = block;
+                    /*episodeInfosContentDiv.insertAdjacentHTML('beforeend', block);*/
+                    const filmingLocationsDiv = tempDiv.querySelector(".season-filming-locations");
+                    gThis.toolTips.init(filmingLocationsDiv);
+                    episodeInfosContentDiv.appendChild(filmingLocationsDiv);
                 });
                 gThis.initScrollInfosButtons();
             })
@@ -561,15 +565,16 @@ export class Season {
     updateButtonVisibility() {
         const infosDivs = document.querySelectorAll(".episodes .episode-wrapper .infos");
         infosDivs.forEach(infosDiv => {
+            const infosContentDiv = infosDiv.querySelector(".infos-content");
             const btn = infosDiv.querySelector(".scroll-infos-button");
-            const found = gThis.findFirstHiddenTarget(infosDiv);
+            const found = gThis.findFirstHiddenTarget(infosContentDiv);
             btn.style.display = found ? 'flex' : 'none';
         });
     }
 
     buttonScrollAction (evt) {
-        const infosDiv = evt.currentTarget.closest(".infos");
-        const found = gThis.findFirstHiddenTarget(infosDiv);
+        const infosContentDiv = evt.currentTarget.closest(".infos").querySelector(".infos-content");
+        const found = gThis.findFirstHiddenTarget(infosContentDiv);
         if (!found) return;
         const { target, container } = found;
 

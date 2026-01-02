@@ -32,7 +32,7 @@
                                 {% if season.series_localized_name %}
                                     <span class="localization-span">{{ season.series_localized_name.name }}</span><br>
                                 {% endif %}
-                                <span class="name-span">{{ series.name }} ({{ series.firstAirDate|date("Y") }})</span>
+                                <span class="name-span">{{ series.name }}</span>&nbsp;<span>({{ series.firstAirDate|date("Y") }})</span>
                             </h1>
                             {{ include('_blocks/translations/_tools.html.twig', {type: 'season', hidden: season.season_localized_overview|length}) }}
                         </div>
@@ -245,83 +245,85 @@
                                             {% endif %}
                                         </div>
                                         <div class="infos">
-                                            <div class="episode-name">
-                                                <div class="name">{{ episode.name }}</div>
-                                                {% if ue.substitute_name %}
-                                                    <div class="substitute{% if ue and ue.watch_at %} watched{% endif %}">
-                                                        {{ ue.substitute_name }}
-                                                    </div>
-                                                {% endif %}
-                                                <div class="edit"
-                                                     data-title="{{ 'Suggest a title'|trans }}"
-                                                     data-id="{{ episode.id }}"
-                                                     data-type="name"
-                                                >
-                                                    {{ ux_icon('mdi:pencil') }}
-                                                </div>
-                                            </div>
-                                            {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (ue.watch_at != null)}) }}
-                                            {{ include('_blocks/series/_episode_air_date.html.twig', {episode: episode, ue: ue, ues: episode.user_episodes}) }}
-                                            {% if episode.runtime or episode.vote_average %}
-                                                <div class="episode-stats">
-                                                    {% if episode.runtime %}
-                                                        <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
+                                            <div class="infos-content">
+                                                <div class="episode-name">
+                                                    <div class="name">{{ episode.name }}</div>
+                                                    {% if ue.substitute_name %}
+                                                        <div class="substitute{% if ue and ue.watch_at %} watched{% endif %}">
+                                                            {{ ue.substitute_name }}
+                                                        </div>
                                                     {% endif %}
-                                                    {% if episode.vote_average %}
-                                                        <div class="vote-average">{{ episode.vote_average }} / 10 - {{ episode.vote_count }} {{ (episode.vote_count > 1 ? 'votes':'vote')|trans }}</div>
+                                                    <div class="edit"
+                                                         data-title="{{ 'Suggest a title'|trans }}"
+                                                         data-id="{{ episode.id }}"
+                                                         data-type="name"
+                                                    >
+                                                        {{ ux_icon('mdi:pencil') }}
+                                                    </div>
+                                                </div>
+                                                {{ include('_blocks/series/_watch_links.html.twig', {watchLinks: series.seriesWatchLinks, seasonNumber: season.season_number, hidden: (ue.watch_at != null)}) }}
+                                                {{ include('_blocks/series/_episode_air_date.html.twig', {episode: episode, ue: ue, ues: episode.user_episodes}) }}
+                                                {% if episode.runtime or episode.vote_average %}
+                                                    <div class="episode-stats">
+                                                        {% if episode.runtime %}
+                                                            <div class="runtime">{{ episode.runtime }} {{ 'minutes'|trans }}</div>
+                                                        {% endif %}
+                                                        {% if episode.vote_average %}
+                                                            <div class="vote-average">{{ episode.vote_average }} / 10 - {{ episode.vote_count }} {{ (episode.vote_count > 1 ? 'votes':'vote')|trans }}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                {% endif %}
+                                                <div class="episode-overview" data-id="{{ episode.id }}">
+                                                    {% if episode.overview %}
+                                                        <div class="overview">
+                                                            {{ episode.overview }}
+                                                        </div>
                                                     {% endif %}
+                                                    {% if ue.localized_overview|length %}
+                                                        <div class="overview additional">
+                                                            {{ ue.localized_overview|nl2br }}
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if (episode.overview or ue.localized_overview|length) == 0 %}
+                                                        <div class="overview additional">{{ 'No overview'|trans }}</div>
+                                                    {% endif %}
+                                                    <div class="edit"
+                                                         data-title="{{ 'Suggest an overview'|trans }}"
+                                                         data-id="{{ episode.id }}"
+                                                         data-type="overview"
+                                                    >
+                                                        {{ ux_icon("mdi:pencil") }}
+                                                    </div>
                                                 </div>
-                                            {% endif %}
-                                            <div class="episode-overview" data-id="{{ episode.id }}">
-                                                {% if episode.overview %}
-                                                    <div class="overview">
-                                                        {{ episode.overview }}
+                                                {% if episode.guest_stars %}
+                                                    <div class="guest-stars">
+                                                        <div class="wrapper">
+                                                            {% for people in episode.guest_stars %}
+                                                                <div class="people" data-title="{{ people.name }}{% if people.preferred_name %} - {{ people.preferred_name }}{% endif %} → {{ people.character }}">
+                                                                    <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
+                                                                        <div class="photo">
+                                                                            {% if people.profile_path %}
+                                                                                <img src="{{ people.profile_path }}" alt="{{ people.name }}">
+                                                                            {% else %}
+                                                                                <div>{{ people.character }}</div>
+                                                                                <div>{{ people.name }}</div>
+                                                                                <div>{{ 'No picture'|trans }}</div>
+                                                                            {% endif %}
+                                                                        </div>
+                                                                    </a>
+                                                                    {% if people.google is defined %}
+                                                                        <div class="google" data-title="{{ 'See on Google'|trans }}">
+                                                                            <a href="{{ people.google }}" target="_blank">
+                                                                                {{ ux_icon('flat-color-icons:google') }}
+                                                                            </a>
+                                                                        </div>
+                                                                    {% endif %}
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
                                                     </div>
                                                 {% endif %}
-                                                {% if ue.localized_overview|length %}
-                                                    <div class="overview additional">
-                                                        {{ ue.localized_overview|nl2br }}
-                                                    </div>
-                                                {% endif %}
-                                                {% if (episode.overview or ue.localized_overview|length) == 0 %}
-                                                    <div class="overview additional">{{ 'No overview'|trans }}</div>
-                                                {% endif %}
-                                                <div class="edit"
-                                                     data-title="{{ 'Suggest an overview'|trans }}"
-                                                     data-id="{{ episode.id }}"
-                                                     data-type="overview"
-                                                >
-                                                    {{ ux_icon("mdi:pencil") }}
-                                                </div>
                                             </div>
-                                            {% if episode.guest_stars %}
-                                                <div class="guest-stars">
-                                                    <div class="wrapper">
-                                                        {% for people in episode.guest_stars %}
-                                                            <div class="people" data-title="{{ people.name }}{% if people.preferred_name %} - {{ people.preferred_name }}{% endif %} → {{ people.character }}">
-                                                                <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
-                                                                    <div class="photo">
-                                                                        {% if people.profile_path %}
-                                                                            <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                                                                        {% else %}
-                                                                            <div>{{ people.character }}</div>
-                                                                            <div>{{ people.name }}</div>
-                                                                            <div>{{ 'No picture'|trans }}</div>
-                                                                        {% endif %}
-                                                                    </div>
-                                                                </a>
-                                                                {% if people.google is defined %}
-                                                                    <div class="google" data-title="{{ 'See on Google'|trans }}">
-                                                                        <a href="{{ people.google }}" target="_blank">
-                                                                            {{ ux_icon('flat-color-icons:google') }}
-                                                                        </a>
-                                                                    </div>
-                                                                {% endif %}
-                                                            </div>
-                                                        {% endfor %}
-                                                    </div>
-                                                </div>
-                                            {% endif %}
                                             <div class="scroll-infos-button">{{ ux_icon('mdi:video-film', {style: "--size: 2rem;"}) }}</div>
                                         </div>
                                         <div class="user-episode">

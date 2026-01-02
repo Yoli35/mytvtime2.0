@@ -3895,6 +3895,7 @@ h2 {
 .episodes {
     --episode-height: 15rem;
     --episode-aspect-ratio: 16/9;
+    width: 100%;
 
     /*container: episodes / inline-size;*/
 
@@ -3924,7 +3925,7 @@ h2 {
                 flex-shrink: 0;
                 height: 100%;
                 justify-content: center;
-                max-width: 57%;
+                /*max-width: 57%;*/
                 position: relative;
                 transition: width 0.3s ease-in-out;
 
@@ -4069,364 +4070,369 @@ h2 {
                 background-color: hsla(from var(--ardoise-90) h s l / 0.1);
                 border: 2px solid transparent;
                 border-radius: .5rem;
-                /*color: var(--ardoise-10);*/
-                display: flex;
-                flex-direction: column;
+                flex-grow: 0;
                 font-weight: 300;
-                gap: .5rem;
                 height: 100%;
-                justify-content: flex-start;
-                overflow-y: auto;
-                padding-block: 1rem;
-                padding-inline: 1rem;
                 position: relative;
-                scroll-behavior: smooth;
-                transform: translateZ(0);
                 transition: width .3s ease-in-out;
-                width: 100%;
+                width: calc(100% - calc(calc(var(--episode-height) * var(--episode-aspect-ratio) + 5.25rem)));
 
-                .episode-name {
-                    align-items: center;
-                    /*color: var(--ardoise-10);*/
+                .infos-content {
                     display: flex;
-                    flex-wrap: wrap;
-                    font-size: 1.5rem;
-                    gap: 1rem;
-                    justify-content: flex-start;
-                    line-height: 1.1em;
-                    position: relative;
+                    flex-direction: column;
+                    gap: .5rem;
+                    height: 100%;
+                    overflow-y: auto;
+                    padding-block: 1rem;
+                    padding-inline: 1rem;
+                    scroll-behavior: smooth;
+                    width: 100%;
 
-                    .name {
-                        flex-shrink: 0;
-                        font-weight: 100;
-                        max-width: 100%;
-                        text-wrap: wrap;
-                    }
-
-                    .substitute {
-                        background-color: var(--orange-40);
-                        border-radius: 0.25rem;
-                        font-weight: 300;
-                        padding-block: 0.25rem;
-                        padding-inline: 1rem;
-                        text-wrap: balance;
-
-                        &.watched {
-                            background-color: var(--user-episode-actions);
-                        }
-                    }
-
-                    .edit {
+                    .episode-name {
                         align-items: center;
-                        background-color: var(--orange-50);
-                        border: 2px solid var(--orange-90);
-                        border-radius: 50%;
-                        color: var(--orange-90);
-                        cursor: pointer;
+                        /*color: var(--ardoise-10);*/
                         display: flex;
-                        flex-shrink: 0;
-                        font-size: 1rem;
-                        height: 2rem;
-                        justify-content: center;
-                        opacity: 0;
-                        margin-inline-start: auto;
-                        position: absolute;
-                        right: 0;
-                        top: 0;
-                        transition: opacity 0.3s ease-in-out;
-                        width: 2rem;
-                    }
+                        flex-wrap: wrap;
+                        font-size: 1.5rem;
+                        gap: 1rem;
+                        justify-content: flex-start;
+                        line-height: 1.1em;
+                        position: relative;
 
-                    /*&:not(:has(form)):hover {
+                        .name {
+                            flex-shrink: 0;
+                            font-weight: 100;
+                            max-width: 100%;
+                            text-wrap: wrap;
+                        }
+
+                        .substitute {
+                            background-color: var(--orange-40);
+                            border-radius: 0.25rem;
+                            font-weight: 300;
+                            padding-block: 0.25rem;
+                            padding-inline: 1rem;
+                            text-wrap: balance;
+
+                            &.watched {
+                                background-color: var(--user-episode-actions);
+                            }
+                        }
+
                         .edit {
-                            display: flex;
-                        }
-                    }*/
-                }
-
-                .episode-name, .episode-overview {
-                    form {
-                        display: flex;
-                        gap: .5rem;
-                        position: absolute;
-                        right: 0;
-                        top: 0;
-                        width: 100%;
-                        z-index: 1;
-
-                        input {
-                            background-color: var(--ardoise-80);
-                            border: 2px solid var(--orange-50);
-                            border-radius: .25rem;
-                            color: var(--ardoise-10);
-                            flex-grow: 1;
-                            font-size: 1rem;
-                            font-weight: 100;
-                            height: 2rem;
-                            padding-inline: .5rem;
-                        }
-
-                        textarea {
-                            background-color: var(--ardoise-80);
-                            border: 2px solid var(--orange-50);
-                            border-radius: .25rem;
-                            color: var(--ardoise-10);
-                            flex-grow: 1;
-                            font-size: 1rem;
-                            font-weight: 100;
-                            padding-inline: .5rem;
-                        }
-
-                        button {
                             align-items: center;
                             background-color: var(--orange-50);
                             border: 2px solid var(--orange-90);
-                            border-radius: 5rem;
+                            border-radius: 50%;
                             color: var(--orange-90);
+                            cursor: pointer;
+                            display: flex;
+                            flex-shrink: 0;
+                            font-size: 1rem;
+                            height: 2rem;
+                            justify-content: center;
+                            opacity: 0;
+                            margin-inline-start: auto;
+                            position: absolute;
+                            right: 0;
+                            top: 0;
+                            transition: opacity 0.3s ease-in-out;
+                            width: 2rem;
+                        }
+
+                        /*&:not(:has(form)):hover {
+                            .edit {
+                                display: flex;
+                            }
+                        }*/
+                    }
+
+                    .episode-name, .episode-overview {
+                        form {
+                            display: flex;
+                            gap: .5rem;
+                            position: absolute;
+                            right: 0;
+                            top: 0;
+                            width: 100%;
+                            z-index: 1;
+
+                            input {
+                                background-color: var(--ardoise-80);
+                                border: 2px solid var(--orange-50);
+                                border-radius: .25rem;
+                                color: var(--ardoise-10);
+                                flex-grow: 1;
+                                font-size: 1rem;
+                                font-weight: 100;
+                                height: 2rem;
+                                padding-inline: .5rem;
+                            }
+
+                            textarea {
+                                background-color: var(--ardoise-80);
+                                border: 2px solid var(--orange-50);
+                                border-radius: .25rem;
+                                color: var(--ardoise-10);
+                                flex-grow: 1;
+                                font-size: 1rem;
+                                font-weight: 100;
+                                padding-inline: .5rem;
+                            }
+
+                            button {
+                                align-items: center;
+                                background-color: var(--orange-50);
+                                border: 2px solid var(--orange-90);
+                                border-radius: 5rem;
+                                color: var(--orange-90);
+                                cursor: pointer;
+                                display: flex;
+                                font-size: 1rem;
+                                font-weight: 300;
+                                height: 2rem;
+                                justify-content: center;
+                                width: 2.5rem;
+                            }
+                        }
+                    }
+
+                    .episode-overview {
+                        background-color: hsla(from var(--ardoise-90) h s l / 0);
+                        border-radius: .25rem;
+                        padding: .5rem;
+                        position: relative;
+
+                        .overview {
+                            border-left: 2px solid var(--orange-50);
+                            font-size: 1rem;
+                            font-weight: 300;
+                            padding-inline-start: .5rem;
+
+                            &.additional {
+                                border-left: 2px solid var(--green-50);
+                                padding-inline-start: 1rem;
+                            }
+                        }
+
+                        .edit {
+                            align-items: center;
+                            background-color: var(--orange-50);
+                            border: 2px solid var(--orange-90);
+                            border-radius: 50%;
+                            color: var(--orange-90);
+                            cursor: pointer;
+                            display: flex;
+                            flex-shrink: 0;
+                            font-size: 1rem;
+                            height: 2rem;
+                            justify-content: center;
+                            margin-inline-start: auto;
+                            opacity: 0;
+                            position: absolute;
+                            right: -.5rem;
+                            top: -.5rem;
+                            transition: opacity 0.3s ease-in-out;
+                            width: 2rem;
+                        }
+
+                        /*&:not(:has(form)):hover {
+                            .edit {
+                                display: flex;
+                            }
+                        }*/
+                    }
+
+                    .episode-stats {
+                        display: flex;
+                        gap: 1rem;
+
+                        .runtime, .vote-average {
+
+                        }
+                    }
+
+                    .air-date {
+                        align-items: center;
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: .125rem 1rem;
+
+                        .airing {
+                            align-items: center;
+                            background-color: hsla(from var(--ardoise-80) h s l / .5);
+                            border-radius: 5rem;
+                            color: var(--ardoise-10);
+                            display: flex;
+                            font-size: 1rem;
+                            font-weight: 500;
+                            gap: .5rem;
+                            padding-block: .25rem;
+                            padding-inline: 1rem;
+                        }
+
+                        .watch-at-list {
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: .5rem;
+                            justify-content: flex-start;
+                            padding-inline: 1rem;
+
+                            .watched-at {
+                                align-items: center;
+                                background-color: cadetblue;
+                                border-radius: 5rem;
+                                color: var(--ardoise-10);
+                                cursor: grab;
+                                display: flex;
+                                flex-wrap: nowrap;
+                                gap: .5rem;
+                                padding: .25rem 1rem;
+
+                                &.editing {
+                                    background-color: var(--orange-50);
+                                    cursor: pointer;
+                                }
+                            }
+                        }
+
+                        .watched-at-modify {
+                            background-color: var(--orange-50);
+                            border-radius: .25rem;
+                            color: var(--ardoise-10);
                             cursor: pointer;
                             display: flex;
                             font-size: 1rem;
                             font-weight: 300;
-                            height: 2rem;
+                            gap: .5rem;
                             justify-content: center;
-                            width: 2.5rem;
+                            padding: .25rem;
+
+                            input[type="datetime-local"] {
+                                background-color: var(--orange-20);
+                                border: 2px solid var(--orange-50);
+                                border-radius: .25rem;
+                                color: var(--orange-90);
+                                font-size: 1rem;
+                                padding-inline: .5rem;
+                            }
+
+                            button {
+                                background-color: var(--orange-30);
+                                border-radius: .375rem;
+                                border: 2px solid var(--orange-60);
+                                color: var(--orange-90);
+                                cursor: pointer;
+                                padding: .25rem .5rem;
+
+                                &:hover {
+                                    background-color: var(--orange-40);
+                                    border: 2px solid var(--orange-70);
+                                }
+                            }
                         }
                     }
-                }
 
-                .episode-overview {
-                    background-color: hsla(from var(--ardoise-90) h s l / 0);
-                    border-radius: .25rem;
-                    padding: .5rem;
-                    position: relative;
-
-                    .overview {
-                        border-left: 2px solid var(--orange-50);
+                    .air-date, .episodes, .runtime {
                         font-size: 1rem;
                         font-weight: 300;
-                        padding-inline-start: .5rem;
+                    }
 
-                        &.additional {
-                            border-left: 2px solid var(--green-50);
-                            padding-inline-start: 1rem;
+                    .episodes {
+                        display: flex;
+                        gap: 1rem;
+
+                        .watched {
+                            display: flex;
+                            gap: .5rem;
                         }
                     }
 
-                    .edit {
-                        align-items: center;
-                        background-color: var(--orange-50);
-                        border: 2px solid var(--orange-90);
-                        border-radius: 50%;
-                        color: var(--orange-90);
-                        cursor: pointer;
+                    .guest-stars {
                         display: flex;
                         flex-shrink: 0;
-                        font-size: 1rem;
-                        height: 2rem;
-                        justify-content: center;
-                        margin-inline-start: auto;
-                        opacity: 0;
-                        position: absolute;
-                        right: -.5rem;
-                        top: -.5rem;
-                        transition: opacity 0.3s ease-in-out;
-                        width: 2rem;
-                    }
+                        height: 16rem;
+                        overflow-x: auto;
 
-                    /*&:not(:has(form)):hover {
-                        .edit {
-                            display: flex;
-                        }
-                    }*/
-                }
-
-                .episode-stats {
-                    display: flex;
-                    gap: 1rem;
-
-                    .runtime, .vote-average {
-
-                    }
-                }
-
-                .air-date {
-                    align-items: center;
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: .125rem 1rem;
-
-                    .airing {
-                        align-items: center;
-                        background-color: hsla(from var(--ardoise-80) h s l / .5);
-                        border-radius: 5rem;
-                        color: var(--ardoise-10);
-                        display: flex;
-                        font-size: 1rem;
-                        font-weight: 500;
-                        gap: .5rem;
-                        padding-block: .25rem;
-                        padding-inline: 1rem;
-                    }
-
-                    .watch-at-list {
-                        display: flex;
-                        flex-wrap: wrap;
-                        gap: .5rem;
-                        justify-content: flex-start;
-                        padding-inline: 1rem;
-
-                        .watched-at {
-                            align-items: center;
-                            background-color: cadetblue;
-                            border-radius: 5rem;
-                            color: var(--ardoise-10);
-                            cursor: grab;
-                            display: flex;
-                            flex-wrap: nowrap;
-                            gap: .5rem;
-                            padding: .25rem 1rem;
-
-                            &.editing {
-                                background-color: var(--orange-50);
-                                cursor: pointer;
-                            }
-                        }
-                    }
-
-                    .watched-at-modify {
-                        background-color: var(--orange-50);
-                        border-radius: .25rem;
-                        color: var(--ardoise-10);
-                        cursor: pointer;
-                        display: flex;
-                        font-size: 1rem;
-                        font-weight: 300;
-                        gap: .5rem;
-                        justify-content: center;
-                        padding: .25rem;
-
-                        input[type="datetime-local"] {
-                            background-color: var(--orange-20);
-                            border: 2px solid var(--orange-50);
-                            border-radius: .25rem;
-                            color: var(--orange-90);
-                            font-size: 1rem;
-                            padding-inline: .5rem;
-                        }
-
-                        button {
-                            background-color: var(--orange-30);
-                            border-radius: .375rem;
-                            border: 2px solid var(--orange-60);
-                            color: var(--orange-90);
-                            cursor: pointer;
-                            padding: .25rem .5rem;
-
-                            &:hover {
-                                background-color: var(--orange-40);
-                                border: 2px solid var(--orange-70);
-                            }
-                        }
-                    }
-                }
-
-                .air-date, .episodes, .runtime {
-                    font-size: 1rem;
-                    font-weight: 300;
-                }
-
-                .episodes {
-                    display: flex;
-                    gap: 1rem;
-
-                    .watched {
-                        display: flex;
-                        gap: .5rem;
-                    }
-                }
-
-                .guest-stars {
-                    display: flex;
-                    flex-shrink: 0;
-                    height: 16rem;
-                    overflow-x: auto;
-
-                    .wrapper {
-                        height: 100%;
-                        padding-inline: 1rem;
-
-                        .people {
+                        .wrapper {
                             height: 100%;
+                            padding-inline: 1rem;
 
-                            a {
-                                display: flex;
-                                gap: .5rem;
+                            .people {
                                 height: 100%;
 
-                                .photo {
+                                a {
+                                    display: flex;
+                                    gap: .5rem;
                                     height: 100%;
 
-                                    img {
-                                        border-radius: .25rem;
+                                    .photo {
+                                        height: 100%;
+
+                                        img {
+                                            border-radius: .25rem;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
 
-                .season-filming-locations {
-                    display: flex;
-                    flex-direction: column;
-                    flex-shrink: 0;
-                    gap: .5rem;
-
-                    .season-filming-location {
+                    .season-filming-locations {
                         display: flex;
+                        flex-direction: column;
+                        flex-shrink: 0;
                         gap: .5rem;
-                        height: 9rem;
-                        overflow-x: auto;
+                        width: 100%;
 
-                        .location-card {
-                            align-items: center;
-                            aspect-ratio: 16/9;
-                            background-color: hsla(from var(--ardoise-80) h s l / .25);
-                            border-radius: .5rem;
+                        .season-filming-location {
                             display: flex;
-                            flex-direction: column;
                             gap: .5rem;
-                            height: 100%;
-                            justify-content: center;
-                            padding: .5rem;
-                            text-align: center;
-                            width: auto;
+                            height: 9rem;
+                            overflow-x: auto;
+                            width: 100%;
 
-                            .location {
+                            .location-card {
                                 align-items: center;
+                                aspect-ratio: 16/9;
+                                background-color: hsla(from var(--ardoise-80) h s l / .25);
+                                border-radius: .5rem;
                                 display: flex;
-                                gap: 1rem;
-                                font-size: 1.25rem;
-                                font-weight: 500;
+                                flex-direction: column;
+                                gap: .5rem;
+                                height: 100%;
+                                justify-content: center;
+                                padding: .5rem;
+                                text-align: center;
+                                width: auto;
 
-                                svg {
-                                    flex-shrink: 0;
+                                .location {
+                                    align-items: center;
+                                    display: flex;
+                                    gap: 1rem;
+                                    font-size: 1.25rem;
+                                    font-weight: 500;
+
+                                    svg {
+                                        flex-shrink: 0;
+                                    }
+                                }
+
+                                .description {
+                                    overflow-y: auto;
                                 }
                             }
 
-                            .description {
-                                overflow-y: auto;
-                            }
-                        }
-
-                        .image {
-                            aspect-ratio: 16/9;
-                            height: 100%;
-
-                            img {
-                                border-radius: .5rem;
+                            .image {
+                                aspect-ratio: 16/9;
                                 height: 100%;
-                                object-fit: cover;
-                                width: 100%;
+
+                                img {
+                                    border-radius: .5rem;
+                                    height: 100%;
+                                    object-fit: cover;
+                                    width: 100%;
+                                }
                             }
                         }
                     }
@@ -4444,10 +4450,11 @@ h2 {
                     font-size: 1.5rem;
                     height: 2.5rem;
                     justify-content: center;
-                    position: fixed;
+                    position: absolute;
                     right: 1rem;
                     transition: background-color 0.3s ease-in-out;
                     width: 2.5rem;
+                    z-index: 1;
 
                     &:hover {
                         background-color: var(--orange-40);
@@ -4538,12 +4545,13 @@ h2 {
     border-radius: 5rem;
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
     font-size: 1.25rem;
     font-weight: 400;
     /*gap: 1%;*/
     height: 100%;
     justify-content: center;
-    /*padding: 0.5rem;*/
+    padding: 0.5rem;
     transition: gap .3s ease-in-out, width .3s ease-in-out;
     width: 4.25rem;
 
@@ -5509,6 +5517,10 @@ h2 {
     .episodes {
         --episode-height: 12.5rem;
         --episode-aspect-ratio: 1/1;
+
+        .infos {
+            width: calc(100% - calc(calc(var(--episode-height) * var(--episode-aspect-ratio) + 3.5rem)));
+        }
     }
 
     .episodes .episode-wrapper .episode:hover {

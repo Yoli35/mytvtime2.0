@@ -47,7 +47,7 @@ readonly class ApiSeasonFilmingLocation
         }
         foreach ($flArr as $e => $location) {
             $flArr[$e]['episode_number'] = $e;
-            $flArr[$e]['block'][] = ($this->renderView)('_blocks/series/_season_filming_locations.html.twig', [
+            $flArr[$e]['block'] = ($this->renderView)('_blocks/series/_season_filming_locations.html.twig', [
                 'locations' => $location['locations'],
             ]);
         }
