@@ -2,7 +2,9 @@
 
 namespace App\Api;
 
+use App\Entity\Settings;
 use App\Entity\User;
+use App\Repository\SettingsRepository;
 use App\Repository\UserSeriesRepository;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
@@ -20,6 +22,7 @@ class SeriesWhatNext extends AbstractController
         private readonly ImageConfiguration   $imageConfiguration,
         private readonly TMDBService          $tmdbService,
         private readonly UserSeriesRepository $userSeriesRepository,
+        private readonly SettingsRepository   $settingsRepository,
     )
     {
     }
@@ -28,8 +31,11 @@ class SeriesWhatNext extends AbstractController
     public function next(Request $request): JsonResponse
     {
         $user = $this->getUser();
-        $filters = ['page' => 1, 'perPage' => 20, 'sort' => 'finalAirDate', 'order' => 'DESC', 'network' => 'all'];
+        $settings = $this->getSettings($user);
+
+        $filters = ['page' => 1, 'perPage' => $settings['limit'], 'sort' => $settings['sort'], 'order' => $settings['order'], 'network' => 'all'];
         $localisation = ['language' => 'fr_FR', 'country' => 'FR', 'timezone' => 'Europe/Paris', 'locale' => 'fr'];
+
         $userSeries = $this->userSeriesRepository->getAllSeries(
             $user,
             $localisation,
@@ -83,5 +89,22 @@ class SeriesWhatNext extends AbstractController
         return new JsonResponse([
             'blocks' => $blocks,
         ]);
+    }
+
+    public function getSettings(User $user): array
+    {
+        $settings = $this->settingsRepository->findOneBy(['user' => $user, 'name' => 'seriesWhatNext']);
+        if (!$settings) {
+            $settings = new Settings($user, 'seriesWhatNext', [
+                'default_limit' => 20,
+                'default_order' => 'DESC',
+                'default_sort' => 'lastWatched',
+                'limit' => 20,
+                'order' => 'DESC',
+                'sort' => 'lastWatched',
+            ]);
+            $this->settingsRepository->save($settings, true);
+        }
+        return $settings->getData();
     }
 }

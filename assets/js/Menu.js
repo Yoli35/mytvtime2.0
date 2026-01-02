@@ -111,9 +111,10 @@ export class Menu {
         gThis = this;
         this.root = document.documentElement;
         this.userMenu = document.querySelector(".menu.user");
-        this.accentColor = this.userMenu.querySelector(".accent-color");
-        this.scheduleRange = this.userMenu.querySelector(".schedule-range");
-        this.menuPreview = this.userMenu.querySelector(".menu-preview");
+        this.accentColor = this.userMenu.querySelector(".accent-color-settings");
+        this.scheduleRange = this.userMenu.querySelector(".schedule-range-settings");
+        this.whatNext = this.userMenu.querySelector(".what-next-settings");
+        this.menuPreview = this.userMenu.querySelector(".menu-preview-settings");
         this.menuThemes = this.userMenu.querySelectorAll(".menu-theme");
         this.clientHeight = window.innerHeight;
         this.init = this.init.bind(this);
@@ -495,6 +496,7 @@ export class Menu {
         if (this.userMenu) {
             this.accentColor.addEventListener("click", this.setAccentColor);
             this.scheduleRange.addEventListener("click", this.setScheduleRange);
+            this.whatNext.addEventListener("click", this.setWhatNext);
             this.menuPreview.addEventListener("click", this.togglePreview);
             this.menuThemes.forEach((theme) => {
                 theme.addEventListener("click", this.setTheme);
@@ -904,6 +906,66 @@ export class Menu {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
+    setWhatNext() {
+        document.documentElement.click();
+        /** @type HTMLDialogElement */
+        const whatNextDialog = document.querySelector("#whatNextDialog");
+        const submitButton = whatNextDialog.querySelector("button[type=submit]");
+        const resetButton = whatNextDialog.querySelector("button[type=reset]");
+        const cancelButton = whatNextDialog.querySelector("button[type=button]");
+
+        gThis.getWhatNextSettings('values');
+
+        cancelButton.addEventListener("click", () => {
+            whatNextDialog.close();
+        });
+        resetButton.addEventListener("click", () => {
+            gThis.getWhatNextSettings('defaut');
+        });
+        submitButton.addEventListener("click", gThis.updateWhatNextSettings);
+        whatNextDialog.showModal();
+    }
+
+    getWhatNextSettings(type) {
+        fetch("/api/settings/what/next/read?t=" + type)
+            .then(response => response.json())
+            .then(data => {
+                const whatNextDialog = document.querySelector("#whatNextDialog");
+                const sortSelect = whatNextDialog.querySelector("#what-next-select-sort");
+                const orderSelect = whatNextDialog.querySelector("#what-next-select-order");
+                const limitSelect = whatNextDialog.querySelector("#what-next-select-limit");
+                console.log(data);
+                sortSelect.value = data['sort'];
+                orderSelect.value = data['order'];
+                limitSelect.value = data['limit'];
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
+    updateWhatNextSettings() {
+        const whatNextDialog = document.querySelector("#whatNextDialog");
+        const sortSelect = whatNextDialog.querySelector("#what-next-select-sort");
+        const orderSelect = whatNextDialog.querySelector("#what-next-select-order");
+        const limitSelect = whatNextDialog.querySelector("#what-next-select-limit");
+        fetch("/api/settings/what/next/update", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({sort: sortSelect.value, order: orderSelect.value, limit: limitSelect.value})
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                whatNextDialog.close();
             })
             .catch((error) => {
                 console.log(error);

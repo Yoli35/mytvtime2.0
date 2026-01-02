@@ -706,7 +706,7 @@ label:has(input[type="text"]) {
                     padding: .125rem .5rem;
                 }
             }
-            .accent-color {
+            .accent-color-settings {
                 display: flex;
                 padding-inline: 1rem;
 
@@ -1387,9 +1387,10 @@ label:has(input[type="text"]) {
 .menu.main, .menu.user {
     > a,
     .a-preview > a,
-    .menu-preview,
-    .accent-color,
-    .schedule-range,
+    .menu-preview-settings,
+    .accent-color-settings,
+    .what-next-settings,
+    .schedule-range-settings,
     .menu-theme {
         align-items: center;
         border-radius: 0.25rem;
@@ -2762,6 +2763,7 @@ section:has(.pages) {
 
 dialog.accent-color-dialog,
 dialog.schedule-range-dialog,
+dialog.what-next-dialog,
 dialog.user-list-dialog {
     background-color: hsl(from var(--orange-50) h s 20%/0.8);
     border-radius: 2rem;
@@ -2888,6 +2890,23 @@ dialog.accent-color-dialog {
             background: var(--orange-100);
         }
 
+    }
+}
+
+dialog.what-next-dialog {
+    label {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: column;
+        gap: .25rem;
+        margin-inline-start: 0;
+
+        select {
+            background-color: var(--orange-30);
+            border-radius: 5rem;
+            border: none;
+            padding: .5rem 1rem;
+        }
     }
 }
 

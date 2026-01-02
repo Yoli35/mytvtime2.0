@@ -1,0 +1,34 @@
+<dialog id="whatNextDialog" class="what-next-dialog" closedby="any">
+    <label for="what-next-select-sort">
+        {{ 'Sort by'|trans }}
+        <select id="what-next-select-sort">
+            <option value="first_air_date">{{ 'First air date'|trans }}</option>
+            <option value="lastWatched">{{ 'Last watched'|trans }}</option>
+            <option value="episodeAirDate">{{ 'Episode air date'|trans }}</option>
+            <option value="name">{{ 'Name'|trans }}</option>
+            <option value="addedAt">{{ 'Date added'|trans }}</option>
+            <option value="finalAirDate">{{ 'Final air date'|trans }}</option>
+        </select>
+    </label>
+    <label for="what-next-select-order">
+        {{ 'Order'|trans }}
+        <select id="what-next-select-order">
+            <option value="DESC">{{ 'Descendant'|trans }}</option>
+            <option value="ASC">{{ 'Ascendant'|trans }}</option>
+        </select>
+    </label>
+    <label for="what-next-select-limit">
+        {{ 'Limit'|trans }}
+        <select id="what-next-select-limit">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+    </label>
+    <div class="row">
+        <button type="reset">{{ 'Reset'|trans }}</button>
+        <button type="button">{{ 'Cancel'|trans }}</button>
+        <button type="submit">{{ 'Apply'|trans }}</button>
+    </div>
+</dialog>
