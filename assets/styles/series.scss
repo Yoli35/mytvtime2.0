@@ -1810,6 +1810,7 @@ h2 {
                             align-items: center;
                             background-color: var(--green);
                             border-radius: 5rem;
+                            color: var(--ardoise-10);
                             display: flex;
                             font-size: 1.25rem;
                             font-weight: 300;
@@ -3450,7 +3451,7 @@ h2 {
         .quick-episode {
             align-items: center;
             background-color: hsla(from var(--ardoise-80) h s l / .5);
-            border: 2px solid hsla(from var(--ardoise-30) h s l / .5);
+            border: 2px solid hsla(from var(--ardoise-80) h s l / .5);
             border-radius: .25rem;
             color: var(--ardoise-10);
             cursor: pointer;
@@ -4075,7 +4076,7 @@ h2 {
                 height: 100%;
                 position: relative;
                 transition: width .3s ease-in-out;
-                width: calc(100% - calc(calc(var(--episode-height) * var(--episode-aspect-ratio) + 5.25rem)));
+                width: calc(100% - calc(calc(var(--episode-height) * var(--episode-aspect-ratio) + 4.75rem)));
 
                 .infos-content {
                     display: flex;
@@ -4397,6 +4398,7 @@ h2 {
                                 aspect-ratio: 16/9;
                                 background-color: hsla(from var(--ardoise-80) h s l / .25);
                                 border-radius: .5rem;
+                                color: var(--ardoise-10);
                                 display: flex;
                                 flex-direction: column;
                                 gap: .5rem;
@@ -4469,7 +4471,8 @@ h2 {
             }
 
             &:not(:has(form)):hover {
-                .edit {
+                .infos .infos-content .episode-name .edit,
+                .infos .infos-content .episode-overview .edit {
                     opacity: 1;
                 }
             }
@@ -4551,9 +4554,9 @@ h2 {
     /*gap: 1%;*/
     height: 100%;
     justify-content: center;
-    padding: 0.5rem;
+    padding: 0.25rem;
     transition: gap .3s ease-in-out, width .3s ease-in-out;
-    width: 4.25rem;
+    width: 3.75rem;
 
     .add-this-episode, .remove-this-episode,
     .select-provider, .select-device, .select-vote,
@@ -4572,12 +4575,19 @@ h2 {
     }
 
     .add-this-episode, .remove-this-episode {
-        border-radius: 5rem 5rem .25rem .25rem;
         margin-block-start: 0;
 
         svg {
             margin-block-start: 10%;
         }
+    }
+
+    .add-this-episode {
+        border-radius: 5rem;
+    }
+
+    .remove-this-episode {
+        border-radius: 5rem 5rem .25rem .25rem;
     }
 
     .select-vote,
@@ -4940,15 +4950,27 @@ h2 {
         }
     }
 
+    .series-to-watch-infos {
+        background-color: var(--green);
+        border-radius: 5rem;
+        color: var(--ardoise-10);
+        font-size: 1.25rem;
+        font-weight: 300;
+        margin-inline: auto;
+        outline: 4px solid hsl(from var(--ardoise-10) h s l / .25);
+        padding-block: .5rem;
+        padding-inline: 2rem;
+    }
+
     .series-to-watch {
         background-color: hsla(from var(--ardoise-90) h s l / .2);
-        border-radius: .5rem;
-        padding: 1rem;
+        border-radius: 1rem;
+        padding: .5rem .5rem 0 .5rem;
         width: 100%;
 
         .wrapper {
             display: flex;
-            gap: 1rem;
+            gap: .5rem;
             overflow-x: auto;
             padding-block-end: .5rem;
             width: 100%;
@@ -4980,7 +5002,7 @@ h2 {
 
                         .series-infos {
                             /*border: 1px dashed var(--orange-50);*/
-                            bottom: 1rem;
+                            bottom: 1.25rem;
                             display: flex;
                             flex-direction: column;
                             gap: .25rem;
@@ -5023,17 +5045,43 @@ h2 {
                         .progress {
                             background-color: var(--orange-10);
                             border: 2px solid var(--orange-40);
-                            bottom: 0;
+                            bottom: .25rem;
                             height: .75rem;
-                            left: 0;
+                            /*left: 0;*/
                             position: absolute;
-                            right: 0;
+                            /*right: 0;*/
 
                             .progress-bar {
                                 background-color: var(--orange-50);
                                 height: 100%;
                                 transition: width 0.3s ease-in-out;
                                 width: 0;
+                            }
+                        }
+
+                        .number {
+                            align-items: center;
+                            background-color: var(--green);
+                            border-radius: 5rem;
+                            border: 2px solid var(--ardoise-10);
+                            color: var(--ardoise-10);
+                            display: flex;
+                            font-size: 1.5rem;
+                            font-weight: 500;
+                            height: 3rem;
+                            justify-content: center;
+                            opacity: 0;
+                            position: absolute;
+                            right: 1rem;
+                            top: 1rem;
+                            transition: opacity 0.3s ease-in-out;
+                            width: 3rem;
+                        }
+
+                        &:hover {
+                            .number {
+                                opacity: 1;
+                                transition: opacity 0.1s ease-in-out;
                             }
                         }
                     }

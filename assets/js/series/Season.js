@@ -380,8 +380,11 @@ export class Season {
                 .then(data => {
                     const blocks = data['blocks'];
                     let containerDiv = whatToWatchNextDiv.querySelector('.series-to-watch');
-                    let wrapperDiv;
+                    let wrapperDiv, infosDiv;
                     if (!containerDiv) {
+                        infosDiv = document.createElement('div');
+                        infosDiv.classList.add('series-to-watch-infos');
+                        whatToWatchNextDiv.appendChild(infosDiv);
                         containerDiv = document.createElement('div');
                         containerDiv.classList.add('series-to-watch');
                         wrapperDiv = document.createElement('div');
@@ -389,11 +392,18 @@ export class Season {
                         containerDiv.appendChild(wrapperDiv);
                         whatToWatchNextDiv.appendChild(containerDiv);
                     } else {
+                        infosDiv = whatToWatchNextDiv.querySelector(".series-to-watch-infos");
                         wrapperDiv = containerDiv.querySelector('.wrapper')
                         wrapperDiv.innerHTML = '';
                     }
-                    blocks.forEach((block) => {
+                    infosDiv.innerText = data['sortOption'] + " / "+data['orderOption'] + " x "+data['limitOption'];
+                    blocks.forEach((block, index) => {
                         wrapperDiv.insertAdjacentHTML('beforeend', block);
+                        const posterDiv = wrapperDiv.querySelector(".card:last-child").querySelector(".poster");
+                        const numberDiv = document.createElement("div");
+                        numberDiv.classList.add("number");
+                        numberDiv.innerText = (index+1).toString()
+                        posterDiv.appendChild(numberDiv);
                     });
                     new UserList(gThis.flashMessage, gThis.toolTips);
                     whatToWatchNextButton.classList.remove('disabled');

@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @method User|null getUser() */
 #[Route('/api/series', name: 'api_series_')]
@@ -23,6 +24,7 @@ class SeriesWhatNext extends AbstractController
         private readonly TMDBService          $tmdbService,
         private readonly UserSeriesRepository $userSeriesRepository,
         private readonly SettingsRepository   $settingsRepository,
+        private readonly TranslatorInterface $translator,
     )
     {
     }
@@ -86,8 +88,24 @@ class SeriesWhatNext extends AbstractController
             }
         }
 
+        $sortOptions = [
+            'first_air_date' => $this->translator->trans('First air date'),
+            'lastWatched' => $this->translator->trans('Last watched'),
+            'episodeAirDate' => $this->translator->trans('Episode air date'),
+            'name' => $this->translator->trans('Name'),
+            'addedAt' => $this->translator->trans('Date added'),
+            'finalAirDate' => $this->translator->trans('Final air date'),
+        ];
+        $orderOptions = [
+            'ASC' => $this->translator->trans('Ascending'),
+            'DESC' => $this->translator->trans('Descending'),
+        ];
+
         return new JsonResponse([
             'blocks' => $blocks,
+            'sortOption' => $sortOptions[$settings['sort']],
+            'orderOption' => $orderOptions[$settings['order']],
+            'limitOption' => $settings['limit'],
         ]);
     }
 
