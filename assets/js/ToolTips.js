@@ -164,12 +164,12 @@ export class ToolTips {
 
         const right = evt.pageX + (width / 2);
         if (right > windowWidth * visualViewport.scale) {
-            let style = "transform: translate(" + (evt.pageX - (width / 2) - (right - windowWidth)) + "px, " + toolTipsTranslateY + "px);";
+            let style = "transform: translate(" + (evt.pageX - (width / 2) - (right - (windowWidth * visualViewport.scale))) + "px, " + toolTipsTranslateY + "px);";
             if (style !== gThis.style) {
                 gThis.style = style;
                 // console.log(style);
                 tooltips.setAttribute("style", style);
-                tail.setAttribute("style", "translate: " + (right - windowWidth) + "px -" + tailTranslateY + "px;" + bg);
+                tail.setAttribute("style", "translate: " + (right - (windowWidth * visualViewport.scale)) + "px -" + tailTranslateY + "px;" + bg);
             }
             return;
         }

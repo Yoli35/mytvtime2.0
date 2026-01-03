@@ -2379,18 +2379,19 @@ section:has(.pages) {
         background-color: var(--ardoise-90);
         border-radius: .25em;
         color: var(--ardoise-10);
-        font-size: clamp(1rem, 1.5dvh, 2rem);
-        line-height: 1.5em;
+        font-size: clamp(1rem, 1.5dvw, 2rem);
+        line-height: 1.1em;
         max-width: 100dvw;
         overflow-y: auto;
         text-align: center;
         text-wrap: balance;
-        padding: .5em;
+        padding: .5em 1em;
         width: fit-content;
         z-index: 2;
 
         &:has(img) {
             flex-direction: column;
+            padding: .5em;
         }
 
         img {
