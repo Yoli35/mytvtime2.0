@@ -3770,6 +3770,28 @@ h2 {
             transition: all 0.3s ease-in-out;
             width: fit-content;
 
+            .cast-search-close {
+                align-items: center;
+                aspect-ratio: 1;
+                background-color: hsl(from var(--ardoise-80) h s l / .25);
+                border-radius: 50%;
+                color: var(--ardoise-10);
+                cursor: pointer;
+                display: flex;
+                font-size: 1.5rem;
+                font-weight: 300;
+                height: 2rem;
+                justify-content: center;
+                position: absolute;
+                right: 0;
+                top: 0;
+                width: 2rem;
+
+                &:hover {
+                    background-color: var(--orange-50);
+                }
+            }
+
             form {
                 all: inherit;
                 display: contents;

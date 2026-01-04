@@ -1378,10 +1378,18 @@ class SeriesController extends AbstractController
         return ['items' => $quickLinks, 'count' => $count, 'itemPerLine' => $itemPerLine, 'lineCount' => $lineCount];
     }
 
-    #[Route('/cast/add/{id}/{seasonNumber}/{peopleId}', name: 'add_cast', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS, 'peopleId' => Requirement::DIGITS], methods: ['GET'])]
-    public function addCast(Request $request, Series $series, int $seasonNumber, int $peopleId): Response
+    #[Route('/cast/add', name: 'add_cast', methods: ['POST'])]
+    public function addCast(#[CurrentUser] User $user, Request $request): JsonResponse
     {
-        $characterName = $request->query->get('name');
+        $inputBag = $request->getPayload();
+        $id = $inputBag->get('id');
+        $seasonNumber = $inputBag->get('seasonNumber');
+        $peopleId = $inputBag->get('peopleId');
+        $characterName = $inputBag->get('characterName');
+        $series = $this->seriesRepository->findOneBy(['id' => $id]);
+        $seriesLocalizedName = $series->getLocalizedName($request->getLocale());
+        $seriesName = $seriesLocalizedName->getName() ?? $series->getName();
+
         // TODO: implement cast editing
         $people = json_decode($this->tmdbService->getPerson($peopleId, 'en-US'), true);
         $peopleDb = $this->peopleRepository->findOneBy(['tmdbId' => $peopleId]);
@@ -1402,21 +1410,32 @@ class SeriesController extends AbstractController
                 $message = $people['name'] . ' is already in ';
             }
         }
-
-        if ($seasonNumber) {
-            $message = $this->translator->trans($message . 'season cast');
-            $this->addFlash('info', $message);
-            return $this->redirectToRoute('app_series_season', [
-                'id' => $series->getId(),
-                'slug' => $series->getSlug(),
-                'seasonNumber' => $seasonNumber,
-            ]);
+        $slugger = new AsciiSlugger();
+        $userPreferredName = $this->peopleUserPreferredNameRepository->findOneBy(['user'=>$user, 'tmdbId'=>$peopleId]);
+        if ($userPreferredName) {
+            $slug = $slugger->slug($userPreferredName->getName())->lower()->toString();
+        } else {
+            $slug = $slugger->slug($people['name'])->lower()->toString();
         }
-        $message = $this->translator->trans($message . 'series cast');
-        $this->addFlash('info', $message);
-        return $this->redirectToRoute('app_series_show', [
-            'id' => $series->getId(),
-            'slug' => $series->getSlug(),
+        $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
+
+        // '_blocks/series/_cast.html.twig', {people: people, role: people.character}
+        return new JsonResponse([
+            'ok' => true,
+            'success' => true,
+            'block' => $this->renderView('_blocks/series/_cast.html.twig', [
+                'people' => [
+                    'id' => $peopleId,
+                    'name' => $peopleDb->getName(),
+                    'order' => -1, // Means user added
+                    'preferred_name' => $userPreferredName?->getName(),
+                    'profile_path' => $peopleDb->getProfilePath() ? $profileUrl . $peopleDb->getProfilePath() : null,
+                    'slug' => $slug,
+                    'tmdb_id' => $peopleDb->getTmdbId(),
+                ],
+                'role' => $seriesCast->getCharacterName(),
+            ]),
+            'message' => $message . $seriesName . '.',
         ]);
     }
 

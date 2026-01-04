@@ -450,7 +450,7 @@ export class Season {
          * Add a person to the cast - Search input                                    *
          ******************************************************************************/
         const addCast = new AddCast();
-        addCast.init(menu);
+        addCast.init(menu, this.toolTips, this.flashMessage);
 
         this.getEpisodeFilmingLocations();
 

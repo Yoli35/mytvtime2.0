@@ -415,7 +415,7 @@
                     </div>
                 {% endif %}
 
-                {% set someCast = season.credits.cast|length %}
+                {% set someCast = 1 %}{# season.credits.cast|length #}
                 {% if someCast %}
                     <h3>{{ 'Cast'|trans }}</h3>
                     <div class="cast-and-name">
