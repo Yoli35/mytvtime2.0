@@ -849,18 +849,18 @@ export class Show {
         const addVideoDialog = document.querySelector('.add-video-dialog');
         const addVideoCancelButton = addVideoDialog.querySelector('button[name="cancel"]');
 
-        /******************************************************************************
-         * Add a person to the cast - Search input                                    *
-         ******************************************************************************/
-        const addCast = new AddCast();
-        addCast.init(menu, this.toolTips, this.flashMessage);
-
         addVideoButton.addEventListener('click', () => {
             addVideoDialog.showModal();
         });
         addVideoCancelButton.addEventListener('click', () => {
             addVideoDialog.close();
         });
+
+        /******************************************************************************
+         * Add a person to the cast - Search input                                    *
+         ******************************************************************************/
+        const addCast = new AddCast();
+        addCast.init(menu, this.toolTips, this.flashMessage);
     }
 
     fetchEpisodeCards(cards, index, length) {
