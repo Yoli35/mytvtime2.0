@@ -18,8 +18,44 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>58ᵉ mise à jour : 05/01/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Highlight next episode to watch in schedule view</div>
+                        <div class="details">Added logic to visually highlight and scroll to the next episode the user should watch in the alternate schedule. Updated styles and markup to support highlighting, and passed episode identifiers for accurate selection.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tooltip-account') }}→ Move cast tooltip to photo div and add unique ID</div>
+                        <div class="details">Shifted the data-title attribute from the .people div to the .photo div for improved tooltip behavior. Added a unique id attribute to each .people div for better DOM targeting.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Refactor cast addition to use AJAX and add close button</div>
+                        <div class="details">The cast addition form now submits via AJAX instead of a page redirect, providing a smoother user experience and instant UI updates. A close button was added to the cast search block for better usability. The SeriesController's addCast route was updated to accept POST requests and return JSON, and related JS and template code was updated accordingly. Minor style adjustments were made to support the new close button.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tooltip-text') }}→ Fix tooltip positioning and update tooltip styles</div>
+                        <div class="details">Corrects tooltip positioning calculations to account for visual viewport scaling in ToolTips.js. Updates tooltip font size, line height, and padding in app.scss for improved appearance and consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add numbered overlays and info to 'What Next' series</div>
+                        <div class="details">Enhances the 'What Next' series UI by displaying sort, order, and limit options above the series list and adding numbered overlays to each series card. Updates SeriesWhatNext API to return translated sort and order options, and refines related styles for improved appearance and usability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:settings-outline') }}→ Add 'What Next to Watch' user setting</div>
+                        <div class="details">Introduces a new user setting for customizing the 'What Next to Watch' feature, including backend API endpoints, frontend dialog, and menu integration. Refactors accent color and schedule range settings into a unified ApiAppSettings controller, updates related styles and translations, and removes obsolete API controllers.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor episode info layout and improve styling</div>
+                        <div class="details">Episode info sections are now wrapped in a new .infos-content div for better structure and scrolling. JavaScript and CSS were updated to target this new structure, improving scroll behavior and button visibility. The season filming locations API and rendering were adjusted for consistency. Minor template and style tweaks enhance layout and maintainability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add scroll button for episode info sections</div>
+                        <div class="details">Introduces a scroll-infos-button to episode info sections, allowing users to quickly scroll to hidden filming location details. Updates JavaScript to manage button visibility and scrolling behavior, adjusts styles for the new button, and refines markup and class names for better structure and styling.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>57ᵉ mise à jour : 01/01/2026</h2>
-
                 <ul>
                     <li>
                         <div class="change">{{ ux_icon('mdi:map-outline') }}→ Enhance fileToWebp to support season and episode numbers</div>
