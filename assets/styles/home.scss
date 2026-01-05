@@ -403,11 +403,7 @@
         }
 
         .series-group {
-            /*justify-content: center;
-            scroll-snap-align: start;
-            height: 100dvh;
             margin-top: unset;
-            padding-block-start: 8dvh;*/
 
             h2 {
                 /*font-size: 3vw;*/
@@ -421,6 +417,13 @@
 
                     .card {
                         scroll-snap-align: start;
+
+                        .series-name {
+                            background-color: cadetblue;
+                            border-radius: 0 0 .5rem .5rem;
+                            align-items: center;
+                            justify-content: center;
+                        }
                     }
                 }
             }
