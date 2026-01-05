@@ -26,12 +26,14 @@
                         <img src="/series/backdrops{{ tv.backdrop_path }}" alt="{{ tv.name }}">
                     </div>
                 {% endif %}
+                <div class="poster-container">
                 <div class="poster">
                     {% if tv.poster_path %}
                         <img src="/series/posters{{ tv.poster_path }}" alt="{{ tv.name }}">
                     {% else %}
                         <div>{{ 'No poster'|trans }}</div>
                     {% endif %}
+                </div>
                 </div>
                 <div class="infos">
                     <div class="infos-content">
