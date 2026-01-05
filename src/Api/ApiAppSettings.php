@@ -194,7 +194,7 @@ readonly class ApiAppSettings
     public function WNUpdate(Request $request): Response
     {
         $inputBag = $request->getPayload();
-        dump($inputBag);
+
         $user = ($this->getUser)();
         if (!$user) {
             return ($this->json)([
