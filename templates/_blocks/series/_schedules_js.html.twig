@@ -1,4 +1,16 @@
 <script>
+    const nextEpisodeDiv = document.querySelector(".next.user.episode");
+    if (nextEpisodeDiv) {
+        const ref = nextEpisodeDiv.getAttribute('data-ref');
+        const alternateSchedulesDivs = document.querySelectorAll('.alternate-schedule');
+        alternateSchedulesDivs.forEach(div => {
+            const airDayCard = div.querySelector('a[id="' + ref + '"]');
+            if (airDayCard) {
+                airDayCard.classList.add('highlighted');
+                airDayCard.scrollIntoView({behavior: "smooth", inline: "center"});
+            }
+        });
+    }
     const scheduledDayDivs = document.querySelectorAll('.scheduled-day');
     scheduledDayDivs.forEach(div => {
         const checkbox = div.querySelector('input[type="checkbox"]');

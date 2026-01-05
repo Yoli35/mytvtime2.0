@@ -53,7 +53,7 @@ Mandatory variables:
                         {#                        {% set tvle = schedule.tvLastEpisode %} #}
                         {#                        {% set tvne = schedule.tvNextEpisode %} #}
                         {% if ule %}
-                            <div class="episode user">
+                            <div class="last user episode">
                                 <div class="type">{{ ux_icon('mdi:user-outline', {height: "18px", width: "18px"}) }}</div>
                                 <div class="episode-info">{{ 'Last episode watched'|trans }}</div>
                                 <div class="episode-number">{{ "S%02dE%02d"|format(ule.season_number, ule.episode_number) }}</div>
@@ -62,7 +62,7 @@ Mandatory variables:
                             </div>
                         {% endif %}
                         {% if une %}
-                            <div class="episode user">
+                            <div class="next user episode" data-ref="{{ une.episode }}">
                                 <div class="type">{{ ux_icon('mdi:user-outline', {height: "18px", width: "18px"}) }}</div>
                                 <div class="episode-info">{{ 'Next episode to watch'|trans }}</div>
                                 <div class="episode-number">{{ "S%02dE%02d"|format(une.season_number, une.episode_number) }}</div>
@@ -123,7 +123,7 @@ Mandatory variables:
                         <h3> {{ 'Season'|trans }} {{ as.seasonNumber }}{% if as.multiPart %} {{ 'Part'|trans }} {{ as.seasonPart }}{% endif %} - {{ as.airDays|length }} {{ 'episodes'|trans }}</h3>
                         <div class="alternate-schedule">
                             {% for airDay in as.airDays %}
-                                <a href="{{ airDay.url }}">
+                                <a href="{{ airDay.url }}" id="{{ airDay.episode }}">
                                     <div class="air-day{% if airDay.watched %} watched{% endif %}{% if airDay.future %} future{% endif %}">
                                         <div class="air-day-episode">{{ airDay.episode }}</div>
                                         <div class="air-day-date">

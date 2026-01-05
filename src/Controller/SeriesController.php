@@ -2287,6 +2287,7 @@ class SeriesController extends AbstractController
                 }
             }
             if ($userNextEpisode) {
+                $userNextEpisode['episode'] = sprintf("S%02dE%02d", $seasonNumber, $userNextEpisode['episode_number']);
                 if ($multiPart) {
                     if ($userNextEpisode['episode_number'] >= $firstEpisode && $userNextEpisode['episode_number'] <= $lastEpisode) {
                         if ($userNextEpisode['date'])
