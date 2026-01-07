@@ -8,7 +8,9 @@ use App\Repository\SettingsRepository;
 use App\Repository\UserSeriesRepository;
 use App\Service\ImageConfiguration;
 use App\Service\TMDBService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Closure;
+use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
+use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -17,14 +19,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @method User|null getUser() */
 #[Route('/api/series', name: 'api_series_')]
-class SeriesWhatNext extends AbstractController
+readonly class SeriesWhatNext
 {
     public function __construct(
-        private readonly ImageConfiguration   $imageConfiguration,
-        private readonly TMDBService          $tmdbService,
-        private readonly UserSeriesRepository $userSeriesRepository,
-        private readonly SettingsRepository   $settingsRepository,
-        private readonly TranslatorInterface $translator,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure              $getUser,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private Closure              $renderView,
+        private ImageConfiguration   $imageConfiguration,
+        private TMDBService          $tmdbService,
+        private UserSeriesRepository $userSeriesRepository,
+        private SettingsRepository   $settingsRepository,
+        private TranslatorInterface  $translator,
     )
     {
     }
@@ -32,7 +38,7 @@ class SeriesWhatNext extends AbstractController
     #[Route('/what/next', name: 'what_next', methods: ['GET'])]
     public function next(Request $request): JsonResponse
     {
-        $user = $this->getUser();
+        $user = ($this->getUser)();
         $settings = $this->getSettings($user);
 
         $filters = ['page' => 1, 'perPage' => $settings['limit'], 'sort' => $settings['sort'], 'order' => $settings['order'], 'network' => 'all'];
@@ -50,7 +56,7 @@ class SeriesWhatNext extends AbstractController
         }, $userSeries);
         $blocks = [];
         foreach ($userSeries as $series) {
-            $blocks[] = $this->renderView('_blocks/series/_card.html.twig', [
+            $blocks[] = ($this->renderView)('_blocks/series/_card.html.twig', [
                 'series' => $series,
                 'home' => true,
                 'allFiltered' => true,
@@ -81,30 +87,18 @@ class SeriesWhatNext extends AbstractController
             }, $similarSeries['results']);
             $similarSeries = array_slice($similarSeries, 0, $missingCount);
             foreach ($similarSeries as $series) {
-                $blocks[] = $this->renderView('_blocks/series/_card.html.twig', [
+                $blocks[] = ($this->renderView)('_blocks/series/_card.html.twig', [
                     'series' => $series,
                     'home' => true,
                 ]);
             }
         }
-
-        $sortOptions = [
-            'first_air_date' => $this->translator->trans('First air date'),
-            'lastWatched' => $this->translator->trans('Last watched'),
-            'episodeAirDate' => $this->translator->trans('Episode air date'),
-            'name' => $this->translator->trans('Name'),
-            'addedAt' => $this->translator->trans('Date added'),
-            'finalAirDate' => $this->translator->trans('Final air date'),
-        ];
-        $orderOptions = [
-            'ASC' => $this->translator->trans('Ascending'),
-            'DESC' => $this->translator->trans('Descending'),
-        ];
+        $optionStrings = $this->optionStrings();
 
         return new JsonResponse([
             'blocks' => $blocks,
-            'sortOption' => $sortOptions[$settings['sort']],
-            'orderOption' => $orderOptions[$settings['order']],
+            'sortOption' => $optionStrings['sort'][$settings['sort']],
+            'orderOption' => $optionStrings['order'][$settings['order']],
             'limitOption' => $settings['limit'],
         ]);
     }
@@ -124,5 +118,22 @@ class SeriesWhatNext extends AbstractController
             $this->settingsRepository->save($settings, true);
         }
         return $settings->getData();
+    }
+
+    private function optionStrings(): array
+    {
+        $sortOptions = [
+            'first_air_date' => $this->translator->trans('First air date'),
+            'lastWatched' => $this->translator->trans('Last watched'),
+            'episodeAirDate' => $this->translator->trans('Episode air date'),
+            'name' => $this->translator->trans('Name'),
+            'addedAt' => $this->translator->trans('Date added'),
+            'finalAirDate' => $this->translator->trans('Final air date'),
+        ];
+        $orderOptions = [
+            'ASC' => $this->translator->trans('Ascending'),
+            'DESC' => $this->translator->trans('Descending'),
+        ];
+        return ['sort' => $sortOptions, 'order' => $orderOptions];
     }
 }
