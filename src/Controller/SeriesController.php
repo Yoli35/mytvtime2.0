@@ -1709,7 +1709,7 @@ class SeriesController extends AbstractController
          * Images ajoutées depuis des fichiers locaux (type : UploadedFile)           *
          ******************************************************************************/
         foreach ($imageFiles as $key => $file) {
-            $image = $this->imageService->fileToWebp($file, $title, $location, $n, '/public/images/map/');
+            $image = $this->imageService->fileToWebp($file, $title, $location, $n, '/public/images/map/', $seasonNumber, $episodeNumber);
             if ($image) {
                 $filmingLocationImage = new FilmingLocationImage($filmingLocation, $image, $now);
                 $this->filmingLocationImageRepository->save($filmingLocationImage, true);
