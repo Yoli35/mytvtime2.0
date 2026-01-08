@@ -311,7 +311,7 @@
                         hide.innerText = '{{ 'Hide'|trans }}';
                         displaySettings['data'][menuKey] = 0;
                     }
-                    fetch('/' + lang + '/series/advanced/search/settings', {
+                    fetch('/api/user/settings/series/advanced/search', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

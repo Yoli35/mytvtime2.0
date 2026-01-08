@@ -19,7 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @method User|null getUser() */
 #[Route('/api/series', name: 'api_series_')]
-readonly class SeriesWhatNext
+readonly class ApiSeriesWhatNext
 {
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]

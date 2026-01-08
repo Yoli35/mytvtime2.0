@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Api\WatchLink;
+use App\Api\ApiWatchLink;
 use App\DTO\MovieSearchDTO;
 use App\Entity\Movie;
 use App\Entity\MovieAdditionalOverview;
@@ -51,17 +51,17 @@ class MovieController extends AbstractController
         private readonly ImageConfiguration                $imageConfiguration,
         private readonly ImageService                      $imageService,
         private readonly KeywordService                    $keywordService,
-        private readonly MovieCollectionRepository         $movieCollectionRepository,
-        private readonly MovieDirectLinkRepository         $movieDirectLinkRepository,
-        private readonly MovieLocalizedNameRepository      $movieLocalizedNameRepository,
-        private readonly MovieRepository                   $movieRepository,
-        private readonly MovieService                      $movieService,
-        private readonly SettingsRepository                $settingsRepository,
-        private readonly SourceRepository                  $sourceRepository,
-        private readonly TMDBService                       $tmdbService,
-        private readonly TranslatorInterface               $translator,
-        private readonly UserMovieRepository               $userMovieRepository,
-        private readonly WatchLink                         $watchLinkApi,
+        private readonly MovieCollectionRepository    $movieCollectionRepository,
+        private readonly MovieDirectLinkRepository    $movieDirectLinkRepository,
+        private readonly MovieLocalizedNameRepository $movieLocalizedNameRepository,
+        private readonly MovieRepository              $movieRepository,
+        private readonly MovieService                 $movieService,
+        private readonly SettingsRepository           $settingsRepository,
+        private readonly SourceRepository             $sourceRepository,
+        private readonly TMDBService                  $tmdbService,
+        private readonly TranslatorInterface          $translator,
+        private readonly UserMovieRepository          $userMovieRepository,
+        private readonly ApiWatchLink                 $watchLinkApi,
 //        private readonly WatchProviderRepository           $watchProviderRepository,
     )
     {

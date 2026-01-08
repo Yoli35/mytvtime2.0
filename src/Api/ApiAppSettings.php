@@ -21,7 +21,7 @@ readonly class ApiAppSettings
         private Closure            $json,
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure            $getUser,
-        private SeriesWhatNext     $seriesWhatNext,
+        private ApiSeriesWhatNext  $seriesWhatNext,
         private SettingsRepository $settingsRepository,
     )
     {

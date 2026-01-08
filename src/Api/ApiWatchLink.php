@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/watch/link', name: 'api_watch_link_')]
-class WatchLink extends AbstractController
+class ApiWatchLink extends AbstractController
 {
     public function __construct(
         private readonly ImageConfiguration        $imageConfiguration,
