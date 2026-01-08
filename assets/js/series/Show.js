@@ -318,7 +318,7 @@ export class Show {
                 star.addEventListener('click', function () {
                     const active = this.classList.contains('active');
                     const value = active ? 0 : this.getAttribute('data-value');
-                    fetch('/' + lang + '/series/rating/' + userSeriesId,
+                    fetch('/api/series/user/rating/' + userSeriesId,
                         {
                             method: 'POST',
                             headers: {
@@ -351,7 +351,7 @@ export class Show {
             const pinned = userActions.querySelector('.toggle-pinned-series');
             pinned.addEventListener('click', function () {
                 const isPinned = this.classList.contains('pinned');
-                fetch('/' + lang + '/series/pinned/' + userSeriesId,
+                fetch('/api/series/user/pinned/' + userSeriesId,
                     {
                         method: 'POST',
                         headers: {
@@ -369,7 +369,7 @@ export class Show {
             const favorite = userActions.querySelector('.toggle-favorite-series');
             favorite.addEventListener('click', function () {
                 const isFavorite = this.classList.contains('favorite');
-                fetch('/' + lang + '/series/favorite/' + userSeriesId,
+                fetch('/api/series/user/favorite/' + userSeriesId,
                     {
                         method: 'POST',
                         headers: {
@@ -391,7 +391,7 @@ export class Show {
 
             const removeThisSeries = userActions.querySelector('.remove-this-series');
             removeThisSeries.addEventListener('click', function () {
-                fetch('/' + lang + '/series/remove/' + userSeriesId,
+                fetch('/api/series/user/remove/' + userSeriesId,
                     {
                         method: 'POST',
                         headers: {

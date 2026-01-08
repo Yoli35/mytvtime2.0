@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Api\WatchLink;
+use App\Api\ApiWatchLink;
 use App\DTO\SeriesAdvancedSearchDTO;
 use App\DTO\SeriesSearchDTO;
 use App\Entity\FilmingLocation;
@@ -79,6 +79,7 @@ class SeriesController extends AbstractController
     private bool $reloadUserEpisodes = false;
 
     public function __construct(
+        private readonly ApiWatchLink            $watchLinkApi,
         private readonly DateService                       $dateService,
         private readonly DeviceRepository                  $deviceRepository,
         private readonly EpisodeStillRepository            $episodeStillRepository,
@@ -97,19 +98,17 @@ class SeriesController extends AbstractController
         private readonly SeriesBroadcastScheduleRepository $seriesBroadcastScheduleRepository,
         private readonly SeriesCastRepository              $seriesCastRepository,
         private readonly SeriesExternalRepository          $seriesExternalRepository,
-        private readonly SeriesImageRepository             $seriesImageRepository,
-        private readonly SeriesService                     $seriesService,
-        private readonly SeriesVideoRepository             $seriesVideoRepository,
-        private readonly SeriesRepository                  $seriesRepository,
-        private readonly SettingsRepository                $settingsRepository,
-        private readonly SourceRepository                  $sourceRepository,
-        private readonly TMDBService                       $tmdbService,
-        private readonly TranslatorInterface               $translator,
-        private readonly UserEpisodeRepository             $userEpisodeRepository,
-        private readonly UserPinnedSeriesRepository        $userPinnedSeriesRepository,
-        private readonly UserSeriesRepository              $userSeriesRepository,
-        private readonly WatchLink                         $watchLinkApi,
-        private readonly WatchProviderRepository           $watchProviderRepository,
+        private readonly SeriesImageRepository   $seriesImageRepository,
+        private readonly SeriesRepository        $seriesRepository,
+        private readonly SeriesService           $seriesService,
+        private readonly SeriesVideoRepository   $seriesVideoRepository,
+        private readonly SettingsRepository      $settingsRepository,
+        private readonly SourceRepository        $sourceRepository,
+        private readonly TMDBService             $tmdbService,
+        private readonly TranslatorInterface     $translator,
+        private readonly UserEpisodeRepository   $userEpisodeRepository,
+        private readonly UserSeriesRepository    $userSeriesRepository,
+        private readonly WatchProviderRepository $watchProviderRepository,
     )
     {
     }
@@ -677,26 +676,6 @@ class SeriesController extends AbstractController
         ]);
     }
 
-    #[Route('/advanced/search/settings', name: 'advanced_search_display_settings', methods: ['POST'])]
-    public function advancedSearchDisplaySettings(Request $request): JsonResponse
-    {
-        if ($request->isMethod('POST')) {
-            $payload = $request->getPayload()->all();
-            $settingsId = $payload['id'];
-            $settingsData = $payload['data'];
-            foreach ($settingsData as $key => $value) {
-                $settingsData[$key] = (bool)$value;
-            }
-            $displaySettings = $this->settingsRepository->find($settingsId);
-            if (!$displaySettings) {
-                return new JsonResponse(['ok' => false, 'message' => 'Settings not found'], 404);
-            }
-            $displaySettings->setData($settingsData);
-            $this->settingsRepository->save($displaySettings, true);
-        }
-        return new JsonResponse(['ok' => true]);
-    }
-
     #[Route('/tmdb/{id}-{slug}', name: 'tmdb', requirements: ['id' => Requirement::DIGITS])]
     public function tmdb(#[CurrentUser] User $user, Request $request, $id, $slug): Response
     {
@@ -1094,27 +1073,6 @@ class SeriesController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    #[Route('/remove/{id}', name: 'remove', requirements: ['id' => Requirement::DIGITS])]
-    public function remove(UserSeries $userSeries): Response
-    {
-        $userSeries->setLastUserEpisode(null);
-        $userSeries->setNextUserEpisode(null);
-        $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries]);
-        foreach ($userEpisodes as $userEpisode) {
-            $userEpisode->setPreviousOccurrence(null);
-        }
-        foreach ($userEpisodes as $userEpisode) {
-            $this->userEpisodeRepository->remove($userEpisode);
-        }
-        $this->userEpisodeRepository->flush();
-        $this->userSeriesRepository->remove($userSeries);
-
-        return $this->json([
-            'ok' => true,
-        ]);
-    }
-
-    #[IsGranted('ROLE_USER')]
     #[Route('/schedules/save', name: 'schedule_save', methods: ['POST'])]
     public function schedulesSave(Request $request): JsonResponse
     {
@@ -1260,52 +1218,6 @@ class SeriesController extends AbstractController
             }
         }
         return DateTimeImmutable::createFromMutable($dateTime);
-    }
-
-    #[Route('/pinned/{id}', name: 'pinned', requirements: ['id' => Requirement::DIGITS])]
-    public function pinnedSeries(Request $request, UserSeries $userSeries): Response
-    {
-        $user = $this->getUser();
-        $data = json_decode($request->getContent(), true);
-        $newPinnedValue = $data['newStatus'];
-
-        if ($newPinnedValue) {
-            $userPinnedSeries = new UserPinnedSeries($user, $userSeries);
-            $this->userPinnedSeriesRepository->add($userPinnedSeries, true);
-        } else {
-            $userPinnedSeries = $this->userPinnedSeriesRepository->findOneBy(['user' => $user, 'userSeries' => $userSeries]);
-            $this->userPinnedSeriesRepository->remove($userPinnedSeries, true);
-        }
-
-        return $this->json([
-            'ok' => true,
-        ]);
-    }
-
-    #[Route('/favorite/{id}', name: 'favorite', requirements: ['id' => Requirement::DIGITS])]
-    public function favoriteSeries(Request $request, UserSeries $userSeries): Response
-    {
-        $data = json_decode($request->getContent(), true);
-        $newFavoriteValue = $data['favorite'];
-        $userSeries->setFavorite($newFavoriteValue);
-        $this->userSeriesRepository->save($userSeries, true);
-
-        return $this->json([
-            'ok' => true,
-        ]);
-    }
-
-    #[Route('/rating/{id}', name: 'rating', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function ratingSeries(Request $request, UserSeries $userSeries): Response
-    {
-        $data = json_decode($request->getContent(), true);
-        $rating = $data['rating'];
-        $userSeries->setRating($rating);
-        $this->userSeriesRepository->save($userSeries, true);
-
-        return $this->json([
-            'ok' => true,
-        ]);
     }
 
     private function getQuickLinks(array $episodes): array
