@@ -1685,6 +1685,7 @@ h2 {
                 overflow-x: auto;
                 margin-inline: auto;
                 padding-block: 1rem;
+                padding-inline: 1rem;
                 scroll-snap-type: x mandatory;
 
                 a {
@@ -4160,10 +4161,11 @@ h2 {
 
                         .substitute {
                             background-color: var(--orange-40);
-                            border-radius: 0.25rem;
+                            border-radius: 5rem;
+                            color: var(--orange-90);
                             font-weight: 300;
-                            padding-block: 0.25rem;
-                            padding-inline: 1rem;
+                            padding-block: 0.5rem;
+                            padding-inline: 1.5rem;
                             text-wrap: balance;
 
                             &.watched {
@@ -5939,6 +5941,7 @@ dialog {
     top: 9rem;
     transform: translateX(100%);
     transition: transform 1s var(--side-panel-easing), opacity 0.3s ease-in-out;
+    width: 64rem;
     z-index: 10;
 
     /* background:
