@@ -14,3 +14,134 @@
         <span class="error"></span>
     </label>
 </div>
+<!-- html -->
+{#<style>
+    .autocomplete { position: relative; width: 100%; max-width: 360px; }
+    .autocomplete input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px 10px;
+        border: 1px solid #bbb;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+    .autocomplete-list {
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: 6px 0 0 0;
+        padding: 0;
+        list-style: none;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        max-height: 220px;
+        overflow-y: auto;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        z-index: 1000;
+    }
+    .autocomplete-list[hidden] { display: none; }
+    .autocomplete-list li {
+        padding: 8px 10px;
+        cursor: pointer;
+    }
+    .autocomplete-list li[aria-selected="true"],
+    .autocomplete-list li:hover {
+        background: #f0f4ff;
+    }
+</style>#}
+
+{#<div class="autocomplete" id="loc-autocomplete" data-items='["Paris","Lyon","Marseille","Toulouse","Nice","Bordeaux"]'>
+    <input id="location" name="location" type="text" autocomplete="off" aria-autocomplete="list" aria-controls="loc-list" aria-expanded="false" aria-haspopup="listbox">
+    <ul id="loc-list" class="autocomplete-list" role="listbox" hidden></ul>
+</div>#}
+
+{#<script>
+    (function(){
+        const container = document.getElementById('loc-autocomplete');
+        const input = container.querySelector('input');
+        const listEl = container.querySelector('ul');
+        const items = JSON.parse(container.getAttribute('data-items') || '[]');
+        let current = -1;
+
+        function render(matches) {
+            listEl.innerHTML = '';
+            if (!matches.length) {
+                listEl.setAttribute('hidden', '');
+                input.setAttribute('aria-expanded', 'false');
+                return;
+            }
+            matches.forEach((v, i) => {
+                const li = document.createElement('li');
+                li.textContent = v;
+                li.id = 'loc-item-' + i;
+                li.setAttribute('role', 'option');
+                li.tabIndex = -1;
+                li.addEventListener('mousedown', e => {
+                    // use mousedown to avoid blur before click
+                    e.preventDefault();
+                    selectValue(v);
+                });
+                listEl.appendChild(li);
+            });
+            listEl.removeAttribute('hidden');
+            input.setAttribute('aria-expanded', 'true');
+        }
+
+        function filter(q) {
+            const s = String(q).trim().toLowerCase();
+            if (!s) return items.slice(0, 10);
+            return items.filter(i => i.toLowerCase().includes(s)).slice(0, 10);
+        }
+
+        function selectValue(val) {
+            input.value = val;
+            closeList();
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
+        function closeList() {
+            listEl.setAttribute('hidden', '');
+            input.setAttribute('aria-expanded', 'false');
+            current = -1;
+        }
+
+        input.addEventListener('input', () => {
+            const matches = filter(input.value);
+            render(matches);
+        });
+
+        input.addEventListener('keydown', (e) => {
+            const nodes = Array.from(listEl.children);
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (!nodes.length) return;
+                current = Math.min(current + 1, nodes.length - 1);
+                nodes.forEach(n => n.setAttribute('aria-selected', 'false'));
+                nodes[current].setAttribute('aria-selected', 'true');
+                nodes[current].scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (!nodes.length) return;
+                current = Math.max(current - 1, 0);
+                nodes.forEach(n => n.setAttribute('aria-selected', 'false'));
+                nodes[current].setAttribute('aria-selected', 'true');
+                nodes[current].scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'Enter') {
+                if (current >= 0 && nodes[current]) {
+                    e.preventDefault();
+                    selectValue(nodes[current].textContent);
+                }
+            } else if (e.key === 'Escape') {
+                closeList();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!container.contains(e.target)) closeList();
+        });
+
+        // initial
+        render(items.slice(0,10));
+    })();
+</script>#}
