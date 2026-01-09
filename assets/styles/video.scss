@@ -149,6 +149,25 @@
                     right: 1rem;
                     bottom: 1rem;
                 }
+
+                .categories {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: .5rem;
+                    position: absolute;
+                    left: 1rem;
+                    top: 1rem;
+
+                    .category {
+                        background-color: var(--orange-40);
+                        border-radius: 5rem;
+                        border: 2px solid;
+                        color: var(--orange-90);
+                        font-size: .875rem;
+                        font-weight: 400;
+                        padding: .25rem 1rem;
+                    }
+                }
             }
 
             .infos {
@@ -410,26 +429,28 @@
 
                 .category {
                     background-color: var(--orange-40);
-                    border-radius: .25rem;
+                    border-radius: 5rem;
+                    border: 2px solid;
                     color: var(--orange-90);
                     font-size: 1rem;
                     font-weight: 400;
-                    padding: .25rem 1.5rem .25rem .5rem;
+                    padding: .25rem 2rem .25rem .5rem;
                     position: relative;
 
                     .delete-category {
                         align-items: center;
-                        background-color: var(--green-40);
-                        border-radius: .125rem;
+                        background-color: var(--orange-20);
+                        border-radius: 5rem;
+                        border: 1px solid;
                         color: var(--orange-90);
                         cursor: pointer;
                         display: flex;
-                        height: .75rem;
+                        height: 1rem;
                         justify-content: center;
                         position: absolute;
-                        right: .125rem;
-                        top: .125rem;
-                        width: .75rem;
+                        right: .5rem;
+                        top: .5rem;
+                        width: 1rem;
                     }
                 }
             }

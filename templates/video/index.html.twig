@@ -43,14 +43,21 @@
         {{ pagination|raw }}
         <div class="video-wrapper">
             {% for userVideo in dbUserVideos %}
+                {% set categories = userVideo.categories ?? [] %}
                 <div class="video">
                     <div class="thumbnail">
                         <a href="{{ path('app_video_show', {'id': userVideo.user_video_id, category: categoryId, page: page}) }}">
                             <img src="/videos/thumbnails{{ userVideo.thumbnail }}" alt="{{ userVideo.title }}">
                         </a>
                         <div class="duration">{{ userVideo.duration }}</div>
+                        <div class="categories">
+                        {% for category in categories %}
+                            <div class="category" data-title="{{ category.name }}" style="background-color: {{ category.color }};">
+                                {{ category.name|trans }}
+                            </div>
+                        {% endfor %}
+                        </div>
                     </div>
-                    {% set categories = userVideo.categories ?? [] %}
                     {% set bgStyle = '' %}
                     {% if categories|length %}
                         {% set bgStyle = 'background: linear-gradient(90deg, ' %}
