@@ -1,5 +1,19 @@
 <div class="cast-search-block" data-season-number="{{ seasonNumber }}" data-series-id="{{ seriesId }}">
     <form id="cast-search-form" action="javascript:void(0);">
+        {% if tv.seasons|length > 1 %}
+            <label for="season-number">
+                <select id="season-number">
+                    <option value="-1">{{ 'All seasons'|trans }}</option>
+                    {% for season in tv.seasons %}
+                        {% if season.season_number == 0 %}
+                            <option value="0" {% if 0 == seasonNumber %}selected{% endif %}>{{ 'Special episodes'|trans }}</option>
+                        {% else %}
+                            <option value="{{ season.season_number }}" {% if season.season_number == seasonNumber %}selected{% endif %}>{{ 'Season'|trans }} {{ season.season_number }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </label>
+        {% endif %}
         <label for="character-name">
             <input type="text" id="character-name" data-type="person" class="character" spellcheck="false" autocomplete="off" placeholder="{{ 'Character‘s name'|trans }}">
         </label>

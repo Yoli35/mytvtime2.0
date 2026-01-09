@@ -3855,6 +3855,20 @@ h2 {
                     padding: .25rem 1rem;
                     width: 100%;
                 }
+
+                select {
+                    background-color: var(--orange-30);
+                    border-radius: 5rem;
+                    color: var(--orange-90);
+                    font-size: 1.5rem;
+                    font-weight: 300;
+                    line-height: 1.25em;
+                    padding: .25rem 1rem;
+                }
+
+                &:has(select)::after {
+                    top: 37%;
+                }
             }
 
             .search-results {

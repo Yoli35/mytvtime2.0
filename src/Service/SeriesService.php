@@ -106,6 +106,25 @@ class SeriesService extends AbstractController
         return $tv;
     }
 
+    public function getTvMini(Series $series): ?array
+    {
+        $seriesTmdbId = $series->getTmdbId();
+        $tv = json_decode($this->tmdbService->getTv($seriesTmdbId, 'en-US'), true);
+
+        if (key_exists('error', $tv)) {
+            $this->logger->error("TMDB TV show not found", ['series_id' => $series->getId(), 'tmdb_id' => $seriesTmdbId]);
+            return null;
+        }
+
+        if (!$tv) {
+            return null;
+        }
+
+        $tv['seasons'] = $this->seasonsPosterPath($tv['seasons']);
+
+        return $tv;
+    }
+
     public function seasonsPosterPath(array $seasons): array
     {
         /*$slugger = new AsciiSlugger();*/

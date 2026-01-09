@@ -923,6 +923,7 @@ class SeriesController extends AbstractController
                 'slug' => $series->getSlug(),
             ]);
         }
+        $tv = $this->seriesService->getTvMini($series);
 
         if ($season['poster_path']) {
             if (!$this->inImages($season['poster_path'], $seriesImages)) {
@@ -991,6 +992,7 @@ class SeriesController extends AbstractController
         return $this->render('series/season.html.twig', [
             'series' => $series,
             'userSeries' => $userSeries,
+            'tv' => $tv,
             'translations' => $this->seriesService->getSeriesSeasonTranslations(),
             'quickLinks' => $this->getQuickLinks($season['episodes']),
             'season' => $season,
