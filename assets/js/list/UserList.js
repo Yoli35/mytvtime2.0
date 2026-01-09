@@ -332,6 +332,7 @@ export class UserList {
             const seriesTools = seriesToolsContainer.querySelector('.series-tools');
             const seriesToolsMenu = seriesToolsContainer.querySelector('.series-tools-menu');
             const bookmark = seriesToolsMenu.querySelector("li.bookmark");
+            const share = seriesToolsMenu.querySelector("li.share");
 
             seriesTools.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -369,6 +370,7 @@ export class UserList {
             });
 
             bookmark.addEventListener("click", this.bookmarkClick);
+            share.addEventListener("click", this.shareClick);
         });
     }
 
@@ -487,6 +489,21 @@ export class UserList {
             this.closeSeriesListMenu();
         }).catch((error) => {
             this.flashMessage.add("error", error);
+        });
+    }
+
+    shareClick(e) {
+        const li = e.currentTarget;
+        const seriesToolsMenu = li.closest("ul");
+        const seriesToolsContainer = li.closest(".series-tools-container");
+        const seriesName = seriesToolsContainer.getAttribute("data-name");
+        e.preventDefault();
+        seriesToolsMenu.classList.remove('visible');
+        // Copier le nom de la série dans le presse-papier
+        navigator.clipboard.writeText(seriesName).then(() => {
+            console.log('Copied to clipboard: ' + seriesName);
+        }).catch(err => {
+            console.error('Error copying text: ', err);
         });
     }
 
