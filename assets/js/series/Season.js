@@ -1719,7 +1719,8 @@ export class Season {
         const averageColor = new AverageColor();
         const color = averageColor.getColor(img);
         console.log({color});
-        if (Math.floor(color.lightness) > 160) {
+        /* Luminosité de l'espace de couleur LCH */
+        if (Math.floor(color.lch.l) > 50) {
             const voteGraphDiv = document.querySelector('.vote-graph');
             voteGraphDiv.classList.add('dark');
         }

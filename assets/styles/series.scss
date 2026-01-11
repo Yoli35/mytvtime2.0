@@ -4819,30 +4819,9 @@ h2 {
     width: fit-content;
 
     &.dark {
-        .episode-votes {
-            .episode-vote {
-                .vote {
-                    .user-vote, .dashed-vote {
-                        color: var(--green-80);
-                    }
-
-                    .user-vote {
-                        background-color: hsla(from var(--green-60), h s l / .4);
-                        border: 2px solid var(--green-80);
-                    }
-
-                    .dashed-vote {
-                        background-color: hsla(from var(--green-60), h s l / .1);
-                        border: 1px dashed var(--green-70);
-                    }
-                }
-
-                .episode-number {
-                    color: hsl(from var(--green-50) h s 20%);
-                    font-weight: 500;
-                }
-            }
-        }
+        background-color: hsl(0 0 0 / .25);
+        border-radius: 1rem;
+        padding: 1rem 2rem;
     }
 
     &:hover {
@@ -4859,7 +4838,6 @@ h2 {
 
     .episode-votes {
         align-items: flex-end;
-        /*background-color: hsla(from var(--ardoise-90) h s l / .2);*/
         border-radius: .25rem;
         display: flex;
         flex-direction: row-reverse;
