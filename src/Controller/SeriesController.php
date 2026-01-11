@@ -90,8 +90,6 @@ class SeriesController extends AbstractController
         private readonly KeywordRepository                 $keywordRepository,
         private readonly MonologLogger                     $logger,
         private readonly NetworkRepository                 $networkRepository,
-        private readonly PeopleController                  $peopleController,
-        private readonly PeopleRepository                  $peopleRepository,
         private readonly PeopleUserPreferredNameRepository $peopleUserPreferredNameRepository,
         private readonly SeasonLocalizedOverviewRepository $seasonLocalizedOverviewRepository,
         private readonly SeriesBroadcastDateRepository     $seriesBroadcastDateRepository,
@@ -1290,67 +1288,6 @@ class SeriesController extends AbstractController
             $quickLinks[$count - 1]['class'] .= ' bottom-right';
         }
         return ['items' => $quickLinks, 'count' => $count, 'itemPerLine' => $itemPerLine, 'lineCount' => $lineCount];
-    }
-
-    #[Route('/cast/add', name: 'add_cast', methods: ['POST'])]
-    public function addCast(#[CurrentUser] User $user, Request $request): JsonResponse
-    {
-        $inputBag = $request->getPayload();
-        $id = $inputBag->get('id');
-        $seasonNumber = $inputBag->get('seasonNumber');
-        $peopleId = $inputBag->get('peopleId');
-        $characterName = $inputBag->get('characterName');
-        $series = $this->seriesRepository->findOneBy(['id' => $id]);
-        $seriesLocalizedName = $series->getLocalizedName($request->getLocale());
-        $seriesName = $seriesLocalizedName->getName() ?? $series->getName();
-
-        // TODO: implement cast editing
-        $people = json_decode($this->tmdbService->getPerson($peopleId, 'en-US'), true);
-        $peopleDb = $this->peopleRepository->findOneBy(['tmdbId' => $peopleId]);
-        if (!$peopleDb) {
-            $peopleDb = $this->peopleController->savePeople($people);
-        }
-        $seriesCast = $this->seriesCastRepository->findOneBy(['series' => $series, 'people' => $peopleDb]);
-        if (!$seriesCast) {
-            $seriesCast = new SeriesCast($series, $peopleDb, $seasonNumber, $characterName);
-            $this->seriesCastRepository->save($seriesCast, true);
-            $message = $people['name'] . ($characterName ? ' as ' . $characterName : '') . ' has been added to ';
-        } else {
-            if ($characterName && $characterName != $seriesCast->getCharacterName()) {
-                $seriesCast->setCharacterName($characterName);
-                $this->seriesCastRepository->save($seriesCast, true);
-                $message = $people['name'] . ' as ' . $characterName . ' has been updated to ';
-            } else {
-                $message = $people['name'] . ' is already in ';
-            }
-        }
-        $slugger = new AsciiSlugger();
-        $userPreferredName = $this->peopleUserPreferredNameRepository->findOneBy(['user'=>$user, 'tmdbId'=>$peopleId]);
-        if ($userPreferredName) {
-            $slug = $slugger->slug($userPreferredName->getName())->lower()->toString();
-        } else {
-            $slug = $slugger->slug($people['name'])->lower()->toString();
-        }
-        $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
-
-        // '_blocks/series/_cast.html.twig', {people: people, role: people.character}
-        return new JsonResponse([
-            'ok' => true,
-            'success' => true,
-            'block' => $this->renderView('_blocks/series/_cast.html.twig', [
-                'people' => [
-                    'id' => $peopleId,
-                    'name' => $peopleDb->getName(),
-                    'order' => -1, // Means user added
-                    'preferred_name' => $userPreferredName?->getName(),
-                    'profile_path' => $peopleDb->getProfilePath() ? $profileUrl . $peopleDb->getProfilePath() : null,
-                    'slug' => $slug,
-                    'tmdb_id' => $peopleDb->getTmdbId(),
-                ],
-                'role' => $seriesCast->getCharacterName(),
-            ]),
-            'message' => $message . $seriesName . '.',
-        ]);
     }
 
     #[Route('/overview/{id}', name: 'get_overview', methods: 'GET')]

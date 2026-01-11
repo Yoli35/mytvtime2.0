@@ -34,7 +34,7 @@ export class AddCast {
                 const seriesId = form.querySelector("#cast-search-series-id").value;
                 const seasonNumber = form.querySelector("#cast-search-season-number").value;
                 const peopleId = form.querySelector("#cast-search-person-id").value;
-                const url = "/" + this.lang + "/series/cast/add";
+                const url = "/api/series/cast/add";
 
                 fetch(url, {
                     method: "POST",
