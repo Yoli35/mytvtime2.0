@@ -560,7 +560,7 @@ class PeopleController extends AbstractController
 
         foreach ($dates as $date => $media) {
             $item = [];
-            // si la clé est numérique, on la transforme en date "aaaa-mm-dd" ($now + clé * 1 mois)
+            // si la clé est numérique, on la transforme en date "aaaa-mm-dd" ($now + clé * un mois).
             if (is_numeric($date)) {
                 $offset = 1 + $date;
                 $date = $now->modify("+$offset month")->format('Y-m-d');
