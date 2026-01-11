@@ -146,14 +146,26 @@ window.addEventListener("DOMContentLoaded", () => {
             const averageColor = new AverageColor();
             const color = averageColor.getColor(img);
             const seasonInfosDivs = document.querySelectorAll(".seasons .season .infos");
-            console.log({color})
-            if (color.lightness > 160) {
+            const keywordDivs = document.querySelectorAll(".series-show .block-infos .keywords .keyword");
+            /*console.log({color});
+            console.log({lchLightness: color.lch.l});*/
+            if (color.lch.l > 50) {
                 seriesShow.style.color = "hsl(202, 18%, 10%)";
+                if (keywordDivs) {
+                    keywordDivs.forEach(div => {
+                        div.classList.add("dark");
+                    });
+                }
                 if (seasonInfosDivs) seasonInfosDivs.forEach(seasonInfosDiv => {
                     seasonInfosDiv.style.color = "hsl(202, 18%, 10%)";
                 });
             } else {
                 seriesShow.style.color = "hsl(202, 18%, 90%)";
+                if (keywordDivs) {
+                    keywordDivs.forEach(div => {
+                        div.classList.add("light");
+                    });
+                }
                 if (seasonInfosDivs) seasonInfosDivs.forEach(seasonInfosDiv => {
                     seasonInfosDiv.style.color = "hsl(202, 18%, 90%)";
                 });

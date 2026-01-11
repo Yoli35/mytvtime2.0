@@ -1,3 +1,5 @@
+import {RgbToLch} from "RgbToLch";
+
 export class AverageColor {
 
     constructor(blockSize = 5) {
@@ -63,6 +65,7 @@ export class AverageColor {
             rgb.b = ~~(Math.sqrt(rgb.b / count));
         }
 
+        rgb.lch = new RgbToLch(rgb);
         rgb.lightness = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b);
 
         return rgb;

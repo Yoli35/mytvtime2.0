@@ -94,6 +94,9 @@ return [
     'ProviderSelect' => [
         'path' => './assets/js/home/ProviderSelect.js',
     ],
+    'RgbToLch' => [
+        'path' => './assets/js/images/RgbToLch.js',
+    ],
     'SeriesStatistics' => [
         'path' => './assets/js/home/SeriesStatistics.js',
     ],
