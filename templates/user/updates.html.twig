@@ -18,6 +18,63 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>59ᵉ mise à jour : 12/01/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:api') }}→ Move series cast add endpoint to API and update usage</div>
+                        <div class="details">Refactored the add cast functionality by moving the endpoint from SeriesController to a new ApiSeriesCast class under /api/series/cast/add. Updated the frontend to use the new API route and removed the old controller method and related dependencies.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:language-javascript') }}→ Update vote graph dark mode styling and color logic</div>
+                        <div class="details">Refactored the logic for applying the 'dark' class to use LCH color lightness instead of generic lightness. Simplified and updated the SCSS for the vote graph's dark mode, removing nested vote-specific styles and adding a general background, border radius, and padding.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:language-javascript') }}→ Add LCH color calculation and dynamic keyword styling</div>
+                        <div class="details">Introduced RgbToLch utility for converting RGB to LCH color space and integrated it into AverageColor. Updated app.js to use LCH lightness for determining text and keyword color themes, and adjusted series.scss to support dynamic background colors for keywords based on light/dark mode. Registered RgbToLch in importmap.php for module loading.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:language-css3') }}→ Update series styles for improved layout and UI</div>
+                        <div class="details">Added horizontal padding to scrollable containers, adjusted .substitute class with larger border radius, color, and padding for better appearance, and set a fixed width for side panel dialogs to enhance consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:youtube-tv') }}{{ ux_icon('mdi:language-css3') }}→ Improve video category display and styling</div>
+                        <div class="details">Added a categories section to video thumbnails on the index page and updated SCSS styles for category badges to use rounded borders and consistent colors. Also increased the delete icon size in the show template for better visibility.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add share functionality to series tools menu</div>
+                        <div class="details">Introduces a share button in the series tools menu that copies the series name to the clipboard when clicked. This enhances user interaction by allowing easy sharing of series names.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:user-outline') }}→ Add season selector to cast search block</div>
+                        <div class="details">Introduces a dropdown for selecting seasons in the cast search block when a series has multiple seasons. Adds supporting styles, controller logic, and a new SeriesService method to provide season data for the template.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:api') }}→ Refactor and unify user settings API endpoints</div>
+                        <div class="details">Renamed API classes for consistency (e.g., SeriesWhatNext to ApiSeriesWhatNext, WatchLink to ApiWatchLink). Removed the old UserSettings controller and replaced it with ApiUserSettings, consolidating user network, provider, and advanced search settings endpoints under a unified API route. Updated MovieController and frontend template to use the new API class and endpoint paths.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:code') }}→ Add separate deprecation log channel to Monolog config</div>
+                        <div class="details">Configured Monolog to log deprecation messages to a dedicated deprecations.log file. Excluded deprecation messages from the main log to improve log clarity during development.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Update input and textarea styles in series.scss</div>
+                        <div class="details">Added border-radius and padding to input and textarea elements for improved appearance. These changes enhance the UI consistency and user experience in the affected components.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:api') }}→ Refactor user series actions to API endpoints</div>
+                        <div class="details">Moved user series actions (rating, favorite, pinned, remove) from SeriesController to a new ApiSeriesUserActions class under /api/series/user endpoints. Updated frontend JS to use the new API routes. This improves separation of concerns and provides a cleaner API structure.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Refactor SeriesWhatNext to use ControllerHelper closures</div>
+                        <div class="details">Replaces inheritance from AbstractController with readonly class and injects ControllerHelper methods as closures using AutowireMethodOf. Moves sort and order option strings to a new private method for reuse and cleaner code. Updates usages of getUser and renderView to use the injected closures.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:language-css3') }}→ Style series name in history card and update markup</div>
+                        <div class="details">Added a 'series-name' class to the series link in the history card template and applied new background color, border radius, and alignment styles in home.scss for improved visual presentation.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>58ᵉ mise à jour : 05/01/2026</h2>
                 <ul>
                     <li>
