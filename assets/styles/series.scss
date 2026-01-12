@@ -5606,7 +5606,8 @@ h2 {
         --episode-height: 12.5rem;
         --episode-aspect-ratio: 1/1;
 
-        .infos {
+        .episode-wrapper .episode .infos {
+            height: 20rem;
             width: calc(100% - calc(calc(var(--episode-height) * var(--episode-aspect-ratio) + 3.5rem)));
         }
     }
@@ -5614,13 +5615,13 @@ h2 {
     .episodes .episode-wrapper .episode:hover {
         .user-episode, .user-episode:last-of-type {
             .back-to-top, .back-to-series {
-                font-size: 1.25rem;
+                /*font-size: 1.25rem;
                 width: 1.75rem;
 
                 svg {
                     height: 1.25rem;
                     width: 1.25rem;
-                }
+                }*/
             }
         }
     }
@@ -5628,9 +5629,9 @@ h2 {
     .user-episode {
         font-size: 1rem;
         font-weight: 400;
-        width: 3rem;
+        height: 20rem;
 
-        .add-this-episode, .remove-this-episode,
+        /*.add-this-episode, .remove-this-episode,
         .select-provider, .select-device, .select-vote {
             font-size: 1.25rem;
             width: 1.75rem;
@@ -5669,7 +5670,7 @@ h2 {
                     width: 2rem;
                 }
             }
-        }
+        }*/
 
         .select-provider, .select-vote {
             .list {
