@@ -497,8 +497,7 @@ export class UserList {
     shareClick(e) {
         const li = e.currentTarget;
         const seriesToolsMenu = li.closest("ul");
-        const seriesToolsContainer = li.closest(".series-tools-container");
-        const seriesName = seriesToolsContainer.getAttribute("data-name");
+        const seriesName = li.getAttribute("data-name");
         e.preventDefault();
         seriesToolsMenu.classList.remove('visible');
         // Copier le nom de la série dans le presse-papier
