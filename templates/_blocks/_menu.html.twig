@@ -30,41 +30,21 @@
                 {{ ux_icon('mdi:tv', {'data-title': 'My series'|trans}) }}
                 <div class="menu series">
                     {% set country=getUserCountrySettings(app.user) %}
-                    <div class="menu-item"><a href="{{ path('app_series_index') }}" class="desktop">{{ 'Series.week'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_all') }}" class="desktop">{{ 'Series.in progress'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_not_seen_in_a_while') }}">{{ 'Series.not seen in a while'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_to_start') }}">{{ 'Series.to start'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_up_coming') }}">{{ 'Series.up coming series'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_ranking_by_vote') }}">{{ 'Series.by ranking vote'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_user_favorites') }}">{{ 'Series.favorites'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_by_country', {country: country}) }}">{{ 'Series.by country'|trans }} - {{ country|country_name(app.locale) }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_index') }}" class="desktop">{{ ux_icon('mdi:calendar') }}{{ 'Series.week'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_all') }}" class="desktop">{{ ux_icon('mdi:play') }}{{ 'Series.in progress'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_not_seen_in_a_while') }}">{{ ux_icon('mdi:sleep') }}{{ 'Series.not seen in a while'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_to_start') }}">{{ ux_icon('mdi:eye') }}{{ 'Series.to start'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_up_coming') }}">{{ ux_icon('mdi:page-next-outline') }}{{ 'Series.up coming series'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_ranking_by_vote') }}">{{ ux_icon('mdi:star') }}{{ 'Series.by ranking vote'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_user_favorites') }}">{{ ux_icon('mdi:heart') }}{{ 'Series.favorites'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_by_country', {country: country}) }}">{{ ux_icon('mdi:world') }}{{ 'Series.by country'|trans }} - {{ country|country_name(app.locale) }}</a></div>
                     <div class="separation">{{ 'Shooting locations'|trans }}</div>
-                    <div class="menu-item"><a href="{{ path('app_map_index') }}" class="desktop">{{ 'All locations'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_map_last', { type: 'creation' }) }}" class="desktop">{{ 'Recent additions'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_map_index') }}" class="desktop">{{ ux_icon('mdi:map-outline') }}{{ 'All locations'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_map_last', { type: 'creation' }) }}" class="desktop">{{ ux_icon('mdi:timer-plus-outline') }}{{ 'Recent additions'|trans }}</a></div>
                     <div class="separation">{{ 'Search'|trans }}</div>
-                    {#                    <div class="menu-item"> #}
-                    {#                        <label for="tv-search"> #}
-                    {#                            <input type="search" id="tv-search" data-type="tv" class="search" spellcheck="false" placeholder="{{ 'In The Movie Database'|trans }}"> #}
-                    {#                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }} #}
-                    {#                        </label> #}
-                    {#                        <div class="search-results __series"> #}
-                    {#                            <ul data-type="tv"></ul> #}
-                    {#                        </div> #}
-                    {#                    </div> #}
-                    {#                    <div class="menu-item"> #}
-                    {#                        <label for="tv-search-db"> #}
-                    {#                            <input type="search" id="tv-search-db" data-type="db" class="search" spellcheck="false" placeholder="{{ 'Among your series'|trans }}"> #}
-                    {#                            {{ ux_icon('mdi:search', {class: 'magnifying-glass', height: '18px', width:'18px'}) }} #}
-                    {#                        </label> #}
-                    {#                        <div class="search-results __db_series"> #}
-                    {#                            <ul data-type="dbtv"></ul> #}
-                    {#                        </div> #}
-                    {#                    </div> #}
-                    {% if app.user %}
-                        <div class="menu-item"><a href="{{ path('app_series_search_db') }}">{{ 'Among your series'|trans }}</a></div>
-                    {% endif %}
-                    <div class="menu-item"><a href="{{ path('app_series_search') }}">{{ 'A series by name/year'|trans }}</a></div>
-                    <div class="menu-item"><a href="{{ path('app_series_advanced_search') }}">{{ 'Advanced search'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_search_db') }}">{{ ux_icon('mdi:account-search-outline') }}{{ 'Among your series'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_search') }}">{{ ux_icon('mdi:search') }}{{ 'A series by name/year'|trans }}</a></div>
+                    <div class="menu-item"><a href="{{ path('app_series_advanced_search') }}">{{ ux_icon('mdi:text-box-search-outline') }}{{ 'Advanced search'|trans }}</a></div>
                 </div>
             </div>
             <div class="navbar-item">

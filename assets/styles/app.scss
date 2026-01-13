@@ -499,7 +499,9 @@ label:has(input[type="text"]) {
                 }
 
                 a {
-                    display: block;
+                    align-items: center;
+                    display: flex;
+                    gap: .5rem;
                     height: 100%;
                     padding-block-start: 0.125rem;
                     padding-inline: 1rem;
