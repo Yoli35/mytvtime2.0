@@ -18,6 +18,35 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>60ᵉ mise à jour : 13/01/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:tv') }}→ Add icons to series menu and improve menu item layout</div>
+                        <div class="details">Added Material Design icons to each menu item in the series menu for better visual distinction. Updated SCSS to use flex layout and spacing for menu links, improving alignment and appearance.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:share') }}{{ ux_icon('mdi:tv') }}→ Fix share menu to use correct series name attribute</div>
+                        <div class="details">The share menu now retrieves the series name directly from the clicked list item, which is assigned a data-name attribute in the template. Also, updated card menu text color for better visibility.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:list-box') }}{{ ux_icon('mdi:tv') }}→ Fix user list description removal and update styles/translations</div>
+                        <div class="details">Replaces single child removal with a loop to clear all children in the user list description. Adjusts card.scss to move overflow-y and max-height to .description for better scrolling. Corrects typos and improves phrasing in French translations.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:calendar') }}{{ ux_icon('mdi:tv') }}→ Improve episode filtering and broadcast date handling</div>
+                        <div class="details">Updated episode queries to filter by 'previousOccurrence' and improved logic for creating or updating SeriesBroadcastDate entities. Error may occurs when new episodes are added to an existing schedule with override option checked. Also increased the height of the .show class in series.scss for better UI display.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Refactor quick episode links and update styles</div>
+                        <div class="details">Refactored the quick episode links to support multiple quick-episodes containers and improved their event handling in Season.js. Moved and enhanced the quick-episodes SCSS for better modularity and visual consistency. Updated the season.html.twig template to optionally display a floating quick-episodes panel in the header when multiple quick links are present.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-css3') }}→ Update episode info and user-episode styles</div>
+                        <div class="details">Responsiveness with device width <= 64rem: Adjusted the selector for .infos to target nested elements and set a fixed height. Increased .user-episode height to 20rem and commented out some font-size and width rules for episode controls to refine layout and appearance.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>59ᵉ mise à jour : 12/01/2026</h2>
                 <ul>
                     <li>
