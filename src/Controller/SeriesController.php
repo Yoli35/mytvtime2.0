@@ -1145,7 +1145,6 @@ class SeriesController extends AbstractController
             $as = $this->seriesService->getAlternateSchedule($seriesBroadcastSchedule, $tv['seasons'], $userEpisodes);
 
             $airDays = $as['airDays'];
-            dump($airDays);
             foreach ($airDays as $airDay) {
                 if (!$previousOverrideStatus) {
                     $seriesBroadcastDate = new SeriesBroadcastDate($seriesBroadcastSchedule, $airDay['episodeId'], $seasonNumber, $seasonPart, $airDay['episodeNumber'], $airDay['date']);
