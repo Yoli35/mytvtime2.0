@@ -79,7 +79,7 @@ class SeriesController extends AbstractController
     private bool $reloadUserEpisodes = false;
 
     public function __construct(
-        private readonly ApiWatchLink            $watchLinkApi,
+        private readonly ApiWatchLink                      $watchLinkApi,
         private readonly DateService                       $dateService,
         private readonly DeviceRepository                  $deviceRepository,
         private readonly EpisodeStillRepository            $episodeStillRepository,
@@ -96,17 +96,17 @@ class SeriesController extends AbstractController
         private readonly SeriesBroadcastScheduleRepository $seriesBroadcastScheduleRepository,
         private readonly SeriesCastRepository              $seriesCastRepository,
         private readonly SeriesExternalRepository          $seriesExternalRepository,
-        private readonly SeriesImageRepository   $seriesImageRepository,
-        private readonly SeriesRepository        $seriesRepository,
-        private readonly SeriesService           $seriesService,
-        private readonly SeriesVideoRepository   $seriesVideoRepository,
-        private readonly SettingsRepository      $settingsRepository,
-        private readonly SourceRepository        $sourceRepository,
-        private readonly TMDBService             $tmdbService,
-        private readonly TranslatorInterface     $translator,
-        private readonly UserEpisodeRepository   $userEpisodeRepository,
-        private readonly UserSeriesRepository    $userSeriesRepository,
-        private readonly WatchProviderRepository $watchProviderRepository,
+        private readonly SeriesImageRepository             $seriesImageRepository,
+        private readonly SeriesRepository                  $seriesRepository,
+        private readonly SeriesService                     $seriesService,
+        private readonly SeriesVideoRepository             $seriesVideoRepository,
+        private readonly SettingsRepository                $settingsRepository,
+        private readonly SourceRepository                  $sourceRepository,
+        private readonly TMDBService                       $tmdbService,
+        private readonly TranslatorInterface               $translator,
+        private readonly UserEpisodeRepository             $userEpisodeRepository,
+        private readonly UserSeriesRepository              $userSeriesRepository,
+        private readonly WatchProviderRepository           $watchProviderRepository,
     )
     {
     }
@@ -1139,18 +1139,23 @@ class SeriesController extends AbstractController
         if ($override) {
             $user = $this->getUser();
             $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
-            $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
+            $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'seasonNumber' => $seasonNumber, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
 
             $tv = json_decode($this->tmdbService->getTv($seriesBroadcastSchedule->getSeries()->getTmdbId(), 'fr-FR', ['seasons']), true);
             $as = $this->seriesService->getAlternateSchedule($seriesBroadcastSchedule, $tv['seasons'], $userEpisodes);
 
             $airDays = $as['airDays'];
+            dump($airDays);
             foreach ($airDays as $airDay) {
                 if (!$previousOverrideStatus) {
                     $seriesBroadcastDate = new SeriesBroadcastDate($seriesBroadcastSchedule, $airDay['episodeId'], $seasonNumber, $seasonPart, $airDay['episodeNumber'], $airDay['date']);
                 } else {
                     $seriesBroadcastDate = $this->seriesBroadcastDateRepository->findOneBy(['episodeId' => $airDay['episodeId']]);
-                    $seriesBroadcastDate->setDate($airDay['date']);
+                    if (!$seriesBroadcastDate) {
+                        $seriesBroadcastDate = new SeriesBroadcastDate($seriesBroadcastSchedule, $airDay['episodeId'], $seasonNumber, $seasonPart, $airDay['episodeNumber'], $airDay['date']);
+                    } else {
+                        $seriesBroadcastDate->setDate($airDay['date']);
+                    }
                 }
                 $this->seriesBroadcastDateRepository->save($seriesBroadcastDate);
             }
@@ -2841,8 +2846,7 @@ class SeriesController extends AbstractController
         if ($userSeries->getNextUserEpisode() === null) {
             if (!$userEpisodes) {
                 $userEpisodes = $this->userEpisodeRepository->findBy(['userSeries' => $userSeries, 'watchAt' => null, 'previousOccurrence' => null], ['seasonNumber' => 'ASC', 'episodeNumber' => 'ASC']);
-            }
-            else {
+            } else {
                 $userEpisodes = array_filter($userEpisodes, function ($ue) {
                     return $ue->getWatchAt() === null && $ue->getPreviousOccurrence() === null;
                 });
