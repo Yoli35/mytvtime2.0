@@ -25,6 +25,18 @@
     <div class="container-fluid backgroundImageOverlay">
         <div id="series-season" class="series-show">
             <div class="header">
+
+                {% if quickLinks.count > 1 %}
+                    <div class="quick-episodes-top">
+                        <div class="quick-episodes" data-season-number="{{ season.season_number }}" style="height: {{ 32 * quickLinks.lineCount + 4 * (quickLinks.lineCount - 1) + 20 }}px; width: {{ 32 * quickLinks.itemPerLine + 4 * (quickLinks.itemPerLine - 1) + 20 }}px;">
+                            {% for item in quickLinks.items %}
+                                <div class="{{ item.class }}" data-number="{{ item.episode_number }}"{% if item.name %} data-title="{{ item.air_date|format_date('relative_long')|capitalize }} | {{ item.name }}"{% endif %}>
+                                    {{ item.episode_number }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
                 <div class="infos">
                     <div class="infos-content">
                         <div class="name">
@@ -402,9 +414,9 @@
                 <div class="what-to-watch-next">
                     <div class="next-button" data-id="{{ series.tmdbId }}" data-language="{{ language }}">
                         {% if episodeCount %}
-                        {{ 'What to watch next?'|trans }}
+                            {{ 'What to watch next?'|trans }}
                         {% else %}
-                        {{ 'What else to watch?'|trans }}
+                            {{ 'What else to watch?'|trans }}
                         {% endif %}
                     </div>
                 </div>
@@ -490,13 +502,13 @@
 
     <div id="globs" style="display: none">
         {
-            "seriesId": {{ series.id }},
-            "showId": {{ series.tmdbId }},
-            "seasonNumber": {{ season.season_number }},
-            "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        "seriesId": {{ series.id }},
+        "showId": {{ series.tmdbId }},
+        "seasonNumber": {{ season.season_number }},
+        "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+        "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
     <div id="svgs" style="display: none">

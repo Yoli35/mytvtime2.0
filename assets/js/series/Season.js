@@ -262,10 +262,10 @@ export class Season {
             editEpisodeInfosDialog.querySelector('.frame').scrollTo(0, submitRow.offsetTop);
         });
 
-        const quickEpisodesDiv = document.querySelector('.quick-episodes');
-        if (quickEpisodesDiv) {
+        const quickEpisodesDivs = document.querySelectorAll('.quick-episodes');
+        quickEpisodesDivs.forEach((quickEpisodesDiv) => {
             const seasonNumber = quickEpisodesDiv.getAttribute('data-season-number');
-            const quickEpisodeLinks = document.querySelectorAll('.quick-episode.enabled');
+            const quickEpisodeLinks = quickEpisodesDiv.querySelectorAll('.quick-episode.enabled');
             quickEpisodeLinks.forEach(episode => {
                 episode.addEventListener('click', e => {
                     e.preventDefault();
@@ -278,7 +278,8 @@ export class Season {
                     target.scrollIntoView({behavior: 'smooth', block: 'center'});
                 });
             });
-        }
+        });
+
 
         const backToTops = document.querySelectorAll('.back-to-top');
         const top = document.querySelector('#top');

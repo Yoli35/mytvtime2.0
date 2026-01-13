@@ -1207,7 +1207,7 @@ h2 {
 
             .keyword {
                 align-items: center;
-                background-color: hsl(0 0 0 / .25);/*var(--green-50);*/
+                background-color: hsl(0 0 0 / .25); /*var(--green-50);*/
                 border-radius: 5rem;
                 color: var(--orange-90);
                 display: flex;
@@ -3456,128 +3456,7 @@ h2 {
         }
     }
 
-    .quick-episodes {
-        align-items: center;
-        background-color: hsla(from var(--ardoise-90) h s l / 0.5);
-        border-radius: 1.25rem;
-        display: flex;
-        flex-wrap: wrap;
-        /*gap: .25rem;*/
-        height: 3.5rem;
-        justify-content: center;
-        overflow-x: auto;
-        padding: .5rem;
-
-        &:not(:has(.top-left)) {
-            border-radius: 5rem;
-        }
-
-        .quick-episode {
-            align-items: center;
-            background-color: hsla(from var(--ardoise-80) h s l / .5);
-            border: 2px solid hsla(from var(--ardoise-80) h s l / .5);
-            border-radius: .25rem;
-            color: var(--ardoise-10);
-            cursor: pointer;
-            display: flex;
-            height: 2rem;
-            justify-content: center;
-            margin-inline: .125rem;
-            transition: all 0.3s linear;
-            width: 2rem;
-            will-change: border, transform, z-index;
-
-            &.watched {
-                background-color: var(--user-episode-actions);
-            }
-
-            &:hover {
-                border: 2px solid var(--orange-50);
-                /*border-radius: 5rem;*/
-                transform: scale(1.75);
-                z-index: 3;
-            }
-
-            &:has(+ .quick-episode:hover),
-            &:hover + .quick-episode {
-                border: 2px solid hsla(from var(--orange-50) h s l / .5);
-                /*border-radius: 1rem;*/
-                transform: scale(1.5);
-                z-index: 2;
-            }
-
-            &:has(+ .quick-episode + .quick-episode:hover),
-            &:hover + .quick-episode + .quick-episode {
-                /*border-radius: .5rem;*/
-                transform: scale(1.20);
-                z-index: 1;
-            }
-        }
-
-        .quick-episode:not(.enabled) {
-            cursor: not-allowed;
-            opacity: 0.25;
-        }
-
-        .quick-episode:first-child {
-            cursor: pointer;
-            opacity: 1;
-        }
-
-        .future-episode {
-            align-items: center;
-            background-color: hsla(from var(--ardoise-40) h s l / .5);
-            border: 2px dashed hsla(from var(--ardoise-30) h s l / .5);
-            border-radius: .25rem;
-            color: var(--ardoise-30);
-            display: flex;
-            gap: .5rem;
-            height: 2rem;
-            justify-content: center;
-            margin-inline: .125rem;
-            padding: .25rem;
-            width: 2rem;
-        }
-
-        .quick-episode, .future-episode {
-            &.first {
-                border-bottom-left-radius: 5rem;
-                border-top-left-radius: 5rem;
-            }
-
-            &.last {
-                border-bottom-right-radius: 5rem;
-                border-top-right-radius: 5rem;
-            }
-
-            &.bottom-left {
-                border-bottom-left-radius: .75rem;
-                border-top-left-radius: .25rem;
-            }
-
-            &.bottom-right {
-                border-bottom-right-radius: .75rem;
-                border-top-right-radius: .25rem;
-            }
-
-            &.top-left {
-                border-top-left-radius: .75rem;
-                border-bottom-left-radius: .25rem;
-            }
-
-            &.top-right {
-                border-top-right-radius: .75rem;
-                border-bottom-right-radius: .25rem;
-            }
-        }
-
-        .quick-episodes-break {
-            height: 0;
-            width: 100%;
-        }
-    }
-
-    .user-actions, .quick-episodes {
+    .user-actions {
         > div {
             &:first-child {
                 border-bottom-left-radius: 5rem;
@@ -3608,8 +3487,146 @@ h2 {
     }
 }
 
+.quick-episodes {
+    align-items: center;
+    background-color: hsla(from var(--ardoise-90) h s l / 0.5);
+    border-radius: 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    /*gap: .25rem;*/
+    height: 3.5rem;
+    justify-content: center;
+    overflow-x: auto;
+    padding: .5rem;
+
+    &:not(:has(.top-left)) {
+        border-radius: 5rem;
+    }
+
+    .quick-episode {
+        align-items: center;
+        background-color: hsla(from var(--ardoise-80) h s l / .5);
+        border: 2px solid hsla(from var(--ardoise-80) h s l / .5);
+        border-radius: .25rem;
+        color: var(--ardoise-10);
+        cursor: pointer;
+        display: flex;
+        height: 2rem;
+        justify-content: center;
+        margin-inline: .125rem;
+        transition: all 0.3s linear;
+        width: 2rem;
+        will-change: border, transform, z-index;
+
+        &.watched {
+            background-color: var(--user-episode-actions);
+        }
+
+        &:hover {
+            border: 2px solid var(--orange-50);
+            /*border-radius: 5rem;*/
+            transform: scale(1.75);
+            z-index: 3;
+        }
+
+        &:has(+ .quick-episode:hover),
+        &:hover + .quick-episode {
+            border: 2px solid hsla(from var(--orange-50) h s l / .5);
+            /*border-radius: 1rem;*/
+            transform: scale(1.5);
+            z-index: 2;
+        }
+
+        &:has(+ .quick-episode + .quick-episode:hover),
+        &:hover + .quick-episode + .quick-episode {
+            /*border-radius: .5rem;*/
+            transform: scale(1.20);
+            z-index: 1;
+        }
+    }
+
+    .quick-episode:not(.enabled) {
+        cursor: not-allowed;
+        opacity: 0.25;
+    }
+
+    .quick-episode:first-child {
+        cursor: pointer;
+        opacity: 1;
+    }
+
+    .future-episode {
+        align-items: center;
+        background-color: hsla(from var(--ardoise-40) h s l / .5);
+        border: 2px dashed hsla(from var(--ardoise-30) h s l / .5);
+        border-radius: .25rem;
+        color: var(--ardoise-30);
+        display: flex;
+        gap: .5rem;
+        height: 2rem;
+        justify-content: center;
+        margin-inline: .125rem;
+        padding: .25rem;
+        width: 2rem;
+    }
+
+    .quick-episode, .future-episode {
+        &.first {
+            border-bottom-left-radius: 5rem;
+            border-top-left-radius: 5rem;
+        }
+
+        &.last {
+            border-bottom-right-radius: 5rem;
+            border-top-right-radius: 5rem;
+        }
+
+        &.bottom-left {
+            border-bottom-left-radius: .75rem;
+            border-top-left-radius: .25rem;
+        }
+
+        &.bottom-right {
+            border-bottom-right-radius: .75rem;
+            border-top-right-radius: .25rem;
+        }
+
+        &.top-left {
+            border-top-left-radius: .75rem;
+            border-bottom-left-radius: .25rem;
+        }
+
+        &.top-right {
+            border-top-right-radius: .75rem;
+            border-bottom-right-radius: .25rem;
+        }
+    }
+
+    .quick-episodes-break {
+        height: 0;
+        width: 100%;
+    }
+
+    > div:first-child {
+        border-bottom-left-radius: 5rem;
+        border-top-left-radius: 5rem;
+    }
+
+    > div:last-child {
+        border-bottom-right-radius: 5rem;
+        border-top-right-radius: 5rem;
+    }
+}
+
 #series-season {
     .header {
+        .quick-episodes-top {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            z-index: 50;
+        }
+
         .infos {
             .infos-content {
                 .season-overview {
