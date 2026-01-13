@@ -19,29 +19,12 @@
                     {% else %}
                         <p>{{ 'No lists found.'|trans }}</p>
                     {% endfor %}
+                    <div class="add-list">{{ ux_icon('mdi:plus') }}{{ 'New list'|trans   }}</div>
                 </div>
-                <script>
-                    const listsListToggler = document.querySelector('.lists-list-toggler');
-                    const listsListDiv = document.querySelector('.lists-list');
-                    listsListToggler.addEventListener("click", (e) => {
-                        listsListDiv.classList.toggle("show");
-                        listsListToggler.classList.toggle("show");
-                    });
-                    document.addEventListener("click", (e) => {
-                        const target = e.target;
-                        if (target === listsListToggler || listsListToggler.contains(target) || listsListDiv.contains(target)) {
-                            return;
-                        }
-                        if (listsListToggler.classList.contains("show")) {
-                            listsListDiv.classList.remove("show");
-                            listsListToggler.classList.remove("show");
-                        }
-                    });
-                </script>
                 <div class="list-container">
                     {% if infos %}
                         <div class="list-header">
-                            <div class="list-card">
+                            <div class="list-card" data-id="{{ infos.id }}">
                                 <div class="name">{{ infos.name }}</div>
                                 <div class="count"><span class="sub-count"></span>{{ infos.count|raw }}</div>
                                 <div class="description">{{ infos.description }}</div>
@@ -54,6 +37,10 @@
                                             {% endfor %}
                                         </select>
                                     </label>
+                                </div>
+                                <div class="tools">
+                                    <div class="tool edit">{{ ux_icon('mdi:pen') }}</div>
+                                    <div class="tool delete">{{ ux_icon('mdi:trash') }}</div>
                                 </div>
                             </div>
                         </div>
@@ -97,7 +84,8 @@
     {% include('_blocks/_footer.html.twig') %}
     <div id="globs" style="display: none">
         {
-        "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+            "infos": {{ infos|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
     <div id="svgs" style="display: none">

@@ -2950,6 +2950,13 @@ dialog.user-list-dialog {
             padding: .5rem 1rem;
             width: 100%;
         }
+
+        .error {
+            color: var(--red-50);
+            font-size: .875rem;
+            font-weight: 300;
+            margin-inline-start: .5rem;
+        }
     }
 
     label:has(textarea) {

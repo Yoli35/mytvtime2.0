@@ -37,6 +37,7 @@ final class UserListController extends AbstractController
             'years' => $result['years'],
             'translations' => [
                 'All' => $this->translator->trans('All'),
+                'Required field' => $this->translator->trans('Required field'),
             ]
         ]);
     }

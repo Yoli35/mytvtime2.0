@@ -2,6 +2,7 @@
     <label for="user-list-name">
         {{ 'List name'|trans }}
         <input type="text" id="user-list-name" value="" aria-description="{{ 'Name of the list'|trans }}"/>
+        <div class="error"></div>
     </label>
     <label for="user-list-description">
         {{ 'Description'|trans }}
@@ -16,6 +17,7 @@
         {{ 'Add'|trans }} <span></span>
     </label>
     <input type="hidden" id="tmdb-id" value=""/>
+    <input type="hidden" id="list-id" value="-1"/>
     <div class="row">
         <button type="button">{{ 'Cancel'|trans }}</button>
         <button type="submit">{{ 'Close'|trans }}</button>

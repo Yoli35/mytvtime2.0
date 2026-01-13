@@ -8,11 +8,13 @@ export class UserList {
         if (globs) {
             const globsJson = JSON.parse(globs.textContent);
             this.translations = globsJson['translations'];
+            this.infos = globsJson['infos'];
         } else {
             this.translations = [];
         }
 
         this.init = this.init.bind(this);
+        this.initUserListPage = this.initUserListPage.bind(this);
         this.bookmarkClick = this.bookmarkClick.bind(this);
         this.bookMarkToggle = this.bookMarkToggle.bind(this);
         this.closeSeriesListMenu = this.closeSeriesListMenu.bind(this);
@@ -28,6 +30,8 @@ export class UserList {
         this.userListDialog = document.querySelector("dialog.user-list-dialog");
         this.userListDialogCancel = this.userListDialog.querySelector("button[type=button]");
         this.userListDialogSubmit = this.userListDialog.querySelector("button[type=submit]");
+        this.listCrud = 'create_from_series';
+        this.editing = false;
 
         this.init(buttons);
     }
@@ -41,7 +45,7 @@ export class UserList {
         this.initUserListPage();
 
         document.addEventListener("click", (e) => {
-            if (this.seriesListsMenu.style.length && !this.seriesListsMenu.contains(e.target)) {
+            if (!this.editing && this.seriesListsMenu.style.length && !this.seriesListsMenu.contains(e.target)) {
                 e.preventDefault();
                 this.closeSeriesListMenu();
                 return;
@@ -57,6 +61,37 @@ export class UserList {
     initUserListPage() {
         const userLists = document.querySelector(".user-lists");
         if (!userLists) return;
+
+        this.listsListToggler = document.querySelector('.lists-list-toggler');
+        this.listsListDiv = document.querySelector('.lists-list');
+        this.listsListToggler.addEventListener("click", () => {
+            this.listsListDiv.classList.toggle("show");
+            this.listsListToggler.classList.toggle("show");
+        });
+        document.addEventListener("click", (e) => {
+            const target = e.target;
+            if (this.editing || target === this.listsListToggler || this.listsListToggler.contains(target) || this.listsListDiv.contains(target)) {
+                return;
+            }
+            if (this.listsListToggler.classList.contains("show")) {
+                this.listsListDiv.classList.remove("show");
+                this.listsListToggler.classList.remove("show");
+            }
+        });
+
+        this.userListCard = document.querySelector(".user-lists .lists-container .list-container .list-header .list-card");
+        this.toolEditButton = this.userListCard.querySelector(".tool.edit");
+        this.toolDeleteButton = this.userListCard.querySelector(".tool.delete");
+        this.toolEditButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            this.openUserListDialog('edit');
+
+        });
+        this.toolDeleteButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            alert("List ID: " + this.userListCard.getAttribute("data-id"));
+        });
+
         this.totalCount = document.querySelectorAll(".cards").length;
 
         const listItems = document.querySelector(".lists-list").querySelectorAll(".list-item");
@@ -90,22 +125,23 @@ export class UserList {
                     cards.forEach(card => {
                         card.remove();
                     });
-                    const infos = data['infos'];
+                    this.infos = data['infos'];
                     const list = data['list'];
                     const years = data['years'];
-                    const listCardDiv = document.querySelector(".list-card");
+                    const listCardDiv = this.userListCard;
+                    listCardDiv.setAttribute("data-id", this.infos['id']);
                     const nameDiv = listCardDiv.querySelector(".name");
-                    this.totalCount = infos['total_results'];
+                    this.totalCount = this.infos['total_results'];
                     nameDiv.firstChild.remove();
-                    nameDiv.appendChild(document.createTextNode(infos['name']));
+                    nameDiv.appendChild(document.createTextNode(this.infos['name']));
                     const countDiv = listCardDiv.querySelector(".count");
                     countDiv.lastChild.remove();
-                    countDiv.innerHTML = '<span class="sub-count"></span>' + infos['count'];
+                    countDiv.innerHTML = '<span class="sub-count"></span>' + this.infos['count'];
                     const descriptionDiv = listCardDiv.querySelector(".description");
                     while (descriptionDiv.firstChild) {
                         descriptionDiv.firstChild.remove();
                     }
-                    descriptionDiv.appendChild(document.createTextNode(infos['description']));
+                    descriptionDiv.appendChild(document.createTextNode(this.infos['description']));
                     this.resetSelect(years);
                     const translations = data['translations'];
                     const svgBookmark = this.svgs.querySelector("#svg-bookmark").querySelector("svg");
@@ -165,8 +201,43 @@ export class UserList {
                 });
             });
         });
+        const addList = userLists.querySelector(".add-list");
+        addList.addEventListener("click", (e) => {
+            e.preventDefault();
+            this.openUserListDialog('create_from_list');
+        });
 
         this.initSelect();
+    }
+
+    openUserListDialog(crud) {
+        const nameLabel = this.userListDialog.querySelector('label[for="user-list-name"]');
+        const error = nameLabel.querySelector(".error");
+        const nameInput = this.userListDialog.querySelector("#user-list-name");
+        const descriptionTextarea = this.userListDialog.querySelector("#user-list-description");
+        const publicCheckbox = this.userListDialog.querySelector("#user-list-public");
+        const addSeriesLabel = this.userListDialog.querySelector('label[for="user-list-add-series"]')
+        const addSeriesCheckbox = this.userListDialog.querySelector("#user-list-add-series");
+        const tmdbInput = this.userListDialog.querySelector("#tmdb-id");
+        const listInput = this.userListDialog.querySelector("#list-id");
+        if (crud === 'edit') {
+            nameInput.value = this.infos['name'];
+            descriptionTextarea.value = this.infos['description'];
+            publicCheckbox.checked = this.infos['public'];
+            listInput.value = this.userListCard.getAttribute("data-id");
+        } else {
+            nameInput.value = "";
+            descriptionTextarea.value = "";
+            publicCheckbox.checked = true;
+            listInput.value = -1;
+        }
+        tmdbInput.value = -1;
+        addSeriesLabel.style.display = "none";
+        addSeriesCheckbox.checked = false;
+        error.innerText = "";
+        this.listCrud = crud;
+        this.editing = true;
+        this.userListDialog.showModal();
     }
 
     initSelect() {
@@ -247,6 +318,8 @@ export class UserList {
     }
 
     initCreateListDialog() {
+        const nameLabel = this.userListDialog.querySelector('label[for="user-list-name"]');
+        const error = nameLabel.querySelector(".error");
         this.createNewList.addEventListener("click", (e) => {
             e.preventDefault();
             const seriesName = this.createNewList.getAttribute("data-name");
@@ -260,40 +333,57 @@ export class UserList {
             const nameInput = this.userListDialog.querySelector("#user-list-name");
             const descriptionTextarea = this.userListDialog.querySelector("#user-list-description");
             const publicCheckbox = this.userListDialog.querySelector("#user-list-public");
+            const addSeriesLabel = this.userListDialog.querySelector('label[for="user-list-add-series"]');
             const addSeriesCheckbox = this.userListDialog.querySelector("#user-list-add-series");
             const tmdbInput = this.userListDialog.querySelector("#tmdb-id");
             const span = this.userListDialog.querySelector('label[for="user-list-add-series"] span');
             nameInput.value = "";
+            error.innerText = "";
             descriptionTextarea.value = "";
             publicCheckbox.checked = true;
+            addSeriesLabel.style.display = "flex";
             addSeriesCheckbox.checked = true;
             tmdbInput.value = tmdbId;
             span.innerText = seriesName;
+            this.listCrud = 'create_from_series';
+            this.editing = true;
             this.userListDialog.showModal();
         });
         this.userListDialogCancel.addEventListener("click", (e) => {
             e.preventDefault();
             this.userListDialog.close();
+            this.editing = false;
         });
         this.userListDialogSubmit.addEventListener("click", (e) => {
             e.preventDefault();
+
             const nameInput = this.userListDialog.querySelector("#user-list-name");
             const descriptionTextarea = this.userListDialog.querySelector("#user-list-description");
             const publicCheckbox = this.userListDialog.querySelector("#user-list-public");
             const addSeriesCheckbox = this.userListDialog.querySelector("#user-list-add-series");
             const tmdbInput = this.userListDialog.querySelector("#tmdb-id");
-            fetch("/api/series/list/create", {
+            const listInput = this.userListDialog.querySelector("#list-id");
+            if (!nameInput.value.length) {
+                error.innerText = this.translations['Required field'];
+                return;
+            } else {
+                error.innerText = "";
+            }
+            const url = this.listCrud === 'edit' ? "/api/series/list/update" : "/api/series/list/create";
+            const data = {
+                name: nameInput.value,
+                description: descriptionTextarea.value,
+                public: publicCheckbox.checked,
+                add: addSeriesCheckbox.checked,
+                tmdbId: tmdbInput.value,
+                listId: listInput.value
+            }
+            fetch(url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    name: nameInput.value,
-                    description: descriptionTextarea.value,
-                    public: publicCheckbox.checked,
-                    add: addSeriesCheckbox.checked,
-                    tmdbId: tmdbInput.value
-                }),
+                body: JSON.stringify(data),
             }).then((response) => {
                 if (response.ok) {
                     return response.json();
@@ -301,12 +391,42 @@ export class UserList {
                 const json = response.json();
                 throw new Error("Network response was not ok. " + json.error);
             }).then((data) => {
-                this.flashMessage.add("success", "List " + nameInput.value + " has been successfully created.");
-                const seriesName = nameInput.value;
-                const selector = '.series-tools-container[data-id="' + tmdbInput.value + '"]'
-                const seriesToolsContainers = document.querySelectorAll(selector);
+                this.flashMessage.add("success", "List " + nameInput.value + " has been successfully " + (this.listCrud === 'edit' ? "updated" : "created") + ".");
+                const listName = nameInput.value;
 
-                if (data['final_state']) {
+                if (this.listCrud === 'edit') {
+                    this.infos['name'] = listName;
+                    this.infos['description'] = descriptionTextarea.value;
+                    this.infos['public'] = publicCheckbox.checked;
+                    const nameDiv = this.userListCard.querySelector(".name");
+                    nameDiv.firstChild.remove();
+                    nameDiv.appendChild(document.createTextNode(this.infos['name']));
+                    const descriptionDiv = this.userListCard.querySelector(".description");
+                    while (descriptionDiv.firstChild) {
+                        descriptionDiv.firstChild.remove();
+                    }
+                    descriptionDiv.appendChild(document.createTextNode(this.infos['description']));
+
+                    const selector = '.list-item[data-id="' + listInput.value + '"]';
+                    const listItem = this.listsListDiv.querySelector(selector);
+                    listItem.innerText = listName;
+                }
+
+                if (this.listCrud === 'create_from_list') {
+                    const listId = data['id'];
+                    const listItemDiv = document.createElement("div");
+                    listItemDiv.classList.add("list-item");
+                    listItemDiv.setAttribute("data-id", listId);
+                    listItemDiv.innerText = nameInput.value;
+                    const firstItem = this.listsListDiv.firstChild;
+                    this.listsListDiv.insertBefore(listItemDiv, firstItem);
+                }
+
+                if (this.listCrud === 'create_from_series' && data['final_state']) {
+                    const span = this.userListDialog.querySelector('label[for="user-list-add-series"] span');
+                    const seriesName = span.innerText;
+                    const selector = '.series-tools-container[data-id="' + tmdbInput.value + '"]'
+                    const seriesToolsContainers = document.querySelectorAll(selector);
                     console.log("success", "Series " + seriesName + " added to list " + nameInput.value);
                     this.flashMessage.add("success", "Series " + seriesName + " added to list " + nameInput.value);
                     seriesToolsContainers.forEach(seriesToolsContainer => {
@@ -315,6 +435,7 @@ export class UserList {
                     });
                 }
                 this.userListDialog.close();
+                this.editing = false;
             }).catch((error) => {
                 this.flashMessage.add("error", error);
             });

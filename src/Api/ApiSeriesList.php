@@ -144,13 +144,6 @@ readonly class ApiSeriesList
                 'error' => 'Invalid parameters',
             ]);
         }
-        if (empty($name)) {
-            return ($this->json)([
-                'ok' => true,
-                'create' => false,
-                'error' => 'Name cannot be empty',
-            ]);
-        }
         $userList = new UserList($user, $name, $description, $public);
         $this->userListRepository->save($userList, true);
 
@@ -166,7 +159,53 @@ readonly class ApiSeriesList
         return ($this->json)([
             'ok' => true,
             'create' => true,
+            'id' => $userList->getId(),
             'final_state' => $add ? $userList->getSeriesList()->contains($series) : null,
+        ]);
+    }
+
+    #[Route('/update', name: 'update', methods: ['POST'])]
+    public function update(Request $request): Response
+    {
+        $inputBag = $request->getPayload();
+        $user = ($this->getUser)();
+        if (!$user) {
+            return ($this->json)([
+                'ok' => true,
+                'create' => false,
+                'error' => 'Unauthorized',
+            ]);
+        }
+        $name = $inputBag->get('name', '');
+        $description = $inputBag->get('description', '');
+        $public = $inputBag->getBoolean('public');
+        $listId = $inputBag->getInt('listId', -1);
+        if ($listId === -1) {
+            return ($this->json)([
+                'ok' => true,
+                'update' => false,
+                'error' => 'Invalid parameters',
+            ]);
+        }
+        $userList = $this->userListRepository->find($listId);
+        if (!$userList) {
+            return ($this->json)([
+                'ok' => true,
+                'update' => false,
+                'error' => 'Unauthorized',
+            ]);
+        }
+        $userList->setName($name);
+        $userList->setDescription($description);
+        $userList->setPublic($public);
+        $userList->setUpdatedAt(new DateTimeImmutable());
+        $this->userListRepository->save($userList, true);
+
+        return ($this->json)([
+            'ok' => true,
+            'update' => true,
+            'id' => $userList->getId(),
+            'final_state' => null,
         ]);
     }
 
