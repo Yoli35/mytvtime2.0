@@ -102,7 +102,9 @@ export class UserList {
                     countDiv.lastChild.remove();
                     countDiv.innerHTML = '<span class="sub-count"></span>' + infos['count'];
                     const descriptionDiv = listCardDiv.querySelector(".description");
-                    descriptionDiv.firstChild.remove();
+                    while (descriptionDiv.firstChild) {
+                        descriptionDiv.firstChild.remove();
+                    }
                     descriptionDiv.appendChild(document.createTextNode(infos['description']));
                     this.resetSelect(years);
                     const translations = data['translations'];

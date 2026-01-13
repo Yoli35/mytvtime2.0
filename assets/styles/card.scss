@@ -284,7 +284,6 @@
             border-radius: 0 0 .5rem .5rem;
             height: max(3rem, 4vmax);
             justify-content: center;
-            overflow-y: auto;
             padding-block: .125rem;
             padding-inline: .5rem;
             position: relative;
@@ -296,6 +295,8 @@
             font-size: 1rem;
             font-weight: 500;
             line-height: 1.2em;
+            max-height: 100%;
+            overflow-y: auto;
             text-align: center;
             text-wrap: balance;
 
