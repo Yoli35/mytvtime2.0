@@ -5624,7 +5624,7 @@ h2 {
         --episode-aspect-ratio: 1/1;
 
         .episode-wrapper .episode .infos {
-            height: 20rem;
+            height: var(--episode-height);
             width: calc(100% - calc(calc(var(--episode-height) * var(--episode-aspect-ratio) + 3.5rem)));
         }
     }
@@ -5646,7 +5646,7 @@ h2 {
     .user-episode {
         font-size: 1rem;
         font-weight: 400;
-        height: 20rem;
+        height: var(--episode-height);
 
         /*.add-this-episode, .remove-this-episode,
         .select-provider, .select-device, .select-vote {
