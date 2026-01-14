@@ -293,7 +293,7 @@ export class Menu {
         const multiSearchOptionsMenu = multiSearchDiv.querySelector(".multi-search-options-menu");
         const multiSearchOptions = multiSearchOptionsMenu.querySelectorAll(".multi-search-option");
         const displayPosterToggler = multiSearchOptionsMenu.querySelector("#display-poster-toggler");
-
+        const openInNewTabToggler = multiSearchOptionsMenu.querySelector("#new-tab-toggler");
         magnifyingGlassSpan.addEventListener("click", () => {
             multiSearchDiv.classList.toggle("active");
             if (multiSearchDiv.classList.contains("active")) {
@@ -309,6 +309,17 @@ export class Menu {
         });
         displayPosterToggler.addEventListener("change", () => {
             gThis.forcePreview(displayPosterToggler.checked);
+        });
+        openInNewTabToggler.addEventListener("change", () => {
+            const as = multiSearchDiv.querySelectorAll(".search-results ul li a");
+            const openInNewTab = openInNewTabToggler.checked;
+            console.log(as);
+            console.log(openInNewTab);
+            if (openInNewTab) {
+                as.forEach(a => { a.target = "_blank"});
+            } else {
+                as.forEach(a => { a.target = "_self"});
+            }
         });
 
         multiSearchOptionsButton.addEventListener("click", () => {
@@ -336,7 +347,7 @@ export class Menu {
                 // On sauve l'option dans un cookie
                 gThis.setMultiSearchOptionCookie(newValue);
                 // On relance la recherche
-                gThis.searchFetch({target: multiSearch});
+                gThis.searchFetch({currentTarget: multiSearch});
             });
         });
 
@@ -428,32 +439,6 @@ export class Menu {
         });
     }
 
-    addAuxClickListener(a) {
-        // Si le lien DEPUIS UN MENU est ouvert dans un autre onglet (bouton du milieu : auxclick), il faut supprimer le menu.
-        a.addEventListener("auxclick", () => {
-            const menuItemDiv = a.closest(".menu-item") || a.closest(".multi-search");
-            if (menuItemDiv) {
-                const inputElement = menuItemDiv.querySelector("input");
-                const resultsDiv = menuItemDiv.querySelector(".search-results");
-                const ul = menuItemDiv.querySelectorAll("li");
-                ul.forEach(item => {
-                    item.remove();
-                });
-                resultsDiv.classList.remove("showing-something");
-                inputElement.value = '';
-                gThis.tooltips.hide();
-
-                if (!resultsDiv.classList.contains("__multi")) {
-                    const menuDiv = menuItemDiv.closest(".menu");
-                    const navbarItem = menuItemDiv.closest(".navbar-item");
-                    gThis.closeMenu(navbarItem, menuDiv);
-                } else {
-                    resultsDiv.classList.remove("active");
-                }
-            }
-        });
-    }
-
     openMenu(button, menu) {
         button.classList.add("open");
         document.body.classList.add("frozen");
@@ -541,9 +526,9 @@ export class Menu {
     }
 
     searchFetch(e) {
-        const multiSearchOptionsMenu = document.querySelector(".multi-search-options-menu.active");
-        if (multiSearchOptionsMenu) {
-            multiSearchOptionsMenu.classList.remove("active");
+        const openMultiSearchOptionsMenu = document.querySelector(".multi-search-options-menu.active");
+        if (openMultiSearchOptionsMenu) {
+            openMultiSearchOptionsMenu.classList.remove("active");
         }
 
         const searchInput = e.currentTarget;
@@ -577,6 +562,8 @@ export class Menu {
             .then(res => res.json())
             .then(json => {
                 // console.log(json);
+                const openInNewTab = document.querySelector(".navbar .multi-search .multi-search-options-menu #new-tab-toggler").checked;
+                console.log(openInNewTab);
                 const addCastBlock = searchInput.closest('.cast-search-block');
                 const isAddCastInput = searchType === 'people' && addCastBlock !== null;
                 const lis = ul.querySelectorAll('li');
@@ -602,31 +589,22 @@ export class Menu {
                         url = baseHref + gThis.hRefs[type] + result['id'];
                         if (type !== 'movie' && type !== 'dbmovie' && type !== 'collection') url += '-' + gThis.toSlug(result[gThis.resultNames[type]]);
                     }
-                    const a = document.createElement(url ? "a" : "div");
+                    const aDiv = document.createElement(url ? "a" : "div");
                     if (url) {
-                        const openInNewTabSetting = document.querySelector("#new-tab-toggler").checked;
-                        a.href = url;
-                        a.addEventListener("click", e => {
-                            e.preventDefault();
-                            gThis.forcePreview(gThis.initialPreviewSetting);
-                            if (openInNewTabSetting) {
-                                window.open(url, "_blank");
-                            } else {
-                                window.location.href = url;
-                            }
-                        });
+                        aDiv.href = url;
+                        aDiv.target = openInNewTab ? "_blank" : "_self";
                     } else {
                         const hiddenInputPersonId = addCastBlock.querySelector('#cast-search-person-id');
                         const castNameInput = addCastBlock.querySelector('#cast-search');
-                        a.setAttribute("person-id", result['id'].toString());
-                        a.setAttribute("name", result['name'].toString());
-                        a.addEventListener("click", e => {
+                        aDiv.setAttribute("person-id", result['id'].toString());
+                        aDiv.setAttribute("name", result['name'].toString());
+                        aDiv.addEventListener("click", e => {
                             castNameInput.removeEventListener("input", gThis.searchFetch);
                             castNameInput.addEventListener("input", () => {
                                 castNameInput.addEventListener("input", gThis.searchFetch); // Same type & listener do not add event listener
                             });
-                            hiddenInputPersonId.value = a.getAttribute("person-id");
-                            castNameInput.value = a.getAttribute("name");
+                            hiddenInputPersonId.value = aDiv.getAttribute("person-id");
+                            castNameInput.value = aDiv.getAttribute("name");
                             const thisUl = e.target.closest("ul");
                             const lis = thisUl.querySelectorAll('li');
                             lis.forEach(item => {
@@ -648,13 +626,12 @@ export class Menu {
                     } else {
                         posterDiv.innerHTML = '<div>No poster</div>';
                     }
-                    a.appendChild(posterDiv);
+                    aDiv.appendChild(posterDiv);
                     const titleDiv = document.createElement("div");
                     titleDiv.classList.add("title");
                     titleDiv.innerHTML = result[gThis.resultNames[type]];
-                    a.appendChild(titleDiv);
-                    gThis.addAuxClickListener(a);
-                    li.appendChild(a);
+                    aDiv.appendChild(titleDiv);
+                    li.appendChild(aDiv);
                     ul.appendChild(li);
                 });
                 gThis.tooltips.init(ul);
@@ -1356,7 +1333,7 @@ export class Menu {
             .replace(/-+/g, '-'); // collapse dashes
 
         if (!str || str === '') str = 'no-slug';
-        console.log(str);
+        /*console.log(str);*/
         return str;
     }
 }
