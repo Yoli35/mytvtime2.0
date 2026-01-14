@@ -623,7 +623,7 @@ export class Show {
                     }
                 ).then(async function (response) {
                     const data = await response.json();
-                    console.log({data});
+                    // console.log({data});
                     if (response.ok) {
                         window.location.reload();
                     } else {
@@ -673,8 +673,8 @@ export class Show {
                 const img = this.closest('.form-field').querySelector('img');
                 img.src = URL.createObjectURL(file);
                 this.value = img.src;
-                console.log({file});
-                console.log(img.src)
+                // console.log({file});
+                // console.log(img.src)
                 const blobPreviewDiv = this.closest('.form-field').querySelector('.blob-preview');
                 const blobPreview = blobPreviewDiv.querySelector('img');
                 previewFile(file, blobPreview);
@@ -760,7 +760,7 @@ export class Show {
 
             reader.addEventListener("load", () => {
                 preview.src = reader.result;
-                console.log({reader});
+                // console.log({reader});
             }, false);
             if (file) {
                 reader.readAsDataURL(file);

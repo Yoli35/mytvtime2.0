@@ -31,7 +31,7 @@ export class WatchLinkCrud {
 
         this.toolTips = new ToolTips();
 
-        this.list();
+        // this.list();
         this.init();
     }
 
@@ -169,13 +169,13 @@ export class WatchLinkCrud {
             ).then(async function (response) {
                 if (response.ok) {
                     const data = await response.json();
-                    console.log({data});
+                    // console.log({data});
                     gThis.hideForm(watchLinkForm);
                     const watchLinksDiv = document.querySelector('.watch-links');
                     if (type.value === 'create') {
                         /** @var {Link} link */
                         const link = data.link;
-                        console.log({link});
+                        // console.log({link});
                         const newWatchLinkDiv = document.createElement('div');
                         newWatchLinkDiv.classList.add('watch-link');
                         newWatchLinkDiv.setAttribute('data-id', link.id.toString());
@@ -321,19 +321,19 @@ export class WatchLinkCrud {
         });
     }
 
-    list() {
-        const watchLinksDiv = document.querySelector(".watch-links");
-        const watchLinkDivs = watchLinksDiv.querySelectorAll(".watch-link");
-        watchLinkDivs.forEach(function (item) {
-            const id = item.getAttribute("data-id")
-            fetch(gThis.api.directLinkCrud.read + id)
-                .then(response => response.json())
-                .then(data => {
-                    const link = data.link;
-                    console.log(link);
-                });
-        });
-    }
+    // list() {
+    //     const watchLinksDiv = document.querySelector(".watch-links");
+    //     const watchLinkDivs = watchLinksDiv.querySelectorAll(".watch-link");
+    //     watchLinkDivs.forEach(function (item) {
+    //         const id = item.getAttribute("data-id")
+    //         fetch(gThis.api.directLinkCrud.read + id)
+    //             .then(response => response.json())
+    //             .then(data => {
+    //                 const link = data.link;
+    //                 console.log(link);
+    //             });
+    //     });
+    // }
 
     displayForm(form) {
         if (form.getAttribute('popover') === "") {
