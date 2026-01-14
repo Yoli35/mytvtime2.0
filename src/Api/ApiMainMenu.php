@@ -6,6 +6,7 @@ use App\Entity\Settings;
 use App\Entity\User;
 use App\Repository\SettingsRepository;
 use App\Repository\UserEpisodeRepository;
+use App\Repository\UserListRepository;
 use App\Service\SeriesSchedule;
 use Closure;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
@@ -16,7 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 /** @method User|null getUser() */
 #[Route('/api/main/menu', name: 'api_main_menu_')]
-readonly class MainMenu
+readonly class ApiMainMenu
 {
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
@@ -28,6 +29,7 @@ readonly class MainMenu
         private SeriesSchedule        $seriesSchedule,
         private SettingsRepository    $settingsRepository,
         private UserEpisodeRepository $userEpisodeRepository,
+        private UserListRepository    $userListRepository,
     )
     {
     }
@@ -79,4 +81,32 @@ readonly class MainMenu
         ]);
     }
 
+    #[Route('/suggestions', name: 'suggestions', methods: ['GET'])]
+    public function suggestions(Request $request): Response
+    {
+        $user = ($this->getUser)();
+        if (!$user) {
+            return ($this->json)([
+                'ok' => true,
+                'suggestions' => [],
+            ]);
+        }
+
+        $list = $this->userListRepository->findOneBy(['user' => $user, 'mainMenu' => true]);
+        $locale = $request->query->getAlpha("locale", "fr");
+        $suggestions = array_map(function ($s) use ($locale) {
+            return [
+                'href' => '/' . $locale . '/series/show/' . $s['id'] . '-' . ($s['localized_slug'] ?: $s['slug']),
+                'id' => $s['id'],
+                'name' => ($s['localized_name'] ?: $s['name']) . '(' . $s['air_year'] . ')',
+                'poster_path' => $s['poster_path'],
+            ];
+        }, $this->userListRepository->getListContent($user, 1, $locale));
+
+        return ($this->json)([
+            'ok' => true,
+            'suggestions' => $suggestions,
+            'label' => $list->getName() . ' (' . count($suggestions) . ')',
+        ]);
+    }
 }

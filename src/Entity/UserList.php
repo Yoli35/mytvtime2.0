@@ -42,6 +42,9 @@ class UserList
     #[ORM\ManyToMany(targetEntity: Series::class, inversedBy: 'userLists')]
     private Collection $seriesList;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $mainMenu = null;
+
     public function __construct(User $user, string $name, ?string $description, bool $public)
     {
         $this->user = $user;
@@ -150,6 +153,18 @@ class UserList
     public function removeSeriesList(Series $seriesList): static
     {
         $this->seriesList->removeElement($seriesList);
+
+        return $this;
+    }
+
+    public function isMainMenu(): ?bool
+    {
+        return $this->mainMenu;
+    }
+
+    public function setMainMenu(?bool $mainMenu): static
+    {
+        $this->mainMenu = $mainMenu;
 
         return $this;
     }

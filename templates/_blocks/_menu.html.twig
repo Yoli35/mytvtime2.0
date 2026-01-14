@@ -207,65 +207,6 @@
                 {% set p = p ~ (loop.index0 ? '&':'?') ~ key ~ '=' ~ value %}
             {% endfor %}
         {% endif %}
-
-        {#        Are this notifications usefull? #}
-        {#        {% if app.user %} #}
-        {#            {% set notificationCount = countEpisodeNotifications(app.user) %} #}
-        {#            {% if notificationCount %} #}
-        {#                {% set notifications = listEpisodeNotifications(app.user) %} #}
-        {#                {% set newCount = countNewEpisodeNotifications(app.user) %} #}
-        {#                <div class="navbar-item notifications"> #}
-        {#                    <em>{{ ux_icon('mdi:bell') }}</em> #}
-        {#                    {% if newCount %} #}
-        {#                        <span>{{ newCount }}</span> #}
-        {#                    {% endif %} #}
-        {#                    <div class="menu menu-notifications"> #}
-        {#                        {% for n in notifications %} #}
-        {#                            {% set message = n.message|replace({ #}
-        {#                                'New episode date': 'New episode date'|trans, #}
-        {#                                'New episode': 'New episode'|trans, #}
-        {#                                'New series date': 'New series date'|trans, #}
-        {#                                'Unknown': 'Unknown'|trans, #}
-        {#                            }) %} #}
-        {#                            <div class="item{% if n.validated_at %} validated{% endif %}" data-id="{{ n.id }}" title="{{ message }}"> #}
-        {#                                <div class="message">{{ message }}</div> #}
-        {#                                <div class="date">{{ n.created_at|date('d/m/Y h:i:s') }}</div> #}
-        {#                            </div> #}
-        {#                        {% endfor %} #}
-        {#                        {% if notificationCount > 50 %} #}
-        {#                            <div class="item"> #}
-        {#                                <div class="message">{{ notificationCount-50 }} {{ 'more notifications'|trans }}</div> #}
-        {#                            </div> #}
-        {#                        {% endif %} #}
-        {#                    </div> #}
-        {#                </div> #}
-        {#            {% endif %} #}
-        {#        {% endif %} #}
-        {#        {% set users = getUsers() %} #}
-        {#        <div class="navbar-item"> #}
-        {#            {{ ux_icon('mdi:user-outline') }} #}
-        {#            <div class="menu users"> #}
-        {#                <label for="user-select"> #}
-        {#                    <select id="user-select" class="user-select"> #}
-        {#                        <button> #}
-        {#                            <!-- Prendra le contenu HTML de l'option choisie --> #}
-        {#                            <selectedcontent></selectedcontent> #}
-        {#                            {{ ux_icon('mdi:arrow-down') }} #}
-        {#                        </button> #}
-        {#                        {% for u in users %} #}
-        {#                            <option value="{{ loop.index}}"{% if app.user and app.user.id == u.id %} selected{% endif %}> #}
-        {#                                {% if u.avatar %} #}
-        {#                                    <img src="/images/users/avatars/{{ u.avatar }}" alt="{{ u.username }}"> #}
-        {#                                {% else %} #}
-        {#                                    <img src="/images/users/avatars/default.png" alt="{{ u.username }}"> #}
-        {#                                {% endif %} #}
-        {#                                {{ u.username }} #}
-        {#                            </option> #}
-        {#                        {% endfor %} #}
-        {#                    </select> #}
-        {#                </label> #}
-        {#            </div> #}
-        {#        </div> #}
         <div class="navbar-item">
             <div class="avatar"{% if app.user and app.user.avatar is null %} data-title="{{ 'Change your avatar on your account page'|trans }}"{% endif %}>
                 {% if app.user %}
@@ -332,15 +273,11 @@
             </div>
             <div class="menu main">
                 {% if app.user %}
-                    {#                    {% set start="-3 day" %} #}
-                    {#                    {% set end="2 day" %} #}
-                    {#                    {% set startDay=-3 %} #}
-                    {#                    {% set endDay=2 %} #}
                     {{ include('_blocks/_empty_schedule_menu.html.twig') }}
 
                     {% set inProgress = inProgressSeries(app.user, app.user.preferredLanguage??'fr') %}
                     {% if inProgress.ok %}
-                        <div class="separation">{{ 'Series in progress'|trans }} - {% if inProgress.nextEpisode %}{{ 'Next episode'|trans }}{% else %}🎉 {{ 'That\'s all!'|trans }} 🎉{% endif %}</div>
+                        <div class="separation" id="menu-main-series-in-progress">{{ 'Series in progress'|trans }} - {% if inProgress.nextEpisode %}{{ 'Next episode'|trans }}{% else %}🎉 {{ 'That\'s all!'|trans }} 🎉{% endif %}</div>
                         <div class="a-preview">
                             <a href="{{ path('app_series_season', {id: inProgress.id, slug: inProgress.name|slug, seasonNumber: inProgress.seasonNumber}) }}"
                                id="sip-menu-item-{{ inProgress.id }}"
@@ -361,7 +298,7 @@
                         </div>
                     {% endif %}
                     {% if seriesName is defined %}
-                        <div class="separation">{{ 'Back to the series page'|trans }}</div>
+                        <div class="separation" id="main-menu-back-to-series">{{ 'Back to the series page'|trans }}</div>
                         <a href="{{ seriesLink }}">
                             <em>{{ ux_icon('mdi:arrow-left') }}</em>&nbsp;{{ seriesName }}
                         </a>
@@ -370,7 +307,7 @@
                     {% set pinnedSeries=pinnedSeries(app.user, app.user.preferredLanguage??'fr') %}
                     {% set l = pinnedSeries|length %}
                     {% if l %}
-                        <div class="separation">{{ 'Pinned series'|trans }} ({{ l }} {{ (l > 1 ? 'seriess':'series')|trans }})</div>
+                        <div class="separation" id="menu-main-pinned-series">{{ 'Pinned series'|trans }} ({{ l }} {{ (l > 1 ? 'seriess':'series')|trans }})</div>
                         {% for series in pinnedSeries %}
                             <div class="a-preview">
                                 <a id="pinned-menu-item-{{ series.id }}"{% if series.linkName %} data-title="{{ series.linkName }}"{% endif %}

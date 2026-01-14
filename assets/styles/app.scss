@@ -691,6 +691,51 @@ label:has(input[type="text"]) {
                 display: flex;
                 justify-content: space-between;
             }
+
+            .suggestions {
+                .wrapper {
+                    display: flex;
+                    gap: .25rem;
+                    height: 0;
+                    overflow-x: auto;
+                    padding-block-end: .5rem;
+                    transition: height 300ms ease-in-out;
+
+                    .suggestion {
+                        align-items: center;
+                        aspect-ratio: 2 / 3;
+                        background-color: var(--orange-30);
+                        border-radius: .375rem;
+                        border: 2px solid transparent;
+                        color: var(--orange-90);
+                        cursor: pointer;
+                        display: flex;
+                        flex-shrink: 0;
+                        font-size: .875rem;
+                        gap: .5rem;
+                        height: 6rem;
+                        justify-content: center;
+
+                        a {
+                            align-items: center;
+                            display: flex;
+                            height: 100%;
+                            justify-content: center;
+                            width: 100%;
+                        }
+
+                        img {
+                            border-radius: .25rem;
+                            height: 100%;
+                            object-fit: cover;
+                        }
+
+                        &:hover {
+                            border-color: var(--orange);
+                        }
+                    }
+                }
+            }
         }
 
         .menu.user {
@@ -708,6 +753,7 @@ label:has(input[type="text"]) {
                     padding: .125rem .5rem;
                 }
             }
+
             .accent-color-settings {
                 display: flex;
                 padding-inline: 1rem;
@@ -2336,8 +2382,8 @@ section:has(.pages) {
 }
 
 .series-lists-menu {
-     display: none;
- }
+    display: none;
+}
 
 .tool-tips {
     align-items: center;

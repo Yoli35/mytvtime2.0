@@ -187,7 +187,9 @@ export class Menu {
             return;
         }
 
-        window.addEventListener("resize", ()=> { this.clientHeight = window.innerHeight; });
+        window.addEventListener("resize", () => {
+            this.clientHeight = window.innerHeight;
+        });
 
         this.reloadOnDayChange();
         this.getTMDBConfig();
@@ -316,9 +318,13 @@ export class Menu {
             console.log(as);
             console.log(openInNewTab);
             if (openInNewTab) {
-                as.forEach(a => { a.target = "_blank"});
+                as.forEach(a => {
+                    a.target = "_blank"
+                });
             } else {
-                as.forEach(a => { a.target = "_self"});
+                as.forEach(a => {
+                    a.target = "_self"
+                });
             }
         });
 
@@ -507,7 +513,6 @@ export class Menu {
         fetch(apiUrl, options)
             .then(res => res.json())
             .then(res => {
-                console.log(res);
                 localStorage.removeItem("schedule_range_updated");
                 if (res['update'] === false) return;
                 const scheduleMenuDiv = document.querySelector(".schedule-menu");
@@ -519,6 +524,50 @@ export class Menu {
                 scheduleMenuDiv.setAttribute("data-id", newScheduleMenuDiv.getAttribute("data-id"));
 
                 gThis.posterPreview();
+            })
+            .catch(err => {
+                console.log(err);
+            });
+
+        if (document.querySelector(".suggestions")) {
+            return;
+        }
+        fetch("/api/main/menu/suggestions")
+            .then(res => res.json())
+            .then(res => {
+                const list = res['suggestions'];
+                const suggestionsDiv = document.createElement("div");
+                suggestionsDiv.classList.add("suggestions");
+                const wrapperDiv = document.createElement("div");
+                wrapperDiv.classList.add("wrapper");
+                suggestionsDiv.appendChild(wrapperDiv);
+                list.forEach(item => {
+                    const a = document.createElement("a");
+                    a.href = item['href'];
+                    const suggestionDiv = document.createElement("div");
+                    suggestionDiv.classList.add("suggestion");
+                    suggestionDiv.setAttribute("data-title", item['name']);
+                    const img = document.createElement("img");
+                    img.src = "/series/posters" + item['poster_path'];
+                    img.alt = item['name'];
+                    a.appendChild(img);
+                    suggestionDiv.appendChild(a);
+                    wrapperDiv.appendChild(suggestionDiv);
+                });
+                const mainMenu = document.querySelector(".menu.main");
+                const separation = mainMenu.querySelector("#menu-main-pinned-series");
+                const suggestionSeparation = document.createElement("div");
+                suggestionSeparation.classList.add("separation");
+                suggestionSeparation.innerText = res['label'];
+                if (separation) {
+                    mainMenu.insertBefore(suggestionSeparation, separation);
+                    mainMenu.insertBefore(suggestionsDiv, separation);
+                } else {
+                    mainMenu.appendChild(suggestionSeparation);
+                    mainMenu.appendChild(suggestionsDiv);
+                }
+                wrapperDiv.style.height = "6.5rem";
+                gThis.tooltips.init(suggestionsDiv);
             })
             .catch(err => {
                 console.log(err);
