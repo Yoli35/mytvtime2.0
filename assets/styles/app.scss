@@ -690,6 +690,11 @@ label:has(input[type="text"]) {
             .separation {
                 display: flex;
                 justify-content: space-between;
+
+                &.today {
+                    background-color: var(--orange-40);
+                    font-weight: 600;
+                }
             }
 
             .suggestions {
@@ -1505,6 +1510,10 @@ label:has(input[type="text"]) {
     .a-preview {
         display: flex;
         position: relative;
+
+        &.today {
+            background-color: hsla(from var(--navbar-bg) h s l / 0.8);
+        }
 
         > a {
             display: flex;
