@@ -18,6 +18,43 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>61ᵉ mise à jour : 15/01/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:tv') }}→ Update suggestions menu styling and behavior</div>
+                        <div class="details">Replaces fixed height assignment with a 'ready' class for the suggestions wrapper and updates related SCSS to adjust heights and max-widths. Improves menu responsiveness and visual consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-css3') }}{{ ux_icon('mdi:tv') }}→ Update series keyword badge styles for improved layout</div>
+                        <div class="details">Adjusted font-size, height, and padding properties for keyword badges in series.scss to enhance visual consistency and responsiveness.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve watch link label and season badge handling</div>
+                        <div class="details">Refactored JS to centralize watch link label generation and update on both provider and season changes. Updated SeriesService to provide new translation keys for 'Watch season' and 'Watch specials'. Modified Twig template to display 'SP' badge for specials and use -1 as the default provider value. Added corresponding French translations.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:tv') }}→ Add user list suggestions to main menu</div>
+                        <div class="details">Introduces a new suggestions section in the main menu, displaying items from the user's list marked for the main menu. Adds a nullable 'mainMenu' property to UserList, updates the API (renamed to ApiMainMenu) to provide suggestions, and implements corresponding frontend logic and styles for displaying suggestions in the menu.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:search') }}→ Fix 'Open in new tab' option to multi-search results</div>
+                        <div class="details">Correct the toggle in the multi-search options menu to open search result links in a new tab. Refactors link creation logic in Menu.js to use the 'target' attribute instead of custom click handlers, and removes the addAuxClickListener method. Also updates the menu template to reflect the new toggle and cleans up commented code.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ Bug fix. Add lch property to defaultRGB in AverageColor</div>
+                        <div class="details">Extended the defaultRGB object in AverageColor.js to include an lch property with default values. This prepares the class for handling LCH color representations.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-css3') }}→ Layout fix. Use CSS variable for episode height</div>
+                        <div class="details">Replaced hardcoded 20rem height values with the --episode-height CSS variable for better flexibility and maintainability in episode styling.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:list-box') }}→ Add edit and create functionality for user lists</div>
+                        <div class="details">Implemented the ability to create and edit user lists from the UI, including dialog validation and error display. Added new API endpoint for updating lists, updated styles for list management, and improved the user experience for managing lists. Also updated translations and templates to support these features.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>60ᵉ mise à jour : 13/01/2026</h2>
                 <ul>
                     <li>
