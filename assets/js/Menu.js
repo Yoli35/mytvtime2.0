@@ -566,7 +566,7 @@ export class Menu {
                     mainMenu.appendChild(suggestionSeparation);
                     mainMenu.appendChild(suggestionsDiv);
                 }
-                wrapperDiv.style.height = "6.5rem";
+                wrapperDiv.classList.add("ready");
                 gThis.tooltips.init(suggestionsDiv);
             })
             .catch(err => {

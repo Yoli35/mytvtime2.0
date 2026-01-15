@@ -693,6 +693,9 @@ label:has(input[type="text"]) {
             }
 
             .suggestions {
+                flex-grow: 0;
+                max-width: 100%;
+
                 .wrapper {
                     display: flex;
                     gap: .25rem;
@@ -700,6 +703,10 @@ label:has(input[type="text"]) {
                     overflow-x: auto;
                     padding-block-end: .5rem;
                     transition: height 300ms ease-in-out;
+
+                    &.ready {
+                        height: 9.5rem;
+                    }
 
                     .suggestion {
                         align-items: center;
@@ -713,7 +720,7 @@ label:has(input[type="text"]) {
                         flex-shrink: 0;
                         font-size: .875rem;
                         gap: .5rem;
-                        height: 6rem;
+                        height: 9rem;
                         justify-content: center;
 
                         a {
@@ -1314,7 +1321,7 @@ label:has(input[type="text"]) {
     }
 
     .menu.main {
-        max-width: calc(100vw - 2rem);
+        max-width: min(36rem, calc(100vw - 2rem));
         overflow-x: auto;
         overflow-y: auto;
 
