@@ -1781,7 +1781,7 @@ h2 {
             width: calc(100% + 2rem);
 
             &.show {
-                height: 26rem;
+                height: 30rem;
                 margin-block-end: 1rem;
                 padding: 1rem;
             }
@@ -1802,12 +1802,19 @@ h2 {
                         width: 100%;
                     }
 
+                    &:has(.scheduled-day) {
+                        background-color: var(--orange-30);
+                        border-radius: 1rem;
+                        box-shadow: 0 0 1rem hsla(from var(--orange-10) h s l / .25) inset;
+                        padding: 1rem;
+                    }
+
                     .scheduled-day {
                         align-items: center;
                         display: flex;
                         flex-direction: row;
                         justify-content: space-between;
-                        width: 12rem;
+                        width: 10rem;
                     }
                 }
 
@@ -1866,8 +1873,38 @@ h2 {
                         }
                     }
 
+                    label[for^=season-number] {
+                        background-color: var(--orange-30);
+                        border-radius: 5rem;
+                        box-shadow: 0 0 1rem hsla(from var(--orange-10) h s l / .25) inset;
+                        font-size: 2rem;
+                        gap: 1rem;
+                        padding-block: .5rem;
+                        padding-inline: 1.5rem .5rem;
+
+                        input {
+                            border-radius: 5rem;
+                            font-size: inherit;
+                            width: 6rem;
+                        }
+                    }
+
+                    label:has(select) {
+                        width: fit-content;
+                    }
+
+                    label:has(select) select {
+                        background-color: var(--orange-20);
+                        border: 2px solid var(--orange);
+                        border-radius: 5rem;
+                        flex-shrink: 0;
+                        padding-block: .5rem;
+                        width: fit-content;
+                    }
+
                     label:has(select)::after {
-                        top: 20%;
+                        right: 1.5rem;
+                        top: 32%;
                     }
 
                     label:has(.provider-logo) {
@@ -1919,18 +1956,20 @@ h2 {
                     input[type=number] {
                         background-color: var(--orange-20);
                         border: 2px solid var(--orange-50);
-                        border-radius: .25rem;
+                        border-radius: 5rem;
                         color: var(--orange-90);
-                        padding-inline: .5rem;
+                        padding-block: .25rem;
+                        padding-inline: .75rem;
                         width: 4rem;
                     }
 
                     input[type=time], input[type=date] {
                         background-color: var(--orange-20);
                         border: 2px solid var(--orange-50);
-                        border-radius: .25rem;
+                        border-radius: 5rem;
                         color: var(--orange-90);
-                        padding-inline: .5rem;
+                        padding-block: .25rem;
+                        padding-inline: .75rem;
                     }
                 }
 
