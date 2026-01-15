@@ -1211,11 +1211,11 @@ h2 {
                 border-radius: 5rem;
                 color: var(--orange-90);
                 display: flex;
-                font-size: clamp(1rem, 1vw, 1.5rem);
+                font-size: clamp(1rem, 1.25vw, 1.5rem);
                 font-weight: 300;
-                gap: .25rem;
+                height: clamp(2rem, 3vw, 3.5rem);
                 justify-content: center;
-                padding: clamp(.125rem, .25vw, .5rem) clamp(1rem, 1vw, 1.5rem);
+                padding-inline: clamp(1rem, 1vw, 1.5rem);
                 position: relative;
 
                 &.light {
