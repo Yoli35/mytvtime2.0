@@ -397,13 +397,13 @@ export class Season {
                         wrapperDiv = containerDiv.querySelector('.wrapper')
                         wrapperDiv.innerHTML = '';
                     }
-                    infosDiv.innerText = data['sortOption'] + " / "+data['orderOption'] + " x "+data['limitOption'];
+                    infosDiv.innerText = data['sortOption'] + " / " + data['orderOption'] + " x " + data['limitOption'];
                     blocks.forEach((block, index) => {
                         wrapperDiv.insertAdjacentHTML('beforeend', block);
                         const posterDiv = wrapperDiv.querySelector(".card:last-child").querySelector(".poster");
                         const numberDiv = document.createElement("div");
                         numberDiv.classList.add("number");
-                        numberDiv.innerText = (index+1).toString()
+                        numberDiv.innerText = (index + 1).toString()
                         posterDiv.appendChild(numberDiv);
                     });
                     new UserList(gThis.flashMessage, gThis.toolTips);
@@ -454,6 +454,7 @@ export class Season {
         addCast.init(menu, this.toolTips, this.flashMessage);
 
         this.getEpisodeFilmingLocations();
+        this.getEpisodeComments();
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -544,6 +545,70 @@ export class Season {
             .catch(err => console.log(err));
     }
 
+    getEpisodeComments() {
+        fetch('/api/season/comments/' + this.seriesId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                seasonNumber: this.seasonNumber
+            })
+        })
+            .then((response) => response.json())
+            .then(data => {
+                console.log(data);
+                const comments = data['comments'];
+                const episodesCommetsDiv = document.querySelector(".episodes-comments");
+                comments.forEach(comment => {
+                    const episodeNumber = comment['episodeNumber'];
+                    let episodeGroup = episodesCommetsDiv.querySelector(".episode-group#comment-" + comment["tmdbId"]);
+                    if (!episodeGroup) {
+                        episodeGroup = document.createElement("div");
+                        episodeGroup.classList.add("episode-group");
+                        episodeGroup.setAttribute("id", "comment-" + comment["tmdbId"]);
+                        const titleDiv = document.createElement("div");
+                        titleDiv.classList.add("episode-group-title");
+                        titleDiv.innerText = "Episode #" + episodeNumber;
+                        episodeGroup.appendChild(titleDiv);
+                        episodesCommetsDiv.appendChild(episodeGroup);
+                    }
+                    const coreDiv = document.createElement("div");
+                    coreDiv.classList.add("comment");
+                    coreDiv.setAttribute("data-id", comment['id']);
+                    coreDiv.setAttribute("data-tmdb-id", comment['tmdbId']);
+                    const userDiv = document.createElement("div");
+                    userDiv.classList.add("user");
+                    const userAvatarDiv = document.createElement("div");
+                    userAvatarDiv.classList.add("avatar");
+                    userAvatarDiv.setAttribute("data-tile", comment['user']['username']);
+                    if (comment['user']['avatar']) {
+                        const img = document.createElement("img");
+                        img.src = "/images/users/avatars/" + comment['user']['avatar'];
+                        img.alt = comment['user']['username'];
+                        userAvatarDiv.appendChild(img);
+                    } else {
+                        userAvatarDiv.innerText = comment['user']['username'].slice(0, 1).toUpperCase();
+                    }
+                    userDiv.appendChild(userAvatarDiv);
+                    const dateDiv = document.createElement("div");
+                    dateDiv.classList.add("date");
+                    dateDiv.innerText = comment['createdAt'].toLocaleString();
+                    userDiv.appendChild(dateDiv);
+                    const messageDiv = document.createElement("div");
+                    messageDiv.classList.add("message");
+                    messageDiv.innerText = comment['message'];
+                    coreDiv.appendChild(userDiv);
+                    coreDiv.appendChild(messageDiv);
+                    if (comment['replyTo'] === null) {
+                        episodeGroup.appendChild(coreDiv);
+                    }
+                });
+            })
+            .catch(err => console.log(err));
+    }
+
     initScrollInfosButtons() {
         const scrollButtons = document.querySelectorAll(".episodes .episode-wrapper .scroll-infos-button");
         scrollButtons.forEach(button => {
@@ -555,7 +620,7 @@ export class Season {
         window.addEventListener('scroll', gThis.updateButtonVisibility, true); // true pour capter le scroll des conteneurs
         // et observer dynamiquement les changements dans la zone episodes
         const observer = new MutationObserver(gThis.updateButtonVisibility);
-        observer.observe(document.body, { childList: true, subtree: true });
+        observer.observe(document.body, {childList: true, subtree: true});
     }
 
     isVisibleInContainer(el, container) {
@@ -568,7 +633,7 @@ export class Season {
         const targets = infosDiv.querySelectorAll('.infos .season-filming-location');
         for (const t of targets) {
             // si l'élément n'est pas entièrement visible dans son conteneur
-            if (!gThis.isVisibleInContainer(t, infosDiv)) return { target: t, container: infosDiv };
+            if (!gThis.isVisibleInContainer(t, infosDiv)) return {target: t, container: infosDiv};
         }
         return null;
     }
@@ -583,11 +648,11 @@ export class Season {
         });
     }
 
-    buttonScrollAction (evt) {
+    buttonScrollAction(evt) {
         const infosContentDiv = evt.currentTarget.closest(".infos").querySelector(".infos-content");
         const found = gThis.findFirstHiddenTarget(infosContentDiv);
         if (!found) return;
-        const { target, container } = found;
+        const {target, container} = found;
 
         const e = target.getBoundingClientRect();
         const c = container.getBoundingClientRect();
@@ -596,7 +661,7 @@ export class Season {
         // si l'élément est au-dessus, on aligne son haut
         const deltaTop = e.top - c.top;
         const scrollTo = delta > 0 ? container.scrollTop + delta + 8 : container.scrollTop + deltaTop - 8;
-        container.scrollTo({ top: scrollTo, behavior: 'smooth' });
+        container.scrollTo({top: scrollTo, behavior: 'smooth'});
     }
 
     openEditEpisodeInfosPanel() {

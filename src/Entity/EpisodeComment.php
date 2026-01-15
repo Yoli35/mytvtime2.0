@@ -1,0 +1,186 @@
+<?php
+
+namespace App\Entity;
+
+use App\Repository\EpisodeCommentRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: EpisodeCommentRepository::class)]
+class EpisodeComment
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\ManyToOne(inversedBy: 'episodeComments')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
+    #[ORM\ManyToOne(inversedBy: 'episodeComments')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Series $series = null;
+
+    #[ORM\Column]
+    private ?int $tmdbId = null;
+
+    #[ORM\Column]
+    private ?int $seasonNumber = null;
+
+    #[ORM\Column]
+    private ?int $episodeNumber = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $message = null;
+
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'episodeComments')]
+    private ?self $replyTo = null;
+
+    /**
+     * @var Collection<int, self>
+     */
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'replyTo')]
+    private Collection $episodeComments;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    public function __construct()
+    {
+        $this->episodeComments = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getSeries(): ?Series
+    {
+        return $this->series;
+    }
+
+    public function setSeries(?Series $series): static
+    {
+        $this->series = $series;
+
+        return $this;
+    }
+
+    public function getTmdbId(): ?int
+    {
+        return $this->tmdbId;
+    }
+
+    public function setTmdbId(int $tmdbId): static
+    {
+        $this->tmdbId = $tmdbId;
+
+        return $this;
+    }
+
+    public function getSeasonNumber(): ?int
+    {
+        return $this->seasonNumber;
+    }
+
+    public function setSeasonNumber(int $seasonNumber): static
+    {
+        $this->seasonNumber = $seasonNumber;
+
+        return $this;
+    }
+
+    public function getEpisodeNumber(): ?int
+    {
+        return $this->episodeNumber;
+    }
+
+    public function setEpisodeNumber(int $episodeNumber): static
+    {
+        $this->episodeNumber = $episodeNumber;
+
+        return $this;
+    }
+
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    public function setMessage(string $message): static
+    {
+        $this->message = $message;
+
+        return $this;
+    }
+
+    public function getReplyTo(): ?self
+    {
+        return $this->replyTo;
+    }
+
+    public function setReplyTo(?self $replyTo): static
+    {
+        $this->replyTo = $replyTo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getEpisodeComments(): Collection
+    {
+        return $this->episodeComments;
+    }
+
+    public function addEpisodeComment(self $episodeComment): static
+    {
+        if (!$this->episodeComments->contains($episodeComment)) {
+            $this->episodeComments->add($episodeComment);
+            $episodeComment->setReplyTo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEpisodeComment(self $episodeComment): static
+    {
+        if ($this->episodeComments->removeElement($episodeComment)) {
+            // set the owning side to null (unless already changed)
+            if ($episodeComment->getReplyTo() === $this) {
+                $episodeComment->setReplyTo(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+}

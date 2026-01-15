@@ -136,6 +136,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: UserList::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $userLists;
 
+    /**
+     * @var Collection<int, EpisodeComment>
+     */
+    #[ORM\OneToMany(targetEntity: EpisodeComment::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $episodeComments;
+
     public function __construct()
     {
         $this->history = new ArrayCollection();
@@ -153,6 +159,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->albums = new ArrayCollection();
         $this->photos = new ArrayCollection();
         $this->userLists = new ArrayCollection();
+        $this->episodeComments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -779,6 +786,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($userList->getUser() === $this) {
                 $userList->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EpisodeComment>
+     */
+    public function getEpisodeComments(): Collection
+    {
+        return $this->episodeComments;
+    }
+
+    public function addEpisodeComment(EpisodeComment $episodeComment): static
+    {
+        if (!$this->episodeComments->contains($episodeComment)) {
+            $this->episodeComments->add($episodeComment);
+            $episodeComment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEpisodeComment(EpisodeComment $episodeComment): static
+    {
+        if ($this->episodeComments->removeElement($episodeComment)) {
+            // set the owning side to null (unless already changed)
+            if ($episodeComment->getUser() === $this) {
+                $episodeComment->setUser(null);
             }
         }
 

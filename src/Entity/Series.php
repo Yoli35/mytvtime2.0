@@ -130,6 +130,12 @@ class Series
     #[ORM\ManyToMany(targetEntity: UserList::class, mappedBy: 'seriesList')]
     private Collection $userLists;
 
+    /**
+     * @var Collection<int, EpisodeComment>
+     */
+    #[ORM\OneToMany(targetEntity: EpisodeComment::class, mappedBy: 'series', orphanRemoval: true)]
+    private Collection $episodeComments;
+
     public function __construct()
     {
         $this->networks = new ArrayCollection();
@@ -145,6 +151,7 @@ class Series
         $this->watchProviders = new ArrayCollection();
         $this->seriesCasts = new ArrayCollection();
         $this->userLists = new ArrayCollection();
+        $this->episodeComments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -777,6 +784,36 @@ class Series
     {
         if ($this->userLists->removeElement($userList)) {
             $userList->removeSeriesList($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EpisodeComment>
+     */
+    public function getEpisodeComments(): Collection
+    {
+        return $this->episodeComments;
+    }
+
+    public function addEpisodeComment(EpisodeComment $episodeComment): static
+    {
+        if (!$this->episodeComments->contains($episodeComment)) {
+            $this->episodeComments->add($episodeComment);
+            $episodeComment->setSeries($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEpisodeComment(EpisodeComment $episodeComment): static
+    {
+        if ($this->episodeComments->removeElement($episodeComment)) {
+            // set the owning side to null (unless already changed)
+            if ($episodeComment->getSeries() === $this) {
+                $episodeComment->setSeries(null);
+            }
         }
 
         return $this;
