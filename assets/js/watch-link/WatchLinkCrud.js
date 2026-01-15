@@ -46,6 +46,7 @@ export class WatchLinkCrud {
         const watchLinkFormType = watchLinkForm.querySelector('#crud-type');
         const watchLinkFormId = watchLinkForm.querySelector('#crud-id');
         const form = document.querySelector('#watch-link-form');
+        const seasonSelect = form.querySelector('#season-number');
         const providerSelect = form.querySelector('#provider');
         const watchLinkFormCancel = form.querySelector('button[type="button"]');
         const watchLinkFormSubmit = form.querySelector('button[type="submit"]');
@@ -106,19 +107,12 @@ export class WatchLinkCrud {
             });
         });
 
+        seasonSelect.addEventListener('change', function () {
+            watchLinkFormName.value = gThis.buildWatchLabel(gThis.selectValue(providerSelect), gThis.selectValue(seasonSelect));
+        });
+
         providerSelect.addEventListener('change', function () {
-            const provider = this.value;
-            const seasonNumber = form.querySelector('#season-number').value
-            if (provider) {
-                const name = form.querySelector('#name');
-                if (seasonNumber === "-1") {
-                    name.value = gThis.translations['Watch on'] + ' ' + gThis.providers.names[provider];
-                } else if (seasonNumber === "0") {
-                    name.value = gThis.translations['Watch'] + ' ' + gThis.translations['special.episodes'] + ' ' + gThis.translations['on'] + ' ' + gThis.providers.names[provider];
-                } else {
-                    name.value = gThis.translations['Watch'] + ' ' + gThis.translations['season'] + ' ' + seasonNumber + ' ' + gThis.translations['on'] + ' ' + gThis.providers.names[provider];
-                }
-            }
+            watchLinkFormName.value = gThis.buildWatchLabel(gThis.selectValue(providerSelect), gThis.selectValue(seasonSelect));
         });
         watchLinkFormCancel.addEventListener('click', function () {
             gThis.hideForm(watchLinkForm);
@@ -319,6 +313,41 @@ export class WatchLinkCrud {
                 }
             });
         });
+    }
+
+    buildWatchLabel(providerIndex, seasonNumber) {
+        const providersNames = gThis.providers.names;
+        const translations = gThis.translations;
+        const noProvider = providerIndex === -1 || providerIndex === null || typeof providerIndex === 'undefined';
+        const noSeason = seasonNumber === -1 || seasonNumber === null || typeof seasonNumber === 'undefined';
+
+        if (noProvider && noSeason) return '';
+
+        const providerName = !noProvider ? (providersNames?.[providerIndex] ?? '') : '';
+
+        if (!noSeason && seasonNumber === 0) {
+            return noProvider
+                ? translations['Watch specials']
+                : translations['Watch specials'] + ' ' + translations['on'] + ' ' + providerName;
+        }
+
+        if (!noSeason) {
+            return noProvider
+                ? translations['Watch season'] + ' ' + seasonNumber
+                : translations['Watch season'] + ' ' + seasonNumber + ' ' + translations['on'] + ' ' + providerName;
+        }
+
+        // pas de saison, mais provider présent
+        return translations['Watch on'] + ' ' + providerName;
+    }
+
+    selectValue(select) {
+        const raw = select?.value ?? '';
+        let num = parseInt(raw, 10);
+        if (Number.isNaN(num)) {
+            num = -1;
+        }
+        return num;
     }
 
     // list() {

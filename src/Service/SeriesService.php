@@ -229,6 +229,8 @@ class SeriesService extends AbstractController
             'Tomorrow' => $this->translator->trans('Tomorrow'),
             'Update' => $this->translator->trans('Update'),
             'Watch on' => $this->translator->trans('Watch on'),
+            'Watch season' => $this->translator->trans('Watch season'),
+            'Watch specials' => $this->translator->trans('Watch specials'),
             'Watch' => $this->translator->trans('Watch'),
             'on' => $this->translator->trans('on'),
             'season' => $this->translator->trans('season.number'),
@@ -242,6 +244,7 @@ class SeriesService extends AbstractController
             'Season completed' => $this->translator->trans('Season completed'),
             'Up to date' => $this->translator->trans('Up to date'),
             'Not a valid file type. Update your selection' => $this->translator->trans('Not a valid file type. Update your selection'),
+            'special.episodes' => $this->translator->trans('special.episodes'),
         ];
     }
 

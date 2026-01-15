@@ -10,8 +10,12 @@
                     <span>{{ link.name }}</span>
                 {% endif %}
             </a>
-            {% if link.seasonNumber is defined and link.seasonNumber > 0 %}
-                <div class="season-number-badge">{{ 'S%02d'|format(link.seasonNumber) }}</div>
+            {% if link.seasonNumber is defined %}
+                {% if link.seasonNumber > 0 %}
+                    <div class="season-number-badge">{{ 'S%02d'|format(link.seasonNumber) }}</div>
+                {% else %}
+                    <div class="season-number-badge">{{ 'SP' }}</div>
+                {% endif %}
             {% endif %}
             <div class="watch-link-tools"
                  data-id="{{ link.id }}"
@@ -75,7 +79,7 @@
             <div class="form-field">
                 <label for="provider">{{ 'Provider'|trans }}
                     <select name="provider" id="provider">
-                        <option value="">{{ 'Select a provider'|trans }}</option>
+                        <option value="-1">{{ 'Select a provider'|trans }}</option>
                         {% for name, id in providers.select %}
                             <option value="{{ id }}">{{ name }}</option>
                         {% endfor %}
