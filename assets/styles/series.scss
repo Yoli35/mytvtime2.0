@@ -4656,13 +4656,15 @@ h2 {
 }
 
 .episodes-comments {
-    border: 2px dashed var(--orange);
-    border-radius: 1rem;
-    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
 
     .episode-group {
-        border: 2px solid var(--green);
-        margin-block-end: 1rem;
+        background-color: hsl(from var(--green) h s l / .25);
+        border-radius: 1rem;
+        box-shadow: 0 0 1rem hsla(from var(--orange-10) h s l / .25) inset;
+        padding: .5rem;
 
         .episode-group-title {
             font-size: 1rem;
@@ -4671,12 +4673,12 @@ h2 {
     }
 
     .comment {
-        border: 2px dashed var(--orange);
-        border-radius: .5rem;
         display: flex;
-        flex-direction: column;
-        margin-block-end: 1rem;
-        padding: .5rem;
+        gap: 1rem;
+
+        &:last-of-type {
+            margin-block-end: .5rem;
+        }
 
         .user {
             align-items: center;
@@ -4684,7 +4686,7 @@ h2 {
             gap: .5rem;
 
             .avatar {
-                border: 2px solid var(--orange);
+                border: 2px solid var(--orange-90);
                 border-radius: 50%;
                 height: 2rem;
                 width: 2rem;
@@ -4704,10 +4706,10 @@ h2 {
         }
 
         .message {
-            border-radius: .25rem;
-            border: 2px solid var(--ardoise-70);
-            margin-block-start: .5rem;
+            background-color: hsla(from var(--ardoise-90) h s l / .2);
+            border-radius: .5rem;
             padding: .5rem;
+            width: 100%;
         }
     }
 }
