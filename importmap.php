@@ -85,9 +85,6 @@ return [
     'Photos' => [
         'path' => './assets/js/album/Photos.js',
     ],
-//    'PosterHover' => [
-//        'path' => './assets/js/images/PosterHover.js',
-//    ],
     'Profile' => [
         'path' => './assets/js/user/Profile.js',
     ],
@@ -212,5 +209,8 @@ return [
     ],
     'tabbable' => [
         'version' => '5.3.3',
+    ],
+    'js-confetti' => [
+        'version' => '0.13.1',
     ],
 ];

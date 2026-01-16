@@ -6,6 +6,7 @@ import {Map} from "Map";
 import {ToolTips} from 'ToolTips';
 import {TranslationsForms} from "TranslationsForms";
 import {UserList} from "UserList";
+import JSConfetti from "js-confetti"
 
 let gThis;
 
@@ -1590,8 +1591,9 @@ export class Season {
                         selectVoteDiv.appendChild(svgPlus);
                         gThis.toolTips.init(selectVoteDiv);
                     } else {
+                        // Display the vote value
                         selectVoteDiv.innerHTML = voteValue;
-
+                        // Add the vote to the graph
                         const voteGraphDiv = document.querySelector('.vote-graph');
                         const voteDiv = voteGraphDiv.querySelector('.vote[data-ep-id="' + episodeId + '"]');
                         const div = voteDiv.querySelector('div');
@@ -1601,7 +1603,7 @@ export class Season {
                         div.style.height = (voteValue * 16) + 'px';
                         div.innerText = voteValue;
                         episodeVoteDiv.setAttribute('data-vote', voteValue);
-
+                        // Average vote for the season
                         const voteAverageDiv = voteGraphDiv.querySelector('.vote-average');
                         const voteDivs = voteGraphDiv.querySelectorAll('.episode-vote');
                         let sum = 0, count = 0;
@@ -1618,6 +1620,29 @@ export class Season {
                             voteAverageDiv.innerHTML = result + " / 10";
                         } else {
                             voteAverageDiv.innerHTML = gThis.translations['No votes'];
+                        }
+                        // If finale, confetti!!
+                        const episodeDiv = selectVoteDiv.closest(".episode");
+                        if (episodeDiv.querySelector(".still .finale.season-finale")) {
+                            const jsConfetti = new JSConfetti();
+                            jsConfetti.addConfetti({
+                                confettiNumber: 500,
+                                confettiColors: [
+                                    'hsl(28deg 100% 48%)',
+                                    'hsl(34deg 100% 50%)',
+                                    'hsl(41deg 100% 50%)',
+                                    'hsl(48deg 100% 50%)',
+                                    'hsl(55deg 100% 50%)',
+                                    'hsl(55deg 99% 66%)',
+                                    'hsl(56deg 98% 75%)',
+                                    'hsl(56deg 98% 83%)',
+                                    'hsl(58deg 100% 90%)',
+                                    'hsl(58deg 100% 93%)',
+                                    'hsl(58deg 100% 95%)',
+                                    'hsl(57deg 100% 98%)',
+                                    'hsl(0deg 0% 100%)',
+                                ],
+                            });
                         }
                     }
                 }
