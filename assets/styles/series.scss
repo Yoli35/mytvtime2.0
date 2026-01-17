@@ -886,8 +886,7 @@ h2 {
 
                 &:hover {
                     backdrop-filter: blur(80px);
-                    background: linear-gradient(to bottom, hsla(from var(--ardoise-90) h s l / .05) 0%, hsla(from var(--ardoise-90) h s l / .75) 100%);
-                    //background-color: hsla(from var(--ardoise-90) h s l / .75);
+                    background: linear-gradient(to bottom, hsla(from var(--ardoise-90) h s l / .25) 0%, hsla(from var(--ardoise-90) h s l / .75) 100%);
                 }
 
                 .name {

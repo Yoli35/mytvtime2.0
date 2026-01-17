@@ -457,8 +457,9 @@ label:has(input[type="text"]) {
             }
 
             .menu-item {
-                border-radius: 0.25rem;
+                border-radius: 5rem;
                 color: var(--navbar-color-hover);
+                padding-block: 2px;
 
                 &:hover {
                     background-color: var(--orange-50);
@@ -503,8 +504,8 @@ label:has(input[type="text"]) {
                     display: flex;
                     gap: .5rem;
                     height: 100%;
-                    padding-block-start: 0.125rem;
-                    padding-inline: 1rem;
+                    padding-block: 0.25rem;
+                    padding-inline: .5rem;
                     text-decoration: none;
                     width: 100%;
 
@@ -516,19 +517,19 @@ label:has(input[type="text"]) {
 
                         .poster {
                             align-items: center;
-                            aspect-ratio: 2 / 3;
+                            aspect-ratio: 1;
                             background-color: var(--orange-50);
-                            border-radius: .125rem;
+                            border-radius: 5rem;
                             color: var(--orange-90);
                             display: flex;
                             font-size: 1.5rem;
-                            height: 3rem;
+                            height: 2.5rem;
                             justify-content: center;
                             text-align: center;
 
                             img {
-                                border-radius: .125rem;
-                                height: 3rem;
+                                border-radius: 5rem;
+                                height: 2.5rem;
                                 object-fit: cover;
                                 width: 100%;
                             }
@@ -555,7 +556,7 @@ label:has(input[type="text"]) {
                         .provider {
                             img {
                                 aspect-ratio: 1 / 1;
-                                border-radius: .25rem;
+                                border-radius: 5rem;
                                 border: 1px solid var(--orange-50);
                                 height: 2.5rem;
                                 object-fit: cover;
@@ -1453,13 +1454,13 @@ label:has(input[type="text"]) {
     .schedule-range-settings,
     .menu-theme {
         align-items: center;
-        border-radius: 0.25rem;
+        border-radius: 5rem;
         color: var(--navbar-color-hover);
         display: flex;
         flex-shrink: 0;
         height: 2rem;
         justify-content: flex-start;
-        padding-inline: 1rem;
+        padding-inline: 1rem 2px;
         white-space: nowrap;
         width: 100%;
 
@@ -1550,7 +1551,7 @@ label:has(input[type="text"]) {
                 width: 1.75rem;
 
                 img {
-                    border-radius: .25rem;
+                    border-radius: 5rem;
                     height: 100%;
                     object-fit: cover;
                     width: 100%;
