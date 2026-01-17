@@ -14,7 +14,7 @@ export class AverageColor {
         let imageData, width, height,
             i = -4,
             length,
-            rgb = {r: 0, g: 0, b: 0, lightness: 0},
+            rgb = {r: 0, g: 0, b: 0, lightness: 0, lch: {l: 0, c: 0, h: 0}},
             count = 0;
 
         if (!this.context) {

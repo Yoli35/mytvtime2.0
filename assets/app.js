@@ -52,7 +52,7 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     }
     const previewToggler = document.querySelector(".preview-toggler");
-    const toggler = function() {
+    const toggler = function () {
         if (menu.getPreview()) {
             previewToggler.classList.add("active");
         } else {
@@ -147,8 +147,12 @@ window.addEventListener("DOMContentLoaded", () => {
             const color = averageColor.getColor(img);
             const seasonInfosDivs = document.querySelectorAll(".seasons .season .infos");
             const keywordDivs = document.querySelectorAll(".series-show .block-infos .keywords .keyword");
-            /*console.log({color});
-            console.log({lchLightness: color.lch.l});*/
+            const hasPoster = seriesShow.querySelector(".poster")?.querySelector("img");
+            if (!hasPoster) {
+                const body = document.querySelector("body");
+                body.style.backgroundImage = "unset";
+                body.style.backgroundColor = "oklch(" + color.lch.l / 100 + " " + color.lch.c / 100 + " " + ((color.lch.h+180) % 360) + ")"
+            }
             if (color.lch.l > 50) {
                 seriesShow.style.color = "hsl(202, 18%, 10%)";
                 if (keywordDivs) {
