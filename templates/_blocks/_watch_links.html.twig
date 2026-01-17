@@ -13,7 +13,8 @@
             {% if link.seasonNumber is defined %}
                 {% if link.seasonNumber > 0 %}
                     <div class="season-number-badge">{{ 'S%02d'|format(link.seasonNumber) }}</div>
-                {% else %}
+                {% endif %}
+                {% if link.seasonNumber == 0 %}
                     <div class="season-number-badge">{{ 'SP' }}</div>
                 {% endif %}
             {% endif %}
