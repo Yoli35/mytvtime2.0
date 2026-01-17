@@ -1213,19 +1213,22 @@ export class Menu {
                     name.innerHTML = item.name;
                     a.appendChild(name);
 
+                    const userPart = document.createElement("div");
+                    userPart.classList.add("user-part");
+
                     const vote = document.createElement("div");
                     vote.classList.add("vote");
-                    if (options.vote === false) vote.classList.add('hidden');
+                    /*if (options.vote === false) vote.classList.add('hidden');*/
                     vote.innerHTML = item.vote;
 
                     const device = document.createElement("div");
                     device.classList.add("device");
-                    if (options.device === false) device.classList.add('hidden');
-                    device.innerHTML = gThis.svgs[item.deviceSvg];
+                    /*if (options.device === false) device.classList.add('hidden');*/
+                    if (item.deviceSvg) device.innerHTML = gThis.svgs[item.deviceSvg];
 
                     const provider = document.createElement("div");
                     provider.classList.add("provider");
-                    if (options.provider === false) provider.classList.add('hidden');
+                    /*if (options.provider === false) provider.classList.add('hidden');*/
                     if (item.providerLogoPath) {
                         const imgProvider = document.createElement("img");
                         imgProvider.src = item.providerLogoPath;
@@ -1243,9 +1246,11 @@ export class Menu {
                     date.innerHTML = item.lastWatchAt;
                     a.appendChild(date);
 
-                    a.appendChild(vote);
-                    a.appendChild(device);
-                    a.appendChild(provider);
+                    userPart.appendChild(vote);
+                    userPart.appendChild(device);
+                    userPart.appendChild(provider);
+
+                    a.appendChild(userPart);
 
                     li.appendChild(a);
                     ul.appendChild(li);

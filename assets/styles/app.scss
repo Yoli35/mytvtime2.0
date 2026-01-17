@@ -543,43 +543,57 @@ label:has(input[type="text"]) {
                             white-space: nowrap;
                         }
 
-                        .device, .vote {
-                            align-items: center;
-                            border-radius: .25rem;
-                            border: 1px solid var(--orange-50);
+                        .user-part {
+                            border-radius: 5rem;
+                            border: 2px solid hsl(from var(--orange-50) h s l / .5);
                             display: flex;
-                            height: 2.5rem;
-                            justify-content: center;
-                            width: 2.5rem;
-                        }
 
-                        .provider {
-                            img {
-                                aspect-ratio: 1 / 1;
-                                border-radius: 5rem;
-                                border: 1px solid var(--orange-50);
+                            .device, .vote {
+                                border-right: 1px solid var(--orange-50);
+                            }
+
+                            .device, .vote, .provider {
+                                align-items: center;
+                                display: flex;
                                 height: 2.5rem;
-                                object-fit: cover;
-                            }
-                        }
+                                justify-content: center;
+                                width: 2.5rem;
 
-                        .device, .vote, .provider, .provider img {
-                            overflow: hidden;
-                            transition: width 250ms ease-in-out, height 250ms ease-in-out;
-
-                            &.hidden {
-                                border-width: 0;
-                                height: 0;
-                                width: 0;
+                                &:first-child {
+                                    border-radius: 5rem 0 0 5rem;
+                                }
+                                &:last-child {
+                                    border-radius: 0 5rem 5rem 0;
+                                }
                             }
+
+                            .provider {
+                                img {
+                                    aspect-ratio: 1 / 1;
+                                    border-radius: 0 5rem 5rem 0;
+                                    height: 2.5rem;
+                                    object-fit: cover;
+                                }
+                            }
+
+                            /*.device, .vote, .provider, .provider img {
+                                overflow: hidden;
+                                transition: width 250ms ease-in-out, height 250ms ease-in-out;
+
+                                &.hidden {
+                                    border-width: 0;
+                                    height: 0;
+                                    width: 0;
+                                }
+                            }*/
                         }
 
                         .number {
                             background-color: var(--orange-50);
-                            border-radius: .25rem;
+                            border-radius: 5rem;
                             color: var(--orange-90);
                             margin-inline-start: auto;
-                            padding-inline: .5rem;
+                            padding-inline: .75rem;
 
                             &.ended {
                                 background-color: var(--green-50);
@@ -589,10 +603,10 @@ label:has(input[type="text"]) {
 
                         .date {
                             background-color: var(--orange-50);
-                            border-radius: .25rem;
+                            border-radius: 5rem;
                             color: var(--orange-90);
                             margin-inline-start: auto;
-                            padding-inline: .5rem;
+                            padding-inline: .75rem;
                         }
                     }
 

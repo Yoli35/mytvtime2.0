@@ -207,7 +207,7 @@ class UserEpisodeRepository extends ServiceEntityRepository
                            wp.provider_name                       as providerName,
                            d.svg                                  as deviceSvg,
                            ue.vote                                as vote,
-                           IF(sln.name IS NULL, s.name, CONCAT(sln.name,' - ',s.name)) as name,
+                           IF(sln.name IS NULL, s.name, sln.name) as name,
                            IF(sln.slug IS NULL, s.slug, sln.slug) as slug
                     FROM `user_episode` ue
                              INNER JOIN `user_series` us ON us.`id` = ue.`user_series_id`
