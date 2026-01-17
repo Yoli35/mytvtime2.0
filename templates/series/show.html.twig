@@ -277,120 +277,122 @@
 
             {{ include('_blocks/series/_schedules.html.twig') }}
 
-            <div class="content column">
-                <div class="content-seasons">
-                    <div class="all-seasons">
-                        <div>{{ 'Seasons'|trans }}</div>
-                        {% if series.seasons|length > 1 %}
-                            <div class="season-order-badge">
-                                {{ ux_icon('mdi:arrow-down') }}
+            {% if series.firstAirDate is not null %}
+                <div class="content column">
+                    <div class="content-seasons">
+                        <div class="all-seasons">
+                            <div>{{ 'Seasons'|trans }}</div>
+                            {% if series.seasons|length > 1 %}
+                                <div class="season-order-badge">
+                                    {{ ux_icon('mdi:arrow-down') }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="seasons">
+                            {% for season in series.seasons %}
+                                {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
+                                <div class="season" data-season-number="{{ season.season_number }}">
+                                    <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: (series.localizedName ?? series.name)|slug|lower}) }}"
+                                       class="poster" data-title="{{ "Season poster"|trans }}">
+                                        {% if season.poster_path %}
+                                            <img src="{{ season.poster_path }}" alt="{{ season.name }}">
+                                        {% elseif series.posterPath %}
+                                            <img src="/series/posters{{ series.posterPath }}" alt="{{ season.name }}">
+                                        {% else %}
+                                            <div>{{ 'No poster'|trans }}</div>
+                                        {% endif %}
+                                        <div class="number{% if viewedEpisodes and viewedEpisodes == season.episode_count %} complete{% endif %}">
+                                            {{ season.season_number }}
+                                        </div>
+                                    </a>
+                                    <div class="infos">
+                                        <div class="season__name">{{ season.name }}</div>
+                                        {% if season.overview %}
+                                            <div class="season__overview">{{ season.overview }}</div>
+                                        {% endif %}
+                                        <div class="season__air-date">{{ 'Air date'|trans }}
+                                            {% if season.final_air_date is defined %}
+                                                {{ date(season.final_air_date)|format_datetime('relative_long', 'short') }}
+                                            {% else %}
+                                                {% if season.air_date %}
+                                                    {{ date(season.air_date)|format_date('relative_long') }}
+                                                    {% if userSeries.lastSeason is not null and userSeries.lastSeason == season.season_number %}
+                                                        — {{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {{ 'TBA'|trans }}
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                        <div class="season__episodes">
+                                            <div class="episode-count">
+                                                {{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}
+                                            </div>
+                                            <div class="watched">
+                                                {% if viewedEpisodes == 0 %}
+                                                    {{ 'No episode seen'|trans }}
+                                                {% elseif viewedEpisodes == 1 %}
+                                                    {{ '1 episode seen'|trans }}
+                                                {% elseif viewedEpisodes == season.episode_count %}
+                                                    {{ 'All episodes seen'|trans }}
+                                                {% else %}
+                                                    {{ viewedEpisodes }} {{ 'episodes seen'|trans }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="episode__cards" data-id="{{ series.id }}" data-tmdb-id="{{ series.tmdbId }}" data-season-number="{{ season.season_number }}" data-series-slug="{{ tv.localized_name.slug ?? series.slug }}"></div>
+                                        {% if userSeries.progress and series.userVotes|length %}
+                                            <div class="user-votes">
+                                                <div class="show-tab">{{ ux_icon('mdi:bar-chart') }}</div>
+                                                {% set uvs = series.userVotes[season.season_number] %}
+                                                {{ include('_blocks/series/_votes.html.twig', {scale: 0.5, type: 'entity', season_number: season.season_number, ues: uvs.ues, vas: uvs.avs}) }}
+                                            </div>
+                                        {% endif %}
+                                        {#                                    <div class="new-edition-toggler" data-title="{{ 'Add a re-edited version to this season'|trans }}"> #}
+                                        {#                                        {{ ux_icon('mdi:ellipsis-horizontal') }} #}
+                                        {#                                    </div> #}
+                                        {#                                    <div class="new-edition-menu"> #}
+                                        {#                                        <div class="new-edition-menu-item">{{ 'Add a re-edited version to this season'|trans }}</div> #}
+                                        {#                                    </div> #}
+                                        {#                                    <script> #}
+                                        {#                                        const newEditionToggler = document.querySelector('.season[data-season-number="{{ season.season_number }}"] .new-edition-toggler'); #}
+                                        {#                                        const newEditionMenu = document.querySelector('.season[data-season-number="{{ season.season_number }}"] .new-edition-menu'); #}
+                                        {#                                        newEditionToggler.addEventListener('click', function () { #}
+                                        {#                                            newEditionMenu.classList.toggle('visible'); #}
+                                        {#                                        }); #}
+                                        {#                                    </script> #}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if tv.credits.cast|length %}
+                            <h3>{{ 'Cast'|trans }}</h3>
+                            <div class="cast-and-name">
+                                <div class="cast">
+                                    <div class="wrapper">
+                                        {% for people in tv.credits.cast %}
+                                            {{ include('_blocks/series/_cast.html.twig', { people: people, role: people.character }) }}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {{ include('_blocks/series/_cast_buttons.html.twig', {localized_name: tv.localized_name, name: series.name, seriesId: series.id, seasonNumber: 0}) }}
                             </div>
                         {% endif %}
-                    </div>
-                    <div class="seasons">
-                        {% for season in series.seasons %}
-                            {% set viewedEpisodes = userSeries.userEpisodes|filter(ue => ue.seasonNumber == season.season_number and ue.watchAt)|length %}
-                            <div class="season" data-season-number="{{ season.season_number }}">
-                                <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: (series.localizedName ?? series.name)|slug|lower}) }}"
-                                   class="poster" data-title="{{ "Season poster"|trans }}">
-                                    {% if season.poster_path %}
-                                        <img src="{{ season.poster_path }}" alt="{{ season.name }}">
-                                    {% elseif series.posterPath %}
-                                        <img src="/series/posters{{ series.posterPath }}" alt="{{ season.name }}">
-                                    {% else %}
-                                        <div>{{ 'No poster'|trans }}</div>
-                                    {% endif %}
-                                    <div class="number{% if viewedEpisodes and viewedEpisodes == season.episode_count %} complete{% endif %}">
-                                        {{ season.season_number }}
-                                    </div>
-                                </a>
-                                <div class="infos">
-                                    <div class="season__name">{{ season.name }}</div>
-                                    {% if season.overview %}
-                                        <div class="season__overview">{{ season.overview }}</div>
-                                    {% endif %}
-                                    <div class="season__air-date">{{ 'Air date'|trans }}
-                                        {% if season.final_air_date is defined %}
-                                            {{ date(season.final_air_date)|format_datetime('relative_long', 'short') }}
-                                        {% else %}
-                                            {% if season.air_date %}
-                                                {{ date(season.air_date)|format_date('relative_long') }}
-                                                {% if userSeries.lastSeason is not null and userSeries.lastSeason == season.season_number %}
-                                                    — {{ 'Last seen'|trans }} {{ date(userSeries.lastWatchAt)|format_date('relative_long') }}
-                                                {% endif %}
-                                            {% else %}
-                                                {{ 'TBA'|trans }}
-                                            {% endif %}
-                                        {% endif %}
-                                    </div>
-                                    <div class="season__episodes">
-                                        <div class="episode-count">
-                                            {{ season.episode_count }} {{ (season.episode_count>1?'episodes':'episode')|trans }}
-                                        </div>
-                                        <div class="watched">
-                                            {% if viewedEpisodes == 0 %}
-                                                {{ 'No episode seen'|trans }}
-                                            {% elseif viewedEpisodes == 1 %}
-                                                {{ '1 episode seen'|trans }}
-                                            {% elseif viewedEpisodes == season.episode_count %}
-                                                {{ 'All episodes seen'|trans }}
-                                            {% else %}
-                                                {{ viewedEpisodes }} {{ 'episodes seen'|trans }}
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="episode__cards" data-id="{{ series.id }}" data-tmdb-id="{{ series.tmdbId }}" data-season-number="{{ season.season_number }}" data-series-slug="{{ tv.localized_name.slug ?? series.slug }}"></div>
-                                    {% if userSeries.progress and series.userVotes|length %}
-                                        <div class="user-votes">
-                                            <div class="show-tab">{{ ux_icon('mdi:bar-chart') }}</div>
-                                            {% set uvs = series.userVotes[season.season_number] %}
-                                            {{ include('_blocks/series/_votes.html.twig', {scale: 0.5, type: 'entity', season_number: season.season_number, ues: uvs.ues, vas: uvs.avs}) }}
-                                        </div>
-                                    {% endif %}
-                                    {#                                    <div class="new-edition-toggler" data-title="{{ 'Add a re-edited version to this season'|trans }}"> #}
-                                    {#                                        {{ ux_icon('mdi:ellipsis-horizontal') }} #}
-                                    {#                                    </div> #}
-                                    {#                                    <div class="new-edition-menu"> #}
-                                    {#                                        <div class="new-edition-menu-item">{{ 'Add a re-edited version to this season'|trans }}</div> #}
-                                    {#                                    </div> #}
-                                    {#                                    <script> #}
-                                    {#                                        const newEditionToggler = document.querySelector('.season[data-season-number="{{ season.season_number }}"] .new-edition-toggler'); #}
-                                    {#                                        const newEditionMenu = document.querySelector('.season[data-season-number="{{ season.season_number }}"] .new-edition-menu'); #}
-                                    {#                                        newEditionToggler.addEventListener('click', function () { #}
-                                    {#                                            newEditionMenu.classList.toggle('visible'); #}
-                                    {#                                        }); #}
-                                    {#                                    </script> #}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    {% if tv.credits.cast|length %}
-                        <h3>{{ 'Cast'|trans }}</h3>
-                        <div class="cast-and-name">
-                            <div class="cast">
+
+                        {% if tv.credits.crew|length %}
+                            <h3>{{ 'Crew'|trans }}</h3>
+                            <div class="crew">
                                 <div class="wrapper">
-                                    {% for people in tv.credits.cast %}
-                                        {{ include('_blocks/series/_cast.html.twig', { people: people, role: people.character }) }}
+                                    {% for people in tv.credits.crew %}
+                                        {{ include('_blocks/series/_crew.html.twig') }}
                                     {% endfor %}
                                 </div>
                             </div>
-                            {{ include('_blocks/series/_cast_buttons.html.twig', {localized_name: tv.localized_name, name: series.name, seriesId: series.id, seasonNumber: 0}) }}
-                        </div>
-                    {% endif %}
+                        {% endif %}
 
-                    {% if tv.credits.crew|length %}
-                        <h3>{{ 'Crew'|trans }}</h3>
-                        <div class="crew">
-                            <div class="wrapper">
-                                {% for people in tv.credits.crew %}
-                                    {{ include('_blocks/series/_crew.html.twig') }}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-
+                    </div>
                 </div>
-            </div>
+            {% endif %}
 
             {% if app.environment == 'dev' %}
                 {{ include('_blocks/series/_externals.html.twig') }}

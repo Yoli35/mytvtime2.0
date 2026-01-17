@@ -2477,7 +2477,7 @@ class SeriesController extends AbstractController
             $this->userEpisodeRepository->flush();
             $userSeries->setNextUserEpisode($userEpisode);
             $this->userSeriesRepository->save($userSeries, true);
-            $this->addFlash('info', $this->translator->trans('Next episode to watch: %episode%', ['%episode%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
+            $this->addFlash('info', $this->translator->trans('Next episode to watch is %episode%', ['%episode%' => sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])]));
         }
         return 1;
     }
@@ -2860,7 +2860,7 @@ class SeriesController extends AbstractController
                 $ep = $userEpisodes[0];
                 $userSeries->setNextUserEpisode($ep);
                 $this->userSeriesRepository->save($userSeries, true);
-                $this->addFlash('info', $this->translator->trans('Next episode to watch: %episode%', ['%episode%' => sprintf('S%02dE%02d', $ep->getSeasonNumber(), $ep->getEpisodeNumber())]));
+                $this->addFlash('info', $this->translator->trans('Next episode to watch is %episode%', ['%episode%' => sprintf('S%02dE%02d', $ep->getSeasonNumber(), $ep->getEpisodeNumber())]));
             }
         }
     }

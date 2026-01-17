@@ -864,6 +864,7 @@ export class Show {
     }
 
     fetchEpisodeCards(cards, index, length) {
+        if (!length) return;
         const episodeCardDiv = cards.item(index);
         const id = episodeCardDiv.getAttribute('data-id');
         const tmdbId = episodeCardDiv.getAttribute('data-tmdb-id');
