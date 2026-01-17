@@ -1236,15 +1236,15 @@ export class Menu {
                         provider.appendChild(imgProvider);
                     }
 
-                    const number = document.createElement("div");
-                    number.classList.add("number");
-                    number.innerHTML = 'S' + (item.seasonNumber < 10 ? '0' + item.seasonNumber : item.seasonNumber) + 'E' + (item.episodeNumber < 10 ? '0' + item.episodeNumber : item.episodeNumber);
-                    a.appendChild(number);
-
                     const date = document.createElement("div");
                     date.classList.add("date");
                     date.innerHTML = item.lastWatchAt;
                     a.appendChild(date);
+
+                    const number = document.createElement("div");
+                    number.classList.add("number");
+                    number.innerHTML = 'S' + (item.seasonNumber < 10 ? '0' + item.seasonNumber : item.seasonNumber) + 'E' + (item.episodeNumber < 10 ? '0' + item.episodeNumber : item.episodeNumber);
+                    a.appendChild(number);
 
                     userPart.appendChild(vote);
                     userPart.appendChild(device);

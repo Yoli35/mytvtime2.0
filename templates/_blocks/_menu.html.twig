@@ -80,8 +80,8 @@
                                         {% endif %}
                                     </div>
                                     <div class="name">{{ h.name }}</div>
-                                    <div class="number{% if h.progress==100 %} ended{% endif %}">{{ ep }}</div>
                                     <div class="date">{{ h.lastWatchAt|format_datetime('relative_short', 'short') }}</div>
+                                    <div class="number{% if h.progress==100 %} ended{% endif %}">{{ ep }}</div>
                                     <div class="user-part">
                                         <div class="vote{#{% if history.vote == 0 %} hidden{% endif %}#}">{% if h.vote %}{{ h.vote }}{% endif %}</div>
                                         <div class="device{#{% if history.device == 0 %} hidden{% endif %}#}">{% if h.deviceSvg %}{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}{% endif %}</div>
