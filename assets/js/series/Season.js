@@ -604,6 +604,10 @@ export class Season {
                     coreDiv.appendChild(messageDiv);
                     if (comment['replyTo'] === null) {
                         episodeGroup.appendChild(coreDiv);
+                    } else {
+                        const replyToCommentDiv = episodeGroup.querySelector('.comment[data-id="' + comment['replyTo'] + '"]');
+                        const messageDiv = replyToCommentDiv.querySelector(".message");
+                        messageDiv.appendChild(coreDiv);
                     }
                 });
             })

@@ -5,6 +5,7 @@ namespace App\Api;
 use App\Entity\Series;
 use App\Entity\User;
 use App\Repository\EpisodeCommentRepository;
+use App\Service\DateService;
 use Closure;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
 use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
@@ -20,17 +21,21 @@ readonly class ApiSeasonComments
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure                  $json,
+        private DateService              $dateService,
         private EpisodeCommentRepository $episodeCommentRepository,
     )
     {
     }
 
     #[Route('/comments/{id}', name: 'comments', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function add(Request $request, Series $series): JsonResponse
+    public function add(#[CurrentUser] User $user, Request $request, Series $series): JsonResponse
     {
         $inputBag = $request->getPayload();
         $seasonNumber = $inputBag->get('seasonNumber');
-        $comments = array_map(function ($c) {
+        $timezone = 'UTC';//$user->getTimezone() ?? 'UTC';
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+
+        $comments = array_map(function ($c) use ($timezone, $locale) {
             return [
                 'user' => [
                     'id' => $c->getUser()->getId(),
@@ -42,15 +47,10 @@ readonly class ApiSeasonComments
                 'seasonNumber' => $c->getSeasonNumber(),
                 'episodeNumber' => $c->getEpisodeNumber(),
                 'message' => $c->getMessage(),
-                'createdAt' => $c->getCreatedAt()->format('Y-m-d H:i:s'),
-                'replyTo' => $c->getReplyTo() ? [
-                    'id' => $c->getReplyTo()->getId(),
-                    'message' => $c->getReplyTo()->getMessage(),
-                    'createdAt' => $c->getReplyTo()->getCreatedAt()->format('Y-m-d H:i:s'),
-                ] : null,
+                'createdAt' => $this->dateService->formatDateRelativeLong($c->getCreatedAt()->format('Y-m-d H:i:s'), $timezone, $locale),
+                'replyTo' => $c->getReplyTo()?->getId(),
             ];
         }, $this->episodeCommentRepository->findBy(['series' => $series, 'seasonNumber' => $seasonNumber]));
-        /*dump($comments);*/
 
         return ($this->json)([
             'ok' => true,
