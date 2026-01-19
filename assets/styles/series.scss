@@ -4665,9 +4665,32 @@ h2 {
         box-shadow: 0 0 1rem hsla(from var(--orange-10) h s l / .25) inset;
         padding: .5rem;
 
-        .episode-group-title {
-            font-size: 1rem;
-            font-weight: 500;
+        .episode-group-header {
+            display: flex;
+            justify-content: space-between;
+
+            .episode-group-title {
+                font-size: 1rem;
+                font-weight: 500;
+            }
+
+            .episode-group-add-comment {
+                align-items: center;
+                background-color: var(--green-50);
+                border-radius: 5rem;
+                color: var(--ardoise-10);
+                cursor: pointer;
+                display: flex;
+                font-size: 0.875rem;
+                font-weight: 300;
+                height: 1.5rem;
+                justify-content: center;
+                padding-inline: 1rem;
+
+                &:hover {
+                    background-color: var(--green-40);
+                }
+            }
         }
     }
 

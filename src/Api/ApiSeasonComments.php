@@ -32,6 +32,9 @@ readonly class ApiSeasonComments
     {
         $inputBag = $request->getPayload();
         $seasonNumber = $inputBag->get('seasonNumber');
+        $availableEpisodeCount = $inputBag->get('availableEpisodeCount');
+        $episodeArr = json_decode($inputBag->get('episodeArr'), true);
+
         $timezone = 'UTC';//$user->getTimezone() ?? 'UTC';
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
 
@@ -52,9 +55,15 @@ readonly class ApiSeasonComments
             ];
         }, $this->episodeCommentRepository->findBy(['series' => $series, 'seasonNumber' => $seasonNumber]));
 
+        foreach ($comments as $comment) {
+            $episodeArr[$comment['episodeNumber'] - 1]['commentCount']++;
+        }
+
         return ($this->json)([
             'ok' => true,
             'comments' => $comments,
+            'episodeArr' => $episodeArr,
+            'availableEpisodeCount' => $availableEpisodeCount,
         ]);
     }
 }

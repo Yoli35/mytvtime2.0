@@ -251,6 +251,7 @@ class SeriesService extends AbstractController
     public function getSeriesSeasonTranslations(): array
     {
         return [
+            'Add a comment' => $this->translator->trans('Add a comment'),
             'Add to favorites' => $this->translator->trans('Add to favorites'),
             'Add' => $this->translator->trans('Add'),
             'Additional overviews' => $this->translator->trans('Additional overviews'),
