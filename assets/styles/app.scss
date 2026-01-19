@@ -1064,7 +1064,7 @@ label:has(input[type="text"]) {
         }
     }
 
-    .notifications {
+    /*.notifications {
         em {
             color: var(--orange-50);
         }
@@ -1152,7 +1152,7 @@ label:has(input[type="text"]) {
                 }
             }
         }
-    }
+    }*/
 
     .avatar {
         background-color: var(--orange-50);
@@ -1277,9 +1277,9 @@ label:has(input[type="text"]) {
     }
 
     .menu.main,
-    .menu.user,
+    .menu.user/*,
     .menu.users,
-    .menu.menu-notifications {
+    .menu.menu-notifications*/ {
         right: 0;
         top: 3rem;
         transform: translateX(100%);
@@ -1314,9 +1314,9 @@ label:has(input[type="text"]) {
     .menu.history,
     .menu.log,
     .menu.map,
-    .menu.menu-notifications,
+    /*.menu.menu-notifications,*/
     .menu.main,
-    .menu.users,
+    /*.menu.users,*/
     .menu.user {
         backdrop-filter: blur(4rem);
         background-color: hsla(from var(--navbar-bg) h s l / 0.4);
@@ -1504,7 +1504,7 @@ label:has(input[type="text"]) {
         }
     }
 
-    a > em:has(svg) {
+    /*a > em:has(svg) {
         align-items: center;
         background-color: var(--add-this-episode);
         border-radius: .125rem;
@@ -1513,7 +1513,7 @@ label:has(input[type="text"]) {
         justify-content: center;
         margin-inline-end: .5rem;
         width: 1.75rem;
-    }
+    }*/
 
     > details {
         ul {
@@ -1524,6 +1524,7 @@ label:has(input[type="text"]) {
     }
 
     .a-preview {
+        border-radius: 5rem;
         display: flex;
         position: relative;
 

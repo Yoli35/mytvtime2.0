@@ -50,7 +50,7 @@ readonly class ApiSeasonComments
                 ] : null,
             ];
         }, $this->episodeCommentRepository->findBy(['series' => $series, 'seasonNumber' => $seasonNumber]));
-        dump($comments);
+        /*dump($comments);*/
 
         return ($this->json)([
             'ok' => true,

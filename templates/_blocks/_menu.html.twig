@@ -63,9 +63,9 @@
                         <label><input id="history-option-type" type="checkbox"{% if history.type == 'episode' %} checked{% endif %} switch>{{ 'Episodes detail'|trans }}</label>
                         <label>{{ 'Page'|trans }}<input id="history-option-page" type="number" value="{{ history.page }}"></label>
                         <label>{{ 'Count'|trans }}<input id="history-option-count" type="number" value="{{ history.count }}"></label>
-{#                        <label><input id="history-option-vote" type="checkbox"{% if history.vote %} checked{% endif %} switch>{{ 'Rating'|trans }}</label>#}
-{#                        <label><input id="history-option-device" type="checkbox"{% if history.device %} checked{% endif %} switch>{{ 'Device'|trans }}</label>#}
-{#                        <label><input id="history-option-provider" type="checkbox"{% if history.provider %} checked{% endif %} switch>{{ 'Provider'|trans }}</label>#}
+                        {#                        <label><input id="history-option-vote" type="checkbox"{% if history.vote %} checked{% endif %} switch>{{ 'Rating'|trans }}</label> #}
+                        {#                        <label><input id="history-option-device" type="checkbox"{% if history.device %} checked{% endif %} switch>{{ 'Device'|trans }}</label> #}
+                        {#                        <label><input id="history-option-provider" type="checkbox"{% if history.provider %} checked{% endif %} switch>{{ 'Provider'|trans }}</label> #}
                     </div>
                     <ul>
                         {% for h in history.list %}
@@ -83,9 +83,9 @@
                                     <div class="date">{{ h.lastWatchAt|format_datetime('relative_short', 'short') }}</div>
                                     <div class="number{% if h.progress==100 %} ended{% endif %}">{{ ep }}</div>
                                     <div class="user-part">
-                                        <div class="vote{#{% if history.vote == 0 %} hidden{% endif %}#}">{% if h.vote %}{{ h.vote }}{% endif %}</div>
-                                        <div class="device{#{% if history.device == 0 %} hidden{% endif %}#}">{% if h.deviceSvg %}{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}{% endif %}</div>
-                                        <div class="provider{#{% if history.provider == 0 %} hidden{% endif %}#}">{% if h.providerLogoPath %}<img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}">{% endif %}</div>
+                                        <div class="vote{# {% if history.vote == 0 %} hidden{% endif %} #}">{% if h.vote %}{{ h.vote }}{% endif %}</div>
+                                        <div class="device{# {% if history.device == 0 %} hidden{% endif %} #}">{% if h.deviceSvg %}{{ ux_icon(h.deviceSvg, {height: "18px", width: "18px"}) }}{% endif %}</div>
+                                        <div class="provider{# {% if history.provider == 0 %} hidden{% endif %} #}">{% if h.providerLogoPath %}<img src="{{ h.providerLogoPath }}" alt="{{ h.providerName }}">{% endif %}</div>
                                     </div>
                                 </a>
                             </li>
@@ -299,12 +299,13 @@
                             </div>
                         </div>
                     {% endif %}
-                    {% if seriesName is defined %}
-                        <div class="separation" id="main-menu-back-to-series">{{ 'Back to the series page'|trans }}</div>
-                        <a href="{{ seriesLink }}">
-                            <em>{{ ux_icon('mdi:arrow-left') }}</em>&nbsp;{{ seriesName }}
-                        </a>
-                    {% endif %}
+
+                    {#                    {% if seriesName is defined %} #}
+                    {#                        <div class="separation" id="main-menu-back-to-series">{{ 'Back to the series page'|trans }}</div> #}
+                    {#                        <a href="{{ seriesLink }}"> #}
+                    {#                            <em>{{ ux_icon('mdi:arrow-left') }}</em>&nbsp;{{ seriesName }} #}
+                    {#                        </a> #}
+                    {#                    {% endif %} #}
 
                     {% set pinnedSeries=pinnedSeries(app.user, app.user.preferredLanguage??'fr') %}
                     {% set l = pinnedSeries|length %}
