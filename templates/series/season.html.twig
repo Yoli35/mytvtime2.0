@@ -401,7 +401,6 @@
                             {% endfor %}
                         </div>
                     </div>
-                    <div class="episodes-comments"></div>
                 {% endif %}
 
                 {% if season.air_date and season.air_date <= today %}
@@ -476,6 +475,10 @@
                             {{ include('_blocks/series/_cast_buttons.html.twig', {localized_name: season.series_localized_name, name: series.name, seriesId: series.id, seasonNumber: season.season_number}) }}
                         </div>
                     {% endif %}
+                {% endif %}
+
+                {% if episodeCount %}
+                    <div class="episodes-comments"></div>
                 {% endif %}
             </div>
         </div>

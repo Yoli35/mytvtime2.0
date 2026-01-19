@@ -4660,7 +4660,7 @@ h2 {
     gap: .25rem;
 
     .episode-group {
-        background-color: hsl(from var(--green) h s l / .25);
+        background-color: hsl(from var(--green) h s l / .05);
         border-radius: 1rem;
         box-shadow: 0 0 1rem hsla(from var(--orange-10) h s l / .25) inset;
         padding: .5rem;
@@ -4719,7 +4719,7 @@ h2 {
         .message {
             background-color: hsla(from var(--ardoise-90) h s l / .05);
             border-radius: .5rem;
-            padding: .5rem;
+            padding: .25rem;
             width: 100%;
 
             .comment {
