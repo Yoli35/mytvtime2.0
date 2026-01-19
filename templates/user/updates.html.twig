@@ -18,6 +18,51 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>62ᵉ mise à jour : 19/01/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:clipboard-text-history') }}→ Reorder episode number and date in menu history</div>
+                        <div class="details">Moved the episode number display after the date in both the JavaScript and Twig template to ensure consistent ordering. Updated SCSS to use monospace font for the episode number for improved readability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}{{ ux_icon('mdi:clipboard-text-history') }}→ Refactor user history menu layout and styling</div>
+                        <div class="details">Grouped vote, device, and provider elements into a new 'user-part' container in both JS and Twig templates, and updated SCSS for improved styling and layout. Commented out options to toggle visibility for these elements, making them always visible if data is present. Also fixed the SQL query to use only the localized name if available.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Fix season badge rendering for season 0</div>
+                        <div class="details">Adjusts the template logic to correctly display the 'SP' badge only when seasonNumber is exactly 0, preventing duplicate badge rendering for other values.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}→ Update border radius and padding for menu and images</div>
+                        <div class="details">Standardized border-radius to 5rem and adjusted padding for menu items, posters, and provider images in app.scss. Modified hover background gradient in series.scss for improved visual consistency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve season display and update episode flash messages</div>
+                        <div class="details">Wrapped the season display in show.html.twig to only render if the series has a first air date, preventing display for incomplete data. Updated flash messages in SeriesController to use 'Next episode to watch is %episode%' for clarity and added the corresponding translation. Fixed a potential bug in Show.js by returning early if no episode cards are present. Added max-width to card titles in card.scss for better layout.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve background color handling without poster image</div>
+                        <div class="details">Update app.js to set a fallback background color using OKLCH when no poster image is present. Also, extend the AverageColor class to initialize the lch property in the rgb object for more consistent color data handling.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add confetti effect for season finale votes</div>
+                        <div class="details">Integrated JSConfetti to display a confetti animation when a user votes on a season finale episode. Updated importmap.php to include js-confetti dependency.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Add episode comments feature for series seasons - wip</div>
+                        <div class="details">Introduces backend and frontend support for episode comments in series seasons. Adds EpisodeComment entity, repository, and API endpoint to fetch comments by season. Updates Series and User entities for comment relations. Implements frontend logic and styles to display episode comments in the season view.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Improve schedule form UI and abbreviate weekday</div>
+                        <div class="details">Updated the series schedule form styles for better visual consistency, including increased container height, rounded input fields, and enhanced background colors. Weekday labels in the schedule form now display only the first letter of each day for a more compact layout.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:menu') }}→ Highlight current day in schedule menu</div>
+                        <div class="details">Added 'today' class styling to visually distinguish the current day in the schedule menu. Updated SCSS and Twig template to apply background color and font weight for better user recognition.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>61ᵉ mise à jour : 15/01/2026</h2>
                 <ul>
                     <li>
