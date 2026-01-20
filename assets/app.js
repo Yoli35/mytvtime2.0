@@ -146,6 +146,7 @@ window.addEventListener("DOMContentLoaded", () => {
             const averageColor = new AverageColor();
             const color = averageColor.getColor(img);
             const seasonInfosDivs = document.querySelectorAll(".seasons .season .infos");
+            const commentDiv = document.querySelector(".episodes-comments");
             const keywordDivs = document.querySelectorAll(".series-show .block-infos .keywords .keyword");
             const hasPoster = seriesShow.querySelector(".poster")?.querySelector("img");
             if (!hasPoster) {
@@ -160,6 +161,7 @@ window.addEventListener("DOMContentLoaded", () => {
                         div.classList.add("dark");
                     });
                 }
+                if (commentDiv) commentDiv.style.backgroundColor = "hsl(0 0 90% /.75)";
                 if (seasonInfosDivs) seasonInfosDivs.forEach(seasonInfosDiv => {
                     seasonInfosDiv.style.color = "hsl(202, 18%, 10%)";
                 });
@@ -170,6 +172,7 @@ window.addEventListener("DOMContentLoaded", () => {
                         div.classList.add("light");
                     });
                 }
+                if (commentDiv) commentDiv.style.backgroundColor = "hsl(0 0 10% /.25)";
                 if (seasonInfosDivs) seasonInfosDivs.forEach(seasonInfosDiv => {
                     seasonInfosDiv.style.color = "hsl(202, 18%, 90%)";
                 });

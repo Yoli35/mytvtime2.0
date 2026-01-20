@@ -106,6 +106,9 @@ return [
     'Season' => [
         'path' => './assets/js/series/Season.js',
     ],
+    'SeasonComments' => [
+        'path' => './assets/js/series/SeasonComments.js',
+    ],
     'Show' => [
         'path' => './assets/js/series/Show.js',
     ],

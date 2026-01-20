@@ -4655,9 +4655,12 @@ h2 {
 }
 
 .episodes-comments {
+    background-color: hsl(0 0 90% / .75);
+    border-radius: 1rem;
     display: flex;
     flex-direction: column;
     gap: .25rem;
+    padding: 1rem;
 
     .episode-group {
         background-color: hsl(from var(--green) h s l / .05);
