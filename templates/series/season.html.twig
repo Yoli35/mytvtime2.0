@@ -506,13 +506,17 @@
 
     <div id="globs" style="display: none">
         {
-        "seriesId": {{ series.id }},
-        "showId": {{ series.tmdbId }},
-        "seasonNumber": {{ season.season_number }},
-        "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-        "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+            "user": {
+                "avatar": "{{ app.user.avatar }}",
+                "username": "{{ app.user.username }}"
+            },
+            "seriesId": {{ series.id }},
+            "showId": {{ series.tmdbId }},
+            "seasonNumber": {{ season.season_number }},
+            "seasonProvider": {{ season["watch/providers"]|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "providers": {{ providers|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "devices": {{ devices|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
         }
     </div>
     <div id="svgs" style="display: none">
@@ -528,6 +532,7 @@
         {{ ux_icon('mdi:location-favorite', {id: 'poi-toggler-svg'}) }}
         {{ ux_icon('mdi:plus', {id: 'plus', height: '18px', width: '18px'}) }}
         {{ ux_icon('mdi:trash', {id: 'trash', height: '18px', width: '18px'}) }}
+        {{ ux_icon('mdi:send', {id: 'send', height: '18px', width: '18px'}) }}
         <div class="svg" id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
         <div class="svg" id="pen">{{ ux_icon('mdi:pencil') }}</div>
         <div class="svg" id="trash">{{ ux_icon('mdi:trash') }}</div>

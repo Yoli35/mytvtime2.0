@@ -4695,6 +4695,84 @@ h2 {
                 }
             }
         }
+
+        .episode-group-content {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            margin-block-start: .5rem;
+        }
+
+        .episode-group-footer {
+            align-items: center;
+            display: flex;
+            font-size: 0.875rem;
+            font-weight: 300;
+            gap: .5rem;
+            justify-content: flex-start;
+            margin-block-start: .5rem;
+        }
+    }
+
+    .user {
+        align-items: center;
+        display: flex;
+        gap: .5rem;
+
+        .avatar {
+            border: 2px solid var(--orange-90);
+            border-radius: 50%;
+            flex-shrink: 0;
+            height: 2.25rem;
+            width: 2.25rem;
+
+            &:not(:has(img)) {
+                align-items: center;
+                background-color: var(--ardoise-80);
+                color: var(--ardoise-10);
+                display: flex;
+                font-size: 1.5rem;
+                font-weight: 500;
+                justify-content: center;
+            }
+
+            img {
+                border-radius: 50%;
+                height: 100%;
+                object-fit: cover;
+                width: 100%;
+            }
+        }
+
+        .date {
+            font-size: 0.875rem;
+            font-weight: 300;
+        }
+    }
+
+    input[type=text] {
+        background-color: hsl(from var(--orange) h s l /.2);
+        border-radius: 5rem;
+        border: none;
+        padding: .25rem .5rem;
+        width: min(64rem, 80%);
+    }
+
+    .send-button {
+        border-radius: 50%;
+        align-items: center;
+        cursor: pointer;
+        display: flex;
+        height: 2.25rem;
+        justify-content: center;
+        width: 2.25rem;
+        border: 2px solid;
+        color: var(--orange);
+
+        svg {
+            height: 1.25rem;
+            width: 1.25rem;
+        }
     }
 
     .comment {
@@ -4704,42 +4782,6 @@ h2 {
 
         &:last-of-type {
             margin-block-end: .5rem;
-        }
-
-        .user {
-            align-items: center;
-            display: flex;
-            gap: .5rem;
-
-            .avatar {
-                border: 2px solid var(--orange-90);
-                border-radius: 50%;
-                flex-shrink: 0;
-                height: 2.25rem;
-                width: 2.25rem;
-
-                &:not(:has(img)) {
-                    align-items: center;
-                    background-color: var(--ardoise-80);
-                    color: var(--ardoise-10);
-                    display: flex;
-                    font-size: 1.5rem;
-                    font-weight: 500;
-                    justify-content: center;
-                }
-
-                img {
-                    border-radius: 50%;
-                    height: 100%;
-                    object-fit: cover;
-                    width: 100%;
-                }
-            }
-
-            .date {
-                font-size: 0.875rem;
-                font-weight: 300;
-            }
         }
 
         .message {

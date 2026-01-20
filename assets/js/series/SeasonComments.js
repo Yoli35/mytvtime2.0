@@ -1,21 +1,29 @@
+import {ToolTips} from 'ToolTips';
+
 let gThis;
 
 export class SeasonComments {
-    constructor(seriesId, seasonNumber, translations) {
+    constructor(user, seriesId, seasonNumber, translations) {
         gThis = this;
+        this.user = user;
         this.seriesId = seriesId;
         this.seasonNumber = seasonNumber;
         this.translations = translations;
+        this.toolTips = new ToolTips();
 
-        this.addCommentButtons = document.querySelectorAll(".episode-group-add-comment");
-        console.log("Season comments")
+        this.addEpisodeComment = this.addEpisodeComment.bind(this);
+
         this.init();
+        console.log("Season comments initialized")
     }
 
     init() {
         this.getEpisodeComments();
-        this.addCommentButtons.forEach(button => {
-            button.addEventListener("click", () => {});
+
+        const addCommentButtons = document.querySelectorAll(".episode-group-add-comment");
+        addCommentButtons.forEach(button => {
+            button.addEventListener("click", () => {
+            });
         });
     }
 
@@ -35,7 +43,7 @@ export class SeasonComments {
         })
             .then((response) => response.json())
             .then(data => {
-                console.log(data);
+                /*console.log(data);*/
                 const comments = data['comments'];
                 const episodesCommentsDiv = document.querySelector(".episodes-comments");
                 comments.forEach(comment => {
@@ -46,39 +54,14 @@ export class SeasonComments {
                         episodeGroup = gThis.createEpisodeGroup(seasonNumber, episodeNumber);
                         episodesCommentsDiv.appendChild(episodeGroup);
                     }
-                    const coreDiv = document.createElement("div");
-                    coreDiv.classList.add("comment");
-                    coreDiv.setAttribute("data-id", comment['id']);
-                    coreDiv.setAttribute("data-tmdb-id", comment['tmdbId']);
-                    const userDiv = document.createElement("div");
-                    userDiv.classList.add("user");
-                    const userAvatarDiv = document.createElement("div");
-                    userAvatarDiv.classList.add("avatar");
-                    userAvatarDiv.setAttribute("data-tile", comment['user']['username']);
-                    if (comment['user']['avatar']) {
-                        const img = document.createElement("img");
-                        img.src = "/images/users/avatars/" + comment['user']['avatar'];
-                        img.alt = comment['user']['username'];
-                        userAvatarDiv.appendChild(img);
-                    } else {
-                        userAvatarDiv.innerText = comment['user']['username'].slice(0, 1).toUpperCase();
-                    }
-                    userDiv.appendChild(userAvatarDiv);
-                    const dateDiv = document.createElement("div");
-                    dateDiv.classList.add("date");
-                    dateDiv.innerText = comment['createdAt'].toLocaleString();
-                    userDiv.appendChild(dateDiv);
-                    const messageDiv = document.createElement("div");
-                    messageDiv.classList.add("message");
-                    messageDiv.innerText = comment['message'];
-                    coreDiv.appendChild(userDiv);
-                    coreDiv.appendChild(messageDiv);
+                    const episodeGroupContent = episodeGroup.querySelector(".episode-group-content");
+
                     if (comment['replyTo'] === null) {
-                        episodeGroup.appendChild(coreDiv);
+                        episodeGroupContent.appendChild(gThis.createMessage(comment));
                     } else {
-                        const replyToCommentDiv = episodeGroup.querySelector('.comment[data-id="' + comment['replyTo'] + '"]');
+                        const replyToCommentDiv = episodeGroupContent.querySelector('.comment[data-id="' + comment['replyTo'] + '"]');
                         const messageDiv = replyToCommentDiv.querySelector(".message");
-                        messageDiv.appendChild(coreDiv);
+                        messageDiv.appendChild(gThis.createMessage(comment));
                     }
                 });
                 const episodeArr = data['episodeArr'];
@@ -87,6 +70,40 @@ export class SeasonComments {
                         episodesCommentsDiv.appendChild(gThis.createEpisodeGroup(ep['seasonNumber'], ep['episodeNumber']));
                     }
                 });
+                gThis.toolTips.init(episodesCommentsDiv);
+            })
+            .catch(err => console.log(err));
+    }
+
+    addEpisodeComment(e) {
+        const button = e.currentTarget;
+        const episodeNumber = button.getAttribute("data-ep-number");
+        const episodeId = button.getAttribute("data-ep-id");
+        const input = button.parentNode.querySelector("input");
+        fetch('/api/season/comment/add/' + this.seriesId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                seasonNumber: this.seasonNumber,
+                episodeNumber: episodeNumber,
+                episodeId: episodeId,
+                message: input.value
+            })
+        })
+            .then((response) => response.json())
+            .then(data => {
+                /*console.log(data);*/
+                input.value = '';
+                input.focus();
+                const footer = button.closest(".episode-group-footer");
+                const episodeGroup = footer.closest(".episode-group");
+                const content = episodeGroup.querySelector(".episode-group-content");
+                const newMessage = this.createMessage(data['comment']);
+                gThis.toolTips.init(newMessage);
+                content.appendChild(newMessage);
             })
             .catch(err => console.log(err));
     }
@@ -104,16 +121,19 @@ export class SeasonComments {
                 'commentCount': 0
             };
         });
-        console.log(episodeArr);
+        /*console.log(episodeArr);*/
 
         return episodeArr;
     }
 
     createEpisodeGroup(seasonNumber, episodeNumber) {
+        // Episode comment group
         const episodeGroup = document.createElement("div");
         episodeGroup.classList.add("episode-group");
         episodeGroup.style.order = episodeNumber.toString();
         episodeGroup.setAttribute("id", "episode-comments-" + episodeNumber);
+
+        // Header
         const headerDiv = document.createElement("div");
         headerDiv.classList.add("episode-group-header");
         const titleDiv = document.createElement("div");
@@ -124,11 +144,75 @@ export class SeasonComments {
         commentButton.classList.add("episode-group-add-comment");
         commentButton.innerText = gThis.translations['Add a comment'];
         commentButton.setAttribute("data-episode-number", episodeNumber);
-        commentButton.addEventListener("click", () => {
-        });
         headerDiv.appendChild(commentButton);
         episodeGroup.appendChild(headerDiv);
+
+        // Content
+        const content = document.createElement("div");
+        content.classList.add("episode-group-content");
+        episodeGroup.appendChild(content);
+
+        // Footer
+        const footer = document.createElement("div");
+        footer.classList.add("episode-group-footer");
+        const userDiv = gThis.createUser(gThis.user);
+        const commentInput = document.createElement("input");
+        commentInput.setAttribute("type", "text");
+        const sendButton = document.createElement("div");
+        const episode = document.querySelector('.episodes .episode-wrapper .episode#episode-' + seasonNumber + '-' + episodeNumber);
+        const episodeId = episode.getAttribute("data-episode-id");
+        sendButton.classList.add("send-button");
+        sendButton.setAttribute("data-ep-number", episodeNumber);
+        sendButton.setAttribute("data-ep-id", episodeId);
+        sendButton.setAttribute("data-title", gThis.translations['Send your comment'])
+        sendButton.addEventListener("click", gThis.addEpisodeComment);
+        const sendSvg = document.querySelector("#svgs #send").cloneNode(true);
+        sendSvg.removeAttribute("id");
+        sendButton.appendChild(sendSvg);
+
+        footer.appendChild(userDiv);
+        footer.appendChild(commentInput);
+        footer.appendChild(sendButton);
+        episodeGroup.appendChild(footer);
+
         return episodeGroup;
+    }
+
+    createMessage(comment) {
+        const coreDiv = document.createElement("div");
+        coreDiv.classList.add("comment");
+        coreDiv.setAttribute("data-id", comment['id']);
+        coreDiv.setAttribute("data-tmdb-id", comment['tmdbId']);
+        const userDiv = gThis.createUser(comment['user']);
+        const dateDiv = document.createElement("div");
+        dateDiv.classList.add("date");
+        dateDiv.innerText = comment['createdAt'].toLocaleString();
+        userDiv.appendChild(dateDiv);
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message");
+        messageDiv.innerText = comment['message'];
+        coreDiv.appendChild(userDiv);
+        coreDiv.appendChild(messageDiv);
+
+        return coreDiv;
+    }
+
+    createUser(user) {
+        const userDiv = document.createElement("div");
+        userDiv.classList.add("user");
+        const userAvatarDiv = document.createElement("div");
+        userAvatarDiv.classList.add("avatar");
+        userAvatarDiv.setAttribute("data-title", user['username']);
+        if (user['avatar']) {
+            const img = document.createElement("img");
+            img.src = "/images/users/avatars/" + user['avatar'];
+            img.alt = user['username'];
+            userAvatarDiv.appendChild(img);
+        } else {
+            userAvatarDiv.innerText = user['username'].slice(0, 1).toUpperCase();
+        }
+        userDiv.appendChild(userAvatarDiv);
+        return userDiv;
     }
 
     pad2(value) {

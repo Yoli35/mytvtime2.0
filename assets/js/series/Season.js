@@ -109,11 +109,18 @@ export class Season {
          * @property {string} poiToggler
          */
         /**
+         * @typedef User
+         * @type {Object}
+         * @property {string} avatar
+         * @property {string} username
+         */
+        /**
          * @typedef Globs
          * @type {Object}
          * @property {SeasonProvider} seasonProvider
          * @property {number} showId
          * @property {number} seasonNumber
+         * @property {User} user
          * @property {Providers} providers
          * @property {Devices} devices
          * @property {Translations} text
@@ -128,6 +135,7 @@ export class Season {
         this.seasonProvider = jsonGlobsObject.seasonProvider;
         this.seriesId = jsonGlobsObject.seriesId;
         this.showId = jsonGlobsObject.showId;
+        this.user = jsonGlobsObject.user;
         this.translations = jsonGlobsObject.translations;
         this.lang = document.documentElement.lang;
         this.intervals = [];
@@ -166,7 +174,7 @@ export class Season {
         /******************************************************************************
          * Comments                                                                   *
          ******************************************************************************/
-        new SeasonComments(this.seriesId, this.seasonNumber, this.translations);
+        new SeasonComments(this.user, this.seriesId, this.seasonNumber, this.translations);
 
         // Test
         console.log(this.getLightnessFromHex('#7f7f7f'));

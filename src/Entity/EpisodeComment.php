@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\EpisodeCommentRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -46,11 +47,36 @@ class EpisodeComment
     private Collection $episodeComments;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?DateTimeImmutable $createdAt = null;
 
-    public function __construct()
+    public function __construct(User $user, Series $series, int $tmdbId, int $seasonNumber, int $episodeNumber, string $message, DateTimeImmutable $createdAt)
     {
+        $this->user = $user;
+        $this->series = $series;
+        $this->tmdbId = $tmdbId;
+        $this->seasonNumber = $seasonNumber;
+        $this->episodeNumber = $episodeNumber;
+        $this->message = $message;
+        $this->createdAt = $createdAt;
         $this->episodeComments = new ArrayCollection();
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'user' => [
+                'id' => $this->getUser()?->getId(),
+                'username' => $this->getUser()?->getUsername(),
+                'avatar' => $this->getUser()?->getAvatar(),
+            ],
+            'tmdbId' => $this->getTmdbId(),
+            'seasonNumber' => $this->getSeasonNumber(),
+            'episodeNumber' => $this->getEpisodeNumber(),
+            'message' => $this->getMessage(),
+            'createdAt' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
+            'replyTo' => $this->getReplyTo()?->getId(),
+        ];
     }
 
     public function getId(): ?int
@@ -172,12 +198,12 @@ class EpisodeComment
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
 

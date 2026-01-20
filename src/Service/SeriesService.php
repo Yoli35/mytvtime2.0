@@ -270,6 +270,7 @@ class SeriesService extends AbstractController
             'Remove from favorites' => $this->translator->trans('Remove from favorites'),
             'Search' => $this->translator->trans('Search'),
             'Season completed' => $this->translator->trans('Season completed'),
+            'Send your comment' => $this->translator->trans('Send your comment'),
             'Since' => $this->translator->trans('Since'),
             'Tablet' => $this->translator->trans('Tablet'),
             'Television' => $this->translator->trans('Television'),

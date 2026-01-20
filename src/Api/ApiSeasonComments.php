@@ -2,11 +2,13 @@
 
 namespace App\Api;
 
+use App\Entity\EpisodeComment;
 use App\Entity\Series;
 use App\Entity\User;
 use App\Repository\EpisodeCommentRepository;
 use App\Service\DateService;
 use Closure;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
 use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,7 +30,7 @@ readonly class ApiSeasonComments
     }
 
     #[Route('/comments/{id}', name: 'comments', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
-    public function add(#[CurrentUser] User $user, Request $request, Series $series): JsonResponse
+    public function get(#[CurrentUser] User $user, Request $request, Series $series): JsonResponse
     {
         $inputBag = $request->getPayload();
         $seasonNumber = $inputBag->get('seasonNumber');
@@ -65,5 +67,40 @@ readonly class ApiSeasonComments
             'episodeArr' => $episodeArr,
             'availableEpisodeCount' => $availableEpisodeCount,
         ]);
+    }
+
+    #[Route('/comment/add/{id}', name: 'comment_add', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function add(#[CurrentUser] User $user, Request $request, Series $series): JsonResponse
+    {
+        $inputBag = $request->getPayload();
+        $seasonNumber = $inputBag->get('seasonNumber');
+        $episodeNumber = $inputBag->get('episodeNumber');
+        $episodeId = $inputBag->get('episodeId');
+        $message = $inputBag->get('message');
+
+        $commentEntity = new EpisodeComment(
+            user: $user,
+            series: $series,
+            tmdbId: $episodeId,
+            seasonNumber: $seasonNumber,
+            episodeNumber: $episodeNumber,
+            message: $message,
+            createdAt: $this->now($user),
+        );
+        $this->episodeCommentRepository->save($commentEntity, true);
+
+        $comment = $commentEntity->toArray();
+        $comment['createdAt'] = $this->dateService->formatDateRelativeLong($comment['createdAt'], 'UTC', $user->getPreferredLanguage() ?? $request->getLocale());
+
+        return ($this->json)([
+            'ok' => true,
+            'comment' => $comment,
+        ]);
+    }
+
+    private function now(User $user): DateTimeImmutable
+    {
+        $timezone = $user->getTimezone() ?? 'Europe/Paris';
+        return $this->dateService->newDateImmutable('now', $timezone);
     }
 }
