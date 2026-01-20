@@ -63,6 +63,7 @@ export class SeasonComments {
                         const messageDiv = replyToCommentDiv.querySelector(".message");
                         messageDiv.appendChild(gThis.createMessage(comment));
                     }
+                    gThis.addUserCommentBadge(comment);
                 });
                 const episodeArr = data['episodeArr'];
                 episodeArr.forEach(ep => {
@@ -104,8 +105,31 @@ export class SeasonComments {
                 const newMessage = this.createMessage(data['comment']);
                 gThis.toolTips.init(newMessage);
                 content.appendChild(newMessage);
+                gThis.addUserCommentBadge(data['comment']);
             })
             .catch(err => console.log(err));
+    }
+
+    addUserCommentBadge(comment) {
+        const episodeId = comment['tmdbId'];
+        const div = document.querySelector('.user-episode .remove-this-episode[data-id="' + episodeId + '"]');
+        const userEpisodeDiv = div.closest(".user-episode");
+        const selectVote = userEpisodeDiv.querySelector(".select-vote");
+        let badge = userEpisodeDiv.querySelector(".comment-badge");
+        if (badge) return;
+        badge = document.createElement("div");
+        badge.classList.add("comment-badge");
+        badge.setAttribute("data-id", episodeId);
+        badge.setAttribute("data-title", 1);
+        const episodeGroup = document.querySelector(".episode-group#episode-comments-" + comment['episodeNumber']);
+        const svg = document.querySelector("#svgs #comment-badge").cloneNode(true);
+        svg.removeAttribute("id");
+        badge.appendChild(svg);
+        badge.addEventListener("click", () => {
+            episodeGroup.scrollIntoView({behavior: 'smooth', block: 'center'});
+        });
+        userEpisodeDiv.insertBefore(badge, selectVote);
+        console.log(userEpisodeDiv);
     }
 
     getEpisodeArr() {

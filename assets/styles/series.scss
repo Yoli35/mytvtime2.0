@@ -4817,6 +4817,7 @@ h2 {
 
     .add-this-episode, .remove-this-episode,
     .select-provider, .select-device, .select-vote,
+    .comment-badge,
     .back-to-top, .back-to-series {
         align-items: center;
         border-radius: .25rem;
@@ -4870,7 +4871,7 @@ h2 {
     }
 
     .add-this-episode, .remove-this-episode,
-    .select-provider, .select-device, .select-vote {
+    .select-provider, .select-device, .select-vote, .comment-badge {
         font-size: 1.5rem;
         height: 100%;
         transition: font-size 0.3s ease-in-out;
@@ -4893,7 +4894,7 @@ h2 {
     }
 
     .remove-this-episode,
-    .select-provider, .select-device, .select-vote {
+    .select-provider, .select-device, .select-vote, .comment-badge {
         background-color: var(--user-episode-actions);
     }
 
