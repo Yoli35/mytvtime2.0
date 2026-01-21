@@ -19,12 +19,7 @@ export class SeasonComments {
 
     init() {
         this.getEpisodeComments();
-
-        const addCommentButtons = document.querySelectorAll(".episode-group-add-comment");
-        addCommentButtons.forEach(button => {
-            button.addEventListener("click", () => {
-            });
-        });
+        this.initCommentImagesDialog();
     }
 
     getEpisodeComments() {
@@ -45,8 +40,10 @@ export class SeasonComments {
             .then(data => {
                 /*console.log(data);*/
                 const comments = data['comments'];
+                const images = data['images'];
                 const episodesCommentsDiv = document.querySelector(".episodes-comments");
                 comments.forEach(comment => {
+                    const commentImages = images[comment['id']] ?? [];
                     const episodeNumber = comment['episodeNumber'];
                     const seasonNumber = comment['seasonNumber'];
                     let episodeGroup = episodesCommentsDiv.querySelector(".episode-group#episode-comments-" + episodeNumber);
@@ -57,11 +54,11 @@ export class SeasonComments {
                     const episodeGroupContent = episodeGroup.querySelector(".episode-group-content");
 
                     if (comment['replyTo'] === null) {
-                        episodeGroupContent.appendChild(gThis.createMessage(comment));
+                        episodeGroupContent.appendChild(gThis.createMessage(comment, commentImages));
                     } else {
                         const replyToCommentDiv = episodeGroupContent.querySelector('.comment[data-id="' + comment['replyTo'] + '"]');
                         const messageDiv = replyToCommentDiv.querySelector(".message");
-                        messageDiv.appendChild(gThis.createMessage(comment));
+                        messageDiv.appendChild(gThis.createMessage(comment, commentImages));
                     }
                     gThis.addUserCommentBadge(comment);
                 });
@@ -78,21 +75,16 @@ export class SeasonComments {
 
     addEpisodeComment(e) {
         const button = e.currentTarget;
+        const form = button.closest("form");
+        /** @Type {HTMLInputElement} */
+        const imageFilesInput = form.querySelector('input[type="file"]');
         const episodeNumber = button.getAttribute("data-ep-number");
         const episodeId = button.getAttribute("data-ep-id");
-        const input = button.parentNode.querySelector("input");
+        const input = button.parentNode.querySelector('input[type="text"]');
+        const formData = gThis.getFormData(imageFilesInput, input.value, episodeId, episodeNumber);
         fetch('/api/season/comment/add/' + this.seriesId, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-                seasonNumber: this.seasonNumber,
-                episodeNumber: episodeNumber,
-                episodeId: episodeId,
-                message: input.value
-            })
+            body: formData
         })
             .then((response) => response.json())
             .then(data => {
@@ -110,6 +102,138 @@ export class SeasonComments {
             .catch(err => console.log(err));
     }
 
+    getFormData(imageFilesInput, message, episodeId, episodeNumber) {
+        const formData = new FormData();
+        formData.append("seasonNumber", gThis.seasonNumber);
+        formData.append("episodeNumber", episodeNumber);
+        formData.append("episodeId", episodeId);
+        formData.append("message", message);
+        Array.from(imageFilesInput.files).forEach(function (file, index) {
+            formData.append('additional-image-' + index, file);
+        });
+
+        return formData;
+    }
+
+    initCommentImagesDialog() {
+        /** @type HTMLDialogElement */
+        const commentImagesDialog = document.querySelector("#commentImagesDialog");
+        /** @Type {HTMLInputElement} */
+        const commentImageInput = document.getElementById('comment-image-input');
+        const submitButton = commentImagesDialog.querySelector("button[type=submit]");
+        const cancelButton = commentImagesDialog.querySelector("button[type=button]");
+
+        commentImageInput.addEventListener('change', this.displayFiles);
+
+        cancelButton.addEventListener("click", () => {
+            document.removeEventListener("keydown", gThis.keyEventHandlerCommentImagesDialog);
+            commentImagesDialog.close();
+        });
+        submitButton.addEventListener("click", () => {
+            // Store files
+            gThis.closeCommentImagesDialog();
+        });
+    }
+
+    displayFiles(e) {
+        /** @Type HTMLInputElement */
+        const commentImageInput = e.currentTarget;
+        const previewImageFiles = commentImageInput.closest(".form-field").querySelector(".preview-image-files");
+        previewImageFiles.innerHTML = '';
+        const ol = document.createElement('ol');
+        previewImageFiles.appendChild(ol);
+        Array.from(commentImageInput.files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const li = document.createElement('li');
+                const div = document.createElement('div');
+                div.innerText = file.name + ' (' + gThis.fileSize(file.size) + ')';
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = file.name;
+                li.appendChild(img);
+                li.appendChild(div);
+                ol.appendChild(li);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    openCommentImagesDialog(e) {
+        const imageButton = e.currentTarget;
+        const episodeId = imageButton.getAttribute("data-ep-id");
+        const commentForm = imageButton.closest("form");
+        const filesInput = commentForm.querySelector('input[type="file"]');
+        /** @type HTMLDialogElement */
+        const commentImagesDialog = document.querySelector("#commentImagesDialog");
+        /** @Type {HTMLInputElement} */
+        const commentImageInput = document.getElementById('comment-image-input');
+        const episodeIdInput = commentImagesDialog.querySelector("#comment-image-episode-id");
+
+        episodeIdInput.value = episodeId;
+        commentImageInput.files = filesInput.files;
+
+        gThis.displayFiles({currentTarget: commentImageInput});
+
+        document.addEventListener("keydown", gThis.keyEventHandlerCommentImagesDialog);
+        commentImagesDialog.showModal();
+    }
+
+    closeCommentImagesDialog() {
+        /** @type HTMLDialogElement */
+        const commentImagesDialog = document.querySelector("#commentImagesDialog");
+        /** @Type {HTMLInputElement} */
+        const commentImageInput = document.getElementById('comment-image-input');
+        const episodeId = commentImagesDialog.querySelector("#comment-image-episode-id").value;
+        const commentForm = document.querySelector('.add-image-button[data-ep-id="' + episodeId + '"]').closest("form");
+        const filesInput = commentForm.querySelector('input[type="file"]');
+
+        filesInput.files = commentImageInput.files;
+
+        const imageCount = filesInput.files.length;
+        const addImageButton = commentForm.querySelector(".add-image-button");
+        let countBadge = commentForm.querySelector(".count-badge");
+        if (imageCount) {
+            if (!countBadge) {
+                countBadge = document.createElement("div");
+                countBadge.classList.add("count-badge");
+                addImageButton.appendChild(countBadge);
+            }
+            countBadge.innerText = imageCount.toString();
+        } else {
+            if (countBadge) {
+                countBadge.remove()
+            }
+        }
+
+        document.removeEventListener("keydown", gThis.keyEventHandlerCommentImagesDialog);
+        commentImagesDialog.close();
+    }
+
+    fileSize(size) {
+        const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        let unitIndex = 0;
+        while (size >= 1024 && unitIndex < units.length - 1) {
+            size /= 1024;
+            unitIndex++;
+        }
+        return `${size.toFixed(2)} ${units[unitIndex]}`;
+    }
+
+    keyEventHandlerCommentImagesDialog(event) {
+        /** @type HTMLDialogElement */
+        const commentImagesDialog = document.querySelector("#commentImagesDialog");
+        const submitButton = commentImagesDialog.querySelector("button[type=submit]");
+        const cancelButton = commentImagesDialog.querySelector("button[type=button]");
+
+        if (event.key === "Escape" && commentImagesDialog.open) {
+            cancelButton.click();
+        }
+        if (event.key === "Enter" && commentImagesDialog.open) {
+            submitButton.click();
+        }
+    }
+
     addUserCommentBadge(comment) {
         const episodeId = comment['tmdbId'];
         const div = document.querySelector('.user-episode .remove-this-episode[data-id="' + episodeId + '"]');
@@ -120,7 +244,7 @@ export class SeasonComments {
         badge = document.createElement("div");
         badge.classList.add("comment-badge");
         badge.setAttribute("data-id", episodeId);
-        badge.setAttribute("data-title", 1);
+        badge.setAttribute("data-title", "1");
         const episodeGroup = document.querySelector(".episode-group#episode-comments-" + comment['episodeNumber']);
         const svg = document.querySelector("#svgs #comment-badge").cloneNode(true);
         svg.removeAttribute("id");
@@ -164,11 +288,6 @@ export class SeasonComments {
         titleDiv.classList.add("episode-group-title");
         titleDiv.innerText = "Episode " + gThis.formatEpisode(seasonNumber, episodeNumber);
         headerDiv.appendChild(titleDiv);
-        const commentButton = document.createElement("div");
-        commentButton.classList.add("episode-group-add-comment");
-        commentButton.innerText = gThis.translations['Add a comment'];
-        commentButton.setAttribute("data-episode-number", episodeNumber);
-        headerDiv.appendChild(commentButton);
         episodeGroup.appendChild(headerDiv);
 
         // Content
@@ -179,44 +298,84 @@ export class SeasonComments {
         // Footer
         const footer = document.createElement("div");
         footer.classList.add("episode-group-footer");
+        const form = document.createElement("form");
         const userDiv = gThis.createUser(gThis.user);
         const commentInput = document.createElement("input");
         commentInput.setAttribute("type", "text");
-        const sendButton = document.createElement("div");
         const episode = document.querySelector('.episodes .episode-wrapper .episode#episode-' + seasonNumber + '-' + episodeNumber);
         const episodeId = episode.getAttribute("data-episode-id");
+
+        const filesInput = document.createElement("input");
+        filesInput.setAttribute("type", "file");
+        filesInput.style.display = "none";
+
+        const imageButton = document.createElement("div");
+        imageButton.classList.add("add-image-button");
+        imageButton.setAttribute("data-ep-number", episodeNumber);
+        imageButton.setAttribute("data-ep-id", episodeId);
+        imageButton.setAttribute("data-title", gThis.translations['Add images'] + "…");
+        const imgSvg = document.querySelector("#svgs #image-plus").cloneNode(true);
+        imgSvg.removeAttribute("id");
+        imageButton.appendChild(imgSvg);
+        imageButton.addEventListener("click", gThis.openCommentImagesDialog)
+
+        const sendButton = document.createElement("div");
         sendButton.classList.add("send-button");
         sendButton.setAttribute("data-ep-number", episodeNumber);
         sendButton.setAttribute("data-ep-id", episodeId);
-        sendButton.setAttribute("data-title", gThis.translations['Send your comment'])
+        sendButton.setAttribute("data-title", gThis.translations['Send your comment']);
         sendButton.addEventListener("click", gThis.addEpisodeComment);
         const sendSvg = document.querySelector("#svgs #send").cloneNode(true);
         sendSvg.removeAttribute("id");
         sendButton.appendChild(sendSvg);
 
-        footer.appendChild(userDiv);
-        footer.appendChild(commentInput);
-        footer.appendChild(sendButton);
+        form.appendChild(userDiv);
+        form.appendChild(filesInput);
+        form.appendChild(commentInput);
+        form.appendChild(imageButton);
+        form.appendChild(sendButton);
+        footer.appendChild(form);
         episodeGroup.appendChild(footer);
 
         return episodeGroup;
     }
 
-    createMessage(comment) {
+    createMessage(comment, images) {
         const coreDiv = document.createElement("div");
         coreDiv.classList.add("comment");
         coreDiv.setAttribute("data-id", comment['id']);
         coreDiv.setAttribute("data-tmdb-id", comment['tmdbId']);
+
         const userDiv = gThis.createUser(comment['user']);
+
         const dateDiv = document.createElement("div");
         dateDiv.classList.add("date");
         dateDiv.innerText = comment['createdAt'].toLocaleString();
         userDiv.appendChild(dateDiv);
+
         const messageDiv = document.createElement("div");
         messageDiv.classList.add("message");
         messageDiv.innerText = comment['message'];
+
         coreDiv.appendChild(userDiv);
         coreDiv.appendChild(messageDiv);
+
+        if (images.length) {
+            const imagesDiv = document.createElement("div");
+            imagesDiv.classList.add("comment-images");
+            images.forEach(image => {
+                const imageName = 'Image ' + gThis.formatEpisode(comment['seasonNumber'], comment['episodeNumber']);
+                const imageDiv = document.createElement("div");
+                imageDiv.classList.add("comment-image");
+                imageDiv.setAttribute("data-title", imageName)
+                const img = document.createElement("img");
+                img.src = '/images/comments' + image;
+                img.alt = imageName;
+                imageDiv.appendChild(img);
+                imagesDiv.appendChild(imageDiv);
+            });
+            coreDiv.appendChild(imagesDiv);
+        }
 
         return coreDiv;
     }

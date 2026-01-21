@@ -49,6 +49,12 @@ class EpisodeComment
     #[ORM\Column]
     private ?DateTimeImmutable $createdAt = null;
 
+    /**
+     * @var Collection<int, EpisodeCommentImage>
+     */
+    #[ORM\OneToMany(targetEntity: EpisodeCommentImage::class, mappedBy: 'episodeComment', orphanRemoval: true)]
+    private Collection $episodeCommentImages;
+
     public function __construct(User $user, Series $series, int $tmdbId, int $seasonNumber, int $episodeNumber, string $message, DateTimeImmutable $createdAt)
     {
         $this->user = $user;
@@ -59,6 +65,7 @@ class EpisodeComment
         $this->message = $message;
         $this->createdAt = $createdAt;
         $this->episodeComments = new ArrayCollection();
+        $this->episodeCommentImages = new ArrayCollection();
     }
 
     public function toArray(): array
@@ -206,6 +213,36 @@ class EpisodeComment
     public function setCreatedAt(DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EpisodeCommentImage>
+     */
+    public function getEpisodeCommentImages(): Collection
+    {
+        return $this->episodeCommentImages;
+    }
+
+    public function addEpisodeCommentImage(EpisodeCommentImage $episodeCommentImage): static
+    {
+        if (!$this->episodeCommentImages->contains($episodeCommentImage)) {
+            $this->episodeCommentImages->add($episodeCommentImage);
+            $episodeCommentImage->setEpisodeComment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEpisodeCommentImage(EpisodeCommentImage $episodeCommentImage): static
+    {
+        if ($this->episodeCommentImages->removeElement($episodeCommentImage)) {
+            // set the owning side to null (unless already changed)
+            if ($episodeCommentImage->getEpisodeComment() === $this) {
+                $episodeCommentImage->setEpisodeComment(null);
+            }
+        }
 
         return $this;
     }

@@ -4704,13 +4704,15 @@ h2 {
         }
 
         .episode-group-footer {
-            align-items: center;
-            display: flex;
-            font-size: 0.875rem;
-            font-weight: 300;
-            gap: .5rem;
-            justify-content: flex-start;
-            margin-block-start: .5rem;
+            form {
+                align-items: center;
+                display: flex;
+                font-size: 0.875rem;
+                font-weight: 300;
+                gap: .5rem;
+                justify-content: flex-start;
+                margin-block-start: .5rem;
+            }
         }
     }
 
@@ -4758,16 +4760,37 @@ h2 {
         width: min(64rem, 80%);
     }
 
-    .send-button {
-        border-radius: 50%;
+    .add-image-button {
+        position: relative;
+
+        .count-badge {
+            align-items: center;
+            background-color: var(--red);
+            border-radius: 5rem;
+            bottom: -0.25rem;
+            color: var(--ardoise-10);
+            display: flex;
+            font-size: 0.875rem;
+            font-weight: 500;
+            height: 1.25rem;
+            justify-content: center;
+            min-width: 1.25rem;
+            padding-inline: .25rem;
+            position: absolute;
+            right: -0.25rem;
+        }
+    }
+
+    .send-button, .add-image-button {
         align-items: center;
+        border-radius: 50%;
+        border: 2px solid;
+        color: var(--orange-80);
         cursor: pointer;
         display: flex;
         height: 2.25rem;
         justify-content: center;
         width: 2.25rem;
-        border: 2px solid;
-        color: var(--orange);
 
         svg {
             height: 1.25rem;
@@ -4795,7 +4818,37 @@ h2 {
                 margin-inline-start: 1rem;
             }
         }
+
+        .comment-images {
+            border: 2px dashed var(--orange-50);
+            border-radius: .5rem;
+
+            align-items: center;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            justify-content: center;
+            padding: 1rem;
+            width: fit-content;
+
+            .comment-image {
+                border-radius: .5rem;
+                height: 10rem;
+                width: auto;
+
+                img {
+                    border-radius: .5rem;
+                    height: 100%;
+                    object-fit: cover;
+                    width: auto;
+                }
+            }
+        }
     }
+}
+
+#commentImagesDialog {
+    width: min(90vw, 40rem);
 }
 
 .user-episode {
@@ -6098,14 +6151,15 @@ h2 {
 }
 
 dialog {
-    background-color: hsla(from var(--ardoise-80) h s l / .9);
-    border-radius: .5rem;
+    backdrop-filter: blur(1rem);
+    background-color: hsla(from var(--orange-30) h s l / .5);
+    border-radius: 2rem;
+    border: none;
     inset: 0;
     margin-block: auto;
     margin-inline: auto;
     max-width: 80%;
-    padding: 1rem;
-    position: absolute;
+    padding: 2rem;
     z-index: 2;
 }
 
@@ -6261,7 +6315,7 @@ dialog, .side-panel {
                 &:has(input[type="file"]) {
                     background-color: var(--ardoise-80);
                     border: 2px dashed var(--orange-50);
-                    border-radius: .5rem;
+                    border-radius: 5rem;
                     color: var(--ardoise-10);
                     cursor: pointer;
                     padding: .5rem 1rem;
@@ -6292,11 +6346,8 @@ dialog, .side-panel {
 
                     li {
                         align-items: center;
-                        background-color: var(--ardoise-80);
-                        border-radius: .25rem;
                         display: flex;
-                        gap: .25rem;
-                        padding-inline-start: 1rem;
+                        gap: 1rem;
                         width: 100%;
 
                         > div {
@@ -6316,9 +6367,9 @@ dialog, .side-panel {
 
                         img {
                             aspect-ratio: 16/9;
-                            border-radius: 0 .25rem .25rem 0;
-                            object-fit: cover;
-                            width: 10rem;
+                            border-radius: .5rem;
+                            /*object-fit: cover;*/
+                            width: 15rem;
                         }
                     }
                 }
@@ -6363,13 +6414,14 @@ dialog, .side-panel {
         }
 
         .submit-row {
+            display: flex;
             gap: 1rem;
             justify-content: flex-end;
 
             button {
                 background-color: var(--orange-30);
                 /*border: 2px solid var(--orange-90);*/
-                border-radius: .25rem;
+                border-radius: 5rem;
                 color: var(--orange-90);
                 cursor: pointer;
                 font-size: 1.25rem;

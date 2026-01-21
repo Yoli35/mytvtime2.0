@@ -3,10 +3,13 @@
 namespace App\Api;
 
 use App\Entity\EpisodeComment;
+use App\Entity\EpisodeCommentImage;
 use App\Entity\Series;
 use App\Entity\User;
+use App\Repository\EpisodeCommentImageRepository;
 use App\Repository\EpisodeCommentRepository;
 use App\Service\DateService;
+use App\Service\ImageService;
 use Closure;
 use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
@@ -22,9 +25,11 @@ readonly class ApiSeasonComments
 {
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
-        private Closure                  $json,
-        private DateService              $dateService,
-        private EpisodeCommentRepository $episodeCommentRepository,
+        private Closure                       $json,
+        private DateService                   $dateService,
+        private EpisodeCommentImageRepository $episodeCommentImageRepository,
+        private EpisodeCommentRepository      $episodeCommentRepository,
+        private ImageService                  $imageService,
     )
     {
     }
@@ -57,6 +62,17 @@ readonly class ApiSeasonComments
             ];
         }, $this->episodeCommentRepository->findBy(['series' => $series, 'seasonNumber' => $seasonNumber]));
 
+        $ids = array_map(fn($c) => $c['id'], $comments);
+        $images = $this->episodeCommentImageRepository->findByEpisodeCommentIds($ids);
+        $imagesArr = [];
+        foreach ($images as $image) {
+            $commentId = $image->getEpisodeComment()->getId();
+            if (!isset($imagesArr[$commentId])) {
+                $imagesArr[$commentId] = [];
+            }
+            $imagesArr[$commentId][] = $image->getPath();
+        }
+
         foreach ($comments as $comment) {
             $episodeArr[$comment['episodeNumber'] - 1]['commentCount']++;
         }
@@ -64,6 +80,7 @@ readonly class ApiSeasonComments
         return ($this->json)([
             'ok' => true,
             'comments' => $comments,
+            'images' => $imagesArr,
             'episodeArr' => $episodeArr,
             'availableEpisodeCount' => $availableEpisodeCount,
         ]);
@@ -72,11 +89,31 @@ readonly class ApiSeasonComments
     #[Route('/comment/add/{id}', name: 'comment_add', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function add(#[CurrentUser] User $user, Request $request, Series $series): JsonResponse
     {
-        $inputBag = $request->getPayload();
-        $seasonNumber = $inputBag->get('seasonNumber');
-        $episodeNumber = $inputBag->get('episodeNumber');
-        $episodeId = $inputBag->get('episodeId');
-        $message = $inputBag->get('message');
+//        $inputBag = $request->getPayload();
+//        $seasonNumber = $inputBag->get('seasonNumber');
+//        $episodeNumber = $inputBag->get('episodeNumber');
+//        $episodeId = $inputBag->get('episodeId');
+//        $message = $inputBag->get('message');
+
+        $data = $request->request->all();
+        $files = $request->files->all();
+        if (empty($data) && empty($files)) {
+            return ($this->json)([
+                'ok' => false,
+                'message' => 'No data',
+            ]);
+        }
+        $seasonNumber = $data['seasonNumber'] ?? null;
+        $episodeNumber = $data['episodeNumber'] ?? null;
+        $episodeId = $data['episodeId'] ?? null;
+        $message = $data['message'] ?? null;
+
+        if (!$seasonNumber || !$episodeNumber || !$episodeId || !$message) {
+            return ($this->json)([
+                'ok' => false,
+                'message' => 'Missing data',
+            ]);
+        }
 
         $commentEntity = new EpisodeComment(
             user: $user,
@@ -88,6 +125,22 @@ readonly class ApiSeasonComments
             createdAt: $this->now($user),
         );
         $this->episodeCommentRepository->save($commentEntity, true);
+
+        /******************************************************************************
+         * Images ajoutées depuis des fichiers locaux (type : UploadedFile)           *
+         ******************************************************************************/
+        $localizedName = $series->getLocalizedName($user->getPreferredLanguage() ?? $request->getLocale());
+        $title = $localizedName ?? $series->getName();
+        $location = 'series-' . $series->getId() . '-comment-' . $commentEntity->getId();
+        $n = 1;
+
+        foreach ($files as $file) {
+            $image = $this->imageService->fileToWebp($file, $title, $location, $n, '/public/images/comments/', $seasonNumber, $episodeNumber);
+            if ($image) {
+                $episodeCommentImage = new EpisodeCommentImage($commentEntity, $image, $this->now($user));
+                $this->episodeCommentImageRepository->save($episodeCommentImage, true);
+            }
+        }
 
         $comment = $commentEntity->toArray();
         $comment['createdAt'] = $this->dateService->formatDateRelativeLong($comment['createdAt'], 'UTC', $user->getPreferredLanguage() ?? $request->getLocale());

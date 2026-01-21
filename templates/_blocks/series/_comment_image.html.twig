@@ -1,0 +1,19 @@
+<dialog id="commentImagesDialog" class="comment-images-dialog">
+    <form method="dialog">
+        <input type="hidden" name="comment-image-episode-id" id="comment-image-episode-id" value="">
+        <div class="form-row">
+            <div class="form-field">
+                <label for="comment-image-input">
+                    {{ 'Click to select images'|trans }}
+                    <input id="comment-image-input" type="file" accept="image/png, image/jpeg, image/webp" multiple>
+                </label>
+                <div class="preview-image-files">
+                </div>
+            </div>
+        </div>
+        <div class="submit-row">
+            <button type="button">{{ 'Cancel'|trans }}</button>
+            <button type="submit">{{ 'Apply'|trans }}</button>
+        </div>
+    </form>
+</dialog>
