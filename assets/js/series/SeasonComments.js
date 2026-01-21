@@ -348,6 +348,9 @@ export class SeasonComments {
         badge.addEventListener("click", () => {
             episodeGroup.classList.add("force-show");
             episodeGroup.scrollIntoView({behavior: 'smooth', block: 'center'});
+            setTimeout(() => {
+                episodeGroup.classList.remove("force-show");
+            }, 120000);
         });
 
         return episodeGroup;
