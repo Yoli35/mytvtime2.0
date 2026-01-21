@@ -130,16 +130,19 @@ readonly class ApiSeasonComments
          * Images ajoutées depuis des fichiers locaux (type : UploadedFile)           *
          ******************************************************************************/
         $localizedName = $series->getLocalizedName($user->getPreferredLanguage() ?? $request->getLocale());
-        $title = $localizedName ?? $series->getName();
+        $title = $localizedName->getName() ?? $series->getName();
         $location = 'series-' . $series->getId() . '-comment-' . $commentEntity->getId();
         $n = 1;
 
+        $images = [];
         foreach ($files as $file) {
             $image = $this->imageService->fileToWebp($file, $title, $location, $n, '/public/images/comments/', $seasonNumber, $episodeNumber);
             if ($image) {
                 $episodeCommentImage = new EpisodeCommentImage($commentEntity, $image, $this->now($user));
                 $this->episodeCommentImageRepository->save($episodeCommentImage, true);
+                $images[] = $image;
             }
+            $n++;
         }
 
         $comment = $commentEntity->toArray();
@@ -148,6 +151,7 @@ readonly class ApiSeasonComments
         return ($this->json)([
             'ok' => true,
             'comment' => $comment,
+            'images'=> $images,
         ]);
     }
 

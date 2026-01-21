@@ -94,7 +94,7 @@ export class SeasonComments {
                 const footer = button.closest(".episode-group-footer");
                 const episodeGroup = footer.closest(".episode-group");
                 const content = episodeGroup.querySelector(".episode-group-content");
-                const newMessage = this.createMessage(data['comment']);
+                const newMessage = this.createMessage(data['comment'], data['images']);
                 gThis.toolTips.init(newMessage);
                 content.appendChild(newMessage);
                 gThis.addUserCommentBadge(data['comment']);
