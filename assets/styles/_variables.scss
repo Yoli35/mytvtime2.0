@@ -48,9 +48,9 @@ $fa-font-path: "../webfonts";
     --green-80: light-dark(hsl(166, 18%, 80%), hsl(166, 18%, 20%));
     --green-90: light-dark(hsl(166, 18%, 90%), hsl(166, 18%, 10%));
 
-    --red: hsl(0, 18%, 50%);
-    --red-50: hsl(0, 18%, 50%);
-    --red-20: light-dark(hsl(0, 18%, 20%), hsl(0, 18%, 80%));
+    --red: hsl(0, 50%, 50%);
+    --red-50: hsl(0, 50%, 50%);
+    --red-20: light-dark(hsl(0, 50%, 20%), hsl(0, 50%, 80%));
 
     --yellow: hsl(45, 50%, 50%);
     --yellow-50: hsl(45, 50%, 50%);

@@ -1082,27 +1082,6 @@ export class Menu {
         document.documentElement.setAttribute('data-theme', theme);
     }
 
-    /*markNotificationsAsRead() {
-        fetch('/' + gThis.lang + '/user/notifications/mark-as-read', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.ok) {
-                    const notifications = document.querySelector(".notifications");
-                    const badge = notifications.querySelector("span");
-                    badge?.remove();
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-
-    }*/
-
     checkHistory() {
         const historyList = document.querySelector("#history-list");
         const historyOptions = historyList.querySelector("#history-options").querySelectorAll("input");
