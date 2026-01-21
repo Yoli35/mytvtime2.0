@@ -4716,6 +4716,14 @@ h2 {
         }
     }
 
+    .episode-group:not(:has(.comment)) {
+        display: none;
+
+        &.force-show {
+            display: block;
+        }
+    }
+
     .user {
         align-items: center;
         display: flex;
@@ -6366,7 +6374,7 @@ dialog, .side-panel {
                         }
 
                         img {
-                            aspect-ratio: 16/9;
+                            /*aspect-ratio: 16/9;*/
                             border-radius: .5rem;
                             /*object-fit: cover;*/
                             width: 15rem;

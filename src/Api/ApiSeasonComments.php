@@ -126,11 +126,22 @@ readonly class ApiSeasonComments
         );
         $this->episodeCommentRepository->save($commentEntity, true);
 
+        if (count($files) === 0) {
+            $comment = $commentEntity->toArray();
+            $comment['createdAt'] = $this->dateService->formatDateRelativeLong($comment['createdAt'], 'UTC', $user->getPreferredLanguage() ?? $request->getLocale());
+
+            return ($this->json)([
+                'ok' => true,
+                'comment' => $comment,
+                'images'=> [],
+            ]);
+        }
+
         /******************************************************************************
          * Images ajoutées depuis des fichiers locaux (type : UploadedFile)           *
          ******************************************************************************/
         $localizedName = $series->getLocalizedName($user->getPreferredLanguage() ?? $request->getLocale());
-        $title = $localizedName->getName() ?? $series->getName();
+        $title = $localizedName?->getName() ?? $series->getName();
         $location = 'series-' . $series->getId() . '-comment-' . $commentEntity->getId();
         $n = 1;
 

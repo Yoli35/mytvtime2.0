@@ -238,22 +238,28 @@ export class SeasonComments {
         const episodeId = comment['tmdbId'];
         const div = document.querySelector('.user-episode .remove-this-episode[data-id="' + episodeId + '"]');
         const userEpisodeDiv = div.closest(".user-episode");
-        const selectVote = userEpisodeDiv.querySelector(".select-vote");
-        let badge = userEpisodeDiv.querySelector(".comment-badge");
-        if (badge) return;
-        badge = document.createElement("div");
-        badge.classList.add("comment-badge");
-        badge.setAttribute("data-id", episodeId);
-        badge.setAttribute("data-title", "1");
-        const episodeGroup = document.querySelector(".episode-group#episode-comments-" + comment['episodeNumber']);
+        const selectProvider = userEpisodeDiv.querySelector(".select-provider");
         const svg = document.querySelector("#svgs #comment-badge").cloneNode(true);
         svg.removeAttribute("id");
+        let badge = userEpisodeDiv.querySelector(".comment-badge");
+        // if (badge) {
+        // Replace ux_icon('mdi:comment-text-outline') by ux_icon('mdi:comment-text')
+        badge.querySelector("svg").remove();
         badge.appendChild(svg);
-        badge.addEventListener("click", () => {
-            episodeGroup.scrollIntoView({behavior: 'smooth', block: 'center'});
-        });
-        userEpisodeDiv.insertBefore(badge, selectVote);
-        console.log(userEpisodeDiv);
+        // TODO: Add comment count
+        // }
+        // badge = document.createElement("div");
+        // badge.classList.add("comment-badge");
+        // badge.setAttribute("data-id", episodeId);
+        // badge.setAttribute("data-title", "1");
+        // const episodeGroup = document.querySelector(".episode-group#episode-comments-" + comment['episodeNumber']);
+        // badge.appendChild(svg);
+        // badge.addEventListener("click", () => {
+        //     episodeGroup.classList.add("force-show");
+        //     episodeGroup.scrollIntoView({behavior: 'smooth', block: 'center'});
+        // });
+        // userEpisodeDiv.insertBefore(badge, selectProvider);
+        // console.log(userEpisodeDiv);
     }
 
     getEpisodeArr() {
@@ -336,6 +342,13 @@ export class SeasonComments {
         form.appendChild(sendButton);
         footer.appendChild(form);
         episodeGroup.appendChild(footer);
+
+        // Add event click to the comment badge
+        const badge = document.querySelector('.comment-badge[data-id="' + episodeId + '"]');
+        badge.addEventListener("click", () => {
+            episodeGroup.classList.add("force-show");
+            episodeGroup.scrollIntoView({behavior: 'smooth', block: 'center'});
+        });
 
         return episodeGroup;
     }
