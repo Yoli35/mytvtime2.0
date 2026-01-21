@@ -13,13 +13,13 @@ export class SeasonComments {
 
         this.addEpisodeComment = this.addEpisodeComment.bind(this);
 
-        this.init();
-        console.log("Season comments initialized")
+        // this.init();
     }
 
     init() {
         this.getEpisodeComments();
         this.initCommentImagesDialog();
+        console.log("Season comments initialized")
     }
 
     getEpisodeComments() {
@@ -281,8 +281,12 @@ export class SeasonComments {
     }
 
     createEpisodeGroup(seasonNumber, episodeNumber) {
+        let episodeGroup = document.querySelector('.episodes-comments .episode-group[id="episode-comments-' + episodeNumber + '"]');
+        if (episodeGroup) {
+            return episodeGroup;
+        }
         // Episode comment group
-        const episodeGroup = document.createElement("div");
+        episodeGroup = document.createElement("div");
         episodeGroup.classList.add("episode-group");
         episodeGroup.style.order = episodeNumber.toString();
         episodeGroup.setAttribute("id", "episode-comments-" + episodeNumber);

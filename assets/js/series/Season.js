@@ -147,6 +147,7 @@ export class Season {
 
         this.flashMessage = new FlashMessage();
         this.toolTips = new ToolTips();
+        this.seasonComments = new SeasonComments(this.user, this.seriesId, this.seasonNumber, this.translations);
     }
 
     init(menu) {
@@ -174,7 +175,7 @@ export class Season {
         /******************************************************************************
          * Comments                                                                   *
          ******************************************************************************/
-        new SeasonComments(this.user, this.seriesId, this.seasonNumber, this.translations);
+        this.seasonComments.init();
 
         // Test
         console.log(this.getLightnessFromHex('#7f7f7f'));
@@ -921,6 +922,21 @@ export class Season {
                     f.classList.add('watched');
                 });
 
+                // <div className="comment-badge" data-id="{{ episode.id }}" data-title="{{ 'Add a comment or reply to it for the episode'|trans }} {{ episode.episode_number }}">
+                //     {{ux_icon('mdi:comment-text-outline')}}
+                // </div>;
+                const episodesCommentsDiv = document.querySelector(".episodes-comments");
+                const commentBadge = document.createElement("div");
+                commentBadge.classList.add("comment-badge");
+                commentBadge.setAttribute("data-id", id);
+                commentBadge.setAttribute("data-title", gThis.translations['Add a comment or reply to it for the episode'] + " " + episodeNumber);
+                const commentSvg = document.querySelector("#svgs #comment-badge-outline").cloneNode(true);
+                commentSvg.removeAttribute("id");
+                commentBadge.appendChild(commentSvg);
+                userEpisode.insertBefore(commentBadge, backToTopLink);
+                const episodeGroup = gThis.seasonComments.createEpisodeGroup(seasonNumber, episodeNumber);
+                episodesCommentsDiv.appendChild(episodeGroup);
+
                 const previousEpisode = userEpisode.closest('.episodes').querySelector('.remove-this-episode[data-e-number="' + (episodeNumber - 1) + '"]');
                 const previousProvider = previousEpisode?.parentElement.querySelector('.select-provider');
                 if (previousProvider) {
@@ -1332,6 +1348,8 @@ export class Season {
                 episode.parentElement.appendChild(newEpisode);
                 gThis.toolTips.init(newEpisode);
 
+                const commentBadge = episode.parentElement.querySelector(".comment-badge");
+                commentBadge.remove();
                 const episodeProps = episode.parentElement.querySelectorAll('div[class^=select]');
                 episodeProps.forEach(prop => {
                     prop.remove();
