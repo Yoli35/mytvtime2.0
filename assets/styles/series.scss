@@ -4716,12 +4716,17 @@ h2 {
         }
     }
 
+    &:not(:has(.comment)),
     .episode-group:not(:has(.comment)) {
         display: none;
 
         &.force-show {
             display: block;
         }
+    }
+
+    &:has(.episode-group.force-show) {
+        display: flex;
     }
 
     .user {
