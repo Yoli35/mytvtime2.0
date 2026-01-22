@@ -60,7 +60,7 @@ export class SeasonComments {
                         const messageDiv = replyToCommentDiv.querySelector(".message");
                         messageDiv.appendChild(gThis.createMessage(comment, commentImages));
                     }
-                    gThis.addUserCommentBadge(comment);
+                    gThis.adjustCommentBadge(comment);
                 });
                 const episodeArr = data['episodeArr'];
                 episodeArr.forEach(ep => {
@@ -97,7 +97,7 @@ export class SeasonComments {
                 const newMessage = this.createMessage(data['comment'], data['images']);
                 gThis.toolTips.init(newMessage);
                 content.appendChild(newMessage);
-                gThis.addUserCommentBadge(data['comment']);
+                gThis.adjustCommentBadge(data['comment']);
             })
             .catch(err => console.log(err));
     }
@@ -234,32 +234,24 @@ export class SeasonComments {
         }
     }
 
-    addUserCommentBadge(comment) {
+    adjustCommentBadge(comment) {
         const episodeId = comment['tmdbId'];
-        const div = document.querySelector('.user-episode .remove-this-episode[data-id="' + episodeId + '"]');
-        const userEpisodeDiv = div.closest(".user-episode");
-        const selectProvider = userEpisodeDiv.querySelector(".select-provider");
-        const svg = document.querySelector("#svgs #comment-badge").cloneNode(true);
-        svg.removeAttribute("id");
-        let badge = userEpisodeDiv.querySelector(".comment-badge");
-        // if (badge) {
-        // Replace ux_icon('mdi:comment-text-outline') by ux_icon('mdi:comment-text')
-        badge.querySelector("svg").remove();
-        badge.appendChild(svg);
-        // TODO: Add comment count
-        // }
-        // badge = document.createElement("div");
-        // badge.classList.add("comment-badge");
-        // badge.setAttribute("data-id", episodeId);
-        // badge.setAttribute("data-title", "1");
-        // const episodeGroup = document.querySelector(".episode-group#episode-comments-" + comment['episodeNumber']);
-        // badge.appendChild(svg);
-        // badge.addEventListener("click", () => {
-        //     episodeGroup.classList.add("force-show");
-        //     episodeGroup.scrollIntoView({behavior: 'smooth', block: 'center'});
-        // });
-        // userEpisodeDiv.insertBefore(badge, selectProvider);
-        // console.log(userEpisodeDiv);
+        const badge = document.querySelector('.user-episode .comment-badge[data-id="' + episodeId + '"]');
+        const count = parseInt(badge.getAttribute("data-count"));
+        let countBadge;
+        if (!count) {
+            const svg = document.querySelector("#svgs #comment-badge").cloneNode(true);
+            svg.removeAttribute("id");
+            badge.querySelector("svg").remove();
+            badge.appendChild(svg);
+            countBadge = document.createElement("div");
+            countBadge.classList.add("count-badge");
+            badge.appendChild(countBadge);
+        } else {
+            countBadge = badge.querySelector(".count-badge");
+        }
+        badge.setAttribute("data-count", (count + 1).toString());
+        countBadge.innerText = (count + 1).toString();
     }
 
     getEpisodeArr() {

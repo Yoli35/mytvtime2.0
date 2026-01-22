@@ -4965,6 +4965,27 @@ h2 {
         }
     }
 
+    .comment-badge {
+        position: relative;
+
+        .count-badge {
+            align-items: center;
+            background-color: var(--red);
+            border-radius: 5rem;
+            bottom: 0.5rem;
+            color: var(--ardoise-10);
+            display: flex;
+            font-size: 0.875rem;
+            font-weight: 500;
+            height: 1.25rem;
+            justify-content: center;
+            min-width: 1.25rem;
+            padding-inline: .25rem;
+            position: absolute;
+            right: 0.25rem;
+        }
+    }
+
     .select-provider, .select-device, .select-vote {
         position: relative;
 
