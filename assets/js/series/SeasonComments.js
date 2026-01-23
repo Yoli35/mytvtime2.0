@@ -93,7 +93,7 @@ export class SeasonComments {
                 const newMessage = gThis.createMessage(data['comment'], data['images']);
                 gThis.adjustCommentBadge(data['comment']);
                 gThis.toolTips.init(newMessage);
-                if (replyToId === 0) {
+                if (replyToId === "0") {
                     input.value = '';
                     input.focus();
                     const footer = button.closest(".episode-group-footer");
@@ -374,6 +374,11 @@ export class SeasonComments {
         form.appendChild(commentInput);
         form.appendChild(imageButton);
         form.appendChild(sendButton);
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            sendButton.click();
+        })
 
         return form;
     }
