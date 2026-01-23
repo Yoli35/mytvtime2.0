@@ -253,6 +253,7 @@ class SeriesService extends AbstractController
         return [
             'Add a comment' => $this->translator->trans('Add a comment'),
             'Add a comment or reply to it for the episode' => $this->translator->trans('Add a comment or reply to it for the episode'),
+            'Add answer' => $this->translator->trans('Add answer'),
             'Add images' => $this->translator->trans('Add images'),
             'Add to favorites' => $this->translator->trans('Add to favorites'),
             'Add' => $this->translator->trans('Add'),

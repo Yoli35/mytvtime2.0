@@ -21,6 +21,7 @@ class SeriesExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
+            new TwigFunction('commentCountBySeries', [SeriesExtensionRuntime::class, 'commentCountBySeries']),
             new TwigFunction('seriesHistory', [SeriesExtensionRuntime::class, 'seriesHistory']),
             new TwigFunction('getUserCountrySettings', [SeriesExtensionRuntime::class, 'getUserCountrySettings']),
         ];

@@ -178,6 +178,21 @@
 
     <div class="navbar-items right">
         {% if app.environment == 'dev' %}
+            <div class="navbar-item">
+                <div class="debug-comment-anchor">{{ ux_icon('mdi:comment-text-outline') }}</div>
+                {% set seriesList = commentCountBySeries() %}
+                <div class="menu debug-comment-menu">
+                    <ul>
+                        {% for sl in seriesList %}
+                            <li class="menu-item">
+                                <a href="{{ path('app_series_season', {id: sl.id, slug: sl.name|slug, seasonNumber: sl.sn}) }}">
+                                    {{ sl.name }} ({{ sl.count }}) - {{ sl.id }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
             {% if route in ['app_series_show', 'app_series_season'] %}
                 <div class="debug">{{ series.id }} / {{ userSeries.id }} / {{ series.tmdbId }}</div>
             {% endif %}

@@ -4,6 +4,7 @@ namespace App\Twig\Runtime;
 
 use App\Entity\Settings;
 use App\Entity\User;
+use App\Repository\EpisodeCommentRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\UserEpisodeRepository;
@@ -14,11 +15,12 @@ use Twig\Extension\RuntimeExtensionInterface;
 readonly class SeriesExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
-        private DateService                   $dateService,
-        private ImageConfiguration            $imageConfiguration,
-        private SeriesRepository              $seriesRepository,
-        private SettingsRepository            $settingsRepository,
-        private UserEpisodeRepository         $userEpisodeRepository
+        private DateService              $dateService,
+        private EpisodeCommentRepository $episodeCommentRepository,
+        private ImageConfiguration       $imageConfiguration,
+        private SeriesRepository         $seriesRepository,
+        private SettingsRepository       $settingsRepository,
+        private UserEpisodeRepository    $userEpisodeRepository
     )
     {
         // Inject dependencies if needed
@@ -99,5 +101,10 @@ readonly class SeriesExtensionRuntime implements RuntimeExtensionInterface
             $country = $user->getCountry() ?? 'FR';
         }
         return $country;
+    }
+
+    public function commentCountBySeries(): array
+    {
+        return $this->episodeCommentRepository->commentCountBySeries();
     }
 }

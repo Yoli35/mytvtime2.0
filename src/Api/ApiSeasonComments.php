@@ -106,6 +106,7 @@ readonly class ApiSeasonComments
         $seasonNumber = $data['seasonNumber'] ?? null;
         $episodeNumber = $data['episodeNumber'] ?? null;
         $episodeId = $data['episodeId'] ?? null;
+        $replyToId = $data['replyToId'] ?? null;
         $message = $data['message'] ?? null;
 
         if (!$seasonNumber || !$episodeNumber || !$episodeId || !$message) {
@@ -124,6 +125,12 @@ readonly class ApiSeasonComments
             message: $message,
             createdAt: $this->now($user),
         );
+        if ($replyToId) {
+            $replyTo = $this->episodeCommentRepository->find($replyToId);
+            if ($replyTo) {
+                $commentEntity->setReplyTo($replyTo);
+            }
+        }
         $this->episodeCommentRepository->save($commentEntity, true);
 
         if (count($files) === 0) {

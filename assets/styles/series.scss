@@ -872,14 +872,14 @@ h2 {
                 //background-color: hsla(from var(--grey-50) h s l / .1);
                 background: linear-gradient(to bottom, hsla(from var(--ardoise-90) h s l / 0) 0%, hsla(from var(--ardoise-90) h s l / 0) 100%);
                 color: var(--ardoise-10);
-                border-radius: .5rem;
+                border-radius: 2.5rem;
                 display: flex;
                 flex-direction: column;
                 gap: clamp(.5rem, 1vw, 2rem);
                 max-height: 100%;
                 justify-content: flex-start;
                 overflow-y: auto;
-                padding: 1rem;
+                padding: 2rem;
                 position: relative;
                 transition: all 0.3s ease-in-out;
                 width: 100%;
@@ -2684,8 +2684,8 @@ h2 {
             width: 100%;
 
             .infos-content {
-                padding-block-end: 3rem;
-                padding-inline: 1rem;
+                /*padding-block-end: 3rem;*/
+                /*padding-inline: 1rem;*/
                 transition: all 0.5s ease-in-out;
                 width: 100%;
 
@@ -3020,7 +3020,7 @@ h2 {
             .number {
                 align-items: center;
                 background-color: var(--orange-50);
-                border-radius: .25rem;
+                border-radius: 5rem;
                 bottom: .5rem;
                 color: var(--ardoise-10);
                 display: flex;
@@ -3028,10 +3028,11 @@ h2 {
                 font-weight: 500;
                 height: 2rem;
                 justify-content: center;
+                left: .5rem;
+                min-width: 2rem;
+                padding-inline: .5rem;
                 position: absolute;
-                right: .5rem;
                 transition: font-size 0.3s ease-in-out, height 0.3s ease-in-out, width 0.3s ease-in-out;
-                width: 2rem;
 
                 &.complete {
                     background-color: var(--user-episode-actions);
@@ -4655,7 +4656,7 @@ h2 {
 }
 
 .episodes-comments {
-    background-color: hsl(0 0 90% / .75);
+    background-color: hsl(0 0% 90% / .75);
     border-radius: 1rem;
     display: flex;
     flex-direction: column;
@@ -4704,15 +4705,6 @@ h2 {
         }
 
         .episode-group-footer {
-            form {
-                align-items: center;
-                display: flex;
-                font-size: 0.875rem;
-                font-weight: 300;
-                gap: .5rem;
-                justify-content: flex-start;
-                margin-block-start: .5rem;
-            }
         }
     }
 
@@ -4729,48 +4721,138 @@ h2 {
         display: flex;
     }
 
-    .user {
-        align-items: center;
+    .comment {
         display: flex;
+        /*flex-direction: column;*/
         gap: .5rem;
 
-        .avatar {
-            border: 2px solid var(--orange-90);
-            border-radius: 50%;
-            flex-shrink: 0;
-            height: 2.25rem;
-            width: 2.25rem;
+        &:last-of-type {
+            margin-block-end: .5rem;
+        }
 
-            &:not(:has(img)) {
-                align-items: center;
-                background-color: var(--ardoise-80);
-                color: var(--ardoise-10);
-                display: flex;
-                font-size: 1.5rem;
-                font-weight: 500;
-                justify-content: center;
-            }
+        .message {
+            background-color: hsla(from var(--ardoise-90) h s l / .05);
+            border-radius: .5rem;
+            display: flex;
+            flex-direction: column;
+            padding: .25rem;
+            width: 100%;
 
-            img {
-                border-radius: 50%;
-                height: 100%;
-                object-fit: cover;
-                width: 100%;
+            .comment {
+                margin-block-start: 0.5rem;
+                margin-inline-start: 1rem;
             }
         }
 
-        .date {
-            font-size: 0.875rem;
-            font-weight: 300;
+        .comment-images {
+            border: 2px dashed var(--orange-50);
+            border-radius: .5rem;
+
+            align-items: center;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            justify-content: center;
+            padding: 1rem;
+            width: fit-content;
+
+            .comment-image {
+                border-radius: .5rem;
+                height: 10rem;
+                width: auto;
+
+                img {
+                    border-radius: .5rem;
+                    height: 100%;
+                    object-fit: cover;
+                    width: auto;
+                }
+            }
         }
     }
+
+    .answer-button {
+        background-color: hsla(from var(--green-50) h s l / .5);
+        border-radius: 5rem;
+        cursor: pointer;
+        display: inline-flex;
+        font-size: .875rem;
+        font-weight: 300;
+        padding-inline: .75rem;
+        width: fit-content;
+    }
+}
+
+.comment-user {
+    align-items: center;
+    background-color: var(--orange-30);
+    border-radius: 5rem;
+    display: inline-flex;
+    gap: .5rem;
+    height: 2.25rem;
+    width: fit-content;
+
+    .avatar {
+        border: 2px solid var(--orange-30);
+        border-radius: 50%;
+        flex-shrink: 0;
+        height: 2.25rem;
+        width: 2.25rem;
+
+        &:not(:has(img)) {
+            align-items: center;
+            background-color: var(--ardoise-80);
+            color: var(--ardoise-10);
+            display: flex;
+            font-size: 1.5rem;
+            font-weight: 500;
+            justify-content: center;
+        }
+
+        img {
+            border-radius: 50%;
+            height: 100%;
+            object-fit: cover;
+            width: 100%;
+        }
+    }
+
+    .date {
+        font-size: 0.875rem;
+        font-weight: 300;
+        padding-inline-end: 1rem;
+    }
+}
+
+.comment-form {
+    align-items: center;
+    display: flex;
+    font-size: 0.875rem;
+    font-weight: 300;
+    gap: .5rem;
+    justify-content: flex-start;
+    margin-block-start: .5rem;
 
     input[type=text] {
         background-color: hsl(from var(--orange) h s l /.2);
         border-radius: 5rem;
         border: none;
         padding: .25rem .5rem;
-        width: min(64rem, 80%);
+    }
+
+    &.to-episode {
+        input[type=text] {
+            width: min(64rem, 80%);
+        }
+    }
+
+    &.to-comment {
+        flex-direction: row;
+        width: 42rem;
+
+        input[type=text] {
+            width: min(32rem, 80%);
+        }
     }
 
     .add-image-button {
@@ -4808,54 +4890,6 @@ h2 {
         svg {
             height: 1.25rem;
             width: 1.25rem;
-        }
-    }
-
-    .comment {
-        display: flex;
-        flex-direction: column;
-        gap: .5rem;
-
-        &:last-of-type {
-            margin-block-end: .5rem;
-        }
-
-        .message {
-            background-color: hsla(from var(--ardoise-90) h s l / .05);
-            border-radius: .5rem;
-            padding: .25rem;
-            width: 100%;
-
-            .comment {
-                margin-block-start: 0.5rem;
-                margin-inline-start: 1rem;
-            }
-        }
-
-        .comment-images {
-            border: 2px dashed var(--orange-50);
-            border-radius: .5rem;
-
-            align-items: center;
-            display: flex;
-            flex-wrap: wrap;
-            gap: .5rem;
-            justify-content: center;
-            padding: 1rem;
-            width: fit-content;
-
-            .comment-image {
-                border-radius: .5rem;
-                height: 10rem;
-                width: auto;
-
-                img {
-                    border-radius: .5rem;
-                    height: 100%;
-                    object-fit: cover;
-                    width: auto;
-                }
-            }
         }
     }
 }
@@ -5226,7 +5260,6 @@ h2 {
     background-color: hsla(from var(--orange) h s l / .75);
     border-radius: 25rem;
     color: var(--ardoise-10);
-    cursor: pointer;
     display: flex;
     font-size: 2.5rem;
     font-weight: 300;
