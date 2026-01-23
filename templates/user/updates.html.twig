@@ -18,6 +18,59 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>63ᵉ mise à jour : 22/01/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Update series.scss to improve comment and episode group display</div>
+                        <div class="details">Adjusts selectors to hide elements without comments and ensures elements with .episode-group.force-show are displayed. This improves the conditional visibility of episode groups and comments in the UI.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Add comment count badge to episode comments</div>
+                        <div class="details">Introduces a visual count badge to the episode comment icon, updating dynamically as comments are added. Updates JavaScript logic to increment and display the comment count, adds corresponding styles for the count badge, and initializes the badge in the episode template with a default count of 0.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Add episode comment badge as episode marked as viewed</div>
+                        <div class="details">Add a comment badge when adding a viewed episode in the season view, updates JavaScript to handle the creation and removal of comment badges, and adds a new translation key for episode comment tooltips. Also adds a new SVG icon for outlined comment badges in the template.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Temporarily show episode group on badge click</div>
+                        <div class="details">Adds logic to remove the 'force-show' class from episodeGroup 2 minutes after a badge is clicked, ensuring the group is only highlighted temporarily or that a comment has been added in the meantime.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Enhance episode comment badge functionality and UI</div>
+                        <div class="details">Improved the comment badge for episodes by updating its SVG icon, adding click event handling to reveal and scroll to the comment section, and adjusting its placement in the UI. Updated styles to hide episode groups without comments unless forced to show, and added a new translation for the comment badge tooltip. Also fixed a potential null dereference in ApiSeasonComments.php when retrieving the localized series name.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Add image support to season comment creation</div>
+                        <div class="details">Updated the backend to return uploaded images with new comments and modified the frontend to handle and display these images when a comment is added.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-css3') }}→ Update color variables, button style, and remove unused code</div>
+                        <div class="details">Adjusted red color variables in _variables.scss for improved color contrast. Increased border-radius of .add-location-button in map.scss for a more rounded appearance. Removed commented-out notification code in Menu.js and cleaned up commented script in base.html.twig.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Add support for images in episode comments</div>
+                        <div class="details">Introduces the ability to upload and display images with episode comments. Adds new EpisodeCommentImage entity and repository, updates the API to handle image uploads, and modifies the frontend to support image selection, preview, and display. Updates styles and translations to accommodate the new feature, and includes a dialog for image selection in the UI.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Add comment badge to user episode actions</div>
+                        <div class="details">Introduces a comment badge icon to user episode actions, visually indicating episodes with user comments. Updates JavaScript to insert the badge when a comment is present, adds corresponding SVG icon to the template, and styles the badge in the SCSS.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Add episode comment posting for seasons</div>
+                        <div class="details">Implemented frontend and backend support for users to post comments on individual episodes within a season. Added new API endpoint for comment creation, updated JS to handle comment submission and rendering, refactored comment display, and enhanced styles for the comment UI. Also updated translations and template to support the new feature.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Refactor season comments to separate module</div>
+                        <div class="details">Moved episode comments logic from Season.js to a new SeasonComments.js module for better separation of concerns. Updated Season.js to use the new module. Adjusted styles for .episodes-comments and updated importmap.php to include SeasonComments.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text') }}→ Add per-episode comment groups and UI enhancements</div>
+                        <div class="details">Refactored episode comments to group by episode, added UI for 'Add a comment' per episode, and improved episode group rendering in Season.js. Updated styles for episode group headers and comment buttons. Extended backend to return episode arrays with comment counts, and added translation for 'Add a comment' in both PHP and French translation files.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>62ᵉ mise à jour : 19/01/2026</h2>
                 <ul>
                     <li>
