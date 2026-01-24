@@ -569,10 +569,57 @@
         }
 
         .form-row:has(button[type="submit"]) {
-            justify-content: flex-start;
-
             button[type="submit"] {
-                font-size: 2rem;
+                font-size: 1.5rem;
+                margin-inline-start: auto;
+                padding-inline: 1.5rem;
+            }
+        }
+    }
+
+    .security {
+        background-color: var(--green);
+        border-radius: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-block: 2rem;
+        padding: 1.5rem;
+
+        p {
+            font-size: 1.5rem;
+            font-weight: 300;
+        }
+
+        a, ul li button {
+            background-color: var(--green-70);
+            border-radius: 5rem;
+            color: var(--green-20);
+            padding: 0.5rem 1rem;
+            width: fit-content;
+
+            &:has(svg) {
+                align-items: center;
+                display: flex;
+                gap: 1rem;
+                padding-inline-start: .5rem;
+
+                svg {
+                    height: 1.75rem;
+                    width: 1.75rem;
+                }
+            }
+        }
+
+        ul {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            list-style-type: none;
+
+            li {
+                width: fit-content;
             }
         }
     }

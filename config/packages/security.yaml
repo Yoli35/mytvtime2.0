@@ -43,6 +43,10 @@ security:
         # - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/api/series, roles: PUBLIC_ACCESS }
 
+        # Connexions / liaison OAuth (avec locale fr|en|ko)
+        - { path: ^/(fr|en|ko)/account/connections, roles: ROLE_USER }
+        - { path: ^/(fr|en|ko)/connect, roles: ROLE_USER }
+
 when@test:
     security:
         password_hashers:

@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+{% block title %}my Tv Time → {{ 'Connexions'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
+{% endblock %}
+{% block body %}
+    {% include('_blocks/_menu.html.twig') %}
+    <div class="container-fluid user-profile-container">
+        <div class="user-profile">
+            <div class="security">
+                <h1>{{ 'Connexions'|trans }}</h1>
+
+                <ul>
+                    <li>
+                        {% if linked.google %}
+                            <form method="post" action="{{ path('app_oauth_unlink', { _locale: app.request.locale, provider: 'google' }) }}"
+                                  onsubmit="return confirm({{ 'Confirm deletion of Google link?'|trans }});">
+                                <input type="hidden" name="_token" value="{{ csrf_token('unlink_oauth_google') }}">
+                                <button type="submit">{{ ux_icon('mdi:google') }} {{ 'Unlink Google'|trans }}</button>
+                            </form>
+                        {% else %}
+                            <a href="{{ path('app_oauth_connect', { _locale: app.request.locale, provider: 'google' }) }}">{{ ux_icon('mdi:google') }} {{ 'Link Google'|trans }}</a>
+                        {% endif %}
+                    </li>
+
+                    <li>
+                        {% if linked.github %}
+                            <form method="post" action="{{ path('app_oauth_unlink', { _locale: app.request.locale, provider: 'github' }) }}"
+                                  onsubmit="return confirm({{ 'Confirm deletion of Github link?'|trans }});">
+                                <input type="hidden" name="_token" value="{{ csrf_token('unlink_oauth_github') }}">
+                                <button type="submit">{{ ux_icon('mdi:github') }} {{ 'Unlink GitHub'|trans }}</button>
+                            </form>
+                        {% else %}
+                            <a href="{{ path('app_oauth_connect', { _locale: app.request.locale, provider: 'github' }) }}">{{ ux_icon('mdi:github') }} {{ 'Link GitHub'|trans }}</a>
+                        {% endif %}
+                    </li>
+
+{#                    <li>#}
+{#                        {% if linked.apple %}#}
+{#                            <form method="post" action="{{ path('app_oauth_unlink', { _locale: app.request.locale, provider: 'apple' }) }}"#}
+{#                                  onsubmit="return confirm({{ 'Confirmer la suppression de la liaison Apple ?'|trans }});">#}
+{#                                <input type="hidden" name="_token" value="{{ csrf_token('unlink_oauth_apple') }}">#}
+{#                                <button type="submit">{{ ux_icon('mdi:apple') }} {{ 'Unlink Apple'|trans }}</button>#}
+{#                            </form>#}
+{#                        {% else %}#}
+{#                            <a href="{{ path('app_oauth_connect', { _locale: app.request.locale, provider: 'apple' }) }}">{{ ux_icon('mdi:apple') }} {{ 'Link Apple'|trans }}</a>#}
+{#                        {% endif %}#}
+{#                    </li>#}
+
+                    <li>
+                        <a href="{{ path('app_user_profile') }}">{{ ux_icon('mdi:account') }} {{ 'Back to my account'|trans }}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% include('_blocks/_footer.html.twig') %}
+
+{% endblock %}

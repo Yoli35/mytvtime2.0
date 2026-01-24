@@ -1,0 +1,52 @@
+knpu_oauth2_client:
+    clients:
+        # configure your clients as described here: https://github.com/knpuniversity/oauth2-client-bundle#configuration
+
+        # will create service: "knpu.oauth2.client.apple"
+        # an instance of: KnpU\OAuth2ClientBundle\Client\Provider\AppleClient
+        # composer require patrickbussmann/oauth2-apple
+        apple:
+            # must be "apple" - it activates that type!
+            type: apple
+            # add and set these environment variables in your .env files
+            client_id: '%env(OAUTH_APPLE_CLIENT_ID)%'
+            # a route name you'll create
+            redirect_route: connect_apple_check
+            redirect_params: {}
+            team_id: null
+            key_file_id: null
+            key_file_path: null
+            # whether to check OAuth2 "state": defaults to true
+            # use_state: true
+
+        google:
+            type: google
+            client_id: '%env(resolve:OAUTH_GOOGLE_CLIENT_ID)%'
+            client_secret: '%env(resolve:OAUTH_GOOGLE_CLIENT_SECRET)%'
+            redirect_route: app_oauth_check
+            redirect_params:
+                provider: google
+
+        github_fr:
+            type: github
+            client_id: '%env(resolve:OAUTH_GITHUB_FR_CLIENT_ID)%'
+            client_secret: '%env(resolve:OAUTH_GITHUB_FR_CLIENT_SECRET)%'
+            redirect_route: app_oauth_check
+            redirect_params:
+                provider: github
+
+        github_en:
+            type: github
+            client_id: '%env(resolve:OAUTH_GITHUB_EN_CLIENT_ID)%'
+            client_secret: '%env(resolve:OAUTH_GITHUB_EN_CLIENT_SECRET)%'
+            redirect_route: app_oauth_check
+            redirect_params:
+                provider: github
+
+        github_ko:
+            type: github
+            client_id: '%env(resolve:OAUTH_GITHUB_KO_CLIENT_ID)%'
+            client_secret: '%env(resolve:OAUTH_GITHUB_KO_CLIENT_SECRET)%'
+            redirect_route: app_oauth_check
+            redirect_params:
+                provider: github

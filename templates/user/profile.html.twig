@@ -98,7 +98,20 @@
                 <button type="submit">{{ 'Update'|trans }}</button>
             </div>
             {{ form_end(form) }}
+
+            <div class="security">
+                <h2>{{ 'Security'|trans }}</h2>
+                <p>
+                    <small>
+                        {{ 'Link or unlink external accounts (Google, GitHub, Apple)'|trans }}
+                    </small>
+                </p>
+                <a href="{{ path('app_account_connections', { _locale: app.request.locale }) }}">
+                    {{ 'Manage connections'|trans }}
+                </a>
+            </div>
         </div>
+
         {% if app.user.id == 1 %}
             <div class="translation-settings glowing-border right">
                 <h2>{{ 'Translation Settings'|trans }}</h2>

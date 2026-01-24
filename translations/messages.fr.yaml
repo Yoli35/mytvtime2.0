@@ -1343,21 +1343,34 @@ Your message has been sent: Votre message a été envoyé
 An error occurred, please try again later: Une erreur s'est produite, veuillez réessayer plus tard
 
 # User / Profile
-Profile: Profil
-Preferred Language: Langue préférée
 Avatar: Avatar
+Back to my account: Retour à mon compte
 Banner: Bannière
 Choose a color: Choisir une couleur
-Update: Mettre à jour
+Confirm deletion of Apple link?: Confirmer la suppression de la liaison Apple ?
+Confirm deletion of Github link?: Confirmer la suppression de la liaison GitHub ?
+Confirm deletion of Google link?: Confirmer la suppression de la liaison Google ?
 Drop your file here or click to upload: Déposez votre image ou cliquez ici pour la choisir
 Filter: Filtre
-Start taping...: Commencez à taper...
-See selected: Voir la sélection
-Translation Settings: Paramètres de traduction
-You can change the translations of the application here.: Vous pouvez modifier les traductions de l'application ici.
-Select Language: Sélectionner la langue
-Targeted Languages: Langues cibles
+Link Apple: Lier Apple
+Link GitHub: Lier GitHub
+Link Google: Lier Google
+Link or unlink external accounts (Google, GitHub, Apple): Lier ou délier des comptes externes (Google, GitHub, Apple)
+Manage connections: Gérer les connexions
+Preferred Language: Langue préférée
 Preferred Languages: Langues préférées
+Profile: Profil
+See selected: Voir la sélection
+Select Language: Sélectionner la langue
+Start taping...: Commencez à taper...
+Targeted Languages: Langues cibles
+Translation Settings: Paramètres de traduction
+Unlink Apple: Délier Apple
+Unlink GitHub: Délier GitHub
+Unlink Google: Délier Google
+Connexions:	Connexions
+Update: Mettre à jour
+You can change the translations of the application here.: Vous pouvez modifier les traductions de l'application ici.
 
 # Movies
 '%minutes% minutes': '%minutes% minutes'
