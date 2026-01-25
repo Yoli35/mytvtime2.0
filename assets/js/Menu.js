@@ -111,6 +111,7 @@ export class Menu {
         gThis = this;
         this.root = document.documentElement;
         this.userMenu = document.querySelector(".menu.user");
+        this.userConnected = this.userMenu.getAttribute("data-user-connected") === "true";
         this.accentColor = this.userMenu.querySelector(".accent-color-settings");
         this.scheduleRange = this.userMenu.querySelector(".schedule-range-settings");
         this.whatNext = this.userMenu.querySelector(".what-next-settings");
@@ -288,6 +289,9 @@ export class Menu {
 
 
     initMultiSearch(navbar) {
+        if (!this.userConnected) {
+            return;
+        }
         const multiSearch = navbar.querySelector("#multi-search");
         const multiSearchDiv = navbar.querySelector(".multi-search");
         const magnifyingGlassSpan = multiSearchDiv.querySelector(".magnifying-glass");
@@ -390,6 +394,9 @@ export class Menu {
     }
 
     posterPreview() {
+        if (!this.userConnected) {
+            return;
+        }
         const eotdMenuItems = document.querySelectorAll("a[id^='eotd-menu-item-']");
         eotdMenuItems.forEach((item) => {
             const group = item.id.split("-")[3]; // eotd-menu-item-{group}-{id}
@@ -484,17 +491,17 @@ export class Menu {
     }
 
     initOptions() {
-        if (this.userMenu) {
+        if (this.userConnected) {
             this.accentColor.addEventListener("click", this.setAccentColor);
             this.scheduleRange.addEventListener("click", this.setScheduleRange);
             this.whatNext.addEventListener("click", this.setWhatNext);
             this.menuPreview.addEventListener("click", this.togglePreview);
-            this.menuThemes.forEach((theme) => {
-                theme.addEventListener("click", this.setTheme);
-            });
-            this.initTheme();
             this.initPreview();
         }
+        this.menuThemes.forEach((theme) => {
+            theme.addEventListener("click", this.setTheme);
+        });
+        this.initTheme();
     }
 
     updateMainMenu() {
