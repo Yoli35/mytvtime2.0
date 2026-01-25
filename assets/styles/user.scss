@@ -449,7 +449,8 @@
 }
 
 .glowing-border {
-    --gradient-glow: red, orange, yellow, green, blue, indigo, violet, red;
+    --gradient-glow: transparent 0deg, var(--orange) 45deg, transparent 90deg, var(--orange) 135deg, transparent 180deg, var(--orange) 225deg, transparent 270deg, var(--orange) 315deg, transparent 360deg;
+    /*--gradient-glow: red, orange, yellow, green, blue, indigo, violet, red;*/
     /*--gradient-glow: var(--orange-80), var(--orange-20), var(--green-80), var(--green-20), var(--green-80), var(--orange-20), var(--orange-80);*/
 
     animation: glow 10s linear infinite;
