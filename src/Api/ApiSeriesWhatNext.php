@@ -56,11 +56,9 @@ readonly class ApiSeriesWhatNext
         }, $userSeries);
         $blocks = [];
         foreach ($userSeries as $series) {
-            $blocks[] = ($this->renderView)('_blocks/series/_card.html.twig', [
+            $blocks[] = ($this->renderView)('_blocks/series/_card_what_next.html.twig', [
                 'series' => $series,
-                'home' => true,
-                'allFiltered' => true,
-                'sort' => $filters['sort'],
+                'link_type' => $settings['link_to']
             ]);
         }
 
@@ -87,9 +85,9 @@ readonly class ApiSeriesWhatNext
             }, $similarSeries['results']);
             $similarSeries = array_slice($similarSeries, 0, $missingCount);
             foreach ($similarSeries as $series) {
-                $blocks[] = ($this->renderView)('_blocks/series/_card.html.twig', [
+                $blocks[] = ($this->renderView)('_blocks/series/_card_what_next.html.twig', [
                     'series' => $series,
-                    'home' => true,
+                    'link_type' => 'tmdb'
                 ]);
             }
         }
@@ -100,6 +98,7 @@ readonly class ApiSeriesWhatNext
             'sortOption' => $optionStrings['sort'][$settings['sort']],
             'orderOption' => $optionStrings['order'][$settings['order']],
             'limitOption' => $settings['limit'],
+            'linkOption' => $settings['link_to'],
         ]);
     }
 
@@ -111,9 +110,11 @@ readonly class ApiSeriesWhatNext
                 'default_limit' => 20,
                 'default_order' => 'DESC',
                 'default_sort' => 'lastWatched',
+                'default_link_to' => 'series',
                 'limit' => 20,
                 'order' => 'DESC',
                 'sort' => 'lastWatched',
+                'link_to' => 'series',
             ]);
             $this->settingsRepository->save($settings, true);
         }

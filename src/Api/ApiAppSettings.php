@@ -169,6 +169,7 @@ readonly class ApiAppSettings
                 'limit' => $settings['default_limit'],
                 'sort' => $settings['default_sort'],
                 'order' => $settings['default_order'],
+                'link_to' => $settings['default_link_to']
             ];
             $settingsEntity->setData($settings);
             $this->settingsRepository->save($settingsEntity, true);
@@ -179,6 +180,7 @@ readonly class ApiAppSettings
                 'limit' => $settings['default_limit'],
                 'sort' => $settings['default_sort'],
                 'order' => $settings['default_order'],
+                'link_to' => $settings['default_link_to']
             ]);
         }
         return ($this->json)([
@@ -187,6 +189,7 @@ readonly class ApiAppSettings
             'limit' => $settings['limit'],
             'sort' => $settings['sort'],
             'order' => $settings['order'],
+            'link_to' => $settings['link_to'],
         ]);
     }
 
@@ -209,10 +212,12 @@ readonly class ApiAppSettings
         $limit = intval($inputBag->get("limit", $settings['default_limit']));
         $sort = $inputBag->get("sort", $settings['default_sort']);
         $order = $inputBag->get("order", $settings['default_order']);
+        $linkTO = $inputBag->get("link_to", $settings['default_link_to']);
 
         $settings['limit'] = $limit;
         $settings['sort'] = $sort;
         $settings['order'] = $order;
+        $settings['link_to'] = $linkTO;
 
         $settingsEntity->setData($settings);
         $this->settingsRepository->save($settingsEntity, true);
@@ -222,6 +227,7 @@ readonly class ApiAppSettings
             'limit' => $settings['limit'],
             'sort' => $settings['sort'],
             'order' => $settings['order'],
+            'link_to' => $settings['link_to'],
         ]);
     }
 }

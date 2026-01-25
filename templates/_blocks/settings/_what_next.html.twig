@@ -13,8 +13,8 @@
     <label for="what-next-select-order">
         {{ 'Order'|trans }}
         <select id="what-next-select-order">
-            <option value="DESC">{{ 'Descendant'|trans }}</option>
-            <option value="ASC">{{ 'Ascendant'|trans }}</option>
+            <option value="DESC">{{ 'Descending'|trans }}</option>
+            <option value="ASC">{{ 'Ascending'|trans }}</option>
         </select>
     </label>
     <label for="what-next-select-limit">
@@ -24,6 +24,13 @@
             <option value="20">20</option>
             <option value="50">50</option>
             <option value="100">100</option>
+        </select>
+    </label>
+    <label for="what-next-select-link-to">
+        {{ 'Link to'|trans }}
+        <select id="what-next-select-link-to">
+            <option value="series">{{ 'Series'|trans }}</option>
+            <option value="season">{{ 'Season'|trans }}</option>
         </select>
     </label>
     <div class="row">

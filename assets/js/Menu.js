@@ -973,10 +973,12 @@ export class Menu {
                 const sortSelect = whatNextDialog.querySelector("#what-next-select-sort");
                 const orderSelect = whatNextDialog.querySelector("#what-next-select-order");
                 const limitSelect = whatNextDialog.querySelector("#what-next-select-limit");
+                const linkToSelect = whatNextDialog.querySelector("#what-next-select-link-to");
                 console.log(data);
                 sortSelect.value = data['sort'];
                 orderSelect.value = data['order'];
                 limitSelect.value = data['limit'];
+                linkToSelect.value = data['link_to'];
             })
             .catch((error) => {
                 console.log(error);
@@ -988,12 +990,13 @@ export class Menu {
         const sortSelect = whatNextDialog.querySelector("#what-next-select-sort");
         const orderSelect = whatNextDialog.querySelector("#what-next-select-order");
         const limitSelect = whatNextDialog.querySelector("#what-next-select-limit");
+        const linkToSelect = whatNextDialog.querySelector("#what-next-select-link-to");
         fetch("/api/settings/what/next/update", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({sort: sortSelect.value, order: orderSelect.value, limit: limitSelect.value})
+            body: JSON.stringify({sort: sortSelect.value, order: orderSelect.value, limit: limitSelect.value, link_to: linkToSelect.value})
         })
             .then(response => response.json())
             .then(data => {

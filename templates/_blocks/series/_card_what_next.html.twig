@@ -1,0 +1,35 @@
+<div class="card" data-title="{{ series.localized_name ?? series.sln_name ?? series.name }}">
+    {% if link_type == 'tmdb' %}
+        {% set url = path('app_series_tmdb', {'id': series.id, 'slug': series.slug|length  ?series.slug : 'no-slug' }) %}
+    {% elseif link_type == 'series' %}
+        {% set url = path('app_series_show', {'id': series.id, 'slug': series.localized_slug ?? series.slug }) %}
+        {% elseif link_type == 'season' %}
+            {% set url = path('app_series_season', {'id': series.id, 'slug': series.localized_slug ?? series.slug, seasonNumber: series.next_episode_season_number }) ~ '#episode-' ~ series.next_episode_season_number ~ '-' ~ series.next_episode_episode_number %}
+    {% endif %}
+    <a href="{{ url }}" {% if target is defined %} target="{{ target }}"{% endif %}>
+        <div class="poster">
+            {% if series.poster_path %}
+                <img src="{{ series.poster_path }}" alt="{{ series.name }}">
+            {% else %}
+                <div>{{ 'No poster'|trans }}</div>
+            {% endif %}
+            <div class="series-infos">
+                <div class="air-date" data-title="{{ 'Episode air date'|trans }}">{{ series.final_air_date|format_date('relative_full')|capitalize }}</div>
+                <div class="episode-number" data-title="{{ 'Next episode'|trans }}">{{ 'S%02dE%02d'|format(series.next_episode_season_number, series.next_episode_episode_number) }}</div>
+            </div>
+            {% if series.progress is defined %}
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ series.progress }}%"></div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="infos">
+            <div class="name">
+                {{ series.localized_name ?? series.sln_name ?? series.name }}
+            </div>
+            {% if series.tmdb is not defined %}
+                {{ include('_blocks/list/_tools.html.twig', {seriesId: series.tmdb_id ?? series.tmdbId, seriesName: series.sln_name, isSeriesInList: series.is_series_in_list}) }}
+            {% endif %}
+        </div>
+    </a>
+</div>
