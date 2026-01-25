@@ -1097,7 +1097,6 @@ label:has(input[type="text"]) {
     }
 
     .avatar {
-        background-color: var(--orange-50);
         border-radius: 50%;
         flex-shrink: 0;
         z-index: 11;
@@ -1113,6 +1112,7 @@ label:has(input[type="text"]) {
         .svg {
             align-items: center;
             aspect-ratio: 1 / 1;
+            backdrop-filter: blur(.25rem);
             border: 4px solid;
             border-radius: 50%;
             display: flex;
@@ -1437,10 +1437,10 @@ label:has(input[type="text"]) {
         &.active {
             background-color: var(--green-50);
 
-            &::after {
+            /*&::after {
                 content: "*";
                 margin-inline-start: auto;
-            }
+            }*/
         }
 
         &.watched {
@@ -1963,9 +1963,9 @@ section:has(.pages) {
 .login, .register {
 
     form {
-        background-color: hsla(from var(--ardoise-80) h s l / .5);
+        background-color: hsla(from var(--green) h s l / .5);
         border-radius: 1rem;
-        border: 2px solid hsla(from var(--ardoise-20) h s l / .5);
+        border: 4px solid hsla(from var(--ardoise-20) h s l / .25);
         display: flex;
         flex-direction: column;
         gap: 1rem;
@@ -1997,11 +1997,12 @@ section:has(.pages) {
 
                 input[type="text"],
                 input[type="password"] {
-                    background-color: hsla(from var(--ardoise-80) h s l / .5);
-                    border: 1px solid hsla(from var(--ardoise-20) h s l / .5);
-                    border-radius: .25rem;
+                    background-color: hsla(from var(--green-80) h s l/0.5);
+                    border: 2px solid hsla(from var(--green-20) h s l/0.5);
+                    border-radius: 5rem;
                     color: var(--ardoise-10);
-                    padding: .5rem;
+                    padding-block: 0.5rem;
+                    padding-inline: 1rem;
                     transition: border-color .250ms;
                     width: 100%;
 
@@ -2052,21 +2053,11 @@ section:has(.pages) {
             justify-content: flex-end;
             width: 100%;
 
-            button[type="submit"] {
-                background-color: var(--orange-50);
-                border: 1px solid var(--orange-60);
-                border-radius: .25rem;
-                color: var(--orange-90);
-                cursor: pointer;
-                padding-block: .25rem;
-                padding-inline: 1rem;
-            }
-
-            button[type="button"] {
-                background-color: var(--ardoise-50);
-                border: 1px solid var(--ardoise-60);
-                border-radius: .25rem;
-                color: var(--ardoise-90);
+            button {
+                background-color: var(--green-50);
+                border: none;
+                border-radius: 5rem;
+                color: var(--green-10);
                 cursor: pointer;
                 padding-block: .25rem;
                 padding-inline: 1rem;

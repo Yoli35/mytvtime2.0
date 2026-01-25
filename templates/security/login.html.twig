@@ -23,28 +23,10 @@
                     {# See https://symfony.com/doc/current/security/remember_me.html #}
                     <div class="remember-me">
                         <label>
-                            <input type="checkbox" switch name="_remember_me"><span>{{ 'Remember me'|trans }}</span>
+                            <input type="checkbox" switch name="_remember_me" checked><span>{{ 'Remember me'|trans }}</span>
                         </label>
                     </div>
-
-                    <hr>
-
-                    <div class="social-login">
-                        <div class="social-login-title">{{ 'Other sign-in methods'|trans }}</div>
-                        <p><small>{{ 'Available after you sign in: link Google / GitHub in your profile.'|trans }}</small></p>
-
-                        <button type="button" class="btn btn-outline" disabled data-title="Disponible après connexion">
-                            {{ 'Sign in with Google'|trans }}
-                        </button>
-                        <button type="button" class="btn btn-outline" disabled data-title="Disponible après connexion">
-                            {{ 'Sign in with GitHub'|trans }}
-                        </button>
-{#                        <button type="button" class="btn btn-outline" disabled title="Disponible après connexion">#}
-{#                            {{ 'Sign in with Apple'|trans }}#}
-{#                        </button>#}
-                    </div>
                 </div>
-
                 <div class="footer">
                     <button type="button"><a href="{{ path('app_home_index') }}">{{ 'Home'|trans }}</a></button>
                     <button type="button"><a href="{{ path('app_register') }}">{{ 'Register'|trans }}</a></button>
