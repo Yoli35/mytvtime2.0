@@ -4,7 +4,7 @@
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-    <div class="container-fluid">
+    <div class="container-fluid" style="background-image: url('{{ bgImage }}'); background-size: cover; background-position: center;">
         <div class="login">
             <form action="{{ path('app_login') }}" method="post">
                 {% if error %}

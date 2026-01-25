@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
+use App\Service\ImageService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,11 +20,11 @@ use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class RegistrationController extends AbstractController
 {
-    private EmailVerifier $emailVerifier;
-
-    public function __construct(EmailVerifier $emailVerifier)
+    public function __construct(
+        private readonly EmailVerifier $emailVerifier,
+        private readonly ImageService $imageService
+    )
     {
-        $this->emailVerifier = $emailVerifier;
     }
 
     #[Route('/{_locale}/register', name: 'app_register', requirements: ['_locale' => 'fr|en|ko'])]
@@ -47,7 +48,7 @@ class RegistrationController extends AbstractController
 
             // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-                (new TemplatedEmail())
+                new TemplatedEmail()
                     ->from(new Address('ojm16@free.fr', 'Contact my TvTime'))
                     ->to($user->getEmail())
                     ->subject('Please Confirm your Email')
@@ -61,6 +62,7 @@ class RegistrationController extends AbstractController
 
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form,
+            'bgImage' => $this->imageService->getRandomBlurredPosters(),
         ]);
     }
 
@@ -79,7 +81,6 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_register');
         }
 
-        // validate email confirmation link, sets User::isVerified=true and persists
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $user);
         } catch (VerifyEmailExceptionInterface $exception) {

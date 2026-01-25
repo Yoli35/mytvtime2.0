@@ -4,7 +4,7 @@
 
 {% block body %}
     {% include('_blocks/_menu.html.twig') %}
-    <div class="container-fluid">
+    <div class="container-fluid" style="background-image: url('{{ bgImage }}'); background-size: cover; background-position: center;">
         {% for flash_error in app.flashes('verify_email_error') %}
             <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
         {% endfor %}
@@ -52,7 +52,7 @@
                 </label>
                 <div class="remember-me">
                     <label for="{{ registrationForm.agreeTerms.vars.id }}">
-                        <input type="checkbox" switch name="{{ field_name(registrationForm.agreeTerms) }}" id="{{ registrationForm.agreeTerms.vars.id }}">
+                        <input type="checkbox" switch checked name="{{ field_name(registrationForm.agreeTerms) }}" id="{{ registrationForm.agreeTerms.vars.id }}">
                         <span>{{ registrationForm.agreeTerms.vars.label|trans }}</span>
                     </label>
                 </div>

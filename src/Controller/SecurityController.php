@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\ImageService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -9,6 +10,10 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+    public function __construct(private readonly ImageService $imageService)
+    {
+    }
+
     #[Route('/{_locale}/login', name: 'app_login', requirements: ['locale' => 'fr|en|ko'], methods: ['GET', 'POST'])]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -21,6 +26,7 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error,
+            'bgImage' => $this->imageService->getRandomBlurredPosters(),
         ]);
     }
 

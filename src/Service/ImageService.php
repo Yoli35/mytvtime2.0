@@ -745,4 +745,16 @@ class ImageService extends AbstractController
     {
         return $this->getParameter('kernel.project_dir');
     }
+
+    public function getRandomBlurredPosters(): string
+    {
+        $blurredPostersDir = $this->getParameter('kernel.project_dir') . "/public/series/posters_blurred";
+
+        // Retourne le nom d'un fichier aléatoire dans le dossier $blurredPostersDir
+        $files = array_diff(scandir($blurredPostersDir), ['.', '..']);
+        if (empty($files)) {
+            return '';
+        }
+        return "/series/posters_blurred/" . $files[array_rand($files)];
+    }
 }
