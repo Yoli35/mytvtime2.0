@@ -13,7 +13,7 @@ import {Menu} from 'Menu';
 import {Map} from 'Map';
 import {Movie} from 'Movie';
 import {MovieIndex} from 'MovieIndex';
-import {NavBar} from 'NavBar';
+// import {NavBar} from 'NavBar';
 import {NetworkAndProvider} from "NetworkAndProvider";
 import {PeopleShow} from "PeopleShow";
 import {PeopleStar} from "PeopleStar";
@@ -31,7 +31,7 @@ import {Video} from 'Video';
 
 window.addEventListener("DOMContentLoaded", () => {
 
-    const navBar = new NavBar();
+    // const navBar = new NavBar();
     const menu = new Menu();
     menu.init();
 

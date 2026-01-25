@@ -21,9 +21,9 @@ export class NavBar {
         // this.debugDiv.classList.add("debug");
         // body.appendChild(this.debugDiv);
 
-        this.setOpacity();
-        window.addEventListener("scroll", this.setOpacity);
-        window.addEventListener("resize", this.setOpacity);
+        // this.setOpacity();
+        // window.addEventListener("scroll", this.setOpacity);
+        // window.addEventListener("resize", this.setOpacity);
         /*window.addEventListener("mousemove", (e) => {
             const distance = e.clientY - (navBarBounds.top + navBarBounds.height);
             // Si distance > 200 → opacity = 0

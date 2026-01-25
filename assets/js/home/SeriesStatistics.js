@@ -17,6 +17,9 @@ export class SeriesStatistics {
     adjustLayout() {
         const homeContentDiv = document.querySelector('.home-content');
         const seriesStatusDiv = homeContentDiv.querySelector('.series-status');
+        if (!seriesStatusDiv) {
+            return;
+        }
         const statusTitleDiv = seriesStatusDiv.querySelector('.status-title');
         const statusItemsDiv = seriesStatusDiv.querySelector('.status-items');
         const statusItemDivs = statusItemsDiv.querySelectorAll('.status-item');
