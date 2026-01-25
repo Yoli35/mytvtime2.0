@@ -21,14 +21,13 @@ readonly class ApiAppSettings
         private Closure            $json,
         #[AutowireMethodOf(ControllerHelper::class)]
         private Closure            $getUser,
-        private ApiSeriesWhatNext  $seriesWhatNext,
         private SettingsRepository $settingsRepository,
     )
     {
     }
 
     #[Route('/accent-color/read', name: 'accent_color_read', methods: ['GET'])]
-    public function ACRead(Request $request): Response
+    public function ACRead(): Response
     {
         $user = ($this->getUser)();
         if (!$user) {
