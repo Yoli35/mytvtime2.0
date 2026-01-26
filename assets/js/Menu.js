@@ -139,14 +139,14 @@ export class Menu {
         }
 
         this.apiEndPoints = {
-            "movie": "/" + gThis.lang + "/movie/fetch/search",
-            "movie_id": "/" + gThis.lang + "/movie/fetch/search/id",
-            "dbmovie": "/" + gThis.lang + "/movie/fetch/search/movie",
-            "dbtv": "/" + gThis.lang + "/series/fetch/search/tv",
-            "tv": "/" + gThis.lang + "/series/fetch/search/tmdb",
-            "tv_id": "/" + gThis.lang + "/series/fetch/search/tmdb/id",
-            "people": "/" + gThis.lang + "/people/fetch/search",
-            "multi": "/" + gThis.lang + "/series/fetch/search/multi"
+            "multi": "/api/search/multi",
+            "movie": "/api/search/tmdb/movie",
+            "movie_id": "/api/search/tmdb/movie/",
+            "dbmovie": "/api/search/db/movie",
+            "tv": "/api/search/tmdb/tv",
+            "tv_id": "/api/search/tmdb/tv/",
+            "dbtv": "/api/search/db/tv",
+            "people": "/api/search/people"
         }
         this.resultNames = {
             'movie': 'title',
@@ -201,14 +201,8 @@ export class Menu {
         this.tooltips = new ToolTips();
 
         const navbarItems = navbar.querySelectorAll(".navbar-item");
-        /*const notifications = document.querySelector(".notifications");*/
         const historyNavbarItem = navbar.querySelector("#history-menu");
         this.adjustHistoryList();
-
-        const searchResults = navbar.querySelectorAll(".search-results");
-        /*const multiSearchResults = navbar.querySelector(".search-results.__multi");
-        const multiSearchUlTag = multiSearchResults?.querySelector("ul");*/
-        const menus = navbar.querySelectorAll(".menu");
 
         setInterval(() => {
             const mainMenuIsOpen = navbar.querySelector(".menu.main.open.show");
@@ -217,30 +211,6 @@ export class Menu {
             }
             this.updateMainMenu();
         }, 60000);
-
-        document.addEventListener("click", (e) => {
-            const target = e.target;
-
-            searchResults?.forEach((searchResult) => {
-                const ul = searchResult.querySelector("ul");
-                if (ul && !searchResult.parentElement.contains(target)) {
-                    /*if (searchResult.contains(multiSearchUlTag)) {
-                        multiSearch.classList.remove("active");
-                    }*/
-                    const lis = ul.querySelectorAll("li");
-                    lis.forEach(item => {
-                        item.remove();
-                    });
-                    searchResult.classList.remove("showing-something");
-                    // e.preventDefault();
-                }
-            });
-            menus.forEach((menu) => {
-                if (!menu.parentElement.contains(e.target)) {
-                    this.closeMenu(menu.closest(".navbar-item"), menu);
-                }
-            });
-        });
 
         navbarItems.forEach((item) => {
             item.addEventListener("click", (e) => {
@@ -271,11 +241,6 @@ export class Menu {
         });
 
         this.posterPreview();
-
-        /*notifications?.addEventListener("click", () => {
-            this.markNotificationsAsRead();
-        });*/
-
         this.initMultiSearch(navbar);
 
         if (historyNavbarItem) {
@@ -593,26 +558,36 @@ export class Menu {
         const ul = searchResults.querySelector('ul');//document.createElement("ul");
         const lis = ul?.querySelectorAll('li');
         if (value.length < 3) {
-            /*if (searchResults.innerHTML.length) {*/
             lis.forEach(item => {
                 item.remove();
-            }); //searchResults.innerHTML = '';
+            });
             searchResults.classList.remove("showing-something");
-            /*}*/
             return;
         }
         const searchType = ul.getAttribute("data-type");
         const searchSubType = ul.getAttribute("data-sub-type");
         const baseHref = "/" + gThis.lang + "/";
+        let url, options;
 
-        const url = gThis.apiEndPoints[searchSubType || searchType];
-        const options = {
-            method: 'POST',
-            headers: {
-                accept: 'application/json'
-            },
-            body: JSON.stringify({query: value})
-        };
+        if (searchSubType === 'tv_id' || searchSubType === 'movie_id')
+        {
+            url = gThis.apiEndPoints[searchSubType] + value;
+            options = {
+                method: 'GET',
+                headers: {
+                    accept: 'application/json'
+                }
+            };
+        } else {
+            url = gThis.apiEndPoints[searchSubType || searchType];
+            options = {
+                method: 'POST',
+                headers: {
+                    accept: 'application/json'
+                },
+                body: JSON.stringify({query: value})
+            };
+        }
 
         fetch(url, options)
             .then(res => res.json())
@@ -657,7 +632,7 @@ export class Menu {
                         aDiv.addEventListener("click", e => {
                             castNameInput.removeEventListener("input", gThis.searchFetch);
                             castNameInput.addEventListener("input", () => {
-                                castNameInput.addEventListener("input", gThis.searchFetch); // Same type & listener do not add event listener
+                                castNameInput.addEventListener("input", gThis.searchFetch); // The same type & listener do not add event listener
                             });
                             hiddenInputPersonId.value = aDiv.getAttribute("person-id");
                             castNameInput.value = aDiv.getAttribute("name");
@@ -788,7 +763,7 @@ export class Menu {
     }
 
     getTMDBConfig() {
-        fetch('/' + gThis.lang + '/series/fetch/search/multi', {
+        fetch('/api/search/multi', {
             method: 'POST',
             headers: {
                 accept: 'application/json'
@@ -807,9 +782,11 @@ export class Menu {
                 gThis.profileUrl = data.profileUrl;
                 gThis.imagePaths = {
                     'movie': gThis.posterUrl,
+                    'movie_id': gThis.posterUrl,
                     'dbmovie': '/movies/posters',
                     'collection': gThis.posterUrl,
                     'tv': gThis.posterUrl,
+                    'tv_id': gThis.posterUrl,
                     'dbtv': '/series/posters',
                     'people': gThis.profileUrl
                 };
@@ -1364,7 +1341,7 @@ export class Menu {
         str = str.replace(/^\s+|\s+$/g, ''); // trim
         str = str.toLowerCase();
 
-        // remove accents, swap ñ for n, etc
+        // remove accents, swap ñ for n, etc.
         let from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
         let to = "aaaaeeeeiiiioooouuuunc------";
         for (let i = 0, l = from.length; i < l; i++) {
@@ -1372,7 +1349,7 @@ export class Menu {
         }
 
         str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
-            .replace(/\s+/g, '-') // collapse whitespace and replace by -
+            .replace(/\s+/g, '-') // collapse whitespace and replace by '-'
             .replace(/-+/g, '-'); // collapse dashes
 
         if (!str || str === '') str = 'no-slug';

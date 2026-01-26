@@ -371,20 +371,6 @@ class PeopleController extends AbstractController
         ]);
     }
 
-    #[Route('/fetch/search', name: 'fetch_search', methods: ['POST'])]
-    public function fetchSearchPerson(Request $request): Response
-    {
-        $data = json_decode($request->getContent(), true);
-        $query = $data['query'];
-        $searchString = "query=$query&include_adult=false&page=1";
-        $people = json_decode($this->tmdbService->searchPerson($searchString), true);
-
-        return $this->json([
-            'ok' => true,
-            'results' => $people['results'],
-        ]);
-    }
-
     public function savePeople(array $people): People
     {
         $dbPeople = new People(
