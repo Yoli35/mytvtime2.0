@@ -179,6 +179,10 @@ export class Menu {
             'dbtv': 'poster_path',
             'people': 'profile_path'
         };
+        // See getTMDBConfig()
+        this.posterUrl = null;
+        this.profileUrl = null;
+        this.imagePaths = {};
     }
 
     init() {
@@ -211,6 +215,15 @@ export class Menu {
             }
             this.updateMainMenu();
         }, 60000);
+
+        const menus = navbar.querySelectorAll(".menu");
+        document.addEventListener("click", (e) => {
+            menus.forEach((menu) => {
+                if (!menu.parentElement.contains(e.target)) {
+                    this.closeMenu(menu.closest(".navbar-item"), menu);
+                }
+            });
+        });
 
         navbarItems.forEach((item) => {
             item.addEventListener("click", (e) => {
@@ -569,8 +582,7 @@ export class Menu {
         const baseHref = "/" + gThis.lang + "/";
         let url, options;
 
-        if (searchSubType === 'tv_id' || searchSubType === 'movie_id')
-        {
+        if (searchSubType === 'tv_id' || searchSubType === 'movie_id') {
             url = gThis.apiEndPoints[searchSubType] + value;
             options = {
                 method: 'GET',
