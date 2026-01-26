@@ -42,9 +42,13 @@ unzip -o public.zip -d ./;
 unzip -o assets.zip -d ./;
 rm Archives.zip assets.zip public.zip;
 find ./ -depth -name ".DS_Store" -exec rm {} \;
+clear;
+echo 'Cleaning temp directory ...';
 cd temp;
 rm -R *;
 cd ..;
+clear;
+echo 'Done';
 
 11- 'Think to reconnect the domain to the folder "/public"'
 12- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/public"
