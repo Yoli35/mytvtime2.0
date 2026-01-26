@@ -18,6 +18,57 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>64ᵉ mise à jour : 26/01/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:settings-outline') }}→ Add "Link to" option in settings for improved filtering</div>
+                        <div class="details">Introduced the "Link to" dropdown in the settings to allow users to filter by series or seasons. Enhances customization and flexibility in navigating and organizing content.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:login') }}{{ ux_icon('mdi:language-css3') }}→ Add blurred background images to login and registration pages</div>
+                        <div class="details">Displays a random blurred poster as a background image on login and registration pages to enhance visual appeal and create a more engaging experience for users.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:login') }}{{ ux_icon('mdi:language-css3') }}→ Update button styles and login input fields for a consistent design</div>
+                        <div class="details">Improved visual consistency by updating button borders, colors, and shapes, and refined input field styles on the login page to align with the overall design language. Enhanced the user interface for clarity and modern aesthetics.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:home') }}→ Add soft shadow effect to home page images</div>
+                        <div class="details">Introduced a subtle shadow around images to enhance depth and visual appeal. Improves overall aesthetics and ensures better alignment with the design's modern style.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:language-css3') }}→ Update glowing border effect for improved visual aesthetics</div>
+                        <div class="details">Description: Adjusted the glowing border gradient to create a smoother, more modern appearance with transparent transitions and consistent color accents. Enhances the overall visual appeal and alignment with the design language.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:settings-outline') }}→ Restrict menu options and settings to logged-in users</div>
+                        <div class="details">Updated the menu to display user-specific options only when logged in and added safeguards to prevent interactions with settings or search features for guests. Improves UX by clarifying access restrictions and preventing unintended behavior.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:code') }}→ feat(auth): add OAuth account linking (Google/GitHub) + connections UI</div>
+                        <div class="details">
+                            <ul>
+                                <li>- Add OAuth2 client support with Google and GitHub providers</li>
+                                <li>- Add /{_locale}/account/connections screen to link/unlink external accounts</li>
+                                <li>- Secure OAuth linking routes behind ROLE_USER</li>
+                                <li>- Add CSRF protection and confirmation prompts on unlink actions</li>
+                                <li>- Show “Other sign-in methods” section on login (disabled; linking happens after sign-in)</li>
+                                <li>- Add profile shortcut to manage connections</li>
+                                <li>- Add UI styling and FR translations for connection labels</li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('codicon:copilot-unavailable') }}→{{ ux_icon('logos:jetbrains') }}AI → Replace Github Copilot by Jetbrain AI</div>
+                        <div class="details"></div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}{{ ux_icon('mdi:comment-text-outline') }}→ Fix replyToId comparison and handle form submit</div>
+                        <div class="details">Changed replyToId comparison from number to string to ensure correct behavior. Added a submit event listener to the comment form to trigger sendButton click, improving form submission handling.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>63ᵉ mise à jour : 22/01/2026</h2>
                 <ul>
                     <li>
