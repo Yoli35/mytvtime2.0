@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Blog'|trans }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/blog.scss') }}">
+{% endblock %}
+
+{% block body %}
+    {% include '_blocks/_menu.html.twig' %}
+    <div class="container-fluid">
+        <div class="article-list">
+            {% for article in articles %}
+                <a href="{{ path('app_blog_article', {id: article.id, slug: article.title|lower|slug}) }}">
+                    <div class="article">
+                        <div class="infos">
+                            <div class="article-title">{{ article.title }}</div>
+                            <div class="article-author">{{ article.author }}</div>
+                            <div class="article-dates">
+                                <div class="article-date">{{ article.createdAt|format_datetime('relative_medium', 'short')|capitalize }}</div>
+                                <div class="article-date">{{ article.updatedAt|format_datetime('relative_medium', 'short')|capitalize }}</div>
+                            </div>
+                        </div>
+                        <div class="backdrop">
+                            <img src="/images/articles/backdrops/{{ article.backdropPath }}" alt="{{ article.title }} backdrop">
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% include '_blocks/_footer.html.twig' %}
+{% endblock %}

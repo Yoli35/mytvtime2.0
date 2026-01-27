@@ -48,6 +48,8 @@
             <div class="navbar-item">
                 {{ ux_icon('mdi:perm-media', {'data-title': 'My media'|trans}) }}
                 <div class="menu videos">
+                    <div class="separation">{{ 'Blog'|trans }}</div>
+                    <div class="menu-item"><a href="{{ path('app_blog_index') }}" class="desktop">{{ 'My blog'|trans }}</a></div>
                     <div class="separation">{{ 'Videos'|trans }}</div>
                     <div class="menu-item"><a href="{{ path('app_video_index') }}" class="desktop">{{ 'My videos'|trans }}</a></div>
                     <div class="separation">{{ 'Images'|trans }}</div>
