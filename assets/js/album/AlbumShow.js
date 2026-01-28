@@ -447,6 +447,8 @@ export class AlbumShow {
                     gThis.initAnimation();
                 }
                 gThis.fetchFile(formFiles, summaryDiv);
+            }).catch((error) => {
+                console.error('Error fetching file:', error);
             });
         } else {
             const modifyAlbumDialog = document.querySelector('.side-panel.modify-album-dialog');
@@ -562,11 +564,21 @@ export class AlbumShow {
         }
 
         const formDataArr = [];
-        Array.from(imageFilesInput.files).forEach(function (file) {
+        // Array.from(imageFilesInput.files).forEach(function (file) {
+        //     const formData = new FormData();
+        //     formData.append('additional-image', file);
+        //     formDataArr.push(formData);
+        // });
+        const files = imageFilesInput.files;
+        if (!files) {
+            return;
+        }
+
+        for (const file of files) {
             const formData = new FormData();
-            formData.append('additional-image', file);
+            formData.append(`additional-image`, file, file.name);
             formDataArr.push(formData);
-        });
+        }
 
         return formDataArr;
     }
