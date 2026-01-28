@@ -60,7 +60,7 @@ export class SeasonComments {
                         const messageDiv = replyToCommentDiv.querySelector(".message");
                         messageDiv.appendChild(gThis.createMessage(comment, commentImages));
                     }
-                    gThis.adjustCommentBadge(comment);
+                    gThis.adjustCommentBadge(comment['tmdbId']);
                 });
                 const episodeArr = data['episodeArr'];
                 episodeArr.forEach(ep => {
@@ -90,8 +90,9 @@ export class SeasonComments {
             .then((response) => response.json())
             .then(data => {
                 /*console.log(data);*/
-                const newMessage = gThis.createMessage(data['comment'], data['images']);
-                gThis.adjustCommentBadge(data['comment']);
+                const comment = data['comment'];
+                const newMessage = gThis.createMessage(comment, data['images']);
+                gThis.adjustCommentBadge(comment['tmdbId']);
                 gThis.toolTips.init(newMessage);
                 if (replyToId === "0") {
                     input.value = '';
@@ -104,8 +105,8 @@ export class SeasonComments {
                 }
                 const dialog = document.querySelector("dialog.answer-dialog");
                 dialog.close();
-                const comment = document.querySelector('.comment[data-id="' + replyToId + '"]');
-                const messageDiv = comment.querySelector(".message");
+                const commentDiv = document.querySelector('.comment[data-id="' + replyToId + '"]');
+                const messageDiv = commentDiv.querySelector(".message");
                 messageDiv.appendChild(newMessage);
 
             })
@@ -119,9 +120,19 @@ export class SeasonComments {
         formData.append("episodeNumber", episodeNumber);
         formData.append("episodeId", episodeId);
         formData.append("message", message);
-        Array.from(imageFilesInput.files).forEach(function (file, index) {
-            formData.append('additional-image-' + index, file);
-        });
+        // Array.from(imageFilesInput.files).forEach(function (file, index) {
+        //     formData.append('additional-image-' + index, file);
+        // });
+        const files = imageFilesInput.files;
+        if (!files) {
+            return;
+        }
+
+        let index = 0;
+        for (const file of files) {
+            formData.append(`additional-image-${index}`, file, file.name);
+            index += 1;
+        }
 
         return formData;
     }
@@ -153,14 +164,19 @@ export class SeasonComments {
         previewImageFiles.innerHTML = '';
         const ol = document.createElement('ol');
         previewImageFiles.appendChild(ol);
+        /** @Type File file */
         Array.from(commentImageInput.files).forEach(file => {
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = () => {
+                const result = reader.result;
+                if (typeof result !== "string") {
+                    return; // sécurité: ne devrait pas arriver avec readAsDataURL
+                }
                 const li = document.createElement('li');
                 const div = document.createElement('div');
                 div.innerText = file.name + ' (' + gThis.fileSize(file.size) + ')';
                 const img = document.createElement('img');
-                img.src = e.target.result;
+                img.src = result;
                 img.alt = file.name;
                 li.appendChild(img);
                 li.appendChild(div);
@@ -245,8 +261,7 @@ export class SeasonComments {
         }
     }
 
-    adjustCommentBadge(comment) {
-        const episodeId = comment['tmdbId'];
+    adjustCommentBadge(episodeId) {
         const badge = document.querySelector('.user-episode .comment-badge[data-id="' + episodeId + '"]');
         const count = parseInt(badge.getAttribute("data-count"));
         let countBadge;
@@ -323,7 +338,7 @@ export class SeasonComments {
             episodeGroup.scrollIntoView({behavior: 'smooth', block: 'center'});
             setTimeout(() => {
                 episodeGroup.classList.remove("force-show");
-            }, 120000);
+            }, 600000); // 10 minutes
         });
 
         return episodeGroup;
