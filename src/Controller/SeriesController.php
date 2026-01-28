@@ -10,15 +10,14 @@ use App\Entity\FilmingLocationImage;
 use App\Entity\Series;
 use App\Entity\SeriesBroadcastDate;
 use App\Entity\SeriesBroadcastSchedule;
-use App\Entity\SeriesCast;
 use App\Entity\SeriesExternal;
 use App\Entity\SeriesImage;
+use App\Entity\SeriesLocalizedName;
 use App\Entity\SeriesVideo;
 use App\Entity\Settings;
 use App\Entity\User;
 use App\Entity\UserEpisode;
 use App\Entity\UserList;
-use App\Entity\UserPinnedSeries;
 use App\Entity\UserSeries;
 use App\Form\AddBackdropType;
 use App\Form\SeriesAdvancedSearchType;
@@ -30,7 +29,6 @@ use App\Repository\FilmingLocationImageRepository;
 use App\Repository\FilmingLocationRepository;
 use App\Repository\KeywordRepository;
 use App\Repository\NetworkRepository;
-use App\Repository\PeopleRepository;
 use App\Repository\PeopleUserPreferredNameRepository;
 use App\Repository\SeasonLocalizedOverviewRepository;
 use App\Repository\SeriesBroadcastDateRepository;
@@ -43,7 +41,6 @@ use App\Repository\SeriesVideoRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SourceRepository;
 use App\Repository\UserEpisodeRepository;
-use App\Repository\UserPinnedSeriesRepository;
 use App\Repository\UserSeriesRepository;
 use App\Repository\WatchProviderRepository;
 use App\Service\DateService;
@@ -841,7 +838,7 @@ class SeriesController extends AbstractController
             $tv['backdrop_path'] = substr($seriesArr['images']['backdrops'][0], strlen("/series/backdrops"));
         }
 
-        $filmingLocationsWithBounds = $this->getFilmingLocations($series);
+        $filmingLocationsWithBounds = $this->getFilmingLocations($series, $tv['localized_name']);
 
         $list = array_column($this->filmingLocationRepository->getSourceList(), "source_name");
         $addLocationFormData = [
@@ -921,7 +918,7 @@ class SeriesController extends AbstractController
                 'slug' => $series->getSlug(),
             ]);
         }
-        $tv = $this->seriesService->getTvMini($series);
+        //$tv = $this->seriesService->getTvMini($series);
 
         if ($season['poster_path']) {
             if (!$this->inImages($season['poster_path'], $seriesImages)) {
@@ -2444,11 +2441,11 @@ class SeriesController extends AbstractController
         return null;
     }
 
-    public function getFilmingLocations(Series $series): array
+    public function getFilmingLocations(Series $series, SeriesLocalizedName $sln): array
     {
         $tmdbId = $series->getTmdbId();
         $filmingLocations = $this->filmingLocationRepository->locations($tmdbId);
-        $emptyLocation = $this->newLocation($series);
+        $emptyLocation = $this->newLocation($series, $sln);
         if (count($filmingLocations) == 0) {
             return [
                 'filmingLocations' => [],
@@ -2484,12 +2481,13 @@ class SeriesController extends AbstractController
         ];
     }
 
-    private function newLocation(Series $series): array
+    private function newLocation(Series $series, ?SeriesLocalizedName $sln): array
     {
         $uuid = Uuid::v4()->toString();
         $now = $this->now();
         $tmdbId = $series->getTmdbId();
-        $emptyLocation = new FilmingLocation($uuid, $tmdbId, "", "", "", 0, 0, null, 0, 0, "", "", $now, true);
+        $title = $sln ? $sln->getName() : $series->getName();
+        $emptyLocation = new FilmingLocation($uuid, $tmdbId, $title, "", "", 0, 0, null, 0, 0, "", "", $now, true);
         $emptyLocation->setOriginCountry($series->getOriginCountry());
         return $emptyLocation->toArray();
     }
