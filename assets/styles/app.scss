@@ -462,6 +462,10 @@ label:has(input[type="text"]) {
                 color: var(--navbar-color-hover);
                 padding-block: 2px;
 
+                &:not(:has(svg)) {
+                    padding-inline: 1rem;
+                }
+
                 &:hover {
                     background-color: var(--orange-50);
                     color: var(--orange-90);
