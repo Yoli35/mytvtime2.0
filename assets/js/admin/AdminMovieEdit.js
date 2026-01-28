@@ -140,7 +140,7 @@ export class AdminMovieEdit {
         valueSwitchDivs.forEach((div) => {
             const valueDiv = div.closest('.item').querySelector('.iterable');
 
-            div.addEventListener('click', (event) => {
+            div.addEventListener('click', () => {
                 div.classList.toggle('closed');
                 if (div.classList.contains('closed')) {
                     valueDiv.style.height = '0px';

@@ -73,11 +73,6 @@ export class ProviderSelect {
         });
     }
 
-
-    getProvider(id) {
-        return this.providers.find((provider) => provider.id === id);
-    }
-
     // Save the selected provider in a cookie to keep it on the next visit
     setProviderCookie(provider) {
         const date = new Date();

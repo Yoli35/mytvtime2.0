@@ -171,7 +171,7 @@ export class Diaporama {
         /*thumbnail.scrollIntoView(false);*/
     }
 
-    closeDiaporama(e) {
+    closeDiaporama() {
         const diaporamaDiv = document.querySelector(".diaporama");
         const backDiapo = document.querySelector(".back-diapo");
         const imgDiv = backDiapo.querySelector("img");
@@ -193,7 +193,7 @@ export class Diaporama {
         } else if (e.key === "ArrowRight") {
             if (gThis.diaporamaCount > 1) gThis.nextImage();
         } else if (e.key === "Escape") {
-            gThis.closeDiaporama(e);
+            gThis.closeDiaporama();
         }
     }
 }
