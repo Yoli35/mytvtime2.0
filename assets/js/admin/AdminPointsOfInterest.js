@@ -11,7 +11,7 @@ export class AdminPointsOfInterest {
         console.log('Data for points of interest:', jsonGlobsObject);
         const mapDiv = document.querySelector('.map-controller');
         if (mapDiv) {
-            new Location(jsonGlobsObject, ['crud-type', 'crud-id', 'name', 'address', 'city', 'country', 'description', 'latitude', 'longitude', 'created_at'], mapDiv);
+            new Location('poi', jsonGlobsObject, ['crud-type', 'crud-id', 'name', 'address', 'city', 'country', 'description', 'latitude', 'longitude', 'created_at'], mapDiv);
         }
     }
 }
