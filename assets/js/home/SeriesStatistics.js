@@ -65,12 +65,11 @@ export class SeriesStatistics {
             line2Div.classList.add('status-item-line', 'line2');
             statusItemsDiv.appendChild(line1Div);
             statusItemsDiv.appendChild(line2Div);
-            const statusItemDivArray = Array.from(statusItemDivs);
             line1Array.forEach(index => {
-                line1Div.appendChild(statusItemDivArray[index]);
+                line1Div.appendChild(statusItemDivs[index]);
             });
             line2Array.forEach(index => {
-                line2Div.appendChild(statusItemDivArray[index]);
+                line2Div.appendChild(statusItemDivs[index]);
             });
         } else {
             const line1Div = statusItemsDiv.querySelector('.status-item-line.line1');
