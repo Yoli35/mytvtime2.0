@@ -4,13 +4,14 @@ let gThis = null;
 
 export class Location {
 
-    constructor(data, fieldList, mapDiv) {
+    constructor(type, data, fieldList, mapDiv) {
         gThis = this;
         this.mapDiv = mapDiv;
         this.map = null;
         this.lang = document.documentElement.lang;
         this.filmingLocations = [];
         this.flashMessage = null;
+        this.type = type;// 'poi'|'loc'
         this.translations = data.translations || {};
         this.emptyLocation = data.emptyLocation || {};
         this.imagePath = data.imagePath || '';
@@ -18,6 +19,9 @@ export class Location {
         this.seriesName = data.seriesName || '';
         this.url = '/' + gThis.lang + (this.seriesId ? '/series/location/add/' + this.seriesId : '/admin/point-of-interest/add');
         this.fieldList = fieldList || [];
+
+        this.openLocationPanel = this.openLocationPanel.bind(this);
+
         this.init();
     }
 
@@ -28,7 +32,7 @@ export class Location {
         if (this.mapDiv) this.map = new Map({cooperativeGesturesOption: false});
 
         /******************************************************************************
-         * Filming location / point of interest form                                                      *
+         * Filming location / point of interest form                                  *
          ******************************************************************************/
         const addLocationButton = document.querySelector('.add-location-button');
         const addLocationDialog = document.querySelector('.side-panel.add-location-dialog');
@@ -63,52 +67,47 @@ export class Location {
             const mapViewValue = JSON.parse(this.mapDiv.getAttribute('data-symfony--ux-leaflet-map--map-view-value'));
             console.log({mapViewValue});
 
-            const locationsDiv = document.querySelector('.temp-locations');
-            const imageDivs = locationsDiv.querySelectorAll('.image');
+            const locationsDiv = document.querySelector('.locations');
+            const imageDivs = locationsDiv.querySelectorAll('.series-location-image');
             let imageSrcLists = [];
             let currentImages = [];
             imageDivs.forEach(function (imageDiv, imageDivIndex) {
-                const isDB = imageDiv.classList.contains('db');
-                const listDiv = imageDiv.querySelector('.list');
-                let imageList;
-                if (listDiv) {
-                    if (isDB) {
-                        imageList = listDiv.querySelectorAll('img');
-                    } else {
-                        imageList = imageDiv.querySelectorAll('img');
-                    }
-                    imageList = Array.from(imageList);
-                    if (imageList.length > 1) {
-                        imageSrcLists[imageDivIndex] = imageList.map(function (image) {
-                            return {src: image.src};
-                        });
-                        const imageImg = imageDiv.querySelector('img');
-                        const leftArrow = imageDiv.querySelector('.arrow.left');
-                        const rightArrow = imageDiv.querySelector('.arrow.right');
-                        currentImages[imageDivIndex] = 0;
+                if (!imageDiv.classList.contains('help-text')) {
+                    const listDiv = imageDiv.querySelector('.list');
+                    if (listDiv) {
+                        const imageList = Array.from(listDiv.querySelectorAll('img'));
+                        if (imageList.length > 1) {
+                            imageSrcLists[imageDivIndex] = imageList.map(function (image) {
+                                return {src: image.src};
+                            });
+                            const imageImg = imageDiv.querySelector('img');
+                            const leftArrow = imageDiv.querySelector('.arrow.left');
+                            const rightArrow = imageDiv.querySelector('.arrow.right');
+                            currentImages[imageDivIndex] = 0;
 
-                        leftArrow.addEventListener('click', function () {
-                            const lastIndex = imageSrcLists[imageDivIndex].length - 1;
-                            let i = currentImages[imageDivIndex];
-                            i = i === 0 ? lastIndex : (i - 1);
-                            currentImages[imageDivIndex] = i;
-                            imageImg.src = imageSrcLists[imageDivIndex][i].src;
-                        });
-                        rightArrow.addEventListener('click', function () {
-                            const lastIndex = imageSrcLists[imageDivIndex].length - 1;
-                            let i = currentImages[imageDivIndex];
-                            i = i === lastIndex ? 0 : (i + 1);
-                            currentImages[imageDivIndex] = i;
-                            imageImg.src = imageSrcLists[imageDivIndex][i].src;
-                        });
+                            leftArrow.addEventListener('click', function () {
+                                const lastIndex = imageSrcLists[imageDivIndex].length - 1;
+                                let i = currentImages[imageDivIndex];
+                                i = i === 0 ? lastIndex : (i - 1);
+                                currentImages[imageDivIndex] = i;
+                                imageImg.src = imageSrcLists[imageDivIndex][i].src;
+                            });
+                            rightArrow.addEventListener('click', function () {
+                                const lastIndex = imageSrcLists[imageDivIndex].length - 1;
+                                let i = currentImages[imageDivIndex];
+                                i = i === lastIndex ? 0 : (i + 1);
+                                currentImages[imageDivIndex] = i;
+                                imageImg.src = imageSrcLists[imageDivIndex][i].src;
+                            });
+                        }
                     }
+                    const editButton = imageDiv.querySelector('.edit');
+                    editButton.addEventListener('click', function () {
+                        const locationId = this.getAttribute('data-loc-id');
+                        const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
+                        gThis.openLocationPanel('update', location, gThis.translations['Update']);
+                    });
                 }
-                const editButton = imageDiv.querySelector('.edit');
-                editButton.addEventListener('click', function () {
-                    const locationId = this.getAttribute('data-loc-id');
-                    const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
-                    gThis.openLocationPanel('update', location, gThis.translations['Update']);
-                });
             });
         }
 
@@ -227,9 +226,9 @@ export class Location {
             const input = e.target;
             const inputName = input.name;
             const preview = addLocationForm.querySelector('.preview-' + inputName);
-            while (preview.firstChild) {
-                preview.removeChild(preview.firstChild);
-            }
+            const existingList = preview.querySelector('ol');
+            existingList?.remove();
+
             const curFiles = input.files;
             if (curFiles.length === 0) {
                 const div = document.createElement("div");
@@ -349,34 +348,58 @@ export class Location {
         const inputs = addLocationForm.querySelectorAll('input');
         const crudTypeInput = addLocationForm.querySelector('input[name="crud-type"]');
         const firstInput = addLocationForm.querySelector('input[required]');
-        // const crudIdInput = addLocationForm.querySelector('input[name="crud-id"]');
-        // const titleInput = addLocationForm.querySelector('input[name="title"]');
-        // const episodeNumberInput = addLocationForm.querySelector('input[name="episode-number"]');
-        // const seasonNumberInput = addLocationForm.querySelector('input[name="season-number"]');
-        // const locationInput = addLocationForm.querySelector('input[name="location"]');
-        // const descriptionInput = addLocationForm.querySelector('input[name="description"]');
-        // const latitudeInput = addLocationForm.querySelector('input[name="latitude"]');
-        // const longitudeInput = addLocationForm.querySelector('input[name="longitude"]');
+        const titleInput = addLocationForm.querySelector('input[name="title"]');
+        const crudIdInput = addLocationForm.querySelector('input[name="crud-id"]');
+        const episodeNumberInput = addLocationForm.querySelector('input[name="episode-number"]');
+        const seasonNumberInput = addLocationForm.querySelector('input[name="season-number"]');
+        const locationInput = addLocationForm.querySelector('input[name="location"]');
+        const descriptionTextarea = addLocationForm.querySelector('textarea[name="description"]');
+        const latitudeInput = addLocationForm.querySelector('input[name="latitude"]');
+        const longitudeInput = addLocationForm.querySelector('input[name="longitude"]');
+        const radiusInput = addLocationForm.querySelector('input[name="radius"]');
+        const sourceNameInput = addLocationForm.querySelector('input[name="source-name"]');
+        const sourceUrlInput = addLocationForm.querySelector('input[name="source-url"]');
         const locationImages = addLocationForm.querySelector(".location-images");
         const additionalImagesDiv = addLocationForm.querySelector('.additional-images');
         const submitButton = addLocationForm.querySelector('button[type="submit"]');
 
         inputs.forEach(function (input) {
-            const name = input.getAttribute('name');
-            input.value = location[name] || '';
+            // const name = input.getAttribute('name');
+            // input.value = location[name] || '';
+            if (input.getAttribute('type') !== 'hidden') {
+                input.value = '';
+            }
         });
+        titleInput.value = location.title;
         submitButton.textContent = buttonText;
         crudTypeInput.value = crud;
 
         if (crud === 'create') {
+            if (this.type === 'loc') {
+                crudIdInput.value = 0;
+                episodeNumberInput.value = '0';
+                seasonNumberInput.value = '0';
+            }
             locationImages.style.display = 'none';
         } else {
+            if (this.type === 'loc') {
+                crudIdInput.value = location.id;
+                episodeNumberInput.value = location.episode_number;
+                seasonNumberInput.value = location.season_number;
+                locationInput.value = location.location;
+                latitudeInput.value = location.latitude;
+                longitudeInput.value = location.longitude;
+                radiusInput.value = location.radius;
+                descriptionTextarea.value = location.description;
+                sourceNameInput.value = location.source_name;
+                sourceUrlInput.value = location.source_url;
+            }
             locationImages.style.display = 'flex';
             const stillDiv = locationImages.querySelector('.still');
             const imageDiv = stillDiv.querySelector('.image');
             imageDiv.innerHTML = '';
             const img = document.createElement('img');
-            img.src = gThis.imagePath + location.still_path;
+            img.src = this.imagePath + location.still_path;
             img.alt = "Location image"
             imageDiv.appendChild(img);
 
@@ -387,7 +410,7 @@ export class Location {
                 const img = document.createElement('img');
                 const imageDiv = document.createElement('div');
                 imageDiv.classList.add('image');
-                img.src = gThis.imagePath + image.path;
+                img.src = this.imagePath + image.path;
                 img.alt = image.title;
                 imageDiv.appendChild(img);
                 wrapper.appendChild(imageDiv);

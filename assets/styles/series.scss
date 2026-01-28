@@ -6400,6 +6400,8 @@ dialog, .side-panel {
 
             .preview-image-file,
             .preview-image-files {
+                position: relative;
+
                 ol {
                     display: flex;
                     flex-direction: column;
@@ -6435,6 +6437,32 @@ dialog, .side-panel {
                             /*object-fit: cover;*/
                             width: 15rem;
                         }
+                    }
+                }
+
+                .background {
+                    align-items: center;
+                    color: hsl(from var(--green) h s l / .25);
+                    display: flex;
+                    font-size: 6vw;
+                    font-weight: 600;
+                    inset: 0;
+                    justify-content: center;
+                    line-height: 1.2;
+                    position: absolute;
+                    text-align: center;
+                    text-transform: uppercase;
+                }
+
+                &:not(:has(ol)) {
+                    .background {
+                        display: none;
+                    }
+                }
+
+                &:has(ol) {
+                    p {
+                        display: none;
                     }
                 }
             }

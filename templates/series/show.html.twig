@@ -736,7 +736,7 @@
                                 </li>
                                 {% for location in locations %}
                                     <li class="location-item" data-loc-id="{{ location.id }}">
-                                        <div class="series-location-image" data-title="{{ location.title }}">
+                                        <div class="series-location-image" data-title="{{ location.title }}" data-position="0">
                                             <img src="/images/map{{ location.still_path }}" alt="{{ location.title }}">
                                             {% if location.filmingLocationImages|length-1 %}
                                                 <div class="count">

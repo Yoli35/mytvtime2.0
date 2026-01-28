@@ -4,6 +4,7 @@ import {Diaporama} from 'Diaporama';
 import {FlashMessage} from "FlashMessage";
 import {Keyword} from 'Keyword';
 import {Map} from "Map";
+import {Location} from "Location";
 import {ToolTips} from 'ToolTips';
 import {TranslationsForms} from "TranslationsForms";
 import {WatchLinkCrud} from "WatchLinkCrud";
@@ -111,7 +112,9 @@ export class Show {
         // console.log({filmingLocations: this.filmingLocations});
         const jsonGlobsMap = JSON.parse(document.querySelector('div#globs-map').textContent);
         this.fieldList = jsonGlobsMap.fieldList;
-        // console.log({fieldList: this.fieldList});
+        const emptyLocation = jsonGlobsMap.emptyLocation;
+        const locationImagePath = jsonGlobsMap.locationImagePath;
+        console.log(jsonGlobsMap);
 
         const previousSeries = document.querySelector('.previous-series');
         const nextSeries = document.querySelector('.next-series');
@@ -127,7 +130,7 @@ export class Show {
         });
 
         /******************************************************************************
-         * Animation for the progress bar                                             *
+         * Animation for the progress bar.                                            *
          ******************************************************************************/
         const progressDiv = document.querySelector('.progress');
         if (progressDiv) {
@@ -144,12 +147,12 @@ export class Show {
         }
 
         /******************************************************************************
-         * Add a copy badge to name and localized name                                *
+         * Add a copy badge to name and localized name.                               *
          ******************************************************************************/
         new CopyName(document.querySelector('.header .name h1'));
 
         /******************************************************************************
-         * Fetch episode stills for each season                                       *
+         * Fetch episode stills for each season.                                      *
          ******************************************************************************/
         const episodeCardDivs = document.querySelectorAll('.episode__cards');
         const length = episodeCardDivs.length;
@@ -214,7 +217,7 @@ export class Show {
         });
 
         /******************************************************************************
-         * Hide votes when mouse leaves season div                                    *
+         * Hide votes when the mouse leaves season div.                               *
          ******************************************************************************/
         const seasonDivs = document.querySelectorAll('.season');
         if (seasonDivs) {
@@ -229,7 +232,7 @@ export class Show {
         }
 
         /******************************************************************************
-         * Remaining time when schedule is present                                    *
+         * Remaining time when the schedule is present.                                   *
          ******************************************************************************/
         const remainingDivs = document.querySelectorAll('.remaining');
         remainingDivs.forEach(function (remaining) {
@@ -308,7 +311,7 @@ export class Show {
         });
 
         /******************************************************************************
-         * User's actions: rating, pinned, favorite, remove this series               *
+         * User's actions: rating, pinned, favorite, remove this series.              *
          ******************************************************************************/
         const userActions = document.querySelector('.user-actions');
         const lang = document.documentElement.lang;
@@ -416,17 +419,17 @@ export class Show {
         }
 
         /******************************************************************************
-         * Menu to add a localized name or an overview and additional overview        *
+         * Menu to add a localized name or an overview and additional overview.       *
          ******************************************************************************/
         new TranslationsForms(seriesId, 'series', translations);
 
         /******************************************************************************
-         * Keyword translation                                                        *
+         * Keyword translation.                                                       *
          ******************************************************************************/
         new Keyword('series');
 
         /******************************************************************************
-         * User votes on season divs                                                  *
+         * User votes on season divs.                                                 *
          ******************************************************************************/
         const showUserTabs = document.querySelectorAll('.show-tab');
         showUserTabs.forEach(div => {
@@ -455,315 +458,316 @@ export class Show {
          ******************************************************************************/
         const mapDiv = document.querySelector('.map-controller');
         if (mapDiv) {
-            this.map = new Map({cooperativeGesturesOption: false});
-        }
+            /*this.map = new Map({cooperativeGesturesOption: false});*/
+            const data = {
+                translations: translations,
+                emptyLocation: emptyLocation,
+                imagePath: locationImagePath,
+                seriesId: seriesId,
+                seriesName: seriesName
+            };
+            new Location('loc', data, this.fieldList, mapDiv);
+        } else {
+            /******************************************************************************
+             * Filming location form                                                      *
+             * When call location.js:                                                     *
+             *     → new Location(data, fieldList);                                       *
+             *     → data: div#globs                                                      *
+             *     → fieldList: [                                                         *
+             *                   "series-id", "tmdb-id", "crud-type", "crud-id","title",  *
+             *                   "episode-number", "season-number",                       *
+             *                   "location", "description",                               *
+             *                   "latitude", "longitude",                                 *
+             *                  ]                                                         *
+             ******************************************************************************/
+            const seriesMap = document.querySelector('#map');
+            const addLocationButton = document.querySelector('.add-location-button');
+            const addLocationDialog = document.querySelector('.side-panel.add-location-dialog');
+            const addLocationForm = addLocationDialog.querySelector('form');
+            const editLocationImagesForm = document.querySelector('#edit-location-images-form');
+            const inputGoogleMapsUrl = addLocationForm.querySelector('input[name="google-map-url"]');
+            const inputLatitude = addLocationForm.querySelector('input[name="latitude"]');
+            const inputLongitude = addLocationForm.querySelector('input[name="longitude"]');
+            const addLocationCancel = addLocationForm.querySelector('button[type="button"]');
+            const addLocationSubmit = addLocationForm.querySelector('button[type="submit"]');
+            const addLocationImagesCancel = editLocationImagesForm.querySelector('button[type="button"]');
+            const addLocationImagesSubmit = editLocationImagesForm.querySelector('button[type="submit"]');
+            const imageInputs = addLocationForm.querySelectorAll('input[type="url"]');
+            const submitRow = addLocationForm.querySelector('.form-row.submit-row');
+            const scrollDownToSubmitDiv = addLocationDialog.querySelector('.scroll-down-to-submit');
+            const scrollDownToSubmitButton = scrollDownToSubmitDiv.querySelector('button');
 
-        /******************************************************************************
-         * Filming location form                                                      *
-         * When call location.js:                                                     *
-         *     → new Location(data, fieldList);                                       *
-         *     → data: div#globs                                                      *
-         *     → fieldList: [                                                         *
-         *                   "series-id", "tmdb-id", "crud-type", "crud-id","title",  *
-         *                   "episode-number", "season-number",                       *
-         *                   "location", "description",                               *
-         *                   "latitude", "longitude",                                 *
-         *                  ]                                                         *
-         ******************************************************************************/
-        const seriesMap = document.querySelector('#map');
-        const addLocationButton = document.querySelector('.add-location-button');
-        const addLocationDialog = document.querySelector('.side-panel.add-location-dialog');
-        const addLocationForm = addLocationDialog.querySelector('form');
-        const editLocationImagesForm = document.querySelector('#edit-location-images-form');
-        const inputGoogleMapsUrl = addLocationForm.querySelector('input[name="google-map-url"]');
-        const inputLatitude = addLocationForm.querySelector('input[name="latitude"]');
-        const inputLongitude = addLocationForm.querySelector('input[name="longitude"]');
-        const addLocationCancel = addLocationForm.querySelector('button[type="button"]');
-        const addLocationSubmit = addLocationForm.querySelector('button[type="submit"]');
-        const addLocationImagesCancel = editLocationImagesForm.querySelector('button[type="button"]');
-        const addLocationImagesSubmit = editLocationImagesForm.querySelector('button[type="submit"]');
-        const imageInputs = addLocationForm.querySelectorAll('input[type="url"]');
-        const submitRow = addLocationForm.querySelector('.form-row.submit-row');
-        const scrollDownToSubmitDiv = addLocationDialog.querySelector('.scroll-down-to-submit');
-        const scrollDownToSubmitButton = scrollDownToSubmitDiv.querySelector('button');
-
-        // Lorsque le panneau devient trop haut la div "submit-row" disparait.
-        // Si la div "submit-row" est hors du cadre, la div "scroll-down-to-submit" apparaît.
-        // Si la div "submit-row" est visible, la div "scroll-down-to-submit" disparaît.
-        const observer = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) {
-                // console.log(entry)
-                if (entry.isIntersecting) {
-                    scrollDownToSubmitDiv.style.display = 'none';
-                } else {
-                    scrollDownToSubmitDiv.style.display = 'flex';
-                }
-            });
-        });
-        observer.observe(submitRow);
-        scrollDownToSubmitButton.addEventListener('click', function () {
-            // addLocationDialog > frame > form > submit-row
-            // frame overflow-y: auto;
-            // faire apparaitre la div "submit-row" dans le cadre
-            addLocationDialog.querySelector('.frame').scrollTo(0, submitRow.offsetTop);
-        });
-
-        if (seriesMap) {
-            const mapViewValue = JSON.parse(seriesMap.getAttribute('data-symfony--ux-leaflet-map--map-view-value'));
-            console.log({mapViewValue});
-
-            const locationsDiv = document.querySelector('.locations');
-            const imageDivs = locationsDiv.querySelectorAll('.series-location-image');
-            let imageSrcLists = [];
-            let currentImages = [];
-            imageDivs.forEach(function (imageDiv, imageDivIndex) {
-                if (!imageDiv.classList.contains('help-text')) {
-                    const isDB = imageDiv.classList.contains('db');
-                    const listDiv = imageDiv.querySelector('.image-list');
-                    let imageList;
-                    if (listDiv) {
-                        if (isDB) {
-                            imageList = listDiv.querySelectorAll('img');
-                        } else {
-                            imageList = imageDiv.querySelectorAll('img');
-                        }
-                        imageList = Array.from(imageList);
-                        if (imageList.length > 1) {
-                            imageSrcLists[imageDivIndex] = imageList.map(function (image) {
-                                return {src: image.src};
-                            });
-                            const imageImg = imageDiv.querySelector('img');
-                            const leftArrow = imageDiv.querySelector('.arrow.left');
-                            const rightArrow = imageDiv.querySelector('.arrow.right');
-                            currentImages[imageDivIndex] = 0;
-
-                            leftArrow.addEventListener('click', function () {
-                                const lastIndex = imageSrcLists[imageDivIndex].length - 1;
-                                let i = currentImages[imageDivIndex];
-                                i = i === 0 ? lastIndex : (i - 1);
-                                currentImages[imageDivIndex] = i;
-                                imageImg.src = imageSrcLists[imageDivIndex][i].src;
-                            });
-                            rightArrow.addEventListener('click', function () {
-                                const lastIndex = imageSrcLists[imageDivIndex].length - 1;
-                                let i = currentImages[imageDivIndex];
-                                i = i === lastIndex ? 0 : (i + 1);
-                                currentImages[imageDivIndex] = i;
-                                imageImg.src = imageSrcLists[imageDivIndex][i].src;
-                            });
-                        }
-                    }
-                    const editButton = imageDiv.querySelector('.edit');
-                    editButton.addEventListener('click', function () {
-                        const locationId = this.getAttribute('data-loc-id');
-                        const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
-                        gThis.openLocationPanel('update', location, translations['Update']);
-                    });
-                    const editImagesButton = imageDiv.querySelector('.edit-images');
-                    editImagesButton?.addEventListener('click', function () {
-                        const locationId = this.getAttribute('data-loc-id');
-                        const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
-                        gThis.openLocationImagesPanel('update', location, translations['Update']);
-                    });
-                }
-            });
-        }
-
-        addLocationButton.addEventListener('click', function () {
-            gThis.openLocationPanel('create', {'title': seriesName}, translations['Add']);
-        });
-        inputGoogleMapsUrl.addEventListener('paste', function (e) {
-            const url = e.clipboardData.getData('text');
-            const isGoogleMapsUrl = url.match(/https:\/\/www.google.com\/maps\//);
-            let urlParts;
-            if (isGoogleMapsUrl) {
-                urlParts = url.split('@')[1].split(',');
-            } else { // 48.8566,2.3522
-                urlParts = url.split(',');
-            }
-            inputLatitude.value = parseFloat(urlParts[0].trim());
-            inputLongitude.value = parseFloat(urlParts[1].trim());
-        });
-        addLocationCancel.addEventListener('click', function () {
-            gThis.closeLocationPanel();
-        });
-        addLocationSubmit.addEventListener('click', function (event) {
-            event.preventDefault();
-
-            const inputs = addLocationForm.querySelectorAll('input[required]');
-            const crudTypeInput = addLocationForm.querySelector('input[name="crud-type"]');
-            let emptyInput = false;
-            if (crudTypeInput.value === 'create') {
-                inputs.forEach(function (input) {
-                    // la première image ("image-url") est requise, mais peut être remplacée par un fichier (image-file)
-                    // en mode création
-                    if (input.name === 'image-url') {
-                        if (!input.value && !input.closest('.form-row').querySelector('input[name="image-file"]').value) {
-                            input.nextElementSibling.textContent = translations['This field is required'];
-                            emptyInput = true;
-                        } else {
-                            input.nextElementSibling.textContent = '';
-                        }
+            // Lorsque le panneau devient trop haut la div "submit-row" disparait.
+            // Si la div "submit-row" est hors du cadre, la div "scroll-down-to-submit" apparaît.
+            // Si la div "submit-row" est visible, la div "scroll-down-to-submit" disparaît.
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    // console.log(entry)
+                    if (entry.isIntersecting) {
+                        scrollDownToSubmitDiv.style.display = 'none';
                     } else {
-                        if (input.required && !input.value) {
-                            input.nextElementSibling.textContent = translations['This field is required'];
-                            emptyInput = true;
-                        } else {
-                            input.nextElementSibling.textContent = '';
+                        scrollDownToSubmitDiv.style.display = 'flex';
+                    }
+                });
+            });
+            observer.observe(submitRow);
+            scrollDownToSubmitButton.addEventListener('click', function () {
+                // addLocationDialog > frame > form > submit-row
+                // frame overflow-y: auto;
+                // faire apparaitre la div "submit-row" dans le cadre
+                addLocationDialog.querySelector('.frame').scrollTo(0, submitRow.offsetTop);
+            });
+
+            if (seriesMap) {
+                const mapViewValue = JSON.parse(seriesMap.getAttribute('data-symfony--ux-leaflet-map--map-view-value'));
+                console.log({mapViewValue});
+
+                const locationsDiv = document.querySelector('.locations');
+                const imageDivs = locationsDiv.querySelectorAll('.series-location-image');
+                let imageSrcLists = [];
+                let currentImages = [];
+                imageDivs.forEach(function (imageDiv, imageDivIndex) {
+                    if (!imageDiv.classList.contains('help-text')) {
+                        const listDiv = imageDiv.querySelector('.image-list');
+                        if (listDiv) {
+                            const imageList = Array.from(listDiv.querySelectorAll('img'));
+                            if (imageList.length > 1) {
+                                imageSrcLists[imageDivIndex] = imageList.map(function (image) {
+                                    return {src: image.src};
+                                });
+                                const imageImg = imageDiv.querySelector('img');
+                                const leftArrow = imageDiv.querySelector('.arrow.left');
+                                const rightArrow = imageDiv.querySelector('.arrow.right');
+                                currentImages[imageDivIndex] = 0;
+
+                                leftArrow.addEventListener('click', function () {
+                                    const lastIndex = imageSrcLists[imageDivIndex].length - 1;
+                                    let i = currentImages[imageDivIndex];
+                                    i = i === 0 ? lastIndex : (i - 1);
+                                    currentImages[imageDivIndex] = i;
+                                    imageImg.src = imageSrcLists[imageDivIndex][i].src;
+                                });
+                                rightArrow.addEventListener('click', function () {
+                                    const lastIndex = imageSrcLists[imageDivIndex].length - 1;
+                                    let i = currentImages[imageDivIndex];
+                                    i = i === lastIndex ? 0 : (i + 1);
+                                    currentImages[imageDivIndex] = i;
+                                    imageImg.src = imageSrcLists[imageDivIndex][i].src;
+                                });
+                            }
                         }
+                        const editButton = imageDiv.querySelector('.edit');
+                        editButton.addEventListener('click', function () {
+                            const locationId = this.getAttribute('data-loc-id');
+                            const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
+                            gThis.openLocationPanel('update', location, translations['Update']);
+                        });
+                        const editImagesButton = imageDiv.querySelector('.edit-images');
+                        editImagesButton?.addEventListener('click', function () {
+                            const locationId = this.getAttribute('data-loc-id');
+                            const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
+                            gThis.openLocationImagesPanel('update', location, translations['Update']);
+                        });
                     }
                 });
             }
-            if (!emptyInput) {
-                const formData = gThis.getFormData(addLocationForm, gThis.fieldList);
-                fetch('/' + lang + '/series/location/add/' + seriesId,
-                    {
-                        method: 'POST',
-                        body: formData
-                    }
-                ).then(async function (response) {
-                    const data = await response.json();
-                    // console.log({data});
-                    if (response.ok) {
-                        window.location.reload();
-                    } else {
-                        gThis.flashMessage.add('error', data.message);
-                    }
-                    gThis.closeLocationPanel();
-                });
-            }
-        });
-        addLocationImagesCancel.addEventListener('click', function () {
-            gThis.closeLocationImagesPanel();
-        });
-        addLocationImagesSubmit.addEventListener('click', function (event) {
-            event.preventDefault();
-            gThis.closeLocationImagesPanel();
-        });
 
-        imageInputs.forEach(function (imageInput) {
-            // Les champs de type "url" peuvent être modifiés pour afficher une image
-            imageInput.addEventListener('input', function () {
-                let validValue = false;
-                const path = this.value;
-                const img = this.closest('.form-field').querySelector('img');
-                // is it a valid url?
-                const isUrl = path.match(/https?:\/\/.+\.(jpg|jpeg|png|gif|webp)/);
-                if (isUrl) {
-                    img.src = path;
-                    validValue = true;
+            addLocationButton.addEventListener('click', function () {
+                gThis.openLocationPanel('create', {'title': seriesName}, translations['Add']);
+            });
+            inputGoogleMapsUrl.addEventListener('paste', function (e) {
+                const url = e.clipboardData.getData('text');
+                const isGoogleMapsUrl = url.match(/https:\/\/www.google.com\/maps\//);
+                let urlParts;
+                if (isGoogleMapsUrl) {
+                    urlParts = url.split('@')[1].split(',');
+                } else { // 48.8566,2.3522
+                    urlParts = url.split(',');
                 }
-                if (this.value.includes('~/')) { // for dev test
-                    const filename = path.split('/').pop();
-                    // is a valid filename?
-                    const isFilename = filename.match(/.+\.jpg|jpeg|png|webp/);
-                    if (isFilename) {
-                        img.src = this.value.replace('~/', '/images/map/');
+                inputLatitude.value = parseFloat(urlParts[0].trim());
+                inputLongitude.value = parseFloat(urlParts[1].trim());
+            });
+            addLocationCancel.addEventListener('click', function () {
+                gThis.closeLocationPanel();
+            });
+            addLocationSubmit.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const inputs = addLocationForm.querySelectorAll('input[required]');
+                const crudTypeInput = addLocationForm.querySelector('input[name="crud-type"]');
+                let emptyInput = false;
+                if (crudTypeInput.value === 'create') {
+                    inputs.forEach(function (input) {
+                        // la première image ("image-url") est requise, mais peut être remplacée par un fichier (image-file)
+                        // en mode création
+                        if (input.name === 'image-url') {
+                            if (!input.value && !input.closest('.form-row').querySelector('input[name="image-file"]').value) {
+                                input.nextElementSibling.textContent = translations['This field is required'];
+                                emptyInput = true;
+                            } else {
+                                input.nextElementSibling.textContent = '';
+                            }
+                        } else {
+                            if (input.required && !input.value) {
+                                input.nextElementSibling.textContent = translations['This field is required'];
+                                emptyInput = true;
+                            } else {
+                                input.nextElementSibling.textContent = '';
+                            }
+                        }
+                    });
+                }
+                if (!emptyInput) {
+                    const formData = gThis.getFormData(addLocationForm, gThis.fieldList);
+                    fetch('/' + lang + '/series/location/add/' + seriesId,
+                        {
+                            method: 'POST',
+                            body: formData
+                        }
+                    ).then(async function (response) {
+                        const data = await response.json();
+                        // console.log({data});
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            gThis.flashMessage.add('error', data.message);
+                        }
+                        gThis.closeLocationPanel();
+                    });
+                }
+            });
+            addLocationImagesCancel.addEventListener('click', function () {
+                gThis.closeLocationImagesPanel();
+            });
+            addLocationImagesSubmit.addEventListener('click', function (event) {
+                event.preventDefault();
+                gThis.closeLocationImagesPanel();
+            });
+
+            imageInputs.forEach(function (imageInput) {
+                // Les champs de type "url" peuvent être modifiés pour afficher une image
+                imageInput.addEventListener('input', function () {
+                    let validValue = false;
+                    const path = this.value;
+                    const img = this.closest('.form-field').querySelector('img');
+                    // is it a valid url?
+                    const isUrl = path.match(/https?:\/\/.+\.(jpg|jpeg|png|gif|webp)/);
+                    if (isUrl) {
+                        img.src = path;
                         validValue = true;
                     }
-                }
-                if (!validValue) {
-                    img.src = '';
-                }
+                    if (this.value.includes('~/')) { // for dev test
+                        const filename = path.split('/').pop();
+                        // is a valid filename?
+                        const isFilename = filename.match(/.+\.jpg|jpeg|png|webp/);
+                        if (isFilename) {
+                            img.src = this.value.replace('~/', '/images/map/');
+                            validValue = true;
+                        }
+                    }
+                    if (!validValue) {
+                        img.src = '';
+                    }
+                });
+                // Les champs de type "url" peuvent recevoir un fichier de type image par glisser-déposer
+                imageInput.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    const file = e.dataTransfer.files[0];
+                    const img = this.closest('.form-field').querySelector('img');
+                    img.src = URL.createObjectURL(file);
+                    this.value = img.src;
+                    // console.log({file});
+                    // console.log(img.src)
+                    const blobPreviewDiv = this.closest('.form-field').querySelector('.blob-preview');
+                    const blobPreview = blobPreviewDiv.querySelector('img');
+                    previewFile(file, blobPreview);
+                });
             });
-            // Les champs de type "url" peuvent recevoir un fichier de type image par glisser-déposer
-            imageInput.addEventListener('drop', function (e) {
-                e.preventDefault();
-                const file = e.dataTransfer.files[0];
-                const img = this.closest('.form-field').querySelector('img');
-                img.src = URL.createObjectURL(file);
-                this.value = img.src;
-                // console.log({file});
-                // console.log(img.src)
-                const blobPreviewDiv = this.closest('.form-field').querySelector('.blob-preview');
-                const blobPreview = blobPreviewDiv.querySelector('img');
-                previewFile(file, blobPreview);
-            });
-        });
 
-        // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file
-        const imageFile = addLocationForm.querySelector('input[name="image-file"]');
-        imageFile.addEventListener("change", updateImageDisplay);
-        const imageFiles = addLocationForm.querySelector('input[name="image-files"]');
-        imageFiles.addEventListener("change", updateImageDisplay);
+            // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file
+            const imageFile = addLocationForm.querySelector('input[name="image-file"]');
+            imageFile.addEventListener("change", updateImageDisplay);
+            const imageFiles = addLocationForm.querySelector('input[name="image-files"]');
+            imageFiles.addEventListener("change", updateImageDisplay);
 
-        function updateImageDisplay(e) {
-            const input = e.target;
-            const inputName = input.name;
-            const preview = addLocationForm.querySelector('.preview-' + inputName);
-            while (preview.firstChild) {
-                preview.removeChild(preview.firstChild);
+            function updateImageDisplay(e) {
+                const input = e.target;
+                const inputName = input.name;
+                const preview = addLocationForm.querySelector('.preview-' + inputName);
+                while (preview.firstChild) {
+                    preview.removeChild(preview.firstChild);
+                }
+                const curFiles = input.files;
+                if (curFiles.length === 0) {
+                    const div = document.createElement("div");
+                    div.textContent = "No files currently selected for upload";
+                    preview.appendChild(div);
+                    return;
+                }
+
+                const list = document.createElement("ol");
+                preview.appendChild(list);
+
+                for (const file of curFiles) {
+                    const listItem = document.createElement("li");
+                    const div = document.createElement("div");
+                    if (validFileType(file)) {
+                        div.textContent = `${file.name}, ${returnFileSize(file.size)}`;
+                        const image = document.createElement("img");
+                        image.src = URL.createObjectURL(file);
+                        image.alt = image.title = file.name;
+
+                        listItem.appendChild(div);
+                        listItem.appendChild(image);
+                    } else {
+                        div.innerHTML = `${file.name}<span class="error">${translations['Not a valid file type. Update your selection']}.</span>`;
+                        listItem.appendChild(div);
+                    }
+
+                    list.appendChild(listItem);
+                }
+
             }
-            const curFiles = input.files;
-            if (curFiles.length === 0) {
-                const div = document.createElement("div");
-                div.textContent = "No files currently selected for upload";
-                preview.appendChild(div);
-                return;
+
+            // https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
+            const fileTypes = [
+                /* "image/apng",*/
+                /* "image/bmp",*/
+                /* "image/gif",*/
+                "image/jpeg",
+                /* "image/pjpeg",*/
+                "image/png",
+                /* "image/svg+xml",*/
+                /* "image/tiff",*/
+                "image/webp",
+                /* "image/x-icon",*/
+                /*"image/heic",*/
+            ];
+
+            function validFileType(file) {
+                return fileTypes.includes(file.type);
             }
 
-            const list = document.createElement("ol");
-            preview.appendChild(list);
-
-            for (const file of curFiles) {
-                const listItem = document.createElement("li");
-                const div = document.createElement("div");
-                if (validFileType(file)) {
-                    div.textContent = `${file.name}, ${returnFileSize(file.size)}`;
-                    const image = document.createElement("img");
-                    image.src = URL.createObjectURL(file);
-                    image.alt = image.title = file.name;
-
-                    listItem.appendChild(div);
-                    listItem.appendChild(image);
+            function returnFileSize(number) {
+                if (number < 1e3) {
+                    return `${number} bytes`;
+                } else if (number >= 1e3 && number < 1e6) {
+                    return `${(number / 1e3).toFixed(1)} KB`;
                 } else {
-                    div.innerHTML = `${file.name}<span class="error">${translations['Not a valid file type. Update your selection']}.</span>`;
-                    listItem.appendChild(div);
+                    return `${(number / 1e6).toFixed(1)} MB`;
                 }
-
-                list.appendChild(listItem);
             }
 
-        }
+            function previewFile(file, preview) {
+                const reader = new FileReader();
 
-        // https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
-        const fileTypes = [
-            /* "image/apng",*/
-            /* "image/bmp",*/
-            /* "image/gif",*/
-            "image/jpeg",
-            /* "image/pjpeg",*/
-            "image/png",
-            /* "image/svg+xml",*/
-            /* "image/tiff",*/
-            "image/webp",
-            /* "image/x-icon",*/
-            /*"image/heic",*/
-        ];
-
-        function validFileType(file) {
-            return fileTypes.includes(file.type);
-        }
-
-        function returnFileSize(number) {
-            if (number < 1e3) {
-                return `${number} bytes`;
-            } else if (number >= 1e3 && number < 1e6) {
-                return `${(number / 1e3).toFixed(1)} KB`;
-            } else {
-                return `${(number / 1e6).toFixed(1)} MB`;
-            }
-        }
-
-        function previewFile(file, preview) {
-            const reader = new FileReader();
-
-            reader.addEventListener("load", () => {
-                preview.src = reader.result;
-                // console.log({reader});
-            }, false);
-            if (file) {
-                reader.readAsDataURL(file);
+                reader.addEventListener("load", () => {
+                    preview.src = reader.result;
+                    // console.log({reader});
+                }, false);
+                if (file) {
+                    reader.readAsDataURL(file);
+                }
             }
         }
 
@@ -1038,6 +1042,7 @@ export class Show {
         titleInput.value = location.title;
         submitButton.textContent = buttonText;
         crudTypeInput.value = crud;
+
         if (crud === 'create') {
             crudIdInput.value = 0;
             episodeNumberInput.value = '0';
@@ -1090,27 +1095,27 @@ export class Show {
 
         submitButton.innerText = buttonText;
 
-            const wrapper = locationImages.querySelector('.wrapper');
-            while (wrapper.firstChild) {
-                wrapper.firstChild.remove();
+        const wrapper = locationImages.querySelector('.wrapper');
+        while (wrapper.firstChild) {
+            wrapper.firstChild.remove();
+        }
+        const additionalImagesArray = location.filmingLocationImages;/*.filter(fl => fl.id !== location.still_id);*/
+        additionalImagesArray.forEach(function (image) {
+            const img = document.createElement('img');
+            const imageDiv = document.createElement('div');
+            imageDiv.classList.add('image');
+            img.src = '/images/map' + image.path;
+            img.alt = image.title;
+            imageDiv.appendChild(img);
+            if (image.id === location.still_id) {
+                const badge = document.createElement("div");
+                badge.classList.add("still-badge");
+                const asterisk = gThis.getSvg("asterisk");
+                badge.appendChild(asterisk);
+                imageDiv.appendChild(badge);
             }
-            const additionalImagesArray = location.filmingLocationImages;/*.filter(fl => fl.id !== location.still_id);*/
-            additionalImagesArray.forEach(function (image) {
-                const img = document.createElement('img');
-                const imageDiv = document.createElement('div');
-                imageDiv.classList.add('image');
-                img.src = '/images/map' + image.path;
-                img.alt = image.title;
-                imageDiv.appendChild(img);
-                if (image.id === location.still_id) {
-                    const badge = document.createElement("div");
-                    badge.classList.add("still-badge");
-                    const asterisk = gThis.getSvg("asterisk");
-                    badge.appendChild(asterisk);
-                    imageDiv.appendChild(badge);
-                }
-                wrapper.appendChild(imageDiv);
-            });
+            wrapper.appendChild(imageDiv);
+        });
         editLocationImagesDialog.classList.add('open');
     }
 
