@@ -503,6 +503,9 @@ export class Map {
         const count = imageList.children.length;
         const imageWidth = image.clientWidth;
         let position = Math.floor(e.offsetX / (imageWidth / count));
+        if (position < 0 || position >= count) {
+            return;
+        }
         if (position >= count - 1) position = count - 1;
         const oldPosition = parseInt(image.getAttribute('data-position'));
         if (oldPosition !== position) {
