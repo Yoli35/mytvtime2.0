@@ -26,33 +26,6 @@ export class Map {
         mapboxgl.accessToken = 'pk.eyJ1IjoiaWJveTQ0IiwiYSI6ImNtNTZqcXo4ZjAxYzIyaXM3cWZ5dnNheWkifQ.yY-zdieRm3Dhlrj3vYh9hg';
         mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js');
 
-        const initializeMap = () => {
-            this.map = new mapboxgl.Map({
-                container: 'map',
-                cooperativeGestures: options.cooperativeGesturesOption,
-                projection: 'globe',
-                pitch: 45,
-                bearing: 0,
-                bounds: this.bounds,
-                fitBoundsOptions: {
-                    padding: 45
-                }
-            });
-            console.log('Map initialized', this.map);
-            this.map.on('style.load', () => {
-                this.map.setFog({
-                    "range": [0.8, 1.2],
-                    "color": "#E0861F",
-                    "horizon-blend": 0.125,
-                    "high-color": "#112a67",
-                    "space-color": "#000000",
-                    "star-intensity": 0.15
-                });
-
-                this.map.setConfigProperty('basemap', 'show3dObjects', true);
-            });
-        }
-
         const initializeControls = () => {
             const searchBox = new MapboxSearchBox();
             // set the mapbox access token, search box API options
@@ -105,9 +78,11 @@ export class Map {
                             }
                         });
                     });
+                    setTimeout(()=>{ poiToggler.click();}, 5000);
                 });
 
-            this.locations.forEach(location => {
+            let firstMarker = null;
+            this.locations.forEach((location, index) => {
                 let marker = new mapboxgl.Marker({color: "#B46B18FF"})
                     .setLngLat([location.longitude, location.latitude])
                     .setPopup(new mapboxgl.Popup({closeOnMove: true}).setMaxWidth("24rem").setHTML('<div class="leaflet-popup-content-title">' + location.title + '</div><div class="leaflet-popup-content-description"><div class="location">' + location.location + '</div>' + location.description + '</div><div class="leaflet-popup-content-image"><img src="/images/map' + location['still_path'] + '" alt="' + location['title'] + '" style="height: auto; width: 100%"></div>'))
@@ -119,10 +94,15 @@ export class Map {
                 markerIcon.setAttribute('data-latitude', location.latitude);
                 markerIcon.setAttribute('data-longitude', location.longitude);
 
+                if (!index) firstMarker = marker.getElement();
+
                 if (location.radius) {
                     this.circles.push(this.createCircle([location.longitude, location.latitude], location.radius / 1000));
                 }
             });
+            if (firstMarker) {
+                setTimeout(()=>{ firstMarker.click();}, 5000);
+            }
 
             if (this.circles.length) {
                 setTimeout(() => {
@@ -192,247 +172,274 @@ export class Map {
             handleDiv.addEventListener('mousedown', heightHandle);
         };
 
-        initializeMap();
-        initializeControls();
-        initializeMarkers();
-        initializeMapHandle();
-
-        if (document.querySelector("#map-index")) {
-            const locations = this.data['locations'];
-            const countryBounds = this.data['countryLatLngs'];
-            const countryLocationIds = this.data['countryLocationIds'];
-            const latLngs = locations.map(location => [location.latitude, location.longitude]);
-
-            /** @param {Event|number} selectedValue */
-            const gotoLocation = (selectedValue) => {
-                /*const select = document.getElementById('fl-series-map-select');
-                const id = select.options[select.selectedIndex].value;
-                const locationH4 = document.querySelector(`h4[data-tmdb-id="${id}"]`);
-                locationH4.scrollIntoView({behavior: 'instant', block: 'center'});*/
-                const mapDiv = document.getElementById('map');
-                const allSeriesLocations = document.querySelector('.all-series-locations');
-                /** @type {HTMLSelectElement} */
-                const select = document.getElementById('fl-series-map-select');
-                const value = typeof selectedValue == "number" ? selectedValue : select.options[select.selectedIndex].value;
-                let country;
-                if (value !== "all") {
-                    const markerToHide = mapDiv.querySelectorAll(`.mapboxgl-marker:not([data-tmdb-id="${value}"])`);
-                    markerToHide.forEach(marker => {
-                        if (!marker.classList.contains('poi-marker'))
-                            marker.style.display = 'none';
-                    });
-                    const markerToShow = mapDiv.querySelectorAll(`.mapboxgl-marker[data-tmdb-id="${value}"]`);
-                    markerToShow.forEach(marker => {
-                        if (!marker.classList.contains('poi-marker'))
-                            marker.style.display = 'block';
-                    });
-                    const seriesLocationsToHide = allSeriesLocations.querySelectorAll(`.series-locations:not([data-tmdb-id="${value}"])`);
-                    const serieLocations = document.querySelector(`.series-locations[data-tmdb-id="${value}"]`);
-                    seriesLocationsToHide.forEach(locationItem => {
-                        locationItem.style.display = 'none';
-                    });
-                    serieLocations.style.display = "flex";
-                    country = serieLocations?.getAttribute('data-country') || "";
-                } else {
-                    const allSeriesLocationDivs = allSeriesLocations.querySelectorAll('.series-locations');
-                    const allMarkers = mapDiv.querySelectorAll('.mapboxgl-marker');
-                    allMarkers.forEach(marker => {
-                        marker.style.display = 'block';
-                    });
-                    allSeriesLocationDivs.forEach(loc => {
-                        loc.style.display = "flex";
-                    });
-                    country = "";
+        const initializeMap = () => {
+            this.map = new mapboxgl.Map({
+                container: 'map',
+                cooperativeGestures: options.cooperativeGesturesOption,
+                projection: 'globe',
+                pitch: 45,
+                bearing: 0,
+                bounds: this.bounds,
+                fitBoundsOptions: {
+                    padding: 45
                 }
-                // console.log(country);
-                const flCountryBbSelect = document.getElementById('fl-country-bb-select');
-                flCountryBbSelect.selectedIndex = getSelectIndex(flCountryBbSelect, country);
-                zoomToCountry();
-
-                // Lorsqu'on change de series, on veut que le bouton "Zoom to" soit actif pour les pays
-                const zoomToCountryButtons = document.querySelectorAll('.to-country');
-                zoomToCountryButtons.forEach(button => {
-                    button.classList.add('active');
+            });
+            console.log('Map initialized', this.map);
+            this.map.on('style.load', () => {
+                this.map.setFog({
+                    "range": [0.8, 1.2],
+                    "color": "#E0861F",
+                    "horizon-blend": 0.125,
+                    "high-color": "#112a67",
+                    "space-color": "#000000",
+                    "star-intensity": 0.15
                 });
-                const zoomToMarkersButtons = document.querySelectorAll('.to-markers');
-                zoomToMarkersButtons.forEach(button => {
-                    button.classList.remove('active');
-                });
-            }
 
-            const getSelectIndex = (select, value) => {
-                for (let i = 0; i < select.options.length; i++) {
-                    if (select.options[i].value === value) {
-                        return i;
+                this.map.setConfigProperty('basemap', 'show3dObjects', true);
+                initializeControls();
+                initializeMarkers();
+                initializeMapHandle();
+
+                if (document.querySelector("#map-index")) {
+                    const locations = this.data['locations'];
+                    const countryBounds = this.data['countryLatLngs'];
+                    const countryLocationIds = this.data['countryLocationIds'];
+                    const latLngs = locations.map(location => [location.latitude, location.longitude]);
+
+                    /** @param {Event|number} selectedValue */
+                    const gotoLocation = (selectedValue) => {
+                        /*const select = document.getElementById('fl-series-map-select');
+                        const id = select.options[select.selectedIndex].value;
+                        const locationH4 = document.querySelector(`h4[data-tmdb-id="${id}"]`);
+                        locationH4.scrollIntoView({behavior: 'instant', block: 'center'});*/
+                        const mapDiv = document.getElementById('map');
+                        const allSeriesLocations = document.querySelector('.all-series-locations');
+                        /** @type {HTMLSelectElement} */
+                        const select = document.getElementById('fl-series-map-select');
+                        const value = typeof selectedValue == "number" ? selectedValue : select.options[select.selectedIndex].value;
+                        let country;
+                        if (value !== "all") {
+                            const markerToHide = mapDiv.querySelectorAll(`.mapboxgl-marker:not([data-tmdb-id="${value}"])`);
+                            markerToHide.forEach(marker => {
+                                if (!marker.classList.contains('poi-marker'))
+                                    marker.style.display = 'none';
+                            });
+                            const markerToShow = mapDiv.querySelectorAll(`.mapboxgl-marker[data-tmdb-id="${value}"]`);
+                            markerToShow.forEach(marker => {
+                                if (!marker.classList.contains('poi-marker'))
+                                    marker.style.display = 'block';
+                            });
+                            const seriesLocationsToHide = allSeriesLocations.querySelectorAll(`.series-locations:not([data-tmdb-id="${value}"])`);
+                            const serieLocations = document.querySelector(`.series-locations[data-tmdb-id="${value}"]`);
+                            seriesLocationsToHide.forEach(locationItem => {
+                                locationItem.style.display = 'none';
+                            });
+                            serieLocations.style.display = "flex";
+                            country = serieLocations?.getAttribute('data-country') || "";
+                        } else {
+                            const allSeriesLocationDivs = allSeriesLocations.querySelectorAll('.series-locations');
+                            const allMarkers = mapDiv.querySelectorAll('.mapboxgl-marker');
+                            allMarkers.forEach(marker => {
+                                marker.style.display = 'block';
+                            });
+                            allSeriesLocationDivs.forEach(loc => {
+                                loc.style.display = "flex";
+                            });
+                            country = "";
+                        }
+                        // console.log(country);
+                        const flCountryBbSelect = document.getElementById('fl-country-bb-select');
+                        flCountryBbSelect.selectedIndex = getSelectIndex(flCountryBbSelect, country);
+                        zoomToCountry();
+
+                        // Lorsqu'on change de series, on veut que le bouton "Zoom to" soit actif pour les pays
+                        const zoomToCountryButtons = document.querySelectorAll('.to-country');
+                        zoomToCountryButtons.forEach(button => {
+                            button.classList.add('active');
+                        });
+                        const zoomToMarkersButtons = document.querySelectorAll('.to-markers');
+                        zoomToMarkersButtons.forEach(button => {
+                            button.classList.remove('active');
+                        });
+                    }
+
+                    const getSelectIndex = (select, value) => {
+                        for (let i = 0; i < select.options.length; i++) {
+                            if (select.options[i].value === value) {
+                                return i;
+                            }
+                        }
+                        return 0;
+                    }
+
+                    const zoomToSeriesCountry = (e) => {
+                        const target = e.currentTarget;
+                        const locationsButton = target.parentElement.querySelector('.to-markers');
+                        locationsButton.classList.remove('active');
+                        target.classList.add('active');
+                        const countryCode = target.getAttribute('data-country');
+                        const select = document.getElementById('fl-country-bb-select');
+                        select.selectedIndex = getSelectIndex(select, countryCode);
+                        zoomToCountry();
+                    }
+
+                    const zoomToSeriesLocations = (e) => {
+                        const target = e.currentTarget;
+                        const countryButton = target.parentElement.querySelector('.to-country');
+                        countryButton.classList.remove('active');
+                        target.classList.add('active');
+                        let minLat = parseFloat(target.getAttribute('data-min-lat'));
+                        let maxLat = parseFloat(target.getAttribute('data-max-lat'));
+                        let minLng = parseFloat(target.getAttribute('data-min-lng'));
+                        let maxLng = parseFloat(target.getAttribute('data-max-lng'));
+                        minLat -= 0.1;
+                        maxLat += 0.1;
+                        minLng -= 0.1;
+                        maxLng += 0.1;
+                        this.map.fitBounds([[minLng, minLat], [maxLng, maxLat]], {padding: 45});
+                    }
+
+                    const zoomToLocation = () => {
+                        /** @type {HTMLSelectElement} */
+                        const select = document.getElementById('fl-country-map-select');
+                        const country = select.options[select.selectedIndex].value;
+                        const leafletMarkerIcons = document.querySelectorAll('.leaflet-marker-icon');
+                        const leafletMarkerShadows = document.querySelectorAll('.leaflet-marker-shadow');
+
+                        if (country) {
+                            const latLngs = countryBounds[country];
+                            this.map.fitBounds(latLngs, {padding: 45});
+
+                            const locationIds = countryLocationIds[country];
+                            leafletMarkerIcons.forEach(markerIcon => {
+                                const tmdbId = markerIcon.getAttribute('data-tmdb-id');
+                                if (locationIds.includes(parseInt(tmdbId))) {
+                                    markerIcon.style.display = 'block';
+                                } else {
+                                    markerIcon.style.display = 'none';
+                                }
+                            });
+                            leafletMarkerShadows.forEach(markerShadow => {
+                                const tmdbId = markerShadow.getAttribute('data-tmdb-id');
+                                if (locationIds.includes(parseInt(tmdbId))) {
+                                    markerShadow.style.display = 'block';
+                                } else {
+                                    markerShadow.style.display = 'none';
+                                }
+                            });
+                        } else {
+                            this.map.fitBounds(latLngs, {padding: 45});
+                            leafletMarkerIcons.forEach(markerIcon => {
+                                markerIcon.style.display = 'block';
+                            });
+                        }
+                    }
+
+                    const zoomToCountry = () => {
+                        /** @type {HTMLSelectElement} */
+                        const select = document.getElementById('fl-country-bb-select');
+                        const country = select.options[select.selectedIndex];
+                        if (country.value === "") {
+                            const center = this.map.getCenter();
+                            this.map.setZoom(3);
+                            this.map.easeTo({center, duration: 1000, easing: (n) => n});
+                        } else {
+                            // dans la base les latitudes et longitudes sont inversées
+                            const lat1 = country.getAttribute('data-lat1');
+                            const lng1 = country.getAttribute('data-lng1');
+                            const lat2 = country.getAttribute('data-lat2');
+                            const lng2 = country.getAttribute('data-lng2');
+                            this.map.fitBounds([[lat1, lng1], [lat2, lng2]], {padding: 45});
+                        }
+                    }
+
+                    const selectedFilmingLocation = parseInt(document.querySelector('.series-location-selected').textContent) || 0;
+                    const flSeriesMapSelect = document.getElementById('fl-series-map-select');
+                    const flCountryMapSelect = document.getElementById('fl-country-map-select');
+                    const flCountryBbSelect = document.getElementById('fl-country-bb-select');
+
+                    flSeriesMapSelect.addEventListener('change', gotoLocation);
+                    flCountryMapSelect.addEventListener('change', zoomToLocation);
+                    flCountryBbSelect.addEventListener('change', zoomToCountry);
+
+                    const allSeriesLocations = document.querySelector('.all-series-locations');
+                    const seriesLocations = allSeriesLocations.querySelectorAll('.series-locations');
+                    seriesLocations.forEach(loc => {
+                        const toCountry = loc.querySelector('.to-country');
+                        const toMarkers = loc.querySelector('.to-markers');
+                        toCountry.addEventListener('click', zoomToSeriesCountry);
+                        toMarkers.addEventListener('click', zoomToSeriesLocations);
+                    });
+
+                    if (selectedFilmingLocation > 0) {
+                        flSeriesMapSelect.value = selectedFilmingLocation;
+                        gotoLocation(selectedFilmingLocation);
                     }
                 }
-                return 0;
-            }
 
-            const zoomToSeriesCountry = (e) => {
-                const target = e.currentTarget;
-                const locationsButton = target.parentElement.querySelector('.to-markers');
-                locationsButton.classList.remove('active');
-                target.classList.add('active');
-                const countryCode = target.getAttribute('data-country');
-                const select = document.getElementById('fl-country-bb-select');
-                select.selectedIndex = getSelectIndex(select, countryCode);
-                zoomToCountry();
-            }
+                const thumbnails = document.querySelectorAll('.thumbnail');
+                thumbnails.forEach(thumbnail => {
+                    thumbnail.addEventListener('click', this.setMapStyle);
+                });
 
-            const zoomToSeriesLocations = (e) => {
-                const target = e.currentTarget;
-                const countryButton = target.parentElement.querySelector('.to-country');
-                countryButton.classList.remove('active');
-                target.classList.add('active');
-                let minLat = parseFloat(target.getAttribute('data-min-lat'));
-                let maxLat = parseFloat(target.getAttribute('data-max-lat'));
-                let minLng = parseFloat(target.getAttribute('data-min-lng'));
-                let maxLng = parseFloat(target.getAttribute('data-max-lng'));
-                minLat -= 0.1;
-                maxLat += 0.1;
-                minLng -= 0.1;
-                maxLng += 0.1;
-                this.map.fitBounds([[minLng, minLat], [maxLng, maxLat]], {padding: 45});
-            }
-
-            const zoomToLocation = () => {
-                /** @type {HTMLSelectElement} */
-                const select = document.getElementById('fl-country-map-select');
-                const country = select.options[select.selectedIndex].value;
-                const leafletMarkerIcons = document.querySelectorAll('.leaflet-marker-icon');
-                const leafletMarkerShadows = document.querySelectorAll('.leaflet-marker-shadow');
-
-                if (country) {
-                    const latLngs = countryBounds[country];
-                    this.map.fitBounds(latLngs, {padding: 45});
-
-                    const locationIds = countryLocationIds[country];
-                    leafletMarkerIcons.forEach(markerIcon => {
-                        const tmdbId = markerIcon.getAttribute('data-tmdb-id');
-                        if (locationIds.includes(parseInt(tmdbId))) {
-                            markerIcon.style.display = 'block';
-                        } else {
-                            markerIcon.style.display = 'none';
+                const targetMapDivs = document.querySelectorAll('.target-map');
+                targetMapDivs.forEach(targetMapDiv => {
+                    targetMapDiv.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        const locId = targetMapDiv.getAttribute('data-loc-id');
+                        const lat = targetMapDiv.getAttribute('data-lat');
+                        const lng = targetMapDiv.getAttribute('data-lng');
+                        // Center map to location (lat, lng)
+                        this.map.flyTo({center: [lng, lat], duration: 5000, zoom: 15, curve: 2,easing: (n) => n, essential: true});
+                        const markerElement = document.querySelector('div[data-target-id="' + locId + '"]');
+                        if (markerElement) {
+                            markerElement.click();
                         }
                     });
-                    leafletMarkerShadows.forEach(markerShadow => {
-                        const tmdbId = markerShadow.getAttribute('data-tmdb-id');
-                        if (locationIds.includes(parseInt(tmdbId))) {
-                            markerShadow.style.display = 'block';
+                })
+
+                const seriesLocationImages = document.querySelectorAll('.series-location-image');
+                seriesLocationImages.forEach(image => {
+                    const imageList = image.querySelector('.image-list');
+                    if (imageList) {
+                        image.addEventListener('mouseenter', () => {
+                            image.addEventListener('mousemove', gThis.getPosition);
+                        });
+                        image.addEventListener('mouseleave', () => {
+                            image.removeEventListener('mousemove', gThis.getPosition);
+                            image.setAttribute('data-position', "0");
+                            const imageSrc = imageList.children[0].getAttribute('src');
+                            image.querySelector('img').setAttribute('src', imageSrc);
+                        });
+                    }
+                });
+
+                const toggleCooperativeGesturesButton = document.querySelector('.toggle-cooperative-gestures');
+                if (toggleCooperativeGesturesButton) {
+                    toggleCooperativeGesturesButton.addEventListener('click', () => {
+                        const state = gThis.toggleCooperativeGestures();
+                        if (state) {
+                            toggleCooperativeGesturesButton.classList.add('active');
                         } else {
-                            markerShadow.style.display = 'none';
+                            toggleCooperativeGesturesButton.classList.remove('active');
                         }
                     });
-                } else {
-                    this.map.fitBounds(latLngs, {padding: 45});
-                    leafletMarkerIcons.forEach(markerIcon => {
-                        markerIcon.style.display = 'block';
+                }
+
+                const mapStylesButton = document.querySelector('.map-style-list-toggler');
+                const mapList = document.querySelector('.map-style-list');
+                const spans = mapStylesButton.querySelectorAll('span');
+                mapStylesButton.addEventListener('click', () => {
+                    mapList.classList.toggle('active');
+                    mapStylesButton.classList.toggle('active');
+                    spans.forEach(span => {
+                        span.classList.toggle('hidden');
                     });
-                }
-            }
-
-            const zoomToCountry = () => {
-                /** @type {HTMLSelectElement} */
-                const select = document.getElementById('fl-country-bb-select');
-                const country = select.options[select.selectedIndex];
-                if (country.value === "") {
-                    const center = this.map.getCenter();
-                    this.map.setZoom(3);
-                    this.map.easeTo({center, duration: 1000, easing: (n) => n});
-                } else {
-                    // dans la base les latitudes et longitudes sont inversées
-                    const lat1 = country.getAttribute('data-lat1');
-                    const lng1 = country.getAttribute('data-lng1');
-                    const lat2 = country.getAttribute('data-lat2');
-                    const lng2 = country.getAttribute('data-lng2');
-                    this.map.fitBounds([[lat1, lng1], [lat2, lng2]], {padding: 45});
-                }
-            }
-
-            const selectedFilmingLocation = parseInt(document.querySelector('.series-location-selected').textContent) || 0;
-            const flSeriesMapSelect = document.getElementById('fl-series-map-select');
-            const flCountryMapSelect = document.getElementById('fl-country-map-select');
-            const flCountryBbSelect = document.getElementById('fl-country-bb-select');
-
-            flSeriesMapSelect.addEventListener('change', gotoLocation);
-            flCountryMapSelect.addEventListener('change', zoomToLocation);
-            flCountryBbSelect.addEventListener('change', zoomToCountry);
-
-            const allSeriesLocations = document.querySelector('.all-series-locations');
-            const seriesLocations = allSeriesLocations.querySelectorAll('.series-locations');
-            seriesLocations.forEach(loc => {
-                const toCountry = loc.querySelector('.to-country');
-                const toMarkers = loc.querySelector('.to-markers');
-                toCountry.addEventListener('click', zoomToSeriesCountry);
-                toMarkers.addEventListener('click', zoomToSeriesLocations);
-            });
-
-            if (selectedFilmingLocation > 0) {
-                flSeriesMapSelect.value = selectedFilmingLocation;
-                gotoLocation(selectedFilmingLocation);
-            }
-        }
-
-        const thumbnails = document.querySelectorAll('.thumbnail');
-        thumbnails.forEach(thumbnail => {
-            thumbnail.addEventListener('click', this.setMapStyle);
-        });
-
-        const targetMapDivs = document.querySelectorAll('.target-map');
-        targetMapDivs.forEach(targetMapDiv => {
-            targetMapDiv.addEventListener('click', (event) => {
-                event.preventDefault();
-                const locId = targetMapDiv.getAttribute('data-loc-id');
-                const lat = targetMapDiv.getAttribute('data-lat');
-                const lng = targetMapDiv.getAttribute('data-lng');
-                // Center map to location (lat, lng)
-                this.map.flyTo({center: [lng, lat], duration: 5000, zoom: 15, curve: 2,easing: (n) => n, essential: true});
-                const markerElement = document.querySelector('div[data-target-id="' + locId + '"]');
-                if (markerElement) {
-                    markerElement.click();
-                }
-            });
-        })
-
-        const seriesLocationImages = document.querySelectorAll('.series-location-image');
-        seriesLocationImages.forEach(image => {
-            const imageList = image.querySelector('.image-list');
-            if (imageList) {
-                image.addEventListener('mouseenter', () => {
-                    image.addEventListener('mousemove', gThis.getPosition);
                 });
-                image.addEventListener('mouseleave', () => {
-                    image.removeEventListener('mousemove', gThis.getPosition);
-                    image.setAttribute('data-position', "0");
-                    const imageSrc = imageList.children[0].getAttribute('src');
-                    image.querySelector('img').setAttribute('src', imageSrc);
-                });
-            }
-        });
-
-        const toggleCooperativeGesturesButton = document.querySelector('.toggle-cooperative-gestures');
-        if (toggleCooperativeGesturesButton) {
-            toggleCooperativeGesturesButton.addEventListener('click', () => {
-                const state = gThis.toggleCooperativeGestures();
-                if (state) {
-                    toggleCooperativeGesturesButton.classList.add('active');
-                } else {
-                    toggleCooperativeGesturesButton.classList.remove('active');
-                }
             });
         }
 
-        const mapStylesButton = document.querySelector('.map-style-list-toggler');
-        const mapList = document.querySelector('.map-style-list');
-        const spans = mapStylesButton.querySelectorAll('span');
-        mapStylesButton.addEventListener('click', () => {
-            mapList.classList.toggle('active');
-            mapStylesButton.classList.toggle('active');
-            spans.forEach(span => {
-                span.classList.toggle('hidden');
-            });
-        });
+        initializeMap();
     }
 
     addPoiMarker(point, index) {
