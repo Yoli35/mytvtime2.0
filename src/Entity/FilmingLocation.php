@@ -45,7 +45,7 @@ class FilmingLocation
     private Collection $filmingLocationImages;
 
     #[ORM\Column(length: 36, nullable: true)]
-    private ?string $uuid = null;
+    private ?string $uuid;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?FilmingLocationImage $still = null;
@@ -54,25 +54,25 @@ class FilmingLocation
     private ?array $originCountry = null;
 
     #[ORM\Column(nullable: true)]
-    private ?DateTimeImmutable $createdAt = null;
+    private ?DateTimeImmutable $createdAt;
 
     #[ORM\Column(nullable: true)]
-    private ?DateTimeImmutable $updatedAt = null;
+    private ?DateTimeImmutable $updatedAt;
 
     #[ORM\Column(nullable: true)]
-    private ?int $episodeNumber = null;
+    private ?int $episodeNumber;
 
     #[ORM\Column(nullable: true)]
-    private ?int $seasonNumber = null;
+    private ?int $seasonNumber;
 
     #[ORM\Column(nullable: true)]
-    private ?float $radius = null;
+    private ?float $radius;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $sourceName = null;
+    private ?string $sourceName;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $sourceUrl = null;
+    private ?string $sourceUrl;
 
     public function __construct(string $uuid, int $tmdbId, string $title, string $location, string $description, float $latitude, float $longitude, ?float $radius, int $seasonNumber, int $episodeNumber, ?string $sourceName, ?string $sourceUrl, DateTimeImmutable $now, bool $isSeries = false)
     {

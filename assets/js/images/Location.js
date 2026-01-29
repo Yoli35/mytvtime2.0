@@ -9,18 +9,20 @@ export class Location {
         this.mapDiv = mapDiv;
         this.map = null;
         this.lang = document.documentElement.lang;
-        this.filmingLocations = [];
         this.flashMessage = null;
         this.type = type;// 'poi'|'loc'
         this.translations = data.translations || {};
+        this.filmingLocations = data.locations;
         this.emptyLocation = data.emptyLocation || {};
         this.imagePath = data.imagePath || '';
         this.seriesId = data.seriesId || null;
         this.seriesName = data.seriesName || '';
-        this.url = '/' + gThis.lang + (this.seriesId ? '/series/location/add/' + this.seriesId : '/admin/point-of-interest/add');
+        this.urlAdd = '/' + gThis.lang + (this.seriesId ? '/series/location/add/' + this.seriesId : '/admin/point-of-interest/add');
+        this.urlDelete = '/' + gThis.lang + (this.seriesId ? '/series/location/delete' : '/admin/point-of-interest/delete');
         this.fieldList = fieldList || [];
 
         this.openLocationPanel = this.openLocationPanel.bind(this);
+        this.openLocationImagesPanel = this.openLocationImagesPanel.bind(this);
 
         this.init();
     }
@@ -42,10 +44,14 @@ export class Location {
         const inputLongitude = addLocationForm.querySelector('input[name="longitude"]');
         const addLocationCancel = addLocationForm.querySelector('button[type="button"]');
         const addLocationSubmit = addLocationForm.querySelector('button[type="submit"]');
+        const addLocationDelete = addLocationForm.querySelector('button[type="button"].danger');
         const imageInputs = addLocationForm.querySelectorAll('input[type="url"]');
         const submitRow = addLocationForm.querySelector('.form-row.submit-row');
         const scrollDownToSubmitDiv = addLocationDialog.querySelector('.scroll-down-to-submit');
         const scrollDownToSubmitButton = scrollDownToSubmitDiv.querySelector('button');
+        const editLocationImagesForm = document.querySelector('#edit-location-images-form');
+        const addLocationImagesCancel = editLocationImagesForm.querySelector('button[type="button"]');
+        const addLocationImagesSubmit = editLocationImagesForm.querySelector('button[type="submit"]');
         console.log({imageInputs});
 
         const observer = new IntersectionObserver(function (entries) {
@@ -107,6 +113,12 @@ export class Location {
                         const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
                         gThis.openLocationPanel('update', location, gThis.translations['Update']);
                     });
+                    const editImagesButton = imageDiv.querySelector('.edit-images');
+                    editImagesButton?.addEventListener('click', function () {
+                        const locationId = this.getAttribute('data-loc-id');
+                        const location = gThis.filmingLocations.find(location => location.id === parseInt(locationId));
+                        gThis.openLocationImagesPanel('update', location, gThis.translations['Update']);
+                    });
                 }
             });
         }
@@ -128,6 +140,25 @@ export class Location {
         });
         addLocationCancel.addEventListener('click', function () {
             gThis.closeLocationPanel();
+        });
+        addLocationDelete.addEventListener('click', function () {
+            const formData = new FormData();
+            formData.append('id', addLocationForm.querySelector('input[name="crud-id"]').value);
+            fetch(gThis.urlDelete,
+                {
+                    method: 'POST',
+                    body: formData
+                }
+            ).then(async function (response) {
+                const data = await response.json();
+                console.log({data});
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    gThis.flashMessage.add('error', data.message);
+                }
+                gThis.closeLocationPanel();
+            });
         });
         addLocationSubmit.addEventListener('click', function (event) {
             event.preventDefault();
@@ -158,7 +189,7 @@ export class Location {
             }
             if (!emptyInput) {
                 const formData = gThis.getFormData(addLocationForm, gThis.fieldList);
-                fetch(gThis.url,
+                fetch(gThis.urlAdd,
                     {
                         method: 'POST',
                         body: formData
@@ -174,6 +205,14 @@ export class Location {
                     gThis.closeLocationPanel();
                 });
             }
+        });
+
+        addLocationImagesCancel.addEventListener('click', function () {
+            gThis.closeLocationImagesPanel();
+        });
+        addLocationImagesSubmit.addEventListener('click', function (event) {
+            event.preventDefault();
+            gThis.closeLocationImagesPanel();
         });
 
         imageInputs.forEach(function (imageInput) {
@@ -335,9 +374,15 @@ export class Location {
         });
         if (imageFileInput.files.length)
             formData.append(imageFileInput.name, imageFileInput.files[0]);
-        Array.from(imageFilesInput.files).forEach(function (file, index) {
-            formData.append('additional-image-' + index, file);
-        });
+        const files = imageFilesInput.files;
+        if (!files) {
+            return formData;
+        }
+        let index = 0;
+        for (const file of files) {
+            formData.append(`additional-image-${index}`, file, file.name);
+            index += 1;
+        }
 
         return formData;
     }
@@ -362,6 +407,7 @@ export class Location {
         const locationImages = addLocationForm.querySelector(".location-images");
         const additionalImagesDiv = addLocationForm.querySelector('.additional-images');
         const submitButton = addLocationForm.querySelector('button[type="submit"]');
+        const deleteButton = addLocationForm.querySelector('button[type="button"].danger');
 
         inputs.forEach(function (input) {
             // const name = input.getAttribute('name');
@@ -393,6 +439,7 @@ export class Location {
                 descriptionTextarea.value = location.description;
                 sourceNameInput.value = location.source_name;
                 sourceUrlInput.value = location.source_url;
+                deleteButton.classList.remove('d-none');
             }
             locationImages.style.display = 'flex';
             const stillDiv = locationImages.querySelector('.still');
@@ -406,7 +453,7 @@ export class Location {
             const wrapper = additionalImagesDiv.querySelector('.wrapper');
             wrapper.innerHTML = '';
             const additionalImagesArray = location.filmingLocationImages.filter(fl => fl.id !== location.still_id);
-            additionalImagesArray.forEach(function (image) {
+            for (let image of additionalImagesArray) {
                 const img = document.createElement('img');
                 const imageDiv = document.createElement('div');
                 imageDiv.classList.add('image');
@@ -414,7 +461,7 @@ export class Location {
                 img.alt = image.title;
                 imageDiv.appendChild(img);
                 wrapper.appendChild(imageDiv);
-            });
+            }
         }
         addLocationDialog.classList.add('open');
         firstInput.focus();
@@ -423,6 +470,52 @@ export class Location {
 
     closeLocationPanel() {
         const addLocationDialog = document.querySelector('.side-panel.add-location-dialog');
+        const deleteButton = addLocationDialog.querySelector('button[type="button"].danger');
+        deleteButton.classList.add('d-none');
         addLocationDialog.classList.remove('open');
+    }
+
+    openLocationImagesPanel(crud, location, buttonText) {
+        const editLocationImagesForm = document.querySelector('#edit-location-images-form');
+        const editLocationImagesDialog = document.querySelector('.side-panel.edit-location-images-dialog');
+        const locationImages = editLocationImagesForm.querySelector(".location-images");
+        const submitButton = editLocationImagesForm.querySelector('button[type="submit"]');
+
+        submitButton.innerText = buttonText;
+
+        const wrapper = locationImages.querySelector('.wrapper');
+        while (wrapper.firstChild) {
+            wrapper.firstChild.remove();
+        }
+        const additionalImagesArray = location.filmingLocationImages;
+        for(const image of additionalImagesArray) {
+            const img = document.createElement('img');
+            const imageDiv = document.createElement('div');
+            imageDiv.classList.add('image');
+            img.src = '/images/map' + image.path;
+            img.alt = image.title;
+            imageDiv.appendChild(img);
+            if (image.id === location.still_id) {
+                const badge = document.createElement("div");
+                badge.classList.add("still-badge");
+                const asterisk = this.getSvg("asterisk");
+                badge.appendChild(asterisk);
+                imageDiv.appendChild(badge);
+            }
+            wrapper.appendChild(imageDiv);
+        }
+        editLocationImagesDialog.classList.add('open');
+    }
+
+    closeLocationImagesPanel() {
+        const editLocationImagesDialog = document.querySelector('.side-panel.edit-location-images-dialog');
+        editLocationImagesDialog.classList.remove('open');
+    }
+
+    getSvg(id) {
+        const selector = 'svg[id="' + id + '"]';
+        const clone = document.querySelector('#svgs').querySelector(selector).cloneNode(true);
+        clone.removeAttribute('id');
+        return clone;
     }
 }

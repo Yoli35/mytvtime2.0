@@ -17,34 +17,18 @@ class FilmingLocationImageRepository extends ServiceEntityRepository
         parent::__construct($registry, FilmingLocationImage::class);
     }
 
-    //    /**
-    //     * @return FilmingLocationImage[] Returns an array of FilmingLocationImage objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('f')
-    //            ->andWhere('f.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('f.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?FilmingLocationImage
-    //    {
-    //        return $this->createQueryBuilder('f')
-    //            ->andWhere('f.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
     public function save(FilmingLocationImage $filmingLocationImage, bool $flush = false): void
     {
         $this->em->persist($filmingLocationImage);
 
+        if ($flush) {
+            $this->em->flush();
+        }
+    }
+
+    public function remove(FilmingLocationImage $filmingLocationImage, bool $flush = false): void
+    {
+        $this->em->remove($filmingLocationImage);
         if ($flush) {
             $this->em->flush();
         }

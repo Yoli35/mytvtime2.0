@@ -1584,6 +1584,49 @@ class SeriesController extends AbstractController
         ]);
     }
 
+    #[Route('/location/delete', name: 'delete_location', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
+    public function deleteLocation(Request $request): Response
+    {
+        $data = $request->request->all();
+        $id = $data['id'] ?? null;
+        if (!$id) {
+            return $this->json([
+                'ok' => false,
+                'success' => false,
+                'message' => 'Invalid ID',
+            ]);
+        }
+        $filmingLocation = $this->filmingLocationRepository->findOneBy(['id' => intval($id)]);
+        if (!$filmingLocation) {
+            return $this->json([
+                'ok' => false,
+                'success' => false,
+                'message' => 'Location not found',
+            ]);
+        }
+        $filmingLocation->setStill(null);
+        $this->filmingLocationRepository->save($filmingLocation, true);
+        $filmingLocationImages = $filmingLocation->getFilmingLocationImages();
+        foreach ($filmingLocationImages as $filmingLocationImage) {
+            $path = $filmingLocationImage->getPath();
+
+            $filmingLocation->removeFilmingLocationImage($filmingLocationImage);
+            $this->filmingLocationImageRepository->remove($filmingLocationImage);
+
+            $filePath = $this->getProjectDir() . '/public/images/map/' . $path;
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+        }
+        $this->filmingLocationImageRepository->flush();
+        $this->filmingLocationRepository->remove($filmingLocation, true);
+
+        return $this->json([
+            'ok' => true,
+            'success' => true,
+        ]);
+    }
+
     #[Route('/tmdb/check', name: 'tmdb_check', methods: ['POST'])]
     public function tmdbCheck(Request $request): Response
     {
@@ -2441,7 +2484,7 @@ class SeriesController extends AbstractController
         return null;
     }
 
-    public function getFilmingLocations(Series $series, SeriesLocalizedName $sln): array
+    public function getFilmingLocations(Series $series, ?SeriesLocalizedName $sln): array
     {
         $tmdbId = $series->getTmdbId();
         $filmingLocations = $this->filmingLocationRepository->locations($tmdbId);

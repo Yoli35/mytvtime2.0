@@ -27,6 +27,14 @@ class FilmingLocationRepository extends ServiceEntityRepository
         }
     }
 
+    public function remove(FilmingLocation $filmingLocation, bool $flush = false): void
+    {
+        $this->em->remove($filmingLocation);
+        if ($flush) {
+            $this->em->flush();
+        }
+    }
+
     public function flush(): void
     {
         $this->em->flush();

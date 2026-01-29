@@ -6525,6 +6525,14 @@ dialog, .side-panel {
                     background-color: var(--orange-50);
                     color: var(--ardoise-10);
                 }
+
+                &.danger {
+                    background-color: var(--red);
+                }
+
+                &.danger:hover {
+                    background-color: var(--red-40);
+                }
             }
         }
     }
