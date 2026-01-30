@@ -715,6 +715,7 @@ class SeriesController extends AbstractController
         $tv['seasons'] = $this->seriesService->seasonsPosterPath($tv['seasons']);
         $tv['watch/providers'] = $this->watchProviders($tv, 'FR');
         $tv['translations'] = $this->seriesService->getTranslations($tv['translations']['translations'], $country, $locale);
+        $translatedName = $tv['translations']['data']['name'] ?? null;
         $c = count($tv['episode_run_time']);
         $tv['average_episode_run_time'] = $c ? array_reduce($tv['episode_run_time'], function ($carry, $item) {
                 return $carry + $item;
@@ -723,6 +724,7 @@ class SeriesController extends AbstractController
         return $this->render('series/tmdb.html.twig', [
             'tv' => $tv,
             'localizedName' => $localizedName,
+            'translatedName' => $translatedName,
             'localizedOverview' => $localizedOverview,
         ]);
     }
