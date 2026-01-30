@@ -10,6 +10,8 @@ export class SeasonComments {
         this.seasonNumber = seasonNumber;
         this.translations = translations;
         this.toolTips = new ToolTips();
+        this.answerSVG = document.getElementById('answer-badge').cloneNode(true);
+        this.answerSVG.removeAttribute('id');
 
         this.addEpisodeComment = this.addEpisodeComment.bind(this);
 
@@ -419,8 +421,10 @@ export class SeasonComments {
         messageDiv.appendChild(span);
         const answerDiv = document.createElement("div");
         answerDiv.classList.add("answer-button");
+        const svg = gThis.answerSVG.cloneNode(true);
+        answerDiv.appendChild(svg);
         answerDiv.setAttribute("data-ep-number", comment['episodeNumber'].toString());
-        answerDiv.innerText = gThis.translations['Add answer'];
+        answerDiv.setAttribute("data-title", gThis.translations['Add answer']);
         messageDiv.appendChild(answerDiv);
 
         coreDiv.appendChild(messageDiv);
