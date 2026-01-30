@@ -108,14 +108,14 @@ readonly class ApiLocation
             $images = array_filter($data, fn($key) => str_contains($key, 'image-url-'), ARRAY_FILTER_USE_KEY);
         }
         $images = array_filter($images, fn($image) => $image != '' and $image != "undefined");
-        // TODO: Vérifier le code suivant
+
         $firstImageIndex = 1;
         if ($filmingLocation) {
-            // Récupérer les images existantes et les compter
-            $existingAdditionalImages = $this->filmingLocationImageRepository->findBy(['filmingLocation' => $filmingLocation]);
-            $firstImageIndex += count($existingAdditionalImages);
+            // Récupérer les images existantes et récupérer l'index le plus élevé
+            $existingImages = array_map(fn($image) => $image->getFilename(), $this->filmingLocationImageRepository->findBy(['filmingLocation' => $filmingLocation]));
+            $lastImageIndex = $this->getHighestImageIndex($existingImages);
+            $firstImageIndex = $lastImageIndex + 1; /*count($existingImages);*/
         }
-        // Fin du code à vérifier
 
         if (!$filmingLocation) {
             $uuid = $data['uuid'] = Uuid::v4()->toString();
@@ -214,7 +214,7 @@ readonly class ApiLocation
             $filmingLocation->removeFilmingLocationImage($filmingLocationImage);
             $this->filmingLocationImageRepository->remove($filmingLocationImage);
 
-            $filePath = ($this->getParameter)('kernel.project_dir') . '/public/images/map/' . $path;
+            $filePath = ($this->getParameter)('kernel.project_dir') . '/public/images/map' . $path;
             if (file_exists($filePath)) {
                 unlink($filePath);
             }
@@ -226,6 +226,34 @@ readonly class ApiLocation
             'ok' => true,
             'success' => true,
         ]);
+    }
+
+    /**
+     * Retourne l'index le plus élevé trouvé dans des filenames de type "...-<index>.webp"
+     * Ex : "the-boyfriend-lac-akan-s02-e01-maps-3.webp" → 3
+     *
+     * @param string[] $filenames
+     */
+    function getHighestImageIndex(array $filenames, int $defaultValue = 0): int
+    {
+        $max = $defaultValue;
+        $pattern = '/-(\d+)\.webp$/i'; // capture le dernier "-<nombre>.webp" en fin de string
+
+        foreach ($filenames as $name) {
+            if (!is_string($name)) {
+                continue;
+            }
+            if (preg_match($pattern, $name, $m) !== 1) {
+                continue;
+            }
+
+            $idx = (int) $m[1];
+            if ($idx > $max) {
+                $max = $idx;
+            }
+        }
+
+        return $max;
     }
 
     public function now(): DateTimeImmutable
