@@ -4,9 +4,9 @@ let gThis = null;
 
 export class Location {
 
-    constructor(type, data, fieldList, mapDiv) {
+    constructor(type, data, fieldList) {
         gThis = this;
-        this.mapDiv = mapDiv;
+        this.mapDiv = document.querySelector('.map-controller');
         this.map = null;
         this.lang = document.documentElement.lang;
         this.flashMessage = null;
@@ -17,8 +17,8 @@ export class Location {
         this.imagePath = data.imagePath || '';
         this.seriesId = data.seriesId || null;
         this.seriesName = data.seriesName || '';
-        this.urlAdd = '/' + gThis.lang + (this.seriesId ? '/series/location/add/' + this.seriesId : '/admin/point-of-interest/add');
-        this.urlDelete = '/' + gThis.lang + (this.seriesId ? '/series/location/delete' : '/admin/point-of-interest/delete');
+        this.urlAdd = this.seriesId ? '/api/location/add/' + this.seriesId : '/' + gThis.lang + '/admin/point-of-interest/add';
+        this.urlDelete = this.seriesId ? '/api/location/delete' : '/' + gThis.lang + '/admin/point-of-interest/delete';
         this.fieldList = fieldList || [];
 
         this.openLocationPanel = this.openLocationPanel.bind(this);
@@ -146,7 +146,7 @@ export class Location {
             formData.append('id', addLocationForm.querySelector('input[name="crud-id"]').value);
             fetch(gThis.urlDelete,
                 {
-                    method: 'POST',
+                    method: 'DELETE',
                     body: formData
                 }
             ).then(async function (response) {

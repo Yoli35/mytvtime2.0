@@ -6442,7 +6442,7 @@ dialog, .side-panel {
 
                 .background {
                     align-items: center;
-                    color: hsl(from var(--green) h s l / .25);
+                    color: hsl(from var(--green) h s l / .5);
                     display: flex;
                     font-size: 6vw;
                     font-weight: 600;
@@ -6452,6 +6452,7 @@ dialog, .side-panel {
                     position: absolute;
                     text-align: center;
                     text-transform: uppercase;
+                    z-index: -1;
                 }
 
                 &:not(:has(ol)) {

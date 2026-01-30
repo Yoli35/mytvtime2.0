@@ -156,7 +156,7 @@ export class Show {
         }
 
         /******************************************************************************
-         * Add a copy badge to name and localized name.                               *
+         * Add a copy badge to the name and localized name.                               *
          ******************************************************************************/
         new CopyName(document.querySelector('.header .name h1'));
 
@@ -465,19 +465,15 @@ export class Show {
         /******************************************************************************
          * mapbox gl                                                                  *
          ******************************************************************************/
-        const mapDiv = document.querySelector('.map-controller');
-        if (mapDiv) {
-            /*this.map = new Map({cooperativeGesturesOption: false});*/
-            const data = {
-                translations: translations,
-                locations: filmingLocations,
-                emptyLocation: emptyLocation,
-                imagePath: locationImagePath,
-                seriesId: seriesId,
-                seriesName: seriesName
-            };
-            new Location('loc', data, fieldList, mapDiv);
-        }
+        const data = {
+            translations: translations,
+            locations: filmingLocations,
+            emptyLocation: emptyLocation,
+            imagePath: locationImagePath,
+            seriesId: seriesId,
+            seriesName: seriesName
+        };
+        new Location('loc', data, fieldList);
 
         /******************************************************************************
          + Add all backdrops and posters from TMDB to the series                      *
