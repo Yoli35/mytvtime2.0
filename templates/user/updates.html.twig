@@ -18,6 +18,55 @@
                 </div>
             </div>
             <div class="site-update glowing-border">
+                <h2>65ᵉ mise à jour : 31/01/2026</h2>
+                <ul>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:tv') }}→ Send email notification on new series addition</div>
+                        <div class="details">Adds an email notification to inform administrators when a user adds a new series. Enhances communication by providing detailed series and user information in the email for better tracking and management.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Improve image indexing for filming locations</div>
+                        <div class="details">Enhances accuracy in determining the next image index by identifying the highest existing index. Prevents potential overwrites and ensures consistent image naming for better file management.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Extract location management logic to dedicated API</div>
+                        <div class="details">Streamlines filming location operations by moving addition and deletion functionality to an API. Improves maintainability and separation of concerns while retaining core location management features.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Improve map marker interaction and load behavior</div>
+                        <div class="details">Enhances user experience by automatically clicking the first map marker and toggling POI visibility after loading. Ensures smoother navigation and interaction with map elements for improved usability.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Add location deletion functionality</div>
+                        <div class="details">Provides a feature for deleting filming locations along with related images. Enhances user control by enabling cleanup of unused or incorrect location data directly within the application.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Improve image handling and location list display</div>
+                        <div class="details">Refines the display of images in location lists in admin section with clearer styling and streamlined image groupings. Enhances user experience by improving visual consistency and simplifying navigation through associated images.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:map-outline') }}→ Refactor js filming location code from Show.js to Location.js</div>
+                        <div class="details">Also improves the user experience of location forms by introducing thumbnail and additional image previews. Enhances clarity when uploading images and ensures better feedback during image selection.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:comment-text-outline') }}→ Improve image upload handling for comments</div>
+                        <div class="details">Optimizes image file processing by ensuring file names are preserved and null file selections are handled gracefully. Improves reliability and feedback during image preview rendering and comment submission.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:blog') }}→ Add blog feature with articles and detailed views</div>
+                        <div class="details">Introduces a blog section with an article list and individual article pages. Enhances content presentation with a detailed layout, dynamic styling, and support for locale-specific routes. Improves user engagement by showcasing articles with metadata and clean navigation.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:cursor-default-click-outline') }}→ Add click-outside-to-close behavior for menus</div>
+                        <div class="details">Improves user interaction by allowing menus to close when clicking outside them. Enhances navigation usability and prevents unintended menu states.</div>
+                    </li>
+                    <li>
+                        <div class="change">{{ ux_icon('mdi:search') }}→ Consolidate search API endpoints and clean up unused code</div>
+                        <div class="details">Unified multiple search-related API endpoints into a single controller for better maintainability and streamlined functionality. Removed outdated endpoints and redundant code to improve performance and simplify the application structure.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="site-update glowing-border">
                 <h2>64ᵉ mise à jour : 26/01/2026</h2>
                 <ul>
                     <li>
