@@ -50,6 +50,7 @@ class ContactController extends AbstractController
                 ->subject($this->translator->trans('Contact form') . ' - ' . $data->getSubject())
                 ->htmlTemplate('emails/contact.html.twig')
                 ->context([
+                    'title' => 'Contact message',
                     'data' => $data,
                 ])
                 ->locale($user?->getPreferredLanguage() ?? $request->getLocale());
