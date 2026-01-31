@@ -50,5 +50,5 @@ cd ..;
 clear;
 echo 'Done';
 
-11- 'Think to reconnect the domain to the folder "/public"'
+11- 'Penser à connecter le domaine au dossier "/public"'
 12- ionos > Espace web > Utiliser l'espace web > Connecter le domaine au dossier "/public"
