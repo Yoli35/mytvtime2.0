@@ -254,7 +254,7 @@
             width: 100%;
 
             &:hover {
-                backdrop-filter: blur(80px);
+                backdrop-filter: blur(5rem);
                 background-color: hsl(from var(--ardoise-90) h s l / .5);
 
                 .infos-content {

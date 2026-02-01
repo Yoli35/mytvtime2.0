@@ -885,7 +885,7 @@ h2 {
                 width: 100%;
 
                 &:hover {
-                    backdrop-filter: blur(80px);
+                    backdrop-filter: blur(5rem);
                     background: linear-gradient(to bottom, hsla(from var(--ardoise-90) h s l / .25) 0%, hsla(from var(--ardoise-90) h s l / .75) 100%);
                 }
 
@@ -4028,154 +4028,158 @@ h2 {
             padding-inline: 1rem;
             width: 100%;
 
-            .still {
-                align-items: center;
-                aspect-ratio: var(--episode-aspect-ratio);
-                background-color: hsla(from var(--ardoise-90) h s l / 0.1);
-                border: 2px solid transparent;
-                border-radius: .5rem;
-                color: var(--green-10);
-                display: flex;
-                flex-shrink: 0;
-                height: 100%;
-                justify-content: center;
-                /*max-width: 57%;*/
-                position: relative;
-                transition: width 0.3s ease-in-out;
+            a {
+                height: var(--episode-height);
 
-                &:has(img) {
-                    background-color: black;
-                }
-
-                img {
-                    border-radius: .375rem;
+                .still {
+                    align-items: center;
+                    aspect-ratio: var(--episode-aspect-ratio);
+                    background-color: hsla(from var(--ardoise-90) h s l / 0.1);
+                    border: 2px solid transparent;
+                    border-radius: .5rem;
+                    color: var(--green-10);
+                    display: flex;
+                    flex-shrink: 0;
                     height: 100%;
-                    object-fit: cover;
-                    width: 100%;
-                }
+                    justify-content: center;
+                    /*max-width: 57%;*/
+                    position: relative;
+                    transition: width 0.3s ease-in-out;
 
-                &:hover {
+                    &:has(img) {
+                        background: black padding-box;
+                    }
+
+                    img {
+                        border-radius: .375rem;
+                        height: 100%;
+                        object-fit: cover;
+                        width: 100%;
+                    }
+
+                    &:hover {
+                        .custom-stills {
+                            background-color: hsla(from var(--orange-40) h s l / .2);
+                            border-color: var(--orange-50);
+                            opacity: 1;
+                        }
+
+                        .custom-stills-text {
+                            display: flex;
+                        }
+                    }
+
                     .custom-stills {
-                        background-color: hsla(from var(--orange-40) h s l / .2);
-                        border-color: var(--orange-50);
-                        opacity: 1;
+                        border-radius: .5rem;
+                        border: 2px dashed transparent;
+                        bottom: .5rem;
+                        display: flex;
+                        gap: .5rem;
+                        justify-content: flex-start;
+                        left: .5rem;
+                        min-height: 4rem;
+                        opacity: 0;
+                        overflow-x: auto;
+                        padding: .5rem;
+                        position: absolute;
+                        right: .5rem;
+                        transition: opacity 0.3s ease-in-out;
+
+                        &.active {
+                            background-color: hsla(from var(--green-40) h s l / .5);
+                            border-color: var(--green-30);
+                        }
+
+                        .custom-still {
+                            aspect-ratio: 16/9;
+                            border-radius: .25rem;
+                            border: 2px solid var(--orange-50);
+                            height: 4rem;
+
+                            img {
+                                border-radius: .125rem;
+                                height: 100%;
+                                object-fit: cover;
+                                width: 100%;
+                            }
+                        }
                     }
 
                     .custom-stills-text {
-                        display: flex;
-                    }
-                }
+                        align-items: center;
+                        background-color: var(--orange-10);
+                        border-radius: .5rem;
+                        bottom: 5.75rem;
+                        color: var(--orange-60);
+                        display: none;
+                        font-size: 1.5rem;
+                        font-weight: 900;
+                        gap: .5rem;
+                        justify-content: center;
+                        overflow-x: auto;
+                        padding: .25rem 1rem;
+                        position: absolute;
 
-                .custom-stills {
-                    border-radius: .5rem;
-                    border: 2px dashed transparent;
-                    bottom: .5rem;
-                    display: flex;
-                    gap: .5rem;
-                    justify-content: flex-start;
-                    left: .5rem;
-                    min-height: 4rem;
-                    opacity: 0;
-                    overflow-x: auto;
-                    padding: .5rem;
-                    position: absolute;
-                    right: .5rem;
-                    transition: opacity 0.3s ease-in-out;
-
-                    &.active {
-                        background-color: hsla(from var(--green-40) h s l / .5);
-                        border-color: var(--green-30);
-                    }
-
-                    .custom-still {
-                        aspect-ratio: 16/9;
-                        border-radius: .25rem;
-                        border: 2px solid var(--orange-50);
-                        height: 4rem;
-
-                        img {
-                            border-radius: .125rem;
-                            height: 100%;
-                            object-fit: cover;
-                            width: 100%;
+                        &.active {
+                            color: var(--green-30);
                         }
                     }
-                }
 
-                .custom-stills-text {
-                    align-items: center;
-                    background-color: var(--orange-10);
-                    border-radius: .5rem;
-                    bottom: 5.75rem;
-                    color: var(--orange-60);
-                    display: none;
-                    font-size: 1.5rem;
-                    font-weight: 900;
-                    gap: .5rem;
-                    justify-content: center;
-                    overflow-x: auto;
-                    padding: .25rem 1rem;
-                    position: absolute;
+                    .number {
+                        align-items: center;
+                        background-color: var(--orange-50);
+                        border-radius: .25rem;
+                        bottom: .5rem;
+                        color: var(--ardoise-10);
+                        display: flex;
+                        font-size: 1.5rem;
+                        font-weight: 500;
+                        height: 2rem;
+                        justify-content: center;
+                        min-width: 2rem;
+                        padding-inline: .75rem;
+                        position: absolute;
+                        right: .5rem;
+                        transition: font-size 0.3s ease-in-out, height 0.3s ease-in-out, width 0.3s ease-in-out;
 
-                    &.active {
-                        color: var(--green-30);
-                    }
-                }
+                        &.watched {
+                            background-color: var(--user-episode-actions);
+                        }
 
-                .number {
-                    align-items: center;
-                    background-color: var(--orange-50);
-                    border-radius: .25rem;
-                    bottom: .5rem;
-                    color: var(--ardoise-10);
-                    display: flex;
-                    font-size: 1.5rem;
-                    font-weight: 500;
-                    height: 2rem;
-                    justify-content: center;
-                    min-width: 2rem;
-                    padding-inline: .75rem;
-                    position: absolute;
-                    right: .5rem;
-                    transition: font-size 0.3s ease-in-out, height 0.3s ease-in-out, width 0.3s ease-in-out;
-
-                    &.watched {
-                        background-color: var(--user-episode-actions);
+                        > span {
+                            display: none;
+                            font-size: 1rem;
+                            margin-block-start: .25rem;
+                        }
                     }
 
-                    > span {
-                        display: none;
-                        font-size: 1rem;
-                        margin-block-start: .25rem;
-                    }
-                }
+                    .finale {
+                        align-items: center;
+                        background-color: var(--orange-50);
+                        border-radius: .25rem;
+                        color: var(--ardoise-10);
+                        display: flex;
+                        font-size: 1.5rem;
+                        font-weight: 500;
+                        justify-content: center;
+                        left: .5rem;
+                        max-width: calc(100% - 1rem);
+                        padding-block: .25rem;
+                        padding-inline: .5rem;
+                        position: absolute;
+                        text-align: center;
 
-                .finale {
-                    align-items: center;
-                    background-color: var(--orange-50);
-                    border-radius: .25rem;
-                    color: var(--ardoise-10);
-                    display: flex;
-                    font-size: 1.5rem;
-                    font-weight: 500;
-                    justify-content: center;
-                    left: .5rem;
-                    max-width: calc(100% - 1rem);
-                    padding-block: .25rem;
-                    padding-inline: .5rem;
-                    position: absolute;
-                    text-align: center;
+                        &.season-finale {
+                            top: .5rem;
+                        }
 
-                    &.season-finale {
-                        top: .5rem;
-                    }
+                        &.series-finale {
+                            top: 3.5rem;
+                        }
 
-                    &.series-finale {
-                        top: 3.5rem;
-                    }
-
-                    &.watched {
-                        background-color: var(--user-episode-actions);
+                        &.watched {
+                            background-color: var(--user-episode-actions);
+                        }
                     }
                 }
             }
