@@ -46,7 +46,7 @@ class HistoryMenu extends AbstractController
         $this->settingsRepository->save($settings, true);
 
         $history = array_map(function ($item) use ($user) {
-            $item['url'] = $this->generateUrl('app_series_season', ['id' => $item['id'], 'slug' => $item['slug'], 'seasonNumber' => $item['seasonNumber']]);
+            $item['url'] = $this->generateUrl('app_series_season_show', ['id' => $item['id'], 'slug' => $item['slug'], 'seasonNumber' => $item['seasonNumber']]);
             $item['posterPath'] = $item['posterPath'] ? $this->imageConfiguration->getCompleteUrl($item['posterPath'], 'poster_sizes', 2) : null;
             $item['lastWatchAt'] = $this->dateService->formatDateRelativeLong($item['lastWatchAt'], "UTC"/*$user->getTimezone() ?? 'Europe/Paris'*/, $user->getPreferredLanguage() ?? 'fr');
 //            $item['providerLogoPath'] = $item['providerLogoPath'] ? $this->imageConfiguration->getCompleteUrl($item['providerLogoPath'], 'logo_sizes', 2) : null;

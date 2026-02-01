@@ -149,7 +149,7 @@
                     </div>
                     <div class="seasons">
                         {% for season in tv.seasons %}
-                            <a href="{{ path('app_series_season', {id: series.id, seasonNumber: season.season_number, slug: tv.localized_name.slug ?? series.slug}) }}">
+                            <a href="{{ path('app_series_season_show', {id: series.id, seasonNumber: season.season_number, slug: tv.localized_name.slug ?? series.slug}) }}">
                                 <div class="season">
                                     <div class="poster">
                                         {% if season.poster_path %}

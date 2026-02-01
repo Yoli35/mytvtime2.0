@@ -4,7 +4,7 @@
 {% set displayName = series.localizedName ?? series.name %}
 {% set displaySlug = displayName|slug|lower %}
 <div class="card"{% if dataTitle is defined %} data-title="{{ dataTitle }}"{% endif %}>
-    <a href="{{ path('app_series_season', {'id': series.id, 'seasonNumber': series.seasonNumber, 'slug': displaySlug }) }}#episode-{{ series.episodeNumber }}">
+    <a href="{{ path('app_series_season_show', {'id': series.id, 'seasonNumber': series.seasonNumber, 'slug': displaySlug }) }}#episode-{{ series.episodeNumber }}">
         <div class="poster">
             {% if series.posterPath %}
                 <img src="{{ series.posterPath }}" alt="{{ series.name }}">

@@ -4,7 +4,7 @@
     {% elseif link_type == 'series' %}
         {% set url = path('app_series_show', {'id': series.id, 'slug': series.localized_slug ?? series.slug }) %}
         {% elseif link_type == 'season' %}
-            {% set url = path('app_series_season', {'id': series.id, 'slug': series.localized_slug ?? series.slug, seasonNumber: series.next_episode_season_number }) ~ '#episode-' ~ series.next_episode_season_number ~ '-' ~ series.next_episode_episode_number %}
+            {% set url = path('app_series_season_show', {'id': series.id, 'slug': series.localized_slug ?? series.slug, seasonNumber: series.next_episode_season_number }) ~ '#episode-' ~ series.next_episode_season_number ~ '-' ~ series.next_episode_episode_number %}
     {% endif %}
     <a href="{{ url }}" {% if target is defined %} target="{{ target }}"{% endif %}>
         <div class="poster">

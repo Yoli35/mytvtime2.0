@@ -17,7 +17,7 @@
     {% endif %}
 {% endif %}
 <div class="card" data-title="{{ title }}">
-    <a href="{{ path('app_series_season', {'id': series.id, 'seasonNumber': series.seasonNumber, 'slug': displaySlug }) }}#episode-{{ series.episodeNumber }}">
+    <a href="{{ path('app_series_season_show', {'id': series.id, 'seasonNumber': series.seasonNumber, 'slug': displaySlug }) }}#episode-{{ series.episodeNumber }}">
         <div class="poster">
             {% if series.posterPath %}
                 <img src="{{ series.posterPath }}" alt="{{ displayName }}"{% if series.date is defined %} data-title="{{ series.date }}{% endif %}">
