@@ -897,7 +897,7 @@ class SeriesController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    #[Route('/season/{id}-{slug}/{seasonNumber}', name: 'season', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS])]
+    #[Route('/season/{id}-{slug}/{seasonNumber}', name: 'season_show', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS])]
     public function showSeason(#[CurrentUser] User $user, Request $request, Series $series, int $seasonNumber, string $slug): Response
     {
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
@@ -1006,6 +1006,41 @@ class SeriesController extends AbstractController
             'providers' => $providers,
             'devices' => $devices,
 //            'externals' => $this->getExternals($series, $tvKeywords['results'] ?? [], $tvExternalIds, $request->getLocale()),
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/episode/{id}-{slug}/{seasonNumber}/{episodeNumber}', name: 'episode_show', requirements: ['id' => Requirement::DIGITS, 'seasonNumber' => Requirement::DIGITS, 'episodeNumber' => Requirement::DIGITS])]
+    public function showEpisode(#[CurrentUser] User $user, Request $request, Series $series, int $seasonNumber, int $episodeNumber, string $slug): Response
+    {
+        $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+        $this->logger->info('showEpisode', ['series' => $series->getId(), 'season' => $seasonNumber, 'episode' => $episodeNumber, 'slug' => $slug]);
+
+        $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
+        $season = json_decode($this->tmdbService->getTvSeason($series->getTmdbId(), $seasonNumber, $locale, ['credits', 'watch/providers']), true);
+        $episode = json_decode($this->tmdbService->getTvEpisode($series->getTmdbId(), $seasonNumber, $episodeNumber, $locale, ['credits', 'watch/providers']), true);
+
+        $finaleEpisodeNumber = $this->getFinaleEpisodeNumber($season);
+        $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $locale, true);
+        $stills = $this->episodeStillRepository->getSeasonStills([$episode['id']]);
+
+        $episode = $this->seasonEpisode($episode, $userSeries, $userEpisodes, $seasonNumber, $finaleEpisodeNumber, $stills);
+        $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
+        $peopleUserPreferredNames = $this->getPreferredNames($user);
+        $episode['guest_stars'] = $this->episodeGuestStars($episode, new AsciiSlugger(), $series, $profileUrl, $peopleUserPreferredNames);
+        dump($series->getTmdbId(), $seasonNumber, $episodeNumber, $episode);
+
+        $season['series_localized_name'] = $series->getLocalizedName($request->getLocale());
+        $season['blurred_poster_path'] = $this->imageService->blurPoster($season['poster_path'], 'series', 8);
+
+        $filmingLocation = $this->filmingLocationRepository->location($series->getTmdbId());
+
+        return $this->render('series/episode.html.twig', [
+            'userSeries' => $userSeries,
+            'series' => $series,
+            'season' => $season,
+            'episode' => $episode,
+            'filmingLocation' => $filmingLocation,
         ]);
     }
 
@@ -2290,7 +2325,7 @@ class SeriesController extends AbstractController
         foreach ($tvSeason['episodes'] as $episode) {
             if (key_exists("episode_type", $episode)) {
                 if ($episode['episode_type'] == "finale") {
-                    $finaleEpisodeNumber = $episode['episode_number'];
+                    return $episode['episode_number'];
                 }
             }
         }
@@ -2565,104 +2600,34 @@ class SeriesController extends AbstractController
     {
         $user = $userSeries->getUser();
         $series = $userSeries->getSeries();
-        $next_episode_to_air = $series->getNextEpisodeAirDate();
         $slugger = new AsciiSlugger();
         $locale = $user->getPreferredLanguage() ?? 'fr';
         $seasonEpisodes = [];
+        $episodeArr = [];
         $userEpisodes = $this->userEpisodeRepository->getUserEpisodesDB($userSeries->getId(), $season['season_number'], $locale, true);
-        $arr = $this->peopleUserPreferredNameRepository->getUserPreferredNames($user->getId());
-        $peopleUserPreferredNames = [];
-        foreach ($arr as $people) {
-            $peopleUserPreferredNames[$people['tmdb_id']] = $people;
-        }
+        $peopleUserPreferredNames = $this->getPreferredNames($user);
 
         $episodeIds = array_column($userEpisodes, 'episode_id');
         $stills = $this->episodeStillRepository->getSeasonStills($episodeIds);
 
-        $newCount = 0;
         $finaleEpisodeNumber = $this->getFinaleEpisodeNumber($season);
         foreach ($season['episodes'] as $episode) {
-            if (key_exists('episode_type', $episode) && $episode['episode_type'] == 'finale') {
-                $finaleEpisodeNumber = $episode['episode_number'];
-            }
-            if ($episode['episode_number'] > $finaleEpisodeNumber) {
-                $this->addFlash('warning', "// Skip episode " . sprintf("S%02dE%02d", $season['season_number'], $episode['episode_number']) . " after a finale");
-                continue;
-            }
-            $userEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number']);
-            if (!$userEpisode) {
-                $nue = new UserEpisode($userSeries, $episode['id'], $season['season_number'], $episode['episode_number'], null);
-                $nue->setAirDate($episode['air_date'] ? $this->date($episode['air_date']) : null);
-                if ($episode['episode_number'] > 1) {
-                    $previousEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number'] - 1);
-                    if ($previousEpisode) {
-                        $nue->setProviderId($previousEpisode['provider_id']);
-                        $nue->setDeviceId($previousEpisode['device_id']);
-                    }
-                }
-                $this->userEpisodeRepository->save($nue, true);
-                $userEpisode = $this->userEpisodeRepository->getUserEpisodeDB($nue->getId(), $locale);
-                $newCount++;
-            }
-            if (!$userEpisode['custom_date'] && !$next_episode_to_air && !$episode['air_date']) {
-                continue;
-            }
-            if (!$userEpisode['air_date'] && $episode['air_date']) {
-                $ue = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
-                if ($ue) {
-                    $airDate = $this->date($episode['air_date']);
-                    $ue->setAirDate($airDate);
-                    $this->userEpisodeRepository->save($ue, true);
-                    $userEpisode['air_date'] = $airDate;
-                    $this->addFlash('success',
-                        $this->translator->trans('Episode air date updated')
-                        . ' (' . sprintf('S%02dE%02d', $season['season_number'], $episode['episode_number'])
-                        . ' → ' . $airDate->format('Y-m-d') . ')');
-                }
-            }
 
-            $userEpisodeList = $this->getUserEpisodes($userEpisodes, $episode['episode_number']);
-
-            $stillUrl = $this->imageConfiguration->getUrl('still_sizes', 3);
-            $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
-
-            $episode['still_path'] = $episode['still_path'] ? $stillUrl . $episode['still_path'] : null; // w300
-            $episode['stills'] = array_filter($stills, function ($still) use ($episode) {
-                return $still['episode_id'] == $episode['id'];
-            });
-            if ($userEpisode['custom_date']) {
-                $episode['air_date'] = $userEpisode['custom_date'];
-            }
-
-            $episode['guest_stars'] = array_filter($episode['guest_stars'] ?? [], function ($guest) {
-                return key_exists('id', $guest);
-            });
-            usort($episode['guest_stars'], function ($a, $b) {
-                return !$a['profile_path'] <=> !$b['profile_path'];
-            });
-            $episode['guest_stars'] = array_map(function ($guest) use ($slugger, $series, $profileUrl, $peopleUserPreferredNames) {
-                $guest['profile_path'] = $guest['profile_path'] ? $profileUrl . $guest['profile_path'] : null; // w185
-                $guest['slug'] = $slugger->slug($guest['name'])->lower()->toString();
-                if (!$guest['profile_path']) {
-                    $guest['google'] = 'https://www.google.com/search?q=' . urlencode($guest['name'] . ' ' . $series->getName());
-                }
-                if (key_exists($guest['id'], $peopleUserPreferredNames)) {
-                    $guest['preferred_name'] = $peopleUserPreferredNames[$guest['id']]['name'];
-                } else {
-                    $guest['preferred_name'] = null;
-                }
-                return $guest;
-            }, $episode['guest_stars']);
-
-            $userEpisode['watch_at_db'] = $userEpisode['watch_at'];
-            if ($userEpisode['watch_at']) {
-                $userEpisode['watch_at'] = $this->date($userEpisode['watch_at']);
-            }
-            $episode['user_episode'] = $userEpisode;
-            $episode['user_episodes'] = $userEpisodeList;
 //            $episode['substitute_name'] = $this->userEpisodeRepository->getSubstituteName($episode['id']);
-            $seasonEpisodes[] = $episode;
+            $episode['locale'] = $locale;
+            $episodeArr[] = $this->seasonEpisode($episode, $userSeries, $userEpisodes, $season['season_number'], $finaleEpisodeNumber, $stills);
         }
+        $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
+        foreach ($episodeArr as $episode) {
+            $episode['guest_stars'] = $this->episodeGuestStars($episode, $slugger, $series, $profileUrl, $peopleUserPreferredNames);
+            $seasonEpisodes[] = $episode;
+            dump($episode['guest_stars']);
+        }
+
+        $newCount = array_reduce($seasonEpisodes, function ($carry, $episode) {
+            return $carry + $episode['new'] ? 1 : 0;
+        }, 0);
+
         if ($newCount) {
             $this->addFlash('warning', $newCount . ' new episode' . ($newCount > 1 ? 's' : '') . ' added to your watchlist');
             $tv = json_decode($this->tmdbService->getTv($series->getTmdbId(), 'en-US'), true);
@@ -2672,6 +2637,106 @@ class SeriesController extends AbstractController
             $this->addFlash('success', sprintf("Series updated (%d season%s, %d episode%s)", $tv['number_of_seasons'], $tv['number_of_seasons'] > 1 ? 's' : '', $tv['number_of_episodes'], $tv['number_of_episodes'] > 1 ? 's' : ''));
         }
         return $seasonEpisodes;
+    }
+
+    private function getPreferredNames(User $user): array
+    {
+        $arr = $this->peopleUserPreferredNameRepository->getUserPreferredNames($user->getId());
+        $peopleUserPreferredNames = [];
+        foreach ($arr as $people) {
+            $peopleUserPreferredNames[$people['tmdb_id']] = $people;
+        }
+        return $peopleUserPreferredNames;
+    }
+
+    private function seasonEpisode(array $episode, UserSeries $userSeries, array $userEpisodes, int $seasonNumber, int $finaleEpisodeNumber, array $stills): array
+    {
+//        if (key_exists('episode_type', $episode) && $episode['episode_type'] == 'finale') {
+//            $finaleEpisodeNumber = $episode['episode_number'];
+//        }
+        if ($episode['episode_number'] > $finaleEpisodeNumber) {
+            $this->addFlash('warning', "// Skip episode " . sprintf("S%02dE%02d", $seasonNumber, $episode['episode_number']) . " after a finale");
+            return [];
+        }
+        $episode['new'] = false;
+        $userEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number']);
+        if (!$userEpisode) {
+            $nue = new UserEpisode($userSeries, $episode['id'], $seasonNumber, $episode['episode_number'], null);
+            $nue->setAirDate($episode['air_date'] ? $this->date($episode['air_date']) : null);
+            if ($episode['episode_number'] > 1) {
+                $previousEpisode = $this->getUserEpisode($userEpisodes, $episode['episode_number'] - 1);
+                if ($previousEpisode) {
+                    $nue->setProviderId($previousEpisode['provider_id']);
+                    $nue->setDeviceId($previousEpisode['device_id']);
+                }
+            }
+            $this->userEpisodeRepository->save($nue, true);
+            $userEpisode = $this->userEpisodeRepository->getUserEpisodeDB($nue->getId(), $episode['locale']);
+            $episode['new'] = true;
+        }
+        $series = $userSeries->getSeries();
+        $next_episode_to_air = $series->getNextEpisodeAirDate();
+        if (!$userEpisode['custom_date'] && !$next_episode_to_air && !$episode['air_date']) {
+            return [];
+        }
+        if (!$userEpisode['air_date'] && $episode['air_date']) {
+            $ue = $this->userEpisodeRepository->findOneBy(['userSeries' => $userSeries, 'episodeId' => $episode['id']]);
+            if ($ue) {
+                $airDate = $this->date($episode['air_date']);
+                $ue->setAirDate($airDate);
+                $this->userEpisodeRepository->save($ue, true);
+                $userEpisode['air_date'] = $airDate;
+                $this->addFlash('success',
+                    $this->translator->trans('Episode air date updated')
+                    . ' (' . sprintf('S%02dE%02d', $seasonNumber, $episode['episode_number'])
+                    . ' → ' . $airDate->format('Y-m-d') . ')');
+            }
+        }
+
+        $userEpisodeList = $this->getUserEpisodes($userEpisodes, $episode['episode_number']);
+
+        $stillUrl = $this->imageConfiguration->getUrl('still_sizes', 3);
+
+        $episode['still_path'] = $episode['still_path'] ? $stillUrl . $episode['still_path'] : null; // w300
+        $episode['stills'] = array_filter($stills, function ($still) use ($episode) {
+            return $still['episode_id'] == $episode['id'];
+        });
+        if ($userEpisode['custom_date']) {
+            $episode['air_date'] = $userEpisode['custom_date'];
+        }
+
+        $userEpisode['watch_at_db'] = $userEpisode['watch_at'];
+        if ($userEpisode['watch_at']) {
+            $userEpisode['watch_at'] = $this->date($userEpisode['watch_at']);
+        }
+        $episode['user_episode'] = $userEpisode;
+        $episode['user_episodes'] = $userEpisodeList;
+
+        return $episode;
+    }
+
+    private function episodeGuestStars(array $episode, AsciiSlugger $slugger, Series $series, string $profileUrl, array $peopleUserPreferredNames): array
+    {
+        $guestStars = array_filter($episode['guest_stars'] ?? [], function ($guest) {
+            return key_exists('id', $guest);
+        });
+        usort($guestStars, function ($a, $b) {
+            return !$a['profile_path'] <=> !$b['profile_path'];
+        });
+
+        return array_map(function ($guest) use ($slugger, $series, $profileUrl, $peopleUserPreferredNames) {
+            $guest['profile_path'] = $guest['profile_path'] ? $profileUrl . $guest['profile_path'] : null; // w185
+            $guest['slug'] = $slugger->slug($guest['name'])->lower()->toString();
+            if (!$guest['profile_path']) {
+                $guest['google'] = 'https://www.google.com/search?q=' . urlencode($guest['name'] . ' ' . $series->getName());
+            }
+            if (key_exists($guest['id'], $peopleUserPreferredNames)) {
+                $guest['preferred_name'] = $peopleUserPreferredNames[$guest['id']]['name'];
+            } else {
+                $guest['preferred_name'] = null;
+            }
+            return $guest;
+        }, $guestStars);
     }
 
     private function adjustNextEpisodeToWatch(UserSeries $userSeries, ?array $userEpisodes): void

@@ -163,7 +163,7 @@ export class Season {
         this.setProgress();
 
         /******************************************************************************
-         * Add a copy badge to name and localized name                                *
+         * Add a copy badge to the name and localized name                            *
          ******************************************************************************/
         new CopyName(document.querySelector('.header .name h1'));
 
@@ -352,7 +352,8 @@ export class Season {
 
         const customStillsTextDivs = document.querySelectorAll('.custom-stills-text');
         customStillsTextDivs.forEach(customStillsTextDiv => {
-            customStillsTextDiv.addEventListener('click', () => {
+            customStillsTextDiv.addEventListener('click', (e) => {
+                e.preventDefault();
                 const customStillsDiv = customStillsTextDiv.parentElement.querySelector('.custom-stills');
                 customStillsTextDiv.innerText = gThis.translations['paste'] + ' - 4';
                 customStillsDiv.classList.add('active');

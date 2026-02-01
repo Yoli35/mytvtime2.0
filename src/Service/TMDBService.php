@@ -124,7 +124,7 @@ class TMDBService
 
     public function getTvEpisode(int $tvId, int $seasonNumber, int $episodeNumber, string $locale, ?array $details = null): ?string
     {
-        $request = "https://api.themoviedb.org/3/tv/$tvId/season/$seasonNumber/episode/$episodeNumber&language=$locale";
+        $request = "https://api.themoviedb.org/3/tv/$tvId/season/$seasonNumber/episode/$episodeNumber?language=$locale";
         if ($details) {
             $request .= '&append_to_response=' . implode(',', $details);
         }

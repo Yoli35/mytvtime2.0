@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my Tv Time → {{ 'Series'|trans }} → {{ series.name }} → {{ season.name }} → {{ episode.episode_number }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/map.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/episode.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/translations.scss') }}">
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css">
+{% endblock %}
+{% block body %}
+    <script>
+        const bd = '/series/posters_blurred{{ season.blurred_poster_path }}';
+        const body = document.querySelector("body");
+        body.style.backgroundSize = "cover";
+        body.style.backgroundPosition = "center";
+        body.style.backgroundRepeat = "no-repeat";
+        body.style.backgroundAttachment = "fixed";
+        body.style.backgroundImage = "url(" + bd + ")";
+    </script>
+    {{ include('_blocks/_menu.html.twig', {seriesName: season.series_localized_name ? season.series_localized_name.name:series.name, seriesLink: path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }) }}
+    <div class="container-fluid backgroundImageOverlay">
+        <div class="episode-show">
+            <header>
+                {% if episode.still_path %}
+                    <div class="still">
+                        <img src="{{ episode.still_path }}" alt="{{ episode.name }} still image">
+                    </div>
+                {% endif %}
+                <div class="infos">
+                    <h1>{{ episode.episode_number }}. {{ episode.user_episode.substitute_name ?: episode.name }}</h1>
+                    <div class="overview">{{ episode.user_episode.localized_overview ?: episode.overview }}</div>
+                </div>
+                <a href="{{ path('app_series_season_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug, seasonNumber: season.season_number}) }}">
+                    <div class="back">
+                        {% if season.season_number %}
+                            {{ 'Season'|trans }} {{ season.season_number }}
+                        {% else %}
+                            {{ 'Specials'|trans }}
+                        {% endif %}
+                    </div>
+                </a>
+            </header>
+        </div>
+    </div>
+
+    {% include '_blocks/_footer.html.twig' %}
+{% endblock %}
