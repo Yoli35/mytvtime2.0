@@ -309,34 +309,7 @@
                                                         {{ ux_icon("mdi:pencil") }}
                                                     </div>
                                                 </div>
-                                                {% if episode.guest_stars %}
-                                                    <div class="guest-stars">
-                                                        <div class="wrapper">
-                                                            {% for people in episode.guest_stars %}
-                                                                <div class="people" data-title="{{ people.name }}{% if people.preferred_name %} - {{ people.preferred_name }}{% endif %} → {{ people.character }}">
-                                                                    <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
-                                                                        <div class="photo">
-                                                                            {% if people.profile_path %}
-                                                                                <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                                                                            {% else %}
-                                                                                <div>{{ people.character }}</div>
-                                                                                <div>{{ people.name }}</div>
-                                                                                <div>{{ 'No picture'|trans }}</div>
-                                                                            {% endif %}
-                                                                        </div>
-                                                                    </a>
-                                                                    {% if people.google is defined %}
-                                                                        <div class="google" data-title="{{ 'See on Google'|trans }}">
-                                                                            <a href="{{ people.google }}" target="_blank">
-                                                                                {{ ux_icon('flat-color-icons:google') }}
-                                                                            </a>
-                                                                        </div>
-                                                                    {% endif %}
-                                                                </div>
-                                                            {% endfor %}
-                                                        </div>
-                                                    </div>
-                                                {% endif %}
+                                                {{ include('_blocks/series/_guest_stars.html.twig', {guest_stars: episode.guest_stars}) }}
                                             </div>
                                             <div class="scroll-infos-button">{{ ux_icon('mdi:video-film', {style: "--size: 2rem;"}) }}</div>
                                         </div>

@@ -57,4 +57,20 @@
             width: fit-content;
         }
     }
+
+    main {
+        h3 {
+            font-size: max(2vw, 2vh);
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .guest-stars {
+            .wrapper {
+                .people {
+                    flex-shrink: 0;
+                }
+            }
+        }
+    }
 }

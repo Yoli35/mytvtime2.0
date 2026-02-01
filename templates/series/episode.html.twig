@@ -1,12 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}my Tv Time → {{ 'Series'|trans }} → {{ series.name }} → {{ season.name }} → {{ episode.episode_number }}{% endblock %}
+{% block title %}my Tv Time → {{ 'Series'|trans }} → {{ season.series_localized_name ? season.series_localized_name.name : series.name }} → {{ season.name }} → {{ 'Episode'|trans }} {{ episode.episode_number }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/contact.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/map.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/user.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/series.scss') }}">
+    <link rel="stylesheet" href="{{ asset('styles/card.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/episode.scss') }}">
     <link rel="stylesheet" href="{{ asset('styles/translations.scss') }}">
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css">
@@ -44,6 +45,10 @@
                     </div>
                 </a>
             </header>
+            <main>
+                {{ include('_blocks/series/_guest_stars.html.twig', {guest_stars: episode.guest_stars, episode_page: true}) }}
+                {{ include('_blocks/series/_credits.html.twig', {season: season, series: series}) }}
+            </main>
         </div>
     </div>
 

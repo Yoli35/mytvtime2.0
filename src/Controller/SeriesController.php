@@ -1028,12 +1028,19 @@ class SeriesController extends AbstractController
         $profileUrl = $this->imageConfiguration->getUrl('profile_sizes', 2);
         $peopleUserPreferredNames = $this->getPreferredNames($user);
         $episode['guest_stars'] = $this->episodeGuestStars($episode, new AsciiSlugger(), $series, $profileUrl, $peopleUserPreferredNames);
-        dump($series->getTmdbId(), $seasonNumber, $episodeNumber, $episode);
 
+        $season['credits'] = $this->castAndCrew($season, $series);
         $season['series_localized_name'] = $series->getLocalizedName($request->getLocale());
         $season['blurred_poster_path'] = $this->imageService->blurPoster($season['poster_path'], 'series', 8);
 
         $filmingLocation = $this->filmingLocationRepository->location($series->getTmdbId());
+        dump([
+            'userSeries' => $userSeries,
+            'series' => $series,
+            'season' => $season,
+            'episode' => $episode,
+            'filmingLocation' => $filmingLocation,
+        ]);
 
         return $this->render('series/episode.html.twig', [
             'userSeries' => $userSeries,

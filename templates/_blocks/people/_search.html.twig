@@ -1,6 +1,6 @@
 <div class="cast-search-block" data-season-number="{{ seasonNumber }}" data-series-id="{{ seriesId }}">
     <form id="cast-search-form" action="javascript:void(0);">
-        {% if tv.seasons|length > 1 %}
+        {% if tv is defined and tv.seasons|length > 1 %}
             <label for="season-number">
                 <select id="season-number">
                     <option value="-1">{{ 'All seasons'|trans }}</option>
