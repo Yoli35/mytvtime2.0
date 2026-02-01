@@ -47,14 +47,24 @@
         }
 
         .back {
-            background-color: var(--green);
+            align-items: center;
+            backdrop-filter: blur(1rem);
+            background-color: hsl(from var(--green) h s l / .5);
             border-radius: 5rem;
+            display: flex;
             font-size: max(2vw, 2vh);
+            height: 3.7rem;
             line-height: 1.2;
             margin-inline-start: auto;
-            padding-block: 1rem;
-            padding-inline: 2rem;
+            outline: 4px solid hsl(from var(--orange-80) h s l / .25);
+            padding-inline: 2.5rem;
+            transition: all 0.3s ease-in-out;
             width: fit-content;
+
+            &:hover {
+                background-color: var(--green);
+                outline: 4px solid hsl(from var(--orange-80) h s l / .5);
+            }
         }
     }
 

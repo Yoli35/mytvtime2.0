@@ -1033,13 +1033,13 @@ class SeriesController extends AbstractController
         $season['series_localized_name'] = $series->getLocalizedName($request->getLocale());
         $season['blurred_poster_path'] = $this->imageService->blurPoster($season['poster_path'], 'series', 8);
 
-        $filmingLocation = $this->filmingLocationRepository->location($series->getTmdbId());
+        $filmingLocations = $this->filmingLocationRepository->locations($series->getTmdbId());
         dump([
             'userSeries' => $userSeries,
             'series' => $series,
             'season' => $season,
             'episode' => $episode,
-            'filmingLocation' => $filmingLocation,
+            'filmingLocations' => $filmingLocations,
         ]);
 
         return $this->render('series/episode.html.twig', [
@@ -1047,7 +1047,7 @@ class SeriesController extends AbstractController
             'series' => $series,
             'season' => $season,
             'episode' => $episode,
-            'filmingLocation' => $filmingLocation,
+            'filmingLocations' => $filmingLocations,
         ]);
     }
 

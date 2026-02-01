@@ -1,37 +1,9 @@
 {% if guest_stars %}
-    <h3>{{ 'Guest stars'|trans }}</h3>
-    <div class="guest-stars">
+    <h3>{{ 'Guest starts'|trans }}</h3>
+    <div class="cast">
         <div class="wrapper">
             {% for people in guest_stars %}
-                <div class="people" data-title="{{ people.name }}{% if people.preferred_name %} - {{ people.preferred_name }}{% endif %} → {{ people.character }}">
-                    <a href="{{ path('app_people_show', {id: people.id, slug: people.slug}) }}">
-                        <div class="photo">
-                            {% if people.profile_path %}
-                                <img src="{{ people.profile_path }}" alt="{{ people.name }}">
-                            {% else %}
-                                <div>{{ people.character }}</div>
-                                <div>{{ people.name }}</div>
-                                <div>{{ 'No picture'|trans }}</div>
-                            {% endif %}
-                        </div>
-                        {% if episode_page is defined %}
-                            <div class="infos{% if people.order == -1 %} added{% endif %}">
-                                {% if people.preferred_name %}
-                                    <div class="preferred-name">{{ people.preferred_name }}</div>
-                                {% endif %}
-                                <div class="name">{{ people.name }}</div>
-                                <div>{{ people.character }}</div>
-                            </div>
-                        {% endif %}
-                    </a>
-                    {% if people.google is defined %}
-                        <div class="google" data-title="{{ 'See on Google'|trans }}">
-                            <a href="{{ people.google }}" target="_blank">
-                                {{ ux_icon('flat-color-icons:google') }}
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
+                {{ include('_blocks/series/_cast.html.twig', {people: people, role: people.character}) }}
             {% endfor %}
         </div>
     </div>
