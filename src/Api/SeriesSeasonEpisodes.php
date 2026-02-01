@@ -357,12 +357,8 @@ class SeriesSeasonEpisodes extends AbstractController
                     $palette[$color]['count'] = 1;
                     $palette[$color]['lightness'] = $this->hexToLightness($color);
                 }
-//                $palette[$color] = isset($palette[$color]) ? ++$palette[$color] : 1;
             }
         }
-
-        // Free up memory by destroying the GD image resource
-        imagedestroy($img);
 
         // sort by count
         $paletteC = $palette;

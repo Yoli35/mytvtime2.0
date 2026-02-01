@@ -316,13 +316,11 @@ class ImageService extends AbstractController
         }
 
         $blurredImage = $this->blurImage($image, $blur);
-        imagedestroy($image);
         if ($isAlpha) {
             imagealphablending($blurredImage, false);
             imagesavealpha($blurredImage, true);
         }
         imagewebp($blurredImage, $fullDestPath, 90);
-        imagedestroy($blurredImage);
 
         return $imageDestPath;
     }
@@ -381,9 +379,6 @@ class ImageService extends AbstractController
         $newImage = imagecreatetruecolor($newWidth, $newHeight);
         imagecopyresampled($newImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $sourceWidth, $sourceHeight);
         $successfullyConverted = imagewebp($newImage, $destPath, 90);
-
-        imagedestroy($newImage);
-        imagedestroy($image);
 
         if ($successfullyConverted) {
             return $destPath;
@@ -472,8 +467,6 @@ class ImageService extends AbstractController
                 $successfullyResampled = imagecopyresampled($newImage, $image, 0, 0, $sourceX, $sourceY, $width, $height, $sourceWidth, $sourceHeight);
 
                 if (!$successfullyResampled) {
-                    imagedestroy($newImage);
-                    imagedestroy($image);
                     return null;
                 }
                 $successfullyConverted = $this->composeImage($newImage, $title, $destPath, $width, $height, $quality);
@@ -483,7 +476,6 @@ class ImageService extends AbstractController
         } else {
             $successfullyConverted = $this->composeImage($image, $title, $destPath, $sourceWidth, $sourceHeight, $quality);
         }
-        imagedestroy($image);
 
         if ($successfullyConverted && $removeOld) unlink($sourcePath);
 
@@ -556,7 +548,6 @@ class ImageService extends AbstractController
         // If the title is not empty, add it on the image with a dark background
         $this->addTitle($title, $kernelProjectDir, $gdImage, $height);
         $successfullyConverted = imagewebp($gdImage, $destPath, $quality);
-        imagedestroy($gdImage);
         return $successfullyConverted;
     }
 
@@ -669,9 +660,6 @@ class ImageService extends AbstractController
         imagecopyresized($gdImage, $nextImage,
             0, 0, 0, 0, $originalWidth, $originalHeight, $nextWidth, $nextHeight);
         imagefilter($gdImage, IMG_FILTER_GAUSSIAN_BLUR);
-
-        // clean up
-        imagedestroy($prevImage);
 
         // return result
         return $gdImage;
