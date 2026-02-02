@@ -34,6 +34,11 @@ class SeriesLocalizedName
         $this->locale = $locale;
     }
 
+    public function __toString(): string
+    {
+        return $this->name;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
