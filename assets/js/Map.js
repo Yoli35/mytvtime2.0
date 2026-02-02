@@ -94,14 +94,14 @@ export class Map {
                 markerIcon.setAttribute('data-latitude', location.latitude);
                 markerIcon.setAttribute('data-longitude', location.longitude);
 
-                if (!index) firstMarker = marker.getElement();
+                if (!index) firstMarker = marker;
 
                 if (location.radius) {
                     this.circles.push(this.createCircle([location.longitude, location.latitude], location.radius / 1000));
                 }
             });
             if (firstMarker) {
-                setTimeout(()=>{ firstMarker.click();}, 5000);
+                setTimeout(()=>{ firstMarker.togglePopup(); }, 5000);
             }
 
             if (this.circles.length) {
