@@ -307,7 +307,7 @@ export class Season {
         });
 
         const episodes = document.querySelector('.episodes');
-        const infos = episodes.querySelectorAll('.infos');
+        const infos = episodes.querySelectorAll('.episode > .infos');
         infos.forEach(info => {
             info.addEventListener('mouseleave', () => {
                 const infosContentDiv = info.querySelector(".infos-content");
