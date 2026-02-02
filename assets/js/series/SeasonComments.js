@@ -83,7 +83,7 @@ export class SeasonComments {
         const replyToId = form.querySelector('input[name="replyToId"]').value;
         const episodeNumber = button.getAttribute("data-ep-number");
         const episodeId = button.getAttribute("data-ep-id");
-        const input = button.parentNode.querySelector('input[type="text"]');
+        const input = form.querySelector('textarea');
         const formData = gThis.getFormData(imageFilesInput, input.value, episodeId, episodeNumber, replyToId);
         fetch('/api/season/comment/add/' + this.seriesId, {
             method: 'POST',
@@ -92,6 +92,11 @@ export class SeasonComments {
             .then((response) => response.json())
             .then(data => {
                 /*console.log(data);*/
+                const dialog = document.querySelector("dialog.answer-dialog");
+                if (data['ok'] === false) {
+                    dialog.close();
+                    return;
+                }
                 const comment = data['comment'];
                 const newMessage = gThis.createMessage(comment, data['images']);
                 gThis.adjustCommentBadge(comment['tmdbId']);
@@ -105,7 +110,6 @@ export class SeasonComments {
                     content.appendChild(newMessage);
                     return;
                 }
-                const dialog = document.querySelector("dialog.answer-dialog");
                 dialog.close();
                 const commentDiv = document.querySelector('.comment[data-id="' + replyToId + '"]');
                 const messageDiv = commentDiv.querySelector(".message");
@@ -127,7 +131,7 @@ export class SeasonComments {
         // });
         const files = imageFilesInput.files;
         if (!files) {
-            return;
+            return formData;
         }
 
         let index = 0;
@@ -337,14 +341,14 @@ export class SeasonComments {
         // Add event click to the comment badge
         const episode = document.querySelector('.episodes .episode-wrapper .episode#episode-' + seasonNumber + '-' + episodeNumber);
         const episodeId = episode.getAttribute("data-episode-id");
-            const badge = document.querySelector('.comment-badge[data-id="' + episodeId + '"]');
-            badge?.addEventListener("click", () => {
-                episodeGroup.classList.add("force-show");
-                episodeGroup.scrollIntoView({behavior: 'smooth', block: 'center'});
-                setTimeout(() => {
-                    episodeGroup.classList.remove("force-show");
-                }, 600000); // 10 minutes
-            });
+        const badge = document.querySelector('.comment-badge[data-id="' + episodeId + '"]');
+        badge?.addEventListener("click", () => {
+            episodeGroup.classList.add("force-show");
+            episodeGroup.scrollIntoView({behavior: 'smooth', block: 'center'});
+            setTimeout(() => {
+                episodeGroup.classList.remove("force-show");
+            }, 600000); // 10 minutes
+        });
 
         return episodeGroup;
     }
@@ -354,8 +358,8 @@ export class SeasonComments {
         form.classList.add("comment-form");
         form.classList.add(replyToId === 0 ? "to-episode" : "to-comment");
         const userDiv = gThis.createUser(gThis.user);
-        const commentInput = document.createElement("input");
-        commentInput.setAttribute("type", "text");
+        const commentInput = document.createElement("textarea");
+        commentInput.setAttribute("row", "1");
         const episode = document.querySelector('.episodes .episode-wrapper .episode#episode-' + seasonNumber + '-' + episodeNumber);
         const episodeId = episode.getAttribute("data-episode-id");
 
