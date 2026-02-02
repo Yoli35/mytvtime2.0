@@ -4662,8 +4662,9 @@ h2 {
 }
 
 .episodes-comments {
-    background-color: hsl(0 0% 90% / .75);
+    background-color: hsl(0 0% 50% / .25);
     border-radius: 1rem;
+    color: var(--orange-90);
     display: flex;
     flex-direction: column;
     gap: .25rem;
@@ -4680,7 +4681,7 @@ h2 {
             justify-content: space-between;
 
             .episode-group-title {
-                font-size: 1rem;
+                font-size: 1.375rem;
                 font-weight: 500;
             }
 

@@ -40,7 +40,12 @@ readonly class ApiSeasonComments
         $inputBag = $request->getPayload();
         $seasonNumber = $inputBag->get('seasonNumber');
         $availableEpisodeCount = $inputBag->get('availableEpisodeCount');
-        $episodeArr = json_decode($inputBag->get('episodeArr'), true);
+        $episodeArr = array_filter(json_decode($inputBag->get('episodeArr'), true), fn($episode) => $episode != null);
+
+        $episodeNumber = null;
+        if (count($episodeArr) === 1) {
+            $episodeNumber = array_first($episodeArr)['episodeNumber'];
+        }
 
         $timezone = 'UTC';//$user->getTimezone() ?? 'UTC';
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
@@ -60,7 +65,9 @@ readonly class ApiSeasonComments
                 'createdAt' => $this->dateService->formatDateRelativeLong($c->getCreatedAt()->format('Y-m-d H:i:s'), $timezone, $locale),
                 'replyTo' => $c->getReplyTo()?->getId(),
             ];
-        }, $this->episodeCommentRepository->findBy(['series' => $series, 'seasonNumber' => $seasonNumber]));
+        }, $episodeNumber ?
+            $this->episodeCommentRepository->findBy(['series' => $series, 'seasonNumber' => $seasonNumber, 'episodeNumber' => $episodeNumber])
+            : $this->episodeCommentRepository->findBy(['series' => $series, 'seasonNumber' => $seasonNumber]));
 
         $ids = array_map(fn($c) => $c['id'], $comments);
         $images = $this->episodeCommentImageRepository->findByEpisodeCommentIds($ids);
@@ -76,6 +83,15 @@ readonly class ApiSeasonComments
         foreach ($comments as $comment) {
             $episodeArr[$comment['episodeNumber'] - 1]['commentCount']++;
         }
+        // Si on récupère les commentaires d'un épisode ($episodeNumber !== null) et que le numéro d'épisode est supérieur à 1, il faut insérer $episodNumber-1 éléments au début du tableau $episodeArr
+        if ($episodeNumber) {
+            for ($i = 0; $i < $episodeNumber - 1; $i++) {
+                $episodeArr = array_merge([$i => ["tmdb" => "",
+                    "episodeNumber" => -1,
+                    "seasonNumber" => -1,
+                    "commentCount" => 1]], $episodeArr);
+            }
+        }
 
         return ($this->json)([
             'ok' => true,
@@ -89,12 +105,6 @@ readonly class ApiSeasonComments
     #[Route('/comment/add/{id}', name: 'comment_add', requirements: ['id' => Requirement::DIGITS], methods: ['POST'])]
     public function add(#[CurrentUser] User $user, Request $request, Series $series): JsonResponse
     {
-//        $inputBag = $request->getPayload();
-//        $seasonNumber = $inputBag->get('seasonNumber');
-//        $episodeNumber = $inputBag->get('episodeNumber');
-//        $episodeId = $inputBag->get('episodeId');
-//        $message = $inputBag->get('message');
-
         $data = $request->request->all();
         $files = $request->files->all();
         if (empty($data) && empty($files)) {
@@ -140,7 +150,7 @@ readonly class ApiSeasonComments
             return ($this->json)([
                 'ok' => true,
                 'comment' => $comment,
-                'images'=> [],
+                'images' => [],
             ]);
         }
 
@@ -169,7 +179,7 @@ readonly class ApiSeasonComments
         return ($this->json)([
             'ok' => true,
             'comment' => $comment,
-            'images'=> $images,
+            'images' => $images,
         ]);
     }
 

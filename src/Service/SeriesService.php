@@ -248,6 +248,19 @@ class SeriesService extends AbstractController
         ];
     }
 
+    public function getEpisodeShowTranslations(): array
+    {
+        return [
+            'Add' => $this->translator->trans('Add'),
+            'Add answer' => $this->translator->trans('Add answer'),
+            'Add images' => $this->translator->trans('Add images'),
+            'Not a valid file type. Update your selection' => $this->translator->trans('Not a valid file type. Update your selection'),
+            'Send your comment' => $this->translator->trans('Send your comment'),
+            'This field is required' => $this->translator->trans('This field is required'),
+            'Update' => $this->translator->trans('Update'),
+        ];
+    }
+
     public function getSeriesSeasonTranslations(): array
     {
         return [

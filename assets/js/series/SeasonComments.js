@@ -265,6 +265,9 @@ export class SeasonComments {
 
     adjustCommentBadge(episodeId) {
         const badge = document.querySelector('.user-episode .comment-badge[data-id="' + episodeId + '"]');
+        if (!badge) {
+            return;
+        }
         const count = parseInt(badge.getAttribute("data-count"));
         let countBadge;
         if (!count) {
@@ -334,14 +337,14 @@ export class SeasonComments {
         // Add event click to the comment badge
         const episode = document.querySelector('.episodes .episode-wrapper .episode#episode-' + seasonNumber + '-' + episodeNumber);
         const episodeId = episode.getAttribute("data-episode-id");
-        const badge = document.querySelector('.comment-badge[data-id="' + episodeId + '"]');
-        badge.addEventListener("click", () => {
-            episodeGroup.classList.add("force-show");
-            episodeGroup.scrollIntoView({behavior: 'smooth', block: 'center'});
-            setTimeout(() => {
-                episodeGroup.classList.remove("force-show");
-            }, 600000); // 10 minutes
-        });
+            const badge = document.querySelector('.comment-badge[data-id="' + episodeId + '"]');
+            badge?.addEventListener("click", () => {
+                episodeGroup.classList.add("force-show");
+                episodeGroup.scrollIntoView({behavior: 'smooth', block: 'center'});
+                setTimeout(() => {
+                    episodeGroup.classList.remove("force-show");
+                }, 600000); // 10 minutes
+            });
 
         return episodeGroup;
     }

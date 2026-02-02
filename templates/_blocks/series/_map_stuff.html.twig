@@ -1,0 +1,13 @@
+{{ include('_blocks/forms/_add_location_form.html.twig', addLocationFormData) }}
+    {{ include('_blocks/forms/_edit_location_images_form.html.twig', addLocationFormData) }}
+
+<div id="globs-map" style="display: none">
+    {
+    "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+    "bounds": {{ locationsBounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+    "emptyLocation": {{ emptyLocation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+    "fieldList": {{ fieldList|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+    "locationImagePath": "/images/map",
+    "poiImagePath": "/images/poi"
+    }
+</div>

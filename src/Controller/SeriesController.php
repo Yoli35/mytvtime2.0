@@ -1033,21 +1033,52 @@ class SeriesController extends AbstractController
         $season['series_localized_name'] = $series->getLocalizedName($request->getLocale());
         $season['blurred_poster_path'] = $this->imageService->blurPoster($season['poster_path'], 'series', 8);
 
-        $filmingLocations = $this->filmingLocationRepository->locations($series->getTmdbId());
-        dump([
-            'userSeries' => $userSeries,
-            'series' => $series,
-            'season' => $season,
-            'episode' => $episode,
-            'filmingLocations' => $filmingLocations,
-        ]);
+        $filmingLocationsWithBounds = $this->getFilmingLocations($series, $season['series_localized_name'], $seasonNumber, $episodeNumber);
+
+        $list = array_column($this->filmingLocationRepository->getSourceList(), "source_name");
+        $addLocationFormData = [
+            'hiddenFields' => [
+                ['item' => 'hidden', 'name' => 'series-id', 'value' => $series->getId()],
+                ['item' => 'hidden', 'name' => 'tmdb-id', 'value' => $series->getTmdbId()],
+                ['item' => 'hidden', 'name' => 'crud-type', 'value' => 'create'],
+                ['item' => 'hidden', 'name' => 'crud-id', 'value' => 0],
+            ],
+            'rows' => [
+                [
+                    ['item' => 'input', 'name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true],
+                ],
+                [
+                    ['item' => 'input', 'name' => 'location', 'label' => 'Location', 'type' => 'text', 'required' => false],
+                    [
+                        'item' => 'row',
+                        'fields' => [
+                            ['item' => 'input', 'name' => 'season-number', 'label' => 'Season number', 'type' => 'text', 'required' => false],
+                            ['item' => 'input', 'name' => 'episode-number', 'label' => 'Episode number', 'type' => 'text', 'required' => false],
+                        ]
+                    ],
+                ],
+                [
+                    ['item' => 'textarea', 'name' => 'description', 'label' => 'Description', 'rows' => '5', 'required' => false],
+                ],
+                [
+                    ['item' => 'input_list', 'name' => 'source-name', 'label' => 'Source', 'type' => 'text', 'class' => 'flex-1', 'list' => $list, 'required' => false],
+                    ['item' => 'input', 'name' => 'source-url', 'label' => 'Url', 'type' => 'text', 'class' => 'flex-2', 'required' => false],
+                ]
+            ],
+        ];
 
         return $this->render('series/episode.html.twig', [
             'userSeries' => $userSeries,
             'series' => $series,
             'season' => $season,
             'episode' => $episode,
-            'filmingLocations' => $filmingLocations,
+            'locations' => $filmingLocationsWithBounds['filmingLocations'],
+            'locationsBounds' => $filmingLocationsWithBounds['bounds'],
+            'emptyLocation' => $filmingLocationsWithBounds['emptyLocation'],
+            'addLocationFormData' => $addLocationFormData,
+            'fieldList' => ['series-id', 'tmdb-id', 'crud-type', 'crud-id', 'title', 'location', 'season-number', 'episode-number', 'description', 'latitude', 'longitude', 'radius', "source-name", "source-url"],
+            'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
+            'translations' => $this->seriesService->getEpisodeShowTranslations(),
         ]);
     }
 
@@ -2384,10 +2415,10 @@ class SeriesController extends AbstractController
         return null;
     }
 
-    public function getFilmingLocations(Series $series, ?SeriesLocalizedName $sln): array
+    public function getFilmingLocations(Series $series, ?SeriesLocalizedName $sln, ?int $seasonNumber = null, ?int $episodeNumber = null): array
     {
         $tmdbId = $series->getTmdbId();
-        $filmingLocations = $this->filmingLocationRepository->locations($tmdbId);
+        $filmingLocations = $this->filmingLocationRepository->locations($tmdbId, $seasonNumber, $episodeNumber);
         $emptyLocation = $this->newLocation($series, $sln);
         if (count($filmingLocations) == 0) {
             return [
@@ -2628,7 +2659,6 @@ class SeriesController extends AbstractController
         foreach ($episodeArr as $episode) {
             $episode['guest_stars'] = $this->episodeGuestStars($episode, $slugger, $series, $profileUrl, $peopleUserPreferredNames);
             $seasonEpisodes[] = $episode;
-            dump($episode['guest_stars']);
         }
 
         $newCount = array_reduce($seasonEpisodes, function ($carry, $episode) {

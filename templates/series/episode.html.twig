@@ -46,11 +46,40 @@
                 </a>
             </header>
             <main>
+                <div class="episodes-comments"></div>
+                {{ include('_blocks/series/_map.html.twig', {locations: locations, mapSettings: mapSettings}) }}
                 {{ include('_blocks/series/_guest_stars.html.twig', {guest_stars: episode.guest_stars, episode_page: true}) }}
                 {{ include('_blocks/series/_credits.html.twig', {season: season, series: series}) }}
             </main>
         </div>
     </div>
+    {{ include('_blocks/series/_comment_image.html.twig') }}
+    <div class="episodes" style="display: none">
+        <div class="episode-wrapper">
+            <div class="episode" id="episode-{{ season.season_number }}-{{ episode.episode_number }}" data-ue-id="{{ episode.user_episode.id }}" data-episode-id="{{ episode.id }}">
+            </div>
+        </div>
+    </div>
+    <div id="globs" style="display: none">
+        {
+            "user": {
+                "avatar": "{{ app.user.avatar }}",
+                "username": "{{ app.user.username }}"
+            },
+            "seriesId": {{ series.id }},
+            "showId": {{ series.tmdbId }},
+            "seasonNumber": {{ season.season_number }},
+            "seriesName": "{{ season.series_localized_name ?:series.name }}",
+            "translations": {{ translations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        }
+    </div>
+    <div id="svgs" style="display: none">
+        {{ ux_icon('mdi:asterisk', {id: 'asterisk'}) }}
+        {{ ux_icon('mdi:question-answer', {id: 'answer-badge'}) }}
+        {{ ux_icon('mdi:send', {id: 'send'}) }}
+        {{ ux_icon('mdi:image-plus', {id: 'image-plus'}) }}
+    </div>
+    {{ include('_blocks/series/_map_stuff.html.twig', {locations: locations, mapSettings: mapSettings, addLocationFormData: addLocationFormData}) }}
 
     {% include '_blocks/_footer.html.twig' %}
 {% endblock %}

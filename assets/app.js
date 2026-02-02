@@ -6,6 +6,7 @@ import {AdminSeriesUpdates} from "AdminSeriesUpdates";
 import {AlbumShow} from "AlbumShow";
 import {AverageColor} from 'AverageColor';
 import {EpisodeHistory} from "EpisodeHistory";
+import {Episode} from "Episode";
 import {FlashMessage} from 'FlashMessage';
 import {HighlightSeries} from 'HighlightSeries';
 import {Index} from 'Index';
@@ -161,7 +162,7 @@ window.addEventListener("DOMContentLoaded", () => {
                         div.classList.add("dark");
                     });
                 }
-                if (commentDiv) commentDiv.style.backgroundColor = "hsl(0 0 90% /.75)";
+                if (commentDiv) commentDiv.style.backgroundColor = "hsl(0 0 90% /.25)";
                 if (seasonInfosDivs) seasonInfosDivs.forEach(seasonInfosDiv => {
                     seasonInfosDiv.style.color = "hsl(202, 18%, 10%)";
                 });
@@ -218,6 +219,12 @@ window.addEventListener("DOMContentLoaded", () => {
     if (userSeriesShow) {
         const show = new Show();
         show.init(menu);
+    }
+
+    const episodeShow = document.querySelector(".episode-show");
+    if (episodeShow) {
+        const episode = new Episode(flashMessage, toolTips, menu);
+        episode.init();
     }
 
     const userAlbumShow = document.querySelector(".album-page");

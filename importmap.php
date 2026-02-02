@@ -43,6 +43,9 @@ return [
     'EpisodeHistory' => [
         'path' => './assets/js/home/EpisodeHistory.js',
     ],
+    'Episode' => [
+        'path' => './assets/js/series/Episode.js',
+    ],
     'FlashMessage' => [
         'path' => './assets/js/FlashMessage.js',
     ],

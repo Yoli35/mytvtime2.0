@@ -56,12 +56,20 @@ class FilmingLocationRepository extends ServiceEntityRepository
         return $this->getAll($sql);
     }
 
-    public function locations(?int $tmdbId): array
+    public function locations(?int $tmdbId, ?int $seasonNumber = null, ?int $episodeNumber = null): array
     {
+        $andWhere = "";
+        if ($seasonNumber && $episodeNumber) {
+            $andWhere = " AND fl.season_number = $seasonNumber AND fl.episode_number = $episodeNumber";
+        } elseif ($seasonNumber && !$episodeNumber) {
+            $andWhere = " AND fl.season_number = $seasonNumber";
+        } elseif (!$seasonNumber && $episodeNumber) { // Devrait lever une exception
+            throw new \InvalidArgumentException('Episode number cannot be provided without season number');
+        }
         $sql = "SELECT fl.*, fli.path as still_path
                 FROM filming_location fl
                     LEFT JOIN filming_location_image fli ON fl.`still_id` = fli.`id`
-                WHERE tmdb_id = $tmdbId
+                WHERE tmdb_id = $tmdbId $andWhere
                 ORDER BY fl.season_number, fl.episode_number";
 
         return $this->getAll($sql);

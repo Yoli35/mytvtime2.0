@@ -706,71 +706,7 @@
             </div>
 
             <div class="content">
-                <div id="series-map-title">
-                    <div class="title">{{ 'Shooting locations'|trans }}</div>
-                    <div class="add-location-button" data-title="{{ 'Add a shooting location'|trans }}">
-                        {{ ux_icon('mdi:plus') }}
-                    </div>
-                    {% if locations|length %}
-                        <div class="toggle-cooperative-gestures">
-                            {{ ux_icon('mdi:apple-keyboard-command') }} / {{ ux_icon('mdi:apple-keyboard-control') }}
-                        </div>
-                    {% endif %}
-                </div>
-                <div class="series-map">
-                    {% if locations|length %}
-                        {% set loc = locations|first %}
-                        {{ include('_blocks/map/_map_container.html.twig', {type: 'series', styleSettings: mapSettings.data.styles}) }}
-                        <div class="locations">
-                            <ul>
-                                <li class="location-item">
-                                    <div class="series-location-image help-text">
-                                        <div><div class="icon">{{ ux_icon('mdi:map-marker') }}</div>{{ 'Location marker'|trans }}</div>
-                                        <div><div class="icon">{{ ux_icon('mdi:pencil') }}</div>{{ 'Edit location'|trans }}</div>
-                                        <div><div class="icon">{{ ux_icon('mdi:arrow-left') }}</div>{{ 'Previous image'|trans }}</div>
-                                        <div><div class="icon">{{ ux_icon('mdi:arrow-right') }}</div>{{ 'Next image'|trans }}</div>
-                                    </div>
-                                    <div class="location help-text">
-                                        {{ ux_icon('mdi:hand-back-right') }}{{ 'Fly to the location'|trans }}
-                                    </div>
-                                </li>
-                                {% for location in locations %}
-                                    <li class="location-item" data-loc-id="{{ location.id }}">
-                                        <div class="series-location-image" data-title="{{ location.title }}" data-position="0">
-                                            <img src="/images/map{{ location.still_path }}" alt="{{ location.title }}">
-                                            {% if location.filmingLocationImages|length-1 %}
-                                                <div class="count">
-                                                    {{ location.filmingLocationImages|length }}
-                                                </div>
-                                                <div class="edit-images" data-loc-id="{{ location.id }}">{{ ux_icon('mdi:images') }}</div>
-                                                <div class="arrow left">{{ ux_icon('mdi:arrow-left') }}</div>
-                                                <div class="arrow right">{{ ux_icon('mdi:arrow-right') }}</div>
-                                                <div class="image-list">
-                                                    {% for i in location.filmingLocationImages %}
-                                                        <img src="/images/map{{ i.path }}" alt="{{ location.title ~ ' - ' ~ 'image'|trans ~ ' #' ~ (loop.index + 1) }}">
-                                                    {% endfor %}
-                                                </div>
-                                            {% endif %}
-                                            {% if location.season_number and location.episode_number %}
-                                                <div class="episode">
-                                                    {{ 'S%02dE%02d'|format(location.season_number, location.episode_number) }}
-                                                </div>
-                                            {% elseif location.season_number %}
-                                                <div class="episode">
-                                                    {{ 'S%02d'|format(location.season_number) }}
-                                                </div>
-                                            {% endif %}
-                                            <div class="edit" data-loc-id="{{ location.id }}">{{ ux_icon('mdi:pencil') }}</div>
-                                        </div>
-                                        <div class="location target-map" data-loc-id="{{ location.id }}" data-lat="{{ location.latitude }}" data-lng="{{ location.longitude }}">
-                                            {{ location.location }}
-                                        </div>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
-                </div>
+                {{ include('_blocks/series/_map.html.twig', {locations: locations, mapSettings: mapSettings}) }}
 
                 {% if tv.similar.total_results %}
                     <div class="series-group">
@@ -804,19 +740,7 @@
             </div>
         </div>
     </div>
-    {{ include('_blocks/forms/_add_location_form.html.twig', addLocationFormData) }}
-    {{ include('_blocks/forms/_edit_location_images_form.html.twig', addLocationFormData) }}
-
-    <div id="globs-map" style="display: none">
-        {
-            "locations": {{ locations|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "bounds": {{ locationsBounds|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "emptyLocation": {{ emptyLocation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "fieldList": {{ fieldList|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            "locationImagePath": "/images/map",
-            "poiImagePath": "/images/poi"
-        }
-    </div>
+    {{ include('_blocks/series/_map_stuff.html.twig', {locations: locations, mapSettings: mapSettings, addLocationFormData: addLocationFormData}) }}
     <div id="globs" style="display: none">{# |replace({'\'': '\\\'', '"': '\\"'}}) #}
         {
             "seriesId": {{ series.id }},
