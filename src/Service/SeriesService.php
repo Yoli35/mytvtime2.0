@@ -258,6 +258,12 @@ class SeriesService extends AbstractController
             'Send your comment' => $this->translator->trans('Send your comment'),
             'This field is required' => $this->translator->trans('This field is required'),
             'Update' => $this->translator->trans('Update'),
+            'hour' => $this->translator->trans('hour'),
+            'hours' => $this->translator->trans('hours'),
+            'minute' => $this->translator->trans('minute'),
+            'minutes' => $this->translator->trans('minutes'),
+            'second' => $this->translator->trans('second'),
+            'seconds' => $this->translator->trans('seconds'),
         ];
     }
 

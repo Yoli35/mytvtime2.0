@@ -313,67 +313,7 @@
                                             </div>
                                             <div class="scroll-infos-button">{{ ux_icon('mdi:video-film', {style: "--size: 2rem;"}) }}</div>
                                         </div>
-                                        <div class="user-episode">
-                                            {% if ue and ue.watch_at %}
-                                                <div class="remove-this-episode" data-id="{{ episode.id }}"
-                                                     data-ue-id="{{ ue.id }}"
-                                                     data-series-id="{{ series.id }}"
-                                                     data-last-episode="{{ loop.last ?? 0 }}"
-                                                     data-show-id="{{ episode.show_id }}"
-                                                     data-s-number="{{ episode.season_number }}"
-                                                     data-e-number="{{ episode.episode_number }}"
-                                                     data-views="{{ episode.user_episodes|length }}"
-                                                     data-title="{{ ue.watch_at|format_datetime('relative_short', 'short')|capitalize }}">
-                                                    {{ ux_icon('mdi:eye') }}
-                                                </div>
-                                                <div class="comment-badge" data-id="{{ episode.id }}" data-count="0" data-title="{{ 'Add a comment or reply to it for the episode'|trans }} {{ episode.episode_number }}">
-                                                    {{ ux_icon('mdi:comment-text-outline') }}
-                                                </div>
-                                                <div class="select-provider" data-ue-id="{{ ue.id }}" data-title="{{ ue.provider_id ? ue.provider_name : 'Choose a provider'|trans }}">
-                                                    {% if ue.provider_id %}
-                                                        <img src="{{ ue.provider_logo_path }}" alt="{{ ue.provider_name }}">
-                                                    {% else %}
-                                                        {{ ux_icon('mdi:plus') }}
-                                                    {% endif %}
-                                                </div>
-                                                <div class="select-device" data-ue-id="{{ ue.id }}" data-title="{{ 'Choose a device'|trans }}">
-                                                    {% if ue.device_id %}
-                                                        {{ ux_icon(ue.device_svg) }}
-                                                    {% else %}
-                                                        {{ ux_icon('mdi:plus') }}
-                                                    {% endif %}
-                                                </div>
-                                                <div class="select-vote" data-ue-id="{{ ue.id }}" data-title="{{ 'Give a rating'|trans }}">
-                                                    {#                                        {% if ue.vote %} #}
-                                                    {#                                            {{ ue.vote }} #}
-                                                    {#                                        {% else %} #}
-                                                    {#                                            {{ ux_icon('fa6-solid:plus') }} #}
-                                                    {#                                        {% endif %} #}
-                                                    {{ ue.vote ?? ux_icon('mdi:plus') }}
-                                                </div>
-                                            {% else %}
-                                                <div class="add-this-episode" data-id="{{ episode.id }}"
-                                                     data-ue-id="{{ ue.id }}"
-                                                     data-series-id="{{ series.id }}"
-                                                     data-last-episode="{{ loop.last ?? 0 }}"
-                                                     data-show-id="{{ episode.show_id }}"
-                                                     data-s-number="{{ episode.season_number }}"
-                                                     data-e-number="{{ episode.episode_number }}"
-                                                     data-title="{{ 'Mark this episode as seen'|trans }}">
-                                                    {{ ux_icon('mdi:plus') }}
-                                                </div>
-                                            {% endif %}
-                                            <div class="back-to-top" data-title="{{ 'Back to top'|trans }}">
-                                                {{ ux_icon('mdi:arrow-up') }}
-                                            </div>
-                                            <a href="{{ path('app_series_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug}) }}"
-                                               class="back-to-series"
-                                               data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.series_localized_name %}{{ season.series_localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»">
-                                                {#                                            <div class="back-to-series" data-title="{{ 'Back to series'|trans }} «&nbsp;{% if season.series_localized_name %}{{ season.series_localized_name.name }}{% else %}{{ series.name }}{% endif %}&nbsp;»"> #}
-                                                {{ ux_icon('mdi:arrow-left') }}
-                                                {#                                            </div> #}
-                                            </a>
-                                        </div>
+                                        {{ include('_blocks/series/_user_episode.html.twig', {ue: episode.user_episode, episode: episode, series: series, season: season}) }}
                                     </div>
                                 {% endif %}
                             {% endfor %}
@@ -454,20 +394,20 @@
         {% for d in devices %}
             {{ ux_icon(d.svg, {id: 'device-'~d.id, height: '18px', width: '18px'}) }}
         {% endfor %}
-        {{ ux_icon('mdi:arrow-left', {id: 'left', height: '18px', width: '18px'}) }}
-        {{ ux_icon('mdi:arrow-up', {id: 'up', height: '18px', width: '18px'}) }}
-        {{ ux_icon('mdi:checkbox-outline', {id: 'save', height: '18px', width: '18px'}) }}
-        {{ ux_icon('mdi:close', {id: 'cancel', height: '18px', width: '18px'}) }}
-        {{ ux_icon('mdi:content-copy', {id: 'copy', height: '18px', width: '18px'}) }}
-        {{ ux_icon('mdi:eye', {id: 'eye', height: '18px', width: '18px'}) }}
+        {{ ux_icon('mdi:arrow-left', {id: 'left' }) }}
+        {{ ux_icon('mdi:arrow-up', {id: 'up' }) }}
+        {{ ux_icon('mdi:checkbox-outline', {id: 'save' }) }}
+        {{ ux_icon('mdi:close', {id: 'cancel' }) }}
+        {{ ux_icon('mdi:comment-text', {id: 'comment-badge' }) }}
+        {{ ux_icon('mdi:comment-text-outline', {id: 'comment-badge-outline' }) }}
+        {{ ux_icon('mdi:content-copy', {id: 'copy' }) }}
+        {{ ux_icon('mdi:eye', {id: 'eye' }) }}
+        {{ ux_icon('mdi:image-plus', {id: 'image-plus' }) }}
         {{ ux_icon('mdi:location-favorite', {id: 'poi-toggler-svg'}) }}
-        {{ ux_icon('mdi:plus', {id: 'plus', height: '18px', width: '18px'}) }}
-        {{ ux_icon('mdi:trash', {id: 'trash', height: '18px', width: '18px'}) }}
-        {{ ux_icon('mdi:send', {id: 'send', height: '18px', width: '18px'}) }}
-        {{ ux_icon('mdi:comment-text', {id: 'comment-badge', height: '18px', width: '18px'}) }}
-        {{ ux_icon('mdi:comment-text-outline', {id: 'comment-badge-outline', height: '18px', width: '18px'}) }}
-        {{ ux_icon('mdi:question-answer', {id: 'answer-badge', height: '18px', width: '18px'}) }}
-        {{ ux_icon('mdi:image-plus', {id: 'image-plus', height: '18px', width: '18px'}) }}
+        {{ ux_icon('mdi:plus', {id: 'plus' }) }}
+        {{ ux_icon('mdi:question-answer', {id: 'answer-badge' }) }}
+        {{ ux_icon('mdi:send', {id: 'send' }) }}
+        {{ ux_icon('mdi:trash', {id: 'trash' }) }}
         <div class="svg" id="svg-xmark">{{ ux_icon('mdi:close') }}</div>
         <div class="svg" id="pen">{{ ux_icon('mdi:pencil') }}</div>
         <div class="svg" id="trash">{{ ux_icon('mdi:trash') }}</div>

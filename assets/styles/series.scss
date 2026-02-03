@@ -4897,6 +4897,7 @@ h2 {
         color: var(--orange-80);
         cursor: pointer;
         display: flex;
+        flex-shrink: 0;
         height: 2.25rem;
         justify-content: center;
         width: 2.25rem;
@@ -4998,7 +4999,7 @@ h2 {
     }
 
     .select-provider, .select-vote {
-        &:has(svg) {
+        &:has(> svg) {
             display: none;
         }
     }
@@ -5128,14 +5129,14 @@ h2 {
     }
 }
 
-.user-episode:has(.select-vote svg) {
+.user-episode:has(.select-vote > svg) {
     .select-device {
         border-radius: .25rem .25rem 5rem 5rem;
     }
 }
 
 .episode:hover {
-    .user-episode:has(.select-vote svg) {
+    .user-episode:has(.select-vote > svg) {
         .select-device {
             border-radius: .25rem;
         }

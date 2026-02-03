@@ -1014,6 +1014,8 @@ class SeriesController extends AbstractController
     public function showEpisode(#[CurrentUser] User $user, Request $request, Series $series, int $seasonNumber, int $episodeNumber, string $slug): Response
     {
         $locale = $user->getPreferredLanguage() ?? $request->getLocale();
+        $country = $user->getCountry() ?? 'FR';
+
         $this->logger->info('showEpisode', ['series' => $series->getId(), 'season' => $seasonNumber, 'episode' => $episodeNumber, 'slug' => $slug]);
 
         $userSeries = $this->userSeriesRepository->findOneBy(['user' => $user, 'series' => $series]);
@@ -1029,6 +1031,7 @@ class SeriesController extends AbstractController
         $peopleUserPreferredNames = $this->getPreferredNames($user);
         $episode['guest_stars'] = $this->episodeGuestStars($episode, new AsciiSlugger(), $series, $profileUrl, $peopleUserPreferredNames);
 
+        $season['watch/providers'] = $this->watchProviders($season, $country);
         $season['credits'] = $this->castAndCrew($season, $series);
         $season['series_localized_name'] = $series->getLocalizedName($request->getLocale());
         $season['blurred_poster_path'] = $this->imageService->blurPoster($season['poster_path'], 'series', 8);
@@ -1067,6 +1070,11 @@ class SeriesController extends AbstractController
             ],
         ];
 
+        $episode['show_id'] = $series->getTmdbId();
+
+        $providers = $this->watchLinkApi->getWatchProviders($country);
+        $devices = $this->deviceRepository->deviceArray();
+
         return $this->render('series/episode.html.twig', [
             'userSeries' => $userSeries,
             'series' => $series,
@@ -1079,6 +1087,8 @@ class SeriesController extends AbstractController
             'fieldList' => ['series-id', 'tmdb-id', 'crud-type', 'crud-id', 'title', 'location', 'season-number', 'episode-number', 'description', 'latitude', 'longitude', 'radius', "source-name", "source-url"],
             'mapSettings' => $this->settingsRepository->findOneBy(['name' => 'mapbox']),
             'translations' => $this->seriesService->getEpisodeShowTranslations(),
+            'providers' => $providers,
+            'devices' => $devices,
         ]);
     }
 

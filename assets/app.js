@@ -203,8 +203,8 @@ window.addEventListener("DOMContentLoaded", () => {
         });
 
         if (isSeasonPage) {
-            const season = new Season();
-            season.init(menu);
+            const season = new Season(menu);
+            season.init();
         } else {
             new UserList(flashMessage, toolTips, document.querySelectorAll(".action.toggle-bookmark-series"))
         }

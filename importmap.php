@@ -46,6 +46,9 @@ return [
     'Episode' => [
         'path' => './assets/js/series/Episode.js',
     ],
+    'EpisodeActions' => [
+        'path' => './assets/js/series/EpisodeActions.js',
+    ],
     'FlashMessage' => [
         'path' => './assets/js/FlashMessage.js',
     ],
