@@ -1080,6 +1080,7 @@ class SeriesController extends AbstractController
             'series' => $series,
             'season' => $season,
             'episode' => $episode,
+            'slug' => $slug,
             'locations' => $filmingLocationsWithBounds['filmingLocations'],
             'locationsBounds' => $filmingLocationsWithBounds['bounds'],
             'emptyLocation' => $filmingLocationsWithBounds['emptyLocation'],

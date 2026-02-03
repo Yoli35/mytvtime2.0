@@ -35,15 +35,27 @@
                     <h1>{{ episode.episode_number }} / {{ season.episodes|length }}. {{ episode.user_episode.substitute_name ?: episode.name }}</h1>
                     <div class="overview">{{ episode.user_episode.localized_overview ?: episode.overview }}</div>
                 </div>
-                <a href="{{ path('app_series_season_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug, seasonNumber: season.season_number}) }}">
-                    <div class="back">
-                        {% if season.season_number %}
-                            {{ 'Season'|trans }} {{ season.season_number }}
-                        {% else %}
-                            {{ 'Specials'|trans }}
-                        {% endif %}
-                    </div>
-                </a>
+                <div class="navigation">
+                    {% if episode.episode_number > 1 %}
+                        <a href="{{ path("app_series_episode_show", {id: series.id, slug: slug, seasonNumber: season.season_number, episodeNumber: episode.episode_number - 1}) }}">
+                            <div class="previous-episode">{{ ux_icon('mdi:arrow-left') }}</div>
+                        </a>
+                    {% endif %}
+                    <a href="{{ path('app_series_season_show', {id: series.id, slug: season.series_localized_name.slug ?? series.slug, seasonNumber: season.season_number}) }}">
+                        <div class="back">
+                            {% if season.season_number %}
+                                {{ 'Season'|trans }} {{ season.season_number }}
+                            {% else %}
+                                {{ 'Specials'|trans }}
+                            {% endif %}
+                        </div>
+                    </a>
+                    {% if  episode.episode_type == "standard" %} {# Last episode: episode.episode_type == "finale" #}
+                        <a href="{{ path("app_series_episode_show", {id: series.id, slug: slug, seasonNumber: season.season_number, episodeNumber: episode.episode_number + 1}) }}">
+                            <div class="next-episode">{{ ux_icon('mdi:arrow-right') }}</div>
+                        </a>
+                    {% endif %}
+                </div>
                 {{ include('_blocks/series/_user_episode.html.twig', {ue: episode.user_episode, episode: episode, series: series, season: season}) }}
             </header>
             <main>
